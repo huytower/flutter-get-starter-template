@@ -57,6 +57,7 @@ export 'core/enum/routing_manager_enum.dart';
 // =================================
 
 export 'core/extension/app_track_log_extension.dart';
+export 'core/extension/cc_extension.dart';
 // =================================
 // DATA LAYER
 // =================================
