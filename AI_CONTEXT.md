@@ -4,10 +4,7 @@
 
 Flutter starter template following **Clean Architecture** and **SOLID principles** with modular structure.
 
-**Project Path:** `C:\Users\Admin\repository\flutter-get-starter-template`
-
 ## Architecture Principles
-````
 ### Clean Architecture
 - **Domain Layer**: Business logic, use cases, entities, repository interfaces
 - **Data Layer**: Data sources (remote/local), repository implementations, entities
@@ -33,7 +30,7 @@ flutter-get-starter-template/
 │   ├── app_config/              # Configuration, DI, storage
 │   ├── data/                    # Data sources, repositories, entities
 │   ├── message/                 # i18n/localization
-  └── theme/                   # Theming system
+│   └── theme/                   # Theming system
 ├── libraries/                    # Reusable libraries
 │   ├── cc_sdk/                  # Core SDK (network, device, failures)
 │   ├── cc_sdk_ui/               # UI component library
@@ -316,6 +313,174 @@ Each entry point initializes:
 - Localization
 - Theme provider
 
+## Routing & Navigation
+
+### Strategy Pattern
+The app uses a **Strategy Pattern** for routing, allowing runtime selection between routing frameworks.
+
+**Key Files:**
+- `lib/data/datasource/route_strategy.dart`: Abstract `RoutingStrategy` + implementations
+- `lib/core/navigation/route_strategy_provider.dart`: Strategy factory with `RouteStrategyProvider`
+- `lib/core/navigation/config/auto_route/app_router.dart`: AutoRoute configuration (default)
+- `lib/core/navigation/config/getx/getx_router.dart`: GetX route configuration
+
+**Available Strategies:**
+| Strategy | Class | Router | Use When |
+| :--- | :--- | :--- | :--- |
+| **AutoRoute** (default) | `AutoRouteStrategy` | `AppRouter` | Type-safe routing with code generation |
+| **GetX** | `GetxRouteStrategy` | `GetxRoutingManager` | Lightweight routing with GetX bindings |
+
+**Route Registration:**
+- Page names are defined in `PageNameEnum` (app pages) and `PageNameByRouteStrategyEnum` (strategy-specific sample pages)
+- Route paths are auto-generated from enum names: `getPageName(PageNameEnum.HOME)` → `"/home"`
+
+**Adding a New Route:**
+1. Add entry to `PageNameEnum` (or `PageNameByRouteStrategyEnum` for sample pages)
+2. For **AutoRoute**: Add `AutoRoute(page: YourRoute.page, path: ...)` in `app_router.dart`, then run `build_runner`
+3. For **GetX**: Add `GetPage(name: ..., page: () => YourPage(), binding: YourBinding())` in `getx_router.dart`
+
+---
+
+## State Management Guidelines
+
+### Decision Matrix
+
+| Scenario | Recommended | Why |
+| :--- | :--- | :--- |
+| **Complex async workflows** with multiple states (loading/error/success) | **BLoC/Cubit** | Structured state transitions, testable with `bloc_test`, clear separation of events/states |
+| **Simple reactive UI** with minimal state | **GetX** (`GetxController` + `Obx`) | Lightweight, less boilerplate, built-in routing/DI integration |
+| **Theme / app-wide config** | **Provider** (`ChangeNotifier`) | Already used for `ThemeProvider`; ideal for simple cross-cutting concerns |
+| **Reactive data models** with fine-grained rebuilds | **watch_it** | Integrates with `get_it`, supports `ValueListenable`-based reactivity |
+
+### Implementation Patterns
+
+**BLoC/Cubit Pattern** (preferred for feature logic):
+```
+lib/presentation/{feature}/
+├── bloc/
+│   ├── {feature}_bloc.dart       # or {feature}_cubit.dart
+│   └── {feature}_state.dart
+├── pages/
+│   └── {feature}_page.dart
+└── widgets/
+    └── {feature}_content.dart
+```
+
+**GetX Pattern** (for simpler screens):
+```
+lib/presentation/getx/{feature}/
+├── get_x/
+│   ├── {feature}_controller.dart
+│   └── {feature}_binding.dart
+└── ui/
+    └── {feature}_page.dart
+```
+
+**Rule**: Do not mix state management approaches within the same feature. Pick one per feature and stay consistent.
+
+---
+
+## Testing Strategy
+
+### Test Structure
+```
+test/
+└── presentation/
+    └── cubit/
+        └── simple_cubit_test.dart    # Example BLoC/Cubit test
+```
+
+### Test Types
+
+| Type | Location | Tools | What to Test |
+| :--- | :--- | :--- | :--- |
+| **Unit Tests** | `test/` (mirrors `lib/` structure) | `flutter_test`, `bloc_test` | Use cases, cubits/blocs, repositories, utilities |
+| **Widget Tests** | `test/presentation/` | `flutter_test` | Individual widget rendering, interactions |
+| **Integration Tests** | `integration_test/` | `integration_test` package | Full user flows, navigation, DI wiring |
+
+### Testing Conventions
+- **File naming**: `{class_name}_test.dart` (e.g., `simple_cubit_test.dart`)
+- **Mocking**: Use `MockCubit<State>` from `bloc_test` for BLoC/Cubit mocks; consider adding `mocktail` for general mocking
+- **BLoC/Cubit tests**: Use `blocTest<Cubit, State>()` for state transition assertions with `build`, `act`, `seed`, `expect`
+- **Group tests** by method name: `group('increase()', () { ... })`
+
+### Running Tests
+```bash
+# Run all tests
+flutter test
+
+# Run specific test file
+flutter test test/presentation/cubit/simple_cubit_test.dart
+
+# Run with coverage
+flutter test --coverage
+```
+
+### Recommended Test Coverage
+- **Domain layer** (use cases): High priority — pure business logic, easy to test
+- **Data layer** (repositories, datasources): Mock API responses, verify data transformations
+- **Presentation layer** (cubits/blocs): Test state transitions with `bloc_test`
+- **UI widgets**: Test key interactions and conditional rendering
+
+---
+
+## Build & Environment Configuration
+
+### Flutter & Dart Versions
+- **Dart SDK**: `^3.11.5`
+- **Flutter**: `>=3.41.9`
+- **Version Manager**: [FVM](https://fvm.app/) (Flutter Version Management)
+
+### Environment Setup
+The project supports 3 environments, configured via `.env` files in `env/`:
+
+| Environment | Env File | Enum Value | Entry Point |
+| :--- | :--- | :--- | :--- |
+| Development | `env/.env.development` | `FREE_FAKE_API` | `main.dart` |
+| UAT | `env/.env.uat` | `UAT` | `main_uat.dart` |
+| Production | `env/.env.production` | `PROD` | `main_prod.dart` |
+
+**Switching Environments** (PowerShell):
+```powershell
+# From scripts/ directory
+.\set-environment.ps1 -Environment development   # or: uat, production
+```
+This copies the correct `.env` file to the project root and updates `http_client_config.dart` with the matching enum.
+
+### Code Generation
+After modifying DI annotations, data models, routes, or Hive type adapters:
+```bash
+flutter pub run build_runner build --delete-conflicting-outputs
+```
+
+### Lint & Analysis
+- **Config**: `analysis_options.yaml` (extends `flutter_lints`)
+- **Key rules enforced**: `prefer_relative_imports`, `avoid_print`, `prefer_const_constructors`, `sort_pub_dependencies`, `sort_child_properties_last`
+
+```bash
+# Run static analysis
+flutter analyze
+
+# Auto-fix lint issues
+dart fix --apply
+```
+
+### Build Commands
+```bash
+# Debug build
+flutter run
+
+# Release build
+flutter build apk --release          # Android
+flutter build ios --release           # iOS
+
+# Run with specific entry point
+flutter run -t lib/main_uat.dart      # UAT environment
+flutter run -t lib/main_prod.dart     # Production environment
+```
+
+---
+
 ## Error Handling
 
 ### Failure Types (from cc_sdk)
@@ -325,6 +490,8 @@ Each entry point initializes:
   - `MissingConfigFailure`: Missing configuration key
   - `InvalidConfigFailure`: Invalid configuration value
   - `SecurityConfigFailure`: Security-related issues
+
+---
 
 ## Important Notes
 
