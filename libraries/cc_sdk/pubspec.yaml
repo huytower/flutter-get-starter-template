@@ -9,9 +9,12 @@ environment:
 dependencies:
   ansicolor: ^2.0.3
 
+  catcher_2: ^2.1.9
   connectivity_plus: ^7.1.1
   crypto: ^3.0.7
   custom_refresh_indicator: ^4.0.1
+  data:
+    path: ../../modules/data
   dartx: ^1.2.0
 
   deep_collection: ^1.0.2
@@ -31,6 +34,7 @@ dependencies:
   flutter_udid: ^4.1.2
 
   get: ^4.7.3
+  get_it: ^9.2.1
   google_fonts: ^8.1.0
 
   internet_connection_checker_plus: ^3.0.0

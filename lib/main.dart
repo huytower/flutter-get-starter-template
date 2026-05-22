@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'core/crash_reporting/cc_catcher_bootstrap.dart';
+import 'package:cc_sdk/core/crash_reporting/cc_catcher_bootstrap.dart';
 import 'core/crash_reporting/crash_log_dev_overlay.dart';
-import 'core/crash_reporting/crash_log_startup.dart';
+import 'package:cc_sdk/core/crash_reporting/crash_log_startup.dart';
 import 'core/di/dependency_register.dart';
 import 'core/di/inject/inject.dart';
 import 'core/runner/app_runner.dart';
