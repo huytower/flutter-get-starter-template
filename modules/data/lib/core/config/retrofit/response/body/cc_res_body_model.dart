@@ -33,9 +33,13 @@ class CcResBodyModel<T> {
 
   /// Getters for ease of use
   bool get isSuccess => _resHeader?.status ?? false;
+
   String get message => _resHeader?.message ?? '';
+
   int get total => _resHeader?.total ?? 0;
+
   String? get code => _resHeader?.code;
+
   Map<String, dynamic>? get meta => _resHeader?.meta;
 
   /// General error message or detail

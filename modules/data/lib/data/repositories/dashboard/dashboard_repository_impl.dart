@@ -10,7 +10,9 @@ import '../../datasource/remote/dashboard/dashboard_remote_datasource.dart';
 
 /// Dashboard Repository Implementation - Data Layer
 @LazySingleton(as: DashboardRepository)
-class DashboardRepositoryImpl with CcBaseRepository implements DashboardRepository {
+class DashboardRepositoryImpl
+    with CcBaseRepository
+    implements DashboardRepository {
   final DashboardLocalDataSource _localDataSource;
   final DashboardRemoteDataSource _remoteDataSource;
 

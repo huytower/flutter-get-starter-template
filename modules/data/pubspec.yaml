@@ -11,8 +11,11 @@ resolution: workspace
 
 dependencies:
   app_config:
+    path: ../app_config
   cc_sdk:
+    path: ../../cc_core_sdk/cc_sdk
   cc_sdk_ui:
+    path: ../../cc_core_sdk/cc_sdk_ui
 
   curl_logger_dio_interceptor: ^1.0.1
   dartx: ^1.2.0

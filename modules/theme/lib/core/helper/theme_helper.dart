@@ -56,9 +56,7 @@ ThemeData createLightTheme() {
   return ThemeData(
     useMaterial3: true,
     colorScheme: createColorScheme(Brightness.light),
-    extensions: <ThemeExtension<dynamic>>[
-      CcTextStyle.light(),
-    ],
+    extensions: <ThemeExtension<dynamic>>[CcTextStyle.light()],
   );
 }
 
@@ -67,8 +65,6 @@ ThemeData createDarkTheme() {
   return ThemeData.dark().copyWith(
     useMaterial3: true,
     colorScheme: createColorScheme(Brightness.dark),
-    extensions: <ThemeExtension<dynamic>>[
-      CcTextStyle.dark(),
-    ],
+    extensions: <ThemeExtension<dynamic>>[CcTextStyle.dark()],
   );
 }

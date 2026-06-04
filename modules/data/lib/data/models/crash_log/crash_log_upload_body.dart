@@ -11,8 +11,8 @@ class CrashLogUploadBody {
   final String logs;
 
   Map<String, dynamic> toJson() => {
-        'appName': appName,
-        'uploadedAt': uploadedAt,
-        'logs': logs,
-      };
+    'appName': appName,
+    'uploadedAt': uploadedAt,
+    'logs': logs,
+  };
 }

@@ -14,11 +14,11 @@ abstract class CommentRemote {
 
   /// Get all comments with pagination support.
   /// The CcResponseInterceptor handles peeling the envelope.
-  /// 
+  ///
   /// Parameters:
   /// - [page]: Page number (1-based, default: 1)
   /// - [perPage]: Number of items per page (default: 20)
-  /// 
+  ///
   /// Returns a list of comments for the specified page.
   @GET('/comments')
   Future<List<CommentModel>> getComments(

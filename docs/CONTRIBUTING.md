@@ -7,21 +7,21 @@ This file describes how to contribute safely to the `flutter-get-starter-templat
 1. Read `../README.md` and `docs/onboarding.md`.
 2. Check `../AI_CONTEXT.md` for architecture intent and module boundaries.
 3. Identify where the change belongs:
-   - UI or shared widgets: `libraries/cc_sdk_ui`
-   - Feature logic: `libraries/features`
+   - UI or shared widgets: `cc_core_sdk/cc_sdk_ui`
+   - Feature logic: `features`
    - App-specific data and domain: `modules/data`
    - App configuration: `modules/app_config`
    - Theming: `modules/theme`
 
 ## How to add a new feature
 
-1. Create a new feature folder under `libraries/features/lib/features/`.
+1. Create a new feature folder under `features/lib/features/`.
 2. Follow the pattern:
    - `core/di/di.dart`
    - `data/` for datasources/repositories
    - `domain/` for entities/repositories/usecases
    - `presentation/` for pages/widgets
-3. Export the feature from `libraries/features/lib/export_features.dart`.
+3. Export the feature from `features/lib/export_features.dart`.
 4. Update the app import paths to use the new feature export.
 5. Run:
    - `flutter pub get`

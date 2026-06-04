@@ -21,11 +21,8 @@ import 'package:flutter/material.dart';
 // Base path constants
 class _AssetPaths {
   static const String _basePath = 'assets';
-  static const String background = '$_basePath/background';
   static const String lottie = '$_basePath/lottie';
   static const String icon = '$_basePath/icons';
-  static const String logo = '$_basePath/logo';
-  static const String splash = '$_basePath/splash';
 }
 
 /// Base class for all asset types
@@ -86,15 +83,6 @@ class LogoAsset extends AssetType {
 
 /// Utility class for working with assets
 class AssetUtils {
-  /// Get background image path
-  ///
-  /// Example:
-  /// ```dart
-  /// final bgPath = AssetUtils.getBackground(BackgroundAsset.splash);
-  /// ```
-  static String getBackground(BackgroundAsset asset) =>
-      _validatePath('${_AssetPaths.background}/${asset.path}');
-
   /// Get Lottie animation path
   ///
   /// Example:
@@ -112,24 +100,6 @@ class AssetUtils {
   /// ```
   static String getIcon(IconAsset asset) =>
       _validatePath('${_AssetPaths.icon}/${asset.path}');
-
-  /// Get logo path
-  ///
-  /// Example:
-  /// ```dart
-  /// final logoPath = AssetUtils.getLogo(LogoAsset.appLogo);
-  /// ```
-  static String getLogo(LogoAsset asset) =>
-      _validatePath('${_AssetPaths.logo}/${asset.path}');
-
-  /// Get splash presentation path
-  ///
-  /// Example:
-  /// ```dart
-  /// final splashPath = AssetUtils.getSplash(BackgroundAsset.splash);
-  /// ```
-  static String getSplash(BackgroundAsset asset) =>
-      _validatePath('${_AssetPaths.splash}/${asset.path}');
 
   /// Validates that the asset path exists in the pubspec.yaml
   ///

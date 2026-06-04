@@ -19,9 +19,9 @@ A modular Flutter starter template built with:
 
 2. `lib/core/di/inject/inject.dart`
    - Global DI assembly
-   - Includes module DI from `libraries/features`, `modules/data`, `modules/app_config`, etc.
+   - Includes module DI from `features`, `modules/data`, `modules/app_config`, etc.
 
-3. `libraries/features/lib/export_features.dart`
+3. `features/lib/export_features.dart`
    - Exports reusable feature packages
    - New reusable features should be added here
 
@@ -32,12 +32,12 @@ A modular Flutter starter template built with:
 5. `modules/theme/lib/core/di/di.dart`
    - Theme module DI registration and exports
 
-6. `libraries/cc_sdk/lib/core/di/di.dart`
+6. `cc_core_sdk/cc_sdk/lib/core/di/di.dart`
    - Core SDK DI exports
 
 ## Current feature pattern
 
-Reusable feature packages live under `libraries/features/lib/features/`.
+Reusable feature packages live under `features/lib/features/`.
 
 Each feature should generally follow this structure:
 
@@ -60,9 +60,9 @@ Each feature should generally follow this structure:
 ### Example: crash_log feature
 
 The crash log viewer was moved into:
-- `libraries/features/lib/features/crash_log/crash_log_viewer_page.dart`
-- `libraries/features/lib/features/crash_log/crash_log_dev_overlay.dart`
-- `libraries/features/lib/features/crash_log/export_crash_log.dart`
+- `features/lib/features/crash_log/crash_log_viewer_page.dart`
+- `features/lib/features/crash_log/crash_log_dev_overlay.dart`
+- `features/lib/features/crash_log/export_crash_log.dart`
 
 Use the feature package import:
 ```dart
@@ -71,12 +71,12 @@ import 'package:features/features/crash_log/export_crash_log.dart';
 
 ## How to add a new reusable feature
 
-1. Create a new feature folder under `libraries/features/lib/features/`.
+1. Create a new feature folder under `features/lib/features/`.
 2. Add `core/di/di.dart` for feature DI registration.
 3. Add domain contracts and use cases under `domain/`.
 4. Add data sources and repository implementations under `data/`.
 5. Add UI pages/widgets under `presentation/`.
-6. Export the feature from `libraries/features/lib/export_features.dart`.
+6. Export the feature from `features/lib/export_features.dart`.
 7. Update the main app imports to use the feature package export.
 8. Run `flutter pub get` and `flutter analyze`.
 
@@ -84,9 +84,9 @@ import 'package:features/features/crash_log/export_crash_log.dart';
 
 1. Open the issue or ticket description.
 2. Identify the related module/package.
-   - UI/UX changes often live in `lib/presentation` or `libraries/cc_sdk_ui`
+   - UI/UX changes often live in `lib/presentation` or `cc_core_sdk/cc_sdk_ui`
    - Domain logic changes often live in `modules/data` or feature domain folders
-   - Reusable feature changes often live in `libraries/features`
+   - Reusable feature changes often live in `features`
 3. Find the DI entry points.
 4. Confirm current behavior by running the app or using existing examples.
 5. Make the change, then run `flutter analyze`.
@@ -103,5 +103,5 @@ import 'package:features/features/crash_log/export_crash_log.dart';
 - Use package exports for cross-package imports
 - Keep module boundaries clean: domain should not depend on presentation
 - Prefer abstractions (interfaces, repositories) in DI
-- Document new feature package exports in `libraries/features/lib/export_features.dart`
+- Document new feature package exports in `features/lib/export_features.dart`
 - Keep `README.md` and `docs/AI_CONTEXT.md` in sync with major structure changes

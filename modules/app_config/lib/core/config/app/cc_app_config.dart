@@ -35,9 +35,9 @@ class CcAppConfig {
     final version = await semanticVersion;
     final parts = version.split('.').map((e) => int.tryParse(e) ?? 0).toList();
     // Convert x.y.z to a single number (e.g., 1.2.3 -> 1002003)
-    return parts[0] * 1000000 + 
-           (parts.length > 1 ? parts[1] * 1000 : 0) + 
-           (parts.length > 2 ? parts[2] : 0);
+    return parts[0] * 1000000 +
+        (parts.length > 1 ? parts[1] * 1000 : 0) +
+        (parts.length > 2 ? parts[2] : 0);
   }
 
   /// The current Android version code.

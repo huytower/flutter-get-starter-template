@@ -4,8 +4,6 @@ class CounterEntity {
   const CounterEntity({required this.value});
 
   CounterEntity copyWith({int? value}) {
-    return CounterEntity(
-      value: value ?? this.value,
-    );
+    return CounterEntity(value: value ?? this.value);
   }
 }

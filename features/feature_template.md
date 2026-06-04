@@ -240,6 +240,6 @@ void configureDependencies() {
 
 ## See Also
 
-- [Counter Feature Example](/libraries/features/lib/counter)
+- [Counter Feature Example](/features/lib/counter)
 - [Project Architecture Documentation](/doc/ARCHITECTURE.md)
 - [Coding Guidelines](/doc/CODING_GUIDELINES.md)

@@ -12,23 +12,28 @@ workspace:
   - modules/data
   - modules/message
   - modules/theme
-  - libraries/cc_sdk
-  - libraries/cc_sdk_ui
-  - libraries/cc_mixin
+  - cc_core_sdk/cc_sdk
+  - cc_core_sdk/cc_sdk_ui
+  - cc_core_sdk/cc_mixin
   - features
 
 dependencies:
   app_config:
+    path: modules/app_config
   auto_route: ^11.1.0
 
   bloc: ^9.2.1
   catcher_2: ^2.1.9
   cc_mixin:
+    path: cc_core_sdk/cc_mixin
   cc_sdk:
+    path: cc_core_sdk/cc_sdk
   cc_sdk_ui:
+    path: cc_core_sdk/cc_sdk_ui
   custom_refresh_indicator: ^4.0.1
 
   data:
+    path: modules/data
   device_info_plus: ^13.1.0
   dio: ^5.9.2
   dio_smart_retry: ^7.0.1
@@ -37,6 +42,7 @@ dependencies:
   equatable: ^2.0.8
 
   features:
+    path: features
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
@@ -65,6 +71,7 @@ dependencies:
 
   melos: ^7.8.0
   message:
+    path: modules/message
   path: ^1.9.1
   path_provider: ^2.1.5
   provider: ^6.1.5+1
@@ -72,6 +79,7 @@ dependencies:
   shared_preferences: ^2.5.5
 
   theme:
+    path: modules/theme
 
   url_launcher: ^6.3.2
   uuid: ^4.5.3

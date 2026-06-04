@@ -58,7 +58,7 @@ This project enforces a **state-management agnostic design** principle for all c
 5. Open `lib/main.dart` to follow app startup and feature wiring.
 6. Inspect `lib/core/di/di.dart` for global dependency registration.
 7. Explore `modules/` for app-specific domain/data modules.
-8. Explore `libraries/features/lib/export_features.dart` for reusable feature packages.
+8. Explore `features/lib/export_features.dart` for reusable feature packages.
 9. Read `docs/onboarding.md` for step-by-step developer onboarding.
 10. Use `docs/CONTRIBUTING.md` for workflow, code review, and documentation sync rules.
 
@@ -113,7 +113,7 @@ flutter-get-starter-template/
 │   ├── data/                    # Data sources, repositories
 │   ├── message/                 # i18n/localization
 │   └── theme/                   # Theming system
-├── libraries/                    # Reusable libraries
+├── cc_core_sdk/                  # Reusable libraries
 │   ├── cc_sdk/                  # Core SDK
 │   ├── cc_sdk_ui/               # UI component library
 │   ├── cc_mixin/                # Reusable mixins

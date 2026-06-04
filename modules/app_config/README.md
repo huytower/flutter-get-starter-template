@@ -1,24 +1,25 @@
 # App Config Module
 
-A comprehensive configuration module for Flutter applications that handles application settings, environment configurations, and dependency management.
+A comprehensive configuration module for Flutter applications that handles application settings, environment
+configurations, and dependency management.
 
 ## Features
 
 - **Application Configuration**
-  - Version and build information
-  - Environment-specific settings
-  - Feature flags and toggles
-  - Global application constants
+    - Version and build information
+    - Environment-specific settings
+    - Feature flags and toggles
+    - Global application constants
 
 - **Dependency Injection**
-  - Centralized dependency registration
-  - Environment-aware service configuration
-  - Lazy loading support
+    - Centralized dependency registration
+    - Environment-aware service configuration
+    - Lazy loading support
 
 - **Local Storage**
-  - Hive-based storage
-  - Type-safe data access
-  - Automatic serialization
+    - Hive-based storage
+    - Type-safe data access
+    - Automatic serialization
 
 ## Getting Started
 
@@ -74,13 +75,15 @@ final needsUpdate = await appVersionService.isUpdateRequired('1.2.0');
 ### Environment Configuration``
 
 Environment variables are loaded from `.env` files in the `env/` directory:
+
 - `.env` - Development environment
 - `.env.uat` - UAT environment
 - `.env.production` - Production environment
 
 ## Dependency Injection
 
-The module uses `get_it` with `injectable` for dependency management. To regenerate injection code after adding new dependencies:
+The module uses `get_it` with `injectable` for dependency management. To regenerate injection code after adding new
+dependencies:
 
 ```bash
 flutter pub run build_runner build --delete-conflicting-outputs

@@ -39,11 +39,11 @@ class AppConfigEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        appName,
-        packageName,
-        version,
-        buildNumber,
-        environment,
-        featureFlags,
-      ];
+    appName,
+    packageName,
+    version,
+    buildNumber,
+    environment,
+    featureFlags,
+  ];
 }

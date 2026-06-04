@@ -8,14 +8,14 @@ abstract class AppConfigRepository {
 
   /// Refreshes the app configuration from the remote source.
   Future<AppConfigEntity> refreshConfig();
-  
+
   /// Gets a feature flag value by key.
   /// Returns [defaultValue] if the key doesn't exist.
   Future<T> getFeatureFlag<T>(String key, {required T defaultValue});
-  
+
   /// Checks if an update is required for the given version.
   Future<bool> isUpdateRequired(String currentVersion);
-  
+
   /// Gets the minimum required app version.
   Future<String> getMinimumRequiredVersion();
 }

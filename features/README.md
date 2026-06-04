@@ -41,7 +41,7 @@ Add this to your app's `pubspec.yaml`:
 ```yaml
 dependencies:
   features:
-    path: libraries/features
+    path: features
 ```
 
 ### Creating a New Feature
@@ -53,7 +53,7 @@ dependencies:
     - `domain/`: Define entities, repository interfaces, and use cases.
     - `presentation/`: Build UI and state management logic.
 4. **Set up DI**: Use `@injectable`, `@lazySingleton`, or `@factory` annotations on your classes.
-5. **Register Exports**: 
+5. **Register Exports**:
     - Add your internal files to `{feature_name}_export.dart`.
     - Export the feature from the root `lib/export_features.dart`.
 6. **Generate Code**: Run `build_runner` to update the DI configuration.
@@ -105,11 +105,13 @@ Features should use `Bloc` or `Cubit` for state management to maintain consisten
 Run build_runner after making changes to DI or JSON serialization:
 
 ```bash
-cd libraries/features
+cd features
 flutter pub run build_runner build --delete-conflicting-outputs
 ```
 
 ## 🔗 Related Libraries
 
-- `cc_sdk_ui`: UI component library used across apps and features. See [libraries/cc_sdk_ui/README.md](../cc_sdk_ui/README.md) for usage and examples.
-- `cc_sdk`: Core SDK utilities and shared services used by features. See [libraries/cc_sdk/README.md](../cc_sdk/README.md).
+- `cc_sdk_ui`: UI component library used across apps and features.
+  See [cc_core_sdk/cc_sdk_ui/README.md](../cc_core_sdk/cc_sdk_ui/README.md) for usage and examples.
+- `cc_sdk`: Core SDK utilities and shared services used by features.
+  See [cc_core_sdk/cc_sdk/README.md](../cc_core_sdk/cc_sdk/README.md).

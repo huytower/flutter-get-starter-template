@@ -12,13 +12,16 @@ resolution: workspace
 dependencies:
   # Internal dependencies
   cc_sdk:
+    path: ../../cc_core_sdk/cc_sdk
   cc_sdk_ui:
+    path: ../../cc_core_sdk/cc_sdk_ui
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
   google_fonts: ^8.1.0
   message:
+    path: ../message
 
 dev_dependencies:
   flutter_lints: ^6.0.0
@@ -29,11 +32,9 @@ flutter:
   # This section identifies this package as a plugin project.
   # To add assets to your plugin package, add an assets section, like this:
   assets:
-    - assets/background/
     - assets/icon/
     - assets/lottie/
-    - assets/logo/
-#    - packages/theme/assets/background/
+  #    - packages/theme/assets/background/
 
   # Fonts and other font-related configurations
   fonts: [ ]  # Empty list as we're using google_fonts package

@@ -10,8 +10,11 @@ resolution: workspace
 
 dependencies:
   cc_sdk:
+    path: ../cc_core_sdk/cc_sdk
   cc_sdk_ui:
+    path: ../cc_core_sdk/cc_sdk_ui
   data:
+    path: ../modules/data
   auto_route: ^11.1.0
   dio: ^5.9.2
   easy_localization: ^3.0.8

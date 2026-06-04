@@ -20,7 +20,7 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
 
 4. **Final-State Delivery**: Provide final, production-ready implementation immediately. Skip intermediate wrappers or temporary helper files.
 
-5. **SDK-First Component Reuse**: Prioritize components from `libraries/cc_sdk_ui`.
+5. **SDK-First Component Reuse**: Prioritize components from `cc_core_sdk/cc_sdk_ui`.
 
 6. **Clean Bootstrap Integrity**: Preserve `main.dart` as lean, service-only entry point (Env -> DI -> Hive -> Localization).
 
@@ -123,7 +123,7 @@ flutter-get-starter-template/
 │   ├── data/                    # Data sources, repositories, entities
 │   ├── message/                 # i18n/localization
 │   └── theme/                   # Theming system
-├── libraries/                    # Reusable libraries
+├── cc_core_sdk/                  # Reusable libraries
 │   ├── cc_sdk/                  # Core SDK (network, device, failures)
 │   ├── cc_sdk_ui/               # UI component library
 │   ├── cc_mixin/                # Reusable mixins
@@ -148,7 +148,7 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 
 ## Core Libraries
 
-### libraries/cc_sdk (Core SDK)
+### cc_core_sdk/cc_sdk (Core SDK)
 **Purpose:** Essential functionality and utilities
 
 **State-Management Requirements:**
@@ -171,9 +171,9 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 - `CcResponsiveHelper`: Screen type detection (mobile/tablet/desktop), responsive breakpoints, orientation helpers
 - Use these helpers to build adaptive UIs that work across all device sizes
 
-**DI File:** `libraries/cc_sdk/lib/core/di/di.dart`
+**DI File:** `cc_core_sdk/cc_sdk/lib/core/di/di.dart`
 
-### libraries/cc_sdk_ui (UI Components)
+### cc_core_sdk/cc_sdk_ui (UI Components)
 **Purpose:** Reusable, customizable UI components
 
 **State-Management Requirements:**
@@ -201,7 +201,7 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 
 **DI File:** No DI file (stateless UI library)
 
-### libraries/cc_mixin (Reusable Mixins)
+### cc_core_sdk/cc_mixin (Reusable Mixins)
 **Purpose:** Reusable mixins for common functionality
 
 **State-Management Requirements:**

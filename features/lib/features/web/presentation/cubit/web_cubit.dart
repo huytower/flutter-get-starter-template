@@ -1,8 +1,10 @@
 import 'dart:ui';
+
 import 'package:bloc/bloc.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:injectable/injectable.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
 import 'web_state.dart';
 
 @lazySingleton
@@ -25,10 +27,12 @@ class WebCubit extends Cubit<WebState> {
             emit(state.copyWith(status: CcLayoutStatus.success, url: url));
           },
           onWebResourceError: (WebResourceError error) {
-            emit(state.copyWith(
-              status: CcLayoutStatus.error,
-              errorMessage: error.description,
-            ));
+            emit(
+              state.copyWith(
+                status: CcLayoutStatus.error,
+                errorMessage: error.description,
+              ),
+            );
           },
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.startsWith('https://www.youtube.com/')) {

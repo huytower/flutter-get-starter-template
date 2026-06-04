@@ -30,7 +30,6 @@ Future<void> registerHiveAdapter() async {
       'CcDeviceInfo',
       () => CcDeviceInfo.register(),
     );
-
   } catch (e, stackTrace) {
     developer.log(
       'Failed to register one or more Hive adapters',

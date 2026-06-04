@@ -1,6 +1,6 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:equatable/equatable.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 
 class WebState extends Equatable {
   final WebViewController? controller;

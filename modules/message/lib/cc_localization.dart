@@ -13,8 +13,7 @@ class CcLocalization {
 
   /// The path to the directory containing the translation files.
   // In modules/message/lib/cc_localization.dart
-  static const String translationsPath =
-      'packages/message/assets/translations';
+  static const String translationsPath = 'packages/message/assets/translations';
 
   /// The fallback locale to use when a locale is not supported.
   static const Locale fallbackLocale = Locale('en');
@@ -36,9 +35,7 @@ class CcLocalization {
   }
 
   /// Wraps the app with [EasyLocalization] to enable localization.
-  static Widget wrapWithLocalization({
-    required Widget child,
-  }) {
+  static Widget wrapWithLocalization({required Widget child}) {
     return EasyLocalization(
       path: translationsPath,
       supportedLocales: supportedLocales,
@@ -56,8 +53,11 @@ class CcLocalization {
   /// ```dart
   /// CcLocalization.translate('hello_world');
   /// ```
-  static String translate(String key,
-      {List<String>? args, Map<String, String>? namedArgs}) {
+  static String translate(
+    String key, {
+    List<String>? args,
+    Map<String, String>? namedArgs,
+  }) {
     if (args != null) {
       return key.tr(args: args);
     } else if (namedArgs != null) {

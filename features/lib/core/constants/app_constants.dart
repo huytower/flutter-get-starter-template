@@ -12,5 +12,5 @@ class AppConstants {
   static const String storageTokenKey = 'auth_token';
   static const String storageUserKey = 'user_data';
 
-// Add more constants as needed
+  // Add more constants as needed
 }
