@@ -95,28 +95,20 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   injectable_generator: ^3.0.2
+  lean_builder: ^0.1.10
   lint: ^2.8.0
 
 melos:
   scripts:
-    # Run pub get in all modules
-    get:
-      description: Run `flutter pub get` in all packages.
-      run: melos exec -- "flutter pub get"
+    # Full bootstrap: link packages and run pub get
+    bootstrap:
+      description: Bootstrap the workspace and download all dependencies.
+      run: melos bootstrap
 
-    # Run code generation where needed
-    gen:
-      description: Run `build_runner` in all packages that depend on it.
-      run: melos exec --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs"
-
-    # Quality Gates
-    analyze:
-      description: Analyze all packages.
-      run: melos exec -- "flutter analyze"
-
-    test:
-      description: Run all tests across the workspace.
-      run: melos exec --dir-exists="test" -- "flutter test"
+    # Full rebuild: bootstrap followed by stable code generation
+    rebuild:
+      description: Run bootstrap followed by code generation (stable).
+      run: melos bootstrap && melos exec --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs"
 
 flutter:
   uses-material-design: true

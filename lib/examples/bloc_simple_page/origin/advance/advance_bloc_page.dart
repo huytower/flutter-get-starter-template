@@ -1,5 +1,4 @@
 import 'package:auto_route/annotations.dart';
-import 'package:cc_sdk/core/extensions/export_cc_extensions.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -95,10 +94,7 @@ class AdvanceBlocPage extends StatelessWidget {
   CcText buildBlocUI(BuildContext context, Color color) {
     return CcText(
       getIt<AdvanceBloc>().counter.toString(),
-      textStyle: context.ccTextTheme.headlineLarge?.copyWith(
-        color: color,
-      ),
+      textStyle: context.ccTextTheme.headlineLarge?.copyWith(color: color),
     );
   }
-
 }

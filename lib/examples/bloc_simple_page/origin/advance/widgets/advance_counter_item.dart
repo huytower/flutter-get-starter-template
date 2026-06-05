@@ -1,5 +1,3 @@
-import 'package:cc_sdk/core/extensions/export_cc_extensions.dart';
-import 'package:cc_sdk_ui/core/extensions/common/cc_responsive_extension.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
@@ -10,10 +8,7 @@ import '../advance_bloc_event.dart';
 class AdvanceCounterItem extends StatelessWidget {
   final AdvanceBloc bloc;
 
-  const AdvanceCounterItem({
-    super.key,
-    required this.bloc,
-  });
+  const AdvanceCounterItem({super.key, required this.bloc});
 
   @override
   Widget build(BuildContext context) {

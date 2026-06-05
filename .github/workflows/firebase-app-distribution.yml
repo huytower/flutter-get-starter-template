@@ -48,7 +48,7 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
       - name: Lint & Test
         run: |
-          melos run gen
+          melos run gen-legacy
           melos run analyze
           melos run test
 
@@ -76,7 +76,7 @@ jobs:
           EOF
 
       - name: Generate Code
-        run: melos run gen
+        run: melos run gen-legacy
 
       - name: Fastlane Distribute
         run: cd android && bundle exec fastlane distribute_firebase flavor:${{ github.event.inputs.flavor || 'uat' }}
@@ -97,7 +97,7 @@ jobs:
           ruby-dir: 'ios'
 
       - name: Generate Code
-        run: melos run gen
+        run: melos run gen-legacy
 
       - name: Fastlane TestFlight
         run: cd ios && bundle exec fastlane beta flavor:${{ github.event.inputs.flavor || 'uat' }}
@@ -118,6 +118,6 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           setup-java: 'true'
       - name: Generate Code
-        run: melos run gen
+        run: melos run gen-legacy
       - name: Compile Check
         run: flutter build appbundle --release --flavor free

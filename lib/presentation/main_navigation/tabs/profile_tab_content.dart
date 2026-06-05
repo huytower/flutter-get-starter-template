@@ -1,5 +1,4 @@
 import 'package:catcher_2/catcher_2.dart';
-import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:features/features/crash_log/export_crash_log.dart';

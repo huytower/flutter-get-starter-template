@@ -1,9 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:message/cc_locale_keys.dart';
-
-import '../../../../core/extensions/cc_context_extension.dart';
 
 /// Retry page displayed when an action fails and can be retried.
 /// Shows a retry button to attempt the action again.

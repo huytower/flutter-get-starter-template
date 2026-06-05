@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import '../../core/config/tokens/cc_base_colors.dart';
 import '../../core/extensions/cc_context_extension.dart';
 
 class SpinkitScreen extends StatelessWidget {

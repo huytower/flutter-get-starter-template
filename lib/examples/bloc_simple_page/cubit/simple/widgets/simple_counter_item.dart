@@ -1,5 +1,3 @@
-import 'package:cc_sdk/core/extensions/export_cc_extensions.dart';
-import 'package:cc_sdk_ui/core/extensions/common/cc_responsive_extension.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
@@ -9,10 +7,7 @@ import '../simple_cubit_interface.dart';
 class SimpleCounterItem extends StatelessWidget {
   final SimpleCubitInterface cubit;
 
-  const SimpleCounterItem({
-    super.key,
-    required this.cubit,
-  });
+  const SimpleCounterItem({super.key, required this.cubit});
 
   @override
   Widget build(BuildContext context) {
