@@ -7,9 +7,6 @@ import 'package:multiple_result/multiple_result.dart';
 import '../../entities/comment/comment_entity.dart';
 
 abstract class CommentRepository {
-  /// Get all comments without pagination (legacy support).
-  Future<Result<List<CommentEntity>, Failure>> getListComments();
-
   /// Get comments with pagination support.
   ///
   /// Parameters:

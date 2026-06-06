@@ -66,7 +66,8 @@
     "title": "Trang chủ",
     "welcome": "Xin chào, {name}!",
     "recent_activity": "Hoạt động gần đây",
-    "view_all": "Xem tất cả"
+    "view_all": "Xem tất cả",
+    "my_wallets": "Ví tiền"
   },
   "settings": {
     "title": "Cài đặt",
@@ -78,6 +79,7 @@
     "about": "Giới thiệu"
   },
   "nav": {
+    "home": "Trang chủ",
     "dashboard": "Bảng điều khiển",
     "quick_test": "Kiểm tra nhanh",
     "quick_test_page": "Trang kiểm tra nhanh",

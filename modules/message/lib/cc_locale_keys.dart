@@ -71,6 +71,7 @@ abstract class CcLocaleKeys {
   static const home_welcome = 'home.welcome';
   static const home_recent_activity = 'home.recent_activity';
   static const home_view_all = 'home.view_all';
+  static const home_my_wallets = 'home.my_wallets';
 
   static const settings_title = 'settings.title';
   static const settings_language = 'settings.language';
@@ -80,6 +81,7 @@ abstract class CcLocaleKeys {
   static const settings_help = 'settings.help';
   static const settings_about = 'settings.about';
 
+  static const nav_home = 'nav.home';
   static const nav_dashboard = 'nav.dashboard';
   static const nav_quick_test = 'nav.quick_test';
   static const nav_quick_test_page = 'nav.quick_test_page';

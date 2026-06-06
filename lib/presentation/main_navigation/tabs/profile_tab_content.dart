@@ -36,46 +36,65 @@ class _ProfileTabContentState extends State<ProfileTabContent> {
     CcDialogHelper.showModalBottomSheet(navContext, const CrashLogViewerPage());
   }
 
+  /// Build the app bar title with localized text in red color
+  Widget _buildTitle(BuildContext context) {
+    return CcText(
+      el.tr(CcLocaleKeys.nav_profile_info),
+      textStyle: context.ccTextTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.bold,
+        fontSize: context.respFontSize(CcTypographyParams.titleLarge),
+        color: context.ccColorScheme.error, // Semantic red color
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final appInfo = '${CcAppTrackName.appName} v$_version';
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.person_rounded,
-            size: context.respIconSize(baseSize: 64.0),
-            color: context.ccColorScheme.primary,
-          ),
-          const CcSpaceLG(),
-          CcText(
-            el.tr(CcLocaleKeys.nav_profile),
-            textStyle: context.ccTextTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              fontSize: context.respFontSize(CcTypographyParams.headlineSmall),
+    return Scaffold(
+      appBar: AppBar(title: _buildTitle(context), centerTitle: false),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.person_rounded,
+              size: context.respIconSize(baseSize: 64.0),
+              color: context.ccColorScheme.primary,
             ),
-            align: Alignment.center,
-          ),
-          const CcSpaceXL(),
-          const CcSpaceXL(),
-          // Hidden/Dev Trigger: Long press on App Name to open logs
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.respPadding(CcPaddingParams.SPACE_XL),
+            const CcSpaceLG(),
+            CcText(
+              el.tr(CcLocaleKeys.nav_profile),
+              textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: context.respFontSize(
+                  CcTypographyParams.headlineSmall,
+                ),
+              ),
+              align: Alignment.center,
             ),
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onLongPress: _openCrashLogViewer,
-              child: AppNameWidget(
-                appInfo,
-                fontSize: CcTypographyParams.bodySmall,
-                color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.5),
+            const CcSpaceXL(),
+            const CcSpaceXL(),
+            // Hidden/Dev Trigger: Long press on App Name to open logs
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: context.respPadding(CcPaddingParams.SPACE_XL),
+              ),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onLongPress: _openCrashLogViewer,
+                child: AppNameWidget(
+                  appInfo,
+                  fontSize: CcTypographyParams.bodySmall,
+                  color: context.ccColorScheme.onSurfaceVariant.withOpacity(
+                    0.5,
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

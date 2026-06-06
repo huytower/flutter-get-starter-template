@@ -22,7 +22,7 @@ class NavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<NavigationBar>
     with CcCurvedNavigationMixin, DoubleBackToExitMixin, NavigationLogicMixin {
   // Navigation indices
-  static const int _indexDashboard = 0;
+  static const int _indexHome = 0;
   static const int _indexNotification = 1;
   static const int _indexProfile = 2;
 
@@ -37,15 +37,15 @@ class _NavigationBarState extends State<NavigationBar>
 
   @override
   bool handleCustomNavigation() {
-    if (currentIndex != _indexDashboard) {
-      setIndex(_indexDashboard);
+    if (currentIndex != _indexHome) {
+      setIndex(_indexHome);
       return true;
     }
     return false;
   }
 
   @override
-  bool get shouldEnableDoubleBackToExit => currentIndex == _indexDashboard;
+  bool get shouldEnableDoubleBackToExit => currentIndex == _indexHome;
 
   @override
   String get backPressMessage => el.tr('common.press_back_again_to_exit');
@@ -62,9 +62,9 @@ class _NavigationBarState extends State<NavigationBar>
   @override
   List<CcCurvedNavigationItem> get navigationItems => [
     CcCurvedNavigationItem(
-      inactiveIcon: Icons.dashboard_outlined,
-      activeIcon: Icons.dashboard_rounded,
-      label: el.tr(CcLocaleKeys.nav_dashboard),
+      inactiveIcon: Icons.home_outlined,
+      activeIcon: Icons.home_rounded,
+      label: el.tr(CcLocaleKeys.nav_home),
     ),
     showQuickTestAsSecondTab
         ? CcCurvedNavigationItem(
@@ -106,7 +106,7 @@ class _NavigationBarState extends State<NavigationBar>
 
   Widget _buildContentForIndex(int index) {
     switch (index) {
-      case _indexDashboard:
+      case _indexHome:
         return const HomeTabContent();
       case _indexNotification:
         return showQuickTestAsSecondTab
