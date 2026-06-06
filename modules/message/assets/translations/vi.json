@@ -82,7 +82,8 @@
     "quick_test": "Kiểm tra nhanh",
     "quick_test_page": "Trang kiểm tra nhanh",
     "notification": "Thông báo",
-    "profile": "Hồ sơ"
+    "profile": "Hồ sơ",
+    "profile_info": "Thông tin cá nhân"
   },
   "dashboard": {
     "item_count": "Số lượng mục",

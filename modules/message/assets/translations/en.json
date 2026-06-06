@@ -82,7 +82,8 @@
     "quick_test": "Quick Test",
     "quick_test_page": "Quick Testing Page",
     "notification": "Notification",
-    "profile": "Profile"
+    "profile": "Profile",
+    "profile_info": "Personal Information"
   },
   "dashboard": {
     "item_count": "Item Count",
