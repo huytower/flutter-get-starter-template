@@ -1,8 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../core/config/tokens/cc_circular_params.dart';
-
 class CcCheckBox extends StatelessWidget {
   const CcCheckBox({Key? key, required this.isChecked, required this.onChanged})
     : super(key: key);

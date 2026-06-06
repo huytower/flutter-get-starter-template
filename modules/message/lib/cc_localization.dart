@@ -16,12 +16,12 @@ class CcLocalization {
   static const String translationsPath = 'packages/message/assets/translations';
 
   /// The fallback locale to use when a locale is not supported.
-  static const Locale fallbackLocale = Locale('en');
+  static const Locale fallbackLocale = Locale('vi');
 
   /// The list of supported locales in the application.
   static const List<Locale> supportedLocales = [
-    Locale('en'), // English
     Locale('vi'), // Vietnamese
+    Locale('en'), // English
     // Add more locales as needed
   ];
 
@@ -40,7 +40,7 @@ class CcLocalization {
       path: translationsPath,
       supportedLocales: supportedLocales,
       fallbackLocale: fallbackLocale,
-      startLocale: fallbackLocale,
+      startLocale: const Locale('vi'),
       useOnlyLangCode: true,
       saveLocale: true,
       child: child,
