@@ -85,6 +85,7 @@ abstract class CcLocaleKeys {
   static const nav_quick_test_page = 'nav.quick_test_page';
   static const nav_notification = 'nav.notification';
   static const nav_profile = 'nav.profile';
+  static const nav_profile_info = 'nav.profile_info';
 
   static const dashboard_item_count = 'dashboard.item_count';
   static const dashboard_last_updated = 'dashboard.last_updated';
