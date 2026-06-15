@@ -43,6 +43,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId = "mobile.template"
         minSdk = 28
         targetSdk = 36
         versionCode = flutterVersionCode.toInt()
@@ -75,27 +76,23 @@ android {
         }
     }
 
-    flavorDimensions += "flavors"
+    flavorDimensions += "environment"
     productFlavors {
         create("free") {
-            dimension = "flavors"
-            resValue("string", "app_name", "Free App")
+            dimension = "environment"
             applicationIdSuffix = ".free"
             versionNameSuffix = "-free"
         }
         create("uat") {
-            dimension = "flavors"
-            resValue("string", "app_name", "Uat App")
+            dimension = "environment"
             applicationIdSuffix = ".uat"
             versionNameSuffix = "-uat"
         }
         create("prod") {
-            dimension = "flavors"
-            applicationId = "mobile.template"
-            resValue("string", "app_name", "Prod App")
+            dimension = "environment"
         }
     }
-    
+
     lint {
         checkReleaseBuilds = false
     }
