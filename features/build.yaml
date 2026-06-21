@@ -10,9 +10,9 @@ targets:
         options:
           auto_register: true
           class_name_pattern:
-            "Impl$|Helper$|DataSource$|Repository$|UseCase$|Bloc$"
+            "Impl$|DataSource$|Repository$|UseCase$|Bloc$"
           file_name_pattern:
-            "_impl$|_helper$|_data_source$|_repository$|_use_case$|_bloc$"
+            "_impl$|_data_source$|_repository$|_use_case$|_bloc$"
       injectable_generator:injectable_config_builder:
         generate_for:
           include:
