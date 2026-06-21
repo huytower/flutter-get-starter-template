@@ -10,6 +10,24 @@ A modular Flutter starter template built with:
 - Reusable packages for core logic, UI components, and feature modules
 - GetIt + Injectable dependency injection
 
+## Firebase Configuration
+
+This project uses Firebase for Crashlytics, Performance Monitoring, and App Check. Due to security, the actual configuration files are ignored by Git.
+
+To set up Firebase for local development:
+
+1. **Automatic Setup (Recommended):**
+   Run the following command from the root directory:
+   ```bash
+   melos run setup:firebase
+   ```
+   This will copy the `.template` files to the required `.json` and `.plist` locations for all flavors (`free`, `prod`, `uat`).
+
+2. **Manual Setup:**
+   If you need to use your own Firebase project, manually create/update:
+   - **Android:** `android/app/src/{flavor}/google-services.json`
+   - **iOS:** `ios/Firebase/{flavor}/GoogleService-Info.plist`
+
 ## Most important files
 
 1. `lib/main.dart`
@@ -93,6 +111,9 @@ import 'package:features/features/crash_log/export_crash_log.dart';
 
 ## Useful commands
 
+- `melos bootstrap` - Bootstrap the workspace
+- `melos run gen` - Generate code for all modules
+- `melos run setup:firebase` - Initialize Firebase config from templates
 - `flutter pub get`
 - `flutter analyze`
 - `flutter pub run build_runner build --delete-conflicting-outputs`
