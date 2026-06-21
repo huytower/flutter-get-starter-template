@@ -51,7 +51,10 @@ abstract class RoutingStrategy {
 /// [RoutingStrategy] backed by the `auto_route` package.
 @LazySingleton(as: RoutingStrategy)
 class AutoRouteStrategy extends RoutingStrategy {
-  AutoRouteStrategy(ThemeProvider themeProvider) : super(themeProvider);
+  final AppRouter _appRouter;
+
+  AutoRouteStrategy(ThemeProvider themeProvider, this._appRouter)
+    : super(themeProvider);
 
   @override
   Widget buildApp() {
@@ -61,7 +64,7 @@ class AutoRouteStrategy extends RoutingStrategy {
         theme: createLightTheme(),
         darkTheme: createDarkTheme(),
         themeMode: themeProvider.themeMode,
-        routerConfig: AppRouter().config(),
+        routerConfig: _appRouter.config(),
         locale: CcLocalization.getCurrentLocale(context),
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,

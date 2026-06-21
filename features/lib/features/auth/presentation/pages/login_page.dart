@@ -39,13 +39,16 @@ class _LoginViewState extends State<LoginView> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFE3F2FD),
+        backgroundColor: context.ccColorScheme.surface,
         body: DecoratedBox(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
+              colors: [
+                context.ccColorScheme.primaryContainer,
+                context.ccColorScheme.surface,
+              ],
             ),
           ),
           child: SafeArea(
@@ -64,13 +67,15 @@ class _LoginViewState extends State<LoginView> {
                             : context.respDim(600),
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: context.ccColorScheme.surface,
                         borderRadius: BorderRadius.circular(
                           context.respDim(CcPaddingParams.DESC_LG),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: context.ccColorScheme.shadow.withOpacity(
+                              0.1,
+                            ),
                             blurRadius: context.respDim(20),
                             offset: Offset(0, context.respDim(10)),
                           ),
