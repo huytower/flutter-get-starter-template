@@ -24,6 +24,38 @@ Copy-Item -Path $envFile -Destination $targetFile -Force
 
 Write-Host "Environment file set to $Environment (copied $envFileName to .env in root)" -ForegroundColor Green
 
+# --- Secret Injection Logic ---
+Write-Host "Injecting secrets from .env into native config files..." -ForegroundColor Cyan
+
+# Parse .env into a hashtable
+$envVars = @{}
+Get-Content $targetFile | Where-Object { $_ -match '=' -and $_ -notmatch '^#' } | ForEach-Object {
+    $parts = $_.Split('=', 2)
+    $key = $parts[0].Trim()
+    $val = $parts[1].Trim().Trim("'").Trim('"')
+    $envVars[$key] = $val
+}
+
+# Find all .template files
+$templates = Get-ChildItem -Path $rootDir -Filter "*.template" -Recurse
+
+foreach ($template in $templates) {
+    $targetPath = $template.FullName.Replace(".template", "")
+    $content = Get-Content $template.FullName -Raw
+
+    # Replace placeholders
+    foreach ($key in $envVars.Keys) {
+        $placeholder = "{{" + $key + "}}"
+        if ($content.Contains($placeholder)) {
+             $content = $content.Replace($placeholder, $envVars[$key])
+        }
+    }
+
+    $content | Set-Content $targetPath -NoNewline
+    Write-Host "  Generated: $($targetPath.Replace($rootDir, ""))" -ForegroundColor Gray
+}
+# ------------------------------
+
 # Map input environment to enum value
 $enumValue = switch ($Environment) {
     "development" { "FREE_FAKE_API" }
