@@ -26,7 +26,9 @@ class DashboardContent extends StatelessWidget {
     return Stack(
       children: [
         CcResponsiveContainer(
-          padding: const EdgeInsets.all(CcPaddingParams.SPACE_LG),
+          padding: EdgeInsets.all(
+            context.respPadding(CcPaddingParams.SPACE_LG),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -64,12 +66,12 @@ class DashboardContent extends StatelessWidget {
 
   Widget _buildRefreshButton(BuildContext context) {
     return CcBaseBtn(
-      allowShowLoading: true,
       onTap: () {
         context.read<DashboardBloc>().add(
           const RefreshDashboardDataEvent(showLoading: true),
         );
       },
+      allowShowLoading: true,
       title: el.tr(CcLocaleKeys.dashboard_refresh_data),
       bgColor: [
         context.ccColorScheme.primary,

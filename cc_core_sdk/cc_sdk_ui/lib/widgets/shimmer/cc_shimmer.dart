@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
 import '../../core/config/tokens/cc_circular_params.dart';
+import '../../core/extensions/cc_context_extension.dart';
 
 class CcShimmer extends StatelessWidget {
   const CcShimmer({
@@ -29,7 +30,7 @@ class CcShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Shimmer(
       duration: duration ?? const Duration(milliseconds: 1500),
-      color: baseColor ?? Colors.white,
+      color: baseColor ?? context.ccColorScheme.surfaceVariant,
       colorOpacity: 0.5,
       enabled: enabled,
       direction: const ShimmerDirection.fromLTRB(),
@@ -41,7 +42,7 @@ class CcShimmer extends StatelessWidget {
           borderRadius:
               borderRadius ??
               BorderRadius.circular(CcCircularParams.SQUARE_TOP),
-          color: Colors.grey[400],
+          color: context.ccColorScheme.surfaceVariant,
         ),
       ),
     );

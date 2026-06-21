@@ -8,6 +8,7 @@ import 'dart:async' as _i687;
 import 'package:cc_sdk/core/di/module/cc_dependencies.dart' as _i1021;
 import 'package:cc_sdk/core/helper/cc_device_helper.dart' as _i918;
 import 'package:cc_sdk/core/helper/cc_device_info_helper.dart' as _i312;
+import 'package:cc_sdk/core/helper/cc_location_helper.dart' as _i537;
 import 'package:cc_sdk/core/helper/cc_network_helper.dart' as _i548;
 import 'package:cc_sdk/core/helper/cc_responsive_helper.dart' as _i987;
 import 'package:cc_sdk/core/network/cc_network_info.dart' as _i13;
@@ -25,6 +26,7 @@ class CcSdkPackageModule extends _i526.MicroPackageModule {
   _i687.FutureOr<void> init(_i526.GetItHelper gh) async {
     final ccSdkDependencies = _$CcSdkDependencies();
     gh.factory<_i918.CcDeviceHelper>(() => _i918.CcDeviceHelper());
+    gh.factory<_i537.CcLocationHelper>(() => _i537.CcLocationHelper());
     gh.factory<_i987.CcResponsiveHelper>(() => _i987.CcResponsiveHelper());
     await gh.singletonAsync<_i460.SharedPreferences>(
       () => ccSdkDependencies.sharedPreferences,

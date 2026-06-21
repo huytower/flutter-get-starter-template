@@ -18,7 +18,7 @@ class CommentRepositoryImpl with CcBaseRepository implements CommentRepository {
   final CommentRemote _remote;
 
   @override
-  Future<Result<List<CommentEntity>, Failure>> getListComments() async {
+  Future<Result<List<CommentEntity>, CcFailure>> getListComments() async {
     return safeRequest(() async {
       // 1. Call the remote source (The interceptor already peeled the JSON)
       final response = await _remote.getListComments();
@@ -29,7 +29,7 @@ class CommentRepositoryImpl with CcBaseRepository implements CommentRepository {
   }
 
   @override
-  Future<Result<List<CommentEntity>, Failure>> getComments(
+  Future<Result<List<CommentEntity>, CcFailure>> getComments(
     PaginationRequest request,
   ) async {
     return safeRequest(() async {

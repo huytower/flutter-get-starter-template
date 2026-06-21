@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-class CcKeyboardUtils {
+class CcKeyboardHelper {
   /// Shows the keyboard by focusing a new FocusNode
   ///
   /// [context] - The BuildContext to use for showing the keyboard
@@ -24,5 +24,22 @@ class CcKeyboardUtils {
         currentFocus.unfocus();
       }
     }
+  }
+
+  /// Wraps a widget with GestureDetector to hide keyboard on tap
+  ///
+  /// [child] - The widget to wrap
+  /// [context] - Optional BuildContext to use for hiding keyboard
+  /// [behavior] - HitTestBehavior for the GestureDetector
+  static Widget dismissOnTap({
+    required Widget child,
+    BuildContext? context,
+    HitTestBehavior behavior = HitTestBehavior.translucent,
+  }) {
+    return GestureDetector(
+      onTap: () => hideKeyboard(context: context),
+      behavior: behavior,
+      child: child,
+    );
   }
 }

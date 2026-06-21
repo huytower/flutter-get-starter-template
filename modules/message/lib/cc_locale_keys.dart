@@ -10,6 +10,9 @@ abstract class CcLocaleKeys {
   static const app_error_retry = 'app.error.retry';
   static const app_error_network = 'app.error.network';
   static const app_error_server = 'app.error.server';
+  static const app_app_check_initialization_failed = 'app.app_check.initialization_failed';
+  static const app_app_check_token_refresh_failed = 'app.app_check.token_refresh_failed';
+  static const app_app_check_device_not_verified = 'app.app_check.device_not_verified';
 
   static const common_ok = 'common.ok';
   static const common_cancel = 'common.cancel';
@@ -17,12 +20,14 @@ abstract class CcLocaleKeys {
   static const common_delete = 'common.delete';
   static const common_edit = 'common.edit';
   static const common_back = 'common.back';
+  static const common_continue = 'common.continue';
   static const common_next = 'common.next';
   static const common_skip = 'common.skip';
   static const common_done = 'common.done';
   static const common_search = 'common.search';
   static const common_no_results = 'common.no_results';
   static const common_no_data = 'common.no_data';
+  static const common_or = 'common.or';
   static const common_income = 'common.income';
   static const common_expense = 'common.expense';
   static const common_press_back_again_to_exit =
@@ -42,6 +47,22 @@ abstract class CcLocaleKeys {
   static const auth_have_account = 'auth.have_account';
   static const auth_login_success = 'auth.login_success';
   static const auth_login_failed = 'auth.login_failed';
+  static const auth_login_google = 'auth.login_google';
+  static const auth_login_apple = 'auth.login_apple';
+  static const auth_login_phone = 'auth.login_phone';
+  static const auth_enter_phone_number = 'auth.enter_phone_number';
+  static const auth_phone_number = 'auth.phone_number';
+  static const auth_phone_number_hint = 'auth.phone_number_hint';
+  static const auth_phone_hint = 'auth.phone_hint';
+  static const auth_default_country_code = 'auth.default_country_code';
+  static const auth_terms_and_privacy = 'auth.terms_and_privacy';
+  static const auth_verify = 'auth.verify';
+  static const auth_send_code = 'auth.send_code';
+  static const auth_enter_code = 'auth.enter_code';
+  static const auth_we_just_sent_sms = 'auth.we_just_sent_sms';
+  static const auth_enter_security_code = 'auth.enter_security_code';
+  static const auth_didnt_receive_code = 'auth.didnt_receive_code';
+  static const auth_resend = 'auth.resend';
   static const auth_biometric_reason = 'auth.biometric.reason';
   static const auth_biometric_fallback = 'auth.biometric.fallback';
   static const auth_biometric_error_not_available =
@@ -62,10 +83,15 @@ abstract class CcLocaleKeys {
       'auth.biometric.error.system_canceled';
   static const auth_biometric_error_generic = 'auth.biometric.error.generic';
 
+  static const auth_otp_invalid = 'auth.otp.invalid';
+  static const auth_otp_expired = 'auth.otp.expired';
+  static const auth_otp_too_many_attempts = 'auth.otp.too_many_attempts';
+
   static const validation_required = 'validation.required';
   static const validation_email = 'validation.email';
   static const validation_password_length = 'validation.password_length';
   static const validation_password_match = 'validation.password_match';
+  static const validation_phone = 'validation.phone';
 
   static const home_title = 'home.title';
   static const home_welcome = 'home.welcome';

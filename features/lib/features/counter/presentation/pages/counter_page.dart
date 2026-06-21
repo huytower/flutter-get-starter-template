@@ -1,3 +1,4 @@
+import 'package:auto_route/annotations.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import '../../../../core/di/di.dart';
 import '../bloc/counter_bloc.dart';
 import '../widgets/counter_action_button.dart';
 
+@RoutePage()
 class CounterPage extends StatelessWidget {
   const CounterPage({super.key});
 
@@ -46,20 +48,18 @@ class CounterDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CounterBloc, CounterState>(
       builder: (context, state) {
-        if (state is CounterLoading) {
-          return const CircularProgressIndicator();
-        } else if (state is CounterLoaded) {
-          return CcText(
-            '${state.counter.value}',
+        return switch (state) {
+          CounterLoading() => const CircularProgressIndicator(),
+          CounterLoaded(counter: var counter) => CcText(
+            '${counter.value}',
             fontSize: CcTypographyParams.headlineLarge,
             color: context.ccColorScheme.primary,
-          );
-        } else if (state is CounterError) {
-          return CcText(
-            '${el.tr(CcLocaleKeys.app_error_general)}: ${state.message}',
-          );
-        }
-        return CcText(el.tr(CcLocaleKeys.home_welcome));
+          ),
+          CounterError(message: var message) => CcText(
+            '${el.tr(CcLocaleKeys.app_error_general)}: $message',
+          ),
+          _ => CcText(el.tr(CcLocaleKeys.home_welcome)),
+        };
       },
     );
   }

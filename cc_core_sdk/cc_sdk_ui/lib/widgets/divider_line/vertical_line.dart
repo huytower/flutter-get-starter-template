@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/extensions/cc_context_extension.dart';
+import '../../core/extensions/common/cc_responsive_extension.dart';
 
 class CcDividerVerticalLine extends StatelessWidget {
   const CcDividerVerticalLine({super.key, this.color, this.width, this.height});
@@ -10,8 +11,8 @@ class CcDividerVerticalLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    width: width ?? 1,
-    height: height ?? 12,
+    width: width ?? context.respDim(1.0),
+    height: height ?? context.respDim(12.0),
     color: color ?? context.ccColorScheme.outlineVariant,
   );
 }
@@ -25,8 +26,8 @@ class CcDividerIndicatorLine extends StatelessWidget {
   Widget build(BuildContext context) => Center(
     child: Container(
       color: context.ccColorScheme.outlineVariant,
-      width: width ?? 96,
-      height: 6,
+      width: width ?? context.respDim(96.0),
+      height: context.respDim(6.0),
     ),
   );
 }
@@ -40,8 +41,8 @@ class CcDividerShadowLine extends StatelessWidget {
   Widget build(BuildContext context) => Center(
     child: Container(
       color: context.ccColorScheme.shadow.withOpacity(0.1),
-      width: width ?? 128,
-      height: 6,
+      width: width ?? context.respDim(128.0),
+      height: context.respDim(6.0),
     ),
   );
 }

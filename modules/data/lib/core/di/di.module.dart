@@ -7,6 +7,7 @@ import 'dart:async' as _i687;
 
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart'
     as _i215;
+import 'package:data/core/di/di.dart' as _i1010;
 import 'package:data/core/di/module/data_module.dart' as _i532;
 import 'package:data/data/datasource/local/dashboard/dashboard_local_datasource.dart'
     as _i966;
@@ -21,6 +22,8 @@ import 'package:data/data/datasource/remote/dashboard/dashboard_remote_datasourc
 import 'package:data/data/datasource/remote/dashboard/dashboard_remote_datasource_impl.dart'
     as _i434;
 import 'package:data/data/datasource/remote/home/home_remote.dart' as _i516;
+import 'package:data/data/repositories/auth/firebase_auth_repository_impl.dart'
+    as _i733;
 import 'package:data/data/repositories/comment/comment_repository_impl.dart'
     as _i576;
 import 'package:data/data/repositories/crash_log/crash_log_repository_impl.dart'
@@ -28,6 +31,7 @@ import 'package:data/data/repositories/crash_log/crash_log_repository_impl.dart'
 import 'package:data/data/repositories/dashboard/dashboard_repository_impl.dart'
     as _i254;
 import 'package:data/data/repositories/home/home_repository_impl.dart' as _i114;
+import 'package:data/domain/repositories/auth/cc_auth_repository.dart' as _i475;
 import 'package:data/domain/repositories/comment/comment_repository.dart'
     as _i683;
 import 'package:data/domain/repositories/crash_log/crash_log_repository.dart'
@@ -44,13 +48,18 @@ import 'package:data/domain/usecases/upload_pending_crash_logs_usecase.dart'
     as _i813;
 import 'package:data/export_data.dart' as _i859;
 import 'package:dio/dio.dart' as _i361;
+import 'package:firebase_auth/firebase_auth.dart' as _i59;
+import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
 
 class DataPackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
+    final firebaseModule = _$FirebaseModule();
     final dataModule = _$DataModule();
+    gh.lazySingleton<_i59.FirebaseAuth>(() => firebaseModule.firebaseAuth);
+    gh.lazySingleton<_i116.GoogleSignIn>(() => firebaseModule.googleSignIn);
     gh.singleton<_i361.Interceptor>(
       () => dataModule.ccResponseInterceptor,
       instanceName: 'ccResponseInterceptor',
@@ -86,6 +95,11 @@ class DataPackageModule extends _i526.MicroPackageModule {
           gh<_i361.Interceptor>(instanceName: 'talkerDioLogger'),
           gh<_i361.Interceptor>(instanceName: 'cacheInterceptor'),
         ));
+    gh.lazySingleton<_i475.CcAuthRepository>(
+        () => _i733.FirebaseAuthRepositoryImpl(
+              gh<_i59.FirebaseAuth>(),
+              gh<_i116.GoogleSignIn>(),
+            ));
     gh.lazySingleton<_i361.BaseOptions>(
         () => dataModule.baseOptions(gh<String>(instanceName: 'baseUrl')));
     gh.lazySingleton<_i866.DashboardRepository>(
@@ -122,5 +136,7 @@ class DataPackageModule extends _i526.MicroPackageModule {
         () => _i576.CommentRepositoryImpl(remote: gh<_i574.CommentRemote>()));
   }
 }
+
+class _$FirebaseModule extends _i1010.FirebaseModule {}
 
 class _$DataModule extends _i532.DataModule {}

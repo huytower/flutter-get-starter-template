@@ -47,8 +47,8 @@ abstract class CcGetController extends GetxController {
   /// - [targetList]: Optional [RxList] to automatically populate on success.
   ///
   /// Returns the [Result] for further processing if needed.
-  Future<Result<List<T>, Failure>> ccFetchData<T>({
-    required Future<Result<List<T>, Failure>> Function() fetchFunction,
+  Future<Result<List<T>, CcFailure>> ccFetchData<T>({
+    required Future<Result<List<T>, CcFailure>> Function() fetchFunction,
     RxList<T>? targetList,
   }) async {
     layoutStatus.value = CcLayoutStatus.loading;

@@ -1,3 +1,5 @@
+import 'package:cc_sdk/export_cc_sdk.dart';
+
 /// Central route name definitions for the app.
 ///
 /// This file keeps route identifiers and path generation in one place.
@@ -8,6 +10,7 @@ enum AppRoute {
   dashboard,
   setting,
   login,
+  phoneAuth,
   logout,
   profile,
   updateVersion,
@@ -19,7 +22,15 @@ enum AppRoute {
 }
 
 extension AppRoutePath on AppRoute {
-  String get path => '/${_snakeCase(name)}';
+  String get path {
+    if (this == AppRoute.mainNavigation) {
+      return CcRouteConfig.mainNavigation;
+    }
+    if (this == AppRoute.login) {
+      return CcRouteConfig.login;
+    }
+    return '/${_snakeCase(name)}';
+  }
 }
 
 enum ExampleRoute { blocSimple, blocAdvance, getxSimple, getxSimpleV2 }

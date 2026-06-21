@@ -5,7 +5,7 @@ import 'package:message/cc_locale_keys.dart';
 
 import '../../core/extensions/cc_context_extension.dart';
 import '../../core/extensions/common/cc_responsive_extension.dart';
-import '../../widgets/button/cc_debounce_widget.dart';
+import '../../widgets/button/cc_base_btn.dart';
 import '../../widgets/space/cc_space.dart';
 
 class CcBodyShowMessage extends StatelessWidget {
@@ -53,20 +53,26 @@ class CcBodyShowMessage extends StatelessWidget {
             children: [
               !isExistOK
                   ? Expanded(
-                      child: CcDebounce(
+                      child: CcBaseBtn.bouncing(
                         onTap: () => Get.back(),
-                        iconColor: Colors.pink,
                         textColor: Colors.white,
                         title: el.tr(CcLocaleKeys.common_cancel),
+                        bgColor: [
+                          context.ccColorScheme.primary,
+                          context.ccColorScheme.primary,
+                        ],
                       ),
                     )
                   : const SizedBox(),
               Expanded(
-                child: CcDebounce(
+                child: CcBaseBtn.bouncing(
                   onTap: onTabOK,
-                  iconColor: Colors.pink,
                   textColor: Colors.white,
                   title: el.tr(CcLocaleKeys.common_ok),
+                  bgColor: [
+                    context.ccColorScheme.primary,
+                    context.ccColorScheme.primary,
+                  ],
                 ),
               ),
             ],

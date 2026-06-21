@@ -52,32 +52,35 @@ abstract final class PrjColors {
 
   // -- Light Mode
   static const Color background = CcBaseColors.white100;
-  static const Color onBackground = CcBaseColors.neutral80;
+  static const Color onBackground = CcBaseColors.gray900;
 
   static const Color surface = CcBaseColors.white100;
-  static const Color onSurface = CcBaseColors.neutral80;
+  static const Color onSurface = CcBaseColors.gray900;
   static const Color surfaceVariant = CcBaseColors.gray100;
-  static const Color onSurfaceVariant = CcBaseColors.neutral50;
-  static const Color surfaceOverlay = CcBaseColors.neutral50;
+  static const Color onSurfaceVariant = CcBaseColors.gray700;
+  static const Color surfaceOverlay = CcBaseColors.gray200;
 
   // -- Dark Mode Specifics
   static const Color darkBackground = CcBaseColors.neutral100;
+  static const Color darkOnBackground = CcBaseColors.white100;
   static const Color darkSurface = CcBaseColors.gray900;
+  static const Color darkOnSurface = CcBaseColors.white100;
   static const Color darkSurfaceVariant = CcBaseColors.gray800;
+  static const Color darkOnSurfaceVariant = CcBaseColors.gray300;
   static const Color darkDivider = CcBaseColors.gray50;
 
   // ===========================================================================
   // CONTENT & UTILS
   // ===========================================================================
-  static const Color highEmphasis = CcBaseColors.neutral80;
-  static const Color mediumEmphasis = CcBaseColors.neutral50;
-  static const Color body = CcBaseColors.gray500;
-  static const Color disabled = CcBaseColors.neutral30;
-  static const Color hint = CcBaseColors.neutral30;
+  static const Color highEmphasis = CcBaseColors.gray900;
+  static const Color mediumEmphasis = CcBaseColors.gray700;
+  static const Color body = CcBaseColors.gray700;
+  static const Color disabled = CcBaseColors.gray400;
+  static const Color hint = CcBaseColors.gray400;
 
-  static const Color outline = CcBaseColors.neutral30;
-  static const Color outlineVariant = CcBaseColors.neutral10;
-  static const Color divider = CcBaseColors.gray50;
+  static const Color outline = CcBaseColors.gray300;
+  static const Color outlineVariant = CcBaseColors.gray200;
+  static const Color divider = CcBaseColors.gray100;
 
   // Legacy/Common Aliases
   static const Color blue = CcBaseColors.blue500;

@@ -15,12 +15,12 @@ class GetAppConfig {
 
   /// Calls the repository to get the app configuration.
   ///
-  /// Returns a [Result] containing either a [Failure] or the [AppConfigEntity].
-  Future<Result<AppConfigEntity, Failure>> call() async {
+  /// Returns a [Result] containing either a [CcFailure] or the [AppConfigEntity].
+  Future<Result<AppConfigEntity, CcFailure>> call() async {
     try {
       final config = await repository.getConfig();
       return Success(config);
-    } on Failure catch (e) {
+    } on CcFailure catch (e) {
       return Error(e);
     } catch (e) {
       return Error(CcConfigFailure('Failed to get app config: $e'));

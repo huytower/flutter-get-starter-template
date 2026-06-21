@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/dashboard_bloc.dart';
+import '../bloc/dashboard_bloc.dart';
 
 /// Dashboard app bar widget with title and refresh action
 class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -35,10 +35,12 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// Build the refresh action button
   Widget _buildRefreshButton(BuildContext context) {
-    return CcDebounce(
+    return CcInteractBtnWrapper(
       onTap: () => blocContext.read<DashboardBloc>().add(
         const RefreshDashboardDataEvent(),
       ),
+      useDebounce: true,
+      isBouncing: true,
       child: Padding(
         padding: EdgeInsets.only(
           right: context.respPadding(CcPaddingParams.SPACE_MD),

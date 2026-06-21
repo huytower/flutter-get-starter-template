@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/extensions/cc_context_extension.dart';
+import '../../core/extensions/common/cc_responsive_extension.dart';
 
 class PhoneNumberOtpTextField extends StatelessWidget {
   const PhoneNumberOtpTextField({
@@ -39,7 +40,7 @@ class PhoneNumberOtpTextField extends StatelessWidget {
           ),
         ),
         Container(
-          height: 1,
+          height: context.respDim(1.0),
           width: double.infinity,
           color: colorDivider ?? context.ccColorScheme.outlineVariant,
         ),

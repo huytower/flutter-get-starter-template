@@ -19,7 +19,7 @@ class SimpleShowTrackLogButton extends StatelessWidget {
           const CrashLogViewerPage(),
         );
       },
-      title: el.tr(CcLocaleKeys.common_ok), // TODO: Add proper locale key for show track log
+      title: el.tr(CcLocaleKeys.common_ok),
       bgColor: [context.ccColorScheme.primary],
       textColor: context.ccColorScheme.onPrimary,
       height: 48,

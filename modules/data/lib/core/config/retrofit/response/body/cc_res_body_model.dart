@@ -79,19 +79,17 @@ class CcResBodyModel<T> {
     if (json is! Map<String, dynamic>) return;
 
     // Root-level fields (status, message, code, etc.)
-    // CcResHeaderModel is designed to handle missing root fields gracefully.
     _resHeader = CcResHeaderModel.fromJson(json);
 
     // Payload extraction
     final data = json[CcRestApiParams.data.name];
 
-    if (data is List) {
-      _resBodyList = data;
-    } else if (data is Map<String, dynamic>) {
-      _resBodyObj = data;
-      _resBodyList = [
-        data,
-      ]; // Normalize single object to list for flatMapToList
+    switch (data) {
+      case List():
+        _resBodyList = data;
+      case Map<String, dynamic>():
+        _resBodyObj = data;
+        _resBodyList = [data]; // Normalize single object to list
     }
   }
 
@@ -104,11 +102,15 @@ class CcResBodyModel<T> {
       map.addAll(_resHeader!.toJson());
     }
 
-    // Include data
-    if (_resBodyObj != null) {
-      map[CcRestApiParams.data.name] = _resBodyObj;
-    } else if (_resBodyList != null) {
-      map[CcRestApiParams.data.name] = _resBodyList;
+    // Include data using switch expression for cleaner normalization
+    final data = switch ((_resBodyObj, _resBodyList)) {
+      (Map<String, dynamic> obj, _) => obj,
+      (_, List list) => list,
+      _ => null,
+    };
+
+    if (data != null) {
+      map[CcRestApiParams.data.name] = data;
     }
 
     return map;

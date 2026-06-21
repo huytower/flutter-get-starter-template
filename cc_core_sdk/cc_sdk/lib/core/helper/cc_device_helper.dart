@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:injectable/injectable.dart';
 
 /// Utility class for screen-layout and platform helpers.
@@ -49,21 +48,19 @@ class CcDeviceHelper {
   /// Must be called once during app initialization to populate screen
   /// dimensions and platform information.
   static void init(BuildContext context) {
-    isIOS = Theme.of(context).platform == TargetPlatform.iOS;
-    isAndroid = Theme.of(context).platform == TargetPlatform.android;
+    final platform = Theme.of(context).platform;
+    isIOS = platform == TargetPlatform.iOS;
+    isAndroid = platform == TargetPlatform.android;
     widthScreen = MediaQuery.of(context).size.width;
     heightScreen = MediaQuery.of(context).size.height;
     minScreen = widthScreen > heightScreen ? heightScreen : widthScreen;
 
-    hasHomeBtnIOSDevice = true;
-
-    bool isIphoneXs = widthScreen == 414.0 && heightScreen == 896.0;
-    bool isIphoneXsMax = widthScreen == 1242 && heightScreen == 2688;
-    bool isIphoneXr = widthScreen == 828 && heightScreen == 1792;
-
-    if (isIphoneXs || isIphoneXsMax || isIphoneXr) {
-      hasHomeBtnIOSDevice = false;
-    }
+    hasHomeBtnIOSDevice = switch ((widthScreen, heightScreen)) {
+      (414.0, 896.0) => false, // iPhone Xs
+      (1242.0, 2688.0) => false, // iPhone Xs Max
+      (828.0, 1792.0) => false, // iPhone Xr
+      _ => true,
+    };
   }
 
   // ==========================================================================

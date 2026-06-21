@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/extensions/common/cc_responsive_extension.dart';
 import '../../core/helper/cc_widget_helper.dart';
 
 /// A circular container with optional shadow and border.
@@ -24,19 +25,22 @@ class CcContainerCircle extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Container(
-    width: width,
-    height: width,
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      color: bgColor,
-      border: Border.all(color: strokeColor, width: strokeWidth),
-      boxShadow: hasShadow
-          ? CcWidgetHelper.getBoxShadows(context, shadowColor: shadowColor)
-          : const [],
-    ),
-    child: child ?? const SizedBox(),
-  );
+  Widget build(BuildContext context) {
+    final double respWidth = context.respDim(width);
+    return Container(
+      width: respWidth,
+      height: respWidth,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: bgColor,
+        border: Border.all(color: strokeColor, width: strokeWidth),
+        boxShadow: hasShadow
+            ? CcWidgetHelper.getBoxShadows(context, shadowColor: shadowColor)
+            : const [],
+      ),
+      child: child ?? const SizedBox(),
+    );
+  }
 }
 
 /// A rectangular container with small rounded corners.
@@ -60,8 +64,8 @@ class CcContainerRect extends StatelessWidget {
       color: bgColor,
       borderRadius: CcWidgetHelper.getBorderRoundedSM(),
     ),
-    width: width,
-    height: height,
+    width: context.respDim(width),
+    height: context.respDim(height),
     child: child,
   );
 }
@@ -80,13 +84,16 @@ class CcContainerSquare extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      color: bgColor,
-      borderRadius: CcWidgetHelper.getBorderRoundedSM(),
-    ),
-    width: width,
-    height: width,
-    child: child,
-  );
+  Widget build(BuildContext context) {
+    final double respWidth = context.respDim(width);
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: CcWidgetHelper.getBorderRoundedSM(),
+      ),
+      width: respWidth,
+      height: respWidth,
+      child: child,
+    );
+  }
 }

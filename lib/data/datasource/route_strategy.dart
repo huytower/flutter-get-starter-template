@@ -1,4 +1,4 @@
-import 'package:cc_sdk/export_cc_sdk.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
@@ -65,6 +65,12 @@ class AutoRouteStrategy extends RoutingStrategy {
         locale: CcLocalization.getCurrentLocale(context),
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
+        builder: (context, child) {
+          return CcKeyboardHelper.dismissOnTap(
+            child: child ?? const SizedBox.shrink(),
+            context: context,
+          );
+        },
       );
     });
   }

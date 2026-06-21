@@ -11,7 +11,7 @@ class DecrementCounterUseCase {
 
   DecrementCounterUseCase(this.repository);
 
-  Future<Result<CounterEntity, Failure>> call(CounterEntity current) async {
+  Future<Result<CounterEntity, CcFailure>> call(CounterEntity current) async {
     // Business rule: Counter cannot be less than 0
     if (current.value <= 0) {
       return Success(current);

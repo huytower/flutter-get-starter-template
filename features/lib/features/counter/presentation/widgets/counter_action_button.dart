@@ -15,8 +15,10 @@ class CounterActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CcDebounce(
+    return CcInteractBtnWrapper(
       onTap: onTap,
+      useDebounce: true,
+      isBouncing: true,
       child: CcCloseBtn(
         onTap: onTap,
         icon: Icon(

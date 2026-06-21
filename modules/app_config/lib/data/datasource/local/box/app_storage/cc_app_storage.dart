@@ -28,13 +28,12 @@ class CcAppStorage extends HiveObject {
     Box<CcAppStorage> box = await Hive.openBox<CcAppStorage>(
       CcHiveBox.APP_BOX_NAME,
     );
-    CcAppStorage? model = box.get(CcHiveBox.keyDefault);
+    final model = box.get(CcHiveBox.keyDefault) ?? CcAppStorage();
 
-    /// is it existed? if not, init it
-    if (model == null) {
-      model = CcAppStorage();
-      box.put(CcHiveBox.keyDefault, model);
+    if (!box.containsKey(CcHiveBox.keyDefault)) {
+      await box.put(CcHiveBox.keyDefault, model);
     }
+
     instance = model;
     return model;
   }

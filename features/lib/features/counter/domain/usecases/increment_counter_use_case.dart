@@ -11,7 +11,7 @@ class IncrementCounterUseCase {
 
   IncrementCounterUseCase(this.repository);
 
-  Future<Result<CounterEntity, Failure>> call(CounterEntity current) async {
+  Future<Result<CounterEntity, CcFailure>> call(CounterEntity current) async {
     final updated = current.copyWith(value: current.value + 1);
     final result = await repository.saveCounter(updated);
 

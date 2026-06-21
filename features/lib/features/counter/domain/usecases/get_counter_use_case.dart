@@ -11,7 +11,7 @@ class GetCounterUseCase {
 
   GetCounterUseCase(this.repository);
 
-  Future<Result<CounterEntity, Failure>> call() async {
+  Future<Result<CounterEntity, CcFailure>> call() async {
     return await repository.getCounter();
   }
 }

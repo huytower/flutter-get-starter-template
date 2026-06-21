@@ -33,7 +33,7 @@ class CommentCard extends StatelessWidget {
             CcText(
               comment.name,
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+                fontWeight: CcTypographyParams.bold,
                 color: context.ccColorScheme.primary,
                 fontSize: context.respFontSize(CcTypographyParams.titleMedium),
               ),

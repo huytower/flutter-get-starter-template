@@ -8,6 +8,11 @@
       "retry": "Tap here to reload",
       "network": "Network error. Please check your connection.",
       "server": "Server error. Please try again later."
+    },
+    "app_check": {
+      "initialization_failed": "App Check initialization failed. Please restart the app.",
+      "token_refresh_failed": "Failed to refresh security token. Please check your connection.",
+      "device_not_verified": "Device verification failed. This device may not be supported."
     }
   },
   "common": {
@@ -17,12 +22,14 @@
     "delete": "Delete",
     "edit": "Edit",
     "back": "Back",
+    "continue": "Continue",
     "next": "Next",
     "skip": "Skip",
     "done": "Done",
     "search": "Search",
     "no_results": "No results found",
     "no_data": "No data found",
+    "or": "OR",
     "income": "Income",
     "expense": "Expense",
     "press_back_again_to_exit": "Press back again to exit"
@@ -38,6 +45,21 @@
     "have_account": "Already have an account?",
     "login_success": "Login successful",
     "login_failed": "Login failed. Please check your credentials.",
+    "login_google": "Login with Google",
+    "login_apple": "Login with Apple",
+    "login_phone": "Login with Phone Number",
+    "enter_phone_number": "Log in with \n Phone Number",
+    "phone_number": "Phone Number",
+    "phone_number_hint": "Enter phone number",
+    "phone_hint": "+1234567890",
+    "verify": "Verify",
+    "send_code": "Send Code",
+    "enter_code": "Enter SMS Code",
+    "we_just_sent_sms": "We just sent an SMS",
+    "enter_security_code": "Enter the security code we sent to",
+    "didnt_receive_code": "Didn't receive code?",
+    "resend": "Resend after",
+    "terms_and_privacy": "By continuing, you agree to our Terms of Service and Privacy Policy",
     "biometric": {
       "reason": "Authentication required",
       "fallback": "Please enable biometrics for this app in Settings.",
@@ -54,13 +76,19 @@
         "system_canceled": "Authentication was canceled by the system.",
         "generic": "Authentication error: {error}"
       }
+    },
+    "otp": {
+      "invalid": "Invalid OTP code",
+      "expired": "OTP code has expired",
+      "too_many_attempts": "Too many attempts. Please try again later"
     }
   },
   "validation": {
     "required": "This field is required",
     "email": "Please enter a valid email",
     "password_length": "Password must be at least {length} characters",
-    "password_match": "Passwords do not match"
+    "password_match": "Passwords do not match",
+    "phone": "Invalid phone number format"
   },
   "home": {
     "title": "Home",

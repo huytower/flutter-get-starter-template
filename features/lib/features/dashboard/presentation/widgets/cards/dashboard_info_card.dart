@@ -21,7 +21,7 @@ class DashboardInfoCard extends StatelessWidget {
           CcText(
             title,
             textStyle: context.ccTextTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: CcTypographyParams.bold,
               color: context.ccColorScheme.primary,
             ),
           ),

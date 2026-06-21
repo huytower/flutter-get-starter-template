@@ -9,7 +9,7 @@ import 'package:multiple_result/multiple_result.dart';
 /// without using up their single inheritance slot.
 mixin CcBaseRepository {
   /// Executes a network request and maps any DioException to a Failure.
-  Future<Result<T, Failure>> safeRequest<T>(
+  Future<Result<T, CcFailure>> safeRequest<T>(
     Future<T> Function() request,
   ) async {
     try {
@@ -38,7 +38,7 @@ mixin CcBaseRepository {
   }
 
   /// Maps DioException to standardized Failure types.
-  Failure mapDioErrorToFailure(DioException error) {
+  CcFailure mapDioErrorToFailure(DioException error) {
     final message = error.message ?? 'Unknown error occurred';
     final statusCode = error.response?.statusCode;
 

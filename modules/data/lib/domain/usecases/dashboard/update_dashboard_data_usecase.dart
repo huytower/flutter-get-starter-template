@@ -14,7 +14,7 @@ class UpdateDashboardDataUseCase {
 
   /// Executes the use case to update dashboard data
   /// Returns a Future with Result containing updated DashboardEntity or Failure
-  Future<Result<DashboardEntity, Failure>> call(
+  Future<Result<DashboardEntity, CcFailure>> call(
     DashboardEntity dashboardData,
   ) async {
     return await repository.updateDashboardData(dashboardData);

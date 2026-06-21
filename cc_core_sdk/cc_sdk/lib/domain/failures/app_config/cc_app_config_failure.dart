@@ -8,10 +8,10 @@ part 'cc_security_config_failure.dart';
 
 /// Base failure class for configuration-related errors.
 ///
-/// This class extends [Failure] and uses modern Dart 3 sealed class features
+/// This class extends [CcFailure] and uses modern Dart 3 sealed class features
 /// to allow for exhaustive pattern matching.
 @immutable
-sealed class CcAppConfigFailure extends Failure {
+sealed class CcAppConfigFailure extends CcFailure {
   /// The configuration key associated with this error, if any.
   final String? key;
 

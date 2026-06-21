@@ -1,3 +1,4 @@
+import 'package:auto_route/annotations.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../../../../core/di/di.dart';
 import '../cubit/web_cubit.dart';
 
+@RoutePage()
 class WebPage extends StatelessWidget {
   const WebPage({super.key});
 

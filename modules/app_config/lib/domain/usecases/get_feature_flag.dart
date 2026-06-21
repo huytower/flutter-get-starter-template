@@ -14,9 +14,9 @@ class GetFeatureFlag {
 
   /// Gets the value of a feature flag with the given [key].
   ///
-  /// Returns a [Result] containing either a [Failure] or the feature flag value.
+  /// Returns a [Result] containing either a [CcFailure] or the feature flag value.
   /// If the key doesn't exist, returns the [defaultValue].
-  Future<Result<T, Failure>> call<T>(
+  Future<Result<T, CcFailure>> call<T>(
     String key, {
     required T defaultValue,
   }) async {
@@ -26,7 +26,7 @@ class GetFeatureFlag {
         defaultValue: defaultValue,
       );
       return Success(value);
-    } on Failure catch (e) {
+    } on CcFailure catch (e) {
       return Error(e);
     } catch (e) {
       return Error(CcConfigFailure('Failed to get feature flag: $e'));

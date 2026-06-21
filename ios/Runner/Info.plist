@@ -33,6 +33,16 @@
     <true/>
     <key>NSFaceIDUsageDescription</key>
     <string>My app use face id for authentication</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs access to your photo library to save and access images</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>This app needs permission to save photos to your photo library</string>
+    <key>NSDocumentsFolderUsageDescription</key>
+    <string>This app needs access to your documents folder to save files</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>This app needs access to your location to detect your country code for phone number input</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>This app needs access to your location to detect your country code for phone number input</string>
     <key>UILaunchStoryboardName</key>
     <string>LaunchScreen</string>
     <key>UIMainStoryboardFile</key>
@@ -50,9 +60,26 @@
       <string>UIInterfaceOrientationLandscapeLeft</string>
       <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>fetch</string>
+      <string>remote-notification</string>
+    </array>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
     <key>UIStatusBarHidden</key>
     <false/>
+    <key>CFBundleURLTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>com.googleusercontent.apps.525600752173-ih1vut9idrrn8pgo80vestpu6gifkoqu</string>
+          <string>com.googleusercontent.apps.525600752173-68tckhdq99mt25bcpn2p29igjgmcb8jq</string>
+        </array>
+      </dict>
+    </array>
   </dict>
 </plist>

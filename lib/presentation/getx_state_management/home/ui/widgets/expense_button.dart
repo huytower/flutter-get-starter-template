@@ -12,8 +12,8 @@ class ExpenseButton extends StatelessWidget {
     return CcBaseBtn(
       onTap: onTap,
       title: el.tr(CcLocaleKeys.common_expense),
-      width: 80,
-      height: 36,
+      width: context.respDim(80),
+      height: context.respDim(36),
       colorsGradient: [
         context.ccColorScheme.primary,
         context.ccColorScheme.primaryContainer,

@@ -15,12 +15,12 @@ class RefreshAppConfig {
 
   /// Refreshes the app configuration from the remote source.
   ///
-  /// Returns a [Result] containing either a [Failure] or the updated [AppConfigEntity].
-  Future<Result<AppConfigEntity, Failure>> call() async {
+  /// Returns a [Result] containing either a [CcFailure] or the updated [AppConfigEntity].
+  Future<Result<AppConfigEntity, CcFailure>> call() async {
     try {
       final config = await repository.refreshConfig();
       return Success(config);
-    } on Failure catch (e) {
+    } on CcFailure catch (e) {
       return Error(e);
     } catch (e) {
       return Error(CcConfigFailure('Failed to refresh app config: $e'));

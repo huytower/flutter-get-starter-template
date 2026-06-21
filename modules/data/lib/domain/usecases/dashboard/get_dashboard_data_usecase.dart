@@ -14,7 +14,7 @@ class GetDashboardDataUseCase {
 
   /// Executes the use case to retrieve dashboard data
   /// Returns a Future with Result containing DashboardEntity or Failure
-  Future<Result<DashboardEntity, Failure>> call() async {
+  Future<Result<DashboardEntity, CcFailure>> call() async {
     return await repository.getDashboardData();
   }
 }

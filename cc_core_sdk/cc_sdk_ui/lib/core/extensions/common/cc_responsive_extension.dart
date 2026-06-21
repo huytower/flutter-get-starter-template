@@ -1,3 +1,4 @@
+import '../../../export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 /// Extension for responsive UI calculations
@@ -16,7 +17,6 @@ extension ResponsiveExtension on BuildContext {
     double baselineWidth = 360.0,
     double maxMultiplier = 2,
   }) {
-    final screenWidth = MediaQuery.of(this).size.width;
     return baseSize * (screenWidth / baselineWidth).clamp(1.0, maxMultiplier);
   }
 
@@ -32,7 +32,6 @@ extension ResponsiveExtension on BuildContext {
     double baselineWidth = 360.0,
     double maxMultiplier = 2,
   }) {
-    final screenWidth = MediaQuery.of(this).size.width;
     return baseSize * (screenWidth / baselineWidth).clamp(1.0, maxMultiplier);
   }
 
@@ -48,7 +47,6 @@ extension ResponsiveExtension on BuildContext {
     double baselineWidth = 360.0,
     double maxMultiplier = 2,
   }) {
-    final screenWidth = MediaQuery.of(this).size.width;
     return basePadding *
         (screenWidth / baselineWidth).clamp(1.0, maxMultiplier);
   }
@@ -64,7 +62,6 @@ extension ResponsiveExtension on BuildContext {
     double baselineWidth = 360.0,
     double maxMultiplier = 2,
   }) {
-    final screenWidth = MediaQuery.of(this).size.width;
     return baseDimension *
         (screenWidth / baselineWidth).clamp(1.0, maxMultiplier);
   }

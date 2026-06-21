@@ -13,7 +13,7 @@ class CounterRepositoryImpl implements CounterRepository {
   CounterRepositoryImpl({required this.localDataSource});
 
   @override
-  Future<Result<CounterEntity, Failure>> getCounter() async {
+  Future<Result<CounterEntity, CcFailure>> getCounter() async {
     try {
       final result = await localDataSource.getCounter();
       return Success(result);
@@ -23,7 +23,7 @@ class CounterRepositoryImpl implements CounterRepository {
   }
 
   @override
-  Future<Result<Unit, Failure>> saveCounter(CounterEntity counter) async {
+  Future<Result<Unit, CcFailure>> saveCounter(CounterEntity counter) async {
     try {
       await localDataSource.saveCounter(counter);
       return const Success(unit);

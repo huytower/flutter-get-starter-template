@@ -40,12 +40,16 @@ class _CrashLogViewerPageState extends State<CrashLogViewerPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         const CcSpaceSM(),
-        CcCopyWidget(
-          title: _appInfo,
-          child: AppNameWidget(
-            _appInfo,
-            fontSize: CcTypographyParams.bodySmall,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: AppNameWidget(
+                _appInfo,
+                fontSize: CcTypographyParams.bodySmall,
+              ),
+            ),
+            CcCopyBtn(onTap: () => CcStringHelper.copyToClipboard(_appInfo)),
+          ],
         ),
         const CcSpaceSM(),
         CcDividerLine(color: context.ccColorScheme.outlineVariant),
@@ -62,15 +66,22 @@ class _CrashLogViewerPageState extends State<CrashLogViewerPage> {
         const CcSpaceSM(),
         CcDividerLine(color: context.ccColorScheme.outlineVariant),
         const CcSpaceSM(),
-        CcCopyWidget(
-          title: CcCrashLogPaths.logFileName,
-          child: CcText(
-            CcCrashLogPaths.logFileName,
-            color: context.ccColorScheme.onSurfaceVariant,
-            fontSize: CcTypographyParams.labelSmall,
-            textAlign: TextAlign.center,
-            align: Alignment.center,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: CcText(
+                CcCrashLogPaths.logFileName,
+                color: context.ccColorScheme.onSurfaceVariant,
+                fontSize: CcTypographyParams.labelSmall,
+                textAlign: TextAlign.center,
+                align: Alignment.center,
+              ),
+            ),
+            CcCopyBtn(
+              onTap: () =>
+                  CcStringHelper.copyToClipboard(CcCrashLogPaths.logFileName),
+            ),
+          ],
         ),
         const CcSpaceFooter(),
       ],
@@ -96,21 +107,29 @@ class _CrashLogViewerPageState extends State<CrashLogViewerPage> {
     return SizedBox(
       width: double.infinity,
       height: MediaQuery.sizeOf(context).height * 0.5,
-      child: CcCopyWidget(
-        title: _logContent,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
-          ),
-          child: SelectableText(
-            _logContent,
-            style: context.ccTextTheme.labelSmall?.copyWith(
-              height: 1.4,
-              fontFamily: 'monospace',
-              fontSize: context.respFontSize(CcTypographyParams.labelSmall),
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
+            ),
+            child: SelectableText(
+              _logContent,
+              style: context.ccTextTheme.labelSmall?.copyWith(
+                height: 1.4,
+                fontFamily: 'monospace',
+                fontSize: context.respFontSize(CcTypographyParams.labelSmall),
+              ),
             ),
           ),
-        ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: CcCopyBtn(
+              onTap: () => CcStringHelper.copyToClipboard(_logContent),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -23,7 +23,7 @@ class DashboardRepositoryImpl
        _remoteDataSource = remoteDataSource;
 
   @override
-  Future<Result<DashboardEntity, Failure>> getDashboardData() async {
+  Future<Result<DashboardEntity, CcFailure>> getDashboardData() async {
     return safeRequest(() async {
       try {
         final localData = await _localDataSource.getDashboardData();
@@ -51,7 +51,7 @@ class DashboardRepositoryImpl
   }
 
   @override
-  Future<Result<DashboardEntity, Failure>> updateDashboardData(
+  Future<Result<DashboardEntity, CcFailure>> updateDashboardData(
     DashboardEntity dashboardData,
   ) async {
     return safeRequest(() async {
@@ -70,7 +70,7 @@ class DashboardRepositoryImpl
   }
 
   @override
-  Future<Result<DashboardEntity, Failure>> refreshDashboardData() async {
+  Future<Result<DashboardEntity, CcFailure>> refreshDashboardData() async {
     return safeRequest(() async {
       final freshData = await _remoteDataSource.fetchDashboardData();
       await _localDataSource.saveDashboardData(freshData);

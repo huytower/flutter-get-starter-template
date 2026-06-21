@@ -14,12 +14,12 @@ class CheckUpdateRequired {
 
   /// Checks if an update is required for the given [currentVersion].
   ///
-  /// Returns a [Result] containing either a [Failure] or a [bool] indicating if an update is required.
-  Future<Result<bool, Failure>> call(String currentVersion) async {
+  /// Returns a [Result] containing either a [CcFailure] or a [bool] indicating if an update is required.
+  Future<Result<bool, CcFailure>> call(String currentVersion) async {
     try {
       final isRequired = await repository.isUpdateRequired(currentVersion);
       return Success(isRequired);
-    } on Failure catch (e) {
+    } on CcFailure catch (e) {
       return Error(e);
     } catch (e) {
       return Error(CcConfigFailure('Failed to check update requirement: $e'));

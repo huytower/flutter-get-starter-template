@@ -17,7 +17,7 @@ class HomeRepositoryImpl with CcBaseRepository implements HomeRepository {
   final HomeRemote _remote;
 
   @override
-  Future<Result<HomeEntity, Failure>> getHomeData() {
+  Future<Result<HomeEntity, CcFailure>> getHomeData() {
     throw UnimplementedError();
   }
 }

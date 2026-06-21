@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/di.dart';
 import '../bloc/dashboard_bloc.dart';
+import '../widgets/dashboard_app_bar.dart';
 import '../widgets/dashboard_content.dart';
-import 'widgets/dashboard_app_bar.dart';
 
 @RoutePage()
 class DashboardPage extends StatelessWidget {

@@ -4,6 +4,9 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
+    id("com.google.firebase.firebase-perf")
 }
 
 
@@ -25,7 +28,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "mobile.template"
-    compileSdk = 36
+    compileSdk = 37
     ndkVersion = "28.2.13676358"
 
     compileOptions {
@@ -42,10 +45,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "mobile.template"
         minSdk = 28
-        targetSdk = 36
         versionCode = flutterVersionCode.toInt()
         versionName = flutterVersionName
         // Enabling multidex support.
@@ -71,8 +72,8 @@ android {
             } else {
                 signingConfigs.getByName("debug")
             }
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
 
@@ -105,4 +106,8 @@ flutter {
 dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("com.airbnb.android:lottie:6.7.1")
+    implementation(platform("com.google.firebase:firebase-bom:34.14.1"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-app-check-play-integrity")
 }

@@ -5,7 +5,7 @@ import 'package:message/cc_locale_keys.dart';
 import '../../core/config/tokens/cc_padding_params.dart';
 import '../../core/extensions/cc_context_extension.dart';
 import '../../core/extensions/common/cc_responsive_extension.dart';
-import '../button/cc_debounce_widget.dart';
+import '../button/cc_interaction_wrapper.dart';
 import '../container/cc_container_rounded_corner_widget.dart';
 import '../divider_line/cc_divider.dart';
 import '../flex/cc_flex.dart';
@@ -95,8 +95,10 @@ class CcActionBtnInDialog extends StatelessWidget {
   /// cancel button ui
   Widget getCancelButtonWidget(BuildContext context) => SizedBox(
     height: context.respPadding(heightActionBtn ?? 35),
-    child: CcDebounce(
+    child: CcInteractBtnWrapper(
       onTap: onTapCancel ?? () => Navigator.of(context).pop(),
+      useDebounce: true,
+      isBouncing: true,
       child: Stack(
         children: [
           CcContainerRoundedCorner(
@@ -117,8 +119,10 @@ class CcActionBtnInDialog extends StatelessWidget {
   /// confirm button ui
   Widget getConfirmButtonWidget(BuildContext context) => SizedBox(
     height: context.respPadding(heightActionBtn ?? 35),
-    child: CcDebounce(
+    child: CcInteractBtnWrapper(
       onTap: onTapConfirm ?? () => Navigator.of(context).pop(),
+      useDebounce: true,
+      isBouncing: true,
       child: Stack(
         children: [
           CcContainerRoundedCorner(

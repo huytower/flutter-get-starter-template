@@ -1,6 +1,8 @@
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/extensions/cc_context_extension.dart';
+
 /// A responsive flex widget that adapts its layout based on screen size.
 ///
 /// On mobile: Uses vertical layout (column)
@@ -56,7 +58,7 @@ class CcResponsiveFlex extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenType = CcResponsiveHelper.getScreenType(context);
+    final screenType = context.screenType;
 
     // Mobile: Vertical layout
     if (screenType == ScreenType.mobile ||

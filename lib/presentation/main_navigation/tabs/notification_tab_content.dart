@@ -6,8 +6,6 @@ import 'package:mobile_flutter_template/presentation/getx_state_management/walle
 import '../../getx_state_management/comment/get_x/comment_controller.dart';
 
 class NotificationTabContent extends StatefulWidget {
-  static const String routeName = 'QUICK_TEST';
-
   const NotificationTabContent({super.key});
 
   @override
@@ -25,7 +23,6 @@ class _NotificationTabContentState extends State<NotificationTabContent> {
 
   @override
   Widget build(BuildContext context) {
-    // return const DashboardPage();
     return const WalletPage();
   }
 }

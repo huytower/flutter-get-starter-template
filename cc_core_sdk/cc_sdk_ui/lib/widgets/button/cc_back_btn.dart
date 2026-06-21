@@ -1,100 +1,87 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 
-import '../../core/extensions/common/cc_responsive_extension.dart';
-import '../../core/helper/cc_widget_helper.dart';
-import '../icon/cc_icon.dart';
-import '../inkwell/cc_inkwell.dart';
-import '../padding/cc_padding.dart';
+import '../../export_cc_sdk_ui.dart';
 
 class CcBackBtn extends StatelessWidget {
-  const CcBackBtn({super.key, required this.onPress, required this.icon});
+  final IconData? icon;
+  final VoidCallback? onTap;
+  final CcInteractionType interactionType;
+  final bool useDebounce;
 
-  final VoidCallback onPress;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) => CcPadding(
-    Stack(
-      children: [
-        CcIcon(
-          icon: icon,
-          size: context.respIconSize(baseSize: 20.0),
-          align: Alignment.center,
-          color: Colors.white,
-        ),
-        CcInkWell(
-          onTap: onPress,
-          borderRadius: CcWidgetHelper.getCircleBorderRadius(),
-        ),
-      ],
-    ),
-    4,
-    4,
-    4,
-    4,
-  );
-}
-
-/// use *.svg only
-class CcBackAssetBtn extends StatelessWidget {
-  const CcBackAssetBtn(
-    this.assetRes, {
+  // Backward compatibility constructor (defaults to bounce)
+  const CcBackBtn({
+    required this.onTap,
+    this.icon,
     super.key,
+    this.useDebounce = true,
+  }) : interactionType = CcInteractionType.bounce;
+
+  // Private internal constructor
+  const CcBackBtn._({
+    required this.interactionType,
     this.onTap,
-    this.aspectRatio = 16 / 9,
+    this.icon,
+    this.useDebounce = true,
+    super.key,
   });
 
-  final VoidCallback? onTap;
-  final String assetRes;
-  final double aspectRatio;
+  // Named constructors
+  factory CcBackBtn.bouncing({
+    required VoidCallback onTap,
+    IconData? icon,
+    bool useDebounce = true,
+    Key? key,
+  }) => CcBackBtn._(
+    interactionType: CcInteractionType.bounce,
+    onTap: onTap,
+    icon: icon,
+    useDebounce: useDebounce,
+    key: key,
+  );
+
+  factory CcBackBtn.simple({
+    required VoidCallback onTap,
+    IconData? icon,
+    bool useDebounce = true,
+    Key? key,
+  }) => CcBackBtn._(
+    interactionType: CcInteractionType.tap,
+    onTap: onTap,
+    icon: icon,
+    useDebounce: useDebounce,
+    key: key,
+  );
+
+  factory CcBackBtn.static({IconData? icon, Key? key}) => CcBackBtn._(
+    interactionType: CcInteractionType.none,
+    icon: icon,
+    useDebounce: false,
+    key: key,
+  );
 
   @override
-  Widget build(BuildContext context) => CcInkWell(
-    onTap: onTap ?? () => Get.back(),
-    borderRadius: CcWidgetHelper.getCircleBorderRadius(),
-    child: SizedBox(
-      height: 45.0,
-      width: 45.0,
-      child: Center(
-        child: SvgPicture.asset(assetRes, height: 22.0, width: 22.0),
+  Widget build(BuildContext context) {
+    final baseIcon = Padding(
+      padding: EdgeInsets.all(context.respPadding(4)),
+      child: CcIcon(
+        icon: icon ?? Icons.arrow_back,
+        size: context.respIconSize(baseSize: 20.0),
+        align: Alignment.center,
+        color: context.ccColorScheme.onSurface,
       ),
-    ),
-  );
-}
+    );
 
-class CcBackDividerBtn extends StatelessWidget {
-  static const double heightBack = 5, widthBack = 36, paddingBack = 14;
+    // If type is none, return the base icon directly
+    if (interactionType == CcInteractionType.none) {
+      return baseIcon;
+    }
 
-  const CcBackDividerBtn({super.key, required this.onPress});
-
-  final VoidCallback onPress;
-
-  @override
-  Widget build(BuildContext context) => Positioned(
-    left: Get.width / 2 - widthBack / 2,
-    top: paddingBack,
-    child: Stack(
-      children: <Widget>[
-        const Padding(
-          padding: EdgeInsets.only(bottom: paddingBack),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(
-                Radius.circular(4),
-              ), // Assuming small rounded
-            ),
-            child: SizedBox(width: widthBack, height: heightBack),
-          ),
-        ),
-        CcInkWell(
-          onTap: onPress,
-          borderRadius: const BorderRadius.all(Radius.circular(4)),
-          child: const SizedBox(width: widthBack, height: heightBack),
-        ),
-      ],
-    ),
-  );
+    // Otherwise, wrap it in the interaction logic
+    return CcInteractBtnWrapper(
+      onTap: onTap ?? () {},
+      useDebounce: useDebounce,
+      isBouncing: interactionType == CcInteractionType.bounce,
+      child: baseIcon,
+    );
+  }
 }

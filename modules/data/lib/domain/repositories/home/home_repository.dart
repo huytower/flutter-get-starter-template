@@ -10,5 +10,5 @@ import '../../entities/home/home_entity.dart';
 abstract class HomeRepository {
   /// Retrieves the home data
   /// Returns a Future with Result containing HomeEntity or Failure
-  Future<Result<HomeEntity, Failure>> getHomeData();
+  Future<Result<HomeEntity, CcFailure>> getHomeData();
 }

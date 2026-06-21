@@ -12,8 +12,8 @@ class IncomeButton extends StatelessWidget {
     return CcBaseBtn(
       onTap: onTap,
       title: el.tr(CcLocaleKeys.common_income),
-      width: 80,
-      height: 36,
+      width: context.respDim(80),
+      height: context.respDim(36),
       colorsGradient: [
         context.ccColorScheme.secondary,
         context.ccColorScheme.secondaryContainer,

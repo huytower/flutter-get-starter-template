@@ -8,6 +8,11 @@
       "retry": "Nhấn vào đây để tải lại",
       "network": "Lỗi kết nối mạng. Vui lòng kiểm tra kết nối của bạn.",
       "server": "Lỗi máy chủ. Vui lòng thử lại sau."
+    },
+    "app_check": {
+      "initialization_failed": "Khởi tạo App Check thất bại. Vui lòng khởi động lại ứng dụng.",
+      "token_refresh_failed": "Không thể làm mới mã bảo mật. Vui lòng kiểm tra kết nối của bạn.",
+      "device_not_verified": "Xác minh thiết bị thất bại. Thiết bị này có thể không được hỗ trợ."
     }
   },
   "common": {
@@ -17,6 +22,7 @@
     "delete": "Xóa",
     "edit": "Sửa",
     "back": "Quay lại",
+    "continue": "Tiếp tục",
     "next": "Tiếp theo",
     "skip": "Bỏ qua",
     "done": "Xong",
@@ -38,6 +44,17 @@
     "have_account": "Đã có tài khoản?",
     "login_success": "Đăng nhập thành công",
     "login_failed": "Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập.",
+    "enter_phone_number": "Nhập số điện thoại của bạn",
+    "phone_number": "Số điện thoại",
+    "phone_number_hint": "Nhập số điện thoại",
+    "verify": "Xác minh",
+    "send_code": "Gửi mã",
+    "enter_code": "Nhập mã SMS",
+    "we_just_sent_sms": "Chúng tôi vừa gửi một tin nhắn SMS",
+    "enter_security_code": "Nhập mã bảo mật chúng tôi đã gửi tới",
+    "didnt_receive_code": "Không nhận được mã?",
+    "resend": "Gửi lại sau",
+    "terms_and_privacy": "Bằng cách tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi",
     "biometric": {
       "reason": "Yêu cầu xác thực",
       "fallback": "Vui lòng bật sinh trắc học cho ứng dụng này trong Cài đặt.",
@@ -54,13 +71,19 @@
         "system_canceled": "Hệ thống đã hủy xác thực.",
         "generic": "Lỗi xác thực: {error}"
       }
+    },
+    "otp": {
+      "invalid": "Mã OTP không hợp lệ",
+      "expired": "Mã OTP đã hết hạn",
+      "too_many_attempts": "Quá nhiều lần thử. Vui lòng thử lại sau"
     }
   },
   "validation": {
     "required": "Trường này là bắt buộc",
     "email": "Vui lòng nhập địa chỉ email hợp lệ",
     "password_length": "Mật khẩu phải có ít nhất {length} ký tự",
-    "password_match": "Mật khẩu không khớp"
+    "password_match": "Mật khẩu không khớp",
+    "phone": "Số điện thoại không hợp lệ"
   },
   "home": {
     "title": "Trang chủ",

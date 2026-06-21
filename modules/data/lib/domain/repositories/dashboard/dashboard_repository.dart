@@ -11,15 +11,15 @@ import '../../entities/dashboard/dashboard_entity.dart';
 abstract class DashboardRepository {
   /// Retrieves the dashboard data
   /// Returns a Future with Result containing DashboardEntity or Failure
-  Future<Result<DashboardEntity, Failure>> getDashboardData();
+  Future<Result<DashboardEntity, CcFailure>> getDashboardData();
 
   /// Updates the dashboard data
   /// Takes a DashboardEntity and returns a Future with Result containing updated entity or Failure
-  Future<Result<DashboardEntity, Failure>> updateDashboardData(
+  Future<Result<DashboardEntity, CcFailure>> updateDashboardData(
     DashboardEntity dashboardData,
   );
 
   /// Refreshes the dashboard data from the source
   /// Returns a Future with Result containing refreshed DashboardEntity or Failure
-  Future<Result<DashboardEntity, Failure>> refreshDashboardData();
+  Future<Result<DashboardEntity, CcFailure>> refreshDashboardData();
 }

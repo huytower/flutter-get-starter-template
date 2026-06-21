@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/config/tokens/cc_base_colors.dart';
+import '../../core/extensions/cc_context_extension.dart';
 import '../../core/helper/cc_widget_helper.dart';
 
 class ShadowWidget extends StatelessWidget {
@@ -21,8 +21,8 @@ class ShadowWidget extends StatelessWidget {
       borderRadius: CcWidgetHelper.getBorderRoundedLG(),
       boxShadow: CcWidgetHelper.getBoxShadows(
         context,
-        bgColor: bgColor ?? CcBaseColors.white80,
-        shadowColor: shadowColor ?? CcBaseColors.brand300,
+        bgColor: bgColor ?? context.ccColorScheme.surface,
+        shadowColor: shadowColor ?? context.ccColorScheme.shadow,
       ),
     ),
     child: child,

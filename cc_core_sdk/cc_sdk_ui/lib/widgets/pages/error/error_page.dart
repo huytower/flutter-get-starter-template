@@ -13,7 +13,7 @@ class ErrorPage extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
       leading: CcBackBtn(
-        onPress: () => Navigator.of(context).pop(),
+        onTap: () => Navigator.of(context).pop(),
         icon: Icons.arrow_back,
       ),
       title: CcText(el.tr(CcLocaleKeys.app_error_general)),
@@ -35,8 +35,10 @@ class ErrorPage extends StatelessWidget {
         ),
         const CcSpaceLG(),
         if (onRetry != null)
-          CcDebounce(
+          CcInteractBtnWrapper(
             onTap: onRetry!,
+            useDebounce: true,
+            isBouncing: true,
             child: Container(
               padding: EdgeInsets.symmetric(
                 horizontal: context.respPadding(24.0),

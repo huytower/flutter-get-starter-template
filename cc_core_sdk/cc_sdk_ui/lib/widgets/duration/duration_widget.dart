@@ -16,8 +16,8 @@ class DurationWidget extends StatelessWidget {
       vertical: context.respPadding(4.0),
     ),
     decoration: BoxDecoration(
-      color: Colors.black54,
-      borderRadius: BorderRadius.circular(4),
+      color: context.ccColorScheme.scrim.withOpacity(0.6),
+      borderRadius: BorderRadius.circular(context.respDim(4)),
     ),
     child: CcText(
       duration,

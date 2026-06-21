@@ -4,7 +4,7 @@ import 'package:multiple_result/multiple_result.dart';
 import '../entities/counter_entity.dart';
 
 abstract class CounterRepository {
-  Future<Result<CounterEntity, Failure>> getCounter();
+  Future<Result<CounterEntity, CcFailure>> getCounter();
 
-  Future<Result<Unit, Failure>> saveCounter(CounterEntity counter);
+  Future<Result<Unit, CcFailure>> saveCounter(CounterEntity counter);
 }

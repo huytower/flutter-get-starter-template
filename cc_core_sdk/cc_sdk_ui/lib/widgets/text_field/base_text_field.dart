@@ -46,7 +46,10 @@ class BaseTextField extends StatelessWidget {
             focusedErrorBorder: InputBorder.none,
           ),
         ),
-        CcDividerLine(color: context.ccColorScheme.outlineVariant, height: 1),
+        CcDividerLine(
+          color: context.ccColorScheme.outlineVariant,
+          height: context.respDim(1.0),
+        ),
       ],
     );
   }

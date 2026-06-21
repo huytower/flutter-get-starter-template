@@ -114,8 +114,8 @@ mixin PaginationMixin {
   /// - On [Error]: Returns the original error result for the caller to handle.
   ///
   /// Set [isRefresh] to true to reset the state to the first page before processing.
-  Result<List<T>, Failure> handlePaginationResult<T>(
-    Result<List<T>, Failure> result, {
+  Result<List<T>, CcFailure> handlePaginationResult<T>(
+    Result<List<T>, CcFailure> result, {
     bool isRefresh = false,
   }) {
     if (isRefresh) resetPagination();

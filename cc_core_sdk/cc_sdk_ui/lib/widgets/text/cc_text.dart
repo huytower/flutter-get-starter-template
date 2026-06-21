@@ -46,7 +46,7 @@ class CcText extends StatelessWidget {
         ),
         child: RichText(
           textAlign: textAlign ?? TextAlign.left,
-          maxLines: maxLines ?? 1,
+          maxLines: maxLines,
           overflow: overflow ?? TextOverflow.ellipsis,
           text: TextSpan(
             text: text ?? '',
@@ -61,7 +61,7 @@ class CcText extends StatelessWidget {
     final style = baseStyle ?? const TextStyle();
     return style.copyWith(
       height: heightLine ?? 1.2,
-      color: color,
+      color: color ?? context.ccColorScheme.onSurface,
       fontSize: context.respFontSize(fontSize ?? CcTypographyParams.bodyMedium),
       fontWeight: fontWeight ?? CcTypographyParams.regular,
       fontStyle: fontStyle ?? FontStyle.normal,

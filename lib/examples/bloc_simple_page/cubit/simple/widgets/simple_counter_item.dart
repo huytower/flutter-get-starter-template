@@ -16,10 +16,12 @@ class SimpleCounterItem extends StatelessWidget {
       width: double.infinity,
       backgroundColor: context.ccColorScheme.surfaceContainerHighest,
       hasShadow: false,
-      child: CcDebounce(
+      child: CcInteractBtnWrapper(
         onTap: () {
           'DebounceWidget'.Log();
         },
+        useDebounce: true,
+        isBouncing: true,
         child: CcCloseBtn(
           onTap: () {
             'cubit : close() :'.Log();

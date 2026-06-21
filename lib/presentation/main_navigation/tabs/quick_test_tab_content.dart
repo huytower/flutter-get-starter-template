@@ -1,4 +1,4 @@
-import 'package:features/export_features.dart';
+import 'package:features/features/auth/presentation/pages/phone_auth_page.dart';
 import 'package:flutter/material.dart';
 
 class QuickTestTabContent extends StatefulWidget {
@@ -12,16 +12,7 @@ class QuickTestTabContent extends StatefulWidget {
 
 class _QuickTestTabContentState extends State<QuickTestTabContent> {
   @override
-  void initState() {
-    super.initState();
-    // if (!Get.isRegistered<CommentController>()) {
-    //   CommentBinding().dependencies();
-    // }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return const DashboardPage();
-    // return CommentPage();
+    return const PhoneAuthPage();
   }
 }

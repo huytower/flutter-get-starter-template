@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/config/tokens/cc_base_colors.dart';
+import '../../core/extensions/cc_context_extension.dart';
 import '../../core/helper/cc_widget_helper.dart';
 
 class CcInkWell extends StatelessWidget {
@@ -22,7 +22,8 @@ class CcInkWell extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: borderRadius ?? CcWidgetHelper.getCircleBorderRadius(),
-      splashColor: splashColor ?? CcBaseColors.neutral5,
+      splashColor:
+          splashColor ?? context.ccColorScheme.primary.withOpacity(0.1),
       child: child,
     );
   }

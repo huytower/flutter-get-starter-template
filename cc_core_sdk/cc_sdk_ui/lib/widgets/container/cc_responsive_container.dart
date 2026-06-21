@@ -1,6 +1,8 @@
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/extensions/cc_context_extension.dart';
+
 /// A responsive container that adapts its padding, margin, and width
 /// based on the current screen size (mobile, tablet, desktop).
 ///
@@ -84,8 +86,8 @@ class CcResponsiveContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenType = CcResponsiveHelper.getScreenType(context);
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenType = context.screenType;
+    final screenWidth = context.screenWidth;
 
     // Determine responsive padding
     EdgeInsets responsivePadding = padding ?? EdgeInsets.zero;

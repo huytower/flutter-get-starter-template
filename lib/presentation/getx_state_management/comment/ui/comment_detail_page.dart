@@ -24,7 +24,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
           return CcText(
             el.tr(CcLocaleKeys.comment_detail_title),
             align: Alignment.center,
-            fontWeight: FontWeight.bold,
+            fontWeight: CcTypographyParams.bold,
             fontSize: CcTypographyParams.titleLarge,
             color: context.ccColorScheme.primary,
           );
@@ -67,7 +67,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
         CcText(
           comment.name,
           textStyle: context.ccTextTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
+            fontWeight: CcTypographyParams.bold,
             color: context.ccColorScheme.primary,
             fontSize: context.respFontSize(CcTypographyParams.headlineSmall),
           ),
@@ -95,7 +95,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
                 comment.email,
                 textStyle: context.ccTextTheme.labelMedium?.copyWith(
                   color: context.ccColorScheme.onSecondaryContainer,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: CcTypographyParams.medium,
                 ),
               ),
             ],
@@ -123,7 +123,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
             CcText(
               el.tr(CcLocaleKeys.comment_detail_content),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+                fontWeight: CcTypographyParams.bold,
               ),
             ),
           ],
@@ -193,7 +193,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
               CcText(
                 value,
                 textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: CcTypographyParams.bold,
                 ),
               ),
             ],

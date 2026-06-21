@@ -4,6 +4,9 @@ import '../../core/config/tokens/cc_padding_params.dart';
 import '../../core/extensions/cc_context_extension.dart';
 import '../../core/extensions/common/cc_responsive_extension.dart';
 
+import '../../core/config/tokens/cc_typography_params.dart';
+import '../space/cc_space.dart';
+
 class SectionTitleWidget extends StatelessWidget {
   const SectionTitleWidget({super.key, required this.title});
 
@@ -24,7 +27,7 @@ class SectionTitleWidget extends StatelessWidget {
               style: TextStyle(
                 color: context.ccColorScheme.onSurface,
                 fontSize: context.respFontSize(20.0),
-                fontWeight: FontWeight.w600,
+                fontWeight: CcTypographyParams.semiBold,
               ),
               text: title,
             ),
@@ -32,5 +35,5 @@ class SectionTitleWidget extends StatelessWidget {
             textAlign: TextAlign.start,
           ),
         )
-      : SizedBox(height: context.respPadding(CcPaddingParams.PAGE_MD));
+      : const CcSpaceXL();
 }
