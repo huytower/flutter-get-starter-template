@@ -12,9 +12,6 @@ workspace:
   - modules/data
   - modules/message
   - modules/theme
-  - cc_core_sdk/cc_sdk
-  - cc_core_sdk/cc_sdk_ui
-  - cc_core_sdk/cc_mixin
   - features
 
 dependencies:
@@ -116,7 +113,7 @@ flutter:
   assets:
     - env/.env.development
     - env/.env.uat
-    - env/.env.production
+    - env/.env.prod
     - assets/icon/
     - assets/lottie/
 
