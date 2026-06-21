@@ -19,11 +19,16 @@ DerivedData/
 # Environment variables
 .env
 .env.*
-!.env.template
-# Allow environment files in env/ directory for CI builds
-!env/.env.development
-!env/.env.uat
-!env/.env.production
+!.env.example
+!env/.env.example
+
+# Block the native configuration files from being tracked
+android/app/src/free/google-services.json
+android/app/src/uat/google-services.json
+android/app/src/prod/google-services.json
+ios/Firebase/free/GoogleService-Info.plist
+ios/Firebase/prod/GoogleService-Info.plist
+ios/Firebase/uat/GoogleService-Info.plist
 
 .generated/
 
