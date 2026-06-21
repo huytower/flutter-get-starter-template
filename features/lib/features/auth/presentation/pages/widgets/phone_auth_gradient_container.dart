@@ -2,10 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 class PhoneAuthGradientContainer extends StatelessWidget {
-  const PhoneAuthGradientContainer({
-    super.key,
-    required this.child,
-  });
+  const PhoneAuthGradientContainer({super.key, required this.child});
 
   final Widget child;
 

@@ -3,8 +3,8 @@ import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 
 import '../../domain/usecases/login_usecase.dart';
-import '../../domain/usecases/login_with_google_usecase.dart';
 import '../../domain/usecases/login_with_apple_usecase.dart';
+import '../../domain/usecases/login_with_google_usecase.dart';
 import 'login_event.dart';
 import 'login_state.dart';
 

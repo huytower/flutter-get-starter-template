@@ -8,7 +8,7 @@ enum PageNameByRouteStrategyEnum {
   BLOC_ADVANCE,
   BLOC_SIMPLE,
   GETX_SIMPLE,
-  GETX_SIMPLE_V2
+  GETX_SIMPLE_V2,
 }
 
 String getPageNameByRouteStrategy(PageNameByRouteStrategyEnum pageName) =>

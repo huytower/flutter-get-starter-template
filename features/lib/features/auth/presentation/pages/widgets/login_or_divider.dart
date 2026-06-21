@@ -17,9 +17,7 @@ class LoginOrDivider extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(
-              CcPaddingParams.PAGE_MD,
-            ),
+            horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
           ),
           child: CcText(
             el.tr(CcLocaleKeys.common_or),

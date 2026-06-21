@@ -1,6 +1,6 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import '../../core/config/http/http_client/http_client_config.dart';
 import '../../domain/entities/app_config_entity.dart';
 import '../../domain/repositories/app_config_repository.dart';

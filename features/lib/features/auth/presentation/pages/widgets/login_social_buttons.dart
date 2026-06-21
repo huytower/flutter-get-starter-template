@@ -14,9 +14,8 @@ class LoginSocialButtons extends StatelessWidget {
       children: [
         CcSocialLoginBtn(
           type: SocialLoginType.google,
-          onTap: () => context.read<LoginBloc>().add(
-            const LoginWithGoogleStarted(),
-          ),
+          onTap: () =>
+              context.read<LoginBloc>().add(const LoginWithGoogleStarted()),
         ),
 
         const CcSpaceMD(),
@@ -32,9 +31,8 @@ class LoginSocialButtons extends StatelessWidget {
 
         CcSocialLoginBtn(
           type: SocialLoginType.apple,
-          onTap: () => context.read<LoginBloc>().add(
-            const LoginWithAppleStarted(),
-          ),
+          onTap: () =>
+              context.read<LoginBloc>().add(const LoginWithAppleStarted()),
         ),
       ],
     );

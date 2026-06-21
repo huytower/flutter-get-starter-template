@@ -60,7 +60,7 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
 
     try {
       _logger.i('PhoneAuthBloc: Calling verifyPhoneNumberUseCase');
-      
+
       final verificationStream = _verifyPhoneNumberUseCase(
         phoneNumber: event.phoneNumber,
       );
@@ -154,7 +154,7 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
       },
       (failure) {
         _logger.e('PhoneAuthBloc: Sign in failed: ${failure.message}');
-        
+
         // Map failure message to specific OTP error locale keys
         final errorMessage = _mapOtpErrorToLocaleKey(failure.message);
         emit(PhoneAuthError(errorMessage));
@@ -165,24 +165,23 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
   String _mapOtpErrorToLocaleKey(String failureMessage) {
     // Firebase Auth error codes for OTP verification
     final lowerMessage = failureMessage.toLowerCase();
-    
-    if (lowerMessage.contains('invalid') || 
+
+    if (lowerMessage.contains('invalid') ||
         lowerMessage.contains('wrong') ||
         lowerMessage.contains('incorrect')) {
       return CcLocaleKeys.auth_otp_invalid;
     }
-    
-    if (lowerMessage.contains('expired') || 
-        lowerMessage.contains('timeout')) {
+
+    if (lowerMessage.contains('expired') || lowerMessage.contains('timeout')) {
       return CcLocaleKeys.auth_otp_expired;
     }
-    
-    if (lowerMessage.contains('too many') || 
+
+    if (lowerMessage.contains('too many') ||
         lowerMessage.contains('quota') ||
         lowerMessage.contains('attempts')) {
       return CcLocaleKeys.auth_otp_too_many_attempts;
     }
-    
+
     // Default to general error if no specific match
     return failureMessage;
   }

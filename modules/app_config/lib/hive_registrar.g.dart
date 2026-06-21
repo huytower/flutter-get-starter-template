@@ -2,10 +2,10 @@
 // Do not modify
 // Check in to version control
 
-import 'package:hive_ce/hive_ce.dart';
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:app_config/data/datasource/local/box/app_track_log/cc_app_track_log.dart';
 import 'package:app_config/data/datasource/local/box/device_info/cc_device_info.dart';
+import 'package:hive_ce/hive_ce.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {

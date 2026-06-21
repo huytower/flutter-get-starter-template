@@ -5,7 +5,6 @@ targets:
         generate_for:
           include:
             - lib/**
-            - ../features/lib/**  # Scan features package
       injectable_generator:injectable_builder:
         options:
           auto_register: true

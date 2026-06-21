@@ -18,6 +18,7 @@ class LoginLoading extends LoginState {
 
 class LoginSuccess extends LoginState {
   final CcUserEntity user;
+
   const LoginSuccess(this.user);
 
   @override
@@ -26,6 +27,7 @@ class LoginSuccess extends LoginState {
 
 class LoginError extends LoginState {
   final String message;
+
   const LoginError(this.message);
 
   @override

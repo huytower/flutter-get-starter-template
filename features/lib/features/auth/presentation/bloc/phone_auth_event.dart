@@ -9,6 +9,7 @@ abstract class PhoneAuthEvent extends Equatable {
 
 class VerifyPhoneNumberStarted extends PhoneAuthEvent {
   final String phoneNumber;
+
   const VerifyPhoneNumberStarted(this.phoneNumber);
 
   @override
@@ -17,6 +18,7 @@ class VerifyPhoneNumberStarted extends PhoneAuthEvent {
 
 class SignInWithCodeStarted extends PhoneAuthEvent {
   final String smsCode;
+
   const SignInWithCodeStarted(this.smsCode);
 
   @override

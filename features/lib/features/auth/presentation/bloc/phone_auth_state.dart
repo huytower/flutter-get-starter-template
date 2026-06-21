@@ -22,6 +22,7 @@ class PhoneAuthCodeSent extends PhoneAuthState {
 
 class PhoneAuthSuccess extends PhoneAuthState {
   final CcUserEntity user;
+
   const PhoneAuthSuccess(this.user);
 
   @override
@@ -30,6 +31,7 @@ class PhoneAuthSuccess extends PhoneAuthState {
 
 class PhoneAuthError extends PhoneAuthState {
   final String message;
+
   const PhoneAuthError(this.message);
 
   @override

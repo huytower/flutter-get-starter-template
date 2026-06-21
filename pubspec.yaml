@@ -109,18 +109,6 @@ dev_dependencies:
   lean_builder: ^0.1.10
   lint: ^2.8.0
 
-melos:
-  scripts:
-    # Full bootstrap: use flutter pub get for Melos 7 Workspaces
-    bootstrap:
-      description: Bootstrap the workspace and download all dependencies.
-      run: flutter pub get
-
-    # Full rebuild: pub get followed by stable code generation
-    rebuild:
-      description: Run bootstrap followed by code generation (stable).
-      run: flutter pub get && melos exec --depends-on="build_runner" -- "flutter pub run build_runner build" && flutter pub run build_runner build
-
 flutter:
   uses-material-design: true
 

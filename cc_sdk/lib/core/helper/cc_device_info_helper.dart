@@ -1,11 +1,10 @@
 import 'dart:io';
 
+import 'package:cc_sdk/domain/entities/cc_device_entity.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_udid/flutter_udid.dart';
 import 'package:injectable/injectable.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
-import '../../../domain/entities/cc_device_entity.dart';
 
 /// Centralised service for all device-information queries.
 ///

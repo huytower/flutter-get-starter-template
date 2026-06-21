@@ -10,9 +10,12 @@ abstract class CcLocaleKeys {
   static const app_error_retry = 'app.error.retry';
   static const app_error_network = 'app.error.network';
   static const app_error_server = 'app.error.server';
-  static const app_app_check_initialization_failed = 'app.app_check.initialization_failed';
-  static const app_app_check_token_refresh_failed = 'app.app_check.token_refresh_failed';
-  static const app_app_check_device_not_verified = 'app.app_check.device_not_verified';
+  static const app_app_check_initialization_failed =
+      'app.app_check.initialization_failed';
+  static const app_app_check_token_refresh_failed =
+      'app.app_check.token_refresh_failed';
+  static const app_app_check_device_not_verified =
+      'app.app_check.device_not_verified';
 
   static const common_ok = 'common.ok';
   static const common_cancel = 'common.cancel';

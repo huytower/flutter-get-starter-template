@@ -53,7 +53,6 @@ class SimpleCubitPage extends StatelessWidget {
     );
   }
 
-
   /// Build the counter title display
   SizedBox buildTitle(BuildContext context) {
     return SizedBox(
@@ -72,5 +71,4 @@ class SimpleCubitPage extends StatelessWidget {
       ),
     );
   }
-
 }

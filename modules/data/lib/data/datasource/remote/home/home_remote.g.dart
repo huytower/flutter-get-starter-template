@@ -33,7 +33,9 @@ class _HomeRemote implements HomeRemote {
   }
 
   String _combineBaseUrls(String dioBaseUrl, String? baseUrl) {
-    if (baseUrl == null || baseUrl.trim().isEmpty) {
+    if (baseUrl == null || baseUrl
+        .trim()
+        .isEmpty) {
       return dioBaseUrl;
     }
 

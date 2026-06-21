@@ -22,6 +22,7 @@ abstract final class AppBuilder {
 /// A simple wrapper for localization to keep the builder clean.
 class CcLocalizationWrapper extends StatelessWidget {
   final Widget child;
+
   const CcLocalizationWrapper({super.key, required this.child});
 
   @override

@@ -1,6 +1,5 @@
+import 'package:cc_sdk_ui/core/extensions/cc_context_extension.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../core/extensions/cc_context_extension.dart';
 
 // Purpose:
 // small reusable widgets for loading states and empty API responses

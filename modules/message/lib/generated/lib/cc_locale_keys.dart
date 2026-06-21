@@ -2,7 +2,7 @@
 
 // ignore_for_file: constant_identifier_names
 
-abstract class  LocaleKeys {
+abstract class LocaleKeys {
   static const app_name = 'app.name';
   static const app_version = 'app.version';
   static const app_loading = 'app.loading';
@@ -11,9 +11,12 @@ abstract class  LocaleKeys {
   static const app_error_network = 'app.error.network';
   static const app_error_server = 'app.error.server';
   static const app_error = 'app.error';
-  static const app_app_check_initialization_failed = 'app.app_check.initialization_failed';
-  static const app_app_check_token_refresh_failed = 'app.app_check.token_refresh_failed';
-  static const app_app_check_device_not_verified = 'app.app_check.device_not_verified';
+  static const app_app_check_initialization_failed =
+      'app.app_check.initialization_failed';
+  static const app_app_check_token_refresh_failed =
+      'app.app_check.token_refresh_failed';
+  static const app_app_check_device_not_verified =
+      'app.app_check.device_not_verified';
   static const app_app_check = 'app.app_check';
   static const app = 'app';
   static const common_ok = 'common.ok';
@@ -32,7 +35,8 @@ abstract class  LocaleKeys {
   static const common_or = 'common.or';
   static const common_income = 'common.income';
   static const common_expense = 'common.expense';
-  static const common_press_back_again_to_exit = 'common.press_back_again_to_exit';
+  static const common_press_back_again_to_exit =
+      'common.press_back_again_to_exit';
   static const common = 'common';
   static const auth_login = 'auth.login';
   static const auth_logout = 'auth.logout';
@@ -61,16 +65,25 @@ abstract class  LocaleKeys {
   static const auth_terms_and_privacy = 'auth.terms_and_privacy';
   static const auth_biometric_reason = 'auth.biometric.reason';
   static const auth_biometric_fallback = 'auth.biometric.fallback';
-  static const auth_biometric_not_available_log = 'auth.biometric.not_available_log';
+  static const auth_biometric_not_available_log =
+      'auth.biometric.not_available_log';
   static const auth_biometric_init_error = 'auth.biometric.init_error';
-  static const auth_biometric_error_not_available = 'auth.biometric.error.not_available';
-  static const auth_biometric_error_not_enrolled = 'auth.biometric.error.not_enrolled';
-  static const auth_biometric_error_locked_out = 'auth.biometric.error.locked_out';
-  static const auth_biometric_error_permanently_locked_out = 'auth.biometric.error.permanently_locked_out';
-  static const auth_biometric_error_passcode_not_set = 'auth.biometric.error.passcode_not_set';
-  static const auth_biometric_error_user_canceled = 'auth.biometric.error.user_canceled';
-  static const auth_biometric_error_app_canceled = 'auth.biometric.error.app_canceled';
-  static const auth_biometric_error_system_canceled = 'auth.biometric.error.system_canceled';
+  static const auth_biometric_error_not_available =
+      'auth.biometric.error.not_available';
+  static const auth_biometric_error_not_enrolled =
+      'auth.biometric.error.not_enrolled';
+  static const auth_biometric_error_locked_out =
+      'auth.biometric.error.locked_out';
+  static const auth_biometric_error_permanently_locked_out =
+      'auth.biometric.error.permanently_locked_out';
+  static const auth_biometric_error_passcode_not_set =
+      'auth.biometric.error.passcode_not_set';
+  static const auth_biometric_error_user_canceled =
+      'auth.biometric.error.user_canceled';
+  static const auth_biometric_error_app_canceled =
+      'auth.biometric.error.app_canceled';
+  static const auth_biometric_error_system_canceled =
+      'auth.biometric.error.system_canceled';
   static const auth_biometric_error_generic = 'auth.biometric.error.generic';
   static const auth_biometric_error = 'auth.biometric.error';
   static const auth_biometric = 'auth.biometric';
@@ -122,5 +135,4 @@ abstract class  LocaleKeys {
   static const comment_detail_id = 'comment.detail.id';
   static const comment_detail = 'comment.detail';
   static const comment = 'comment';
-
 }

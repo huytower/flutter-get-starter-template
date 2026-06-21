@@ -1,0 +1,15 @@
+name: mobile_flutter_template
+
+packages:
+  - modules/*
+  - cc_core_sdk/*
+  - features
+
+scripts:
+  bootstrap:
+    description: Bootstrap the workspace and download all dependencies.
+    run: flutter pub get
+
+  rebuild:
+    description: Run bootstrap followed by code generation.
+    run: flutter pub get && melos exec --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs" && flutter pub run build_runner build --delete-conflicting-outputs
