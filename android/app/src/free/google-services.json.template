@@ -1,8 +1,8 @@
 {
   "project_info": {
     "project_number": "525600752173",
-    "project_id": "mobile-flutter-template",
-    "storage_bucket": "mobile-flutter-template.firebasestorage.app"
+    "project_id": "{{FIREBASE_PROJECT_ID}}",
+    "storage_bucket": "{{FIREBASE_PROJECT_ID}}.firebasestorage.app"
   },
   "client": [
     {
@@ -20,7 +20,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCtBAm50ik06pngGOWJ4gQyi0SahBFJ2-8"
+          "current_key": "{{GOOGLE_API_KEY_ANDROID}}"
         }
       ],
       "services": {
@@ -56,7 +56,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCtBAm50ik06pngGOWJ4gQyi0SahBFJ2-8"
+          "current_key": "{{GOOGLE_API_KEY_ANDROID}}"
         }
       ],
       "services": {
@@ -92,7 +92,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCtBAm50ik06pngGOWJ4gQyi0SahBFJ2-8"
+          "current_key": "{{GOOGLE_API_KEY_ANDROID}}"
         }
       ],
       "services": {
