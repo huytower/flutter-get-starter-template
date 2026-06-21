@@ -54,8 +54,9 @@ This project enforces a **state-management agnostic design** principle for all c
 1. Read `docs/AI_CONTEXT.md` for architecture overview and **state-management agnostic design principles**.
 2. Ensure you have Flutter 3.41.9+ and Dart 3.11.5+ installed
 3. Run `melos bootstrap` to set up the workspace
-4. Run `melos run gen` to generate code for Hive adapters, JSON serialization, etc.
-5. Open `lib/main.dart` to follow app startup and feature wiring.
+4. Run `melos run setup:firebase` to initialize Firebase configuration files
+5. Run `melos run gen` to generate code for Hive adapters, JSON serialization, etc.
+6. Open `lib/main.dart` to follow app startup and feature wiring.
 6. Inspect `lib/core/di/di.dart` for global dependency registration.
 7. Explore `modules/` for app-specific domain/data modules.
 8. Explore `features/lib/export_features.dart` for reusable feature packages.
