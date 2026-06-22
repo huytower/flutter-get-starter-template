@@ -106,7 +106,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
       decoration: BoxDecoration(
         color: context.ccColorScheme.surface,
         borderRadius: BorderRadius.circular(
-          context.respDim(CcCircularParams.RADIUS_LG),
+          context.respDim(CcPaddingParams.DESC_LG),
         ),
         boxShadow: [
           BoxShadow(

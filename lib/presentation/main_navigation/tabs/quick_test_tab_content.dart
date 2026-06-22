@@ -1,4 +1,4 @@
-import 'package:features/features/auth/presentation/pages/login_page.dart';
+import 'package:features/features/auth/presentation/pages/phone_auth_page.dart';
 import 'package:flutter/material.dart';
 
 class QuickTestTabContent extends StatefulWidget {
@@ -13,6 +13,6 @@ class QuickTestTabContent extends StatefulWidget {
 class _QuickTestTabContentState extends State<QuickTestTabContent> {
   @override
   Widget build(BuildContext context) {
-    return const LoginPage();
+    return const PhoneAuthPage();
   }
 }

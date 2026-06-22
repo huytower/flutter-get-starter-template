@@ -16,8 +16,8 @@ class PhoneAuthGradientContainer extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
+              context.ccColorScheme.primaryContainer,
               context.ccColorScheme.surface,
-              context.ccColorScheme.surfaceVariant,
             ],
           ),
         ),
