@@ -13,6 +13,7 @@ class ProfileTabContent extends StatefulWidget {
 
 class _ProfileTabContentState extends State<ProfileTabContent> {
   String _version = '';
+  static const double _appBarHeight = kToolbarHeight + 16;
 
   @override
   void initState() {
@@ -36,26 +37,28 @@ class _ProfileTabContentState extends State<ProfileTabContent> {
     CcDialogHelper.showModalBottomSheet(navContext, const CrashLogViewerPage());
   }
 
-  /// Build the app bar title with localized text in red color
-  Widget _buildTitle(BuildContext context) {
-    return CcText(
-      el.tr(CcLocaleKeys.nav_profile_info),
-      textStyle: context.ccTextTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.bold,
-        fontSize: context.respFontSize(CcTypographyParams.titleLarge),
-        color: context.ccColorScheme.error, // Semantic red color
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final appInfo = '${CcAppTrackName.appName} v$_version';
 
     return Scaffold(
-      appBar: AppBar(title: _buildTitle(context), centerTitle: false),
-      body: Center(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: _appBarHeight,
+        centerTitle: true,
+        title: CcText(
+          el.tr(CcLocaleKeys.nav_profile),
+          textStyle: context.ccTextTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: context.ccColorScheme.onSurface,
+          ),
+        ),
+      ),
+      body: CcGradientCardLayout(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(

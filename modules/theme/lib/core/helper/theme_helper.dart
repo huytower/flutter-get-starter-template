@@ -10,26 +10,33 @@ import '../../presentation/style/cc_text_style.dart';
 /// `ColorScheme` consumed by `ThemeData`. Widgets should read colors from
 /// `Theme.of(context).colorScheme` to remain decoupled from the color source.
 ColorScheme createColorScheme(Brightness brightness) {
-  final baseScheme = brightness == Brightness.dark
+  final bool isDark = brightness == Brightness.dark;
+  final baseScheme = isDark
       ? const ColorScheme.dark()
       : const ColorScheme.light();
 
   return baseScheme.copyWith(
     primary: PrjColors.primary,
-    primaryContainer: PrjColors.primaryContainer,
+    primaryContainer: isDark
+        ? PrjColors.darkPrimaryContainer
+        : PrjColors.primaryContainer,
     onPrimary: PrjColors.onPrimary,
     onPrimaryContainer: PrjColors.onPrimaryContainer,
     secondary: PrjColors.secondary,
     secondaryContainer: PrjColors.secondaryContainer,
     onSecondary: PrjColors.onSecondary,
     onSecondaryContainer: PrjColors.onSecondaryContainer,
-    surface: PrjColors.surface,
-    surfaceVariant: PrjColors.surfaceVariant,
-    background: PrjColors.background,
+    surface: isDark ? PrjColors.darkSurface : PrjColors.surface,
+    surfaceVariant: isDark
+        ? PrjColors.darkSurfaceVariant
+        : PrjColors.surfaceVariant,
+    background: isDark ? PrjColors.darkBackground : PrjColors.background,
     error: PrjColors.error,
-    onSurface: PrjColors.onSurface,
-    onSurfaceVariant: PrjColors.onSurfaceVariant,
-    onBackground: PrjColors.onBackground,
+    onSurface: isDark ? PrjColors.darkOnSurface : PrjColors.onSurface,
+    onSurfaceVariant: isDark
+        ? PrjColors.darkOnSurfaceVariant
+        : PrjColors.onSurfaceVariant,
+    onBackground: isDark ? PrjColors.darkOnBackground : PrjColors.onBackground,
     onError: PrjColors.onError,
     brightness: brightness,
   );

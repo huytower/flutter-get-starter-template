@@ -5,7 +5,6 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 
 import '../bloc/phone_auth_bloc.dart';
 import '../bloc/phone_auth_event.dart';
@@ -23,7 +22,6 @@ class OtpVerificationPage extends StatefulWidget {
 
 class _OtpVerificationPageState extends State<OtpVerificationPage> {
   late final TextEditingController _codeController;
-  final Logger _logger = Logger(printer: SimplePrinter());
   bool _showEditIcon = false;
   Timer? _editIconTimer;
   bool _canResend = false;
@@ -78,64 +76,40 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   Widget build(BuildContext context) {
     return BlocListener<PhoneAuthBloc, PhoneAuthState>(
       listener: _onStateChanged,
-      child: PhoneAuthGradientContainer(child: _buildCard(context)),
+      child: PhoneAuthGradientContainer(child: _buildCardContent(context)),
     );
   }
 
   void _onStateChanged(BuildContext context, PhoneAuthState state) {
     if (state is PhoneAuthSuccess) {
-      _logger.i(
-        'OtpVerificationPage: PhoneAuthSuccess received, navigating to ${CcRouteConfig.mainNavigation}',
-      );
       // Using replacePath to avoid circular dependency between features and app shell router
       context.router.replacePath(CcRouteConfig.mainNavigation);
     }
   }
 
-  Widget _buildCard(BuildContext context) {
+  Widget _buildCardContent(BuildContext context) {
     final phoneNumber = context.select(
       (PhoneAuthBloc bloc) => bloc.phoneNumber,
     );
 
-    return Container(
-      constraints: BoxConstraints(
-        maxWidth: context.isPortrait
-            ? context.respDim(500)
-            : context.respDim(600),
-      ),
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.surface,
-        borderRadius: BorderRadius.circular(
-          context.respDim(CcCircularParams.RADIUS_LG),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: context.ccColorScheme.shadow.withOpacity(0.1),
-            blurRadius: context.respDim(20),
-            offset: Offset(0, context.respDim(10)),
-          ),
-        ],
-      ),
-      padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_MD)),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const CcSpaceLG(),
-          const CcSpeechBubbleIcon(),
-          const CcSpaceLG(),
-          _buildTitle(context),
-          const CcSpaceSM(),
-          _buildPhoneSubtitle(context, phoneNumber),
-          const CcSpaceXL(),
-          _buildOtpInput(),
-          const CcSpaceXL(),
-          _buildErrorSection(),
-          _buildActionBtn(),
-          const CcSpaceLG(),
-          _buildResendSection(context),
-          const CcSpaceLG(),
-        ],
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const CcSpaceLG(),
+        const CcSpeechBubbleIcon(),
+        const CcSpaceLG(),
+        _buildTitle(context),
+        const CcSpaceSM(),
+        _buildPhoneSubtitle(context, phoneNumber),
+        const CcSpaceXL(),
+        _buildOtpInput(),
+        const CcSpaceXL(),
+        _buildErrorSection(),
+        _buildActionBtn(),
+        const CcSpaceLG(),
+        _buildResendSection(context),
+        const CcSpaceLG(),
+      ],
     );
   }
 

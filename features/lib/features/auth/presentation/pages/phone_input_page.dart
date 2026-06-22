@@ -66,105 +66,84 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
   }
 
   Widget _buildBody(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(
-        maxWidth: context.isPortrait
-            ? context.respDim(500)
-            : context.respDim(600),
-      ),
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.surface,
-        borderRadius: BorderRadius.circular(
-          context.respDim(CcPaddingParams.DESC_LG),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const CcSpaceLG(),
+        const CcSpeechBubbleIcon(),
+        const CcSpaceLG(),
+        CcText(
+          el.tr(CcLocaleKeys.auth_enter_phone_number),
+          maxLines: 2,
+          align: Alignment.center,
+          textStyle: context.ccTextTheme.headlineMedium?.copyWith(
+            fontWeight: CcTypographyParams.bold,
+            color: context.ccColorScheme.onSurface,
+          ),
+          textAlign: TextAlign.center,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: context.ccColorScheme.shadow.withOpacity(0.1),
-            blurRadius: context.respDim(20),
-            offset: Offset(0, context.respDim(10)),
-          ),
-        ],
-      ),
-      padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_MD)),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const CcSpaceLG(),
-          const CcSpeechBubbleIcon(),
-          const CcSpaceLG(),
-          CcText(
-            el.tr(CcLocaleKeys.auth_enter_phone_number),
-            maxLines: 2,
-            align: Alignment.center,
-            textStyle: context.ccTextTheme.headlineMedium?.copyWith(
-              fontWeight: CcTypographyParams.bold,
-              color: context.ccColorScheme.onSurface,
+        const CcSpaceXL(),
+        CcPhoneNumberInput(
+          countryCode: _countryCode,
+          onCountryCodeTap: () {},
+          controller: _phoneController,
+          hintText: el.tr(CcLocaleKeys.auth_phone_number_hint),
+        ),
+        // Validation error display
+        if (_validationError != null)
+          Padding(
+            padding: EdgeInsets.only(
+              top: context.respPadding(CcPaddingParams.DESC_MD),
             ),
-            textAlign: TextAlign.center,
+            child: CcText(
+              el.tr(_validationError!),
+              maxLines: 8,
+              textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                color: context.ccColorScheme.error,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
-          const CcSpaceXL(),
-          CcPhoneNumberInput(
-            countryCode: _countryCode,
-            onCountryCodeTap: () {},
-            controller: _phoneController,
-            hintText: el.tr(CcLocaleKeys.auth_phone_number_hint),
-          ),
-          // Validation error display
-          if (_validationError != null)
-            Padding(
+        BlocSelector<PhoneAuthBloc, PhoneAuthState, String?>(
+          selector: (state) => state is PhoneAuthError ? state.message : null,
+          builder: (context, errorMessage) {
+            if (errorMessage == null) return const SizedBox.shrink();
+            return Padding(
               padding: EdgeInsets.only(
                 top: context.respPadding(CcPaddingParams.DESC_MD),
               ),
               child: CcText(
-                el.tr(_validationError!),
+                el.tr(errorMessage),
                 maxLines: 8,
                 textStyle: context.ccTextTheme.bodySmall?.copyWith(
                   color: context.ccColorScheme.error,
                 ),
                 textAlign: TextAlign.center,
               ),
-            ),
-          BlocSelector<PhoneAuthBloc, PhoneAuthState, String?>(
-            selector: (state) => state is PhoneAuthError ? state.message : null,
-            builder: (context, errorMessage) {
-              if (errorMessage == null) return const SizedBox.shrink();
-              return Padding(
-                padding: EdgeInsets.only(
-                  top: context.respPadding(CcPaddingParams.DESC_MD),
-                ),
-                child: CcText(
-                  el.tr(errorMessage),
-                  maxLines: 8,
-                  textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                    color: context.ccColorScheme.error,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              );
-            },
-          ),
-          const CcSpaceMD(),
-          BlocSelector<PhoneAuthBloc, PhoneAuthState, bool>(
-            selector: (state) => state is PhoneAuthLoading,
-            builder: (context, isLoading) {
-              return ValueListenableBuilder<TextEditingValue>(
-                valueListenable: _phoneController,
-                builder: (context, value, _) {
-                  final bool isNotEmpty = value.text.trim().isNotEmpty;
-                  final bool isEnabled = !isLoading && isNotEmpty;
+            );
+          },
+        ),
+        const CcSpaceMD(),
+        BlocSelector<PhoneAuthBloc, PhoneAuthState, bool>(
+          selector: (state) => state is PhoneAuthLoading,
+          builder: (context, isLoading) {
+            return ValueListenableBuilder<TextEditingValue>(
+              valueListenable: _phoneController,
+              builder: (context, value, _) {
+                final bool isNotEmpty = value.text.trim().isNotEmpty;
+                final bool isEnabled = !isLoading && isNotEmpty;
 
-                  return CcNextBtn.bouncing(
-                    onTap: _handleContinue,
-                    isEnable: isEnabled,
-                    title: el.tr(CcLocaleKeys.common_continue),
-                  );
-                },
-              );
-            },
-          ),
-          const CcSpaceLG(),
-        ],
-      ),
+                return CcNextBtn.bouncing(
+                  onTap: _handleContinue,
+                  isEnable: isEnabled,
+                  title: el.tr(CcLocaleKeys.common_continue),
+                );
+              },
+            );
+          },
+        ),
+        const CcSpaceLG(),
+      ],
     );
   }
 }

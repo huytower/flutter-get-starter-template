@@ -11,19 +11,23 @@ import 'widgets/login_card_content.dart';
 
 @RoutePage()
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.showGradient = true});
+
+  final bool showGradient;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<LoginBloc>(),
-      child: const LoginView(),
+      child: LoginView(showGradient: showGradient),
     );
   }
 }
 
 class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+  const LoginView({super.key, this.showGradient = true});
+
+  final bool showGradient;
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -39,60 +43,20 @@ class _LoginViewState extends State<LoginView> {
         }
       },
       child: Scaffold(
-        backgroundColor: context.ccColorScheme.surface,
-        body: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                context.ccColorScheme.primaryContainer,
-                context.ccColorScheme.surface,
-              ],
-            ),
-          ),
-          child: SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.respPadding(CcPaddingParams.PAGE_LG),
-                  vertical: context.respPadding(CcPaddingParams.PAGE_LG),
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: BlocBuilder<LoginBloc, LoginState>(
+            builder: (context, state) {
+              return CcGradientCardLayout(
+                maxWidth: context.isPortrait
+                    ? context.respDim(400)
+                    : context.respDim(600),
+                child: LoginCardContent(
+                  onPhoneLogin: () =>
+                      context.router.push(const PhoneAuthRoute()),
                 ),
-                child: BlocBuilder<LoginBloc, LoginState>(
-                  builder: (context, state) {
-                    return Container(
-                      constraints: BoxConstraints(
-                        maxWidth: context.isPortrait
-                            ? context.respDim(400)
-                            : context.respDim(600),
-                      ),
-                      decoration: BoxDecoration(
-                        color: context.ccColorScheme.surface,
-                        borderRadius: BorderRadius.circular(
-                          context.respDim(CcPaddingParams.DESC_LG),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: context.ccColorScheme.shadow.withOpacity(
-                              0.1,
-                            ),
-                            blurRadius: context.respDim(20),
-                            offset: Offset(0, context.respDim(10)),
-                          ),
-                        ],
-                      ),
-                      padding: EdgeInsets.all(
-                        context.respPadding(CcPaddingParams.PAGE_XL),
-                      ),
-                      child: LoginCardContent(
-                        onPhoneLogin: () =>
-                            context.router.push(const PhoneAuthRoute()),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),

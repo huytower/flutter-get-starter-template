@@ -98,7 +98,7 @@ class CcThemes {
       onSurface: PrjColors.darkOnSurface,
       onBackground: PrjColors.darkOnBackground,
       onError: PrjColors.onError,
-      primaryContainer: PrjColors.primaryContainer,
+      primaryContainer: PrjColors.darkPrimaryContainer,
       onPrimaryContainer: PrjColors.onPrimaryContainer,
       secondaryContainer: PrjColors.secondaryContainer,
       onSecondaryContainer: PrjColors.onSecondaryContainer,
