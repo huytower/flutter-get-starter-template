@@ -31,6 +31,7 @@
     "no_data": "Không có dữ liệu",
     "income": "Thu nhập",
     "expense": "Chi tiêu",
+    "or": "HOẶC",
     "press_back_again_to_exit": "Nhấn lại để thoát"
   },
   "auth": {
@@ -44,9 +45,13 @@
     "have_account": "Đã có tài khoản?",
     "login_success": "Đăng nhập thành công",
     "login_failed": "Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập.",
+    "login_google": "Đăng nhập với Google",
+    "login_apple": "Đăng nhập với Apple",
+    "login_phone": "Đăng nhập với số điện thoại",
     "enter_phone_number": "Nhập số điện thoại của bạn",
     "phone_number": "Số điện thoại",
     "phone_number_hint": "Nhập số điện thoại",
+    "phone_hint": "+1234567890",
     "verify": "Xác minh",
     "send_code": "Gửi mã",
     "enter_code": "Nhập mã SMS",
@@ -122,6 +127,14 @@
       "hours": "{count} giờ trước",
       "minute": "{count} phút trước",
       "minutes": "{count} phút trước"
+    }
+  },
+  "comment": {
+    "detail": {
+      "title": "Chi tiết bình luận",
+      "content": "Nội dung bình luận",
+      "post_id": "ID bài đăng",
+      "id": "ID bình luận"
     }
   }
 }
