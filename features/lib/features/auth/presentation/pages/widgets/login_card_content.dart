@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import 'login_or_divider.dart';
-import 'login_sign_up_link.dart';
 import 'login_social_buttons.dart';
 
 class LoginCardContent extends StatelessWidget {
@@ -57,11 +56,6 @@ class LoginCardContent extends StatelessWidget {
         ),
 
         const CcSpaceLG(),
-
-        // Sign up link
-        const LoginSignUpLink(),
-
-        const CcSpaceSM(),
       ],
     );
   }

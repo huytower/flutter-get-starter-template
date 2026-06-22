@@ -116,7 +116,7 @@ flutter:
   assets:
     - env/.env.development
     - env/.env.uat
-    - env/.env.production
+    - env/.env.prod
     - assets/icon/
     - assets/lottie/
 
@@ -133,3 +133,29 @@ flutter_native_splash:
   android_12:
     image: assets/icon/app_icon.png
     color: "#36454F"
+
+melos:
+  scripts:
+    bootstrap:
+      description: Bootstrap the workspace and download all dependencies.
+      run: flutter pub get
+
+    gen:
+      description: Generate code for all packages and the root project.
+      run: |
+        melos exec --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs"
+        flutter pub run build_runner build --delete-conflicting-outputs
+
+    rebuild:
+      description: Run bootstrap followed by code generation.
+      run: flutter pub get && melos run gen && flutter pub run build_runner build --delete-conflicting-outputs
+
+    setup:firebase:
+      description: Initialize Firebase configuration files from templates.
+      run: |
+        cp android/app/src/free/google-services.json.template android/app/src/free/google-services.json
+        cp android/app/src/prod/google-services.json.template android/app/src/prod/google-services.json
+        cp android/app/src/uat/google-services.json.template android/app/src/uat/google-services.json
+        cp ios/Firebase/free/GoogleService-Info.plist.template ios/Firebase/free/GoogleService-Info.plist
+        cp ios/Firebase/prod/GoogleService-Info.plist.template ios/Firebase/prod/GoogleService-Info.plist
+        cp ios/Firebase/uat/GoogleService-Info.plist.template ios/Firebase/uat/GoogleService-Info.plist
