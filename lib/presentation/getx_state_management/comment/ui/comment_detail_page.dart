@@ -12,7 +12,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
   const CommentDetailPage({super.key, required this.comment});
 
   @override
-  PreferredSizeWidget? appBar() {
+  PreferredSizeWidget? buildAppBar() {
     return AppBar(
       elevation: 0,
       leading: Builder(

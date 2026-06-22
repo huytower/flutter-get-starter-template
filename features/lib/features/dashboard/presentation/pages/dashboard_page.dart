@@ -34,7 +34,7 @@ class DashboardView extends StatelessWidget with CcViewConfigMixin {
   const DashboardView(this.state, this.blocContext, {super.key});
 
   @override
-  bool get isEnableLoading => false;
+  bool get enableLoading => false;
 
   @override
   CcLayoutStatus get layoutStatus => _getLayoutStatus();
@@ -59,7 +59,8 @@ class DashboardView extends StatelessWidget with CcViewConfigMixin {
   }
 
   @override
-  PreferredSizeWidget? appBar() => DashboardAppBar(blocContext: blocContext);
+  PreferredSizeWidget? buildAppBar() =>
+      DashboardAppBar(blocContext: blocContext);
 
   @override
   Widget? buildContent() => _buildContent();

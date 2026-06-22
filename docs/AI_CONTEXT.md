@@ -154,6 +154,8 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
     - [ ] **Linter Compliance**: Run `analyze_file` on modified files; zero errors/warnings allowed.
     - [ ] **Import Hygiene**: No unused or redundant imports (use centralized exports).
 
+17. **Logging Strategy (CRITICAL)**: Use the `.Log()` extension (from `cc_sdk`) for all debug logging. It handles environment-based silencing (via `CcFeatureFlags`), automatic serialization (via `ccGson`), and context capture (file/line). Avoid raw `print()`, `developer.log()`, or external `Logger` instances in features or modules.
+
 ## Project Structure
 
 ```

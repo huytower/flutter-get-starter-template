@@ -85,16 +85,18 @@ class _NavigationBarState extends State<NavigationBar>
   ];
 
   @override
-  bool get isEnableAppBar => false;
+  bool get enableAppBar => false;
 
   @override
-  bool get isEnableBottomNavigation => !showSplash;
+  bool get enableBottomNavigationBar => !showSplash;
 
   @override
-  PreferredSizeWidget? appBar() => null;
+  PreferredSizeWidget? buildAppBar() => null;
 
   @override
-  Widget? bottomNavigationBar() => buildCurvedNavigationBar();
+  Widget? buildBottomNavigationBar() => buildCurvedNavigationBar();
+
+  Widget onBodyWrapper(BuildContext context, Widget body) => body;
 
   @override
   Widget? buildContent() {
@@ -126,10 +128,10 @@ class _NavigationBarState extends State<NavigationBar>
       onPopInvokedWithResult: (didPop, result) =>
           onPopInvokedWithResult(context, didPop, result),
       child: Scaffold(
-        body: SafeArea(child: _body),
-        appBar: isEnableAppBar ? appBar() : null,
-        bottomNavigationBar: isEnableBottomNavigation
-            ? bottomNavigationBar()
+        body: onBodyWrapper(context, SafeArea(child: _body)),
+        appBar: enableAppBar ? buildAppBar() : null,
+        bottomNavigationBar: enableBottomNavigationBar
+            ? buildBottomNavigationBar()
             : null,
       ),
     );

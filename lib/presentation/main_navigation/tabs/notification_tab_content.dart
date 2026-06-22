@@ -1,3 +1,5 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/widgets/container/cc_gradient_card_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
@@ -23,6 +25,6 @@ class _NotificationTabContentState extends State<NotificationTabContent> {
 
   @override
   Widget build(BuildContext context) {
-    return const CommentPage();
+    return const CcGradientCardLayout(child: CommentPage());
   }
 }

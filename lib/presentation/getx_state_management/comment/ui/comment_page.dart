@@ -25,6 +25,8 @@ class CommentPage extends CcGetView<CommentController> with CcPullRefreshMixin {
           context: context,
           onRefresh: controller.refreshData,
           child: ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: isLoading ? 5 : comments.length,
             itemBuilder: (context, index) {
               if (isLoading) {

@@ -27,13 +27,15 @@ class LoginSocialButtons extends StatelessWidget {
         //     const LoginWithFacebookStarted(),
         //   ),
         // ),
-        const CcSpaceMD(),
-
-        CcSocialLoginBtn(
-          type: SocialLoginType.apple,
-          onTap: () =>
-              context.read<LoginBloc>().add(const LoginWithAppleStarted()),
-        ),
+        // Apple login only on iOS
+        if (CcDeviceHelper.isIOS) ...[
+          const CcSpaceMD(),
+          CcSocialLoginBtn(
+            type: SocialLoginType.apple,
+            onTap: () =>
+                context.read<LoginBloc>().add(const LoginWithAppleStarted()),
+          ),
+        ],
       ],
     );
   }

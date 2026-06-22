@@ -13,6 +13,7 @@ class ProfileTabContent extends StatefulWidget {
 
 class _ProfileTabContentState extends State<ProfileTabContent> {
   String _version = '';
+  static const double _appBarHeight = kToolbarHeight + 16;
 
   @override
   void initState() {
@@ -40,42 +41,63 @@ class _ProfileTabContentState extends State<ProfileTabContent> {
   Widget build(BuildContext context) {
     final appInfo = '${CcAppTrackName.appName} v$_version';
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.person_rounded,
-            size: context.respIconSize(baseSize: 64.0),
-            color: context.ccColorScheme.primary,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: _appBarHeight,
+        centerTitle: true,
+        title: CcText(
+          el.tr(CcLocaleKeys.nav_profile),
+          textStyle: context.ccTextTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: context.ccColorScheme.onSurface,
           ),
-          const CcSpaceLG(),
-          CcText(
-            el.tr(CcLocaleKeys.nav_profile),
-            textStyle: context.ccTextTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              fontSize: context.respFontSize(CcTypographyParams.headlineSmall),
+        ),
+      ),
+      body: CcGradientCardLayout(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.person_rounded,
+              size: context.respIconSize(baseSize: 64.0),
+              color: context.ccColorScheme.primary,
             ),
-            align: Alignment.center,
-          ),
-          const CcSpaceXL(),
-          const CcSpaceXL(),
-          // Hidden/Dev Trigger: Long press on App Name to open logs
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.respPadding(CcPaddingParams.SPACE_XL),
+            const CcSpaceLG(),
+            CcText(
+              el.tr(CcLocaleKeys.nav_profile),
+              textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: context.respFontSize(
+                  CcTypographyParams.headlineSmall,
+                ),
+              ),
+              align: Alignment.center,
             ),
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onLongPress: _openCrashLogViewer,
-              child: AppNameWidget(
-                appInfo,
-                fontSize: CcTypographyParams.bodySmall,
-                color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.5),
+            const CcSpaceXL(),
+            const CcSpaceXL(),
+            // Hidden/Dev Trigger: Long press on App Name to open logs
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: context.respPadding(CcPaddingParams.SPACE_XL),
+              ),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onLongPress: _openCrashLogViewer,
+                child: AppNameWidget(
+                  appInfo,
+                  fontSize: CcTypographyParams.bodySmall,
+                  color: context.ccColorScheme.onSurfaceVariant.withOpacity(
+                    0.5,
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

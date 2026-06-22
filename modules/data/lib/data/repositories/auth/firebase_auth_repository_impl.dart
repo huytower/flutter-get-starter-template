@@ -64,11 +64,13 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
   Future<Result<CcUserEntity, CcFailure>> signInWithGoogle() async {
     try {
       final googleUser = await _googleSignIn.signIn();
+
       if (googleUser == null) {
         return const Error(UnauthorizedFailure(CcLocaleKeys.auth_login_failed));
       }
 
       final googleAuth = await googleUser.authentication;
+
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
