@@ -33,6 +33,9 @@ Configure these secrets in `Settings > Secrets and variables > Actions`:
 | `KEY_ALIAS` | Alias of the key in keystore |
 | `FIREBASE_APP_ID` | Android App ID from Firebase |
 | `FIREBASE_SERVICE_CREDENTIALS` | Full Service Account JSON string for Firebase |
+| `FIREBASE_PROJECT_ID` | Project ID (e.g., `mobile-flutter-template`) |
+| `GOOGLE_API_KEY_ANDROID` | Google API Key for Android services |
+| `GOOGLE_API_KEY_IOS` | Google API Key for iOS services |
 
 ### 2. iOS & TestFlight (App Store Connect API)
 
@@ -67,6 +70,20 @@ Paste this into the `KEYSTORE_BASE64` secret.
 2.  Generate an **App Store Connect API Key** (Admin or App Manager access).
 3.  Download the `.p8` file, encode it to base64, and add to GitHub Secrets.
 4.  Update `ios/fastlane/Appfile` with your `team_id` and `itc_team_id`.
+
+---
+
+## Environment & Secret Injection
+
+To prevent sensitive keys from leaking in public repositories, this project uses an automated injection system.
+
+### How it works:
+1.  **Templates**: Native config files (`google-services.json`, `GoogleService-Info.plist`) are stored as `.template` files with placeholders like `{{GOOGLE_API_KEY_ANDROID}}`.
+2.  **Environment Files**: `.env` files in `env/` use placeholders like `YOUR_ANDROID_KEY_HERE`.
+3.  **CI Injection**: The GitHub Action (`flutter-setup`) automatically:
+    - Creates missing `.env` and native files from their templates.
+    - Uses `perl` to swap placeholders with real values from **GitHub Secrets**.
+4.  **Local Development**: Run `melos run setup:firebase` to generate local config files from templates. You can then manually fill in your local `.env` files (which are ignored by Git).
 
 ---
 
