@@ -149,6 +149,14 @@ melos:
       description: Run bootstrap followed by code generation.
       run: flutter pub get && melos run gen && flutter pub run build_runner build --delete-conflicting-outputs
 
+    analyze:
+      description: Analyze all packages in the workspace.
+      run: melos exec -- "flutter analyze"
+
+    test:
+      description: Run tests for all packages in the workspace.
+      run: melos exec --dir-exists="test" -- "flutter test"
+
     setup:firebase:
       description: Initialize Firebase configuration files from templates.
       run: |
