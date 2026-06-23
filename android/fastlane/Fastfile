@@ -8,7 +8,7 @@ platform :android do
 
     # 1. Generate code (run from root directory)
     # Use direct Flutter command instead of melos to avoid PATH issues
-    sh("cd ../.. && flutter pub run build_runner build --delete-conflicting-outputs")
+    sh("cd ../.. && melos run gen")
 
     # 2. Build the Flutter App Bundle
     # We move up to the root to run flutter commands
@@ -22,14 +22,15 @@ platform :android do
       groups: ENV["FIREBASE_GROUPS"] || "testers",
       release_notes: "Built with Fastlane from CI",
       android_artifact_type: "AAB",
-      android_artifact_path: "../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab"
+      android_artifact_path: "../../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab",
+      service_credentials_file: ENV["FIREBASE_SERVICE_CREDENTIALS_PATH"]
     )
   end
 
   desc "Build and sign the release AAB for Play Store"
   lane :build_release do
     # 1. Generate code (run from root directory)
-    sh("cd ../.. && flutter pub run build_runner build --delete-conflicting-outputs")
+    sh("cd ../.. && melos run gen")
     
     # 2. Build the Flutter App Bundle
     sh("cd ../.. && flutter build appbundle --release --flavor prod")

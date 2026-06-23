@@ -7,7 +7,7 @@ platform :ios do
 
     # 1. Generate code (run from root directory)
     # Use direct Flutter command instead of melos to avoid PATH issues
-    sh("cd ../.. && flutter pub run build_runner build --delete-conflicting-outputs")
+    sh("cd ../.. && melos run gen")
 
     # 2. Setup API Key (to bypass 2FA)
     api_key = app_store_connect_api_key(
@@ -28,14 +28,14 @@ platform :ios do
       include_bitcode: false,
       export_method: "app-store",
       api_key: api_key,
-      output_directory: "../build/ios/ipa",
+      output_directory: "../../build/ios/ipa",
       output_name: "Runner.ipa"
     )
 
     # 5. Upload to TestFlight (Pilot)
     upload_to_testflight(
       api_key: api_key,
-      ipa: "../build/ios/ipa/Runner.ipa",
+      ipa: "../../build/ios/ipa/Runner.ipa",
       skip_waiting_for_build_processing: true,
       skip_submission: true
     )

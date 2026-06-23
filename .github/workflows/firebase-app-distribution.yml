@@ -1,23 +1,10 @@
 name: CI/CD Pipeline
 
-# TEMPORARILY DISABLED - Comment out triggers to prevent auto-runs and notifications
-# on:
-#   push:
-#     branches: [ main ]
-#   pull_request:
-#     branches: [ main ]
-#   workflow_dispatch:
-#     inputs:
-#       flavor:
-#         description: 'App flavor'
-#         required: true
-#         default: 'uat'
-#         type: choice
-#         options: [ free, uat, prod ]
-
-# TEMPORARILY DISABLED - Add condition to prevent any job from running
-# Uncomment the 'on:' section above and remove this 'if:' condition to re-enable
 on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
     inputs:
       flavor:
@@ -26,15 +13,9 @@ on:
         default: 'uat'
         type: choice
         options: [ free, uat, prod ]
-      enable_ci:
-        description: 'Enable CI/CD pipeline'
-        required: true
-        default: 'false'
-        type: choice
-        options: [ 'true', 'false' ]
 
 env:
-  FLUTTER_VERSION: '3.41.9'
+  FLUTTER_VERSION: '3.44.3'
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -48,7 +29,7 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
       - name: Lint & Test
         run: |
-          melos run gen-legacy
+          melos run gen
           melos run analyze
           melos run test
 
@@ -76,13 +57,15 @@ jobs:
           EOF
 
       - name: Generate Code
-        run: melos run gen-legacy
+        run: melos run gen
 
       - name: Fastlane Distribute
-        run: cd android && bundle exec fastlane distribute_firebase flavor:${{ github.event.inputs.flavor || 'uat' }}
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_CREDENTIALS }}" > firebase_credentials.json
+          cd android && bundle exec fastlane distribute_firebase flavor:${{ github.event.inputs.flavor || 'uat' }}
         env:
           FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID }}
-          FIREBASE_SERVICE_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_CREDENTIALS }}
+          FIREBASE_SERVICE_CREDENTIALS_PATH: ../firebase_credentials.json
 
   # 3. iOS Deployment: Only on Main or Dispatch.
   ios-distribute:
@@ -97,7 +80,7 @@ jobs:
           ruby-dir: 'ios'
 
       - name: Generate Code
-        run: melos run gen-legacy
+        run: melos run gen
 
       - name: Fastlane TestFlight
         run: cd ios && bundle exec fastlane beta flavor:${{ github.event.inputs.flavor || 'uat' }}
@@ -118,6 +101,6 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           setup-java: 'true'
       - name: Generate Code
-        run: melos run gen-legacy
+        run: melos run gen
       - name: Compile Check
         run: flutter build appbundle --release --flavor free
