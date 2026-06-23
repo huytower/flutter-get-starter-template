@@ -10,6 +10,15 @@ inputs:
   ruby-dir:
     description: 'Directory containing Gemfile'
     required: false
+  google-api-key-android:
+    description: 'Google API Key for Android'
+    required: false
+  google-api-key-ios:
+    description: 'Google API Key for iOS'
+    required: false
+  firebase-project-id:
+    description: 'Firebase Project ID'
+    required: false
 
 runs:
   using: "composite"
@@ -31,6 +40,49 @@ runs:
       run: |
         dart pub global activate melos
         echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+
+    - name: Ensure Environment Files Exist
+      shell: bash
+      run: |
+        mkdir -p env
+        [ -f env/.env.development ] || cp env/.env.example env/.env.development
+        [ -f env/.env.uat ] || cp env/.env.example env/.env.uat
+        [ -f env/.env.prod ] || cp env/.env.example env/.env.prod
+        
+        # Initialize native config files from templates to avoid "file not found" errors in CI
+        find . -name "*.template" | while read -r template; do
+          target="${template%.template}"
+          if [ ! -f "$target" ]; then
+            # Ensure target directory exists
+            mkdir -p "$(dirname "$target")"
+            cp "$template" "$target"
+            echo "Created $target from template"
+          fi
+        done
+
+    - name: Inject Secrets
+      shell: bash
+      run: |
+        # Inject secrets into .env files and native templates
+        # We use perl for cross-platform compatibility (Linux/macOS)
+        
+        inject_secret() {
+          local key=$1
+          local val=$2
+          local placeholder_env=$3
+          
+          if [ -n "$val" ]; then
+            echo "Injecting $key..."
+            # Replace in .env files (handles the text placeholders)
+            find env -type f -name ".env.*" -exec perl -pi -e "s/$placeholder_env/$val/g" {} +
+            # Replace {{KEY}} style placeholders in all files
+            find . -type f -not -path '*/.*' -exec perl -pi -e "s/\{\{$key\}\}/$val/g" {} +
+          fi
+        }
+
+        inject_secret "GOOGLE_API_KEY_ANDROID" "${{ inputs.google-api-key-android }}" "YOUR_ANDROID_KEY_HERE"
+        inject_secret "GOOGLE_API_KEY_IOS" "${{ inputs.google-api-key-ios }}" "YOUR_IOS_KEY_HERE"
+        inject_secret "FIREBASE_PROJECT_ID" "${{ inputs.firebase-project-id }}" "your-project-id"
 
     - name: Bootstrap Workspace
       shell: bash

@@ -29,6 +29,9 @@ jobs:
       - uses: ./.github/actions/flutter-setup
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
+          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
+          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
+          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
       - name: Lint & Test
         run: |
           melos run gen
@@ -47,6 +50,9 @@ jobs:
       - uses: ./.github/actions/flutter-setup
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
+          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
+          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
+          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
           setup-java: 'true'
           ruby-dir: 'android'
       
@@ -83,6 +89,9 @@ jobs:
       - uses: ./.github/actions/flutter-setup
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
+          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
+          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
+          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
           ruby-dir: 'ios'
 
       - name: Generate Code
@@ -107,6 +116,9 @@ jobs:
       - uses: ./.github/actions/flutter-setup
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
+          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
+          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
+          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
           setup-java: 'true'
       - name: Generate Code
         run: melos run gen

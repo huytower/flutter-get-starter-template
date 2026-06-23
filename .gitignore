@@ -19,11 +19,9 @@ DerivedData/
 # Environment variables
 .env
 .env.*
+env/.env.*
 !.env.example
 !env/.env.example
-!env/.env.development
-!env/.env.uat
-!env/.env.prod
 
 # Block the native configuration files from being tracked
 android/app/src/free/google-services.json
