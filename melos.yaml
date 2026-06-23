@@ -14,6 +14,24 @@ scripts:
     description: Run bootstrap followed by code generation.
     run: flutter pub get && melos exec --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs" && flutter pub run build_runner build --delete-conflicting-outputs
 
+  analyze:
+    description: Analyze all packages in the workspace.
+    run: melos exec -- "flutter analyze"
+
+  test:
+    description: Run tests for all packages in the workspace.
+    run: melos exec --dir-exists="test" -- "flutter test"
+
+  gen:
+    description: Generate code for all packages and the root project.
+    run: |
+      melos exec --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs"
+      flutter pub run build_runner build --delete-conflicting-outputs
+
+  gen-legacy:
+    description: Alias for gen.
+    run: melos run gen
+
   setup:firebase:
     description: Initialize Firebase configuration files from templates.
     run: |

@@ -2,8 +2,13 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude:
+    - "**/*.g.dart"
+    - "**/*.gr.dart"
+    - "**/*.config.dart"
+    - "**/*.freezed.dart"
     - module/ui/lib/extension/logger.dart
   errors:
+    unused_field: ignore
     avoid_empty_else: error
     no_leading_underscores_for_local_identifiers: ignore
     non_constant_identifier_names: ignore
