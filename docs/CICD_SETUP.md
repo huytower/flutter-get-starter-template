@@ -15,6 +15,7 @@ The CI/CD pipeline automatically:
 2.  **Firebase Project** for Android testing.
 3.  **Apple Developer Program** membership for TestFlight.
 4.  **Melos** installed locally for management (`dart pub global activate melos`).
+5.  **Submodules**: This project uses submodules (e.g., `cc_core_sdk`). Ensure they are initialized locally (`git submodule update --init --recursive`).
 
 ---
 
@@ -31,7 +32,7 @@ Configure these secrets in `Settings > Secrets and variables > Actions`:
 | `KEY_PASSWORD` | Password for the key |
 | `KEY_ALIAS` | Alias of the key in keystore |
 | `FIREBASE_APP_ID` | Android App ID from Firebase |
-| `FIREBASE_SERVICE_CREDENTIALS` | Service Account JSON for Firebase |
+| `FIREBASE_SERVICE_CREDENTIALS` | Full Service Account JSON string for Firebase |
 
 ### 2. iOS & TestFlight (App Store Connect API)
 
@@ -46,7 +47,8 @@ Configure these secrets in `Settings > Secrets and variables > Actions`:
 ## Setup Steps
 
 ### 1. Workspace Management (Melos)
-This project is modular. Locally, always run:
+This project is modular and uses **Flutter Workspaces**. Melos scripts are defined in `pubspec.yaml`.
+Locally, always run:
 ```bash
 melos bootstrap
 ```
@@ -87,12 +89,15 @@ The pipeline is defined in `.github/workflows/firebase-app-distribution.yml` and
 
 ## Troubleshooting
 
+### Submodule Issues
+- If the CI fails during checkout with "not our ref", ensure all local commits in `cc_core_sdk` (or other submodules) have been pushed to their respective remote repositories.
+
 ### Melos Issues
-- If dependencies aren't found, run `melos bootstrap`.
+- If scripts aren't found, check the `melos:` section in the root `pubspec.yaml`.
 - To run code gen everywhere: `melos run gen`.
 
 ### Fastlane Errors
-- **Android**: Verify `FIREBASE_SERVICE_CREDENTIALS` is the full JSON string.
+- **Android**: Ensure `FIREBASE_SERVICE_CREDENTIALS` is the full JSON string. The CI converts this to a file automatically.
 - **iOS**: If upload fails, check if the `APP_STORE_CONNECT_KEY_CONTENT` base64 string includes the "BEGIN/END" headers (it should).
 
 ### Local Testing
@@ -109,4 +114,5 @@ cd ios && bundle exec fastlane beta flavor:uat
 
 ## Maintenance
 - **Flutter Version**: Update `FLUTTER_VERSION` in the `.yml` file.
-- **Tools**: The setup logic is shared in `.github/actions/flutter-setup/action.yml`. Update there to affect all jobs.
+- **Tools**: The setup logic is shared in `.github/actions/flutter-setup/action.yml`.
+- **Linting**: Static analysis rules are managed in the root `analysis_options.yaml`. Generated files are excluded by default to avoid CI noise.
