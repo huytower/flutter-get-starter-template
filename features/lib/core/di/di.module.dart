@@ -55,7 +55,7 @@ import 'package:features/features/counter/domain/usecases/decrement_counter_use_
 import 'package:features/features/counter/domain/usecases/get_counter_use_case.dart'
     as _i476;
 import 'package:features/features/counter/domain/usecases/increment_counter_use_case.dart'
-    as _i827;
+    as _i828;
 import 'package:features/features/counter/presentation/bloc/counter_bloc.dart'
     as _i8;
 import 'package:features/features/dashboard/presentation/bloc/dashboard_bloc.dart'
@@ -122,8 +122,8 @@ class FeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i678.DecrementCounterUseCase(gh<_i112.CounterRepository>()));
     gh.lazySingleton<_i476.GetCounterUseCase>(
         () => _i476.GetCounterUseCase(gh<_i112.CounterRepository>()));
-    gh.lazySingleton<_i827.IncrementCounterUseCase>(
-        () => _i827.IncrementCounterUseCase(gh<_i112.CounterRepository>()));
+    gh.lazySingleton<_i828.IncrementCounterUseCase>(
+        () => _i828.IncrementCounterUseCase(gh<_i112.CounterRepository>()));
     gh.lazySingleton<_i142.CcAuthenticateWithBiometrics>(() =>
         _i142.CcAuthenticateWithBiometrics(
             gh<_i85.CcBiometricAuthRepository>()));
@@ -133,7 +133,7 @@ class FeaturesPackageModule extends _i526.MicroPackageModule {
         ));
     gh.factory<_i8.CounterBloc>(() => _i8.CounterBloc(
           getCounterUseCase: gh<_i476.GetCounterUseCase>(),
-          incrementCounterUseCase: gh<_i827.IncrementCounterUseCase>(),
+          incrementCounterUseCase: gh<_i828.IncrementCounterUseCase>(),
           decrementCounterUseCase: gh<_i678.DecrementCounterUseCase>(),
         ));
   }
