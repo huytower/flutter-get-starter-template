@@ -12,7 +12,12 @@ workspace:
   - modules/data
   - modules/message
   - modules/theme
-  - features
+  - cc_core_sdk/cc_sdk
+  - cc_core_sdk/cc_sdk_ui
+  - cc_core_sdk/cc_mixin
+  - cc_core_sdk/cc_bridge
+  - cc_core_sdk/cc_sdk_data
+  - micro_features
 
 dependencies:
   app_config:
@@ -23,6 +28,8 @@ dependencies:
   catcher_2: ^2.1.9
   cc_mixin:
     path: cc_core_sdk/cc_mixin
+  cc_bridge:
+    path: cc_core_sdk/cc_bridge
   cc_sdk:
     path: cc_core_sdk/cc_sdk
   cc_sdk_ui:
@@ -47,8 +54,8 @@ dependencies:
   google_sign_in: ^7.2.0
   sign_in_with_apple: ^8.1.0
 
-  features:
-    path: features
+  micro_features:
+    path: micro_features
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1

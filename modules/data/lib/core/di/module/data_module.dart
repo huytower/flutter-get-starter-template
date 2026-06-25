@@ -9,8 +9,8 @@ import 'package:injectable/injectable.dart';
 import 'package:talker_dio_logger/talker_dio_logger_interceptor.dart';
 import 'package:talker_dio_logger/talker_dio_logger_settings.dart';
 
-import '../../config/retrofit/interceptors/cc_request_interceptor.dart';
-import '../../config/retrofit/interceptors/cc_response_interceptor.dart';
+import '../../config/retrofit/interceptors/request_interceptor.dart';
+import '../../config/retrofit/interceptors/response_interceptor.dart';
 
 @module
 abstract class DataModule {
@@ -47,15 +47,15 @@ abstract class DataModule {
 
   @singleton
   List<Interceptor> interceptors(
-    @Named("ccRequestInterceptor") Interceptor ccRequestInterceptor,
-    @Named("ccResponseInterceptor") Interceptor ccResponseInterceptor,
+    @Named("requestInterceptor") Interceptor requestInterceptor,
+    @Named("responseInterceptor") Interceptor responseInterceptor,
     @Named("curlLoggerInterceptor") Interceptor curlLoggerInterceptor,
     @Named("talkerDioLogger") Interceptor talkerDioLogger,
     @Named("cacheInterceptor") Interceptor cacheInterceptor,
   ) {
     return [
-      ccRequestInterceptor,
-      ccResponseInterceptor,
+      requestInterceptor,
+      responseInterceptor,
       if (CcFeatureFlags.isEnableLoggerDio) curlLoggerInterceptor,
       if (CcFeatureFlags.isEnableLoggerDio) talkerDioLogger,
       cacheInterceptor,
@@ -63,12 +63,12 @@ abstract class DataModule {
   }
 
   @singleton
-  @Named('ccRequestInterceptor')
-  Interceptor get ccRequestInterceptor => CcRequestInterceptor();
+  @Named('requestInterceptor')
+  Interceptor get requestInterceptor => RequestInterceptor();
 
   @singleton
-  @Named("ccResponseInterceptor")
-  Interceptor get ccResponseInterceptor => CcResponseInterceptor();
+  @Named("responseInterceptor")
+  Interceptor get responseInterceptor => ResponseInterceptor();
 
   @singleton
   @Named("curlLoggerInterceptor")

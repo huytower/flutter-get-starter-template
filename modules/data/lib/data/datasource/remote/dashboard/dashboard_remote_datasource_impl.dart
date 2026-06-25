@@ -1,6 +1,6 @@
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/config/retrofit/response/body/cc_res_body_model.dart';
+import '../../../../core/config/retrofit/response/body/res_body_model.dart';
 import '../../../../domain/entities/dashboard/dashboard_entity.dart';
 import '../../../models/dashboard/dashboard_model.dart';
 import 'dashboard_remote_datasource.dart';
@@ -37,10 +37,10 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       "total": 1,
     };
 
-    // Demonstrating the use of CcResBodyModel for parsing
+    // Demonstrating the use of ResBodyModel for parsing
     // In a real Retrofit implementation, the CcResponseInterceptor would handle this peeling,
     // but we can also use it manually for robust parsing.
-    final body = CcResBodyModel<DashboardModel>.fromJson(mockJsonResponse);
+    final body = ResBodyModel<DashboardModel>.fromJson(mockJsonResponse);
     body.flatMapToList((json) => DashboardModel.fromJson(json));
 
     if (body.isSuccess && body.firstElement != null) {
