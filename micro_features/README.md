@@ -1,117 +1,67 @@
-# Features Library
+# Micro-Features Library
 
-A collection of reusable, modular feature packages following CLEAN architecture and SOLID principles.
+A collection of **project-blind, reusable Micro-Features** following the Hybrid-Modular Super App architecture. These are standalone business verticals (Feature-as-a-Service) designed to be shared across multiple enterprise applications.
+
+## 🎯 The "Global Lego" Principle
+
+Micro-Features are engineered as independent blocks. They follow two strict rules:
+1.  **Project-Blind**: They must NEVER depend on the App Shell (`lib/`) or app-specific data modules. They only communicate via interfaces (Dependency Inversion).
+2.  **State-Management Agnostic Core**: While they may use Bloc or GetX in their `presentation/` layer, their business logic (domain/data) is strictly decoupled and agnostic.
 
 ## 📁 Directory Structure
 
 ```
 lib/
-├── core/                  # Shared code across features
-│   ├── constants/        # App-wide constants
-│   ├── di/               # Dependency injection setup (Injectable)
-│   └── utils/            # Shared utilities
+├── core/                  # Shared logic within micro_features
+│   ├── di/               # Local Micro-Package DI registration
+│   └── navigation/       # Feature-specific routing (AutoRoute)
 │
-├── {feature_name}/        # Feature modules (lowercase with underscores)
+├── {feature_name}/        # Micro-Feature module (snake_case)
 │   ├── data/
-│   │   ├── datasources/  # Data sources (API, local storage, etc.)
+│   │   ├── datasources/  # Remote/Local data fetchers
+│   │   ├── models/       # JSON DTOs (Data Transfer Objects)
 │   │   └── repositories/ # Repository implementations
 │   │
 │   ├── domain/
-│   │   ├── entities/     # Business objects
-│   │   ├── repositories/ # Repository contracts
-│   │   └── usecases/    # Business logic
+│   │   ├── entities/     # Project-agnostic business objects
+│   │   ├── repositories/ # Abstract repository contracts
+│   │   └── usecases/     # Pure business logic (suffix: _usecase.dart)
 │   │
 │   ├── presentation/
-│   │   ├── bloc/        # State management (Bloc/Cubit)
-│   │   ├── pages/       # Feature screens
-│   │   └── widgets/     # Reusable UI components
+│   │   ├── bloc/        # State management (Bloc/Cubit/GetX)
+│   │   ├── pages/       # Feature screens (suffix: _page.dart)
+│   │   └── widgets/     # Feature-specific sub-widgets
 │   │
-│   ├── {feature_name}_init.dart    # Initialization logic
-│   └── {feature_name}_export.dart  # Public API exports
+│   └── export_{name}.dart  # Single public API export for the feature
 │
-└── export_features.dart          # Root export for all features
+└── export_micro_features.dart  # Root export for all micro-features
 ```
 
-## 🚀 Getting Started
+## 🏗️ Dependency Inversion (Interface-Driven)
 
-### Adding to Your Project
+If a Micro-Feature needs to access project-specific data (e.g., an app-specific Auth implementation), it MUST NOT import it. Instead:
+1.  Define an `abstract class` (Interface) in the Micro-Feature's `domain/repositories/`.
+2.  The App Shell (`lib/`) or local `modules/data` implements this interface.
+3.  Inject the implementation via DI during the App Shell's startup.
 
-Add this to your app's `pubspec.yaml`:
+## 🚀 Development Workflow
 
-```yaml
-dependencies:
-  features:
-    path: features
-```
+### Adding a New Micro-Feature
+1.  Create a folder under `lib/features/`.
+2.  Follow the **Suffix-First** naming convention (e.g., `login_usecase.dart`).
+3.  Implement the three CLEAN layers.
+4.  Export the feature via `export_{name}.dart` and register it in `export_micro_features.dart`.
+5.  Run code generation:
+    ```bash
+    melos run gen
+    ```
 
-### Creating a New Feature
+## 📦 Core Dependencies
+- `cc_core_sdk`: The engine for logic and UI.
+- `injectable` & `get_it`: For modular dependency management.
+- `auto_route`: For cross-feature navigation.
+- `multiple_result`: For functional error handling.
 
-1. **Use the template**: Copy an existing feature (like `counter`) as a starting point.
-2. **Rename files and classes**: Update all references to match your feature name.
-3. **Implement layers**:
-    - `data/`: Implement data sources and repositories.
-    - `domain/`: Define entities, repository interfaces, and use cases.
-    - `presentation/`: Build UI and state management logic.
-4. **Set up DI**: Use `@injectable`, `@lazySingleton`, or `@factory` annotations on your classes.
-5. **Register Exports**:
-    - Add your internal files to `{feature_name}_export.dart`.
-    - Export the feature from the root `lib/export_features.dart`.
-6. **Generate Code**: Run `build_runner` to update the DI configuration.
-
-## 🏗️ Dependency Injection
-
-This library uses `injectable` for automated dependency injection.
-
-- **Implementation**: Annotate your implementation classes (e.g., `@LazySingleton(as: MyRepository)`).
-- **Core Config**: Located in `lib/core/di/di.dart`.
-- **Async Deps**: Use `@preResolve` in `ExternalModule` (e.g., for `SharedPreferences`).
-
-## 🧪 Testing
-
-Each feature should include tests for:
-
-- Data layer (repositories, data sources)
-- Domain layer (use cases, entities)
-- Presentation layer (widgets, controllers)
-
-Example test structure:
-
-```
-test/
-  ├── {feature_name}_test/
-  │   ├── data/
-  │   ├── domain/
-  │   └── presentation/
-  └── test_helpers/     # Test utilities and mocks
-```
-
-## 📦 Dependencies
-
-Core dependencies used across features:
-
-- `get_it`: Service locator
-- `injectable`: Code generation for dependency injection
-- `equatable`: Value equality
-- `dio`: HTTP client
-- `flutter_bloc`: State management
-- `shared_preferences`: Local storage
-
-## 🔄 State Management
-
-Features should use `Bloc` or `Cubit` for state management to maintain consistency across the project.
-
-## 📝 Code Generation
-
-Run build_runner after making changes to DI or JSON serialization:
-
-```bash
-cd features
-flutter pub run build_runner build --delete-conflicting-outputs
-```
-
-## 🔗 Related Libraries
-
-- `cc_sdk_ui`: UI component library used across apps and features.
-  See [cc_core_sdk/cc_sdk_ui/README.md](../cc_core_sdk/cc_sdk_ui/README.md) for usage and examples.
-- `cc_sdk`: Core SDK utilities and shared services used by features.
-  See [cc_core_sdk/cc_sdk/README.md](../cc_core_sdk/cc_sdk/README.md).
+## 🔗 Related SDKs
+- [cc_sdk_ui](../cc_core_sdk/cc_sdk_ui/README.md): Design System.
+- [cc_sdk](../cc_core_sdk/cc_sdk/README.md): Core Utilities.

@@ -37,7 +37,7 @@ To set up Firebase for local development:
 
 2. `lib/core/di/inject/inject.dart`
    - Global DI assembly
-   - Includes module DI from `features`, `modules/data`, `modules/app_config`, etc.
+   - Includes module DI from `micro_features`, `modules/data`, `modules/app_config`, etc.
 
 3. `micro_features/lib/export_micro_features.dart`
    - Exports reusable feature packages
@@ -78,9 +78,9 @@ Each feature should generally follow this structure:
 ### Example: crash_log feature
 
 The crash log viewer was moved into:
-- `features/lib/features/crash_log/crash_log_viewer_page.dart`
-- `features/lib/features/crash_log/crash_log_dev_overlay.dart`
-- `features/lib/features/crash_log/export_crash_log.dart`
+- `micro_features/lib/features/crash_log/crash_log_viewer_page.dart`
+- `micro_features/lib/features/crash_log/crash_log_dev_overlay.dart`
+- `micro_features/lib/features/crash_log/export_crash_log.dart`
 
 Use the feature package import:
 ```dart
@@ -104,7 +104,7 @@ import 'package:micro_features/features/crash_log/export_crash_log.dart';
 2. Identify the related module/package.
    - UI/UX changes often live in `lib/presentation` or `cc_core_sdk/cc_sdk_ui`
    - Domain logic changes often live in `modules/data` or feature domain folders
-   - Reusable feature changes often live in `features`
+   - Reusable feature changes often live in `micro_features`
 3. Find the DI entry points.
 4. Confirm current behavior by running the app or using existing examples.
 5. Make the change, then run `flutter analyze`.

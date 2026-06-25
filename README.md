@@ -1,170 +1,68 @@
-# Flutter Get Starter Template
+# Flutter Hybrid-Modular Super App Template
 
-A modular starter kit built around **Clean Architecture** and **SOLID** principles. Designed to help junior and new developers find the right entry points, understand module boundaries, and extend the app safely.
+A production-ready modular starter kit built around **Clean Architecture**, **SOLID principles**, and a **Hybrid-Modular Super App** vision. Designed for enterprise-scale applications where features are treated as independent, reusable "Micro-Features."
 
-## 🎯 Critical Architecture Principle: State-Management Agnostic Design
+## 🚀 Architectural Vision: The Super App Ecosystem
 
-**Core libraries (cc_sdk, cc_sdk_ui, cc_mixin, features) MUST be state-management agnostic.**
+This project is engineered as an ecosystem of independent Lego blocks rather than a single monolithic application. The architecture is split into three rigid layers:
 
-This project enforces a **state-management agnostic design** principle for all core libraries. This ensures that core components work with GetX or Bloc without being tied to a specific one.
+1.  **App Shell (Host/Container)**: The lightweight `lib/` shell responsible for startup, security checks, routing, and dynamic orchestration of sub-features.
+2.  **Micro-Features (Feature-as-a-Service)**: Located in `micro_features/`, these are standalone, project-blind business verticals (e.g., Auth, Pay, Loyalty). They are designed to be "Global Lego Blocks" reusable across multiple different enterprise projects.
+3.  **Shared Core Layer (Core SDK)**: Located in `cc_core_sdk/`, this is the "Universal Logic Layer" (Auth, Network, Encryption, Data Persistence). It is designed to mirror KMP (Kotlin Multiplatform) logic, making it ready for cross-platform binary sharing.
 
-### Why State-Management Agnostic Design Matters
+## 🎯 Critical Principle: State-Management Agnostic & Project-Blind
 
-- **Flexibility**: Teams can choose different state management approaches for different features
-- **Reusability**: Components can be reused across projects with different state management preferences
-- **Future-Proof**: Easy to migrate between state management libraries as needs change
-- **Team Autonomy**: Different teams can work independently without state management conflicts
-- **Testing**: Pure, stateless components are easier to test in isolation
+**Core libraries (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`) and `micro_features` MUST be state-management agnostic and 100% project-blind.**
 
-### Key Guidelines
+### Why This Matters
+-   **Zero Regression**: A change in the Booking flow cannot break the Payment gateway because they are isolated modules.
+-   **Parallel Development**: Different teams can work on different Micro-Features simultaneously without merge conflicts.
+-   **Infinite Reusability**: You can pick up `micro_features/auth` and drop it into a completely different App Shell tomorrow with zero modifications.
 
-#### ✅ ALLOWED in Core Libraries (cc_sdk, cc_sdk_ui, cc_mixin, features):
-- Pure data classes (models, entities)
-- Utility functions and helpers
-- Network utilities and interceptors
-- Form validators (pure logic)
-- Mixins with required/optional methods
-- Interfaces and abstract classes
-- Callback-based widgets
+### Key Guidelines for Micro-Features
+-   ✅ **ALLOWED**: Imports from `cc_core_sdk` and 3rd party utilities.
+-   ❌ **FORBIDDEN**: Imports from the App Shell (`lib/`) or app-specific modules (`modules/data`).
+-   **Interface-Driven**: Micro-Features define their own `Repository` contracts. The App Shell or Data module implements these and injects them via DI.
 
-#### ❌ NOT ALLOWED in Core Libraries (cc_sdk, cc_sdk_ui, cc_mixin, features):
-- GetX controllers and reactive variables
-- Bloc cubits and blocs
-- Provider state management
-- Riverpod providers
-- State management-specific widgets
-
-#### ✅ ALLOWED in Presentation Layer (lib/presentation):
-- GetX controllers and reactive variables
-- Bloc cubits and blocs
-- Provider state management
-- Any state management approach of choice
-
-**See `docs/AI_CONTEXT.md` for comprehensive guidelines, architecture details, and development rules.**
-
-## Development Requirements
-
-- **Flutter:** 3.41.9 or higher
-- **Dart:** 3.11.5 or higher
-- **Melos:** 7.8.0 (workspace version)
-- **Code Generation:** Required for Hive adapters, JSON serialization, DI setup
-
-## Quick start for new developers
-
-1. Read `docs/AI_CONTEXT.md` for architecture overview and **state-management agnostic design principles**.
-2. Ensure you have Flutter 3.41.9+ and Dart 3.11.5+ installed
-3. Run `melos bootstrap` to set up the workspace
-4. Run `melos run setup:firebase` to initialize Firebase configuration files
-5. Run `melos run gen` to generate code for Hive adapters, JSON serialization, etc.
-6. Open `lib/main.dart` to follow app startup and feature wiring.
-6. Inspect `lib/core/di/di.dart` for global dependency registration.
-7. Explore `modules/` for app-specific domain/data modules.
-8. Explore `features/lib/export_features.dart` for reusable feature packages.
-9. Read `docs/onboarding.md` for step-by-step developer onboarding.
-10. Use `docs/CONTRIBUTING.md` for workflow, code review, and documentation sync rules.
-
-## Development Workflow
-
-```bash
-# Bootstrap the workspace
-melos bootstrap
-
-# Generate code (after adding new models, adapters, or DI annotations)
-melos run gen
-
-# Run analysis
-melos run analyze
-
-# Run tests
-melos run test
-
-# Clean and rebuild
-melos clean
-melos bootstrap
-melos run gen
-```
-
-## CI/CD Setup
-
-This project uses **Melos 7.x.x** with pub workspaces for monorepo management. The CI/CD pipeline requires:
-
-1. **Flutter 3.41.9+** with Dart 3.11.5+ for workspace compatibility
-2. **Code generation** runs before analysis to ensure generated files are available
-3. **Generated files** are committed for app_config and data modules (.g.dart files)
-4. **Analysis rules** configured for generated file compatibility
-
-### CI Configuration
-
-- **Workspace:** Melos 7.x.x pub workspaces (no melos.yaml, uses pubspec.yaml workspace config)
-- **Global Melos activation:** Required for script compatibility in CI
-- **Generated files:** Selected modules commit generated files for analysis
-- **Lint rules:** `prefer_relative_imports` disabled for generated files
-
-## Project Structure
+## 🛠 Project Structure
 
 ```
 flutter-get-starter-template/
-├── lib/                          # Main app code
-│   ├── core/                     # Core app logic
-│   ├── data/                     # Data layer
-│   ├── presentation/             # UI layer
-│   └── main*.dart               # Entry points
-├── modules/                      # App-specific modules
-│   ├── app_config/              # Configuration, DI, storage
-│   ├── data/                    # Data sources, repositories
-│   ├── message/                 # i18n/localization
-│   └── theme/                   # Theming system
-├── cc_core_sdk/                  # Reusable libraries
-│   ├── cc_sdk/                  # Core SDK
-│   ├── cc_sdk_ui/               # UI component library
-│   ├── cc_mixin/                # Reusable mixins
-│   └── features/                # Modular feature packages
-└── docs/                        # Documentation
+├── lib/                          # App Shell (Project-Specific)
+│   ├── core/                     # Startup, DI orchestration, Global Router
+│   ├── data/                     # Project-specific data implementations
+│   └── presentation/             # Local glue logic and UI
+├── micro_features/               # Global Reusable Features (Project-Blind)
+│   ├── auth/                     # Auth Micro-Feature
+│   ├── counter/                  # Counter Micro-Feature
+│   └── ...                       # Other business verticals
+├── cc_core_sdk/                  # Shared Core SDK (Universal Engine)
+│   ├── cc_sdk/                  # Pure Logic, Network, Failures
+│   ├── cc_sdk_ui/               # Design System & UI Components
+│   └── cc_mixin/                # Reusable Behaviors
+├── modules/                      # App Support Modules
+│   ├── app_config/              # Env, Storage, Global DI
+│   ├── theme/                   # Brand Design Tokens (EB Garamond)
+│   └── message/                 # Centralized i18n
+└── docs/                        # Architecture & Onboarding Docs
 ```
 
-## Key Libraries & Modules
+## 🏗 Naming Convention (Suffix-First)
 
-### Core Libraries
+To prevent name collisions in a Super App, we enforce strict suffixing:
+-   **Entities**: `*_entity.dart`
+-   **UseCases**: `*_usecase.dart`
+-   **Repositories**: `*_repository.dart` (Interface) / `*_repository_impl.dart`
+-   **Models**: `*_model.dart`
+-   **Pages**: `*_page.dart`
+-   **State Management**: `*_bloc.dart` / `*_state.dart`
 
-- **cc_sdk**: Core SDK functionality (network, device info, failures, utilities)
-- **cc_sdk_ui**: Reusable UI components (buttons, forms, dialogs, navigation, theming)
-- **cc_mixin**: Reusable mixins (navigation, validation, lifecycle patterns)
-- **features**: Modular feature packages (auth, counter, etc.)
+## 🚦 Quick Start
 
-### App Modules
+1.  Read `docs/AI_CONTEXT.md` for the full "Constitution" of this project.
+2.  Run `melos bootstrap` to set up the workspace.
+3.  Run `melos run setup:firebase` to initialize config templates.
+4.  Run `melos run gen` to generate all DI and serialization code.
 
-- **app_config**: Application configuration, DI, and storage
-- **data**: Data layer configuration, repositories, data sources
-- **theme**: Theming system
-- **message**: Internationalization (i18n) and localization
-
-## Libraries & Tools Used
-
-- [melos](https://pub.dev/packages/melos) - Monorepo management with pub workspaces
-- [getx](https://pub.dev/packages/get) - State management
-- [bloc](https://pub.dev/packages/bloc) - State management
-- [get_it](https://pub.dev/packages/get_it) - Service locator
-- [injectable](https://pub.dev/packages/injectable) - DI code generation
-- [retrofit](https://pub.dev/packages/retrofit) - HTTP client
-- [build_runner](https://pub.dev/packages/build_runner) - Code generation
-- [json_serializable](https://pub.dev/packages/json_serializable) - JSON serialization
-
-## Documentation
-
-- **AI_CONTEXT.md**: Architecture guidelines, development rules, and AI instructions
-- **onboarding.md**: Step-by-step developer onboarding guide
-- **CONTRIBUTING.md**: Workflow, code review, and documentation rules
-
-## Architecture Principles
-
-### Clean Architecture
-- **Domain Layer**: Business logic, use cases, entities, repository interfaces
-- **Data Layer**: Data sources (remote/local), repository implementations
-- **Presentation Layer**: UI components, pages, widgets
-
-### SOLID Principles
-- **Single Responsibility**: Each class/module has one reason to change
-- **Open/Closed**: Open for extension, closed for modification
-- **Liskov Substitution**: Subtypes must be substitutable for base types
-- **Interface Segregation**: Clients shouldn't depend on unused interfaces
-- **Dependency Inversion**: Depend on abstractions, not concretions
+---
+**See `docs/onboarding.md` for a step-by-step developer guide.**

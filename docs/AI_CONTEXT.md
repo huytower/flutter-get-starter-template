@@ -6,176 +6,128 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
 
 ## AI Guidelines & Strategic Guardrails
 
-1. **State-Management Agnostic Design (CRITICAL)**: All components in `cc_sdk`, `cc_sdk_ui`, `cc_mixin`, and `micro_features` MUST be state-management agnostic. Components must work with GetX or Bloc without being tied to a specific one.
+1. **Hybrid-Modular Super App Design (CRITICAL)**: The project is divided into three distinct layers:
+    - **App Shell (Host)**: The `lib/` folder. Contains project-specific glue code, startup logic, and orchestration.
+    - **Micro-Features (Global Legos)**: The `micro_features/` folder. Project-blind business verticals (Auth, Pay, etc.) reusable across different enterprise apps.
+    - **Shared Core (Engine)**: The `cc_core_sdk/` folder. Universal logic (Network, Auth logic, Design System).
 
-   **Requirements:**
-   - Core SDK libraries must not depend on specific state management libraries
-   - Use mixins to provide reusable functionality across GetX and Bloc
-   - Use required/optional methods for implementation details with default implementations
-   - Use dependency injection to inject implementations rather than hard-coding state management
+2. **Project-Blind Dependency Rules (STRICT)**:
+    - Components in `micro_features/` **MUST NOT** import from `lib/` (App Shell) or `modules/data` (Project-specific data).
+    - Micro-Features define their own `Repository` interfaces in their `domain/` layer.
+    - The App Shell or local `modules/data` implements these interfaces and injects them via DI.
+    - This ensures a Micro-Feature can be moved to a different project without code changes.
 
-2. **Architecture Respect**: Maintain existing patterns and architecture. Propose refactors only when requested or essential for new feature stability.
+3. **State-Management Agnostic Core (STRICT)**:
+    - `cc_sdk`, `cc_sdk_ui`, and `cc_mixin` MUST NOT depend on specific state management (GetX/Bloc).
+    - Micro-Features may use state management (Bloc/GetX) in their `presentation/` layer, but their `domain/` and `data/` layers must remain agnostic.
 
-3. **Precise Scope**: Limit modifications strictly to files directly required for the current task.
+4. **Naming Convention (Suffix-First)**:
+    - To avoid name collisions in a Super App, use mandatory suffixes:
+        - Entities: `*_entity.dart`
+        - UseCases: `*_usecase.dart`
+        - Repositories (Contract): `*_repository.dart`
+        - Repositories (Impl): `*_repository_impl.dart`
+        - Models/DTOs: `*_model.dart`
+        - Pages: `*_page.dart`
+        - Bloc/Cubit: `*_bloc.dart` / `*_cubit.dart`
+        - State/Event: `*_state.dart` / `*_event.dart`
+    - Use `lower_snake_case` for all files.
 
-4. **Final-State Delivery**: Provide final, production-ready implementation immediately. Skip intermediate wrappers or temporary helper files.
+5. **Import Hygiene (CRITICAL)**:
+    - Always prefer centralized exports (e.g., `import 'package:micro_features/export_micro_features.dart'`).
+    - NEVER duplicate imports (e.g., do not import a centralized export AND a specific file from that same module).
+    - Import tokens/extensions directly only if not present in the centralized export.
+    - **Requirements:**
+        - Before adding imports, check if the required elements are already available through existing imports (especially `export_cc_sdk_ui.dart`)
+        - Prefer using centralized export files (e.g., `export_cc_sdk_ui.dart`, `export_cc_mixin.dart`) over individual file imports
+        - Remove unused imports after code changes
+        - Example: If importing from `cc_sdk_ui/export_cc_sdk_ui.dart`, do not also import from individual widget files or from modules that are already exported through cc_sdk_ui
+    - **Import Order Convention:** 1. Flutter/Dart SDK, 2. External packages, 3. Project modules, 4. Local relative imports.
 
-5. **SDK-First Component Reuse**: Prioritize components from `cc_core_sdk/cc_sdk_ui`.
+6. **Color & Typography (Single Source of Truth)**:
+    - **Colors**: Flow from `CcBaseColors` (Primitives) → `PrjColors` (Semantic Roles) → `context.ccColorScheme` (Widgets). NEVER hardcode hex colors or use `Colors.*` directly.
+    - **Typography**: Standardized on **EB Garamond**. Access via `context.ccTextTheme`. NEVER hardcode font sizes, weights, or families in widgets.
+    - **Localization**: Use `el.tr(CcLocaleKeys.key)` for ALL user-facing strings. No hardcoded strings.
+    - **Requirements:**
+        - **Adding a new color?** Add a primitive to `CcBaseColors` (SDK), then a mapping to `PrjColors` (App).
+        - **SDK Reuse**: `CcBaseColors` MUST stay project-agnostic. No 'actionPrimary' or 'textPrimary' in the SDK.
+        - **Project SSOT**: `PrjColors` is the ONLY place to change the project's brand identity.
+        - **Dark mode support**: Map dark specifics (like `darkSurface`) in `PrjColors` using the primitive gray scale.
+        - **Consistency**: Use `context.ccColorScheme.primary` in widgets to ensure automatic theme switching and modularity.
+        - **Typography Chain**: `CcTypographyParams` (tokens) → `CcTextStyle` (semantic) → `context.ccTextTheme` (widgets).
 
-6. **Clean Bootstrap Integrity**: Preserve `main.dart` as lean, service-only entry point (Env -> DI -> Hive -> Localization).
+7. **Multi-Screen & Orientation Support**:
+    - Use `context.respPadding()`, `context.respFontSize()`, and `context.respDim()` for all dimensions.
+    - Check `context.isPortrait` vs `context.isLandscape` for orientation-specific layouts.
+    - Use `CcResponsiveContainer` and `CcResponsiveFlex` for adaptive layouts.
+    - **Breakpoints:** Small Mobile (<360px), Mobile (360-600px), Tablet (600-900px), Desktop (>900px).
+    - **Orientation:** Test UI on both portrait and landscape. Consider orientation-specific layouts when beneficial.
 
-7. **Collaborative Evolution**: For structural changes (file movements, return type updates, DI shifts), present clear plan and proceed after developer confirmation.
+8. **Logging Strategy**:
+    - Use the `.Log()` extension from `cc_sdk` for all debug logging.
+    - NEVER use `print()` or `developer.log()` in production code.
+    - It handles environment-based silencing (via `CcFeatureFlags`), automatic serialization (via `ccGson`), and context capture.
 
-8. **Evidence-Based Implementation**: Use read_file and analyze_file to verify current structure before proposing changes.
+9. **Git Management & Code Organization**:
+    - Keep files focused (max 200-300 lines).
+    - Use Widget Composition to split large UIs into smaller components.
+    - Mark all possible constructors and widgets as `const`.
+    - Extract constants to dedicated files when needed.
+    - UI rendering methods (build methods), data transformation, validation, and navigation should be extracted.
 
-9. **Import Hygiene (CRITICAL)**: Avoid unnecessary imports to prevent linter warnings and maintain clean code.
+10. **Architecture Respect**: Maintain existing patterns and architecture. Propose refactors only when requested or essential for new feature stability.
 
-   **Requirements:**
-   - Before adding imports, check if the required elements are already available through existing imports (especially `export_cc_sdk_ui.dart`)
-   - Prefer using centralized export files (e.g., `export_cc_sdk_ui.dart`, `export_cc_mixin.dart`) over individual file imports
-   - Remove unused imports after code changes
-   - Example: If importing from `cc_sdk_ui/export_cc_sdk_ui.dart`, do not also import from individual widget files or from modules that are already exported through cc_sdk_ui
+11. **Precise Scope**: Limit modifications strictly to files directly required for the current task.
 
-   **Common Mistakes to Avoid:**
-   - **Duplicate Imports**: Do not import both the centralized export file AND individual files from the same module
-     - ❌ `import '../../export_cc_sdk_ui.dart';` AND `import '../inkwell/cc_inkwell.dart';`
-     - ✅ `import '../../export_cc_sdk_ui.dart';` (only)
-   - **Redundant Imports**: If a widget is already exported through the centralized export, don't import it separately
-   - **Missing Token Imports**: For cc_sdk_ui files, always import required tokens directly if not in export:
-     - `import '../../core/config/tokens/cc_padding_params.dart';`
-     - `import '../../core/extensions/cc_context_extension.dart';`
+12. **Final-State Delivery**: Provide final, production-ready implementation immediately. Skip intermediate wrappers or temporary helper files.
 
-   **Import Order Convention:**
-   1. Flutter/Dart SDK imports
-   2. External package imports
-   3. Project module imports (cc_sdk, cc_sdk_ui, etc.)
-   4. Local relative imports (only if not available through exports)
+13. **SDK-First Component Reuse**: Prioritize components from `cc_core_sdk/cc_sdk_ui`.
 
-10. **Multi-Screen Support (CRITICAL)**: All UI components and pages must support multiple screen sizes and orientations.
+14. **Clean Bootstrap Integrity**: Preserve `main.dart` as lean, service-only entry point (Env -> DI -> Hive -> Localization).
 
-    **Requirements:**
-    - Use `CcResponsiveHelper` from `cc_sdk` for screen type detection (mobile, tablet, desktop)
-    - Design layouts to adapt to different screen sizes using responsive breakpoints:
-      - Small mobile: < 360px (foldable covers, small phones)
-      - Mobile: 360px - 600px
-      - Tablet: 600px - 900px
-      - Desktop: > 900px
-    - Use responsive widgets like `CcResponsiveContainer` and `CcResponsiveFlex` from `cc_sdk_ui`
-    - Test UI on both portrait and landscape orientations
-    - Consider orientation-specific layouts when beneficial (e.g., landscape for data tables)
-    - Use `context.isPortrait` and `context.isLandscape` to check orientation (provided by `CcContextExtension`)
-    - Apply responsive padding, font sizes, and dimensions using helper methods:
-      - `context.respPadding(base)` for spacing.
-      - `context.respFontSize(base)` for text.
-      - `context.respIconSize(base)` for icons.
-      - `context.respDim(base)` for generic widths/heights (NEVER use hardcoded fixed values for structural UI elements).
-    - Ensure touch targets are appropriately sized for different screen densities.
+15. **Collaborative Evolution**: For structural changes (file movements, return type updates, DI shifts), present clear plan and proceed after developer confirmation.
 
-11. **Color Single Source of Truth (CRITICAL)**: NEVER hardcode hex colors or use `Colors.*` directly for UI components. All colors must flow from the Design Token system via Semantic Synchronization.
+16. **Evidence-Based Implementation**: Use `read_file` and `analyze_file` to verify current structure before proposing changes.
 
-    **Chain of Truth:**
-    1. **SDK Palette** (`CcBaseColors` in `cc_sdk_ui`): Defines generic **Primitives** (e.g., `brand500`, `gray900`, `indigo500`). This is a pure palette shared across projects.
-    2. **App Mapping** (`PrjColors` in `theme` module): Defines **Semantic Roles** for THIS project. Maps app-specific names (e.g., `primary`, `background`) to SDK primitives.
-    3. **Theme Configuration** (`CcThemes` in `theme` module): Configures `ThemeData` and `ColorScheme` using `PrjColors`.
-    4. **Widgets**: Access colors via **`context.ccColorScheme`** (provided by `CcContextExtension`).
+17. **Verification & Self-Check Protocols**:
+      **Import Verification:**
+        - [ ] Check if centralized export file is available (e.g., `export_cc_sdk_ui.dart`)
+        - [ ] If using centralized export, remove all individual file imports from the same module
+        - [ ] Verify no duplicate imports exist
 
-    **Requirements:**
-    - **Adding a new color?** Add a primitive to `CcBaseColors` (SDK), then a mapping to `PrjColors` (App).
-    - **SDK Reuse**: `CcBaseColors` MUST stay project-agnostic. No 'actionPrimary' or 'textPrimary' in the SDK.
-    - **Project SSOT**: `PrjColors` is the ONLY place to change the project's brand identity.
-    - **Dark mode support**: Map dark specifics (like `darkSurface`) in `PrjColors` using the primitive gray scale.
-    - **Consistency**: Use `context.ccColorScheme.primary` in widgets to ensure automatic theme switching and modularity.
-    - **Agnostic UI**: UI components in `cc_sdk_ui` MUST NOT depend on the `theme` module. Use standard Material 3 roles from `context.ccColorScheme`.
-
-12. **Multi-Language Support (CRITICAL)**: NEVER hardcode user-facing strings. All strings must be localized using `easy_localization`.
-
-    **Requirements:**
-    - Use `CcLocaleKeys` (from `modules/message`) for all string keys.
-    - Use `el.tr(CcLocaleKeys.your_key)` to translate strings, where `el` is the alias for `package:easy_localization/easy_localization.dart`.
-    - Example: `el.tr(CcLocaleKeys.auth_biometric_error_not_available)`
-    - All modules (`cc_sdk_ui`, `cc_mixin`, `micro_features`) must follow this rule.
-    - Do not use `String` literals for UI text, error messages, or button labels.
-    - **Self-Correction**: If you detect hardcoded strings in your proposed code, immediately replace them with the appropriate `CcLocaleKeys`. If the key doesn't exist, mention that it needs to be added or add it to the message module.
-
-13. **Typography Single Source of Truth (CRITICAL)**: NEVER hardcode font sizes, weights, or font families in widgets. Use Semantic Synchronization to inherit the project standard (**EB Garamond**).
-
-    **Chain of Truth:**
-    1. `CcTypographyParams` (`libraries/cc_sdk_ui`): Defines raw tokens (sizes, weights).
-    2. `CcTextStyle` (`modules/theme`): Implements `ThemeExtension` to provide semantic `TextStyle` objects.
-    3. `CcThemes` (`modules/theme`): Sets **EB Garamond** as the default font and maps `CcTextStyle` to `ThemeData.textTheme`.
-    4. **Widgets**: Access styles via **`context.ccTextTheme`** (provided by `CcContextExtension`).
-
-    **Requirements:**
-    - **Inheritance**: Standard widgets like `CcText` automatically use the ambient font (EB Garamond) from `ThemeData`. Do not specify `fontFamily` in widgets.
-    - **Semantic Access**: Use `context.ccTextTheme.bodyLarge` (or similar) for standard Material 3 typography.
-    - **Modifications**: If a specific modification is needed (e.g., color), use `.copyWith()`: `context.ccTextTheme.bodyMedium.copyWith(color: context.ccColorScheme.primary)`.
-    - **Forbidden**: `TextStyle(fontSize: 16, fontWeight: FontWeight.bold)` with hardcoded literals.
-
-14. **Git Management & Code Organization (CRITICAL)**: Follow these practices to reduce merge conflicts and improve code maintainability.
-
-    **File Organization:**
-    - **Single Responsibility**: Keep files focused on single responsibility (max 200-300 lines)
-    - **Widget Composition**: Split large widgets into smaller components (widget composition)
-    - **Method Extraction**:
-      - UI rendering methods (build methods)
-      - Data transformation methods
-      - Validation methods
-      - Navigation methods
-    - **Constants & Performance**: 
-      - Use `const` constructors wherever possible to improve Flutter's rebuild performance.
-      - Extract constants to dedicated files when needed.
-
-15. **Code Review Self-Check (CRITICAL)**: Before providing any code, the AI must perform a self-check to avoid common mistakes:
-
-    **Import Verification:**
-    - [ ] Check if centralized export file is available (e.g., `export_cc_sdk_ui.dart`)
-    - [ ] If using centralized export, remove all individual file imports from the same module
-    - [ ] Verify no duplicate imports exist
-    - [ ] Ensure import order follows convention: SDK → External → Project → Local
-    - [ ] For cc_sdk_ui files: Import tokens/extensions directly if not in export
-
-    **Code Quality Verification:**
-    - [ ] No hardcoded strings (use `el.tr(CcLocaleKeys.key)`)
-    - [ ] No hardcoded colors (use `context.ccColorScheme`)
-    - [ ] No hardcoded typography (use `context.ccTextTheme`)
-    - [ ] No hardcoded dimensions (use `context.resp*` helpers)
-    - [ ] All possible constructors marked as `const`
-    - [ ] Follow single responsibility principle (max 200-300 lines per file)
-    - [ ] Use widget composition for large widgets
-
-16. **Mandatory Verification Protocol (CRITICAL)**: Before applying any changes, the AI must verify the following:
-
-    **Pre-Deployment Checklist**:
-    - [ ] **No Hardcoded Strings**: All user-facing text uses `el.tr(CcLocaleKeys.key)`.
-    - [ ] **No Hardcoded Colors**: All colors use `context.ccColorScheme`.
-    - [ ] **No Hardcoded Typography**: All text styles use `context.ccTextTheme` and inherit **EB Garamond**.
-    - [ ] **Performance**: All possible constructors and widgets are marked as `const`.
-    - [ ] **Responsiveness**: All dimensions/padding use `context.resp*` helpers.
-    - [ ] **Linter Compliance**: Run `analyze_file` on modified files; zero errors/warnings allowed.
-    - [ ] **Import Hygiene**: No unused or redundant imports (use centralized exports).
-
-17. **Logging Strategy (CRITICAL)**: Use the `.Log()` extension (from `cc_sdk`) for all debug logging. It handles environment-based silencing (via `CcFeatureFlags`), automatic serialization (via `ccGson`), and context capture (file/line). Avoid raw `print()`, `developer.log()`, or external `Logger` instances in features or modules.
+      **Code Quality Verification:**
+        - [ ] All possible constructors marked as `const`
+        - [ ] Use widget composition for large widgets
+        - [ ] **No Hardcoded Strings**: All user-facing text uses `el.tr(CcLocaleKeys.key)`.
+        - [ ] **No Hardcoded Colors**: All colors use `context.ccColorScheme`.
+        - [ ] **No Hardcoded Typography**: All text styles use `context.ccTextTheme` and inherit **EB Garamond**.
+        - [ ] **Performance**: All possible constructors and widgets are marked as `const`.
+        - [ ] **Responsiveness**: All dimensions/padding use `context.resp*` helpers.
+        - [ ] **Linter Compliance**: Run `analyze_file` on modified files; zero errors/warnings allowed.
+        - [ ] **Import Hygiene**: No unused or redundant imports (use centralized exports).
 
 ## Project Structure
 
 ```
 flutter-get-starter-template/
-├── lib/                          # Main app code
-│   ├── core/                     # Core app logic
-│   │   └── di/                  # Centralized DI entry point
-│   ├── data/                     # Data layer
-│   ├── presentation/             # UI layer
+├── lib/                          # App Shell (Host)
+│   ├── core/                     # Core app logic (DI, Navigation)
+│   ├── data/                     # Data layer (App-specific orchestration)
+│   ├── presentation/             # UI layer (App-specific screens)
 │   └── main*.dart               # Entry points (prod, uat, logging, free)
 ├── modules/                      # App-specific modules
 │   ├── app_config/              # Configuration, DI, storage
-│   ├── data/                    # Data sources, repositories, entities
-│   ├── message/                 # i18n/localization
-│   └── theme/                   # Theming system
-├── cc_core_sdk/                  # Reusable libraries
-│   ├── cc_sdk/                  # Core SDK (network, device, failures)
-│   ├── cc_sdk_ui/               # UI component library
+│   ├── data/                    # Data sources, repositories (Prj SSOT)
+│   ├── message/                 # i18n/localization (CcLocaleKeys)
+│   └── theme/                   # Theming system (PrjColors, CcTextStyle)
+├── cc_core_sdk/                  # Shared Core (Engine)
+│   ├── cc_sdk/                  # Core SDK (network, device, failures, ccGson)
+│   ├── cc_sdk_ui/               # UI component library (CcContextExtension)
 │   ├── cc_mixin/                # Reusable mixins
-│   └── micro_features/          # Modular micro-feature packages
+│   ├── cc_bridge/               # Bridge for communication
+│   └── cc_sdk_data/             # Core data entities/models
+├── micro_features/               # Modular micro-feature packages (Global Legos)
+│   └── lib/features/            # Reusable business verticals (Auth, Biometric, etc.)
 └── docs/                        # Documentation
 ```
 
@@ -193,157 +145,70 @@ Every library and module must implement DI using Micro-Package pattern with `@In
 
 ### Main App Integration
 The main app consolidates all modules in `lib/core/di/di.dart` using `@InjectableInit` with `externalPackageModulesBefore`.
-
+``
 ## Core Libraries
 
 ### cc_core_sdk/cc_sdk (Core SDK)
-**Purpose:** Essential functionality and utilities
+**Source of Truth:** `cc_core_sdk/cc_sdk/README.md` (Refer to this for technical features and usage examples)
 
-**State-Management Requirements:**
-- Must NOT depend on specific state management libraries
-- All components must be state-management agnostic
-- Use mixins and interfaces for reusable functionality
-
-**Key Components:**
-- Network utilities (CURL, interceptors, connectivity)
-- Feature flags and environment toggles
-- Device information (`CcDeviceHelper`, `CcDeviceInfoHelper`)
-- Responsive design utilities (`CcResponsiveHelper` for multi-screen support)
-- Common extensions and helpers
-- Serialization (GSON-style)
-- Error handling with Failure types
-- Clean Architecture implementation (Domain/Data/Core layers)
-
-**Responsive Design Support:**
-- `CcDeviceHelper`: Screen dimensions, platform detection, keyboard height
-- `CcResponsiveHelper`: Screen type detection (mobile/tablet/desktop), responsive breakpoints, orientation helpers
-- Use these helpers to build adaptive UIs that work across all device sizes
+**Strategic Guardrails:**
+- **State-Management Agnostic:** Must NOT depend on GetX, Bloc, or any specific state management library.
+- **Clean Architecture:** Strictly follow Domain (UseCases/Failures), Data (Repositories/DataSources), and Core layers.
+- **Logging:** All logs must use the standardized `.Log()` extension provided here.
+- **Serialization:** Use the GSON-style serialization (`ccGson`) provided in this package.
 
 **DI File:** `cc_core_sdk/cc_sdk/lib/core/di/di.dart`
 
 ### cc_core_sdk/cc_sdk_ui (UI Components)
-**Purpose:** Reusable, customizable UI components
+**Source of Truth:** `cc_core_sdk/cc_sdk_ui/README.md` (Refer to this for widget catalog and design tokens)
 
-**State-Management Requirements:**
-- Must NOT depend on specific state management libraries
-- All widgets must be state-management agnostic
-- Use value parameters and callbacks rather than coupled state management
-
-**Key Components:**
-- Buttons (CcCloseBtn, CcDebounce, CcBaseBtn)
-- Dialogs and bottom sheets (`CcDialogHelper` - consolidated utility)
-- Form elements (text fields, validators)
-- Loaders & indicators (spinners, skeletons)
-- Layout components (containers, cards, dividers)
-- Responsive widgets (CcResponsiveContainer, CcResponsiveFlex for multi-screen support)
-- Text & typography widgets (CcText - inherits ambient EB Garamond font)
-- Theme Extensions (CcContextExtension for semantic access to `ccTextTheme`/`ccColorScheme`)
-- Animations (fade, scale, transitions)
-- Navigation (CcCurvedNavigationBar - state-management agnostic)
-
-**Theme Tokens:**
-- `CcBaseColors`: Color palette (brand, neutral, semantic)
-- `CcTypographyParams`: Typography system (sizes, weights)
-- `CcPaddingParams`: Spacing and padding system
-- `CcCircularParams`: Border radius and circular dimensions
+**Strategic Guardrails:**
+- **State-Management Agnostic:** All widgets must be stateless or manage state via standard callbacks/ValueNotifiers. No GetX/Bloc allowed.
+- **Theme Sync:** Inherits typography (EB Garamond) and colors via `CcContextExtension`.
+- **Responsive-First:** All widgets must use `context.resp*` helpers for dimensions.
 
 **DI File:** No DI file (stateless UI library)
 
 ### cc_core_sdk/cc_mixin (Reusable Mixins)
-**Purpose:** Reusable mixins for common functionality
+**Purpose:** Reusable mixins for common functionality (e.g., navigation, pagination).
 
-**State-Management Requirements:**
-- All mixins must be state-management agnostic
-- Provide reusable functionality without imposing specific state management patterns
-- Use required methods for implementation details, with default implementations for common cases
-
-**Key Mixins:**
-- **CcCurvedNavigationMixin**: Provides curved navigation bar functionality (Home, Notification, Profile items)
-  - Required: `currentIndex` getter and `setIndex` method
-  - Optional: Navigation items, colors, dimensions, style presets
-  - Works with any state management approach
-- **CcPullRefreshMixin**: Agnostic pull-to-refresh logic
-- **CcLoadMoreMixin**: Agnostic infinite scroll logic
-- **DoubleBackToExitMixin**: Android back button handling
-- **CcViewConfigMixin**: Standardized scaffold/layout state builder
+**Strategic Guardrails:**
+- **State-Management Agnostic:** Mixins must provide reusable functionality (via required methods/getters) without imposing GetX or Bloc.
+- **Generic Logic:** Focus on boilerplate reduction (Scaffold config, Infinite scroll, Back button handling).
 
 **DI File:** No DI file (mixin library)
 
-### libraries/micro_features (Feature Modules)
-**Purpose:** Standalone, shareable micro-feature modules
+### micro_features/ (Feature Modules)
+**Source of Truth:** `micro_features/README.md` (Refer to this for feature list and implementation flow)
 
-**State-Management Requirements:**
-- Feature modules should be designed to work with different state management approaches
-- Provide clear separation between feature logic (state-management agnostic) and presentation (state-management specific)
-- Use dependency injection to allow consuming applications to choose their preferred state management
+**Strategic Guardrails:**
+- **Project-Blind (STRICT):** MUST NOT import from `lib/` or `modules/data`. Use Dependency Inversion (Interfaces).
+- **Architecture:** Must follow the 3-layer Clean Architecture (Data, Domain, Presentation).
+- **Agnostic Core:** Domain and Data layers MUST be state-management agnostic. Presentation layer can use Bloc or GetX.
 
-**Structure per feature:**
-```
-{feature_name}/
-├── data/                        # State-management agnostic
-│   ├── datasources/             # API, local storage
-│   └── repositories/            # Repository implementations
-├── domain/                      # State-management agnostic
-│   ├── entities/                # Business objects
-│   ├── repositories/            # Repository contracts
-│   └── usecases/               # Business logic
-├── presentation/                # State-management specific
-│   ├── bloc/                    # Bloc implementation (optional)
-│   ├── getx/                    # GetX implementation (optional)
-│   ├── pages/                   # Feature screens
-│   └── widgets/                 # Reusable UI components (agnostic)
-└── core/di/di.dart             # Standardized DI entry
-```
-
-**DI File:** `libraries/micro_features/lib/core/di/di.dart`
+**DI File:** `micro_features/lib/core/di/di.dart`
 
 ## App Modules
 
 ### modules/app_config
-**Purpose:** Application configuration and dependency management
-
-**State-Management Requirements:**
-- Must be state-management agnostic
-- Configuration, DI, and storage should not depend on specific state management libraries
-
-**Features:**
-- Version and build information
-- Environment-specific settings (.env files)
-- Centralized dependency registration (Micro-Package)
-- Hive-based local storage with type adapters
-
+**Source of Truth:** `modules/app_config/README.md`
+**Purpose:** Application configuration, Environment management, and DI discovery.
 **DI File:** `modules/app_config/lib/core/di/di.dart`
 
 ### modules/data
-**Purpose:** Data layer configuration and implementation
-
-**State-Management Requirements:**
-- Must be state-management agnostic
-- Data sources, repositories, and parsing should not depend on specific state management
-- Provide data through standard interfaces (Result<T, Failure>) that work with any state management
-
-**Features:**
-- Remote server configuration (Retrofit)
-- Server response handling
-- JSON parsing
-- Local database (Floor)
-- Repository pattern
-
+**Source of Truth:** `modules/data/README.md`
+**Purpose:** App-specific data implementations and repository orchestration.
 **DI File:** `modules/data/lib/core/di/di.dart`
 
 ### modules/theme
-**Purpose:** Theming system with Clean Architecture
-
-**State-Management Requirements:**
-- Must be state-management agnostic
-- Theme changes should be accessible through standard interfaces (not tied to specific state management)
+**Source of Truth:** `modules/theme/README.md`
+**Purpose:** Theming system (SSOT for Colors/Typography).
+**Key Files:** `PrjColors`, `CcTextStyle`, `CcThemes`.
 
 ### modules/message
-**Purpose:** Internationalization (i18n) and localization
-
-**State-Management Requirements:**
-- Must be state-management agnostic
-- Translation and localization should not depend on specific state management libraries
+**Source of Truth:** `modules/message/README.md`
+**Purpose:** i18n and localization (SSOT for Strings).
+**Key Files:** `CcLocaleKeys`.
 
 ## Key Technologies
 
