@@ -6,6 +6,7 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
 
 ## AI Guidelines & Strategic Guardrails
 
+ ### I. ARCHITECTURAL INTEGRITY (The Laws)
 1. **Hybrid-Modular Super App Design (CRITICAL)**: The project is divided into three distinct layers:
     - **App Shell (Host)**: The `lib/` folder. Contains project-specific glue code, startup logic, and orchestration.
     - **Micro-Features (Global Legos)**: The `micro_features/` folder. Project-blind business verticals (Auth, Pay, etc.) reusable across different enterprise apps.
@@ -18,93 +19,72 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
     - This ensures a Micro-Feature can be moved to a different project without code changes.
 
 3. **State-Management Agnostic Core (STRICT)**:
-    - `cc_sdk`, `cc_sdk_ui`, and `cc_mixin` MUST NOT depend on specific state management (GetX/Bloc).
+    - `cc_core_sdk` modules (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`, `cc_bridge`) MUST NOT depend on specific state management (GetX/Bloc).
     - Micro-Features may use state management (Bloc/GetX) in their `presentation/` layer, but their `domain/` and `data/` layers must remain agnostic.
 
-4. **Naming Convention (Suffix-First)**:
-    - To avoid name collisions in a Super App, use mandatory suffixes:
-        - Entities: `*_entity.dart`
-        - UseCases: `*_usecase.dart`
-        - Repositories (Contract): `*_repository.dart`
-        - Repositories (Impl): `*_repository_impl.dart`
-        - Models/DTOs: `*_model.dart`
-        - Pages: `*_page.dart`
-        - Bloc/Cubit: `*_bloc.dart` / `*_cubit.dart`
-        - State/Event: `*_state.dart` / `*_event.dart`
-    - Use `lower_snake_case` for all files.
+4. **Interface-Driven Communication**: 
+    - All cross-module interactions (e.g., Navigation, Session Management) must be mediated by contracts defined in `cc_bridge`.
+    - Features should depend on abstractions, never on concrete implementations of other features.
 
-5. **Import Hygiene (CRITICAL)**:
-    - Always prefer centralized exports (e.g., `import 'package:micro_features/export_micro_features.dart'`).
-    - NEVER duplicate imports (e.g., do not import a centralized export AND a specific file from that same module).
-    - Import tokens/extensions directly only if not present in the centralized export.
-    - **Requirements:**
-        - Before adding imports, check if the required elements are already available through existing imports (especially `export_cc_sdk_ui.dart`)
-        - Prefer using centralized export files (e.g., `export_cc_sdk_ui.dart`, `export_cc_mixin.dart`) over individual file imports
-        - Remove unused imports after code changes
-        - Example: If importing from `cc_sdk_ui/export_cc_sdk_ui.dart`, do not also import from individual widget files or from modules that are already exported through cc_sdk_ui
-    - **Import Order Convention:** 1. Flutter/Dart SDK, 2. External packages, 3. Project modules, 4. Local relative imports.
+5. **Clean Bootstrap Integrity**: Preserve `main.dart` as lean, service-only entry point (Env -> DI -> Hive -> Localization).
 
+### II. DESIGN SYSTEM & UI (The Look)
 6. **Color & Typography (Single Source of Truth)**:
     - **Colors**: Flow from `CcBaseColors` (Primitives) → `PrjColors` (Semantic Roles) → `context.ccColorScheme` (Widgets). NEVER hardcode hex colors or use `Colors.*` directly.
     - **Typography**: Standardized on **EB Garamond**. Access via `context.ccTextTheme`. NEVER hardcode font sizes, weights, or families in widgets.
-    - **Localization**: Use `el.tr(CcLocaleKeys.key)` for ALL user-facing strings. No hardcoded strings.
-    - **Requirements:**
-        - **Adding a new color?** Add a primitive to `CcBaseColors` (SDK), then a mapping to `PrjColors` (App).
-        - **SDK Reuse**: `CcBaseColors` MUST stay project-agnostic. No 'actionPrimary' or 'textPrimary' in the SDK.
-        - **Project SSOT**: `PrjColors` is the ONLY place to change the project's brand identity.
-        - **Dark mode support**: Map dark specifics (like `darkSurface`) in `PrjColors` using the primitive gray scale.
-        - **Consistency**: Use `context.ccColorScheme.primary` in widgets to ensure automatic theme switching and modularity.
-        - **Typography Chain**: `CcTypographyParams` (tokens) → `CcTextStyle` (semantic) → `context.ccTextTheme` (widgets).
+    - **Chain of Truth**: `CcTypographyParams` (tokens) → `CcTextStyle` (semantic) → `context.ccTextTheme` (widgets).
 
-7. **Multi-Screen & Orientation Support**:
+7. **Multi-Screen & Orientation Support (Adaptive-First)**:
     - Use `context.respPadding()`, `context.respFontSize()`, and `context.respDim()` for all dimensions.
-    - Check `context.isPortrait` vs `context.isLandscape` for orientation-specific layouts.
     - Use `CcResponsiveContainer` and `CcResponsiveFlex` for adaptive layouts.
-    - **Breakpoints:** Small Mobile (<360px), Mobile (360-600px), Tablet (600-900px), Desktop (>900px).
-    - **Orientation:** Test UI on both portrait and landscape. Consider orientation-specific layouts when beneficial.
+    - **Breakpoints**: Small Mobile (<360px), Mobile (360-600px), Tablet (600-900px), Desktop (>900px).
+    - **Mandatory**: All UI must be verified for both portrait and landscape orientations.
 
-8. **Logging Strategy**:
+8. **Localization & Messaging**:
+    - Use `el.tr(CcLocaleKeys.key)` for ALL user-facing strings. No hardcoded strings.
+    - Reference keys from the `message` module.
+
+9. **SDK-First Component Reuse**: Prioritize using and extending components from `cc_core_sdk/cc_sdk_ui` before building custom widgets.
+
+### III. CODE QUALITY & STANDARDS (The Feel)
+10. **Suffix-First Naming Convention**:
+    - To avoid name collisions in a Super App, use mandatory suffixes:
+        - Entities: `*_entity.dart` | UseCases: `*_usecase.dart`
+        - Repositories: `*_repository.dart` | Repositories (Impl): `*_repository_impl.dart`
+        - Models/DTOs: `*_model.dart` | Pages: `*_page.dart`
+        - Bloc/Cubit: `*_bloc.dart` / `*_cubit.dart` | State/Event: `*_state.dart` / `*_event.dart`
+    - Use `lower_snake_case` for all files.
+
+11. **Import Hygiene (CRITICAL)**:
+    - Always prefer centralized exports (e.g., `import 'package:micro_features/export_micro_features.dart'`).
+    - NEVER duplicate imports (e.g., do not import a centralized export AND a specific file from that same module).
+    - **Order**: 1. Flutter/Dart, 2. External packages, 3. Project modules, 4. Local relative imports.
+
+12. **Standardized Functional Results**:
+    - All UseCases and Repositories must return `Result<T, Failure>` from the `multiple_result` package to ensure consistent error handling.
+
+13. **Logging Strategy**:
     - Use the `.Log()` extension from `cc_sdk` for all debug logging.
+    - Handles environment-based silencing (via `CcFeatureFlags`), automatic serialization (via `ccGson`), and context capture.
     - NEVER use `print()` or `developer.log()` in production code.
-    - It handles environment-based silencing (via `CcFeatureFlags`), automatic serialization (via `ccGson`), and context capture.
 
-9. **Git Management & Code Organization**:
-    - Keep files focused (max 200-300 lines).
-    - Use Widget Composition to split large UIs into smaller components.
+14. **Git Management & Code Organization**:
+    - Keep files focused (max 200-300 lines). Use Widget Composition to split large UIs.
     - Mark all possible constructors and widgets as `const`.
     - Extract constants to dedicated files when needed.
-    - UI rendering methods (build methods), data transformation, validation, and navigation should be extracted.
 
-10. **Architecture Respect**: Maintain existing patterns and architecture. Propose refactors only when requested or essential for new feature stability.
+### IV. AI INTERACTION PROTOCOL (The Workflow)
+15. **Evidence-Based Implementation**: Always use `read_file` and `analyze_file` to verify current structure and linter compliance before and after changes.
 
-11. **Precise Scope**: Limit modifications strictly to files directly required for the current task.
+16. **Final-State Delivery**: Provide final, production-ready implementation immediately. Skip intermediate placeholders or "TODOs".
 
-12. **Final-State Delivery**: Provide final, production-ready implementation immediately. Skip intermediate wrappers or temporary helper files.
+17. **Collaborative Evolution**: For structural changes (file movements, return type updates, DI shifts), present a clear plan and proceed after developer confirmation.
 
-13. **SDK-First Component Reuse**: Prioritize components from `cc_core_sdk/cc_sdk_ui`.
-
-14. **Clean Bootstrap Integrity**: Preserve `main.dart` as lean, service-only entry point (Env -> DI -> Hive -> Localization).
-
-15. **Collaborative Evolution**: For structural changes (file movements, return type updates, DI shifts), present clear plan and proceed after developer confirmation.
-
-16. **Evidence-Based Implementation**: Use `read_file` and `analyze_file` to verify current structure before proposing changes.
-
-17. **Verification & Self-Check Protocols**:
-      **Import Verification:**
-        - [ ] Check if centralized export file is available (e.g., `export_cc_sdk_ui.dart`)
-        - [ ] If using centralized export, remove all individual file imports from the same module
-        - [ ] Verify no duplicate imports exist
-
-      **Code Quality Verification:**
-        - [ ] All possible constructors marked as `const`
-        - [ ] Use widget composition for large widgets
-        - [ ] **No Hardcoded Strings**: All user-facing text uses `el.tr(CcLocaleKeys.key)`.
-        - [ ] **No Hardcoded Colors**: All colors use `context.ccColorScheme`.
-        - [ ] **No Hardcoded Typography**: All text styles use `context.ccTextTheme` and inherit **EB Garamond**.
-        - [ ] **Performance**: All possible constructors and widgets are marked as `const`.
-        - [ ] **Responsiveness**: All dimensions/padding use `context.resp*` helpers.
-        - [ ] **Linter Compliance**: Run `analyze_file` on modified files; zero errors/warnings allowed.
-        - [ ] **Import Hygiene**: No unused or redundant imports (use centralized exports).
+18. **Verification Protocol**: Before delivery, verify:
+    - [ ] No Hardcoded Strings/Colors/Typography.
+    - [ ] Functional responsiveness (`context.resp*`).
+    - [ ] Import hygiene and Suffix-first naming.
+    - [ ] Linter compliance (zero errors/warnings).
 
 ## Project Structure
 

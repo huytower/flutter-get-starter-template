@@ -1,5 +1,3 @@
-#name: CI/CD Pipeline
-#
 # TEMP DISABLE CICD
 #on:
 #  push:
@@ -19,109 +17,110 @@ env:
   FLUTTER_VERSION: '3.44.3'
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
-jobs:
-  # 1. Quality Gate: Runs for everything.
-  quality-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          submodules: recursive
-      - uses: ./.github/actions/flutter-setup
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
-          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
-          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
-      - name: Lint & Test
-        run: |
-          melos run gen
-          melos run analyze
-          melos run test
-
-  # 2. Android Deployment: Only on Main or Dispatch.
-  android-distribute:
-    needs: quality-check
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          submodules: recursive
-      - uses: ./.github/actions/flutter-setup
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
-          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
-          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
-          setup-java: 'true'
-          ruby-dir: 'android'
-      
-      - name: Prep Keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
-          cat > android/key.properties << EOF
-          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword=${{ secrets.KEY_PASSWORD }}
-          keyAlias=${{ secrets.KEY_ALIAS }}
-          storeFile=keystore.jks
-          EOF
-
-      - name: Generate Code
-        run: melos run gen
-
-      - name: Fastlane Distribute
-        run: |
-          echo "${{ secrets.FIREBASE_SERVICE_CREDENTIALS }}" > firebase_credentials.json
-          cd android && bundle exec fastlane distribute_firebase flavor:${{ github.event.inputs.flavor || 'uat' }}
-        env:
-          FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID }}
-          FIREBASE_SERVICE_CREDENTIALS_PATH: ../firebase_credentials.json
-
-  # 3. iOS Deployment: Only on Main or Dispatch.
-  ios-distribute:
-    needs: quality-check
-    if: github.event_name != 'pull_request'
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          submodules: recursive
-      - uses: ./.github/actions/flutter-setup
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
-          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
-          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
-          ruby-dir: 'ios'
-
-      - name: Generate Code
-        run: melos run gen
-
-      - name: Fastlane TestFlight
-        run: cd ios && bundle exec fastlane beta flavor:${{ github.event.inputs.flavor || 'uat' }}
-        env:
-          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          APP_STORE_CONNECT_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}
-
-  # 4. PR Smoke Test: Ensures the app still compiles.
-  pr-build-test:
-    needs: quality-check
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          submodules: recursive
-      - uses: ./.github/actions/flutter-setup
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
-          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
-          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
-          setup-java: 'true'
-      - name: Generate Code
-        run: melos run gen
-      - name: Compile Check
-        run: flutter build appbundle --release --flavor free
+# TEMP DISABLE CICD - Jobs commented out
+#jobs:
+#  # 1. Quality Gate: Runs for everything.
+#  quality-check:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v5
+#        with:
+#          submodules: recursive
+#      - uses: ./.github/actions/flutter-setup
+#        with:
+#          flutter-version: ${{ env.FLUTTER_VERSION }}
+#          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
+#          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
+#          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
+#      - name: Lint & Test
+#        run: |
+#          melos run gen
+#          melos run analyze
+#          melos run test
+#
+#  # 2. Android Deployment: Only on Main or Dispatch.
+#  android-distribute:
+#    needs: quality-check
+#    if: github.event_name != 'pull_request'
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v5
+#        with:
+#          submodules: recursive
+#      - uses: ./.github/actions/flutter-setup
+#        with:
+#          flutter-version: ${{ env.FLUTTER_VERSION }}
+#          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
+#          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
+#          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
+#          setup-java: 'true'
+#          ruby-dir: 'android'
+#      
+#      - name: Prep Keystore
+#        run: |
+#          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
+#          cat > android/key.properties << EOF
+#          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+#          keyPassword=${{ secrets.KEY_PASSWORD }}
+#          keyAlias=${{ secrets.KEY_ALIAS }}
+#          storeFile=keystore.jks
+#          EOF
+#
+#      - name: Generate Code
+#        run: melos run gen
+#
+#      - name: Fastlane Distribute
+#        run: |
+#          echo "${{ secrets.FIREBASE_SERVICE_CREDENTIALS }}" > firebase_credentials.json
+#          cd android && bundle exec fastlane distribute_firebase flavor:${{ github.event.inputs.flavor || 'uat' }}
+#        env:
+#          FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID }}
+#          FIREBASE_SERVICE_CREDENTIALS_PATH: ../firebase_credentials.json
+#
+#  # 3. iOS Deployment: Only on Main or Dispatch.
+#  ios-distribute:
+#    needs: quality-check
+#    if: github.event_name != 'pull_request'
+#    runs-on: macos-latest
+#    steps:
+#      - uses: actions/checkout@v5
+#        with:
+#          submodules: recursive
+#      - uses: ./.github/actions/flutter-setup
+#        with:
+#          flutter-version: ${{ env.FLUTTER_VERSION }}
+#          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
+#          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
+#          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
+#          ruby-dir: 'ios'
+#
+#      - name: Generate Code
+#        run: melos run gen
+#
+#      - name: Fastlane TestFlight
+#        run: cd ios && bundle exec fastlane beta flavor:${{ github.event.inputs.flavor || 'uat' }}
+#        env:
+#          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+#          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+#          APP_STORE_CONNECT_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}
+#
+#  # 4. PR Smoke Test: Ensures the app still compiles.
+#  pr-build-test:
+#    needs: quality-check
+#    if: github.event_name == 'pull_request'
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v5
+#        with:
+#          submodules: recursive
+#      - uses: ./.github/actions/flutter-setup
+#        with:
+#          flutter-version: ${{ env.FLUTTER_VERSION }}
+#          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
+#          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
+#          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
+#          setup-java: 'true'
+#      - name: Generate Code
+#        run: melos run gen
+#      - name: Compile Check
+#        run: flutter build appbundle --release --flavor free

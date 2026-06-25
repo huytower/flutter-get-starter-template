@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:micro_features/export_micro_features.dart';
 import 'package:injectable/injectable.dart';
+import 'package:micro_features/export_micro_features.dart';
 
 import '../../route_names.dart';
 import 'app_router.gr.dart';
@@ -25,8 +25,6 @@ class AppRouter extends RootStackRouter {
 
     // --- Feature Modules (from package:features) ---
     AutoRoute(page: PhoneAuthRoute.page, path: AppRoute.phoneAuth.path),
-    AutoRoute(page: DashboardRoute.page, path: AppRoute.dashboard.path),
-    AutoRoute(page: CounterRoute.page, path: AppRoute.featuresCounter.path),
     AutoRoute(page: WebRoute.page, path: AppRoute.web.path),
 
     // --- GetX Examples & Pages ---

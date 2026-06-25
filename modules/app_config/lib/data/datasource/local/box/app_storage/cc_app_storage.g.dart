@@ -22,13 +22,14 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       gpsLocation: fields[2] as String?,
       userRole: fields[3] as String?,
       dashboardData: fields[4] as String?,
+      user: fields[5] as DomainUserEntity?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CcAppStorage obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..writeByte(3)
       ..write(obj.userRole)
       ..writeByte(4)
-      ..write(obj.dashboardData);
+      ..write(obj.dashboardData)
+      ..writeByte(5)
+      ..write(obj.user);
   }
 
   @override
@@ -56,17 +59,16 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) =>
-    CcAppStorage(
-        accessToken: json['accessToken'] as String?,
-        fcmToken: json['fcmToken'] as String?,
-        gpsLocation: json['gpsLocation'] as String?,
-        userRole: json['userRole'] as String?,
-        dashboardData: json['dashboardData'] as String?,
-      )
-      ..user = json['user'] == null
-          ? null
-          : ResUser.fromJson(json['user'] as Map<String, dynamic>);
+CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
+  accessToken: json['accessToken'] as String?,
+  fcmToken: json['fcmToken'] as String?,
+  gpsLocation: json['gpsLocation'] as String?,
+  userRole: json['userRole'] as String?,
+  dashboardData: json['dashboardData'] as String?,
+  user: const DomainUserEntityConverter().fromJson(
+    json['user'] as Map<String, dynamic>?,
+  ),
+);
 
 Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
     <String, dynamic>{
@@ -75,5 +77,5 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
       'gpsLocation': instance.gpsLocation,
       'userRole': instance.userRole,
       'dashboardData': instance.dashboardData,
-      'user': instance.user,
+      'user': const DomainUserEntityConverter().toJson(instance.user),
     };

@@ -17,13 +17,12 @@ dependencies:
     path: ../cc_core_sdk/cc_bridge
   cc_sdk_data:
     path: ../cc_core_sdk/cc_sdk_data
-  data:
-    path: ../modules/data
   auto_route: ^11.1.0
   dio: ^5.9.2
   easy_localization: ^3.0.8
   equatable: ^2.0.8
   firebase_core: ^4.11.0
+  firebase_auth: ^6.5.4
   firebase_messaging: ^16.4.1
   flutter:
     sdk: flutter
@@ -32,6 +31,7 @@ dependencies:
   bloc: ^9.2.1
   catcher_2: ^2.1.9
   get_it: ^9.2.1
+  google_sign_in: ^7.2.0
   injectable: ^3.0.0
   local_auth: ^3.0.1
   local_auth_android: ^2.0.0
@@ -39,6 +39,7 @@ dependencies:
   multiple_result: ^5.3.0
   rxdart: ^0.28.0
   shared_preferences: ^2.5.2
+  sign_in_with_apple: ^8.1.0
   webview_flutter: ^4.13.1
 
 dev_dependencies:

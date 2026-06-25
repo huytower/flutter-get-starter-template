@@ -1,5 +1,8 @@
 import 'dart:developer' as developer;
 
+import 'package:data/data/adapters/domain_user_entity_adapter.dart';
+import 'package:hive_ce/hive_ce.dart';
+
 import 'app_storage/cc_app_storage.dart';
 import 'device_info/cc_device_info.dart';
 
@@ -21,6 +24,8 @@ import 'device_info/cc_device_info.dart';
 /// ```
 Future<void> registerHiveAdapter() async {
   try {
+    Hive.registerAdapter(DomainUserEntityAdapter());
+
     await _registerAdapterWithErrorHandling(
       'CcAppStorage',
       () => CcAppStorage.register(),

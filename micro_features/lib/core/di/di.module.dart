@@ -7,12 +7,6 @@ import 'dart:async' as _i687;
 
 import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
 import 'package:cc_sdk/domain/services/cc_messaging_service.dart' as _i408;
-import 'package:data/domain/usecases/dashboard/get_dashboard_data_usecase.dart'
-    as _i208;
-import 'package:data/domain/usecases/dashboard/refresh_dashboard_data_usecase.dart'
-    as _i393;
-import 'package:data/domain/usecases/dashboard/update_dashboard_data_usecase.dart'
-    as _i695;
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:firebase_messaging/firebase_messaging.dart' as _i892;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
@@ -54,57 +48,33 @@ import 'package:micro_features/features/biometric/domain/usecases/authenticate_w
     as _i55;
 import 'package:micro_features/features/biometric/presentation/bloc/biometric_bloc.dart'
     as _i992;
-import 'package:micro_features/features/counter/data/datasources/counter_local_data_source.dart'
-    as _i575;
-import 'package:micro_features/features/counter/data/repositories/counter_repository_impl.dart'
-    as _i123;
-import 'package:micro_features/features/counter/domain/repositories/counter_repository.dart'
-    as _i789;
-import 'package:micro_features/features/counter/domain/usecases/decrement_counter_usecase.dart'
-    as _i537;
-import 'package:micro_features/features/counter/domain/usecases/get_counter_usecase.dart'
-    as _i885;
-import 'package:micro_features/features/counter/domain/usecases/increment_counter_usecase.dart'
-    as _i848;
-import 'package:micro_features/features/counter/presentation/bloc/counter_bloc.dart'
-    as _i337;
-import 'package:micro_features/features/dashboard/presentation/bloc/dashboard_bloc.dart'
-    as _i647;
 import 'package:micro_features/features/messaging/data/services/firebase_messaging_service_impl.dart'
     as _i371;
 import 'package:micro_features/features/web/presentation/cubit/web_cubit.dart'
     as _i149;
-import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 class MicroFeaturesPackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
     final messagingModule = _$MessagingModule();
+    final authModule = _$AuthModule();
     gh.lazySingleton<_i892.FirebaseMessaging>(
         () => messagingModule.firebaseMessaging);
+    gh.lazySingleton<_i59.FirebaseAuth>(() => authModule.firebaseAuth);
+    gh.lazySingleton<_i116.GoogleSignIn>(() => authModule.googleSignIn);
     gh.lazySingleton<_i22.BiometricLocalDataSource>(
         () => _i22.BiometricLocalDataSource());
     gh.lazySingleton<_i149.WebCubit>(() => _i149.WebCubit());
-    gh.factory<_i647.DashboardBloc>(() => _i647.DashboardBloc(
-          getDashboardDataUseCase: gh<_i208.GetDashboardDataUseCase>(),
-          updateDashboardDataUseCase: gh<_i695.UpdateDashboardDataUseCase>(),
-          refreshDashboardDataUseCase: gh<_i393.RefreshDashboardDataUseCase>(),
-        ));
     gh.lazySingleton<_i359.BiometricRepository>(() =>
         _i817.BiometricRepositoryImpl(gh<_i22.BiometricLocalDataSource>()));
     gh.lazySingleton<_i408.CcMessagingService>(() =>
         _i371.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()));
-    gh.lazySingleton<_i575.CounterLocalDataSource>(() =>
-        _i575.CounterLocalDataSourceImpl(
-            sharedPreferences: gh<_i460.SharedPreferences>()));
     gh.lazySingleton<_i597.FirebaseAuthRepository>(
         () => _i781.FirebaseAuthRepositoryImpl(
               gh<_i59.FirebaseAuth>(),
               gh<_i116.GoogleSignIn>(),
             ));
-    gh.lazySingleton<_i789.CounterRepository>(() => _i123.CounterRepositoryImpl(
-        localDataSource: gh<_i575.CounterLocalDataSource>()));
     gh.lazySingleton<_i55.AuthenticateWithBiometricsUseCase>(() =>
         _i55.AuthenticateWithBiometricsUseCase(
             gh<_i359.BiometricRepository>()));
@@ -124,12 +94,6 @@ class MicroFeaturesPackageModule extends _i526.MicroPackageModule {
         _i970.SignInWithPhoneNumberUseCase(gh<_i597.FirebaseAuthRepository>()));
     gh.lazySingleton<_i801.VerifyPhoneNumberUseCase>(() =>
         _i801.VerifyPhoneNumberUseCase(gh<_i597.FirebaseAuthRepository>()));
-    gh.lazySingleton<_i537.DecrementCounterUseCase>(
-        () => _i537.DecrementCounterUseCase(gh<_i789.CounterRepository>()));
-    gh.lazySingleton<_i885.GetCounterUseCase>(
-        () => _i885.GetCounterUseCase(gh<_i789.CounterRepository>()));
-    gh.lazySingleton<_i848.IncrementCounterUseCase>(
-        () => _i848.IncrementCounterUseCase(gh<_i789.CounterRepository>()));
     gh.factory<_i854.PhoneAuthBloc>(() => _i854.PhoneAuthBloc(
           gh<_i801.VerifyPhoneNumberUseCase>(),
           gh<_i970.SignInWithPhoneNumberUseCase>(),
@@ -137,11 +101,6 @@ class MicroFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.lazySingleton<_i727.SessionContract>(() => _i158.SessionProviderImpl(
           gh<_i396.GetCurrentUserUseCase>(),
           gh<_i779.LogoutUseCase>(),
-        ));
-    gh.factory<_i337.CounterBloc>(() => _i337.CounterBloc(
-          getCounterUseCase: gh<_i885.GetCounterUseCase>(),
-          incrementCounterUseCase: gh<_i848.IncrementCounterUseCase>(),
-          decrementCounterUseCase: gh<_i537.DecrementCounterUseCase>(),
         ));
     gh.factory<_i992.BiometricBloc>(() => _i992.BiometricBloc(
           gh<_i55.AuthenticateWithBiometricsUseCase>(),
@@ -156,3 +115,5 @@ class MicroFeaturesPackageModule extends _i526.MicroPackageModule {
 }
 
 class _$MessagingModule extends _i1043.MessagingModule {}
+
+class _$AuthModule extends _i1043.AuthModule {}
