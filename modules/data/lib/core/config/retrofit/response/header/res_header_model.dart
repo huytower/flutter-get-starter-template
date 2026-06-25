@@ -1,13 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'cc_res_header_model.g.dart';
+part 'res_header_model.g.dart';
 
 /// Standard header/envelope part of a REST API response.
 ///
 /// This model is designed to be extremely robust. It will NOT crash
 /// if the backend fails to send specific fields.
 @JsonSerializable()
-class CcResHeaderModel {
+class ResHeaderModel {
   /// Boolean success flag. Defaults to `false` if missing.
   @JsonKey(defaultValue: false)
   final bool status;
@@ -31,7 +31,7 @@ class CcResHeaderModel {
   /// Metadata for pagination, server time, etc.
   final Map<String, dynamic>? meta;
 
-  const CcResHeaderModel({
+  const ResHeaderModel({
     this.status = false,
     this.message = '',
     this.code,
@@ -41,8 +41,8 @@ class CcResHeaderModel {
     this.meta,
   });
 
-  factory CcResHeaderModel.fromJson(Map<String, dynamic> json) =>
-      _$CcResHeaderModelFromJson(json);
+  factory ResHeaderModel.fromJson(Map<String, dynamic> json) =>
+      _$ResHeaderModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CcResHeaderModelToJson(this);
+  Map<String, dynamic> toJson() => _$ResHeaderModelToJson(this);
 }

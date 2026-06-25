@@ -1,4 +1,5 @@
 import 'package:app_config/core/di/di.module.dart';
+import 'package:cc_bridge/core/di/di.module.dart';
 import 'package:cc_sdk/core/di/di.module.dart';
 import 'package:data/core/di/di.module.dart';
 import 'package:features/core/di/di.module.dart';
@@ -22,5 +23,6 @@ class CcDiModuleConfig {
     ExternalModule(DataPackageModule),
     ExternalModule(AppConfigPackageModule),
     ExternalModule(FeaturesPackageModule),
+    ExternalModule(CcBridgePackageModule),
   ];
 }

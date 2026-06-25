@@ -16,6 +16,10 @@ dependencies:
     path: ../../cc_core_sdk/cc_sdk
   cc_sdk_ui:
     path: ../../cc_core_sdk/cc_sdk_ui
+  cc_bridge:
+    path: ../../cc_core_sdk/cc_bridge
+  cc_sdk_data:
+    path: ../../cc_core_sdk/cc_sdk_data
 
   curl_logger_dio_interceptor: ^1.0.1
   dartx: ^1.2.0

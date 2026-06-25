@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/navigation/features_router.gr.dart';
 import '../bloc/login_bloc.dart';
 import '../bloc/login_state.dart';
 import 'widgets/login_card_content.dart';
@@ -39,7 +39,7 @@ class _LoginViewState extends State<LoginView> {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
-          context.router.replacePath(CcRouteConfig.mainNavigation);
+          getIt<AuthCoordinator>().navigateToDashboard(context);
         }
       },
       child: Scaffold(
@@ -53,7 +53,7 @@ class _LoginViewState extends State<LoginView> {
                     : context.respDim(600),
                 child: LoginCardContent(
                   onPhoneLogin: () =>
-                      context.router.push(const PhoneAuthRoute()),
+                      getIt<AuthCoordinator>().navigateToPhoneAuth(context),
                 ),
               );
             },

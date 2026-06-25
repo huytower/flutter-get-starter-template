@@ -5,8 +5,9 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i687;
 
+import 'package:cc_bridge/export_cc_bridge.dart' as _i271;
 import 'package:cc_sdk/domain/services/cc_messaging_service.dart' as _i408;
-import 'package:data/domain/repositories/auth/cc_auth_repository.dart' as _i475;
+import 'package:data/domain/repositories/auth/auth_repository.dart' as _i478;
 import 'package:data/domain/usecases/dashboard/get_dashboard_data_usecase.dart'
     as _i208;
 import 'package:data/domain/usecases/dashboard/refresh_dashboard_data_usecase.dart'
@@ -44,6 +45,8 @@ import 'package:features/features/auth/presentation/bloc/login_bloc.dart'
     as _i758;
 import 'package:features/features/auth/presentation/bloc/phone_auth_bloc.dart'
     as _i586;
+import 'package:features/features/auth/presentation/session/session_provider_impl.dart'
+    as _i897;
 import 'package:features/features/counter/data/datasources/counter_local_data_source.dart'
     as _i19;
 import 'package:features/features/counter/data/repositories/counter_repository_impl.dart'
@@ -55,7 +58,7 @@ import 'package:features/features/counter/domain/usecases/decrement_counter_use_
 import 'package:features/features/counter/domain/usecases/get_counter_use_case.dart'
     as _i476;
 import 'package:features/features/counter/domain/usecases/increment_counter_use_case.dart'
-    as _i828;
+    as _i827;
 import 'package:features/features/counter/presentation/bloc/counter_bloc.dart'
     as _i8;
 import 'package:features/features/dashboard/presentation/bloc/dashboard_bloc.dart'
@@ -69,73 +72,112 @@ import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 class FeaturesPackageModule extends _i526.MicroPackageModule {
-// initializes the registration of main-scope dependencies inside of GetIt
+  // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
     final messagingModule = _$MessagingModule();
     gh.lazySingleton<_i820.CcBiometricAuthDatasource>(
-        () => _i820.CcBiometricAuthDatasource());
+      () => _i820.CcBiometricAuthDatasource(),
+    );
     gh.lazySingleton<_i892.FirebaseMessaging>(
-        () => messagingModule.firebaseMessaging);
+      () => messagingModule.firebaseMessaging,
+    );
     gh.lazySingleton<_i312.WebCubit>(() => _i312.WebCubit());
-    gh.factory<_i1059.DashboardBloc>(() => _i1059.DashboardBloc(
-          getDashboardDataUseCase: gh<_i208.GetDashboardDataUseCase>(),
-          updateDashboardDataUseCase: gh<_i695.UpdateDashboardDataUseCase>(),
-          refreshDashboardDataUseCase: gh<_i393.RefreshDashboardDataUseCase>(),
-        ));
+    gh.factory<_i1059.DashboardBloc>(
+      () => _i1059.DashboardBloc(
+        getDashboardDataUseCase: gh<_i208.GetDashboardDataUseCase>(),
+        updateDashboardDataUseCase: gh<_i695.UpdateDashboardDataUseCase>(),
+        refreshDashboardDataUseCase: gh<_i393.RefreshDashboardDataUseCase>(),
+      ),
+    );
+    gh.lazySingleton<_i85.CcBiometricAuthRepository>(
+      () => _i507.CcBiometricAuthRepositoryImpl(
+        gh<_i820.CcBiometricAuthDatasource>(),
+      ),
+    );
+    gh.lazySingleton<_i408.CcMessagingService>(
+      () => _i827.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()),
+    );
     gh.lazySingleton<_i1003.GetCurrentUserUseCase>(
-        () => _i1003.GetCurrentUserUseCase(gh<_i475.CcAuthRepository>()));
+      () => _i1003.GetCurrentUserUseCase(gh<_i478.AuthRepository>()),
+    );
     gh.lazySingleton<_i601.LoginAnonymouslyUseCase>(
-        () => _i601.LoginAnonymouslyUseCase(gh<_i475.CcAuthRepository>()));
+      () => _i601.LoginAnonymouslyUseCase(gh<_i478.AuthRepository>()),
+    );
     gh.lazySingleton<_i595.LoginUseCase>(
-        () => _i595.LoginUseCase(gh<_i475.CcAuthRepository>()));
+      () => _i595.LoginUseCase(gh<_i478.AuthRepository>()),
+    );
     gh.lazySingleton<_i307.LoginWithAppleUseCase>(
-        () => _i307.LoginWithAppleUseCase(gh<_i475.CcAuthRepository>()));
+      () => _i307.LoginWithAppleUseCase(gh<_i478.AuthRepository>()),
+    );
     gh.lazySingleton<_i600.LoginWithGoogleUseCase>(
-        () => _i600.LoginWithGoogleUseCase(gh<_i475.CcAuthRepository>()));
+      () => _i600.LoginWithGoogleUseCase(gh<_i478.AuthRepository>()),
+    );
     gh.lazySingleton<_i1043.LogoutUseCase>(
-        () => _i1043.LogoutUseCase(gh<_i475.CcAuthRepository>()));
+      () => _i1043.LogoutUseCase(gh<_i478.AuthRepository>()),
+    );
     gh.lazySingleton<_i602.SignInWithPhoneNumberUseCase>(
-        () => _i602.SignInWithPhoneNumberUseCase(gh<_i475.CcAuthRepository>()));
+      () => _i602.SignInWithPhoneNumberUseCase(gh<_i478.AuthRepository>()),
+    );
     gh.lazySingleton<_i55.VerifyPhoneNumberUseCase>(
-        () => _i55.VerifyPhoneNumberUseCase(gh<_i475.CcAuthRepository>()));
-    gh.lazySingleton<_i85.CcBiometricAuthRepository>(() =>
-        _i507.CcBiometricAuthRepositoryImpl(
-            gh<_i820.CcBiometricAuthDatasource>()));
-    gh.lazySingleton<_i408.CcMessagingService>(() =>
-        _i827.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()));
-    gh.factory<_i758.LoginBloc>(() => _i758.LoginBloc(
-          gh<_i595.LoginUseCase>(),
-          gh<_i600.LoginWithGoogleUseCase>(),
-          gh<_i307.LoginWithAppleUseCase>(),
-        ));
-    gh.lazySingleton<_i19.CounterLocalDataSource>(() =>
-        _i19.CounterLocalDataSourceImpl(
-            sharedPreferences: gh<_i460.SharedPreferences>()));
-    gh.factory<_i586.PhoneAuthBloc>(() => _i586.PhoneAuthBloc(
-          gh<_i55.VerifyPhoneNumberUseCase>(),
-          gh<_i602.SignInWithPhoneNumberUseCase>(),
-        ));
-    gh.lazySingleton<_i112.CounterRepository>(() => _i345.CounterRepositoryImpl(
-        localDataSource: gh<_i19.CounterLocalDataSource>()));
+      () => _i55.VerifyPhoneNumberUseCase(gh<_i478.AuthRepository>()),
+    );
+    gh.factory<_i758.LoginBloc>(
+      () => _i758.LoginBloc(
+        gh<_i595.LoginUseCase>(),
+        gh<_i600.LoginWithGoogleUseCase>(),
+        gh<_i307.LoginWithAppleUseCase>(),
+      ),
+    );
+    gh.lazySingleton<_i19.CounterLocalDataSource>(
+      () => _i19.CounterLocalDataSourceImpl(
+        sharedPreferences: gh<_i460.SharedPreferences>(),
+      ),
+    );
+    gh.factory<_i586.PhoneAuthBloc>(
+      () => _i586.PhoneAuthBloc(
+        gh<_i55.VerifyPhoneNumberUseCase>(),
+        gh<_i602.SignInWithPhoneNumberUseCase>(),
+      ),
+    );
+    gh.lazySingleton<_i112.CounterRepository>(
+      () => _i345.CounterRepositoryImpl(
+        localDataSource: gh<_i19.CounterLocalDataSource>(),
+      ),
+    );
     gh.lazySingleton<_i678.DecrementCounterUseCase>(
-        () => _i678.DecrementCounterUseCase(gh<_i112.CounterRepository>()));
+      () => _i678.DecrementCounterUseCase(gh<_i112.CounterRepository>()),
+    );
     gh.lazySingleton<_i476.GetCounterUseCase>(
-        () => _i476.GetCounterUseCase(gh<_i112.CounterRepository>()));
-    gh.lazySingleton<_i828.IncrementCounterUseCase>(
-        () => _i828.IncrementCounterUseCase(gh<_i112.CounterRepository>()));
-    gh.lazySingleton<_i142.CcAuthenticateWithBiometrics>(() =>
-        _i142.CcAuthenticateWithBiometrics(
-            gh<_i85.CcBiometricAuthRepository>()));
-    gh.factory<_i18.BiometricBloc>(() => _i18.BiometricBloc(
-          gh<_i142.CcAuthenticateWithBiometrics>(),
-          gh<_i85.CcBiometricAuthRepository>(),
-        ));
-    gh.factory<_i8.CounterBloc>(() => _i8.CounterBloc(
-          getCounterUseCase: gh<_i476.GetCounterUseCase>(),
-          incrementCounterUseCase: gh<_i828.IncrementCounterUseCase>(),
-          decrementCounterUseCase: gh<_i678.DecrementCounterUseCase>(),
-        ));
+      () => _i476.GetCounterUseCase(gh<_i112.CounterRepository>()),
+    );
+    gh.lazySingleton<_i827.IncrementCounterUseCase>(
+      () => _i827.IncrementCounterUseCase(gh<_i112.CounterRepository>()),
+    );
+    gh.lazySingleton<_i271.SessionContract>(
+      () => _i897.SessionProviderImpl(
+        gh<_i1003.GetCurrentUserUseCase>(),
+        gh<_i1043.LogoutUseCase>(),
+      ),
+    );
+    gh.lazySingleton<_i142.CcAuthenticateWithBiometrics>(
+      () => _i142.CcAuthenticateWithBiometrics(
+        gh<_i85.CcBiometricAuthRepository>(),
+      ),
+    );
+    gh.factory<_i18.BiometricBloc>(
+      () => _i18.BiometricBloc(
+        gh<_i142.CcAuthenticateWithBiometrics>(),
+        gh<_i85.CcBiometricAuthRepository>(),
+      ),
+    );
+    gh.factory<_i8.CounterBloc>(
+      () => _i8.CounterBloc(
+        getCounterUseCase: gh<_i476.GetCounterUseCase>(),
+        incrementCounterUseCase: gh<_i827.IncrementCounterUseCase>(),
+        decrementCounterUseCase: gh<_i678.DecrementCounterUseCase>(),
+      ),
+    );
   }
 }
 

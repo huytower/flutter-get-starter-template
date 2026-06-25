@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/di.dart';
 import '../bloc/phone_auth_bloc.dart';
 import '../bloc/phone_auth_event.dart';
 import '../bloc/phone_auth_state.dart';
@@ -82,8 +84,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
   void _onStateChanged(BuildContext context, PhoneAuthState state) {
     if (state is PhoneAuthSuccess) {
-      // Using replacePath to avoid circular dependency between features and app shell router
-      context.router.replacePath(CcRouteConfig.mainNavigation);
+      getIt<AuthCoordinator>().navigateToDashboard(context);
     }
   }
 

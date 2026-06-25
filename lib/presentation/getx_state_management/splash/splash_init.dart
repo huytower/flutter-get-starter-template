@@ -1,11 +1,9 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/navigation/route_names.dart';
-
 void navigateFromSplash(BuildContext context) {
-  // Always navigate to MainNavigationRoute as the main shell
-  // The AUTO_ROUTE_START value controls what content shows inside it
-  // context.router.replacePath(AppRoute.dashboard.path);
-  context.router.replacePath(AppRoute.mainNavigation.path);
+  // Use the AuthCoordinator to handle splash-to-main navigation
+  // This allows the orchestrator to decide the initial flow based on auth state
+  getIt<AuthCoordinator>().navigateToDashboard(context);
 }

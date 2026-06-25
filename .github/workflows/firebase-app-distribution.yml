@@ -1,18 +1,19 @@
 name: CI/CD Pipeline
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
-    inputs:
-      flavor:
-        description: 'App flavor'
-        required: true
-        default: 'uat'
-        type: choice
-        options: [ free, uat, prod ]
+# TEMP DISABLE CICD
+#on:
+#  push:
+#    branches: [ main ]
+#  pull_request:
+#    branches: [ main ]
+#  workflow_dispatch:
+#    inputs:
+#      flavor:
+#        description: 'App flavor'
+#        required: true
+#        default: 'uat'
+#        type: choice
+#        options: [ free, uat, prod ]
 
 env:
   FLUTTER_VERSION: '3.44.3'

@@ -15,6 +15,8 @@ workspace:
   - cc_core_sdk/cc_sdk
   - cc_core_sdk/cc_sdk_ui
   - cc_core_sdk/cc_mixin
+  - cc_core_sdk/cc_bridge
+  - cc_core_sdk/cc_sdk_data
   - features
 
 dependencies:
@@ -26,6 +28,8 @@ dependencies:
   catcher_2: ^2.1.9
   cc_mixin:
     path: cc_core_sdk/cc_mixin
+  cc_bridge:
+    path: cc_core_sdk/cc_bridge
   cc_sdk:
     path: cc_core_sdk/cc_sdk
   cc_sdk_ui:

@@ -5,13 +5,13 @@ import 'package:cc_sdk/core/network/curl/curl_utils.dart';
 import 'package:dio/dio.dart';
 
 import '../params/cc_rest_api_params.dart';
-import '../response/header/cc_res_header_model.dart';
+import '../response/header/res_header_model.dart';
 
 /// Interceptor that standardizes all responses into the project's envelope format.
 ///
 /// It ensures that whether the API is internal (enveloped) or external (raw),
 /// the downstream code (Repositories) always receives a consistent "Peeled" payload.
-class CcResponseInterceptor extends Interceptor {
+class ResponseInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
     // 1. Logging Logic
@@ -54,7 +54,7 @@ class CcResponseInterceptor extends Interceptor {
     }
 
     // 3. Peeling Logic (Now guaranteed to have a Map with a status key)
-    final header = CcResHeaderModel.fromJson(rawData);
+    final header = ResHeaderModel.fromJson(rawData);
 
     if (header.status) {
       // SUCCESS: Strip the envelope and return the inner data

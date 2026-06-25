@@ -1,5 +1,5 @@
 import '../../params/cc_rest_api_params.dart';
-import '../header/cc_res_header_model.dart';
+import '../header/res_header_model.dart';
 
 /// Standard Wrapper for RESTful API responses.
 ///
@@ -12,11 +12,11 @@ import '../header/cc_res_header_model.dart';
 /// final response = await remote.getUserProfile();
 /// final user = response.flatMapToList((json) => User.fromJson(json)).firstElement;
 /// ```
-class CcResBodyModel<T> {
-  CcResBodyModel();
+class ResBodyModel<T> {
+  ResBodyModel();
 
   /// Contains status, message, and metadata
-  CcResHeaderModel? _resHeader;
+  ResHeaderModel? _resHeader;
 
   /// Raw data as a List (unified internally)
   List<dynamic>? _resBodyList;
@@ -54,9 +54,7 @@ class CcResBodyModel<T> {
   /// ```dart
   /// final result = response.flatMapToList((json) => User.fromJson(json));
   /// ```
-  CcResBodyModel<T> flatMapToList(
-    T Function(Map<String, dynamic> json) mapper,
-  ) {
+  ResBodyModel<T> flatMapToList(T Function(Map<String, dynamic> json) mapper) {
     listElements.clear();
 
     if (_resBodyList != null) {
@@ -75,11 +73,11 @@ class CcResBodyModel<T> {
 
   /// Parses the response from dynamic JSON (Map).
   /// This method is robust and will not crash if fields are missing.
-  CcResBodyModel.fromJson(dynamic json) {
+  ResBodyModel.fromJson(dynamic json) {
     if (json is! Map<String, dynamic>) return;
 
     // Root-level fields (status, message, code, etc.)
-    _resHeader = CcResHeaderModel.fromJson(json);
+    _resHeader = ResHeaderModel.fromJson(json);
 
     // Payload extraction
     final data = json[CcRestApiParams.data.name];

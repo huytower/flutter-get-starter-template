@@ -1,31 +1,31 @@
 import 'package:cc_sdk/domain/failures/cc_failure.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../entities/auth/cc_phone_auth_event.dart';
-import '../../entities/auth/cc_user_entity.dart';
+import '../../../../../../features/lib/features/auth/presentation/bloc/domain_phone_auth_event.dart';
+import '../../entities/auth/domain_user_entity.dart';
 
 /// Repository interface for authentication operations.
-abstract class CcAuthRepository {
+abstract class AuthRepository {
   /// Signs in with email and password.
-  Future<Result<CcUserEntity, CcFailure>> signInWithEmail(
+  Future<Result<DomainUserEntity, CcFailure>> signInWithEmail(
     String email,
     String password,
   );
 
   /// Signs in anonymously.
-  Future<Result<CcUserEntity, CcFailure>> signInAnonymously();
+  Future<Result<DomainUserEntity, CcFailure>> signInAnonymously();
 
   /// Signs in with Google.
-  Future<Result<CcUserEntity, CcFailure>> signInWithGoogle();
+  Future<Result<DomainUserEntity, CcFailure>> signInWithGoogle();
 
   /// Signs in with Apple.
-  Future<Result<CcUserEntity, CcFailure>> signInWithApple();
+  Future<Result<DomainUserEntity, CcFailure>> signInWithApple();
 
   /// Verifies a phone number and returns a stream of events.
-  Stream<CcPhoneAuthEvent> verifyPhoneNumber({required String phoneNumber});
+  Stream<DomainPhoneAuthEvent> verifyPhoneNumber({required String phoneNumber});
 
   /// Signs in with a phone number and the SMS code received.
-  Future<Result<CcUserEntity, CcFailure>> signInWithPhoneNumber({
+  Future<Result<DomainUserEntity, CcFailure>> signInWithPhoneNumber({
     required String verificationId,
     required String smsCode,
   });
@@ -34,8 +34,8 @@ abstract class CcAuthRepository {
   Future<Result<Unit, CcFailure>> signOut();
 
   /// Gets the currently authenticated user.
-  Future<Result<CcUserEntity?, CcFailure>> getCurrentUser();
+  Future<Result<DomainUserEntity?, CcFailure>> getCurrentUser();
 
   /// Streams the authentication state changes.
-  Stream<CcUserEntity?> authStateChanges();
+  Stream<DomainUserEntity?> authStateChanges();
 }

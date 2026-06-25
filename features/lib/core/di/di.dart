@@ -1,6 +1,6 @@
 import 'package:cc_sdk/core/helper/cc_device_info_helper.dart';
 import 'package:cc_sdk/domain/entities/cc_device_entity.dart';
-import 'package:data/domain/repositories/auth/cc_auth_repository.dart';
+import 'package:data/domain/repositories/auth/auth_repository.dart';
 import 'package:data/domain/usecases/dashboard/get_dashboard_data_usecase.dart';
 import 'package:data/domain/usecases/dashboard/refresh_dashboard_data_usecase.dart';
 import 'package:data/domain/usecases/dashboard/update_dashboard_data_usecase.dart';
@@ -21,7 +21,7 @@ final GetIt getIt = GetIt.instance;
     RefreshDashboardDataUseCase,
     CcDeviceInfoHelper,
     CcDeviceEntity,
-    CcAuthRepository,
+    AuthRepository,
     FirebaseMessaging,
   ],
 )

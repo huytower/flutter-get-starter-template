@@ -31,7 +31,7 @@ import 'package:data/data/repositories/crash_log/crash_log_repository_impl.dart'
 import 'package:data/data/repositories/dashboard/dashboard_repository_impl.dart'
     as _i254;
 import 'package:data/data/repositories/home/home_repository_impl.dart' as _i114;
-import 'package:data/domain/repositories/auth/cc_auth_repository.dart' as _i475;
+import 'package:data/domain/repositories/auth/auth_repository.dart' as _i478;
 import 'package:data/domain/repositories/comment/comment_repository.dart'
     as _i683;
 import 'package:data/domain/repositories/crash_log/crash_log_repository.dart'
@@ -61,10 +61,6 @@ class DataPackageModule extends _i526.MicroPackageModule {
     gh.lazySingleton<_i59.FirebaseAuth>(() => firebaseModule.firebaseAuth);
     gh.lazySingleton<_i116.GoogleSignIn>(() => firebaseModule.googleSignIn);
     gh.singleton<_i361.Interceptor>(
-      () => dataModule.ccResponseInterceptor,
-      instanceName: 'ccResponseInterceptor',
-    );
-    gh.singleton<_i361.Interceptor>(
       () => dataModule.cacheInterceptor,
       instanceName: 'cacheInterceptor',
     );
@@ -79,23 +75,27 @@ class DataPackageModule extends _i526.MicroPackageModule {
     gh.lazySingleton<_i966.DashboardLocalDataSource>(
         () => _i774.DashboardLocalDataSourceImpl(gh<_i215.CcAppStorage>()));
     gh.singleton<_i361.Interceptor>(
-      () => dataModule.ccRequestInterceptor,
-      instanceName: 'ccRequestInterceptor',
-    );
-    gh.singleton<_i361.Interceptor>(
       () => dataModule.curlLoggerInterceptor,
       instanceName: 'curlLoggerInterceptor',
+    );
+    gh.singleton<_i361.Interceptor>(
+      () => dataModule.requestInterceptor,
+      instanceName: 'requestInterceptor',
+    );
+    gh.singleton<_i361.Interceptor>(
+      () => dataModule.responseInterceptor,
+      instanceName: 'responseInterceptor',
     );
     gh.lazySingleton<_i480.DashboardRemoteDataSource>(
         () => const _i434.DashboardRemoteDataSourceImpl());
     gh.singleton<List<_i361.Interceptor>>(() => dataModule.interceptors(
-          gh<_i361.Interceptor>(instanceName: 'ccRequestInterceptor'),
-          gh<_i361.Interceptor>(instanceName: 'ccResponseInterceptor'),
+          gh<_i361.Interceptor>(instanceName: 'requestInterceptor'),
+          gh<_i361.Interceptor>(instanceName: 'responseInterceptor'),
           gh<_i361.Interceptor>(instanceName: 'curlLoggerInterceptor'),
           gh<_i361.Interceptor>(instanceName: 'talkerDioLogger'),
           gh<_i361.Interceptor>(instanceName: 'cacheInterceptor'),
         ));
-    gh.lazySingleton<_i475.CcAuthRepository>(
+    gh.lazySingleton<_i478.AuthRepository>(
         () => _i733.FirebaseAuthRepositoryImpl(
               gh<_i59.FirebaseAuth>(),
               gh<_i116.GoogleSignIn>(),

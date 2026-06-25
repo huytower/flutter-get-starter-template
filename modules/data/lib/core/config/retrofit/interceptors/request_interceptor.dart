@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
-class CcRequestInterceptor extends Interceptor {
+class RequestInterceptor extends Interceptor {
   @override
   Future<void> onRequest(
     RequestOptions options,

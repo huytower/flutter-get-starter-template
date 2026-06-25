@@ -3,27 +3,28 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:cc_sdk/domain/failures/cc_failure.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:crypto/crypto.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-import '../../../domain/entities/auth/cc_phone_auth_event.dart';
-import '../../../domain/entities/auth/cc_user_entity.dart';
-import '../../../domain/repositories/auth/cc_auth_repository.dart';
+import '../../../../../../features/lib/features/auth/presentation/bloc/domain_phone_auth_event.dart';
+import '../../../domain/entities/auth/domain_user_entity.dart';
+import '../../../domain/repositories/auth/auth_repository.dart';
 
-@LazySingleton(as: CcAuthRepository)
-class FirebaseAuthRepositoryImpl implements CcAuthRepository {
-  final FirebaseAuth _firebaseAuth;
+@LazySingleton(as: AuthRepository)
+class FirebaseAuthRepositoryImpl implements AuthRepository {
+  final firebase_auth.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
 
   FirebaseAuthRepositoryImpl(this._firebaseAuth, this._googleSignIn);
 
   @override
-  Future<Result<CcUserEntity, CcFailure>> signInWithEmail(
+  Future<Result<DomainUserEntity, CcFailure>> signInWithEmail(
     String email,
     String password,
   ) async {
@@ -34,10 +35,10 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
       );
       final user = userCredential.user;
       return switch (user) {
-        User u => Success(_mapFirebaseUserToEntity(u)),
+        firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
         _ => const Error(UnauthorizedFailure(CcLocaleKeys.auth_login_failed)),
       };
-    } on FirebaseAuthException catch (e) {
+    } on firebase_auth.FirebaseAuthException catch (e) {
       return Error(ServerFailure(e.message ?? CcLocaleKeys.app_error_server));
     } catch (e) {
       return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
@@ -45,15 +46,15 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
   }
 
   @override
-  Future<Result<CcUserEntity, CcFailure>> signInAnonymously() async {
+  Future<Result<DomainUserEntity, CcFailure>> signInAnonymously() async {
     try {
       final userCredential = await _firebaseAuth.signInAnonymously();
       final user = userCredential.user;
       return switch (user) {
-        User u => Success(_mapFirebaseUserToEntity(u)),
+        firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
         _ => const Error(UnauthorizedFailure(CcLocaleKeys.auth_login_failed)),
       };
-    } on FirebaseAuthException catch (e) {
+    } on firebase_auth.FirebaseAuthException catch (e) {
       return Error(ServerFailure(e.message ?? CcLocaleKeys.app_error_server));
     } catch (e) {
       return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
@@ -61,14 +62,14 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
   }
 
   @override
-  Future<Result<CcUserEntity, CcFailure>> signInWithGoogle() async {
+  Future<Result<DomainUserEntity, CcFailure>> signInWithGoogle() async {
     try {
       await _googleSignIn.initialize();
       final googleUser = await _googleSignIn.authenticate();
 
       final googleAuth = googleUser.authentication;
 
-      final credential = GoogleAuthProvider.credential(
+      final credential = firebase_auth.GoogleAuthProvider.credential(
         accessToken: null, // Access token is now separate in 7.x
         idToken: googleAuth.idToken,
       );
@@ -79,10 +80,10 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
       final user = userCredential.user;
 
       return switch (user) {
-        User u => Success(_mapFirebaseUserToEntity(u)),
+        firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
         _ => const Error(UnauthorizedFailure(CcLocaleKeys.auth_login_failed)),
       };
-    } on FirebaseAuthException catch (e) {
+    } on firebase_auth.FirebaseAuthException catch (e) {
       return Error(ServerFailure(e.message ?? CcLocaleKeys.app_error_server));
     } catch (e) {
       return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
@@ -90,7 +91,7 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
   }
 
   @override
-  Future<Result<CcUserEntity, CcFailure>> signInWithApple() async {
+  Future<Result<DomainUserEntity, CcFailure>> signInWithApple() async {
     try {
       final rawNonce = _generateNonce();
       final nonce = _sha256ofString(rawNonce);
@@ -103,7 +104,7 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
         nonce: nonce,
       );
 
-      final credential = OAuthProvider(
+      final credential = firebase_auth.OAuthProvider(
         'apple.com',
       ).credential(idToken: appleCredential.identityToken, rawNonce: rawNonce);
 
@@ -113,10 +114,10 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
       final user = userCredential.user;
 
       return switch (user) {
-        User u => Success(_mapFirebaseUserToEntity(u)),
+        firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
         _ => const Error(UnauthorizedFailure(CcLocaleKeys.auth_login_failed)),
       };
-    } on FirebaseAuthException catch (e) {
+    } on firebase_auth.FirebaseAuthException catch (e) {
       return Error(ServerFailure(e.message ?? CcLocaleKeys.app_error_server));
     } catch (e) {
       return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
@@ -124,14 +125,16 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
   }
 
   @override
-  Stream<CcPhoneAuthEvent> verifyPhoneNumber({required String phoneNumber}) {
-    final controller = StreamController<CcPhoneAuthEvent>();
+  Stream<DomainPhoneAuthEvent> verifyPhoneNumber({
+    required String phoneNumber,
+  }) {
+    final controller = StreamController<DomainPhoneAuthEvent>();
 
-    void onEvent(CcPhoneAuthEvent event) {
+    void onEvent(DomainPhoneAuthEvent event) {
       if (!controller.isClosed) {
         controller.add(event);
-        if (event is CcPhoneVerificationCompleted ||
-            event is CcPhoneVerificationFailed) {
+        if (event is DomainPhoneVerificationCompleted ||
+            event is DomainPhoneVerificationFailed) {
           controller.close();
         }
       }
@@ -142,30 +145,30 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
       verificationCompleted: (credential) async {
         final result = await _signInWithCredential(credential);
         result.when(
-          (u) => onEvent(CcPhoneVerificationCompleted(u)),
-          (f) => onEvent(CcPhoneVerificationFailed(f)),
+          (u) => onEvent(DomainPhoneVerificationCompleted(u)),
+          (f) => onEvent(DomainPhoneVerificationFailed(f)),
         );
       },
       verificationFailed: (e) => onEvent(
-        CcPhoneVerificationFailed(
+        DomainPhoneVerificationFailed(
           ServerFailure(e.message ?? CcLocaleKeys.app_error_server),
         ),
       ),
-      codeSent: (id, token) => onEvent(CcPhoneCodeSent(id, token)),
+      codeSent: (id, token) => onEvent(DomainPhoneCodeSent(id, token)),
       codeAutoRetrievalTimeout: (id) =>
-          onEvent(CcPhoneCodeAutoRetrievalTimeout(id)),
+          onEvent(DomainPhoneCodeAutoRetrievalTimeout(id)),
     );
 
     return controller.stream;
   }
 
   @override
-  Future<Result<CcUserEntity, CcFailure>> signInWithPhoneNumber({
+  Future<Result<DomainUserEntity, CcFailure>> signInWithPhoneNumber({
     required String verificationId,
     required String smsCode,
   }) async {
     return _signInWithCredential(
-      PhoneAuthProvider.credential(
+      firebase_auth.PhoneAuthProvider.credential(
         verificationId: verificationId,
         smsCode: smsCode,
       ),
@@ -183,7 +186,7 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
   }
 
   @override
-  Future<Result<CcUserEntity?, CcFailure>> getCurrentUser() async {
+  Future<Result<DomainUserEntity?, CcFailure>> getCurrentUser() async {
     try {
       final user = _firebaseAuth.currentUser;
       return Success(user != null ? _mapFirebaseUserToEntity(user) : null);
@@ -193,14 +196,14 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
   }
 
   @override
-  Stream<CcUserEntity?> authStateChanges() {
+  Stream<DomainUserEntity?> authStateChanges() {
     return _firebaseAuth.authStateChanges().map((user) {
       return user != null ? _mapFirebaseUserToEntity(user) : null;
     });
   }
 
-  Future<Result<CcUserEntity, CcFailure>> _signInWithCredential(
-    AuthCredential credential,
+  Future<Result<DomainUserEntity, CcFailure>> _signInWithCredential(
+    firebase_auth.AuthCredential credential,
   ) async {
     try {
       final userCredential = await _firebaseAuth.signInWithCredential(
@@ -208,22 +211,39 @@ class FirebaseAuthRepositoryImpl implements CcAuthRepository {
       );
       final user = userCredential.user;
       return switch (user) {
-        User u => Success(_mapFirebaseUserToEntity(u)),
+        firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
         _ => const Error(UnauthorizedFailure(CcLocaleKeys.auth_login_failed)),
       };
-    } on FirebaseAuthException catch (e) {
+    } on firebase_auth.FirebaseAuthException catch (e) {
       return Error(ServerFailure(e.message ?? CcLocaleKeys.app_error_server));
     } catch (e) {
       return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
     }
   }
 
-  CcUserEntity _mapFirebaseUserToEntity(User user) {
-    return CcUserEntity(
+  DomainUserEntity _mapFirebaseUserToEntity(firebase_auth.User user) {
+    // Determine status based on Firebase properties
+    CcUserStatus status = CcUserStatus.active;
+    if (user.email != null && !user.emailVerified) {
+      status = CcUserStatus.pendingVerification;
+    }
+
+    return DomainUserEntity(
       id: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      photoUrl: user.photoURL,
+      email: user.email ?? '',
+      phoneNumber: user.phoneNumber,
+      status: status,
+      firstName: user.displayName?.split(' ').first,
+      lastName: user.displayName?.contains(' ') == true
+          ? user.displayName?.split(' ').last
+          : null,
+      avatarUrl: user.photoURL,
+      isEmailVerified: user.emailVerified,
+      isPhoneVerified: user.phoneNumber != null,
+      registeredDeviceIds: const [], // To be populated by device service
+      createdAt: user.metadata.creationTime ?? DateTime.now(),
+      updatedAt: user.metadata.lastSignInTime ?? DateTime.now(),
+      lastActiveAt: user.metadata.lastSignInTime,
     );
   }
 

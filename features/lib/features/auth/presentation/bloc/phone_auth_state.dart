@@ -1,4 +1,4 @@
-import 'package:data/domain/entities/auth/cc_user_entity.dart';
+import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class PhoneAuthState extends Equatable {
@@ -17,7 +17,13 @@ class PhoneAuthLoading extends PhoneAuthState {
 }
 
 class PhoneAuthCodeSent extends PhoneAuthState {
-  const PhoneAuthCodeSent();
+  final String verificationId;
+  final int? resendToken;
+
+  const PhoneAuthCodeSent(this.verificationId, this.resendToken);
+
+  @override
+  List<Object?> get props => [verificationId, resendToken];
 }
 
 class PhoneAuthSuccess extends PhoneAuthState {

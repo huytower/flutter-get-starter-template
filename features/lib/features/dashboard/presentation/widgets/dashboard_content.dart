@@ -1,3 +1,4 @@
+import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -48,6 +49,8 @@ class DashboardContent extends StatelessWidget {
                 ),
               ),
               const CcSpaceLG(),
+              _buildFeatureButtons(context),
+              const CcSpaceMD(),
               _buildRefreshButton(context),
             ],
           ),
@@ -60,6 +63,37 @@ class DashboardContent extends StatelessWidget {
           ),
         if (isUpdating)
           const Positioned.fill(child: Center(child: CcLoadingIconWidget())),
+      ],
+    );
+  }
+
+  Widget _buildFeatureButtons(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: CcBaseBtn(
+            onTap: () => getIt<HomeCoordinator>().navigateToCounter(context),
+            title: 'Counter Feature',
+            bgColor: [
+              context.ccColorScheme.secondary,
+              context.ccColorScheme.secondary.withOpacity(0.8),
+            ],
+          ),
+        ),
+        const CcSpaceMD(),
+        Expanded(
+          child: CcBaseBtn(
+            onTap: () => getIt<HomeCoordinator>().navigateToWeb(
+              context,
+              url: 'https://flutter.dev',
+            ),
+            title: 'Web Feature',
+            bgColor: [
+              context.ccColorScheme.tertiary,
+              context.ccColorScheme.tertiary.withOpacity(0.8),
+            ],
+          ),
+        ),
       ],
     );
   }

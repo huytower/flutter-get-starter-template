@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:data/domain/entities/auth/cc_phone_auth_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
@@ -54,7 +53,7 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
         phoneNumber: event.phoneNumber,
       );
 
-      await emit.forEach<CcPhoneAuthEvent>(
+      await emit.forEach<PhoneAuthEvent>(
         verificationStream,
         onData: (phoneEvent) {
           // If we already reached success (manually or automatically),
@@ -63,16 +62,19 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
             return state;
           }
 
-          if (phoneEvent is CcPhoneCodeSent) {
+          if (phoneEvent is DomainPhoneCodeSent) {
             _verificationId = phoneEvent.verificationId;
-            return const PhoneAuthCodeSent();
-          } else if (phoneEvent is CcPhoneVerificationCompleted) {
+            return PhoneAuthCodeSent(
+              phoneEvent.verificationId,
+              phoneEvent.resendToken,
+            );
+          } else if (phoneEvent is DomainPhoneVerificationCompleted) {
             return PhoneAuthSuccess(phoneEvent.user);
-          } else if (phoneEvent is CcPhoneVerificationFailed) {
+          } else if (phoneEvent is DomainPhoneVerificationFailed) {
             return PhoneAuthError(phoneEvent.failure.message);
-          } else if (phoneEvent is CcPhoneCodeAutoRetrievalTimeout) {
+          } else if (phoneEvent is DomainPhoneCodeAutoRetrievalTimeout) {
             // Keep the CodeSent state so the user can still enter the code manually
-            return const PhoneAuthCodeSent();
+            return state;
           }
           return state;
         },

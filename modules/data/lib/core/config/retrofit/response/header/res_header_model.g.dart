@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'cc_res_header_model.dart';
+part of 'res_header_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-CcResHeaderModel _$CcResHeaderModelFromJson(Map<String, dynamic> json) =>
-    CcResHeaderModel(
+ResHeaderModel _$ResHeaderModelFromJson(Map<String, dynamic> json) =>
+    ResHeaderModel(
       status: json['status'] as bool? ?? false,
       message: json['message'] as String? ?? '',
       code: json['code'] as String?,
@@ -20,7 +20,7 @@ CcResHeaderModel _$CcResHeaderModelFromJson(Map<String, dynamic> json) =>
       meta: json['meta'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$CcResHeaderModelToJson(CcResHeaderModel instance) =>
+Map<String, dynamic> _$ResHeaderModelToJson(ResHeaderModel instance) =>
     <String, dynamic>{
       'status': instance.status,
       'message': instance.message,
