@@ -1,4 +1,4 @@
-# Micro-Features Library
+# CC Micro-Features Library
 
 A collection of **project-blind, reusable Micro-Features** following the Hybrid-Modular Super App architecture. These are standalone business verticals (Feature-as-a-Service) designed to be shared across multiple enterprise applications.
 
@@ -12,7 +12,7 @@ Micro-Features are engineered as independent blocks. They follow two strict rule
 
 ```
 lib/
-├── core/                  # Shared logic within micro_features
+├── core/                  # Shared logic within cc_micro_features
 │   ├── di/               # Local Micro-Package DI registration
 │   └── navigation/       # Feature-specific routing (AutoRoute)
 │

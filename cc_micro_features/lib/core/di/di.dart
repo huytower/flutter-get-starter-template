@@ -9,30 +9,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final GetIt getIt = GetIt.instance;
 
-/// Configures dependency injection for the micro_features library.
+/// Configures dependency injection for the cc_micro_features library.
 /// Uses the Micro-Package pattern for injectable.
 @InjectableInit.microPackage(
   ignoreUnregisteredTypes: [
     SharedPreferences,
     CcDeviceInfoHelper,
     CcDeviceEntity,
-    FirebaseMessaging,
+    firebase_auth.FirebaseAuth,
+    GoogleSignIn,
   ],
 )
 void initMicroPackage() {}
+
+// Shared services like FirebaseAuth and GoogleSignIn are provided by modules/data
+// to avoid GetIt duplication errors in the Super App orchestrator.
 
 @module
 abstract class MessagingModule {
   @lazySingleton
   FirebaseMessaging get firebaseMessaging => FirebaseMessaging.instance;
-}
-
-@module
-abstract class AuthModule {
-  @lazySingleton
-  firebase_auth.FirebaseAuth get firebaseAuth =>
-      firebase_auth.FirebaseAuth.instance;
-
-  @lazySingleton
-  GoogleSignIn get googleSignIn => GoogleSignIn.instance;
 }

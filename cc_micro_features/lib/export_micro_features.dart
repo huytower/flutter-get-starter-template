@@ -1,4 +1,4 @@
-library micro_features;
+library cc_micro_features;
 
 // Core
 export 'core/di/di.dart';

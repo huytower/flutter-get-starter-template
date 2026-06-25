@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:injectable/injectable.dart';
-import 'package:micro_features/export_micro_features.dart';
+import 'package:cc_micro_features/export_micro_features.dart';
 
 import '../../route_names.dart';
 import 'app_router.gr.dart';

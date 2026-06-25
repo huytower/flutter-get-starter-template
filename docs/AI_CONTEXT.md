@@ -9,11 +9,11 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
  ### I. ARCHITECTURAL INTEGRITY (The Laws)
 1. **Hybrid-Modular Super App Design (CRITICAL)**: The project is divided into three distinct layers:
     - **App Shell (Host)**: The `lib/` folder. Contains project-specific glue code, startup logic, and orchestration.
-    - **Micro-Features (Global Legos)**: The `micro_features/` folder. Project-blind business verticals (Auth, Pay, etc.) reusable across different enterprise apps.
+    - **Micro-Features (Global Legos)**: The `cc_micro_features/` folder. Project-blind business verticals (Auth, Pay, etc.) reusable across different enterprise apps.
     - **Shared Core (Engine)**: The `cc_core_sdk/` folder. Universal logic (Network, Auth logic, Design System).
 
 2. **Project-Blind Dependency Rules (STRICT)**:
-    - Components in `micro_features/` **MUST NOT** import from `lib/` (App Shell) or `modules/data` (Project-specific data).
+    - Components in `cc_micro_features/` **MUST NOT** import from `lib/` (App Shell) or `modules/data` (Project-specific data).
     - Micro-Features define their own `Repository` interfaces in their `domain/` layer.
     - The App Shell or local `modules/data` implements these interfaces and injects them via DI.
     - This ensures a Micro-Feature can be moved to a different project without code changes.
@@ -56,7 +56,7 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
     - Use `lower_snake_case` for all files.
 
 11. **Import Hygiene (CRITICAL)**:
-    - Always prefer centralized exports (e.g., `import 'package:micro_features/export_micro_features.dart'`).
+    - Always prefer centralized exports (e.g., `import 'package:cc_micro_features/export_micro_features.dart'`).
     - NEVER duplicate imports (e.g., do not import a centralized export AND a specific file from that same module).
     - **Order**: 1. Flutter/Dart, 2. External packages, 3. Project modules, 4. Local relative imports.
 
@@ -83,7 +83,7 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
 18. **Verification Protocol**: Before delivery, verify:
     - [ ] No Hardcoded Strings/Colors/Typography.
     - [ ] Functional responsiveness (`context.resp*`).
-    - [ ] Import hygiene and Suffix-first naming.
+    - [ ] [ ] Import hygiene and Suffix-first naming.
     - [ ] Linter compliance (zero errors/warnings).
 
 ## Project Structure
@@ -106,7 +106,7 @@ flutter-get-starter-template/
 │   ├── cc_mixin/                # Reusable mixins
 │   ├── cc_bridge/               # Bridge for communication
 │   └── cc_sdk_data/             # Core data entities/models
-├── micro_features/               # Modular micro-feature packages (Global Legos)
+├── cc_micro_features/            # Modular micro-feature packages (Global Legos)
 │   └── lib/features/            # Reusable business verticals (Auth, Biometric, etc.)
 └── docs/                        # Documentation
 ```
@@ -158,15 +158,15 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 
 **DI File:** No DI file (mixin library)
 
-### micro_features/ (Feature Modules)
-**Source of Truth:** `micro_features/README.md` (Refer to this for feature list and implementation flow)
+### cc_micro_features/ (Feature Modules)
+**Source of Truth:** `cc_micro_features/README.md` (Refer to this for feature list and implementation flow)
 
 **Strategic Guardrails:**
 - **Project-Blind (STRICT):** MUST NOT import from `lib/` or `modules/data`. Use Dependency Inversion (Interfaces).
 - **Architecture:** Must follow the 3-layer Clean Architecture (Data, Domain, Presentation).
 - **Agnostic Core:** Domain and Data layers MUST be state-management agnostic. Presentation layer can use Bloc or GetX.
 
-**DI File:** `micro_features/lib/core/di/di.dart`
+**DI File:** `cc_micro_features/lib/core/di/di.dart`
 
 ## App Modules
 
@@ -200,13 +200,13 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 
 ### State Management
 - **Multi-Support**: The project supports GetX and Bloc state management approaches
-- **State-Management Agnostic Core**: Core libraries (cc_sdk, cc_sdk_ui, cc_mixin, micro_features) must be state-management agnostic
+- **State-Management Agnostic Core**: Core libraries (cc_sdk, cc_sdk_ui, cc_mixin, cc_micro_features) must be state-management agnostic
 - **Flexibility**: Choose the state management approach that works best for your feature or team
 - **No Lock-in**: Core components are not locked to any specific state management library
 
 **State-Management Usage:**
 - Use GetX or Bloc in the `lib/presentation` layer for specific features
-- Keep core libraries (cc_sdk, cc_sdk_ui, cc_mixin, micro_features) state-management agnostic
+- Keep core libraries (cc_sdk, cc_sdk_ui, cc_mixin, cc_micro_features) state-management agnostic
 - Provide abstract interfaces in features that can be implemented with GetX or Bloc
 - Use dependency injection to inject state management implementations
 

@@ -17,7 +17,7 @@ workspace:
   - cc_core_sdk/cc_mixin
   - cc_core_sdk/cc_bridge
   - cc_core_sdk/cc_sdk_data
-  - micro_features
+  - cc_micro_features
 
 dependencies:
   app_config:
@@ -54,8 +54,8 @@ dependencies:
   google_sign_in: ^7.2.0
   sign_in_with_apple: ^8.1.0
 
-  micro_features:
-    path: micro_features
+  cc_micro_features:
+    path: cc_micro_features
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1

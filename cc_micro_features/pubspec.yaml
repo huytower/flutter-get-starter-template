@@ -1,4 +1,4 @@
-name: micro_features
+name: cc_micro_features
 description: A collection of reusable micro-feature modules for the application.
 version: 1.0.0
 publish_to: none

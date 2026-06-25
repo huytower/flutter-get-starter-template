@@ -7,17 +7,17 @@ A production-ready modular starter kit built around **Clean Architecture**, **SO
 This project is engineered as an ecosystem of independent Lego blocks rather than a single monolithic application. The architecture is split into three rigid layers:
 
 1.  **App Shell (Host/Container)**: The lightweight `lib/` shell responsible for startup, security checks, routing, and dynamic orchestration of sub-features.
-2.  **Micro-Features (Feature-as-a-Service)**: Located in `micro_features/`, these are standalone, project-blind business verticals (e.g., Auth, Pay, Loyalty). They are designed to be "Global Lego Blocks" reusable across multiple different enterprise projects.
+2.  **Micro-Features (Feature-as-a-Service)**: Located in `cc_micro_features/`, these are standalone, project-blind business verticals (e.g., Auth, Pay, Loyalty). They are designed to be "Global Lego Blocks" reusable across multiple different enterprise projects.
 3.  **Shared Core Layer (Core SDK)**: Located in `cc_core_sdk/`, this is the "Universal Logic Layer" (Auth, Network, Encryption, Data Persistence). It is designed to mirror KMP (Kotlin Multiplatform) logic, making it ready for cross-platform binary sharing.
 
 ## 🎯 Critical Principle: State-Management Agnostic & Project-Blind
 
-**Core libraries (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`) and `micro_features` MUST be state-management agnostic and 100% project-blind.**
+**Core libraries (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`) and `cc_micro_features` MUST be state-management agnostic and 100% project-blind.**
 
 ### Why This Matters
 -   **Zero Regression**: A change in the Booking flow cannot break the Payment gateway because they are isolated modules.
 -   **Parallel Development**: Different teams can work on different Micro-Features simultaneously without merge conflicts.
--   **Infinite Reusability**: You can pick up `micro_features/auth` and drop it into a completely different App Shell tomorrow with zero modifications.
+-   **Infinite Reusability**: You can pick up `cc_micro_features/auth` and drop it into a completely different App Shell tomorrow with zero modifications.
 
 ### Key Guidelines for Micro-Features
 -   ✅ **ALLOWED**: Imports from `cc_core_sdk` and 3rd party utilities.
@@ -32,7 +32,7 @@ flutter-get-starter-template/
 │   ├── core/                     # Startup, DI orchestration, Global Router
 │   ├── data/                     # Project-specific data implementations
 │   └── presentation/             # Local glue logic and UI
-├── micro_features/               # Global Reusable Features (Project-Blind)
+├── cc_micro_features/            # Global Reusable Features (Project-Blind)
 │   ├── auth/                     # Auth Micro-Feature
 │   ├── counter/                  # Counter Micro-Feature
 │   └── ...                       # Other business verticals

@@ -9,8 +9,8 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
-import 'package:micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
-import 'package:micro_features/features/auth/presentation/bloc/phone_auth_event.dart';
+import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
+import 'package:cc_micro_features/features/auth/presentation/bloc/phone_auth_event.dart';
 import 'package:multiple_result/multiple_result.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
