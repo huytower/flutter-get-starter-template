@@ -39,7 +39,7 @@ To set up Firebase for local development:
    - Global DI assembly
    - Includes module DI from `features`, `modules/data`, `modules/app_config`, etc.
 
-3. `features/lib/export_features.dart`
+3. `micro_features/lib/export_micro_features.dart`
    - Exports reusable feature packages
    - New reusable features should be added here
 
@@ -55,7 +55,7 @@ To set up Firebase for local development:
 
 ## Current feature pattern
 
-Reusable feature packages live under `features/lib/features/`.
+Reusable feature packages live under `micro_features/lib/features/`.
 
 Each feature should generally follow this structure:
 
@@ -84,17 +84,17 @@ The crash log viewer was moved into:
 
 Use the feature package import:
 ```dart
-import 'package:features/features/crash_log/export_crash_log.dart';
+import 'package:micro_features/features/crash_log/export_crash_log.dart';
 ```
 
 ## How to add a new reusable feature
 
-1. Create a new feature folder under `features/lib/features/`.
+1. Create a new feature folder under `micro_features/lib/features/`.
 2. Add `core/di/di.dart` for feature DI registration.
 3. Add domain contracts and use cases under `domain/`.
 4. Add data sources and repository implementations under `data/`.
 5. Add UI pages/widgets under `presentation/`.
-6. Export the feature from `features/lib/export_features.dart`.
+6. Export the feature from `micro_features/lib/export_micro_features.dart`.
 7. Update the main app imports to use the feature package export.
 8. Run `flutter pub get` and `flutter analyze`.
 
@@ -124,5 +124,5 @@ import 'package:features/features/crash_log/export_crash_log.dart';
 - Use package exports for cross-package imports
 - Keep module boundaries clean: domain should not depend on presentation
 - Prefer abstractions (interfaces, repositories) in DI
-- Document new feature package exports in `features/lib/export_features.dart`
+- Document new feature package exports in `micro_features/lib/export_micro_features.dart`
 - Keep `README.md` and `docs/AI_CONTEXT.md` in sync with major structure changes

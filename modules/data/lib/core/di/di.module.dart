@@ -22,8 +22,6 @@ import 'package:data/data/datasource/remote/dashboard/dashboard_remote_datasourc
 import 'package:data/data/datasource/remote/dashboard/dashboard_remote_datasource_impl.dart'
     as _i434;
 import 'package:data/data/datasource/remote/home/home_remote.dart' as _i516;
-import 'package:data/data/repositories/auth/firebase_auth_repository_impl.dart'
-    as _i733;
 import 'package:data/data/repositories/comment/comment_repository_impl.dart'
     as _i576;
 import 'package:data/data/repositories/crash_log/crash_log_repository_impl.dart'
@@ -31,7 +29,6 @@ import 'package:data/data/repositories/crash_log/crash_log_repository_impl.dart'
 import 'package:data/data/repositories/dashboard/dashboard_repository_impl.dart'
     as _i254;
 import 'package:data/data/repositories/home/home_repository_impl.dart' as _i114;
-import 'package:data/domain/repositories/auth/auth_repository.dart' as _i478;
 import 'package:data/domain/repositories/comment/comment_repository.dart'
     as _i683;
 import 'package:data/domain/repositories/crash_log/crash_log_repository.dart'
@@ -95,11 +92,6 @@ class DataPackageModule extends _i526.MicroPackageModule {
           gh<_i361.Interceptor>(instanceName: 'talkerDioLogger'),
           gh<_i361.Interceptor>(instanceName: 'cacheInterceptor'),
         ));
-    gh.lazySingleton<_i478.AuthRepository>(
-        () => _i733.FirebaseAuthRepositoryImpl(
-              gh<_i59.FirebaseAuth>(),
-              gh<_i116.GoogleSignIn>(),
-            ));
     gh.lazySingleton<_i361.BaseOptions>(
         () => dataModule.baseOptions(gh<String>(instanceName: 'baseUrl')));
     gh.lazySingleton<_i866.DashboardRepository>(

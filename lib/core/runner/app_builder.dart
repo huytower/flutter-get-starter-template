@@ -1,5 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:features/features/crash_log/export_crash_log.dart';
+import 'package:micro_features/features/crash_log/export_crash_log.dart';
 import 'package:flutter/material.dart';
 
 import 'app_runner.dart';

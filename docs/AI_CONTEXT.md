@@ -6,7 +6,7 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
 
 ## AI Guidelines & Strategic Guardrails
 
-1. **State-Management Agnostic Design (CRITICAL)**: All components in `cc_sdk`, `cc_sdk_ui`, `cc_mixin`, and `features` MUST be state-management agnostic. Components must work with GetX or Bloc without being tied to a specific one.
+1. **State-Management Agnostic Design (CRITICAL)**: All components in `cc_sdk`, `cc_sdk_ui`, `cc_mixin`, and `micro_features` MUST be state-management agnostic. Components must work with GetX or Bloc without being tied to a specific one.
 
    **Requirements:**
    - Core SDK libraries must not depend on specific state management libraries
@@ -93,7 +93,7 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
     - Use `CcLocaleKeys` (from `modules/message`) for all string keys.
     - Use `el.tr(CcLocaleKeys.your_key)` to translate strings, where `el` is the alias for `package:easy_localization/easy_localization.dart`.
     - Example: `el.tr(CcLocaleKeys.auth_biometric_error_not_available)`
-    - All modules (`cc_sdk_ui`, `cc_mixin`, `features`) must follow this rule.
+    - All modules (`cc_sdk_ui`, `cc_mixin`, `micro_features`) must follow this rule.
     - Do not use `String` literals for UI text, error messages, or button labels.
     - **Self-Correction**: If you detect hardcoded strings in your proposed code, immediately replace them with the appropriate `CcLocaleKeys`. If the key doesn't exist, mention that it needs to be added or add it to the message module.
 
@@ -175,7 +175,7 @@ flutter-get-starter-template/
 │   ├── cc_sdk/                  # Core SDK (network, device, failures)
 │   ├── cc_sdk_ui/               # UI component library
 │   ├── cc_mixin/                # Reusable mixins
-│   └── features/                # Modular feature packages
+│   └── micro_features/          # Modular micro-feature packages
 └── docs/                        # Documentation
 ```
 
@@ -269,8 +269,8 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 
 **DI File:** No DI file (mixin library)
 
-### libraries/features (Feature Modules)
-**Purpose:** Standalone, shareable feature modules
+### libraries/micro_features (Feature Modules)
+**Purpose:** Standalone, shareable micro-feature modules
 
 **State-Management Requirements:**
 - Feature modules should be designed to work with different state management approaches
@@ -295,7 +295,7 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 └── core/di/di.dart             # Standardized DI entry
 ```
 
-**DI File:** `libraries/features/lib/core/di/di.dart`
+**DI File:** `libraries/micro_features/lib/core/di/di.dart`
 
 ## App Modules
 
@@ -355,13 +355,13 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 
 ### State Management
 - **Multi-Support**: The project supports GetX and Bloc state management approaches
-- **State-Management Agnostic Core**: Core libraries (cc_sdk, cc_sdk_ui, cc_mixin, features) must be state-management agnostic
+- **State-Management Agnostic Core**: Core libraries (cc_sdk, cc_sdk_ui, cc_mixin, micro_features) must be state-management agnostic
 - **Flexibility**: Choose the state management approach that works best for your feature or team
 - **No Lock-in**: Core components are not locked to any specific state management library
 
 **State-Management Usage:**
 - Use GetX or Bloc in the `lib/presentation` layer for specific features
-- Keep core libraries (cc_sdk, cc_sdk_ui, cc_mixin, features) state-management agnostic
+- Keep core libraries (cc_sdk, cc_sdk_ui, cc_mixin, micro_features) state-management agnostic
 - Provide abstract interfaces in features that can be implemented with GetX or Bloc
 - Use dependency injection to inject state management implementations
 
