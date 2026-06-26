@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cc_micro_features/export_micro_features.dart' hide SplashRoute;
+import 'package:domain_features/export_domain_features.dart';
 import 'package:injectable/injectable.dart';
-import 'package:cc_micro_features/export_micro_features.dart';
 
 import '../../route_names.dart';
 import 'app_router.gr.dart';
@@ -23,16 +24,17 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: SplashRoute.page, path: AppRoute.splash.path),
     AutoRoute(page: LoginRoute.page, path: AppRoute.login.path),
 
-    // --- Feature Modules (from package:features) ---
+    // --- Feature Modules (from package:cc_micro_features) ---
     AutoRoute(page: PhoneAuthRoute.page, path: AppRoute.phoneAuth.path),
     AutoRoute(page: WebRoute.page, path: AppRoute.web.path),
 
-    // --- GetX Examples & Pages ---
+    // --- Business Features (from package:domain_features) ---
     AutoRoute(page: HomeRoute.page, path: AppRoute.home.path),
     AutoRoute(page: CommentRoute.page, path: AppRoute.comment.path),
     AutoRoute(page: CommentDetailRoute.page, path: AppRoute.commentDetail.path),
+    AutoRoute(page: WalletRoute.page, path: AppRoute.wallet.path),
 
-    // --- Bloc Examples ---
+    // --- Examples (from package:domain_features) ---
     AutoRoute(page: SimpleCubitRoute.page, path: ExampleRoute.blocSimple.path),
     AutoRoute(page: AdvanceBlocRoute.page, path: ExampleRoute.blocAdvance.path),
   ];

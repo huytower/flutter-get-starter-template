@@ -1,7 +1,7 @@
+import 'package:cc_micro_features/features/splash/core/splash_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import '../../../../core/common/managers/splash_manager.dart';
 import '../tabs/quick_test_tab_content.dart';
 
 mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
@@ -23,7 +23,7 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
 
     if (shouldShow) {
       setState(() => showSplash = true);
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(milliseconds: 300), () {
         if (mounted) {
           setState(() => showSplash = false);
         }

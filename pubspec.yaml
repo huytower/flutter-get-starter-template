@@ -18,6 +18,7 @@ workspace:
   - cc_core_sdk/cc_bridge
   - cc_core_sdk/cc_sdk_data
   - cc_micro_features
+  - domain_features
 
 dependencies:
   app_config:
@@ -56,6 +57,8 @@ dependencies:
 
   cc_micro_features:
     path: cc_micro_features
+  domain_features:
+    path: domain_features
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1

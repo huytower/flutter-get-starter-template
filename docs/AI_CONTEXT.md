@@ -8,22 +8,24 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
 
  ### I. ARCHITECTURAL INTEGRITY (The Laws)
 1. **Hybrid-Modular Super App Design (CRITICAL)**: The project is divided into three distinct layers:
-    - **App Shell (Host)**: The `lib/` folder. Contains project-specific glue code, startup logic, and orchestration.
-    - **Micro-Features (Global Legos)**: The `cc_micro_features/` folder. Project-blind business verticals (Auth, Pay, etc.) reusable across different enterprise apps.
+    - **App Shell (Host)**: The `lib/` folder. Acts as a **Pure Orchestrator**. It contains ONLY glue code (Routing, Global DI, Coordinator Impl). It MUST NOT contain vertical business logic or feature-specific UI.
+    - **Domain Features (Verticals)**: The `domain_features/` folder. Contains business-specific verticals (Home, Comment, Wallet, etc.). These follow Clean Architecture and own their own Domain logic.
+    - **Micro-Features (Global Legos)**: The `cc_micro_features/` folder. Project-blind business verticals (Auth, Biometric, etc.) reusable across different enterprise apps.
     - **Shared Core (Engine)**: The `cc_core_sdk/` folder. Universal logic (Network, Auth logic, Design System).
 
 2. **Project-Blind Dependency Rules (STRICT)**:
-    - Components in `cc_micro_features/` **MUST NOT** import from `lib/` (App Shell) or `modules/data` (Project-specific data).
-    - Micro-Features define their own `Repository` interfaces in their `domain/` layer.
-    - The App Shell or local `modules/data` implements these interfaces and injects them via DI.
-    - This ensures a Micro-Feature can be moved to a different project without code changes.
+    - Components in `cc_micro_features/` and `domain_features/` **MUST NOT** import from `lib/` (App Shell).
+    - `cc_micro_features/` MUST NOT import from `domain_features/` or `modules/data`.
+    - **Dependency Inversion**: Features define their own `Repository` interfaces in their `domain/` layer. The App Shell or local `modules/data` implements these interfaces and injects them via DI.
+    - This ensures features can be moved or replaced without code changes in other modules.
 
 3. **State-Management Agnostic Core (STRICT)**:
     - `cc_core_sdk` modules (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`, `cc_bridge`) MUST NOT depend on specific state management (GetX/Bloc).
-    - Micro-Features may use state management (Bloc/GetX) in their `presentation/` layer, but their `domain/` and `data/` layers must remain agnostic.
+    - Features may use state management (Bloc/GetX) in their `presentation/` layer, but their `domain/` and `data/` layers must remain agnostic.
 
-4. **Interface-Driven Communication**: 
+4. **Interface-Driven Communication (The Bridge)**: 
     - All cross-module interactions (e.g., Navigation, Session Management) must be mediated by contracts defined in `cc_bridge`.
+    - **Contract Naming**: Use `*Coordinator` for flow (Navigation), `*Contract` for shared state (Session), and `*Provider` for shared logic.
     - Features should depend on abstractions, never on concrete implementations of other features.
 
 5. **Clean Bootstrap Integrity**: Preserve `main.dart` as lean, service-only entry point (Env -> DI -> Hive -> Localization).
@@ -90,24 +92,25 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
 
 ```
 flutter-get-starter-template/
-├── lib/                          # App Shell (Host)
-│   ├── core/                     # Core app logic (DI, Navigation)
-│   ├── data/                     # Data layer (App-specific orchestration)
-│   ├── presentation/             # UI layer (App-specific screens)
-│   └── main*.dart               # Entry points (prod, uat, logging, free)
-├── modules/                      # App-specific modules
-│   ├── app_config/              # Configuration, DI, storage
-│   ├── data/                    # Data sources, repositories (Prj SSOT)
-│   ├── message/                 # i18n/localization (CcLocaleKeys)
-│   └── theme/                   # Theming system (PrjColors, CcTextStyle)
+├── lib/                          # App Shell (Pure Orchestrator)
+│   ├── core/                     # Core app logic (Global DI, Root Routing)
+│   ├── data/                     # Project-specific data (Impl, Adapters)
+│   ├── presentation/             # Shell UI (NavigationBar, Root Scaffold)
+│   └── main*.dart               # Entry points
+├── domain_features/              # Business Verticals (Vertical Features)
+│   └── lib/features/            # Home, Comment, Wallet, etc.
+├── cc_micro_features/            # Global Legos (Micro-Features)
+│   └── lib/features/            # Auth, Biometric, Splash, etc.
 ├── cc_core_sdk/                  # Shared Core (Engine)
 │   ├── cc_sdk/                  # Core SDK (network, device, failures, ccGson)
 │   ├── cc_sdk_ui/               # UI component library (CcContextExtension)
 │   ├── cc_mixin/                # Reusable mixins
 │   ├── cc_bridge/               # Bridge for communication
 │   └── cc_sdk_data/             # Core data entities/models
-├── cc_micro_features/            # Modular micro-feature packages (Global Legos)
-│   └── lib/features/            # Reusable business verticals (Auth, Biometric, etc.)
+├── modules/                      # App-specific modules
+│   ├── app_config/              # Configuration, Storage
+│   ├── message/                 # i18n/localization (CcLocaleKeys)
+│   └── theme/                   # Theming system (PrjColors, CcTextStyle)
 └── docs/                        # Documentation
 ```
 
@@ -125,7 +128,7 @@ Every library and module must implement DI using Micro-Package pattern with `@In
 
 ### Main App Integration
 The main app consolidates all modules in `lib/core/di/di.dart` using `@InjectableInit` with `externalPackageModulesBefore`.
-``
+
 ## Core Libraries
 
 ### cc_core_sdk/cc_sdk (Core SDK)
@@ -167,6 +170,12 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 - **Agnostic Core:** Domain and Data layers MUST be state-management agnostic. Presentation layer can use Bloc or GetX.
 
 **DI File:** `cc_micro_features/lib/core/di/di.dart`
+
+## domain_features/ (Vertical Features)
+**Purpose:** Business-specific vertical features.
+**Architecture:** 3-layer Clean Architecture.
+**Logic:** Domain and Data must be state-management agnostic.
+**DI File:** `domain_features/lib/core/di/di.dart`
 
 ## App Modules
 
