@@ -10,17 +10,19 @@ resolution: workspace
 
 dependencies:
   cc_sdk:
-    path: ../../cc_core_sdk/cc_sdk
+    path: ../../shared/cc_core_sdk/cc_sdk
   cc_sdk_ui:
-    path: ../../cc_core_sdk/cc_sdk_ui
+    path: ../../shared/cc_core_sdk/cc_sdk_ui
   cc_bridge:
     path: ../../cc_bridge
   cc_sdk_data:
-    path: ../../cc_core_sdk/cc_sdk_data
+    path: ../../shared/cc_core_sdk/cc_sdk_data
   cc_micro_features:
-    path: ../../cc_micro_features
+    path: ../../shared/cc_micro_features
   
   auto_route: ^11.1.0
+  data_config:
+    path: ../../modules/data_config
   dio: ^5.9.2
   easy_localization: ^3.0.8
   equatable: ^2.0.8

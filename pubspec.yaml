@@ -9,17 +9,15 @@ environment:
 
 workspace:
   - modules/app_config
-  - modules/data
+  - modules/data_config
   - modules/message
   - modules/theme
   - shared/cc_core_sdk/cc_sdk
   - shared/cc_core_sdk/cc_sdk_ui
   - shared/cc_core_sdk/cc_mixin
   - shared/cc_core_sdk/cc_sdk_data
-
   - cc_bridge
   - shared/cc_micro_features
-
   - modules/domain_features
 
 dependencies:
@@ -41,8 +39,8 @@ dependencies:
 
   custom_refresh_indicator: ^4.0.1
 
-  data:
-    path: modules/data
+  data_config:
+    path: modules/data_config
   device_info_plus: ^13.1.0
   dio: ^5.9.2
   dio_smart_retry: ^7.0.1

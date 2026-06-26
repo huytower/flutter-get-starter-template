@@ -19,7 +19,7 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 class CcSdkPackageModule extends _i526.MicroPackageModule {
-  // initializes the registration of main-scope dependencies inside of GetIt
+// initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) async {
     final ccSdkDependencies = _$CcSdkDependencies();
@@ -29,21 +29,16 @@ class CcSdkPackageModule extends _i526.MicroPackageModule {
       preResolve: true,
     );
     gh.singleton<_i161.InternetConnection>(
-      () => ccSdkDependencies.internetConnection,
-    );
+        () => ccSdkDependencies.internetConnection);
     gh.singleton<_i895.Connectivity>(() => ccSdkDependencies.connectivity);
     gh.singleton<_i833.DeviceInfoPlugin>(
-      () => ccSdkDependencies.deviceInfoPlugin,
-    );
+        () => ccSdkDependencies.deviceInfoPlugin);
     gh.singleton<_i13.CcNetworkInfo>(
-      () => _i13.CcNetworkInfoImpl(gh<_i895.Connectivity>()),
-    );
+        () => _i13.CcNetworkInfoImpl(gh<_i895.Connectivity>()));
     gh.singleton<_i548.CcNetworkHelper>(
-      () => _i548.CcNetworkHelper(gh<_i161.InternetConnection>()),
-    );
+        () => _i548.CcNetworkHelper(gh<_i161.InternetConnection>()));
     gh.lazySingleton<_i312.CcDeviceInfoHelper>(
-      () => _i312.CcDeviceInfoHelper(gh<_i833.DeviceInfoPlugin>()),
-    );
+        () => _i312.CcDeviceInfoHelper(gh<_i833.DeviceInfoPlugin>()));
     await gh.singletonAsync<_i739.CcDeviceEntity>(
       () => ccSdkDependencies.deviceModel(gh<_i312.CcDeviceInfoHelper>()),
       preResolve: true,

@@ -11,9 +11,9 @@ resolution: workspace
 
 dependencies:
   cc_sdk:
-    path: ../../cc_core_sdk/cc_sdk
-  data:
-    path: ../data
+    path: ../../shared/cc_core_sdk/cc_sdk
+  data_config:
+    path: ../data_config
   equatable: ^2.0.8
   flutter:
     sdk: flutter

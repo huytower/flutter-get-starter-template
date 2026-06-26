@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:data/data/converters/domain_user_entity_converter.dart';
-import 'package:data/domain/entities/auth/domain_user_entity.dart';
+import 'package:data_config/data/converters/domain_user_entity_converter.dart';
+import 'package:data_config/domain/entities/auth/domain_user_entity.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:json_annotation/json_annotation.dart';
 

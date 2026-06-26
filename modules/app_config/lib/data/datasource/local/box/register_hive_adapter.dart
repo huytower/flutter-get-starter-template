@@ -1,6 +1,6 @@
 import 'dart:developer' as developer;
 
-import 'package:data/data/adapters/domain_user_entity_adapter.dart';
+import 'package:data_config/data/adapters/domain_user_entity_adapter.dart';
 import 'package:hive_ce/hive_ce.dart';
 
 import 'app_storage/cc_app_storage.dart';
