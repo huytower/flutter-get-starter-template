@@ -1,0 +1,25 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.packages
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+build/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+
+# VS Code related
+.vscode/
+
+# Logs
+*.log
+
+# Generated files (if you prefer them not to be tracked)
+**/*.g.dart
+**/*.config.dart
+**/*.freezed.dart
+**/*.gr.dart

@@ -1,8 +1,8 @@
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:micro_features/features/crash_log/export_crash_log.dart';
 import 'package:flutter/material.dart';
 
 class ProfileTabContent extends StatefulWidget {

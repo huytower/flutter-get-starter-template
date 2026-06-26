@@ -70,7 +70,7 @@ runs:
           local key=$1
           local val=$2
           local placeholder_env=$3
-          
+        
           if [ -n "$val" ]; then
             echo "Injecting $key..."
             # Replace in .env files (handles the text placeholders)

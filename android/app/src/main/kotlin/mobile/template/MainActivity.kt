@@ -2,7 +2,6 @@ package mobile.template
 
 
 import android.content.Intent
-import android.os.Build
 import androidx.core.view.WindowCompat
 import io.flutter.embedding.android.FlutterActivity
 

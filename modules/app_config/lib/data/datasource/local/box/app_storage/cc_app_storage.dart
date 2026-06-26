@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:data/data/models/user/res_user.dart';
+import 'package:data_config/data/converters/domain_user_entity_converter.dart';
+import 'package:data_config/domain/entities/auth/domain_user_entity.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -53,14 +54,16 @@ class CcAppStorage extends HiveObject {
   @HiveField(4)
   String? dashboardData;
 
+  @HiveField(5)
+  @DomainUserEntityConverter()
+  DomainUserEntity? user;
+
   CcAppStorage({
     this.accessToken,
     this.fcmToken,
     this.gpsLocation,
     this.userRole,
     this.dashboardData,
+    this.user,
   });
-
-  ///
-  ResUser? user = ResUser();
 }

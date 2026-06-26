@@ -1,4 +1,4 @@
-import 'package:data/domain/usecases/upload_pending_crash_logs_usecase.dart';
+import 'package:domain_features/features/crashlog/domain/usecases/upload_pending_crash_logs_usecase.dart';
 
 import '../di/di.dart';
 

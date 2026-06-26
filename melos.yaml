@@ -2,8 +2,22 @@ name: mobile_flutter_template
 
 packages:
   - modules/*
-  - cc_core_sdk/*
-  - features
+  - shared/cc_core_sdk/*
+  - shared/cc_core_sdk/cc_mixin
+  - shared/cc_core_sdk/cc_sdk_data
+
+
+  - cc_bridge
+  - shared/cc_core_sdk/cc_sdk_ui
+  - shared/cc_core_sdk/cc_sdk
+
+
+
+  - shared/cc_micro_features
+
+
+
+
 
 scripts:
   bootstrap:

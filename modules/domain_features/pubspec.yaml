@@ -1,0 +1,47 @@
+name: domain_features
+description: A collection of business-specific micro-feature modules.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '^3.12.0'
+
+resolution: workspace
+
+dependencies:
+  cc_sdk:
+    path: ../../shared/cc_core_sdk/cc_sdk
+  cc_sdk_ui:
+    path: ../../shared/cc_core_sdk/cc_sdk_ui
+  cc_bridge:
+    path: ../../cc_bridge
+  cc_sdk_data:
+    path: ../../shared/cc_core_sdk/cc_sdk_data
+  cc_micro_features:
+    path: ../../shared/cc_micro_features
+  
+  auto_route: ^11.1.0
+  data_config:
+    path: ../../modules/data_config
+  dio: ^5.9.2
+  easy_localization: ^3.0.8
+  equatable: ^2.0.8
+  flutter:
+    sdk: flutter
+  get: ^4.7.3
+  get_it: ^9.2.1
+  injectable: ^3.0.0
+  multiple_result: ^5.3.0
+  rxdart: ^0.28.0
+
+dev_dependencies:
+  auto_route_generator: ^10.5.0
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+  injectable_generator: ^3.0.2
+  build_runner: ^2.15.0
+
+flutter:
+  uses-material-design: true
+  generate: true
