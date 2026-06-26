@@ -22,6 +22,7 @@ import 'package:data/domain/repositories/crash_log/crash_log_repository.dart'
 import 'package:data/domain/usecases/upload_pending_crash_logs_usecase.dart'
     as _i813;
 import 'package:dio/dio.dart' as _i361;
+import 'package:domain_features/export_domain_features.dart' as _i857;
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
@@ -84,10 +85,10 @@ class DataPackageModule extends _i526.MicroPackageModule {
         () => _i516.HomeRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
     gh.lazySingleton<_i813.UploadPendingCrashLogsUseCase>(() =>
         _i813.UploadPendingCrashLogsUseCase(gh<_i63.CrashLogRepository>()));
-    gh.singleton<_i576.CommentRepositoryImpl>(
-        () => _i576.CommentRepositoryImpl(remote: gh<_i574.CommentRemote>()));
-    gh.singleton<_i114.HomeRepositoryImpl>(
+    gh.singleton<_i857.HomeRepository>(
         () => _i114.HomeRepositoryImpl(remote: gh<_i516.HomeRemote>()));
+    gh.singleton<_i857.CommentRepository>(
+        () => _i576.CommentRepositoryImpl(remote: gh<_i574.CommentRemote>()));
   }
 }
 

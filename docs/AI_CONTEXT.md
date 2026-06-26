@@ -9,9 +9,10 @@ A modular Flutter starter built around **Clean Architecture** and **SOLID princi
  ### I. ARCHITECTURAL INTEGRITY (The Laws)
 1. **Hybrid-Modular Super App Design (CRITICAL)**: The project is divided into three distinct layers:
     - **App Shell (Host)**: The `lib/` folder. Acts as a **Pure Orchestrator**. It contains ONLY glue code (Routing, Global DI, Coordinator Impl). It MUST NOT contain vertical business logic or feature-specific UI.
-    - **Domain Features (Verticals)**: The `domain_features/` folder. Contains business-specific verticals (Home, Comment, Wallet, etc.). These follow Clean Architecture and own their own Domain logic.
+    - **Domain Features (Verticals)**: The `modules/domain_features/` folder. Contains business-specific verticals (Home, Comment, Wallet, etc.). These follow Clean Architecture and own their own Domain logic.
     - **Micro-Features (Global Legos)**: The `cc_micro_features/` folder. Project-blind business verticals (Auth, Biometric, etc.) reusable across different enterprise apps.
     - **Shared Core (Engine)**: The `cc_core_sdk/` folder. Universal logic (Network, Auth logic, Design System).
+    - **Bridge Layer**: The `cc_bridge/` folder (root level). Communication contracts and interfaces for cross-module interaction.
 
 2. **Project-Blind Dependency Rules (STRICT)**:
     - Components in `cc_micro_features/` and `domain_features/` **MUST NOT** import from `lib/` (App Shell).
@@ -97,7 +98,7 @@ flutter-get-starter-template/
 │   ├── data/                     # Project-specific data (Impl, Adapters)
 │   ├── presentation/             # Shell UI (NavigationBar, Root Scaffold)
 │   └── main*.dart               # Entry points
-├── domain_features/              # Business Verticals (Vertical Features)
+├── modules/domain_features/      # Business Verticals (Vertical Features)
 │   └── lib/features/            # Home, Comment, Wallet, etc.
 ├── cc_micro_features/            # Global Legos (Micro-Features)
 │   └── lib/features/            # Auth, Biometric, Splash, etc.
@@ -105,8 +106,8 @@ flutter-get-starter-template/
 │   ├── cc_sdk/                  # Core SDK (network, device, failures, ccGson)
 │   ├── cc_sdk_ui/               # UI component library (CcContextExtension)
 │   ├── cc_mixin/                # Reusable mixins
-│   ├── cc_bridge/               # Bridge for communication
 │   └── cc_sdk_data/             # Core data entities/models
+├── cc_bridge/                   # Bridge for communication (root level)
 ├── modules/                      # App-specific modules
 │   ├── app_config/              # Configuration, Storage
 │   ├── message/                 # i18n/localization (CcLocaleKeys)
@@ -161,6 +162,18 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 
 **DI File:** No DI file (mixin library)
 
+### cc_bridge (Bridge Layer)
+**Source of Truth:** `cc_bridge/README.md` (Refer to this for communication contracts and usage)
+
+**Purpose:** Communication contracts and interfaces for cross-module interaction.
+
+**Strategic Guardrails:**
+- **Interface-Driven:** All cross-module communication must use contracts defined here.
+- **State-Management Agnostic:** Contracts must not depend on specific state management.
+- **Project-Blind:** Can be used across different enterprise applications.
+
+**DI File:** `cc_bridge/lib/core/di/di.dart`
+
 ### cc_micro_features/ (Feature Modules)
 **Source of Truth:** `cc_micro_features/README.md` (Refer to this for feature list and implementation flow)
 
@@ -171,11 +184,11 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 
 **DI File:** `cc_micro_features/lib/core/di/di.dart`
 
-## domain_features/ (Vertical Features)
+## modules/domain_features/ (Vertical Features)
 **Purpose:** Business-specific vertical features.
 **Architecture:** 3-layer Clean Architecture.
 **Logic:** Domain and Data must be state-management agnostic.
-**DI File:** `domain_features/lib/core/di/di.dart`
+**DI File:** `modules/domain_features/lib/core/di/di.dart`
 
 ## App Modules
 

@@ -1,11 +1,9 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:cc_sdk_ui/widgets/container/cc_gradient_card_layout.dart';
+import 'package:domain_features/features/comment/presentation/get_x/comment_controller.dart';
+import 'package:domain_features/features/comment/presentation/ui/comment_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
-
-import '../../getx_state_management/comment/get_x/comment_controller.dart';
-import '../../getx_state_management/comment/ui/comment_page.dart';
 
 class NotificationTabContent extends StatefulWidget {
   const NotificationTabContent({super.key});

@@ -3,7 +3,8 @@ name: mobile_flutter_template
 packages:
   - modules/*
   - cc_core_sdk/*
-  - features
+  - cc_bridge
+  - cc_micro_features
 
 scripts:
   bootstrap:

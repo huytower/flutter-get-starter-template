@@ -1,6 +1,6 @@
 import 'package:cc_sdk/core/helper/cc_device_info_helper.dart';
 import 'package:cc_sdk/domain/entities/cc_device_entity.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -16,7 +16,7 @@ final GetIt getIt = GetIt.instance;
     SharedPreferences,
     CcDeviceInfoHelper,
     CcDeviceEntity,
-    firebase_auth.FirebaseAuth,
+    FirebaseAuth,
     GoogleSignIn,
   ],
 )

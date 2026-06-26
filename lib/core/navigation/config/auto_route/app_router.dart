@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cc_micro_features/export_micro_features.dart' hide SplashRoute;
+import 'package:cc_micro_features/export_micro_features.dart';
 import 'package:domain_features/export_domain_features.dart';
 import 'package:injectable/injectable.dart';
 
@@ -32,7 +32,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: HomeRoute.page, path: AppRoute.home.path),
     AutoRoute(page: CommentRoute.page, path: AppRoute.comment.path),
     AutoRoute(page: CommentDetailRoute.page, path: AppRoute.commentDetail.path),
-    AutoRoute(page: WalletRoute.page, path: AppRoute.wallet.path),
 
     // --- Examples (from package:domain_features) ---
     AutoRoute(page: SimpleCubitRoute.page, path: ExampleRoute.blocSimple.path),

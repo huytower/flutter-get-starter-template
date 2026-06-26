@@ -15,10 +15,10 @@ workspace:
   - cc_core_sdk/cc_sdk
   - cc_core_sdk/cc_sdk_ui
   - cc_core_sdk/cc_mixin
-  - cc_core_sdk/cc_bridge
   - cc_core_sdk/cc_sdk_data
+  - cc_bridge
   - cc_micro_features
-  - domain_features
+  - modules/domain_features
 
 dependencies:
   app_config:
@@ -30,7 +30,7 @@ dependencies:
   cc_mixin:
     path: cc_core_sdk/cc_mixin
   cc_bridge:
-    path: cc_core_sdk/cc_bridge
+    path: cc_bridge
   cc_sdk:
     path: cc_core_sdk/cc_sdk
   cc_sdk_ui:
@@ -58,7 +58,7 @@ dependencies:
   cc_micro_features:
     path: cc_micro_features
   domain_features:
-    path: domain_features
+    path: modules/domain_features
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1

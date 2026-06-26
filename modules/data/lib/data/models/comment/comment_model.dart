@@ -1,6 +1,5 @@
+import 'package:domain_features/export_domain_features.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-import '../../../domain/entities/comment/comment_entity.dart';
 
 part 'comment_model.g.dart';
 
