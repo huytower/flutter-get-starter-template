@@ -1,5 +1,6 @@
 import 'package:cc_sdk_ui/core/enum/cc_layout_status.dart';
 import 'package:get/get.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
@@ -12,6 +13,7 @@ class HomeBinding extends Bindings {
   }
 }
 
+@lazySingleton
 class HomeController extends CcGetController {
   HomeController(this._repository);
 

@@ -7,7 +7,9 @@ pluginManagement {
         sdkPath
     }
 
-    includeBuild(file("$flutterSdkPath/packages/flutter_tools/gradle").toPath().toRealPath().toAbsolutePath().toString())
+    includeBuild(
+        file("$flutterSdkPath/packages/flutter_tools/gradle").toPath().toRealPath().toAbsolutePath().toString()
+    )
 
 
     repositories {

@@ -2,7 +2,6 @@ library data;
 
 // Adapters
 export 'data/adapters/domain_user_entity_adapter.dart';
-
 // Converters
 export 'data/converters/domain_user_entity_converter.dart';
 

@@ -11,15 +11,22 @@ import 'package:domain_features/features/examples/bloc_simple_page/cubit/simple/
     as _i402;
 import 'package:domain_features/features/examples/bloc_simple_page/origin/advance/advance_bloc.dart'
     as _i1004;
+import 'package:domain_features/features/home/domain/repositories/home_repository.dart'
+    as _i269;
+import 'package:domain_features/features/home/presentation/get_x/home_controller.dart'
+    as _i971;
 import 'package:injectable/injectable.dart' as _i526;
 
 class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
-// initializes the registration of main-scope dependencies inside of GetIt
+  // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
     gh.lazySingleton<_i1004.AdvanceBloc>(
       () => _i1004.AdvanceBloc(),
       dispose: (i) => i.close(),
+    );
+    gh.lazySingleton<_i971.HomeController>(
+      () => _i971.HomeController(gh<_i269.HomeRepository>()),
     );
     gh.lazySingleton<_i402.SimpleCubitInterface>(
       () => _i691.SimpleCubit(),

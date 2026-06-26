@@ -7,19 +7,19 @@ This document explains how to manage different environments in the Flutter appli
 Environment configuration is essential for:
 
 1. **Environment-Specific Settings**
-   - Different API endpoints for dev/UAT/production
-   - Environment-specific feature flags
-   - Third-party service configurations
+    - Different API endpoints for dev/UAT/production
+    - Environment-specific feature flags
+    - Third-party service configurations
 
 2. **Security**
-   - Keep sensitive data out of version control
-   - Use different API keys per environment
-   - Protect production credentials
+    - Keep sensitive data out of version control
+    - Use different API keys per environment
+    - Protect production credentials
 
 3. **Developer Experience**
-   - Easy switching between environments
-   - Consistent setup across team members
-   - Simplified deployment process
+    - Easy switching between environments
+    - Consistent setup across team members
+    - Simplified deployment process
 
 ## Quick Start
 
@@ -44,25 +44,26 @@ Future<void> main() async {
 ## Available Environments
 
 - **Development** (Default)
-  - File: `env/.env`
-  - Used for local development
-  - Default API: `https://jsonplaceholder.typicode.com`
+    - File: `env/.env`
+    - Used for local development
+    - Default API: `https://jsonplaceholder.typicode.com`
 
 - **UAT**
-  - File: `env/.env.uat`
-  - Used for User Acceptance Testing
-  - Example API: `https://api.uat.yourdomain.com`
+    - File: `env/.env.uat`
+    - Used for User Acceptance Testing
+    - Example API: `https://api.uat.yourdomain.com`
 
 - **Production**
-  - File: `env/.env.production`
-  - Used for production deployment
-  - Example API: `https://api.production.com`
+    - File: `env/.env.production`
+    - Used for production deployment
+    - Example API: `https://api.production.com`
 
 ## How to Switch Environments
 
 ### 1. Using PowerShell (Recommended for Windows)
 
 #### Useful PowerShell Commands:
+
 ```powershell
 # List available devices
 flutter devices

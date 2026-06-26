@@ -12,12 +12,14 @@ workspace:
   - modules/data
   - modules/message
   - modules/theme
-  - cc_core_sdk/cc_sdk
-  - cc_core_sdk/cc_sdk_ui
-  - cc_core_sdk/cc_mixin
-  - cc_core_sdk/cc_sdk_data
+  - shared/cc_core_sdk/cc_sdk
+  - shared/cc_core_sdk/cc_sdk_ui
+  - shared/cc_core_sdk/cc_mixin
+  - shared/cc_core_sdk/cc_sdk_data
+
   - cc_bridge
-  - cc_micro_features
+  - shared/cc_micro_features
+
   - modules/domain_features
 
 dependencies:
@@ -28,13 +30,15 @@ dependencies:
   bloc: ^9.2.1
   catcher_2: ^2.1.9
   cc_mixin:
-    path: cc_core_sdk/cc_mixin
+    path: shared/cc_core_sdk/cc_mixin
+
   cc_bridge:
     path: cc_bridge
   cc_sdk:
-    path: cc_core_sdk/cc_sdk
+    path: shared/cc_core_sdk/cc_sdk
   cc_sdk_ui:
-    path: cc_core_sdk/cc_sdk_ui
+    path: shared/cc_core_sdk/cc_sdk_ui
+
   custom_refresh_indicator: ^4.0.1
 
   data:
@@ -56,7 +60,8 @@ dependencies:
   sign_in_with_apple: ^8.1.0
 
   cc_micro_features:
-    path: cc_micro_features
+    path: shared/cc_micro_features
+
   domain_features:
     path: modules/domain_features
   flutter:

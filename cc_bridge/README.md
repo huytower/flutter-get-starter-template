@@ -4,21 +4,26 @@ A bridge module for cross-feature communication and navigation contracts in the 
 
 ## Purpose
 
-The `cc_bridge` module serves as the communication layer between different features and modules in the hybrid-modular architecture. It defines contracts and interfaces that enable loose coupling between components while maintaining type safety and clear communication patterns.
+The `cc_bridge` module serves as the communication layer between different features and modules in the hybrid-modular
+architecture. It defines contracts and interfaces that enable loose coupling between components while maintaining type
+safety and clear communication patterns.
 
 ## Architecture Principles
 
 ### Interface-Driven Communication
+
 - All cross-module interactions are mediated by contracts defined in `cc_bridge`
 - Features depend on abstractions, never on concrete implementations
 - Enables true modularity and testability
 
 ### Contract Types
+
 - **Coordinators**: Handle navigation flows between features (e.g., `AuthCoordinator`)
 - **Contracts**: Define shared state and session management (e.g., `SessionContract`)
 - **Providers**: Offer shared logic and utilities across features
 
 ### State-Management Agnostic
+
 - Contracts remain independent of specific state management solutions
 - Can work with Bloc, GetX, Provider, or any other state management approach
 - Focus on communication patterns, not implementation details
@@ -119,11 +124,13 @@ Future<void> initMicroPackage() async {
 ## Key Contracts
 
 ### Navigation Coordinators
+
 - **AuthCoordinator**: Manages authentication flow navigation
 - **HomeCoordinator**: Handles home feature navigation
 - **CommentCoordinator**: Manages comment feature navigation
 
 ### Session Contracts
+
 - **SessionContract**: Defines session management interface
 
 ## Benefits

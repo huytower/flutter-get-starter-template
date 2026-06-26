@@ -28,7 +28,7 @@ import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
 
 class DataPackageModule extends _i526.MicroPackageModule {
-// initializes the registration of main-scope dependencies inside of GetIt
+  // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
     final firebaseModule = _$FirebaseModule();
@@ -39,10 +39,7 @@ class DataPackageModule extends _i526.MicroPackageModule {
       () => dataModule.cacheInterceptor,
       instanceName: 'cacheInterceptor',
     );
-    gh.factory<String>(
-      () => dataModule.baseUrl,
-      instanceName: 'baseUrl',
-    );
+    gh.factory<String>(() => dataModule.baseUrl, instanceName: 'baseUrl');
     gh.singleton<_i361.Interceptor>(
       () => dataModule.talkerDioLogger,
       instanceName: 'talkerDioLogger',
@@ -59,15 +56,18 @@ class DataPackageModule extends _i526.MicroPackageModule {
       () => dataModule.responseInterceptor,
       instanceName: 'responseInterceptor',
     );
-    gh.singleton<List<_i361.Interceptor>>(() => dataModule.interceptors(
-          gh<_i361.Interceptor>(instanceName: 'requestInterceptor'),
-          gh<_i361.Interceptor>(instanceName: 'responseInterceptor'),
-          gh<_i361.Interceptor>(instanceName: 'curlLoggerInterceptor'),
-          gh<_i361.Interceptor>(instanceName: 'talkerDioLogger'),
-          gh<_i361.Interceptor>(instanceName: 'cacheInterceptor'),
-        ));
+    gh.singleton<List<_i361.Interceptor>>(
+      () => dataModule.interceptors(
+        gh<_i361.Interceptor>(instanceName: 'requestInterceptor'),
+        gh<_i361.Interceptor>(instanceName: 'responseInterceptor'),
+        gh<_i361.Interceptor>(instanceName: 'curlLoggerInterceptor'),
+        gh<_i361.Interceptor>(instanceName: 'talkerDioLogger'),
+        gh<_i361.Interceptor>(instanceName: 'cacheInterceptor'),
+      ),
+    );
     gh.lazySingleton<_i361.BaseOptions>(
-        () => dataModule.baseOptions(gh<String>(instanceName: 'baseUrl')));
+      () => dataModule.baseOptions(gh<String>(instanceName: 'baseUrl')),
+    );
     gh.lazySingleton<_i361.Dio>(
       () => dataModule.dio(
         gh<_i361.BaseOptions>(),
@@ -76,19 +76,26 @@ class DataPackageModule extends _i526.MicroPackageModule {
       instanceName: 'baseDio',
     );
     gh.lazySingleton<_i313.CrashLogRemote>(
-        () => _i313.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+      () => _i313.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')),
+    );
     gh.lazySingleton<_i63.CrashLogRepository>(
-        () => _i701.CrashLogRepositoryImpl(gh<_i313.CrashLogRemote>()));
+      () => _i701.CrashLogRepositoryImpl(gh<_i313.CrashLogRemote>()),
+    );
     gh.singleton<_i574.CommentRemote>(
-        () => _i574.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+      () => _i574.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')),
+    );
     gh.singleton<_i516.HomeRemote>(
-        () => _i516.HomeRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.lazySingleton<_i813.UploadPendingCrashLogsUseCase>(() =>
-        _i813.UploadPendingCrashLogsUseCase(gh<_i63.CrashLogRepository>()));
+      () => _i516.HomeRemote(gh<_i361.Dio>(instanceName: 'baseDio')),
+    );
+    gh.lazySingleton<_i813.UploadPendingCrashLogsUseCase>(
+      () => _i813.UploadPendingCrashLogsUseCase(gh<_i63.CrashLogRepository>()),
+    );
     gh.singleton<_i857.HomeRepository>(
-        () => _i114.HomeRepositoryImpl(remote: gh<_i516.HomeRemote>()));
+      () => _i114.HomeRepositoryImpl(remote: gh<_i516.HomeRemote>()),
+    );
     gh.singleton<_i857.CommentRepository>(
-        () => _i576.CommentRepositoryImpl(remote: gh<_i574.CommentRemote>()));
+      () => _i576.CommentRepositoryImpl(remote: gh<_i574.CommentRemote>()),
+    );
   }
 }
 

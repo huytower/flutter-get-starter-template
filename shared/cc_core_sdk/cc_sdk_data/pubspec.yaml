@@ -1,0 +1,19 @@
+name: cc_sdk_data
+description: Core SDK Data module containing reusable domain entities for auth and other shared data structures.
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: '^3.12.0'
+  flutter: '>=3.41.9'
+
+resolution: workspace
+
+dependencies:
+  equatable: ^2.0.8
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
