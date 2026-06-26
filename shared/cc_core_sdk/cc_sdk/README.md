@@ -87,7 +87,7 @@ final deviceInfo = await DeviceUtils.getDeviceInfo();
 #### General Failures
 
 ```dart
-import 'package:cc_sdk/domain/failures/cc_failure.dart';
+
 import 'package:multiple_result/multiple_result.dart';
 
 class MyUseCase {

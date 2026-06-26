@@ -13,6 +13,8 @@ resolution: workspace
 dependencies:
   cc_sdk:
     path: ../cc_sdk
+  cc_sdk_data:
+    path: ../cc_sdk_data
   cc_sdk_ui:
     path: ../cc_sdk_ui
   flutter:

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cc_sdk/domain/failures/cc_failure.dart';
+import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:data_config/core/repository/cc_base_repository.dart';
 import 'package:domain_features/export_domain_features.dart';
 import 'package:injectable/injectable.dart';

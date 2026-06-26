@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:cc_sdk/domain/failures/cc_failure.dart';
-import 'package:cc_sdk/domain/models/pagination_request.dart';
+import 'package:cc_sdk_data/data/models/pagination_request.dart';
+import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../entities/comment_entity.dart';

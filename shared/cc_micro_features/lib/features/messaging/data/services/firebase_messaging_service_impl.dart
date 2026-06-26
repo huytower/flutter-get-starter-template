@@ -1,6 +1,6 @@
-import 'package:cc_sdk/domain/entities/cc_message_entity.dart';
-import 'package:cc_sdk/domain/failures/cc_failure.dart';
-import 'package:cc_sdk/domain/services/cc_messaging_service.dart';
+import 'package:cc_sdk_data/domain/entities/cc_message_entity.dart';
+import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:cc_sdk_data/domain/services/cc_messaging_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';

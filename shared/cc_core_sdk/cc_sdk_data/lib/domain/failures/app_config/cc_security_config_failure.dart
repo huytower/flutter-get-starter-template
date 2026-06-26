@@ -1,4 +1,4 @@
-part of 'cc_app_config_failure.dart';
+part of '../../../../../cc_sdk/lib/domain/failures/app_config/cc_app_config_failure.dart';
 
 /// Thrown or returned when there's a security-related configuration issue.
 class CcSecurityConfigFailure extends CcAppConfigFailure {

@@ -1,4 +1,4 @@
-part of 'cc_app_config_failure.dart';
+part of '../../../../../cc_sdk_data/lib/domain/failures/app_config/cc_app_config_failure.dart';
 
 /// Thrown or returned when a configuration value is found but is invalid or malformed.
 class CcInvalidConfigFailure extends CcAppConfigFailure {

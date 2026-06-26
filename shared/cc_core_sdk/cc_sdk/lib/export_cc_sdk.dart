@@ -13,12 +13,5 @@ export 'package:cc_sdk/core/extensions/export_cc_extensions.dart';
 export 'package:cc_sdk/core/helper/cc_location_helper.dart';
 // Helpers
 export 'package:cc_sdk/core/helper/export_cc_helper.dart';
-// Domain Entities, Models & Failures
-export 'package:cc_sdk/domain/entities/cc_device_entity.dart';
-export 'package:cc_sdk/domain/entities/cc_message_entity.dart';
-export 'package:cc_sdk/domain/failures/app_config/cc_app_config_failure.dart';
-export 'package:cc_sdk/domain/failures/cc_failure.dart';
-export 'package:cc_sdk/domain/models/pagination_request.dart';
-export 'package:cc_sdk/domain/services/cc_messaging_service.dart';
 // Localization (Transitive export from content_locale module)
 export 'package:message/export_message.dart';

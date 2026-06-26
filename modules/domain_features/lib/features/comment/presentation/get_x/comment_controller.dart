@@ -1,4 +1,5 @@
 import 'package:cc_mixin/export_cc_mixin.dart';
+import 'package:cc_sdk_data/data/models/pagination_request.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:get/get.dart';
 

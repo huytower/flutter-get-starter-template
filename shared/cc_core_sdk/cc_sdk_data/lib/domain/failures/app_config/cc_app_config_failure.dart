@@ -2,9 +2,9 @@ import 'package:meta/meta.dart';
 
 import '../cc_failure.dart';
 
-part 'cc_invalid_config_failure.dart';
-part 'cc_missing_config_failure.dart';
-part 'cc_security_config_failure.dart';
+part '../../../../../cc_sdk/lib/domain/failures/app_config/cc_missing_config_failure.dart';
+part '../../../../../cc_sdk_data/lib/domain/failures/app_config/cc_invalid_config_failure.dart';
+part '../app_config/cc_security_config_failure.dart';
 
 /// Base failure class for configuration-related errors.
 ///
