@@ -4,7 +4,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'home_remote.g.dart';
 
-@singleton
+@lazySingleton
 @RestApi()
 abstract class HomeRemote {
   @factoryMethod

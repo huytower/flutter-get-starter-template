@@ -32,33 +32,32 @@ Future<void> logVersionInfo() async {
   }
 }
 
+/// Initializes environment variables without logging
+Future<void> initEnv() async {
+  final env = HttpClientConfig.environment;
+  String envFile;
+  switch (env) {
+    case Environment.FREE_FAKE_API:
+      envFile = '.env.development';
+      break;
+    case Environment.UAT:
+      envFile = '.env.uat';
+      break;
+    case Environment.PROD:
+      envFile = '.env.production';
+      break;
+  }
+  await dotenv.load(fileName: 'env/$envFile');
+}
+
 Future<void> logEnv() async {
   try {
     // Use the environment defined in HttpClientConfig as the source of truth
     final env = HttpClientConfig.environment;
 
-    String envFile;
-    switch (env) {
-      case Environment.FREE_FAKE_API:
-        envFile = '.env.development';
-        break;
-      case Environment.UAT:
-        envFile = '.env.uat';
-        break;
-      case Environment.PROD:
-        envFile = '.env.production';
-        break;
+    if (!dotenv.isInitialized) {
+      await initEnv();
     }
-
-    final envPath = 'env/$envFile';
-
-    developer.log(
-      'Loading env variables from $envPath (Environment: $env)',
-      name: 'EnvConfig',
-    );
-
-    // Load the env variables
-    await dotenv.load(fileName: envPath);
 
     // Log env info
     developer.log('✅ Running in ${env.name} environment', name: 'EnvConfig');

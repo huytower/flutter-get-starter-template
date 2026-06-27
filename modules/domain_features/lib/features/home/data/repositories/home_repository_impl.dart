@@ -8,7 +8,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../datasources/remote/home_remote.dart';
 
-@Singleton(as: HomeRepository)
+@LazySingleton(as: HomeRepository)
 class HomeRepositoryImpl with CcBaseRepository implements HomeRepository {
   @factoryMethod
   HomeRepositoryImpl({required HomeRemote remote}) : _remote = remote;

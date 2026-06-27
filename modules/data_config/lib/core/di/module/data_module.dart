@@ -45,7 +45,7 @@ abstract class DataModule {
     return dio;
   }
 
-  @singleton
+  @lazySingleton
   List<Interceptor> interceptors(
     @Named("requestInterceptor") Interceptor requestInterceptor,
     @Named("responseInterceptor") Interceptor responseInterceptor,
@@ -62,20 +62,20 @@ abstract class DataModule {
     ];
   }
 
-  @singleton
+  @lazySingleton
   @Named('requestInterceptor')
   Interceptor get requestInterceptor => RequestInterceptor();
 
-  @singleton
+  @lazySingleton
   @Named("responseInterceptor")
   Interceptor get responseInterceptor => ResponseInterceptor();
 
-  @singleton
+  @lazySingleton
   @Named("curlLoggerInterceptor")
   Interceptor get curlLoggerInterceptor =>
       CurlLoggerDioInterceptor(printOnSuccess: true);
 
-  @singleton
+  @lazySingleton
   @Named("talkerDioLogger")
   Interceptor get talkerDioLogger => TalkerDioLogger(
     settings: const TalkerDioLoggerSettings(
@@ -84,7 +84,7 @@ abstract class DataModule {
     ),
   );
 
-  @singleton
+  @lazySingleton
   @Named("cacheInterceptor")
   Interceptor get cacheInterceptor {
     final cacheStore = MemCacheStore(maxSize: 10485760, maxEntrySize: 1048576);

@@ -10,7 +10,7 @@ import 'app_router.gr.dart';
 ///
 /// This class uses auto_route for type-safe navigation and route generation.
 /// Routes are organized into logical groups for better maintainability.
-@singleton
+@lazySingleton
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
   @override

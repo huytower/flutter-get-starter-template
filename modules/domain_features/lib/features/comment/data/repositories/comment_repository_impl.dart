@@ -9,7 +9,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../datasources/remote/comment_remote.dart';
 
-@Singleton(as: CommentRepository)
+@LazySingleton(as: CommentRepository)
 class CommentRepositoryImpl with CcBaseRepository implements CommentRepository {
   @factoryMethod
   CommentRepositoryImpl({required CommentRemote remote}) : _remote = remote;

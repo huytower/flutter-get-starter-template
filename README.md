@@ -9,8 +9,7 @@ Micro-Features."
 This project is engineered as an ecosystem of independent Lego blocks rather than a single monolithic application. The
 architecture is split into three rigid layers:
 
-1. **App Shell (Host/Container)**: The lightweight `lib/` shell responsible for startup, security checks, routing, and
-   dynamic orchestration of sub-features.
+1. **App Shell (Host/Container)**: The lightweight `lib/` shell responsible for startup (Turbo Parallel Boot < 2s), security checks, routing, and dynamic orchestration of sub-features.
 2. **Micro-Features (Feature-as-a-Service)**: Located in `cc_micro_features/`, these are standalone, project-blind
    business verticals (e.g., Auth, Pay, Loyalty). They are designed to be "Global Lego Blocks" reusable across multiple
    different enterprise projects.

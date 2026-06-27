@@ -6,7 +6,6 @@ import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:path_provider/path_provider.dart';
@@ -20,34 +19,34 @@ void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
 
-    await Firebase.initializeApp();
-    await FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
+    // 1. Environment Loading (Critical & Blocking for DI)
+    // We load this first because initializeDependencies() depends on env variables.
+    // This is very fast (~50ms) and prevents race conditions in the parallel block.
+    await initEnv();
 
-    // Initialize Firebase App Check for device attestation
-    await CcAppCheckHelper.initialize();
+    // 2. TURBO PARALLEL BOOT (Awaited Barrier)
+    // We run the most critical systems concurrently to hit the < 2s target.
+    await Future.wait([
+      Firebase.initializeApp(),
+      initializeDependencies(),
+      _initHive(),
+      CcLocalization.initialize(),
+    ]);
 
-    // Pass all uncaught "fatal" errors from the framework to Crashlytics
+    // 3. Setup error handling immediately after core systems are ready
     FlutterError.onError = (errorDetails) {
       FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
     };
-
-    // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
     PlatformDispatcher.instance.onError = (error, stack) {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
 
-    await logEnv();
-    await logVersionInfo();
+    // 4. PRIORITY BACKGROUND (Non-blocking)
+    // Starts the native security handshake without delaying the first frame.
+    CcAppCheckHelper.initialize();
 
-    await initializeDependencies();
-
-    final appDocumentDir = await getApplicationDocumentsDirectory();
-    Hive.init(appDocumentDir.path);
-    await registerHiveAdapter();
-
-    await CcLocalization.initialize();
-
+    // 5. UI Launch
     _runApplication();
   } catch (error, stackTrace) {
     developer.log(
@@ -57,6 +56,13 @@ void main() async {
     );
     runApp(ErrorPage(message: error.toString()));
   }
+}
+
+/// Initializes Hive and its adapters.
+Future<void> _initHive() async {
+  final appDocumentDir = await getApplicationDocumentsDirectory();
+  Hive.init(appDocumentDir.path);
+  await registerHiveAdapter();
 }
 
 /// Configures and launches the application shell.

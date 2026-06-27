@@ -6,7 +6,7 @@ import '../../models/comment_model.dart';
 
 part 'comment_remote.g.dart';
 
-@singleton
+@lazySingleton
 @RestApi()
 abstract class CommentRemote {
   @factoryMethod

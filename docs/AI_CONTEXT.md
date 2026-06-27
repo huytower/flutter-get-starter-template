@@ -40,8 +40,15 @@ SDK, UI, and feature modules.
       `*Provider` for shared logic.
     - Features should depend on abstractions, never on concrete implementations of other features.
 
-5. **Clean Bootstrap Integrity**: Preserve `main.dart` as lean, service-only entry point (Env -> DI -> Hive ->
-   Localization).
+5. **Clean Bootstrap Integrity (CRITICAL PERF)**: 
+    - Preserve `main.dart` as a lean, service-only entry point. 
+    - **Startup Target**: < 2 seconds.
+    - **Boot Sequence (STRICT)**: 
+        1. `await initEnv()` (Must be first for DI/Flags).
+        2. `await Future.wait([...])` (Parallelize Firebase, DI, Hive, Localization).
+        3. `CcAppCheckHelper.initialize()` (Non-blocking background).
+    - **Lazy Initialization**: All heavy infrastructure (Network, Routing, Repos) MUST be `@lazySingleton` to prevent "Constructor Leaks" during parallel boot.
+    - **Deferred Telemetry**: Non-essential services (Logging, Performance) must be deferred to the `NavigationBar` shell via `NavigationLogicMixin`.
 
 ### II. DESIGN SYSTEM & UI (The Look)
 
