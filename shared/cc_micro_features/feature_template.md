@@ -1,7 +1,15 @@
 # Feature Template
 
 This document outlines the standard structure and implementation guidelines for creating new features in the
-application.
+Hybrid-Modular Super App architecture. All features follow **Clean Architecture** with **Turbo Boot** performance
+requirements (startup < 2s).
+
+## Architecture Layer
+
+Features are organized by purpose in two locations:
+
+- **Micro-Features** (`cc_micro_features/lib/features/`): Reusable, project-blind features (Auth, Biometric, etc.)
+- **Domain Features** (`modules/domain_features/lib/features/`): App-specific business verticals (Home, Comment, Wallet)
 
 ## Directory Structure
 
@@ -179,34 +187,30 @@ abstract class FeatureNameModule {
 
 ### 1. Update Features Exports
 
-Add your feature exports to `lib/export_features.dart`:
+For **Micro-Features** (`cc_micro_features`): Add your feature exports to `lib/export_micro_features.dart`:
 
 ```dart
-library features;
-
-// Core exports
-export 'common/constants/app_constants.dart';
-export 'common/di/di.dart';
+library micro_features;
 
 // Feature exports
-export 'counter/presentation/pages/counter_page.dart';
-export 'feature_name/presentation/pages/feature_name_page.dart'; // Add this line
+export 'features/counter/presentation/pages/counter_page.dart';
+export 'features/{feature_name}/presentation/pages/{feature_name}_page.dart'; // Add this line
 ```
+
+For **Domain Features** (`modules/domain_features`): Add to `lib/export_features.dart`.
 
 ### 2. Register Dependencies
 
-Update `core/di/di.dart` to include your feature module:
+Micro-Features with their own DI use `@InjectableInit.microPackage()`:
 
 ```dart
-@injectableInit
-void configureDependencies() {
-  // Register feature modules
-  getIt.registerSingleton(FeatureNameModule());
-
-  // Initialize other dependencies
-  $initGetIt(getIt);
+@injectableInit.microPackage()
+Future<void> initMicroPackage() async {
+  getIt.init();
 }
 ```
+
+The main App Shell consolidates all modules in `lib/core/di/di.dart`.
 
 ## Best Practices
 
@@ -243,6 +247,6 @@ void configureDependencies() {
 
 ## See Also
 
-- [Counter Feature Example](/features/lib/counter)
-- [Project Architecture Documentation](/doc/ARCHITECTURE.md)
-- [Coding Guidelines](/doc/CODING_GUIDELINES.md)
+- [Counter Micro-Feature Example](cc_micro_features/lib/features/counter)
+- [AI Context Architecture Documentation](docs/AI_CONTEXT.md)
+- [Project Clean Architecture Guidelines](docs/CONTRIBUTING.md)

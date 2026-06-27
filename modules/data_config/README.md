@@ -1,14 +1,20 @@
 ### Features
 
-Config remote server-side, include :
+Config remote server-side, includes :
 
 - host url,
 - server-response handler,
 - json parser
 
-### Getting started
+This module supports the **Hybrid-Shell App Architecture** by providing app-specific repository implementations that fulfill contracts defined in Micro-Features.
 
-### How to use?
+### Getting Started
+
+### How to Use
+
+1. `di.dart` : Initialize data modules using Micro-Package DI pattern for Turbo Boot performance.
+
+2. `data_module.dart` : Configure remote server-url using `@module` decorator.
 
 1. `di.dart` : Init data, module ..v.v. before launching app (using `injectable` lib)
 
@@ -22,42 +28,44 @@ Config remote server-side, include :
 
 3. `response.dart` : serves for these targets :
 
-    - Json parser
+     - Json parser
+       
       ex.
-   ```dart
-   Map<String, dynamic> toJson() {
-      final map = <String, dynamic>{};
-      if (status != null) {
-         map['status'] = status?.toJson();
-      }
-      if (_elements != null) {
-         map['elements'] = _elements?.map((v) => jsonEncode(v)).toList();
-      }
-      return map;
-   }
-   ```
+       ```dart
+       Map<String, dynamic> toJson() {
+          final map = <String, dynamic>{};
+          if (status != null) {
+             map['status'] = status?.toJson();
+          }
+          if (_elements != null) {
+             map['elements'] = _elements?.map((v) => jsonEncode(v)).toList();
+          }
+          return map;
+       }
+       ```
 
-    - Server response handler
+     - Server response handler
+       
       ex.
 
-   ```
-   when(
-      variable: status?.code,
-         conditions: {
-         200: () {
-         layoutStatus = LayoutStatus.success;
-         },
-      401: () {},
-      400: () {},
-      },
-      orElse: () {
-         layoutStatus = LayoutStatus.error;
-      },
-   );
-   ```
+       ```
+       when(
+          variable: status?.code,
+             conditions: {
+             200: () {
+             layoutStatus = LayoutStatus.success;
+             },
+          401: () {},
+          400: () {},
+          },
+          orElse: () {
+             layoutStatus = LayoutStatus.error;
+          },
+       );
+       ```
 
 4. `/datasource` : define detail api [url | service] (using `retrofit` & `injectable` libs).
-   **Crucial**: Use `@lazySingleton` to keep startup fast.
+   **Crucial**: Use `@lazySingleton` to keep startup fast (Turbo Boot < 2s).
 
    ex.
    ```dart

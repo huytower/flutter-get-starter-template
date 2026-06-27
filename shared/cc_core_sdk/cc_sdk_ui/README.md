@@ -1,7 +1,9 @@
 # CC SDK UI
 
 A comprehensive UI component library for Flutter applications, designed to work seamlessly with `cc_sdk`. This package
-provides a collection of reusable, customizable, and production-ready UI components following best practices.
+is part of the **Hybrid-Shell Super App Architecture**, providing responsive, design-system-aligned widgets.
+
+**Architecture Note**: All widgets are state-management agnostic and follow responsive-first design for the Multi-Screen support in the Hybrid-Shell architecture.
 
 ## Features
 
