@@ -5,7 +5,7 @@ abstract class CcNetworkInfo {
   Future<bool> get isConnected;
 }
 
-@Singleton(as: CcNetworkInfo)
+@LazySingleton(as: CcNetworkInfo)
 class CcNetworkInfoImpl implements CcNetworkInfo {
   final Connectivity connectivity;
 

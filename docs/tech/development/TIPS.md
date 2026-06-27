@@ -86,3 +86,13 @@ then, `delete all unnecessary simulator version`, as below example :
 
 <br />
 - Turn of auto-update : `macos version`, `postman version`, ...
+
+### Identify Performance Bottlenecks
+
+For **Turbo Boot** performance (startup < 2s):
+
+- Use `developer.log` with timestamps in `main.dart` to measure startup time.
+- If startup exceeds 2s, check if any `@singleton` is being eagerly instantiated. Convert to `@lazySingleton`.
+- **Deferred Telemetry**: Non-essential services (Logging, Performance) must be deferred to the NavigationBar shell via `NavigationLogicMixin`.
+- Use **Firebase Performance Monitoring** (enabled in `NavigationBar`) to track real-world startup metrics.
+- Review `CcAppConfig.serviceStartupLogEnabled` in `modules/app_config` for startup timing analysis.

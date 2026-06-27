@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:cc_sdk/domain/failures/cc_failure.dart';
-import 'package:cc_sdk/domain/models/pagination_request.dart';
+import 'package:cc_sdk_data/data/models/pagination_request.dart';
+import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:data_config/core/repository/cc_base_repository.dart';
 import 'package:domain_features/export_domain_features.dart';
 import 'package:injectable/injectable.dart';
@@ -9,7 +9,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../datasources/remote/comment_remote.dart';
 
-@Singleton(as: CommentRepository)
+@LazySingleton(as: CommentRepository)
 class CommentRepositoryImpl with CcBaseRepository implements CommentRepository {
   @factoryMethod
   CommentRepositoryImpl({required CommentRemote remote}) : _remote = remote;

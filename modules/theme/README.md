@@ -1,21 +1,18 @@
-# Theme Module — Clean Architecture & Usage
+# Theme Module — Hybrid-Shell Architecture
 
-This module follows a simple, pragmatic Clean Architecture pattern to keep
-theme-related code organized, testable and easy to understand for junior
-developers.
+This module follows Clean Architecture to keep theme-related code organized and testable. It serves as the **Semantic Layer** for the Super App Hybrid-Shell, mapping design tokens to brand-specific colors.
 
-Structure
+## Architecture
 
 - `core/` — low-level theme configuration and helpers
-    - `config/cc_themes.dart` — app-level ThemeData definitions
+    - `config/cc_themes.dart` — ThemeData definitions for the App Shell
     - `utils/theme_utils.dart` — helpers that create `ColorScheme` and theme builders
 - `data/` — data sources, including color tokens that inherit from the UI SDK
     - `data_source/color/prj_color.dart` — maps semantic app colors to `cc_sdk_ui` `CcBaseColors`
 - `presentation/` — UI-facing styles and theme extensions
     - `style/cc_text_style.dart` — `ThemeExtension` building the `TextTheme`
-    - `provider/` — theme provider for runtime selection
 
-Design principles
+## Design Principles
 
 - Single Source of Truth: The `cc_sdk_ui` library exports `CcBaseColors` and
   `CcTypographyParams`. `modules/theme` maps semantic `PrjColors` to those tokens.

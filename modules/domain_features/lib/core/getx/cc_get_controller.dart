@@ -1,3 +1,4 @@
+import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';

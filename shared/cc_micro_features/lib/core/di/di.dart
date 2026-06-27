@@ -1,5 +1,5 @@
 import 'package:cc_sdk/core/helper/cc_device_info_helper.dart';
-import 'package:cc_sdk/domain/entities/cc_device_entity.dart';
+import 'package:cc_sdk_data/domain/entities/cc_device_entity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_it/get_it.dart';

@@ -1,5 +1,5 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
-import 'package:cc_sdk/domain/failures/cc_failure.dart';
+
 import 'package:equatable/equatable.dart';
 
 abstract class PhoneAuthEvent extends Equatable {

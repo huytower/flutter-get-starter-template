@@ -34,8 +34,8 @@ To set up Firebase for local development:
 ## Most important files
 
 1. `lib/main.dart`
-    - App startup flow
-    - Dependency initialization
+    - App startup flow (Turbo Parallel Boot < 2s)
+    - Critical initialization sequence (Env -> Parallel DI/Hive/I18n)
     - Crash log feature wrapper
 
 2. `lib/core/di/inject/inject.dart`
@@ -95,7 +95,7 @@ import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 ## How to add a new reusable feature
 
 1. Create a new feature folder under `cc_micro_features/lib/features/`.
-2. Add `core/di/di.dart` for feature DI registration.
+2. Add `core/di/di.dart` for feature DI registration. **CRITICAL**: Use `@lazySingleton` for all heavy services to maintain < 2s startup.
 3. Add domain contracts and use cases under `domain/`.
 4. Add data sources and repository implementations under `data/`.
 5. Add UI pages/widgets under `presentation/`.

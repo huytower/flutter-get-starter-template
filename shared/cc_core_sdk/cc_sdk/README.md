@@ -1,7 +1,9 @@
 # CC SDK Core
 
 A core SDK package that provides essential functionality and utilities for Flutter applications. This package is part of
-a larger ecosystem that includes `cc_sdk_ui` for UI components.
+the **Hybrid-Shell Super App Architecture**, serving as the Universal Logic Layer ready for cross-platform binary sharing.
+
+**Performance Note**: Services registered in this package must use `@lazySingleton` to maintain the App Shell's **Turbo Boot** startup time (< 2s).
 
 ## Features
 
@@ -87,7 +89,7 @@ final deviceInfo = await DeviceUtils.getDeviceInfo();
 #### General Failures
 
 ```dart
-import 'package:cc_sdk/domain/failures/cc_failure.dart';
+
 import 'package:multiple_result/multiple_result.dart';
 
 class MyUseCase {

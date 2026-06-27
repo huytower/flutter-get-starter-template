@@ -48,16 +48,20 @@ modules/
 
 1. **Initialize Localization**
 
-In your `main.`:
+In your `main.dart`, follow the **Turbo Parallel Boot** pattern:
 
 ```
-import 'package:content_locale/cc_localization.' as localization;
+import 'package:message/cc_localization.' as localization;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize localization
-  await localization.CcLocalization.initialize();
+  // Part of parallel boot sequence
+  await Future.wait([
+    // ... other parallel inits
+    localization.CcLocalization.initialize(),
+    // ... other parallel inits
+  ]);
   
   runApp(
     localization.CcLocalization.wrapWithLocalization(

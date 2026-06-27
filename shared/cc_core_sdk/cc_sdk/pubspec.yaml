@@ -14,6 +14,8 @@ dependencies:
   ansicolor: ^2.0.3
 
   catcher_2: ^2.1.9
+  cc_sdk_data:
+    path: ../cc_sdk_data
   firebase_app_check: ^0.4.5
   firebase_crashlytics: ^5.2.4
   connectivity_plus: ^7.1.1

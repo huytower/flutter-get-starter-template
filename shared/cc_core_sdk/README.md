@@ -47,7 +47,9 @@ Core data entities and models for shared data structures.
 
 ## Usage
 
-Add the desired package to your `pubspec.yaml`:
+Add the desired package to your `pubspec.yaml`. 
+
+**Note**: This SDK is designed for high-performance apps. When registering core services (e.g., `CcNetworkInfo`), always use `@lazySingleton` or `@LazySingleton` to ensure the App Shell's **Turbo Boot** remains under 2 seconds.
 
 ```yaml
 dependencies:

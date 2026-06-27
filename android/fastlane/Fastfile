@@ -23,7 +23,8 @@ platform :android do
       release_notes: "Built with Fastlane from CI",
       android_artifact_type: "AAB",
       android_artifact_path: "../../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab",
-      service_credentials_file: ENV["FIREBASE_SERVICE_CREDENTIALS_PATH"]
+      service_credentials_file: ENV["FIREBASE_SERVICE_CREDENTIALS_PATH"],
+      notifications: false
     )
   end
 

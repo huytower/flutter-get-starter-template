@@ -52,6 +52,9 @@ it. Instead:
 
 ## 🚀 Development Workflow
 
+### Performance Requirement
+To maintain a **< 2s startup time**, all heavy infrastructure (repositories, data sources, etc.) within Micro-Features MUST be registered as `@lazySingleton`.
+
 ### Adding a New Micro-Feature
 
 1. Create a folder under `lib/features/`.

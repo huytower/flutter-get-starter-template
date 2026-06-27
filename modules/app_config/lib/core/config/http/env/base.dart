@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 
-import 'package:cc_sdk/domain/failures/app_config/cc_app_config_failure.dart';
+import 'package:cc_sdk_data/domain/failures/app_config/cc_app_config_failure'
+    '.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../app/cc_app_config.dart';

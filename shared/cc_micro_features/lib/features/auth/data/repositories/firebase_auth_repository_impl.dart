@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
 import 'package:cc_micro_features/features/auth/presentation/bloc/phone_auth_event.dart';
-import 'package:cc_sdk/domain/failures/cc_failure.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;

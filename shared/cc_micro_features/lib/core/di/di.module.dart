@@ -47,7 +47,7 @@ import 'package:cc_micro_features/features/messaging/data/services/firebase_mess
     as _i441;
 import 'package:cc_micro_features/features/web/presentation/cubit/web_cubit.dart'
     as _i354;
-import 'package:cc_sdk/domain/services/cc_messaging_service.dart' as _i408;
+import 'package:cc_sdk_data/domain/services/cc_messaging_service.dart' as _i4;
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:firebase_messaging/firebase_messaging.dart' as _i892;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
@@ -63,6 +63,8 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.lazySingleton<_i350.BiometricLocalDataSource>(
         () => _i350.BiometricLocalDataSource());
     gh.lazySingleton<_i354.WebCubit>(() => _i354.WebCubit());
+    gh.lazySingleton<_i4.CcMessagingService>(() =>
+        _i441.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()));
     gh.lazySingleton<_i521.BiometricRepository>(() =>
         _i32.BiometricRepositoryImpl(gh<_i350.BiometricLocalDataSource>()));
     gh.lazySingleton<_i745.FirebaseAuthRepository>(
@@ -70,8 +72,6 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i59.FirebaseAuth>(),
               gh<_i116.GoogleSignIn>(),
             ));
-    gh.lazySingleton<_i408.CcMessagingService>(() =>
-        _i441.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()));
     gh.lazySingleton<_i380.GetCurrentUserUseCase>(
         () => _i380.GetCurrentUserUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i566.LoginAnonymouslyUseCase>(() =>
