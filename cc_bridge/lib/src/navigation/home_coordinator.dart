@@ -11,4 +11,10 @@ abstract class HomeCoordinator {
     required String url,
     String? title,
   });
+
+  /// Navigates to the Wallet page.
+  void navigateToWallet(BuildContext context);
+
+  /// Navigates to the Transaction page.
+  void navigateToTransaction(BuildContext context);
 }

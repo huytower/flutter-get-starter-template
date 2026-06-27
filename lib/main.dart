@@ -1,7 +1,6 @@
 import 'dart:developer' as developer;
 import 'dart:ui';
 
-import 'package:app_config/data/datasource/local/box/register_hive_adapter.dart';
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,6 +10,7 @@ import 'package:hive_ce/hive_ce.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'core/di/di.dart';
+import 'core/di/hive_registrar.dart';
 import 'core/logging/init_logger.dart';
 import 'core/runner/app_runner.dart';
 
@@ -62,7 +62,7 @@ void main() async {
 Future<void> _initHive() async {
   final appDocumentDir = await getApplicationDocumentsDirectory();
   Hive.init(appDocumentDir.path);
-  await registerHiveAdapter();
+  await HiveRegistrar.registerAll();
 }
 
 /// Configures and launches the application shell.

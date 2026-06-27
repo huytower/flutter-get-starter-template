@@ -32,7 +32,8 @@
     "income": "Thu nhập",
     "expense": "Chi tiêu",
     "or": "HOẶC",
-    "press_back_again_to_exit": "Nhấn lại để thoát"
+    "press_back_again_to_exit": "Nhấn lại để thoát",
+    "add_source": "Thêm nguồn"
   },
   "auth": {
     "login": "Đăng nhập",
@@ -108,6 +109,8 @@
   },
   "nav": {
     "home": "Trang chủ",
+    "transaction": "Giao dịch",
+    "wallet": "Ví",
     "dashboard": "Bảng điều khiển",
     "quick_test": "Kiểm tra nhanh",
     "quick_test_page": "Trang kiểm tra nhanh",
@@ -129,6 +132,11 @@
       "minutes": "{count} phút trước"
     }
   },
+  "wallet": {
+    "my_account": "Tài khoản của tôi",
+    "spending_account": "Tài khoản chi tiêu",
+    "total_assets": "Tổng tài sản"
+  },
   "comment": {
     "detail": {
       "title": "Chi tiết bình luận",
@@ -136,5 +144,49 @@
       "post_id": "ID bài đăng",
       "id": "ID bình luận"
     }
+  },
+  "transaction": {
+    "title": "Giao dịch",
+    "wallet": "Ví",
+    "emergency": "Khẩn cấp",
+    "investment": "Đầu tư",
+    "category": "Danh mục",
+    "amount": "Số tiền",
+    "source_expense": "Nguồn chi tiêu",
+    "reason_expense": "Lý do chi tiêu",
+    "enter_content": "Nhập nội dung",
+    "payer": "Người trả",
+    "staff_name": "Tên nhân viên",
+    "time": "Thời gian",
+    "history": "Lịch sử",
+    "record_expense": "Ghi chép chi tiêu",
+    "source_income": "Nguồn thu nhập",
+    "reason_income": "Lý do thu nhập",
+    "recipient": "Người nhận",
+    "record_income": "Ghi chép thu nhập",
+    "expense_slip": "Chi tiêu",
+    "income_slip": "Thu nhập"
+  },
+  "category": {
+    "group_daily": "Hàng ngày",
+    "group_personal": "Cá nhân",
+    "food": "Đồ ăn",
+    "transport": "Di chuyển",
+    "shopping": "Mua sắm",
+    "health": "Sức khỏe",
+    "food_drink": "Ăn uống",
+    "coffee": "Cà phê",
+    "water": "Nước",
+    "eat_out": "Ăn ngoài",
+    "taxi": "Taxi",
+    "gas": "Xăng",
+    "parking": "Đỗ xe",
+    "maintenance": "Bảo trì",
+    "electricity": "Điện",
+    "internet": "Internet",
+    "phone": "Điện thoại",
+    "rent": "Thuê nhà",
+    "furniture": "Nội thất",
+    "laundry": "Giặt ủi"
   }
 }

@@ -1,14 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/export_domain_features.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import 'logic/navigation_logic_mixin.dart';
-import 'tabs/home_tab_content.dart';
-import 'tabs/notification_tab_content.dart';
 import 'tabs/profile_tab_content.dart';
-import 'tabs/quick_test_tab_content.dart';
 
 /// Main navigation view with curved navigation bar.
 @RoutePage()
@@ -22,8 +20,8 @@ class NavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<NavigationBar>
     with CcCurvedNavigationMixin, DoubleBackToExitMixin, NavigationLogicMixin {
   // Navigation indices
-  static const int _indexHome = 0;
-  static const int _indexNotification = 1;
+  static const int _indexTransaction = 0;
+  static const int _indexWallet = 1;
   static const int _indexProfile = 2;
 
   // Singleton to persist index across hot reload
@@ -37,15 +35,15 @@ class _NavigationBarState extends State<NavigationBar>
 
   @override
   bool handleCustomNavigation() {
-    if (currentIndex != _indexHome) {
-      setIndex(_indexHome);
+    if (currentIndex != _indexTransaction) {
+      setIndex(_indexTransaction);
       return true;
     }
     return false;
   }
 
   @override
-  bool get shouldEnableDoubleBackToExit => currentIndex == _indexHome;
+  bool get shouldEnableDoubleBackToExit => currentIndex == _indexTransaction;
 
   @override
   String get backPressMessage => el.tr('common.press_back_again_to_exit');
@@ -62,21 +60,15 @@ class _NavigationBarState extends State<NavigationBar>
   @override
   List<CcCurvedNavigationItem> get navigationItems => [
     CcCurvedNavigationItem(
-      inactiveIcon: Icons.home_outlined,
-      activeIcon: Icons.home_rounded,
-      label: el.tr(CcLocaleKeys.nav_home),
+      inactiveIcon: Icons.receipt_long_outlined,
+      activeIcon: Icons.receipt_long_rounded,
+      label: el.tr(CcLocaleKeys.nav_transaction),
     ),
-    showQuickTestAsSecondTab
-        ? CcCurvedNavigationItem(
-            inactiveIcon: Icons.bug_report_outlined,
-            activeIcon: Icons.bug_report_rounded,
-            label: el.tr(CcLocaleKeys.nav_quick_test),
-          )
-        : CcCurvedNavigationItem(
-            inactiveIcon: Icons.notifications_outlined,
-            activeIcon: Icons.notifications_rounded,
-            label: el.tr(CcLocaleKeys.nav_notification),
-          ),
+    CcCurvedNavigationItem(
+      inactiveIcon: Icons.account_balance_wallet_outlined,
+      activeIcon: Icons.account_balance_wallet_rounded,
+      label: el.tr(CcLocaleKeys.nav_wallet),
+    ),
     CcCurvedNavigationItem(
       inactiveIcon: Icons.person_outline_rounded,
       activeIcon: Icons.person_rounded,
@@ -106,18 +98,16 @@ class _NavigationBarState extends State<NavigationBar>
     return _buildContentForIndex(currentIndex);
   }
 
-  Widget _buildContentForIndex(int index) {
+  Widget? _buildContentForIndex(int index) {
     switch (index) {
-      case _indexHome:
-        return const HomeTabContent();
-      case _indexNotification:
-        return showQuickTestAsSecondTab
-            ? const QuickTestTabContent()
-            : const NotificationTabContent();
+      case _indexTransaction:
+        return const TransactionPage();
+      case _indexWallet:
+        return const WalletPage();
       case _indexProfile:
         return const ProfileTabContent();
       default:
-        return const HomeTabContent();
+        return const TransactionPage();
     }
   }
 

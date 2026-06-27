@@ -32,7 +32,8 @@
     "or": "OR",
     "income": "Income",
     "expense": "Expense",
-    "press_back_again_to_exit": "Press back again to exit"
+    "press_back_again_to_exit": "Press back again to exit",
+    "add_source": "Add Source"
   },
   "auth": {
     "login": "Login",
@@ -108,6 +109,8 @@
   },
   "nav": {
     "home": "Home",
+    "transaction": "Transaction",
+    "wallet": "Wallet",
     "dashboard": "Dashboard",
     "quick_test": "Quick Test",
     "quick_test_page": "Quick Testing Page",
@@ -129,6 +132,11 @@
       "minutes": "{count} minutes ago"
     }
   },
+  "wallet": {
+    "my_account": "My Account",
+    "spending_account": "Spending Account",
+    "total_assets": "Total Assets"
+  },
   "comment": {
     "detail": {
       "title": "Comment Detail",
@@ -136,5 +144,49 @@
       "post_id": "Post ID",
       "id": "Comment ID"
     }
+  },
+  "transaction": {
+    "title": "Transaction",
+    "wallet": "Wallet",
+    "emergency": "Emergency",
+    "investment": "Investment",
+    "category": "Category",
+    "amount": "Amount",
+    "source_expense": "Source of Expense",
+    "reason_expense": "Reason for Expense",
+    "enter_content": "Enter content",
+    "payer": "Payer",
+    "staff_name": "Staff Name",
+    "time": "Time",
+    "history": "History",
+    "record_expense": "Record Expense",
+    "source_income": "Source of Income",
+    "reason_income": "Reason for Income",
+    "recipient": "Recipient",
+    "record_income": "Record Income",
+    "expense_slip": "Expense",
+    "income_slip": "Income"
+  },
+  "category": {
+    "group_daily": "Daily",
+    "group_personal": "Personal",
+    "food": "Food",
+    "transport": "Transport",
+    "shopping": "Shopping",
+    "health": "Health",
+    "food_drink": "Food & Drink",
+    "coffee": "Coffee",
+    "water": "Water",
+    "eat_out": "Eat Out",
+    "taxi": "Taxi",
+    "gas": "Gas",
+    "parking": "Parking",
+    "maintenance": "Maintenance",
+    "electricity": "Electricity",
+    "internet": "Internet",
+    "phone": "Phone",
+    "rent": "Rent",
+    "furniture": "Furniture",
+    "laundry": "Laundry"
   }
 }

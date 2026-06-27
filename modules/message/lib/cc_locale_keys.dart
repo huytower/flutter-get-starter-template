@@ -111,6 +111,8 @@ abstract class CcLocaleKeys {
   static const settings_about = 'settings.about';
 
   static const nav_home = 'nav.home';
+  static const nav_transaction = 'nav.transaction';
+  static const nav_wallet = 'nav.wallet';
   static const nav_dashboard = 'nav.dashboard';
   static const nav_quick_test = 'nav.quick_test';
   static const nav_quick_test_page = 'nav.quick_test_page';
@@ -128,4 +130,51 @@ abstract class CcLocaleKeys {
   static const dashboard_time_hours = 'dashboard.time.hours';
   static const dashboard_time_minute = 'dashboard.time.minute';
   static const dashboard_time_minutes = 'dashboard.time.minutes';
+
+  static const wallet_my_account = 'wallet.my_account';
+  static const wallet_spending_account = 'wallet.spending_account';
+  static const wallet_total_assets = 'wallet.total_assets';
+
+  static const category_group_daily = 'category.group_daily';
+  static const category_group_personal = 'category.group_personal';
+  static const category_food = 'category.food';
+  static const category_transport = 'category.transport';
+  static const category_shopping = 'category.shopping';
+  static const category_health = 'category.health';
+  static const category_food_drink = 'category.food_drink';
+  static const category_coffee = 'category.coffee';
+  static const category_water = 'category.water';
+  static const category_eat_out = 'category.eat_out';
+  static const category_taxi = 'category.taxi';
+  static const category_gas = 'category.gas';
+  static const category_parking = 'category.parking';
+  static const category_maintenance = 'category.maintenance';
+  static const category_electricity = 'category.electricity';
+  static const category_internet = 'category.internet';
+  static const category_phone = 'category.phone';
+  static const category_rent = 'category.rent';
+  static const category_furniture = 'category.furniture';
+  static const category_laundry = 'category.laundry';
+
+  static const transaction_title = 'transaction.title';
+  static const transaction_wallet = 'transaction.wallet';
+  static const transaction_emergency = 'transaction.emergency';
+  static const transaction_investment = 'transaction.investment';
+  static const transaction_expense_slip = 'transaction_expense_slip';
+  static const transaction_income_slip = 'transaction_income_slip';
+  static const transaction_category = 'transaction.category';
+  static const transaction_amount = 'transaction.amount';
+  static const transaction_source_expense = 'transaction.source_expense';
+  static const transaction_reason_expense = 'transaction.reason_expense';
+  static const transaction_enter_content = 'transaction.enter_content';
+  static const transaction_payer = 'transaction.payer';
+  static const transaction_staff_name = 'transaction.staff_name';
+  static const transaction_time = 'transaction.time';
+  static const transaction_history = 'transaction.history';
+  static const transaction_record_expense = 'transaction.record_expense';
+  static const transaction_source_income = 'transaction.source_income';
+  static const transaction_reason_income = 'transaction.reason_income';
+  static const transaction_recipient = 'transaction.recipient';
+  static const transaction_record_income = 'transaction.record_income';
+  static const common_add_source = 'common.add_source';
 }

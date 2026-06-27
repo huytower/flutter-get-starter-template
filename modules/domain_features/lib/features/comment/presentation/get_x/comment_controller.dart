@@ -2,6 +2,7 @@ import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_data/data/models/pagination_request.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:get/get.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
@@ -15,6 +16,7 @@ class CommentBinding extends Bindings {
   }
 }
 
+@injectable
 class CommentController extends CcGetController with PaginationMixin {
   CommentController(this._repository);
 

@@ -26,14 +26,16 @@ class CcHiveBox {
   static const int APP_STORAGE_TYPE_ID = 2;
   static const int DEVICE_TYPE_ID = 3;
   static const int APP_TRACK_LOG_TYPE_ID = 4;
+  static const int WALLET_TYPE_ID = 5;
 
-  // Add new type IDs here (next would be 5)
+  // Add new type IDs here (next would be 6)
 
   // ===== Box Names =====
   // Use these with Hive.openBox()
   static const String APP_BOX_NAME = 'application';
   static const String DEVICE_BOX_NAME = 'device';
   static const String TRACK_LOG_BOX_NAME = 'track_log';
+  static const String WALLET_BOX_NAME = 'wallet';
 
   static const keyDefault = 'key_default';
 }

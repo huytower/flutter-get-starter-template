@@ -20,6 +20,10 @@ enum AppRoute {
   commentDetail,
   mainNavigation,
   home,
+  wallet,
+  walletDetail,
+  transaction,
+  transactionDetail,
 }
 
 extension AppRoutePath on AppRoute {

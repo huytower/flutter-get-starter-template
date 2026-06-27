@@ -1,4 +1,6 @@
 import 'package:cc_sdk_ui/core/enum/cc_layout_status.dart';
+import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
@@ -15,16 +17,23 @@ class HomeBinding extends Bindings {
 
 @lazySingleton
 class HomeController extends CcGetController {
-  HomeController(this._repository);
+  HomeController(this._repository, this._coordinator);
 
   final HomeRepository _repository;
+  final HomeCoordinator _coordinator;
 
   @override
   void onReady() {
     super.onReady();
-
-    // Example of fetching data when the controller is ready
     fetchHomeData();
+  }
+
+  void navigateToWallet(BuildContext context) {
+    _coordinator.navigateToWallet(context);
+  }
+
+  void navigateToTransaction(BuildContext context) {
+    _coordinator.navigateToTransaction(context);
   }
 
   void fetchHomeData() {
