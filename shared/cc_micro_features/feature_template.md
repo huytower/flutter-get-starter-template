@@ -146,6 +146,8 @@ class FeatureNameWidget extends StatelessWidget {
 
 ### 4. Dependency Injection
 
+**CRITICAL**: Always use `@lazySingleton` for DataSources and Repositories to ensure the App Shell's **Turbo Boot** remains under 2 seconds.
+
 #### `di/feature_name_module.dart`
 
 ```dart
@@ -167,7 +169,7 @@ abstract class FeatureNameModule {
   FeatureNameRepository get repository =>
       FeatureNameRepositoryImpl(getIt<FeatureNameDatasource>());
 
-  @injectable
+  @lazySingleton // Use lazySingleton for UseCases too if they hold heavy state
   FeatureNameUseCase get useCase =>
       FeatureNameUseCase(getIt<FeatureNameRepository>());
 }

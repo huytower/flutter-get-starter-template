@@ -56,18 +56,19 @@ Config remote server-side, include :
    );
    ```
 
-4. `/datasource` : define detail api [url | service] (using `retrofit` & `injectable` libs)
+4. `/datasource` : define detail api [url | service] (using `retrofit` & `injectable` libs).
+   **Crucial**: Use `@lazySingleton` to keep startup fast.
 
    ex.
    ```dart
-   @singleton
+   @lazySingleton
    @RestApi()
    abstract class HomeRemote {
       @factoryMethod
-      factory HomeRemote(Dio dio, {@Named('BaseUrl') String baseUrl}) = _HomeRemote;
+      factory HomeRemote(@Named('baseDio') Dio dio) = _HomeRemote;
       
-      @POST('/api/PoemAlbums/ReadByIDs')
-      Future<List<ReadByIdEntity>> readIds(@Body() dynamic body);
+      @GET('/comments')
+      Future<List<CommentModel>> getComments();
    }
    ```
 
@@ -87,22 +88,18 @@ Config remote server-side, include :
    }
    ```
 
-6. `/repositories` : as data storage, get `directly parsed [data object | model object]`
+6. `/repositories` : as data storage, get `directly parsed [data object | model object]`.
+   **Crucial**: Use `@LazySingleton` for implementations.
 
    ex.
    ```dart
-   abstract class HomeRepositories {
-      Future<CcResponse<TaskEntity>> getTask();
+   abstract class HomeRepository {
+      Future<Result<HomeEntity, CcFailure>> getHomeData();
    }
 
-   @Singleton(as: HomeRepositories)
-   class HomeRepositoriesImpl implements HomeRepositories {
-      @override
-      Future<CcResponse<TaskEntity>> getTask() async {
-         var response = await testRemote.getTasks();
-         var result = response.convertToModel((map) => TaskEntity.fromJson(map));
-         return result;
-      }
+   @LazySingleton(as: HomeRepository)
+   class HomeRepositoryImpl implements HomeRepository {
+      // ...
    }
    ```
 

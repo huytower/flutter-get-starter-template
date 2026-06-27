@@ -55,6 +55,7 @@ Whenever you move or rename major modules, update:
 
 - [ ] Confirm the change is in the correct module/package.
 - [ ] Confirm module DI is registered correctly.
+- [ ] Confirm all heavy services use `@lazySingleton` to maintain < 2s startup.
 - [ ] Confirm `flutter analyze` reports no errors.
 - [ ] Confirm documentation is updated for new module boundaries.
 - [ ] Confirm feature exports are added if the change is reusable.

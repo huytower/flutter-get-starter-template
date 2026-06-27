@@ -35,22 +35,25 @@ dependencies:
 
 ### 2. Initialization
 
-In your `main.dart`:
+In your `main.dart`, follow the **Turbo Parallel Boot** pattern:
 
 ```dart
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize dependencies
-  await initializeDependencies();
+  // 1. Critical Environment Load
+  await initEnv();
   
-  // Initialize Hive
-  final appDocumentDir = await getApplicationDocumentsDirectory();
-  Hive.init(appDocumentDir.path);
-  await registerHiveAdapter();
+  // 2. Turbo Parallel Boot (Safety Barrier)
+  await Future.wait([
+    Firebase.initializeApp(),
+    initializeDependencies(),
+    _initHive(),
+    CcLocalization.initialize(),
+  ]);
   
-  // Set up localization
-  await CcLocalization.setLocale('en');
+  // 3. Deferred Services (Non-blocking)
+  CcAppCheckHelper.initialize();
   
   runApp(const AppRunner());
 }

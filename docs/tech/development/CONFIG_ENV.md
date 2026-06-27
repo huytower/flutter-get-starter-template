@@ -32,10 +32,18 @@ class ApiService {
   static String get apiKey => dotenv.get('API_KEY');
 }
 
-// 2. Initialize in main.dart
+// 2. Initialize in main.dart (Turbo Parallel Boot)
 Future<void> main() async {
-  // Load env variables before running the app
-  await dotenv.load(fileName: 'env/.env');
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // CRITICAL: Load env variables before DI or any other critical service
+  await initEnv();
+  
+  await Future.wait([
+    Firebase.initializeApp(),
+    initializeDependencies(),
+    _initHive(),
+  ]);
   
   runApp(const MyApp());
 }
