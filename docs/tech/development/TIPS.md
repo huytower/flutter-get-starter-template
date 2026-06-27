@@ -86,3 +86,9 @@ then, `delete all unnecessary simulator version`, as below example :
 
 <br />
 - Turn of auto-update : `macos version`, `postman version`, ...
+
+### Identify Performance Bottlenecks
+
+- Use `developer.log` with timestamps in `main.dart` to measure startup time.
+- If startup exceeds 2s, check if any `@singleton` is being eagerly instantiated by accident. Convert it to `@lazySingleton`.
+- Use **Firebase Performance Monitoring** (enabled in `NavigationBar`) to track real-world startup metrics.
