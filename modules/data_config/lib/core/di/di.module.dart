@@ -20,7 +20,7 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
     final dataModule = _$DataModule();
     gh.lazySingleton<_i59.FirebaseAuth>(() => firebaseModule.firebaseAuth);
     gh.lazySingleton<_i116.GoogleSignIn>(() => firebaseModule.googleSignIn);
-    gh.singleton<_i361.Interceptor>(
+    gh.lazySingleton<_i361.Interceptor>(
       () => dataModule.cacheInterceptor,
       instanceName: 'cacheInterceptor',
     );
@@ -28,23 +28,23 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
       () => dataModule.baseUrl,
       instanceName: 'baseUrl',
     );
-    gh.singleton<_i361.Interceptor>(
+    gh.lazySingleton<_i361.Interceptor>(
       () => dataModule.talkerDioLogger,
       instanceName: 'talkerDioLogger',
     );
-    gh.singleton<_i361.Interceptor>(
+    gh.lazySingleton<_i361.Interceptor>(
       () => dataModule.curlLoggerInterceptor,
       instanceName: 'curlLoggerInterceptor',
     );
-    gh.singleton<_i361.Interceptor>(
+    gh.lazySingleton<_i361.Interceptor>(
       () => dataModule.requestInterceptor,
       instanceName: 'requestInterceptor',
     );
-    gh.singleton<_i361.Interceptor>(
+    gh.lazySingleton<_i361.Interceptor>(
       () => dataModule.responseInterceptor,
       instanceName: 'responseInterceptor',
     );
-    gh.singleton<List<_i361.Interceptor>>(() => dataModule.interceptors(
+    gh.lazySingleton<List<_i361.Interceptor>>(() => dataModule.interceptors(
           gh<_i361.Interceptor>(instanceName: 'requestInterceptor'),
           gh<_i361.Interceptor>(instanceName: 'responseInterceptor'),
           gh<_i361.Interceptor>(instanceName: 'curlLoggerInterceptor'),

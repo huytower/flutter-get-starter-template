@@ -43,17 +43,17 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
       () => _i1004.AdvanceBloc(),
       dispose: (i) => i.close(),
     );
-    gh.singleton<_i130.CommentRemote>(
+    gh.lazySingleton<_i130.CommentRemote>(
         () => _i130.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.singleton<_i55.HomeRemote>(
+    gh.lazySingleton<_i55.HomeRemote>(
         () => _i55.HomeRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.singleton<_i857.HomeRepository>(
+    gh.lazySingleton<_i857.HomeRepository>(
         () => _i179.HomeRepositoryImpl(remote: gh<_i55.HomeRemote>()));
     gh.lazySingleton<_i402.SimpleCubitInterface>(
       () => _i691.SimpleCubit(),
       dispose: (i) => i.close(),
     );
-    gh.singleton<_i857.CommentRepository>(
+    gh.lazySingleton<_i857.CommentRepository>(
         () => _i536.CommentRepositoryImpl(remote: gh<_i130.CommentRemote>()));
     gh.lazySingleton<_i580.CrashLogRemote>(
         () => _i580.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));

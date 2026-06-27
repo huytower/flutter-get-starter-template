@@ -33,9 +33,9 @@ class CcSdkPackageModule extends _i526.MicroPackageModule {
     gh.singleton<_i895.Connectivity>(() => ccSdkDependencies.connectivity);
     gh.singleton<_i833.DeviceInfoPlugin>(
         () => ccSdkDependencies.deviceInfoPlugin);
-    gh.singleton<_i13.CcNetworkInfo>(
+    gh.lazySingleton<_i13.CcNetworkInfo>(
         () => _i13.CcNetworkInfoImpl(gh<_i895.Connectivity>()));
-    gh.singleton<_i548.CcNetworkHelper>(
+    gh.lazySingleton<_i548.CcNetworkHelper>(
         () => _i548.CcNetworkHelper(gh<_i161.InternetConnection>()));
     gh.lazySingleton<_i312.CcDeviceInfoHelper>(
         () => _i312.CcDeviceInfoHelper(gh<_i833.DeviceInfoPlugin>()));
