@@ -47,92 +47,67 @@ import 'package:cc_micro_features/features/messaging/data/services/firebase_mess
     as _i441;
 import 'package:cc_micro_features/features/web/presentation/cubit/web_cubit.dart'
     as _i354;
-import 'package:cc_sdk_data/domain/services/cc_messaging_service.dart' as _i408;
+import 'package:cc_sdk_data/domain/services/cc_messaging_service.dart' as _i4;
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:firebase_messaging/firebase_messaging.dart' as _i892;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
 
 class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
-  // initializes the registration of main-scope dependencies inside of GetIt
+// initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
     final messagingModule = _$MessagingModule();
     gh.lazySingleton<_i892.FirebaseMessaging>(
-      () => messagingModule.firebaseMessaging,
-    );
+        () => messagingModule.firebaseMessaging);
     gh.lazySingleton<_i350.BiometricLocalDataSource>(
-      () => _i350.BiometricLocalDataSource(),
-    );
+        () => _i350.BiometricLocalDataSource());
     gh.lazySingleton<_i354.WebCubit>(() => _i354.WebCubit());
-    gh.lazySingleton<_i521.BiometricRepository>(
-      () => _i32.BiometricRepositoryImpl(gh<_i350.BiometricLocalDataSource>()),
-    );
+    gh.lazySingleton<_i4.CcMessagingService>(() =>
+        _i441.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()));
+    gh.lazySingleton<_i521.BiometricRepository>(() =>
+        _i32.BiometricRepositoryImpl(gh<_i350.BiometricLocalDataSource>()));
     gh.lazySingleton<_i745.FirebaseAuthRepository>(
-      () => _i832.FirebaseAuthRepositoryImpl(
-        gh<_i59.FirebaseAuth>(),
-        gh<_i116.GoogleSignIn>(),
-      ),
-    );
-    gh.lazySingleton<_i408.CcMessagingService>(
-      () => _i441.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()),
-    );
+        () => _i832.FirebaseAuthRepositoryImpl(
+              gh<_i59.FirebaseAuth>(),
+              gh<_i116.GoogleSignIn>(),
+            ));
     gh.lazySingleton<_i380.GetCurrentUserUseCase>(
-      () => _i380.GetCurrentUserUseCase(gh<_i745.FirebaseAuthRepository>()),
-    );
-    gh.lazySingleton<_i566.LoginAnonymouslyUseCase>(
-      () => _i566.LoginAnonymouslyUseCase(gh<_i745.FirebaseAuthRepository>()),
-    );
+        () => _i380.GetCurrentUserUseCase(gh<_i745.FirebaseAuthRepository>()));
+    gh.lazySingleton<_i566.LoginAnonymouslyUseCase>(() =>
+        _i566.LoginAnonymouslyUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i23.LoginUseCase>(
-      () => _i23.LoginUseCase(gh<_i745.FirebaseAuthRepository>()),
-    );
+        () => _i23.LoginUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i632.LoginWithAppleUseCase>(
-      () => _i632.LoginWithAppleUseCase(gh<_i745.FirebaseAuthRepository>()),
-    );
+        () => _i632.LoginWithAppleUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i811.LoginWithGoogleUseCase>(
-      () => _i811.LoginWithGoogleUseCase(gh<_i745.FirebaseAuthRepository>()),
-    );
+        () => _i811.LoginWithGoogleUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i732.LogoutUseCase>(
-      () => _i732.LogoutUseCase(gh<_i745.FirebaseAuthRepository>()),
-    );
-    gh.lazySingleton<_i189.SignInWithPhoneNumberUseCase>(
-      () => _i189.SignInWithPhoneNumberUseCase(
-        gh<_i745.FirebaseAuthRepository>(),
-      ),
-    );
-    gh.lazySingleton<_i120.VerifyPhoneNumberUseCase>(
-      () => _i120.VerifyPhoneNumberUseCase(gh<_i745.FirebaseAuthRepository>()),
-    );
-    gh.factory<_i345.LoginBloc>(
-      () => _i345.LoginBloc(
-        gh<_i23.LoginUseCase>(),
-        gh<_i811.LoginWithGoogleUseCase>(),
-        gh<_i632.LoginWithAppleUseCase>(),
-      ),
-    );
-    gh.factory<_i902.PhoneAuthBloc>(
-      () => _i902.PhoneAuthBloc(
-        gh<_i120.VerifyPhoneNumberUseCase>(),
-        gh<_i189.SignInWithPhoneNumberUseCase>(),
-      ),
-    );
-    gh.lazySingleton<_i721.AuthenticateWithBiometricsUseCase>(
-      () => _i721.AuthenticateWithBiometricsUseCase(
-        gh<_i521.BiometricRepository>(),
-      ),
-    );
-    gh.lazySingleton<_i727.SessionContract>(
-      () => _i638.SessionProviderImpl(
-        gh<_i380.GetCurrentUserUseCase>(),
-        gh<_i732.LogoutUseCase>(),
-      ),
-    );
-    gh.factory<_i384.BiometricBloc>(
-      () => _i384.BiometricBloc(
-        gh<_i721.AuthenticateWithBiometricsUseCase>(),
-        gh<_i521.BiometricRepository>(),
-      ),
-    );
+        () => _i732.LogoutUseCase(gh<_i745.FirebaseAuthRepository>()));
+    gh.lazySingleton<_i189.SignInWithPhoneNumberUseCase>(() =>
+        _i189.SignInWithPhoneNumberUseCase(gh<_i745.FirebaseAuthRepository>()));
+    gh.lazySingleton<_i120.VerifyPhoneNumberUseCase>(() =>
+        _i120.VerifyPhoneNumberUseCase(gh<_i745.FirebaseAuthRepository>()));
+    gh.factory<_i345.LoginBloc>(() => _i345.LoginBloc(
+          gh<_i23.LoginUseCase>(),
+          gh<_i811.LoginWithGoogleUseCase>(),
+          gh<_i632.LoginWithAppleUseCase>(),
+        ));
+    gh.factory<_i902.PhoneAuthBloc>(() => _i902.PhoneAuthBloc(
+          gh<_i120.VerifyPhoneNumberUseCase>(),
+          gh<_i189.SignInWithPhoneNumberUseCase>(),
+        ));
+    gh.lazySingleton<_i721.AuthenticateWithBiometricsUseCase>(() =>
+        _i721.AuthenticateWithBiometricsUseCase(
+            gh<_i521.BiometricRepository>()));
+    gh.lazySingleton<_i727.SessionContract>(() => _i638.SessionProviderImpl(
+          gh<_i380.GetCurrentUserUseCase>(),
+          gh<_i732.LogoutUseCase>(),
+        ));
+    gh.factory<_i384.BiometricBloc>(() => _i384.BiometricBloc(
+          gh<_i721.AuthenticateWithBiometricsUseCase>(),
+          gh<_i521.BiometricRepository>(),
+        ));
   }
 }
 

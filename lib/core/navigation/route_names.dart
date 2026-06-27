@@ -11,6 +11,7 @@ enum AppRoute {
   setting,
   login,
   phoneAuth,
+  otpVerification,
   logout,
   profile,
   updateVersion,
