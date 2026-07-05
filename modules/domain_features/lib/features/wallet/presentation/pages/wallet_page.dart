@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../../core/util/icon_utils.dart';
+import '../../domain/entities/wallet_entity.dart';
 import '../controller/wallet_controller.dart';
+import '../widgets/add_wallet_sheet.dart';
 import '../widgets/shimmer_wallet_card.dart';
 import '../widgets/wallet_header.dart';
 import '../widgets/wallet_list_item.dart';
@@ -32,6 +36,134 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
       ),
       backgroundColor: Get.context?.ccColorScheme.primary,
       elevation: 0,
+      actions: [
+        Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: 'Thêm ví',
+            onPressed: () => _openAddWallet(context),
+          ),
+        ),
+        Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.fact_check_outlined),
+            tooltip: 'Đối soát',
+            onPressed: () => context.router.push(const ReconcileRoute()),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _openAddWallet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.ccColorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => const AddWalletSheet(),
+    );
+  }
+
+  void _openWalletActions(BuildContext context, WalletEntity wallet) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: context.ccColorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(
+                Icons.edit_outlined,
+                color: sheetContext.ccColorScheme.primary,
+              ),
+              title: const Text('Sửa ví'),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _editWallet(context, wallet);
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.delete_outline,
+                color: sheetContext.ccColorScheme.error,
+              ),
+              title: Text(
+                'Xóa ví',
+                style: TextStyle(color: sheetContext.ccColorScheme.error),
+              ),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _confirmDelete(context, wallet);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _editWallet(BuildContext context, WalletEntity wallet) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.ccColorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => AddWalletSheet(wallet: wallet),
+    );
+  }
+
+  void _confirmDelete(BuildContext context, WalletEntity wallet) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Xóa ví'),
+        content: const Text(
+          'Chỉ có thể xóa ví khi số dư bằng 0. '
+          'Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Hủy'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              final outcome = await controller.deleteWallet(wallet.id);
+              if (!context.mounted) return;
+              switch (outcome) {
+                case WalletDeleteOutcome.success:
+                  CcSnackBarHelper.showSuccessSnackBar(
+                    context: context,
+                    message: 'Đã xóa ví',
+                  );
+                case WalletDeleteOutcome.notEmpty:
+                  CcSnackBarHelper.showErrorSnackBar(
+                    context: context,
+                    message: 'Không thể xóa: số dư của ví phải bằng 0',
+                  );
+                case WalletDeleteOutcome.error:
+                  CcSnackBarHelper.showErrorSnackBar(
+                    context: context,
+                    message: controller.errorMessage.value.isNotEmpty
+                        ? controller.errorMessage.value
+                        : 'Xóa ví thất bại',
+                  );
+              }
+            },
+            child: const Text('Xóa'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -47,7 +179,8 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
           onRefresh: controller.loadWallets,
           child: Builder(
             builder: (context) {
-              return Column(
+              return Obx(
+                () => Column(
                 children: [
                   const WalletHeader(),
                   Expanded(
@@ -88,13 +221,10 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
                                   return Column(
                                     children: [
                                       WalletListItem(
-                                        icon: IconData(
-                                          wallet.iconCode,
-                                          fontFamily: 'MaterialIcons',
-                                        ),
+                                        icon: iconDataFromCode(wallet.iconCode),
                                         title: wallet.name,
                                         balance: controller.isBalanceVisible.value
-                                            ? '${wallet.balance.toStringAsFixed(0).replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} đ'
+                                            ? '${controller.bookBalanceOf(wallet.id).toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} đ'
                                             : '*********',
                                         onTap: () {
                                           getIt<WalletCoordinator>()
@@ -103,6 +233,8 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
                                             wallet,
                                           );
                                         },
+                                        onMore: () =>
+                                            _openWalletActions(context, wallet),
                                       ),
                                       if (index < controller.wallets.length - 1)
                                         Padding(
@@ -127,6 +259,7 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
                     ),
                   ),
                 ],
+                ),
               );
             },
           ),

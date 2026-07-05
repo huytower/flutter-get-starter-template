@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 
@@ -18,31 +19,54 @@ class TransactionBinding extends Bindings {
 
 @injectable
 class TransactionController extends CcGetController with PaginationMixin {
-  TransactionController(this._repository);
+  TransactionController(this._repository, this._getWalletBalances);
 
   final TransactionRepository _repository;
+  final GetWalletBalancesUseCase _getWalletBalances;
 
   final RxInt selectedTabIndex = 0.obs;
   final transactions = <TransactionEntity>[].obs;
+
+  /// Total book balance across all wallets, shown in the header "Ví" chip.
+  final RxInt walletTotal = 0.obs;
+
+  /// Loading flag for the history list. The entry screen is always shown, so
+  /// history uses this instead of [layoutStatus] (which stays `success`).
+  final RxBool isLoading = false.obs;
 
   void setTabIndex(int index) {
     selectedTabIndex.value = index;
   }
 
   @override
-  void onReady() {
-    super.onReady();
+  void onInit() {
+    super.onInit();
+    // The transaction tab hosts an always-visible entry form, not a data-gated
+    // list, so keep the layout in the success state.
+    layoutStatus.value = CcLayoutStatus.success;
     initPagination(initialItemsPerPage: 20);
-    loadTransactions();
+    _loadWalletTotal();
+  }
+
+  /// Recomputes the total wallet balance shown in the header.
+  Future<void> _loadWalletTotal() async {
+    final result = await _getWalletBalances();
+    result.when(
+      (balances) {
+        walletTotal.value = balances.fold<int>(
+          0,
+          (sum, b) => sum + b.bookBalance,
+        );
+      },
+      (_) {},
+    );
   }
 
   Future<void> loadTransactions({bool refresh = false}) async {
     if (!canFetchMore && !refresh) return;
 
     setPaginationLoading(true);
-    layoutStatus.value = refresh
-        ? CcLayoutStatus.loading
-        : CcLayoutStatus.loadMore;
+    isLoading.value = true;
 
     final result = await _repository.getTransactions(
       refresh
@@ -59,23 +83,20 @@ class TransactionController extends CcGetController with PaginationMixin {
         } else {
           transactions.addAll(success);
         }
-
-        if (transactions.isEmpty) {
-          layoutStatus.value = CcLayoutStatus.empty;
-        } else {
-          layoutStatus.value = CcLayoutStatus.success;
-        }
       },
       (error) {
         errorMessage.value = error.message;
-        layoutStatus.value = CcLayoutStatus.error;
       },
     );
 
+    isLoading.value = false;
     setPaginationLoading(false);
   }
 
   Future<void> loadNextPage() => loadTransactions(refresh: false);
 
-  Future<void> refreshData() => loadTransactions(refresh: true);
+  Future<void> refreshData() async {
+    await loadTransactions(refresh: true);
+    await _loadWalletTotal();
+  }
 }

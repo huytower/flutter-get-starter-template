@@ -7,7 +7,7 @@ part 'wallet_model.g.dart';
 class WalletModel {
   final String? id;
   final String? name;
-  final double? balance;
+  final int? balance;
   final int? iconCode;
   final String? type;
   final String? createdAt;
@@ -29,7 +29,7 @@ class WalletModel {
   WalletEntity toEntity() => WalletEntity(
     id: id ?? '',
     name: name ?? '',
-    balance: balance ?? 0.0,
+    balance: balance ?? 0,
     iconCode: iconCode ?? 0,
     type: type ?? 'spending',
     createdAt: createdAt != null ? DateTime.parse(createdAt!) : DateTime.now(),

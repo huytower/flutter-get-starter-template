@@ -160,8 +160,8 @@ abstract class CcLocaleKeys {
   static const transaction_wallet = 'transaction.wallet';
   static const transaction_emergency = 'transaction.emergency';
   static const transaction_investment = 'transaction.investment';
-  static const transaction_expense_slip = 'transaction_expense_slip';
-  static const transaction_income_slip = 'transaction_income_slip';
+  static const transaction_expense_slip = 'transaction.expense_slip';
+  static const transaction_income_slip = 'transaction.income_slip';
   static const transaction_category = 'transaction.category';
   static const transaction_amount = 'transaction.amount';
   static const transaction_source_expense = 'transaction.source_expense';
@@ -177,4 +177,53 @@ abstract class CcLocaleKeys {
   static const transaction_recipient = 'transaction.recipient';
   static const transaction_record_income = 'transaction.record_income';
   static const common_add_source = 'common.add_source';
+
+  static const budget_title = 'budget.title';
+  static const budget_empty = 'budget.empty';
+  static const budget_edit_limit = 'budget.edit_limit';
+  static const budget_delete_title = 'budget.delete_title';
+  static const budget_delete_confirm = 'budget.delete_confirm';
+  static const budget_reset_period = 'budget.reset_period';
+  static const budget_reset_title = 'budget.reset_title';
+  static const budget_add_title = 'budget.add_title';
+  static const budget_name = 'budget.name';
+  static const budget_name_hint = 'budget.name_hint';
+  static const budget_category = 'budget.category';
+  static const budget_limit = 'budget.limit';
+  static const budget_limit_hint = 'budget.limit_hint';
+  static const budget_start_date = 'budget.start_date';
+  static const budget_end_date = 'budget.end_date';
+  static const budget_added = 'budget.added';
+  static const budget_period_started = 'budget.period_started';
+  static const budget_over_limit = 'budget.over_limit';
+  static const budget_near_limit = 'budget.near_limit';
+  static const budget_over_by = 'budget.over_by';
+  static const budget_remaining = 'budget.remaining';
+
+  static const reconciliation_title = 'reconciliation.title';
+  static const reconciliation_empty = 'reconciliation.empty';
+  static const reconciliation_instruction = 'reconciliation.instruction';
+  static const reconciliation_book_total = 'reconciliation.book_total';
+  static const reconciliation_actual_total = 'reconciliation.actual_total';
+  static const reconciliation_difference = 'reconciliation.difference';
+  static const reconciliation_balanced = 'reconciliation.balanced';
+  static const reconciliation_surplus = 'reconciliation.surplus';
+  static const reconciliation_deficit = 'reconciliation.deficit';
+  static const reconciliation_confirm = 'reconciliation.confirm';
+  static const reconciliation_success = 'reconciliation.success';
+  static const reconciliation_history = 'reconciliation.history';
+  static const reconciliation_undo = 'reconciliation.undo';
+  static const reconciliation_undo_title = 'reconciliation.undo_title';
+  static const reconciliation_undo_confirm = 'reconciliation.undo_confirm';
+  static const reconciliation_week = 'reconciliation.week';
+  static const reconciliation_book = 'reconciliation.book';
+  static const reconciliation_actual = 'reconciliation.actual';
+  static const reconciliation_book_balance = 'reconciliation.book_balance';
+
+  static const report_title = 'report.title';
+  static const report_spending_proportion = 'report.spending_proportion';
+  static const report_monthly_chart = 'report.monthly_chart';
+  static const report_this_week = 'report.this_week';
+  static const report_this_month = 'report.this_month';
+  static const report_no_expense = 'report.no_expense';
 }

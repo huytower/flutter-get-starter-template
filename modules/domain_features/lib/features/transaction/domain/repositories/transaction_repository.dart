@@ -10,4 +10,29 @@ abstract class TransactionRepository {
   Future<Result<List<TransactionEntity>, CcFailure>> getTransactions(
     PaginationRequest request,
   );
+
+  Future<Result<void, CcFailure>> createTransaction(
+    TransactionEntity transaction,
+  );
+
+  Future<Result<void, CcFailure>> deleteTransaction(String id);
+
+  /// Soft-deletes every transaction (income and expense) of a wallet.
+  Future<Result<void, CcFailure>> softDeleteByWallet(String walletId);
+
+  /// Transactions belonging to a wallet.
+  Future<Result<List<TransactionEntity>, CcFailure>> getTransactionsByWallet(
+    String walletId,
+  );
+
+  /// Transactions counting against a budget.
+  Future<Result<List<TransactionEntity>, CcFailure>> getTransactionsByBudget(
+    String budgetId,
+  );
+
+  /// Transactions within an inclusive [start]..[end] date range.
+  Future<Result<List<TransactionEntity>, CcFailure>> getTransactionsByPeriod(
+    DateTime start,
+    DateTime end,
+  );
 }

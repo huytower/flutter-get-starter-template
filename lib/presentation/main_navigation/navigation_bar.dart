@@ -4,11 +4,18 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/export_domain_features.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'logic/navigation_logic_mixin.dart';
 import 'tabs/profile_tab_content.dart';
 
-/// Main navigation view with curved navigation bar.
+/// Main navigation view.
+///
+/// Layout mirrors the QLTC web dashboard: two tabs on each side of a raised
+/// centre item that opens the expense/income entry ("Giao dịch") — rendered as
+/// the centred "＋" of the curved navigation bar.
+///
+///   Ví · Ngân sách · (＋ Giao dịch) · Lịch sử · Hồ sơ
 @RoutePage()
 class NavigationBar extends StatefulWidget {
   const NavigationBar({super.key});
@@ -19,12 +26,14 @@ class NavigationBar extends StatefulWidget {
 
 class _NavigationBarState extends State<NavigationBar>
     with CcCurvedNavigationMixin, DoubleBackToExitMixin, NavigationLogicMixin {
-  // Navigation indices
-  static const int _indexTransaction = 0;
-  static const int _indexWallet = 1;
-  static const int _indexProfile = 2;
+  // Navigation indices — entry ("Giao dịch") is centred as the raised "＋".
+  static const int _indexWallet = 0;
+  static const int _indexBudget = 1;
+  static const int _indexEntry = 2;
+  static const int _indexHistory = 3;
+  static const int _indexProfile = 4;
 
-  // Singleton to persist index across hot reload
+  // Singleton to persist index across hot reload.
   static int? _persistentIndex;
 
   @override
@@ -35,39 +44,59 @@ class _NavigationBarState extends State<NavigationBar>
 
   @override
   bool handleCustomNavigation() {
-    if (currentIndex != _indexTransaction) {
-      setIndex(_indexTransaction);
+    if (currentIndex != _indexEntry) {
+      setIndex(_indexEntry);
       return true;
     }
     return false;
   }
 
   @override
-  bool get shouldEnableDoubleBackToExit => currentIndex == _indexTransaction;
+  bool get shouldEnableDoubleBackToExit => currentIndex == _indexEntry;
 
   @override
   String get backPressMessage => el.tr('common.press_back_again_to_exit');
 
   @override
-  int get currentIndex => _persistentIndex ?? 0;
+  int get currentIndex => _persistentIndex ?? _indexEntry;
 
   @override
   void setIndex(int index) {
     _persistentIndex = index;
+    // These tabs derive their figures from transactions that may have been
+    // added on the entry tab, so re-fetch each time the tab is (re)opened — the
+    // GetX controllers are kept alive, so onReady() won't fire again on its own.
+    if (index == _indexBudget && Get.isRegistered<BudgetController>()) {
+      Get.find<BudgetController>().loadBudgets(showLoading: false);
+    }
+    if (index == _indexWallet && Get.isRegistered<WalletController>()) {
+      Get.find<WalletController>().loadWallets(showLoading: false);
+    }
     setState(() {});
   }
 
   @override
   List<CcCurvedNavigationItem> get navigationItems => [
     CcCurvedNavigationItem(
-      inactiveIcon: Icons.receipt_long_outlined,
-      activeIcon: Icons.receipt_long_rounded,
-      label: el.tr(CcLocaleKeys.nav_transaction),
-    ),
-    CcCurvedNavigationItem(
       inactiveIcon: Icons.account_balance_wallet_outlined,
       activeIcon: Icons.account_balance_wallet_rounded,
       label: el.tr(CcLocaleKeys.nav_wallet),
+    ),
+    const CcCurvedNavigationItem(
+      inactiveIcon: Icons.pie_chart_outline_rounded,
+      activeIcon: Icons.pie_chart_rounded,
+      label: 'Ngân sách',
+    ),
+    // Centre "＋" — opens the Chi/Thu entry form.
+    CcCurvedNavigationItem(
+      inactiveIcon: Icons.add,
+      activeIcon: Icons.add,
+      label: el.tr(CcLocaleKeys.nav_transaction),
+    ),
+    CcCurvedNavigationItem(
+      inactiveIcon: Icons.history_outlined,
+      activeIcon: Icons.history_rounded,
+      label: el.tr(CcLocaleKeys.transaction_history),
     ),
     CcCurvedNavigationItem(
       inactiveIcon: Icons.person_outline_rounded,
@@ -100,10 +129,14 @@ class _NavigationBarState extends State<NavigationBar>
 
   Widget? _buildContentForIndex(int index) {
     switch (index) {
-      case _indexTransaction:
-        return const TransactionPage();
       case _indexWallet:
         return const WalletPage();
+      case _indexBudget:
+        return const BudgetPage();
+      case _indexEntry:
+        return const TransactionPage();
+      case _indexHistory:
+        return const TransactionHistoryPage();
       case _indexProfile:
         return const ProfileTabContent();
       default:

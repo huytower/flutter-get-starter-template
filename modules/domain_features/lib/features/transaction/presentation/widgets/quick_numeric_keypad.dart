@@ -72,6 +72,8 @@ class QuickNumericKeypad extends StatelessWidget {
             ? Icon(Icons.backspace_outlined, color: Colors.grey[700], size: 20)
             : CcText(
                 label,
+                align: Alignment.center,
+                textAlign: TextAlign.center,
                 textStyle: context.ccTextTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   fontSize: context.respFontSize(18),

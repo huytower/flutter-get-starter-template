@@ -2,19 +2,41 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../domain/entities/wallet_entity.dart';
 import '../controller/wallet_controller.dart';
 
 class AddWalletSheet extends StatefulWidget {
-  const AddWalletSheet({super.key});
+  /// When [wallet] is provided the sheet acts as an edit form; otherwise it
+  /// creates a new wallet.
+  const AddWalletSheet({super.key, this.wallet});
+
+  final WalletEntity? wallet;
 
   @override
   State<AddWalletSheet> createState() => _AddWalletSheetState();
 }
 
 class _AddWalletSheetState extends State<AddWalletSheet> {
-  final _nameController = TextEditingController();
-  final _balanceController = TextEditingController();
+  late final TextEditingController _nameController;
+  late final TextEditingController _balanceController;
   final _controller = Get.find<WalletController>();
+
+  bool get _isEditing => widget.wallet != null;
+
+  /// Opening balance is locked once the wallet has any transaction (rule 1).
+  bool get _balanceLocked =>
+      _isEditing && _controller.walletHasTransactions(widget.wallet!.id);
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.wallet?.name ?? '');
+    _balanceController = TextEditingController(
+      text: widget.wallet != null
+          ? widget.wallet!.balance.toString()
+          : '',
+    );
+  }
 
   @override
   void dispose() {
@@ -35,19 +57,33 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       return;
     }
 
-    final balance = double.tryParse(balanceStr) ?? 0.0;
+    final balance = int.tryParse(balanceStr) ?? 0;
 
-    await _controller.addWallet(
-      name: name,
-      initialBalance: balance,
-      iconCode: Icons.account_balance_wallet.codePoint,
-    );
+    if (_isEditing) {
+      final original = widget.wallet!;
+      await _controller.updateWallet(
+        WalletEntity(
+          id: original.id,
+          name: name,
+          balance: balance,
+          iconCode: original.iconCode,
+          type: original.type,
+          createdAt: original.createdAt,
+        ),
+      );
+    } else {
+      await _controller.addWallet(
+        name: name,
+        initialBalance: balance,
+        iconCode: Icons.account_balance_wallet.codePoint,
+      );
+    }
 
     if (mounted) {
       Navigator.pop(context); // Đóng sheet
       CcSnackBarHelper.showSuccessSnackBar(
         context: context,
-        message: 'Đã thêm ví mới',
+        message: _isEditing ? 'Đã cập nhật ví' : 'Đã thêm ví mới',
       );
     }
   }
@@ -72,7 +108,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CcText(
-            'Thêm ví mới',
+            _isEditing ? 'Sửa ví' : 'Thêm ví mới',
             textStyle: context.ccTextTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: context.ccColorScheme.primary,
@@ -93,10 +129,16 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           TextField(
             controller: _balanceController,
             keyboardType: TextInputType.number,
+            readOnly: _balanceLocked,
+            enabled: !_balanceLocked,
             decoration: InputDecoration(
               labelText: 'Số dư đầu kỳ',
               hintText: 'Ví dụ: 1000000',
               suffixText: 'đ',
+              helperText: _balanceLocked
+                  ? 'Không thể sửa số dư đầu kỳ khi ví đã có giao dịch'
+                  : null,
+              helperMaxLines: 2,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),

@@ -40,6 +40,12 @@ class UnknownFailure extends CcFailure {
   const UnknownFailure(String message) : super(message);
 }
 
+/// Raised when domain-level input validation fails (e.g. empty name,
+/// non-positive amount, invalid date range).
+class ValidationFailure extends CcFailure {
+  const ValidationFailure(String message) : super(message);
+}
+
 class CurlFailure extends CcFailure {
   final String? responseBody;
 

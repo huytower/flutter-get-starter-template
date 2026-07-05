@@ -1,19 +1,19 @@
 import 'package:auto_route/annotations.dart';
-import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../domain/entities/transaction_entity.dart';
+import '../../../../core/util/money_format.dart';
 import '../get_x/transaction_controller.dart';
-import '../ui/widgets/shimmer_transaction_card.dart';
-import '../ui/widgets/transaction_card.dart';
+import '../widgets/expense_form.dart';
+import '../widgets/receipt_form.dart';
+import '../widgets/transfer_form.dart';
+import 'transaction_history_page.dart';
 
 @RoutePage()
-class TransactionPage extends CcGetView<TransactionController>
-    with CcPullRefreshMixin {
+class TransactionPage extends CcGetView<TransactionController> {
   const TransactionPage({super.key});
 
   @override
@@ -26,37 +26,27 @@ class TransactionPage extends CcGetView<TransactionController>
   Widget? buildContent() {
     return Builder(
       builder: (context) {
-        final transactions = controller.transactions;
-        final isLoading =
-            controller.layoutStatus.value == CcLayoutStatus.loading ||
-            controller.layoutStatus.value == CcLayoutStatus.loadMore;
-
-        return FadePageWrapper(
-          child: Builder(
-            builder: (context) => buildPullToRefresh(
-              context: context,
-              onRefresh: controller.refreshData,
-              child: DefaultTabController(
-                length: 2,
-                child: Scaffold(
-                  backgroundColor: context.ccColorScheme.surface,
-                  body: Column(
-                    children: [
-                      _buildTopNav(context),
-                      const CcSpaceMD(),
-                      _buildTabBar(context),
-                      const CcSpaceSM(),
-                      Expanded(
-                        child: TabBarView(
-                          children: [
-                            _buildTransactionList(context, isLoading, transactions, 'expense'),
-                            _buildTransactionList(context, isLoading, transactions, 'income'),
-                          ],
-                        ),
-                      ),
-                    ],
+        return DefaultTabController(
+          length: 3,
+          child: FadePageWrapper(
+            child: Scaffold(
+              backgroundColor: context.ccColorScheme.surface,
+              body: Column(
+                children: [
+                  _buildTopNav(context),
+                  const CcSpaceMD(),
+                  _buildTabBar(context),
+                  const CcSpaceSM(),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        ExpenseForm(onSaved: controller.refreshData),
+                        ReceiptForm(onSaved: controller.refreshData),
+                        TransferForm(onSaved: controller.refreshData),
+                      ],
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ),
@@ -65,24 +55,12 @@ class TransactionPage extends CcGetView<TransactionController>
     );
   }
 
-  Widget _buildTransactionList(
-    BuildContext context,
-    bool isLoading,
-    RxList<TransactionEntity> transactions,
-    String type,
-  ) {
-    final filteredTransactions = transactions.where((t) => t.type == type).toList();
-
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: isLoading ? 5 : filteredTransactions.length,
-      itemBuilder: (context, index) {
-        if (isLoading) {
-          return const ShimmerTransactionCard();
-        }
-        return TransactionCard(transaction: filteredTransactions[index]);
-      },
+  void _openHistory(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            TransactionHistoryPage(initialTab: controller.selectedTabIndex.value),
+      ),
     );
   }
 
@@ -90,45 +68,79 @@ class TransactionPage extends CcGetView<TransactionController>
     return Container(
       color: context.ccColorScheme.primary,
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + context.respPadding(CcPaddingParams.SPACE_MD),
+        top: MediaQuery.of(context).padding.top +
+            context.respPadding(CcPaddingParams.SPACE_MD),
         left: context.respPadding(CcPaddingParams.SPACE_LG),
         right: context.respPadding(CcPaddingParams.SPACE_LG),
         bottom: context.respPadding(CcPaddingParams.SPACE_LG),
       ),
       child: Column(
         children: [
-          CcText(
-            el.tr(CcLocaleKeys.transaction_title),
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-              color: context.ccColorScheme.onPrimary,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-              fontSize: context.respFontSize(16),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: CcText(
+                  el.tr(CcLocaleKeys.transaction_title),
+                  textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                    color: context.ccColorScheme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                    fontSize: context.respFontSize(16),
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () => _openHistory(context),
+                borderRadius: BorderRadius.circular(context.respDim(20)),
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.history,
+                        size: context.respIconSize(baseSize: 18),
+                        color: context.ccColorScheme.onPrimary,
+                      ),
+                      const CcSpaceXS(),
+                      CcText(
+                        el.tr(CcLocaleKeys.transaction_history),
+                        textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                          color: context.ccColorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: context.respFontSize(12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
           const CcSpaceLG(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildWalletChip(
-                context,
-                Icons.account_balance_wallet,
-                el.tr(CcLocaleKeys.transaction_wallet),
-                '0',
-                Colors.yellow,
+              Obx(
+                () => _buildWalletChip(
+                  context,
+                  Icons.account_balance_wallet,
+                  el.tr(CcLocaleKeys.transaction_wallet),
+                  formatVndShort(controller.walletTotal.value),
+                  Colors.yellow,
+                ),
               ),
               _buildWalletChip(
                 context,
                 Icons.security,
                 el.tr(CcLocaleKeys.transaction_emergency),
-                '0',
+                formatVndShort(0),
                 Colors.orangeAccent,
               ),
               _buildWalletChip(
                 context,
                 Icons.rocket_launch,
                 el.tr(CcLocaleKeys.transaction_investment),
-                '0',
+                formatVndShort(0),
                 Colors.lightBlueAccent,
               ),
             ],
@@ -180,6 +192,8 @@ class TransactionPage extends CcGetView<TransactionController>
           const CcSpaceXS(),
           CcText(
             amount,
+            align: Alignment.center,
+            textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: context.ccColorScheme.onPrimary,
@@ -193,7 +207,9 @@ class TransactionPage extends CcGetView<TransactionController>
 
   Widget _buildTabBar(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: context.respPadding(CcPaddingParams.PAGE_MD)),
+      margin: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+      ),
       height: context.respDim(48),
       decoration: BoxDecoration(
         color: context.ccColorScheme.surfaceContainerHighest,
@@ -217,9 +233,11 @@ class TransactionPage extends CcGetView<TransactionController>
               ),
             ],
           ),
-          labelColor: controller.selectedTabIndex.value == 0
-              ? context.ccColorScheme.error
-              : context.ccColorScheme.primary,
+          labelColor: switch (controller.selectedTabIndex.value) {
+            0 => context.ccColorScheme.error,
+            2 => const Color(0xFF2F80ED),
+            _ => context.ccColorScheme.primary,
+          },
           unselectedLabelColor: context.ccColorScheme.onSurfaceVariant,
           labelStyle: context.ccTextTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
@@ -228,6 +246,7 @@ class TransactionPage extends CcGetView<TransactionController>
           tabs: [
             Tab(text: el.tr(CcLocaleKeys.transaction_expense_slip)),
             Tab(text: el.tr(CcLocaleKeys.transaction_income_slip)),
+            const Tab(text: 'Chuyển khoản'),
           ],
         );
       }),

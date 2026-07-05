@@ -24,6 +24,9 @@ enum AppRoute {
   walletDetail,
   transaction,
   transactionDetail,
+  budget,
+  reconcile,
+  report,
 }
 
 extension AppRoutePath on AppRoute {
