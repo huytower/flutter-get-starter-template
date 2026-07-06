@@ -39,7 +39,9 @@ class TransactionLocalDataSource {
         .where((m) => m.walletId == walletId && m.deletedAt == null)
         .toList();
     for (final model in targets) {
-      await box.put(model.id, model.copyWith(deletedAt: iso));
+      final id = model.id;
+      if (id == null) continue;
+      await box.put(id, model.copyWith(deletedAt: iso));
     }
   }
 
