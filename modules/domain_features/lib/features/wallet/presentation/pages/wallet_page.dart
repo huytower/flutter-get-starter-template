@@ -10,7 +10,7 @@ import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../../core/util/icon_utils.dart';
 import '../../domain/entities/wallet_entity.dart';
-import '../controller/wallet_controller.dart';
+import '../get_x/wallet_controller.dart';
 import '../widgets/add_wallet_sheet.dart';
 import '../widgets/shimmer_wallet_card.dart';
 import '../widgets/wallet_header.dart';
