@@ -146,11 +146,13 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
                     context: context,
                     message: 'Đã xóa ví',
                   );
+                  break;
                 case WalletDeleteOutcome.notEmpty:
                   CcSnackBarHelper.showErrorSnackBar(
                     context: context,
                     message: 'Không thể xóa: số dư của ví phải bằng 0',
                   );
+                  break;
                 case WalletDeleteOutcome.error:
                   CcSnackBarHelper.showErrorSnackBar(
                     context: context,
@@ -158,6 +160,7 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
                         ? controller.errorMessage.value
                         : 'Xóa ví thất bại',
                   );
+                  break;
               }
             },
             child: const Text('Xóa'),
