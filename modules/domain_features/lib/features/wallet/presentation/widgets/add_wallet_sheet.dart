@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../domain/entities/wallet_entity.dart';
-import '../controller/wallet_controller.dart';
+import '../get_x/wallet_controller.dart';
 
 class AddWalletSheet extends StatefulWidget {
   /// When [wallet] is provided the sheet acts as an edit form; otherwise it
