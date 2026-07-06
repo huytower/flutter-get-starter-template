@@ -42,6 +42,8 @@ import 'package:domain_features/features/category/domain/usecases/get_categories
     as _i224;
 import 'package:domain_features/features/category/domain/usecases/get_category_groups_usecase.dart'
     as _i397;
+import 'package:domain_features/features/category/domain/usecases/toggle_category_enabled_usecase.dart'
+    as _i110;
 import 'package:domain_features/features/comment/data/datasources/remote/comment_remote.dart'
     as _i130;
 import 'package:domain_features/features/comment/data/repositories/comment_repository_impl.dart'
@@ -115,7 +117,7 @@ import 'package:domain_features/features/wallet/domain/usecases/get_wallet_balan
 import 'package:domain_features/features/wallet/domain/usecases/get_wallet_book_balance_usecase.dart'
     as _i105;
 import 'package:domain_features/features/wallet/presentation/get_x/wallet_controller.dart'
-    as _i785;
+    as _i229;
 import 'package:injectable/injectable.dart' as _i526;
 
 class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
@@ -200,6 +202,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i224.GetCategoriesUseCase(gh<_i1059.CategoryRepository>()));
     gh.lazySingleton<_i397.GetCategoryGroupsUseCase>(
         () => _i397.GetCategoryGroupsUseCase(gh<_i1059.CategoryRepository>()));
+    gh.lazySingleton<_i110.ToggleCategoryEnabledUseCase>(() =>
+        _i110.ToggleCategoryEnabledUseCase(gh<_i1059.CategoryRepository>()));
     gh.factory<_i402.BudgetController>(() => _i402.BudgetController(
           gh<_i1058.GetBudgetStatsUseCase>(),
           gh<_i685.CreateBudgetUseCase>(),
@@ -236,7 +240,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i944.ReconciliationRepository>(),
             ));
-    gh.factory<_i785.WalletController>(() => _i785.WalletController(
+    gh.factory<_i229.WalletController>(() => _i229.WalletController(
           gh<_i572.WalletRepository>(),
           gh<_i1027.TransactionRepository>(),
           gh<_i105.GetWalletBookBalanceUseCase>(),

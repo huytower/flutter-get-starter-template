@@ -45,11 +45,10 @@ class TransactionController extends CcGetController with PaginationMixin {
     // list, so keep the layout in the success state.
     layoutStatus.value = CcLayoutStatus.success;
     initPagination(initialItemsPerPage: 20);
-    _loadWalletTotal();
+    refreshWalletTotal();
   }
 
-  /// Recomputes the total wallet balance shown in the header.
-  Future<void> _loadWalletTotal() async {
+  Future<void> refreshWalletTotal() async {
     final result = await _getWalletBalances();
     result.when(
       (balances) {
@@ -97,6 +96,6 @@ class TransactionController extends CcGetController with PaginationMixin {
 
   Future<void> refreshData() async {
     await loadTransactions(refresh: true);
-    await _loadWalletTotal();
+    await refreshWalletTotal();
   }
 }

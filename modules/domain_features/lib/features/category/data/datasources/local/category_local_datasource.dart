@@ -46,4 +46,22 @@ class CategoryLocalDataSource {
     final box = await _box;
     await box.delete(id);
   }
+
+  Future<void> updateCategoryEnabled(String id, bool isEnabled) async {
+    final box = await _box;
+    final existing = box.get(id);
+    if (existing == null) return;
+    await box.put(
+      id,
+      CategoryModel(
+        id: existing.id,
+        nameKey: existing.nameKey,
+        iconCode: existing.iconCode,
+        iconFamily: existing.iconFamily,
+        colorValue: existing.colorValue,
+        groupId: existing.groupId,
+        isEnabled: isEnabled,
+      ),
+    );
+  }
 }

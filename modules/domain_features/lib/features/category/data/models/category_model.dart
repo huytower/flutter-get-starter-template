@@ -31,6 +31,9 @@ class CategoryModel {
   @HiveField(5)
   final String groupId;
 
+  @HiveField(6)
+  final bool isEnabled;
+
   CategoryModel({
     required this.id,
     required this.nameKey,
@@ -38,6 +41,7 @@ class CategoryModel {
     this.iconFamily,
     this.colorValue,
     required this.groupId,
+    this.isEnabled = true,
   });
 
   factory CategoryModel.fromEntity(CategoryEntity entity) => CategoryModel(
@@ -47,6 +51,7 @@ class CategoryModel {
     iconFamily: entity.iconFamily,
     colorValue: entity.color?.toARGB32(),
     groupId: entity.groupId,
+    isEnabled: entity.isEnabled,
   );
 
   CategoryEntity toEntity() => CategoryEntity(
@@ -56,5 +61,6 @@ class CategoryModel {
     iconFamily: iconFamily,
     color: colorValue != null ? Color(colorValue!) : null,
     groupId: groupId,
+    isEnabled: isEnabled,
   );
 }

@@ -8,13 +8,13 @@ import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../../core/util/icon_utils.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/add_wallet_sheet.dart';
+import '../widgets/budget_preview_section.dart';
 import '../widgets/shimmer_wallet_card.dart';
 import '../widgets/wallet_header.dart';
-import '../widgets/wallet_list_item.dart';
+import '../widgets/wallet_strip.dart';
 
 @RoutePage()
 class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
@@ -28,22 +28,15 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
     return AppBar(
       title: Builder(
         builder: (context) => CcText(
-          el.tr(CcLocaleKeys.wallet_my_account),
+          el.tr(CcLocaleKeys.nav_wallet),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
-      backgroundColor: Get.context?.ccColorScheme.primary,
+      backgroundColor: Get.context?.ccColorScheme.background,
       elevation: 0,
       actions: [
-        Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'Thêm ví',
-            onPressed: () => _openAddWallet(context),
-          ),
-        ),
         Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.fact_check_outlined),
@@ -172,97 +165,21 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
 
   @override
   Widget? buildContent() {
-    final isLoading =
-        controller.layoutStatus.value == CcLayoutStatus.loading;
-
     return FadePageWrapper(
       child: Builder(
         builder: (context) => buildPullToRefresh(
           context: context,
           onRefresh: controller.loadWallets,
-          child: Builder(
-            builder: (context) {
-              return Obx(
-                () => Column(
+          child: Obx(
+            () {
+              final isLoading =
+                  controller.layoutStatus.value == CcLayoutStatus.loading;
+              return ListView(
                 children: [
                   const WalletHeader(),
-                  Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.all(
-                        context.respPadding(CcPaddingParams.SPACE_MD),
-                      ),
-                      children: [
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: context.ccColorScheme.surface,
-                            borderRadius: BorderRadius.circular(context.respDim(20)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: context.ccColorScheme.onSurface.withOpacity(0.05),
-                                blurRadius: context.respDim(10),
-                                offset: Offset(0, context.respDim(4)),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              _buildSectionCard(
-                                context,
-                                title:
-                                    '${el.tr(CcLocaleKeys.wallet_spending_account)} (${controller.wallets.length})',
-                                onTap: () {},
-                              ),
-                              if (isLoading)
-                                ...List.generate(
-                                  3,
-                                  (index) => const ShimmerWalletCard(),
-                                )
-                              else
-                                ...controller.wallets.asMap().entries.map((entry) {
-                                  final index = entry.key;
-                                  final wallet = entry.value;
-                                  return Column(
-                                    children: [
-                                      WalletListItem(
-                                        icon: iconDataFromCode(wallet.iconCode),
-                                        title: wallet.name,
-                                        balance: controller.isBalanceVisible.value
-                                            ? '${controller.bookBalanceOf(wallet.id).toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} đ'
-                                            : '*********',
-                                        onTap: () {
-                                          getIt<WalletCoordinator>()
-                                              .navigateToWalletDetail(
-                                            context,
-                                            wallet,
-                                          );
-                                        },
-                                        onMore: () =>
-                                            _openWalletActions(context, wallet),
-                                      ),
-                                      if (index < controller.wallets.length - 1)
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: context.respPadding(
-                                              CcPaddingParams.SPACE_LG,
-                                            ),
-                                          ),
-                                          child: Divider(
-                                            height: context.respDim(1),
-                                            color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.2),
-                                          ),
-                                        ),
-                                    ],
-                                  );
-                                }),
-                              SizedBox(height: context.respDim(8)),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildWalletsSection(context, isLoading),
+                  const BudgetPreviewSection(),
                 ],
-                ),
               );
             },
           ),
@@ -271,30 +188,80 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
     );
   }
 
-  Widget _buildSectionCard(
-    BuildContext context, {
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_LG)),
-        decoration: const BoxDecoration(color: Colors.transparent),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CcText(
-              title,
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: context.ccColorScheme.onSurface,
+  Widget _buildWalletsSection(BuildContext context, bool isLoading) {
+    final scheme = context.ccColorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            context.respPadding(CcPaddingParams.SPACE_LG),
+            context.respPadding(CcPaddingParams.SPACE_LG),
+            context.respPadding(CcPaddingParams.SPACE_MD),
+            context.respPadding(CcPaddingParams.SPACE_SM),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CcText(
+                el.tr(CcLocaleKeys.wallet_your_wallets),
+                textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: scheme.onBackground,
+                ),
+              ),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => _openAddWallet(context),
+                    child: Icon(
+                      Icons.add_circle_outline_rounded,
+                      size: context.respIconSize(baseSize: 20),
+                      color: scheme.primary,
+                    ),
+                  ),
+                  SizedBox(width: context.respDim(8)),
+                  GestureDetector(
+                    onTap: () => context.router.push(const WalletListRoute()),
+                    child: CcText(
+                      el.tr(CcLocaleKeys.wallet_see_all),
+                      textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                        color: scheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        if (isLoading)
+          SizedBox(
+            height: context.respDim(110),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(
+                horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
+              ),
+              itemCount: 3,
+              itemBuilder: (_, _i) => Padding(
+                padding: EdgeInsets.only(right: context.respDim(10)),
+                child: SizedBox(
+                  width: context.respDim(110),
+                  child: const ShimmerWalletCard(),
+                ),
               ),
             ),
-            Icon(Icons.chevron_right, color: context.ccColorScheme.onSurfaceVariant),
-          ],
-        ),
-      ),
+          )
+        else
+          WalletStrip(
+            wallets: controller.wallets,
+            onTap: (wallet) => getIt<WalletCoordinator>()
+                .navigateToWalletDetail(context, wallet),
+            onMore: (wallet) => _openWalletActions(context, wallet),
+          ),
+      ],
     );
   }
 }

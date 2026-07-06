@@ -27,15 +27,26 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
   bool get _balanceLocked =>
       _isEditing && _controller.walletHasTransactions(widget.wallet!.id);
 
+  bool get _isValid {
+    if (_nameController.text.trim().isEmpty) return false;
+    if (!_balanceLocked) {
+      final balanceStr = _balanceController.text.trim();
+      if (balanceStr.isNotEmpty && int.tryParse(balanceStr) == null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.wallet?.name ?? '');
     _balanceController = TextEditingController(
-      text: widget.wallet != null
-          ? widget.wallet!.balance.toString()
-          : '',
+      text: widget.wallet != null ? widget.wallet!.balance.toString() : '',
     );
+    _nameController.addListener(() => setState(() {}));
+    _balanceController.addListener(() => setState(() {}));
   }
 
   @override
@@ -47,17 +58,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
 
   void _onSave() async {
     final name = _nameController.text.trim();
-    final balanceStr = _balanceController.text.trim();
-
-    if (name.isEmpty) {
-      CcSnackBarHelper.showErrorSnackBar(
-        context: context,
-        message: 'Vui lòng nhập tên ví',
-      );
-      return;
-    }
-
-    final balance = int.tryParse(balanceStr) ?? 0;
+    final balance = int.tryParse(_balanceController.text.trim()) ?? 0;
 
     if (_isEditing) {
       final original = widget.wallet!;
@@ -147,9 +148,9 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           const CcSpaceLG(),
           SizedBox(
             width: double.infinity,
-            height: 50,
+            height: context.respDim(50),
             child: ElevatedButton(
-              onPressed: _onSave,
+              onPressed: _isValid ? _onSave : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: context.ccColorScheme.primary,
                 shape: RoundedRectangleBorder(
@@ -158,6 +159,8 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               ),
               child: const CcText(
                 'Lưu thông tin',
+                align: Alignment.center,
+                textAlign: TextAlign.center,
                 textStyle: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,

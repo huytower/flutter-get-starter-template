@@ -11,11 +11,9 @@ import 'tabs/profile_tab_content.dart';
 
 /// Main navigation view.
 ///
-/// Layout mirrors the QLTC web dashboard: two tabs on each side of a raised
-/// centre item that opens the expense/income entry ("Giao dịch") — rendered as
-/// the centred "＋" of the curved navigation bar.
-///
-///   Ví · Ngân sách · (＋ Giao dịch) · Lịch sử · Hồ sơ
+/// Layout: Phân bổ · (＋ Giao dịch) · Hồ sơ
+/// History is accessible via the action button on the Giao dịch tab.
+/// Budget is accessible from the Phân bổ tab ("Xem tất cả"), not a top-level tab.
 @RoutePage()
 class NavigationBar extends StatefulWidget {
   const NavigationBar({super.key});
@@ -28,10 +26,8 @@ class _NavigationBarState extends State<NavigationBar>
     with CcCurvedNavigationMixin, DoubleBackToExitMixin, NavigationLogicMixin {
   // Navigation indices — entry ("Giao dịch") is centred as the raised "＋".
   static const int _indexWallet = 0;
-  static const int _indexBudget = 1;
-  static const int _indexEntry = 2;
-  static const int _indexHistory = 3;
-  static const int _indexProfile = 4;
+  static const int _indexEntry = 1;
+  static const int _indexProfile = 2;
 
   // Singleton to persist index across hot reload.
   static int? _persistentIndex;
@@ -66,11 +62,16 @@ class _NavigationBarState extends State<NavigationBar>
     // These tabs derive their figures from transactions that may have been
     // added on the entry tab, so re-fetch each time the tab is (re)opened — the
     // GetX controllers are kept alive, so onReady() won't fire again on its own.
-    if (index == _indexBudget && Get.isRegistered<BudgetController>()) {
-      Get.find<BudgetController>().loadBudgets(showLoading: false);
+    if (index == _indexWallet) {
+      if (Get.isRegistered<WalletController>()) {
+        Get.find<WalletController>().loadWallets(showLoading: false);
+      }
+      if (Get.isRegistered<BudgetController>()) {
+        Get.find<BudgetController>().loadBudgets(showLoading: false);
+      }
     }
-    if (index == _indexWallet && Get.isRegistered<WalletController>()) {
-      Get.find<WalletController>().loadWallets(showLoading: false);
+    if (index == _indexEntry && Get.isRegistered<TransactionController>()) {
+      Get.find<TransactionController>().refreshWalletTotal();
     }
     setState(() {});
   }
@@ -82,21 +83,11 @@ class _NavigationBarState extends State<NavigationBar>
       activeIcon: Icons.account_balance_wallet_rounded,
       label: el.tr(CcLocaleKeys.nav_wallet),
     ),
-    const CcCurvedNavigationItem(
-      inactiveIcon: Icons.pie_chart_outline_rounded,
-      activeIcon: Icons.pie_chart_rounded,
-      label: 'Ngân sách',
-    ),
     // Centre "＋" — opens the Chi/Thu entry form.
     CcCurvedNavigationItem(
       inactiveIcon: Icons.add,
       activeIcon: Icons.add,
       label: el.tr(CcLocaleKeys.nav_transaction),
-    ),
-    CcCurvedNavigationItem(
-      inactiveIcon: Icons.history_outlined,
-      activeIcon: Icons.history_rounded,
-      label: el.tr(CcLocaleKeys.transaction_history),
     ),
     CcCurvedNavigationItem(
       inactiveIcon: Icons.person_outline_rounded,
@@ -131,12 +122,8 @@ class _NavigationBarState extends State<NavigationBar>
     switch (index) {
       case _indexWallet:
         return const WalletPage();
-      case _indexBudget:
-        return const BudgetPage();
       case _indexEntry:
         return const TransactionPage();
-      case _indexHistory:
-        return const TransactionHistoryPage();
       case _indexProfile:
         return const ProfileTabContent();
       default:

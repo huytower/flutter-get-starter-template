@@ -65,8 +65,8 @@ class BudgetPage extends CcGetView<BudgetController> {
               .map(
                 (stats) => BudgetCard(
                   stats: stats,
-                  onEditLimit: () => _editLimit(context, stats.budget),
-                  onReset: () => _openForm(context, resetTarget: stats.budget),
+                  onEditLimit: () =>
+                      _openForm(context, resetTarget: stats.budget),
                   onDelete: () => _confirmDelete(context, stats.budget),
                 ),
               )
@@ -85,43 +85,6 @@ class BudgetPage extends CcGetView<BudgetController> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => BudgetFormSheet(resetTarget: resetTarget),
-    );
-  }
-
-  void _editLimit(BuildContext context, BudgetEntity budget) {
-    final initialText = budget.limit.toString();
-    final limitController = TextEditingController(text: initialText)
-      ..selection = TextSelection(
-        baseOffset: 0,
-        extentOffset: initialText.length,
-      );
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(el.tr(CcLocaleKeys.budget_edit_limit)),
-        content: TextField(
-          controller: limitController,
-          keyboardType: TextInputType.number,
-          autofocus: true,
-          decoration: const InputDecoration(suffixText: 'đ'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(el.tr(CcLocaleKeys.common_cancel)),
-          ),
-          TextButton(
-            onPressed: () async {
-              final value = int.tryParse(limitController.text.trim());
-              Navigator.pop(dialogContext);
-              if (value != null) {
-                await controller.updateLimit(budget.id, value);
-              }
-            },
-            child: Text(el.tr(CcLocaleKeys.common_save)),
-          ),
-        ],
-      ),
     );
   }
 

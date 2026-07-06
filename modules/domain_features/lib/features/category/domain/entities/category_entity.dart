@@ -9,6 +9,7 @@ class CategoryEntity extends Equatable {
   final String? iconFamily;
   final Color? color;
   final String groupId;
+  final bool isEnabled;
 
   const CategoryEntity({
     required this.id,
@@ -17,7 +18,18 @@ class CategoryEntity extends Equatable {
     this.iconFamily,
     this.color,
     required this.groupId,
+    this.isEnabled = true,
   });
+
+  CategoryEntity copyWith({bool? isEnabled}) => CategoryEntity(
+    id: id,
+    nameKey: nameKey,
+    iconCode: iconCode,
+    iconFamily: iconFamily,
+    color: color,
+    groupId: groupId,
+    isEnabled: isEnabled ?? this.isEnabled,
+  );
 
   @override
   List<Object?> get props => [
@@ -27,5 +39,6 @@ class CategoryEntity extends Equatable {
     iconFamily,
     color,
     groupId,
+    isEnabled,
   ];
 }

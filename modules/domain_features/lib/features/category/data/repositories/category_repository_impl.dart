@@ -56,4 +56,14 @@ class CategoryRepositoryImpl with CcBaseRepository
       await _local.deleteCategory(id);
     });
   }
+
+  @override
+  Future<Result<void, CcFailure>> updateCategoryEnabled(
+    String id,
+    bool isEnabled,
+  ) {
+    return safeRequest(() async {
+      await _local.updateCategoryEnabled(id, isEnabled);
+    });
+  }
 }

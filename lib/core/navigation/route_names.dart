@@ -21,6 +21,7 @@ enum AppRoute {
   mainNavigation,
   home,
   wallet,
+  walletList,
   walletDetail,
   transaction,
   transactionDetail,

@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/util/horizontal_fade_scroll_view.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
@@ -11,7 +12,6 @@ import 'category_selection_section.dart';
 import 'money_keypad_panel.dart';
 
 class ExpenseForm extends StatefulWidget {
-  /// Called after a transaction is saved (e.g. to refresh history).
   final VoidCallback? onSaved;
 
   const ExpenseForm({super.key, this.onSaved});
@@ -23,8 +23,24 @@ class ExpenseForm extends StatefulWidget {
 class _ExpenseFormState extends State<ExpenseForm> {
   static const Color _accent = Color(0xFFE54D42);
 
+  static const List<int> _quickAmounts = [
+    10000,
+    20000,
+    30000,
+    50000,
+    100000,
+    200000,
+    300000,
+    500000,
+    1000000,
+    2000000,
+  ];
+
   String _amountStr = '0';
   final TextEditingController _noteController = TextEditingController();
+  final _scrollController = ScrollController();
+  final _amountFieldKey = GlobalKey();
+  int _categoryKey = 0;
 
   List<WalletEntity> _wallets = const [];
   String? _selectedWalletId;
@@ -42,6 +58,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
   @override
   void dispose() {
     _noteController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -85,8 +102,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
   }
 
   Future<void> _pickDate() async {
-    // Only today or earlier — a transaction can't be recorded in the future
-    // (spec: "cho phép điều chỉnh lùi ngày").
     final picked = await showDatePicker(
       context: context,
       initialDate: _date,
@@ -132,9 +147,13 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
     result.when(
       (_) {
+        final savedAmount = _formatAmount(_amountStr);
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
-          message: el.tr(CcLocaleKeys.transaction_record_expense),
+          message: el.tr(
+            CcLocaleKeys.transaction_expense_saved,
+            namedArgs: {'amount': savedAmount},
+          ),
         );
         _resetForm();
         widget.onSaved?.call();
@@ -146,6 +165,11 @@ class _ExpenseFormState extends State<ExpenseForm> {
     );
   }
 
+  bool get _canSubmit =>
+      _selectedCategory != null &&
+      _selectedWalletId != null &&
+      (_amountStr != '0' && _amountStr.isNotEmpty);
+
   void _resetForm() {
     setState(() {
       _amountStr = '0';
@@ -153,8 +177,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
       _selectedCategory = null;
       _date = DateTime.now();
       _showKeypad = false;
+      _categoryKey++;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +193,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               if (_showKeypad) setState(() => _showKeypad = false);
             },
             child: SingleChildScrollView(
+              controller: _scrollController,
               padding: EdgeInsets.symmetric(
                 vertical: context.respPadding(CcPaddingParams.PAGE_XS),
               ),
@@ -174,15 +201,16 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CategorySelectionSection(
+                    key: ValueKey(_categoryKey),
                     activeColor: _accent,
                     onCategorySelected: (category) =>
                         setState(() => _selectedCategory = category),
                   ),
                   const CcSpaceLG(),
-
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+                      horizontal:
+                          context.respPadding(CcPaddingParams.PAGE_SM),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,28 +218,23 @@ class _ExpenseFormState extends State<ExpenseForm> {
                         _buildLabel(el.tr(CcLocaleKeys.transaction_amount)),
                         const CcSpaceXS(),
                         _buildAmountField(),
+                        const CcSpaceSM(),
+                        _buildQuickAmountChips(context),
                         const CcSpaceLG(),
-
                         _buildLabel(
                           el.tr(CcLocaleKeys.transaction_source_expense),
                         ),
                         const CcSpaceXS(),
-                        _buildSourceDropdown(),
+                        _buildWalletChips(context),
                         const CcSpaceLG(),
-
-                        _buildLabel('Ghi chú'),
-                        const CcSpaceXS(),
-                        _buildTextField(
-                          _noteController,
-                          el.tr(CcLocaleKeys.transaction_enter_content),
-                        ),
-                        const CcSpaceLG(),
-
                         _buildLabel(el.tr(CcLocaleKeys.transaction_time)),
                         const CcSpaceXS(),
                         _buildTimeRow(),
+                        const CcSpaceLG(),
+                        _buildLabel(el.tr(CcLocaleKeys.transaction_note)),
+                        const CcSpaceXS(),
+                        _buildNoteField(context),
                         const CcSpaceXL(),
-
                         _buildSubmitButton(),
                         const CcSpaceLG(),
                       ],
@@ -249,7 +272,20 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
   Widget _buildAmountField() {
     return GestureDetector(
-      onTap: () => setState(() => _showKeypad = true),
+      key: _amountFieldKey,
+      onTap: () {
+        setState(() => _showKeypad = true);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final ctx = _amountFieldKey.currentContext;
+          if (ctx != null) {
+            Scrollable.ensureVisible(
+              ctx,
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOut,
+            );
+          }
+        });
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         height: 54,
@@ -261,9 +297,11 @@ class _ExpenseFormState extends State<ExpenseForm> {
             width: _showKeypad ? 1.5 : 1,
           ),
         ),
-        alignment: Alignment.centerRight,
+        alignment: Alignment.center,
         child: CcText(
-          _formatAmount(_amountStr),
+          '${_formatAmount(_amountStr)} đ',
+          align: Alignment.center,
+          textAlign: TextAlign.center,
           textStyle: context.ccTextTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: _accent,
@@ -274,15 +312,48 @@ class _ExpenseFormState extends State<ExpenseForm> {
     );
   }
 
-  Widget _buildSourceDropdown() {
+  Widget _buildQuickAmountChips(BuildContext context) {
+    final formatter = el.NumberFormat('#,###', 'vi_VN');
+    return HorizontalFadeScrollView(
+      height: context.respDim(36),
+      builder: (scrollController) => ListView.separated(
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        itemCount: _quickAmounts.length,
+        separatorBuilder: (_, _) => const CcSpaceSM(),
+        itemBuilder: (context, index) {
+          final amount = _quickAmounts[index];
+          return GestureDetector(
+            onTap: () => setState(() => _amountStr = amount.toString()),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: _accent.withValues(alpha: 0.07),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: CcText(
+                formatter.format(amount),
+                textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                  color: _accent,
+                  fontWeight: FontWeight.bold,
+                  fontSize: context.respFontSize(12),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildWalletChips(BuildContext context) {
     if (_wallets.isEmpty) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        height: 48,
-        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: const Color(0xFFF8F9FA),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(color: Colors.grey.withOpacity(0.2)),
         ),
         child: CcText(
@@ -295,80 +366,53 @@ class _ExpenseFormState extends State<ExpenseForm> {
       );
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      height: 48,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.2)),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: _selectedWalletId,
-          isExpanded: true,
-          dropdownColor: Colors.white,
-          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
-          style: context.ccTextTheme.bodyMedium?.copyWith(
-            color: Colors.black,
-            fontSize: context.respFontSize(14),
-          ),
-          items: _wallets.map((wallet) {
-            return DropdownMenuItem<String>(
-              value: wallet.id,
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.account_balance_wallet,
-                    size: 18,
-                    color: _accent,
+    return HorizontalFadeScrollView(
+      height: context.respDim(44),
+      builder: (scrollController) => SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        child: Row(
+          children: _wallets.map((wallet) {
+            final isSelected = _selectedWalletId == wallet.id;
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: GestureDetector(
+                onTap: () => setState(() => _selectedWalletId = wallet.id),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
                   ),
-                  const CcSpaceSM(),
-                  CcText(
-                    wallet.name,
-                    textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                      fontSize: context.respFontSize(14),
-                      color: Colors.black,
-                    ),
+                  decoration: BoxDecoration(
+                    color: isSelected ? _accent : const Color(0xFFF1F3F5),
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                ],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.account_balance,
+                        size: 14,
+                        color: isSelected ? Colors.white : Colors.grey[600],
+                      ),
+                      const SizedBox(width: 6),
+                      CcText(
+                        wallet.name,
+                        textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                          color: isSelected ? Colors.white : Colors.grey[800],
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          fontSize: context.respFontSize(13),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             );
           }).toList(),
-          onChanged: (value) {
-            if (value != null) {
-              setState(() => _selectedWalletId = value);
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(TextEditingController controller, String hint) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      height: 48,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.2)),
-      ),
-      child: TextField(
-        controller: controller,
-        onTap: () => setState(() => _showKeypad = false),
-        style: context.ccTextTheme.bodyMedium?.copyWith(
-          fontSize: context.respFontSize(14),
-        ),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: context.ccTextTheme.bodyMedium?.copyWith(
-            color: Colors.grey[400],
-            fontSize: context.respFontSize(13),
-          ),
-          border: InputBorder.none,
-          isDense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12),
         ),
       ),
     );
@@ -401,24 +445,63 @@ class _ExpenseFormState extends State<ExpenseForm> {
     );
   }
 
+  Widget _buildNoteField(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      height: 48,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8F9FA),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _noteController,
+              onTap: () => setState(() => _showKeypad = false),
+              style: context.ccTextTheme.bodyMedium?.copyWith(
+                fontSize: context.respFontSize(14),
+              ),
+              decoration: InputDecoration(
+                hintText: el.tr(CcLocaleKeys.transaction_note_hint),
+                hintStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                  color: Colors.grey[400],
+                  fontSize: context.respFontSize(13),
+                ),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSubmitButton() {
+    final enabled = _canSubmit && !_isSubmitting;
     return CcInteractBtnWrapper(
       useDebounce: true,
-      isBouncing: true,
-      onTap: _onSubmit,
-      child: Container(
+      isBouncing: enabled,
+      onTap: enabled ? _onSubmit : () {},
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         width: double.infinity,
         height: 54,
         decoration: BoxDecoration(
-          color: _accent,
+          color: enabled ? _accent : Colors.grey[300],
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: _accent.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
+          boxShadow: enabled
+              ? [
+                  BoxShadow(
+                    color: _accent.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ]
+              : null,
         ),
         child: _isSubmitting
             ? const Center(
@@ -436,7 +519,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 align: Alignment.center,
                 textAlign: TextAlign.center,
                 textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                  color: Colors.white,
+                  color: enabled ? Colors.white : Colors.grey[500],
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1,
                   fontSize: context.respFontSize(15),

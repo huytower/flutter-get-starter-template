@@ -134,6 +134,9 @@ abstract class CcLocaleKeys {
   static const wallet_my_account = 'wallet.my_account';
   static const wallet_spending_account = 'wallet.spending_account';
   static const wallet_total_assets = 'wallet.total_assets';
+  static const wallet_your_wallets = 'wallet.your_wallets';
+  static const wallet_see_all = 'wallet.see_all';
+  static const wallet_empty = 'wallet.empty';
 
   static const category_group_daily = 'category.group_daily';
   static const category_group_personal = 'category.group_personal';
@@ -156,6 +159,66 @@ abstract class CcLocaleKeys {
   static const category_furniture = 'category.furniture';
   static const category_laundry = 'category.laundry';
 
+  // Housing extras
+  static const category_mortgage = 'category.mortgage';
+  static const category_condo_fee = 'category.condo_fee';
+
+  // Health
+  static const category_doctor = 'category.doctor';
+  static const category_medicine = 'category.medicine';
+  static const category_health_insurance = 'category.health_insurance';
+  static const category_gym = 'category.gym';
+
+  // Education
+  static const category_tuition = 'category.tuition';
+  static const category_books = 'category.books';
+  static const category_courses = 'category.courses';
+
+  // Entertainment
+  static const category_cinema = 'category.cinema';
+  static const category_travel = 'category.travel';
+  static const category_gaming = 'category.gaming';
+  static const category_events = 'category.events';
+
+  // Shopping
+  static const category_appliances = 'category.appliances';
+  static const category_electronics = 'category.electronics';
+  static const category_clothing = 'category.clothing';
+  static const category_cosmetics = 'category.cosmetics';
+
+  // Debt & loans
+  static const category_installment = 'category.installment';
+  static const category_loan_interest = 'category.loan_interest';
+
+  // Insurance
+  static const category_life_insurance = 'category.life_insurance';
+  static const category_vehicle_insurance = 'category.vehicle_insurance';
+  static const category_home_insurance = 'category.home_insurance';
+
+  // Gifts & charity
+  static const category_gifts = 'category.gifts';
+  static const category_charity = 'category.charity';
+
+  // Personal care
+  static const category_haircut = 'category.haircut';
+  static const category_spa = 'category.spa';
+  static const category_personal_care_product = 'category.personal_care_product';
+
+  // Service fees
+  static const category_bank_fee = 'category.bank_fee';
+  static const category_card_fee = 'category.card_fee';
+
+  // Family & children
+  static const category_milk_formula = 'category.milk_formula';
+  static const category_diapers = 'category.diapers';
+  static const category_baby_toys = 'category.baby_toys';
+
+  // Category settings screen
+  static const category_settings_title = 'category.settings_title';
+  static const category_settings_subtitle = 'category.settings_subtitle';
+  static const category_settings_save = 'category.settings_save';
+  static const category_settings_saved = 'category.settings_saved';
+
   static const transaction_title = 'transaction.title';
   static const transaction_wallet = 'transaction.wallet';
   static const transaction_emergency = 'transaction.emergency';
@@ -176,6 +239,17 @@ abstract class CcLocaleKeys {
   static const transaction_reason_income = 'transaction.reason_income';
   static const transaction_recipient = 'transaction.recipient';
   static const transaction_record_income = 'transaction.record_income';
+  static const transaction_expense_saved = 'transaction.expense_saved';
+  static const transaction_income_saved = 'transaction.income_saved';
+  static const transaction_transfer_saved = 'transaction.transfer_saved';
+  static const transaction_transfer_from = 'transaction.transfer_from';
+  static const transaction_transfer_to = 'transaction.transfer_to';
+  static const transaction_record_transfer = 'transaction.record_transfer';
+  static const transaction_category_sub = 'transaction.category_sub';
+  static const transaction_today = 'transaction.today';
+  static const transaction_yesterday = 'transaction.yesterday';
+  static const transaction_note = 'transaction.note';
+  static const transaction_note_hint = 'transaction.note_hint';
   static const common_add_source = 'common.add_source';
 
   static const budget_title = 'budget.title';
@@ -194,11 +268,14 @@ abstract class CcLocaleKeys {
   static const budget_start_date = 'budget.start_date';
   static const budget_end_date = 'budget.end_date';
   static const budget_added = 'budget.added';
+  static const budget_updated = 'budget.updated';
   static const budget_period_started = 'budget.period_started';
   static const budget_over_limit = 'budget.over_limit';
   static const budget_near_limit = 'budget.near_limit';
   static const budget_over_by = 'budget.over_by';
   static const budget_remaining = 'budget.remaining';
+  static const budget_this_month = 'budget.this_month';
+  static const budget_see_all = 'budget.see_all';
 
   static const reconciliation_title = 'reconciliation.title';
   static const reconciliation_empty = 'reconciliation.empty';

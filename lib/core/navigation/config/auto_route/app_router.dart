@@ -34,6 +34,7 @@ class AppRouter extends RootStackRouter {
     // --- GetX Examples & Pages ---
     AutoRoute(page: HomeRoute.page, path: AppRoute.home.path),
     AutoRoute(page: WalletRoute.page, path: AppRoute.wallet.path),
+    AutoRoute(page: WalletListRoute.page, path: AppRoute.walletList.path),
     AutoRoute(page: WalletDetailRoute.page, path: AppRoute.walletDetail.path),
     AutoRoute(page: TransactionRoute.page, path: AppRoute.transaction.path),
     AutoRoute(

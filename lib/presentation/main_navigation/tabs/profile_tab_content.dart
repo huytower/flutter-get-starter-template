@@ -2,6 +2,7 @@ import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,60 @@ class ProfileTabContent extends StatefulWidget {
 
   @override
   State<ProfileTabContent> createState() => _ProfileTabContentState();
+}
+
+class _SettingsTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _SettingsTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.ccColorScheme.surfaceContainerHighest,
+      borderRadius: BorderRadius.circular(context.respDim(12)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(context.respDim(12)),
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.respDim(16),
+            vertical: context.respDim(14),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: context.respIconSize(baseSize: 20),
+                color: context.ccColorScheme.primary,
+              ),
+              SizedBox(width: context.respDim(12)),
+              Expanded(
+                child: CcText(
+                  label,
+                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.ccColorScheme.onSurface,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: context.respIconSize(baseSize: 20),
+                color: context.ccColorScheme.onSurfaceVariant,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _ProfileTabContentState extends State<ProfileTabContent> {
@@ -29,6 +84,14 @@ class _ProfileTabContentState extends State<ProfileTabContent> {
         _version = version;
       });
     }
+  }
+
+  void _openCategorySettings() {
+    Navigator.of(context).push(
+      MaterialPageRoute<bool>(
+        builder: (_) => const CategorySettingsPage(),
+      ),
+    );
   }
 
   void _openCrashLogViewer() {
@@ -97,6 +160,17 @@ class _ProfileTabContentState extends State<ProfileTabContent> {
                     ),
                   ),
                 const CcSpaceXL(),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.respPadding(CcPaddingParams.SPACE_XL),
+                  ),
+                  child: _SettingsTile(
+                    icon: Icons.tune_rounded,
+                    label: el.tr(CcLocaleKeys.category_settings_title),
+                    onTap: _openCategorySettings,
+                  ),
+                ),
+                const CcSpaceMD(),
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: context.respPadding(CcPaddingParams.SPACE_XL),

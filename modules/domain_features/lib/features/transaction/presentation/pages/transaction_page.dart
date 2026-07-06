@@ -116,34 +116,26 @@ class TransactionPage extends CcGetView<TransactionController> {
               ),
             ],
           ),
-          const CcSpaceLG(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Obx(
-                () => _buildWalletChip(
-                  context,
-                  Icons.account_balance_wallet,
-                  el.tr(CcLocaleKeys.transaction_wallet),
-                  formatVndShort(controller.walletTotal.value),
-                  Colors.yellow,
+          const CcSpaceSM(),
+          Obx(
+            () => Row(
+              children: [
+                Icon(
+                  Icons.account_balance_wallet_outlined,
+                  size: context.respIconSize(baseSize: 14),
+                  color: context.ccColorScheme.onPrimary.withOpacity(0.8),
                 ),
-              ),
-              _buildWalletChip(
-                context,
-                Icons.security,
-                el.tr(CcLocaleKeys.transaction_emergency),
-                formatVndShort(0),
-                Colors.orangeAccent,
-              ),
-              _buildWalletChip(
-                context,
-                Icons.rocket_launch,
-                el.tr(CcLocaleKeys.transaction_investment),
-                formatVndShort(0),
-                Colors.lightBlueAccent,
-              ),
-            ],
+                const CcSpaceXS(),
+                CcText(
+                  '${el.tr(CcLocaleKeys.transaction_wallet)}  ${formatVndShort(controller.walletTotal.value)}',
+                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                    color: context.ccColorScheme.onPrimary.withOpacity(0.9),
+                    fontWeight: FontWeight.w600,
+                    fontSize: context.respFontSize(13),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -217,9 +209,7 @@ class TransactionPage extends CcGetView<TransactionController> {
       ),
       child: Obx(() {
         return TabBar(
-          onTap: (index) {
-            controller.setTabIndex(index);
-          },
+          onTap: controller.setTabIndex,
           indicatorSize: TabBarIndicatorSize.tab,
           dividerColor: Colors.transparent,
           indicator: BoxDecoration(
@@ -241,8 +231,9 @@ class TransactionPage extends CcGetView<TransactionController> {
           unselectedLabelColor: context.ccColorScheme.onSurfaceVariant,
           labelStyle: context.ccTextTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            fontSize: context.respFontSize(14),
+            fontSize: context.respFontSize(12),
           ),
+          labelPadding: EdgeInsets.zero,
           tabs: [
             Tab(text: el.tr(CcLocaleKeys.transaction_expense_slip)),
             Tab(text: el.tr(CcLocaleKeys.transaction_income_slip)),

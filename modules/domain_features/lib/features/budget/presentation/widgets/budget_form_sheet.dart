@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/util/horizontal_fade_scroll_view.dart';
+import '../../../../core/util/icon_utils.dart';
 import '../../domain/entities/budget_entity.dart';
 import '../../domain/usecases/create_budget_usecase.dart';
 import '../get_x/budget_controller.dart';
@@ -29,8 +31,18 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
   String? _selectedCategoryId;
   late DateTime _startDate;
   late DateTime _endDate;
+  ScrollController? _categoryScrollController;
 
   bool get _isReset => widget.resetTarget != null;
+
+  bool get _isValid {
+    final name = _nameController.text.trim();
+    final limit = int.tryParse(_limitController.text.trim()) ?? 0;
+    return name.isNotEmpty &&
+        _selectedCategoryId != null &&
+        limit > 0 &&
+        !_endDate.isBefore(_startDate);
+  }
 
   @override
   void initState() {
@@ -45,6 +57,8 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
       _selectedCategoryId = target.categoryId;
       _limitController.text = target.limit.toString();
     }
+    _nameController.addListener(() => setState(() {}));
+    _limitController.addListener(() => setState(() {}));
     _loadCategories();
   }
 
@@ -52,12 +66,27 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
     final result = await getIt<GetCategoriesUseCase>().call();
     if (!mounted) return;
     result.when((categories) {
+      final enabled = categories.where((c) => c.isEnabled).toList();
       setState(() {
-        _categories = categories;
-        _selectedCategoryId ??=
-            categories.isNotEmpty ? categories.first.id : null;
+        _categories = enabled;
+        _selectedCategoryId ??= enabled.isNotEmpty ? enabled.first.id : null;
       });
+      _scrollToSelectedCategory(enabled);
     }, (_) {});
+  }
+
+  void _scrollToSelectedCategory(List<CategoryEntity> categories) {
+    if (_selectedCategoryId == null) return;
+    final index = categories.indexWhere((c) => c.id == _selectedCategoryId);
+    if (index <= 0) return;
+    // item width (68) + separator (8) = 76 per slot
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _categoryScrollController?.animateTo(
+        index * 76.0,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   @override
@@ -103,11 +132,12 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
       return;
     }
     Navigator.pop(context);
+    final budgetName = _nameController.text.trim();
     CcSnackBarHelper.showSuccessSnackBar(
       context: context,
       message: _isReset
-          ? el.tr(CcLocaleKeys.budget_period_started)
-          : el.tr(CcLocaleKeys.budget_added),
+          ? el.tr(CcLocaleKeys.budget_updated, namedArgs: {'name': budgetName})
+          : el.tr(CcLocaleKeys.budget_added, namedArgs: {'name': budgetName}),
     );
   }
 
@@ -144,22 +174,92 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
             ),
           ),
           const CcSpaceMD(),
-          DropdownButtonFormField<String>(
-            initialValue: _selectedCategoryId,
-            isExpanded: true,
-            decoration: InputDecoration(
-              labelText: el.tr(CcLocaleKeys.budget_category),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            items: _categories
-                .map(
-                  (c) => DropdownMenuItem(
-                    value: c.id,
-                    child: Text(el.tr(c.nameKey)),
-                  ),
-                )
-                .toList(),
-            onChanged: (value) => setState(() => _selectedCategoryId = value),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CcText(
+                el.tr(CcLocaleKeys.budget_category),
+                textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.bold,
+                  fontSize: context.respFontSize(12),
+                ),
+              ),
+              const CcSpaceSM(),
+              HorizontalFadeScrollView(
+                height: context.respDim(80),
+                builder: (scrollController) {
+                  _categoryScrollController = scrollController;
+                  return ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  controller: scrollController,
+                  itemCount: _categories.length,
+                  separatorBuilder: (_, __) => const CcSpaceSM(),
+                  itemBuilder: (context, index) {
+                    final cat = _categories[index];
+                    final isSelected = _selectedCategoryId == cat.id;
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedCategoryId = cat.id),
+                      child: SizedBox(
+                        width: context.respDim(68),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeInOut,
+                              width: context.respDim(52),
+                              height: context.respDim(52),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? context.ccColorScheme.primary
+                                    : const Color(0xFFF1F3F5),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Center(
+                                child: CcIcon(
+                                  icon: iconDataFromCode(
+                                    cat.iconCode,
+                                    fontFamily: cat.iconFamily,
+                                  ),
+                                  size: context.respIconSize(baseSize: 22),
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.grey[600],
+                                ),
+                              ),
+                            ),
+                            const CcSpaceXS(),
+                            AnimatedDefaultTextStyle(
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeInOut,
+                              style: (context.ccTextTheme.bodySmall ??
+                                      const TextStyle())
+                                  .copyWith(
+                                fontSize: context.respFontSize(9),
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: isSelected
+                                    ? context.ccColorScheme.primary
+                                    : Colors.grey[700],
+                              ),
+                              child: Text(
+                                el.tr(cat.nameKey),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  );
+                },
+              ),
+            ],
           ),
           const CcSpaceMD(),
           TextField(
@@ -197,7 +297,7 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
             width: double.infinity,
             height: context.respDim(50),
             child: ElevatedButton(
-              onPressed: _onSave,
+              onPressed: _isValid ? _onSave : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: context.ccColorScheme.primary,
                 shape: RoundedRectangleBorder(
@@ -206,6 +306,8 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
               ),
               child: CcText(
                 el.tr(CcLocaleKeys.common_save),
+                align: Alignment.center,
+                textAlign: TextAlign.center,
                 textStyle: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
