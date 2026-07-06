@@ -17,9 +17,11 @@ int bookBalanceFromTransactions(
       case TransactionType.income:
       case TransactionType.transferIn:
         balance += txn.amount;
+        break;
       case TransactionType.expense:
       case TransactionType.transferOut:
         balance -= txn.amount;
+        break;
     }
   }
   return balance;
