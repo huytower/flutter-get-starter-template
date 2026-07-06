@@ -134,10 +134,13 @@ class BudgetCard extends StatelessWidget {
         switch (value) {
           case 'edit':
             onEditLimit?.call();
+            break;
           case 'reset':
             onReset?.call();
+            break;
           case 'delete':
             onDelete?.call();
+            break;
         }
       },
       itemBuilder: (context) => [
