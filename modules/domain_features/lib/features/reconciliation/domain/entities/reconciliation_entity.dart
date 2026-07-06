@@ -42,8 +42,8 @@ class ReconciliationEntity extends Equatable {
     required this.date,
   });
 
-  /// True when book matched reality (no adjustment needed). Uses a sub-đồng
-  /// tolerance so floating-point noise isn't reported as a discrepancy.
+  /// True when book matched reality (no adjustment needed).
+  /// Values are integer VND amounts, so an exact 0 difference means balanced.
   bool get isBalanced => difference == 0;
 
   @override
