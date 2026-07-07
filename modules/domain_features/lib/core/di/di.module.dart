@@ -6,6 +6,7 @@
 import 'dart:async' as _i687;
 
 import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' as _i631;
 import 'package:dio/dio.dart' as _i361;
 import 'package:domain_features/export_domain_features.dart' as _i857;
 import 'package:domain_features/features/budget/data/datasources/local/budget_local_datasource.dart'
@@ -74,6 +75,18 @@ import 'package:domain_features/features/home/domain/repositories/home_repositor
     as _i269;
 import 'package:domain_features/features/home/presentation/get_x/home_controller.dart'
     as _i971;
+import 'package:domain_features/features/profile/data/datasources/local/profile_local_datasource.dart'
+    as _i755;
+import 'package:domain_features/features/profile/data/repositories/profile_repository_impl.dart'
+    as _i609;
+import 'package:domain_features/features/profile/domain/repositories/profile_repository.dart'
+    as _i270;
+import 'package:domain_features/features/profile/domain/usecases/get_profile_settings_usecase.dart'
+    as _i569;
+import 'package:domain_features/features/profile/domain/usecases/update_profile_settings_usecase.dart'
+    as _i220;
+import 'package:domain_features/features/profile/presentation/get_x/profile_controller.dart'
+    as _i920;
 import 'package:domain_features/features/reconciliation/data/datasources/local/reconciliation_local_datasource.dart'
     as _i896;
 import 'package:domain_features/features/reconciliation/data/repositories/reconciliation_repository_impl.dart'
@@ -132,6 +145,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
       () => _i1004.AdvanceBloc(),
       dispose: (i) => i.close(),
     );
+    gh.lazySingleton<_i755.ProfileLocalDataSource>(
+        () => _i755.ProfileLocalDataSource());
     gh.lazySingleton<_i896.ReconciliationLocalDataSource>(
         () => _i896.ReconciliationLocalDataSource());
     gh.lazySingleton<_i648.TransactionLocalDataSource>(
@@ -168,6 +183,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i730.CommentController(gh<_i670.CommentRepository>()));
     gh.lazySingleton<_i580.CrashLogRemote>(
         () => _i580.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+    gh.lazySingleton<_i270.ProfileRepository>(() =>
+        _i609.ProfileRepositoryImpl(local: gh<_i755.ProfileLocalDataSource>()));
     gh.lazySingleton<_i857.WalletRepository>(() =>
         _i589.WalletRepositoryImpl(local: gh<_i1058.WalletLocalDataSource>()));
     gh.lazySingleton<_i192.BudgetRepository>(() =>
@@ -222,6 +239,10 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.lazySingleton<_i473.CrashLogRepository>(
         () => _i689.CrashLogRepositoryImpl(gh<_i580.CrashLogRemote>()));
+    gh.lazySingleton<_i569.GetProfileSettingsUseCase>(
+        () => _i569.GetProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
+    gh.lazySingleton<_i220.UpdateProfileSettingsUseCase>(() =>
+        _i220.UpdateProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
     gh.lazySingleton<_i892.UploadPendingCrashLogsUseCase>(() =>
         _i892.UploadPendingCrashLogsUseCase(gh<_i473.CrashLogRepository>()));
     gh.lazySingleton<_i167.GetWalletBalancesUseCase>(
@@ -244,6 +265,13 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i572.WalletRepository>(),
           gh<_i1027.TransactionRepository>(),
           gh<_i105.GetWalletBookBalanceUseCase>(),
+        ));
+    gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
+          gh<_i569.GetProfileSettingsUseCase>(),
+          gh<_i220.UpdateProfileSettingsUseCase>(),
+          gh<_i727.SessionContract>(),
+          gh<_i631.CcDeviceInfoHelper>(),
+          gh<_i727.AuthCoordinator>(),
         ));
     gh.lazySingleton<_i28.CreateTransactionUseCase>(
         () => _i28.CreateTransactionUseCase(

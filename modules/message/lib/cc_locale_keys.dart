@@ -296,6 +296,11 @@ abstract class CcLocaleKeys {
   static const reconciliation_book = 'reconciliation.book';
   static const reconciliation_actual = 'reconciliation.actual';
   static const reconciliation_book_balance = 'reconciliation.book_balance';
+  static const reconciliation_cycle_subtitle = 'reconciliation.cycle_subtitle';
+  static const reconciliation_mismatch_warning = 'reconciliation.mismatch_warning';
+  static const reconciliation_create_adjustment = 'reconciliation.create_adjustment';
+  static const reconciliation_matched = 'reconciliation.matched';
+  static const reconciliation_lech = 'reconciliation.lech';
 
   static const report_title = 'report.title';
   static const report_spending_proportion = 'report.spending_proportion';
@@ -303,4 +308,19 @@ abstract class CcLocaleKeys {
   static const report_this_week = 'report.this_week';
   static const report_this_month = 'report.this_month';
   static const report_no_expense = 'report.no_expense';
+
+  static const profile_guest = 'profile.guest';
+  static const profile_not_logged_in = 'profile.not_logged_in';
+  static const profile_register_login = 'profile.register_login';
+  static const profile_weekly_audit = 'profile.weekly_audit';
+  static const profile_days_left = 'profile.days_left';
+  static const profile_debt_loan = 'profile.debt_loan';
+  static const profile_unlock_at_lv = 'profile.unlock_at_lv';
+  static const profile_weekly_audit_day = 'profile.weekly_audit_day';
+  static const profile_reminder = 'profile.reminder';
+  static const profile_currency = 'profile.currency';
+  static const profile_view_tutorial = 'profile.view_tutorial';
+  static const profile_terms = 'profile.terms';
+  static const profile_about = 'profile.about';
+  static const profile_delete_account = 'profile.delete_account';
 }

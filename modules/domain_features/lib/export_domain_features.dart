@@ -26,6 +26,8 @@ export 'features/budget/export_budget.dart';
 export 'features/reconciliation/export_reconciliation.dart';
 // Report
 export 'features/report/export_report.dart';
+// Profile
+export 'features/profile/export_profile.dart';
 // Examples
 export 'features/examples/bloc_simple_page/cubit/simple/simple_cubit_page.dart';
 export 'features/examples/bloc_simple_page/origin/advance/advance_bloc_page.dart';

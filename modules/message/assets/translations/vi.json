@@ -218,7 +218,7 @@
     "surplus": "Dư thừa {amount}",
     "deficit": "Hao hụt {amount}",
     "confirm": "Xác nhận đối soát",
-    "success": "Đã đối soát & khớp sổ",
+    "success": "Đã xác nhận đối soát",
     "history": "Lịch sử đối soát",
     "undo": "Hoàn tác",
     "undo_title": "Hoàn tác đối soát",
@@ -226,7 +226,12 @@
     "week": "Tuần {week}/{year}",
     "book": "Sổ sách",
     "actual": "Thực tế",
-    "book_balance": "Sổ sách: {amount}"
+    "book_balance": "Sổ sách: {amount}",
+    "cycle_subtitle": "Chu kỳ tuần này · đến hạn Chủ nhật",
+    "mismatch_warning": "{count} ví chưa khớp số, xử lý trước khi xác nhận",
+    "create_adjustment": "Tạo khoản điều chỉnh",
+    "matched": "Khớp sổ",
+    "lech": "Lệch {amount}"
   },
   "report": {
     "title": "Báo cáo",
@@ -293,5 +298,21 @@
     "settings_subtitle": "Lướt để chọn mục phù hợp với bạn",
     "settings_save": "Lưu và tiếp tục",
     "settings_saved": "Tùy chỉnh danh mục thành công"
+  },
+  "profile": {
+    "guest": "Khách",
+    "not_logged_in": "Chưa đăng nhập",
+    "register_login": "Đăng ký / Đăng nhập",
+    "weekly_audit": "Kiểm toán tuần",
+    "days_left": "Còn {count} ngày",
+    "debt_loan": "Nợ/Vay",
+    "unlock_at_lv": "Mở ở LV{level}",
+    "weekly_audit_day": "Ngày kiểm toán hàng tuần",
+    "reminder": "Nhắc nhở",
+    "currency": "Đơn vị tiền tệ",
+    "view_tutorial": "Xem hướng dẫn lại",
+    "terms": "Điều khoản sử dụng",
+    "about": "Về ứng dụng",
+    "delete_account": "Xoá tài khoản"
   }
 }

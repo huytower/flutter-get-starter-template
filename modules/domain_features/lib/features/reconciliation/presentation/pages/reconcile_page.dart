@@ -23,11 +23,21 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
   PreferredSizeWidget? buildAppBar() {
     return AppBar(
       title: Builder(
-        builder: (context) => CcText(
-          el.tr(CcLocaleKeys.reconciliation_title),
-          textStyle: context.ccTextTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+        builder: (context) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CcText(
+              el.tr(CcLocaleKeys.reconciliation_title),
+              textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            CcText(
+              el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
+              textStyle: context.ccTextTheme.bodySmall,
+            ),
+          ],
         ),
       ),
       backgroundColor: Get.context?.ccColorScheme.primary,
@@ -60,13 +70,21 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
               textStyle: context.ccTextTheme.bodyMedium,
             ),
             const CcSpaceSM(),
-            ...controller.balances.map(
-              (balance) => WalletReconcileTile(
-                balance: balance,
-                onActualChanged: (value) =>
-                    controller.setActual(balance.wallet.id, value),
+            Obx(
+              () => Column(
+                children: controller.balances.map((balance) {
+                  return WalletReconcileTile(
+                    balance: balance,
+                    isAcknowledged: controller.isAcknowledged(balance.wallet.id),
+                    onActualChanged: (value) =>
+                        controller.setActual(balance.wallet.id, value),
+                    onAcknowledge: () =>
+                        controller.acknowledgeAdjustment(balance.wallet.id),
+                  );
+                }).toList(),
               ),
             ),
+            _buildMismatchWarning(context),
             const Divider(height: 24),
             _buildSummary(context),
             const CcSpaceMD(),
@@ -79,26 +97,67 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
     );
   }
 
+  Widget _buildMismatchWarning(BuildContext context) {
+    return Obx(() {
+      final count = controller.unhandledCount.value;
+      if (count == 0) return const SizedBox.shrink();
+      return Container(
+        margin: const EdgeInsets.only(top: 4, bottom: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: context.ccColorScheme.error.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: context.ccColorScheme.error.withValues(alpha: 0.4),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded,
+                color: context.ccColorScheme.error, size: 18),
+            const SizedBox(width: 8),
+            Expanded(
+              child: CcText(
+                el.tr(
+                  CcLocaleKeys.reconciliation_mismatch_warning,
+                  namedArgs: {'count': count.toString()},
+                ),
+                textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                  color: context.ccColorScheme.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
   Widget _buildSummary(BuildContext context) {
     final scheme = context.ccColorScheme;
     return Obx(() {
       final diff = controller.difference;
+      final diffText = diff == 0
+          ? el.tr(CcLocaleKeys.reconciliation_balanced)
+          : '${diff < 0 ? '-' : '+'}${_money(diff.abs())}';
       return Column(
         children: [
-          _summaryRow(context, el.tr(CcLocaleKeys.reconciliation_book_total), _money(controller.systemTotal.value)),
-          _summaryRow(context, el.tr(CcLocaleKeys.reconciliation_actual_total), _money(controller.actualTotal.value)),
+          _summaryRow(
+            context,
+            el.tr(CcLocaleKeys.reconciliation_book_total),
+            _money(controller.systemTotal.value),
+          ),
+          _summaryRow(
+            context,
+            el.tr(CcLocaleKeys.reconciliation_actual_total),
+            _money(controller.actualTotal.value),
+          ),
           const CcSpaceXS(),
           _summaryRow(
             context,
             el.tr(CcLocaleKeys.reconciliation_difference),
-            diff == 0
-                ? el.tr(CcLocaleKeys.reconciliation_balanced)
-                : el.tr(
-                    diff > 0
-                        ? CcLocaleKeys.reconciliation_surplus
-                        : CcLocaleKeys.reconciliation_deficit,
-                    namedArgs: {'amount': _money(diff.abs())},
-                  ),
+            diffText,
             color: diff == 0 ? scheme.primary : scheme.error,
           ),
         ],
@@ -138,11 +197,12 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
   Widget _buildConfirmButton(BuildContext context) {
     return Obx(() {
       final busy = controller.isSubmitting.value;
+      final hasWarning = controller.unhandledCount.value > 0;
       return SizedBox(
         width: double.infinity,
         height: context.respDim(50),
         child: ElevatedButton(
-          onPressed: busy
+          onPressed: busy || hasWarning
               ? null
               : () async {
                   final error = await controller.performReconciliation();
@@ -161,6 +221,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                 },
           style: ElevatedButton.styleFrom(
             backgroundColor: context.ccColorScheme.primary,
+            alignment: Alignment.center,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -174,9 +235,10 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                     color: context.ccColorScheme.onPrimary,
                   ),
                 )
-              : CcText(
+              : Text(
                   el.tr(CcLocaleKeys.reconciliation_confirm),
-                  textStyle: const TextStyle(
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),

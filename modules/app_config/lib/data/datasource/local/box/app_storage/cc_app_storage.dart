@@ -58,6 +58,15 @@ class CcAppStorage extends HiveObject {
   @DomainUserEntityConverter()
   DomainUserEntity? user;
 
+  @HiveField(6)
+  bool? reminderEnabled;
+
+  @HiveField(7)
+  int? weeklyAuditDayIndex;
+
+  @HiveField(8)
+  String? currencyCode;
+
   CcAppStorage({
     this.accessToken,
     this.fcmToken,
@@ -65,5 +74,8 @@ class CcAppStorage extends HiveObject {
     this.userRole,
     this.dashboardData,
     this.user,
+    this.reminderEnabled,
+    this.weeklyAuditDayIndex,
+    this.currencyCode,
   });
 }

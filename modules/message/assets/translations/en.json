@@ -218,7 +218,7 @@
     "surplus": "Surplus {amount}",
     "deficit": "Deficit {amount}",
     "confirm": "Confirm Reconciliation",
-    "success": "Reconciliation confirmed & balanced",
+    "success": "Reconciliation confirmed",
     "history": "Reconciliation History",
     "undo": "Undo",
     "undo_title": "Undo Reconciliation",
@@ -226,7 +226,12 @@
     "week": "Week {week}/{year}",
     "book": "Book",
     "actual": "Actual",
-    "book_balance": "Book: {amount}"
+    "book_balance": "Book: {amount}",
+    "cycle_subtitle": "This week · due Sunday",
+    "mismatch_warning": "{count} wallet(s) unmatched, handle before confirming",
+    "create_adjustment": "Create adjustment",
+    "matched": "Balanced",
+    "lech": "Off by {amount}"
   },
   "report": {
     "title": "Report",
@@ -293,5 +298,21 @@
     "settings_subtitle": "Select the categories that suit your lifestyle",
     "settings_save": "Save & Continue",
     "settings_saved": "Categories updated successfully"
+  },
+  "profile": {
+    "guest": "Guest",
+    "not_logged_in": "Not logged in",
+    "register_login": "Register / Login",
+    "weekly_audit": "Weekly audit",
+    "days_left": "{count} days left",
+    "debt_loan": "Debt / Loan",
+    "unlock_at_lv": "Opens at LV{level}",
+    "weekly_audit_day": "Weekly audit day",
+    "reminder": "Reminders",
+    "currency": "Currency unit",
+    "view_tutorial": "View tutorial again",
+    "terms": "Terms of use",
+    "about": "About app",
+    "delete_account": "Delete account"
   }
 }
