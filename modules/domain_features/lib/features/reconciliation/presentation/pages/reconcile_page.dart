@@ -42,7 +42,36 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
       ),
       backgroundColor: Get.context?.ccColorScheme.primary,
       elevation: 0,
+      actions: [
+        // Corner shortcut with the same behaviour as the bottom confirm
+        // button (identical enable/disable rules).
+        Builder(
+          builder: (context) => Obx(() {
+            final enabled = !controller.isSubmitting.value &&
+                controller.unhandledCount.value == 0 &&
+                controller.balances.isNotEmpty;
+            return IconButton(
+              icon: const Icon(Icons.check_circle_outline),
+              tooltip: el.tr(CcLocaleKeys.reconciliation_confirm),
+              onPressed: enabled ? () => _confirm(context) : null,
+            );
+          }),
+        ),
+      ],
     );
+  }
+
+  Future<void> _confirm(BuildContext context) async {
+    final error = await controller.performReconciliation();
+    if (!context.mounted) return;
+    if (error != null) {
+      CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
+    } else {
+      CcSnackBarHelper.showSuccessSnackBar(
+        context: context,
+        message: el.tr(CcLocaleKeys.reconciliation_success),
+      );
+    }
   }
 
   @override
@@ -202,23 +231,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         width: double.infinity,
         height: context.respDim(50),
         child: ElevatedButton(
-          onPressed: busy || hasWarning
-              ? null
-              : () async {
-                  final error = await controller.performReconciliation();
-                  if (!context.mounted) return;
-                  if (error != null) {
-                    CcSnackBarHelper.showErrorSnackBar(
-                      context: context,
-                      message: error,
-                    );
-                  } else {
-                    CcSnackBarHelper.showSuccessSnackBar(
-                      context: context,
-                      message: el.tr(CcLocaleKeys.reconciliation_success),
-                    );
-                  }
-                },
+          onPressed: busy || hasWarning ? null : () => _confirm(context),
           style: ElevatedButton.styleFrom(
             backgroundColor: context.ccColorScheme.primary,
             alignment: Alignment.center,

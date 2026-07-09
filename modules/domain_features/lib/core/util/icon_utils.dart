@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 /// Builds an [IconData] from a stored [codePoint].
 ///
@@ -10,4 +10,18 @@ import 'package:flutter/widgets.dart';
 IconData iconDataFromCode(int codePoint, {String? fontFamily}) {
   // ignore: non_const_argument_for_const_parameter
   return IconData(codePoint, fontFamily: fontFamily ?? 'MaterialIcons');
+}
+
+/// Default icon per wallet type ('cash' / 'bank' / 'credit').
+///
+/// Referencing the `Icons` constants keeps these glyphs tree-shake-safe.
+IconData walletIconFor(String type) {
+  switch (type) {
+    case 'cash':
+      return Icons.payments;
+    case 'credit':
+      return Icons.credit_card;
+    default:
+      return Icons.account_balance;
+  }
 }

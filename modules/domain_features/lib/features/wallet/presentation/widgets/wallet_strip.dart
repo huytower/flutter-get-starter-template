@@ -9,17 +9,15 @@ import '../get_x/wallet_controller.dart';
 
 /// Compact horizontal strip of wallet cards shown on the combined Phân bổ tab.
 ///
-/// Each card shows the wallet icon, name, and current book balance. Tapping a
-/// card calls [onTap]; long-pressing calls [onMore] for edit/delete actions.
+/// Each card shows the wallet icon, name, and current book balance.
+/// Long-pressing a card calls [onMore] for edit/delete actions.
 class WalletStrip extends StatelessWidget {
   final List<WalletEntity> wallets;
-  final void Function(WalletEntity) onTap;
   final void Function(WalletEntity) onMore;
 
   const WalletStrip({
     super.key,
     required this.wallets,
-    required this.onTap,
     required this.onMore,
   });
 
@@ -46,7 +44,6 @@ class WalletStrip extends StatelessWidget {
                 balance: controller.isBalanceVisible.value
                     ? controller.bookBalanceOf(wallet.id)
                     : null,
-                onTap: () => onTap(wallet),
                 onMore: () => onMore(wallet),
               ),
             ),
@@ -60,13 +57,11 @@ class WalletStrip extends StatelessWidget {
 class _WalletCard extends StatelessWidget {
   final WalletEntity wallet;
   final int? balance;
-  final VoidCallback onTap;
   final VoidCallback onMore;
 
   const _WalletCard({
     required this.wallet,
     required this.balance,
-    required this.onTap,
     required this.onMore,
   });
 
@@ -79,7 +74,6 @@ class _WalletCard extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     return GestureDetector(
-      onTap: onTap,
       onLongPress: onMore,
       child: Container(
         width: context.respDim(110),

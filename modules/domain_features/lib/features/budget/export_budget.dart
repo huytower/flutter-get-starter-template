@@ -6,8 +6,9 @@ export 'domain/usecases/create_budget_usecase.dart';
 export 'domain/usecases/delete_budget_usecase.dart';
 export 'domain/usecases/get_budget_stats_usecase.dart';
 export 'domain/usecases/get_budgets_usecase.dart';
-export 'domain/usecases/reset_budget_usecase.dart';
-export 'domain/usecases/update_budget_limit_usecase.dart';
+export 'domain/usecases/sort_budgets_by_limit_usecase.dart';
+export 'domain/usecases/update_budget_usecase.dart';
+export 'domain/usecases/update_budget_orders_usecase.dart';
 // Presentation
 export 'presentation/get_x/budget_controller.dart';
 export 'presentation/pages/budget_page.dart';

@@ -15,12 +15,14 @@ class CategoryLocalDataSource {
     if (box.isEmpty) {
       await box.putAll({for (final c in CategorySeed.categories) c.id: c});
     } else {
-      // Migration: refresh a seeded category whenever its icon changes in
-      // [CategorySeed], so existing installs pick up icon fixes. User-added
-      // categories (non-seed ids) are left untouched.
+      // Migration: insert seed categories missing from the box (e.g. income
+      // seeds added in an update) and refresh a seeded category whenever its
+      // icon changes in [CategorySeed], so existing installs pick up fixes.
+      // User-added categories (non-seed ids) are left untouched.
       final updates = <String, CategoryModel>{
         for (final c in CategorySeed.categories)
-          if (box.get(c.id)?.iconCode != c.iconCode) c.id: c,
+          if (box.get(c.id) == null || box.get(c.id)!.iconCode != c.iconCode)
+            c.id: c,
       };
       if (updates.isNotEmpty) await box.putAll(updates);
     }
@@ -47,6 +49,11 @@ class CategoryLocalDataSource {
     await box.delete(id);
   }
 
+  Future<void> updateCategory(CategoryModel category) async {
+    final box = await _box;
+    await box.put(category.id, category);
+  }
+
   Future<void> updateCategoryEnabled(String id, bool isEnabled) async {
     final box = await _box;
     final existing = box.get(id);
@@ -61,6 +68,7 @@ class CategoryLocalDataSource {
         colorValue: existing.colorValue,
         groupId: existing.groupId,
         isEnabled: isEnabled,
+        type: existing.type,
       ),
     );
   }

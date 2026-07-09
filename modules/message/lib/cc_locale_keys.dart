@@ -219,6 +219,22 @@ abstract class CcLocaleKeys {
   static const category_settings_save = 'category.settings_save';
   static const category_settings_saved = 'category.settings_saved';
 
+  // Expense / income category settings section headers
+  static const category_expense_settings_title = 'category.expense_settings_title';
+  static const category_income_settings_title = 'category.income_settings_title';
+  static const category_income_group_active = 'category.income_group_active';
+  static const category_income_group_invest = 'category.income_group_invest';
+  static const category_income_group_other = 'category.income_group_other';
+  static const category_income_salary = 'category.income_salary';
+  static const category_income_freelance = 'category.income_freelance';
+  static const category_income_allowance = 'category.income_allowance';
+  static const category_income_savings_interest = 'category.income_savings_interest';
+  static const category_income_dividends = 'category.income_dividends';
+  static const category_income_rental = 'category.income_rental';
+  static const category_income_bonus = 'category.income_bonus';
+  static const category_income_gift = 'category.income_gift';
+  static const category_income_cashback = 'category.income_cashback';
+
   static const transaction_title = 'transaction.title';
   static const transaction_wallet = 'transaction.wallet';
   static const transaction_emergency = 'transaction.emergency';
@@ -255,6 +271,8 @@ abstract class CcLocaleKeys {
   static const budget_title = 'budget.title';
   static const budget_empty = 'budget.empty';
   static const budget_edit_limit = 'budget.edit_limit';
+  static const budget_edit_title = 'budget.edit_title';
+  static const budget_limit_locked = 'budget.limit_locked';
   static const budget_delete_title = 'budget.delete_title';
   static const budget_delete_confirm = 'budget.delete_confirm';
   static const budget_reset_period = 'budget.reset_period';
@@ -276,6 +294,9 @@ abstract class CcLocaleKeys {
   static const budget_remaining = 'budget.remaining';
   static const budget_this_month = 'budget.this_month';
   static const budget_see_all = 'budget.see_all';
+  static const budget_drag_reorder_hint = 'budget.drag_reorder_hint';
+  static const budget_customize_category = 'budget.customize_category';
+  static const budget_percent_used = 'budget.percent_used';
 
   static const reconciliation_title = 'reconciliation.title';
   static const reconciliation_empty = 'reconciliation.empty';

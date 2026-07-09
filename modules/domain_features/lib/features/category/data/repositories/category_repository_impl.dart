@@ -51,6 +51,13 @@ class CategoryRepositoryImpl with CcBaseRepository
   }
 
   @override
+  Future<Result<void, CcFailure>> updateCategory(CategoryEntity category) {
+    return safeRequest(() async {
+      await _local.updateCategory(CategoryModel.fromEntity(category));
+    });
+  }
+
+  @override
   Future<Result<void, CcFailure>> deleteCategory(String id) {
     return safeRequest(() async {
       await _local.deleteCategory(id);

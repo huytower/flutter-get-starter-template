@@ -11,6 +11,7 @@ class ProfileLocalDataSource {
       reminderEnabled: s.reminderEnabled ?? true,
       weeklyAuditDayIndex: s.weeklyAuditDayIndex ?? 6,
       currencyCode: s.currencyCode ?? 'VND',
+      birthYear: s.birthYear,
     );
   }
 
@@ -19,6 +20,7 @@ class ProfileLocalDataSource {
     s.reminderEnabled = entity.reminderEnabled;
     s.weeklyAuditDayIndex = entity.weeklyAuditDayIndex;
     s.currencyCode = entity.currencyCode;
+    s.birthYear = entity.birthYear;
     await s.save();
   }
 }

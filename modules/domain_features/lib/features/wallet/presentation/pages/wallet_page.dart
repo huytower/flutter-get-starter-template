@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
@@ -257,8 +256,6 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
         else
           WalletStrip(
             wallets: controller.wallets,
-            onTap: (wallet) => getIt<WalletCoordinator>()
-                .navigateToWalletDetail(context, wallet),
             onMore: (wallet) => _openWalletActions(context, wallet),
           ),
       ],

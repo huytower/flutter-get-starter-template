@@ -47,6 +47,12 @@ class ProfileController extends GetxController {
     await _updateSettings(updated);
   }
 
+  Future<void> setBirthYear(int year) async {
+    final updated = settings.value.copyWith(birthYear: year);
+    settings.value = updated;
+    await _updateSettings(updated);
+  }
+
   Future<void> logout(BuildContext context) async {
     await _session.clearSession();
     if (context.mounted) _authCoordinator.navigateToLogin(context);

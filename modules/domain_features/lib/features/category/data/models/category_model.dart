@@ -34,6 +34,11 @@ class CategoryModel {
   @HiveField(6)
   final bool isEnabled;
 
+  /// Nullable for records written before the field existed — read back as
+  /// [CategoryType.expense].
+  @HiveField(7)
+  final String? type;
+
   CategoryModel({
     required this.id,
     required this.nameKey,
@@ -42,6 +47,7 @@ class CategoryModel {
     this.colorValue,
     required this.groupId,
     this.isEnabled = true,
+    this.type = CategoryType.expense,
   });
 
   factory CategoryModel.fromEntity(CategoryEntity entity) => CategoryModel(
@@ -52,6 +58,7 @@ class CategoryModel {
     colorValue: entity.color?.toARGB32(),
     groupId: entity.groupId,
     isEnabled: entity.isEnabled,
+    type: entity.type,
   );
 
   CategoryEntity toEntity() => CategoryEntity(
@@ -62,5 +69,6 @@ class CategoryModel {
     color: colorValue != null ? Color(colorValue!) : null,
     groupId: groupId,
     isEnabled: isEnabled,
+    type: type ?? CategoryType.expense,
   );
 }

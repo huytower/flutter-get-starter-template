@@ -2,6 +2,12 @@ import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
 
+/// Category kind stored in [CategoryEntity.type].
+abstract class CategoryType {
+  static const String expense = 'expense';
+  static const String income = 'income';
+}
+
 class CategoryEntity extends Equatable {
   final String id;
   final String nameKey;
@@ -11,6 +17,9 @@ class CategoryEntity extends Equatable {
   final String groupId;
   final bool isEnabled;
 
+  /// [CategoryType.expense] or [CategoryType.income].
+  final String type;
+
   const CategoryEntity({
     required this.id,
     required this.nameKey,
@@ -19,16 +28,26 @@ class CategoryEntity extends Equatable {
     this.color,
     required this.groupId,
     this.isEnabled = true,
+    this.type = CategoryType.expense,
   });
 
-  CategoryEntity copyWith({bool? isEnabled}) => CategoryEntity(
+  CategoryEntity copyWith({
+    String? nameKey,
+    int? iconCode,
+    String? iconFamily,
+    Color? color,
+    String? groupId,
+    bool? isEnabled,
+    String? type,
+  }) => CategoryEntity(
     id: id,
-    nameKey: nameKey,
-    iconCode: iconCode,
-    iconFamily: iconFamily,
-    color: color,
-    groupId: groupId,
+    nameKey: nameKey ?? this.nameKey,
+    iconCode: iconCode ?? this.iconCode,
+    iconFamily: iconFamily ?? this.iconFamily,
+    color: color ?? this.color,
+    groupId: groupId ?? this.groupId,
     isEnabled: isEnabled ?? this.isEnabled,
+    type: type ?? this.type,
   );
 
   @override
@@ -40,5 +59,6 @@ class CategoryEntity extends Equatable {
     color,
     groupId,
     isEnabled,
+    type,
   ];
 }

@@ -185,6 +185,8 @@
     "title": "Budget",
     "empty": "No budgets yet.\nTap + to add a spending limit.",
     "edit_limit": "Edit Limit",
+    "edit_title": "Edit Budget",
+    "limit_locked": "The limit can only be changed in the first 7 days of the month.",
     "delete_title": "Delete Budget",
     "delete_confirm": "Delete \"{name}\"?",
     "reset_period": "Reset Period",
@@ -205,7 +207,10 @@
     "over_by": "Over by {amount}",
     "remaining": "Remaining {amount}",
     "this_month": "This month's budgets",
-    "see_all": "See all"
+    "see_all": "See all",
+    "drag_reorder_hint": "Hold and drag to reorder",
+    "customize_category": "Customize category",
+    "percent_used": "{percent}% used"
   },
   "reconciliation": {
     "title": "Reconciliation",
@@ -297,7 +302,21 @@
     "settings_title": "Customise Categories",
     "settings_subtitle": "Select the categories that suit your lifestyle",
     "settings_save": "Save & Continue",
-    "settings_saved": "Categories updated successfully"
+    "settings_saved": "Categories updated successfully",
+    "income_settings_title": "Income Categories",
+    "income_group_active": "Active Income",
+    "income_group_invest": "Investment Income",
+    "income_group_other": "Other Income",
+    "income_salary": "Main Salary",
+    "income_freelance": "Freelance",
+    "income_allowance": "Allowance",
+    "income_savings_interest": "Savings Interest",
+    "income_dividends": "Dividends",
+    "income_rental": "Asset Rental",
+    "income_bonus": "Bonus",
+    "income_gift": "Gifts/Presents",
+    "income_cashback": "Cashback",
+    "expense_settings_title": "Expense Categories"
   },
   "profile": {
     "guest": "Guest",

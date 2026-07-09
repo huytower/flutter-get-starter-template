@@ -1,12 +1,17 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/util/horizontal_fade_scroll_view.dart';
+import '../../../../core/util/icon_utils.dart';
+import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
+import 'category_selection_section.dart';
+import 'income_quick_amounts.dart';
 import 'money_keypad_panel.dart';
 
 class ReceiptForm extends StatefulWidget {
@@ -21,18 +26,8 @@ class ReceiptForm extends StatefulWidget {
 class _ReceiptFormState extends State<ReceiptForm> {
   static const Color _accent = Color(0xFF13C07F);
 
-  static const List<int> _quickAmounts = [
-    10000,
-    20000,
-    30000,
-    50000,
-    100000,
-    200000,
-    300000,
-    500000,
-    1000000,
-    2000000,
-  ];
+  /// Age-based suggestions (see [IncomeQuickAmounts]); resolved in initState.
+  List<int> _quickAmounts = IncomeQuickAmounts.fallback;
 
   String _amountStr = '0';
   final TextEditingController _noteController = TextEditingController();
@@ -41,14 +36,25 @@ class _ReceiptFormState extends State<ReceiptForm> {
 
   List<WalletEntity> _wallets = const [];
   String? _selectedWalletId;
+  CategoryEntity? _selectedCategory;
   DateTime _date = DateTime.now();
   bool _isSubmitting = false;
   bool _showKeypad = false;
+  int _categoryKey = 0;
 
   @override
   void initState() {
     super.initState();
     _loadWallets();
+    _loadSuggestions();
+  }
+
+  Future<void> _loadSuggestions() async {
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    if (!mounted) return;
+    setState(() {
+      _quickAmounts = IncomeQuickAmounts.forBirthYear(settings.birthYear);
+    });
   }
 
   @override
@@ -120,6 +126,7 @@ class _ReceiptFormState extends State<ReceiptForm> {
   }
 
   bool get _canSubmit =>
+      _selectedCategory != null &&
       _selectedWalletId != null &&
       _amountStr != '0' &&
       _amountStr.isNotEmpty;
@@ -131,6 +138,10 @@ class _ReceiptFormState extends State<ReceiptForm> {
     final params = CreateTransactionParams(
       type: 'income',
       amount: int.tryParse(_amountStr) ?? 0,
+      categoryId: _selectedCategory?.id ?? '',
+      categoryLabel: _selectedCategory != null
+          ? el.tr(_selectedCategory!.nameKey)
+          : '',
       walletId: _selectedWalletId ?? '',
       note: _composeNote(),
       date: _date,
@@ -164,8 +175,10 @@ class _ReceiptFormState extends State<ReceiptForm> {
     setState(() {
       _amountStr = '0';
       _noteController.clear();
+      _selectedCategory = null;
       _date = DateTime.now();
       _showKeypad = false;
+      _categoryKey++;
     });
   }
 
@@ -182,32 +195,53 @@ class _ReceiptFormState extends State<ReceiptForm> {
             child: SingleChildScrollView(
               controller: _scrollController,
               padding: EdgeInsets.symmetric(
-                horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
                 vertical: context.respPadding(CcPaddingParams.PAGE_XS),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildLabel(el.tr(CcLocaleKeys.transaction_amount)),
-                  const CcSpaceXS(),
-                  _buildAmountField(),
-                  const CcSpaceSM(),
-                  _buildQuickAmountChips(context),
+                  CategorySelectionSection(
+                    key: ValueKey(_categoryKey),
+                    type: CategoryType.income,
+                    autoSelectFirst: true,
+                    activeColor: _accent,
+                    onCategorySelected: (category) =>
+                        setState(() => _selectedCategory = category),
+                  ),
                   const CcSpaceLG(),
-                  _buildLabel(el.tr(CcLocaleKeys.transaction_source_income)),
-                  const CcSpaceXS(),
-                  _buildWalletChips(context),
-                  const CcSpaceLG(),
-                  _buildLabel(el.tr(CcLocaleKeys.transaction_time)),
-                  const CcSpaceXS(),
-                  _buildTimeRow(),
-                  const CcSpaceLG(),
-                  _buildLabel(el.tr(CcLocaleKeys.transaction_note)),
-                  const CcSpaceXS(),
-                  _buildNoteField(),
-                  const CcSpaceXL(),
-                  _buildSubmitButton(),
-                  const CcSpaceLG(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal:
+                          context.respPadding(CcPaddingParams.PAGE_SM),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildLabel(el.tr(CcLocaleKeys.transaction_amount)),
+                        const CcSpaceXS(),
+                        _buildAmountField(),
+                        const CcSpaceXS(),
+                        _buildQuickAmounts(),
+                        const CcSpaceLG(),
+                        _buildLabel(
+                          el.tr(CcLocaleKeys.transaction_source_income),
+                        ),
+                        const CcSpaceXS(),
+                        _buildWalletChips(context),
+                        const CcSpaceLG(),
+                        _buildLabel(el.tr(CcLocaleKeys.transaction_time)),
+                        const CcSpaceXS(),
+                        _buildTimeRow(),
+                        const CcSpaceLG(),
+                        _buildLabel(el.tr(CcLocaleKeys.transaction_note)),
+                        const CcSpaceXS(),
+                        _buildNoteField(),
+                        const CcSpaceXL(),
+                        _buildSubmitButton(),
+                        const CcSpaceLG(),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -218,10 +252,54 @@ class _ReceiptFormState extends State<ReceiptForm> {
             onKeyPress: _onKeyPress,
             onDelete: _onDelete,
             onClear: () => setState(() => _amountStr = '0'),
+            suggestions: _quickAmounts,
+            onSuggestion: (value) =>
+                setState(() => _amountStr = value.toString()),
             onDone: () => setState(() => _showKeypad = false),
             activeColor: _accent,
           ),
       ],
+    );
+  }
+
+  String _formatShort(int amount) {
+    if (amount >= 1000000) return '${amount ~/ 1000000}tr';
+    if (amount >= 1000) return '${amount ~/ 1000}k';
+    return amount.toString();
+  }
+
+  Widget _buildQuickAmounts() {
+    return HorizontalFadeScrollView(
+      height: context.respDim(36),
+      builder: (scrollController) => SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        child: Row(
+          children: _quickAmounts.map((amount) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: GestureDetector(
+                onTap: () => setState(() => _amountStr = amount.toString()),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _accent.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: CcText(
+                    _formatShort(amount),
+                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                      color: _accent,
+                      fontWeight: FontWeight.w600,
+                      fontSize: context.respFontSize(12),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 
@@ -278,41 +356,6 @@ class _ReceiptFormState extends State<ReceiptForm> {
     );
   }
 
-  Widget _buildQuickAmountChips(BuildContext context) {
-    final formatter = el.NumberFormat('#,###', 'vi_VN');
-    return HorizontalFadeScrollView(
-      height: context.respDim(36),
-      builder: (scrollController) => ListView.separated(
-        scrollDirection: Axis.horizontal,
-        controller: scrollController,
-        itemCount: _quickAmounts.length,
-        separatorBuilder: (_, _) => const CcSpaceSM(),
-        itemBuilder: (context, index) {
-          final amount = _quickAmounts[index];
-          return GestureDetector(
-            onTap: () => setState(() => _amountStr = amount.toString()),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: _accent.withValues(alpha: 0.07),
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: CcText(
-                formatter.format(amount),
-                textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                  color: _accent,
-                  fontWeight: FontWeight.bold,
-                  fontSize: context.respFontSize(12),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
   Widget _buildWalletChips(BuildContext context) {
     if (_wallets.isEmpty) {
       return Container(
@@ -357,7 +400,7 @@ class _ReceiptFormState extends State<ReceiptForm> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        Icons.account_balance,
+                        walletIconFor(wallet.type),
                         size: 14,
                         color: isSelected ? Colors.white : Colors.grey[600],
                       ),

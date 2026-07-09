@@ -6,9 +6,9 @@ import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../../core/util/horizontal_fade_scroll_view.dart';
 import '../../../../core/util/icon_utils.dart';
 import '../../../budget/domain/entities/budget_stats_entity.dart';
+import '../../../budget/domain/usecases/sort_budgets_by_limit_usecase.dart';
 import '../../../budget/presentation/get_x/budget_controller.dart';
 import '../../../budget/presentation/widgets/budget_form_sheet.dart';
 import '../../../category/domain/entities/category_entity.dart';
@@ -108,7 +108,9 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
           ),
         ),
         Obx(() {
-          final budgets = Get.find<BudgetController>().budgets;
+          // Overview shows only the 4 budgets with the highest limit.
+          final budgets = getIt<SortBudgetsByLimitUseCase>()
+              .call(Get.find<BudgetController>().budgets, limit: 4);
           if (budgets.isEmpty) {
             return Padding(
               padding: EdgeInsets.symmetric(
@@ -124,30 +126,43 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
               ),
             );
           }
-          return HorizontalFadeScrollView(
-            height: context.respDim(120),
-            builder: (scrollController) => ListView.builder(
-              scrollDirection: Axis.horizontal,
-              controller: scrollController,
-              padding: EdgeInsets.symmetric(
-                horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-              ),
-              itemCount: budgets.length,
-              itemBuilder: (context, index) => Padding(
-                padding: EdgeInsets.only(right: context.respDim(10)),
-                child: SizedBox(
-                  width: context.respDim(140),
-                  child: _BudgetPreviewCard(
-                    stats: budgets[index],
-                    category: _categoryMap[budgets[index].budget.categoryId],
+          // 2-column grid — at most 4 cards, so no scrolling needed.
+          return Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
+            ),
+            child: Column(
+              children: [
+                for (var i = 0; i < budgets.length; i += 2) ...[
+                  if (i > 0) SizedBox(height: context.respDim(10)),
+                  Row(
+                    children: [
+                      Expanded(child: _buildCard(context, budgets[i])),
+                      SizedBox(width: context.respDim(10)),
+                      Expanded(
+                        child: i + 1 < budgets.length
+                            ? _buildCard(context, budgets[i + 1])
+                            : const SizedBox.shrink(),
+                      ),
+                    ],
                   ),
-                ),
-              ),
+                ],
+              ],
             ),
           );
         }),
         SizedBox(height: context.respDim(24)),
       ],
+    );
+  }
+
+  Widget _buildCard(BuildContext context, BudgetStatsEntity stats) {
+    return SizedBox(
+      height: context.respDim(150),
+      child: _BudgetPreviewCard(
+        stats: stats,
+        category: _categoryMap[stats.budget.categoryId],
+      ),
     );
   }
 
@@ -170,8 +185,6 @@ class _BudgetPreviewCard extends StatelessWidget {
 
   const _BudgetPreviewCard({required this.stats, this.category});
 
-  static const Color _amber = Color(0xFFF2A65A);
-
   static String _fmtShort(int value) {
     if (value >= 1000000000) return '${(value / 1000000000).toStringAsFixed(1)}tỷ đ';
     if (value >= 1000000) return '${(value / 1000000).toStringAsFixed(1)}tr đ';
@@ -182,15 +195,11 @@ class _BudgetPreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final status = stats.status;
-    final accent = switch (status) {
-      BudgetStatus.over => scheme.error,
-      BudgetStatus.nearLimit => _amber,
-      BudgetStatus.safe => scheme.primary,
-    };
+    final iconColor = category?.color ?? scheme.primary;
+    // Cards are tinted per category; over-limit still overrides with red.
+    final accent = stats.isOver ? scheme.error : iconColor;
     final pct = (stats.progress * 100).round();
 
-    final iconColor = category?.color ?? scheme.primary;
     final iconCode = category?.iconCode;
     final iconFamily = category?.iconFamily;
     final iconData = iconCode != null
@@ -218,7 +227,9 @@ class _BudgetPreviewCard extends StatelessWidget {
                   height: context.respDim(48),
                   child: CircularProgressIndicator(
                     value: stats.progress,
-                    backgroundColor: scheme.surfaceContainerHighest,
+                    // Accent-tinted track so the ring reads in the category
+                    // colour even at 0% spent.
+                    backgroundColor: accent.withOpacity(0.25),
                     valueColor: AlwaysStoppedAnimation<Color>(accent),
                     strokeWidth: 3.5,
                     strokeCap: StrokeCap.round,
@@ -251,7 +262,10 @@ class _BudgetPreviewCard extends StatelessWidget {
             ),
           ),
           CcText(
-            '$pct% đã dùng',
+            el.tr(
+              CcLocaleKeys.budget_percent_used,
+              namedArgs: {'percent': '$pct'},
+            ),
             align: Alignment.center,
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: scheme.onSurfaceVariant,
@@ -259,8 +273,16 @@ class _BudgetPreviewCard extends StatelessWidget {
           ),
           CcText(
             stats.isOver
-                ? '− ${_fmtShort(stats.spent - stats.budget.limit)}'
-                : 'còn ${_fmtShort(stats.remaining)}',
+                ? el.tr(
+                    CcLocaleKeys.budget_over_by,
+                    namedArgs: {
+                      'amount': _fmtShort(stats.spent - stats.budget.limit),
+                    },
+                  )
+                : el.tr(
+                    CcLocaleKeys.budget_remaining,
+                    namedArgs: {'amount': _fmtShort(stats.remaining)},
+                  ),
             align: Alignment.center,
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: accent,

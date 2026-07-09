@@ -67,6 +67,9 @@ class CcAppStorage extends HiveObject {
   @HiveField(8)
   String? currencyCode;
 
+  @HiveField(9)
+  int? birthYear;
+
   CcAppStorage({
     this.accessToken,
     this.fcmToken,
@@ -77,5 +80,6 @@ class CcAppStorage extends HiveObject {
     this.reminderEnabled,
     this.weeklyAuditDayIndex,
     this.currencyCode,
+    this.birthYear,
   });
 }

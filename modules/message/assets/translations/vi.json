@@ -185,6 +185,8 @@
     "title": "Ngân sách",
     "empty": "Chưa có ngân sách nào.\nNhấn + để thêm hạn mức chi tiêu.",
     "edit_limit": "Sửa định mức",
+    "edit_title": "Sửa ngân sách",
+    "limit_locked": "Định mức chỉ có thể thay đổi trong 7 ngày đầu tháng.",
     "delete_title": "Xóa ngân sách",
     "delete_confirm": "Xóa \"{name}\"?",
     "reset_period": "Đặt lại kỳ mới",
@@ -205,7 +207,10 @@
     "over_by": "Vượt {amount}",
     "remaining": "Còn {amount}",
     "this_month": "Ngân sách tháng này",
-    "see_all": "Xem tất cả"
+    "see_all": "Xem tất cả",
+    "drag_reorder_hint": "Giữ và kéo để đổi thứ tự",
+    "customize_category": "Tuỳ chỉnh danh mục",
+    "percent_used": "{percent}% đã dùng"
   },
   "reconciliation": {
     "title": "Đối soát",
@@ -297,7 +302,21 @@
     "settings_title": "Tuỳ chỉnh danh mục",
     "settings_subtitle": "Lướt để chọn mục phù hợp với bạn",
     "settings_save": "Lưu và tiếp tục",
-    "settings_saved": "Tùy chỉnh danh mục thành công"
+    "settings_saved": "Tùy chỉnh danh mục thành công",
+    "income_settings_title": "Hạng mục thu nhập",
+    "income_group_active": "Thu nhập chủ động",
+    "income_group_invest": "Thu nhập đầu tư",
+    "income_group_other": "Thu nhập khác",
+    "income_salary": "Lương chính",
+    "income_freelance": "Làm thêm (Freelance)",
+    "income_allowance": "Phụ cấp",
+    "income_savings_interest": "Tiền lãi tiết kiệm",
+    "income_dividends": "Cổ tức",
+    "income_rental": "Cho thuê tài sản",
+    "income_bonus": "Thưởng",
+    "income_gift": "Được tặng/Biếu",
+    "income_cashback": "Hoàn tiền (Cashback)",
+    "expense_settings_title": "Hạng mục chi tiêu"
   },
   "profile": {
     "guest": "Khách",

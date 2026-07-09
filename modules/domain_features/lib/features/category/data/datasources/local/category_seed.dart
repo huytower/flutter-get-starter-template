@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:message/cc_locale_keys.dart';
 
+import '../../../domain/entities/category_entity.dart';
 import '../../../domain/entities/category_group_entity.dart';
 import '../../models/category_model.dart';
 
 /// Default categories + groups seeded into Hive on first launch.
 class CategorySeed {
   CategorySeed._();
+
+  /// Pseudo-group id kept for backwards-compat (no longer used in seed).
+  static const String incomeGroupId = 'income';
+
+  static const String incomeActiveGroupId = 'income_active';
+  static const String incomeInvestGroupId = 'income_invest';
+  static const String incomeOtherGroupId = 'income_other';
+
+  static const List<CategoryGroupEntity> incomeGroups = [
+    CategoryGroupEntity(id: incomeActiveGroupId, nameKey: CcLocaleKeys.category_income_group_active),
+    CategoryGroupEntity(id: incomeInvestGroupId, nameKey: CcLocaleKeys.category_income_group_invest),
+    CategoryGroupEntity(id: incomeOtherGroupId, nameKey: CcLocaleKeys.category_income_group_other),
+  ];
 
   static const List<CategoryGroupEntity> groups = [
     CategoryGroupEntity(id: '1', nameKey: 'Ăn uống & Cà phê'),
@@ -331,6 +345,75 @@ class CategorySeed {
       iconCode: Icons.toys.codePoint,
       groupId: '14',
       isEnabled: false,
+    ),
+
+    // Income — Thu nhập chủ động
+    CategoryModel(
+      id: 'i1',
+      nameKey: CcLocaleKeys.category_income_salary,
+      iconCode: Icons.business_center.codePoint,
+      groupId: incomeActiveGroupId,
+      type: CategoryType.income,
+    ),
+    CategoryModel(
+      id: 'i2',
+      nameKey: CcLocaleKeys.category_income_freelance,
+      iconCode: Icons.laptop_mac.codePoint,
+      groupId: incomeActiveGroupId,
+      type: CategoryType.income,
+    ),
+    CategoryModel(
+      id: 'i3',
+      nameKey: CcLocaleKeys.category_income_allowance,
+      iconCode: Icons.volunteer_activism.codePoint,
+      groupId: incomeActiveGroupId,
+      type: CategoryType.income,
+    ),
+
+    // Income — Thu nhập đầu tư
+    CategoryModel(
+      id: 'i4',
+      nameKey: CcLocaleKeys.category_income_savings_interest,
+      iconCode: Icons.account_balance.codePoint,
+      groupId: incomeInvestGroupId,
+      type: CategoryType.income,
+    ),
+    CategoryModel(
+      id: 'i5',
+      nameKey: CcLocaleKeys.category_income_dividends,
+      iconCode: Icons.pie_chart.codePoint,
+      groupId: incomeInvestGroupId,
+      type: CategoryType.income,
+    ),
+    CategoryModel(
+      id: 'i6',
+      nameKey: CcLocaleKeys.category_income_rental,
+      iconCode: Icons.home.codePoint,
+      groupId: incomeInvestGroupId,
+      type: CategoryType.income,
+    ),
+
+    // Income — Thu nhập khác
+    CategoryModel(
+      id: 'i7',
+      nameKey: CcLocaleKeys.category_income_bonus,
+      iconCode: Icons.card_giftcard.codePoint,
+      groupId: incomeOtherGroupId,
+      type: CategoryType.income,
+    ),
+    CategoryModel(
+      id: 'i8',
+      nameKey: CcLocaleKeys.category_income_gift,
+      iconCode: Icons.favorite.codePoint,
+      groupId: incomeOtherGroupId,
+      type: CategoryType.income,
+    ),
+    CategoryModel(
+      id: 'i9',
+      nameKey: CcLocaleKeys.category_income_cashback,
+      iconCode: Icons.replay.codePoint,
+      groupId: incomeOtherGroupId,
+      type: CategoryType.income,
     ),
   ];
 }

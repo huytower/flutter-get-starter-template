@@ -9,8 +9,6 @@ class CreateBudgetParams {
   final String categoryId;
   final String name;
   final int limit;
-  final DateTime startDate;
-  final DateTime endDate;
 
   /// Optional explicit order; when null the next order is computed.
   final int? order;
@@ -19,8 +17,6 @@ class CreateBudgetParams {
     required this.categoryId,
     required this.name,
     required this.limit,
-    required this.startDate,
-    required this.endDate,
     this.order,
   });
 }
@@ -43,11 +39,6 @@ class CreateBudgetUseCase {
     if (params.limit <= 0) {
       return const Error(ValidationFailure('Định mức ngân sách phải lớn hơn 0!'));
     }
-    if (!params.endDate.isAfter(params.startDate)) {
-      return const Error(
-        ValidationFailure('Thời gian kết thúc phải sau thời gian bắt đầu!'),
-      );
-    }
 
     var order = params.order;
     if (order == null) {
@@ -66,8 +57,6 @@ class CreateBudgetUseCase {
       categoryId: params.categoryId,
       name: name,
       limit: params.limit,
-      startDate: params.startDate,
-      endDate: params.endDate,
       order: order,
     );
 

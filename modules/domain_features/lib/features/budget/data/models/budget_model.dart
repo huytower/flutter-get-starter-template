@@ -20,11 +20,9 @@ class BudgetModel {
   @HiveField(3)
   final int limit;
 
-  @HiveField(4)
-  final String startDate;
-
-  @HiveField(5)
-  final String endDate;
+  // @HiveField(4) startDate and @HiveField(5) endDate were removed when
+  // budgets became perpetual monthly — indices 4 and 5 are reserved, do not
+  // reuse them.
 
   @HiveField(6)
   final int order;
@@ -37,8 +35,6 @@ class BudgetModel {
     required this.categoryId,
     required this.name,
     required this.limit,
-    required this.startDate,
-    required this.endDate,
     required this.order,
     required this.isClosed,
   });
@@ -48,8 +44,6 @@ class BudgetModel {
     categoryId: entity.categoryId,
     name: entity.name,
     limit: entity.limit,
-    startDate: entity.startDate.toIso8601String(),
-    endDate: entity.endDate.toIso8601String(),
     order: entity.order,
     isClosed: entity.isClosed,
   );
@@ -59,8 +53,6 @@ class BudgetModel {
     categoryId: categoryId,
     name: name,
     limit: limit,
-    startDate: DateTime.parse(startDate),
-    endDate: DateTime.parse(endDate),
     order: order,
     isClosed: isClosed,
   );

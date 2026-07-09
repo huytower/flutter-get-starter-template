@@ -1,48 +1,40 @@
+import 'dart:ui';
+
 import 'package:equatable/equatable.dart';
 
 import 'budget_entity.dart';
 
-/// Spending state of a budget, driving the card's colour and warning.
-enum BudgetStatus {
-  /// Comfortably within the limit.
-  safe,
+enum BudgetStatus { safe, over }
 
-  /// Approaching the limit ("sắp chạm mức trần") — amber warning.
-  nearLimit,
-
-  /// Reached or exceeded the limit ("tiêu quá hạn mức") — red warning.
-  over,
-}
-
-/// A budget paired with its computed spending ("Cảnh báo vượt rào").
-///
-/// Replaces the web `sum_thong_ke_ngan_sach` view — `spent` is aggregated in
-/// Dart from the transactions linked to the budget within its period.
+/// A budget paired with its computed spending and the category's display data.
 class BudgetStatsEntity extends Equatable {
   final BudgetEntity budget;
   final int spent;
 
-  const BudgetStatsEntity({required this.budget, required this.spent});
+  /// Category icon codePoint (0 = no category found, card shows fallback icon).
+  final int iconCode;
+  final String? iconFamily;
 
-  /// Fraction of the limit at which the "sắp chạm hạn mức" warning begins.
-  static const double warnThreshold = 0.8;
+  /// Category colour; null falls back to the theme primary.
+  final Color? color;
+
+  const BudgetStatsEntity({
+    required this.budget,
+    required this.spent,
+    this.iconCode = 0,
+    this.iconFamily,
+    this.color,
+  });
 
   /// Amount still available ("còn X"); negative when over the limit.
   int get remaining => budget.limit - spent;
 
-  /// True once spending reaches or exceeds the limit ("tiêu quá hạn mức").
-  bool get isOver => spent >= budget.limit;
-
-  /// True while spending is in [warnThreshold]..limit (approaching the cap).
-  bool get isNearLimit =>
-      !isOver && budget.limit > 0 && spent >= budget.limit * warnThreshold;
+  /// True only once spending exceeds the limit ("tiêu quá hạn mức");
+  /// spending exactly the limit stays safe.
+  bool get isOver => spent > budget.limit;
 
   /// Discrete state for the UI.
-  BudgetStatus get status {
-    if (isOver) return BudgetStatus.over;
-    if (isNearLimit) return BudgetStatus.nearLimit;
-    return BudgetStatus.safe;
-  }
+  BudgetStatus get status => isOver ? BudgetStatus.over : BudgetStatus.safe;
 
   /// Spent fraction in 0..1 for the progress bar.
   double get progress {
@@ -51,5 +43,5 @@ class BudgetStatsEntity extends Equatable {
   }
 
   @override
-  List<Object?> get props => [budget.id, spent];
+  List<Object?> get props => [budget.id, spent, iconCode, iconFamily, color];
 }

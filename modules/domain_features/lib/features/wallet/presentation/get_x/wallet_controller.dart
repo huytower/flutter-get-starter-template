@@ -111,7 +111,7 @@ class WalletController extends CcGetController {
     required String name,
     required int initialBalance,
     required int iconCode,
-    String type = 'spending',
+    required String type,
   }) async {
     final newWallet = WalletEntity(
       id: DateTime.now().microsecondsSinceEpoch.toString(),

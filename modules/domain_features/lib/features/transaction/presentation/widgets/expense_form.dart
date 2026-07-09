@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/util/horizontal_fade_scroll_view.dart';
+import '../../../../core/util/icon_utils.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
@@ -203,6 +204,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   CategorySelectionSection(
                     key: ValueKey(_categoryKey),
                     activeColor: _accent,
+                    autoSelectFirst: true,
                     onCategorySelected: (category) =>
                         setState(() => _selectedCategory = category),
                   ),
@@ -218,8 +220,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
                         _buildLabel(el.tr(CcLocaleKeys.transaction_amount)),
                         const CcSpaceXS(),
                         _buildAmountField(),
-                        const CcSpaceSM(),
-                        _buildQuickAmountChips(context),
+                        const CcSpaceXS(),
+                        _buildQuickAmounts(),
                         const CcSpaceLG(),
                         _buildLabel(
                           el.tr(CcLocaleKeys.transaction_source_expense),
@@ -250,12 +252,54 @@ class _ExpenseFormState extends State<ExpenseForm> {
             onKeyPress: _onKeyPress,
             onDelete: _onDelete,
             onClear: () => setState(() => _amountStr = '0'),
+            suggestions: _quickAmounts,
             onSuggestion: (value) =>
                 setState(() => _amountStr = value.toString()),
             onDone: () => setState(() => _showKeypad = false),
             activeColor: _accent,
           ),
       ],
+    );
+  }
+
+  String _formatShort(int amount) {
+    if (amount >= 1000000) return '${amount ~/ 1000000}tr';
+    if (amount >= 1000) return '${amount ~/ 1000}k';
+    return amount.toString();
+  }
+
+  Widget _buildQuickAmounts() {
+    return HorizontalFadeScrollView(
+      height: context.respDim(36),
+      builder: (scrollController) => SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        child: Row(
+          children: _quickAmounts.map((amount) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: GestureDetector(
+                onTap: () => setState(() => _amountStr = amount.toString()),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _accent.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: CcText(
+                    _formatShort(amount),
+                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                      color: _accent,
+                      fontWeight: FontWeight.w600,
+                      fontSize: context.respFontSize(12),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 
@@ -312,41 +356,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
     );
   }
 
-  Widget _buildQuickAmountChips(BuildContext context) {
-    final formatter = el.NumberFormat('#,###', 'vi_VN');
-    return HorizontalFadeScrollView(
-      height: context.respDim(36),
-      builder: (scrollController) => ListView.separated(
-        scrollDirection: Axis.horizontal,
-        controller: scrollController,
-        itemCount: _quickAmounts.length,
-        separatorBuilder: (_, _) => const CcSpaceSM(),
-        itemBuilder: (context, index) {
-          final amount = _quickAmounts[index];
-          return GestureDetector(
-            onTap: () => setState(() => _amountStr = amount.toString()),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: _accent.withValues(alpha: 0.07),
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: CcText(
-                formatter.format(amount),
-                textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                  color: _accent,
-                  fontWeight: FontWeight.bold,
-                  fontSize: context.respFontSize(12),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
   Widget _buildWalletChips(BuildContext context) {
     if (_wallets.isEmpty) {
       return Container(
@@ -392,7 +401,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        Icons.account_balance,
+                        walletIconFor(wallet.type),
                         size: 14,
                         color: isSelected ? Colors.white : Colors.grey[600],
                       ),

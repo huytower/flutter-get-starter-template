@@ -38,6 +38,28 @@ class _ProfilePageState extends State<ProfilePage> {
     CcDialogHelper.showModalBottomSheet(navContext, const CrashLogViewerPage());
   }
 
+  Future<void> _pickBirthYear(BuildContext context) async {
+    final now = DateTime.now();
+    final current = _c.settings.value.birthYear ?? now.year - 25;
+    final picked = await showDialog<int>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Năm sinh'),
+        content: SizedBox(
+          width: 300,
+          height: 300,
+          child: YearPicker(
+            firstDate: DateTime(now.year - 100),
+            lastDate: DateTime(now.year),
+            selectedDate: DateTime(current),
+            onChanged: (date) => Navigator.of(dialogContext).pop(date.year),
+          ),
+        ),
+      ),
+    );
+    if (picked != null) await _c.setBirthYear(picked);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -284,6 +306,14 @@ class _ProfilePageState extends State<ProfilePage> {
           MaterialPageRoute<bool>(
             builder: (_) => const CategorySettingsPage(),
           ),
+        ),
+      ),
+      Obx(
+        () => ProfileSettingsTile(
+          icon: Icons.cake_rounded,
+          label: 'Năm sinh',
+          trailingLabel: _c.settings.value.birthYear?.toString() ?? 'Chưa đặt',
+          onTap: () => _pickBirthYear(context),
         ),
       ),
       ProfileSettingsTile(

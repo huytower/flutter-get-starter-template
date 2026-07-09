@@ -11,10 +11,19 @@ class CategorySelectionSection extends StatefulWidget {
   final Function(CategoryEntity)? onCategorySelected;
   final Color activeColor;
 
+  /// Which categories to offer: [CategoryType.expense] or
+  /// [CategoryType.income].
+  final String type;
+
+  /// Pre-select (and report) the first category once loaded.
+  final bool autoSelectFirst;
+
   const CategorySelectionSection({
     super.key,
     this.onCategorySelected,
     this.activeColor = const Color(0xFF13C07F),
+    this.type = CategoryType.expense,
+    this.autoSelectFirst = false,
   });
 
   @override
@@ -38,12 +47,19 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
     if (!mounted) return;
     setState(() {
       result.when(
-        (categories) =>
-            _categories = categories.where((c) => c.isEnabled).toList(),
+        (categories) => _categories = categories
+            .where((c) => c.isEnabled && c.type == widget.type)
+            .toList(),
         (_) {},
       );
       _isLoading = false;
     });
+    if (widget.autoSelectFirst &&
+        _selectedCategoryId == null &&
+        _categories.isNotEmpty) {
+      setState(() => _selectedCategoryId = _categories.first.id);
+      widget.onCategorySelected?.call(_categories.first);
+    }
   }
 
   @override
@@ -78,7 +94,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
 
   Widget _buildCategoryList(BuildContext context) {
     return HorizontalFadeScrollView(
-      height: context.respDim(80),
+      height: context.respDim(90),
       builder: (scrollController) => ListView.separated(
           scrollDirection: Axis.horizontal,
           controller: scrollController,
@@ -99,7 +115,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
               child: SizedBox(
                 width: context.respDim(68),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),

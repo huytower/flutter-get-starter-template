@@ -13,6 +13,8 @@ abstract class CategoryRepository {
 
   Future<Result<void, CcFailure>> addCategory(CategoryEntity category);
 
+  Future<Result<void, CcFailure>> updateCategory(CategoryEntity category);
+
   Future<Result<void, CcFailure>> deleteCategory(String id);
 
   Future<Result<void, CcFailure>> updateCategoryEnabled(

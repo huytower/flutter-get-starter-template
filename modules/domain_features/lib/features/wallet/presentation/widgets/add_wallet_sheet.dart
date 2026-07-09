@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/util/icon_utils.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 
@@ -21,7 +22,14 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
   late final TextEditingController _balanceController;
   final _controller = Get.find<WalletController>();
 
+  /// Type of a newly created wallet — the cash wallet is a fixed singleton,
+  /// so only bank/credit can be added.
+  String _newType = WalletType.bank;
+
   bool get _isEditing => widget.wallet != null;
+
+  /// The cash wallet keeps its fixed default name and icon.
+  bool get _isCash => widget.wallet?.type == WalletType.cash;
 
   /// Opening balance is locked once the wallet has any transaction (rule 1).
   bool get _balanceLocked =>
@@ -65,7 +73,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       await _controller.updateWallet(
         WalletEntity(
           id: original.id,
-          name: name,
+            name: name,
           balance: balance,
           iconCode: original.iconCode,
           type: original.type,
@@ -76,7 +84,8 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       await _controller.addWallet(
         name: name,
         initialBalance: balance,
-        iconCode: Icons.account_balance_wallet.codePoint,
+        iconCode: walletIconFor(_newType).codePoint,
+        type: _newType,
       );
     }
 
@@ -116,6 +125,10 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
             ),
           ),
           const CcSpaceMD(),
+          if (!_isEditing) ...[
+            _buildTypeSelector(context),
+            const CcSpaceMD(),
+          ],
           TextField(
             controller: _nameController,
             decoration: InputDecoration(
@@ -170,6 +183,57 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTypeSelector(BuildContext context) {
+    const options = [
+      (WalletType.bank, 'Ngân hàng'),
+      (WalletType.credit, 'Thẻ tín dụng'),
+    ];
+    return Row(
+      children: options.map((option) {
+        final (type, label) = option;
+        final isSelected = _newType == type;
+        return Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: GestureDetector(
+            onTap: () => setState(() => _newType = type),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 10,
+              ),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? context.ccColorScheme.primary
+                    : const Color(0xFFF1F3F5),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    walletIconFor(type),
+                    size: 16,
+                    color: isSelected ? Colors.white : Colors.grey[600],
+                  ),
+                  const SizedBox(width: 6),
+                  CcText(
+                    label,
+                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                      color: isSelected ? Colors.white : Colors.grey[800],
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

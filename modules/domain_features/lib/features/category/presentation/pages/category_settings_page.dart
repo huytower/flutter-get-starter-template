@@ -2,10 +2,10 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:message/cc_locale_keys.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/util/icon_utils.dart';
+import '../../data/datasources/local/category_seed.dart';
 
 class CategorySettingsPage extends StatefulWidget {
   const CategorySettingsPage({super.key});
@@ -17,8 +17,11 @@ class CategorySettingsPage extends StatefulWidget {
 class _CategorySettingsPageState extends State<CategorySettingsPage> {
   List<CategoryGroupEntity> _groups = const [];
 
-  /// All categories, keyed by group id.
+  /// Expense categories, keyed by group id.
   Map<String, List<CategoryEntity>> _byGroup = const {};
+
+  /// Income categories, keyed by income group id.
+  Map<String, List<CategoryEntity>> _incomeByGroup = const {};
 
   /// Pending toggle state: categoryId → isEnabled.
   /// Only contains entries that differ from the persisted value.
@@ -42,10 +45,16 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
       groupsResult.when((groups) => _groups = groups, (_) {});
       categoriesResult.when((categories) {
         final byGroup = <String, List<CategoryEntity>>{};
+        final incomeByGroup = <String, List<CategoryEntity>>{};
         for (final cat in categories) {
-          byGroup.putIfAbsent(cat.groupId, () => []).add(cat);
+          if (cat.type == CategoryType.income) {
+            incomeByGroup.putIfAbsent(cat.groupId, () => []).add(cat);
+          } else {
+            byGroup.putIfAbsent(cat.groupId, () => []).add(cat);
+          }
         }
         _byGroup = byGroup;
+        _incomeByGroup = incomeByGroup;
       }, (_) {});
       _isLoading = false;
     });
@@ -54,9 +63,10 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
   bool _isEnabled(CategoryEntity cat) =>
       _pending.containsKey(cat.id) ? _pending[cat.id]! : cat.isEnabled;
 
-  bool get _hasAnyEnabled => _byGroup.values
-      .expand((cats) => cats)
-      .any((cat) => _isEnabled(cat));
+  bool get _hasAnyEnabled => [
+        ..._byGroup.values.expand((c) => c),
+        ..._incomeByGroup.values.expand((c) => c),
+      ].any(_isEnabled);
 
   void _toggle(CategoryEntity cat) {
     setState(() {
@@ -73,7 +83,16 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
     setState(() => _isSaving = true);
     final useCase = getIt<ToggleCategoryEnabledUseCase>();
     for (final entry in _pending.entries) {
-      await useCase.call(entry.key, entry.value);
+      final result = await useCase.call(entry.key, entry.value);
+      if (result.isError()) {
+        if (!mounted) return;
+        setState(() => _isSaving = false);
+        CcSnackBarHelper.showErrorSnackBar(
+          context: context,
+          message: result.tryGetError()!.message,
+        );
+        return;
+      }
     }
     if (!mounted) return;
     setState(() => _isSaving = false);
@@ -130,16 +149,65 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                     padding: EdgeInsets.only(
                       bottom: context.respDim(100),
                     ),
-                    itemCount: _groups.length,
+                    // +2: one header for expense, one for income
+                    itemCount: 1 + _groups.length + 1 + CategorySeed.incomeGroups.length,
                     itemBuilder: (context, index) {
-                      final group = _groups[index];
-                      final cats = _byGroup[group.id] ?? [];
+                      if (index == 0) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            top: context.respDim(8),
+                            left: context.respPadding(CcPaddingParams.PAGE_SM),
+                            right: context.respPadding(CcPaddingParams.PAGE_SM),
+                            bottom: context.respDim(4),
+                          ),
+                          child: CcText(
+                            el.tr(CcLocaleKeys.category_expense_settings_title),
+                            textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: context.ccColorScheme.primary,
+                            ),
+                          ),
+                        );
+                      }
+                      final expenseIndex = index - 1;
+                      if (expenseIndex < _groups.length) {
+                        final group = _groups[expenseIndex];
+                        final cats = _byGroup[group.id] ?? [];
+                        if (cats.isEmpty) return const SizedBox.shrink();
+                        return _GroupSection(
+                          group: group,
+                          categories: cats,
+                          isEnabled: _isEnabled,
+                          onToggle: _toggle,
+                        );
+                      }
+                      if (expenseIndex == _groups.length) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            top: context.respDim(24),
+                            left: context.respPadding(CcPaddingParams.PAGE_SM),
+                            right: context.respPadding(CcPaddingParams.PAGE_SM),
+                            bottom: context.respDim(4),
+                          ),
+                          child: CcText(
+                            el.tr(CcLocaleKeys.category_income_settings_title),
+                            textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green.shade600,
+                            ),
+                          ),
+                        );
+                      }
+                      final incomeIndex = expenseIndex - _groups.length - 1;
+                      final group = CategorySeed.incomeGroups[incomeIndex];
+                      final cats = _incomeByGroup[group.id] ?? [];
                       if (cats.isEmpty) return const SizedBox.shrink();
                       return _GroupSection(
                         group: group,
                         categories: cats,
                         isEnabled: _isEnabled,
                         onToggle: _toggle,
+                        accentColor: Colors.green.shade600,
                       );
                     },
                   ),
@@ -185,12 +253,14 @@ class _GroupSection extends StatelessWidget {
   final List<CategoryEntity> categories;
   final bool Function(CategoryEntity) isEnabled;
   final void Function(CategoryEntity) onToggle;
+  final Color? accentColor;
 
   const _GroupSection({
     required this.group,
     required this.categories,
     required this.isEnabled,
     required this.onToggle,
+    this.accentColor,
   });
 
   @override
@@ -230,6 +300,7 @@ class _GroupSection extends StatelessWidget {
                     category: cat,
                     enabled: enabled,
                     onTap: () => onToggle(cat),
+                    accentColor: accentColor,
                   ),
                 );
               }).toList(),
@@ -245,16 +316,18 @@ class _CategoryChip extends StatelessWidget {
   final CategoryEntity category;
   final bool enabled;
   final VoidCallback onTap;
+  final Color? accentColor;
 
   const _CategoryChip({
     required this.category,
     required this.enabled,
     required this.onTap,
+    this.accentColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    final primary = context.ccColorScheme.primary;
+    final primary = accentColor ?? context.ccColorScheme.primary;
     final chipBg = enabled
         ? primary.withOpacity(0.15)
         : context.ccColorScheme.surfaceContainerHighest;

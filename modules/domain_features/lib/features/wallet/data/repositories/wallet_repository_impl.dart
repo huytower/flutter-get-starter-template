@@ -18,7 +18,18 @@ class WalletRepositoryImpl with CcBaseRepository
 
   @override
   Future<Result<List<WalletEntity>, CcFailure>> getWallets() {
-    return safeRequest(() => _local.getWallets());
+    // Cash always comes first, then by creation time — every consumer
+    // (wallet lists, form dropdowns, reconcile tiles) inherits this order.
+    return safeRequest(() async {
+      final wallets = await _local.getWallets();
+      wallets.sort((a, b) {
+        final aCash = a.type == WalletType.cash ? 0 : 1;
+        final bCash = b.type == WalletType.cash ? 0 : 1;
+        if (aCash != bCash) return aCash - bCash;
+        return a.createdAt.compareTo(b.createdAt);
+      });
+      return wallets;
+    });
   }
 
   @override

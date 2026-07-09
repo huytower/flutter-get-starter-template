@@ -1,6 +1,8 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
+import '../../../../core/util/horizontal_fade_scroll_view.dart';
 import 'quick_numeric_keypad.dart';
 
 class MoneyKeypadPanel extends StatelessWidget {
@@ -8,8 +10,9 @@ class MoneyKeypadPanel extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onClear;
 
-  /// Kept for API compatibility with receipt/transfer forms; no longer used
-  /// inside this widget (quick-amount chips live in the inline form row).
+  /// Quick-amount suggestions (Momo style) shown as a chip strip above the
+  /// keypad; tapping one fires [onSuggestion].
+  final List<int> suggestions;
   final void Function(int)? onSuggestion;
 
   final VoidCallback onDone;
@@ -20,6 +23,7 @@ class MoneyKeypadPanel extends StatelessWidget {
     required this.onKeyPress,
     required this.onDelete,
     required this.onClear,
+    this.suggestions = const [],
     this.onSuggestion,
     required this.onDone,
     required this.activeColor,
@@ -35,27 +39,41 @@ class MoneyKeypadPanel extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: onDone,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-                    horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-                  ),
-                  child: CcText(
-                    'Xong',
-                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      color: activeColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: context.respFontSize(13),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: suggestions.isEmpty
+                      ? const SizedBox.shrink()
+                      : Padding(
+                          padding: EdgeInsets.only(
+                            left: context.respPadding(CcPaddingParams.PAGE_SM),
+                          ),
+                          child: _buildSuggestionChips(context),
+                        ),
+                ),
+                GestureDetector(
+                  onTap: onDone,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+                    ),
+                    child: CcText(
+                      'Xong',
+                      textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                        color: activeColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: context.respFontSize(13),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           QuickNumericKeypad(
             onKeyPress: onKeyPress,
@@ -64,6 +82,41 @@ class MoneyKeypadPanel extends StatelessWidget {
             activeColor: activeColor,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSuggestionChips(BuildContext context) {
+    final formatter = el.NumberFormat('#,###', 'vi_VN');
+    return HorizontalFadeScrollView(
+      height: context.respDim(32),
+      builder: (scrollController) => ListView.separated(
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        itemCount: suggestions.length,
+        separatorBuilder: (_, _) => const CcSpaceSM(),
+        itemBuilder: (context, index) {
+          final amount = suggestions[index];
+          return GestureDetector(
+            onTap: () => onSuggestion?.call(amount),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: activeColor.withValues(alpha: 0.07),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: CcText(
+                formatter.format(amount),
+                textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                  color: activeColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: context.respFontSize(12),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

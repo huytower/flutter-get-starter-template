@@ -9,14 +9,17 @@ import '../../../../core/util/horizontal_fade_scroll_view.dart';
 import '../../../../core/util/icon_utils.dart';
 import '../../domain/entities/budget_entity.dart';
 import '../../domain/usecases/create_budget_usecase.dart';
+import '../../domain/usecases/update_budget_usecase.dart';
 import '../get_x/budget_controller.dart';
 
-/// Bottom sheet to create a budget, or open a new period for an existing one
-/// when [resetTarget] is provided.
+/// Bottom sheet to create a budget, or edit an existing one when
+/// [editTarget] is provided. The category is fixed after creation; the name
+/// can change any time, the limit only during days 1–7 of the month (the
+/// limit input is hidden outside that window).
 class BudgetFormSheet extends StatefulWidget {
-  final BudgetEntity? resetTarget;
+  final BudgetEntity? editTarget;
 
-  const BudgetFormSheet({super.key, this.resetTarget});
+  const BudgetFormSheet({super.key, this.editTarget});
 
   @override
   State<BudgetFormSheet> createState() => _BudgetFormSheetState();
@@ -29,29 +32,27 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
 
   List<CategoryEntity> _categories = const [];
   String? _selectedCategoryId;
-  late DateTime _startDate;
-  late DateTime _endDate;
   ScrollController? _categoryScrollController;
 
-  bool get _isReset => widget.resetTarget != null;
+  bool get _isEdit => widget.editTarget != null;
+
+  /// Limits may only change during the first week of the month (days 1–7).
+  bool get _limitLocked => _isEdit && !UpdateBudgetUseCase.isLimitEditable;
 
   bool get _isValid {
     final name = _nameController.text.trim();
+    if (name.isEmpty || _selectedCategoryId == null) return false;
+    // While the limit is locked its input is hidden, so only the name has
+    // to be valid.
+    if (_limitLocked) return true;
     final limit = int.tryParse(_limitController.text.trim()) ?? 0;
-    return name.isNotEmpty &&
-        _selectedCategoryId != null &&
-        limit > 0 &&
-        !_endDate.isBefore(_startDate);
+    return limit > 0;
   }
 
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    _startDate = DateTime(now.year, now.month, now.day);
-    _endDate = _startDate.add(const Duration(days: 7));
-
-    final target = widget.resetTarget;
+    final target = widget.editTarget;
     if (target != null) {
       _nameController.text = target.name;
       _selectedCategoryId = target.categoryId;
@@ -59,14 +60,17 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
     }
     _nameController.addListener(() => setState(() {}));
     _limitController.addListener(() => setState(() {}));
-    _loadCategories();
+    if (!_isEdit) _loadCategories();
   }
 
   Future<void> _loadCategories() async {
     final result = await getIt<GetCategoriesUseCase>().call();
     if (!mounted) return;
     result.when((categories) {
-      final enabled = categories.where((c) => c.isEnabled).toList();
+      // Budgets only cap expenses.
+      final enabled = categories
+          .where((c) => c.isEnabled && c.type == CategoryType.expense)
+          .toList();
       setState(() {
         _categories = enabled;
         _selectedCategoryId ??= enabled.isNotEmpty ? enabled.first.id : null;
@@ -96,49 +100,36 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
     super.dispose();
   }
 
-  Future<void> _pickDate({required bool isStart}) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: isStart ? _startDate : _endDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-    );
-    if (picked == null) return;
-    setState(() {
-      if (isStart) {
-        _startDate = picked;
-      } else {
-        _endDate = picked;
-      }
-    });
-  }
-
   Future<void> _onSave() async {
-    final params = CreateBudgetParams(
-      categoryId: _selectedCategoryId ?? '',
-      name: _nameController.text,
-      limit: int.tryParse(_limitController.text.trim()) ?? 0,
-      startDate: _startDate,
-      endDate: _endDate,
-    );
+    final limit = int.tryParse(_limitController.text.trim()) ?? 0;
 
-    final error = _isReset
-        ? await _controller.resetBudget(widget.resetTarget!.id, params)
-        : await _controller.createBudget(params);
+    final error = _isEdit
+        ? await _controller.updateBudget(
+            widget.editTarget!.id,
+            name: _nameController.text,
+            limit: _limitLocked ? null : limit,
+          )
+        : await _controller.createBudget(
+            CreateBudgetParams(
+              categoryId: _selectedCategoryId ?? '',
+              name: _nameController.text,
+              limit: limit,
+            ),
+          );
 
     if (!mounted) return;
     if (error != null) {
       CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
       return;
     }
-    Navigator.pop(context);
     final budgetName = _nameController.text.trim();
     CcSnackBarHelper.showSuccessSnackBar(
       context: context,
-      message: _isReset
+      message: _isEdit
           ? el.tr(CcLocaleKeys.budget_updated, namedArgs: {'name': budgetName})
           : el.tr(CcLocaleKeys.budget_added, namedArgs: {'name': budgetName}),
     );
+    Navigator.pop(context);
   }
 
   @override
@@ -156,8 +147,8 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CcText(
-            _isReset
-                ? el.tr(CcLocaleKeys.budget_reset_title)
+            _isEdit
+                ? el.tr(CcLocaleKeys.budget_edit_title)
                 : el.tr(CcLocaleKeys.budget_add_title),
             textStyle: context.ccTextTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
@@ -173,6 +164,7 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
+          if (!_isEdit) ...[
           const CcSpaceMD(),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,23 +179,26 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
               ),
               const CcSpaceSM(),
               HorizontalFadeScrollView(
-                height: context.respDim(80),
+                height: context.respDim(90),
                 builder: (scrollController) {
                   _categoryScrollController = scrollController;
                   return ListView.separated(
                   scrollDirection: Axis.horizontal,
                   controller: scrollController,
                   itemCount: _categories.length,
-                  separatorBuilder: (_, __) => const CcSpaceSM(),
+                  separatorBuilder: (_, _) => const CcSpaceSM(),
                   itemBuilder: (context, index) {
                     final cat = _categories[index];
                     final isSelected = _selectedCategoryId == cat.id;
                     return GestureDetector(
-                      onTap: () => setState(() => _selectedCategoryId = cat.id),
+                      onTap: _isEdit
+                          ? null
+                          : () =>
+                              setState(() => _selectedCategoryId = cat.id),
                       child: SizedBox(
                         width: context.respDim(68),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
@@ -261,37 +256,39 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
               ),
             ],
           ),
+          ], // end if (!_isEdit)
           const CcSpaceMD(),
-          TextField(
-            controller: _limitController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: el.tr(CcLocaleKeys.budget_limit),
-              hintText: el.tr(CcLocaleKeys.budget_limit_hint),
-              suffixText: 'đ',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          if (_limitLocked)
+            Row(
+              children: [
+                Icon(
+                  Icons.lock_clock_outlined,
+                  size: context.respIconSize(baseSize: 16),
+                  color: Colors.grey[600],
+                ),
+                const CcSpaceSM(),
+                Expanded(
+                  child: CcText(
+                    el.tr(CcLocaleKeys.budget_limit_locked),
+                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+              ],
+            )
+          else
+            TextField(
+              controller: _limitController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: el.tr(CcLocaleKeys.budget_limit),
+                hintText: el.tr(CcLocaleKeys.budget_limit_hint),
+                suffixText: 'đ',
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
             ),
-          ),
-          const CcSpaceMD(),
-          Row(
-            children: [
-              Expanded(
-                child: _DateField(
-                  label: el.tr(CcLocaleKeys.budget_start_date),
-                  date: _startDate,
-                  onTap: () => _pickDate(isStart: true),
-                ),
-              ),
-              const CcSpaceMD(),
-              Expanded(
-                child: _DateField(
-                  label: el.tr(CcLocaleKeys.budget_end_date),
-                  date: _endDate,
-                  onTap: () => _pickDate(isStart: false),
-                ),
-              ),
-            ],
-          ),
           const CcSpaceLG(),
           SizedBox(
             width: double.infinity,
@@ -316,35 +313,6 @@ class _BudgetFormSheetState extends State<BudgetFormSheet> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _DateField extends StatelessWidget {
-  final String label;
-  final DateTime date;
-  final VoidCallback onTap;
-
-  const _DateField({
-    required this.label,
-    required this.date,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-        child: CcText(
-          '${date.day}/${date.month}/${date.year}',
-          textStyle: context.ccTextTheme.bodyMedium,
-        ),
       ),
     );
   }
