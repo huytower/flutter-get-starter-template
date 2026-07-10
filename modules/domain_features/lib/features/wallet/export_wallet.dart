@@ -8,7 +8,7 @@ export 'domain/usecases/wallet_balance_calculator.dart';
 // Presentation
 export 'presentation/get_x/wallet_controller.dart';
 export 'presentation/pages/wallet_detail_page.dart';
-export 'presentation/pages/wallet_page.dart';
+export 'presentation/pages/budget_allocation_page.dart';
 export 'presentation/widgets/shimmer_wallet_card.dart';
 // Data
 export 'data/models/wallet_hive_model.dart';

@@ -11,14 +11,14 @@ import '../../../../core/navigation/domain_router.gr.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/add_wallet_sheet.dart';
+import '../widgets/budget_allocation_header.dart';
 import '../widgets/budget_preview_section.dart';
 import '../widgets/shimmer_wallet_card.dart';
-import '../widgets/wallet_header.dart';
 import '../widgets/wallet_strip.dart';
 
 @RoutePage()
-class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
-  const WalletPage({super.key});
+class BudgetAllocationPage extends CcGetView<WalletController> with CcPullRefreshMixin {
+  const BudgetAllocationPage({super.key});
 
   @override
   bool get enableAppBar => true;
@@ -27,7 +27,7 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
       title: CcText(
-        el.tr(CcLocaleKeys.nav_wallet),
+        'BudgetAllocation',
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.bold,
           color: context.ccColorScheme.onPrimary,
@@ -189,7 +189,7 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
                 controller.layoutStatus.value == CcLayoutStatus.loading;
             return ListView(
               children: [
-                const WalletHeader(),
+                const BudgetAllocationHeader(),
                 _buildWalletsSection(context, isLoading),
                 const BudgetPreviewSection(),
               ],

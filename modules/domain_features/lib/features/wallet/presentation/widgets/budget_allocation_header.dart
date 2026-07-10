@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 
 import '../get_x/wallet_controller.dart';
 
-class WalletHeader extends StatelessWidget {
-  const WalletHeader({super.key});
+class BudgetAllocationHeader extends StatelessWidget {
+  const BudgetAllocationHeader({super.key});
 
   @override
   Widget build(BuildContext context) {

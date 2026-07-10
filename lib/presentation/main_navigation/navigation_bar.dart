@@ -89,9 +89,9 @@ class _NavigationBarState extends State<NavigationBar>
   @override
   List<CcCurvedNavigationItem> get navigationItems => [
     CcCurvedNavigationItem(
-      inactiveIcon: Icons.account_balance_wallet_outlined,
-      activeIcon: Icons.account_balance_wallet_rounded,
-      label: el.tr(CcLocaleKeys.nav_wallet),
+      inactiveIcon: Icons.pie_chart_outline,
+      activeIcon: Icons.pie_chart,
+      label: 'BudgetAllocation',
     ),
     // Centre "＋" — opens the Chi/Thu entry form.
     CcCurvedNavigationItem(
@@ -127,7 +127,7 @@ class _NavigationBarState extends State<NavigationBar>
   Widget? _buildContentForIndex(int index) {
     switch (index) {
       case _indexWallet:
-        return const WalletPage();
+        return const BudgetAllocationPage();
       case _indexEntry:
         return TransactionPage();
       case _indexProfile:

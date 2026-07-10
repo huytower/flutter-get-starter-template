@@ -12,8 +12,8 @@ import '../widgets/budget_card.dart';
 import '../widgets/budget_form_sheet.dart';
 
 @RoutePage()
-class BudgetPage extends CcGetView<BudgetController> {
-  const BudgetPage({super.key});
+class BudgetManagementPage extends CcGetView<BudgetController> {
+  const BudgetManagementPage({super.key});
 
   @override
   bool get enableAppBar => true;

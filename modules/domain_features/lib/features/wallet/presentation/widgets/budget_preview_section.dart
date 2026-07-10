@@ -32,7 +32,7 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
   @override
   void initState() {
     super.initState();
-    // BudgetPage is no longer a top-level tab; ensure its controller is
+    // BudgetManagementPage is no longer a top-level tab; ensure its controller is
     // registered before the first reactive read in this widget.
     if (!Get.isRegistered<BudgetController>()) {
       Get.put(getIt<BudgetController>());
