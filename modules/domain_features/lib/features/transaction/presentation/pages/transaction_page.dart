@@ -17,10 +17,110 @@ class TransactionPage extends CcGetView<TransactionController> {
   const TransactionPage({super.key});
 
   @override
-  bool get enableAppBar => false;
+  bool get enableAppBar => true;
 
   @override
   bool get enableBottomNavigationBar => false;
+
+  @override
+  Widget buildView(BuildContext context) {
+    // Calling super to satisfy @mustCallSuper. We reconstruct the Scaffold
+    // locally because buildAppBar() in the framework lacks a BuildContext parameter,
+    // which is required for our responsive (context-dependent) height calculations.
+    super.buildView(context);
+
+    return Scaffold(
+      appBar: _buildAppBarWithContext(context),
+      body: onPageBodyWrapper(context, SafeArea(child: body)),
+      bottomNavigationBar: enableBottomNavigationBar
+          ? buildBottomNavigationBar()
+          : null,
+    );
+  }
+
+  PreferredSizeWidget _buildAppBarWithContext(BuildContext context) {
+    return PreferredSize(
+      preferredSize: Size.fromHeight(
+        context.respDim(95) + MediaQuery.of(context).padding.top,
+      ),
+      child: Container(
+        color: context.ccColorScheme.primary,
+        padding: EdgeInsets.only(
+          top:
+              MediaQuery.of(context).padding.top +
+              context.respPadding(CcPaddingParams.SPACE_MD),
+          left: context.respPadding(CcPaddingParams.SPACE_LG),
+          right: context.respPadding(CcPaddingParams.SPACE_LG),
+          bottom: context.respPadding(CcPaddingParams.SPACE_LG),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: CcText(
+                    el.tr(CcLocaleKeys.transaction_title),
+                    textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                      color: context.ccColorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                      fontSize: context.respFontSize(16),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () => _openHistory(context),
+                  borderRadius: BorderRadius.circular(context.respDim(20)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.history,
+                          size: context.respIconSize(baseSize: 18),
+                          color: context.ccColorScheme.onPrimary,
+                        ),
+                        const CcSpaceXS(),
+                        CcText(
+                          el.tr(CcLocaleKeys.transaction_history),
+                          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                            color: context.ccColorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: context.respFontSize(12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const CcSpaceSM(),
+            Obx(
+              () => Row(
+                children: [
+                  Icon(
+                    Icons.account_balance_wallet_outlined,
+                    size: context.respIconSize(baseSize: 14),
+                    color: context.ccColorScheme.onPrimary.withOpacity(0.8),
+                  ),
+                  const CcSpaceXS(),
+                  CcText(
+                    '${el.tr(CcLocaleKeys.transaction_wallet)}  ${formatVndShort(controller.walletTotal.value)}',
+                    textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                      color: context.ccColorScheme.onPrimary.withOpacity(0.9),
+                      fontWeight: FontWeight.w600,
+                      fontSize: context.respFontSize(13),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget? buildContent() {
@@ -29,25 +129,21 @@ class TransactionPage extends CcGetView<TransactionController> {
         return DefaultTabController(
           length: 3,
           child: FadePageWrapper(
-            child: Scaffold(
-              backgroundColor: context.ccColorScheme.surface,
-              body: Column(
-                children: [
-                  _buildTopNav(context),
-                  const CcSpaceMD(),
-                  _buildTabBar(context),
-                  const CcSpaceSM(),
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        ExpenseForm(onSaved: controller.refreshData),
-                        ReceiptForm(onSaved: controller.refreshData),
-                        TransferForm(onSaved: controller.refreshData),
-                      ],
-                    ),
+            child: Column(
+              children: [
+                const CcSpaceMD(),
+                _buildTabBar(context),
+                const CcSpaceSM(),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      ExpenseForm(onSaved: controller.refreshData),
+                      ReceiptForm(onSaved: controller.refreshData),
+                      TransferForm(onSaved: controller.refreshData),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         );
@@ -58,86 +154,9 @@ class TransactionPage extends CcGetView<TransactionController> {
   void _openHistory(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) =>
-            TransactionHistoryPage(initialTab: controller.selectedTabIndex.value),
-      ),
-    );
-  }
-
-  Widget _buildTopNav(BuildContext context) {
-    return Container(
-      color: context.ccColorScheme.primary,
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top +
-            context.respPadding(CcPaddingParams.SPACE_MD),
-        left: context.respPadding(CcPaddingParams.SPACE_LG),
-        right: context.respPadding(CcPaddingParams.SPACE_LG),
-        bottom: context.respPadding(CcPaddingParams.SPACE_LG),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: CcText(
-                  el.tr(CcLocaleKeys.transaction_title),
-                  textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                    color: context.ccColorScheme.onPrimary,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
-                    fontSize: context.respFontSize(16),
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () => _openHistory(context),
-                borderRadius: BorderRadius.circular(context.respDim(20)),
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.history,
-                        size: context.respIconSize(baseSize: 18),
-                        color: context.ccColorScheme.onPrimary,
-                      ),
-                      const CcSpaceXS(),
-                      CcText(
-                        el.tr(CcLocaleKeys.transaction_history),
-                        textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                          color: context.ccColorScheme.onPrimary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: context.respFontSize(12),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const CcSpaceSM(),
-          Obx(
-            () => Row(
-              children: [
-                Icon(
-                  Icons.account_balance_wallet_outlined,
-                  size: context.respIconSize(baseSize: 14),
-                  color: context.ccColorScheme.onPrimary.withOpacity(0.8),
-                ),
-                const CcSpaceXS(),
-                CcText(
-                  '${el.tr(CcLocaleKeys.transaction_wallet)}  ${formatVndShort(controller.walletTotal.value)}',
-                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                    color: context.ccColorScheme.onPrimary.withOpacity(0.9),
-                    fontWeight: FontWeight.w600,
-                    fontSize: context.respFontSize(13),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        builder: (_) => TransactionHistoryPage(
+          initialTab: controller.selectedTabIndex.value,
+        ),
       ),
     );
   }
@@ -158,7 +177,9 @@ class TransactionPage extends CcGetView<TransactionController> {
       decoration: BoxDecoration(
         color: context.ccColorScheme.onPrimary.withOpacity(0.15),
         borderRadius: BorderRadius.circular(context.respDim(12)),
-        border: Border.all(color: context.ccColorScheme.onPrimary.withOpacity(0.2)),
+        border: Border.all(
+          color: context.ccColorScheme.onPrimary.withOpacity(0.2),
+        ),
       ),
       child: Column(
         children: [
