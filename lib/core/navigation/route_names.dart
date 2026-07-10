@@ -25,7 +25,7 @@ enum AppRoute {
   walletDetail,
   transaction,
   transactionDetail,
-  budget,
+  budgetLimit,
   reconcile,
   report,
 }

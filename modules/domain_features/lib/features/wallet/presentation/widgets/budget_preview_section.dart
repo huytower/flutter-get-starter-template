@@ -7,17 +7,17 @@ import 'package:get/get.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../../core/util/icon_utils.dart';
-import '../../../budget/domain/entities/budget_stats_entity.dart';
-import '../../../budget/domain/usecases/sort_budgets_by_limit_usecase.dart';
-import '../../../budget/presentation/get_x/budget_controller.dart';
-import '../../../budget/presentation/widgets/budget_form_sheet.dart';
+import '../../../budget_limit/domain/entities/budget_limit_stats_entity.dart';
+import '../../../budget_limit/domain/usecases/sort_budget_limits_by_limit_usecase.dart';
+import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
+import '../../../budget_limit/presentation/widgets/budget_limit_form_sheet.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 
 /// Inline budget summary shown below the wallet strip on the Phân bổ tab.
 ///
 /// Loads categories once on first build to resolve icons. The budget data comes
-/// directly from the already-registered [BudgetController].
+/// directly from the already-registered [BudgetLimitController].
 class BudgetPreviewSection extends StatefulWidget {
   const BudgetPreviewSection({super.key});
 
@@ -32,10 +32,10 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
   @override
   void initState() {
     super.initState();
-    // BudgetManagementPage is no longer a top-level tab; ensure its controller is
+    // BudgetLimitManagementPage is no longer a top-level tab; ensure its controller is
     // registered before the first reactive read in this widget.
-    if (!Get.isRegistered<BudgetController>()) {
-      Get.put(getIt<BudgetController>());
+    if (!Get.isRegistered<BudgetLimitController>()) {
+      Get.put(getIt<BudgetLimitController>());
     }
     _loadCategories();
   }
@@ -93,7 +93,8 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
                   ),
                   SizedBox(width: context.respDim(8)),
                   GestureDetector(
-                    onTap: () => context.router.push(const BudgetRoute()),
+                    onTap: () =>
+                        context.router.push(const BudgetLimitManagementRoute()),
                     child: CcText(
                       el.tr(CcLocaleKeys.budget_see_all),
                       textStyle: context.ccTextTheme.labelMedium?.copyWith(
@@ -109,8 +110,10 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
         ),
         Obx(() {
           // Overview shows only the 4 budgets with the highest limit.
-          final budgets = getIt<SortBudgetsByLimitUseCase>()
-              .call(Get.find<BudgetController>().budgets, limit: 4);
+          final budgets = getIt<SortBudgetLimitsByLimitUseCase>().call(
+            Get.find<BudgetLimitController>().budgets,
+            limit: 4,
+          );
           if (budgets.isEmpty) {
             return Padding(
               padding: EdgeInsets.symmetric(
@@ -156,7 +159,7 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
     );
   }
 
-  Widget _buildCard(BuildContext context, BudgetStatsEntity stats) {
+  Widget _buildCard(BuildContext context, BudgetLimitStatsEntity stats) {
     return SizedBox(
       height: context.respDim(150),
       child: _BudgetPreviewCard(
@@ -174,19 +177,20 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => const BudgetFormSheet(),
+      builder: (_) => const BudgetLimitFormSheet(),
     );
   }
 }
 
 class _BudgetPreviewCard extends StatelessWidget {
-  final BudgetStatsEntity stats;
+  final BudgetLimitStatsEntity stats;
   final CategoryEntity? category;
 
   const _BudgetPreviewCard({required this.stats, this.category});
 
   static String _fmtShort(int value) {
-    if (value >= 1000000000) return '${(value / 1000000000).toStringAsFixed(1)}tỷ đ';
+    if (value >= 1000000000)
+      return '${(value / 1000000000).toStringAsFixed(1)}tỷ đ';
     if (value >= 1000000) return '${(value / 1000000).toStringAsFixed(1)}tr đ';
     if (value >= 1000) return '${(value / 1000).toStringAsFixed(0)}k đ';
     return '$value đ';

@@ -21,8 +21,8 @@ export 'features/wallet/domain/repositories/wallet_repository.dart';
 export 'features/wallet/export_wallet.dart';
 // Category
 export 'features/category/export_category.dart';
-// Budget
-export 'features/budget/export_budget.dart';
+// Budget Limit
+export 'features/budget_limit/export_budget_limit.dart';
 // Reconciliation
 export 'features/reconciliation/export_reconciliation.dart';
 // Report

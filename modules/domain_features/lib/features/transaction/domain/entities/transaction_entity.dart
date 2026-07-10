@@ -24,7 +24,7 @@ class TransactionEntity extends Equatable {
   /// FK to the owning [CategoryEntity] (used for budget aggregation).
   final String categoryId;
 
-  /// FK to the [BudgetEntity] this expense counts against (nullable).
+  /// FK to the [BudgetLimitEntity] this expense counts against (nullable).
   final String? budgetId;
 
   final String? note;
@@ -53,8 +53,7 @@ class TransactionEntity extends Equatable {
 
   /// True for either leg of a transfer.
   bool get isTransfer =>
-      type == TransactionType.transferOut ||
-      type == TransactionType.transferIn;
+      type == TransactionType.transferOut || type == TransactionType.transferIn;
 
   bool get isDeleted => deletedAt != null;
 

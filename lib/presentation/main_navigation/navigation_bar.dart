@@ -76,8 +76,8 @@ class _NavigationBarState extends State<NavigationBar>
       if (Get.isRegistered<WalletController>()) {
         Get.find<WalletController>().loadWallets(showLoading: false);
       }
-      if (Get.isRegistered<BudgetController>()) {
-        Get.find<BudgetController>().loadBudgets(showLoading: false);
+      if (Get.isRegistered<BudgetLimitController>()) {
+        Get.find<BudgetLimitController>().loadBudgets(showLoading: false);
       }
     }
     if (index == _indexEntry && Get.isRegistered<TransactionController>()) {

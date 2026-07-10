@@ -43,7 +43,10 @@ class AppRouter extends RootStackRouter {
     ),
     AutoRoute(page: CommentRoute.page, path: AppRoute.comment.path),
     AutoRoute(page: CommentDetailRoute.page, path: AppRoute.commentDetail.path),
-    AutoRoute(page: BudgetRoute.page, path: AppRoute.budget.path),
+    AutoRoute(
+      page: BudgetLimitManagementRoute.page,
+      path: AppRoute.budgetLimit.path,
+    ),
     AutoRoute(page: ReconcileRoute.page, path: AppRoute.reconcile.path),
     AutoRoute(page: ReportRoute.page, path: AppRoute.report.path),
 
