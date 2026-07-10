@@ -6,6 +6,8 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../wallet/domain/entities/wallet_entity.dart';
+import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
@@ -19,10 +21,11 @@ class TransactionBinding extends Bindings {
 
 @injectable
 class TransactionController extends CcGetController with PaginationMixin {
-  TransactionController(this._repository, this._getWalletBalances);
+  TransactionController(this._repository, this._getWalletBalances, this._walletRepository);
 
   final TransactionRepository _repository;
   final GetWalletBalancesUseCase _getWalletBalances;
+  final WalletRepository _walletRepository;
 
   final RxInt selectedTabIndex = 0.obs;
   final transactions = <TransactionEntity>[].obs;
@@ -33,6 +36,10 @@ class TransactionController extends CcGetController with PaginationMixin {
   /// Loading flag for the history list. The entry screen is always shown, so
   /// history uses this instead of [layoutStatus] (which stays `success`).
   final RxBool isLoading = false.obs;
+
+  /// Shared wallet list for all forms to avoid duplicate API calls
+  final RxList<WalletEntity> wallets = <WalletEntity>[].obs;
+  final RxBool isLoadingWallets = false.obs;
 
   void setTabIndex(int index) {
     selectedTabIndex.value = index;
@@ -46,6 +53,17 @@ class TransactionController extends CcGetController with PaginationMixin {
     layoutStatus.value = CcLayoutStatus.success;
     initPagination(initialItemsPerPage: 20);
     refreshWalletTotal();
+    loadWallets();
+  }
+
+  Future<void> loadWallets() async {
+    isLoadingWallets.value = true;
+    final result = await _walletRepository.getWallets();
+    isLoadingWallets.value = false;
+    result.when(
+      (walletList) => wallets.assignAll(walletList),
+      (_) {},
+    );
   }
 
   Future<void> refreshWalletTotal() async {

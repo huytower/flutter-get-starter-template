@@ -5,6 +5,7 @@ import 'package:domain_features/export_domain_features.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:theme/data/data_source/color/prj_color.dart';
 
 import 'logic/navigation_logic_mixin.dart';
 import 'tabs/profile_tab_content.dart';
@@ -49,6 +50,15 @@ class _NavigationBarState extends State<NavigationBar>
 
   @override
   bool get shouldEnableDoubleBackToExit => currentIndex == _indexEntry;
+
+  @override
+  Color? get navigationActiveColor => PrjColors.primary;
+
+  @override
+  Color? get navigationActiveIconColor => PrjColors.onPrimary;
+
+  @override
+  Color? get navigationFabColor => PrjColors.primary;
 
   @override
   String get backPressMessage => el.tr('common.press_back_again_to_exit');
@@ -119,11 +129,11 @@ class _NavigationBarState extends State<NavigationBar>
       case _indexWallet:
         return const WalletPage();
       case _indexEntry:
-        return const TransactionPage();
+        return TransactionPage();
       case _indexProfile:
         return const ProfileTabContent();
       default:
-        return const TransactionPage();
+        return TransactionPage();
     }
   }
 

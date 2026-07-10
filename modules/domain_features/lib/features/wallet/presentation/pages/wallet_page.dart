@@ -3,6 +3,7 @@ import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
@@ -25,20 +26,34 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
-      title: Builder(
-        builder: (context) => CcText(
-          el.tr(CcLocaleKeys.nav_wallet),
-          textStyle: context.ccTextTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+      title: CcText(
+        el.tr(CcLocaleKeys.nav_wallet),
+        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: context.ccColorScheme.onPrimary,
+        ),
+      ),
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              context.ccColorScheme.primary,
+              context.ccColorScheme.primaryContainer,
+            ],
           ),
         ),
       ),
-      backgroundColor: Get.context?.ccColorScheme.background,
       elevation: 0,
       actions: [
         Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.fact_check_outlined),
+            icon: Icon(
+              Icons.fact_check_outlined,
+              color: context.ccColorScheme.onPrimary,
+            ),
             tooltip: 'Đối soát',
             onPressed: () => context.router.push(const ReconcileRoute()),
           ),

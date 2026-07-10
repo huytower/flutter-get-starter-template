@@ -2,29 +2,32 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/util/horizontal_fade_scroll_view.dart';
 import '../../../../core/util/icon_utils.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
-import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
+import '../get_x/transaction_controller.dart';
 import 'category_selection_section.dart';
 import 'income_quick_amounts.dart';
 import 'money_keypad_panel.dart';
 
-class ReceiptForm extends StatefulWidget {
+class IncomeForm extends StatefulWidget {
   final VoidCallback? onSaved;
+  final GlobalKey<IncomeFormState>? formKey;
 
-  const ReceiptForm({super.key, this.onSaved});
+  const IncomeForm({super.key, this.onSaved, this.formKey});
 
   @override
-  State<ReceiptForm> createState() => _ReceiptFormState();
+  IncomeFormState createState() => IncomeFormState();
 }
 
-class _ReceiptFormState extends State<ReceiptForm> {
-  static const Color _accent = Color(0xFF13C07F);
+class IncomeFormState extends State<IncomeForm> {
+  Color get _accent => PrjColors.success;
 
   /// Age-based suggestions (see [IncomeQuickAmounts]); resolved in initState.
   List<int> _quickAmounts = IncomeQuickAmounts.fallback;
@@ -45,7 +48,7 @@ class _ReceiptFormState extends State<ReceiptForm> {
   @override
   void initState() {
     super.initState();
-    _loadWallets();
+    _loadWalletsFromController();
     _loadSuggestions();
   }
 
@@ -64,15 +67,23 @@ class _ReceiptFormState extends State<ReceiptForm> {
     super.dispose();
   }
 
-  Future<void> _loadWallets() async {
-    final result = await getIt<WalletRepository>().getWallets();
-    if (!mounted) return;
-    result.when((wallets) {
-      setState(() {
-        _wallets = wallets;
-        _selectedWalletId = wallets.isNotEmpty ? wallets.first.id : null;
-      });
-    }, (_) {});
+  void _loadWalletsFromController() {
+    // Use shared wallet data from controller to avoid duplicate API calls
+    final controller = Get.find<TransactionController>();
+    _wallets = controller.wallets;
+    _selectedWalletId = _wallets.isNotEmpty ? _wallets.first.id : null;
+
+    // Listen to wallet changes
+    ever(controller.wallets, (wallets) {
+      if (mounted) {
+        setState(() {
+          _wallets = wallets;
+          if (_selectedWalletId == null && wallets.isNotEmpty) {
+            _selectedWalletId = wallets.first.id;
+          }
+        });
+      }
+    });
   }
 
   void _onKeyPress(String key) {
@@ -182,6 +193,13 @@ class _ReceiptFormState extends State<ReceiptForm> {
     });
   }
 
+  /// Public method to submit the form (called from app bar)
+  void submitForm() {
+    if (_canSubmit && !_isSubmitting) {
+      _onSubmit();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -211,8 +229,7 @@ class _ReceiptFormState extends State<ReceiptForm> {
                   const CcSpaceLG(),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal:
-                          context.respPadding(CcPaddingParams.PAGE_SM),
+                      horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,7 +298,10 @@ class _ReceiptFormState extends State<ReceiptForm> {
               child: GestureDetector(
                 onTap: () => setState(() => _amountStr = amount.toString()),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: _accent.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(20),
@@ -408,8 +428,7 @@ class _ReceiptFormState extends State<ReceiptForm> {
                       CcText(
                         wallet.name,
                         textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                          color:
-                              isSelected ? Colors.white : Colors.grey[800],
+                          color: isSelected ? Colors.white : Colors.grey[800],
                           fontWeight: isSelected
                               ? FontWeight.bold
                               : FontWeight.normal,

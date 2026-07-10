@@ -15,6 +15,6 @@ class HomePage extends CcGetView<HomeController> {
 
   @override
   Widget? buildContent(BuildContext context) {
-    return const TransactionPage();
+    return TransactionPage();
   }
 }

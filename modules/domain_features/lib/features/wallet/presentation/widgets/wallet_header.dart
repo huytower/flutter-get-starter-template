@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../get_x/wallet_controller.dart';
 
 class WalletHeader extends StatelessWidget {
@@ -22,7 +23,14 @@ class WalletHeader extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_LG)),
         decoration: BoxDecoration(
-          color: context.ccColorScheme.primary,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              context.ccColorScheme.primary,
+              context.ccColorScheme.primaryContainer,
+            ],
+          ),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(

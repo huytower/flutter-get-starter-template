@@ -2,27 +2,29 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/util/horizontal_fade_scroll_view.dart';
 import '../../../../core/util/icon_utils.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
-import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
+import '../get_x/transaction_controller.dart';
 import 'category_selection_section.dart';
 import 'money_keypad_panel.dart';
 
 class ExpenseForm extends StatefulWidget {
   final VoidCallback? onSaved;
+  final GlobalKey<ExpenseFormState>? formKey;
 
-  const ExpenseForm({super.key, this.onSaved});
+  const ExpenseForm({super.key, this.onSaved, this.formKey});
 
   @override
-  State<ExpenseForm> createState() => _ExpenseFormState();
+  ExpenseFormState createState() => ExpenseFormState();
 }
 
-class _ExpenseFormState extends State<ExpenseForm> {
-  static const Color _accent = Color(0xFFE54D42);
+class ExpenseFormState extends State<ExpenseForm> {
+  Color get _accent => context.ccColorScheme.error;
 
   static const List<int> _quickAmounts = [
     10000,
@@ -53,7 +55,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
   @override
   void initState() {
     super.initState();
-    _loadWallets();
+    _loadWalletsFromController();
   }
 
   @override
@@ -63,15 +65,23 @@ class _ExpenseFormState extends State<ExpenseForm> {
     super.dispose();
   }
 
-  Future<void> _loadWallets() async {
-    final result = await getIt<WalletRepository>().getWallets();
-    if (!mounted) return;
-    result.when((wallets) {
-      setState(() {
-        _wallets = wallets;
-        _selectedWalletId = wallets.isNotEmpty ? wallets.first.id : null;
-      });
-    }, (_) {});
+  void _loadWalletsFromController() {
+    // Use shared wallet data from controller to avoid duplicate API calls
+    final controller = Get.find<TransactionController>();
+    _wallets = controller.wallets;
+    _selectedWalletId = _wallets.isNotEmpty ? _wallets.first.id : null;
+
+    // Listen to wallet changes
+    ever(controller.wallets, (wallets) {
+      if (mounted) {
+        setState(() {
+          _wallets = wallets;
+          if (_selectedWalletId == null && wallets.isNotEmpty) {
+            _selectedWalletId = wallets.first.id;
+          }
+        });
+      }
+    });
   }
 
   void _onKeyPress(String key) {
@@ -182,6 +192,12 @@ class _ExpenseFormState extends State<ExpenseForm> {
     });
   }
 
+  /// Public method to submit the form (called from app bar)
+  void submitForm() {
+    if (_canSubmit && !_isSubmitting) {
+      _onSubmit();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,8 +227,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   const CcSpaceLG(),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal:
-                          context.respPadding(CcPaddingParams.PAGE_SM),
+                      horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,7 +296,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
               child: GestureDetector(
                 onTap: () => setState(() => _amountStr = amount.toString()),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: _accent.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(20),

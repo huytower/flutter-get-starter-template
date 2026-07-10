@@ -16,9 +16,9 @@ abstract final class PrjColors {
   // ===========================================================================
   // BRAND & PRIMARY
   // ===========================================================================
-  static const Color primary = CcBaseColors.brand500;
+  static const Color primary = CcBaseColors.teal600;
   static const Color onPrimary = CcBaseColors.white100;
-  static const Color primaryContainer = CcBaseColors.brand300;
+  static const Color primaryContainer = CcBaseColors.emerald500;
   static const Color darkPrimaryContainer = CcBaseColors.gray700;
   static const Color onPrimaryContainer = CcBaseColors.neutral100;
   static const Color primaryPressed = CcBaseColors.brand600;

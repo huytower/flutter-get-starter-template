@@ -2,19 +2,25 @@ import 'package:auto_route/annotations.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/util/money_format.dart';
 import '../get_x/transaction_controller.dart';
 import '../widgets/expense_form.dart';
-import '../widgets/receipt_form.dart';
+import '../widgets/income_form.dart';
 import '../widgets/transfer_form.dart';
 import 'transaction_history_page.dart';
 
 @RoutePage()
 class TransactionPage extends CcGetView<TransactionController> {
-  const TransactionPage({super.key});
+  TransactionPage({super.key});
+
+  final _expenseFormKey = GlobalKey<ExpenseFormState>();
+  final _incomeFormKey = GlobalKey<IncomeFormState>();
+  final _transferFormKey = GlobalKey<TransferFormState>();
 
   @override
   bool get enableAppBar => true;
@@ -23,103 +29,121 @@ class TransactionPage extends CcGetView<TransactionController> {
   bool get enableBottomNavigationBar => false;
 
   @override
-  Widget buildView(BuildContext context) {
-    // Calling super to satisfy @mustCallSuper. We reconstruct the Scaffold
-    // locally because buildAppBar() in the framework lacks a BuildContext parameter,
-    // which is required for our responsive (context-dependent) height calculations.
-    super.buildView(context);
-
-    return Scaffold(
-      appBar: _buildAppBarWithContext(context),
-      body: onPageBodyWrapper(
-        context,
-        buildContent(context) ?? const SizedBox.shrink(),
-      ),
-      bottomNavigationBar: enableBottomNavigationBar
-          ? buildBottomNavigationBar(context)
-          : null,
-    );
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
+    return _buildAppBarWithContext(context);
   }
 
   PreferredSizeWidget _buildAppBarWithContext(BuildContext context) {
     return PreferredSize(
       preferredSize: Size.fromHeight(
-        context.respDim(95) + MediaQuery.of(context).padding.top,
+        context.respDim(100) + MediaQuery.of(context).padding.top,
       ),
-      child: Container(
-        color: context.ccColorScheme.primary,
-        padding: EdgeInsets.only(
-          top:
-              MediaQuery.of(context).padding.top +
-              context.respPadding(CcPaddingParams.SPACE_MD),
-          left: context.respPadding(CcPaddingParams.SPACE_LG),
-          right: context.respPadding(CcPaddingParams.SPACE_LG),
-          bottom: context.respPadding(CcPaddingParams.SPACE_LG),
-        ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: CcText(
-                    el.tr(CcLocaleKeys.transaction_title),
-                    textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                      color: context.ccColorScheme.onPrimary,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                      fontSize: context.respFontSize(16),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () => _openHistory(context),
-                  borderRadius: BorderRadius.circular(context.respDim(20)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.history,
-                          size: context.respIconSize(baseSize: 18),
-                          color: context.ccColorScheme.onPrimary,
-                        ),
-                        const CcSpaceXS(),
-                        CcText(
-                          el.tr(CcLocaleKeys.transaction_history),
-                          textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                            color: context.ccColorScheme.onPrimary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: context.respFontSize(12),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                context.ccColorScheme.primary,
+                context.ccColorScheme.primaryContainer,
               ],
             ),
-            const CcSpaceSM(),
-            Obx(
-              () => Row(
+          ),
+          padding: EdgeInsets.only(
+            top:
+                MediaQuery.of(context).padding.top +
+                context.respPadding(CcPaddingParams.SPACE_MD),
+            left: context.respPadding(CcPaddingParams.SPACE_LG),
+            right: context.respPadding(CcPaddingParams.SPACE_LG),
+            bottom: context.respPadding(CcPaddingParams.SPACE_LG),
+          ),
+          child: Column(
+            children: [
+              Row(
                 children: [
-                  Icon(
-                    Icons.account_balance_wallet_outlined,
-                    size: context.respIconSize(baseSize: 14),
-                    color: context.ccColorScheme.onPrimary.withOpacity(0.8),
+                  Expanded(
+                    child: CcText(
+                      el.tr(CcLocaleKeys.transaction_title),
+                      textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                        color: context.ccColorScheme.onPrimary,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                        fontSize: context.respFontSize(16),
+                      ),
+                    ),
+                  ),
+                  Obx(
+                    () => IconButton(
+                      onPressed: _submitCurrentForm,
+                      icon: Icon(
+                        Icons.check_circle_outline_rounded,
+                        size: context.respIconSize(baseSize: 24),
+                        color: _getTabColor(
+                          context,
+                          controller.selectedTabIndex.value,
+                        ),
+                      ),
+                      padding: EdgeInsets.zero,
+                      constraints: BoxConstraints(
+                        minWidth: context.respDim(40),
+                        minHeight: context.respDim(40),
+                      ),
+                    ),
                   ),
                   const CcSpaceXS(),
-                  CcText(
-                    '${el.tr(CcLocaleKeys.transaction_wallet)}  ${formatVndShort(controller.walletTotal.value)}',
-                    textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                      color: context.ccColorScheme.onPrimary.withOpacity(0.9),
-                      fontWeight: FontWeight.w600,
-                      fontSize: context.respFontSize(13),
+                  InkWell(
+                    onTap: () => _openHistory(context),
+                    borderRadius: BorderRadius.circular(context.respDim(20)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.history,
+                            size: context.respIconSize(baseSize: 18),
+                            color: context.ccColorScheme.onPrimary,
+                          ),
+                          const CcSpaceXS(),
+                          CcText(
+                            el.tr(CcLocaleKeys.transaction_history),
+                            textStyle: context.ccTextTheme.labelMedium
+                                ?.copyWith(
+                                  color: context.ccColorScheme.onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: context.respFontSize(12),
+                                ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
+              const CcSpaceSM(),
+              Obx(
+                () => Row(
+                  children: [
+                    Icon(
+                      Icons.account_balance_wallet_outlined,
+                      size: context.respIconSize(baseSize: 14),
+                      color: context.ccColorScheme.onPrimary.withOpacity(0.8),
+                    ),
+                    const CcSpaceXS(),
+                    CcText(
+                      '${el.tr(CcLocaleKeys.transaction_wallet)}  ${formatVndShort(controller.walletTotal.value)}',
+                      textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                        color: context.ccColorScheme.onPrimary.withOpacity(0.9),
+                        fontWeight: FontWeight.w600,
+                        fontSize: context.respFontSize(13),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -140,9 +164,18 @@ class TransactionPage extends CcGetView<TransactionController> {
                 Expanded(
                   child: TabBarView(
                     children: [
-                      ExpenseForm(onSaved: controller.refreshData),
-                      ReceiptForm(onSaved: controller.refreshData),
-                      TransferForm(onSaved: controller.refreshData),
+                      ExpenseForm(
+                        onSaved: controller.refreshData,
+                        formKey: _expenseFormKey,
+                      ),
+                      IncomeForm(
+                        onSaved: controller.refreshData,
+                        formKey: _incomeFormKey,
+                      ),
+                      TransferForm(
+                        onSaved: controller.refreshData,
+                        formKey: _transferFormKey,
+                      ),
                     ],
                   ),
                 ),
@@ -164,61 +197,26 @@ class TransactionPage extends CcGetView<TransactionController> {
     );
   }
 
-  Widget _buildWalletChip(
-    BuildContext context,
-    IconData icon,
-    String label,
-    String amount,
-    Color iconColor,
-  ) {
-    return Container(
-      width: context.respDim(105),
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
-        vertical: context.respPadding(CcPaddingParams.SPACE_XS),
-      ),
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.onPrimary.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(context.respDim(12)),
-        border: Border.all(
-          color: context.ccColorScheme.onPrimary.withOpacity(0.2),
-        ),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: context.respIconSize(baseSize: 14),
-                color: iconColor,
-              ),
-              const CcSpaceXS(),
-              CcText(
-                label,
-                textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                  fontSize: context.respFontSize(9),
-                  fontWeight: FontWeight.bold,
-                  color: context.ccColorScheme.onPrimary.withOpacity(0.9),
-                ),
-              ),
-            ],
-          ),
-          const CcSpaceXS(),
-          CcText(
-            amount,
-            align: Alignment.center,
-            textAlign: TextAlign.center,
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: context.ccColorScheme.onPrimary,
-              fontSize: context.respFontSize(15),
-            ),
-          ),
-        ],
-      ),
-    );
+  void _submitCurrentForm() {
+    switch (controller.selectedTabIndex.value) {
+      case 0:
+        _expenseFormKey.currentState?.submitForm();
+        break;
+      case 1:
+        _incomeFormKey.currentState?.submitForm();
+        break;
+      case 2:
+        _transferFormKey.currentState?.submitForm();
+        break;
+    }
+  }
+
+  Color _getTabColor(BuildContext context, int index) {
+    return switch (index) {
+      0 => context.ccColorScheme.error,
+      2 => context.ccColorScheme.secondary,
+      _ => PrjColors.success,
+    };
   }
 
   Widget _buildTabBar(BuildContext context) {
@@ -247,11 +245,7 @@ class TransactionPage extends CcGetView<TransactionController> {
               ),
             ],
           ),
-          labelColor: switch (controller.selectedTabIndex.value) {
-            0 => context.ccColorScheme.error,
-            2 => const Color(0xFF2F80ED),
-            _ => context.ccColorScheme.primary,
-          },
+          labelColor: _getTabColor(context, controller.selectedTabIndex.value),
           unselectedLabelColor: context.ccColorScheme.onSurfaceVariant,
           labelStyle: context.ccTextTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,

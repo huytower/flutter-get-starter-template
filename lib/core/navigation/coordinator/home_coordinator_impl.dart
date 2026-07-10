@@ -23,6 +23,6 @@ class HomeCoordinatorImpl implements HomeCoordinator {
 
   @override
   void navigateToTransaction(BuildContext context) {
-    context.router.push(const TransactionRoute());
+    context.router.push(TransactionRoute());
   }
 }

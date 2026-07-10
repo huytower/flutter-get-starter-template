@@ -115,11 +115,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [CcBaseColors.brand600, CcBaseColors.brand500],
+          colors: [
+            context.ccColorScheme.primary,
+            context.ccColorScheme.primaryContainer,
+          ],
         ),
       ),
       child: SafeArea(
@@ -189,41 +192,46 @@ class _ProfilePageState extends State<ProfilePage> {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: context.ccColorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(context.respDim(CcCircularParams.CARD)),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(context.respDim(CcCircularParams.CARD)),
-        child: IntrinsicHeight(
-        child: Row(
-          children: [
-            Expanded(
-              child: _buildStatCell(
-                context,
-                icon: Icons.access_time_rounded,
-                label: el.tr(CcLocaleKeys.profile_weekly_audit),
-                value: el.tr(
-                  CcLocaleKeys.profile_days_left,
-                  namedArgs: {'count': '$_daysToSunday'},
-                ),
-                valueColor: context.ccColorScheme.primary,
-              ),
-            ),
-            Expanded(
-              child: _buildStatCell(
-                context,
-                icon: Icons.lock_rounded,
-                label: el.tr(CcLocaleKeys.profile_debt_loan),
-                value: el.tr(
-                  CcLocaleKeys.profile_unlock_at_lv,
-                  namedArgs: {'level': '3'},
-                ),
-                valueColor: context.ccColorScheme.onSurfaceVariant.withOpacity(0.5),
-                isLocked: true,
-              ),
-            ),
-          ],
+        borderRadius: BorderRadius.circular(
+          context.respDim(CcCircularParams.CARD),
         ),
       ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(
+          context.respDim(CcCircularParams.CARD),
+        ),
+        child: IntrinsicHeight(
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildStatCell(
+                  context,
+                  icon: Icons.access_time_rounded,
+                  label: el.tr(CcLocaleKeys.profile_weekly_audit),
+                  value: el.tr(
+                    CcLocaleKeys.profile_days_left,
+                    namedArgs: {'count': '$_daysToSunday'},
+                  ),
+                  valueColor: context.ccColorScheme.primary,
+                ),
+              ),
+              Expanded(
+                child: _buildStatCell(
+                  context,
+                  icon: Icons.lock_rounded,
+                  label: el.tr(CcLocaleKeys.profile_debt_loan),
+                  value: el.tr(
+                    CcLocaleKeys.profile_unlock_at_lv,
+                    namedArgs: {'level': '3'},
+                  ),
+                  valueColor: context.ccColorScheme.onSurfaceVariant
+                      .withOpacity(0.5),
+                  isLocked: true,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -247,7 +255,11 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           Align(
             alignment: Alignment.center,
-            child: Icon(icon, size: context.respIconSize(baseSize: 18), color: iconColor),
+            child: Icon(
+              icon,
+              size: context.respIconSize(baseSize: 18),
+              color: iconColor,
+            ),
           ),
           SizedBox(height: context.respDim(4)),
           CcText(
@@ -303,9 +315,7 @@ class _ProfilePageState extends State<ProfilePage> {
         icon: Icons.tune_rounded,
         label: el.tr(CcLocaleKeys.category_settings_title),
         onTap: () => Navigator.of(context).push(
-          MaterialPageRoute<bool>(
-            builder: (_) => const CategorySettingsPage(),
-          ),
+          MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),
         ),
       ),
       Obx(
@@ -408,10 +418,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String _displayName(BuildContext context, CcUserEntity? user) {
     if (user == null) return el.tr(CcLocaleKeys.profile_guest);
-    final parts = [user.firstName, user.lastName]
-        .whereType<String>()
-        .where((s) => s.isNotEmpty)
-        .join(' ');
+    final parts = [
+      user.firstName,
+      user.lastName,
+    ].whereType<String>().where((s) => s.isNotEmpty).join(' ');
     return parts.isNotEmpty ? parts : user.email;
   }
 }

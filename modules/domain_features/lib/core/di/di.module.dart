@@ -280,6 +280,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i631.CcDeviceInfoHelper>(),
           gh<_i727.AuthCoordinator>(),
         ));
+    gh.factory<_i700.TransactionController>(() => _i700.TransactionController(
+          gh<_i1027.TransactionRepository>(),
+          gh<_i167.GetWalletBalancesUseCase>(),
+          gh<_i572.WalletRepository>(),
+        ));
     gh.factory<_i353.ReportController>(() => _i353.ReportController(
           gh<_i169.GetCategorySpendingUseCase>(),
           gh<_i850.GetMonthlySummaryUseCase>(),
@@ -294,10 +299,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
             ));
-    gh.factory<_i700.TransactionController>(() => _i700.TransactionController(
-          gh<_i1027.TransactionRepository>(),
-          gh<_i167.GetWalletBalancesUseCase>(),
-        ));
     gh.factory<_i1051.ReconciliationController>(
         () => _i1051.ReconciliationController(
               gh<_i167.GetWalletBalancesUseCase>(),

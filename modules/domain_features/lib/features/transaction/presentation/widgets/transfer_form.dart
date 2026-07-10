@@ -1,26 +1,28 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/util/horizontal_fade_scroll_view.dart';
 import '../../../../core/util/icon_utils.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
-import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/create_transfer_usecase.dart';
+import '../get_x/transaction_controller.dart';
 import 'money_keypad_panel.dart';
 
 class TransferForm extends StatefulWidget {
   final VoidCallback? onSaved;
+  final GlobalKey<TransferFormState>? formKey;
 
-  const TransferForm({super.key, this.onSaved});
+  const TransferForm({super.key, this.onSaved, this.formKey});
 
   @override
-  State<TransferForm> createState() => _TransferFormState();
+  TransferFormState createState() => TransferFormState();
 }
 
-class _TransferFormState extends State<TransferForm> {
-  static const Color _accent = Color(0xFF2F80ED);
+class TransferFormState extends State<TransferForm> {
+  Color get _accent => context.ccColorScheme.secondary;
 
   static const List<int> _quickAmounts = [
     10000,
@@ -50,7 +52,7 @@ class _TransferFormState extends State<TransferForm> {
   @override
   void initState() {
     super.initState();
-    _loadWallets();
+    _loadWalletsFromController();
   }
 
   @override
@@ -60,16 +62,27 @@ class _TransferFormState extends State<TransferForm> {
     super.dispose();
   }
 
-  Future<void> _loadWallets() async {
-    final result = await getIt<WalletRepository>().getWallets();
-    if (!mounted) return;
-    result.when((wallets) {
-      setState(() {
-        _wallets = wallets;
-        _fromWalletId = wallets.isNotEmpty ? wallets.first.id : null;
-        _toWalletId = wallets.length > 1 ? wallets[1].id : null;
-      });
-    }, (_) {});
+  void _loadWalletsFromController() {
+    // Use shared wallet data from controller to avoid duplicate API calls
+    final controller = Get.find<TransactionController>();
+    _wallets = controller.wallets;
+    _fromWalletId = _wallets.isNotEmpty ? _wallets.first.id : null;
+    _toWalletId = _wallets.length > 1 ? _wallets[1].id : null;
+
+    // Listen to wallet changes
+    ever(controller.wallets, (wallets) {
+      if (mounted) {
+        setState(() {
+          _wallets = wallets;
+          if (_fromWalletId == null && wallets.isNotEmpty) {
+            _fromWalletId = wallets.first.id;
+          }
+          if (_toWalletId == null && wallets.length > 1) {
+            _toWalletId = wallets[1].id;
+          }
+        });
+      }
+    });
   }
 
   void _onKeyPress(String key) {
@@ -172,6 +185,13 @@ class _TransferFormState extends State<TransferForm> {
       _date = DateTime.now();
       _showKeypad = false;
     });
+  }
+
+  /// Public method to submit the form (called from app bar)
+  void submitForm() {
+    if (_canSubmit && !_isSubmitting) {
+      _onSubmit();
+    }
   }
 
   @override
@@ -288,7 +308,10 @@ class _TransferFormState extends State<TransferForm> {
               child: GestureDetector(
                 onTap: () => setState(() => _amountStr = amount.toString()),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: _accent.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(20),
