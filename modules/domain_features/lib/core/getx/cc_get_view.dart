@@ -18,7 +18,7 @@ import 'cc_get_controller.dart';
 /// ```dart
 /// class MyView extends CcGetView<MyController> {
 ///   @override
-///   Widget? buildContent() {
+///   Widget? buildContent(BuildContext context) {
 ///     return Text('My Content'); // Your content here
 ///   }
 /// }
@@ -49,13 +49,13 @@ abstract class CcGetView<T extends CcGetController> extends GetView<T>
   //----------------------------------------------------------------------------
   // Wraps body with Obx for reactivity
   @override
-  Widget get body {
-    return Obx(() => super.body);
+  Widget buildBody(BuildContext context) {
+    return Obx(() => super.buildBody(context));
   }
 
   //----------------------------------------------------------------------------
   @override
-  void onRetry() {
+  void onRetry(BuildContext context) {
     controller.onInit();
   }
 }

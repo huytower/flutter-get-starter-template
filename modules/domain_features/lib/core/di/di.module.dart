@@ -25,6 +25,8 @@ import 'package:domain_features/features/examples/bloc_simple_page/cubit/simple/
     as _i402;
 import 'package:domain_features/features/examples/bloc_simple_page/origin/advance/advance_bloc.dart'
     as _i1004;
+import 'package:domain_features/features/comment/presentation/get_x/comment_controller.dart'
+    as _i1005;
 import 'package:domain_features/features/home/data/datasources/remote/home_remote.dart'
     as _i55;
 import 'package:domain_features/features/home/data/repositories/home_repository_impl.dart'
@@ -36,32 +38,43 @@ import 'package:domain_features/features/home/presentation/get_x/home_controller
 import 'package:injectable/injectable.dart' as _i526;
 
 class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
-// initializes the registration of main-scope dependencies inside of GetIt
+  // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
     gh.lazySingleton<_i1004.AdvanceBloc>(
       () => _i1004.AdvanceBloc(),
       dispose: (i) => i.close(),
     );
-    gh.singleton<_i130.CommentRemote>(
-        () => _i130.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.singleton<_i55.HomeRemote>(
-        () => _i55.HomeRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.singleton<_i857.HomeRepository>(
-        () => _i179.HomeRepositoryImpl(remote: gh<_i55.HomeRemote>()));
+    gh.lazySingleton<_i130.CommentRemote>(
+      () => _i130.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')),
+    );
+    gh.lazySingleton<_i55.HomeRemote>(
+      () => _i55.HomeRemote(gh<_i361.Dio>(instanceName: 'baseDio')),
+    );
+    gh.lazySingleton<_i857.HomeRepository>(
+      () => _i179.HomeRepositoryImpl(remote: gh<_i55.HomeRemote>()),
+    );
     gh.lazySingleton<_i402.SimpleCubitInterface>(
       () => _i691.SimpleCubit(),
       dispose: (i) => i.close(),
     );
-    gh.singleton<_i857.CommentRepository>(
-        () => _i536.CommentRepositoryImpl(remote: gh<_i130.CommentRemote>()));
+    gh.lazySingleton<_i857.CommentRepository>(
+      () => _i536.CommentRepositoryImpl(remote: gh<_i130.CommentRemote>()),
+    );
     gh.lazySingleton<_i580.CrashLogRemote>(
-        () => _i580.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+      () => _i580.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')),
+    );
     gh.lazySingleton<_i971.HomeController>(
-        () => _i971.HomeController(gh<_i269.HomeRepository>()));
+      () => _i971.HomeController(gh<_i269.HomeRepository>()),
+    );
+    gh.lazySingleton<_i1005.CommentController>(
+      () => _i1005.CommentController(gh<_i857.CommentRepository>()),
+    );
     gh.lazySingleton<_i473.CrashLogRepository>(
-        () => _i689.CrashLogRepositoryImpl(gh<_i580.CrashLogRemote>()));
-    gh.lazySingleton<_i892.UploadPendingCrashLogsUseCase>(() =>
-        _i892.UploadPendingCrashLogsUseCase(gh<_i473.CrashLogRepository>()));
+      () => _i689.CrashLogRepositoryImpl(gh<_i580.CrashLogRemote>()),
+    );
+    gh.lazySingleton<_i892.UploadPendingCrashLogsUseCase>(
+      () => _i892.UploadPendingCrashLogsUseCase(gh<_i473.CrashLogRepository>()),
+    );
   }
 }

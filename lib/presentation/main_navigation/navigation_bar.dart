@@ -84,22 +84,18 @@ class _NavigationBarState extends State<NavigationBar>
     ),
   ];
 
-  @override
   bool get enableAppBar => false;
 
-  @override
   bool get enableBottomNavigationBar => !showSplash;
 
-  @override
-  PreferredSizeWidget? buildAppBar() => null;
+  PreferredSizeWidget? buildAppBar(BuildContext context) => null;
 
-  @override
-  Widget? buildBottomNavigationBar() => buildCurvedNavigationBar();
+  Widget? buildBottomNavigationBar(BuildContext context) =>
+      buildCurvedNavigationBar();
 
   Widget onBodyWrapper(BuildContext context, Widget body) => body;
 
-  @override
-  Widget? buildContent() {
+  Widget? buildContent(BuildContext context) {
     if (showSplash) {
       return const Center(child: CcLoadingIconWidget());
     }
@@ -128,17 +124,17 @@ class _NavigationBarState extends State<NavigationBar>
       onPopInvokedWithResult: (didPop, result) =>
           onPopInvokedWithResult(context, didPop, result),
       child: Scaffold(
-        body: onBodyWrapper(context, SafeArea(child: _body)),
-        appBar: enableAppBar ? buildAppBar() : null,
+        body: onBodyWrapper(context, SafeArea(child: _buildBody(context))),
+        appBar: enableAppBar ? buildAppBar(context) : null,
         bottomNavigationBar: enableBottomNavigationBar
-            ? buildBottomNavigationBar()
+            ? buildBottomNavigationBar(context)
             : null,
       ),
     );
   }
 
-  Widget get _body {
-    final content = buildContent() ?? const SizedBox.shrink();
+  Widget _buildBody(BuildContext context) {
+    final content = buildContent(context) ?? const SizedBox.shrink();
     return FadePageWrapper(child: content);
   }
 }

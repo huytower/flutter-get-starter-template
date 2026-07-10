@@ -11,12 +11,12 @@ class HomePage extends CcGetView<HomeController> {
   const HomePage({super.key});
 
   @override
-  PreferredSizeWidget? buildAppBar() {
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
     return const FinanceAppBar();
   }
 
   @override
-  Widget? buildContent() {
+  Widget? buildContent(BuildContext context) {
     return const CcGradientCardLayout(child: CcText('Home Page'));
   }
 }

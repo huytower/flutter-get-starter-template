@@ -1,4 +1,3 @@
-import 'package:cc_sdk_ui/widgets/container/cc_gradient_card_layout.dart';
 import 'package:domain_features/features/comment/presentation/get_x/comment_controller.dart';
 import 'package:domain_features/features/comment/presentation/ui/comment_page.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +22,8 @@ class _NotificationTabContentState extends State<NotificationTabContent> {
 
   @override
   Widget build(BuildContext context) {
-    return const CcGradientCardLayout(child: CommentPage());
+    // We return the CommentPage directly.
+    // It will provide its own Scaffold which is handled by NavigationBar's body.
+    return const CommentPage();
   }
 }
