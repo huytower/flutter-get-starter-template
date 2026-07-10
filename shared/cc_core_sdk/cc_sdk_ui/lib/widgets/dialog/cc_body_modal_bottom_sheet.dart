@@ -7,6 +7,11 @@ class CcBodyModalBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(child: Container(child: w));
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [if (w != null) w!],
+      ),
+    );
   }
 }
