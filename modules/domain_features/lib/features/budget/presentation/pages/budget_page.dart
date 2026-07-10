@@ -19,7 +19,7 @@ class BudgetPage extends CcGetView<BudgetController> {
   bool get enableAppBar => true;
 
   @override
-  PreferredSizeWidget? buildAppBar() {
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Builder(
@@ -65,7 +65,7 @@ class BudgetPage extends CcGetView<BudgetController> {
   Widget? get floatingActionButton => null;
 
   @override
-  Widget? buildContent() {
+  Widget? buildContent(BuildContext context) {
     // Obx here so isEditMode.value is tracked directly in the reactive context —
     // reading it inside a Builder callback (deferred build) would escape tracking.
     return Obx(() {
@@ -136,8 +136,10 @@ class BudgetPage extends CcGetView<BudgetController> {
       builder: (dialogCtx) => AlertDialog(
         title: Text(el.tr(CcLocaleKeys.budget_delete_title)),
         content: Text(
-          el.tr(CcLocaleKeys.budget_delete_confirm,
-              namedArgs: {'name': budget.name}),
+          el.tr(
+            CcLocaleKeys.budget_delete_confirm,
+            namedArgs: {'name': budget.name},
+          ),
         ),
         actions: [
           TextButton(
@@ -201,14 +203,14 @@ class _BudgetGridState extends State<_BudgetGrid> {
   }
 
   void _startDrag(String id) => setState(() {
-        _draggingId = id;
-        _hoveredId = null;
-      });
+    _draggingId = id;
+    _hoveredId = null;
+  });
 
   void _cancelDrag() => setState(() {
-        _draggingId = null;
-        _hoveredId = null;
-      });
+    _draggingId = null;
+    _hoveredId = null;
+  });
 
   void _updateHover(String id) {
     if (_hoveredId != id) setState(() => _hoveredId = id);
@@ -240,7 +242,11 @@ class _BudgetGridState extends State<_BudgetGrid> {
       if (!isEdit && _draggingId != null) {
         // Mode switched to view while a drag was in progress — clear state.
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) setState(() { _draggingId = null; _hoveredId = null; });
+          if (mounted)
+            setState(() {
+              _draggingId = null;
+              _hoveredId = null;
+            });
         });
       }
       return GridView.builder(
@@ -332,8 +338,7 @@ class _BudgetGridState extends State<_BudgetGrid> {
       key: ValueKey(stats.budget.id),
       stats: stats,
       isEditMode: true,
-      onEdit: () =>
-          widget.onOpenForm(context, editTarget: stats.budget),
+      onEdit: () => widget.onOpenForm(context, editTarget: stats.budget),
       onDelete: () => widget.onDelete(context, stats.budget),
     );
   }
@@ -358,8 +363,11 @@ class _BudgetGridState extends State<_BudgetGrid> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.local_offer_outlined,
-                  color: scheme.onSurfaceVariant, size: 28),
+              Icon(
+                Icons.local_offer_outlined,
+                color: scheme.onSurfaceVariant,
+                size: 28,
+              ),
               const SizedBox(height: 8),
               CcText(
                 el.tr(CcLocaleKeys.budget_customize_category),

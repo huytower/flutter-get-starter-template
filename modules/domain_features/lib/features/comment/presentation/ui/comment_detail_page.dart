@@ -13,56 +13,47 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
   const CommentDetailPage({super.key, required this.comment});
 
   @override
-  PreferredSizeWidget? buildAppBar() {
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 0,
-      leading: Builder(
-        builder: (context) =>
-            BackButton(color: context.ccColorScheme.onSurface),
-      ),
-      title: Builder(
-        builder: (context) {
-          return CcText(
-            el.tr(CcLocaleKeys.comment_detail_title),
-            align: Alignment.center,
-            fontWeight: CcTypographyParams.bold,
-            fontSize: CcTypographyParams.titleLarge,
-            color: context.ccColorScheme.primary,
-          );
-        },
+      leading: BackButton(color: context.ccColorScheme.onSurface),
+      title: CcText(
+        el.tr(CcLocaleKeys.comment_detail_title),
+        align: Alignment.center,
+        fontWeight: CcTypographyParams.bold,
+        fontSize: CcTypographyParams.titleLarge,
+        color: context.ccColorScheme.primary,
       ),
       centerTitle: true,
     );
   }
 
   @override
-  Widget? buildContent() {
-    return Builder(
-      builder: (context) {
-        return SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-            vertical: context.respPadding(CcPaddingParams.PAGE_LG),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context),
-              const CcSpaceLG(),
-              const CcDividerLine(),
-              const CcSpaceLG(),
-              _buildDescription(context),
-              const CcSpaceXL(),
-              _buildMetaData(context),
-            ],
-          ),
-        );
-      },
+  Widget? buildContent(BuildContext context) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+        vertical: context.respPadding(CcPaddingParams.PAGE_LG),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(context),
+          const CcSpaceLG(),
+          const CcDividerLine(),
+          const CcSpaceLG(),
+          _buildDescription(context),
+          const CcSpaceXL(),
+          _buildMetaData(context),
+        ],
+      ),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcText(
@@ -108,6 +99,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
 
   Widget _buildDescription(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
@@ -183,6 +175,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
           Icon(icon, size: 16, color: context.ccColorScheme.primary),
           const CcSpaceXS(),
           Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CcText(

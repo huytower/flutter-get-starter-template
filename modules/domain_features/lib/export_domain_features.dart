@@ -8,6 +8,7 @@ export 'core/navigation/domain_router.gr.dart';
 // Comment
 export 'features/comment/domain/entities/comment_entity.dart';
 export 'features/comment/domain/repositories/comment_repository.dart';
+export 'features/comment/presentation/get_x/comment_controller.dart';
 export 'features/comment/presentation/ui/comment_detail_page.dart';
 export 'features/comment/presentation/ui/comment_page.dart';
 // Transaction

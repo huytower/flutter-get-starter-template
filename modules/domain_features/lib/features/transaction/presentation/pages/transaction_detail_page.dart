@@ -13,7 +13,7 @@ class TransactionDetailPage extends StatelessWidget with CcViewConfigMixin {
   const TransactionDetailPage({super.key, required this.transaction});
 
   @override
-  PreferredSizeWidget? buildAppBar() {
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 0,
       leading: Builder(
@@ -36,7 +36,7 @@ class TransactionDetailPage extends StatelessWidget with CcViewConfigMixin {
   }
 
   @override
-  Widget? buildContent() {
+  Widget? buildContent(BuildContext context) {
     return Builder(
       builder: (context) {
         return SingleChildScrollView(
@@ -183,7 +183,11 @@ class TransactionDetailPage extends StatelessWidget with CcViewConfigMixin {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: context.respIconSize(baseSize: 16), color: context.ccColorScheme.primary),
+          Icon(
+            icon,
+            size: context.respIconSize(baseSize: 16),
+            color: context.ccColorScheme.primary,
+          ),
           const CcSpaceXS(),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

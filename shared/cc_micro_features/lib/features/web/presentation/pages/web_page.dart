@@ -37,7 +37,7 @@ class _WebViewState extends State<WebView> with CcViewConfigMixin {
       context.watch<WebCubit>().state.errorMessage ?? 'Unknown Error';
 
   @override
-  Widget? buildContent() {
+  Widget? buildContent(BuildContext context) {
     final controller = context.read<WebCubit>().state.controller;
     if (controller == null) return const SizedBox.shrink();
 

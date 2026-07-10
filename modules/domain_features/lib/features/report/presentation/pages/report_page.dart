@@ -20,7 +20,7 @@ class ReportPage extends CcGetView<ReportController> {
   bool get enableAppBar => true;
 
   @override
-  PreferredSizeWidget? buildAppBar() {
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
       title: Builder(
         builder: (context) => CcText(
@@ -36,7 +36,7 @@ class ReportPage extends CcGetView<ReportController> {
   }
 
   @override
-  Widget? buildContent() {
+  Widget? buildContent(BuildContext context) {
     return Builder(
       builder: (context) {
         final padding = context.respPadding(CcPaddingParams.SPACE_MD);

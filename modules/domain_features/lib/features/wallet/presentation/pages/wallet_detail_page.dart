@@ -21,7 +21,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
       : wallet.balance;
 
   @override
-  PreferredSizeWidget? buildAppBar() {
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 0,
       leading: Builder(
@@ -44,7 +44,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
   }
 
   @override
-  Widget? buildContent() {
+  Widget? buildContent(BuildContext context) {
     return Builder(
       builder: (context) {
         return SingleChildScrollView(
@@ -123,7 +123,8 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
         _buildInfoChip(
           context,
           label: 'Created',
-          value: '${wallet.createdAt.day}/${wallet.createdAt.month}/${wallet.createdAt.year}',
+          value:
+              '${wallet.createdAt.day}/${wallet.createdAt.month}/${wallet.createdAt.year}',
           icon: Icons.calendar_today,
         ),
       ],

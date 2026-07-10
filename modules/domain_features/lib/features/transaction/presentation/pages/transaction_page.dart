@@ -31,9 +31,12 @@ class TransactionPage extends CcGetView<TransactionController> {
 
     return Scaffold(
       appBar: _buildAppBarWithContext(context),
-      body: onPageBodyWrapper(context, SafeArea(child: body)),
+      body: onPageBodyWrapper(
+        context,
+        buildContent(context) ?? const SizedBox.shrink(),
+      ),
       bottomNavigationBar: enableBottomNavigationBar
-          ? buildBottomNavigationBar()
+          ? buildBottomNavigationBar(context)
           : null,
     );
   }
@@ -123,7 +126,7 @@ class TransactionPage extends CcGetView<TransactionController> {
   }
 
   @override
-  Widget? buildContent() {
+  Widget? buildContent(BuildContext context) {
     return Builder(
       builder: (context) {
         return DefaultTabController(

@@ -18,7 +18,7 @@ class WalletListPage extends CcGetView<WalletController> {
   bool get enableAppBar => true;
 
   @override
-  PreferredSizeWidget? buildAppBar() {
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
       title: Builder(
         builder: (context) => CcText(
@@ -103,7 +103,7 @@ class WalletListPage extends CcGetView<WalletController> {
   }
 
   @override
-  Widget? buildContent() {
+  Widget? buildContent(BuildContext context) {
     return Builder(
       builder: (context) => Obx(() {
         if (controller.wallets.isEmpty) {
@@ -145,20 +145,14 @@ class _WalletListCard extends StatefulWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
-  const _WalletListCard({
-    required this.wallet,
-    this.onEdit,
-    this.onDelete,
-  });
+  const _WalletListCard({required this.wallet, this.onEdit, this.onDelete});
 
   static const double _kRevealWidth = 130.0;
 
-  static String _fmt(int value) => value
-      .toString()
-      .replaceAllMapped(
-        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-        (m) => '${m[1]}.',
-      );
+  static String _fmt(int value) => value.toString().replaceAllMapped(
+    RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+    (m) => '${m[1]}.',
+  );
 
   @override
   State<_WalletListCard> createState() => _WalletListCardState();
@@ -334,8 +328,11 @@ class _ActionButton extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white,
-                size: context.respIconSize(baseSize: 22)),
+            Icon(
+              icon,
+              color: Colors.white,
+              size: context.respIconSize(baseSize: 22),
+            ),
             const SizedBox(height: 4),
             Text(
               label,

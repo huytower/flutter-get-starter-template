@@ -23,7 +23,7 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
   bool get enableAppBar => true;
 
   @override
-  PreferredSizeWidget? buildAppBar() {
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
       title: Builder(
         builder: (context) => CcText(
@@ -163,25 +163,23 @@ class WalletPage extends CcGetView<WalletController> with CcPullRefreshMixin {
   }
 
   @override
-  Widget? buildContent() {
+  Widget? buildContent(BuildContext context) {
     return FadePageWrapper(
       child: Builder(
         builder: (context) => buildPullToRefresh(
           context: context,
           onRefresh: controller.loadWallets,
-          child: Obx(
-            () {
-              final isLoading =
-                  controller.layoutStatus.value == CcLayoutStatus.loading;
-              return ListView(
-                children: [
-                  const WalletHeader(),
-                  _buildWalletsSection(context, isLoading),
-                  const BudgetPreviewSection(),
-                ],
-              );
-            },
-          ),
+          child: Obx(() {
+            final isLoading =
+                controller.layoutStatus.value == CcLayoutStatus.loading;
+            return ListView(
+              children: [
+                const WalletHeader(),
+                _buildWalletsSection(context, isLoading),
+                const BudgetPreviewSection(),
+              ],
+            );
+          }),
         ),
       ),
     );

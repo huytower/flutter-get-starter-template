@@ -20,7 +20,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
   bool get enableAppBar => true;
 
   @override
-  PreferredSizeWidget? buildAppBar() {
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
     return AppBar(
       title: Builder(
         builder: (context) => Column(
@@ -47,7 +47,8 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         // button (identical enable/disable rules).
         Builder(
           builder: (context) => Obx(() {
-            final enabled = !controller.isSubmitting.value &&
+            final enabled =
+                !controller.isSubmitting.value &&
                 controller.unhandledCount.value == 0 &&
                 controller.balances.isNotEmpty;
             return IconButton(
@@ -75,7 +76,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
   }
 
   @override
-  Widget? buildContent() {
+  Widget? buildContent(BuildContext context) {
     return Builder(
       builder: (context) {
         if (controller.balances.isEmpty) {
@@ -104,7 +105,9 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                 children: controller.balances.map((balance) {
                   return WalletReconcileTile(
                     balance: balance,
-                    isAcknowledged: controller.isAcknowledged(balance.wallet.id),
+                    isAcknowledged: controller.isAcknowledged(
+                      balance.wallet.id,
+                    ),
                     onActualChanged: (value) =>
                         controller.setActual(balance.wallet.id, value),
                     onAcknowledge: () =>
@@ -142,8 +145,11 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         ),
         child: Row(
           children: [
-            Icon(Icons.warning_amber_rounded,
-                color: context.ccColorScheme.error, size: 18),
+            Icon(
+              Icons.warning_amber_rounded,
+              color: context.ccColorScheme.error,
+              size: 18,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: CcText(
