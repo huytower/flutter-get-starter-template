@@ -8,6 +8,7 @@ class WalletListItem extends StatelessWidget {
   final String? balance;
   final bool isNegative;
   final VoidCallback onTap;
+  final VoidCallback? onMore;
 
   const WalletListItem({
     super.key,
@@ -17,6 +18,7 @@ class WalletListItem extends StatelessWidget {
     this.balance,
     this.isNegative = false,
     required this.onTap,
+    this.onMore,
   });
 
   @override
@@ -76,13 +78,21 @@ class WalletListItem extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(
-              Icons.more_vert,
-              color: Colors.black.withOpacity(
-                0.4,
-              ), // Đổi sang màu đen với opacity
-              size: context.respIconSize(baseSize: 20),
-            ),
+            if (onMore != null)
+              InkWell(
+                onTap: onMore,
+                customBorder: const CircleBorder(),
+                child: Padding(
+                  padding: EdgeInsets.all(
+                    context.respPadding(CcPaddingParams.SPACE_XS),
+                  ),
+                  child: Icon(
+                    Icons.more_vert,
+                    color: Colors.black.withOpacity(0.4),
+                    size: context.respIconSize(baseSize: 20),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

@@ -1,16 +1,29 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+
+import '../../../../core/di/di.dart';
+import '../../../../core/util/horizontal_fade_scroll_view.dart';
+import '../../../../core/util/icon_utils.dart';
 
 class CategorySelectionSection extends StatefulWidget {
   final Function(CategoryEntity)? onCategorySelected;
   final Color activeColor;
 
+  /// Which categories to offer: [CategoryType.expense] or
+  /// [CategoryType.income].
+  final String type;
+
+  /// Pre-select (and report) the first category once loaded.
+  final bool autoSelectFirst;
+
   const CategorySelectionSection({
     super.key,
     this.onCategorySelected,
     this.activeColor = const Color(0xFF13C07F),
+    this.type = CategoryType.expense,
+    this.autoSelectFirst = false,
   });
 
   @override
@@ -19,112 +32,35 @@ class CategorySelectionSection extends StatefulWidget {
 }
 
 class _CategorySelectionSectionState extends State<CategorySelectionSection> {
-  String _selectedGroupId = '1';
+  List<CategoryEntity> _categories = const [];
   String? _selectedCategoryId;
+  bool _isLoading = true;
 
-  final List<Map<String, dynamic>> _groups = [
-    {'id': '1', 'name': 'Ăn uống & Cà phê'},
-    {'id': '2', 'name': 'Di chuyển'},
-    {'id': '3', 'name': 'Tiện ích'},
-    {'id': '4', 'name': 'Nhà cửa'},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
 
-  final List<CategoryEntity> _allCategories = [
-    // Nhóm 1: Ăn uống (ID '1')
-    CategoryEntity(
-      id: 'c1',
-      nameKey: CcLocaleKeys.category_food_drink,
-      iconCode: 0xe25a,
-      groupId: '1',
-    ),
-    CategoryEntity(
-      id: 'c2',
-      nameKey: CcLocaleKeys.category_coffee,
-      iconCode: 0xe0af,
-      groupId: '1',
-    ),
-    CategoryEntity(
-      id: 'c3',
-      nameKey: CcLocaleKeys.category_water,
-      iconCode: 0xe41b,
-      groupId: '1',
-    ),
-    CategoryEntity(
-      id: 'c4',
-      nameKey: CcLocaleKeys.category_eat_out,
-      iconCode: 0xe56c,
-      groupId: '1',
-    ),
-
-    // Nhóm 2: Di chuyển (ID '2')
-    CategoryEntity(
-      id: 'c5',
-      nameKey: CcLocaleKeys.category_taxi,
-      iconCode: 0xe404,
-      groupId: '2',
-    ),
-    CategoryEntity(
-      id: 'c6',
-      nameKey: CcLocaleKeys.category_gas,
-      iconCode: 0xe3ab,
-      groupId: '2',
-    ),
-    CategoryEntity(
-      id: 'c7',
-      nameKey: CcLocaleKeys.category_parking,
-      iconCode: 0xe44d,
-      groupId: '2',
-    ),
-    CategoryEntity(
-      id: 'c8',
-      nameKey: CcLocaleKeys.category_maintenance,
-      iconCode: 0xe1bc,
-      groupId: '2',
-    ),
-
-    // Nhóm 3: Tiện ích (ID '3')
-    CategoryEntity(
-      id: 'c9',
-      nameKey: CcLocaleKeys.category_electricity,
-      iconCode: 0xe230,
-      groupId: '3',
-    ),
-    CategoryEntity(
-      id: 'c10',
-      nameKey: CcLocaleKeys.category_internet,
-      iconCode: 0xe6e1,
-      groupId: '3',
-    ),
-    CategoryEntity(
-      id: 'c11',
-      nameKey: CcLocaleKeys.category_phone,
-      iconCode: 0xe53f,
-      groupId: '3',
-    ),
-
-    // Nhóm 4: Nhà cửa (ID '4')
-    CategoryEntity(
-      id: 'c12',
-      nameKey: CcLocaleKeys.category_rent,
-      iconCode: 0xe318,
-      groupId: '4',
-    ),
-    CategoryEntity(
-      id: 'c13',
-      nameKey: CcLocaleKeys.category_furniture,
-      iconCode: 0xe1ad,
-      groupId: '4',
-    ),
-    CategoryEntity(
-      id: 'c14',
-      nameKey: CcLocaleKeys.category_laundry,
-      iconCode: 0xe3a8,
-      groupId: '4',
-    ),
-  ];
-
-  List<CategoryEntity> get _filteredCategories =>
-      _allCategories.where((cat) => cat.groupId == _selectedGroupId).toList();
+  Future<void> _loadCategories() async {
+    final result = await getIt<GetCategoriesUseCase>().call();
+    if (!mounted) return;
+    setState(() {
+      result.when(
+        (categories) => _categories = categories
+            .where((c) => c.isEnabled && c.type == widget.type)
+            .toList(),
+        (_) {},
+      );
+      _isLoading = false;
+    });
+    if (widget.autoSelectFirst &&
+        _selectedCategoryId == null &&
+        _categories.isNotEmpty) {
+      setState(() => _selectedCategoryId = _categories.first.id);
+      widget.onCategorySelected?.call(_categories.first);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,146 +71,96 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
           padding: EdgeInsets.symmetric(
             horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
           ),
-          child: Row(
-            children: [
-              CcIcon(
-                icon: Icons.local_offer,
-                size: context.respIconSize(baseSize: 16),
-                color: widget.activeColor,
-              ),
-              const CcSpaceSM(),
-              CcText(
-                el.tr(CcLocaleKeys.transaction_category),
-                textStyle: context.ccTextTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.0,
-                  fontSize: context.respFontSize(13),
-                  color: Colors.black87,
-                ),
-              ),
-            ],
+          child: CcText(
+            el.tr(CcLocaleKeys.transaction_category),
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
+              color: Colors.grey[700],
+              fontWeight: FontWeight.bold,
+              fontSize: context.respFontSize(12),
+            ),
           ),
         ),
         const CcSpaceSM(),
-        SingleChildScrollView(
+        if (_isLoading)
+          SizedBox(
+            height: context.respDim(80),
+            child: const Center(child: CircularProgressIndicator()),
+          )
+        else
+          _buildCategoryList(context),
+      ],
+    );
+  }
+
+  Widget _buildCategoryList(BuildContext context) {
+    return HorizontalFadeScrollView(
+      height: context.respDim(90),
+      builder: (scrollController) => ListView.separated(
           scrollDirection: Axis.horizontal,
+          controller: scrollController,
           padding: EdgeInsets.symmetric(
             horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
           ),
-          child: Row(
-            children: _groups.map((group) {
-              final isSelected = _selectedGroupId == group['id'];
-              return Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: ChoiceChip(
-                  label: CcText(
-                    group['name'],
-                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      color: isSelected ? Colors.white : Colors.grey[700],
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                      fontSize: context.respFontSize(12),
-                    ),
-                  ),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedGroupId = group['id'];
-                    });
-                  },
-                  selectedColor: widget.activeColor,
-                  backgroundColor: const Color(0xFFF1F3F5),
-                  showCheckmark: false,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide.none,
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-        const CcSpaceMD(),
-        SizedBox(
-          height: context.respDim(68),
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(
-              horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-            ),
-            itemCount: _filteredCategories.length,
-            separatorBuilder: (context, index) => const CcSpaceSM(),
-            itemBuilder: (context, index) {
-              final category = _filteredCategories[index];
-              final isSelected = _selectedCategoryId == category.id;
+          itemCount: _categories.length,
+          separatorBuilder: (context, index) => const CcSpaceSM(),
+          itemBuilder: (context, index) {
+            final category = _categories[index];
+            final isSelected = _selectedCategoryId == category.id;
 
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedCategoryId = category.id;
-                  });
-                  widget.onCategorySelected?.call(category);
-                },
-                child: Container(
-                  width: context.respDim(68),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? widget.activeColor.withOpacity(0.1)
-                        : const Color(0xFFF8F9FA),
-                    borderRadius: BorderRadius.circular(12),
-                    border: isSelected
-                        ? Border.all(color: widget.activeColor, width: 1.5)
-                        : null,
-                    boxShadow: [
-                      if (isSelected)
-                        BoxShadow(
-                          color: widget.activeColor.withOpacity(0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CcIcon(
-                        icon: IconData(
-                          category.iconCode,
-                          fontFamily: 'MaterialIcons',
-                        ),
-                        size: context.respIconSize(baseSize: 22),
+            return GestureDetector(
+              onTap: () {
+                setState(() => _selectedCategoryId = category.id);
+                widget.onCategorySelected?.call(category);
+              },
+              child: SizedBox(
+                width: context.respDim(68),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      width: context.respDim(52),
+                      height: context.respDim(52),
+                      decoration: BoxDecoration(
                         color: isSelected
                             ? widget.activeColor
-                            : Colors.grey[600],
+                            : const Color(0xFFF1F3F5),
+                        borderRadius: BorderRadius.circular(14),
                       ),
-                      const CcSpaceXS(),
-                      CcText(
-                        el.tr(category.nameKey),
-                        align: Alignment.center,
-                        textAlign: TextAlign.center,
-                        textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                          fontSize: context.respFontSize(9),
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          color: isSelected
-                              ? widget.activeColor
-                              : Colors.grey[800],
+                      child: Center(
+                        child: CcIcon(
+                          icon: iconDataFromCode(
+                            category.iconCode,
+                            fontFamily: category.iconFamily,
+                          ),
+                          size: context.respIconSize(baseSize: 22),
+                          color: isSelected ? Colors.white : Colors.grey[600],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    const CcSpaceXS(),
+                    AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeInOut,
+                      style: (context.ccTextTheme.bodySmall ?? const TextStyle()).copyWith(
+                        fontSize: context.respFontSize(9),
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        color: isSelected ? widget.activeColor : Colors.grey[700],
+                      ),
+                      child: Text(
+                        el.tr(category.nameKey),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
-              );
-            },
-          ),
-        ),
-      ],
+              ),
+            );
+          },
+      ),
     );
   }
 }

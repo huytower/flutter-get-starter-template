@@ -34,6 +34,7 @@ class AppRouter extends RootStackRouter {
     // --- GetX Examples & Pages ---
     AutoRoute(page: HomeRoute.page, path: AppRoute.home.path),
     AutoRoute(page: WalletRoute.page, path: AppRoute.wallet.path),
+    AutoRoute(page: WalletListRoute.page, path: AppRoute.walletList.path),
     AutoRoute(page: WalletDetailRoute.page, path: AppRoute.walletDetail.path),
     AutoRoute(page: TransactionRoute.page, path: AppRoute.transaction.path),
     AutoRoute(
@@ -42,6 +43,9 @@ class AppRouter extends RootStackRouter {
     ),
     AutoRoute(page: CommentRoute.page, path: AppRoute.comment.path),
     AutoRoute(page: CommentDetailRoute.page, path: AppRoute.commentDetail.path),
+    AutoRoute(page: BudgetRoute.page, path: AppRoute.budget.path),
+    AutoRoute(page: ReconcileRoute.page, path: AppRoute.reconcile.path),
+    AutoRoute(page: ReportRoute.page, path: AppRoute.report.path),
 
     // --- Bloc Examples ---
     AutoRoute(page: SimpleCubitRoute.page, path: ExampleRoute.blocSimple.path),

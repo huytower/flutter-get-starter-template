@@ -1,29 +1,25 @@
-import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
-import 'package:hive_ce/hive_ce.dart';
+import 'package:equatable/equatable.dart';
 
-part 'wallet_entity.g.dart';
+/// Wallet type values stored in [WalletEntity.type].
+///
+/// `cash` is a singleton wallet with a fixed name/icon; `bank` and `credit`
+/// are user-managed. (Legacy wallets stored as `'spending'` are migrated to
+/// [bank] by the local datasource.)
+abstract class WalletType {
+  static const String cash = 'cash';
+  static const String bank = 'bank';
+  static const String credit = 'credit';
+}
 
-@HiveType(typeId: CcHiveBox.WALLET_TYPE_ID)
-class WalletEntity extends HiveObject {
-  @HiveField(0)
+class WalletEntity extends Equatable {
   final String id;
-
-  @HiveField(1)
   final String name;
-
-  @HiveField(2)
-  final double balance;
-
-  @HiveField(3)
+  final int balance;
   final int iconCode;
-
-  @HiveField(4)
   final String type;
-
-  @HiveField(5)
   final DateTime createdAt;
 
-  WalletEntity({
+  const WalletEntity({
     required this.id,
     required this.name,
     required this.balance,
@@ -31,4 +27,7 @@ class WalletEntity extends HiveObject {
     required this.type,
     required this.createdAt,
   });
+
+  @override
+  List<Object?> get props => [id, name, balance, iconCode, type, createdAt];
 }

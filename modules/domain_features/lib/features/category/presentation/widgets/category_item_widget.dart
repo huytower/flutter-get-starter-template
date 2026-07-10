@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
+import '../../../../core/util/icon_utils.dart';
 import '../../domain/entities/category_entity.dart';
 
 /// A widget representing a single category item.
@@ -55,9 +56,9 @@ class CategoryItemWidget extends StatelessWidget {
       ),
       child: Center(
         child: CcIcon(
-          icon: IconData(
+          icon: iconDataFromCode(
             category.iconCode,
-            fontFamily: category.iconFamily ?? 'MaterialIcons',
+            fontFamily: category.iconFamily,
           ),
           size: iconSize,
           color: isSelected

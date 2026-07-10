@@ -23,13 +23,17 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       userRole: fields[3] as String?,
       dashboardData: fields[4] as String?,
       user: fields[5] as DomainUserEntity?,
+      reminderEnabled: fields[6] as bool?,
+      weeklyAuditDayIndex: (fields[7] as num?)?.toInt(),
+      currencyCode: fields[8] as String?,
+      birthYear: (fields[9] as num?)?.toInt(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CcAppStorage obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)
@@ -41,7 +45,15 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..writeByte(4)
       ..write(obj.dashboardData)
       ..writeByte(5)
-      ..write(obj.user);
+      ..write(obj.user)
+      ..writeByte(6)
+      ..write(obj.reminderEnabled)
+      ..writeByte(7)
+      ..write(obj.weeklyAuditDayIndex)
+      ..writeByte(8)
+      ..write(obj.currencyCode)
+      ..writeByte(9)
+      ..write(obj.birthYear);
   }
 
   @override
@@ -68,6 +80,10 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
   user: const DomainUserEntityConverter().fromJson(
     json['user'] as Map<String, dynamic>?,
   ),
+  reminderEnabled: json['reminderEnabled'] as bool?,
+  weeklyAuditDayIndex: (json['weeklyAuditDayIndex'] as num?)?.toInt(),
+  currencyCode: json['currencyCode'] as String?,
+  birthYear: (json['birthYear'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
@@ -78,4 +94,8 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
       'userRole': instance.userRole,
       'dashboardData': instance.dashboardData,
       'user': const DomainUserEntityConverter().toJson(instance.user),
+      'reminderEnabled': instance.reminderEnabled,
+      'weeklyAuditDayIndex': instance.weeklyAuditDayIndex,
+      'currencyCode': instance.currencyCode,
+      'birthYear': instance.birthYear,
     };

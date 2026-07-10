@@ -15,9 +15,20 @@ class HiveRegistrar {
   }
 
   static void _registerFeatureAdapters() {
-    // Register Wallet adapter from domain_features
-    // Note: WalletEntityAdapter is generated in domain_features
-    Hive.registerAdapter(WalletEntityAdapter());
+    Hive.registerAdapter(WalletHiveModelAdapter());
+
+    // Register Category adapter (data-layer model) from domain_features
+    Hive.registerAdapter(CategoryModelAdapter());
+
+    // Register Transaction adapter (data-layer model) from domain_features
+    Hive.registerAdapter(TransactionModelAdapter());
+
+    // Register Budget adapter (data-layer model) from domain_features
+    Hive.registerAdapter(BudgetModelAdapter());
+
+    // Register Reconciliation adapters (record + nested allocation)
+    Hive.registerAdapter(ReconciliationAllocationModelAdapter());
+    Hive.registerAdapter(ReconciliationModelAdapter());
 
     // Add other feature adapters here as needed
   }

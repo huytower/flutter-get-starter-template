@@ -2,8 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controller/wallet_controller.dart';
-import 'add_wallet_sheet.dart';
+import '../get_x/wallet_controller.dart';
 
 class WalletHeader extends StatelessWidget {
   const WalletHeader({super.key});
@@ -12,32 +11,23 @@ class WalletHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<WalletController>();
 
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            context.ccColorScheme.primary,
-            context.ccColorScheme.primary.withOpacity(0.8),
-          ],
-        ),
-      ),
-      padding: EdgeInsets.only(
-        left: context.respPadding(CcPaddingParams.SPACE_LG),
-        right: context.respPadding(CcPaddingParams.SPACE_LG),
-        top: context.respPadding(CcPaddingParams.SPACE_SM),
-        bottom: context.respPadding(CcPaddingParams.SPACE_XL),
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        context.respPadding(CcPaddingParams.SPACE_LG),
+        context.respPadding(CcPaddingParams.SPACE_MD),
+        context.respPadding(CcPaddingParams.SPACE_LG),
+        context.respPadding(CcPaddingParams.SPACE_SM),
       ),
       child: Container(
+        width: double.infinity,
         padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_LG)),
         decoration: BoxDecoration(
-          color: context.ccColorScheme.onPrimary.withOpacity(0.15),
-          borderRadius: BorderRadius.circular(24), // Tăng bo góc cho giống ảnh
+          color: context.ccColorScheme.primary,
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,55 +41,40 @@ class WalletHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Obx(
-                  () => Row(
-                    children: [
-                      CcText(
-                        controller.isBalanceVisible.value
-                            ? '${controller.totalBalance.value.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} đ'
-                            : '*********',
-                        textStyle: context.ccTextTheme.headlineMedium?.copyWith(
-                          color: context.ccColorScheme.onPrimary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: context.respFontSize(32),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      GestureDetector(
-                        onTap: controller.toggleBalanceVisibility,
-                        child: Icon(
-                          controller.isBalanceVisible.value
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                          color: context.ccColorScheme.onPrimary.withOpacity(
-                            0.8,
-                          ),
-                          size: context.respIconSize(baseSize: 24),
-                        ),
-                      ),
-                    ],
+                  () => CcText(
+                    controller.isBalanceVisible.value
+                        ? '${controller.totalBalance.value.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} đ'
+                        : '*********',
+                    textStyle: context.ccTextTheme.headlineMedium?.copyWith(
+                      color: context.ccColorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: context.respFontSize(32),
+                    ),
                   ),
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                CcDialogHelper.showModalBottomSheet(
-                  context,
-                  const AddWalletSheet(),
-                );
-              },
-              behavior: HitTestBehavior.opaque,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0), // Mở rộng vùng cảm ứng
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: context.ccColorScheme.onPrimary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.add,
-                    color: context.ccColorScheme.primary,
-                    size: context.respIconSize(baseSize: 32),
+            Obx(
+              () => GestureDetector(
+                onTap: controller.toggleBalanceVisibility,
+                behavior: HitTestBehavior.opaque,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: context.ccColorScheme.onPrimary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(context.respDim(6)),
+                      child: Icon(
+                        controller.isBalanceVisible.value
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        color: context.ccColorScheme.primary,
+                        size: context.respIconSize(baseSize: 24),
+                      ),
+                    ),
                   ),
                 ),
               ),

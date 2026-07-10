@@ -134,6 +134,9 @@ abstract class CcLocaleKeys {
   static const wallet_my_account = 'wallet.my_account';
   static const wallet_spending_account = 'wallet.spending_account';
   static const wallet_total_assets = 'wallet.total_assets';
+  static const wallet_your_wallets = 'wallet.your_wallets';
+  static const wallet_see_all = 'wallet.see_all';
+  static const wallet_empty = 'wallet.empty';
 
   static const category_group_daily = 'category.group_daily';
   static const category_group_personal = 'category.group_personal';
@@ -156,12 +159,88 @@ abstract class CcLocaleKeys {
   static const category_furniture = 'category.furniture';
   static const category_laundry = 'category.laundry';
 
+  // Housing extras
+  static const category_mortgage = 'category.mortgage';
+  static const category_condo_fee = 'category.condo_fee';
+
+  // Health
+  static const category_doctor = 'category.doctor';
+  static const category_medicine = 'category.medicine';
+  static const category_health_insurance = 'category.health_insurance';
+  static const category_gym = 'category.gym';
+
+  // Education
+  static const category_tuition = 'category.tuition';
+  static const category_books = 'category.books';
+  static const category_courses = 'category.courses';
+
+  // Entertainment
+  static const category_cinema = 'category.cinema';
+  static const category_travel = 'category.travel';
+  static const category_gaming = 'category.gaming';
+  static const category_events = 'category.events';
+
+  // Shopping
+  static const category_appliances = 'category.appliances';
+  static const category_electronics = 'category.electronics';
+  static const category_clothing = 'category.clothing';
+  static const category_cosmetics = 'category.cosmetics';
+
+  // Debt & loans
+  static const category_installment = 'category.installment';
+  static const category_loan_interest = 'category.loan_interest';
+
+  // Insurance
+  static const category_life_insurance = 'category.life_insurance';
+  static const category_vehicle_insurance = 'category.vehicle_insurance';
+  static const category_home_insurance = 'category.home_insurance';
+
+  // Gifts & charity
+  static const category_gifts = 'category.gifts';
+  static const category_charity = 'category.charity';
+
+  // Personal care
+  static const category_haircut = 'category.haircut';
+  static const category_spa = 'category.spa';
+  static const category_personal_care_product = 'category.personal_care_product';
+
+  // Service fees
+  static const category_bank_fee = 'category.bank_fee';
+  static const category_card_fee = 'category.card_fee';
+
+  // Family & children
+  static const category_milk_formula = 'category.milk_formula';
+  static const category_diapers = 'category.diapers';
+  static const category_baby_toys = 'category.baby_toys';
+
+  // Category settings screen
+  static const category_settings_title = 'category.settings_title';
+  static const category_settings_subtitle = 'category.settings_subtitle';
+  static const category_settings_save = 'category.settings_save';
+  static const category_settings_saved = 'category.settings_saved';
+
+  // Expense / income category settings section headers
+  static const category_expense_settings_title = 'category.expense_settings_title';
+  static const category_income_settings_title = 'category.income_settings_title';
+  static const category_income_group_active = 'category.income_group_active';
+  static const category_income_group_invest = 'category.income_group_invest';
+  static const category_income_group_other = 'category.income_group_other';
+  static const category_income_salary = 'category.income_salary';
+  static const category_income_freelance = 'category.income_freelance';
+  static const category_income_allowance = 'category.income_allowance';
+  static const category_income_savings_interest = 'category.income_savings_interest';
+  static const category_income_dividends = 'category.income_dividends';
+  static const category_income_rental = 'category.income_rental';
+  static const category_income_bonus = 'category.income_bonus';
+  static const category_income_gift = 'category.income_gift';
+  static const category_income_cashback = 'category.income_cashback';
+
   static const transaction_title = 'transaction.title';
   static const transaction_wallet = 'transaction.wallet';
   static const transaction_emergency = 'transaction.emergency';
   static const transaction_investment = 'transaction.investment';
-  static const transaction_expense_slip = 'transaction_expense_slip';
-  static const transaction_income_slip = 'transaction_income_slip';
+  static const transaction_expense_slip = 'transaction.expense_slip';
+  static const transaction_income_slip = 'transaction.income_slip';
   static const transaction_category = 'transaction.category';
   static const transaction_amount = 'transaction.amount';
   static const transaction_source_expense = 'transaction.source_expense';
@@ -176,5 +255,93 @@ abstract class CcLocaleKeys {
   static const transaction_reason_income = 'transaction.reason_income';
   static const transaction_recipient = 'transaction.recipient';
   static const transaction_record_income = 'transaction.record_income';
+  static const transaction_expense_saved = 'transaction.expense_saved';
+  static const transaction_income_saved = 'transaction.income_saved';
+  static const transaction_transfer_saved = 'transaction.transfer_saved';
+  static const transaction_transfer_from = 'transaction.transfer_from';
+  static const transaction_transfer_to = 'transaction.transfer_to';
+  static const transaction_record_transfer = 'transaction.record_transfer';
+  static const transaction_category_sub = 'transaction.category_sub';
+  static const transaction_today = 'transaction.today';
+  static const transaction_yesterday = 'transaction.yesterday';
+  static const transaction_note = 'transaction.note';
+  static const transaction_note_hint = 'transaction.note_hint';
   static const common_add_source = 'common.add_source';
+
+  static const budget_title = 'budget.title';
+  static const budget_empty = 'budget.empty';
+  static const budget_edit_limit = 'budget.edit_limit';
+  static const budget_edit_title = 'budget.edit_title';
+  static const budget_limit_locked = 'budget.limit_locked';
+  static const budget_delete_title = 'budget.delete_title';
+  static const budget_delete_confirm = 'budget.delete_confirm';
+  static const budget_reset_period = 'budget.reset_period';
+  static const budget_reset_title = 'budget.reset_title';
+  static const budget_add_title = 'budget.add_title';
+  static const budget_name = 'budget.name';
+  static const budget_name_hint = 'budget.name_hint';
+  static const budget_category = 'budget.category';
+  static const budget_limit = 'budget.limit';
+  static const budget_limit_hint = 'budget.limit_hint';
+  static const budget_start_date = 'budget.start_date';
+  static const budget_end_date = 'budget.end_date';
+  static const budget_added = 'budget.added';
+  static const budget_updated = 'budget.updated';
+  static const budget_period_started = 'budget.period_started';
+  static const budget_over_limit = 'budget.over_limit';
+  static const budget_near_limit = 'budget.near_limit';
+  static const budget_over_by = 'budget.over_by';
+  static const budget_remaining = 'budget.remaining';
+  static const budget_this_month = 'budget.this_month';
+  static const budget_see_all = 'budget.see_all';
+  static const budget_drag_reorder_hint = 'budget.drag_reorder_hint';
+  static const budget_customize_category = 'budget.customize_category';
+  static const budget_percent_used = 'budget.percent_used';
+
+  static const reconciliation_title = 'reconciliation.title';
+  static const reconciliation_empty = 'reconciliation.empty';
+  static const reconciliation_instruction = 'reconciliation.instruction';
+  static const reconciliation_book_total = 'reconciliation.book_total';
+  static const reconciliation_actual_total = 'reconciliation.actual_total';
+  static const reconciliation_difference = 'reconciliation.difference';
+  static const reconciliation_balanced = 'reconciliation.balanced';
+  static const reconciliation_surplus = 'reconciliation.surplus';
+  static const reconciliation_deficit = 'reconciliation.deficit';
+  static const reconciliation_confirm = 'reconciliation.confirm';
+  static const reconciliation_success = 'reconciliation.success';
+  static const reconciliation_history = 'reconciliation.history';
+  static const reconciliation_undo = 'reconciliation.undo';
+  static const reconciliation_undo_title = 'reconciliation.undo_title';
+  static const reconciliation_undo_confirm = 'reconciliation.undo_confirm';
+  static const reconciliation_week = 'reconciliation.week';
+  static const reconciliation_book = 'reconciliation.book';
+  static const reconciliation_actual = 'reconciliation.actual';
+  static const reconciliation_book_balance = 'reconciliation.book_balance';
+  static const reconciliation_cycle_subtitle = 'reconciliation.cycle_subtitle';
+  static const reconciliation_mismatch_warning = 'reconciliation.mismatch_warning';
+  static const reconciliation_create_adjustment = 'reconciliation.create_adjustment';
+  static const reconciliation_matched = 'reconciliation.matched';
+  static const reconciliation_lech = 'reconciliation.lech';
+
+  static const report_title = 'report.title';
+  static const report_spending_proportion = 'report.spending_proportion';
+  static const report_monthly_chart = 'report.monthly_chart';
+  static const report_this_week = 'report.this_week';
+  static const report_this_month = 'report.this_month';
+  static const report_no_expense = 'report.no_expense';
+
+  static const profile_guest = 'profile.guest';
+  static const profile_not_logged_in = 'profile.not_logged_in';
+  static const profile_register_login = 'profile.register_login';
+  static const profile_weekly_audit = 'profile.weekly_audit';
+  static const profile_days_left = 'profile.days_left';
+  static const profile_debt_loan = 'profile.debt_loan';
+  static const profile_unlock_at_lv = 'profile.unlock_at_lv';
+  static const profile_weekly_audit_day = 'profile.weekly_audit_day';
+  static const profile_reminder = 'profile.reminder';
+  static const profile_currency = 'profile.currency';
+  static const profile_view_tutorial = 'profile.view_tutorial';
+  static const profile_terms = 'profile.terms';
+  static const profile_about = 'profile.about';
+  static const profile_delete_account = 'profile.delete_account';
 }
