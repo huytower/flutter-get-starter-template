@@ -12,5 +12,7 @@ export 'domain/usecases/update_budget_limit_usecase.dart';
 // Presentation
 export 'presentation/get_x/budget_limit_controller.dart';
 export 'presentation/pages/budget_limit_management_page.dart';
+export 'presentation/widgets/budget_limit_card.dart';
+export 'presentation/widgets/budget_limit_form_sheet.dart';
 // Data (model adapter exported so the app shell can register it with Hive)
 export 'data/models/budget_limit_model.dart';

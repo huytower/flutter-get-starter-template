@@ -6,9 +6,9 @@ import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/util/icon_utils.dart';
+import '../../../budget_allocation/presentation/widgets/add_wallet_sheet.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
-import '../widgets/add_wallet_sheet.dart';
 
 @RoutePage()
 class WalletListPage extends CcGetView<WalletController> {
