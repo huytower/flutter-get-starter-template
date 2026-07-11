@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../../wallet/presentation/widgets/add_wallet_sheet.dart';
@@ -19,6 +21,22 @@ import '../widgets/budget_preview_section.dart';
 class BudgetAllocationPage extends CcGetView<WalletController>
     with CcPullRefreshMixin {
   const BudgetAllocationPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // This screen composes two controllers: [WalletController] (primary,
+    // auto-registered by [CcGetView]) and [BudgetLimitController] (secondary).
+    // Register the secondary controller eagerly and BEFORE super.build() so it
+    // exists regardless of the layoutStatus gating in [CcViewConfigMixin.body()]
+    // — which only mounts buildContent (and therefore BudgetPreviewSection, the
+    // widget that previously registered it) once WalletController finishes
+    // loading. Without this, BudgetLimitController is never registered on first
+    // load and its onReady()/loadBudgets() never runs.
+    if (!Get.isRegistered<BudgetLimitController>()) {
+      Get.put(getIt<BudgetLimitController>());
+    }
+    return super.build(context);
+  }
 
   @override
   bool get enableAppBar => true;
