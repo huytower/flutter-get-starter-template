@@ -26,7 +26,9 @@ class BudgetLimitFormSheet extends StatefulWidget {
 }
 
 class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
-  final _controller = Get.find<BudgetLimitController>();
+  final _controller = Get.isRegistered<BudgetLimitController>()
+      ? Get.find<BudgetLimitController>()
+      : Get.put(getIt<BudgetLimitController>());
   final _nameController = TextEditingController();
   final _limitController = TextEditingController();
 

@@ -18,7 +18,7 @@ class HomeCoordinatorImpl implements HomeCoordinator {
 
   @override
   void navigateToWallet(BuildContext context) {
-    context.router.push(const WalletRoute());
+    context.router.push(BudgetAllocationRoute());
   }
 
   @override

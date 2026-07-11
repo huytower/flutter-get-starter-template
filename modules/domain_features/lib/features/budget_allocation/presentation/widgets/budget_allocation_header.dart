@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../get_x/wallet_controller.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
 class BudgetAllocationHeader extends StatelessWidget {
   const BudgetAllocationHeader({super.key});

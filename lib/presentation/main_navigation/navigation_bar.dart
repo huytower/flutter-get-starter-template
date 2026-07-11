@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:theme/data/data_source/color/prj_color.dart';
 
 import 'logic/navigation_logic_mixin.dart';
-import 'tabs/profile_tab_content.dart';
 
 /// Main navigation view.
 ///
@@ -26,7 +25,7 @@ class NavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<NavigationBar>
     with CcCurvedNavigationMixin, DoubleBackToExitMixin, NavigationLogicMixin {
   // Navigation indices — entry ("Giao dịch") is centred as the raised "＋".
-  static const int _indexWallet = 0;
+  static const int _indexWalletAllocation = 0;
   static const int _indexEntry = 1;
   static const int _indexProfile = 2;
 
@@ -72,12 +71,12 @@ class _NavigationBarState extends State<NavigationBar>
     // These tabs derive their figures from transactions that may have been
     // added on the entry tab, so re-fetch each time the tab is (re)opened — the
     // GetX controllers are kept alive, so onReady() won't fire again on its own.
-    if (index == _indexWallet) {
+    if (index == _indexWalletAllocation) {
       if (Get.isRegistered<WalletController>()) {
-        Get.find<WalletController>().loadWallets(showLoading: false);
+        Get.find<WalletController>().loadWallets();
       }
       if (Get.isRegistered<BudgetLimitController>()) {
-        Get.find<BudgetLimitController>().loadBudgets(showLoading: false);
+        Get.find<BudgetLimitController>().loadBudgets();
       }
     }
     if (index == _indexEntry && Get.isRegistered<TransactionController>()) {
@@ -126,12 +125,12 @@ class _NavigationBarState extends State<NavigationBar>
 
   Widget? _buildContentForIndex(int index) {
     switch (index) {
-      case _indexWallet:
+      case _indexWalletAllocation:
         return const BudgetAllocationPage();
       case _indexEntry:
         return TransactionPage();
       case _indexProfile:
-        return const ProfileTabContent();
+        return const ProfilePage();
       default:
         return TransactionPage();
     }

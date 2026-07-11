@@ -36,7 +36,7 @@ class TransactionPage extends CcGetView<TransactionController> {
   PreferredSizeWidget _buildAppBarWithContext(BuildContext context) {
     return PreferredSize(
       preferredSize: Size.fromHeight(
-        context.respDim(100) + MediaQuery.of(context).padding.top,
+        context.respDim(115) + MediaQuery.of(context).padding.top,
       ),
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,

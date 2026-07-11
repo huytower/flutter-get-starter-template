@@ -47,13 +47,6 @@ abstract class CcGetView<T extends CcGetController> extends GetView<T>
   String get errorMessage => controller.errorMessage.value;
 
   //----------------------------------------------------------------------------
-  // Wraps body with Obx for reactivity
-  @override
-  Widget buildBody(BuildContext context) {
-    return Obx(() => super.buildBody(context));
-  }
-
-  //----------------------------------------------------------------------------
   @override
   void onRetry(BuildContext context) {
     controller.onInit();

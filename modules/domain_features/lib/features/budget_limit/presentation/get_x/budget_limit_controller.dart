@@ -18,7 +18,7 @@ class BudgetLimitBinding extends Bindings {
   }
 }
 
-@injectable
+@lazySingleton
 class BudgetLimitController extends CcGetController {
   BudgetLimitController(
     this._getBudgetStats,
@@ -49,10 +49,9 @@ class BudgetLimitController extends CcGetController {
   ///
   /// Pass [showLoading] as false for background refreshes (e.g. re-opening the
   /// tab) so already-loaded data isn't replaced by a full-screen loader.
-  Future<void> loadBudgets({bool showLoading = true}) async {
-    if (showLoading) {
-      layoutStatus.value = CcLayoutStatus.loading;
-    }
+  Future<void> loadBudgets() async {
+    layoutStatus.value = CcLayoutStatus.loading;
+
     final result = await _getBudgetStats.call();
     result.when(
       (success) {
@@ -97,7 +96,7 @@ class BudgetLimitController extends CcGetController {
     );
     result.when((_) {}, (error) {
       errorMessage.value = error.message;
-      loadBudgets(showLoading: false);
+      loadBudgets();
     });
   }
 
@@ -116,7 +115,7 @@ class BudgetLimitController extends CcGetController {
     );
     result.when((_) {}, (error) {
       errorMessage.value = error.message;
-      loadBudgets(showLoading: false);
+      loadBudgets();
     });
   }
 

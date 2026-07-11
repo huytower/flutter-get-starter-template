@@ -19,7 +19,7 @@ class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
   bool get enableAppBar => true;
 
   @override
-  PreferredSizeWidget? buildAppBar() {
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Builder(
@@ -65,7 +65,7 @@ class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
   Widget? get floatingActionButton => null;
 
   @override
-  Widget? buildContent() {
+  Widget? buildContent(BuildContext context) {
     // Obx here so isEditMode.value is tracked directly in the reactive context —
     // reading it inside a Builder callback (deferred build) would escape tracking.
     return Obx(() {

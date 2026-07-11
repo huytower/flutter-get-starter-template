@@ -1,24 +1,38 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../domain/entities/wallet_entity.dart';
-import '../get_x/wallet_controller.dart';
-import '../widgets/add_wallet_sheet.dart';
+import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
+import '../../../wallet/domain/entities/wallet_entity.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
+import '../../../wallet/presentation/widgets/add_wallet_sheet.dart';
+import '../../../wallet/presentation/widgets/wallet_strip.dart';
 import '../widgets/budget_allocation_header.dart';
 import '../widgets/budget_preview_section.dart';
-import '../widgets/shimmer_wallet_card.dart';
-import '../widgets/wallet_strip.dart';
 
 @RoutePage()
-class BudgetAllocationPage extends CcGetView<WalletController> with CcPullRefreshMixin {
+class BudgetAllocationPage extends CcGetView<WalletController>
+    with CcPullRefreshMixin {
   const BudgetAllocationPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // The budget allocation tab composes two controllers: [WalletController]
+    // (primary, auto-registered by [CcGetView]) and [BudgetLimitController]
+    // (secondary). Register the secondary controller explicitly and eagerly so
+    // the navigation refresh and the budget form sheet can always resolve it.
+    if (!Get.isRegistered<BudgetLimitController>()) {
+      Get.put(getIt<BudgetLimitController>());
+    }
+    return super.build(context);
+  }
 
   @override
   bool get enableAppBar => true;
@@ -185,12 +199,12 @@ class BudgetAllocationPage extends CcGetView<WalletController> with CcPullRefres
           context: context,
           onRefresh: controller.loadWallets,
           child: Obx(() {
-            final isLoading =
-                controller.layoutStatus.value == CcLayoutStatus.loading;
+            // final isLoading =
+            //     controller.layoutStatus.value == CcLayoutStatus.loading;
             return ListView(
               children: [
                 const BudgetAllocationHeader(),
-                _buildWalletsSection(context, isLoading),
+                _buildWalletsSection(context),
                 const BudgetPreviewSection(),
               ],
             );
@@ -200,7 +214,7 @@ class BudgetAllocationPage extends CcGetView<WalletController> with CcPullRefres
     );
   }
 
-  Widget _buildWalletsSection(BuildContext context, bool isLoading) {
+  Widget _buildWalletsSection(BuildContext context) {
     final scheme = context.ccColorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,29 +262,29 @@ class BudgetAllocationPage extends CcGetView<WalletController> with CcPullRefres
             ],
           ),
         ),
-        if (isLoading)
-          SizedBox(
-            height: context.respDim(110),
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(
-                horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-              ),
-              itemCount: 3,
-              itemBuilder: (_, _i) => Padding(
-                padding: EdgeInsets.only(right: context.respDim(10)),
-                child: SizedBox(
-                  width: context.respDim(110),
-                  child: const ShimmerWalletCard(),
-                ),
-              ),
-            ),
-          )
-        else
-          WalletStrip(
-            wallets: controller.wallets,
-            onMore: (wallet) => _openWalletActions(context, wallet),
-          ),
+        // if (isLoading)
+        //   SizedBox(
+        //     height: context.respDim(110),
+        //     child: ListView.builder(
+        //       scrollDirection: Axis.horizontal,
+        //       padding: EdgeInsets.symmetric(
+        //         horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
+        //       ),
+        //       itemCount: 3,
+        //       itemBuilder: (_, _i) => Padding(
+        //         padding: EdgeInsets.only(right: context.respDim(10)),
+        //         child: SizedBox(
+        //           width: context.respDim(110),
+        //           child: const ShimmerWalletCard(),
+        //         ),
+        //       ),
+        //     ),
+        //   )
+        // else
+        WalletStrip(
+          wallets: controller.wallets,
+          onMore: (wallet) => _openWalletActions(context, wallet),
+        ),
       ],
     );
   }

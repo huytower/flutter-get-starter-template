@@ -9,28 +9,28 @@ import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' as _i631;
 import 'package:dio/dio.dart' as _i361;
 import 'package:domain_features/export_domain_features.dart' as _i857;
-import 'package:domain_features/features/budget/data/datasources/local/budget_local_datasource.dart'
-    as _i595;
-import 'package:domain_features/features/budget/data/repositories/budget_repository_impl.dart'
-    as _i1007;
-import 'package:domain_features/features/budget/domain/repositories/budget_repository.dart'
-    as _i192;
-import 'package:domain_features/features/budget/domain/usecases/create_budget_usecase.dart'
-    as _i685;
-import 'package:domain_features/features/budget/domain/usecases/delete_budget_usecase.dart'
-    as _i46;
-import 'package:domain_features/features/budget/domain/usecases/get_budget_stats_usecase.dart'
-    as _i1058;
-import 'package:domain_features/features/budget/domain/usecases/get_budgets_usecase.dart'
-    as _i807;
-import 'package:domain_features/features/budget/domain/usecases/sort_budgets_by_limit_usecase.dart'
-    as _i473;
-import 'package:domain_features/features/budget/domain/usecases/update_budget_orders_usecase.dart'
-    as _i141;
-import 'package:domain_features/features/budget/domain/usecases/update_budget_usecase.dart'
-    as _i593;
-import 'package:domain_features/features/budget/presentation/get_x/budget_controller.dart'
-    as _i402;
+import 'package:domain_features/features/budget_limit/data/datasources/local/budget_limit_local_datasource.dart'
+    as _i585;
+import 'package:domain_features/features/budget_limit/data/repositories/budget_limit_repository_impl.dart'
+    as _i150;
+import 'package:domain_features/features/budget_limit/domain/repositories/budget_limit_repository.dart'
+    as _i544;
+import 'package:domain_features/features/budget_limit/domain/usecases/create_budget_limit_usecase.dart'
+    as _i77;
+import 'package:domain_features/features/budget_limit/domain/usecases/delete_budget_limit_usecase.dart'
+    as _i106;
+import 'package:domain_features/features/budget_limit/domain/usecases/get_budget_limit_stats_usecase.dart'
+    as _i743;
+import 'package:domain_features/features/budget_limit/domain/usecases/get_budget_limits_usecase.dart'
+    as _i847;
+import 'package:domain_features/features/budget_limit/domain/usecases/sort_budget_limits_by_limit_usecase.dart'
+    as _i250;
+import 'package:domain_features/features/budget_limit/domain/usecases/update_budget_limit_orders_usecase.dart'
+    as _i256;
+import 'package:domain_features/features/budget_limit/domain/usecases/update_budget_limit_usecase.dart'
+    as _i829;
+import 'package:domain_features/features/budget_limit/presentation/get_x/budget_limit_controller.dart'
+    as _i1003;
 import 'package:domain_features/features/category/data/datasources/local/category_local_datasource.dart'
     as _i547;
 import 'package:domain_features/features/category/data/repositories/category_repository_impl.dart'
@@ -71,14 +71,6 @@ import 'package:domain_features/features/examples/bloc_simple_page/cubit/simple/
     as _i402;
 import 'package:domain_features/features/examples/bloc_simple_page/origin/advance/advance_bloc.dart'
     as _i1004;
-import 'package:domain_features/features/home/data/datasources/remote/home_remote.dart'
-    as _i55;
-import 'package:domain_features/features/home/data/repositories/home_repository_impl.dart'
-    as _i179;
-import 'package:domain_features/features/home/domain/repositories/home_repository.dart'
-    as _i269;
-import 'package:domain_features/features/home/presentation/get_x/home_controller.dart'
-    as _i971;
 import 'package:domain_features/features/profile/data/datasources/local/profile_local_datasource.dart'
     as _i755;
 import 'package:domain_features/features/profile/data/repositories/profile_repository_impl.dart'
@@ -141,10 +133,10 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
-    gh.lazySingleton<_i595.BudgetLocalDataSource>(
-        () => _i595.BudgetLocalDataSource());
-    gh.lazySingleton<_i473.SortBudgetsByLimitUseCase>(
-        () => _i473.SortBudgetsByLimitUseCase());
+    gh.lazySingleton<_i585.BudgetLimitLocalDataSource>(
+        () => _i585.BudgetLimitLocalDataSource());
+    gh.lazySingleton<_i250.SortBudgetLimitsByLimitUseCase>(
+        () => _i250.SortBudgetLimitsByLimitUseCase());
     gh.lazySingleton<_i547.CategoryLocalDataSource>(
         () => _i547.CategoryLocalDataSource());
     gh.lazySingleton<_i1004.AdvanceBloc>(
@@ -164,10 +156,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             local: gh<_i648.TransactionLocalDataSource>()));
     gh.lazySingleton<_i130.CommentRemote>(
         () => _i130.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.lazySingleton<_i55.HomeRemote>(
-        () => _i55.HomeRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.lazySingleton<_i857.HomeRepository>(
-        () => _i179.HomeRepositoryImpl(remote: gh<_i55.HomeRemote>()));
     gh.lazySingleton<_i944.ReconciliationRepository>(() =>
         _i513.ReconciliationRepositoryImpl(
             local: gh<_i896.ReconciliationLocalDataSource>()));
@@ -193,24 +181,9 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         _i609.ProfileRepositoryImpl(local: gh<_i755.ProfileLocalDataSource>()));
     gh.lazySingleton<_i857.WalletRepository>(() =>
         _i589.WalletRepositoryImpl(local: gh<_i1058.WalletLocalDataSource>()));
-    gh.lazySingleton<_i192.BudgetRepository>(() =>
-        _i1007.BudgetRepositoryImpl(local: gh<_i595.BudgetLocalDataSource>()));
-    gh.lazySingleton<_i685.CreateBudgetUseCase>(
-        () => _i685.CreateBudgetUseCase(gh<_i192.BudgetRepository>()));
-    gh.lazySingleton<_i46.DeleteBudgetUseCase>(
-        () => _i46.DeleteBudgetUseCase(gh<_i192.BudgetRepository>()));
-    gh.lazySingleton<_i807.GetBudgetsUseCase>(
-        () => _i807.GetBudgetsUseCase(gh<_i192.BudgetRepository>()));
-    gh.lazySingleton<_i141.UpdateBudgetOrdersUseCase>(
-        () => _i141.UpdateBudgetOrdersUseCase(gh<_i192.BudgetRepository>()));
-    gh.lazySingleton<_i593.UpdateBudgetUseCase>(
-        () => _i593.UpdateBudgetUseCase(gh<_i192.BudgetRepository>()));
-    gh.lazySingleton<_i1058.GetBudgetStatsUseCase>(
-        () => _i1058.GetBudgetStatsUseCase(
-              gh<_i192.BudgetRepository>(),
-              gh<_i1027.TransactionRepository>(),
-              gh<_i1059.CategoryRepository>(),
-            ));
+    gh.lazySingleton<_i544.BudgetLimitRepository>(() =>
+        _i150.BudgetLimitRepositoryImpl(
+            local: gh<_i585.BudgetLimitLocalDataSource>()));
     gh.lazySingleton<_i169.GetCategorySpendingUseCase>(
         () => _i169.GetCategorySpendingUseCase(
               gh<_i1027.TransactionRepository>(),
@@ -228,10 +201,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         _i110.ToggleCategoryEnabledUseCase(gh<_i1059.CategoryRepository>()));
     gh.lazySingleton<_i989.UpdateCategoryUseCase>(
         () => _i989.UpdateCategoryUseCase(gh<_i1059.CategoryRepository>()));
-    gh.lazySingleton<_i971.HomeController>(() => _i971.HomeController(
-          gh<_i269.HomeRepository>(),
-          gh<_i727.HomeCoordinator>(),
-        ));
     gh.lazySingleton<_i195.UndoReconciliationUseCase>(
         () => _i195.UndoReconciliationUseCase(
               gh<_i944.ReconciliationRepository>(),
@@ -243,13 +212,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i569.GetProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
     gh.lazySingleton<_i220.UpdateProfileSettingsUseCase>(() =>
         _i220.UpdateProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
-    gh.factory<_i402.BudgetController>(() => _i402.BudgetController(
-          gh<_i1058.GetBudgetStatsUseCase>(),
-          gh<_i685.CreateBudgetUseCase>(),
-          gh<_i593.UpdateBudgetUseCase>(),
-          gh<_i141.UpdateBudgetOrdersUseCase>(),
-          gh<_i46.DeleteBudgetUseCase>(),
-        ));
     gh.lazySingleton<_i892.UploadPendingCrashLogsUseCase>(() =>
         _i892.UploadPendingCrashLogsUseCase(gh<_i473.CrashLogRepository>()));
     gh.lazySingleton<_i167.GetWalletBalancesUseCase>(
@@ -262,6 +224,17 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i572.WalletRepository>(),
               gh<_i1027.TransactionRepository>(),
             ));
+    gh.lazySingleton<_i77.CreateBudgetLimitUseCase>(
+        () => _i77.CreateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
+    gh.lazySingleton<_i106.DeleteBudgetLimitUseCase>(() =>
+        _i106.DeleteBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
+    gh.lazySingleton<_i847.GetBudgetLimitsUseCase>(
+        () => _i847.GetBudgetLimitsUseCase(gh<_i544.BudgetLimitRepository>()));
+    gh.lazySingleton<_i256.UpdateBudgetLimitOrdersUseCase>(() =>
+        _i256.UpdateBudgetLimitOrdersUseCase(
+            gh<_i544.BudgetLimitRepository>()));
+    gh.lazySingleton<_i829.UpdateBudgetLimitUseCase>(() =>
+        _i829.UpdateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
     gh.lazySingleton<_i804.PerformReconciliationUseCase>(
         () => _i804.PerformReconciliationUseCase(
               gh<_i167.GetWalletBalancesUseCase>(),
@@ -280,6 +253,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i631.CcDeviceInfoHelper>(),
           gh<_i727.AuthCoordinator>(),
         ));
+    gh.lazySingleton<_i743.GetBudgetLimitStatsUseCase>(
+        () => _i743.GetBudgetLimitStatsUseCase(
+              gh<_i544.BudgetLimitRepository>(),
+              gh<_i1027.TransactionRepository>(),
+              gh<_i1059.CategoryRepository>(),
+            ));
     gh.factory<_i700.TransactionController>(() => _i700.TransactionController(
           gh<_i1027.TransactionRepository>(),
           gh<_i167.GetWalletBalancesUseCase>(),
@@ -298,6 +277,14 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i627.CreateTransferUseCase(
               gh<_i1027.TransactionRepository>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
+            ));
+    gh.lazySingleton<_i1003.BudgetLimitController>(
+        () => _i1003.BudgetLimitController(
+              gh<_i743.GetBudgetLimitStatsUseCase>(),
+              gh<_i77.CreateBudgetLimitUseCase>(),
+              gh<_i829.UpdateBudgetLimitUseCase>(),
+              gh<_i256.UpdateBudgetLimitOrdersUseCase>(),
+              gh<_i106.DeleteBudgetLimitUseCase>(),
             ));
     gh.factory<_i1051.ReconciliationController>(
         () => _i1051.ReconciliationController(

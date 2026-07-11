@@ -62,10 +62,8 @@ class WalletController extends CcGetController {
   /// Pass [showLoading] false for background refreshes (e.g. re-opening the
   /// Wallet tab after adding a transaction elsewhere) so the list isn't
   /// replaced by a full-screen loader.
-  Future<void> loadWallets({bool showLoading = true}) async {
-    if (showLoading) {
-      layoutStatus.value = CcLayoutStatus.loading;
-    }
+  Future<void> loadWallets() async {
+    layoutStatus.value = CcLayoutStatus.loading;
 
     final result = await _repository.getWallets();
 
@@ -80,8 +78,7 @@ class WalletController extends CcGetController {
     wallets.assignAll(list);
     _calculateTotalBalance();
 
-    layoutStatus.value =
-        list.isEmpty ? CcLayoutStatus.empty : CcLayoutStatus.success;
+    layoutStatus.value = CcLayoutStatus.success;
   }
 
   /// Fetches transactions once and derives, per wallet, both the activity flag
@@ -97,14 +94,18 @@ class WalletController extends CcGetController {
     _bookBalances.clear();
     for (final wallet in list) {
       final walletTxns = txns.where((t) => t.walletId == wallet.id).toList();
-      _bookBalances[wallet.id] =
-          bookBalanceFromTransactions(wallet.balance, walletTxns);
+      _bookBalances[wallet.id] = bookBalanceFromTransactions(
+        wallet.balance,
+        walletTxns,
+      );
     }
   }
 
   void _calculateTotalBalance() {
-    totalBalance.value =
-        wallets.fold(0, (sum, item) => sum + bookBalanceOf(item.id));
+    totalBalance.value = wallets.fold(
+      0,
+      (sum, item) => sum + bookBalanceOf(item.id),
+    );
   }
 
   Future<void> addWallet({
@@ -204,8 +205,9 @@ class WalletController extends CcGetController {
     _walletsWithTxns.remove(id);
     _bookBalances.remove(id);
     _calculateTotalBalance();
-    layoutStatus.value =
-        wallets.isEmpty ? CcLayoutStatus.empty : CcLayoutStatus.success;
+    layoutStatus.value = wallets.isEmpty
+        ? CcLayoutStatus.empty
+        : CcLayoutStatus.success;
     return WalletDeleteOutcome.success;
   }
 

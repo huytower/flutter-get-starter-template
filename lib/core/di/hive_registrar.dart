@@ -23,8 +23,8 @@ class HiveRegistrar {
     // Register Transaction adapter (data-layer model) from domain_features
     Hive.registerAdapter(TransactionModelAdapter());
 
-    // Register Budget adapter (data-layer model) from domain_features
-    Hive.registerAdapter(BudgetModelAdapter());
+    // Register Budget Limit adapter (data-layer model) from domain_features
+    Hive.registerAdapter(BudgetLimitModelAdapter());
 
     // Register Reconciliation adapters (record + nested allocation)
     Hive.registerAdapter(ReconciliationAllocationModelAdapter());
