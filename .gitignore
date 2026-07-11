@@ -151,3 +151,7 @@ pubspec_overrides.yaml
 # Ruby / Bundler
 .bundle/
 vendor/bundle/
+/macos/Flutter/ephemeral/Flutter-Generated.xcconfig
+/macos/Flutter/ephemeral/flutter_export_environment.sh
+/macos/Flutter/ephemeral/flutter_native_integration.env
+/macos/Flutter/GeneratedPluginRegistrant.swift
