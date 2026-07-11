@@ -33,6 +33,14 @@ class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
             ),
           ),
           actions: [
+            IconButton(
+              onPressed: () => _openForm(context),
+              tooltip: el.tr(CcLocaleKeys.budget_add_title),
+              icon: Icon(
+                Icons.add_rounded,
+                color: context.ccColorScheme.onPrimary,
+              ),
+            ),
             Obx(
               () => IconButton(
                 onPressed: controller.toggleEditMode,

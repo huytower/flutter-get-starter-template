@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -73,7 +74,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       await _controller.updateWallet(
         WalletEntity(
           id: original.id,
-            name: name,
+          name: name,
           balance: balance,
           iconCode: original.iconCode,
           type: original.type,
@@ -93,7 +94,9 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       Navigator.pop(context); // Đóng sheet
       CcSnackBarHelper.showSuccessSnackBar(
         context: context,
-        message: _isEditing ? 'Đã cập nhật ví' : 'Đã thêm ví mới',
+        message: _isEditing
+            ? el.tr(CcLocaleKeys.wallet_updated_success)
+            : el.tr(CcLocaleKeys.wallet_added_success),
       );
     }
   }
@@ -118,22 +121,21 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CcText(
-            _isEditing ? 'Sửa ví' : 'Thêm ví mới',
+            _isEditing
+                ? el.tr(CcLocaleKeys.wallet_edit_title)
+                : el.tr(CcLocaleKeys.wallet_add_title),
             textStyle: context.ccTextTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: context.ccColorScheme.primary,
             ),
           ),
           const CcSpaceMD(),
-          if (!_isEditing) ...[
-            _buildTypeSelector(context),
-            const CcSpaceMD(),
-          ],
+          if (!_isEditing) ...[_buildTypeSelector(context), const CcSpaceMD()],
           TextField(
             controller: _nameController,
             decoration: InputDecoration(
-              labelText: 'Tên ví',
-              hintText: 'Ví dụ: Tiền mặt, Techcombank...',
+              labelText: el.tr(CcLocaleKeys.wallet_name),
+              hintText: el.tr(CcLocaleKeys.wallet_name_hint),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -146,11 +148,11 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
             readOnly: _balanceLocked,
             enabled: !_balanceLocked,
             decoration: InputDecoration(
-              labelText: 'Số dư đầu kỳ',
-              hintText: 'Ví dụ: 1000000',
+              labelText: el.tr(CcLocaleKeys.wallet_initial_balance),
+              hintText: el.tr(CcLocaleKeys.wallet_initial_balance_hint),
               suffixText: 'đ',
               helperText: _balanceLocked
-                  ? 'Không thể sửa số dư đầu kỳ khi ví đã có giao dịch'
+                  ? el.tr(CcLocaleKeys.wallet_balance_locked_hint)
                   : null,
               helperMaxLines: 2,
               border: OutlineInputBorder(
@@ -170,11 +172,11 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const CcText(
-                'Lưu thông tin',
+              child: CcText(
+                el.tr(CcLocaleKeys.wallet_save_info),
                 align: Alignment.center,
                 textAlign: TextAlign.center,
-                textStyle: TextStyle(
+                textStyle: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
@@ -187,9 +189,9 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
   }
 
   Widget _buildTypeSelector(BuildContext context) {
-    const options = [
-      (WalletType.bank, 'Ngân hàng'),
-      (WalletType.credit, 'Thẻ tín dụng'),
+    final options = [
+      (WalletType.bank, el.tr(CcLocaleKeys.wallet_bank)),
+      (WalletType.credit, el.tr(CcLocaleKeys.wallet_credit)),
     ];
     return Row(
       children: options.map((option) {
@@ -201,10 +203,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
             onTap: () => setState(() => _newType = type),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 10,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: isSelected
                     ? context.ccColorScheme.primary
@@ -224,8 +223,9 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                     label,
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
                       color: isSelected ? Colors.white : Colors.grey[800],
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 ],

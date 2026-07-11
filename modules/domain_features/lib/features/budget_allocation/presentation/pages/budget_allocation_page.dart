@@ -12,9 +12,7 @@ import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/add_wallet_sheet.dart';
-import '../widgets/budget_allocation_header.dart';
 import '../widgets/budget_preview_section.dart';
-import '../widgets/shimmer_wallet_card.dart';
 import '../widgets/wallet_strip.dart';
 
 @RoutePage()
@@ -189,61 +187,37 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   void _confirmDelete(BuildContext context, WalletEntity wallet) {
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: CcText(el.tr(CcLocaleKeys.common_delete)),
-        content: const CcText(
-          'Chỉ có thể xóa ví khi số dư bằng 0. '
-          'Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: CcText(el.tr(CcLocaleKeys.common_cancel)),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(dialogContext);
-              final outcome = await controller.walletController.deleteWallet(
-                wallet.id,
-              );
-              if (!context.mounted) return;
-              switch (outcome) {
-                case WalletDeleteOutcome.success:
-                  CcSnackBarHelper.showSuccessSnackBar(
-                    context: context,
-                    message: el.tr(CcLocaleKeys.common_done),
-                  );
-                  break;
-                case WalletDeleteOutcome.notEmpty:
-                  CcSnackBarHelper.showErrorSnackBar(
-                    context: context,
-                    message: 'Không thể xóa: số dư của ví phải bằng 0',
-                  );
-                  break;
-                case WalletDeleteOutcome.error:
-                  CcSnackBarHelper.showErrorSnackBar(
-                    context: context,
-                    message:
-                        controller
-                            .walletController
-                            .errorMessage
-                            .value
-                            .isNotEmpty
-                        ? controller.walletController.errorMessage.value
-                        : el.tr(CcLocaleKeys.app_error_general),
-                  );
-                  break;
-              }
-            },
-            child: CcText(
-              el.tr(CcLocaleKeys.common_delete),
-              textStyle: TextStyle(color: context.ccColorScheme.error),
-            ),
-          ),
-        ],
-      ),
+    CcDialogHelper.showConfirmationDialog(
+      desc: el.tr(CcLocaleKeys.wallet_delete_confirm_msg),
+      isCancelBtnShown: true,
+      onTapConfirm: () async {
+        final outcome = await controller.walletController.deleteWallet(
+          wallet.id,
+        );
+        if (!context.mounted) return;
+        switch (outcome) {
+          case WalletDeleteOutcome.success:
+            CcSnackBarHelper.showSuccessSnackBar(
+              context: context,
+              message: el.tr(CcLocaleKeys.common_done),
+            );
+            break;
+          case WalletDeleteOutcome.notEmpty:
+            CcSnackBarHelper.showErrorSnackBar(
+              context: context,
+              message: el.tr(CcLocaleKeys.wallet_delete_error_not_empty),
+            );
+            break;
+          case WalletDeleteOutcome.error:
+            CcSnackBarHelper.showErrorSnackBar(
+              context: context,
+              message: controller.walletController.errorMessage.value.isNotEmpty
+                  ? controller.walletController.errorMessage.value
+                  : el.tr(CcLocaleKeys.app_error_general),
+            );
+            break;
+        }
+      },
     );
   }
 

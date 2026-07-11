@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/util/horizontal_fade_scroll_view.dart';
 import '../../../../core/util/icon_utils.dart';
+import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
+import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../../domain/usecases/create_budget_limit_usecase.dart';
 import '../../domain/usecases/update_budget_limit_usecase.dart';
@@ -30,7 +32,21 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
       ? Get.find<BudgetLimitController>()
       : Get.put(getIt<BudgetLimitController>());
   final _nameController = TextEditingController();
-  final _limitController = TextEditingController();
+  final _amountFieldKey = GlobalKey();
+
+  String _limitStr = '0';
+  String? _nameError;
+  bool _showKeypad = false;
+
+  static const List<int> _quickAmounts = [
+    100000,
+    200000,
+    500000,
+    1000000,
+    2000000,
+    5000000,
+    10000000,
+  ];
 
   List<CategoryEntity> _categories = const [];
   String? _selectedCategoryId;
@@ -47,7 +63,7 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
     // While the limit is locked its input is hidden, so only the name has
     // to be valid.
     if (_limitLocked) return true;
-    final limit = int.tryParse(_limitController.text.trim()) ?? 0;
+    final limit = int.tryParse(_limitStr.trim()) ?? 0;
     return limit > 0;
   }
 
@@ -58,10 +74,12 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
     if (target != null) {
       _nameController.text = target.name;
       _selectedCategoryId = target.categoryId;
-      _limitController.text = target.limit.toString();
+      _limitStr = target.limit.toString();
     }
-    _nameController.addListener(() => setState(() {}));
-    _limitController.addListener(() => setState(() {}));
+    _nameController.addListener(() {
+      if (_nameError != null) setState(() => _nameError = null);
+      setState(() {});
+    });
     if (!_isEdit) _loadCategories();
   }
 
@@ -75,7 +93,10 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
           .toList();
       setState(() {
         _categories = enabled;
-        _selectedCategoryId ??= enabled.isNotEmpty ? enabled.first.id : null;
+        if (_selectedCategoryId == null && enabled.isNotEmpty) {
+          _selectedCategoryId = enabled.first.id;
+          _nameController.text = el.tr(enabled.first.nameKey);
+        }
       });
       _scrollToSelectedCategory(enabled);
     }, (_) {});
@@ -98,12 +119,44 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
   @override
   void dispose() {
     _nameController.dispose();
-    _limitController.dispose();
     super.dispose();
   }
 
+  void _onKeyPress(String key) {
+    setState(() {
+      if (_limitStr == '0') {
+        if (key != '0' && key != '000') _limitStr = key;
+      } else {
+        _limitStr += key;
+      }
+    });
+  }
+
+  void _onDelete() {
+    setState(() {
+      if (_limitStr.length > 1) {
+        _limitStr = _limitStr.substring(0, _limitStr.length - 1);
+      } else {
+        _limitStr = '0';
+      }
+    });
+  }
+
   Future<void> _onSave() async {
-    final limit = int.tryParse(_limitController.text.trim()) ?? 0;
+    final budgetName = _nameController.text.trim();
+    final isDuplicate = _controller.budgets.any((b) {
+      if (_isEdit && b.budget.id == widget.editTarget!.id) return false;
+      return b.budget.name.trim().toLowerCase() == budgetName.toLowerCase();
+    });
+
+    if (isDuplicate) {
+      setState(
+        () => _nameError = el.tr(CcLocaleKeys.budget_name_duplicate_error),
+      );
+      return;
+    }
+
+    final limit = int.tryParse(_limitStr.trim()) ?? 0;
 
     final error = _isEdit
         ? await _controller.updateBudget(
@@ -124,7 +177,7 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
       CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
       return;
     }
-    final budgetName = _nameController.text.trim();
+
     CcSnackBarHelper.showSuccessSnackBar(
       context: context,
       message: _isEdit
@@ -136,192 +189,247 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: context.respPadding(CcPaddingParams.SPACE_LG),
-        right: context.respPadding(CcPaddingParams.SPACE_LG),
-        top: context.respPadding(CcPaddingParams.SPACE_LG),
-        bottom:
-            MediaQuery.of(context).viewInsets.bottom +
-            context.respPadding(CcPaddingParams.SPACE_LG),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CcText(
-            _isEdit
-                ? el.tr(CcLocaleKeys.budget_edit_title)
-                : el.tr(CcLocaleKeys.budget_add_title),
-            textStyle: context.ccTextTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: context.ccColorScheme.primary,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            if (_showKeypad) setState(() => _showKeypad = false);
+          },
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: context.respPadding(CcPaddingParams.SPACE_LG),
+              right: context.respPadding(CcPaddingParams.SPACE_LG),
+              top: context.respPadding(CcPaddingParams.SPACE_LG),
+              bottom:
+                  (_showKeypad ? 0 : MediaQuery.of(context).viewInsets.bottom) +
+                  context.respPadding(CcPaddingParams.SPACE_LG),
             ),
-          ),
-          const CcSpaceMD(),
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              labelText: el.tr(CcLocaleKeys.budget_name),
-              hintText: el.tr(CcLocaleKeys.budget_name_hint),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-          if (!_isEdit) ...[
-            const CcSpaceMD(),
-            Column(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CcText(
-                  el.tr(CcLocaleKeys.budget_category),
-                  textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                    color: Colors.grey[700],
+                  _isEdit
+                      ? el.tr(CcLocaleKeys.budget_edit_title)
+                      : el.tr(CcLocaleKeys.budget_add_title),
+                  textStyle: context.ccTextTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: context.respFontSize(12),
+                    color: context.ccColorScheme.primary,
                   ),
                 ),
-                const CcSpaceSM(),
-                HorizontalFadeScrollView(
-                  height: context.respDim(90),
-                  builder: (scrollController) {
-                    _categoryScrollController = scrollController;
-                    return ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      controller: scrollController,
-                      itemCount: _categories.length,
-                      separatorBuilder: (_, _) => const CcSpaceSM(),
-                      itemBuilder: (context, index) {
-                        final cat = _categories[index];
-                        final isSelected = _selectedCategoryId == cat.id;
-                        return GestureDetector(
-                          onTap: _isEdit
-                              ? null
-                              : () => setState(
-                                  () => _selectedCategoryId = cat.id,
-                                ),
-                          child: SizedBox(
-                            width: context.respDim(68),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  curve: Curves.easeInOut,
-                                  width: context.respDim(52),
-                                  height: context.respDim(52),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? context.ccColorScheme.primary
-                                        : const Color(0xFFF1F3F5),
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: Center(
-                                    child: CcIcon(
-                                      icon: iconDataFromCode(
-                                        cat.iconCode,
-                                        fontFamily: cat.iconFamily,
-                                      ),
-                                      size: context.respIconSize(baseSize: 22),
-                                      color: isSelected
-                                          ? Colors.white
-                                          : Colors.grey[600],
-                                    ),
-                                  ),
-                                ),
-                                const CcSpaceXS(),
-                                AnimatedDefaultTextStyle(
-                                  duration: const Duration(milliseconds: 200),
-                                  curve: Curves.easeInOut,
-                                  style:
-                                      (context.ccTextTheme.bodySmall ??
-                                              const TextStyle())
-                                          .copyWith(
-                                            fontSize: context.respFontSize(9),
-                                            fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
-                                            color: isSelected
-                                                ? context.ccColorScheme.primary
-                                                : Colors.grey[700],
+                const CcSpaceMD(),
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: el.tr(CcLocaleKeys.budget_name),
+                    hintText: el.tr(CcLocaleKeys.budget_name_hint),
+                    errorText: _nameError,
+                    suffixIcon: _nameController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 20),
+                            onPressed: () => _nameController.clear(),
+                          )
+                        : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                if (!_isEdit) ...[
+                  const CcSpaceMD(),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CcText(
+                        el.tr(CcLocaleKeys.budget_category),
+                        textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                          color: Colors.grey[700],
+                          fontWeight: FontWeight.bold,
+                          fontSize: context.respFontSize(12),
+                        ),
+                      ),
+                      const CcSpaceSM(),
+                      HorizontalFadeScrollView(
+                        height: context.respDim(90),
+                        builder: (scrollController) {
+                          _categoryScrollController = scrollController;
+                          return ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            controller: scrollController,
+                            itemCount: _categories.length,
+                            separatorBuilder: (_, _) => const CcSpaceSM(),
+                            itemBuilder: (context, index) {
+                              final cat = _categories[index];
+                              final isSelected = _selectedCategoryId == cat.id;
+                              return GestureDetector(
+                                onTap: _isEdit
+                                    ? null
+                                    : () {
+                                        setState(() {
+                                          _selectedCategoryId = cat.id;
+                                          _nameController.text = el.tr(
+                                            cat.nameKey,
+                                          );
+                                        });
+                                      },
+                                child: SizedBox(
+                                  width: context.respDim(68),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      AnimatedContainer(
+                                        duration: const Duration(
+                                          milliseconds: 200,
+                                        ),
+                                        curve: Curves.easeInOut,
+                                        width: context.respDim(52),
+                                        height: context.respDim(52),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? context.ccColorScheme.primary
+                                              : const Color(0xFFF1F3F5),
+                                          borderRadius: BorderRadius.circular(
+                                            14,
                                           ),
-                                  child: Text(
-                                    el.tr(cat.nameKey),
-                                    textAlign: TextAlign.center,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                        ),
+                                        child: Center(
+                                          child: CcIcon(
+                                            icon: iconDataFromCode(
+                                              cat.iconCode,
+                                              fontFamily: cat.iconFamily,
+                                            ),
+                                            size: context.respIconSize(
+                                              baseSize: 22,
+                                            ),
+                                            color: isSelected
+                                                ? Colors.white
+                                                : Colors.grey[600],
+                                          ),
+                                        ),
+                                      ),
+                                      const CcSpaceXS(),
+                                      AnimatedDefaultTextStyle(
+                                        duration: const Duration(
+                                          milliseconds: 200,
+                                        ),
+                                        curve: Curves.easeInOut,
+                                        style:
+                                            (context.ccTextTheme.bodySmall ??
+                                                    const TextStyle())
+                                                .copyWith(
+                                                  fontSize: context
+                                                      .respFontSize(9),
+                                                  fontWeight: isSelected
+                                                      ? FontWeight.bold
+                                                      : FontWeight.normal,
+                                                  color: isSelected
+                                                      ? context
+                                                            .ccColorScheme
+                                                            .primary
+                                                      : Colors.grey[700],
+                                                ),
+                                        child: Text(
+                                          el.tr(cat.nameKey),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ], // end if (!_isEdit)
+                const CcSpaceMD(),
+                if (_limitLocked)
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.lock_clock_outlined,
+                        size: context.respIconSize(baseSize: 16),
+                        color: Colors.grey[600],
+                      ),
+                      const CcSpaceSM(),
+                      Expanded(
+                        child: CcText(
+                          el.tr(CcLocaleKeys.budget_limit_locked),
+                          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                            color: Colors.grey[600],
                           ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-          ], // end if (!_isEdit)
-          const CcSpaceMD(),
-          if (_limitLocked)
-            Row(
-              children: [
-                Icon(
-                  Icons.lock_clock_outlined,
-                  size: context.respIconSize(baseSize: 16),
-                  color: Colors.grey[600],
-                ),
-                const CcSpaceSM(),
-                Expanded(
-                  child: CcText(
-                    el.tr(CcLocaleKeys.budget_limit_locked),
-                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                      color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  CcAmountInputSection(
+                    label: el.tr(CcLocaleKeys.budget_limit),
+                    amountStr: _limitStr,
+                    quickAmounts: _quickAmounts,
+                    isKeypadVisible: _showKeypad,
+                    fieldKey: _amountFieldKey,
+                    onTap: () {
+                      setState(() => _showKeypad = true);
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        final ctx = _amountFieldKey.currentContext;
+                        if (ctx != null) {
+                          Scrollable.ensureVisible(
+                            ctx,
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeOut,
+                          );
+                        }
+                      });
+                    },
+                    onQuickAmountSelected: (amount) =>
+                        setState(() => _limitStr = amount.toString()),
+                  ),
+                const CcSpaceLG(),
+                SizedBox(
+                  width: double.infinity,
+                  height: context.respDim(50),
+                  child: ElevatedButton(
+                    onPressed: _isValid ? _onSave : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.ccColorScheme.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: CcText(
+                      el.tr(CcLocaleKeys.common_save),
+                      align: Alignment.center,
+                      textAlign: TextAlign.center,
+                      textStyle: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
               ],
-            )
-          else
-            TextField(
-              controller: _limitController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: el.tr(CcLocaleKeys.budget_limit),
-                hintText: el.tr(CcLocaleKeys.budget_limit_hint),
-                suffixText: 'đ',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          const CcSpaceLG(),
-          SizedBox(
-            width: double.infinity,
-            height: context.respDim(50),
-            child: ElevatedButton(
-              onPressed: _isValid ? _onSave : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.ccColorScheme.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: CcText(
-                el.tr(CcLocaleKeys.common_save),
-                align: Alignment.center,
-                textAlign: TextAlign.center,
-                textStyle: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ),
           ),
-        ],
-      ),
+        ),
+        if (_showKeypad)
+          MoneyKeypadPanel(
+            onKeyPress: _onKeyPress,
+            onDelete: _onDelete,
+            onClear: () => setState(() => _limitStr = '0'),
+            suggestions: _quickAmounts,
+            onSuggestion: (value) =>
+                setState(() => _limitStr = value.toString()),
+            onDone: () => setState(() => _showKeypad = false),
+            activeColor: context.ccColorScheme.primary,
+          ),
+      ],
     );
   }
 }

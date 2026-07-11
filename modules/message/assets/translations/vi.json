@@ -138,7 +138,21 @@
     "total_assets": "Tổng tài sản",
     "your_wallets": "Ví của bạn",
     "see_all": "Xem tất cả",
-    "empty": "Chưa có ví nào.\nNhấn + để thêm ví."
+    "empty": "Chưa có ví nào.\nNhấn + để thêm ví.",
+    "add_title": "Thêm ví mới",
+    "edit_title": "Sửa ví",
+    "name": "Tên ví",
+    "name_hint": "Ví dụ: Tiền mặt, Techcombank...",
+    "initial_balance": "Số dư đầu kỳ",
+    "initial_balance_hint": "Ví dụ: 1000000",
+    "balance_locked_hint": "Không thể sửa số dư đầu kỳ khi ví đã có giao dịch",
+    "save_info": "Lưu thông tin",
+    "bank": "Ngân hàng",
+    "credit": "Thẻ tín dụng",
+    "added_success": "Đã thêm ví mới",
+    "updated_success": "Đã cập nhật ví",
+    "delete_confirm_msg": "Chỉ có thể xóa ví khi số dư bằng 0. Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?",
+    "delete_error_not_empty": "Không thể xóa: số dư của ví phải bằng 0"
   },
   "comment": {
     "detail": {
@@ -193,7 +207,8 @@
     "reset_title": "Đặt lại ngân sách",
     "add_title": "Thêm ngân sách",
     "name": "Tên ngân sách",
-    "name_hint": "Ví dụ: Mua sắm tháng này",
+    "name_hint": "Ví dụ: Điện tòa nhà quận A",
+    "name_duplicate_error": "Tên ngân sách này đã tồn tại",
     "category": "Hạng mục",
     "limit": "Định mức",
     "limit_hint": "Ví dụ: 1000000",
