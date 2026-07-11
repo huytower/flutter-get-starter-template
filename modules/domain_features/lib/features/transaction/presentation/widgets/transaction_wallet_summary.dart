@@ -1,0 +1,40 @@
+import 'package:flutter/material.dart';
+
+import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:get/get.dart';
+
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+
+import '../../../../core/util/money_format.dart';
+import '../get_x/transaction_controller.dart';
+
+class TransactionWalletSummary extends StatelessWidget {
+  const TransactionWalletSummary({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.find<TransactionController>();
+
+    return Obx(
+      () => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.account_balance_wallet_outlined,
+            size: context.respIconSize(baseSize: 14),
+            color: context.ccColorScheme.onPrimary.withOpacity(0.8),
+          ),
+          const CcSpaceXS(),
+          CcText(
+            '${el.tr(CcLocaleKeys.transaction_wallet)}  ${formatVndShort(controller.walletTotal.value)}',
+            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+              color: context.ccColorScheme.onPrimary.withOpacity(0.9),
+              fontWeight: CcTypographyParams.semiBold,
+              fontSize: context.respFontSize(13),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

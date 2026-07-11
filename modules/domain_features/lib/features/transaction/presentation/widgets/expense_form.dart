@@ -15,9 +15,8 @@ import 'money_keypad_panel.dart';
 
 class ExpenseForm extends StatefulWidget {
   final VoidCallback? onSaved;
-  final GlobalKey<ExpenseFormState>? formKey;
 
-  const ExpenseForm({super.key, this.onSaved, this.formKey});
+  const ExpenseForm({super.key, this.onSaved});
 
   @override
   ExpenseFormState createState() => ExpenseFormState();

@@ -13,9 +13,8 @@ import 'money_keypad_panel.dart';
 
 class TransferForm extends StatefulWidget {
   final VoidCallback? onSaved;
-  final GlobalKey<TransferFormState>? formKey;
 
-  const TransferForm({super.key, this.onSaved, this.formKey});
+  const TransferForm({super.key, this.onSaved});
 
   @override
   TransferFormState createState() => TransferFormState();

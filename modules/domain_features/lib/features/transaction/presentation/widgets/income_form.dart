@@ -18,9 +18,8 @@ import 'money_keypad_panel.dart';
 
 class IncomeForm extends StatefulWidget {
   final VoidCallback? onSaved;
-  final GlobalKey<IncomeFormState>? formKey;
 
-  const IncomeForm({super.key, this.onSaved, this.formKey});
+  const IncomeForm({super.key, this.onSaved});
 
   @override
   IncomeFormState createState() => IncomeFormState();

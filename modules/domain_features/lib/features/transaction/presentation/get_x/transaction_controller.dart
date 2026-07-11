@@ -21,7 +21,11 @@ class TransactionBinding extends Bindings {
 
 @injectable
 class TransactionController extends CcGetController with PaginationMixin {
-  TransactionController(this._repository, this._getWalletBalances, this._walletRepository);
+  TransactionController(
+    this._repository,
+    this._getWalletBalances,
+    this._walletRepository,
+  );
 
   final TransactionRepository _repository;
   final GetWalletBalancesUseCase _getWalletBalances;
@@ -41,8 +45,19 @@ class TransactionController extends CcGetController with PaginationMixin {
   final RxList<WalletEntity> wallets = <WalletEntity>[].obs;
   final RxBool isLoadingWallets = false.obs;
 
+  /// Temporary flag to show wallet summary in the AppBar for 2 seconds.
+  final RxBool showWalletSummaryTemporarily = false.obs;
+
   void setTabIndex(int index) {
     selectedTabIndex.value = index;
+  }
+
+  /// Temporarily shows the wallet summary in place of the title for 2 seconds.
+  void flashWalletSummary() {
+    showWalletSummaryTemporarily.value = true;
+    Future.delayed(const Duration(seconds: 2), () {
+      showWalletSummaryTemporarily.value = false;
+    });
   }
 
   @override
@@ -60,23 +75,17 @@ class TransactionController extends CcGetController with PaginationMixin {
     isLoadingWallets.value = true;
     final result = await _walletRepository.getWallets();
     isLoadingWallets.value = false;
-    result.when(
-      (walletList) => wallets.assignAll(walletList),
-      (_) {},
-    );
+    result.when((walletList) => wallets.assignAll(walletList), (_) {});
   }
 
   Future<void> refreshWalletTotal() async {
     final result = await _getWalletBalances();
-    result.when(
-      (balances) {
-        walletTotal.value = balances.fold<int>(
-          0,
-          (sum, b) => sum + b.bookBalance,
-        );
-      },
-      (_) {},
-    );
+    result.when((balances) {
+      walletTotal.value = balances.fold<int>(
+        0,
+        (sum, b) => sum + b.bookBalance,
+      );
+    }, (_) {});
   }
 
   Future<void> loadTransactions({bool refresh = false}) async {

@@ -7,10 +7,10 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../../core/util/money_format.dart';
 import '../get_x/transaction_controller.dart';
 import '../widgets/expense_form.dart';
 import '../widgets/income_form.dart';
+import '../widgets/transaction_wallet_summary.dart';
 import '../widgets/transfer_form.dart';
 import 'transaction_history_page.dart';
 
@@ -36,7 +36,7 @@ class TransactionPage extends CcGetView<TransactionController> {
   PreferredSizeWidget _buildAppBarWithContext(BuildContext context) {
     return PreferredSize(
       preferredSize: Size.fromHeight(
-        context.respDim(115) + MediaQuery.of(context).padding.top,
+        context.respDim(80) + MediaQuery.of(context).padding.top,
       ),
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
@@ -60,19 +60,40 @@ class TransactionPage extends CcGetView<TransactionController> {
             bottom: context.respPadding(CcPaddingParams.SPACE_LG),
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Row(
                 children: [
                   Expanded(
-                    child: CcText(
-                      el.tr(CcLocaleKeys.transaction_title),
-                      textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                        color: context.ccColorScheme.onPrimary,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                        fontSize: context.respFontSize(16),
-                      ),
-                    ),
+                    child: Obx(() {
+                      return AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 400),
+                        layoutBuilder: (currentChild, previousChildren) {
+                          return Stack(
+                            alignment: Alignment.centerLeft,
+                            children: <Widget>[
+                              ...previousChildren,
+                              if (currentChild != null) currentChild,
+                            ],
+                          );
+                        },
+                        child: controller.showWalletSummaryTemporarily.value
+                            ? const TransactionWalletSummary(
+                                key: ValueKey('wallet_summary'),
+                              )
+                            : CcText(
+                                el.tr(CcLocaleKeys.transaction_title),
+                                key: const ValueKey('transaction_title'),
+                                textStyle: context.ccTextTheme.titleMedium
+                                    ?.copyWith(
+                                      color: context.ccColorScheme.onPrimary,
+                                      fontWeight: CcTypographyParams.bold,
+                                      letterSpacing: 1.2,
+                                      fontSize: context.respFontSize(16),
+                                    ),
+                              ),
+                      );
+                    }),
                   ),
                   Obx(
                     () => IconButton(
@@ -111,7 +132,7 @@ class TransactionPage extends CcGetView<TransactionController> {
                             textStyle: context.ccTextTheme.labelMedium
                                 ?.copyWith(
                                   color: context.ccColorScheme.onPrimary,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: CcTypographyParams.bold,
                                   fontSize: context.respFontSize(12),
                                 ),
                           ),
@@ -120,27 +141,6 @@ class TransactionPage extends CcGetView<TransactionController> {
                     ),
                   ),
                 ],
-              ),
-              const CcSpaceSM(),
-              Obx(
-                () => Row(
-                  children: [
-                    Icon(
-                      Icons.account_balance_wallet_outlined,
-                      size: context.respIconSize(baseSize: 14),
-                      color: context.ccColorScheme.onPrimary.withOpacity(0.8),
-                    ),
-                    const CcSpaceXS(),
-                    CcText(
-                      '${el.tr(CcLocaleKeys.transaction_wallet)}  ${formatVndShort(controller.walletTotal.value)}',
-                      textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                        color: context.ccColorScheme.onPrimary.withOpacity(0.9),
-                        fontWeight: FontWeight.w600,
-                        fontSize: context.respFontSize(13),
-                      ),
-                    ),
-                  ],
-                ),
               ),
             ],
           ),
@@ -166,15 +166,15 @@ class TransactionPage extends CcGetView<TransactionController> {
                     children: [
                       ExpenseForm(
                         onSaved: controller.refreshData,
-                        formKey: _expenseFormKey,
+                        key: _expenseFormKey,
                       ),
                       IncomeForm(
                         onSaved: controller.refreshData,
-                        formKey: _incomeFormKey,
+                        key: _incomeFormKey,
                       ),
                       TransferForm(
                         onSaved: controller.refreshData,
-                        formKey: _transferFormKey,
+                        key: _transferFormKey,
                       ),
                     ],
                   ),
@@ -198,6 +198,7 @@ class TransactionPage extends CcGetView<TransactionController> {
   }
 
   void _submitCurrentForm() {
+    controller.flashWalletSummary();
     switch (controller.selectedTabIndex.value) {
       case 0:
         _expenseFormKey.currentState?.submitForm();
@@ -248,14 +249,14 @@ class TransactionPage extends CcGetView<TransactionController> {
           labelColor: _getTabColor(context, controller.selectedTabIndex.value),
           unselectedLabelColor: context.ccColorScheme.onSurfaceVariant,
           labelStyle: context.ccTextTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.bold,
+            fontWeight: CcTypographyParams.bold,
             fontSize: context.respFontSize(12),
           ),
           labelPadding: EdgeInsets.zero,
           tabs: [
             Tab(text: el.tr(CcLocaleKeys.transaction_expense_slip)),
             Tab(text: el.tr(CcLocaleKeys.transaction_income_slip)),
-            const Tab(text: 'Chuyển khoản'),
+            Tab(text: el.tr(CcLocaleKeys.transaction_record_transfer)),
           ],
         );
       }),
