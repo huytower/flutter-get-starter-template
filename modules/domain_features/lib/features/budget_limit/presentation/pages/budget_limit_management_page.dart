@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../category/export_category.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 import '../get_x/budget_limit_controller.dart';
@@ -359,7 +360,9 @@ class _BudgetLimitGridState extends State<_BudgetLimitGrid> {
   Widget _buildAddCell(BuildContext context, bool isEdit) {
     final scheme = context.ccColorScheme;
     return GestureDetector(
-      onTap: isEdit ? null : () => widget.onOpenForm(context),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),
+      ),
       child: Opacity(
         opacity: isEdit ? 0.4 : 1.0,
         child: DecoratedBox(
