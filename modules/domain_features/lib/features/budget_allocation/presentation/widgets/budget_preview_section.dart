@@ -1,8 +1,10 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+
+import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:get/get.dart';
+
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 
 import '../../../../core/di/di.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
@@ -72,7 +74,7 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
               CcText(
                 el.tr(CcLocaleKeys.budget_this_month),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: CcTypographyParams.bold,
                   color: scheme.onBackground,
                 ),
               ),
@@ -94,7 +96,7 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
                       el.tr(CcLocaleKeys.budget_see_all),
                       textStyle: context.ccTextTheme.labelMedium?.copyWith(
                         color: scheme.primary,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: CcTypographyParams.semiBold,
                       ),
                     ),
                   ),
@@ -184,10 +186,15 @@ class _BudgetPreviewCard extends StatelessWidget {
   const _BudgetPreviewCard({required this.stats, this.category});
 
   static String _fmtShort(int value) {
-    if (value >= 1000000000)
+    if (value >= 1000000000) {
       return '${(value / 1000000000).toStringAsFixed(1)}tỷ đ';
-    if (value >= 1000000) return '${(value / 1000000).toStringAsFixed(1)}tr đ';
-    if (value >= 1000) return '${(value / 1000).toStringAsFixed(0)}k đ';
+    }
+    if (value >= 1000000) {
+      return '${(value / 1000000).toStringAsFixed(1)}tr đ';
+    }
+    if (value >= 1000) {
+      return '${(value / 1000).toStringAsFixed(0)}k đ';
+    }
     return '$value đ';
   }
 
@@ -256,7 +263,7 @@ class _BudgetPreviewCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.w600,
+              fontWeight: CcTypographyParams.semiBold,
               color: scheme.onSurface,
             ),
           ),
@@ -285,7 +292,7 @@ class _BudgetPreviewCard extends StatelessWidget {
             align: Alignment.center,
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: accent,
-              fontWeight: FontWeight.bold,
+              fontWeight: CcTypographyParams.bold,
             ),
           ),
         ],

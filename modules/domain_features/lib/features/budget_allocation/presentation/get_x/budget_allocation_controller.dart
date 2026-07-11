@@ -1,6 +1,9 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:flutter/foundation.dart';
+
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
+
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
@@ -44,23 +47,30 @@ class BudgetAllocationController extends CcGetController {
   Future<void> loadAll() async {
     layoutStatus.value = CcLayoutStatus.loading;
 
-    // Parallelize loading to satisfy Law 5 (Clean Bootstrap Integrity - parallelize)
-    await Future.wait([
-      walletController.loadWallets(),
-      budgetLimitController.loadBudgets(),
-    ]);
+    try {
+      // Parallelize loading to satisfy Law 5 (Clean Bootstrap Integrity - parallelize)
+      await Future.wait([
+        walletController.loadWallets(),
+        budgetLimitController.loadBudgets(),
+      ]);
 
-    // Aggregate status: if either fails, we could show error,
-    // but here we follow the success of both for simplicity.
-    if (walletController.layoutStatus.value == CcLayoutStatus.error) {
-      errorMessage.value = walletController.errorMessage.value;
+      // Aggregate status: if either fails, we could show error
+      if (walletController.layoutStatus.value == CcLayoutStatus.error) {
+        errorMessage.value = walletController.errorMessage.value;
+        layoutStatus.value = CcLayoutStatus.error;
+      } else if (budgetLimitController.layoutStatus.value ==
+          CcLayoutStatus.error) {
+        errorMessage.value = budgetLimitController.errorMessage.value;
+        layoutStatus.value = CcLayoutStatus.error;
+      } else {
+        layoutStatus.value = CcLayoutStatus.success;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error loading budget allocation: $e');
+      }
+      errorMessage.value = e.toString();
       layoutStatus.value = CcLayoutStatus.error;
-    } else if (budgetLimitController.layoutStatus.value ==
-        CcLayoutStatus.error) {
-      errorMessage.value = budgetLimitController.errorMessage.value;
-      layoutStatus.value = CcLayoutStatus.error;
-    } else {
-      layoutStatus.value = CcLayoutStatus.success;
     }
   }
 }

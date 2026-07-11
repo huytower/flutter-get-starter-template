@@ -4,16 +4,18 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
-import '../../../wallet/presentation/widgets/add_wallet_sheet.dart';
-import '../../../wallet/presentation/widgets/wallet_strip.dart';
 import '../get_x/budget_allocation_controller.dart';
+import '../widgets/add_wallet_sheet.dart';
 import '../widgets/budget_allocation_header.dart';
 import '../widgets/budget_preview_section.dart';
+import '../widgets/shimmer_wallet_card.dart';
+import '../widgets/wallet_strip.dart';
 
 @RoutePage()
 class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
@@ -25,14 +27,10 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
+    final walletController = controller.walletController;
     return AppBar(
-      title: CcText(
-        'BudgetAllocation',
-        textStyle: context.ccTextTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: context.ccColorScheme.onPrimary,
-        ),
-      ),
+      elevation: 0,
+      automaticallyImplyLeading: false,
       systemOverlayStyle: SystemUiOverlayStyle.light,
       flexibleSpace: Container(
         decoration: BoxDecoration(
@@ -46,19 +44,81 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           ),
         ),
       ),
-      elevation: 0,
       actions: [
-        Builder(
-          builder: (context) => IconButton(
-            icon: Icon(
-              Icons.fact_check_outlined,
-              color: context.ccColorScheme.onPrimary,
-            ),
-            tooltip: 'Đối soát',
-            onPressed: () => context.router.push(const ReconcileRoute()),
+        IconButton(
+          icon: Icon(
+            Icons.fact_check_outlined,
+            color: context.ccColorScheme.onPrimary,
+            size: context.respIconSize(baseSize: 24),
+          ),
+          tooltip: el.tr(CcLocaleKeys.reconciliation_title),
+          onPressed: () => context.router.push(const ReconcileRoute()),
+        ),
+        SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
+      ],
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(context.respDim(80)),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            context.respPadding(CcPaddingParams.SPACE_LG),
+            0,
+            context.respPadding(CcPaddingParams.SPACE_LG),
+            context.respPadding(CcPaddingParams.SPACE_LG),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CcText(
+                    el.tr(CcLocaleKeys.wallet_total_assets),
+                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                      color: context.ccColorScheme.onPrimary.withOpacity(0.8),
+                      fontSize: context.respFontSize(14),
+                    ),
+                  ),
+                  const CcSpaceXS(),
+                  Obx(
+                    () => CcText(
+                      walletController.isBalanceVisible.value
+                          ? '${walletController.totalBalance.value.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} đ'
+                          : '*********',
+                      textStyle: context.ccTextTheme.headlineMedium?.copyWith(
+                        color: context.ccColorScheme.onPrimary,
+                        fontWeight: CcTypographyParams.bold,
+                        fontSize: context.respFontSize(28),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Obx(
+                () => GestureDetector(
+                  onTap: walletController.toggleBalanceVisibility,
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: context.respDim(4)),
+                    padding: EdgeInsets.all(context.respDim(8)),
+                    decoration: BoxDecoration(
+                      color: context.ccColorScheme.onPrimary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      walletController.isBalanceVisible.value
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: context.ccColorScheme.primary,
+                      size: context.respIconSize(baseSize: 20),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -90,7 +150,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
                 Icons.edit_outlined,
                 color: sheetContext.ccColorScheme.primary,
               ),
-              title: const Text('Sửa ví'),
+              title: CcText(el.tr(CcLocaleKeys.common_edit)),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _editWallet(context, wallet);
@@ -101,9 +161,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
                 Icons.delete_outline,
                 color: sheetContext.ccColorScheme.error,
               ),
-              title: Text(
-                'Xóa ví',
-                style: TextStyle(color: sheetContext.ccColorScheme.error),
+              title: CcText(
+                el.tr(CcLocaleKeys.common_delete),
+                textStyle: TextStyle(color: sheetContext.ccColorScheme.error),
               ),
               onTap: () {
                 Navigator.pop(sheetContext);
@@ -132,15 +192,15 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Xóa ví'),
-        content: const Text(
+        title: CcText(el.tr(CcLocaleKeys.common_delete)),
+        content: const CcText(
           'Chỉ có thể xóa ví khi số dư bằng 0. '
           'Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Hủy'),
+            child: CcText(el.tr(CcLocaleKeys.common_cancel)),
           ),
           TextButton(
             onPressed: () async {
@@ -153,7 +213,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
                 case WalletDeleteOutcome.success:
                   CcSnackBarHelper.showSuccessSnackBar(
                     context: context,
-                    message: 'Đã xóa ví',
+                    message: el.tr(CcLocaleKeys.common_done),
                   );
                   break;
                 case WalletDeleteOutcome.notEmpty:
@@ -172,12 +232,15 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
                             .value
                             .isNotEmpty
                         ? controller.walletController.errorMessage.value
-                        : 'Xóa ví thất bại',
+                        : el.tr(CcLocaleKeys.app_error_general),
                   );
                   break;
               }
             },
-            child: const Text('Xóa'),
+            child: CcText(
+              el.tr(CcLocaleKeys.common_delete),
+              textStyle: TextStyle(color: context.ccColorScheme.error),
+            ),
           ),
         ],
       ),
@@ -193,7 +256,6 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           onRefresh: controller.loadAll,
           child: ListView(
             children: [
-              const BudgetAllocationHeader(),
               _buildWalletsSection(context),
               const BudgetPreviewSection(),
             ],
@@ -221,7 +283,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
               CcText(
                 el.tr(CcLocaleKeys.wallet_your_wallets),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: CcTypographyParams.bold,
                   color: scheme.onBackground,
                 ),
               ),
@@ -242,7 +304,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
                       el.tr(CcLocaleKeys.wallet_see_all),
                       textStyle: context.ccTextTheme.labelMedium?.copyWith(
                         color: scheme.primary,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: CcTypographyParams.semiBold,
                       ),
                     ),
                   ),
