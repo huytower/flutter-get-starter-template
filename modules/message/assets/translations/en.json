@@ -110,7 +110,7 @@
   "nav": {
     "home": "Home",
     "transaction": "Transaction",
-    "wallet": "Allocation",
+    "budget_allocation": "Allocation",
     "dashboard": "Dashboard",
     "quick_test": "Quick Test",
     "quick_test_page": "Quick Testing Page",
@@ -152,7 +152,8 @@
     "added_success": "New wallet added",
     "updated_success": "Wallet updated",
     "delete_confirm_msg": "A wallet can only be deleted when its balance is 0. All transactions of the wallet will be soft-deleted. Continue?",
-    "delete_error_not_empty": "Cannot delete: wallet balance must be 0"
+    "delete_error_not_empty": "Cannot delete: wallet balance must be 0",
+    "delete_error_protected": "This wallet is required and cannot be deleted"
   },
   "comment": {
     "detail": {

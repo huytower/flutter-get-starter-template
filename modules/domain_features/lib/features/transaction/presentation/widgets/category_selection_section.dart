@@ -94,7 +94,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
 
   Widget _buildCategoryList(BuildContext context) {
     return HorizontalFadeScrollView(
-      height: context.respDim(90),
+      height: context.respDim(75),
       builder: (scrollController) => ListView.separated(
         scrollDirection: Axis.horizontal,
         controller: scrollController,

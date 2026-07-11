@@ -112,7 +112,7 @@ abstract class CcLocaleKeys {
 
   static const nav_home = 'nav.home';
   static const nav_transaction = 'nav.transaction';
-  static const nav_wallet = 'nav.wallet';
+  static const nav_budget_allocation = 'nav.budget_allocation';
   static const nav_dashboard = 'nav.dashboard';
   static const nav_quick_test = 'nav.quick_test';
   static const nav_quick_test_page = 'nav.quick_test_page';
@@ -151,6 +151,7 @@ abstract class CcLocaleKeys {
   static const wallet_updated_success = 'wallet.updated_success';
   static const wallet_delete_confirm_msg = 'wallet.delete_confirm_msg';
   static const wallet_delete_error_not_empty = 'wallet.delete_error_not_empty';
+  static const wallet_delete_error_protected = 'wallet.delete_error_protected';
 
   static const category_group_daily = 'category.group_daily';
   static const category_group_personal = 'category.group_personal';

@@ -25,21 +25,18 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    final walletController = controller.walletController;
     return AppBar(
       elevation: 0,
       automaticallyImplyLeading: false,
+      backgroundColor: context.ccColorScheme.primary,
       systemOverlayStyle: SystemUiOverlayStyle.light,
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              context.ccColorScheme.primary,
-              context.ccColorScheme.primaryContainer,
-            ],
-          ),
+      title: CcText(
+        el.tr(CcLocaleKeys.nav_budget_allocation),
+        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+          color: context.ccColorScheme.onPrimary,
+          fontWeight: CcTypographyParams.bold,
+          letterSpacing: 1.2,
+          fontSize: context.respFontSize(16),
         ),
       ),
       actions: [
@@ -54,69 +51,6 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         ),
         SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
       ],
-      bottom: PreferredSize(
-        preferredSize: Size.fromHeight(context.respDim(80)),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            context.respPadding(CcPaddingParams.SPACE_LG),
-            0,
-            context.respPadding(CcPaddingParams.SPACE_LG),
-            context.respPadding(CcPaddingParams.SPACE_LG),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CcText(
-                    el.tr(CcLocaleKeys.wallet_total_assets),
-                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      color: context.ccColorScheme.onPrimary.withOpacity(0.8),
-                      fontSize: context.respFontSize(14),
-                    ),
-                  ),
-                  const CcSpaceXS(),
-                  Obx(
-                    () => CcText(
-                      walletController.isBalanceVisible.value
-                          ? '${walletController.totalBalance.value.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} đ'
-                          : '*********',
-                      textStyle: context.ccTextTheme.headlineMedium?.copyWith(
-                        color: context.ccColorScheme.onPrimary,
-                        fontWeight: CcTypographyParams.bold,
-                        fontSize: context.respFontSize(28),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Obx(
-                () => GestureDetector(
-                  onTap: walletController.toggleBalanceVisibility,
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: context.respDim(4)),
-                    padding: EdgeInsets.all(context.respDim(8)),
-                    decoration: BoxDecoration(
-                      color: context.ccColorScheme.onPrimary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      walletController.isBalanceVisible.value
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
-                      color: context.ccColorScheme.primary,
-                      size: context.respIconSize(baseSize: 20),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -230,11 +164,85 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           onRefresh: controller.loadAll,
           child: ListView(
             children: [
+              _buildHeroBanner(context),
               _buildWalletsSection(context),
               const BudgetPreviewSection(),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeroBanner(BuildContext context) {
+    final scheme = context.ccColorScheme;
+    final walletController = controller.walletController;
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [scheme.primary, scheme.primaryContainer],
+        ),
+      ),
+      padding: EdgeInsets.fromLTRB(
+        context.respPadding(CcPaddingParams.SPACE_LG),
+        context.respPadding(CcPaddingParams.SPACE_MD),
+        context.respPadding(CcPaddingParams.SPACE_LG),
+        context.respPadding(CcPaddingParams.SPACE_LG),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CcText(
+                el.tr(CcLocaleKeys.wallet_total_assets),
+                textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                  color: scheme.onPrimary.withOpacity(0.8),
+                  fontSize: context.respFontSize(14),
+                ),
+              ),
+              const CcSpaceXS(),
+              Obx(
+                () => CcText(
+                  walletController.isBalanceVisible.value
+                      ? '${walletController.totalBalance.value.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} đ'
+                      : '*********',
+                  textStyle: context.ccTextTheme.headlineMedium?.copyWith(
+                    color: scheme.onPrimary,
+                    fontWeight: CcTypographyParams.bold,
+                    fontSize: context.respFontSize(28),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Obx(
+            () => GestureDetector(
+              onTap: walletController.toggleBalanceVisibility,
+              child: Container(
+                margin: EdgeInsets.only(bottom: context.respDim(4)),
+                padding: EdgeInsets.all(context.respDim(8)),
+                decoration: BoxDecoration(
+                  color: scheme.onPrimary,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  walletController.isBalanceVisible.value
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: scheme.primary,
+                  size: context.respIconSize(baseSize: 20),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -93,7 +93,7 @@ class _NavigationBarState extends State<NavigationBar>
     CcCurvedNavigationItem(
       inactiveIcon: Icons.pie_chart_outline,
       activeIcon: Icons.pie_chart,
-      label: el.tr(CcLocaleKeys.nav_wallet),
+      label: el.tr(CcLocaleKeys.nav_budget_allocation),
     ),
     // Centre "＋" — opens the Chi/Thu entry form.
     CcCurvedNavigationItem(
