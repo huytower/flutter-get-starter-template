@@ -15,11 +15,7 @@ class WalletStrip extends StatelessWidget {
   final List<WalletEntity> wallets;
   final void Function(WalletEntity) onMore;
 
-  const WalletStrip({
-    super.key,
-    required this.wallets,
-    required this.onMore,
-  });
+  const WalletStrip({super.key, required this.wallets, required this.onMore});
 
   @override
   Widget build(BuildContext context) {
@@ -27,28 +23,30 @@ class WalletStrip extends StatelessWidget {
 
     return HorizontalFadeScrollView(
       height: context.respDim(110),
-      builder: (scrollController) => ListView.builder(
-        scrollDirection: Axis.horizontal,
-        controller: scrollController,
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-        ),
-        itemCount: wallets.length,
-        itemBuilder: (context, index) {
-          final wallet = wallets[index];
-          return Padding(
-            padding: EdgeInsets.only(right: context.respDim(10)),
-            child: Obx(
-              () => _WalletCard(
-                wallet: wallet,
-                balance: controller.isBalanceVisible.value
-                    ? controller.bookBalanceOf(wallet.id)
-                    : null,
-                onMore: () => onMore(wallet),
+      builder: (scrollController) => Obx(
+        () => ListView.builder(
+          scrollDirection: Axis.horizontal,
+          controller: scrollController,
+          padding: EdgeInsets.symmetric(
+            horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
+          ),
+          itemCount: wallets.length,
+          itemBuilder: (context, index) {
+            final wallet = wallets[index];
+            return Padding(
+              padding: EdgeInsets.only(right: context.respDim(10)),
+              child: Obx(
+                () => _WalletCard(
+                  wallet: wallet,
+                  balance: controller.isBalanceVisible.value
+                      ? controller.bookBalanceOf(wallet.id)
+                      : null,
+                  onMore: () => onMore(wallet),
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -65,9 +63,10 @@ class _WalletCard extends StatelessWidget {
     required this.onMore,
   });
 
-  static String _fmt(int amount) => amount
-      .toString()
-      .replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.');
+  static String _fmt(int amount) => amount.toString().replaceAllMapped(
+    RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+    (m) => '${m[1]}.',
+  );
 
   @override
   Widget build(BuildContext context) {

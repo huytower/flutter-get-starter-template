@@ -192,15 +192,13 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         builder: (context) => buildPullToRefresh(
           context: context,
           onRefresh: controller.loadAll,
-          child: Obx(() {
-            return ListView(
-              children: [
-                const BudgetAllocationHeader(),
-                _buildWalletsSection(context),
-                const BudgetPreviewSection(),
-              ],
-            );
-          }),
+          child: ListView(
+            children: [
+              const BudgetAllocationHeader(),
+              _buildWalletsSection(context),
+              const BudgetPreviewSection(),
+            ],
+          ),
         ),
       ),
     );

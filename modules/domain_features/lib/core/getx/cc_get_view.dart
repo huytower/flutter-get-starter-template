@@ -39,7 +39,7 @@ abstract class CcGetView<T extends CcGetController> extends GetView<T>
     if (!Get.isRegistered<T>()) {
       Get.put(getIt<T>());
     }
-    return super.build(context);
+    return Obx(() => super.build(context));
   }
 
   //----------------------------------------------------------------------------
