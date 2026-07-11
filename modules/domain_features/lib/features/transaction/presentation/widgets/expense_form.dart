@@ -12,9 +12,11 @@ import '../../domain/usecases/create_transaction_usecase.dart';
 import '../get_x/transaction_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
+import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
 import 'note_field_with_camera.dart';
 import 'quick_date_row.dart';
+import '../../../../core/transaction_form_helpers.dart';
 import 'transaction_see_more_section.dart';
 
 class ExpenseForm extends StatefulWidget {
@@ -110,34 +112,16 @@ class ExpenseFormState extends State<ExpenseForm> {
     });
   }
 
-  String _formatAmount(String amount) {
-    if (amount == '0') return '0';
-    final formatter = el.NumberFormat('#,###', 'vi_VN');
-    return formatter.format(int.parse(amount));
-  }
-
   Future<void> _pickDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _date,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-    );
+    final picked = await TransactionFormHelpers.pickDate(context, _date);
     if (picked == null) return;
     setState(() {
-      _date = DateTime(
-        picked.year,
-        picked.month,
-        picked.day,
-        _date.hour,
-        _date.minute,
-      );
+      _date = TransactionFormHelpers.updateDatePreserveTime(_date, picked);
     });
   }
 
   String? _composeNote() {
-    final note = _noteController.text.trim();
-    return note.isEmpty ? null : note;
+    return TransactionFormHelpers.composeNote(_noteController);
   }
 
   Future<void> _onSubmit() async {
@@ -162,7 +146,7 @@ class ExpenseFormState extends State<ExpenseForm> {
 
     result.when(
       (_) {
-        final savedAmount = _formatAmount(_amountStr);
+        final savedAmount = TransactionFormHelpers.formatAmount(_amountStr);
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(
@@ -294,14 +278,7 @@ class ExpenseFormState extends State<ExpenseForm> {
   }
 
   Widget _buildLabel(String text) {
-    return CcText(
-      text,
-      textStyle: context.ccTextTheme.labelMedium?.copyWith(
-        color: Colors.grey[700],
-        fontWeight: FontWeight.bold,
-        fontSize: context.respFontSize(12),
-      ),
-    );
+    return CcFormLabel(text: text);
   }
 
   Widget _buildWalletChips(BuildContext context) {

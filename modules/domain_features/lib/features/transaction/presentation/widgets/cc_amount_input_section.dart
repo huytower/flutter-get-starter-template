@@ -1,8 +1,8 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../../core/util/horizontal_fade_scroll_view.dart';
+import '../../../../core/transaction_form_helpers.dart';
 
 class CcAmountInputSection extends StatelessWidget {
   final String label;
@@ -28,18 +28,6 @@ class CcAmountInputSection extends StatelessWidget {
 
   Color _getAccent(BuildContext context) =>
       activeColor ?? context.ccColorScheme.error;
-
-  String _formatAmount(String amount) {
-    if (amount == '0') return '0';
-    final formatter = el.NumberFormat('#,###', 'vi_VN');
-    return formatter.format(int.parse(amount));
-  }
-
-  String _formatShort(int amount) {
-    if (amount >= 1000000) return '${amount ~/ 1000000}tr';
-    if (amount >= 1000) return '${amount ~/ 1000}k';
-    return amount.toString();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +61,7 @@ class CcAmountInputSection extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: CcText(
-              '${_formatAmount(amountStr)} đ',
+              '${TransactionFormHelpers.formatAmount(amountStr)} đ',
               align: Alignment.center,
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.headlineMedium?.copyWith(
@@ -112,7 +100,7 @@ class CcAmountInputSection extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: CcText(
-                    _formatShort(amount),
+                    TransactionFormHelpers.formatShort(amount),
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
                       color: accent,
                       fontWeight: FontWeight.w600,
