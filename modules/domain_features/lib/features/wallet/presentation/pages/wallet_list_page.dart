@@ -78,42 +78,126 @@ class WalletListPage extends CcGetView<WalletController> {
   }
 
   void _confirmDelete(BuildContext context, WalletEntity wallet) {
-    CcDialogHelper.showConfirmationDialog(
-      desc: el.tr(CcLocaleKeys.wallet_delete_confirm_msg),
-      isCancelBtnShown: true,
-      onTapConfirm: () async {
-        final outcome = await controller.deleteWallet(wallet.id);
-        if (!context.mounted) return;
-        switch (outcome) {
-          case WalletDeleteOutcome.success:
-            CcSnackBarHelper.showSuccessSnackBar(
-              context: context,
-              message: el.tr(CcLocaleKeys.common_done),
-            );
-            break;
-          case WalletDeleteOutcome.notEmpty:
-            CcSnackBarHelper.showErrorSnackBar(
-              context: context,
-              message: el.tr(CcLocaleKeys.wallet_delete_error_not_empty),
-            );
-            break;
-          case WalletDeleteOutcome.protected:
-            CcSnackBarHelper.showErrorSnackBar(
-              context: context,
-              message: el.tr(CcLocaleKeys.wallet_delete_error_protected),
-            );
-            break;
-          case WalletDeleteOutcome.error:
-            CcSnackBarHelper.showErrorSnackBar(
-              context: context,
-              message: controller.errorMessage.value.isNotEmpty
-                  ? controller.errorMessage.value
-                  : el.tr(CcLocaleKeys.app_error_general),
-            );
-            break;
-        }
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: context.ccColorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        final scheme = sheetContext.ccColorScheme;
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(
+              sheetContext.respPadding(CcPaddingParams.SPACE_LG),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.all(sheetContext.respDim(14)),
+                    decoration: BoxDecoration(
+                      color: scheme.error.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.delete_outline_rounded,
+                      color: scheme.error,
+                      size: sheetContext.respIconSize(baseSize: 28),
+                    ),
+                  ),
+                ),
+                const CcSpaceMD(),
+                CcText(
+                  el.tr(CcLocaleKeys.wallet_delete_title),
+                  align: Alignment.center,
+                  textAlign: TextAlign.center,
+                  textStyle: sheetContext.ccTextTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: scheme.onSurface,
+                  ),
+                ),
+                const CcSpaceSM(),
+                CcText(
+                  el.tr(CcLocaleKeys.wallet_delete_confirm_msg),
+                  align: Alignment.center,
+                  maxLines: 5,
+                  textAlign: TextAlign.center,
+                  textStyle: sheetContext.ccTextTheme.bodyMedium?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+                const CcSpaceLG(),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CcBaseBtn(
+                        title: el.tr(CcLocaleKeys.common_cancel),
+                        bgColor: [
+                          scheme.surfaceContainerHighest,
+                          scheme.surfaceContainerHighest,
+                        ],
+                        textColor: scheme.onSurface,
+                        onTap: () => Navigator.of(sheetContext).pop(),
+                      ),
+                    ),
+                    SizedBox(width: sheetContext.respDim(12)),
+                    Expanded(
+                      child: CcBaseBtn(
+                        title: el.tr(CcLocaleKeys.common_delete),
+                        bgColor: [scheme.error, scheme.error],
+                        textColor: scheme.onError,
+                        onTap: () async {
+                          Navigator.of(sheetContext).pop();
+                          final outcome = await controller.deleteWallet(
+                            wallet.id,
+                          );
+                          if (!context.mounted) return;
+                          _handleDeleteOutcome(context, outcome);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
+  }
+
+  void _handleDeleteOutcome(BuildContext context, WalletDeleteOutcome outcome) {
+    switch (outcome) {
+      case WalletDeleteOutcome.success:
+        CcSnackBarHelper.showSuccessSnackBar(
+          context: context,
+          message: el.tr(CcLocaleKeys.common_done),
+        );
+        break;
+      case WalletDeleteOutcome.notEmpty:
+        CcSnackBarHelper.showErrorSnackBar(
+          context: context,
+          message: el.tr(CcLocaleKeys.wallet_delete_error_not_empty),
+        );
+        break;
+      case WalletDeleteOutcome.protected:
+        CcSnackBarHelper.showErrorSnackBar(
+          context: context,
+          message: el.tr(CcLocaleKeys.wallet_delete_error_protected),
+        );
+        break;
+      case WalletDeleteOutcome.error:
+        CcSnackBarHelper.showErrorSnackBar(
+          context: context,
+          message: controller.errorMessage.value.isNotEmpty
+              ? controller.errorMessage.value
+              : el.tr(CcLocaleKeys.app_error_general),
+        );
+        break;
+    }
   }
 
   @override
@@ -191,15 +275,21 @@ class _WalletListCard extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(context.respDim(16)),
-            child: _buildCardContent(context, bgColor),
+          // Reserve a top band so the corner badges sit fully inside the Stack
+          // bounds — a Positioned child painted outside its parent's box does
+          // not receive pointer events, which would make the badges untappable.
+          Padding(
+            padding: EdgeInsets.only(top: context.respDim(10)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(context.respDim(16)),
+              child: _buildCardContent(context, bgColor),
+            ),
           ),
           if (isEditMode) ...[
             if (canDelete)
               Positioned(
-                top: -1,
-                left: -1,
+                top: 0,
+                left: 0,
                 child: _EditBadge(
                   icon: Icons.remove,
                   color: scheme.error,
@@ -208,8 +298,8 @@ class _WalletListCard extends StatelessWidget {
                 ),
               ),
             Positioned(
-              top: -1,
-              right: -1,
+              top: 0,
+              right: 0,
               child: _EditBadge(
                 icon: Icons.edit,
                 color: scheme.primary,
@@ -289,6 +379,7 @@ class _EditBadge extends StatelessWidget {
     final scheme = context.ccColorScheme;
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: Container(
         width: context.respDim(24),
         height: context.respDim(24),

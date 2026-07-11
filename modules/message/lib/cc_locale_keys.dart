@@ -149,6 +149,7 @@ abstract class CcLocaleKeys {
   static const wallet_credit = 'wallet.credit';
   static const wallet_added_success = 'wallet.added_success';
   static const wallet_updated_success = 'wallet.updated_success';
+  static const wallet_delete_title = 'wallet.delete_title';
   static const wallet_delete_confirm_msg = 'wallet.delete_confirm_msg';
   static const wallet_delete_error_not_empty = 'wallet.delete_error_not_empty';
   static const wallet_delete_error_protected = 'wallet.delete_error_protected';

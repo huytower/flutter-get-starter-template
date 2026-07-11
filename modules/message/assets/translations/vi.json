@@ -151,6 +151,7 @@
     "credit": "Thẻ tín dụng",
     "added_success": "Đã thêm ví mới",
     "updated_success": "Đã cập nhật ví",
+    "delete_title": "Xóa ví",
     "delete_confirm_msg": "Chỉ có thể xóa ví khi số dư bằng 0. Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?",
     "delete_error_not_empty": "Không thể xóa: số dư của ví phải bằng 0",
     "delete_error_protected": "Ví này là bắt buộc và không thể xóa"
