@@ -6,37 +6,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../../wallet/presentation/widgets/add_wallet_sheet.dart';
 import '../../../wallet/presentation/widgets/wallet_strip.dart';
+import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_allocation_header.dart';
 import '../widgets/budget_preview_section.dart';
 
 @RoutePage()
-class BudgetAllocationPage extends CcGetView<WalletController>
+class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
     with CcPullRefreshMixin {
   const BudgetAllocationPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // This screen composes two controllers: [WalletController] (primary,
-    // auto-registered by [CcGetView]) and [BudgetLimitController] (secondary).
-    // Register the secondary controller eagerly and BEFORE super.build() so it
-    // exists regardless of the layoutStatus gating in [CcViewConfigMixin.body()]
-    // — which only mounts buildContent (and therefore BudgetPreviewSection, the
-    // widget that previously registered it) once WalletController finishes
-    // loading. Without this, BudgetLimitController is never registered on first
-    // load and its onReady()/loadBudgets() never runs.
-    if (!Get.isRegistered<BudgetLimitController>()) {
-      Get.put(getIt<BudgetLimitController>());
-    }
-    return super.build(context);
-  }
 
   @override
   bool get enableAppBar => true;
@@ -163,7 +146,9 @@ class BudgetAllocationPage extends CcGetView<WalletController>
           TextButton(
             onPressed: () async {
               Navigator.pop(dialogContext);
-              final outcome = await controller.deleteWallet(wallet.id);
+              final outcome = await controller.walletController.deleteWallet(
+                wallet.id,
+              );
               if (!context.mounted) return;
               switch (outcome) {
                 case WalletDeleteOutcome.success:
@@ -181,8 +166,13 @@ class BudgetAllocationPage extends CcGetView<WalletController>
                 case WalletDeleteOutcome.error:
                   CcSnackBarHelper.showErrorSnackBar(
                     context: context,
-                    message: controller.errorMessage.value.isNotEmpty
-                        ? controller.errorMessage.value
+                    message:
+                        controller
+                            .walletController
+                            .errorMessage
+                            .value
+                            .isNotEmpty
+                        ? controller.walletController.errorMessage.value
                         : 'Xóa ví thất bại',
                   );
                   break;
@@ -201,10 +191,8 @@ class BudgetAllocationPage extends CcGetView<WalletController>
       child: Builder(
         builder: (context) => buildPullToRefresh(
           context: context,
-          onRefresh: controller.loadWallets,
+          onRefresh: controller.loadAll,
           child: Obx(() {
-            // final isLoading =
-            //     controller.layoutStatus.value == CcLayoutStatus.loading;
             return ListView(
               children: [
                 const BudgetAllocationHeader(),
@@ -266,27 +254,8 @@ class BudgetAllocationPage extends CcGetView<WalletController>
             ],
           ),
         ),
-        // if (isLoading)
-        //   SizedBox(
-        //     height: context.respDim(110),
-        //     child: ListView.builder(
-        //       scrollDirection: Axis.horizontal,
-        //       padding: EdgeInsets.symmetric(
-        //         horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-        //       ),
-        //       itemCount: 3,
-        //       itemBuilder: (_, _i) => Padding(
-        //         padding: EdgeInsets.only(right: context.respDim(10)),
-        //         child: SizedBox(
-        //           width: context.respDim(110),
-        //           child: const ShimmerWalletCard(),
-        //         ),
-        //       ),
-        //     ),
-        //   )
-        // else
         WalletStrip(
-          wallets: controller.wallets,
+          wallets: controller.walletController.wallets,
           onMore: (wallet) => _openWalletActions(context, wallet),
         ),
       ],

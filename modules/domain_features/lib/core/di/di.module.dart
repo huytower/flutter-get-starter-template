@@ -9,6 +9,8 @@ import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' as _i631;
 import 'package:dio/dio.dart' as _i361;
 import 'package:domain_features/export_domain_features.dart' as _i857;
+import 'package:domain_features/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart'
+    as _i451;
 import 'package:domain_features/features/budget_limit/data/datasources/local/budget_limit_local_datasource.dart'
     as _i585;
 import 'package:domain_features/features/budget_limit/data/repositories/budget_limit_repository_impl.dart'
@@ -291,6 +293,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i804.PerformReconciliationUseCase>(),
               gh<_i195.UndoReconciliationUseCase>(),
               gh<_i446.GetReconciliationHistoryUseCase>(),
+            ));
+    gh.factory<_i451.BudgetAllocationController>(
+        () => _i451.BudgetAllocationController(
+              gh<_i229.WalletController>(),
+              gh<_i1003.BudgetLimitController>(),
             ));
   }
 }

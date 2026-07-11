@@ -32,11 +32,6 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
   @override
   void initState() {
     super.initState();
-    // BudgetLimitManagementPage is no longer a top-level tab; ensure its controller is
-    // registered before the first reactive read in this widget.
-    if (!Get.isRegistered<BudgetLimitController>()) {
-      Get.put(getIt<BudgetLimitController>());
-    }
     _loadCategories();
   }
 
