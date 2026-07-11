@@ -48,6 +48,9 @@ class _NavigationBarState extends State<NavigationBar>
   }
 
   @override
+  double? get navigationBarHeight => 100;
+
+  @override
   bool get shouldEnableDoubleBackToExit => currentIndex == _indexEntry;
 
   @override
