@@ -30,10 +30,14 @@ abstract class CcGetView<T extends CcGetController> extends GetView<T>
 
   //----------------------------------------------------------------------------
   /// Ensures the controller is registered in GetX before the view is built.
+  ///
+  /// Registered as [permanent] so tab controllers survive bottom-navigation
+  /// switches (auto_route pops the page) instead of being disposed and
+  /// re-created on every return.
   @override
   Widget build(BuildContext context) {
     if (!Get.isRegistered<T>()) {
-      Get.put(getIt<T>());
+      Get.put(getIt<T>(), permanent: true);
     }
     return super.build(context);
   }

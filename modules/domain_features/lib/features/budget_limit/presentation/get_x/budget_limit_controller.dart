@@ -18,7 +18,7 @@ class BudgetLimitBinding extends Bindings {
   }
 }
 
-@lazySingleton
+@injectable
 class BudgetLimitController extends CcGetController {
   BudgetLimitController(
     this._getBudgetStats,

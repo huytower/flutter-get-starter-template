@@ -6,10 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../../wallet/presentation/widgets/add_wallet_sheet.dart';
@@ -21,18 +19,6 @@ import '../widgets/budget_preview_section.dart';
 class BudgetAllocationPage extends CcGetView<WalletController>
     with CcPullRefreshMixin {
   const BudgetAllocationPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // The budget allocation tab composes two controllers: [WalletController]
-    // (primary, auto-registered by [CcGetView]) and [BudgetLimitController]
-    // (secondary). Register the secondary controller explicitly and eagerly so
-    // the navigation refresh and the budget form sheet can always resolve it.
-    if (!Get.isRegistered<BudgetLimitController>()) {
-      Get.put(getIt<BudgetLimitController>());
-    }
-    return super.build(context);
-  }
 
   @override
   bool get enableAppBar => true;
