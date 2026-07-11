@@ -43,7 +43,6 @@ class BudgetLimitController extends CcGetController {
   void onReady() {
     super.onReady();
     loadBudgets();
-    print("BudgetLimitController initialized");
   }
 
   /// Fetches budgets and their computed spend.

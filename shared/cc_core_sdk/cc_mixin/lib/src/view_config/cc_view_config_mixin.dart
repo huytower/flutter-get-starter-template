@@ -57,20 +57,20 @@ mixin CcViewConfigMixin {
 
   /// Main content widget for the view.
   /// This is the only method that MUST be overridden.
-  Widget? buildContent();
+  Widget? buildContent(BuildContext context);
 
   // ============================================
   // Hooks (Optional Overrides)
   // ============================================
 
   /// App bar for the view
-  PreferredSizeWidget? buildAppBar() => AppBar();
+  PreferredSizeWidget? buildAppBar(BuildContext context) => AppBar();
 
   /// Bottom navigation bar for the view
   Widget? buildBottomNavigationBar() => null;
 
   /// Action handler for the retry button in error state
-  void onRetry() {}
+  void onRetry(BuildContext context) {}
 
   /// Floating action button tap handler
   void onTapFloatingActionButton() {}
@@ -100,8 +100,8 @@ mixin CcViewConfigMixin {
   @mustCallSuper
   Widget buildView(BuildContext context) {
     return Scaffold(
-      body: onPageBodyWrapper(context, SafeArea(child: body)),
-      appBar: enableAppBar ? buildAppBar() : null,
+      body: onPageBodyWrapper(context, SafeArea(child: body(context))),
+      appBar: enableAppBar ? buildAppBar(context) : null,
       bottomNavigationBar: enableBottomNavigationBar
           ? buildBottomNavigationBar()
           : null,
@@ -118,24 +118,25 @@ mixin CcViewConfigMixin {
   /// - [CcLayoutStatus.error] → Shows error page with retry
   /// - [CcLayoutStatus.loadMore] → Shows main content (for pagination)
   /// - [CcLayoutStatus.refresh] → Shows loading page
-  Widget get body {
+  Widget body(BuildContext context) {
     switch (layoutStatus) {
       case CcLayoutStatus.loading:
         return enableLoading
             ? const LoadingPage()
-            : (buildContent() ?? const SizedBox.shrink());
+            : (buildContent(context) ?? const SizedBox.shrink());
       case CcLayoutStatus.loadMore:
-        return buildContent() ?? const SizedBox.shrink();
+        return buildContent(context) ?? const SizedBox.shrink();
       case CcLayoutStatus.success:
-        return buildContent() ?? const SizedBox.shrink();
+        return buildContent(context) ?? const SizedBox.shrink();
       case CcLayoutStatus.empty:
         return const EmptyPage();
       case CcLayoutStatus.error:
-        return ErrorPage(message: errorMessage, onRetry: onRetry);
+        return ErrorPage(
+            message: errorMessage, onRetry: () => onRetry(context));
       case CcLayoutStatus.refresh:
         return enableLoading
             ? const LoadingPage()
-            : (buildContent() ?? const SizedBox.shrink());
+            : (buildContent(context) ?? const SizedBox.shrink());
     }
   }
 }
