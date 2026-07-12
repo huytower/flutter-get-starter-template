@@ -24,24 +24,34 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return buildDomainGradientAppBar(
       context,
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CcText(
-            el.tr(CcLocaleKeys.reconciliation_title),
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-              color: context.ccColorScheme.onPrimary,
-              fontWeight: CcTypographyParams.bold,
+      leading: CcIconButton.bouncing(
+        icon: Icon(
+          Icons.arrow_back_ios_new_rounded,
+          color: context.ccColorScheme.onPrimary,
+          size: context.respIconSize(baseSize: 24),
+        ),
+        onTap: () => Navigator.of(context).pop(),
+      ),
+      title: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CcText(
+              el.tr(CcLocaleKeys.reconciliation_title),
+              textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                color: context.ccColorScheme.onPrimary,
+                fontWeight: CcTypographyParams.bold,
+              ),
             ),
-          ),
-          CcText(
-            el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              color: context.ccColorScheme.onPrimary.withOpacity(0.9),
+            CcText(
+              el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
+              textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                color: context.ccColorScheme.onPrimary.withOpacity(0.9),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         Builder(
@@ -50,19 +60,16 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                 !controller.isSubmitting.value &&
                 controller.unhandledCount.value == 0 &&
                 controller.balances.isNotEmpty;
-            return IconButton(
+            return CcIconButton.bouncing(
               icon: Icon(
                 Icons.check_circle_outline,
                 size: context.respIconSize(baseSize: 24),
                 color: context.ccColorScheme.onPrimary,
               ),
               tooltip: el.tr(CcLocaleKeys.reconciliation_confirm),
-              onPressed: enabled ? () => _confirm(context) : null,
-              constraints: BoxConstraints(
-                minWidth: context.respDim(40),
-                minHeight: context.respDim(40),
-              ),
-              padding: EdgeInsets.zero,
+              onTap: () => _confirm(context),
+              isEnable: enabled,
+              useDebounce: true,
             );
           }),
         ),

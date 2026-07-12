@@ -3,12 +3,10 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/util/gradient_app_bar.dart';
-
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/util/gradient_app_bar.dart';
 import '../../domain/report_range.dart';
 import '../get_x/report_controller.dart';
 import '../widgets/financial_runway_widget.dart';
@@ -26,11 +24,21 @@ class ReportPage extends CcGetView<ReportController> {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return buildDomainGradientAppBar(
       context,
-      title: CcText(
-        el.tr(CcLocaleKeys.report_title),
-        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+      leading: CcIconButton.bouncing(
+        icon: Icon(
+          Icons.arrow_back_ios_new_rounded,
           color: context.ccColorScheme.onPrimary,
-          fontWeight: CcTypographyParams.bold,
+          size: context.respIconSize(baseSize: 24),
+        ),
+        onTap: () => Navigator.of(context).pop(),
+      ),
+      title: Center(
+        child: CcText(
+          el.tr(CcLocaleKeys.report_title),
+          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            color: context.ccColorScheme.onPrimary,
+            fontWeight: CcTypographyParams.bold,
+          ),
         ),
       ),
     );
@@ -42,7 +50,8 @@ class ReportPage extends CcGetView<ReportController> {
       builder: (context) {
         final padding = context.respPadding(CcPaddingParams.SPACE_MD);
         return Obx(() {
-          if (controller.trendData.value == null && controller.layoutStatus.value == CcLayoutStatus.loading) {
+          if (controller.trendData.value == null &&
+              controller.layoutStatus.value == CcLayoutStatus.loading) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -108,7 +117,9 @@ class ReportPage extends CcGetView<ReportController> {
   @override
   Widget onPageBodyWrapper(BuildContext context, Widget body) {
     return Container(
-      color: CcContextExtension(context).isDarkMode ? const Color(0xFF1A1A1A) : context.ccColorScheme.background,
+      color: CcContextExtension(context).isDarkMode
+          ? const Color(0xFF1A1A1A)
+          : context.ccColorScheme.background,
       child: body,
     );
   }
@@ -168,10 +179,14 @@ class ReportPage extends CcGetView<ReportController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(
-            onPressed: controller.canPrevious ? controller.previousPeriod : null,
-            icon: Icon(Icons.chevron_left,
-              color: controller.canPrevious ? context.ccColorScheme.onSurface : context.ccColorScheme.outline,
+          CcIconButton.bouncing(
+            onTap: controller.previousPeriod,
+            isEnable: controller.canPrevious,
+            icon: Icon(
+              Icons.chevron_left,
+              color: controller.canPrevious
+                  ? context.ccColorScheme.onSurface
+                  : context.ccColorScheme.outline,
             ),
           ),
           const SizedBox(width: 8),
@@ -183,10 +198,14 @@ class ReportPage extends CcGetView<ReportController> {
             ),
           ),
           const SizedBox(width: 8),
-          IconButton(
-            onPressed: controller.canNext ? controller.nextPeriod : null,
-            icon: Icon(Icons.chevron_right,
-              color: controller.canNext ? context.ccColorScheme.onSurface : context.ccColorScheme.outline,
+          CcIconButton.bouncing(
+            onTap: controller.nextPeriod,
+            isEnable: controller.canNext,
+            icon: Icon(
+              Icons.chevron_right,
+              color: controller.canNext
+                  ? context.ccColorScheme.onSurface
+                  : context.ccColorScheme.outline,
             ),
           ),
         ],

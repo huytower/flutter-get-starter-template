@@ -24,31 +24,36 @@ class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return buildDomainGradientAppBar(
       context,
-      title: CcText(
-        el.tr(CcLocaleKeys.budget_title),
-        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+      leading: CcIconButton.bouncing(
+        icon: Icon(
+          Icons.arrow_back_ios_new_rounded,
           color: context.ccColorScheme.onPrimary,
-          fontWeight: CcTypographyParams.bold,
+          size: context.respIconSize(baseSize: 24),
+        ),
+        onTap: () => Navigator.of(context).pop(),
+      ),
+      title: Center(
+        child: CcText(
+          el.tr(CcLocaleKeys.budget_title),
+          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            color: context.ccColorScheme.onPrimary,
+            fontWeight: CcTypographyParams.bold,
+          ),
         ),
       ),
       actions: [
-        IconButton(
-          onPressed: () => _openForm(context),
+        CcIconButton.bouncing(
+          onTap: () => _openForm(context),
           tooltip: el.tr(CcLocaleKeys.budget_add_title),
           icon: Icon(
             Icons.add_rounded,
             color: context.ccColorScheme.onPrimary,
             size: context.respIconSize(baseSize: 24),
           ),
-          constraints: BoxConstraints(
-            minWidth: context.respDim(40),
-            minHeight: context.respDim(40),
-          ),
-          padding: EdgeInsets.zero,
         ),
         Obx(
-          () => IconButton(
-            onPressed: controller.toggleEditMode,
+          () => CcIconButton.bouncing(
+            onTap: controller.toggleEditMode,
             tooltip: controller.isEditMode.value
                 ? el.tr(CcLocaleKeys.common_done)
                 : el.tr(CcLocaleKeys.common_edit),
@@ -63,11 +68,6 @@ class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
                 size: context.respIconSize(baseSize: 24),
               ),
             ),
-            constraints: BoxConstraints(
-              minWidth: context.respDim(40),
-              minHeight: context.respDim(40),
-            ),
-            padding: EdgeInsets.zero,
           ),
         ),
       ],

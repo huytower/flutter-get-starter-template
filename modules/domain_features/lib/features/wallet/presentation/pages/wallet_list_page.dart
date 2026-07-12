@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
@@ -23,31 +22,36 @@ class WalletListPage extends CcGetView<WalletController> {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return buildDomainGradientAppBar(
       context,
-      title: CcText(
-        el.tr(CcLocaleKeys.wallet_your_wallets),
-        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+      leading: CcIconButton.bouncing(
+        icon: Icon(
+          Icons.arrow_back_ios_new_rounded,
           color: context.ccColorScheme.onPrimary,
-          fontWeight: CcTypographyParams.bold,
+          size: context.respIconSize(baseSize: 24),
+        ),
+        onTap: () => Navigator.of(context).pop(),
+      ),
+      title: Center(
+        child: CcText(
+          el.tr(CcLocaleKeys.wallet_your_wallets),
+          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            color: context.ccColorScheme.onPrimary,
+            fontWeight: CcTypographyParams.bold,
+          ),
         ),
       ),
       actions: [
-        IconButton(
+        CcIconButton.bouncing(
           icon: Icon(
             Icons.add,
             color: context.ccColorScheme.onPrimary,
             size: context.respIconSize(baseSize: 24),
           ),
           tooltip: el.tr(CcLocaleKeys.wallet_add_title),
-          onPressed: () => _openForm(context),
-          constraints: BoxConstraints(
-            minWidth: context.respDim(40),
-            minHeight: context.respDim(40),
-          ),
-          padding: EdgeInsets.zero,
+          onTap: () => _openForm(context),
         ),
         Obx(
-          () => IconButton(
-            onPressed: controller.toggleEditMode,
+          () => CcIconButton.bouncing(
+            onTap: controller.toggleEditMode,
             tooltip: controller.isEditMode.value
                 ? el.tr(CcLocaleKeys.common_done)
                 : el.tr(CcLocaleKeys.common_edit),
@@ -62,14 +66,8 @@ class WalletListPage extends CcGetView<WalletController> {
                 size: context.respIconSize(baseSize: 24),
               ),
             ),
-            constraints: BoxConstraints(
-              minWidth: context.respDim(40),
-              minHeight: context.respDim(40),
-            ),
-            padding: EdgeInsets.zero,
           ),
         ),
-        SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
       ],
     );
   }

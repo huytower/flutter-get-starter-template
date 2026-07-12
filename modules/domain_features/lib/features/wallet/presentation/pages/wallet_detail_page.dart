@@ -25,7 +25,14 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return buildDomainGradientAppBar(
       context,
-      leading: BackButton(color: context.ccColorScheme.onPrimary),
+      leading: CcIconButton.bouncing(
+        icon: Icon(
+          Icons.arrow_back_ios_new_rounded,
+          color: context.ccColorScheme.onPrimary,
+          size: context.respIconSize(baseSize: 24),
+        ),
+        onTap: () => Navigator.of(context).pop(),
+      ),
       title: Center(
         child: CcText(
           wallet.name,

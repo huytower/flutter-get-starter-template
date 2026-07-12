@@ -65,9 +65,9 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
       _pending.containsKey(cat.id) ? _pending[cat.id]! : cat.isEnabled;
 
   bool get _hasAnyEnabled => [
-        ..._byGroup.values.expand((c) => c),
-        ..._incomeByGroup.values.expand((c) => c),
-      ].any(_isEnabled);
+    ..._byGroup.values.expand((c) => c),
+    ..._incomeByGroup.values.expand((c) => c),
+  ].any(_isEnabled);
 
   void _toggle(CategoryEntity cat) {
     setState(() {
@@ -112,18 +112,13 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
       backgroundColor: context.ccColorScheme.surface,
       appBar: buildDomainGradientAppBar(
         context,
-        leading: IconButton(
+        leading: CcIconButton.bouncing(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             color: context.ccColorScheme.onPrimary,
             size: context.respIconSize(baseSize: 24),
           ),
-          onPressed: () => Navigator.of(context).pop(),
-          constraints: BoxConstraints(
-            minWidth: context.respDim(40),
-            minHeight: context.respDim(40),
-          ),
-          padding: EdgeInsets.zero,
+          onTap: () => Navigator.of(context).pop(),
         ),
         title: Center(
           child: CcText(
@@ -153,11 +148,13 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.only(
-                      bottom: context.respDim(100),
-                    ),
+                    padding: EdgeInsets.only(bottom: context.respDim(100)),
                     // +2: one header for expense, one for income
-                    itemCount: 1 + _groups.length + 1 + CategorySeed.incomeGroups.length,
+                    itemCount:
+                        1 +
+                        _groups.length +
+                        1 +
+                        CategorySeed.incomeGroups.length,
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         return Padding(
@@ -169,10 +166,11 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                           ),
                           child: CcText(
                             el.tr(CcLocaleKeys.category_expense_settings_title),
-                            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: context.ccColorScheme.primary,
-                            ),
+                            textStyle: context.ccTextTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: context.ccColorScheme.primary,
+                                ),
                           ),
                         );
                       }
@@ -198,10 +196,11 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                           ),
                           child: CcText(
                             el.tr(CcLocaleKeys.category_income_settings_title),
-                            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green.shade600,
-                            ),
+                            textStyle: context.ccTextTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green.shade600,
+                                ),
                           ),
                         );
                       }
@@ -338,8 +337,12 @@ class _CategoryChip extends StatelessWidget {
     final chipBg = enabled
         ? primary.withOpacity(0.15)
         : context.ccColorScheme.surfaceContainerHighest;
-    final iconColor = enabled ? primary : context.ccColorScheme.onSurfaceVariant;
-    final textColor = enabled ? primary : context.ccColorScheme.onSurfaceVariant;
+    final iconColor = enabled
+        ? primary
+        : context.ccColorScheme.onSurfaceVariant;
+    final textColor = enabled
+        ? primary
+        : context.ccColorScheme.onSurfaceVariant;
 
     return GestureDetector(
       onTap: onTap,
@@ -363,7 +366,9 @@ class _CategoryChip extends StatelessWidget {
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 150),
               child: Icon(
-                enabled ? Icons.check_box_rounded : Icons.check_box_outline_blank_rounded,
+                enabled
+                    ? Icons.check_box_rounded
+                    : Icons.check_box_outline_blank_rounded,
                 key: ValueKey(enabled),
                 size: context.respIconSize(baseSize: 16),
                 color: iconColor,
