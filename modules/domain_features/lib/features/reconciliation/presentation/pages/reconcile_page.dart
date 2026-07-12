@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/util/gradient_app_bar.dart';
 import '../get_x/reconciliation_controller.dart';
 import '../widgets/reconciliation_history_card.dart';
 import '../widgets/wallet_reconcile_tile.dart';
@@ -21,30 +22,28 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return AppBar(
-      title: Builder(
-        builder: (context) => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CcText(
-              el.tr(CcLocaleKeys.reconciliation_title),
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+    return buildDomainGradientAppBar(
+      context,
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CcText(
+            el.tr(CcLocaleKeys.reconciliation_title),
+            textStyle: context.ccTextTheme.titleMedium?.copyWith(
+              color: context.ccColorScheme.onPrimary,
+              fontWeight: CcTypographyParams.bold,
             ),
-            CcText(
-              el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
-              textStyle: context.ccTextTheme.bodySmall,
+          ),
+          CcText(
+            el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
+            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+              color: context.ccColorScheme.onPrimary.withOpacity(0.9),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-      backgroundColor: Get.context?.ccColorScheme.primary,
-      elevation: 0,
       actions: [
-        // Corner shortcut with the same behaviour as the bottom confirm
-        // button (identical enable/disable rules).
         Builder(
           builder: (context) => Obx(() {
             final enabled =
@@ -52,9 +51,18 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                 controller.unhandledCount.value == 0 &&
                 controller.balances.isNotEmpty;
             return IconButton(
-              icon: const Icon(Icons.check_circle_outline),
+              icon: Icon(
+                Icons.check_circle_outline,
+                size: context.respIconSize(baseSize: 24),
+                color: context.ccColorScheme.onPrimary,
+              ),
               tooltip: el.tr(CcLocaleKeys.reconciliation_confirm),
               onPressed: enabled ? () => _confirm(context) : null,
+              constraints: BoxConstraints(
+                minWidth: context.respDim(40),
+                minHeight: context.respDim(40),
+              ),
+              padding: EdgeInsets.zero,
             );
           }),
         ),

@@ -305,12 +305,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   List<Widget> _buildMenuItems(BuildContext context, bool isLoggedIn) {
     return [
-      if (!isLoggedIn)
-        ProfileSettingsTile(
-          icon: Icons.person_add_rounded,
-          label: el.tr(CcLocaleKeys.profile_register_login),
-          onTap: () => getIt<AuthCoordinator>().navigateToLogin(context),
-        ),
+      // if (!isLoggedIn)
+      //   ProfileSettingsTile(
+      //     icon: Icons.person_add_rounded,
+      //     label: el.tr(CcLocaleKeys.profile_register_login),
+      //     onTap: () => getIt<AuthCoordinator>().navigateToLogin(context),
+      //   ),
       ProfileSettingsTile(
         icon: Icons.tune_rounded,
         label: el.tr(CcLocaleKeys.category_settings_title),

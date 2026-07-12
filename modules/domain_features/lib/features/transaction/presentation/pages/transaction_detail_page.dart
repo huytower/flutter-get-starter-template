@@ -4,6 +4,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
+import '../../../../core/util/gradient_app_bar.dart';
 import '../../domain/entities/transaction_entity.dart';
 
 @RoutePage()
@@ -14,24 +15,18 @@ class TransactionDetailPage extends StatelessWidget with CcViewConfigMixin {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return AppBar(
-      elevation: 0,
-      leading: Builder(
-        builder: (context) =>
-            BackButton(color: context.ccColorScheme.onSurface),
-      ),
-      title: Builder(
-        builder: (context) {
-          return CcText(
-            el.tr(CcLocaleKeys.transaction_title),
-            align: Alignment.center,
+    return buildDomainGradientAppBar(
+      context,
+      leading: BackButton(color: context.ccColorScheme.onPrimary),
+      title: Center(
+        child: CcText(
+          el.tr(CcLocaleKeys.transaction_title),
+          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,
-            fontSize: CcTypographyParams.titleLarge,
-            color: context.ccColorScheme.primary,
-          );
-        },
+          ),
+        ),
       ),
-      centerTitle: true,
     );
   }
 

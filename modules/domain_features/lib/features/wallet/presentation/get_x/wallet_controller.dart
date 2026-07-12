@@ -19,7 +19,7 @@ class WalletBinding extends Bindings {
 }
 
 /// Outcome of a wallet deletion attempt (rule: only empty wallets deletable).
-enum WalletDeleteOutcome { success, notEmpty, error }
+enum WalletDeleteOutcome { success, notEmpty, protected, error }
 
 @injectable
 class WalletController extends CcGetController {
@@ -36,6 +36,11 @@ class WalletController extends CcGetController {
   final RxInt currentNavIndex = 1.obs;
   final RxBool isBalanceVisible = true.obs;
 
+  /// When true, the wallet list shows edit/delete affordances on each item.
+  final RxBool isEditMode = false.obs;
+
+  void toggleEditMode() => isEditMode.toggle();
+
   final RxList<WalletEntity> wallets = <WalletEntity>[].obs;
   final RxInt totalBalance = 0.obs;
 
@@ -50,6 +55,20 @@ class WalletController extends CcGetController {
   final Map<String, int> _bookBalances = <String, int>{};
 
   int bookBalanceOf(String id) => _bookBalances[id] ?? 0;
+
+  /// Protected wallets can be renamed but never deleted:
+  /// - the `cash` wallet is a fixed singleton, and
+  /// - at least one `bank` account must always remain (mandatory).
+  bool canDeleteWallet(WalletEntity wallet) {
+    if (wallet.type == WalletType.cash) return false;
+    if (wallet.type == WalletType.bank) {
+      final bankCount = wallets
+          .where((w) => w.type == WalletType.bank)
+          .length;
+      if (bankCount <= 1) return false;
+    }
+    return true;
+  }
 
   @override
   void onReady() {
@@ -179,6 +198,12 @@ class WalletController extends CcGetController {
   /// Rule 2: a wallet can be deleted only when its book balance is 0. On
   /// deletion every income/expense record of the wallet is soft-deleted.
   Future<WalletDeleteOutcome> deleteWallet(String id) async {
+    // Guard: cash and the last remaining bank account are mandatory.
+    final index = wallets.indexWhere((w) => w.id == id);
+    if (index != -1 && !canDeleteWallet(wallets[index])) {
+      return WalletDeleteOutcome.protected;
+    }
+
     final balanceResult = await _getWalletBookBalance(id);
     if (balanceResult.isError()) {
       errorMessage.value = balanceResult.tryGetError()!.message;

@@ -1,8 +1,12 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/transaction_form_helpers.dart';
 import '../../../../core/util/icon_utils.dart';
+import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
+import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
@@ -18,9 +22,25 @@ class AddWalletSheet extends StatefulWidget {
 }
 
 class _AddWalletSheetState extends State<AddWalletSheet> {
+  static const List<int> _quickAmounts = [
+    100000,
+    500000,
+    1000000,
+    2000000,
+    5000000,
+    10000000,
+    20000000,
+    50000000,
+  ];
+
   late final TextEditingController _nameController;
-  late final TextEditingController _balanceController;
   final _controller = Get.find<WalletController>();
+
+  /// Opening balance as a raw digit string (e.g. "1000000"), mirroring the
+  /// transaction amount input pattern.
+  String _amountStr = '0';
+  bool _showKeypad = false;
+  final _amountFieldKey = GlobalKey();
 
   /// Type of a newly created wallet — the cash wallet is a fixed singleton,
   /// so only bank/credit can be added.
@@ -35,45 +55,75 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
   bool get _balanceLocked =>
       _isEditing && _controller.walletHasTransactions(widget.wallet!.id);
 
-  bool get _isValid {
-    if (_nameController.text.trim().isEmpty) return false;
-    if (!_balanceLocked) {
-      final balanceStr = _balanceController.text.trim();
-      if (balanceStr.isNotEmpty && int.tryParse(balanceStr) == null) {
-        return false;
-      }
-    }
-    return true;
-  }
+  bool get _isValid => _nameController.text.trim().isNotEmpty;
+
+  Color get _accent => context.ccColorScheme.primary;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.wallet?.name ?? '');
-    _balanceController = TextEditingController(
-      text: widget.wallet != null ? widget.wallet!.balance.toString() : '',
-    );
     _nameController.addListener(() => setState(() {}));
-    _balanceController.addListener(() => setState(() {}));
+    if (_isEditing) {
+      _amountStr = widget.wallet!.balance.toString();
+    }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _balanceController.dispose();
     super.dispose();
+  }
+
+  void _onKeyPress(String key) {
+    setState(() {
+      if (_amountStr == '0') {
+        if (key != '0' && key != '000') {
+          _amountStr = key;
+        }
+      } else {
+        _amountStr += key;
+      }
+    });
+  }
+
+  void _onDelete() {
+    setState(() {
+      if (_amountStr.length > 1) {
+        _amountStr = _amountStr.substring(0, _amountStr.length - 1);
+      } else {
+        _amountStr = '0';
+      }
+    });
+  }
+
+  void _onAmountTap() {
+    // Dismiss the OS keyboard (if the name field is focused) and show the
+    // custom money keypad instead — consistent with the transaction pages.
+    FocusScope.of(context).unfocus();
+    setState(() => _showKeypad = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = _amountFieldKey.currentContext;
+      if (ctx != null) {
+        Scrollable.ensureVisible(
+          ctx,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   void _onSave() async {
     final name = _nameController.text.trim();
-    final balance = int.tryParse(_balanceController.text.trim()) ?? 0;
+    final balance = int.tryParse(_amountStr) ?? 0;
 
     if (_isEditing) {
       final original = widget.wallet!;
       await _controller.updateWallet(
         WalletEntity(
           id: original.id,
-            name: name,
+          name: name,
           balance: balance,
           iconCode: original.iconCode,
           type: original.type,
@@ -93,7 +143,9 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       Navigator.pop(context); // Đóng sheet
       CcSnackBarHelper.showSuccessSnackBar(
         context: context,
-        message: _isEditing ? 'Đã cập nhật ví' : 'Đã thêm ví mới',
+        message: _isEditing
+            ? el.tr(CcLocaleKeys.wallet_updated_success)
+            : el.tr(CcLocaleKeys.wallet_added_success),
       );
     }
   }
@@ -105,9 +157,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         left: context.respPadding(CcPaddingParams.SPACE_LG),
         right: context.respPadding(CcPaddingParams.SPACE_LG),
         top: context.respPadding(CcPaddingParams.SPACE_LG),
-        bottom:
-            MediaQuery.of(context).viewInsets.bottom +
-            context.respPadding(CcPaddingParams.SPACE_LG),
+        bottom: context.respPadding(CcPaddingParams.SPACE_LG),
       ),
       decoration: BoxDecoration(
         color: context.ccColorScheme.surface,
@@ -118,46 +168,42 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CcText(
-            _isEditing ? 'Sửa ví' : 'Thêm ví mới',
+            _isEditing
+                ? el.tr(CcLocaleKeys.wallet_edit_title)
+                : el.tr(CcLocaleKeys.wallet_add_title),
             textStyle: context.ccTextTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: context.ccColorScheme.primary,
             ),
           ),
           const CcSpaceMD(),
-          if (!_isEditing) ...[
-            _buildTypeSelector(context),
-            const CcSpaceMD(),
-          ],
+          if (!_isEditing) ...[_buildTypeSelector(context), const CcSpaceMD()],
           TextField(
             controller: _nameController,
             decoration: InputDecoration(
-              labelText: 'Tên ví',
-              hintText: 'Ví dụ: Tiền mặt, Techcombank...',
+              labelText: el.tr(CcLocaleKeys.wallet_name),
+              hintText: el.tr(CcLocaleKeys.wallet_name_hint),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
           ),
           const CcSpaceMD(),
-          TextField(
-            controller: _balanceController,
-            keyboardType: TextInputType.number,
-            readOnly: _balanceLocked,
-            enabled: !_balanceLocked,
-            decoration: InputDecoration(
-              labelText: 'Số dư đầu kỳ',
-              hintText: 'Ví dụ: 1000000',
-              suffixText: 'đ',
-              helperText: _balanceLocked
-                  ? 'Không thể sửa số dư đầu kỳ khi ví đã có giao dịch'
-                  : null,
-              helperMaxLines: 2,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+          if (_balanceLocked)
+            _buildLockedBalance(context)
+          else
+            CcAmountInputSection(
+              key: const Key('wallet_balance'),
+              label: el.tr(CcLocaleKeys.wallet_initial_balance),
+              amountStr: _amountStr,
+              quickAmounts: _quickAmounts,
+              isKeypadVisible: _showKeypad,
+              activeColor: _accent,
+              fieldKey: _amountFieldKey,
+              onTap: _onAmountTap,
+              onQuickAmountSelected: (amount) =>
+                  setState(() => _amountStr = amount.toString()),
             ),
-          ),
           const CcSpaceLG(),
           SizedBox(
             width: double.infinity,
@@ -170,26 +216,89 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const CcText(
-                'Lưu thông tin',
+              child: CcText(
+                el.tr(CcLocaleKeys.wallet_save_info),
                 align: Alignment.center,
                 textAlign: TextAlign.center,
-                textStyle: TextStyle(
+                textStyle: context.ccTextTheme.titleMedium?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ),
+          if (_showKeypad) ...[
+            const CcSpaceMD(),
+            SafeArea(
+              top: false,
+              child: MoneyKeypadPanel(
+                onKeyPress: _onKeyPress,
+                onDelete: _onDelete,
+                onClear: () => setState(() => _amountStr = '0'),
+                suggestions: _quickAmounts,
+                onSuggestion: (value) =>
+                    setState(() => _amountStr = value.toString()),
+                onDone: () => setState(() => _showKeypad = false),
+                activeColor: _accent,
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 
+  /// Read-only display for a balance that can no longer be edited (a wallet
+  /// that already has transactions).
+  Widget _buildLockedBalance(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcText(
+          el.tr(CcLocaleKeys.wallet_initial_balance),
+          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+            color: Colors.grey[700],
+            fontWeight: FontWeight.bold,
+            fontSize: context.respFontSize(12),
+          ),
+        ),
+        const CcSpaceXS(),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          height: 54,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF8F9FA),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
+          ),
+          alignment: Alignment.center,
+          child: CcText(
+            '${TransactionFormHelpers.formatAmount(_amountStr)} đ',
+            align: Alignment.center,
+            textAlign: TextAlign.center,
+            textStyle: context.ccTextTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: context.ccColorScheme.primary,
+              fontSize: context.respFontSize(24),
+            ),
+          ),
+        ),
+        const CcSpaceXS(),
+        CcText(
+          el.tr(CcLocaleKeys.wallet_balance_locked_hint),
+          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+            color: Colors.grey[500],
+            fontSize: context.respFontSize(11),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildTypeSelector(BuildContext context) {
-    const options = [
-      (WalletType.bank, 'Ngân hàng'),
-      (WalletType.credit, 'Thẻ tín dụng'),
+    final options = [
+      (WalletType.bank, el.tr(CcLocaleKeys.wallet_bank)),
+      (WalletType.credit, el.tr(CcLocaleKeys.wallet_credit)),
     ];
     return Row(
       children: options.map((option) {
@@ -201,10 +310,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
             onTap: () => setState(() => _newType = type),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 180),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 10,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: isSelected
                     ? context.ccColorScheme.primary
@@ -224,8 +330,9 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                     label,
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
                       color: isSelected ? Colors.white : Colors.grey[800],
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 ],

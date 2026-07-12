@@ -11,7 +11,13 @@ import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../get_x/transaction_controller.dart';
 import 'category_selection_section.dart';
+import 'cc_amount_input_section.dart';
+import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
+import 'note_field_with_camera.dart';
+import 'quick_date_row.dart';
+import '../../../../core/transaction_form_helpers.dart';
+import 'transaction_see_more_section.dart';
 
 class ExpenseForm extends StatefulWidget {
   final VoidCallback? onSaved;
@@ -50,6 +56,7 @@ class ExpenseFormState extends State<ExpenseForm> {
   DateTime _date = DateTime.now();
   bool _isSubmitting = false;
   bool _showKeypad = false;
+  bool _showMoreDetails = false;
 
   @override
   void initState() {
@@ -105,34 +112,16 @@ class ExpenseFormState extends State<ExpenseForm> {
     });
   }
 
-  String _formatAmount(String amount) {
-    if (amount == '0') return '0';
-    final formatter = el.NumberFormat('#,###', 'vi_VN');
-    return formatter.format(int.parse(amount));
-  }
-
   Future<void> _pickDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _date,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-    );
+    final picked = await TransactionFormHelpers.pickDate(context, _date);
     if (picked == null) return;
     setState(() {
-      _date = DateTime(
-        picked.year,
-        picked.month,
-        picked.day,
-        _date.hour,
-        _date.minute,
-      );
+      _date = TransactionFormHelpers.updateDatePreserveTime(_date, picked);
     });
   }
 
   String? _composeNote() {
-    final note = _noteController.text.trim();
-    return note.isEmpty ? null : note;
+    return TransactionFormHelpers.composeNote(_noteController);
   }
 
   Future<void> _onSubmit() async {
@@ -157,7 +146,7 @@ class ExpenseFormState extends State<ExpenseForm> {
 
     result.when(
       (_) {
-        final savedAmount = _formatAmount(_amountStr);
+        final savedAmount = TransactionFormHelpers.formatAmount(_amountStr);
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(
@@ -231,11 +220,29 @@ class ExpenseFormState extends State<ExpenseForm> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildLabel(el.tr(CcLocaleKeys.transaction_amount)),
-                        const CcSpaceXS(),
-                        _buildAmountField(),
-                        const CcSpaceXS(),
-                        _buildQuickAmounts(),
+                        CcAmountInputSection(
+                          label: el.tr(CcLocaleKeys.transaction_amount),
+                          amountStr: _amountStr,
+                          quickAmounts: _quickAmounts,
+                          isKeypadVisible: _showKeypad,
+                          activeColor: _accent,
+                          fieldKey: _amountFieldKey,
+                          onTap: () {
+                            setState(() => _showKeypad = true);
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              final ctx = _amountFieldKey.currentContext;
+                              if (ctx != null) {
+                                Scrollable.ensureVisible(
+                                  ctx,
+                                  duration: const Duration(milliseconds: 250),
+                                  curve: Curves.easeOut,
+                                );
+                              }
+                            });
+                          },
+                          onQuickAmountSelected: (amount) =>
+                              setState(() => _amountStr = amount.toString()),
+                        ),
                         const CcSpaceLG(),
                         _buildLabel(
                           el.tr(CcLocaleKeys.transaction_source_expense),
@@ -243,13 +250,7 @@ class ExpenseFormState extends State<ExpenseForm> {
                         const CcSpaceXS(),
                         _buildWalletChips(context),
                         const CcSpaceLG(),
-                        _buildLabel(el.tr(CcLocaleKeys.transaction_time)),
-                        const CcSpaceXS(),
-                        _buildTimeRow(),
-                        const CcSpaceLG(),
-                        _buildLabel(el.tr(CcLocaleKeys.transaction_note)),
-                        const CcSpaceXS(),
-                        _buildNoteField(context),
+                        _buildSeeMoreSection(),
                         const CcSpaceXL(),
                         _buildSubmitButton(),
                         const CcSpaceLG(),
@@ -276,101 +277,8 @@ class ExpenseFormState extends State<ExpenseForm> {
     );
   }
 
-  String _formatShort(int amount) {
-    if (amount >= 1000000) return '${amount ~/ 1000000}tr';
-    if (amount >= 1000) return '${amount ~/ 1000}k';
-    return amount.toString();
-  }
-
-  Widget _buildQuickAmounts() {
-    return HorizontalFadeScrollView(
-      height: context.respDim(36),
-      builder: (scrollController) => SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        controller: scrollController,
-        child: Row(
-          children: _quickAmounts.map((amount) {
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: GestureDetector(
-                onTap: () => setState(() => _amountStr = amount.toString()),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _accent.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: CcText(
-                    _formatShort(amount),
-                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      color: _accent,
-                      fontWeight: FontWeight.w600,
-                      fontSize: context.respFontSize(12),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
   Widget _buildLabel(String text) {
-    return CcText(
-      text,
-      textStyle: context.ccTextTheme.labelMedium?.copyWith(
-        color: Colors.grey[700],
-        fontWeight: FontWeight.bold,
-        fontSize: context.respFontSize(12),
-      ),
-    );
-  }
-
-  Widget _buildAmountField() {
-    return GestureDetector(
-      key: _amountFieldKey,
-      onTap: () {
-        setState(() => _showKeypad = true);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final ctx = _amountFieldKey.currentContext;
-          if (ctx != null) {
-            Scrollable.ensureVisible(
-              ctx,
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeOut,
-            );
-          }
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        height: 54,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF8F9FA),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: _showKeypad ? _accent : Colors.grey.withOpacity(0.2),
-            width: _showKeypad ? 1.5 : 1,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: CcText(
-          '${_formatAmount(_amountStr)} đ',
-          align: Alignment.center,
-          textAlign: TextAlign.center,
-          textStyle: context.ccTextTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: _accent,
-            fontSize: context.respFontSize(24),
-          ),
-        ),
-      ),
-    );
+    return CcFormLabel(text: text);
   }
 
   Widget _buildWalletChips(BuildContext context) {
@@ -445,62 +353,42 @@ class ExpenseFormState extends State<ExpenseForm> {
   }
 
   Widget _buildTimeRow() {
-    return GestureDetector(
-      onTap: _pickDate,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        height: 48,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF8F9FA),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.withOpacity(0.2)),
-        ),
-        child: Row(
-          children: [
-            CcText(
-              el.DateFormat('dd/MM/yyyy HH:mm').format(_date),
-              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                fontSize: context.respFontSize(13),
-              ),
-            ),
-            const Spacer(),
-            Icon(Icons.calendar_month, size: 18, color: Colors.grey[400]),
-          ],
-        ),
-      ),
+    return QuickDateRow(
+      selectedDate: _date,
+      onDateSelected: (date) => setState(() {
+        _date = DateTime(
+          date.year,
+          date.month,
+          date.day,
+          _date.hour,
+          _date.minute,
+        );
+      }),
+      onCalendarTap: _pickDate,
+      accentColor: _accent,
     );
   }
 
   Widget _buildNoteField(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      height: 48,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.2)),
-      ),
-      child: Row(
+    return NoteFieldWithCamera(
+      controller: _noteController,
+      onTap: () => setState(() => _showKeypad = false),
+      onCameraTap: () {
+        // TODO: Implement image picker functionality
+      },
+    );
+  }
+
+  Widget _buildSeeMoreSection() {
+    return TransactionSeeMoreSection(
+      isExpanded: _showMoreDetails,
+      onToggle: () => setState(() => _showMoreDetails = !_showMoreDetails),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: TextField(
-              controller: _noteController,
-              onTap: () => setState(() => _showKeypad = false),
-              style: context.ccTextTheme.bodyMedium?.copyWith(
-                fontSize: context.respFontSize(14),
-              ),
-              decoration: InputDecoration(
-                hintText: el.tr(CcLocaleKeys.transaction_note_hint),
-                hintStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[400],
-                  fontSize: context.respFontSize(13),
-                ),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
-          ),
+          _buildTimeRow(),
+          const CcSpaceLG(),
+          _buildNoteField(context),
         ],
       ),
     );

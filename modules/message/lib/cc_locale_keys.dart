@@ -113,7 +113,7 @@ abstract class CcLocaleKeys {
 
   static const nav_home = 'nav.home';
   static const nav_transaction = 'nav.transaction';
-  static const nav_wallet = 'nav.wallet';
+  static const nav_budget_allocation = 'nav.budget_allocation';
   static const nav_dashboard = 'nav.dashboard';
   static const nav_quick_test = 'nav.quick_test';
   static const nav_quick_test_page = 'nav.quick_test_page';
@@ -138,6 +138,22 @@ abstract class CcLocaleKeys {
   static const wallet_your_wallets = 'wallet.your_wallets';
   static const wallet_see_all = 'wallet.see_all';
   static const wallet_empty = 'wallet.empty';
+  static const wallet_add_title = 'wallet.add_title';
+  static const wallet_edit_title = 'wallet.edit_title';
+  static const wallet_name = 'wallet.name';
+  static const wallet_name_hint = 'wallet.name_hint';
+  static const wallet_initial_balance = 'wallet.initial_balance';
+  static const wallet_initial_balance_hint = 'wallet.initial_balance_hint';
+  static const wallet_balance_locked_hint = 'wallet.balance_locked_hint';
+  static const wallet_save_info = 'wallet.save_info';
+  static const wallet_bank = 'wallet.bank';
+  static const wallet_credit = 'wallet.credit';
+  static const wallet_added_success = 'wallet.added_success';
+  static const wallet_updated_success = 'wallet.updated_success';
+  static const wallet_delete_title = 'wallet.delete_title';
+  static const wallet_delete_confirm_msg = 'wallet.delete_confirm_msg';
+  static const wallet_delete_error_not_empty = 'wallet.delete_error_not_empty';
+  static const wallet_delete_error_protected = 'wallet.delete_error_protected';
 
   static const category_group_daily = 'category.group_daily';
   static const category_group_personal = 'category.group_personal';
@@ -203,7 +219,8 @@ abstract class CcLocaleKeys {
   // Personal care
   static const category_haircut = 'category.haircut';
   static const category_spa = 'category.spa';
-  static const category_personal_care_product = 'category.personal_care_product';
+  static const category_personal_care_product =
+      'category.personal_care_product';
 
   // Service fees
   static const category_bank_fee = 'category.bank_fee';
@@ -221,15 +238,18 @@ abstract class CcLocaleKeys {
   static const category_settings_saved = 'category.settings_saved';
 
   // Expense / income category settings section headers
-  static const category_expense_settings_title = 'category.expense_settings_title';
-  static const category_income_settings_title = 'category.income_settings_title';
+  static const category_expense_settings_title =
+      'category.expense_settings_title';
+  static const category_income_settings_title =
+      'category.income_settings_title';
   static const category_income_group_active = 'category.income_group_active';
   static const category_income_group_invest = 'category.income_group_invest';
   static const category_income_group_other = 'category.income_group_other';
   static const category_income_salary = 'category.income_salary';
   static const category_income_freelance = 'category.income_freelance';
   static const category_income_allowance = 'category.income_allowance';
-  static const category_income_savings_interest = 'category.income_savings_interest';
+  static const category_income_savings_interest =
+      'category.income_savings_interest';
   static const category_income_dividends = 'category.income_dividends';
   static const category_income_rental = 'category.income_rental';
   static const category_income_bonus = 'category.income_bonus';
@@ -281,6 +301,7 @@ abstract class CcLocaleKeys {
   static const budget_add_title = 'budget.add_title';
   static const budget_name = 'budget.name';
   static const budget_name_hint = 'budget.name_hint';
+  static const budget_name_duplicate_error = 'budget.name_duplicate_error';
   static const budget_category = 'budget.category';
   static const budget_limit = 'budget.limit';
   static const budget_limit_hint = 'budget.limit_hint';
@@ -319,8 +340,10 @@ abstract class CcLocaleKeys {
   static const reconciliation_actual = 'reconciliation.actual';
   static const reconciliation_book_balance = 'reconciliation.book_balance';
   static const reconciliation_cycle_subtitle = 'reconciliation.cycle_subtitle';
-  static const reconciliation_mismatch_warning = 'reconciliation.mismatch_warning';
-  static const reconciliation_create_adjustment = 'reconciliation.create_adjustment';
+  static const reconciliation_mismatch_warning =
+      'reconciliation.mismatch_warning';
+  static const reconciliation_create_adjustment =
+      'reconciliation.create_adjustment';
   static const reconciliation_matched = 'reconciliation.matched';
   static const reconciliation_lech = 'reconciliation.lech';
 

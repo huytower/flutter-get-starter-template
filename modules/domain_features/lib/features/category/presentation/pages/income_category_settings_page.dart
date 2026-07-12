@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/util/gradient_app_bar.dart';
 import '../../../../core/util/icon_utils.dart';
 import '../../data/datasources/local/category_seed.dart';
 import '../../domain/entities/category_entity.dart';
@@ -99,24 +100,30 @@ class _IncomeCategorySettingsPageState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.ccColorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: context.ccColorScheme.surface,
-        elevation: 0,
+      appBar: buildDomainGradientAppBar(
+        context,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
-            color: context.ccColorScheme.onSurface,
+            color: context.ccColorScheme.onPrimary,
+            size: context.respIconSize(baseSize: 24),
           ),
           onPressed: () => Navigator.of(context).pop(),
+          constraints: BoxConstraints(
+            minWidth: context.respDim(40),
+            minHeight: context.respDim(40),
+          ),
+          padding: EdgeInsets.zero,
         ),
-        title: CcText(
-          'Hạng mục thu nhập',
-          textStyle: context.ccTextTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: context.ccColorScheme.onSurface,
+        title: Center(
+          child: CcText(
+            'Hạng mục thu nhập',
+            textStyle: context.ccTextTheme.titleLarge?.copyWith(
+              fontWeight: CcTypographyParams.bold,
+              color: context.ccColorScheme.onPrimary,
+            ),
           ),
         ),
-        centerTitle: true,
       ),
       floatingActionButton: CcFloatingActionButton(
         iconData: Icons.add,

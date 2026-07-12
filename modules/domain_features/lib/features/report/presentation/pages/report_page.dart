@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../core/util/gradient_app_bar.dart';
+
 import '../../../../core/getx/cc_get_view.dart';
 import '../../domain/report_range.dart';
 import '../get_x/report_controller.dart';
@@ -22,16 +24,15 @@ class ReportPage extends CcGetView<ReportController> {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return AppBar(
+    return buildDomainGradientAppBar(
+      context,
       title: CcText(
         el.tr(CcLocaleKeys.report_title),
-        textStyle: context.ccTextTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.bold,
+        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+          color: context.ccColorScheme.onPrimary,
+          fontWeight: CcTypographyParams.bold,
         ),
       ),
-      backgroundColor: context.ccColorScheme.background,
-      elevation: 0,
-      centerTitle: false,
     );
   }
 
@@ -44,7 +45,7 @@ class ReportPage extends CcGetView<ReportController> {
           if (controller.trendData.value == null && controller.layoutStatus.value == CcLayoutStatus.loading) {
             return const Center(child: CircularProgressIndicator());
           }
-          
+
           final data = controller.trendData.value;
           if (data == null) return const SizedBox.shrink();
 
@@ -169,7 +170,7 @@ class ReportPage extends CcGetView<ReportController> {
         children: [
           IconButton(
             onPressed: controller.canPrevious ? controller.previousPeriod : null,
-            icon: Icon(Icons.chevron_left, 
+            icon: Icon(Icons.chevron_left,
               color: controller.canPrevious ? context.ccColorScheme.onSurface : context.ccColorScheme.outline,
             ),
           ),

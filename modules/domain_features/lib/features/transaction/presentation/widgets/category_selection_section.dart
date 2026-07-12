@@ -94,72 +94,77 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
 
   Widget _buildCategoryList(BuildContext context) {
     return HorizontalFadeScrollView(
-      height: context.respDim(90),
+      height: context.respDim(75),
       builder: (scrollController) => ListView.separated(
-          scrollDirection: Axis.horizontal,
-          controller: scrollController,
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-          ),
-          itemCount: _categories.length,
-          separatorBuilder: (context, index) => const CcSpaceSM(),
-          itemBuilder: (context, index) {
-            final category = _categories[index];
-            final isSelected = _selectedCategoryId == category.id;
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+        ),
+        itemCount: _categories.length,
+        separatorBuilder: (context, index) => const CcSpaceSM(),
+        itemBuilder: (context, index) {
+          final category = _categories[index];
+          final isSelected = _selectedCategoryId == category.id;
 
-            return GestureDetector(
-              onTap: () {
-                setState(() => _selectedCategoryId = category.id);
-                widget.onCategorySelected?.call(category);
-              },
-              child: SizedBox(
-                width: context.respDim(68),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeInOut,
-                      width: context.respDim(52),
-                      height: context.respDim(52),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? widget.activeColor
-                            : const Color(0xFFF1F3F5),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Center(
-                        child: CcIcon(
-                          icon: iconDataFromCode(
-                            category.iconCode,
-                            fontFamily: category.iconFamily,
-                          ),
-                          size: context.respIconSize(baseSize: 22),
-                          color: isSelected ? Colors.white : Colors.grey[600],
+          return GestureDetector(
+            onTap: () {
+              setState(() => _selectedCategoryId = category.id);
+              widget.onCategorySelected?.call(category);
+            },
+            child: SizedBox(
+              width: context.respDim(68),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    width: context.respDim(52),
+                    height: context.respDim(52),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? widget.activeColor
+                          : const Color(0xFFF1F3F5),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Center(
+                      child: CcIcon(
+                        icon: iconDataFromCode(
+                          category.iconCode,
+                          fontFamily: category.iconFamily,
                         ),
+                        size: context.respIconSize(baseSize: 22),
+                        color: isSelected ? Colors.white : Colors.grey[600],
                       ),
                     ),
-                    const CcSpaceXS(),
-                    AnimatedDefaultTextStyle(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeInOut,
-                      style: (context.ccTextTheme.bodySmall ?? const TextStyle()).copyWith(
-                        fontSize: context.respFontSize(9),
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected ? widget.activeColor : Colors.grey[700],
-                      ),
-                      child: Text(
-                        el.tr(category.nameKey),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                  ),
+                  const CcSpaceXS(),
+                  AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    style: (context.ccTextTheme.bodySmall ?? const TextStyle())
+                        .copyWith(
+                          fontSize: context.respFontSize(9),
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isSelected
+                              ? widget.activeColor
+                              : Colors.grey[700],
+                        ),
+                    child: Text(
+                      el.tr(category.nameKey),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            );
-          },
+            ),
+          );
+        },
       ),
     );
   }

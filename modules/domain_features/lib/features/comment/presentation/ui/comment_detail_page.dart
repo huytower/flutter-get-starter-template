@@ -4,6 +4,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
+import '../../../../core/util/gradient_app_bar.dart';
 import '../../domain/entities/comment_entity.dart';
 
 @RoutePage()
@@ -14,17 +15,18 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return AppBar(
-      elevation: 0,
-      leading: BackButton(color: context.ccColorScheme.onSurface),
-      title: CcText(
-        el.tr(CcLocaleKeys.comment_detail_title),
-        align: Alignment.center,
-        fontWeight: CcTypographyParams.bold,
-        fontSize: CcTypographyParams.titleLarge,
-        color: context.ccColorScheme.primary,
+    return buildDomainGradientAppBar(
+      context,
+      leading: BackButton(color: context.ccColorScheme.onPrimary),
+      title: Center(
+        child: CcText(
+          el.tr(CcLocaleKeys.comment_detail_title),
+          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            color: context.ccColorScheme.onPrimary,
+            fontWeight: CcTypographyParams.bold,
+          ),
+        ),
       ),
-      centerTitle: true,
     );
   }
 

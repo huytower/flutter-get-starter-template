@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../../core/util/gradient_app_bar.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../get_x/transaction_controller.dart';
 import '../widgets/shimmer_transaction_card.dart';
@@ -49,22 +50,29 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage>
       initialIndex: widget.initialTab.clamp(0, 1),
       child: Scaffold(
         backgroundColor: context.ccColorScheme.surface,
-        appBar: AppBar(
-          backgroundColor: context.ccColorScheme.primary,
-          foregroundColor: context.ccColorScheme.onPrimary,
-          elevation: 0,
+        appBar: buildDomainGradientAppBar(
+          context,
           title: CcText(
             el.tr(CcLocaleKeys.transaction_history),
             textStyle: context.ccTextTheme.titleMedium?.copyWith(
               color: context.ccColorScheme.onPrimary,
-              fontWeight: FontWeight.bold,
+              fontWeight: CcTypographyParams.bold,
             ),
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.bar_chart_rounded),
+              icon: Icon(
+                Icons.bar_chart_rounded,
+                size: context.respIconSize(baseSize: 24),
+                color: context.ccColorScheme.onPrimary,
+              ),
               tooltip: 'Báo cáo',
               onPressed: _openReport,
+              constraints: BoxConstraints(
+                minWidth: context.respDim(40),
+                minHeight: context.respDim(40),
+              ),
+              padding: EdgeInsets.zero,
             ),
           ],
           bottom: TabBar(
@@ -74,7 +82,8 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage>
               0.6,
             ),
             labelStyle: context.ccTextTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: CcTypographyParams.bold,
+              fontSize: context.respFontSize(12),
             ),
             tabs: [
               Tab(text: el.tr(CcLocaleKeys.transaction_expense_slip)),
