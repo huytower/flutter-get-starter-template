@@ -48,6 +48,7 @@ export 'package:cc_sdk_ui/widgets/button/cc_download_btn.dart';
 export 'package:cc_sdk_ui/widgets/button/cc_edit_btn.dart';
 export 'package:cc_sdk_ui/widgets/button/cc_favorite_btn.dart';
 export 'package:cc_sdk_ui/widgets/button/cc_floating_action_button.dart';
+export 'package:cc_sdk_ui/widgets/button/cc_icon_button.dart';
 export 'package:cc_sdk_ui/widgets/button/cc_interaction_type.dart';
 export 'package:cc_sdk_ui/widgets/button/cc_interaction_wrapper.dart';
 export 'package:cc_sdk_ui/widgets/button/cc_more_btn.dart';
