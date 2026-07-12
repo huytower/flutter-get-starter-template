@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/transaction_form_helpers.dart';
 import '../../../../core/util/horizontal_fade_scroll_view.dart';
 import '../../../../core/util/icon_utils.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
@@ -19,7 +20,6 @@ import 'income_quick_amounts.dart';
 import 'money_keypad_panel.dart';
 import 'note_field_with_camera.dart';
 import 'quick_date_row.dart';
-import '../../../../core/transaction_form_helpers.dart';
 import 'transaction_see_more_section.dart';
 
 class IncomeForm extends StatefulWidget {

@@ -153,10 +153,12 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
                               ? widget.activeColor
                               : Colors.grey[700],
                         ),
-                    child: Text(
+                    child: CcText(
                       el.tr(category.nameKey),
+                      fontSize: context.respFontSize(7),
                       textAlign: TextAlign.center,
-                      maxLines: 2,
+                      align: Alignment.center,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

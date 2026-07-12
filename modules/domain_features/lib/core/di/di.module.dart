@@ -174,10 +174,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             local: gh<_i547.CategoryLocalDataSource>()));
     gh.lazySingleton<_i850.GetMonthlySummaryUseCase>(() =>
         _i850.GetMonthlySummaryUseCase(gh<_i1027.TransactionRepository>()));
-    gh.lazySingleton<_i951.GetTrendDataUseCase>(() => _i951.GetTrendDataUseCase(
-          gh<_i1027.TransactionRepository>(),
-          gh<_i1059.CategoryRepository>(),
-        ));
     gh.lazySingleton<_i857.CommentRepository>(
         () => _i536.CommentRepositoryImpl(remote: gh<_i130.CommentRemote>()));
     gh.lazySingleton<_i446.GetReconciliationHistoryUseCase>(() =>
@@ -199,6 +195,10 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i1059.CategoryRepository>(),
             ));
+    gh.lazySingleton<_i951.GetTrendDataUseCase>(() => _i951.GetTrendDataUseCase(
+          gh<_i1027.TransactionRepository>(),
+          gh<_i1059.CategoryRepository>(),
+        ));
     gh.lazySingleton<_i370.CreateCategoryUseCase>(
         () => _i370.CreateCategoryUseCase(gh<_i1059.CategoryRepository>()));
     gh.lazySingleton<_i1057.DeleteCategoryUseCase>(
