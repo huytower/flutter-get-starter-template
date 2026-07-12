@@ -1,4 +1,5 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -7,12 +8,6 @@ import '../../../category/domain/repositories/category_repository.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/category_spending_entity.dart';
 
-/// Spend-by-category breakdown for the pie chart ("tỷ trọng chi tiêu").
-///
-/// Groups expense transactions in `[start, end]` by their `categoryId`, joins
-/// each group to its [CategoryEntity] for the label/icon/colour, and returns
-/// slices sorted by amount descending with each slice's share of the total.
-/// Replaces the web's server-side aggregation.
 @lazySingleton
 class GetCategorySpendingUseCase {
   GetCategorySpendingUseCase(
@@ -22,9 +17,6 @@ class GetCategorySpendingUseCase {
 
   final TransactionRepository _transactionRepository;
   final CategoryRepository _categoryRepository;
-
-  /// Fallback label for expenses whose category was deleted or never set.
-  static const String _uncategorizedKey = 'Chưa phân loại';
 
   Future<Result<List<CategorySpendingEntity>, CcFailure>> call({
     required DateTime start,
@@ -47,7 +39,6 @@ class GetCategorySpendingUseCase {
       for (final c in catResult.tryGetSuccess()!) c.id: c,
     };
 
-    // Sum expenses per category.
     final totals = <String, int>{};
     for (final t in txnResult.tryGetSuccess()!) {
       if (t.type != 'expense') continue;
@@ -67,8 +58,8 @@ class GetCategorySpendingUseCase {
       final category = categories[entry.key];
       return CategorySpendingEntity(
         categoryId: entry.key,
-        nameKey: category?.nameKey ?? _uncategorizedKey,
-        iconCode: category?.iconCode ?? 0xe148, // Icons.help_outline
+        nameKey: category?.nameKey ?? CcLocaleKeys.report_uncategorized,
+        iconCode: category?.iconCode ?? 0xe148,
         iconFamily: category?.iconFamily,
         color: category?.color,
         amount: entry.value,

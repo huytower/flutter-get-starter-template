@@ -1,6 +1,9 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:message/export_message.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/util/money_format.dart';
 import '../../domain/entities/monthly_summary_entity.dart';
@@ -12,8 +15,8 @@ class MonthlyBarChart extends StatelessWidget {
 
   final List<MonthlySummaryEntity> months;
 
-  static const Color _incomeColor = Color(0xFF57C784);
-  static const Color _expenseColor = Color(0xFFEF6C6C);
+  static const Color _incomeColor = PrjColors.success;
+  static const Color _expenseColor = PrjColors.error;
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +33,9 @@ class MonthlyBarChart extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            _legendDot(context, _incomeColor, 'Thu'),
+            _legendDot(context, _incomeColor, el.tr(CcLocaleKeys.report_income_short)),
             const SizedBox(width: 16),
-            _legendDot(context, _expenseColor, 'Chi'),
+            _legendDot(context, _expenseColor, el.tr(CcLocaleKeys.report_expense_short)),
           ],
         ),
         const SizedBox(height: 12),

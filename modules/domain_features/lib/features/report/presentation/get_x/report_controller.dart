@@ -1,14 +1,17 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
+import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../domain/entities/category_spending_entity.dart';
-import '../../domain/entities/monthly_summary_entity.dart';
+import '../../domain/entities/financial_runway_entity.dart';
+import '../../domain/entities/trend_data_entity.dart';
 import '../../domain/report_range.dart';
 import '../../domain/usecases/get_category_spending_usecase.dart';
-import '../../domain/usecases/get_monthly_summary_usecase.dart';
+import '../../domain/usecases/get_financial_runway_usecase.dart';
+import '../../domain/usecases/get_trend_data_usecase.dart';
 
 class ReportBinding extends Bindings {
   @override
@@ -19,22 +22,31 @@ class ReportBinding extends Bindings {
 
 @injectable
 class ReportController extends CcGetController {
-  ReportController(this._getCategorySpending, this._getMonthlySummary);
+  ReportController(
+    this._getCategorySpending,
+    this._getFinancialRunway,
+    this._getTrendData,
+  );
 
   final GetCategorySpendingUseCase _getCategorySpending;
-  final GetMonthlySummaryUseCase _getMonthlySummary;
+  final GetFinancialRunwayUseCase _getFinancialRunway;
+  final GetTrendDataUseCase _getTrendData;
 
-  /// Number of months shown in the trend bar chart.
-  static const int _trendMonths = 6;
+  final Rx<ReportRange> range = ReportRange.weekly.obs;
+  final RxInt navigationOffset = 0.obs;
 
-  final Rx<ReportRange> range = ReportRange.thisWeek.obs;
-  final RxList<CategorySpendingEntity> spending =
-      <CategorySpendingEntity>[].obs;
-  final RxList<MonthlySummaryEntity> monthly = <MonthlySummaryEntity>[].obs;
+  final RxList<CategorySpendingEntity> spending = <CategorySpendingEntity>[].obs;
+  final Rx<TrendDataEntity?> trendData = Rx<TrendDataEntity?>(null);
+  final Rx<FinancialRunwayEntity?> runway = Rx<FinancialRunwayEntity?>(null);
 
-  /// Total expense over the selected range (sum of pie slices).
-  int get rangeExpense =>
-      spending.fold<int>(0, (sum, s) => sum + s.amount);
+  int get rangeExpense => spending.fold<int>(0, (sum, s) => sum + s.amount);
+
+  bool get canNext => navigationOffset.value > 0;
+  bool get canPrevious {
+    if (range.value == ReportRange.monthly) return navigationOffset.value < 4; // Max 12 months (4 * 3)
+    if (range.value == ReportRange.yearly) return navigationOffset.value < 1; // Max 1 year back
+    return false;
+  }
 
   @override
   void onReady() {
@@ -42,49 +54,54 @@ class ReportController extends CcGetController {
     load();
   }
 
-  /// Switches the pie's time window and reloads.
   void selectRange(ReportRange next) {
     if (range.value == next) return;
     range.value = next;
+    navigationOffset.value = 0;
     load(showLoading: false);
   }
 
-  /// Loads both charts. Pass [showLoading] false for background refreshes so
-  /// existing data isn't replaced by a full-screen loader.
+  void nextPeriod() {
+    if (canNext) {
+      navigationOffset.value--;
+      load(showLoading: false);
+    }
+  }
+
+  void previousPeriod() {
+    if (canPrevious) {
+      navigationOffset.value++;
+      load(showLoading: false);
+    }
+  }
+
   Future<void> load({bool showLoading = true}) async {
     if (showLoading) {
       layoutStatus.value = CcLayoutStatus.loading;
     }
 
     final bounds = range.value.bounds();
+    
     final results = await Future.wait([
       _getCategorySpending.call(start: bounds.start, end: bounds.end),
-      _getMonthlySummary.call(months: _trendMonths),
+      _getTrendData.call(range: range.value, offset: navigationOffset.value),
+      _getFinancialRunway.call(),
     ]);
 
-    final spendingResult = results[0];
+    final spendingResult = results[0] as Result<List<CategorySpendingEntity>, dynamic>;
+    final trendResult = results[1] as Result<TrendDataEntity, dynamic>;
+    final runwayResult = results[2] as Result<FinancialRunwayEntity, dynamic>;
+
     if (spendingResult.isError()) {
       errorMessage.value = spendingResult.tryGetError()!.message;
       layoutStatus.value = CcLayoutStatus.error;
       return;
     }
-    final monthlyResult = results[1];
-    if (monthlyResult.isError()) {
-      errorMessage.value = monthlyResult.tryGetError()!.message;
-      layoutStatus.value = CcLayoutStatus.error;
-      return;
-    }
 
-    spending.assignAll(
-      spendingResult.tryGetSuccess()!.cast<CategorySpendingEntity>(),
-    );
-    monthly.assignAll(
-      monthlyResult.tryGetSuccess()!.cast<MonthlySummaryEntity>(),
-    );
+    spending.assignAll(spendingResult.tryGetSuccess()!);
+    trendData.value = trendResult.tryGetSuccess();
+    runway.value = runwayResult.tryGetSuccess();
 
-    // The screen still has value (trend chart + range switcher) even with no
-    // spending yet, so only the pie shows an inline empty hint — keep the page
-    // in the success state rather than the global empty placeholder.
     layoutStatus.value = CcLayoutStatus.success;
   }
 }

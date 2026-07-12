@@ -1,15 +1,12 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 
-import '../../../../core/util/money_format.dart';
 import '../../domain/entities/category_spending_entity.dart';
 import 'category_legend_tile.dart';
-import 'report_palette.dart';
 
-/// Donut chart of spending share by category with the range total in the hole,
-/// followed by a colour-matched legend ("Biểu đồ tròn: tỷ trọng chi tiêu").
-class SpendingPieChart extends StatelessWidget {
+class SpendingPieChart extends StatefulWidget {
   const SpendingPieChart({
     super.key,
     required this.slices,
@@ -19,75 +16,85 @@ class SpendingPieChart extends StatelessWidget {
   final List<CategorySpendingEntity> slices;
   final int total;
 
-  /// Slices below this share are drawn without an inline label to avoid clutter.
-  static const double _minLabelFraction = 0.06;
+  @override
+  State<SpendingPieChart> createState() => _SpendingPieChartState();
+}
+
+class _SpendingPieChartState extends State<SpendingPieChart> {
+  int _touchedIndex = -1;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(
           height: 200,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              PieChart(
-                PieChartData(
-                  sectionsSpace: 2,
-                  centerSpaceRadius: 56,
-                  sections: [
-                    for (var i = 0; i < slices.length; i++)
-                      _section(context, slices[i], i),
-                  ],
-                ),
+          child: PieChart(
+            PieChartData(
+              pieTouchData: PieTouchData(
+                touchCallback: (event, response) {
+                  setState(() {
+                    if (!event.isInterestedForInteractions ||
+                        response == null ||
+                        response.touchedSection == null) {
+                      _touchedIndex = -1;
+                      return;
+                    }
+                    _touchedIndex = response.touchedSection!.touchedSectionIndex;
+                  });
+                },
               ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CcText(
-                    'Tổng chi',
-                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                      color: context.ccColorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  CcText(
-                    formatVndShort(total),
-                    textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              borderData: FlBorderData(show: false),
+              sectionsSpace: 4,
+              centerSpaceRadius: 40,
+              sections: _buildSections(context),
+            ),
           ),
         ),
-        const SizedBox(height: 16),
-        for (var i = 0; i < slices.length; i++)
-          CategoryLegendTile(
-            slice: slices[i],
-            color: reportSliceColor(slices[i], i),
-          ),
+        const SizedBox(height: 24),
+        Column(
+          children: [
+            for (var i = 0; i < widget.slices.length; i++)
+              CategoryLegendTile(
+                slice: widget.slices[i],
+                color: widget.slices[i].color ?? reportPalette(context)[i % reportPalette(context).length],
+              ),
+          ],
+        ),
       ],
     );
   }
 
-  PieChartSectionData _section(
-    BuildContext context,
-    CategorySpendingEntity slice,
-    int index,
-  ) {
-    final showLabel = slice.fraction >= _minLabelFraction;
-    return PieChartSectionData(
-      value: slice.amount.toDouble(),
-      color: reportSliceColor(slice, index),
-      radius: 44,
-      title: showLabel ? '${slice.percent}%' : '',
-      titleStyle: const TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      ),
-    );
+  List<PieChartSectionData> _buildSections(BuildContext context) {
+    final palette = reportPalette(context);
+    return List.generate(widget.slices.length, (i) {
+      final isTouched = i == _touchedIndex;
+      final radius = isTouched ? 60.0 : 50.0;
+      final slice = widget.slices[i];
+      final color = slice.color ?? palette[i % palette.length];
+
+      return PieChartSectionData(
+        color: color,
+        value: slice.amount.toDouble(),
+        title: isTouched ? '${slice.percent}%' : '',
+        radius: radius,
+        titleStyle: context.ccTextTheme.labelSmall?.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    });
   }
+}
+
+List<Color> reportPalette(BuildContext context) {
+  return [
+    PrjColors.primary,
+    PrjColors.secondary,
+    PrjColors.pink,
+    PrjColors.warning,
+    PrjColors.success,
+    PrjColors.error,
+    PrjColors.secondaryContainer,
+  ];
 }

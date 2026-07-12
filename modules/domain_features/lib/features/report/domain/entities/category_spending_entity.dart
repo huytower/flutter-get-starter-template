@@ -1,23 +1,18 @@
 import 'dart:ui';
-
 import 'package:equatable/equatable.dart';
 
 /// One slice of the spending pie ("tỷ trọng chi tiêu"): the total expense in a
 /// category over the report range, plus its share of the grand total.
-///
-/// Aggregated in Dart from transactions joined to their category — the app has
-/// no backend, so this replaces what the web computed server-side.
 class CategorySpendingEntity extends Equatable {
   final String categoryId;
 
-  /// Category display key (resolve with `el.tr`); already a plain label when
-  /// no translation is registered.
+  /// Category display key (resolve with `el.tr`).
   final String nameKey;
 
   final int iconCode;
   final String? iconFamily;
 
-  /// Category's own colour when set; the pie falls back to a palette otherwise.
+  /// Category's own colour when set.
   final Color? color;
 
   /// Total spent in this category over the range.
@@ -40,5 +35,5 @@ class CategorySpendingEntity extends Equatable {
   int get percent => (fraction * 100).round();
 
   @override
-  List<Object?> get props => [categoryId, amount, fraction];
+  List<Object?> get props => [categoryId, amount, fraction, nameKey, iconCode, iconFamily, color];
 }

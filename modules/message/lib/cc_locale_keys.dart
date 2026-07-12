@@ -33,6 +33,7 @@ abstract class CcLocaleKeys {
   static const common_or = 'common.or';
   static const common_income = 'common.income';
   static const common_expense = 'common.expense';
+  static const common_weekday_names = 'common.common_weekday_names';
   static const common_press_back_again_to_exit =
       'common.press_back_again_to_exit';
   static const comment_detail_title = 'comment.detail.title';
@@ -202,7 +203,7 @@ abstract class CcLocaleKeys {
   static const category_clothing = 'category.clothing';
   static const category_cosmetics = 'category.cosmetics';
 
-  // Debt & loans
+  // Debt \u0026 loans
   static const category_installment = 'category.installment';
   static const category_loan_interest = 'category.loan_interest';
 
@@ -211,7 +212,7 @@ abstract class CcLocaleKeys {
   static const category_vehicle_insurance = 'category.vehicle_insurance';
   static const category_home_insurance = 'category.home_insurance';
 
-  // Gifts & charity
+  // Gifts \u0026 charity
   static const category_gifts = 'category.gifts';
   static const category_charity = 'category.charity';
 
@@ -225,7 +226,7 @@ abstract class CcLocaleKeys {
   static const category_bank_fee = 'category.bank_fee';
   static const category_card_fee = 'category.card_fee';
 
-  // Family & children
+  // Family \u0026 children
   static const category_milk_formula = 'category.milk_formula';
   static const category_diapers = 'category.diapers';
   static const category_baby_toys = 'category.baby_toys';
@@ -350,8 +351,27 @@ abstract class CcLocaleKeys {
   static const report_spending_proportion = 'report.spending_proportion';
   static const report_monthly_chart = 'report.monthly_chart';
   static const report_this_week = 'report.this_week';
+  static const report_four_weeks_near = 'report.four_weeks_near';
   static const report_this_month = 'report.this_month';
   static const report_no_expense = 'report.no_expense';
+  static const report_weekly = 'report.weekly';
+  static const report_monthly = 'report.monthly';
+  static const report_yearly = 'report.yearly';
+  static const report_three_months = 'report.three_months';
+  static const report_income_expense = 'report.income_expense';
+  static const report_safety_index = 'report.safety_index';
+  static const report_runway_message = 'report.runway_message';
+  static const report_runway_perfect = 'report.runway_perfect';
+  static const report_runway_very_good = 'report.runway_very_good';
+  static const report_runway_good = 'report.runway_good';
+  static const report_runway_safe = 'report.runway_safe';
+  static const report_runway_caution = 'report.runway_caution';
+  static const report_runway_insufficient = 'report.runway_insufficient';
+  static const report_runway_not_available = 'report.runway_not_available';
+  static const report_daily_detail = 'report.daily_detail';
+  static const report_income_short = 'report.income_short';
+  static const report_expense_short = 'report.expense_short';
+  static const report_uncategorized = 'report.uncategorized';
 
   static const profile_guest = 'profile.guest';
   static const profile_not_logged_in = 'profile.not_logged_in';

@@ -101,8 +101,12 @@ import 'package:domain_features/features/reconciliation/presentation/get_x/recon
     as _i1051;
 import 'package:domain_features/features/report/domain/usecases/get_category_spending_usecase.dart'
     as _i169;
+import 'package:domain_features/features/report/domain/usecases/get_financial_runway_usecase.dart'
+    as _i701;
 import 'package:domain_features/features/report/domain/usecases/get_monthly_summary_usecase.dart'
     as _i850;
+import 'package:domain_features/features/report/domain/usecases/get_trend_data_usecase.dart'
+    as _i951;
 import 'package:domain_features/features/report/presentation/get_x/report_controller.dart'
     as _i353;
 import 'package:domain_features/features/transaction/data/datasources/local/transaction_local_datasource.dart'
@@ -170,6 +174,10 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             local: gh<_i547.CategoryLocalDataSource>()));
     gh.lazySingleton<_i850.GetMonthlySummaryUseCase>(() =>
         _i850.GetMonthlySummaryUseCase(gh<_i1027.TransactionRepository>()));
+    gh.lazySingleton<_i951.GetTrendDataUseCase>(() => _i951.GetTrendDataUseCase(
+          gh<_i1027.TransactionRepository>(),
+          gh<_i1059.CategoryRepository>(),
+        ));
     gh.lazySingleton<_i857.CommentRepository>(
         () => _i536.CommentRepositoryImpl(remote: gh<_i130.CommentRemote>()));
     gh.lazySingleton<_i446.GetReconciliationHistoryUseCase>(() =>
@@ -216,6 +224,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         _i220.UpdateProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
     gh.lazySingleton<_i892.UploadPendingCrashLogsUseCase>(() =>
         _i892.UploadPendingCrashLogsUseCase(gh<_i473.CrashLogRepository>()));
+    gh.lazySingleton<_i701.GetFinancialRunwayUseCase>(
+        () => _i701.GetFinancialRunwayUseCase(
+              gh<_i572.WalletRepository>(),
+              gh<_i1027.TransactionRepository>(),
+            ));
     gh.lazySingleton<_i167.GetWalletBalancesUseCase>(
         () => _i167.GetWalletBalancesUseCase(
               gh<_i572.WalletRepository>(),
@@ -237,6 +250,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             gh<_i544.BudgetLimitRepository>()));
     gh.lazySingleton<_i829.UpdateBudgetLimitUseCase>(() =>
         _i829.UpdateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
+    gh.factory<_i353.ReportController>(() => _i353.ReportController(
+          gh<_i169.GetCategorySpendingUseCase>(),
+          gh<_i701.GetFinancialRunwayUseCase>(),
+          gh<_i951.GetTrendDataUseCase>(),
+        ));
     gh.lazySingleton<_i804.PerformReconciliationUseCase>(
         () => _i804.PerformReconciliationUseCase(
               gh<_i167.GetWalletBalancesUseCase>(),
@@ -265,10 +283,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i1027.TransactionRepository>(),
           gh<_i167.GetWalletBalancesUseCase>(),
           gh<_i572.WalletRepository>(),
-        ));
-    gh.factory<_i353.ReportController>(() => _i353.ReportController(
-          gh<_i169.GetCategorySpendingUseCase>(),
-          gh<_i850.GetMonthlySummaryUseCase>(),
         ));
     gh.lazySingleton<_i28.CreateTransactionUseCase>(
         () => _i28.CreateTransactionUseCase(

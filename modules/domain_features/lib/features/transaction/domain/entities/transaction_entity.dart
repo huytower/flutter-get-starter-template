@@ -31,6 +31,10 @@ class TransactionEntity extends Equatable {
   final DateTime date;
   final String walletId;
 
+  /// Denormalized icon code for UI display.
+  final int? categoryIconCode;
+  final String? categoryIconFamily;
+
   /// Links the two legs of a transfer. Null for income/expense records.
   final String? transferId;
 
@@ -47,6 +51,8 @@ class TransactionEntity extends Equatable {
     this.note,
     required this.date,
     required this.walletId,
+    this.categoryIconCode,
+    this.categoryIconFamily,
     this.transferId,
     this.deletedAt,
   });
@@ -67,6 +73,8 @@ class TransactionEntity extends Equatable {
     String? note,
     DateTime? date,
     String? walletId,
+    int? categoryIconCode,
+    String? categoryIconFamily,
     String? transferId,
     DateTime? deletedAt,
   }) {
@@ -80,6 +88,8 @@ class TransactionEntity extends Equatable {
       note: note ?? this.note,
       date: date ?? this.date,
       walletId: walletId ?? this.walletId,
+      categoryIconCode: categoryIconCode ?? this.categoryIconCode,
+      categoryIconFamily: categoryIconFamily ?? this.categoryIconFamily,
       transferId: transferId ?? this.transferId,
       deletedAt: deletedAt ?? this.deletedAt,
     );
@@ -96,6 +106,8 @@ class TransactionEntity extends Equatable {
     note,
     date,
     walletId,
+    categoryIconCode,
+    categoryIconFamily,
     transferId,
     deletedAt,
   ];

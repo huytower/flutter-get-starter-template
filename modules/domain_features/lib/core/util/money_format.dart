@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 /// Formats a VND amount into a short, human-readable form with a magnitude
 /// suffix and two decimal places:
 ///   - `>= 1 tỷ` (1e9)  → `1.36tỷ`
@@ -15,4 +17,9 @@ String formatVndShort(num value) {
   if (abs >= 1e6) return '$sign${(abs / 1e6).toStringAsFixed(2)}tr';
   if (abs >= 1e3) return '$sign${(abs / 1e3).toStringAsFixed(2)}k';
   return '$sign${abs.toStringAsFixed(0)}';
+}
+
+String formatVnd(num value) {
+  final formatter = NumberFormat.decimalPattern('vi_VN');
+  return formatter.format(value);
 }
