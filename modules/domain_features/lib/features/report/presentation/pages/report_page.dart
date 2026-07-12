@@ -4,6 +4,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/util/gradient_app_bar.dart';
+
 import '../../../../core/getx/cc_get_view.dart';
 import '../../domain/report_range.dart';
 import '../get_x/report_controller.dart';
@@ -21,17 +23,15 @@ class ReportPage extends CcGetView<ReportController> {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return AppBar(
-      title: Builder(
-        builder: (context) => CcText(
-          el.tr(CcLocaleKeys.report_title),
-          textStyle: context.ccTextTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+    return buildDomainGradientAppBar(
+      context,
+      title: CcText(
+        el.tr(CcLocaleKeys.report_title),
+        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+          color: context.ccColorScheme.onPrimary,
+          fontWeight: CcTypographyParams.bold,
         ),
       ),
-      backgroundColor: Get.context?.ccColorScheme.primary,
-      elevation: 0,
     );
   }
 

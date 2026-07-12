@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../../core/util/gradient_app_bar.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../get_x/budget_allocation_controller.dart';
@@ -25,11 +26,8 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return AppBar(
-      elevation: 0,
-      automaticallyImplyLeading: false,
-      backgroundColor: context.ccColorScheme.primary,
-      systemOverlayStyle: SystemUiOverlayStyle.light,
+    return buildDomainGradientAppBar(
+      context,
       title: CcText(
         el.tr(CcLocaleKeys.nav_budget_allocation),
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
@@ -48,6 +46,11 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           ),
           tooltip: el.tr(CcLocaleKeys.reconciliation_title),
           onPressed: () => context.router.push(const ReconcileRoute()),
+          constraints: BoxConstraints(
+            minWidth: context.respDim(40),
+            minHeight: context.respDim(40),
+          ),
+          padding: EdgeInsets.zero,
         ),
         SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
       ],

@@ -1,0 +1,63 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+PreferredSizeWidget buildDomainGradientAppBar(
+  BuildContext context, {
+  required Widget title,
+  List<Widget>? actions,
+  Widget? bottom,
+  Widget? leading,
+}) {
+  final topPadding = MediaQuery.of(context).padding.top;
+  final horizontalPadding = context.respPadding(CcPaddingParams.SPACE_LG);
+  final verticalPadding = context.respPadding(CcPaddingParams.SPACE_LG);
+
+  return PreferredSize(
+    preferredSize: Size.fromHeight(
+      context.respDim(80) +
+          topPadding +
+          (bottom != null ? context.respDim(56) : 0),
+    ),
+    child: AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              context.ccColorScheme.primary,
+              context.ccColorScheme.primaryContainer,
+            ],
+          ),
+        ),
+        padding: EdgeInsets.only(
+          top: topPadding + context.respPadding(CcPaddingParams.SPACE_MD),
+          left: horizontalPadding,
+          right: horizontalPadding,
+          bottom: verticalPadding,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (leading != null) ...[
+                  leading,
+                  SizedBox(
+                    width: context.respPadding(CcPaddingParams.SPACE_MD),
+                  ),
+                ],
+                Expanded(child: title),
+                if (actions != null) ...actions,
+              ],
+            ),
+            if (bottom != null) ...[const CcSpaceSM(), bottom],
+          ],
+        ),
+      ),
+    ),
+  );
+}

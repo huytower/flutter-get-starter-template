@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/util/gradient_app_bar.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 
@@ -22,24 +23,18 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return AppBar(
-      elevation: 0,
-      leading: Builder(
-        builder: (context) =>
-            BackButton(color: context.ccColorScheme.onSurface),
-      ),
-      title: Builder(
-        builder: (context) {
-          return CcText(
-            wallet.name,
-            align: Alignment.center,
+    return buildDomainGradientAppBar(
+      context,
+      leading: BackButton(color: context.ccColorScheme.onPrimary),
+      title: Center(
+        child: CcText(
+          wallet.name,
+          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,
-            fontSize: CcTypographyParams.titleLarge,
-            color: context.ccColorScheme.primary,
-          );
-        },
+          ),
+        ),
       ),
-      centerTitle: true,
     );
   }
 

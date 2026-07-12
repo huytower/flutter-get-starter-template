@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/util/gradient_app_bar.dart';
 import '../../../category/export_category.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
@@ -21,48 +22,55 @@ class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight),
-      child: Builder(
-        builder: (context) => AppBar(
-          backgroundColor: context.ccColorScheme.primary,
-          elevation: 0,
-          title: CcText(
-            el.tr(CcLocaleKeys.budget_title),
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          actions: [
-            IconButton(
-              onPressed: () => _openForm(context),
-              tooltip: el.tr(CcLocaleKeys.budget_add_title),
-              icon: Icon(
-                Icons.add_rounded,
-                color: context.ccColorScheme.onPrimary,
-              ),
-            ),
-            Obx(
-              () => IconButton(
-                onPressed: controller.toggleEditMode,
-                tooltip: controller.isEditMode.value
-                    ? el.tr(CcLocaleKeys.common_done)
-                    : el.tr(CcLocaleKeys.common_edit),
-                icon: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 200),
-                  child: Icon(
-                    controller.isEditMode.value
-                        ? Icons.check_circle_outline_rounded
-                        : Icons.tune_rounded,
-                    key: ValueKey(controller.isEditMode.value),
-                    color: context.ccColorScheme.onPrimary,
-                  ),
-                ),
-              ),
-            ),
-          ],
+    return buildDomainGradientAppBar(
+      context,
+      title: CcText(
+        el.tr(CcLocaleKeys.budget_title),
+        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+          color: context.ccColorScheme.onPrimary,
+          fontWeight: CcTypographyParams.bold,
         ),
       ),
+      actions: [
+        IconButton(
+          onPressed: () => _openForm(context),
+          tooltip: el.tr(CcLocaleKeys.budget_add_title),
+          icon: Icon(
+            Icons.add_rounded,
+            color: context.ccColorScheme.onPrimary,
+            size: context.respIconSize(baseSize: 24),
+          ),
+          constraints: BoxConstraints(
+            minWidth: context.respDim(40),
+            minHeight: context.respDim(40),
+          ),
+          padding: EdgeInsets.zero,
+        ),
+        Obx(
+          () => IconButton(
+            onPressed: controller.toggleEditMode,
+            tooltip: controller.isEditMode.value
+                ? el.tr(CcLocaleKeys.common_done)
+                : el.tr(CcLocaleKeys.common_edit),
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                controller.isEditMode.value
+                    ? Icons.check_circle_outline_rounded
+                    : Icons.tune_rounded,
+                key: ValueKey(controller.isEditMode.value),
+                color: context.ccColorScheme.onPrimary,
+                size: context.respIconSize(baseSize: 24),
+              ),
+            ),
+            constraints: BoxConstraints(
+              minWidth: context.respDim(40),
+              minHeight: context.respDim(40),
+            ),
+            padding: EdgeInsets.zero,
+          ),
+        ),
+      ],
     );
   }
 

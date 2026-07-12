@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/util/gradient_app_bar.dart';
 import '../../../../core/util/icon_utils.dart';
 import '../../../budget_allocation/presentation/widgets/add_wallet_sheet.dart';
 import '../../domain/entities/wallet_entity.dart';
@@ -20,16 +21,13 @@ class WalletListPage extends CcGetView<WalletController> {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: context.ccColorScheme.primary,
-      systemOverlayStyle: SystemUiOverlayStyle.light,
-      iconTheme: IconThemeData(color: context.ccColorScheme.onPrimary),
+    return buildDomainGradientAppBar(
+      context,
       title: CcText(
         el.tr(CcLocaleKeys.wallet_your_wallets),
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           color: context.ccColorScheme.onPrimary,
-          fontWeight: FontWeight.bold,
+          fontWeight: CcTypographyParams.bold,
         ),
       ),
       actions: [
@@ -41,6 +39,11 @@ class WalletListPage extends CcGetView<WalletController> {
           ),
           tooltip: el.tr(CcLocaleKeys.wallet_add_title),
           onPressed: () => _openForm(context),
+          constraints: BoxConstraints(
+            minWidth: context.respDim(40),
+            minHeight: context.respDim(40),
+          ),
+          padding: EdgeInsets.zero,
         ),
         Obx(
           () => IconButton(
@@ -56,8 +59,14 @@ class WalletListPage extends CcGetView<WalletController> {
                     : Icons.tune_rounded,
                 key: ValueKey(controller.isEditMode.value),
                 color: context.ccColorScheme.onPrimary,
+                size: context.respIconSize(baseSize: 24),
               ),
             ),
+            constraints: BoxConstraints(
+              minWidth: context.respDim(40),
+              minHeight: context.respDim(40),
+            ),
+            padding: EdgeInsets.zero,
           ),
         ),
         SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
