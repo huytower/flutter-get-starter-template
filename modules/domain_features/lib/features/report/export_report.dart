@@ -1,9 +1,11 @@
 // Domain
 export 'domain/entities/category_spending_entity.dart';
-export 'domain/entities/monthly_summary_entity.dart';
+export 'domain/entities/financial_runway_entity.dart';
+export 'domain/entities/trend_data_entity.dart';
 export 'domain/report_range.dart';
 export 'domain/usecases/get_category_spending_usecase.dart';
-export 'domain/usecases/get_monthly_summary_usecase.dart';
+export 'domain/usecases/get_financial_runway_usecase.dart';
+export 'domain/usecases/get_trend_data_usecase.dart';
 // Presentation
 export 'presentation/get_x/report_controller.dart';
 export 'presentation/pages/report_page.dart';

@@ -92,7 +92,7 @@ class PerformReconciliationUseCase {
 
     final reconciliation = ReconciliationEntity(
       id: stamp.toString(),
-      year: period.year,
+      year: period.yearly,
       week: period.week,
       systemTotal: systemTotal,
       actualTotal: actualTotal,

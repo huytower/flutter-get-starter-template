@@ -1,32 +1,35 @@
 /// The time window a spending report is aggregated over.
-///
-/// The spec's reporting cycle is one week ("chu kỳ đang hiểu là 1 tuần"), but a
-/// monthly view is offered too so users can see longer trends. The bar chart
-/// (income vs expense) always spans several months regardless of this range.
 enum ReportRange {
-  thisWeek,
-  thisMonth,
+  /// Tab "Tháng" - Show last 4 weeks (28 days).
+  weekly,
+
+  /// Tab "3 Tháng" - Show 3 months leading up to today.
+  monthly,
+
+  /// Tab "Năm" - Show 12 months leading up to today.
+  yearly,
 }
 
 extension ReportRangeX on ReportRange {
   /// Inclusive start..end bounds for [reference] (defaults to now).
-  ///
-  /// `thisWeek` runs Monday 00:00 → Sunday 23:59:59 (ISO week, matching the
-  /// reconciliation cycle). `thisMonth` runs the 1st → last day of the month.
   ({DateTime start, DateTime end}) bounds([DateTime? reference]) {
     final now = reference ?? DateTime.now();
     switch (this) {
-      case ReportRange.thisWeek:
-        final startOfDay = DateTime(now.year, now.month, now.day);
-        final monday = startOfDay.subtract(
-          Duration(days: now.weekday - DateTime.monday),
-        );
-        final sunday = monday.add(const Duration(days: 6));
-        return (start: monday, end: _endOfDay(sunday));
-      case ReportRange.thisMonth:
-        final first = DateTime(now.year, now.month, 1);
-        final last = DateTime(now.year, now.month + 1, 0);
-        return (start: first, end: _endOfDay(last));
+      case ReportRange.weekly:
+        // Show last 4 weeks (28 days)
+        final end = _endOfDay(now);
+        final start = DateTime(now.year, now.month, now.day - 27, 0, 0, 0, 0);
+        return (start: start, end: end);
+      case ReportRange.monthly:
+        // Show 3 months leading up to today
+        final start = DateTime(now.year, now.month - 2, 1);
+        final end = _endOfDay(now);
+        return (start: start, end: end);
+      case ReportRange.yearly:
+        // Show 12 months leading up to today
+        final start = DateTime(now.year - 1, now.month + 1, 1);
+        final end = _endOfDay(now);
+        return (start: start, end: end);
     }
   }
 

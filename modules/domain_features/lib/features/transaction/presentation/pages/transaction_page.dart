@@ -1,4 +1,4 @@
-import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -7,12 +7,13 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../report/presentation/get_x/report_controller.dart';
 import '../get_x/transaction_controller.dart';
 import '../widgets/expense_form.dart';
 import '../widgets/income_form.dart';
 import '../widgets/transaction_wallet_summary.dart';
 import '../widgets/transfer_form.dart';
-import 'transaction_history_page.dart';
+import '../../../../core/navigation/domain_router.gr.dart';
 
 @RoutePage()
 class TransactionPage extends CcGetView<TransactionController> {
@@ -114,31 +115,19 @@ class TransactionPage extends CcGetView<TransactionController> {
                     ),
                   ),
                   const CcSpaceXS(),
-                  InkWell(
-                    onTap: () => _openHistory(context),
-                    borderRadius: BorderRadius.circular(context.respDim(20)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.history,
-                            size: context.respIconSize(baseSize: 18),
-                            color: context.ccColorScheme.onPrimary,
-                          ),
-                          const CcSpaceXS(),
-                          CcText(
-                            el.tr(CcLocaleKeys.transaction_history),
-                            textStyle: context.ccTextTheme.labelMedium
-                                ?.copyWith(
-                                  color: context.ccColorScheme.onPrimary,
-                                  fontWeight: CcTypographyParams.bold,
-                                  fontSize: context.respFontSize(12),
-                                ),
-                          ),
-                        ],
-                      ),
+                  IconButton(
+                    onPressed: () => _openReport(context),
+                    icon: Icon(
+                      Icons.bar_chart_rounded,
+                      size: context.respIconSize(baseSize: 24),
+                      color: context.ccColorScheme.onPrimary,
                     ),
+                    padding: EdgeInsets.zero,
+                    constraints: BoxConstraints(
+                      minWidth: context.respDim(40),
+                      minHeight: context.respDim(40),
+                    ),
+                    tooltip: el.tr(CcLocaleKeys.report_title),
                   ),
                 ],
               ),
@@ -187,14 +176,11 @@ class TransactionPage extends CcGetView<TransactionController> {
     );
   }
 
-  void _openHistory(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => TransactionHistoryPage(
-          initialTab: controller.selectedTabIndex.value,
-        ),
-      ),
-    );
+  void _openReport(BuildContext context) {
+    if (Get.isRegistered<ReportController>()) {
+      Get.find<ReportController>().load(showLoading: false);
+    }
+    context.router.push(const ReportRoute());
   }
 
   void _submitCurrentForm() {
