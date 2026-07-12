@@ -263,72 +263,85 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   Widget _buildHeroBanner(BuildContext context) {
     final scheme = context.ccColorScheme;
     final walletController = controller.walletController;
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [scheme.primary, scheme.primaryContainer],
-        ),
-      ),
+
+    return Padding(
       padding: EdgeInsets.fromLTRB(
         context.respPadding(CcPaddingParams.SPACE_LG),
-        context.respPadding(CcPaddingParams.SPACE_MD),
         context.respPadding(CcPaddingParams.SPACE_LG),
         context.respPadding(CcPaddingParams.SPACE_LG),
+        context.respPadding(CcPaddingParams.SPACE_SM),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CcText(
-                el.tr(CcLocaleKeys.wallet_total_assets),
-                textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                  color: scheme.onPrimary.withOpacity(0.8),
-                  fontSize: context.respFontSize(14),
-                ),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: scheme.primary,
+          borderRadius: BorderRadius.circular(context.respDim(24)),
+          boxShadow: [
+            BoxShadow(
+              color: scheme.primary.withOpacity(0.25),
+              blurRadius: context.respDim(20),
+              offset: Offset(0, context.respDim(10)),
+            ),
+          ],
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
+          vertical: context.respPadding(CcPaddingParams.SPACE_LG),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CcText(
+                    el.tr(CcLocaleKeys.wallet_total_assets),
+                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                      color: scheme.onPrimary.withOpacity(0.85),
+                      fontSize: context.respFontSize(14),
+                    ),
+                  ),
+                  const CcSpaceXS(),
+                  Obx(
+                    () => CcText(
+                      walletController.isBalanceVisible.value
+                          ? '${walletController.totalBalance.value.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} đ'
+                          : '*********',
+                      textStyle: context.ccTextTheme.headlineMedium?.copyWith(
+                        color: scheme.onPrimary,
+                        fontWeight: CcTypographyParams.bold,
+                        fontSize: context.respFontSize(32),
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const CcSpaceXS(),
-              Obx(
-                () => CcText(
-                  walletController.isBalanceVisible.value
-                      ? '${walletController.totalBalance.value.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} đ'
-                      : '*********',
-                  textStyle: context.ccTextTheme.headlineMedium?.copyWith(
+            ),
+            const CcSpaceLG(),
+            Obx(
+              () => GestureDetector(
+                onTap: walletController.toggleBalanceVisibility,
+                child: Container(
+                  padding: EdgeInsets.all(context.respDim(12)),
+                  decoration: BoxDecoration(
                     color: scheme.onPrimary,
-                    fontWeight: CcTypographyParams.bold,
-                    fontSize: context.respFontSize(28),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    walletController.isBalanceVisible.value
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                    color: scheme.primary,
+                    size: context.respIconSize(baseSize: 24),
                   ),
                 ),
               ),
-            ],
-          ),
-          Obx(
-            () => GestureDetector(
-              onTap: walletController.toggleBalanceVisibility,
-              child: Container(
-                margin: EdgeInsets.only(bottom: context.respDim(4)),
-                padding: EdgeInsets.all(context.respDim(8)),
-                decoration: BoxDecoration(
-                  color: scheme.onPrimary,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  walletController.isBalanceVisible.value
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                  color: scheme.primary,
-                  size: context.respIconSize(baseSize: 20),
-                ),
-              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
