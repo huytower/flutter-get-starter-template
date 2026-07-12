@@ -6,6 +6,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../category/export_category.dart';
@@ -40,22 +41,127 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _pickBirthYear(BuildContext context) async {
     final now = DateTime.now();
-    final current = _c.settings.value.birthYear ?? now.year - 25;
+    final minYear = now.year - 70;
+    final maxYear = now.year - 10;
+    final current = (_c.settings.value.birthYear ?? now.year - 25)
+        .clamp(minYear, maxYear);
+    final currentDateLabel = DateFormat('EEE, MMM d').format(now);
+    int temporaryYear = current;
+
     final picked = await showDialog<int>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Năm sinh'),
-        content: SizedBox(
-          width: 300,
-          height: 300,
-          child: YearPicker(
-            firstDate: DateTime(now.year - 100),
-            lastDate: DateTime(now.year),
-            selectedDate: DateTime(current),
-            onChanged: (date) => Navigator.of(dialogContext).pop(date.year),
+      builder: (dialogContext) {
+        return Dialog(
+          insetPadding: EdgeInsets.symmetric(
+            horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+            vertical: context.respPadding(CcPaddingParams.PAGE_LG),
           ),
-        ),
-      ),
+          backgroundColor: context.ccColorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              context.respDim(CcCircularParams.CARD),
+            ),
+          ),
+          child: StatefulBuilder(
+            builder: (dialogContext, setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          context.ccColorScheme.primary,
+                          context.ccColorScheme.primaryContainer,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(
+                          context.respDim(CcCircularParams.CARD),
+                        ),
+                      ),
+                    ),
+                    padding: EdgeInsets.fromLTRB(
+                      context.respPadding(CcPaddingParams.PAGE_SM),
+                      context.respPadding(CcPaddingParams.SPACE_LG),
+                      context.respPadding(CcPaddingParams.PAGE_SM),
+                      context.respPadding(CcPaddingParams.SPACE_MD),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CcText(
+                          'SELECT DATE',
+                          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                            color: context.ccColorScheme.onPrimary,
+                            letterSpacing: 1.2,
+                            fontWeight: CcTypographyParams.bold,
+                          ),
+                        ),
+                        const CcSpaceMD(),
+                        CcText(
+                          currentDateLabel,
+                          textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+                            color: context.ccColorScheme.onPrimary,
+                            fontWeight: CcTypographyParams.bold,
+                          ),
+                        ),
+                        const CcSpaceMD(),
+                        Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: context.ccColorScheme.onPrimary.withOpacity(0.16),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: context.ccColorScheme.surface,
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(
+                          context.respDim(CcCircularParams.CARD),
+                        ),
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+                      vertical: context.respPadding(CcPaddingParams.SPACE_SM),
+                    ),
+                    child: SizedBox(
+                      height: context.respDim(220),
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                          dividerColor: Colors.transparent,
+                          textTheme: Theme.of(context).textTheme.copyWith(
+                                bodyMedium: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: context.ccColorScheme.onSurface,
+                                    ),
+                              ),
+                        ),
+                        child: YearPicker(
+                          firstDate: DateTime(minYear),
+                          lastDate: DateTime(maxYear),
+                          selectedDate: DateTime(temporaryYear),
+                          onChanged: (date) {
+                            Navigator.of(dialogContext).pop(date.year);
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
     if (picked != null) await _c.setBirthYear(picked);
   }
