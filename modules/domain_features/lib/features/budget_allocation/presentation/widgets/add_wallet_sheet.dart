@@ -189,9 +189,10 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                     textStyle: context.ccTextTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: context.ccColorScheme.primary,
+                      fontSize: context.respFontSize(19),
                     ),
                   ),
-                  const CcSpaceMD(),
+                  const CcSpaceSM(),
                   if (!_isEditing) ...[
                     _buildTypeSelector(context),
                     const CcSpaceMD(),
@@ -222,10 +223,10 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                       onQuickAmountSelected: (amount) =>
                           setState(() => _amountStr = amount.toString()),
                     ),
-                  const CcSpaceLG(),
+                  const CcSpaceMD(),
                   SizedBox(
                     width: double.infinity,
-                    height: context.respDim(50),
+                    height: context.respDim(40),
                     child: ElevatedButton(
                       onPressed: _isValid ? _onSave : null,
                       style: ElevatedButton.styleFrom(
@@ -241,6 +242,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                         textStyle: context.ccTextTheme.titleMedium?.copyWith(
                           color: context.ccColorScheme.onPrimary,
                           fontWeight: FontWeight.bold,
+                          fontSize: context.respFontSize(13),
                         ),
                       ),
                     ),

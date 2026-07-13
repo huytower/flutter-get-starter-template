@@ -853,8 +853,6 @@ abstract class CcLocaleKeys {
   static const common_no_data = 'common.no_data';
   static const common_or = 'common.or';
   static const common_not_set = 'common.not_set';
-  static const common_sunday_short = 'common.sunday_short';
-  static const common_select_date = 'common.select_date';
   static const common_income = 'common.income';
   static const common_expense = 'common.expense';
   static const common_press_back_again_to_exit =
@@ -921,7 +919,6 @@ abstract class CcLocaleKeys {
   static const home_title = 'home.title';
   static const home_welcome = 'home.welcome';
   static const home_recent_activity = 'home.recent_activity';
-  static const home_view_all = 'home.view_all';
   static const home_my_wallets = 'home.my_wallets';
 
   static const settings_title = 'settings.title';
@@ -929,7 +926,6 @@ abstract class CcLocaleKeys {
   static const settings_language_vietnamese = 'settings.language_vietnamese';
   static const settings_language_english = 'settings.language_english';
   static const settings_theme = 'settings.theme';
-  static const settings_theme_static = 'settings.theme_static';
   static const settings_notifications = 'settings.notifications';
   static const settings_privacy = 'settings.privacy';
   static const settings_help = 'settings.help';
@@ -967,7 +963,6 @@ abstract class CcLocaleKeys {
   static const wallet_name = 'wallet.name';
   static const wallet_name_hint = 'wallet.name_hint';
   static const wallet_initial_balance = 'wallet.initial_balance';
-  static const wallet_initial_balance_hint = 'wallet.initial_balance_hint';
   static const wallet_balance_locked_hint = 'wallet.balance_locked_hint';
   static const wallet_save_info = 'wallet.save_info';
   static const wallet_bank = 'wallet.bank';
@@ -1080,13 +1075,11 @@ abstract class CcLocaleKeys {
   static const report_this_month = 'report.this_month';
   static const report_no_expense = 'report.no_expense';
   static const report_weekly = 'report.weekly';
-  static const report_monthly = 'report.monthly';
   static const report_yearly = 'report.yearly';
   static const report_three_months = 'report.three_months';
   static const report_income_expense = 'report.income_expense';
   static const report_safety_index = 'report.safety_index';
   static const report_runway_message = 'report.runway_message';
-  static const report_runway_perfect = 'report.runway_perfect';
   static const report_runway_very_good = 'report.runway_very_good';
   static const report_runway_good = 'report.runway_good';
   static const report_runway_safe = 'report.runway_safe';

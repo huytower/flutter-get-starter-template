@@ -93,7 +93,7 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
                         context.router.push(const BudgetLimitManagementRoute()),
                     child: CcText(
                       el.tr(CcLocaleKeys.budget_see_all),
-                      textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                      textStyle: context.ccTextTheme.titleMedium?.copyWith(
                         color: scheme.primary,
                         fontWeight: CcTypographyParams.semiBold,
                       ),

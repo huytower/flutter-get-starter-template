@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/util/gradient_app_bar.dart';
@@ -170,7 +171,7 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                             textStyle: context.ccTextTheme.titleMedium
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: context.ccColorScheme.primary,
+                                  color: context.ccColorScheme.error,
                                 ),
                           ),
                         );
@@ -185,6 +186,7 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                           categories: cats,
                           isEnabled: _isEnabled,
                           onToggle: _toggle,
+                          accentColor: context.ccColorScheme.error,
                         );
                       }
                       if (expenseIndex == _groups.length) {
@@ -198,12 +200,12 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                           child: CcText(
                             el.tr(CcLocaleKeys.category_income_settings_title),
                              textStyle: context.ccTextTheme.titleMedium
-                                 ?.copyWith(
-                                   fontWeight: FontWeight.bold,
-                                   color: context.ccColorScheme.primary,
-                                 ),
-                          ),
-                        );
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: PrjColors.success,
+                                  ),
+                           ),
+                         );
                       }
                       final incomeIndex = expenseIndex - _groups.length - 1;
                       final group = CategorySeed.incomeGroups[incomeIndex];
@@ -213,8 +215,8 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                         group: group,
                         categories: cats,
                         isEnabled: _isEnabled,
-                      onToggle: _toggle,
-                      accentColor: context.ccColorScheme.primary,
+                        onToggle: _toggle,
+                        accentColor: PrjColors.success,
                       );
                     },
                   ),

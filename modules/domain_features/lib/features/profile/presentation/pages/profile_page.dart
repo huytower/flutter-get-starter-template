@@ -159,9 +159,16 @@ class _ProfilePageState extends State<ProfilePage> {
       ProfileSettingsTile(
         icon: Icons.tune_rounded,
         label: el.tr(CcLocaleKeys.category_settings_title),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),
-        ),
+        onTap: () async {
+          if (_c.settings.value.birthYear == null) {
+            await _pickBirthYear(context);
+            if (_c.settings.value.birthYear == null) return;
+          }
+          if (!context.mounted) return;
+          Navigator.of(context).push(
+            MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),
+          );
+        },
       ),
       Obx(
         () => ProfileSettingsTile(
