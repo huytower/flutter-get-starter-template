@@ -39,6 +39,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,
+            fontSize: context.respFontSize(CcTypographyParams.titleMedium),
           ),
         ),
       ),

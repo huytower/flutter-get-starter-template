@@ -55,16 +55,20 @@ class TrendCard extends StatelessWidget {
               CcText(
                 title,
                 textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
+                  fontWeight: CcTypographyParams.semiBold,
                   color: context.ccColorScheme.onSurface,
+                  fontSize: context.respFontSize(CcTypographyParams.bodyMedium),
                 ),
               ),
               const Spacer(),
               CcText(
                 formatVndShort(amount),
                 textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: CcTypographyParams.bold,
                   color: context.ccColorScheme.onSurface,
+                  fontSize: context.respFontSize(
+                    CcTypographyParams.titleMedium,
+                  ),
                 ),
               ),
             ],
@@ -76,8 +80,18 @@ class TrendCard extends StatelessWidget {
               LineChartData(
                 minX: 0,
                 maxX: points.length.toDouble() - 1,
-                minY: points.isEmpty ? 0 : points.map((p) => isIncome ? p.income : p.expense).reduce((a, b) => a < b ? a : b) * 0.95,
-                maxY: points.isEmpty ? 100 : points.map((p) => isIncome ? p.income : p.expense).reduce((a, b) => a > b ? a : b) * 1.05,
+                minY: points.isEmpty
+                    ? 0
+                    : points
+                              .map((p) => isIncome ? p.income : p.expense)
+                              .reduce((a, b) => a < b ? a : b) *
+                          0.95,
+                maxY: points.isEmpty
+                    ? 100
+                    : points
+                              .map((p) => isIncome ? p.income : p.expense)
+                              .reduce((a, b) => a > b ? a : b) *
+                          1.05,
                 lineTouchData: const LineTouchData(enabled: false),
                 gridData: const FlGridData(show: false),
                 titlesData: const FlTitlesData(show: false),
@@ -86,7 +100,10 @@ class TrendCard extends StatelessWidget {
                   LineChartBarData(
                     spots: [
                       for (int i = 0; i < points.length; i++)
-                        FlSpot(i.toDouble(), isIncome ? points[i].income : points[i].expense),
+                        FlSpot(
+                          i.toDouble(),
+                          isIncome ? points[i].income : points[i].expense,
+                        ),
                     ],
                     isCurved: isCurved,
                     curveSmoothness: 0.3,
@@ -98,8 +115,9 @@ class TrendCard extends StatelessWidget {
                       getDotPainter: (spot, percent, barData, index) {
                         bool shouldShow = false;
                         if (range == ReportRange.monthly) shouldShow = true;
-                        if (range == ReportRange.yearly && index % 3 == 0) shouldShow = true;
-                        
+                        if (range == ReportRange.yearly && index % 3 == 0)
+                          shouldShow = true;
+
                         return FlDotCirclePainter(
                           radius: shouldShow ? 2.5 : 0,
                           color: color,
@@ -122,12 +140,15 @@ class TrendCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 for (int i = 0; i < points.length; i++)
-                  if (range == ReportRange.monthly || (range == ReportRange.yearly && i % 3 == 0))
+                  if (range == ReportRange.monthly ||
+                      (range == ReportRange.yearly && i % 3 == 0))
                     CcText(
                       points[i].label,
                       textStyle: context.ccTextTheme.labelSmall?.copyWith(
                         color: context.ccColorScheme.onSurfaceVariant,
-                        fontSize: 9,
+                        fontSize: context.respFontSize(
+                          CcTypographyParams.labelSmall,
+                        ),
                       ),
                     ),
               ],

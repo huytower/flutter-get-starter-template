@@ -1,7 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:message/export_message.dart';
 
 import '../../../wallet/domain/entities/wallet_entity.dart';
 
@@ -27,9 +26,9 @@ class TransactionWalletSelector extends StatelessWidget {
           vertical: context.respPadding(CcPaddingParams.PAGE_SM),
           horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
         ),
-        child: Text(
+        child: CcText(
           el.tr(CcLocaleKeys.wallet_empty),
-          style: context.ccTextTheme.bodyMedium?.copyWith(
+          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
           ),
         ),
@@ -71,9 +70,9 @@ class TransactionWalletSelector extends StatelessWidget {
                   ),
                   const CcSpaceXS(),
                 ],
-                Text(
+                CcText(
                   wallet.name,
-                  style: context.ccTextTheme.bodyMedium?.copyWith(
+                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                     color: isSelected
                         ? activeColor
                         : context.ccColorScheme.onSurface,

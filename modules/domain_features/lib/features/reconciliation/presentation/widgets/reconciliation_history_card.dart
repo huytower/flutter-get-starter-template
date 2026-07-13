@@ -42,20 +42,30 @@ class ReconciliationHistoryCard extends StatelessWidget {
                   },
                 ),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: CcTypographyParams.bold,
+                  fontSize: context.respFontSize(CcTypographyParams.titleSmall),
                 ),
               ),
               CcText(
                 '${reconciliation.date.day}/${reconciliation.date.month}/${reconciliation.date.year}',
                 textStyle: context.ccTextTheme.bodySmall?.copyWith(
                   color: scheme.onSurfaceVariant,
+                  fontSize: context.respFontSize(CcTypographyParams.bodySmall),
                 ),
               ),
             ],
           ),
           const CcSpaceSM(),
-          _row(context, el.tr(CcLocaleKeys.reconciliation_book), _money(reconciliation.systemTotal)),
-          _row(context, el.tr(CcLocaleKeys.reconciliation_actual), _money(reconciliation.actualTotal)),
+          _row(
+            context,
+            el.tr(CcLocaleKeys.reconciliation_book),
+            _money(reconciliation.systemTotal),
+          ),
+          _row(
+            context,
+            el.tr(CcLocaleKeys.reconciliation_actual),
+            _money(reconciliation.actualTotal),
+          ),
           const CcSpaceXS(),
           CcText(
             balanced
@@ -68,7 +78,8 @@ class ReconciliationHistoryCard extends StatelessWidget {
                   ),
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(
               color: balanced ? scheme.primary : scheme.error,
-              fontWeight: FontWeight.bold,
+              fontWeight: CcTypographyParams.bold,
+              fontSize: context.respFontSize(CcTypographyParams.bodyMedium),
             ),
           ),
         ],
@@ -82,8 +93,18 @@ class ReconciliationHistoryCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          CcText(label, textStyle: context.ccTextTheme.bodySmall),
-          CcText(value, textStyle: context.ccTextTheme.bodySmall),
+          CcText(
+            label,
+            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+              fontSize: context.respFontSize(CcTypographyParams.bodySmall),
+            ),
+          ),
+          CcText(
+            value,
+            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+              fontSize: context.respFontSize(CcTypographyParams.bodySmall),
+            ),
+          ),
         ],
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cc_bridge/export_cc_bridge.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

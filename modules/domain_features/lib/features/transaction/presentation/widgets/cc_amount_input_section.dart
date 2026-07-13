@@ -1,8 +1,8 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/util/horizontal_fade_scroll_view.dart';
 import '../../../../core/transaction_form_helpers.dart';
+import '../../../../core/util/horizontal_fade_scroll_view.dart';
 
 class CcAmountInputSection extends StatelessWidget {
   final String label;
@@ -39,9 +39,9 @@ class CcAmountInputSection extends StatelessWidget {
         CcText(
           label,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: Colors.grey[700],
-            fontWeight: FontWeight.bold,
-            fontSize: context.respFontSize(12),
+            color: context.ccColorScheme.onSurfaceVariant,
+            fontWeight: CcTypographyParams.bold,
+            fontSize: context.respFontSize(CcTypographyParams.labelMedium),
           ),
         ),
         const CcSpaceXS(),
@@ -49,13 +49,18 @@ class CcAmountInputSection extends StatelessWidget {
           key: fieldKey,
           onTap: onTap,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            height: 54,
+            padding: EdgeInsets.symmetric(
+              horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
+              vertical: context.respPadding(CcPaddingParams.SPACE_SM),
+            ),
+            height: context.respDim(54),
             decoration: BoxDecoration(
-              color: const Color(0xFFF8F9FA),
-              borderRadius: BorderRadius.circular(12),
+              color: context.ccColorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(context.respDim(12)),
               border: Border.all(
-                color: isKeypadVisible ? accent : Colors.grey.withOpacity(0.2),
+                color: isKeypadVisible
+                    ? accent
+                    : context.ccColorScheme.outlineVariant,
                 width: isKeypadVisible ? 1.5 : 1,
               ),
             ),
@@ -65,9 +70,11 @@ class CcAmountInputSection extends StatelessWidget {
               align: Alignment.center,
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+                fontWeight: CcTypographyParams.bold,
                 color: accent,
-                fontSize: context.respFontSize(24),
+                fontSize: context.respFontSize(
+                  CcTypographyParams.headlineMedium,
+                ),
               ),
             ),
           ),
@@ -80,31 +87,33 @@ class CcAmountInputSection extends StatelessWidget {
 
   Widget _buildQuickAmounts(BuildContext context, Color accent) {
     return HorizontalFadeScrollView(
-      height: context.respDim(36),
+      height: context.respDim(50),
       builder: (scrollController) => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         controller: scrollController,
         child: Row(
           children: quickAmounts.map((amount) {
             return Padding(
-              padding: const EdgeInsets.only(right: 8),
+              padding: EdgeInsets.only(right: context.respDim(8)),
               child: GestureDetector(
                 onTap: () => onQuickAmountSelected(amount),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
+                    vertical: context.respPadding(CcPaddingParams.SPACE_XS),
                   ),
                   decoration: BoxDecoration(
                     color: accent.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(context.respDim(20)),
                   ),
                   child: CcText(
                     TransactionFormHelpers.formatShort(amount),
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
                       color: accent,
-                      fontWeight: FontWeight.w600,
-                      fontSize: context.respFontSize(12),
+                      fontWeight: CcTypographyParams.semiBold,
+                      fontSize: context.respFontSize(
+                        CcTypographyParams.labelMedium,
+                      ),
                     ),
                   ),
                 ),

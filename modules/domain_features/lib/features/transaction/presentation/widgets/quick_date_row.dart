@@ -27,7 +27,7 @@ class QuickDateRow extends StatelessWidget {
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: Colors.grey[700],
             fontWeight: FontWeight.bold,
-            fontSize: context.respFontSize(12),
+            fontSize: context.respFontSize(CcTypographyParams.labelMedium),
           ),
         ),
         const Spacer(),
@@ -76,7 +76,7 @@ class QuickDateRow extends StatelessWidget {
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: isSelected ? activeColor : Colors.grey[700],
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            fontSize: context.respFontSize(12),
+            fontSize: context.respFontSize(CcTypographyParams.labelMedium),
           ),
         ),
       ),

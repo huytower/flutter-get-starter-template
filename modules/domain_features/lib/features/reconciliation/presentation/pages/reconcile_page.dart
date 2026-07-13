@@ -42,12 +42,14 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: context.ccColorScheme.onPrimary,
                 fontWeight: CcTypographyParams.bold,
+                fontSize: context.respFontSize(CcTypographyParams.titleMedium),
               ),
             ),
             CcText(
               el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
               textStyle: context.ccTextTheme.bodySmall?.copyWith(
                 color: context.ccColorScheme.onPrimary.withOpacity(0.9),
+                fontSize: context.respFontSize(CcTypographyParams.bodySmall),
               ),
             ),
           ],

@@ -1,5 +1,4 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/util/money_format.dart';
@@ -15,8 +14,10 @@ class TransactionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TransactionCardContainer(
-      onTap: () => getIt<TransactionCoordinator>()
-          .navigateToTransactionDetail(context, transaction),
+      onTap: () => getIt<TransactionCoordinator>().navigateToTransactionDetail(
+        context,
+        transaction,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -28,7 +29,9 @@ class TransactionCard extends StatelessWidget {
                 textStyle: context.ccTextTheme.titleMedium?.copyWith(
                   fontWeight: CcTypographyParams.bold,
                   color: context.ccColorScheme.primary,
-                  fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+                  fontSize: context.respFontSize(
+                    CcTypographyParams.titleMedium,
+                  ),
                 ),
               ),
               TransactionTypeBadge(type: transaction.type),
@@ -37,8 +40,9 @@ class TransactionCard extends StatelessWidget {
           const CcSpaceXS(),
           CcText(
             '${formatVnd(transaction.amount)} đ',
-            textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+            textStyle: context.ccTextTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
+              fontSize: context.respFontSize(CcTypographyParams.titleMedium),
               color: transaction.type == TransactionType.expense
                   ? context.ccColorScheme.error
                   : context.ccColorScheme.primary,
@@ -47,9 +51,10 @@ class TransactionCard extends StatelessWidget {
           const Spacer(),
           CcText(
             transaction.note ?? '',
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
               color: context.ccColorScheme.onSurfaceVariant,
               overflow: TextOverflow.ellipsis,
+              fontSize: context.respFontSize(CcTypographyParams.labelMedium),
             ),
             maxLines: 1,
           ),

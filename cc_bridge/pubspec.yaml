@@ -11,6 +11,8 @@ resolution: workspace
 dependencies:
   cc_sdk_data:
     path: ../shared/cc_core_sdk/cc_sdk_data
+  cc_sdk_ui:
+    path: ../shared/cc_core_sdk/cc_sdk_ui
   flutter:
     sdk: flutter
   injectable: ^3.0.0

@@ -38,6 +38,7 @@ class ReportPage extends CcGetView<ReportController> {
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,
+            fontSize: context.respFontSize(CcTypographyParams.titleMedium),
           ),
         ),
       ),

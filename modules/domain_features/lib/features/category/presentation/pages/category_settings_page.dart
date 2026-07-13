@@ -123,9 +123,10 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
         title: Center(
           child: CcText(
             el.tr(CcLocaleKeys.category_settings_title),
-            textStyle: context.ccTextTheme.titleLarge?.copyWith(
+            textStyle: context.ccTextTheme.titleMedium?.copyWith(
               fontWeight: CcTypographyParams.bold,
               color: context.ccColorScheme.onPrimary,
+              fontSize: context.respFontSize(CcTypographyParams.titleMedium),
             ),
           ),
         ),

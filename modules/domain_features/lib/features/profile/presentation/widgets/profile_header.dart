@@ -1,4 +1,4 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
@@ -70,6 +70,9 @@ class ProfileHeader extends StatelessWidget {
                       textStyle: context.ccTextTheme.titleMedium?.copyWith(
                         color: context.ccColorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
+                        fontSize: context.respFontSize(
+                          CcTypographyParams.titleMedium,
+                        ),
                       ),
                     ),
                     const CcSpaceXS(),
@@ -77,6 +80,9 @@ class ProfileHeader extends StatelessWidget {
                       subtitle,
                       textStyle: context.ccTextTheme.bodySmall?.copyWith(
                         color: context.ccColorScheme.onPrimary.withOpacity(0.7),
+                        fontSize: context.respFontSize(
+                          CcTypographyParams.bodySmall,
+                        ),
                       ),
                     ),
                   ],

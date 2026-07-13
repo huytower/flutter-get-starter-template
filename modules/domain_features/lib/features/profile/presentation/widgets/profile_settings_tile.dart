@@ -1,4 +1,4 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:flutter/material.dart';
 
 class ProfileSettingsTile extends StatelessWidget {

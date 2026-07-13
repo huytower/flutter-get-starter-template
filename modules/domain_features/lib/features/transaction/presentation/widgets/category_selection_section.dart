@@ -76,7 +76,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
               color: Colors.grey[700],
               fontWeight: FontWeight.bold,
-              fontSize: context.respFontSize(12),
+              fontSize: context.respFontSize(CcTypographyParams.labelMedium),
             ),
           ),
         ),
@@ -94,7 +94,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
 
   Widget _buildCategoryList(BuildContext context) {
     return HorizontalFadeScrollView(
-      height: context.respDim(75),
+      height: context.respDim(95),
       builder: (scrollController) => ListView.separated(
         scrollDirection: Axis.horizontal,
         controller: scrollController,
@@ -143,22 +143,24 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
                   AnimatedDefaultTextStyle(
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeInOut,
-                    style: (context.ccTextTheme.bodySmall ?? const TextStyle())
-                        .copyWith(
-                          fontSize: context.respFontSize(9),
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          color: isSelected
-                              ? widget.activeColor
-                              : Colors.grey[700],
-                        ),
+                    style:
+                        (context.ccTextTheme.labelMedium ?? const TextStyle())
+                            .copyWith(
+                              fontSize: context.respFontSize(
+                                CcTypographyParams.labelSmall,
+                              ),
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              color: isSelected
+                                  ? widget.activeColor
+                                  : Colors.grey[700],
+                            ),
                     child: CcText(
                       el.tr(category.nameKey),
-                      fontSize: context.respFontSize(7),
                       textAlign: TextAlign.center,
                       align: Alignment.center,
-                      maxLines: 3,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

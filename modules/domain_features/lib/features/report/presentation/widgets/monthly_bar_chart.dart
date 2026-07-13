@@ -2,7 +2,6 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/util/money_format.dart';
@@ -33,9 +32,17 @@ class MonthlyBarChart extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            _legendDot(context, _incomeColor, el.tr(CcLocaleKeys.report_income_short)),
+            _legendDot(
+              context,
+              _incomeColor,
+              el.tr(CcLocaleKeys.report_income_short),
+            ),
             const SizedBox(width: 16),
-            _legendDot(context, _expenseColor, el.tr(CcLocaleKeys.report_expense_short)),
+            _legendDot(
+              context,
+              _expenseColor,
+              el.tr(CcLocaleKeys.report_expense_short),
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -50,10 +57,12 @@ class MonthlyBarChart extends StatelessWidget {
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
                     return BarTooltipItem(
                       formatVndShort(rod.toY),
-                      const TextStyle(
+                      TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
-                        fontSize: 12,
+                        fontSize: context.respFontSize(
+                          CcTypographyParams.labelMedium,
+                        ),
                       ),
                     );
                   },
@@ -83,9 +92,11 @@ class MonthlyBarChart extends StatelessWidget {
                         padding: const EdgeInsets.only(right: 4),
                         child: CcText(
                           formatVndShort(value),
-                          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
                             color: context.ccColorScheme.onSurfaceVariant,
-                            fontSize: 10,
+                            fontSize: context.respFontSize(
+                              CcTypographyParams.labelSmall,
+                            ),
                           ),
                         ),
                       );
@@ -105,9 +116,11 @@ class MonthlyBarChart extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 6),
                         child: CcText(
                           months[index].shortLabel,
-                          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
                             color: context.ccColorScheme.onSurfaceVariant,
-                            fontSize: 10,
+                            fontSize: context.respFontSize(
+                              CcTypographyParams.labelSmall,
+                            ),
                           ),
                         ),
                       );

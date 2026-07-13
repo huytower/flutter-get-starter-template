@@ -1,7 +1,8 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:message/export_message.dart';
+
+import 'quick_date_row.dart';
 
 class TransactionAdditionalDetailsSection extends StatelessWidget {
   final bool isExpanded;
@@ -40,9 +41,9 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
                 size: context.respDim(24),
               ),
               const CcSpaceSM(),
-              Text(
+              CcText(
                 el.tr(CcLocaleKeys.transaction_more_details),
-                style: context.ccTextTheme.bodyMedium?.copyWith(
+                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                   color: context.ccColorScheme.onSurfaceVariant,
                 ),
               ),
@@ -58,7 +59,7 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
             activeColor: activeColor,
           ),
           const CcSpaceMD(),
-          CcTextFormField(
+          CcTextField(
             controller: noteController,
             hintText: el.tr(CcLocaleKeys.transaction_note_hint),
             maxLines: 3,

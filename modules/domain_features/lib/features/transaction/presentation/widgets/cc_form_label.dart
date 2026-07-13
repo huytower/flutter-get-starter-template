@@ -6,10 +6,7 @@ import 'package:flutter/material.dart';
 class CcFormLabel extends StatelessWidget {
   final String text;
 
-  const CcFormLabel({
-    super.key,
-    required this.text,
-  });
+  const CcFormLabel({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +15,7 @@ class CcFormLabel extends StatelessWidget {
       textStyle: context.ccTextTheme.labelMedium?.copyWith(
         color: Colors.grey[700],
         fontWeight: FontWeight.bold,
-        fontSize: context.respFontSize(12),
+        fontSize: context.respFontSize(CcTypographyParams.labelMedium),
       ),
     );
   }

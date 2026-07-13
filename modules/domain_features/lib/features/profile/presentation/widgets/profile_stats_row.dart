@@ -84,8 +84,9 @@ class ProfileStatsRow extends StatelessWidget {
           const CcSpaceXS(),
           CcText(
             label,
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
               color: context.ccColorScheme.onSurfaceVariant,
+              fontSize: context.respFontSize(CcTypographyParams.labelMedium),
             ),
             align: Alignment.center,
             textAlign: TextAlign.center,
@@ -93,9 +94,10 @@ class ProfileStatsRow extends StatelessWidget {
           SizedBox(height: context.respDim(2)),
           CcText(
             value,
-            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+            textStyle: context.ccTextTheme.titleSmall?.copyWith(
               color: valueColor,
               fontWeight: FontWeight.bold,
+              fontSize: context.respFontSize(CcTypographyParams.titleSmall),
             ),
             align: Alignment.center,
             textAlign: TextAlign.center,

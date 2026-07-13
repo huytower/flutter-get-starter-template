@@ -6,7 +6,6 @@
 import 'dart:async' as _i687;
 
 import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' as _i631;
 import 'package:dio/dio.dart' as _i361;
 import 'package:domain_features/export_domain_features.dart' as _i857;
 import 'package:domain_features/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart'
@@ -266,19 +265,19 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i1027.TransactionRepository>(),
           gh<_i105.GetWalletBookBalanceUseCase>(),
         ));
-    gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
-          gh<_i569.GetProfileSettingsUseCase>(),
-          gh<_i220.UpdateProfileSettingsUseCase>(),
-          gh<_i727.SessionContract>(),
-          gh<_i631.CcDeviceInfoHelper>(),
-          gh<_i727.AuthCoordinator>(),
-        ));
     gh.lazySingleton<_i743.GetBudgetLimitStatsUseCase>(
         () => _i743.GetBudgetLimitStatsUseCase(
               gh<_i544.BudgetLimitRepository>(),
               gh<_i1027.TransactionRepository>(),
               gh<_i1059.CategoryRepository>(),
             ));
+    gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
+          gh<_i569.GetProfileSettingsUseCase>(),
+          gh<_i220.UpdateProfileSettingsUseCase>(),
+          gh<_i727.SessionContract>(),
+          gh<_i727.CcDeviceInfoHelper>(),
+          gh<_i727.AuthCoordinator>(),
+        ));
     gh.factory<_i700.TransactionController>(() => _i700.TransactionController(
           gh<_i1027.TransactionRepository>(),
           gh<_i167.GetWalletBalancesUseCase>(),

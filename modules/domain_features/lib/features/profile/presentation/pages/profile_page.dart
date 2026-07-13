@@ -1,7 +1,6 @@
 import 'package:catcher_2/catcher_2.dart';
-import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +9,7 @@ import 'package:get/get.dart';
 import '../../../../core/di/di.dart';
 import '../../../category/export_category.dart';
 import '../get_x/profile_controller.dart';
-import '../widgets/birth_year_dialog_content.dart';
+import '../widgets/birth_year_dialog.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_group.dart';
 import '../widgets/profile_settings_tile.dart';
@@ -50,28 +49,13 @@ class _ProfilePageState extends State<ProfilePage> {
       maxYear,
     );
 
-    final picked = await showDialog<int>(
-      context: context,
-      builder: (dialogContext) {
-        return Dialog(
-          insetPadding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-            vertical: context.respPadding(CcPaddingParams.PAGE_LG),
-          ),
-          backgroundColor: context.ccColorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              context.respDim(CcCircularParams.CARD),
-            ),
-          ),
-          child: BirthYearDialogContent(
-            currentYear: current,
-            minYear: minYear,
-            maxYear: maxYear,
-          ),
-        );
-      },
+    final picked = await BirthYearDialog.show(
+      context,
+      currentYear: current,
+      minYear: minYear,
+      maxYear: maxYear,
     );
+
     if (picked != null) await _c.setBirthYear(picked);
   }
 
@@ -108,12 +92,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         ProfileMenuGroup(
                           items: _buildMenuItems(context, isLoggedIn),
                         ),
-                        if (isLoggedIn) ...[
-                          const CcSpaceXL(),
-                          _buildLogoutButton(context),
-                          const CcSpaceSM(),
-                          _buildDeleteAccountText(context),
-                        ],
+                        // if (isLoggedIn) ...[
+                        //   const CcSpaceXL(),
+                        //   _buildLogoutButton(context),
+                        //   const CcSpaceSM(),
+                        //   _buildDeleteAccountText(context),
+                        // ],
                         const CcSpaceXL(),
                       ],
                     ),

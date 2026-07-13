@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
-
 import 'package:auto_route/auto_route.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:get/get.dart';
-
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
@@ -76,6 +74,7 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
                   fontWeight: CcTypographyParams.bold,
                   color: scheme.onBackground,
+                  fontSize: context.respFontSize(CcTypographyParams.titleSmall),
                 ),
               ),
               Row(
@@ -262,9 +261,10 @@ class _BudgetPreviewCard extends StatelessWidget {
             align: Alignment.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              fontWeight: CcTypographyParams.semiBold,
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
+              fontWeight: CcTypographyParams.bold,
               color: scheme.onSurface,
+              fontSize: context.respFontSize(CcTypographyParams.labelMedium),
             ),
           ),
           CcText(
@@ -275,6 +275,7 @@ class _BudgetPreviewCard extends StatelessWidget {
             align: Alignment.center,
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: scheme.onSurfaceVariant,
+              fontSize: context.respFontSize(CcTypographyParams.labelSmall),
             ),
           ),
           CcText(
@@ -293,6 +294,7 @@ class _BudgetPreviewCard extends StatelessWidget {
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: accent,
               fontWeight: CcTypographyParams.bold,
+              fontSize: context.respFontSize(CcTypographyParams.labelSmall),
             ),
           ),
         ],

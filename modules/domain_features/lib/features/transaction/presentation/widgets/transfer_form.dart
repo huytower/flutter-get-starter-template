@@ -11,6 +11,9 @@ import '../get_x/transaction_controller.dart';
 import 'cc_amount_input_section.dart';
 import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
+import 'transaction_additional_details_section.dart';
+import 'transaction_submit_button.dart';
+import 'transaction_wallet_selector.dart';
 
 class TransferForm extends StatefulWidget {
   final VoidCallback? onSaved;

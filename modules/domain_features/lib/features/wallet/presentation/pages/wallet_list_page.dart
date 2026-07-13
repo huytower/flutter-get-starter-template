@@ -36,6 +36,7 @@ class WalletListPage extends CcGetView<WalletController> {
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,
+            fontSize: context.respFontSize(CcTypographyParams.titleMedium),
           ),
         ),
       ),
@@ -348,6 +349,7 @@ class _WalletListCard extends StatelessWidget {
               wallet.name,
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
+                fontSize: context.respFontSize(CcTypographyParams.titleMedium),
               ),
             ),
           ),
@@ -359,6 +361,7 @@ class _WalletListCard extends StatelessWidget {
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: balance >= 0 ? scheme.onSurface : scheme.error,
+                fontSize: context.respFontSize(CcTypographyParams.titleMedium),
               ),
             );
           }),

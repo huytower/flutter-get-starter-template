@@ -104,17 +104,23 @@ class _WalletCard extends StatelessWidget {
                   wallet.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                  textStyle: context.ccTextTheme.labelMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
+                    fontSize: context.respFontSize(
+                      CcTypographyParams.labelMedium,
+                    ),
                   ),
                 ),
                 CcText(
                   balance != null ? '${_fmt(balance!)} đ' : '*****',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                  textStyle: context.ccTextTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurface,
+                    fontSize: context.respFontSize(
+                      CcTypographyParams.labelMedium,
+                    ),
                   ),
                 ),
               ],

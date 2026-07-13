@@ -32,8 +32,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           color: context.ccColorScheme.onPrimary,
           fontWeight: CcTypographyParams.bold,
-          letterSpacing: 1.2,
-          fontSize: context.respFontSize(16),
+          fontSize: context.respFontSize(CcTypographyParams.titleMedium),
         ),
       ),
       actions: [
@@ -297,7 +296,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
                     el.tr(CcLocaleKeys.wallet_total_assets),
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
                       color: scheme.onPrimary.withOpacity(0.85),
-                      fontSize: context.respFontSize(14),
+                      fontSize: context.respFontSize(
+                        CcTypographyParams.labelMedium,
+                      ),
                     ),
                   ),
                   const CcSpaceXS(),
@@ -309,7 +310,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
                       textStyle: context.ccTextTheme.headlineMedium?.copyWith(
                         color: scheme.onPrimary,
                         fontWeight: CcTypographyParams.bold,
-                        fontSize: context.respFontSize(32),
+                        fontSize: context.respFontSize(
+                          CcTypographyParams.headlineMedium,
+                        ),
                         letterSpacing: 0.2,
                       ),
                     ),
@@ -363,6 +366,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
                   fontWeight: CcTypographyParams.bold,
                   color: scheme.onBackground,
+                  fontSize: context.respFontSize(CcTypographyParams.titleSmall),
                 ),
               ),
               Row(

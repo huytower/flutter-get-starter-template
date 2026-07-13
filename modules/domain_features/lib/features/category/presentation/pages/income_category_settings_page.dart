@@ -113,9 +113,10 @@ class _IncomeCategorySettingsPageState
         title: Center(
           child: CcText(
             'Hạng mục thu nhập',
-            textStyle: context.ccTextTheme.titleLarge?.copyWith(
+            textStyle: context.ccTextTheme.titleMedium?.copyWith(
               fontWeight: CcTypographyParams.bold,
               color: context.ccColorScheme.onPrimary,
+              fontSize: context.respFontSize(CcTypographyParams.titleMedium),
             ),
           ),
         ),

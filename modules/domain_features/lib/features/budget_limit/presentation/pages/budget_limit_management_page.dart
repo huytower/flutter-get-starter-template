@@ -38,6 +38,7 @@ class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,
+            fontSize: context.respFontSize(CcTypographyParams.titleMedium),
           ),
         ),
       ),
@@ -108,10 +109,12 @@ class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
                           const SizedBox(width: 6),
                           CcText(
                             el.tr(CcLocaleKeys.budget_drag_reorder_hint),
-                            textStyle: TextStyle(
+                            textStyle: context.ccTextTheme.labelSmall?.copyWith(
                               color: context.ccColorScheme.onSurfaceVariant
                                   .withOpacity(0.5),
-                              fontSize: 12,
+                              fontSize: context.respFontSize(
+                                CcTypographyParams.labelSmall,
+                              ),
                             ),
                           ),
                         ],

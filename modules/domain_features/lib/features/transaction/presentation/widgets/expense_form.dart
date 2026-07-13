@@ -5,17 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/util/horizontal_fade_scroll_view.dart';
-import '../../../../core/util/icon_utils.dart';
+import '../../../../core/transaction_form_helpers.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
+import '../../domain/entities/transaction_entity.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../get_x/transaction_controller.dart';
-import '../../../../core/transaction_form_helpers.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
 import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
-import 'quick_date_row.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_submit_button.dart';
 import 'transaction_wallet_selector.dart';
@@ -130,7 +128,7 @@ class ExpenseFormState extends State<ExpenseForm> {
     setState(() => _isSubmitting = true);
 
     final params = CreateTransactionParams(
-      type: 'expense',
+      type: TransactionType.expense,
       amount: int.tryParse(_amountStr) ?? 0,
       categoryId: _selectedCategory?.id ?? '',
       categoryLabel: _selectedCategory != null

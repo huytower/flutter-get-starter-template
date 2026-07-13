@@ -1,17 +1,14 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../core/util/icon_utils.dart';
 import '../../../../core/util/money_format.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 
 class ReportDailyList extends StatelessWidget {
-  const ReportDailyList({
-    super.key,
-    required this.transactions,
-  });
+  const ReportDailyList({super.key, required this.transactions});
 
   final List<TransactionEntity> transactions;
 
@@ -32,20 +29,14 @@ class ReportDailyList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (final date in sortedDates)
-          _DailyGroup(
-            date: date,
-            transactions: groups[date]!,
-          ),
+          _DailyGroup(date: date, transactions: groups[date]!),
       ],
     );
   }
 }
 
 class _DailyGroup extends StatelessWidget {
-  const _DailyGroup({
-    required this.date,
-    required this.transactions,
-  });
+  const _DailyGroup({required this.date, required this.transactions});
 
   final DateTime date;
   final List<TransactionEntity> transactions;
@@ -87,12 +78,19 @@ class _DailyGroup extends StatelessWidget {
                   children: [
                     Builder(
                       builder: (context) {
-                        final weekdayNames = el.tr(CcLocaleKeys.common_weekday_names).split('|');
+                        final weekdayNames = el
+                            .tr(CcLocaleKeys.common_weekday_names)
+                            .split('|');
                         final weekdayIndex = date.weekday - 1;
-                        final weekdayText = (weekdayIndex >= 0 && weekdayIndex < weekdayNames.length)
+                        final weekdayText =
+                            (weekdayIndex >= 0 &&
+                                weekdayIndex < weekdayNames.length)
                             ? weekdayNames[weekdayIndex]
-                            : el.DateFormat('EEEE', context.locale.languageCode).format(date);
-                        
+                            : el.DateFormat(
+                                'EEEE',
+                                context.locale.languageCode,
+                              ).format(date);
+
                         return CcText(
                           weekdayText,
                           textStyle: context.ccTextTheme.titleSmall?.copyWith(
@@ -102,7 +100,10 @@ class _DailyGroup extends StatelessWidget {
                       },
                     ),
                     CcText(
-                      el.DateFormat('MMMM, yyyy', context.locale.languageCode).format(date),
+                      el.DateFormat(
+                        'MMMM, yyyy',
+                        context.locale.languageCode,
+                      ).format(date),
                       textStyle: context.ccTextTheme.labelSmall?.copyWith(
                         color: context.ccColorScheme.onSurfaceVariant,
                       ),
@@ -120,7 +121,10 @@ class _DailyGroup extends StatelessWidget {
               ],
             ),
           ),
-          Divider(height: 1, color: context.ccColorScheme.outlineVariant.withValues(alpha: 0.5)),
+          Divider(
+            height: 1,
+            color: context.ccColorScheme.outlineVariant.withValues(alpha: 0.5),
+          ),
           for (final tx in transactions) _TransactionTile(transaction: tx),
         ],
       ),
@@ -136,12 +140,30 @@ class _TransactionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isIncome = transaction.type == TransactionType.income;
-    final amountText = "${isIncome ? '+' : '-'}${formatVnd(transaction.amount)} đ";
+    final amountText =
+        "${isIncome ? '+' : '-'}${formatVnd(transaction.amount)} đ";
 
-    final iconData = transaction.categoryIconCode != null
-        ? IconData(transaction.categoryIconCode!,
-            fontFamily: transaction.categoryIconFamily ?? 'MaterialIcons')
-        : (isIncome ? Icons.north_east : Icons.south_west);
+    Widget getIcon() {
+      if (transaction.categoryIconCode != null) {
+        return Icon(
+          iconDataFromCode(
+            transaction.categoryIconCode!,
+            fontFamily: transaction.categoryIconFamily,
+          ),
+          size: 20,
+          color: isIncome
+              ? context.ccColorScheme.primary
+              : context.ccColorScheme.error,
+        );
+      }
+      return Icon(
+        isIncome ? Icons.north_east : Icons.south_west,
+        size: 20,
+        color: isIncome
+            ? context.ccColorScheme.primary
+            : context.ccColorScheme.error,
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -156,15 +178,7 @@ class _TransactionTile extends StatelessWidget {
                   : context.ccColorScheme.error.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Center(
-              child: Icon(
-                iconData,
-                size: 20,
-                color: isIncome
-                    ? context.ccColorScheme.primary
-                    : context.ccColorScheme.error,
-              ),
-            ),
+            child: Center(child: getIcon()),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -193,14 +207,14 @@ class _TransactionTile extends StatelessWidget {
                 amountText,
                 textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isIncome ? Colors.green : Colors.red,
+                  color: isIncome ? PrjColors.success : PrjColors.error,
                 ),
               ),
               CcText(
                 el.DateFormat('dd/MM').format(transaction.date),
                 textStyle: context.ccTextTheme.labelSmall?.copyWith(
                   color: context.ccColorScheme.onSurfaceVariant,
-                  fontSize: 10,
+                  fontSize: context.respFontSize(CcTypographyParams.labelSmall),
                 ),
               ),
             ],

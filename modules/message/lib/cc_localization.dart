@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import 'cc_locale_keys.dart';
+
 export 'localization_extension.dart';
 
 /// A centralized localization service for the application.
@@ -43,6 +45,7 @@ class CcLocalization {
       startLocale: const Locale('vi'),
       useOnlyLangCode: true,
       saveLocale: true,
+      assetLoader: const CodegenLoader(),
       child: child,
     );
   }

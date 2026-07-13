@@ -57,8 +57,9 @@ class TransactionPage extends CcGetView<TransactionController> {
                   textStyle: context.ccTextTheme.titleMedium?.copyWith(
                     color: context.ccColorScheme.onPrimary,
                     fontWeight: CcTypographyParams.bold,
-                    letterSpacing: 1.2,
-                    fontSize: context.respFontSize(16),
+                    fontSize: context.respFontSize(
+                      CcTypographyParams.titleMedium,
+                    ),
                   ),
                 ),
         );
@@ -184,9 +185,9 @@ class TransactionPage extends CcGetView<TransactionController> {
           ),
           labelColor: _getTabColor(context, controller.selectedTabIndex.value),
           unselectedLabelColor: context.ccColorScheme.onSurfaceVariant,
-          labelStyle: context.ccTextTheme.titleSmall?.copyWith(
+          labelStyle: context.ccTextTheme.labelMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
-            fontSize: context.respFontSize(12),
+            fontSize: context.respFontSize(CcTypographyParams.labelMedium),
           ),
           labelPadding: EdgeInsets.zero,
           tabs: [

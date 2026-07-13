@@ -19,11 +19,12 @@ class TransactionSubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CcPrimaryButton(
-      text: text,
-      onPressed: isEnabled && !isSubmitting ? onTap : null,
-      isLoading: isSubmitting,
-      backgroundColor: activeColor,
+    return CcBaseBtn(
+      title: text,
+      onTap: isEnabled && !isSubmitting ? onTap : null,
+      isEnable: isEnabled && !isSubmitting,
+      allowShowLoading: isSubmitting,
+      bgColor: [activeColor, activeColor],
       width: double.infinity,
     );
   }
