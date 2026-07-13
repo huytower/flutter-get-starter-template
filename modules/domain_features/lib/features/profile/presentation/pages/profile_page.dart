@@ -61,7 +61,29 @@ class _ProfilePageState extends State<ProfilePage> {
       maxYear: maxYear,
     );
 
-    if (picked != null) await _c.setBirthYear(picked);
+    if (picked != null) {
+      final group = CategorySeed.ageGroup(picked);
+      if (group != null) {
+        await _c.setBirthYear(picked);
+        await _enableCategories([
+          ...CategorySeed.defaultExpenseCategoryKeys[group]!,
+          ...CategorySeed.defaultIncomeCategoryKeys[group]!,
+        ]);
+      }
+    }
+  }
+
+  /// Enables the given category `nameKey`s (mapped to their seed ids) so they
+  /// appear checked in the category settings.
+  Future<void> _enableCategories(List<String> keys) async {
+    final useCase = getIt<ToggleCategoryEnabledUseCase>();
+    final idByKey = {
+      for (final c in CategorySeed.categories) c.nameKey: c.id,
+    };
+    for (final key in keys) {
+      final id = idByKey[key];
+      if (id != null) await useCase.call(id, true);
+    }
   }
 
   Future<void> _pickWeeklyAuditDay(BuildContext context) async {

@@ -380,6 +380,7 @@
     "view_tutorial": "View tutorial again",
     "terms": "Terms of use",
     "about": "About app",
-    "delete_account": "Delete account"
+    "delete_account": "Delete account",
+    "young_children_message": "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys)."
   }
 }

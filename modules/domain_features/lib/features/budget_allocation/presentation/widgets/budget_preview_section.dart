@@ -10,7 +10,7 @@ import '../../../../core/util/icon_utils.dart';
 import '../../../budget_limit/domain/entities/budget_limit_stats_entity.dart';
 import '../../../budget_limit/domain/usecases/sort_budget_limits_by_limit_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
-import '../../../budget_limit/presentation/widgets/budget_limit_form_sheet.dart';
+import '../../../budget_limit/presentation/widgets/add_budget_limit_form_sheet.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 
@@ -173,7 +173,7 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => const BudgetLimitFormSheet(),
+      builder: (_) => const AddBudgetLimitFormSheet(),
     );
   }
 }

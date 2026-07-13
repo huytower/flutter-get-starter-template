@@ -413,6 +413,7 @@ class CodegenLoader extends AssetLoader {
       "terms": "Terms of use",
       "about": "About app",
       "delete_account": "Delete account",
+      "young_children_message": "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys).",
     },
   };
   static const Map<String, dynamic> _vi = {
@@ -815,6 +816,7 @@ class CodegenLoader extends AssetLoader {
       "terms": "Điều khoản sử dụng",
       "about": "Về ứng dụng",
       "delete_account": "Xoá tài khoản",
+      "young_children_message": "Bạn có con nhỏ không? Nếu có, chúng tôi sẽ tự động bật các danh mục dành cho con (sữa, bỉm, đồ chơi trẻ em).",
     },
   };
   static const Map<String, Map<String, dynamic>> mapLocales = {
@@ -1187,4 +1189,6 @@ abstract class CcLocaleKeys {
   static const profile_terms = 'profile.terms';
   static const profile_about = 'profile.about';
   static const profile_delete_account = 'profile.delete_account';
+  static const profile_young_children_message =
+      'profile.young_children_message';
 }

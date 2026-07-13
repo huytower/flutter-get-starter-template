@@ -13,3 +13,4 @@ export 'presentation/pages/category_settings_page.dart';
 export 'presentation/pages/income_category_settings_page.dart';
 // Data (model adapter exported so the app shell can register it with Hive)
 export 'data/models/category_model.dart';
+export 'data/datasources/local/category_seed.dart';

@@ -5,6 +5,9 @@ import '../../../domain/entities/category_entity.dart';
 import '../../../domain/entities/category_group_entity.dart';
 import '../../models/category_model.dart';
 
+/// Life stage derived from the user's birth year.
+enum AgeGroup { youngAdult, adult, mature }
+
 /// Default categories + groups seeded into Hive on first launch.
 class CategorySeed {
   CategorySeed._();
@@ -416,4 +419,172 @@ class CategorySeed {
       type: CategoryType.income,
     ),
   ];
+
+  /// Computes the life stage from [birthYear]:
+  /// - [youngAdult]: under 25 (single, no children)
+  /// - [adult]: 25–39 (transitional)
+  /// - [mature]: 40+ (settled family / career)
+  static AgeGroup? ageGroup(int? birthYear) {
+    if (birthYear == null) return null;
+    final age = DateTime.now().year - birthYear;
+    if (age < 25) return AgeGroup.youngAdult;
+    if (age < 40) return AgeGroup.adult;
+    return AgeGroup.mature;
+  }
+
+  /// Whether [birthYear] indicates the user is under 25 years old.
+  static bool isYoungAdult(int? birthYear) =>
+      ageGroup(birthYear) == AgeGroup.youngAdult;
+
+  /// Default-on expense category `nameKey`s per life stage. Categories outside
+  /// these sets are left untouched.
+  static const Map<AgeGroup, List<String>> defaultExpenseCategoryKeys = {
+    AgeGroup.youngAdult: [
+      CcLocaleKeys.category_food_drink,
+      CcLocaleKeys.category_coffee,
+      CcLocaleKeys.category_water,
+      CcLocaleKeys.category_eat_out,
+      CcLocaleKeys.category_taxi,
+      CcLocaleKeys.category_gas,
+      CcLocaleKeys.category_parking,
+      CcLocaleKeys.category_maintenance,
+      CcLocaleKeys.category_electricity,
+      CcLocaleKeys.category_internet,
+      CcLocaleKeys.category_phone,
+      CcLocaleKeys.category_rent,
+      CcLocaleKeys.category_furniture,
+      CcLocaleKeys.category_laundry,
+      CcLocaleKeys.category_gym,
+      CcLocaleKeys.category_doctor,
+      CcLocaleKeys.category_medicine,
+      CcLocaleKeys.category_tuition,
+      CcLocaleKeys.category_courses,
+      CcLocaleKeys.category_cinema,
+      CcLocaleKeys.category_travel,
+      CcLocaleKeys.category_gaming,
+      CcLocaleKeys.category_events,
+      CcLocaleKeys.category_electronics,
+      CcLocaleKeys.category_clothing,
+      CcLocaleKeys.category_cosmetics,
+      CcLocaleKeys.category_installment,
+      CcLocaleKeys.category_vehicle_insurance,
+      CcLocaleKeys.category_gifts,
+      CcLocaleKeys.category_haircut,
+      CcLocaleKeys.category_spa,
+      CcLocaleKeys.category_personal_care_product,
+      CcLocaleKeys.category_bank_fee,
+      CcLocaleKeys.category_card_fee,
+    ],
+    AgeGroup.adult: [
+      CcLocaleKeys.category_food_drink,
+      CcLocaleKeys.category_coffee,
+      CcLocaleKeys.category_water,
+      CcLocaleKeys.category_eat_out,
+      CcLocaleKeys.category_taxi,
+      CcLocaleKeys.category_gas,
+      CcLocaleKeys.category_parking,
+      CcLocaleKeys.category_maintenance,
+      CcLocaleKeys.category_electricity,
+      CcLocaleKeys.category_internet,
+      CcLocaleKeys.category_phone,
+      CcLocaleKeys.category_rent,
+      CcLocaleKeys.category_mortgage,
+      CcLocaleKeys.category_furniture,
+      CcLocaleKeys.category_laundry,
+      CcLocaleKeys.category_condo_fee,
+      CcLocaleKeys.category_doctor,
+      CcLocaleKeys.category_medicine,
+      CcLocaleKeys.category_health_insurance,
+      CcLocaleKeys.category_gym,
+      CcLocaleKeys.category_courses,
+      CcLocaleKeys.category_cinema,
+      CcLocaleKeys.category_travel,
+      CcLocaleKeys.category_events,
+      CcLocaleKeys.category_appliances,
+      CcLocaleKeys.category_electronics,
+      CcLocaleKeys.category_clothing,
+      CcLocaleKeys.category_cosmetics,
+      CcLocaleKeys.category_installment,
+      CcLocaleKeys.category_loan_interest,
+      CcLocaleKeys.category_vehicle_insurance,
+      CcLocaleKeys.category_life_insurance,
+      CcLocaleKeys.category_gifts,
+      CcLocaleKeys.category_haircut,
+      CcLocaleKeys.category_spa,
+      CcLocaleKeys.category_personal_care_product,
+      CcLocaleKeys.category_bank_fee,
+      CcLocaleKeys.category_card_fee,
+    ],
+    AgeGroup.mature: [
+      CcLocaleKeys.category_food_drink,
+      CcLocaleKeys.category_water,
+      CcLocaleKeys.category_eat_out,
+      CcLocaleKeys.category_gas,
+      CcLocaleKeys.category_maintenance,
+      CcLocaleKeys.category_parking,
+      CcLocaleKeys.category_electricity,
+      CcLocaleKeys.category_internet,
+      CcLocaleKeys.category_phone,
+      CcLocaleKeys.category_rent,
+      CcLocaleKeys.category_mortgage,
+      CcLocaleKeys.category_furniture,
+      CcLocaleKeys.category_laundry,
+      CcLocaleKeys.category_condo_fee,
+      CcLocaleKeys.category_doctor,
+      CcLocaleKeys.category_medicine,
+      CcLocaleKeys.category_health_insurance,
+      CcLocaleKeys.category_gym,
+      CcLocaleKeys.category_tuition,
+      CcLocaleKeys.category_books,
+      CcLocaleKeys.category_courses,
+      CcLocaleKeys.category_travel,
+      CcLocaleKeys.category_appliances,
+      CcLocaleKeys.category_electronics,
+      CcLocaleKeys.category_clothing,
+      CcLocaleKeys.category_installment,
+      CcLocaleKeys.category_loan_interest,
+      CcLocaleKeys.category_vehicle_insurance,
+      CcLocaleKeys.category_life_insurance,
+      CcLocaleKeys.category_home_insurance,
+      CcLocaleKeys.category_gifts,
+      CcLocaleKeys.category_charity,
+      CcLocaleKeys.category_haircut,
+      CcLocaleKeys.category_spa,
+      CcLocaleKeys.category_personal_care_product,
+      CcLocaleKeys.category_bank_fee,
+      CcLocaleKeys.category_card_fee,
+    ],
+  };
+
+  /// Default-on income category `nameKey`s per life stage.
+  static const Map<AgeGroup, List<String>> defaultIncomeCategoryKeys = {
+    AgeGroup.youngAdult: [
+      CcLocaleKeys.category_income_salary,
+      CcLocaleKeys.category_income_freelance,
+      CcLocaleKeys.category_income_allowance,
+      CcLocaleKeys.category_income_bonus,
+      CcLocaleKeys.category_income_cashback,
+    ],
+    AgeGroup.adult: [
+      CcLocaleKeys.category_income_salary,
+      CcLocaleKeys.category_income_freelance,
+      CcLocaleKeys.category_income_allowance,
+      CcLocaleKeys.category_income_savings_interest,
+      CcLocaleKeys.category_income_dividends,
+      CcLocaleKeys.category_income_rental,
+      CcLocaleKeys.category_income_bonus,
+      CcLocaleKeys.category_income_gift,
+      CcLocaleKeys.category_income_cashback,
+    ],
+    AgeGroup.mature: [
+      CcLocaleKeys.category_income_salary,
+      CcLocaleKeys.category_income_allowance,
+      CcLocaleKeys.category_income_savings_interest,
+      CcLocaleKeys.category_income_dividends,
+      CcLocaleKeys.category_income_rental,
+      CcLocaleKeys.category_income_bonus,
+      CcLocaleKeys.category_income_gift,
+    ],
+  };
+
 }

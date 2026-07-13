@@ -10,8 +10,8 @@ import '../../../category/export_category.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 import '../get_x/budget_limit_controller.dart';
+import '../widgets/add_budget_limit_form_sheet.dart';
 import '../widgets/budget_limit_card.dart';
-import '../widgets/budget_limit_form_sheet.dart';
 
 @RoutePage()
 class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
@@ -151,7 +151,7 @@ class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => BudgetLimitFormSheet(editTarget: editTarget),
+      builder: (_) => AddBudgetLimitFormSheet(editTarget: editTarget),
     );
   }
 

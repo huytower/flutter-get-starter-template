@@ -18,16 +18,17 @@ import '../get_x/budget_limit_controller.dart';
 /// [editTarget] is provided. The category is fixed after creation; the name
 /// can change any time, the limit only during days 1–7 of the month (the
 /// limit input is hidden outside that window).
-class BudgetLimitFormSheet extends StatefulWidget {
+class AddBudgetLimitFormSheet extends StatefulWidget {
   final BudgetLimitEntity? editTarget;
 
-  const BudgetLimitFormSheet({super.key, this.editTarget});
+  const AddBudgetLimitFormSheet({super.key, this.editTarget});
 
   @override
-  State<BudgetLimitFormSheet> createState() => _BudgetLimitFormSheetState();
+  State<AddBudgetLimitFormSheet> createState() =>
+      _AddBudgetLimitFormSheetState();
 }
 
-class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
+class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
   final _controller = Get.isRegistered<BudgetLimitController>()
       ? Get.find<BudgetLimitController>()
       : Get.put(getIt<BudgetLimitController>());
@@ -287,9 +288,11 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
                                         width: context.respDim(52),
                                         height: context.respDim(52),
                                         decoration: BoxDecoration(
-                                           color: isSelected
-                                               ? context.ccColorScheme.primary
-                                               : context.ccColorScheme.surfaceVariant,
+                                          color: isSelected
+                                              ? context.ccColorScheme.primary
+                                              : context
+                                                    .ccColorScheme
+                                                    .surfaceVariant,
                                           borderRadius: BorderRadius.circular(
                                             14,
                                           ),
@@ -304,8 +307,12 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
                                               baseSize: 22,
                                             ),
                                             color: isSelected
-                                                ? context.ccColorScheme.onPrimary
-                                                : context.ccColorScheme.onSurfaceVariant,
+                                                ? context
+                                                      .ccColorScheme
+                                                      .onPrimary
+                                                : context
+                                                      .ccColorScheme
+                                                      .onSurfaceVariant,
                                           ),
                                         ),
                                       ),
@@ -328,7 +335,9 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
                                                       ? context
                                                             .ccColorScheme
                                                             .primary
-                                                      : context.ccColorScheme.onSurfaceVariant,
+                                                      : context
+                                                            .ccColorScheme
+                                                            .onSurfaceVariant,
                                                 ),
                                         child: Text(
                                           el.tr(cat.nameKey),
