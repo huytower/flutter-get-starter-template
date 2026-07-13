@@ -5,6 +5,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
+import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../entities/financial_runway_entity.dart';
 
 @lazySingleton
@@ -12,20 +13,22 @@ class GetFinancialRunwayUseCase {
   GetFinancialRunwayUseCase(
     this._walletRepository,
     this._transactionRepository,
+    this._getWalletBalances,
   );
 
   final WalletRepository _walletRepository;
   final TransactionRepository _transactionRepository;
+  final GetWalletBalancesUseCase _getWalletBalances;
 
   Future<Result<FinancialRunwayEntity, CcFailure>> call() async {
-    // 1. Get total balance
-    final walletResult = await _walletRepository.getWallets();
-    if (walletResult.isError()) {
-      return Error(walletResult.tryGetError()!);
+    // 1. Get total balance (Book Balance)
+    final balancesResult = await _getWalletBalances.call();
+    if (balancesResult.isError()) {
+      return Error(balancesResult.tryGetError()!);
     }
-    final totalBalance = walletResult
+    final totalBalance = balancesResult
         .tryGetSuccess()!
-        .fold<double>(0, (sum, wallet) => sum + wallet.balance);
+        .fold<double>(0, (sum, b) => sum + b.bookBalance);
 
     // 2. Get average expense from last 3 months + current month to be real-time
     final now = DateTime.now();

@@ -223,11 +223,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         _i220.UpdateProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
     gh.lazySingleton<_i892.UploadPendingCrashLogsUseCase>(() =>
         _i892.UploadPendingCrashLogsUseCase(gh<_i473.CrashLogRepository>()));
-    gh.lazySingleton<_i701.GetFinancialRunwayUseCase>(
-        () => _i701.GetFinancialRunwayUseCase(
-              gh<_i572.WalletRepository>(),
-              gh<_i1027.TransactionRepository>(),
-            ));
     gh.lazySingleton<_i167.GetWalletBalancesUseCase>(
         () => _i167.GetWalletBalancesUseCase(
               gh<_i572.WalletRepository>(),
@@ -237,6 +232,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i105.GetWalletBookBalanceUseCase(
               gh<_i572.WalletRepository>(),
               gh<_i1027.TransactionRepository>(),
+            ));
+    gh.lazySingleton<_i701.GetFinancialRunwayUseCase>(
+        () => _i701.GetFinancialRunwayUseCase(
+              gh<_i572.WalletRepository>(),
+              gh<_i1027.TransactionRepository>(),
+              gh<_i167.GetWalletBalancesUseCase>(),
             ));
     gh.lazySingleton<_i77.CreateBudgetLimitUseCase>(
         () => _i77.CreateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
