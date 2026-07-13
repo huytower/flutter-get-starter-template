@@ -1,8 +1,10 @@
-import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
+import 'package:theme/presentation/provider/theme_provider.dart';
 
+import '../../../../core/di/di.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/usecases/update_profile_settings_usecase.dart';
@@ -38,6 +40,12 @@ class ProfileController extends GetxController {
     final s = await _getSettings();
     settings.value = s;
     appVersion.value = await _deviceInfo.getAppVersion();
+
+    // Initialize theme from saved settings
+    if (getIt.isRegistered<ThemeProvider>()) {
+      final themeProvider = getIt<ThemeProvider>();
+      themeProvider.toggleTheme(s.isDarkMode);
+    }
   }
 
   Future<void> toggleReminder(bool value) async {
@@ -54,6 +62,12 @@ class ProfileController extends GetxController {
 
   Future<void> setWeeklyAuditDay(int dayIndex) async {
     final updated = settings.value.copyWith(weeklyAuditDayIndex: dayIndex);
+    settings.value = updated;
+    await _updateSettings(updated);
+  }
+
+  Future<void> setThemeMode(bool isDarkMode) async {
+    final updated = settings.value.copyWith(isDarkMode: isDarkMode);
     settings.value = updated;
     await _updateSettings(updated);
   }

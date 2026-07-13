@@ -5,6 +5,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:theme/presentation/provider/theme_provider.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../category/export_category.dart';
@@ -70,6 +72,12 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     if (picked != null) await _c.setWeeklyAuditDay(picked - 1);
+  }
+
+  Future<void> _toggleTheme(bool isDarkMode) async {
+    final themeProvider = context.read<ThemeProvider>();
+    themeProvider.toggleTheme(isDarkMode);
+    await _c.setThemeMode(isDarkMode);
   }
 
   String _getDayName(int day) {
@@ -183,10 +191,24 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ),
-      ProfileSettingsTile(
-        icon: Icons.palette_rounded,
-        label: el.tr(CcLocaleKeys.settings_theme),
-        trailingLabel: el.tr(CcLocaleKeys.settings_theme_static),
+      Obx(
+        () => ProfileSettingsTile(
+          icon: Icons.palette_rounded,
+          label: el.tr(CcLocaleKeys.settings_theme),
+          showChevron: false,
+          trailingWidget: SizedBox(
+            height: context.respIconSize(baseSize: 20),
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: Switch(
+                value: _c.settings.value.isDarkMode,
+                onChanged: _toggleTheme,
+                activeColor: context.ccColorScheme.primary,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          ),
+        ),
       ),
       ProfileSettingsTile(
         icon: Icons.language_rounded,
