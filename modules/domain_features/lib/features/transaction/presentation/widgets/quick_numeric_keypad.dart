@@ -54,7 +54,7 @@ class QuickNumericKeypad extends StatelessWidget {
       isBouncing: true,
       onTap: () => isDelete ? onDelete() : onKeyPress(label),
       child: Container(
-        height: context.respDim(50),
+        height: context.respDim(40),
         margin: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           color: context.ccColorScheme.surface,

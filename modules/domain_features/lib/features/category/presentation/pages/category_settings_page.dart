@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/util/gradient_app_bar.dart';
@@ -64,9 +65,9 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
       _pending.containsKey(cat.id) ? _pending[cat.id]! : cat.isEnabled;
 
   bool get _hasAnyEnabled => [
-        ..._byGroup.values.expand((c) => c),
-        ..._incomeByGroup.values.expand((c) => c),
-      ].any(_isEnabled);
+    ..._byGroup.values.expand((c) => c),
+    ..._incomeByGroup.values.expand((c) => c),
+  ].any(_isEnabled);
 
   void _toggle(CategoryEntity cat) {
     setState(() {
@@ -148,10 +149,16 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                 Expanded(
                   child: ListView.builder(
                     padding: EdgeInsets.only(bottom: context.respDim(100)),
-                    itemCount: 1 + _groups.length + 1 + CategorySeed.incomeGroups.length,
+                    itemCount:
+                        1 +
+                        _groups.length +
+                        1 +
+                        CategorySeed.incomeGroups.length,
                     itemBuilder: (context, index) {
                       if (index == 0) {
-                        return _buildHeader(el.tr(CcLocaleKeys.category_expense_settings_title));
+                        return _buildHeader(
+                          el.tr(CcLocaleKeys.category_expense_settings_title),
+                        );
                       }
                       final expenseIndex = index - 1;
                       if (expenseIndex < _groups.length) {
@@ -163,10 +170,14 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                           categories: cats,
                           isEnabled: _isEnabled,
                           onToggle: _toggle,
+                          accentColor: context.ccColorScheme.error,
                         );
                       }
                       if (expenseIndex == _groups.length) {
-                        return _buildHeader(el.tr(CcLocaleKeys.category_income_settings_title), topPadding: 24);
+                        return _buildHeader(
+                          el.tr(CcLocaleKeys.category_income_settings_title),
+                          topPadding: 24,
+                        );
                       }
                       final incomeIndex = expenseIndex - _groups.length - 1;
                       final group = CategorySeed.incomeGroups[incomeIndex];
@@ -177,7 +188,7 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                         categories: cats,
                         isEnabled: _isEnabled,
                         onToggle: _toggle,
-                        accentColor: context.ccColorScheme.primary,
+                        accentColor: PrjColors.success,
                       );
                     },
                   ),

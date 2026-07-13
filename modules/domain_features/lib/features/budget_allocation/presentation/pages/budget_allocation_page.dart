@@ -384,7 +384,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
                     onTap: () => context.router.push(const WalletListRoute()),
                     child: CcText(
                       el.tr(CcLocaleKeys.wallet_see_all),
-                      textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                      textStyle: context.ccTextTheme.titleMedium?.copyWith(
                         color: scheme.primary,
                         fontWeight: CcTypographyParams.semiBold,
                       ),
