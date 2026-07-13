@@ -4,8 +4,10 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
+import '../../../../core/util/money_format.dart';
 import '../../../../core/util/gradient_app_bar.dart';
 import '../../domain/entities/transaction_entity.dart';
+import '../widgets/transaction_type_badge.dart';
 
 @RoutePage()
 class TransactionDetailPage extends StatelessWidget with CcViewConfigMixin {
@@ -69,36 +71,7 @@ class TransactionDetailPage extends StatelessWidget with CcViewConfigMixin {
           ),
         ),
         const CcSpaceSM(),
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
-            vertical: context.respPadding(CcPaddingParams.SPACE_XS),
-          ),
-          decoration: BoxDecoration(
-            color: context.ccColorScheme.secondaryContainer,
-            borderRadius: CcWidgetHelper.getBorderRoundedLG(),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                transaction.type == 'expense'
-                    ? Icons.arrow_downward
-                    : Icons.arrow_upward,
-                size: context.respIconSize(baseSize: 14),
-                color: context.ccColorScheme.onSecondaryContainer,
-              ),
-              const CcSpaceXS(),
-              CcText(
-                transaction.type.toUpperCase(),
-                textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                  color: context.ccColorScheme.onSecondaryContainer,
-                  fontWeight: CcTypographyParams.medium,
-                ),
-              ),
-            ],
-          ),
-        ),
+        TransactionTypeBadge(type: transaction.type),
       ],
     );
   }
@@ -128,7 +101,7 @@ class TransactionDetailPage extends StatelessWidget with CcViewConfigMixin {
         ),
         const CcSpaceSM(),
         CcText(
-          '${transaction.amount.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} đ',
+          '${formatVnd(transaction.amount)} đ',
           textStyle: context.ccTextTheme.bodyLarge?.copyWith(
             height: 1.6,
             color: context.ccColorScheme.onSurface,

@@ -9,13 +9,14 @@ import '../../../../core/util/icon_utils.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../domain/usecases/create_transfer_usecase.dart';
 import '../get_x/transaction_controller.dart';
+import '../../../../core/transaction_form_helpers.dart';
 import 'cc_amount_input_section.dart';
 import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
-import 'note_field_with_camera.dart';
 import 'quick_date_row.dart';
-import '../../../../core/transaction_form_helpers.dart';
-import 'transaction_see_more_section.dart';
+import 'transaction_additional_details_section.dart';
+import 'transaction_submit_button.dart';
+import 'transaction_wallet_selector.dart';
 
 class TransferForm extends StatefulWidget {
   final VoidCallback? onSaved;
@@ -227,10 +228,11 @@ class TransferFormState extends State<TransferForm> {
                   const CcSpaceLG(),
                   _buildLabel(el.tr(CcLocaleKeys.transaction_transfer_from)),
                   const CcSpaceXS(),
-                  _buildWalletChips(
-                    context,
-                    selectedId: _fromWalletId,
-                    onSelect: (id) => setState(() {
+                  TransactionWalletSelector(
+                    wallets: _wallets,
+                    selectedWalletId: _fromWalletId,
+                    activeColor: _accent,
+                    onWalletSelected: (id) => setState(() {
                       if (_toWalletId == id) {
                         _toWalletId = _fromWalletId;
                       }
@@ -250,10 +252,11 @@ class TransferFormState extends State<TransferForm> {
 
                   _buildLabel(el.tr(CcLocaleKeys.transaction_transfer_to)),
                   const CcSpaceXS(),
-                  _buildWalletChips(
-                    context,
-                    selectedId: _toWalletId,
-                    onSelect: (id) => setState(() {
+                  TransactionWalletSelector(
+                    wallets: _wallets,
+                    selectedWalletId: _toWalletId,
+                    activeColor: _accent,
+                    onWalletSelected: (id) => setState(() {
                       if (_fromWalletId == id) {
                         _fromWalletId = _toWalletId;
                       }
@@ -261,9 +264,34 @@ class TransferFormState extends State<TransferForm> {
                     }),
                   ),
                   const CcSpaceLG(),
-                  _buildSeeMoreSection(),
+                  TransactionAdditionalDetailsSection(
+                    isExpanded: _showMoreDetails,
+                    onToggle: () => setState(
+                      () => _showMoreDetails = !_showMoreDetails,
+                    ),
+                    selectedDate: _date,
+                    onDateSelected: (date) => setState(() {
+                      _date = DateTime(
+                        date.year,
+                        date.month,
+                        date.day,
+                        _date.hour,
+                        _date.minute,
+                      );
+                    }),
+                    onCalendarTap: _pickDate,
+                    noteController: _noteController,
+                    onNoteTap: () => setState(() => _showKeypad = false),
+                    activeColor: _accent,
+                  ),
                   const CcSpaceXL(),
-                  _buildSubmitButton(),
+                  TransactionSubmitButton(
+                    text: el.tr(CcLocaleKeys.transaction_record_transfer),
+                    isSubmitting: _isSubmitting,
+                    isEnabled: _canSubmit,
+                    onTap: _onSubmit,
+                    activeColor: _accent,
+                  ),
                   const CcSpaceLG(),
                 ],
               ),
@@ -287,166 +315,5 @@ class TransferFormState extends State<TransferForm> {
 
   Widget _buildLabel(String text) {
     return CcFormLabel(text: text);
-  }
-
-  Widget _buildWalletChips(
-    BuildContext context, {
-    required String? selectedId,
-    required ValueChanged<String> onSelect,
-  }) {
-    if (_wallets.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF8F9FA),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: CcText(
-          el.tr(CcLocaleKeys.common_no_data),
-          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-            color: Colors.grey[500],
-            fontSize: context.respFontSize(13),
-          ),
-        ),
-      );
-    }
-
-    return HorizontalFadeScrollView(
-      height: context.respDim(44),
-      builder: (scrollController) => SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        controller: scrollController,
-        child: Row(
-          children: _wallets.map((wallet) {
-            final isSelected = selectedId == wallet.id;
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: GestureDetector(
-                onTap: () => onSelect(wallet.id),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected ? _accent : const Color(0xFFF1F3F5),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        walletIconFor(wallet.type),
-                        size: 14,
-                        color: isSelected ? Colors.white : Colors.grey[600],
-                      ),
-                      const SizedBox(width: 6),
-                      CcText(
-                        wallet.name,
-                        textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                          color: isSelected ? Colors.white : Colors.grey[800],
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          fontSize: context.respFontSize(13),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTimeRow() {
-    return QuickDateRow(
-      selectedDate: _date,
-      onDateSelected: (date) => setState(() {
-        _date = DateTime(
-          date.year,
-          date.month,
-          date.day,
-          _date.hour,
-          _date.minute,
-        );
-      }),
-      onCalendarTap: _pickDate,
-      accentColor: _accent,
-    );
-  }
-
-  Widget _buildNoteField() {
-    return NoteFieldWithCamera(
-      controller: _noteController,
-      onTap: () => setState(() => _showKeypad = false),
-      onCameraTap: () {
-        // TODO: Implement image picker functionality
-      },
-    );
-  }
-
-  Widget _buildSeeMoreSection() {
-    return TransactionSeeMoreSection(
-      isExpanded: _showMoreDetails,
-      onToggle: () => setState(() => _showMoreDetails = !_showMoreDetails),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [_buildTimeRow(), const CcSpaceLG(), _buildNoteField()],
-      ),
-    );
-  }
-
-  Widget _buildSubmitButton() {
-    final enabled = _canSubmit && !_isSubmitting;
-    return CcInteractBtnWrapper(
-      useDebounce: true,
-      isBouncing: enabled,
-      onTap: enabled ? _onSubmit : () {},
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: double.infinity,
-        height: 54,
-        decoration: BoxDecoration(
-          color: enabled ? _accent : Colors.grey[300],
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: enabled
-              ? [
-                  BoxShadow(
-                    color: _accent.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ]
-              : null,
-        ),
-        child: _isSubmitting
-            ? const Center(
-                child: SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                ),
-              )
-            : CcText(
-                el.tr(CcLocaleKeys.transaction_record_transfer),
-                align: Alignment.center,
-                textAlign: TextAlign.center,
-                textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                  color: enabled ? Colors.white : Colors.grey[500],
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.1,
-                  fontSize: context.respFontSize(15),
-                ),
-              ),
-      ),
-    );
   }
 }
