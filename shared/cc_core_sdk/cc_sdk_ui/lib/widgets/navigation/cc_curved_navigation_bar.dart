@@ -169,8 +169,8 @@ class CcCurvedNavigationBar extends StatelessWidget {
             fontWeight: CcTypographyParams.regular,
             fontSize: context.respFontSize(CcTypographyParams.labelMedium),
           ),
-      inactiveIconSize: inactiveIconSize ?? 24,
-      activeIconSize: activeIconSize ?? 22,
+      inactiveIconSize: inactiveIconSize ?? 35,
+      activeIconSize: activeIconSize ?? 32,
       navbarStyle: navbarStyle,
     );
   }
