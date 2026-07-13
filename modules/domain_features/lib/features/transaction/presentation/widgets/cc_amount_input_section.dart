@@ -53,7 +53,7 @@ class CcAmountInputSection extends StatelessWidget {
               horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
               vertical: context.respPadding(CcPaddingParams.SPACE_SM),
             ),
-            height: context.respDim(54),
+            height: context.respDim(50),
             decoration: BoxDecoration(
               color: context.ccColorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(context.respDim(12)),
@@ -87,7 +87,7 @@ class CcAmountInputSection extends StatelessWidget {
 
   Widget _buildQuickAmounts(BuildContext context, Color accent) {
     return HorizontalFadeScrollView(
-      height: context.respDim(50),
+      height: context.respDim(35),
       builder: (scrollController) => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         controller: scrollController,
