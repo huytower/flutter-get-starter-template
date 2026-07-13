@@ -65,7 +65,9 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
     _nameController = TextEditingController(text: widget.wallet?.name ?? '');
     _nameController.addListener(() => setState(() {}));
     if (_isEditing) {
-      _amountStr = widget.wallet!.balance.toString();
+      // Use the current book balance for display consistency (the "real"
+      // balance the user sees in the list).
+      _amountStr = _controller.bookBalanceOf(widget.wallet!.id).toString();
     }
   }
 
@@ -152,99 +154,117 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        left: context.respPadding(CcPaddingParams.SPACE_LG),
-        right: context.respPadding(CcPaddingParams.SPACE_LG),
-        top: context.respPadding(CcPaddingParams.SPACE_LG),
-        bottom: context.respPadding(CcPaddingParams.SPACE_LG),
-      ),
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CcText(
-            _isEditing
-                ? el.tr(CcLocaleKeys.wallet_edit_title)
-                : el.tr(CcLocaleKeys.wallet_add_title),
-            textStyle: context.ccTextTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: context.ccColorScheme.primary,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            if (_showKeypad) setState(() => _showKeypad = false);
+          },
+          child: Container(
+            padding: EdgeInsets.only(
+              left: context.respPadding(CcPaddingParams.SPACE_LG),
+              right: context.respPadding(CcPaddingParams.SPACE_LG),
+              top: context.respPadding(CcPaddingParams.SPACE_LG),
+              bottom:
+                  (_showKeypad ? 0 : MediaQuery.of(context).viewInsets.bottom) +
+                  context.respPadding(CcPaddingParams.SPACE_LG),
             ),
-          ),
-          const CcSpaceMD(),
-          if (!_isEditing) ...[_buildTypeSelector(context), const CcSpaceMD()],
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              labelText: el.tr(CcLocaleKeys.wallet_name),
-              hintText: el.tr(CcLocaleKeys.wallet_name_hint),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+            decoration: BoxDecoration(
+              color: context.ccColorScheme.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CcText(
+                    _isEditing
+                        ? el.tr(CcLocaleKeys.wallet_edit_title)
+                        : el.tr(CcLocaleKeys.wallet_add_title),
+                    textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: context.ccColorScheme.primary,
+                    ),
+                  ),
+                  const CcSpaceMD(),
+                  if (!_isEditing) ...[
+                    _buildTypeSelector(context),
+                    const CcSpaceMD(),
+                  ],
+                  TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: el.tr(CcLocaleKeys.wallet_name),
+                      hintText: el.tr(CcLocaleKeys.wallet_name_hint),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const CcSpaceMD(),
+                  if (_balanceLocked)
+                    _buildLockedBalance(context)
+                  else
+                    CcAmountInputSection(
+                      key: const Key('wallet_balance'),
+                      label: el.tr(CcLocaleKeys.wallet_initial_balance),
+                      amountStr: _amountStr,
+                      quickAmounts: _quickAmounts,
+                      isKeypadVisible: _showKeypad,
+                      activeColor: _accent,
+                      fieldKey: _amountFieldKey,
+                      onTap: _onAmountTap,
+                      onQuickAmountSelected: (amount) =>
+                          setState(() => _amountStr = amount.toString()),
+                    ),
+                  const CcSpaceLG(),
+                  SizedBox(
+                    width: double.infinity,
+                    height: context.respDim(50),
+                    child: ElevatedButton(
+                      onPressed: _isValid ? _onSave : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: context.ccColorScheme.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: CcText(
+                        el.tr(CcLocaleKeys.wallet_save_info),
+                        align: Alignment.center,
+                        textAlign: TextAlign.center,
+                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          const CcSpaceMD(),
-          if (_balanceLocked)
-            _buildLockedBalance(context)
-          else
-            CcAmountInputSection(
-              key: const Key('wallet_balance'),
-              label: el.tr(CcLocaleKeys.wallet_initial_balance),
-              amountStr: _amountStr,
-              quickAmounts: _quickAmounts,
-              isKeypadVisible: _showKeypad,
+        ),
+        if (_showKeypad)
+          SafeArea(
+            top: false,
+            child: MoneyKeypadPanel(
+              onKeyPress: _onKeyPress,
+              onDelete: _onDelete,
+              onClear: () => setState(() => _amountStr = '0'),
+              suggestions: _quickAmounts,
+              onSuggestion: (value) =>
+                  setState(() => _amountStr = value.toString()),
+              onDone: () => setState(() => _showKeypad = false),
               activeColor: _accent,
-              fieldKey: _amountFieldKey,
-              onTap: _onAmountTap,
-              onQuickAmountSelected: (amount) =>
-                  setState(() => _amountStr = amount.toString()),
-            ),
-          const CcSpaceLG(),
-          SizedBox(
-            width: double.infinity,
-            height: context.respDim(50),
-            child: ElevatedButton(
-              onPressed: _isValid ? _onSave : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.ccColorScheme.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: CcText(
-                el.tr(CcLocaleKeys.wallet_save_info),
-                align: Alignment.center,
-                textAlign: TextAlign.center,
-                textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ),
           ),
-          if (_showKeypad) ...[
-            const CcSpaceMD(),
-            SafeArea(
-              top: false,
-              child: MoneyKeypadPanel(
-                onKeyPress: _onKeyPress,
-                onDelete: _onDelete,
-                onClear: () => setState(() => _amountStr = '0'),
-                suggestions: _quickAmounts,
-                onSuggestion: (value) =>
-                    setState(() => _amountStr = value.toString()),
-                onDone: () => setState(() => _showKeypad = false),
-                activeColor: _accent,
-              ),
-            ),
-          ],
-        ],
-      ),
+      ],
     );
   }
 

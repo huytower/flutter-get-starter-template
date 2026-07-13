@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/util/gradient_app_bar.dart';
+import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../get_x/reconciliation_controller.dart';
 import '../widgets/reconciliation_history_card.dart';
 import '../widgets/wallet_reconcile_tile.dart';
@@ -94,56 +95,84 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
 
   @override
   Widget? buildContent(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        if (controller.balances.isEmpty) {
-          return Center(
-            child: CcText(
-              el.tr(CcLocaleKeys.reconciliation_empty),
-              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                color: context.ccColorScheme.onSurfaceVariant,
-              ),
+    return Obx(() {
+      if (controller.balances.isEmpty) {
+        return Center(
+          child: CcText(
+            el.tr(CcLocaleKeys.reconciliation_empty),
+            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+              color: context.ccColorScheme.onSurfaceVariant,
             ),
-          );
-        }
-
-        return ListView(
-          padding: EdgeInsets.all(
-            context.respPadding(CcPaddingParams.SPACE_MD),
           ),
-          children: [
-            CcText(
-              el.tr(CcLocaleKeys.reconciliation_instruction),
-              textStyle: context.ccTextTheme.bodyMedium,
-            ),
-            const CcSpaceSM(),
-            Obx(
-              () => Column(
-                children: controller.balances.map((balance) {
-                  return WalletReconcileTile(
-                    balance: balance,
-                    isAcknowledged: controller.isAcknowledged(
-                      balance.wallet.id,
-                    ),
-                    onActualChanged: (value) =>
-                        controller.setActual(balance.wallet.id, value),
-                    onAcknowledge: () =>
-                        controller.acknowledgeAdjustment(balance.wallet.id),
-                  );
-                }).toList(),
+        );
+      }
+
+      final isEditing = controller.editingWalletId.value != null;
+
+      return Column(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: controller.stopEditing,
+              child: ListView(
+                padding: EdgeInsets.all(
+                  context.respPadding(CcPaddingParams.SPACE_MD),
+                ),
+                children: [
+                  CcText(
+                    el.tr(CcLocaleKeys.reconciliation_instruction),
+                    textStyle: context.ccTextTheme.bodyMedium,
+                  ),
+                  const CcSpaceSM(),
+                  Column(
+                    children: controller.balances.map((balance) {
+                      return WalletReconcileTile(
+                        balance: balance,
+                        isAcknowledged: controller.isAcknowledged(
+                          balance.wallet.id,
+                        ),
+                        onActualChanged: (value) =>
+                            controller.setActual(balance.wallet.id, value),
+                        onAcknowledge: () =>
+                            controller.acknowledgeAdjustment(balance.wallet.id),
+                      );
+                    }).toList(),
+                  ),
+                  _buildMismatchWarning(context),
+                  const Divider(height: 24),
+                  _buildSummary(context),
+                  const CcSpaceMD(),
+                  _buildConfirmButton(context),
+                  const Divider(height: 32),
+                  _buildHistorySection(context),
+                ],
               ),
             ),
-            _buildMismatchWarning(context),
-            const Divider(height: 24),
-            _buildSummary(context),
-            const CcSpaceMD(),
-            _buildConfirmButton(context),
-            const Divider(height: 32),
-            _buildHistorySection(context),
-          ],
-        );
-      },
-    );
+          ),
+          if (isEditing)
+            SafeArea(
+              top: false,
+              child: MoneyKeypadPanel(
+                onKeyPress: controller.updateAmount,
+                onDelete: controller.deleteChar,
+                onClear: controller.clearAmount,
+                suggestions: const [
+                  100000,
+                  200000,
+                  500000,
+                  1000000,
+                  2000000,
+                  5000000,
+                ],
+                onSuggestion: (value) => controller.setAmount(value),
+                onDone: controller.stopEditing,
+                activeColor: context.ccColorScheme.primary,
+              ),
+            ),
+        ],
+      );
+    });
   }
 
   Widget _buildMismatchWarning(BuildContext context) {

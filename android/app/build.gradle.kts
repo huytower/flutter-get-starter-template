@@ -47,6 +47,7 @@ android {
     defaultConfig {
         applicationId = "mobile.template"
         minSdk = 28
+        targetSdk = 35
         versionCode = flutterVersionCode.toInt()
         versionName = flutterVersionName
         // Enabling multidex support.

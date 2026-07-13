@@ -24,11 +24,16 @@ class WalletListPage extends CcGetView<WalletController> {
       context,
       leading: CcIconButton.bouncing(
         icon: Icon(
-          Icons.arrow_back_ios_new_rounded,
+          controller.isEditMode.value
+              ? Icons.close_rounded
+              : Icons.arrow_back_ios_new_rounded,
           color: context.ccColorScheme.onPrimary,
           size: context.respIconSize(baseSize: 24),
         ),
-        onTap: () => Navigator.of(context).pop(),
+        onTap: () {
+          controller.isEditMode.value = false;
+          Navigator.of(context).pop();
+        },
       ),
       title: Center(
         child: CcText(

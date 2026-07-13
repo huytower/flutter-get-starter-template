@@ -36,7 +36,7 @@ class ReconciliationController extends CcGetController {
   final RxList<ReconciliationEntity> history = <ReconciliationEntity>[].obs;
 
   /// Counted balance per wallet id (defaults to the book balance).
-  final Map<String, int> _actuals = {};
+  final RxMap<String, int> _actuals = <String, int>{}.obs;
 
   /// Wallet ids where the user explicitly acknowledged creating an adjustment.
   final _acknowledged = <String>{};
@@ -46,9 +46,14 @@ class ReconciliationController extends CcGetController {
   final RxInt unhandledCount = 0.obs;
   final RxBool isSubmitting = false.obs;
 
+  final RxnString editingWalletId = RxnString();
+  final RxString amountStr = '0'.obs;
+
   int get difference => actualTotal.value - systemTotal.value;
 
   bool isAcknowledged(String walletId) => _acknowledged.contains(walletId);
+
+  int actualOf(String walletId) => _actuals[walletId] ?? 0;
 
   void acknowledgeAdjustment(String walletId) {
     _acknowledged.add(walletId);
@@ -58,7 +63,8 @@ class ReconciliationController extends CcGetController {
   void _updateUnhandledCount() {
     unhandledCount.value = balances.where((b) {
       final actual = _actuals[b.wallet.id] ?? b.bookBalance;
-      return (actual - b.bookBalance) != 0 && !_acknowledged.contains(b.wallet.id);
+      return (actual - b.bookBalance) != 0 &&
+          !_acknowledged.contains(b.wallet.id);
     }).length;
   }
 
@@ -77,13 +83,15 @@ class ReconciliationController extends CcGetController {
         balances.assignAll(success);
         _actuals
           ..clear()
-          ..addEntries(success.map((b) => MapEntry(b.wallet.id, b.bookBalance)));
+          ..addEntries(success.map((b) => MapEntry(b.wallet.id, 0)));
         _acknowledged.clear();
         systemTotal.value = success.fold(0, (sum, b) => sum + b.bookBalance);
-        actualTotal.value = systemTotal.value;
+        actualTotal.value = 0;
         unhandledCount.value = 0;
-        layoutStatus.value =
-            success.isEmpty ? CcLayoutStatus.empty : CcLayoutStatus.success;
+        _updateUnhandledCount();
+        layoutStatus.value = success.isEmpty
+            ? CcLayoutStatus.empty
+            : CcLayoutStatus.success;
       },
       (error) {
         errorMessage.value = error.message;
@@ -103,20 +111,65 @@ class ReconciliationController extends CcGetController {
     _updateUnhandledCount();
   }
 
+  void startEditing(String walletId) {
+    editingWalletId.value = walletId;
+    amountStr.value = (_actuals[walletId] ?? 0).toString();
+  }
+
+  void stopEditing() {
+    editingWalletId.value = null;
+  }
+
+  void updateAmount(String key) {
+    if (amountStr.value == '0') {
+      if (key != '0' && key != '000') {
+        amountStr.value = key;
+      }
+    } else {
+      amountStr.value += key;
+    }
+    _syncActual();
+  }
+
+  void deleteChar() {
+    if (amountStr.value.length > 1) {
+      amountStr.value = amountStr.value.substring(
+        0,
+        amountStr.value.length - 1,
+      );
+    } else {
+      amountStr.value = '0';
+    }
+    _syncActual();
+  }
+
+  void clearAmount() {
+    amountStr.value = '0';
+    _syncActual();
+  }
+
+  void setAmount(int value) {
+    amountStr.value = value.toString();
+    _syncActual();
+  }
+
+  void _syncActual() {
+    if (editingWalletId.value != null) {
+      setActual(editingWalletId.value!, int.tryParse(amountStr.value) ?? 0);
+    }
+  }
+
   /// Returns null on success, or an error message to surface.
   Future<String?> performReconciliation() async {
     if (isSubmitting.value) return null;
     isSubmitting.value = true;
     try {
       final result = await _performReconciliation.call(Map.of(_actuals));
-      return result.when(
-        (_) {
-          loadBalances();
-          loadHistory();
-          return null;
-        },
-        (error) => error.message,
-      );
+      return result.when((_) {
+        loadBalances();
+        loadHistory();
+        return null;
+      }, (error) => error.message);
     } finally {
       isSubmitting.value = false;
     }
@@ -127,14 +180,11 @@ class ReconciliationController extends CcGetController {
     isSubmitting.value = true;
     try {
       final result = await _undoReconciliation.call();
-      return result.when(
-        (_) {
-          loadBalances();
-          loadHistory();
-          return null;
-        },
-        (error) => error.message,
-      );
+      return result.when((_) {
+        loadBalances();
+        loadHistory();
+        return null;
+      }, (error) => error.message);
     } finally {
       isSubmitting.value = false;
     }
