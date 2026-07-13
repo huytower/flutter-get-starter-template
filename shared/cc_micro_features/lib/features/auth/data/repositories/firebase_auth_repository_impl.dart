@@ -9,9 +9,13 @@ import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
+/// Semantic token for the default server-failure message.
+/// Plain English default so this project-blind repository never depends on
+/// the `message` module.
+const String _serverError = 'Server error. Please try again later.';
 
 @LazySingleton(as: FirebaseAuthRepository)
 class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
@@ -33,12 +37,12 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       final user = userCredential.user;
       return switch (user) {
         firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
-        _ => const Error(UnauthorizedFailure(CcLocaleKeys.auth_login_failed)),
+        _ => const Error(UnauthorizedFailure('Login failed')),
       };
     } on firebase_auth.FirebaseAuthException catch (e) {
-      return Error(ServerFailure(e.message ?? CcLocaleKeys.app_error_server));
+      return Error(ServerFailure(e.message ?? 'Server error'));
     } catch (e) {
-      return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
+      return const Error(UnknownFailure('An error occurred'));
     }
   }
 
@@ -49,12 +53,12 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       final user = userCredential.user;
       return switch (user) {
         firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
-        _ => const Error(UnauthorizedFailure(CcLocaleKeys.auth_login_failed)),
+        _ => const Error(UnauthorizedFailure('Login failed')),
       };
     } on firebase_auth.FirebaseAuthException catch (e) {
-      return Error(ServerFailure(e.message ?? CcLocaleKeys.app_error_server));
+      return Error(ServerFailure(e.message ?? 'Server error'));
     } catch (e) {
-      return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
+      return const Error(UnknownFailure('An error occurred'));
     }
   }
 
@@ -78,12 +82,12 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
 
       return switch (user) {
         firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
-        _ => const Error(UnauthorizedFailure(CcLocaleKeys.auth_login_failed)),
+        _ => const Error(UnauthorizedFailure('Login failed')),
       };
     } on firebase_auth.FirebaseAuthException catch (e) {
-      return Error(ServerFailure(e.message ?? CcLocaleKeys.app_error_server));
+      return Error(ServerFailure(e.message ?? 'Server error'));
     } catch (e) {
-      return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
+      return const Error(UnknownFailure('An error occurred'));
     }
   }
 
@@ -112,12 +116,12 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
 
       return switch (user) {
         firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
-        _ => const Error(UnauthorizedFailure(CcLocaleKeys.auth_login_failed)),
+        _ => const Error(UnauthorizedFailure('Login failed')),
       };
     } on firebase_auth.FirebaseAuthException catch (e) {
-      return Error(ServerFailure(e.message ?? CcLocaleKeys.app_error_server));
+      return Error(ServerFailure(e.message ?? 'Server error'));
     } catch (e) {
-      return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
+      return const Error(UnknownFailure('An error occurred'));
     }
   }
 
@@ -146,7 +150,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       },
       verificationFailed: (e) => onEvent(
         PhoneVerificationFailed(
-          ServerFailure(e.message ?? CcLocaleKeys.app_error_server),
+          ServerFailure(e.message ?? _serverError),
         ),
       ),
       codeSent: (id, token) => onEvent(PhoneCodeSent(id, token)),
@@ -176,7 +180,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       await Future.wait([_firebaseAuth.signOut(), _googleSignIn.signOut()]);
       return const Success(unit);
     } catch (e) {
-      return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
+      return const Error(UnknownFailure('An error occurred'));
     }
   }
 
@@ -186,7 +190,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       final user = _firebaseAuth.currentUser;
       return Success(user != null ? _mapFirebaseUserToEntity(user) : null);
     } catch (e) {
-      return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
+      return const Error(UnknownFailure('An error occurred'));
     }
   }
 
@@ -207,12 +211,12 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       final user = userCredential.user;
       return switch (user) {
         firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
-        _ => const Error(UnauthorizedFailure(CcLocaleKeys.auth_login_failed)),
+        _ => const Error(UnauthorizedFailure('Login failed')),
       };
     } on firebase_auth.FirebaseAuthException catch (e) {
-      return Error(ServerFailure(e.message ?? CcLocaleKeys.app_error_server));
+      return Error(ServerFailure(e.message ?? 'Server error'));
     } catch (e) {
-      return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
+      return const Error(UnknownFailure('An error occurred'));
     }
   }
 

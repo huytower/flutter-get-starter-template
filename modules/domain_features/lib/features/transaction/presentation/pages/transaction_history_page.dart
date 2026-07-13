@@ -52,27 +52,32 @@ class _TransactionHistoryPageState extends State<TransactionHistoryPage>
         backgroundColor: context.ccColorScheme.surface,
         appBar: buildDomainGradientAppBar(
           context,
-          title: CcText(
-            el.tr(CcLocaleKeys.transaction_history),
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
+          leading: CcIconButton.bouncing(
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
               color: context.ccColorScheme.onPrimary,
-              fontWeight: CcTypographyParams.bold,
+              size: context.respIconSize(baseSize: 24),
+            ),
+            onTap: () => Navigator.of(context).pop(),
+          ),
+          title: Center(
+            child: CcText(
+              el.tr(CcLocaleKeys.transaction_history),
+              textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                color: context.ccColorScheme.onPrimary,
+                fontWeight: CcTypographyParams.bold,
+              ),
             ),
           ),
           actions: [
-            IconButton(
+            CcIconButton.bouncing(
               icon: Icon(
                 Icons.bar_chart_rounded,
                 size: context.respIconSize(baseSize: 24),
                 color: context.ccColorScheme.onPrimary,
               ),
-              tooltip: 'Báo cáo',
-              onPressed: _openReport,
-              constraints: BoxConstraints(
-                minWidth: context.respDim(40),
-                minHeight: context.respDim(40),
-              ),
-              padding: EdgeInsets.zero,
+              tooltip: el.tr(CcLocaleKeys.report_title),
+              onTap: _openReport,
             ),
           ],
           bottom: TabBar(

@@ -6,13 +6,15 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../category/export_category.dart';
 import '../get_x/profile_controller.dart';
-import '../widgets/profile_level_badge.dart';
+import '../widgets/birth_year_dialog_content.dart';
+import '../widgets/profile_header.dart';
+import '../widgets/profile_menu_group.dart';
 import '../widgets/profile_settings_tile.dart';
+import '../widgets/profile_stats_row.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -43,10 +45,10 @@ class _ProfilePageState extends State<ProfilePage> {
     final now = DateTime.now();
     final minYear = now.year - 70;
     final maxYear = now.year - 10;
-    final current = (_c.settings.value.birthYear ?? now.year - 25)
-        .clamp(minYear, maxYear);
-    final currentDateLabel = DateFormat('EEE, MMM d').format(now);
-    int temporaryYear = current;
+    final current = (_c.settings.value.birthYear ?? now.year - 25).clamp(
+      minYear,
+      maxYear,
+    );
 
     final picked = await showDialog<int>(
       context: context,
@@ -62,103 +64,10 @@ class _ProfilePageState extends State<ProfilePage> {
               context.respDim(CcCircularParams.CARD),
             ),
           ),
-          child: StatefulBuilder(
-            builder: (dialogContext, setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          context.ccColorScheme.primary,
-                          context.ccColorScheme.primaryContainer,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(
-                          context.respDim(CcCircularParams.CARD),
-                        ),
-                      ),
-                    ),
-                    padding: EdgeInsets.fromLTRB(
-                      context.respPadding(CcPaddingParams.PAGE_SM),
-                      context.respPadding(CcPaddingParams.SPACE_LG),
-                      context.respPadding(CcPaddingParams.PAGE_SM),
-                      context.respPadding(CcPaddingParams.SPACE_MD),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        CcText(
-                          'SELECT DATE',
-                          textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                            color: context.ccColorScheme.onPrimary,
-                            letterSpacing: 1.2,
-                            fontWeight: CcTypographyParams.bold,
-                          ),
-                        ),
-                        const CcSpaceMD(),
-                        CcText(
-                          currentDateLabel,
-                          textStyle: context.ccTextTheme.headlineSmall?.copyWith(
-                            color: context.ccColorScheme.onPrimary,
-                            fontWeight: CcTypographyParams.bold,
-                          ),
-                        ),
-                        const CcSpaceMD(),
-                        Divider(
-                          height: 1,
-                          thickness: 1,
-                          color: context.ccColorScheme.onPrimary.withOpacity(0.16),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: context.ccColorScheme.surface,
-                      borderRadius: BorderRadius.vertical(
-                        bottom: Radius.circular(
-                          context.respDim(CcCircularParams.CARD),
-                        ),
-                      ),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-                      vertical: context.respPadding(CcPaddingParams.SPACE_SM),
-                    ),
-                    child: SizedBox(
-                      height: context.respDim(220),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                          dividerColor: Colors.transparent,
-                          textTheme: Theme.of(context).textTheme.copyWith(
-                                bodyMedium: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: context.ccColorScheme.onSurface,
-                                    ),
-                              ),
-                        ),
-                        child: YearPicker(
-                          firstDate: DateTime(minYear),
-                          lastDate: DateTime(maxYear),
-                          selectedDate: DateTime(temporaryYear),
-                          onChanged: (date) {
-                            Navigator.of(dialogContext).pop(date.year);
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
+          child: BirthYearDialogContent(
+            currentYear: current,
+            minYear: minYear,
+            maxYear: maxYear,
           ),
         );
       },
@@ -182,7 +91,10 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildHeader(context, user),
+                  ProfileHeader(
+                    user: user,
+                    displayName: _displayName(context, user),
+                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
@@ -191,9 +103,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         const CcSpaceMD(),
-                        _buildStatsRow(context),
+                        ProfileStatsRow(daysToSunday: _daysToSunday),
                         const CcSpaceMD(),
-                        _buildMenuGroup(context, isLoggedIn),
+                        ProfileMenuGroup(
+                          items: _buildMenuItems(context, isLoggedIn),
+                        ),
                         if (isLoggedIn) ...[
                           const CcSpaceXL(),
                           _buildLogoutButton(context),
@@ -213,210 +127,13 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, CcUserEntity? user) {
-    final name = _displayName(context, user);
-    final subtitle = user != null
-        ? user.email
-        : el.tr(CcLocaleKeys.profile_not_logged_in);
-
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            context.ccColorScheme.primary,
-            context.ccColorScheme.primaryContainer,
-          ],
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-            vertical: context.respPadding(CcPaddingParams.SPACE_MD),
-          ),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: context.respDim(28),
-                backgroundColor: Colors.white,
-                child: user?.avatarUrl != null
-                    ? ClipOval(
-                        child: Image.network(
-                          user!.avatarUrl!,
-                          width: context.respDim(56),
-                          height: context.respDim(56),
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : Icon(
-                        Icons.person_rounded,
-                        size: context.respIconSize(baseSize: 30),
-                        color: context.ccColorScheme.primary,
-                      ),
-              ),
-              SizedBox(width: context.respDim(12)),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CcText(
-                      name,
-                      textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const CcSpaceXS(),
-                    CcText(
-                      subtitle,
-                      textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                        color: CcBaseColors.white70,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const ProfileLevelBadge('LV1'),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   int get _daysToSunday {
     final daysLeft = 7 - DateTime.now().weekday;
     return daysLeft; // 0 when today is Sunday
   }
 
-  Widget _buildStatsRow(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(
-          context.respDim(CcCircularParams.CARD),
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(
-          context.respDim(CcCircularParams.CARD),
-        ),
-        child: IntrinsicHeight(
-          child: Row(
-            children: [
-              Expanded(
-                child: _buildStatCell(
-                  context,
-                  icon: Icons.access_time_rounded,
-                  label: el.tr(CcLocaleKeys.profile_weekly_audit),
-                  value: el.tr(
-                    CcLocaleKeys.profile_days_left,
-                    namedArgs: {'count': '$_daysToSunday'},
-                  ),
-                  valueColor: context.ccColorScheme.primary,
-                ),
-              ),
-              Expanded(
-                child: _buildStatCell(
-                  context,
-                  icon: Icons.lock_rounded,
-                  label: el.tr(CcLocaleKeys.profile_debt_loan),
-                  value: el.tr(
-                    CcLocaleKeys.profile_unlock_at_lv,
-                    namedArgs: {'level': '3'},
-                  ),
-                  valueColor: context.ccColorScheme.onSurfaceVariant
-                      .withOpacity(0.5),
-                  isLocked: true,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatCell(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color valueColor,
-    bool isLocked = false,
-  }) {
-    final iconColor = isLocked
-        ? context.ccColorScheme.onSurfaceVariant.withOpacity(0.5)
-        : context.ccColorScheme.primary;
-    return Padding(
-      padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: Icon(
-              icon,
-              size: context.respIconSize(baseSize: 18),
-              color: iconColor,
-            ),
-          ),
-          SizedBox(height: context.respDim(4)),
-          CcText(
-            label,
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant,
-            ),
-            align: Alignment.center,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: context.respDim(2)),
-          CcText(
-            value,
-            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-              color: valueColor,
-              fontWeight: FontWeight.bold,
-            ),
-            align: Alignment.center,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMenuGroup(BuildContext context, bool isLoggedIn) {
-    final items = _buildMenuItems(context, isLoggedIn);
-    final rows = <Widget>[];
-    for (var i = 0; i < items.length; i++) {
-      rows.add(items[i]);
-      if (i < items.length - 1) rows.add(const CcDividerHorizontalLine());
-    }
-
-    return Material(
-      color: context.ccColorScheme.surfaceContainerHighest,
-      borderRadius: BorderRadius.circular(
-        context.respDim(CcCircularParams.CARD),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(mainAxisSize: MainAxisSize.min, children: rows),
-    );
-  }
-
   List<Widget> _buildMenuItems(BuildContext context, bool isLoggedIn) {
     return [
-      // if (!isLoggedIn)
-      //   ProfileSettingsTile(
-      //     icon: Icons.person_add_rounded,
-      //     label: el.tr(CcLocaleKeys.profile_register_login),
-      //     onTap: () => getIt<AuthCoordinator>().navigateToLogin(context),
-      //   ),
       ProfileSettingsTile(
         icon: Icons.tune_rounded,
         label: el.tr(CcLocaleKeys.category_settings_title),
@@ -427,15 +144,17 @@ class _ProfilePageState extends State<ProfilePage> {
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.cake_rounded,
-          label: 'Năm sinh',
-          trailingLabel: _c.settings.value.birthYear?.toString() ?? 'Chưa đặt',
+          label: el.tr(CcLocaleKeys.profile_birth_year),
+          trailingLabel:
+              _c.settings.value.birthYear?.toString() ??
+              el.tr(CcLocaleKeys.common_not_set),
           onTap: () => _pickBirthYear(context),
         ),
       ),
       ProfileSettingsTile(
         icon: Icons.calendar_today_rounded,
         label: el.tr(CcLocaleKeys.profile_weekly_audit_day),
-        trailingLabel: 'CN',
+        trailingLabel: el.tr(CcLocaleKeys.common_sunday_short),
       ),
       Obx(
         () => ProfileSettingsTile(
@@ -459,17 +178,17 @@ class _ProfilePageState extends State<ProfilePage> {
       ProfileSettingsTile(
         icon: Icons.palette_rounded,
         label: el.tr(CcLocaleKeys.settings_theme),
-        trailingLabel: 'Tĩnh',
+        trailingLabel: el.tr(CcLocaleKeys.settings_theme_static),
       ),
       ProfileSettingsTile(
         icon: Icons.language_rounded,
         label: el.tr(CcLocaleKeys.settings_language),
-        trailingLabel: 'Vietnamese',
+        trailingLabel: el.tr(CcLocaleKeys.settings_language_vietnamese),
       ),
       ProfileSettingsTile(
         icon: Icons.attach_money_rounded,
         label: el.tr(CcLocaleKeys.profile_currency),
-        trailingLabel: 'Đồng',
+        trailingLabel: el.tr(CcLocaleKeys.profile_currency_dong),
       ),
       ProfileSettingsTile(
         icon: Icons.play_circle_outline_rounded,

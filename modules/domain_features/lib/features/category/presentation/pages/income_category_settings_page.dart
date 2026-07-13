@@ -102,18 +102,13 @@ class _IncomeCategorySettingsPageState
       backgroundColor: context.ccColorScheme.surface,
       appBar: buildDomainGradientAppBar(
         context,
-        leading: IconButton(
+        leading: CcIconButton.bouncing(
           icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             color: context.ccColorScheme.onPrimary,
             size: context.respIconSize(baseSize: 24),
           ),
-          onPressed: () => Navigator.of(context).pop(),
-          constraints: BoxConstraints(
-            minWidth: context.respDim(40),
-            minHeight: context.respDim(40),
-          ),
-          padding: EdgeInsets.zero,
+          onTap: () => Navigator.of(context).pop(),
         ),
         title: Center(
           child: CcText(
@@ -132,29 +127,29 @@ class _IncomeCategorySettingsPageState
       body: _isLoading
           ? const Center(child: CcLoadingIconWidget())
           : _categories.isEmpty
-              ? Center(
-                  child: CcText(
-                    'Chưa có hạng mục thu nhập nào.',
-                    textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                      color: context.ccColorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                )
-              : ListView.separated(
-                  padding: EdgeInsets.all(
-                    context.respPadding(CcPaddingParams.PAGE_SM),
-                  ),
-                  itemCount: _categories.length,
-                  separatorBuilder: (_, _) => const CcSpaceSM(),
-                  itemBuilder: (context, index) {
-                    final category = _categories[index];
-                    return _IncomeCategoryTile(
-                      category: category,
-                      onTap: () => _openForm(target: category),
-                      onDelete: () => _confirmDelete(category),
-                    );
-                  },
+          ? Center(
+              child: CcText(
+                'Chưa có hạng mục thu nhập nào.',
+                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                  color: context.ccColorScheme.onSurfaceVariant,
                 ),
+              ),
+            )
+          : ListView.separated(
+              padding: EdgeInsets.all(
+                context.respPadding(CcPaddingParams.PAGE_SM),
+              ),
+              itemCount: _categories.length,
+              separatorBuilder: (_, _) => const CcSpaceSM(),
+              itemBuilder: (context, index) {
+                final category = _categories[index];
+                return _IncomeCategoryTile(
+                  category: category,
+                  onTap: () => _openForm(target: category),
+                  onDelete: () => _confirmDelete(category),
+                );
+              },
+            ),
     );
   }
 }
@@ -201,9 +196,9 @@ class _IncomeCategoryTile extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        trailing: IconButton(
+        trailing: CcIconButton.bouncing(
           icon: Icon(Icons.delete_outline, color: scheme.error),
-          onPressed: onDelete,
+          onTap: onDelete,
         ),
       ),
     );
@@ -249,7 +244,9 @@ class _IncomeCategoryFormSheetState extends State<_IncomeCategoryFormSheet> {
   @override
   void initState() {
     super.initState();
-    final displayName = widget.target != null ? el.tr(widget.target!.nameKey) : '';
+    final displayName = widget.target != null
+        ? el.tr(widget.target!.nameKey)
+        : '';
     _originalDisplayName = displayName;
     _nameController = TextEditingController(text: displayName);
     _iconCode = widget.target?.iconCode ?? _iconPresets.first.codePoint;
@@ -307,7 +304,8 @@ class _IncomeCategoryFormSheetState extends State<_IncomeCategoryFormSheet> {
         left: context.respPadding(CcPaddingParams.SPACE_LG),
         right: context.respPadding(CcPaddingParams.SPACE_LG),
         top: context.respPadding(CcPaddingParams.SPACE_LG),
-        bottom: MediaQuery.of(context).viewInsets.bottom +
+        bottom:
+            MediaQuery.of(context).viewInsets.bottom +
             context.respPadding(CcPaddingParams.SPACE_LG),
       ),
       child: Column(
@@ -364,10 +362,9 @@ class _IncomeCategoryFormSheetState extends State<_IncomeCategoryFormSheet> {
             width: double.infinity,
             height: context.respDim(50),
             child: ElevatedButton(
-              onPressed:
-                  _nameController.text.trim().isEmpty || _isSaving
-                      ? null
-                      : _onSave,
+              onPressed: _nameController.text.trim().isEmpty || _isSaving
+                  ? null
+                  : _onSave,
               style: ElevatedButton.styleFrom(
                 backgroundColor: scheme.primary,
                 shape: RoundedRectangleBorder(

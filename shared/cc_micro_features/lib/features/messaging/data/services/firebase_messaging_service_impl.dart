@@ -3,7 +3,6 @@ import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:cc_sdk_data/domain/services/cc_messaging_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 @LazySingleton(as: CcMessagingService)
@@ -27,7 +26,7 @@ class FirebaseMessagingServiceImpl implements CcMessagingService {
       final token = await _firebaseMessaging.getToken();
       return Success(token);
     } catch (e) {
-      return const Error(UnknownFailure(CcLocaleKeys.app_error_general));
+      return const Error(UnknownFailure('An error occurred'));
     }
   }
 

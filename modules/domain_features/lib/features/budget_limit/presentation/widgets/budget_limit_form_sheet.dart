@@ -227,9 +227,9 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
                     hintText: el.tr(CcLocaleKeys.budget_name_hint),
                     errorText: _nameError,
                     suffixIcon: _nameController.text.isNotEmpty
-                        ? IconButton(
+                        ? CcIconButton.bouncing(
                             icon: const Icon(Icons.clear, size: 20),
-                            onPressed: () => _nameController.clear(),
+                            onTap: () => _nameController.clear(),
                           )
                         : null,
                     border: OutlineInputBorder(

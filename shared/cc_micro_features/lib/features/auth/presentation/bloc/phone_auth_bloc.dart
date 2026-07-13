@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
 
 import '../../domain/usecases/sign_in_with_phone_number_usecase.dart';
 import '../../domain/usecases/verify_phone_number_usecase.dart';
@@ -41,7 +40,7 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     Emitter<PhoneAuthState> emit,
   ) async {
     if (event.phoneNumber.isEmpty) {
-      emit(const PhoneAuthError(CcLocaleKeys.validation_required));
+      emit(const PhoneAuthError('This field is required'));
       return;
     }
 
@@ -79,11 +78,11 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
           return state;
         },
         onError: (error, stackTrace) {
-          return const PhoneAuthError(CcLocaleKeys.app_error_general);
+          return const PhoneAuthError('An error occurred');
         },
       );
     } catch (e) {
-      emit(const PhoneAuthError(CcLocaleKeys.app_error_general));
+      emit(const PhoneAuthError('An error occurred'));
     }
   }
 
@@ -92,12 +91,12 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     Emitter<PhoneAuthState> emit,
   ) async {
     if (event.smsCode.isEmpty) {
-      emit(const PhoneAuthError(CcLocaleKeys.validation_required));
+      emit(const PhoneAuthError('This field is required'));
       return;
     }
 
     if (_verificationId == null) {
-      emit(const PhoneAuthError(CcLocaleKeys.app_error_general));
+      emit(const PhoneAuthError('An error occurred'));
       return;
     }
 
@@ -113,31 +112,31 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
         emit(PhoneAuthSuccess(user));
       },
       (failure) {
-        // Map failure message to specific OTP error locale keys
-        final errorMessage = _mapOtpErrorToLocaleKey(failure.message);
+        // Map failure message to specific OTP error messages
+        final errorMessage = _mapOtpErrorToMessage(failure.message);
         emit(PhoneAuthError(errorMessage));
       },
     );
   }
 
-  String _mapOtpErrorToLocaleKey(String failureMessage) {
+  String _mapOtpErrorToMessage(String failureMessage) {
     // Firebase Auth error codes for OTP verification
     final lowerMessage = failureMessage.toLowerCase();
 
     if (lowerMessage.contains('invalid') ||
         lowerMessage.contains('wrong') ||
         lowerMessage.contains('incorrect')) {
-      return CcLocaleKeys.auth_otp_invalid;
+      return 'Invalid OTP code';
     }
 
     if (lowerMessage.contains('expired') || lowerMessage.contains('timeout')) {
-      return CcLocaleKeys.auth_otp_expired;
+      return 'OTP code has expired';
     }
 
     if (lowerMessage.contains('too many') ||
         lowerMessage.contains('quota') ||
         lowerMessage.contains('attempts')) {
-      return CcLocaleKeys.auth_otp_too_many_attempts;
+      return 'Too many attempts. Please try again later';
     }
 
     // Default to general error if no specific match

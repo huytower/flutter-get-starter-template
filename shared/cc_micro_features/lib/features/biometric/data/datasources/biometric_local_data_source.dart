@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
 import 'package:local_auth/local_auth.dart';
@@ -37,12 +36,7 @@ class BiometricLocalDataSource {
       _canAuthenticate =
           await _auth.canCheckBiometrics || await _auth.isDeviceSupported();
     } on PlatformException catch (e) {
-      el
-          .tr(
-            CcLocaleKeys.auth_biometric_error_generic,
-            namedArgs: {'error': e.message ?? ''},
-          )
-          .Log();
+      'Biometric authentication error: ${e.message}'.Log();
       _canAuthenticate = false;
     }
   }
@@ -86,7 +80,7 @@ class BiometricLocalDataSource {
     bool sensitiveTransaction = false,
   }) async {
     if (!_canAuthenticate) {
-      el.tr(CcLocaleKeys.auth_biometric_error_not_available).Log();
+      'Biometric authentication not available'.Log();
       return false;
     }
 
@@ -98,12 +92,12 @@ class BiometricLocalDataSource {
         authMessages: [
           AndroidAuthMessages(
             signInTitle:
-                androidSignInTitle ?? el.tr(CcLocaleKeys.auth_biometric_reason),
-            cancelButton: cancelButtonText ?? el.tr(CcLocaleKeys.common_cancel),
+                androidSignInTitle ?? 'Authentication required',
+            cancelButton: cancelButtonText ?? 'Cancel',
           ),
           IOSAuthMessages(
-            cancelButton: cancelButtonText ?? el.tr(CcLocaleKeys.common_cancel),
-            localizedFallbackTitle: el.tr(CcLocaleKeys.auth_biometric_fallback),
+            cancelButton: cancelButtonText ?? 'Cancel',
+            localizedFallbackTitle: 'Use passcode',
           ),
         ],
       );
@@ -119,36 +113,31 @@ class BiometricLocalDataSource {
   void _handleBiometricError(PlatformException e) {
     switch (e.code) {
       case notAvailable:
-        el.tr(CcLocaleKeys.auth_biometric_error_not_available).Log();
+        'Biometric authentication not available'.Log();
         break;
       case notEnrolled:
-        el.tr(CcLocaleKeys.auth_biometric_error_not_enrolled).Log();
+        'No biometrics enrolled on this device'.Log();
         break;
       case lockedOut:
-        el.tr(CcLocaleKeys.auth_biometric_error_locked_out).Log();
+        'Too many failed attempts. Try again later'.Log();
         break;
       case permanentlyLockedOut:
-        el.tr(CcLocaleKeys.auth_biometric_error_permanently_locked_out).Log();
+        'Biometric authentication is permanently locked out'.Log();
         break;
       case passcodeNotSet:
-        el.tr(CcLocaleKeys.auth_biometric_error_passcode_not_set).Log();
+        'No passcode is set on the device'.Log();
         break;
       case userCanceled:
-        el.tr(CcLocaleKeys.auth_biometric_error_user_canceled).Log();
+        'Authentication was canceled by user'.Log();
         break;
       case appCanceled:
-        el.tr(CcLocaleKeys.auth_biometric_error_app_canceled).Log();
+        'Authentication was canceled by the app'.Log();
         break;
       case systemCanceled:
-        el.tr(CcLocaleKeys.auth_biometric_error_system_canceled).Log();
+        'Authentication was canceled by the system'.Log();
         break;
       default:
-        el
-            .tr(
-              CcLocaleKeys.auth_biometric_error_generic,
-              namedArgs: {'error': e.message ?? ''},
-            )
-            .Log();
+        'Biometric authentication error: ${e.message}'.Log();
         break;
     }
   }

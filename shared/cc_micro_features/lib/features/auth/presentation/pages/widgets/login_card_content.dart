@@ -1,14 +1,24 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import 'login_or_divider.dart';
 import 'login_social_buttons.dart';
 
 class LoginCardContent extends StatelessWidget {
-  const LoginCardContent({super.key, required this.onPhoneLogin});
+  const LoginCardContent({
+    super.key,
+    required this.onPhoneLogin,
+    this.loginTitle,
+    this.phoneLoginTitle,
+  });
 
   final VoidCallback onPhoneLogin;
+
+  /// Semantic tokens for the card labels.
+  /// Default to plain English tokens so this project-blind widget does not
+  /// depend on the `message` module (follows `CcNextBtn.title` pattern).
+  final String? loginTitle;
+  final String? phoneLoginTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +34,7 @@ class LoginCardContent extends StatelessWidget {
 
         // Title
         CcText(
-          el.tr(CcLocaleKeys.auth_login),
+          loginTitle ?? 'Login',
           textStyle: context.ccTextTheme.headlineMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: context.ccColorScheme.onSurface,
@@ -47,7 +57,7 @@ class LoginCardContent extends StatelessWidget {
         // Login with phone number button
         CcBaseBtn(
           onTap: onPhoneLogin,
-          title: el.tr(CcLocaleKeys.auth_login_phone),
+          title: phoneLoginTitle ?? 'Login with Phone Number',
           bgColor: [
             context.ccColorScheme.primary,
             context.ccColorScheme.primary,

@@ -196,7 +196,8 @@
     "today": "Hôm nay",
     "yesterday": "Hôm qua",
     "note": "Ghi chú",
-    "note_hint": "Ghi chú (không bắt buộc)"
+    "note_hint": "Ghi chú (không bắt buộc)",
+    "more_details": "Thêm chi tiết"
   },
   "budget": {
     "title": "Ngân sách",

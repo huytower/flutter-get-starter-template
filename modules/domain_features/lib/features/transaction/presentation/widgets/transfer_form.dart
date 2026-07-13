@@ -4,19 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/util/horizontal_fade_scroll_view.dart';
-import '../../../../core/util/icon_utils.dart';
+import '../../../../core/transaction_form_helpers.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../domain/usecases/create_transfer_usecase.dart';
 import '../get_x/transaction_controller.dart';
-import '../../../../core/transaction_form_helpers.dart';
 import 'cc_amount_input_section.dart';
 import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
-import 'quick_date_row.dart';
-import 'transaction_additional_details_section.dart';
-import 'transaction_submit_button.dart';
-import 'transaction_wallet_selector.dart';
 
 class TransferForm extends StatefulWidget {
   final VoidCallback? onSaved;
@@ -266,9 +260,8 @@ class TransferFormState extends State<TransferForm> {
                   const CcSpaceLG(),
                   TransactionAdditionalDetailsSection(
                     isExpanded: _showMoreDetails,
-                    onToggle: () => setState(
-                      () => _showMoreDetails = !_showMoreDetails,
-                    ),
+                    onToggle: () =>
+                        setState(() => _showMoreDetails = !_showMoreDetails),
                     selectedDate: _date,
                     onDateSelected: (date) => setState(() {
                       _date = DateTime(

@@ -2,19 +2,18 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../report/presentation/get_x/report_controller.dart';
+import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../../core/util/gradient_app_bar.dart';
+import '../../../report/presentation/get_x/report_controller.dart';
 import '../get_x/transaction_controller.dart';
 import '../widgets/expense_form.dart';
 import '../widgets/income_form.dart';
 import '../widgets/transaction_wallet_summary.dart';
 import '../widgets/transfer_form.dart';
-import '../../../../core/navigation/domain_router.gr.dart';
 
 @RoutePage()
 class TransactionPage extends CcGetView<TransactionController> {
@@ -51,9 +50,7 @@ class TransactionPage extends CcGetView<TransactionController> {
             );
           },
           child: controller.showWalletSummaryTemporarily.value
-              ? const TransactionWalletSummary(
-                  key: ValueKey('wallet_summary'),
-                )
+              ? const TransactionWalletSummary(key: ValueKey('wallet_summary'))
               : CcText(
                   el.tr(CcLocaleKeys.transaction_title),
                   key: const ValueKey('transaction_title'),
@@ -68,40 +65,26 @@ class TransactionPage extends CcGetView<TransactionController> {
       }),
       actions: [
         Obx(
-          () => IconButton(
-            onPressed: _submitCurrentForm,
+          () => CcIconButton.bouncing(
+            onTap: _submitCurrentForm,
             icon: Icon(
               Icons.check_circle_outline_rounded,
               size: context.respIconSize(baseSize: 24),
-              color: _getTabColor(
-                context,
-                controller.selectedTabIndex.value,
-              ),
-            ),
-            padding: EdgeInsets.zero,
-            constraints: BoxConstraints(
-              minWidth: context.respDim(40),
-              minHeight: context.respDim(40),
+              color: _getTabColor(context, controller.selectedTabIndex.value),
             ),
           ),
         ),
         const CcSpaceXS(),
-        IconButton(
-          onPressed: () => _openReport(context),
-                    icon: Icon(
-                      Icons.bar_chart_rounded,
-                      size: context.respIconSize(baseSize: 24),
-                      color: context.ccColorScheme.onPrimary,
-                    ),
-                    padding: EdgeInsets.zero,
-                    constraints: BoxConstraints(
-                      minWidth: context.respDim(40),
-                      minHeight: context.respDim(40),
-                    ),
-                    tooltip: el.tr(CcLocaleKeys.report_title),
-                  ),
-                ],
-
+        CcIconButton.bouncing(
+          onTap: () => _openReport(context),
+          icon: Icon(
+            Icons.bar_chart_rounded,
+            size: context.respIconSize(baseSize: 24),
+            color: context.ccColorScheme.onPrimary,
+          ),
+          tooltip: el.tr(CcLocaleKeys.report_title),
+        ),
+      ],
     );
   }
 

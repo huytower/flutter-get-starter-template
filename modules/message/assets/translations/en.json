@@ -195,7 +195,8 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "note": "Note",
-    "note_hint": "Note (optional)"
+    "note_hint": "Note (optional)",
+    "more_details": "More details"
   },
   "budget": {
     "title": "Budget",

@@ -8,14 +8,14 @@ class QuickDateRow extends StatelessWidget {
   final DateTime selectedDate;
   final ValueChanged<DateTime> onDateSelected;
   final VoidCallback? onCalendarTap;
-  final Color accentColor;
+  final Color activeColor;
 
   const QuickDateRow({
     super.key,
     required this.selectedDate,
     required this.onDateSelected,
     this.onCalendarTap,
-    required this.accentColor,
+    required this.activeColor,
   });
 
   @override
@@ -63,18 +63,18 @@ class QuickDateRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected
-              ? accentColor.withOpacity(0.15)
+              ? activeColor.withOpacity(0.15)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? accentColor : Colors.grey.withOpacity(0.3),
+            color: isSelected ? activeColor : Colors.grey.withOpacity(0.3),
             width: isSelected ? 1.5 : 1,
           ),
         ),
         child: CcText(
           label,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: isSelected ? accentColor : Colors.grey[700],
+            color: isSelected ? activeColor : Colors.grey[700],
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: context.respFontSize(12),
           ),

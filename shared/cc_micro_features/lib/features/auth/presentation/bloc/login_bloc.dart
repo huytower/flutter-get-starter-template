@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
 
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/login_with_apple_usecase.dart';
@@ -29,7 +28,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     if (event.email.isEmpty || event.password.isEmpty) {
-      emit(const LoginError(CcLocaleKeys.validation_required));
+      emit(const LoginError('This field is required'));
       return;
     }
 

@@ -3,7 +3,6 @@ import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
@@ -38,19 +37,14 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         ),
       ),
       actions: [
-        IconButton(
+        CcIconButton.bouncing(
           icon: Icon(
             Icons.fact_check_outlined,
             color: context.ccColorScheme.onPrimary,
             size: context.respIconSize(baseSize: 24),
           ),
           tooltip: el.tr(CcLocaleKeys.reconciliation_title),
-          onPressed: () => context.router.push(const ReconcileRoute()),
-          constraints: BoxConstraints(
-            minWidth: context.respDim(40),
-            minHeight: context.respDim(40),
-          ),
-          padding: EdgeInsets.zero,
+          onTap: () => context.router.push(const ReconcileRoute()),
         ),
         SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
       ],

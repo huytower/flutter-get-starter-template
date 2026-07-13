@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -7,6 +6,13 @@ import '../bloc/phone_auth_bloc.dart';
 import '../bloc/phone_auth_event.dart';
 import '../bloc/phone_auth_state.dart';
 import 'widgets/phone_auth_gradient_container.dart';
+
+/// Semantic text tokens for this project-blind page.
+/// Defaults to plain English so the page never imports the `message` module.
+const String _enterPhoneNumber = 'Log in with \n Phone Number';
+const String _phoneNumberHint = 'Enter phone number';
+const String _validationPhone = 'Invalid phone number format';
+const String _continueText = 'Continue';
 
 class PhoneInputPage extends StatefulWidget {
   const PhoneInputPage({super.key});
@@ -50,7 +56,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
     // Validate the parsed phone number
     if (!CcPhoneNumberHelper.isValidPhoneNumber(parsedPhoneNumber)) {
       setState(() {
-        _validationError = CcLocaleKeys.validation_phone;
+        _validationError = _validationPhone;
       });
       return;
     }
@@ -73,7 +79,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
         const CcSpeechBubbleIcon(),
         const CcSpaceLG(),
         CcText(
-          el.tr(CcLocaleKeys.auth_enter_phone_number),
+          _enterPhoneNumber,
           maxLines: 2,
           align: Alignment.center,
           textStyle: context.ccTextTheme.headlineMedium?.copyWith(
@@ -87,7 +93,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
           countryCode: _countryCode,
           onCountryCodeTap: () {},
           controller: _phoneController,
-          hintText: el.tr(CcLocaleKeys.auth_phone_number_hint),
+          hintText: _phoneNumberHint,
         ),
         // Validation error display
         if (_validationError != null)
@@ -96,7 +102,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
               top: context.respPadding(CcPaddingParams.DESC_MD),
             ),
             child: CcText(
-              el.tr(_validationError!),
+              _validationError!,
               maxLines: 8,
               textStyle: context.ccTextTheme.bodySmall?.copyWith(
                 color: context.ccColorScheme.error,
@@ -113,7 +119,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                 top: context.respPadding(CcPaddingParams.DESC_MD),
               ),
               child: CcText(
-                el.tr(errorMessage),
+                errorMessage,
                 maxLines: 8,
                 textStyle: context.ccTextTheme.bodySmall?.copyWith(
                   color: context.ccColorScheme.error,
@@ -136,7 +142,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                 return CcNextBtn.bouncing(
                   onTap: _handleContinue,
                   isEnable: isEnabled,
-                  title: el.tr(CcLocaleKeys.common_continue),
+                  title: _continueText,
                 );
               },
             );
