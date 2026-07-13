@@ -6,6 +6,7 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
+import '../../../transaction/presentation/get_x/transaction_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../../domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/get_wallet_book_balance_usecase.dart';
@@ -139,11 +140,14 @@ class WalletController extends CcGetController {
 
     result.when(
       (success) {
-        // A brand-new wallet has no transactions, so book == opening balance.
         _bookBalances[newWallet.id] = newWallet.balance;
         wallets.add(newWallet);
         _calculateTotalBalance();
         layoutStatus.value = CcLayoutStatus.success;
+
+        if (Get.isRegistered<TransactionController>()) {
+          Get.find<TransactionController>().wallets.add(newWallet);
+        }
       },
       (error) {
         errorMessage.value = error.message;
