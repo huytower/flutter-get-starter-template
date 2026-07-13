@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:theme/export_theme.dart';
 import 'quick_date_row.dart';
 
-class TransactionAdditionalDetailsSection extends StatelessWidget {
+class TransactionAdditionalDetailsSection extends StatefulWidget {
   final bool isExpanded;
   final VoidCallback onToggle;
   final DateTime selectedDate;
@@ -28,16 +28,56 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
   });
 
   @override
+  State<TransactionAdditionalDetailsSection> createState() =>
+      _TransactionAdditionalDetailsSectionState();
+}
+
+class _TransactionAdditionalDetailsSectionState
+    extends State<TransactionAdditionalDetailsSection> {
+  bool _hasNoteText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _hasNoteText = widget.noteController.text.isNotEmpty;
+    widget.noteController.addListener(_onNoteChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant TransactionAdditionalDetailsSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.noteController != widget.noteController) {
+      oldWidget.noteController.removeListener(_onNoteChanged);
+      _hasNoteText = widget.noteController.text.isNotEmpty;
+      widget.noteController.addListener(_onNoteChanged);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.noteController.removeListener(_onNoteChanged);
+    super.dispose();
+  }
+
+  void _onNoteChanged() {
+    if (mounted) {
+      setState(() {
+        _hasNoteText = widget.noteController.text.isNotEmpty;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcInkWell(
-          onTap: onToggle,
+          onTap: widget.onToggle,
           child: Row(
             children: [
               Icon(
-                isExpanded ? Icons.expand_less : Icons.expand_more,
+                widget.isExpanded ? Icons.expand_less : Icons.expand_more,
                 color: context.ccColorScheme.onSurfaceVariant,
                 size: context.respDim(24),
               ),
@@ -51,24 +91,24 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
             ],
           ),
         ),
-        if (isExpanded) ...[
+        if (widget.isExpanded) ...[
           const CcSpaceMD(),
           QuickDateRow(
-            selectedDate: selectedDate,
-            onDateSelected: onDateSelected,
-            onCalendarTap: onCalendarTap,
-            activeColor: activeColor,
+            selectedDate: widget.selectedDate,
+            onDateSelected: widget.onDateSelected,
+            onCalendarTap: widget.onCalendarTap,
+            activeColor: widget.activeColor,
           ),
           const CcSpaceMD(),
           CcTextField(
-            controller: noteController,
+            controller: widget.noteController,
             hintText: el.tr(CcLocaleKeys.transaction_note_hint),
             maxLines: 1,
-            onTap: onNoteTap,
+            onTap: widget.onNoteTap,
             suffixIcon: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (noteController.text.isNotEmpty)
+                if (_hasNoteText)
                   IconButton(
                     icon: Icon(
                       Icons.copy,
@@ -77,21 +117,21 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
                     color: context.ccColorScheme.onSurfaceVariant,
                     onPressed: () {
                       Clipboard.setData(
-                        ClipboardData(text: noteController.text),
+                        ClipboardData(text: widget.noteController.text),
                       );
                     },
                     tooltip: el.tr(CcLocaleKeys.common_copy),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                   ),
-                if (noteController.text.isNotEmpty)
+                if (_hasNoteText)
                   IconButton(
                     icon: Icon(
                       Icons.clear,
                       size: context.respIconSize(baseSize: 18),
                     ),
                     color: context.ccColorScheme.onSurfaceVariant,
-                    onPressed: () => noteController.clear(),
+                    onPressed: () => widget.noteController.clear(),
                     tooltip: el.tr(CcLocaleKeys.common_clear),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),

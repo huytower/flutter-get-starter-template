@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
+import '../features/transaction/presentation/widgets/transaction_date_picker_dialog.dart';
+
 /// Common helper functions for transaction forms.
 /// State-management agnostic - pure functions only.
 class TransactionFormHelpers {
@@ -11,14 +13,14 @@ class TransactionFormHelpers {
     return formatter.format(int.parse(amount));
   }
 
-  /// Pick a date using the date picker dialog.
+  /// Pick a date using the custom date picker dialog.
   /// Returns the selected date or null if cancelled.
   static Future<DateTime?> pickDate(
     BuildContext context,
     DateTime initialDate,
   ) async {
-    final picked = await showDatePicker(
-      context: context,
+    final picked = await TransactionDatePickerDialog.show(
+      context,
       initialDate: initialDate,
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
