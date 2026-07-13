@@ -60,15 +60,15 @@ class _WeeklyAuditDayDialogContentState
                topRight: Radius.circular(context.respDim(16)),
              ),
            ),
-           child: CcText(
-             el.tr(CcLocaleKeys.profile_weekly_audit_day_hint),
-             maxLines: 1,
-             textStyle: context.ccTextTheme.titleMedium?.copyWith(
-               color: scheme.onPrimary,
-               fontSize: context.respFontSize(14),
-               fontWeight: CcTypographyParams.bold,
-             ),
-           ),
+            child: CcText(
+              el.tr(CcLocaleKeys.profile_weekly_audit_day_hint),
+              maxLines: 3,
+              textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                color: scheme.onPrimary,
+                fontSize: context.respFontSize(14),
+                fontWeight: CcTypographyParams.bold,
+              ),
+            ),
          ),
 
          // ---- Body ----

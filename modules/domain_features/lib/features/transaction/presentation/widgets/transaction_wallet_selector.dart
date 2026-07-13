@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../wallet/domain/entities/wallet_entity.dart';
+import '../../../../core/util/horizontal_fade_scroll_view.dart';
 
 class TransactionWalletSelector extends StatelessWidget {
   final List<WalletEntity> wallets;
@@ -35,57 +36,66 @@ class TransactionWalletSelector extends StatelessWidget {
       );
     }
 
-    return Wrap(
-      spacing: context.respDim(8),
-      runSpacing: context.respDim(8),
-      children: wallets.map((wallet) {
-        final isSelected = wallet.id == selectedWalletId;
-        return CcInkWell(
-          onTap: () => onWalletSelected(wallet.id),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-              vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-            ),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? activeColor.withOpacity(0.1)
-                  : context.ccColorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(context.respDim(8)),
-              border: Border.all(
-                color: isSelected ? activeColor : Colors.transparent,
-                width: context.respDim(2),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ...[
-                  Icon(
-                    Icons.account_balance_wallet,
-                    size: context.respDim(16),
-                    color: isSelected
-                        ? activeColor
-                        : context.ccColorScheme.onSurfaceVariant,
-                  ),
-                  const CcSpaceXS(),
-                ],
-                CcText(
-                  wallet.name,
-                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                    color: isSelected
-                        ? activeColor
-                        : context.ccColorScheme.onSurface,
-                    fontWeight: isSelected
-                        ? FontWeight.w600
-                        : FontWeight.normal,
+    return HorizontalFadeScrollView(
+      height: context.respDim(44),
+      builder: (scrollController) => ListView.builder(
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
+        ),
+        itemCount: wallets.length,
+        itemBuilder: (context, index) {
+          final wallet = wallets[index];
+          final isSelected = wallet.id == selectedWalletId;
+          return Padding(
+            padding: EdgeInsets.only(right: context.respDim(8)),
+            child: CcInkWell(
+              onTap: () => onWalletSelected(wallet.id),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+                  vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+                ),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? activeColor.withOpacity(0.1)
+                      : context.ccColorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(context.respDim(8)),
+                  border: Border.all(
+                    color: isSelected ? activeColor : Colors.transparent,
+                    width: context.respDim(2),
                   ),
                 ),
-              ],
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.account_balance_wallet,
+                      size: context.respDim(16),
+                      color: isSelected
+                          ? activeColor
+                          : context.ccColorScheme.onSurfaceVariant,
+                    ),
+                    const CcSpaceXS(),
+                    CcText(
+                      wallet.name,
+                      textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                        color: isSelected
+                            ? activeColor
+                            : context.ccColorScheme.onSurface,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        },
+      ),
     );
   }
 }
