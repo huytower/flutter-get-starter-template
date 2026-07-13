@@ -59,10 +59,10 @@ class WalletListItem extends StatelessWidget {
                 children: [
                   CcText(
                     title,
-                    textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black, // Đổi sang màu đen
-                    ),
+                  textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: context.ccColorScheme.onSurface,
+                  ),
                   ),
                   if (balance != null)
                     CcText(
@@ -70,8 +70,7 @@ class WalletListItem extends StatelessWidget {
                       textStyle: context.ccTextTheme.bodyLarge?.copyWith(
                         color: isNegativeValue
                             ? context.ccColorScheme.error
-                            : Colors
-                                  .black, // Đổi sang màu đen cho giá trị dương
+                            : context.ccColorScheme.onSurface,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -88,7 +87,7 @@ class WalletListItem extends StatelessWidget {
                   ),
                   child: Icon(
                     Icons.more_vert,
-                    color: Colors.black.withOpacity(0.4),
+                    color: context.ccColorScheme.onSurfaceVariant,
                     size: context.respIconSize(baseSize: 20),
                   ),
                 ),

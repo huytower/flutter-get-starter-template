@@ -1,3 +1,4 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 /// A fixed-height horizontal scroll area that fades its edges based on
@@ -64,10 +65,10 @@ class _HorizontalFadeScrollViewState extends State<HorizontalFadeScrollView> {
         begin: Alignment.centerLeft,
         end: Alignment.centerRight,
         colors: [
-          _fadeLeft ? Colors.transparent : Colors.white,
-          Colors.white,
-          Colors.white,
-          _fadeRight ? Colors.transparent : Colors.white,
+          _fadeLeft ? Colors.transparent : context.ccColorScheme.surface,
+          context.ccColorScheme.surface,
+          context.ccColorScheme.surface,
+          _fadeRight ? Colors.transparent : context.ccColorScheme.surface,
         ],
         stops: const [0.0, 0.08, 0.88, 1.0],
       ).createShader(bounds),

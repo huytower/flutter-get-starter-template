@@ -33,8 +33,8 @@ class MoneyKeypadPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.1))),
+        color: context.ccColorScheme.surfaceContainerHighest,
+        border: Border(top: BorderSide(color: context.ccColorScheme.outlineVariant.withOpacity(0.1))),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

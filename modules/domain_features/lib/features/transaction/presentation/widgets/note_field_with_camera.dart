@@ -24,9 +24,9 @@ class NoteFieldWithCamera extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       height: 48,
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
+        color: context.ccColorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+        border: Border.all(color: context.ccColorScheme.outlineVariant.withOpacity(0.2)),
       ),
       child: Row(
         children: [
@@ -40,7 +40,7 @@ class NoteFieldWithCamera extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: hintText ?? el.tr(CcLocaleKeys.transaction_note_hint),
                 hintStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[400],
+                  color: CcBaseColors.gray500,
                   fontSize: context.respFontSize(13),
                 ),
                 border: InputBorder.none,
@@ -55,7 +55,7 @@ class NoteFieldWithCamera extends StatelessWidget {
             child: Icon(
               Icons.camera_alt_outlined,
               size: 20,
-              color: Colors.grey[500],
+              color: context.ccColorScheme.onSurfaceVariant,
             ),
           ),
         ],

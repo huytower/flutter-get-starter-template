@@ -197,11 +197,11 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                           ),
                           child: CcText(
                             el.tr(CcLocaleKeys.category_income_settings_title),
-                            textStyle: context.ccTextTheme.titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green.shade600,
-                                ),
+                             textStyle: context.ccTextTheme.titleMedium
+                                 ?.copyWith(
+                                   fontWeight: FontWeight.bold,
+                                   color: context.ccColorScheme.primary,
+                                 ),
                           ),
                         );
                       }
@@ -213,8 +213,8 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                         group: group,
                         categories: cats,
                         isEnabled: _isEnabled,
-                        onToggle: _toggle,
-                        accentColor: Colors.green.shade600,
+                      onToggle: _toggle,
+                      accentColor: context.ccColorScheme.primary,
                       );
                     },
                   ),

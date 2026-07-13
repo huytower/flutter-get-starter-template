@@ -344,15 +344,15 @@ class _IncomeCategoryFormSheetState extends State<_IncomeCategoryFormSheet> {
                   width: 46,
                   height: 46,
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? scheme.primary
-                        : const Color(0xFFF1F3F5),
+                     color: isSelected
+                         ? scheme.primary
+                         : context.ccColorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     icon,
                     size: 22,
-                    color: isSelected ? Colors.white : Colors.grey[600],
+                    color: isSelected ? context.ccColorScheme.onPrimary : context.ccColorScheme.onSurfaceVariant,
                   ),
                 ),
               );
@@ -376,8 +376,8 @@ class _IncomeCategoryFormSheetState extends State<_IncomeCategoryFormSheet> {
                 el.tr(CcLocaleKeys.common_save),
                 align: Alignment.center,
                 textAlign: TextAlign.center,
-                textStyle: const TextStyle(
-                  color: Colors.white,
+                textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                  color: context.ccColorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),

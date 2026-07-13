@@ -37,7 +37,9 @@
     "expense": "Expense",
     "common_weekday_names": "Mon|Tue|Wed|Thu|Fri|Sat|Sun",
     "press_back_again_to_exit": "Press back again to exit",
-    "add_source": "Add Source"
+    "add_source": "Add Source",
+    "copy": "Copy",
+    "clear": "Clear"
   },
   "auth": {
     "login": "Login",
@@ -116,7 +118,7 @@
   "nav": {
     "home": "Home",
     "transaction": "Transaction",
-    "budget_allocation": "Allocation",
+    "budget_allocation": "Budget Allocation",
     "dashboard": "Dashboard",
     "quick_test": "Quick Test",
     "quick_test_page": "Quick Testing Page",
@@ -248,6 +250,7 @@
     "deficit": "Deficit {amount}",
     "confirm": "Confirm Reconciliation",
     "success": "Reconciliation confirmed",
+    "success_message": "Congratulations! You have completed\nreconciliation #{count} successfully.",
     "history": "Reconciliation History",
     "undo": "Undo",
     "undo_title": "Undo Reconciliation",

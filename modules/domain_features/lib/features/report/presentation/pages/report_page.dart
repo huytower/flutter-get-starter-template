@@ -118,9 +118,7 @@ class ReportPage extends CcGetView<ReportController> {
   @override
   Widget onPageBodyWrapper(BuildContext context, Widget body) {
     return Container(
-      color: CcContextExtension(context).isDarkMode
-          ? const Color(0xFF1A1A1A)
-          : context.ccColorScheme.background,
+      color: context.ccColorScheme.background,
       child: body,
     );
   }

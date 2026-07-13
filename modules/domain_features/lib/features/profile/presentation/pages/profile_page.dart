@@ -1,6 +1,7 @@
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,7 @@ import '../../../../core/di/di.dart';
 import '../../../category/export_category.dart';
 import '../get_x/profile_controller.dart';
 import '../widgets/birth_year_dialog.dart';
+import '../widgets/language_selection_dialog.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_group.dart';
 import '../widgets/profile_settings_tile.dart';
@@ -72,6 +74,13 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     if (picked != null) await _c.setWeeklyAuditDay(picked - 1);
+  }
+
+  Future<void> _pickLanguage(BuildContext context) async {
+    final picked = await LanguageSelectionDialog.show(context);
+    if (picked != null && context.mounted) {
+      await el.EasyLocalization.of(context)!.setLocale(picked);
+    }
   }
 
   Future<void> _toggleTheme(bool isDarkMode) async {
@@ -213,7 +222,10 @@ class _ProfilePageState extends State<ProfilePage> {
       ProfileSettingsTile(
         icon: Icons.language_rounded,
         label: el.tr(CcLocaleKeys.settings_language),
-        trailingLabel: el.tr(CcLocaleKeys.settings_language_vietnamese),
+        trailingLabel: context.locale.languageCode == 'vi'
+            ? el.tr(CcLocaleKeys.settings_language_vietnamese)
+            : el.tr(CcLocaleKeys.settings_language_english),
+        onTap: () => _pickLanguage(context),
       ),
       ProfileSettingsTile(
         icon: Icons.attach_money_rounded,

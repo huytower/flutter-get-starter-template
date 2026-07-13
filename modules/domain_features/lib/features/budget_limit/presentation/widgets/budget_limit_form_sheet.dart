@@ -245,7 +245,7 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
                       CcText(
                         el.tr(CcLocaleKeys.budget_category),
                         textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                          color: Colors.grey[700],
+                          color: context.ccColorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.bold,
                           fontSize: context.respFontSize(12),
                         ),
@@ -287,9 +287,9 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
                                         width: context.respDim(52),
                                         height: context.respDim(52),
                                         decoration: BoxDecoration(
-                                          color: isSelected
-                                              ? context.ccColorScheme.primary
-                                              : const Color(0xFFF1F3F5),
+                                           color: isSelected
+                                               ? context.ccColorScheme.primary
+                                               : context.ccColorScheme.surfaceVariant,
                                           borderRadius: BorderRadius.circular(
                                             14,
                                           ),
@@ -304,8 +304,8 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
                                               baseSize: 22,
                                             ),
                                             color: isSelected
-                                                ? Colors.white
-                                                : Colors.grey[600],
+                                                ? context.ccColorScheme.onPrimary
+                                                : context.ccColorScheme.onSurfaceVariant,
                                           ),
                                         ),
                                       ),
@@ -328,7 +328,7 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
                                                       ? context
                                                             .ccColorScheme
                                                             .primary
-                                                      : Colors.grey[700],
+                                                      : context.ccColorScheme.onSurfaceVariant,
                                                 ),
                                         child: Text(
                                           el.tr(cat.nameKey),
@@ -355,14 +355,14 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
                       Icon(
                         Icons.lock_clock_outlined,
                         size: context.respIconSize(baseSize: 16),
-                        color: Colors.grey[600],
+                        color: context.ccColorScheme.onSurfaceVariant,
                       ),
                       const CcSpaceSM(),
                       Expanded(
                         child: CcText(
                           el.tr(CcLocaleKeys.budget_limit_locked),
                           textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
+                            color: context.ccColorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -407,8 +407,8 @@ class _BudgetLimitFormSheetState extends State<BudgetLimitFormSheet> {
                       el.tr(CcLocaleKeys.common_save),
                       align: Alignment.center,
                       textAlign: TextAlign.center,
-                      textStyle: const TextStyle(
-                        color: Colors.white,
+                      textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                        color: context.ccColorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

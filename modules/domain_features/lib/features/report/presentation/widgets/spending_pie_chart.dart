@@ -79,7 +79,7 @@ class _SpendingPieChartState extends State<SpendingPieChart> {
         title: isTouched ? '${slice.percent}%' : '',
         radius: radius,
         titleStyle: context.ccTextTheme.labelSmall?.copyWith(
-          color: Colors.white,
+          color: context.ccColorScheme.onPrimary,
           fontWeight: FontWeight.bold,
         ),
       );

@@ -29,7 +29,7 @@ class ProfileSettingsTile extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: context.respDim(16),
-          vertical: context.respDim(14),
+          vertical: context.respDim(8),
         ),
         child: Row(
           children: [

@@ -2,8 +2,6 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-/// Reusable quick date selection row with "Today" and "Yesterday" buttons.
-/// State-management agnostic widget - can be used with any state management approach.
 class QuickDateRow extends StatelessWidget {
   final DateTime selectedDate;
   final ValueChanged<DateTime> onDateSelected;
@@ -20,12 +18,14 @@ class QuickDateRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
     return Row(
       children: [
         CcText(
           el.tr(CcLocaleKeys.transaction_time),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: Colors.grey[700],
+            color: scheme.onSurfaceVariant,
             fontWeight: FontWeight.bold,
             fontSize: context.respFontSize(CcTypographyParams.labelMedium),
           ),
@@ -45,7 +45,11 @@ class QuickDateRow extends StatelessWidget {
         const CcSpaceSM(),
         GestureDetector(
           onTap: onCalendarTap,
-          child: Icon(Icons.calendar_month, size: 18, color: Colors.grey[400]),
+          child: Icon(
+            Icons.calendar_month,
+            size: context.respIconSize(baseSize: 18),
+            color: scheme.outline,
+          ),
         ),
       ],
     );
@@ -59,22 +63,30 @@ class QuickDateRow extends StatelessWidget {
     final isSelected = _isSameDay(selectedDate, date);
     return GestureDetector(
       onTap: () => onDateSelected(date),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
+          vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+        ),
         decoration: BoxDecoration(
           color: isSelected
               ? activeColor.withOpacity(0.15)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(context.respDim(20)),
           border: Border.all(
-            color: isSelected ? activeColor : Colors.grey.withOpacity(0.3),
+            color: isSelected
+                ? activeColor
+                : context.ccColorScheme.outlineVariant,
             width: isSelected ? 1.5 : 1,
           ),
         ),
         child: CcText(
           label,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: isSelected ? activeColor : Colors.grey[700],
+            color: isSelected
+                ? activeColor
+                : context.ccColorScheme.onSurfaceVariant,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: context.respFontSize(CcTypographyParams.labelMedium),
           ),

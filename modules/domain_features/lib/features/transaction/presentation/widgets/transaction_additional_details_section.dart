@@ -1,7 +1,8 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
+import 'package:theme/export_theme.dart';
 import 'quick_date_row.dart';
 
 class TransactionAdditionalDetailsSection extends StatelessWidget {
@@ -62,8 +63,41 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
           CcTextField(
             controller: noteController,
             hintText: el.tr(CcLocaleKeys.transaction_note_hint),
-            maxLines: 3,
+            maxLines: 1,
             onTap: onNoteTap,
+            suffixIcon: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (noteController.text.isNotEmpty)
+                  IconButton(
+                    icon: Icon(
+                      Icons.copy,
+                      size: context.respIconSize(baseSize: 18),
+                    ),
+                    color: context.ccColorScheme.onSurfaceVariant,
+                    onPressed: () {
+                      Clipboard.setData(
+                        ClipboardData(text: noteController.text),
+                      );
+                    },
+                    tooltip: el.tr(CcLocaleKeys.common_copy),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                if (noteController.text.isNotEmpty)
+                  IconButton(
+                    icon: Icon(
+                      Icons.clear,
+                      size: context.respIconSize(baseSize: 18),
+                    ),
+                    color: context.ccColorScheme.onSurfaceVariant,
+                    onPressed: () => noteController.clear(),
+                    tooltip: el.tr(CcLocaleKeys.common_clear),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+              ],
+            ),
           ),
         ],
       ],

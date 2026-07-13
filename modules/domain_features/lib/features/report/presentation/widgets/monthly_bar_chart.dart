@@ -58,7 +58,7 @@ class MonthlyBarChart extends StatelessWidget {
                     return BarTooltipItem(
                       formatVndShort(rod.toY),
                       TextStyle(
-                        color: Colors.white,
+                        color: context.ccColorScheme.onPrimary,
                         fontWeight: FontWeight.w600,
                         fontSize: context.respFontSize(
                           CcTypographyParams.labelMedium,

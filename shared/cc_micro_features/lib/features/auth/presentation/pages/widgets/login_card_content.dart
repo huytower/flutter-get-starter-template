@@ -62,7 +62,7 @@ class LoginCardContent extends StatelessWidget {
             context.ccColorScheme.primary,
             context.ccColorScheme.primary,
           ],
-          textColor: Colors.white,
+          textColor: CcBaseColors.white100,
         ),
 
         const CcSpaceLG(),

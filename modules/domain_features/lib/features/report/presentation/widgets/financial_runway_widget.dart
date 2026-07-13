@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../domain/entities/financial_runway_entity.dart';
 
@@ -94,7 +95,7 @@ class FinancialRunwayWidget extends StatelessWidget {
         return (scheme.primary, scheme.primaryContainer.withValues(alpha: 0.4));
       case FinancialRunwayStatus.safe:
         // Use a yellowish/orange color for 'safe' (3-6 months)
-        final warningColor = Colors.orange;
+        final warningColor = PrjColors.warning;
         return (warningColor, warningColor.withValues(alpha: 0.1));
       case FinancialRunwayStatus.caution:
         return (scheme.error, scheme.errorContainer.withValues(alpha: 0.4));

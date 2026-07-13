@@ -26,7 +26,7 @@ class TransactionSeeMoreSection extends StatelessWidget {
               CcText(
                 'Xem thêm', // Consider localizing this if a key exists
                 textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                  color: Colors.grey[700],
+                  color: context.ccColorScheme.onSurfaceVariant,
                   fontSize: context.respFontSize(13),
                 ),
               ),
@@ -35,7 +35,7 @@ class TransactionSeeMoreSection extends StatelessWidget {
                 isExpanded
                     ? Icons.keyboard_arrow_up
                     : Icons.keyboard_arrow_down,
-                color: Colors.grey[600],
+                color: context.ccColorScheme.onSurfaceVariant,
               ),
             ],
           ),

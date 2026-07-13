@@ -18,16 +18,16 @@ class ProfileLevelBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.workspace_premium_rounded,
             size: 14,
-            color: Colors.white,
+            color: context.ccColorScheme.onPrimary,
           ),
           const SizedBox(width: 4),
           CcText(
             label,
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: Colors.white,
+              color: context.ccColorScheme.onPrimary,
               fontWeight: FontWeight.bold,
             ),
           ),

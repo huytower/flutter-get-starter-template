@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/util/horizontal_fade_scroll_view.dart';
@@ -21,7 +22,7 @@ class CategorySelectionSection extends StatefulWidget {
   const CategorySelectionSection({
     super.key,
     this.onCategorySelected,
-    this.activeColor = const Color(0xFF13C07F),
+    this.activeColor = PrjColors.primary,
     this.type = CategoryType.expense,
     this.autoSelectFirst = false,
   });
@@ -74,7 +75,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
           child: CcText(
             el.tr(CcLocaleKeys.transaction_category),
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: Colors.grey[700],
+              color: context.ccColorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
               fontSize: context.respFontSize(CcTypographyParams.labelMedium),
             ),
@@ -125,7 +126,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? widget.activeColor
-                          : const Color(0xFFF1F3F5),
+                          : context.ccColorScheme.surfaceVariant,
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Center(
@@ -135,7 +136,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
                           fontFamily: category.iconFamily,
                         ),
                         size: context.respIconSize(baseSize: 22),
-                        color: isSelected ? Colors.white : Colors.grey[600],
+                        color: isSelected ? context.ccColorScheme.onPrimary : context.ccColorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -154,7 +155,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
                                   : FontWeight.normal,
                               color: isSelected
                                   ? widget.activeColor
-                                  : Colors.grey[700],
+                                  : context.ccColorScheme.onSurfaceVariant,
                             ),
                     child: CcText(
                       el.tr(category.nameKey),

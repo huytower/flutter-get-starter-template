@@ -57,6 +57,8 @@ class CodegenLoader extends AssetLoader {
       "common_weekday_names": "Mon|Tue|Wed|Thu|Fri|Sat|Sun",
       "press_back_again_to_exit": "Press back again to exit",
       "add_source": "Add Source",
+      "copy": "Copy",
+      "clear": "Clear",
     },
     "auth": {
       "login": "Login",
@@ -128,6 +130,7 @@ class CodegenLoader extends AssetLoader {
       "title": "Settings",
       "language": "Language",
       "language_vietnamese": "Vietnamese",
+      "language_english": "English",
       "theme": "Theme",
       "theme_static": "Static",
       "notifications": "Notifications",
@@ -138,7 +141,7 @@ class CodegenLoader extends AssetLoader {
     "nav": {
       "home": "Home",
       "transaction": "Transaction",
-      "budget_allocation": "Allocation",
+      "budget_allocation": "Budget Allocation",
       "dashboard": "Dashboard",
       "quick_test": "Quick Test",
       "quick_test_page": "Quick Testing Page",
@@ -456,6 +459,8 @@ class CodegenLoader extends AssetLoader {
       "or": "HOẶC",
       "press_back_again_to_exit": "Nhấn lại để thoát",
       "add_source": "Thêm nguồn",
+      "copy": "Sao chép",
+      "clear": "Xóa",
     },
     "auth": {
       "login": "Đăng nhập",
@@ -529,6 +534,7 @@ class CodegenLoader extends AssetLoader {
       "title": "Cài đặt",
       "language": "Ngôn ngữ",
       "language_vietnamese": "Tiếng Việt",
+      "language_english": "Tiếng Anh",
       "theme": "Giao diện",
       "theme_static": "Tĩnh",
       "notifications": "Thông báo",
@@ -854,6 +860,8 @@ abstract class CcLocaleKeys {
   static const common_press_back_again_to_exit =
       'common.press_back_again_to_exit';
   static const common_add_source = 'common.add_source';
+  static const common_copy = 'common.copy';
+  static const common_clear = 'common.clear';
   static const common_weekday_names = 'common.common_weekday_names';
 
   static const auth_login = 'auth.login';
@@ -919,6 +927,7 @@ abstract class CcLocaleKeys {
   static const settings_title = 'settings.title';
   static const settings_language = 'settings.language';
   static const settings_language_vietnamese = 'settings.language_vietnamese';
+  static const settings_language_english = 'settings.language_english';
   static const settings_theme = 'settings.theme';
   static const settings_theme_static = 'settings.theme_static';
   static const settings_notifications = 'settings.notifications';
@@ -1045,6 +1054,8 @@ abstract class CcLocaleKeys {
   static const reconciliation_deficit = 'reconciliation.deficit';
   static const reconciliation_confirm = 'reconciliation.confirm';
   static const reconciliation_success = 'reconciliation.success';
+  static const reconciliation_success_message =
+      'reconciliation.success_message';
   static const reconciliation_history = 'reconciliation.history';
   static const reconciliation_undo = 'reconciliation.undo';
   static const reconciliation_undo_title = 'reconciliation.undo_title';

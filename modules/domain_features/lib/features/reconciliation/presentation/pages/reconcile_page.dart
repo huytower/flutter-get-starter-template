@@ -95,13 +95,14 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
           return Center(
             child: SizedBox(
               width: size.width * 0.9,
-              height: size.height * 0.2,
+              height: size.height * 0.3,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: CcRewardCompletionBanner(
-                  message:
-                      'Chúc mừng! Bạn đã hoàn thành\n'
-                      'lần đối soát thứ $count thành công.',
+                  message: el.tr(
+                    CcLocaleKeys.reconciliation_success_message,
+                    namedArgs: {'count': count.toString()},
+                  ),
                   onClose: () => Navigator.of(context).pop(),
                 ),
               ),
@@ -330,8 +331,8 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
               : Text(
                   el.tr(CcLocaleKeys.reconciliation_confirm),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: context.ccTextTheme.labelMedium?.copyWith(
+                    color: context.ccColorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

@@ -37,7 +37,9 @@
     "common_weekday_names": "Thứ Hai|Thứ Ba|Thứ Tư|Thứ Năm|Thứ Sáu|Thứ Bảy|Chủ Nhật",
     "or": "HOẶC",
     "press_back_again_to_exit": "Nhấn lại để thoát",
-    "add_source": "Thêm nguồn"
+    "add_source": "Thêm nguồn",
+    "copy": "Sao chép",
+    "clear": "Xóa"
   },
   "auth": {
     "login": "Đăng nhập",
@@ -248,6 +250,7 @@
     "deficit": "Hao hụt {amount}",
     "confirm": "Xác nhận đối soát",
     "success": "Đã xác nhận đối soát",
+    "success_message": "Chúc mừng! Bạn đã hoàn thành\nlần đối soát thứ {count} thành công.",
     "history": "Lịch sử đối soát",
     "undo": "Hoàn tác",
     "undo_title": "Hoàn tác đối soát",

@@ -157,7 +157,7 @@ class BudgetLimitGridCard extends StatelessWidget {
             left: -1,
             child: _EditBadge(
               icon: Icons.remove,
-              color: Colors.red,
+              color: context.ccColorScheme.error,
               onTap: onDelete,
             ),
           ),
@@ -194,10 +194,10 @@ class _EditBadge extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 1.5),
-          boxShadow: const [BoxShadow(color: Colors.black38, blurRadius: 4)],
+          border: Border.all(color: context.ccColorScheme.onPrimary, width: 1.5),
+          boxShadow: [BoxShadow(color: context.ccColorScheme.onSurface.withOpacity(0.38), blurRadius: 4)],
         ),
-        child: Icon(icon, color: Colors.white, size: 13),
+        child: Icon(icon, color: context.ccColorScheme.onPrimary, size: 13),
       ),
     );
   }

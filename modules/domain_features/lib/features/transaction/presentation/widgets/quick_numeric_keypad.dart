@@ -23,8 +23,8 @@ class QuickNumericKeypad extends StatelessWidget {
         vertical: context.respPadding(CcPaddingParams.PAGE_XS),
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.1))),
+        color: context.ccColorScheme.surfaceContainerHighest,
+        border: Border(top: BorderSide(color: context.ccColorScheme.outlineVariant.withOpacity(0.1))),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -57,11 +57,11 @@ class QuickNumericKeypad extends StatelessWidget {
         height: context.respDim(50),
         margin: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.ccColorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: context.ccColorScheme.onSurface.withOpacity(0.02),
               blurRadius: 2,
               offset: const Offset(0, 1),
             ),
@@ -69,7 +69,7 @@ class QuickNumericKeypad extends StatelessWidget {
         ),
         alignment: Alignment.center,
         child: isDelete
-            ? Icon(Icons.backspace_outlined, color: Colors.grey[700], size: 20)
+            ? Icon(Icons.backspace_outlined, color: context.ccColorScheme.onSurfaceVariant, size: 20)
             : CcText(
                 label,
                 align: Alignment.center,
@@ -77,7 +77,7 @@ class QuickNumericKeypad extends StatelessWidget {
                 textStyle: context.ccTextTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   fontSize: context.respFontSize(18),
-                  color: label == '000' ? activeColor : Colors.black87,
+                  color: label == '000' ? activeColor : context.ccColorScheme.onSurface,
                 ),
               ),
       ),

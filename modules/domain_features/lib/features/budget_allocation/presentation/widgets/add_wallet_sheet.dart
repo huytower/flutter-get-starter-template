@@ -239,7 +239,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                         align: Alignment.center,
                         textAlign: TextAlign.center,
                         textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                          color: Colors.white,
+                          color: context.ccColorScheme.onPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -277,7 +277,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         CcText(
           el.tr(CcLocaleKeys.wallet_initial_balance),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: Colors.grey[700],
+            color: context.ccColorScheme.onSurfaceVariant,
             fontWeight: FontWeight.bold,
             fontSize: context.respFontSize(12),
           ),
@@ -286,11 +286,11 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           height: 54,
-          decoration: BoxDecoration(
-            color: const Color(0xFFF8F9FA),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.withOpacity(0.2)),
-          ),
+            decoration: BoxDecoration(
+              color: context.ccColorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: context.ccColorScheme.outlineVariant.withOpacity(0.2)),
+            ),
           alignment: Alignment.center,
           child: CcText(
             '${TransactionFormHelpers.formatAmount(_amountStr)} đ',
@@ -307,7 +307,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         CcText(
           el.tr(CcLocaleKeys.wallet_balance_locked_hint),
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
-            color: Colors.grey[500],
+            color: CcBaseColors.gray500,
             fontSize: context.respFontSize(11),
           ),
         ),
@@ -332,9 +332,9 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               duration: const Duration(milliseconds: 180),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? context.ccColorScheme.primary
-                    : const Color(0xFFF1F3F5),
+                 color: isSelected
+                     ? context.ccColorScheme.primary
+                     : context.ccColorScheme.surfaceVariant,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
@@ -343,13 +343,13 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                   Icon(
                     walletIconFor(type),
                     size: 16,
-                    color: isSelected ? Colors.white : Colors.grey[600],
+                    color: isSelected ? context.ccColorScheme.onPrimary : context.ccColorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 6),
                   CcText(
                     label,
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      color: isSelected ? Colors.white : Colors.grey[800],
+                      color: isSelected ? context.ccColorScheme.onPrimary : context.ccColorScheme.onSurfaceVariant,
                       fontWeight: isSelected
                           ? FontWeight.bold
                           : FontWeight.normal,

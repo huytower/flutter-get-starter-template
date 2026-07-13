@@ -1,5 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 
 class TransactionSubmitButton extends StatelessWidget {
   final String text;
@@ -25,6 +26,7 @@ class TransactionSubmitButton extends StatelessWidget {
       isEnable: isEnabled && !isSubmitting,
       allowShowLoading: isSubmitting,
       bgColor: [activeColor, activeColor],
+      textColor: PrjColors.onPrimary,
       width: double.infinity,
     );
   }
