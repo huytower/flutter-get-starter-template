@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/util/gradient_app_bar.dart';
-import '../../../../core/util/icon_utils.dart';
 import '../../data/datasources/local/category_seed.dart';
+import '../widgets/category_group_section.dart';
 
 class CategorySettingsPage extends StatefulWidget {
   const CategorySettingsPage({super.key});
@@ -25,7 +25,6 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
   Map<String, List<CategoryEntity>> _incomeByGroup = const {};
 
   /// Pending toggle state: categoryId → isEnabled.
-  /// Only contains entries that differ from the persisted value.
   final Map<String, bool> _pending = {};
 
   bool _isLoading = true;
@@ -65,9 +64,9 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
       _pending.containsKey(cat.id) ? _pending[cat.id]! : cat.isEnabled;
 
   bool get _hasAnyEnabled => [
-    ..._byGroup.values.expand((c) => c),
-    ..._incomeByGroup.values.expand((c) => c),
-  ].any(_isEnabled);
+        ..._byGroup.values.expand((c) => c),
+        ..._incomeByGroup.values.expand((c) => c),
+      ].any(_isEnabled);
 
   void _toggle(CategoryEntity cat) {
     setState(() {
@@ -101,7 +100,6 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
       context: context,
       message: el.tr(CcLocaleKeys.category_settings_saved),
     );
-    // Small delay so the snackbar is visible before the page dismisses.
     await Future.delayed(const Duration(milliseconds: 600));
     if (mounted) Navigator.of(context).pop(true);
   }
@@ -150,37 +148,17 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                 Expanded(
                   child: ListView.builder(
                     padding: EdgeInsets.only(bottom: context.respDim(100)),
-                    // +2: one header for expense, one for income
-                    itemCount:
-                        1 +
-                        _groups.length +
-                        1 +
-                        CategorySeed.incomeGroups.length,
+                    itemCount: 1 + _groups.length + 1 + CategorySeed.incomeGroups.length,
                     itemBuilder: (context, index) {
                       if (index == 0) {
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            top: context.respDim(8),
-                            left: context.respPadding(CcPaddingParams.PAGE_SM),
-                            right: context.respPadding(CcPaddingParams.PAGE_SM),
-                            bottom: context.respDim(4),
-                          ),
-                          child: CcText(
-                            el.tr(CcLocaleKeys.category_expense_settings_title),
-                            textStyle: context.ccTextTheme.titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: context.ccColorScheme.primary,
-                                ),
-                          ),
-                        );
+                        return _buildHeader(el.tr(CcLocaleKeys.category_expense_settings_title));
                       }
                       final expenseIndex = index - 1;
                       if (expenseIndex < _groups.length) {
                         final group = _groups[expenseIndex];
                         final cats = _byGroup[group.id] ?? [];
                         if (cats.isEmpty) return const SizedBox.shrink();
-                        return _GroupSection(
+                        return CategoryGroupSection(
                           group: group,
                           categories: cats,
                           isEnabled: _isEnabled,
@@ -188,33 +166,18 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
                         );
                       }
                       if (expenseIndex == _groups.length) {
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            top: context.respDim(24),
-                            left: context.respPadding(CcPaddingParams.PAGE_SM),
-                            right: context.respPadding(CcPaddingParams.PAGE_SM),
-                            bottom: context.respDim(4),
-                          ),
-                          child: CcText(
-                            el.tr(CcLocaleKeys.category_income_settings_title),
-                             textStyle: context.ccTextTheme.titleMedium
-                                 ?.copyWith(
-                                   fontWeight: FontWeight.bold,
-                                   color: context.ccColorScheme.primary,
-                                 ),
-                          ),
-                        );
+                        return _buildHeader(el.tr(CcLocaleKeys.category_income_settings_title), topPadding: 24);
                       }
                       final incomeIndex = expenseIndex - _groups.length - 1;
                       final group = CategorySeed.incomeGroups[incomeIndex];
                       final cats = _incomeByGroup[group.id] ?? [];
                       if (cats.isEmpty) return const SizedBox.shrink();
-                      return _GroupSection(
+                      return CategoryGroupSection(
                         group: group,
                         categories: cats,
                         isEnabled: _isEnabled,
-                      onToggle: _toggle,
-                      accentColor: context.ccColorScheme.primary,
+                        onToggle: _toggle,
+                        accentColor: context.ccColorScheme.primary,
                       );
                     },
                   ),
@@ -253,146 +216,20 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
             ),
     );
   }
-}
 
-class _GroupSection extends StatelessWidget {
-  final CategoryGroupEntity group;
-  final List<CategoryEntity> categories;
-  final bool Function(CategoryEntity) isEnabled;
-  final void Function(CategoryEntity) onToggle;
-  final Color? accentColor;
-
-  const _GroupSection({
-    required this.group,
-    required this.categories,
-    required this.isEnabled,
-    required this.onToggle,
-    this.accentColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildHeader(String title, {double topPadding = 8}) {
     return Padding(
       padding: EdgeInsets.only(
-        top: context.respDim(16),
+        top: context.respDim(topPadding),
+        left: context.respPadding(CcPaddingParams.PAGE_SM),
+        right: context.respPadding(CcPaddingParams.PAGE_SM),
         bottom: context.respDim(4),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-            ),
-            child: CcText(
-              el.tr(group.nameKey),
-              textStyle: context.ccTextTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: context.ccColorScheme.onSurface,
-              ),
-            ),
-          ),
-          const CcSpaceSM(),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(
-              horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-            ),
-            child: Row(
-              children: categories.map((cat) {
-                final enabled = isEnabled(cat);
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: _CategoryChip(
-                    category: cat,
-                    enabled: enabled,
-                    onTap: () => onToggle(cat),
-                    accentColor: accentColor,
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _CategoryChip extends StatelessWidget {
-  final CategoryEntity category;
-  final bool enabled;
-  final VoidCallback onTap;
-  final Color? accentColor;
-
-  const _CategoryChip({
-    required this.category,
-    required this.enabled,
-    required this.onTap,
-    this.accentColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final primary = accentColor ?? context.ccColorScheme.primary;
-    final chipBg = enabled
-        ? primary.withOpacity(0.15)
-        : context.ccColorScheme.surfaceContainerHighest;
-    final iconColor = enabled
-        ? primary
-        : context.ccColorScheme.onSurfaceVariant;
-    final textColor = enabled
-        ? primary
-        : context.ccColorScheme.onSurfaceVariant;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respDim(12),
-          vertical: context.respDim(8),
-        ),
-        decoration: BoxDecoration(
-          color: chipBg,
-          borderRadius: BorderRadius.circular(context.respDim(24)),
-          border: Border.all(
-            color: enabled ? primary.withOpacity(0.4) : Colors.transparent,
-            width: 1.5,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 150),
-              child: Icon(
-                enabled
-                    ? Icons.check_box_rounded
-                    : Icons.check_box_outline_blank_rounded,
-                key: ValueKey(enabled),
-                size: context.respIconSize(baseSize: 16),
-                color: iconColor,
-              ),
-            ),
-            SizedBox(width: context.respDim(6)),
-            Icon(
-              iconDataFromCode(
-                category.iconCode,
-                fontFamily: category.iconFamily,
-              ),
-              size: context.respIconSize(baseSize: 14),
-              color: iconColor,
-            ),
-            SizedBox(width: context.respDim(4)),
-            CcText(
-              el.tr(category.nameKey),
-              textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                color: textColor,
-                fontWeight: enabled ? FontWeight.w600 : FontWeight.normal,
-              ),
-            ),
-          ],
+      child: CcText(
+        title,
+        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+          color: context.ccColorScheme.primary,
         ),
       ),
     );
