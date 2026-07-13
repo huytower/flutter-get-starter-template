@@ -39,7 +39,7 @@ class ReconciliationController extends CcGetController {
   final RxMap<String, int> _actuals = <String, int>{}.obs;
 
   /// Wallet ids where the user explicitly acknowledged creating an adjustment.
-  final _acknowledged = <String>{};
+  final RxSet<String> _acknowledged = <String>{}.obs;
 
   final RxInt systemTotal = 0.obs;
   final RxInt actualTotal = 0.obs;

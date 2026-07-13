@@ -129,9 +129,6 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                     children: controller.balances.map((balance) {
                       return WalletReconcileTile(
                         balance: balance,
-                        isAcknowledged: controller.isAcknowledged(
-                          balance.wallet.id,
-                        ),
                         onActualChanged: (value) =>
                             controller.setActual(balance.wallet.id, value),
                         onAcknowledge: () =>
