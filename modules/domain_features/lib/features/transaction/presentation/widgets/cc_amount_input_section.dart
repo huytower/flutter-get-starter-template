@@ -61,7 +61,7 @@ class CcAmountInputSection extends StatelessWidget {
                 color: isKeypadVisible
                     ? accent
                     : context.ccColorScheme.outlineVariant,
-                width: isKeypadVisible ? 1.5 : 1,
+                width: isKeypadVisible ? 1 : 0.4,
               ),
             ),
             alignment: Alignment.center,
@@ -79,7 +79,7 @@ class CcAmountInputSection extends StatelessWidget {
             ),
           ),
         ),
-        const CcSpaceXS(),
+        const CcSpaceSM(),
         _buildQuickAmounts(context, accent),
       ],
     );

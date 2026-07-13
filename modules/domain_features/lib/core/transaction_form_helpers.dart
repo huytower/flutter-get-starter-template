@@ -19,11 +19,12 @@ class TransactionFormHelpers {
     BuildContext context,
     DateTime initialDate,
   ) async {
+    final now = DateTime.now();
     final picked = await TransactionDatePickerDialog.show(
       context,
       initialDate: initialDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
+      firstDate: DateTime(now.year, now.month - 6, now.day),
+      lastDate: now,
     );
     return picked;
   }
