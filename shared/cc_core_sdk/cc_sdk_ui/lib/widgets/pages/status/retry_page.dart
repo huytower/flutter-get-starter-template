@@ -1,14 +1,19 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 /// Retry page displayed when an action fails and can be retried.
 /// Shows a retry button to attempt the action again.
 class RetryPage extends StatelessWidget {
-  const RetryPage({super.key, this.message, this.onRetry});
+  const RetryPage({
+    super.key,
+    this.message,
+    this.onRetry,
+    this.retryText,
+  });
 
   final String? message;
   final VoidCallback? onRetry;
+  final String? retryText;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +29,7 @@ class RetryPage extends StatelessWidget {
             ),
             const CcSpaceLG(),
             CcText(
-              message ?? el.tr(CcLocaleKeys.app_error_general),
+              message ?? 'An error occurred',
               textStyle: context.ccTextTheme.bodyLarge?.copyWith(
                 color: context.ccColorScheme.error,
               ),
@@ -34,7 +39,7 @@ class RetryPage extends StatelessWidget {
               const CcSpaceXL(),
               CcBaseBtn(
                 onTap: onRetry,
-                title: el.tr(CcLocaleKeys.app_error_retry),
+                title: retryText ?? 'Retry',
               ),
             ],
           ],

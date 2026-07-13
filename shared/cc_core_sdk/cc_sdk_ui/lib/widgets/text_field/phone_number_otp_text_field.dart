@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../core/config/tokens/cc_base_colors.dart';
 import '../../core/extensions/cc_context_extension.dart';
 import '../../core/extensions/common/cc_responsive_extension.dart';
 
@@ -36,7 +37,7 @@ class PhoneNumberOtpTextField extends StatelessWidget {
           decoration: const InputDecoration(
             border: InputBorder.none,
             hintText: '******',
-            hintStyle: TextStyle(color: Colors.grey),
+            hintStyle: TextStyle(color: CcBaseColors.gray500),
           ),
         ),
         Container(

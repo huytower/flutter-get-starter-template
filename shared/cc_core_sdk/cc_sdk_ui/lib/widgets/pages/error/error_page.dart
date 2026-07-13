@@ -1,13 +1,20 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 
 class ErrorPage extends StatelessWidget {
-  const ErrorPage({Key? key, this.message, this.onRetry}) : super(key: key);
+  const ErrorPage({
+    Key? key,
+    this.message,
+    this.onRetry,
+    this.title,
+    this.retryText,
+  }) : super(key: key);
 
   final String? message;
   final VoidCallback? onRetry;
+  final String? title;
+  final String? retryText;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -16,7 +23,7 @@ class ErrorPage extends StatelessWidget {
         onTap: () => Navigator.of(context).pop(),
         icon: Icons.arrow_back,
       ),
-      title: CcText(el.tr(CcLocaleKeys.app_error_general)),
+      title: CcText(title ?? 'Error'),
     ),
     body: CcColCenter(
       children: [
@@ -27,7 +34,7 @@ class ErrorPage extends StatelessWidget {
         ),
         const CcSpaceLG(),
         CcText(
-          message ?? el.tr(CcLocaleKeys.app_error_general),
+          message ?? 'An error occurred',
           textStyle: context.ccTextTheme.bodyLarge?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
           ),
@@ -49,7 +56,7 @@ class ErrorPage extends StatelessWidget {
                 borderRadius: CcWidgetHelper.getBorderRoundedSM(),
               ),
               child: CcText(
-                el.tr(CcLocaleKeys.app_error_retry),
+                retryText ?? 'Retry',
                 textStyle: context.textTheme.labelLarge?.copyWith(
                   color: context.ccColorScheme.onPrimary,
                   fontWeight: FontWeight.bold,

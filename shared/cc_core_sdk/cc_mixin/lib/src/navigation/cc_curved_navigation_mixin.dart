@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 /// Mixin providing curved navigation bar functionality with Home, Notification, and Profile items.
@@ -62,23 +61,33 @@ mixin CcCurvedNavigationMixin {
 
   /// Navigation items for the curved navigation bar
   /// Default: Home, Notification, Profile
+  /// Override this getter to provide custom navigation items
   List<CcCurvedNavigationItem> get navigationItems => [
     CcCurvedNavigationItem(
       inactiveIcon: Icons.home_outlined,
       activeIcon: Icons.home_rounded,
-      label: el.tr(CcLocaleKeys.nav_dashboard),
+      label: dashboardLabel,
     ),
     CcCurvedNavigationItem(
       inactiveIcon: Icons.notifications_outlined,
       activeIcon: Icons.notifications_rounded,
-      label: el.tr(CcLocaleKeys.nav_notification),
+      label: notificationLabel,
     ),
     CcCurvedNavigationItem(
       inactiveIcon: Icons.person_outline_rounded,
       activeIcon: Icons.person_rounded,
-      label: el.tr(CcLocaleKeys.nav_profile),
+      label: profileLabel,
     ),
   ];
+
+  /// Label for dashboard/home navigation item
+  String get dashboardLabel => 'Dashboard';
+
+  /// Label for notification navigation item
+  String get notificationLabel => 'Notification';
+
+  /// Label for profile navigation item
+  String get profileLabel => 'Profile';
 
   /// Optional custom color overrides
   /// Note: These are theme-aware by default and will respond to theme changes

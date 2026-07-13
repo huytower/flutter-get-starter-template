@@ -1,6 +1,4 @@
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:message/cc_locale_keys.dart';
 
 import '../../core/config/tokens/cc_padding_params.dart';
 import '../../core/extensions/cc_context_extension.dart';
@@ -105,7 +103,7 @@ class CcActionBtnInDialog extends StatelessWidget {
             color: btnBgColor ?? context.ccColorScheme.primary,
           ),
           CcText(
-            cancelText ?? el.tr(CcLocaleKeys.common_cancel),
+            cancelText ?? 'Cancel',
             align: Alignment.center,
             color: cancelTextColor ?? context.ccColorScheme.onPrimary,
             fontSize: fontSize ?? 14.0,
@@ -129,7 +127,7 @@ class CcActionBtnInDialog extends StatelessWidget {
             color: btnBgColor ?? context.ccColorScheme.primary,
           ),
           CcText(
-            agreeText ?? el.tr(CcLocaleKeys.common_ok),
+            agreeText ?? 'OK',
             align: Alignment.center,
             color: confirmTextColor ?? context.ccColorScheme.onPrimary,
             fontWeight: FontWeight.w600,

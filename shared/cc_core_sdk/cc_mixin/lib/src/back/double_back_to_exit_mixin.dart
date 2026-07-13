@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -35,8 +34,8 @@ mixin DoubleBackToExitMixin {
   static const _doubleBackDuration = Duration(seconds: 1);
 
   /// Message shown on first back press.
-  String get backPressMessage =>
-      el.tr(CcLocaleKeys.common_press_back_again_to_exit);
+  /// Override this to provide a localized message.
+  String get backPressMessage => 'Press back again to exit';
 
   /// Enable double back behavior on iOS (default: false).
   bool get enableDoubleBackOnIOS => false;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/extensions/cc_context_extension.dart';
 import '../../core/extensions/common/cc_responsive_extension.dart';
 
 class SectionDesWidget extends StatelessWidget {
@@ -15,7 +16,7 @@ class SectionDesWidget extends StatelessWidget {
       child: RichText(
         text: TextSpan(
           style: TextStyle(
-            color: Colors.grey,
+            color: context.ccColorScheme.onSurfaceVariant,
             fontSize: context.respFontSize(15.0),
             fontWeight: FontWeight.w400,
           ),

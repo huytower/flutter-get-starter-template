@@ -16,6 +16,8 @@ class CcTextField extends StatelessWidget {
     this.suffixIcon,
     this.onChanged,
     this.validator,
+    this.maxLines = 1,
+    this.onTap,
   });
 
   final TextEditingController controller;
@@ -26,6 +28,8 @@ class CcTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
+  final int? maxLines;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +48,8 @@ class CcTextField extends StatelessWidget {
         keyboardType: keyboardType,
         onChanged: onChanged,
         validator: validator,
+        maxLines: maxLines,
+        onTap: onTap,
         decoration: InputDecoration(
           hintText: hintText,
           prefixIcon: prefixIcon,

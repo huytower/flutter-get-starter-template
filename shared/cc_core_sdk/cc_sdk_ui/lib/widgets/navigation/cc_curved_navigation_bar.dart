@@ -159,12 +159,15 @@ class CcCurvedNavigationBar extends StatelessWidget {
       animationCurve: animationCurve ?? Curves.easeInOutCubic,
       activeTextStyle:
           activeTextStyle ??
-          context.ccTextTheme.labelSmall?.copyWith(fontWeight: FontWeight.w800),
+          context.ccTextTheme.labelMedium?.copyWith(
+            fontWeight: CcTypographyParams.bold,
+            fontSize: context.respFontSize(CcTypographyParams.labelMedium),
+          ),
       inactiveTextStyle:
           inactiveTextStyle ??
-          context.ccTextTheme.labelSmall?.copyWith(
-            fontSize: context.respFontSize(10.0),
-            fontWeight: FontWeight.w400,
+          context.ccTextTheme.labelMedium?.copyWith(
+            fontWeight: CcTypographyParams.regular,
+            fontSize: context.respFontSize(CcTypographyParams.labelMedium),
           ),
       inactiveIconSize: inactiveIconSize ?? 24,
       activeIconSize: activeIconSize ?? 22,

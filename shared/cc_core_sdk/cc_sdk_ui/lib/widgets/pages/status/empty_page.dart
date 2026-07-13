@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 // Purpose:
@@ -28,7 +27,7 @@ class EmptyPage extends StatelessWidget {
             ),
             const CcSpaceSM(),
             CcText(
-              message ?? el.tr(CcLocaleKeys.common_no_data),
+              message ?? 'No data found',
               color: scheme.onSurfaceVariant,
               textAlign: TextAlign.center,
               align: Alignment.center,

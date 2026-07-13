@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 
+import '../config/tokens/cc_base_colors.dart';
 import '../config/tokens/cc_circular_params.dart';
 import '../extensions/cc_context_extension.dart';
 
@@ -37,7 +38,7 @@ class CcWidgetHelper {
 
     /// 1 - below background of child widget,
     BoxShadow(
-      color: bgColor ?? Colors.white,
+      color: bgColor ?? CcBaseColors.white100,
       spreadRadius: 0,
       blurRadius: 0,
       offset: Offset.zero,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/config/tokens/cc_base_colors.dart';
 import '../../core/extensions/common/cc_responsive_extension.dart';
 
 // Where it helps
@@ -22,7 +23,7 @@ class CcExpansionPane extends StatefulWidget {
     required this.collapse,
     required this.expand,
     this.duration = const Duration(milliseconds: 200),
-    this.backgroundColor = Colors.white,
+    this.backgroundColor = CcBaseColors.white100,
     this.borderRadius,
     this.initiallyExpanded = false,
   }) : super(key: key);

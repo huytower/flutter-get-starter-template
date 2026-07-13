@@ -21,7 +21,7 @@ class TitleLoadingWidget extends StatelessWidget {
     height: lineHeight ?? context.respIconSize(baseSize: 14.0),
     child: Shimmer.fromColors(
       baseColor: CcBaseColors.neutral5,
-      highlightColor: Colors.yellow,
+      highlightColor: CcBaseColors.neutral10,
       child: Container(
         width: lineWidth ?? context.respIconSize(baseSize: 50.0),
         height: context.respIconSize(baseSize: 12.0),

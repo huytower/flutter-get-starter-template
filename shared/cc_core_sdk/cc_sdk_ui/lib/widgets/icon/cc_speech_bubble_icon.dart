@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/config/tokens/cc_base_colors.dart';
 import '../../core/extensions/cc_context_extension.dart';
 import '../../core/extensions/common/cc_responsive_extension.dart';
 
@@ -62,7 +63,7 @@ class _SpeechBubblePainter extends CustomPainter {
 
     // Draw three dots (ellipsis)
     final dotPaint = Paint()
-      ..color = Colors.white
+      ..color = CcBaseColors.white100
       ..style = PaintingStyle.fill;
 
     final dotSize = bubbleSize * 0.06;

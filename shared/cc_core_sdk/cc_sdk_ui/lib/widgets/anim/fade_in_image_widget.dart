@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/config/tokens/cc_base_colors.dart';
+import '../../core/extensions/cc_context_extension.dart';
 
 class FadeInImageWidget extends StatelessWidget {
   const FadeInImageWidget({
@@ -28,7 +29,7 @@ class FadeInImageWidget extends StatelessWidget {
         placeholder ??
         Container(
           color: CcBaseColors.neutral5,
-          child: const Icon(Icons.image_not_supported, color: Colors.grey),
+          child: Icon(Icons.image_not_supported, color: context.ccColorScheme.onSurfaceVariant),
         ),
   );
 }

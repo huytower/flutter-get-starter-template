@@ -229,7 +229,7 @@ class _FacebookIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Icon(Icons.facebook, color: Colors.white, size: context.respDim(24));
+    return Icon(Icons.facebook, color: CcBaseColors.white100, size: context.respDim(24));
   }
 }
 
@@ -238,6 +238,6 @@ class _AppleIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Icon(Icons.apple, color: Colors.white, size: context.respDim(24));
+    return Icon(Icons.apple, color: CcBaseColors.white100, size: context.respDim(24));
   }
 }

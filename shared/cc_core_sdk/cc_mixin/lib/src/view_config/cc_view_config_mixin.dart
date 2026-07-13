@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 /// Mixin providing reusable view configuration and UI building logic.
@@ -49,7 +48,8 @@ mixin CcViewConfigMixin {
   bool get enableLoading => true;
 
   /// Error message to display in error layout
-  String get errorMessage => el.tr(CcLocaleKeys.app_error_general);
+  /// Override this to provide a localized error message.
+  String get errorMessage => 'An error occurred';
 
   // ============================================
   // Required Methods

@@ -111,6 +111,7 @@ class CcDialogHelper {
 
   /// Shows a project-standard confirmation dialog.
   static Future<void> showConfirmationDialog({
+    BuildContext? context,
     VoidCallback? onTapCancel,
     required VoidCallback? onTapConfirm,
     Color? bgColor,
@@ -126,6 +127,7 @@ class CcDialogHelper {
     bool isCancelBtnShown = false,
     CcDialogStatus status = CcDialogStatus.ERROR,
   }) async {
+    final targetContext = context ?? Get.context!;
     try {
       await Get.dialog(
         CcBaseDialog(
@@ -142,7 +144,7 @@ class CcDialogHelper {
           status: status,
         ),
         barrierDismissible: isAllowDismiss,
-        barrierColor: bgColorBarrier ?? Colors.black.withOpacity(0.5),
+        barrierColor: bgColorBarrier ?? targetContext.ccColorScheme.onSurface.withOpacity(0.5),
       );
 
       if (isAutoDismiss) {
@@ -163,7 +165,7 @@ class CcDialogHelper {
     await showDialog<void>(
       context: targetContext,
       barrierDismissible: false,
-      barrierColor: Colors.grey.withOpacity(0.3),
+      barrierColor: targetContext.ccColorScheme.onSurface.withOpacity(0.3),
       builder: (BuildContext context) {
         return const PopScope(
           canPop: false,

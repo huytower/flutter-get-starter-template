@@ -16,7 +16,7 @@ extension ResponsiveExtension on BuildContext {
   double respIconSize({
     double baseSize = 24.0,
     double baselineWidth = 360.0,
-    double maxMultiplier = 1.5,
+    double maxMultiplier = 2,
   }) {
     return baseSize * (screenWidth / baselineWidth).clamp(1.0, maxMultiplier);
   }
@@ -31,7 +31,7 @@ extension ResponsiveExtension on BuildContext {
   double respFontSize(
     double baseSize, {
     double baselineWidth = 360.0,
-    double maxMultiplier = 1.5,
+    double maxMultiplier = 2,
   }) {
     return baseSize * (screenWidth / baselineWidth).clamp(1.0, maxMultiplier);
   }
@@ -46,7 +46,7 @@ extension ResponsiveExtension on BuildContext {
   double respPadding(
     double basePadding, {
     double baselineWidth = 360.0,
-    double maxMultiplier = 1.5,
+    double maxMultiplier = 2,
   }) {
     return basePadding *
         (screenWidth / baselineWidth).clamp(1.0, maxMultiplier);
@@ -61,7 +61,7 @@ extension ResponsiveExtension on BuildContext {
   double respDim(
     double baseDimension, {
     double baselineWidth = 360.0,
-    double maxMultiplier = 1.5,
+    double maxMultiplier = 2,
   }) {
     return baseDimension *
         (screenWidth / baselineWidth).clamp(1.0, maxMultiplier);

@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../export_cc_sdk_ui.dart';
@@ -74,7 +73,7 @@ class CcNextBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     final baseBtn = CcBaseBtn.static(
       isEnable: isEnable,
-      title: title ?? el.tr(CcLocaleKeys.common_next),
+      title: title ?? 'Next',
       bgColor: isEnable
           ? [context.ccColorScheme.primary, context.ccColorScheme.primary]
           : null, // Fallback to surfaceVariant in CcBaseBtn

@@ -6,7 +6,7 @@ class ExpandedCollapseCardWidget extends StatefulWidget {
     Key? key,
     required this.title,
     required this.child,
-    this.backgroundColor = Colors.white,
+    this.backgroundColor = CcBaseColors.white100,
     this.shadowColor,
     this.isExpanded = false,
   }) : super(key: key);
@@ -70,7 +70,7 @@ class _ExpandedCollapseCardWidgetState
                 ),
                 Icon(
                   _isExpanded ? Icons.expand_less : Icons.expand_more,
-                  color: Colors.grey,
+                  color: context.ccColorScheme.onSurfaceVariant,
                 ),
               ],
             ),

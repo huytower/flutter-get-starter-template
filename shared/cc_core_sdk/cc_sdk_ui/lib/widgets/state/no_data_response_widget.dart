@@ -1,14 +1,20 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 // Purpose:
 // small reusable widgets for loading states and empty API responses
 // intended as part of the shared UI library
 class NoDataResponseWidget extends StatelessWidget {
-  const NoDataResponseWidget({Key? key, this.onRefresh}) : super(key: key);
+  const NoDataResponseWidget({
+    Key? key,
+    this.onRefresh,
+    this.message,
+    this.refreshText,
+  }) : super(key: key);
 
   final Future<void> Function()? onRefresh;
+  final String? message;
+  final String? refreshText;
 
   @override
   Widget build(BuildContext context) => Center(
@@ -18,12 +24,12 @@ class NoDataResponseWidget extends StatelessWidget {
         Icon(
           Icons.folder_open,
           size: context.respIconSize(baseSize: 48.0),
-          color: Colors.grey,
+          color: context.ccColorScheme.onSurfaceVariant,
         ),
         const CcSpaceSM(),
         CcText(
-          el.tr(CcLocaleKeys.common_no_data),
-          color: Colors.grey,
+          message ?? 'No data found',
+          color: context.ccColorScheme.onSurfaceVariant,
           textAlign: TextAlign.center,
           align: Alignment.center,
         ),
@@ -35,8 +41,8 @@ class NoDataResponseWidget extends StatelessWidget {
               backgroundColor: CcBaseColors.brand500,
             ),
             child: CcText(
-              el.tr(CcLocaleKeys.app_error_retry),
-              color: Colors.white,
+              refreshText ?? 'Retry',
+              color: context.ccColorScheme.onPrimary,
               fontWeight: FontWeight.bold,
             ),
           ),

@@ -126,22 +126,22 @@ class CcBaseDialog extends StatelessWidget {
       CcDialogStatus.ERROR: () => Icon(
         Icons.error_outline,
         size: context.respIconSize(),
-        color: Colors.redAccent,
+        color: CcBaseColors.errorRed,
       ),
       CcDialogStatus.INFO: () => Icon(
         Icons.announcement_outlined,
         size: context.respIconSize(),
-        color: Colors.grey,
+        color: CcBaseColors.infoBlue,
       ),
       CcDialogStatus.SUCCESS: () => Icon(
         Icons.check_circle,
         size: context.respIconSize(),
-        color: Colors.green,
+        color: CcBaseColors.successGreen,
       ),
       CcDialogStatus.WARNING: () => Icon(
         Icons.warning_outlined,
         size: context.respIconSize(),
-        color: Colors.yellow,
+        color: CcBaseColors.warningAmber,
       ),
     },
   );
