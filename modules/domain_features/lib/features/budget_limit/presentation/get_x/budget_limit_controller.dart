@@ -11,13 +11,6 @@ import '../../domain/usecases/get_budget_limit_stats_usecase.dart';
 import '../../domain/usecases/update_budget_limit_orders_usecase.dart';
 import '../../domain/usecases/update_budget_limit_usecase.dart';
 
-class BudgetLimitBinding extends Bindings {
-  @override
-  void dependencies() {
-    Get.lazyPut(() => getIt<BudgetLimitController>());
-  }
-}
-
 @injectable
 class BudgetLimitController extends CcGetController {
   BudgetLimitController(

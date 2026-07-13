@@ -21,9 +21,11 @@ class BirthYearDialog extends StatelessWidget {
     required int minYear,
     required int maxYear,
   }) {
-    return showDialog<int>(
+    return showModalBottomSheet<int>(
       context: context,
-      builder: (dialogContext) => BirthYearDialog(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => BirthYearDialog(
         currentYear: currentYear,
         minYear: minYear,
         maxYear: maxYear,
@@ -33,26 +35,10 @@ class BirthYearDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: const Color(0xFFECEAF6),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(context.respDim(24)),
-      ),
-      insetPadding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(24),
-        vertical: context.respPadding(24),
-      ),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: context.respDim(340),
-          maxHeight: context.respDim(520),
-        ),
-        child: BirthYearDialogContent(
-          currentYear: currentYear,
-          minYear: minYear,
-          maxYear: maxYear,
-        ),
-      ),
+    return BirthYearDialogContent(
+      currentYear: currentYear,
+      minYear: minYear,
+      maxYear: maxYear,
     );
   }
 }

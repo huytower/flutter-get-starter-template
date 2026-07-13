@@ -11,13 +11,6 @@ import '../../domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../../domain/usecases/wallet_balance_calculator.dart';
 
-class WalletBinding extends Bindings {
-  @override
-  void dependencies() {
-    Get.lazyPut(() => getIt<WalletController>());
-  }
-}
-
 /// Outcome of a wallet deletion attempt (rule: only empty wallets deletable).
 enum WalletDeleteOutcome { success, notEmpty, protected, error }
 

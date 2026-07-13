@@ -394,7 +394,11 @@ class CodegenLoader extends AssetLoader {
       "not_logged_in": "Not logged in",
       "register_login": "Register / Login",
       "birth_year": "Birth year",
+      "birth_year_hint":
+          "Choose your actual birth year, it affects your daily income and expense calculations",
       "weekly_audit": "Weekly audit",
+      "weekly_audit_day_hint":
+          "Select your weekly audit day, usually at the end of your spending cycle",
       "days_left": "{count} days left",
       "debt_loan": "Debt / Loan",
       "unlock_at_lv": "Opens at LV{level}",
@@ -789,7 +793,11 @@ class CodegenLoader extends AssetLoader {
       "not_logged_in": "Chưa đăng nhập",
       "register_login": "Đăng ký / Đăng nhập",
       "birth_year": "Năm sinh",
+      "birth_year_hint":
+          "Chọn năm sinh đúng thực tế, có ảnh hưởng đến số tiền thu nhập, chi tiêu hằng ngày của bạn",
       "weekly_audit": "Kiểm toán tuần",
+      "weekly_audit_day_hint":
+          "Chọn ngày kiểm toán hàng tuần của bạn, thường là ngày cuối cùng trong chu kỳ chi tiêu",
       "days_left": "Còn {count} ngày",
       "debt_loan": "Nợ/Vay",
       "unlock_at_lv": "Mở ở LV{level}",
@@ -1161,7 +1169,9 @@ abstract class CcLocaleKeys {
   static const profile_not_logged_in = 'profile.not_logged_in';
   static const profile_register_login = 'profile.register_login';
   static const profile_birth_year = 'profile.birth_year';
+  static const profile_birth_year_hint = 'profile.birth_year_hint';
   static const profile_weekly_audit = 'profile.weekly_audit';
+  static const profile_weekly_audit_day_hint = 'profile.weekly_audit_day_hint';
   static const profile_days_left = 'profile.days_left';
   static const profile_debt_loan = 'profile.debt_loan';
   static const profile_unlock_at_lv = 'profile.unlock_at_lv';

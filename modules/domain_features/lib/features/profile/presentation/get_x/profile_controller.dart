@@ -52,6 +52,12 @@ class ProfileController extends GetxController {
     await _updateSettings(updated);
   }
 
+  Future<void> setWeeklyAuditDay(int dayIndex) async {
+    final updated = settings.value.copyWith(weeklyAuditDayIndex: dayIndex);
+    settings.value = updated;
+    await _updateSettings(updated);
+  }
+
   Future<void> logout(BuildContext context) async {
     await _session.clearSession();
     if (context.mounted) _authCoordinator.navigateToLogin(context);

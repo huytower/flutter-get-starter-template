@@ -7,6 +7,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/transaction_form_helpers.dart';
+import '../../../../core/transaction_form_mixin.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../domain/entities/transaction_entity.dart';
@@ -30,30 +31,33 @@ class IncomeForm extends StatefulWidget {
   IncomeFormState createState() => IncomeFormState();
 }
 
-class IncomeFormState extends State<IncomeForm> {
-  Color get _accent => PrjColors.success;
+class IncomeFormState extends State<IncomeForm>
+    with TransactionFormMixin {
+  Color get accentColor => PrjColors.success;
 
   /// Age-based suggestions (see [IncomeQuickAmounts]); resolved in initState.
   List<int> _quickAmounts = IncomeQuickAmounts.fallback;
 
-  String _amountStr = '0';
-  final TextEditingController _noteController = TextEditingController();
-  final _scrollController = ScrollController();
-  final _amountFieldKey = GlobalKey();
-
-  List<WalletEntity> _wallets = const [];
+  int _categoryKey = 0;
   String? _selectedWalletId;
   CategoryEntity? _selectedCategory;
-  DateTime _date = DateTime.now();
-  bool _isSubmitting = false;
-  bool _showKeypad = false;
-  bool _showMoreDetails = false;
-  int _categoryKey = 0;
+
+  @override
+  String? get selectedWalletId => _selectedWalletId;
+
+  @override
+  void Function(String) get onWalletSelected => (id) {
+        setState(() => _selectedWalletId = id);
+      };
 
   @override
   void initState() {
     super.initState();
-    _loadWalletsFromController();
+    loadWalletsFromController(
+      onWalletsLoaded: (walletList) {
+        _selectedWalletId = walletList.isNotEmpty ? walletList.first.id : null;
+      },
+    );
     _loadSuggestions();
   }
 
@@ -65,93 +69,35 @@ class IncomeFormState extends State<IncomeForm> {
     });
   }
 
-  @override
-  void dispose() {
-    _noteController.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _loadWalletsFromController() {
-    // Use shared wallet data from controller to avoid duplicate API calls
-    final controller = Get.find<TransactionController>();
-    _wallets = controller.wallets;
-    _selectedWalletId = _wallets.isNotEmpty ? _wallets.first.id : null;
-
-    // Listen to wallet changes
-    ever(controller.wallets, (wallets) {
-      if (mounted) {
-        setState(() {
-          _wallets = wallets;
-          if (_selectedWalletId == null && wallets.isNotEmpty) {
-            _selectedWalletId = wallets.first.id;
-          }
-        });
-      }
-    });
-  }
-
-  void _onKeyPress(String key) {
-    setState(() {
-      if (_amountStr == '0') {
-        if (key != '0' && key != '000') _amountStr = key;
-      } else {
-        _amountStr += key;
-      }
-    });
-  }
-
-  void _onDelete() {
-    setState(() {
-      if (_amountStr.length > 1) {
-        _amountStr = _amountStr.substring(0, _amountStr.length - 1);
-      } else {
-        _amountStr = '0';
-      }
-    });
-  }
-
-  Future<void> _pickDate() async {
-    final picked = await TransactionFormHelpers.pickDate(context, _date);
-    if (picked == null) return;
-    setState(() {
-      _date = TransactionFormHelpers.updateDatePreserveTime(_date, picked);
-    });
-  }
-
-  String? _composeNote() {
-    return TransactionFormHelpers.composeNote(_noteController);
-  }
-
   bool get _canSubmit =>
       _selectedCategory != null &&
-      _selectedWalletId != null &&
-      _amountStr != '0' &&
-      _amountStr.isNotEmpty;
+      selectedWalletId != null &&
+      amountStr != '0' &&
+      amountStr.isNotEmpty;
 
   Future<void> _onSubmit() async {
-    if (_isSubmitting) return;
-    setState(() => _isSubmitting = true);
+    if (isSubmitting) return;
+    setState(() => isSubmitting = true);
 
     final params = CreateTransactionParams(
       type: TransactionType.income,
-      amount: int.tryParse(_amountStr) ?? 0,
+      amount: int.tryParse(amountStr) ?? 0,
       categoryId: _selectedCategory?.id ?? '',
       categoryLabel: _selectedCategory != null
           ? el.tr(_selectedCategory!.nameKey)
           : '',
-      walletId: _selectedWalletId ?? '',
-      note: _composeNote(),
-      date: _date,
+      walletId: selectedWalletId ?? '',
+      note: composeNote(),
+      date: date,
     );
 
     final result = await getIt<CreateTransactionUseCase>().call(params);
     if (!mounted) return;
-    setState(() => _isSubmitting = false);
+    setState(() => isSubmitting = false);
 
     result.when(
       (_) {
-        final savedAmount = TransactionFormHelpers.formatAmount(_amountStr);
+        final savedAmount = TransactionFormHelpers.formatAmount(amountStr);
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(
@@ -159,7 +105,12 @@ class IncomeFormState extends State<IncomeForm> {
             namedArgs: {'amount': savedAmount},
           ),
         );
-        _resetForm();
+        resetForm(
+          onReset: () {
+            _selectedCategory = null;
+            _categoryKey++;
+          },
+        );
         widget.onSaved?.call();
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
@@ -169,20 +120,9 @@ class IncomeFormState extends State<IncomeForm> {
     );
   }
 
-  void _resetForm() {
-    setState(() {
-      _amountStr = '0';
-      _noteController.clear();
-      _selectedCategory = null;
-      _date = DateTime.now();
-      _showKeypad = false;
-      _categoryKey++;
-    });
-  }
-
   /// Public method to submit the form (called from app bar)
   void submitForm() {
-    if (_canSubmit && !_isSubmitting) {
+    if (_canSubmit && !isSubmitting) {
       _onSubmit();
     }
   }
@@ -195,10 +135,10 @@ class IncomeFormState extends State<IncomeForm> {
           child: GestureDetector(
             behavior: HitTestBehavior.translucent,
             onTap: () {
-              if (_showKeypad) setState(() => _showKeypad = false);
+              if (showKeypad) hideKeypad();
             },
             child: SingleChildScrollView(
-              controller: _scrollController,
+              controller: scrollController,
               padding: EdgeInsets.symmetric(
                 vertical: context.respPadding(CcPaddingParams.PAGE_XS),
               ),
@@ -209,7 +149,7 @@ class IncomeFormState extends State<IncomeForm> {
                     key: ValueKey(_categoryKey),
                     type: CategoryType.income,
                     autoSelectFirst: true,
-                    activeColor: _accent,
+                    activeColor: accentColor,
                     onCategorySelected: (category) =>
                         setState(() => _selectedCategory = category),
                   ),
@@ -223,67 +163,54 @@ class IncomeFormState extends State<IncomeForm> {
                       children: [
                         CcAmountInputSection(
                           label: el.tr(CcLocaleKeys.transaction_amount),
-                          amountStr: _amountStr,
+                          amountStr: amountStr,
                           quickAmounts: _quickAmounts,
-                          isKeypadVisible: _showKeypad,
-                          activeColor: _accent,
-                          fieldKey: _amountFieldKey,
-                          onTap: () {
-                            setState(() => _showKeypad = true);
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              final ctx = _amountFieldKey.currentContext;
-                              if (ctx != null) {
-                                Scrollable.ensureVisible(
-                                  ctx,
-                                  duration: const Duration(milliseconds: 250),
-                                  curve: Curves.easeOut,
-                                );
-                              }
-                            });
-                          },
+                          isKeypadVisible: showKeypad,
+                          activeColor: accentColor,
+                          fieldKey: amountFieldKey,
+                          onTap: showKeypadAndScroll,
                           onQuickAmountSelected: (amount) =>
-                              setState(() => _amountStr = amount.toString()),
+                              setState(() => amountStr = amount.toString()),
                         ),
                         const CcSpaceLG(),
-                        _buildLabel(
+                        buildLabel(
                           el.tr(CcLocaleKeys.transaction_source_income),
                         ),
                         const CcSpaceXS(),
                         TransactionWalletSelector(
-                          wallets: _wallets,
-                          selectedWalletId: _selectedWalletId,
-                          activeColor: _accent,
-                          onWalletSelected: (id) =>
-                              setState(() => _selectedWalletId = id),
+                          wallets: wallets,
+                          selectedWalletId: selectedWalletId,
+                          activeColor: accentColor,
+                          onWalletSelected: onWalletSelected,
                         ),
                         const CcSpaceLG(),
                         TransactionAdditionalDetailsSection(
-                          isExpanded: _showMoreDetails,
+                          isExpanded: showMoreDetails,
                           onToggle: () => setState(
-                            () => _showMoreDetails = !_showMoreDetails,
+                            () => showMoreDetails = !showMoreDetails,
                           ),
-                          selectedDate: _date,
-                          onDateSelected: (date) => setState(() {
-                            _date = DateTime(
-                              date.year,
-                              date.month,
-                              date.day,
-                              _date.hour,
-                              _date.minute,
+                          selectedDate: date,
+                          onDateSelected: (newDate) => setState(() {
+                            date = DateTime(
+                              newDate.year,
+                              newDate.month,
+                              newDate.day,
+                              date.hour,
+                              date.minute,
                             );
                           }),
-                          onCalendarTap: _pickDate,
-                          noteController: _noteController,
-                          onNoteTap: () => setState(() => _showKeypad = false),
-                          activeColor: _accent,
+                          onCalendarTap: pickDate,
+                          noteController: noteController,
+                          onNoteTap: hideKeypad,
+                          activeColor: accentColor,
                         ),
                         const CcSpaceXL(),
                         TransactionSubmitButton(
                           text: el.tr(CcLocaleKeys.transaction_record_income),
-                          isSubmitting: _isSubmitting,
+                          isSubmitting: isSubmitting,
                           isEnabled: _canSubmit,
                           onTap: _onSubmit,
-                          activeColor: _accent,
+                          activeColor: accentColor,
                         ),
                         const CcSpaceLG(),
                       ],
@@ -294,22 +221,19 @@ class IncomeFormState extends State<IncomeForm> {
             ),
           ),
         ),
-        if (_showKeypad)
+        if (showKeypad)
           MoneyKeypadPanel(
-            onKeyPress: _onKeyPress,
-            onDelete: _onDelete,
-            onClear: () => setState(() => _amountStr = '0'),
+            onKeyPress: onKeyPress,
+            onDelete: onDelete,
+            onClear: () => setState(() => amountStr = '0'),
             suggestions: _quickAmounts,
             onSuggestion: (value) =>
-                setState(() => _amountStr = value.toString()),
-            onDone: () => setState(() => _showKeypad = false),
-            activeColor: _accent,
+                setState(() => amountStr = value.toString()),
+            onDone: hideKeypad,
+            activeColor: accentColor,
           ),
       ],
     );
   }
 
-  Widget _buildLabel(String text) {
-    return CcFormLabel(text: text);
-  }
 }

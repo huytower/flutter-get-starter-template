@@ -2,80 +2,45 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-class BirthYearDialogContent extends StatefulWidget {
-  final int currentYear;
-  final int minYear;
-  final int maxYear;
+class WeeklyAuditDayDialogContent extends StatefulWidget {
+  final int currentDay;
 
-  const BirthYearDialogContent({
-    super.key,
-    required this.currentYear,
-    required this.minYear,
-    required this.maxYear,
-  });
+  const WeeklyAuditDayDialogContent({super.key, required this.currentDay});
 
   @override
-  State<BirthYearDialogContent> createState() => _BirthYearDialogContentState();
+  State<WeeklyAuditDayDialogContent> createState() =>
+      _WeeklyAuditDayDialogContentState();
 }
 
-class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
-  late DateTime _selectedDate;
-  late int _selectedYear;
-  ScrollController? _scrollController;
+class _WeeklyAuditDayDialogContentState
+    extends State<WeeklyAuditDayDialogContent> {
+  late int _selectedDay;
 
   @override
   void initState() {
     super.initState();
-    _selectedYear = widget.currentYear;
-    _selectedDate = DateTime(
-      _selectedYear,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
+    _selectedDay = widget.currentDay;
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Initialize scroll controller here since it needs context for respDim
-    if (_scrollController == null) {
-      // Scroll so the selected year starts roughly in view when opened.
-      final int index = _selectedYear - widget.minYear;
-      final int row = index ~/ 3;
-      _scrollController = ScrollController(
-        initialScrollOffset:
-            (row - 1).clamp(0, double.infinity) * context.respDim(56),
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController?.dispose();
-    super.dispose();
-  }
-
-  String get _headerDateLabel {
-    final languageCode = Localizations.localeOf(context).languageCode;
-    return el.DateFormat('EEEE, MMM d', languageCode).format(_selectedDate);
-  }
-
-  String get _monthYearLabel {
-    final languageCode = Localizations.localeOf(context).languageCode;
-    return el.DateFormat('MMMM yyyy', languageCode).format(_selectedDate);
-  }
-
-  void _onYearTap(int year) {
+  void _onDayTap(int day) {
     setState(() {
-      _selectedYear = year;
-      _selectedDate = DateTime(year, _selectedDate.month, _selectedDate.day);
+      _selectedDay = day;
     });
+  }
+
+  String _getDayName(int day) {
+    // 1 = Monday, ..., 7 = Sunday
+    // We can use common_weekday_names which is "Thứ Hai|Thứ Ba|..."
+    final names = el.tr(CcLocaleKeys.common_weekday_names).split('|');
+    if (day >= 1 && day <= 7) {
+      return names[day - 1];
+    }
+    return '';
   }
 
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final int totalYears = widget.maxYear - widget.minYear + 1;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -96,7 +61,7 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
             ),
           ),
           child: CcText(
-            el.tr(CcLocaleKeys.profile_birth_year_hint),
+            el.tr(CcLocaleKeys.profile_weekly_audit_day_hint),
             maxLines: 3,
             textStyle: context.ccTextTheme.headlineSmall?.copyWith(
               color: scheme.onPrimary,
@@ -118,45 +83,45 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // ---- Year grid ----
-              SizedBox(
-                height: context.respDim(250),
-                child: GridView.builder(
-                  controller: _scrollController,
+              // ---- Day list ----
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: context.respDim(400)),
+                child: SingleChildScrollView(
                   padding: EdgeInsets.symmetric(
                     horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
                     vertical: context.respPadding(CcPaddingParams.PAGE_SM),
                   ),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    mainAxisExtent: context.respDim(56),
-                  ),
-                  itemCount: totalYears,
-                  itemBuilder: (context, index) {
-                    final int year = widget.minYear + index;
-                    final bool isSelected = year == _selectedYear;
+                  child: Column(
+                    children: List.generate(7, (index) {
+                      final int day = index + 1;
+                      final bool isSelected = day == _selectedDay;
 
-                    return Center(
-                      child: GestureDetector(
-                        onTap: () => _onYearTap(year),
+                      return GestureDetector(
+                        onTap: () => _onDayTap(day),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 150),
-                          width: context.respDim(72),
-                          height: context.respDim(40),
+                          margin: EdgeInsets.only(bottom: context.respDim(8)),
+                          width: double.infinity,
+                          height: context.respDim(48),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? scheme.primary
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(
-                              context.respDim(20),
+                              context.respDim(12),
+                            ),
+                            border: Border.all(
+                              color: isSelected
+                                  ? scheme.primary
+                                  : scheme.outline.withOpacity(0.1),
                             ),
                           ),
                           child: CcText(
-                            '$year',
+                            _getDayName(day),
                             align: Alignment.center,
                             textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-                              fontSize: context.respFontSize(16),
+                              fontSize: context.respFontSize(15),
                               fontWeight: isSelected
                                   ? CcTypographyParams.bold
                                   : CcTypographyParams.regular,
@@ -166,9 +131,9 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    }),
+                  ),
                 ),
               ),
 
@@ -195,7 +160,7 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
                     ),
                     SizedBox(width: context.respDim(8)),
                     TextButton(
-                      onPressed: () => Navigator.of(context).pop(_selectedYear),
+                      onPressed: () => Navigator.of(context).pop(_selectedDay),
                       child: CcText(
                         el.tr(CcLocaleKeys.common_ok),
                         textStyle: context.ccTextTheme.labelLarge?.copyWith(

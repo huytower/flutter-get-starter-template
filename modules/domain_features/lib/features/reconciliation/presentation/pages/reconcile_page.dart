@@ -86,10 +86,40 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
     if (error != null) {
       CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
     } else {
-      CcSnackBarHelper.showSuccessSnackBar(
+      final count = controller.history.length;
+      showDialog(
         context: context,
-        message: el.tr(CcLocaleKeys.reconciliation_success),
+        barrierDismissible: false,
+        builder: (_) {
+          final size = MediaQuery.of(context).size;
+          return Center(
+            child: SizedBox(
+              width: size.width * 0.9,
+              height: size.height * 0.2,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: CcRewardCompletionBanner(
+                  message:
+                      'Chúc mừng! Bạn đã hoàn thành\n'
+                      'lần đối soát thứ $count thành công.',
+                  onClose: () => Navigator.of(context).pop(),
+                ),
+              ),
+            ),
+          );
+        },
       );
+
+      // Auto-dismiss after 3 seconds and navigate back
+      Future.delayed(const Duration(seconds: 3), () {
+        if (context.mounted) {
+          // Check if the dialog is still open by checking the current route
+          Navigator.of(
+            context,
+          ).popUntil((route) => route.isFirst || route is! DialogRoute);
+          Navigator.of(context).pop();
+        }
+      });
     }
   }
 

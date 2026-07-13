@@ -12,13 +12,6 @@ import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 
-class TransactionBinding extends Bindings {
-  @override
-  void dependencies() {
-    Get.lazyPut(() => getIt<TransactionController>());
-  }
-}
-
 @injectable
 class TransactionController extends CcGetController with PaginationMixin {
   TransactionController(

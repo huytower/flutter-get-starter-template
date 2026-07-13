@@ -11,13 +11,6 @@ import '../../domain/usecases/get_reconciliation_history_usecase.dart';
 import '../../domain/usecases/perform_reconciliation_usecase.dart';
 import '../../domain/usecases/undo_reconciliation_usecase.dart';
 
-class ReconciliationBinding extends Bindings {
-  @override
-  void dependencies() {
-    Get.lazyPut(() => getIt<ReconciliationController>());
-  }
-}
-
 @injectable
 class ReconciliationController extends CcGetController {
   ReconciliationController(

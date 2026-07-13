@@ -13,13 +13,6 @@ import '../../domain/usecases/get_category_spending_usecase.dart';
 import '../../domain/usecases/get_financial_runway_usecase.dart';
 import '../../domain/usecases/get_trend_data_usecase.dart';
 
-class ReportBinding extends Bindings {
-  @override
-  void dependencies() {
-    Get.lazyPut(() => getIt<ReportController>());
-  }
-}
-
 @injectable
 class ReportController extends CcGetController {
   ReportController(

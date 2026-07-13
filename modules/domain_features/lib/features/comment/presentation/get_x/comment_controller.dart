@@ -9,13 +9,6 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../domain/entities/comment_entity.dart';
 import '../../domain/repositories/comment_repository.dart';
 
-class CommentBinding extends Bindings {
-  @override
-  void dependencies() {
-    Get.lazyPut(() => getIt<CommentController>());
-  }
-}
-
 @injectable
 class CommentController extends CcGetController with PaginationMixin {
   CommentController(this._repository);

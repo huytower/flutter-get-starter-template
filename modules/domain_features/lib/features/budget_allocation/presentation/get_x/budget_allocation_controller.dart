@@ -10,15 +10,6 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
-class BudgetAllocationBinding extends Bindings {
-  @override
-  void dependencies() {
-    Get.lazyPut(() => getIt<BudgetAllocationController>());
-    Get.lazyPut(() => getIt<WalletController>());
-    Get.lazyPut(() => getIt<BudgetLimitController>());
-  }
-}
-
 @injectable
 class BudgetAllocationController extends CcGetController {
   BudgetAllocationController(this.walletController, this.budgetLimitController);

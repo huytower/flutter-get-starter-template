@@ -14,6 +14,7 @@ import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_group.dart';
 import '../widgets/profile_settings_tile.dart';
 import '../widgets/profile_stats_row.dart';
+import '../widgets/weekly_audit_day_dialog.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -57,6 +58,26 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     if (picked != null) await _c.setBirthYear(picked);
+  }
+
+  Future<void> _pickWeeklyAuditDay(BuildContext context) async {
+    final current =
+        _c.settings.value.weeklyAuditDayIndex + 1; // 0-indexed to 1-indexed
+
+    final picked = await WeeklyAuditDayDialog.show(
+      context,
+      currentDay: current,
+    );
+
+    if (picked != null) await _c.setWeeklyAuditDay(picked - 1);
+  }
+
+  String _getDayName(int day) {
+    final names = el.tr(CcLocaleKeys.common_weekday_names).split('|');
+    if (day >= 1 && day <= 7) {
+      return names[day - 1];
+    }
+    return '';
   }
 
   @override
@@ -135,10 +156,13 @@ class _ProfilePageState extends State<ProfilePage> {
           onTap: () => _pickBirthYear(context),
         ),
       ),
-      ProfileSettingsTile(
-        icon: Icons.calendar_today_rounded,
-        label: el.tr(CcLocaleKeys.profile_weekly_audit_day),
-        trailingLabel: el.tr(CcLocaleKeys.common_sunday_short),
+      Obx(
+        () => ProfileSettingsTile(
+          icon: Icons.calendar_today_rounded,
+          label: el.tr(CcLocaleKeys.profile_weekly_audit_day),
+          trailingLabel: _getDayName(_c.settings.value.weeklyAuditDayIndex + 1),
+          onTap: () => _pickWeeklyAuditDay(context),
+        ),
       ),
       Obx(
         () => ProfileSettingsTile(
