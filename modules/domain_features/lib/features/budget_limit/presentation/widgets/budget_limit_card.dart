@@ -90,18 +90,21 @@ class BudgetLimitGridCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CcText(
-                          stats.budget.name.toLowerCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textStyle: context.ccTextTheme.labelLarge?.copyWith(
-                            fontWeight: CcTypographyParams.bold,
-                            color: scheme.onSurface,
-                            fontSize: context.respFontSize(14),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: CcText(
+                            stats.budget.name.toLowerCase(),
+                            maxLines: 1,
+                            textStyle: context.ccTextTheme.labelLarge?.copyWith(
+                              fontWeight: CcTypographyParams.bold,
+                              color: scheme.onSurface,
+                              fontSize: context.respFontSize(14),
+                            ),
                           ),
                         ),
                         CcText(
-                          '${el.tr(CcLocaleKeys.budget_limit)} ${_fmtShort(stats.budget.limit)}',
+                          '${_fmtShort(stats.budget.limit)}',
                           textStyle: context.ccTextTheme.labelSmall?.copyWith(
                             color: scheme.onSurfaceVariant.withOpacity(0.6),
                             fontSize: context.respFontSize(11),
@@ -112,10 +115,10 @@ class BudgetLimitGridCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const Spacer(),
+              const CcSpaceXS(),
               // Subtle Divider
               Divider(color: scheme.onSurface.withOpacity(0.06), height: 1),
-              const Spacer(),
+              const CcSpaceXS(),
               // Bottom Row: Usage Percent + Mini Pie Chart
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

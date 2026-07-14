@@ -224,6 +224,7 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                 const CcSpaceSM(),
                 TextField(
                   controller: _nameController,
+                  maxLength: 30,
                   decoration: InputDecoration(
                     labelText: el.tr(CcLocaleKeys.budget_name),
                     hintText: el.tr(CcLocaleKeys.budget_name_hint),
