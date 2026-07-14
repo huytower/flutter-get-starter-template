@@ -224,25 +224,29 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                           setState(() => _amountStr = amount.toString()),
                     ),
                   const CcSpaceMD(),
-                  SizedBox(
-                    width: double.infinity,
-                    height: context.respDim(40),
-                    child: ElevatedButton(
-                      onPressed: _isValid ? _onSave : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: context.ccColorScheme.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: CcText(
-                        el.tr(CcLocaleKeys.wallet_save_info),
-                        align: Alignment.center,
-                        textAlign: TextAlign.center,
-                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                          color: context.ccColorScheme.onPrimary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: context.respFontSize(13),
+                  Center(
+                    child: FractionallySizedBox(
+                      widthFactor: 0.4,
+                      child: SizedBox(
+                        height: context.respDim(40),
+                        child: ElevatedButton(
+                          onPressed: _isValid ? _onSave : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: context.ccColorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: CcText(
+                            el.tr(CcLocaleKeys.wallet_save_info),
+                            align: Alignment.center,
+                            textAlign: TextAlign.center,
+                            textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                              color: context.ccColorScheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: context.respFontSize(13),
+                            ),
+                          ),
                         ),
                       ),
                     ),

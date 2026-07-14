@@ -53,89 +53,92 @@ class BudgetLimitGridCard extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         // ── Main card ───────────────────────────────────────────────────────
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: accent.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Circular progress ring + icon
-              Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 52,
-                      height: 52,
-                      child: CircularProgressIndicator(
-                        value: stats.progress,
-                        backgroundColor: accent.withOpacity(0.25),
-                        valueColor: AlwaysStoppedAnimation<Color>(accent),
-                        strokeWidth: 3.5,
-                        strokeCap: StrokeCap.round,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: iconColor.withOpacity(0.12),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(iconData, size: 18, color: iconColor),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-              // Budget name
-              CcText(
-                stats.budget.name,
-                textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: scheme.onSurface,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 2),
-              // Percentage used
-              CcText(
-                el.tr(
-                  CcLocaleKeys.budget_percent_used,
-                  namedArgs: {'percent': '$pct'},
-                ),
-                textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 2),
-              // Remaining / over — reuse existing locale keys
-              CcText(
-                stats.isOver
-                    ? el.tr(
-                        CcLocaleKeys.budget_over_by,
-                        namedArgs: {
-                          'amount': _fmtShort(stats.spent - stats.budget.limit),
-                        },
-                      )
-                    : el.tr(
-                        CcLocaleKeys.budget_remaining,
-                        namedArgs: {'amount': _fmtShort(stats.remaining)},
-                      ),
-                textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                  color: accent,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+         Container(
+           padding: EdgeInsets.all(context.respDim(12)),
+           decoration: BoxDecoration(
+             color: accent.withOpacity(0.08),
+             borderRadius: BorderRadius.circular(16),
+           ),
+           child: Column(
+             crossAxisAlignment: CrossAxisAlignment.stretch,
+             mainAxisAlignment: MainAxisAlignment.center,
+             children: [
+               // Circular progress ring + icon
+               Center(
+                 child: Stack(
+                   alignment: Alignment.center,
+                   children: [
+                     SizedBox(
+                       width: context.respDim(48),
+                       height: context.respDim(48),
+                       child: CircularProgressIndicator(
+                         value: stats.progress,
+                         backgroundColor: accent.withOpacity(0.25),
+                         valueColor: AlwaysStoppedAnimation<Color>(accent),
+                         strokeWidth: 3.5,
+                         strokeCap: StrokeCap.round,
+                       ),
+                     ),
+                     Container(
+                       padding: EdgeInsets.all(context.respDim(8)),
+                       decoration: BoxDecoration(
+                         color: iconColor.withOpacity(0.12),
+                         shape: BoxShape.circle,
+                       ),
+                       child: Icon(
+                         iconData,
+                         size: context.respIconSize(baseSize: 16),
+                         color: iconColor,
+                       ),
+                     ),
+                   ],
+                 ),
+               ),
+               SizedBox(height: context.respDim(6)),
+               // Budget name
+               CcText(
+                 stats.budget.name,
+                 align: Alignment.center,
+                 maxLines: 1,
+                 overflow: TextOverflow.ellipsis,
+                 textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                   fontWeight: CcTypographyParams.bold,
+                   color: scheme.onSurface,
+                   fontSize: context.respFontSize(CcTypographyParams.labelMedium),
+                 ),
+               ),
+               CcText(
+                 el.tr(
+                   CcLocaleKeys.budget_percent_used,
+                   namedArgs: {'percent': '$pct'},
+                 ),
+                 align: Alignment.center,
+                 textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                   color: scheme.onSurfaceVariant,
+                   fontSize: context.respFontSize(CcTypographyParams.labelSmall),
+                 ),
+               ),
+               CcText(
+                 stats.isOver
+                     ? el.tr(
+                         CcLocaleKeys.budget_over_by,
+                         namedArgs: {
+                           'amount': _fmtShort(stats.spent - stats.budget.limit),
+                         },
+                       )
+                     : el.tr(
+                         CcLocaleKeys.budget_remaining,
+                         namedArgs: {'amount': _fmtShort(stats.remaining)},
+                       ),
+                 align: Alignment.center,
+                 textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                   color: accent,
+                   fontWeight: CcTypographyParams.bold,
+                   fontSize: context.respFontSize(CcTypographyParams.labelSmall),
+                 ),
+                 maxLines: 1,
+                 overflow: TextOverflow.ellipsis,
+               ),
             ],
           ),
         ),

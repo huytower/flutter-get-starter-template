@@ -130,23 +130,17 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
             padding: EdgeInsets.symmetric(
               horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
             ),
-            child: Column(
-              children: [
-                for (var i = 0; i < budgets.length; i += 2) ...[
-                  if (i > 0) SizedBox(height: context.respDim(10)),
-                  Row(
-                    children: [
-                      Expanded(child: _buildCard(context, budgets[i])),
-                      SizedBox(width: context.respDim(10)),
-                      Expanded(
-                        child: i + 1 < budgets.length
-                            ? _buildCard(context, budgets[i + 1])
-                            : const SizedBox.shrink(),
-                      ),
-                    ],
-                  ),
-                ],
-              ],
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisExtent: context.respDim(150),
+                crossAxisSpacing: context.respDim(CcPaddingParams.SPACE_MD),
+                mainAxisSpacing: context.respDim(CcPaddingParams.SPACE_MD),
+              ),
+              itemCount: budgets.length,
+              itemBuilder: (context, i) => _buildCard(context, budgets[i]),
             ),
           );
         }),
@@ -156,12 +150,9 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
   }
 
   Widget _buildCard(BuildContext context, BudgetLimitStatsEntity stats) {
-    return SizedBox(
-      height: context.respDim(150),
-      child: _BudgetPreviewCard(
-        stats: stats,
-        category: _categoryMap[stats.budget.categoryId],
-      ),
+    return _BudgetPreviewCard(
+      stats: stats,
+      category: _categoryMap[stats.budget.categoryId],
     );
   }
 

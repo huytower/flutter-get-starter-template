@@ -279,11 +279,11 @@ class _BudgetLimitGridState extends State<_BudgetLimitGrid> {
         // Parent CustomScrollView handles scrolling; disable it here so the
         // LongPressDraggable gestures are not swallowed by nested scrolling.
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 1.05,
+          mainAxisExtent: context.respDim(160),
+          crossAxisSpacing: context.respDim(CcPaddingParams.SPACE_MD),
+          mainAxisSpacing: context.respDim(CcPaddingParams.SPACE_MD),
         ),
         itemCount: budgets.length + 1,
         itemBuilder: (context, i) {

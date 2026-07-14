@@ -218,9 +218,10 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                   textStyle: context.ccTextTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: context.ccColorScheme.primary,
+                    fontSize: context.respFontSize(19),
                   ),
                 ),
-                const CcSpaceMD(),
+                const CcSpaceSM(),
                 TextField(
                   controller: _nameController,
                   decoration: InputDecoration(
@@ -400,25 +401,31 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                     onQuickAmountSelected: (amount) =>
                         setState(() => _limitStr = amount.toString()),
                   ),
-                const CcSpaceLG(),
-                SizedBox(
-                  width: double.infinity,
-                  height: context.respDim(50),
-                  child: ElevatedButton(
-                    onPressed: _isValid ? _onSave : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.ccColorScheme.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: CcText(
-                      el.tr(CcLocaleKeys.common_save),
-                      align: Alignment.center,
-                      textAlign: TextAlign.center,
-                      textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                        color: context.ccColorScheme.onPrimary,
-                        fontWeight: FontWeight.bold,
+                const CcSpaceSM(),
+                Center(
+                  child: FractionallySizedBox(
+                    widthFactor: 0.4,
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: context.respDim(40),
+                      child: ElevatedButton(
+                        onPressed: _isValid ? _onSave : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: context.ccColorScheme.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: CcText(
+                          el.tr(CcLocaleKeys.common_save),
+                          align: Alignment.center,
+                          textAlign: TextAlign.center,
+                          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                            color: context.ccColorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: context.respFontSize(13),
+                          ),
+                        ),
                       ),
                     ),
                   ),

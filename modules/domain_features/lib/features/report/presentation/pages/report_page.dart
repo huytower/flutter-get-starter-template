@@ -62,6 +62,7 @@ class ReportPage extends CcGetView<ReportController> {
           return ListView(
             padding: EdgeInsets.symmetric(horizontal: padding),
             children: [
+              const SizedBox(height: 16),
               if (controller.runway.value != null) ...[
                 FinancialRunwayWidget(runway: controller.runway.value!),
                 const SizedBox(height: 16),
@@ -74,10 +75,16 @@ class ReportPage extends CcGetView<ReportController> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: Center(
-                    child: CcText(
-                      el.tr(CcLocaleKeys.report_four_weeks_near),
-                      textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                        color: context.ccColorScheme.onSurfaceVariant,
+                    child: SizedBox(
+                      height: context.respDim(40),
+                      child: Center(
+                        child: CcText(
+                          el.tr(CcLocaleKeys.report_four_weeks_near),
+                          textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                            color: context.ccColorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -124,8 +131,8 @@ class ReportPage extends CcGetView<ReportController> {
   }
 
   Widget _rangeSelector(BuildContext context) {
-    final pinkBackground = PrjColors.pink.withValues(alpha: 0.15);
-    final pinkText = PrjColors.pink;
+    final primaryBackground = context.ccColorScheme.primary.withValues(alpha: 0.15);
+    final primaryText = context.ccColorScheme.onPrimary;
 
     return Container(
       width: double.infinity,
@@ -149,8 +156,8 @@ class ReportPage extends CcGetView<ReportController> {
         showSelectedIcon: false,
         style: SegmentedButton.styleFrom(
           backgroundColor: Colors.transparent,
-          selectedBackgroundColor: pinkBackground,
-          selectedForegroundColor: pinkText,
+          selectedBackgroundColor: primaryBackground,
+          selectedForegroundColor: primaryText,
           side: BorderSide.none,
           textStyle: context.ccTextTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.w600,

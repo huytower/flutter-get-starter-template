@@ -41,11 +41,11 @@ class _LanguageSelectionDialogContentState
       mainAxisSize: MainAxisSize.min,
       children: [
         // ---- Header ----
-        Container(
+         Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(
             horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-            vertical: context.respPadding(CcPaddingParams.PAGE_MD),
+            vertical: context.respPadding(CcPaddingParams.SPACE_LG),
           ),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -141,10 +141,10 @@ class _LanguageSelectionDialogContentState
               // ---- Actions ----
               Padding(
                 padding: EdgeInsets.fromLTRB(
-                  context.respPadding(CcPaddingParams.PAGE_MD),
+                  context.respPadding(CcPaddingParams.SPACE_LG),
                   context.respPadding(CcPaddingParams.PAGE_XS),
-                  context.respPadding(CcPaddingParams.PAGE_LG),
-                  context.respPadding(CcPaddingParams.PAGE_MD),
+                  context.respPadding(CcPaddingParams.SPACE_LG),
+                  context.respPadding(CcPaddingParams.SPACE_LG),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -174,7 +174,7 @@ class _LanguageSelectionDialogContentState
                   ],
                 ),
               ),
-              SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
+              SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
             ],
           ),
         ),

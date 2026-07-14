@@ -1,6 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:theme/export_theme.dart';
 
 class TransactionSubmitButton extends StatelessWidget {
   final String text;
@@ -20,14 +19,44 @@ class TransactionSubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CcBaseBtn(
-      title: text,
-      onTap: isEnabled && !isSubmitting ? onTap : null,
-      isEnable: isEnabled && !isSubmitting,
-      allowShowLoading: isSubmitting,
-      bgColor: [activeColor, activeColor],
-      textColor: PrjColors.onPrimary,
-      width: double.infinity,
+    final scheme = context.ccColorScheme;
+    return Center(
+      child: FractionallySizedBox(
+        widthFactor: 0.6,
+        child: SizedBox(
+          height: context.respDim(40),
+          child: ElevatedButton(
+            onPressed: isEnabled && !isSubmitting ? onTap : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: activeColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: isSubmitting
+                ? SizedBox(
+                    width: context.respDim(20),
+                    height: context.respDim(20),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        scheme.onPrimary,
+                      ),
+                    ),
+                  )
+                : CcText(
+                    text,
+                    align: Alignment.center,
+                    textAlign: TextAlign.center,
+                    textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                      color: scheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: context.respFontSize(13),
+                    ),
+                  ),
+          ),
+        ),
+      ),
     );
   }
 }
