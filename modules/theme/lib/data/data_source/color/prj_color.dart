@@ -19,7 +19,7 @@ abstract final class PrjColors {
   static const Color primary = CcBaseColors.teal600;
   static const Color onPrimary = CcBaseColors.white100;
   static const Color primaryContainer = CcBaseColors.emerald500;
-  static const Color darkPrimaryContainer = CcBaseColors.gray700;
+  static const Color darkPrimaryContainer = CcBaseColors.gray800;
   static const Color onPrimaryContainer = CcBaseColors.neutral100;
   static const Color primaryPressed = CcBaseColors.brand600;
   static const Color primaryGradientEnd = CcBaseColors.brand900;
@@ -62,7 +62,7 @@ abstract final class PrjColors {
   static const Color surfaceOverlay = CcBaseColors.gray200;
 
   // -- Dark Mode Specifics
-  static const Color darkBackground = CcBaseColors.neutral100;
+  static const Color darkBackground = CcBaseColors.gray950;
   static const Color darkOnBackground = CcBaseColors.white100;
   static const Color darkSurface = CcBaseColors.gray900;
   static const Color darkOnSurface = CcBaseColors.white100;

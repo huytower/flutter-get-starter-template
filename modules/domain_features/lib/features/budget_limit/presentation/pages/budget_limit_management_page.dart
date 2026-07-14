@@ -102,16 +102,21 @@ class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
               child: isEdit
                   ? const SizedBox.shrink()
                   : Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                      padding: EdgeInsets.fromLTRB(
+                        context.respPadding(16),
+                        context.respPadding(12),
+                        context.respPadding(16),
+                        0,
+                      ),
                       child: Row(
                         children: [
                           Icon(
                             Icons.swap_vert,
-                            size: 14,
+                            size: context.respIconSize(baseSize: 14),
                             color: context.ccColorScheme.onSurfaceVariant
                                 .withOpacity(0.5),
                           ),
-                          const SizedBox(width: 6),
+                          SizedBox(width: context.respDim(6)),
                           CcText(
                             el.tr(CcLocaleKeys.budget_drag_reorder_hint),
                             textStyle: context.ccTextTheme.labelSmall?.copyWith(
@@ -281,7 +286,7 @@ class _BudgetLimitGridState extends State<_BudgetLimitGrid> {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisExtent: context.respDim(160),
+          mainAxisExtent: context.respDim(150),
           crossAxisSpacing: context.respDim(CcPaddingParams.SPACE_MD),
           mainAxisSpacing: context.respDim(CcPaddingParams.SPACE_MD),
         ),
@@ -383,10 +388,10 @@ class _BudgetLimitGridState extends State<_BudgetLimitGrid> {
         opacity: isEdit ? 0.4 : 1.0,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: scheme.primary.withOpacity(0.06),
-            borderRadius: BorderRadius.circular(16),
+            color: scheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(context.respDim(20)),
             border: Border.all(
-              color: scheme.primary.withOpacity(0.2),
+              color: scheme.onSurface.withOpacity(0.06),
               width: 1.2,
             ),
           ),
@@ -395,15 +400,16 @@ class _BudgetLimitGridState extends State<_BudgetLimitGrid> {
             children: [
               Icon(
                 Icons.local_offer_outlined,
-                color: scheme.onSurfaceVariant,
+                color: scheme.onSurfaceVariant.withOpacity(0.5),
                 size: 28,
               ),
               const SizedBox(height: 8),
               CcText(
                 el.tr(CcLocaleKeys.budget_customize_category),
                 textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
+                  color: scheme.onSurfaceVariant.withOpacity(0.5),
                   fontWeight: FontWeight.w500,
+                  fontSize: context.respFontSize(12),
                 ),
                 align: Alignment.center,
                 textAlign: TextAlign.center,
