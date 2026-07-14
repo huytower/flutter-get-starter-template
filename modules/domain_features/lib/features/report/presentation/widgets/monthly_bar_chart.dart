@@ -37,7 +37,7 @@ class MonthlyBarChart extends StatelessWidget {
               _incomeColor,
               el.tr(CcLocaleKeys.report_income_short),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: context.respDim(16)),
             _legendDot(
               context,
               _expenseColor,
@@ -45,9 +45,9 @@ class MonthlyBarChart extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: context.respDim(12)),
         SizedBox(
-          height: 200,
+          height: context.respDim(200),
           child: BarChart(
             BarChartData(
               maxY: maxY,
@@ -84,12 +84,12 @@ class MonthlyBarChart extends StatelessWidget {
                 leftTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 40,
+                    reservedSize: context.respDim(40),
                     interval: maxY / 4,
                     getTitlesWidget: (value, meta) {
                       if (value == 0) return const SizedBox.shrink();
                       return Padding(
-                        padding: const EdgeInsets.only(right: 4),
+                        padding: EdgeInsets.only(right: context.respDim(4)),
                         child: CcText(
                           formatVndShort(value),
                           textStyle: context.ccTextTheme.labelSmall?.copyWith(
@@ -106,14 +106,14 @@ class MonthlyBarChart extends StatelessWidget {
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 24,
+                    reservedSize: context.respDim(24),
                     getTitlesWidget: (value, meta) {
                       final index = value.toInt();
                       if (index < 0 || index >= months.length) {
                         return const SizedBox.shrink();
                       }
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 6),
+                       return Padding(
+                         padding: EdgeInsets.only(top: context.respDim(6)),
                         child: CcText(
                           months[index].shortLabel,
                           textStyle: context.ccTextTheme.labelSmall?.copyWith(
@@ -132,10 +132,10 @@ class MonthlyBarChart extends StatelessWidget {
                 for (var i = 0; i < months.length; i++)
                   BarChartGroupData(
                     x: i,
-                    barRods: [
-                      _rod(months[i].income, _incomeColor),
-                      _rod(months[i].expense, _expenseColor),
-                    ],
+                  barRods: [
+                    _rod(context, months[i].income, _incomeColor),
+                    _rod(context, months[i].expense, _expenseColor),
+                  ],
                   ),
               ],
             ),
@@ -145,12 +145,12 @@ class MonthlyBarChart extends StatelessWidget {
     );
   }
 
-  BarChartRodData _rod(num value, Color color) {
+  BarChartRodData _rod(BuildContext context, num value, Color color) {
     return BarChartRodData(
       toY: value.toDouble(),
       color: color,
-      width: 9,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+      width: context.respDim(9),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(context.respDim(3))),
     );
   }
 
@@ -159,14 +159,14 @@ class MonthlyBarChart extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 10,
-          height: 10,
+          width: context.respDim(10),
+          height: context.respDim(10),
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(2),
+            borderRadius: BorderRadius.circular(context.respDim(2)),
           ),
         ),
-        const SizedBox(width: 6),
+        SizedBox(width: context.respDim(6)),
         CcText(label, textStyle: context.ccTextTheme.bodySmall),
       ],
     );

@@ -18,18 +18,18 @@ class CategoryLegendTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: context.respDim(4)),
       child: Row(
         children: [
           Container(
-            width: 12,
-            height: 12,
+            width: context.respDim(12),
+            height: context.respDim(12),
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(3),
+              borderRadius: BorderRadius.circular(context.respDim(3)),
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: context.respDim(12)),
           Expanded(
             child: CcText(
               el.tr(slice.nameKey),
@@ -42,7 +42,7 @@ class CategoryLegendTile extends StatelessWidget {
               color: context.ccColorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: context.respDim(12)),
           CcText(
             formatVndShort(slice.amount),
             textStyle: context.ccTextTheme.bodySmall?.copyWith(

@@ -31,10 +31,13 @@ class TrendCard extends StatelessWidget {
     return SizedBox(
       height: context.respDim(180),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
         decoration: BoxDecoration(
           color: context.ccColorScheme.surface,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(context.respDim(20)),
+          border: Border.all(
+            color: context.ccColorScheme.outlineVariant.withOpacity(0.1),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,24 +45,28 @@ class TrendCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(
+                    context.respPadding(CcPaddingParams.SPACE_SM),
+                  ),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    color: color.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(context.respDim(10)),
                   ),
                   child: Icon(
                     isIncome ? Icons.north_east : Icons.south_west,
                     color: color,
-                    size: 18,
+                    size: context.respIconSize(baseSize: 18),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: context.respDim(12)),
                 CcText(
                   title,
                   textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                     fontWeight: CcTypographyParams.semiBold,
                     color: context.ccColorScheme.onSurface,
-                    fontSize: context.respFontSize(CcTypographyParams.bodyMedium),
+                    fontSize: context.respFontSize(
+                      CcTypographyParams.bodyMedium,
+                    ),
                   ),
                 ),
                 const Spacer(),
@@ -75,7 +82,7 @@ class TrendCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: context.respDim(24)),
             Expanded(
               child: SizedBox(
                 height: context.respDim(50),
@@ -111,19 +118,18 @@ class TrendCard extends StatelessWidget {
                         isCurved: isCurved,
                         curveSmoothness: 0.3,
                         color: color,
-                        barWidth: 2,
+                        barWidth: context.respDim(2),
                         isStrokeCapRound: true,
                         dotData: FlDotData(
                           show: range != ReportRange.weekly,
                           getDotPainter: (spot, percent, barData, index) {
                             bool shouldShow = false;
-                            if (range == ReportRange.monthly)
-                              shouldShow = true;
+                            if (range == ReportRange.monthly) shouldShow = true;
                             if (range == ReportRange.yearly && index % 3 == 0)
                               shouldShow = true;
 
                             return FlDotCirclePainter(
-                              radius: shouldShow ? 2.5 : 0,
+                              radius: shouldShow ? context.respDim(2.5) : 0,
                               color: color,
                               strokeWidth: 0,
                             );
@@ -131,36 +137,37 @@ class TrendCard extends StatelessWidget {
                         ),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: color.withValues(alpha: 0.03),
+                          color: color.withValues(alpha: 0.2),
                         ),
                       ),
                     ],
                   ),
                 ),
+              ),
             ),
-          ),
-          if (range != ReportRange.weekly) ...[
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                for (int i = 0; i < points.length; i++)
-                  if (range == ReportRange.monthly ||
-                      (range == ReportRange.yearly && i % 3 == 0))
-                    CcText(
-                      points[i].label,
-                      textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                        color: context.ccColorScheme.onSurfaceVariant,
-                        fontSize: context.respFontSize(
-                          CcTypographyParams.labelSmall,
+            if (range != ReportRange.weekly) ...[
+              SizedBox(height: context.respDim(12)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  for (int i = 0; i < points.length; i++)
+                    if (range == ReportRange.monthly ||
+                        (range == ReportRange.yearly && i % 3 == 0))
+                      CcText(
+                        points[i].label,
+                        textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                          color: context.ccColorScheme.onSurfaceVariant,
+                          fontSize: context.respFontSize(
+                            CcTypographyParams.labelSmall,
+                          ),
                         ),
                       ),
-                    ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ],
-        ],
+        ),
       ),
-    ));
+    );
   }
 }

@@ -28,7 +28,7 @@ class _SpendingPieChartState extends State<SpendingPieChart> {
     return Column(
       children: [
         SizedBox(
-          height: 200,
+          height: context.respDim(200),
           child: PieChart(
             PieChartData(
               pieTouchData: PieTouchData(
@@ -45,13 +45,13 @@ class _SpendingPieChartState extends State<SpendingPieChart> {
                 },
               ),
               borderData: FlBorderData(show: false),
-              sectionsSpace: 4,
-              centerSpaceRadius: 40,
+              sectionsSpace: context.respDim(4),
+              centerSpaceRadius: context.respDim(40),
               sections: _buildSections(context),
             ),
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: context.respDim(24)),
         Column(
           children: [
             for (var i = 0; i < widget.slices.length; i++)
@@ -69,7 +69,7 @@ class _SpendingPieChartState extends State<SpendingPieChart> {
     final palette = reportPalette(context);
     return List.generate(widget.slices.length, (i) {
       final isTouched = i == _touchedIndex;
-      final radius = isTouched ? 60.0 : 50.0;
+      final radius = isTouched ? context.respDim(60.0) : context.respDim(50.0);
       final slice = widget.slices[i];
       final color = slice.color ?? palette[i % palette.length];
 

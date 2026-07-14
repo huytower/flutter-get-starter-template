@@ -114,7 +114,7 @@ class ReportPage extends CcGetView<ReportController> {
                       ),
                     ),
                   ),
-                  16,
+                  CcPaddingParams.SPACE_MD,
                   0,
                   0,
                   0,
@@ -135,7 +135,7 @@ class ReportPage extends CcGetView<ReportController> {
                       ),
                     ),
                   ),
-                  16,
+                  CcPaddingParams.SPACE_MD,
                   0,
                   0,
                   0,
@@ -179,9 +179,7 @@ class ReportPage extends CcGetView<ReportController> {
   }
 
   Widget _rangeSelector(BuildContext context) {
-    final primaryBackground = context.ccColorScheme.primary.withValues(
-      alpha: 0.15,
-    );
+    final primaryBackground = context.ccColorScheme.primary;
     final primaryText = context.ccColorScheme.onPrimary;
 
     return CcPadding(
@@ -203,21 +201,19 @@ class ReportPage extends CcGetView<ReportController> {
         selected: {controller.range.value},
         showSelectedIcon: false,
         style: SegmentedButton.styleFrom(
-          backgroundColor: Colors.transparent,
+          backgroundColor: context.ccColorScheme.surface,
           selectedBackgroundColor: primaryBackground,
           selectedForegroundColor: primaryText,
-          side: BorderSide.none,
-          textStyle: context.ccTextTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          side: BorderSide(color: primaryBackground.withOpacity(0.1)),
+          textStyle: context.ccTextTheme.titleSmall,
         ),
         onSelectionChanged: (selection) =>
             controller.selectRange(selection.first),
       ),
-      8,
+      CcPaddingParams.SPACE_SM,
       0,
       0,
-      8,
+      CcPaddingParams.SPACE_SM,
     );
   }
 }

@@ -55,15 +55,17 @@ class _DailyGroup extends StatelessWidget {
     final amountText = "$amountPrefix${formatVnd(totalDaily.abs().toInt())} đ";
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: EdgeInsets.only(bottom: context.respDim(16)),
       decoration: BoxDecoration(
         color: context.ccColorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(context.respDim(16)),
       ),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(
+              context.respPadding(CcPaddingParams.SPACE_MD),
+            ),
             child: Row(
               children: [
                 CcText(
@@ -72,7 +74,7 @@ class _DailyGroup extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: context.respDim(12)),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -122,8 +124,8 @@ class _DailyGroup extends StatelessWidget {
             ),
           ),
           Divider(
-            height: 1,
-            color: context.ccColorScheme.outlineVariant.withValues(alpha: 0.5),
+            height: context.respDim(1),
+            color: context.ccColorScheme.outlineVariant.withValues(alpha: 0.1),
           ),
           for (final tx in transactions) _TransactionTile(transaction: tx),
         ],
@@ -150,7 +152,7 @@ class _TransactionTile extends StatelessWidget {
             transaction.categoryIconCode!,
             fontFamily: transaction.categoryIconFamily,
           ),
-          size: 20,
+          size: context.respIconSize(baseSize: 20),
           color: isIncome
               ? context.ccColorScheme.primary
               : context.ccColorScheme.error,
@@ -158,7 +160,7 @@ class _TransactionTile extends StatelessWidget {
       }
       return Icon(
         isIncome ? Icons.north_east : Icons.south_west,
-        size: 20,
+        size: context.respIconSize(baseSize: 20),
         color: isIncome
             ? context.ccColorScheme.primary
             : context.ccColorScheme.error,
@@ -166,12 +168,15 @@ class _TransactionTile extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
+        vertical: context.respPadding(CcPaddingParams.SPACE_SM),
+      ),
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: context.respDim(40),
+            height: context.respDim(40),
             decoration: BoxDecoration(
               color: isIncome
                   ? context.ccColorScheme.primary.withValues(alpha: 0.1)
@@ -180,7 +185,7 @@ class _TransactionTile extends StatelessWidget {
             ),
             child: Center(child: getIcon()),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: context.respDim(12)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

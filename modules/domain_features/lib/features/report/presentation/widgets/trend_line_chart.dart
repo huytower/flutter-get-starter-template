@@ -44,9 +44,9 @@ class TrendLineChart extends StatelessWidget {
     return Column(
       children: [
         _buildHeader(context, incomeColor, expenseColor),
-        const SizedBox(height: 24),
+        SizedBox(height: context.respDim(24)),
         SizedBox(
-          height: 220,
+          height: context.respDim(220),
           child: LineChart(
             LineChartData(
               maxY: maxY,
@@ -93,7 +93,7 @@ class TrendLineChart extends StatelessWidget {
                       }
 
                       return Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
+                        padding: EdgeInsets.only(top: context.respDim(8.0)),
                         child: CcText(
                           points[index].label,
                           textStyle: context.ccTextTheme.labelSmall?.copyWith(
@@ -105,13 +105,25 @@ class TrendLineChart extends StatelessWidget {
                         ),
                       );
                     },
-                    reservedSize: 32,
+                    reservedSize: context.respDim(32),
                   ),
                 ),
               ),
               lineBarsData: [
-                _buildLine(points, (p) => p.income, incomeColor, isCurved),
-                _buildLine(points, (p) => p.expense, expenseColor, isCurved),
+                _buildLine(
+                  context,
+                  points,
+                  (p) => p.income,
+                  incomeColor,
+                  isCurved,
+                ),
+                _buildLine(
+                  context,
+                  points,
+                  (p) => p.expense,
+                  expenseColor,
+                  isCurved,
+                ),
               ],
             ),
           ),
@@ -121,6 +133,7 @@ class TrendLineChart extends StatelessWidget {
   }
 
   LineChartBarData _buildLine(
+    BuildContext context,
     List<TrendPoint> points,
     double Function(TrendPoint) valSelector,
     Color color,
@@ -133,12 +146,12 @@ class TrendLineChart extends StatelessWidget {
       ],
       isCurved: isCurved,
       color: color,
-      barWidth: 3,
+      barWidth: context.respDim(3),
       isStrokeCapRound: true,
       dotData: FlDotData(show: !isCurved || range == ReportRange.monthly),
       belowBarData: BarAreaData(
         show: true,
-        color: color.withValues(alpha: 0.1),
+        color: color.withValues(alpha: 0.2),
       ),
     );
   }
@@ -194,9 +207,9 @@ class TrendLineChart extends StatelessWidget {
                 visualDensity: VisualDensity.compact,
               ),
             ],
-            const SizedBox(width: 8),
+            SizedBox(width: context.respDim(8)),
             _legendDot(context, incomeColor, el.tr(CcLocaleKeys.common_income)),
-            const SizedBox(width: 12),
+            SizedBox(width: context.respDim(12)),
             _legendDot(
               context,
               expenseColor,
@@ -212,11 +225,11 @@ class TrendLineChart extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 8,
-          height: 8,
+          width: context.respDim(8),
+          height: context.respDim(8),
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
-        const SizedBox(width: 4),
+        SizedBox(width: context.respDim(4)),
         CcText(label, textStyle: context.ccTextTheme.labelSmall),
       ],
     );

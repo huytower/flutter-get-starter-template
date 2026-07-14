@@ -15,10 +15,13 @@ class FinancialRunwayWidget extends StatelessWidget {
     final (statusColor, containerColor) = _getStatusColors(context);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
+        vertical: context.respPadding(CcPaddingParams.SPACE_LG),
+      ),
       decoration: BoxDecoration(
         color: containerColor,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(context.respDim(24)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +36,7 @@ class FinancialRunwayWidget extends StatelessWidget {
                   color: statusColor,
                   size: context.respIconSize(baseSize: 20),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: context.respDim(8)),
                 CcText(
                   el.tr(CcLocaleKeys.report_safety_index),
                   textStyle: context.ccTextTheme.labelMedium?.copyWith(
@@ -46,7 +49,7 @@ class FinancialRunwayWidget extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: context.respDim(16)),
           ],
           if (runway.status == FinancialRunwayStatus.insufficient)
             CcText(
@@ -72,7 +75,7 @@ class FinancialRunwayWidget extends StatelessWidget {
                 fontSize: context.respFontSize(CcTypographyParams.titleMedium),
               ),
             ),
-          const SizedBox(height: 12),
+          SizedBox(height: context.respDim(12)),
           CcText(
             el.tr(runway.message),
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
