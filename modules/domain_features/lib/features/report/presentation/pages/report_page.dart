@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:cc_sdk_ui/widgets/padding/cc_padding.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -53,7 +54,7 @@ class ReportPage extends CcGetView<ReportController> {
         return Obx(() {
           if (controller.trendData.value == null &&
               controller.layoutStatus.value == CcLayoutStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
+            return const CcProgressIndicator(paddingTop: 0);
           }
 
           final data = controller.trendData.value;
@@ -62,19 +63,65 @@ class ReportPage extends CcGetView<ReportController> {
           return ListView(
             padding: EdgeInsets.symmetric(horizontal: padding),
             children: [
-              const SizedBox(height: 16),
+              const CcSpaceLG(),
               if (controller.runway.value != null) ...[
                 FinancialRunwayWidget(runway: controller.runway.value!),
-                const SizedBox(height: 16),
+                const CcSpaceLG(),
               ],
               _rangeSelector(context),
-              const SizedBox(height: 16),
+              const CcSpaceLG(),
               if (controller.range.value != ReportRange.weekly)
-                _navigationHeader(context),
+                CcPadding(
+                  Center(
+                    child: SizedBox(
+                      height: context.respDim(40),
+                      child: Center(
+                        child: CcRowCenter(
+                          children: [
+                            CcIconButton.bouncing(
+                              onTap: controller.previousPeriod,
+                              isEnable: controller.canPrevious,
+                              icon: Icon(
+                                Icons.chevron_left,
+                                color: controller.canPrevious
+                                    ? context.ccColorScheme.onSurface
+                                    : context.ccColorScheme.outline,
+                              ),
+                            ),
+                            const CcSpaceSM(),
+                            CcText(
+                              el.tr(CcLocaleKeys.report_four_weeks_near),
+                              textStyle: context.ccTextTheme.titleSmall
+                                  ?.copyWith(
+                                    color:
+                                        context.ccColorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                            const CcSpaceSM(),
+                            CcIconButton.bouncing(
+                              onTap: controller.nextPeriod,
+                              isEnable: controller.canNext,
+                              icon: Icon(
+                                Icons.chevron_right,
+                                color: controller.canNext
+                                    ? context.ccColorScheme.onSurface
+                                    : context.ccColorScheme.outline,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  16,
+                  0,
+                  0,
+                  0,
+                ),
               if (controller.range.value == ReportRange.weekly)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Center(
+                CcPadding(
+                  Center(
                     child: SizedBox(
                       height: context.respDim(40),
                       child: Center(
@@ -88,6 +135,10 @@ class ReportPage extends CcGetView<ReportController> {
                       ),
                     ),
                   ),
+                  16,
+                  0,
+                  0,
+                  0,
                 ),
               TrendCard(
                 title: el.tr(CcLocaleKeys.common_expense),
@@ -97,7 +148,7 @@ class ReportPage extends CcGetView<ReportController> {
                 range: controller.range.value,
                 isIncome: false,
               ),
-              const SizedBox(height: 16),
+              const CcSpaceLG(),
               TrendCard(
                 title: el.tr(CcLocaleKeys.common_income),
                 amount: data.totalIncome,
@@ -106,14 +157,14 @@ class ReportPage extends CcGetView<ReportController> {
                 range: controller.range.value,
                 isIncome: true,
               ),
-              const SizedBox(height: 32),
+              const CcSpaceXL(),
               CcText(
                 el.tr(CcLocaleKeys.report_daily_detail),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 16),
+              const CcSpaceLG(),
               ReportDailyList(transactions: data.transactions),
             ],
           );
@@ -124,20 +175,17 @@ class ReportPage extends CcGetView<ReportController> {
 
   @override
   Widget onPageBodyWrapper(BuildContext context, Widget body) {
-    return Container(
-      color: context.ccColorScheme.background,
-      child: body,
-    );
+    return Container(color: context.ccColorScheme.background, child: body);
   }
 
   Widget _rangeSelector(BuildContext context) {
-    final primaryBackground = context.ccColorScheme.primary.withValues(alpha: 0.15);
+    final primaryBackground = context.ccColorScheme.primary.withValues(
+      alpha: 0.15,
+    );
     final primaryText = context.ccColorScheme.onPrimary;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: SegmentedButton<ReportRange>(
+    return CcPadding(
+      SegmentedButton<ReportRange>(
         segments: [
           ButtonSegment(
             value: ReportRange.weekly,
@@ -166,56 +214,10 @@ class ReportPage extends CcGetView<ReportController> {
         onSelectionChanged: (selection) =>
             controller.selectRange(selection.first),
       ),
-    );
-  }
-
-  Widget _navigationHeader(BuildContext context) {
-    final data = controller.trendData.value;
-    if (data == null || data.points.isEmpty) return const SizedBox.shrink();
-
-    String label = "";
-    if (controller.range.value == ReportRange.monthly) {
-      label = "${data.points.first.label} - ${data.points.last.label}";
-    } else if (controller.range.value == ReportRange.yearly) {
-      label = "${data.points.first.label} - ${data.points.last.label}";
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CcIconButton.bouncing(
-            onTap: controller.previousPeriod,
-            isEnable: controller.canPrevious,
-            icon: Icon(
-              Icons.chevron_left,
-              color: controller.canPrevious
-                  ? context.ccColorScheme.onSurface
-                  : context.ccColorScheme.outline,
-            ),
-          ),
-          const SizedBox(width: 8),
-          CcText(
-            label,
-            textStyle: context.ccTextTheme.titleSmall?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(width: 8),
-          CcIconButton.bouncing(
-            onTap: controller.nextPeriod,
-            isEnable: controller.canNext,
-            icon: Icon(
-              Icons.chevron_right,
-              color: controller.canNext
-                  ? context.ccColorScheme.onSurface
-                  : context.ccColorScheme.outline,
-            ),
-          ),
-        ],
-      ),
+      8,
+      0,
+      0,
+      8,
     );
   }
 }

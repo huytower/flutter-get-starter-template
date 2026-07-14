@@ -124,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
-        backgroundColor: context.ccColorScheme.surface,
+        backgroundColor: context.ccColorScheme.background,
         body: StreamBuilder<CcUserEntity?>(
           stream: _c.userStream,
           builder: (context, snapshot) {

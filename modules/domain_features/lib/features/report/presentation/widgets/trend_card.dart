@@ -28,110 +28,115 @@ class TrendCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isCurved = range != ReportRange.yearly;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  isIncome ? Icons.north_east : Icons.south_west,
-                  color: color,
-                  size: 18,
-                ),
-              ),
-              const SizedBox(width: 12),
-              CcText(
-                title,
-                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  fontWeight: CcTypographyParams.semiBold,
-                  color: context.ccColorScheme.onSurface,
-                  fontSize: context.respFontSize(CcTypographyParams.bodyMedium),
-                ),
-              ),
-              const Spacer(),
-              CcText(
-                formatVndShort(amount),
-                textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                  fontWeight: CcTypographyParams.bold,
-                  color: context.ccColorScheme.onSurface,
-                  fontSize: context.respFontSize(
-                    CcTypographyParams.titleMedium,
+    return SizedBox(
+      height: context.respDim(180),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: context.ccColorScheme.surface,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            height: 50,
-            child: LineChart(
-              LineChartData(
-                minX: 0,
-                maxX: points.length.toDouble() - 1,
-                minY: points.isEmpty
-                    ? 0
-                    : points
-                              .map((p) => isIncome ? p.income : p.expense)
-                              .reduce((a, b) => a < b ? a : b) *
-                          0.95,
-                maxY: points.isEmpty
-                    ? 100
-                    : points
-                              .map((p) => isIncome ? p.income : p.expense)
-                              .reduce((a, b) => a > b ? a : b) *
-                          1.05,
-                lineTouchData: const LineTouchData(enabled: false),
-                gridData: const FlGridData(show: false),
-                titlesData: const FlTitlesData(show: false),
-                borderData: FlBorderData(show: false),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: [
-                      for (int i = 0; i < points.length; i++)
-                        FlSpot(
-                          i.toDouble(),
-                          isIncome ? points[i].income : points[i].expense,
-                        ),
-                    ],
-                    isCurved: isCurved,
-                    curveSmoothness: 0.3,
+                  child: Icon(
+                    isIncome ? Icons.north_east : Icons.south_west,
                     color: color,
-                    barWidth: 2,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(
-                      show: range != ReportRange.weekly,
-                      getDotPainter: (spot, percent, barData, index) {
-                        bool shouldShow = false;
-                        if (range == ReportRange.monthly) shouldShow = true;
-                        if (range == ReportRange.yearly && index % 3 == 0)
-                          shouldShow = true;
-
-                        return FlDotCirclePainter(
-                          radius: shouldShow ? 2.5 : 0,
-                          color: color,
-                          strokeWidth: 0,
-                        );
-                      },
-                    ),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: color.withValues(alpha: 0.03),
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                CcText(
+                  title,
+                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                    fontWeight: CcTypographyParams.semiBold,
+                    color: context.ccColorScheme.onSurface,
+                    fontSize: context.respFontSize(CcTypographyParams.bodyMedium),
+                  ),
+                ),
+                const Spacer(),
+                CcText(
+                  formatVndShort(amount),
+                  textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                    fontWeight: CcTypographyParams.bold,
+                    color: context.ccColorScheme.onSurface,
+                    fontSize: context.respFontSize(
+                      CcTypographyParams.titleMedium,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Expanded(
+              child: SizedBox(
+                height: context.respDim(50),
+                child: LineChart(
+                  LineChartData(
+                    minX: 0,
+                    maxX: points.length.toDouble() - 1,
+                    minY: points.isEmpty
+                        ? 0
+                        : points
+                                  .map((p) => isIncome ? p.income : p.expense)
+                                  .reduce((a, b) => a < b ? a : b) *
+                              0.95,
+                    maxY: points.isEmpty
+                        ? 100
+                        : points
+                                  .map((p) => isIncome ? p.income : p.expense)
+                                  .reduce((a, b) => a > b ? a : b) *
+                              1.05,
+                    lineTouchData: const LineTouchData(enabled: false),
+                    gridData: const FlGridData(show: false),
+                    titlesData: const FlTitlesData(show: false),
+                    borderData: FlBorderData(show: false),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: [
+                          for (int i = 0; i < points.length; i++)
+                            FlSpot(
+                              i.toDouble(),
+                              isIncome ? points[i].income : points[i].expense,
+                            ),
+                        ],
+                        isCurved: isCurved,
+                        curveSmoothness: 0.3,
+                        color: color,
+                        barWidth: 2,
+                        isStrokeCapRound: true,
+                        dotData: FlDotData(
+                          show: range != ReportRange.weekly,
+                          getDotPainter: (spot, percent, barData, index) {
+                            bool shouldShow = false;
+                            if (range == ReportRange.monthly)
+                              shouldShow = true;
+                            if (range == ReportRange.yearly && index % 3 == 0)
+                              shouldShow = true;
+
+                            return FlDotCirclePainter(
+                              radius: shouldShow ? 2.5 : 0,
+                              color: color,
+                              strokeWidth: 0,
+                            );
+                          },
+                        ),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          color: color.withValues(alpha: 0.03),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ),
           ),
           if (range != ReportRange.weekly) ...[
@@ -156,6 +161,6 @@ class TrendCard extends StatelessWidget {
           ],
         ],
       ),
-    );
+    ));
   }
 }
