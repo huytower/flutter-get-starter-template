@@ -5,14 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/util/horizontal_fade_scroll_view.dart';
-import '../../../../core/util/icon_utils.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../../domain/usecases/create_budget_limit_usecase.dart';
 import '../../domain/usecases/update_budget_limit_usecase.dart';
 import '../get_x/budget_limit_controller.dart';
+import 'budget_limit_category_selector.dart';
+import 'budget_limit_lock_notice.dart';
+import 'budget_limit_name_input.dart';
+import 'budget_limit_save_button.dart';
 
 /// Bottom sheet to create a budget, or edit an existing one when
 /// [editTarget] is provided. The category is fixed after creation; the name
@@ -222,163 +224,29 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                   ),
                 ),
                 const CcSpaceSM(),
-                TextField(
+                BudgetLimitNameInput(
                   controller: _nameController,
-                  maxLength: 30,
-                  decoration: InputDecoration(
-                    labelText: el.tr(CcLocaleKeys.budget_name),
-                    hintText: el.tr(CcLocaleKeys.budget_name_hint),
-                    errorText: _nameError,
-                    suffixIcon: _nameController.text.isNotEmpty
-                        ? CcIconButton.bouncing(
-                            icon: const Icon(Icons.clear, size: 20),
-                            onTap: () => _nameController.clear(),
-                          )
-                        : null,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
+                  errorText: _nameError,
+                  onClear: () => _nameController.clear(),
                 ),
                 if (!_isEdit) ...[
                   const CcSpaceMD(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CcText(
-                        el.tr(CcLocaleKeys.budget_category),
-                        textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                          color: context.ccColorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.bold,
-                          fontSize: context.respFontSize(12),
-                        ),
-                      ),
-                      const CcSpaceSM(),
-                      HorizontalFadeScrollView(
-                        height: context.respDim(90),
-                        builder: (scrollController) {
-                          _categoryScrollController = scrollController;
-                          return ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            controller: scrollController,
-                            itemCount: _categories.length,
-                            separatorBuilder: (_, _) => const CcSpaceSM(),
-                            itemBuilder: (context, index) {
-                              final cat = _categories[index];
-                              final isSelected = _selectedCategoryId == cat.id;
-                              return GestureDetector(
-                                onTap: _isEdit
-                                    ? null
-                                    : () {
-                                        setState(() {
-                                          _selectedCategoryId = cat.id;
-                                          _nameController.text = el.tr(
-                                            cat.nameKey,
-                                          );
-                                        });
-                                      },
-                                child: SizedBox(
-                                  width: context.respDim(68),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      AnimatedContainer(
-                                        duration: const Duration(
-                                          milliseconds: 200,
-                                        ),
-                                        curve: Curves.easeInOut,
-                                        width: context.respDim(52),
-                                        height: context.respDim(52),
-                                        decoration: BoxDecoration(
-                                          color: isSelected
-                                              ? context.ccColorScheme.primary
-                                              : context
-                                                    .ccColorScheme
-                                                    .surfaceVariant,
-                                          borderRadius: BorderRadius.circular(
-                                            14,
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: CcIcon(
-                                            icon: iconDataFromCode(
-                                              cat.iconCode,
-                                              fontFamily: cat.iconFamily,
-                                            ),
-                                            size: context.respIconSize(
-                                              baseSize: 22,
-                                            ),
-                                            color: isSelected
-                                                ? context
-                                                      .ccColorScheme
-                                                      .onPrimary
-                                                : context
-                                                      .ccColorScheme
-                                                      .onSurfaceVariant,
-                                          ),
-                                        ),
-                                      ),
-                                      const CcSpaceXS(),
-                                      AnimatedDefaultTextStyle(
-                                        duration: const Duration(
-                                          milliseconds: 200,
-                                        ),
-                                        curve: Curves.easeInOut,
-                                        style:
-                                            (context.ccTextTheme.bodySmall ??
-                                                    const TextStyle())
-                                                .copyWith(
-                                                  fontSize: context
-                                                      .respFontSize(9),
-                                                  fontWeight: isSelected
-                                                      ? FontWeight.bold
-                                                      : FontWeight.normal,
-                                                  color: isSelected
-                                                      ? context
-                                                            .ccColorScheme
-                                                            .primary
-                                                      : context
-                                                            .ccColorScheme
-                                                            .onSurfaceVariant,
-                                                ),
-                                        child: Text(
-                                          el.tr(cat.nameKey),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ],
+                  BudgetLimitCategorySelector(
+                    categories: _categories,
+                    selectedCategoryId: _selectedCategoryId,
+                    onCategorySelected: (cat) {
+                      setState(() {
+                        _selectedCategoryId = cat.id;
+                        _nameController.text = el.tr(cat.nameKey);
+                      });
+                    },
+                    onScrollControllerCreated: (controller) =>
+                        _categoryScrollController = controller,
                   ),
-                ], // end if (!_isEdit)
+                ],
                 const CcSpaceMD(),
                 if (_limitLocked)
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.lock_clock_outlined,
-                        size: context.respIconSize(baseSize: 16),
-                        color: context.ccColorScheme.onSurfaceVariant,
-                      ),
-                      const CcSpaceSM(),
-                      Expanded(
-                        child: CcText(
-                          el.tr(CcLocaleKeys.budget_limit_locked),
-                          textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                            color: context.ccColorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
+                  const BudgetLimitLockNotice()
                 else
                   CcAmountInputSection(
                     label: el.tr(CcLocaleKeys.budget_limit),
@@ -403,34 +271,7 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                         setState(() => _limitStr = amount.toString()),
                   ),
                 const CcSpaceSM(),
-                Center(
-                  child: FractionallySizedBox(
-                    widthFactor: 0.4,
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: context.respDim(40),
-                      child: ElevatedButton(
-                        onPressed: _isValid ? _onSave : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: context.ccColorScheme.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: CcText(
-                          el.tr(CcLocaleKeys.common_save),
-                          align: Alignment.center,
-                          textAlign: TextAlign.center,
-                          textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                            color: context.ccColorScheme.onPrimary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: context.respFontSize(13),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                BudgetLimitSaveButton(onPressed: _isValid ? _onSave : null),
               ],
             ),
           ),

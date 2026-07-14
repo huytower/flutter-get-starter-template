@@ -39,7 +39,10 @@
     "press_back_again_to_exit": "Press back again to exit",
     "add_source": "Add Source",
     "copy": "Copy",
-    "clear": "Clear"
+    "clear": "Clear",
+    "unit_billion": "B",
+    "unit_million": "M",
+    "unit_thousand": "k"
   },
   "auth": {
     "login": "Login",
@@ -208,6 +211,7 @@
   },
   "budget": {
     "title": "Budget",
+    "description": "Limit is the maximum amount you allow for a category per month — exceeding it means spending beyond your plan.",
     "empty": "No budgets yet.\nTap + to add a spending limit.",
     "edit_limit": "Edit Limit",
     "edit_title": "Edit Budget",

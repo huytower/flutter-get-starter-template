@@ -39,7 +39,10 @@
     "press_back_again_to_exit": "Nhấn lại để thoát",
     "add_source": "Thêm nguồn",
     "copy": "Sao chép",
-    "clear": "Xóa"
+    "clear": "Xóa",
+    "unit_billion": "tỷ",
+    "unit_million": "tr",
+    "unit_thousand": "k"
   },
   "auth": {
     "login": "Đăng nhập",
@@ -208,6 +211,7 @@
   },
   "budget": {
     "title": "Ngân sách",
+    "description": "Hạn mức là số tiền tối đa bạn cho phép chi cho 1 danh mục trong tháng — vượt qua đó nghĩa là bạn đang tiêu quá kế hoạch đã đặt ra.",
     "empty": "Chưa có ngân sách nào.\nNhấn + để thêm hạn mức chi tiêu.",
     "edit_limit": "Sửa định mức",
     "edit_title": "Sửa ngân sách",

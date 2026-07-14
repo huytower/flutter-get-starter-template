@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
-
 import 'package:auto_route/auto_route.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:get/get.dart';
-
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/util/gradient_app_bar.dart';
@@ -109,7 +107,7 @@ class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
                 child: Column(
                   children: [
                     CcText(
-                      "Hạn mức là số tiền tối đa bạn cho phép chi cho 1 danh mục trong tháng — vượt qua đó nghĩa là bạn đang tiêu quá kế hoạch đã đặt ra.",
+                      el.tr(CcLocaleKeys.budget_description),
                       maxLines: 3,
                       textStyle: context.ccTextTheme.labelSmall?.copyWith(
                         color: context.ccColorScheme.onSurfaceVariant

@@ -413,7 +413,8 @@ class CodegenLoader extends AssetLoader {
       "terms": "Terms of use",
       "about": "About app",
       "delete_account": "Delete account",
-      "young_children_message": "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys).",
+      "young_children_message":
+          "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys).",
     },
   };
   static const Map<String, dynamic> _vi = {
@@ -816,7 +817,8 @@ class CodegenLoader extends AssetLoader {
       "terms": "Điều khoản sử dụng",
       "about": "Về ứng dụng",
       "delete_account": "Xoá tài khoản",
-      "young_children_message": "Bạn có con nhỏ không? Nếu có, chúng tôi sẽ tự động bật các danh mục dành cho con (sữa, bỉm, đồ chơi trẻ em).",
+      "young_children_message":
+          "Bạn có con nhỏ không? Nếu có, chúng tôi sẽ tự động bật các danh mục dành cho con (sữa, bỉm, đồ chơi trẻ em).",
     },
   };
   static const Map<String, Map<String, dynamic>> mapLocales = {
@@ -862,6 +864,9 @@ abstract class CcLocaleKeys {
   static const common_add_source = 'common.add_source';
   static const common_copy = 'common.copy';
   static const common_clear = 'common.clear';
+  static const common_unit_billion = 'common.unit_billion';
+  static const common_unit_million = 'common.unit_million';
+  static const common_unit_thousand = 'common.unit_thousand';
   static const common_weekday_names = 'common.common_weekday_names';
 
   static const auth_login = 'auth.login';
@@ -1010,6 +1015,7 @@ abstract class CcLocaleKeys {
   static const transaction_more_details = 'transaction.more_details';
 
   static const budget_title = 'budget.title';
+  static const budget_description = 'budget.description';
   static const budget_empty = 'budget.empty';
   static const budget_edit_limit = 'budget.edit_limit';
   static const budget_edit_title = 'budget.edit_title';

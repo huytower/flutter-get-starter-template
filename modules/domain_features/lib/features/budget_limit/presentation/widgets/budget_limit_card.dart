@@ -1,11 +1,10 @@
-import 'dart:math';
-
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../../core/util/icon_utils.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
+import 'budget_limit_pie_chart.dart';
 
 /// Grid card for a budget item — updated to match the new dark sleek design.
 ///
@@ -29,18 +28,21 @@ class BudgetLimitGridCard extends StatelessWidget {
     this.onDelete,
   });
 
-  static String _fmtShort(int value) {
+  String _fmtShort(int value) {
     if (value >= 1000000000) {
       final val = value / 1000000000;
-      return '${val % 1 == 0 ? val.toInt() : val.toStringAsFixed(1)} tỷ';
+      final unit = el.tr(CcLocaleKeys.common_unit_billion);
+      return '${val % 1 == 0 ? val.toInt() : val.toStringAsFixed(1)} $unit';
     }
     if (value >= 1000000) {
       final val = value / 1000000;
-      return '${val % 1 == 0 ? val.toInt() : val.toStringAsFixed(1)}tr';
+      final unit = el.tr(CcLocaleKeys.common_unit_million);
+      return '${val % 1 == 0 ? val.toInt() : val.toStringAsFixed(1)}$unit';
     }
     if (value >= 1000) {
       final val = value / 1000;
-      return '${val % 1 == 0 ? val.toInt() : val.toStringAsFixed(0)}k';
+      final unit = el.tr(CcLocaleKeys.common_unit_thousand);
+      return '${val % 1 == 0 ? val.toInt() : val.toStringAsFixed(0)}$unit';
     }
     return '$value';
   }
@@ -94,7 +96,7 @@ class BudgetLimitGridCard extends StatelessWidget {
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
                           child: CcText(
-                            stats.budget.name.toLowerCase(),
+                            stats.budget.name,
                             maxLines: 1,
                             textStyle: context.ccTextTheme.labelLarge?.copyWith(
                               fontWeight: CcTypographyParams.bold,
@@ -104,7 +106,7 @@ class BudgetLimitGridCard extends StatelessWidget {
                           ),
                         ),
                         CcText(
-                          '${_fmtShort(stats.budget.limit)}',
+                          _fmtShort(stats.budget.limit),
                           textStyle: context.ccTextTheme.labelSmall?.copyWith(
                             color: scheme.onSurfaceVariant.withOpacity(0.6),
                             fontSize: context.respFontSize(11),
@@ -117,7 +119,10 @@ class BudgetLimitGridCard extends StatelessWidget {
               ),
               const CcSpaceXS(),
               // Subtle Divider
-              Divider(color: scheme.onSurface.withOpacity(0.06), height: 1),
+              Divider(
+                color: scheme.onSurface.withOpacity(0.06),
+                height: context.respDim(1),
+              ),
               const CcSpaceXS(),
               // Bottom Row: Usage Percent + Mini Pie Chart
               Row(
@@ -133,7 +138,7 @@ class BudgetLimitGridCard extends StatelessWidget {
                       fontSize: context.respFontSize(12),
                     ),
                   ),
-                  _PieChart(
+                  BudgetLimitPieChart(
                     progress: stats.progress,
                     color: accent,
                     size: context.respDim(24),
@@ -146,30 +151,30 @@ class BudgetLimitGridCard extends StatelessWidget {
         // ── Drag indicator (view mode only) ─────────────────────────────────
         if (!isEditMode)
           Positioned(
-            top: 10,
-            right: 10,
+            top: context.respDim(10),
+            right: context.respDim(10),
             child: Icon(
               Icons.drag_indicator,
               color: scheme.onSurfaceVariant.withOpacity(0.2),
-              size: 14,
+              size: context.respIconSize(baseSize: 14),
             ),
           ),
         // ── Edit mode: delete badge (top-left) ───────────────────────────────
         if (isEditMode)
           Positioned(
-            top: -4,
-            left: -4,
+            top: context.respDim(-4),
+            left: context.respDim(-4),
             child: _EditBadge(
               icon: Icons.remove,
-              color: context.ccColorScheme.error,
+              color: scheme.error,
               onTap: onDelete,
             ),
           ),
         // ── Edit mode: edit badge (top-right) ────────────────────────────────
         if (isEditMode)
           Positioned(
-            top: -4,
-            right: -4,
+            top: context.respDim(-4),
+            right: context.respDim(-4),
             child: _EditBadge(
               icon: Icons.edit,
               color: scheme.primary,
@@ -190,6 +195,8 @@ class _EditBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -198,88 +205,21 @@ class _EditBadge extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           shape: BoxShape.circle,
-          border: Border.all(color: context.ccColorScheme.surface, width: 2),
+          border: Border.all(color: scheme.surface, width: context.respDim(2)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+              color: scheme.shadow.withOpacity(0.2),
+              blurRadius: context.respDim(4),
+              offset: Offset(0, context.respDim(2)),
             ),
           ],
         ),
         child: Icon(
           icon,
-          color: Colors.white,
+          color: scheme.onPrimary,
           size: context.respIconSize(baseSize: 14),
         ),
       ),
     );
   }
-}
-
-/// A simple pie chart widget for showing budget progress.
-class _PieChart extends StatelessWidget {
-  final double progress;
-  final Color color;
-  final double size;
-
-  const _PieChart({
-    required this.progress,
-    required this.color,
-    required this.size,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size(size, size),
-      painter: _PieChartPainter(
-        progress: progress.clamp(0.0, 1.0),
-        color: color,
-        backgroundColor: context.ccColorScheme.onSurface.withOpacity(0.1),
-      ),
-    );
-  }
-}
-
-class _PieChartPainter extends CustomPainter {
-  final double progress;
-  final Color color;
-  final Color backgroundColor;
-
-  _PieChartPainter({
-    required this.progress,
-    required this.color,
-    required this.backgroundColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = min(size.width / 2, size.height / 2);
-    final rect = Rect.fromCircle(center: center, radius: radius);
-
-    // Draw background circle (the "outline")
-    final bgPaint = Paint()
-      ..color = backgroundColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-    canvas.drawCircle(center, radius, bgPaint);
-
-    // Draw the progress segment (the "pie slice")
-    if (progress > 0) {
-      final fgPaint = Paint()
-        ..color = color
-        ..style = PaintingStyle.fill;
-
-      // Start from top (-90 degrees)
-      canvas.drawArc(rect, -pi / 2, 2 * pi * progress, true, fgPaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _PieChartPainter old) =>
-      old.progress != progress ||
-      old.color != color ||
-      old.backgroundColor != backgroundColor;
 }
