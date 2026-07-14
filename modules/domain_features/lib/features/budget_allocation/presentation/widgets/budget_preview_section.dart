@@ -119,7 +119,7 @@ class _BudgetPreviewSectionState extends State<BudgetPreviewSection> {
               child: CcText(
                 el.tr(CcLocaleKeys.budget_empty),
                 textAlign: TextAlign.center,
-                textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                textStyle: context.ccTextTheme.bodyLarge?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
               ),

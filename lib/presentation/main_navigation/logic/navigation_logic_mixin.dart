@@ -1,9 +1,11 @@
-import 'dart:developer' as developer;
+import 'package:flutter/material.dart';
+
+import 'package:firebase_performance/firebase_performance.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 
 import 'package:cc_micro_features/features/splash/core/splash_manager.dart';
-import 'package:firebase_performance/firebase_performance.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:domain_features/export_domain_features.dart';
 
 import '../../../core/logging/init_logger.dart';
 import '../tabs/quick_test_tab_content.dart';
@@ -30,8 +32,26 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
       FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
       logEnv();
       logVersionInfo();
-      developer.log('Application Telemetry & Environment logging initialized');
     });
+  }
+
+  void handleTabRefresh(int index) {
+    // These tabs derive their figures from transactions that may have been
+    // added on the entry tab, so re-fetch each time the tab is (re)opened — the
+    // GetX controllers are kept alive, so onReady() won't fire again on its own.
+    if (index == 0) {
+      // _indexWalletAllocation
+      if (Get.isRegistered<WalletController>()) {
+        Get.find<WalletController>().loadWallets();
+      }
+      if (Get.isRegistered<BudgetLimitController>()) {
+        Get.find<BudgetLimitController>().loadBudgets();
+      }
+    }
+    if (index == 1 && Get.isRegistered<TransactionController>()) {
+      // _indexEntry
+      Get.find<TransactionController>().refreshWalletTotal();
+    }
   }
 
   Future<void> checkSplash() async {

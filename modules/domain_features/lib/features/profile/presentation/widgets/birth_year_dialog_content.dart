@@ -80,44 +80,44 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-         // ---- Header ----
-         Container(
-           width: double.infinity,
-           padding: EdgeInsets.symmetric(
-             horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-             vertical: context.respPadding(CcPaddingParams.PAGE_SM),
-           ),
-           decoration: BoxDecoration(
-             gradient: LinearGradient(
-               begin: Alignment.topLeft,
-               end: Alignment.bottomRight,
-               colors: [scheme.primary, scheme.primaryContainer],
-             ),
-             borderRadius: BorderRadius.only(
-               topLeft: Radius.circular(context.respDim(12)),
-               topRight: Radius.circular(context.respDim(12)),
-             ),
-           ),
-            child: CcText(
-              el.tr(CcLocaleKeys.profile_birth_year_hint),
-              maxLines: 3,
-              textStyle: context.ccTextTheme.labelLarge?.copyWith(
-                color: scheme.onPrimary,
-                fontSize: context.respFontSize(13),
-                fontWeight: CcTypographyParams.bold,
-              ),
+        // ---- Header ----
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(
+            horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+            vertical: context.respPadding(CcPaddingParams.PAGE_SM),
+          ),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [scheme.primary, scheme.primaryContainer],
             ),
-         ),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(context.respDim(12)),
+              topRight: Radius.circular(context.respDim(12)),
+            ),
+          ),
+          child: CcText(
+            el.tr(CcLocaleKeys.profile_birth_year_hint),
+            maxLines: 3,
+            textStyle: context.ccTextTheme.labelLarge?.copyWith(
+              color: scheme.onPrimary,
+              fontSize: context.respFontSize(13),
+              fontWeight: CcTypographyParams.bold,
+            ),
+          ),
+        ),
 
-         // ---- Body ----
-         DecoratedBox(
-           decoration: BoxDecoration(
-             color: scheme.surfaceContainerHighest,
-             borderRadius: BorderRadius.only(
-               bottomLeft: Radius.circular(context.respDim(12)),
-               bottomRight: Radius.circular(context.respDim(12)),
-             ),
-           ),
+        // ---- Body ----
+        DecoratedBox(
+          decoration: BoxDecoration(
+            color: scheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(context.respDim(12)),
+              bottomRight: Radius.circular(context.respDim(12)),
+            ),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -175,42 +175,42 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
                 ),
               ),
 
-                // ---- Actions ----
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    context.respPadding(CcPaddingParams.SPACE_LG),
-                    context.respPadding(CcPaddingParams.PAGE_XS),
-                    context.respPadding(CcPaddingParams.SPACE_LG),
-                    context.respPadding(CcPaddingParams.SPACE_LG),
-                  ),
-                 child: Row(
-                   mainAxisAlignment: MainAxisAlignment.end,
-                   children: [
-                     TextButton(
-                       onPressed: () => Navigator.of(context).pop(null),
-                       child: CcText(
-                         el.tr(CcLocaleKeys.common_cancel),
-                         textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                           color: scheme.primary,
-                           fontWeight: CcTypographyParams.semiBold,
-                         ),
-                       ),
-                     ),
-                     SizedBox(width: context.respDim(8)),
-                     TextButton(
-                       onPressed: () => Navigator.of(context).pop(_selectedYear),
-                       child: CcText(
-                         el.tr(CcLocaleKeys.common_ok),
-                         textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                           color: scheme.primary,
-                           fontWeight: CcTypographyParams.semiBold,
-                         ),
-                       ),
-                     ),
-                   ],
-                 ),
-               ),
-               SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+              // ---- Actions ----
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  context.respPadding(CcPaddingParams.PAGE_MD),
+                  0,
+                  context.respPadding(CcPaddingParams.PAGE_MD),
+                  context.respPadding(CcPaddingParams.PAGE_XS),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(null),
+                      child: CcText(
+                        el.tr(CcLocaleKeys.common_cancel),
+                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                          color: scheme.primary,
+                          fontWeight: CcTypographyParams.semiBold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: context.respDim(8)),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(_selectedYear),
+                      child: CcText(
+                        el.tr(CcLocaleKeys.common_ok),
+                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                          color: scheme.primary,
+                          fontWeight: CcTypographyParams.semiBold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
             ],
           ),
         ),

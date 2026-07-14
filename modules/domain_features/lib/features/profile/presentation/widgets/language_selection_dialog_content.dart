@@ -41,7 +41,7 @@ class _LanguageSelectionDialogContentState
       mainAxisSize: MainAxisSize.min,
       children: [
         // ---- Header ----
-         Container(
+        Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(
             horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
@@ -141,10 +141,10 @@ class _LanguageSelectionDialogContentState
               // ---- Actions ----
               Padding(
                 padding: EdgeInsets.fromLTRB(
-                  context.respPadding(CcPaddingParams.SPACE_LG),
+                  context.respPadding(CcPaddingParams.PAGE_MD),
+                  0,
+                  context.respPadding(CcPaddingParams.PAGE_MD),
                   context.respPadding(CcPaddingParams.PAGE_XS),
-                  context.respPadding(CcPaddingParams.SPACE_LG),
-                  context.respPadding(CcPaddingParams.SPACE_LG),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -153,7 +153,7 @@ class _LanguageSelectionDialogContentState
                       onPressed: () => Navigator.of(context).pop(null),
                       child: CcText(
                         tr(CcLocaleKeys.common_cancel),
-                        textStyle: context.ccTextTheme.labelLarge?.copyWith(
+                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
                           color: scheme.primary,
                           fontWeight: CcTypographyParams.semiBold,
                         ),
@@ -165,7 +165,7 @@ class _LanguageSelectionDialogContentState
                           Navigator.of(context).pop(_selectedLocale),
                       child: CcText(
                         tr(CcLocaleKeys.common_ok),
-                        textStyle: context.ccTextTheme.labelLarge?.copyWith(
+                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
                           color: scheme.primary,
                           fontWeight: CcTypographyParams.semiBold,
                         ),
@@ -174,7 +174,7 @@ class _LanguageSelectionDialogContentState
                   ],
                 ),
               ),
-              SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
+              SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
             ],
           ),
         ),

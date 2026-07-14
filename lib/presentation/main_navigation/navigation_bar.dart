@@ -1,11 +1,13 @@
+import 'package:flutter/material.dart';
+
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:get/get.dart';
+
 import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/export_domain_features.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:theme/data/data_source/color/prj_color.dart';
+import 'package:theme/export_theme.dart';
 
 import 'logic/navigation_logic_mixin.dart';
 
@@ -48,7 +50,7 @@ class _NavigationBarState extends State<NavigationBar>
   }
 
   @override
-  double? get navigationBarHeight => 100;
+  double? get navigationBarHeight => context.respDim(100);
 
   @override
   bool get shouldEnableDoubleBackToExit => currentIndex == _indexEntry;
@@ -63,7 +65,8 @@ class _NavigationBarState extends State<NavigationBar>
   Color? get navigationFabColor => PrjColors.primary;
 
   @override
-  String get backPressMessage => el.tr('common.press_back_again_to_exit');
+  String get backPressMessage =>
+      el.tr(CcLocaleKeys.common_press_back_again_to_exit);
 
   @override
   int get currentIndex => _persistentIndex ?? _indexEntry;
@@ -71,20 +74,7 @@ class _NavigationBarState extends State<NavigationBar>
   @override
   void setIndex(int index) {
     _persistentIndex = index;
-    // These tabs derive their figures from transactions that may have been
-    // added on the entry tab, so re-fetch each time the tab is (re)opened — the
-    // GetX controllers are kept alive, so onReady() won't fire again on its own.
-    if (index == _indexWalletAllocation) {
-      if (Get.isRegistered<WalletController>()) {
-        Get.find<WalletController>().loadWallets();
-      }
-      if (Get.isRegistered<BudgetLimitController>()) {
-        Get.find<BudgetLimitController>().loadBudgets();
-      }
-    }
-    if (index == _indexEntry && Get.isRegistered<TransactionController>()) {
-      Get.find<TransactionController>().refreshWalletTotal();
-    }
+    handleTabRefresh(index);
     setState(() {});
   }
 

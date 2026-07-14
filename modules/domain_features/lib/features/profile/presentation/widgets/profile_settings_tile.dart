@@ -42,7 +42,7 @@ class ProfileSettingsTile extends StatelessWidget {
             Expanded(
               child: CcText(
                 label,
-                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                textStyle: context.ccTextTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: context.ccColorScheme.onSurface,
                 ),
@@ -54,7 +54,7 @@ class ProfileSettingsTile extends StatelessWidget {
               if (trailingLabel != null) ...[
                 CcText(
                   trailingLabel!,
-                  textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                  textStyle: context.ccTextTheme.bodyLarge?.copyWith(
                     color: context.ccColorScheme.onSurfaceVariant,
                   ),
                 ),

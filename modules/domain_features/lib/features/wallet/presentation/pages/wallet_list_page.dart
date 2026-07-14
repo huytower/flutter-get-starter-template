@@ -222,7 +222,7 @@ class WalletListPage extends CcGetView<WalletController> {
             child: CcText(
               el.tr(CcLocaleKeys.wallet_empty),
               textAlign: TextAlign.center,
-              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+              textStyle: context.ccTextTheme.bodyLarge?.copyWith(
                 color: context.ccColorScheme.onSurfaceVariant,
               ),
             ),
