@@ -58,7 +58,7 @@ class _ReconciliationSuccessDialogState
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: size.width * 0.9,
-            maxHeight: size.height * 0.2,
+            maxHeight: size.height * 0.15,
           ),
           child: CcRewardCompletionBanner(
             message: el.tr(
