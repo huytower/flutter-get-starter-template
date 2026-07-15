@@ -8,7 +8,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../budget_limit/domain/usecases/sort_budget_limits_by_limit_usecase.dart';
+import '../../../budget_limit/domain/usecases/sort_budget_limits_by_progress_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
 import '../../../budget_limit/presentation/widgets/add_budget_limit_form_sheet.dart';
 import '../../../budget_limit/presentation/widgets/budget_limit_grid_card.dart';
@@ -69,7 +69,7 @@ class BudgetPreviewSection extends StatelessWidget {
           ),
         ),
         Obx(() {
-          final budgets = getIt<SortBudgetLimitsByLimitUseCase>().call(
+          final budgets = getIt<SortBudgetLimitsByProgressUseCase>().call(
             Get.find<BudgetLimitController>().budgets,
             limit: 4,
           );

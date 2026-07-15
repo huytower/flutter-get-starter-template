@@ -26,6 +26,8 @@ import 'package:domain_features/features/budget_limit/domain/usecases/get_budget
     as _i847;
 import 'package:domain_features/features/budget_limit/domain/usecases/sort_budget_limits_by_limit_usecase.dart'
     as _i250;
+import 'package:domain_features/features/budget_limit/domain/usecases/sort_budget_limits_by_progress_usecase.dart'
+    as _i37;
 import 'package:domain_features/features/budget_limit/domain/usecases/update_budget_limit_orders_usecase.dart'
     as _i256;
 import 'package:domain_features/features/budget_limit/domain/usecases/update_budget_limit_usecase.dart'
@@ -142,6 +144,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i585.BudgetLimitLocalDataSource());
     gh.lazySingleton<_i250.SortBudgetLimitsByLimitUseCase>(
         () => _i250.SortBudgetLimitsByLimitUseCase());
+    gh.lazySingleton<_i37.SortBudgetLimitsByProgressUseCase>(
+        () => _i37.SortBudgetLimitsByProgressUseCase());
     gh.lazySingleton<_i547.CategoryLocalDataSource>(
         () => _i547.CategoryLocalDataSource());
     gh.lazySingleton<_i1004.AdvanceBloc>(
