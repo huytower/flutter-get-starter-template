@@ -31,6 +31,14 @@ class MoneyKeypadPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Hide soft keyboard when this custom keypad panel is active
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final currentFocus = FocusScope.of(context);
+      if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+        currentFocus.focusedChild?.unfocus();
+      }
+    });
+
     return DecoratedBox(
       decoration: BoxDecoration(
         color: context.ccColorScheme.surfaceContainerHighest,

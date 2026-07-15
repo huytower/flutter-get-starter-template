@@ -228,6 +228,9 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                   controller: _nameController,
                   errorText: _nameError,
                   onClear: () => _nameController.clear(),
+                  onTap: () {
+                    if (_showKeypad) setState(() => _showKeypad = false);
+                  },
                 ),
                 if (!_isEdit) ...[
                   BudgetLimitCategorySelector(
@@ -237,7 +240,9 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                       setState(() {
                         _selectedCategoryId = cat.id;
                         _nameController.text = el.tr(cat.nameKey);
+                        if (_showKeypad) _showKeypad = false;
                       });
+                      FocusScope.of(context).unfocus();
                     },
                     onScrollControllerCreated: (controller) =>
                         _categoryScrollController = controller,
@@ -254,6 +259,7 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                     fieldKey: _amountFieldKey,
                     onTap: () {
                       setState(() => _showKeypad = true);
+                      FocusScope.of(context).unfocus();
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         final ctx = _amountFieldKey.currentContext;
                         if (ctx != null) {

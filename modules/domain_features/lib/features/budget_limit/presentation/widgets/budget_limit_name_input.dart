@@ -6,17 +6,19 @@ class BudgetLimitNameInput extends StatelessWidget {
   final TextEditingController controller;
   final String? errorText;
   final VoidCallback onClear;
+  final VoidCallback? onTap;
 
   const BudgetLimitNameInput({
     super.key,
     required this.controller,
     this.errorText,
     required this.onClear,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = context.ccTextTheme.bodyLarge?.copyWith(
+    final textStyle = context.ccTextTheme.bodyMedium?.copyWith(
       color: context.ccColorScheme.onSurface,
     );
 
@@ -24,13 +26,14 @@ class BudgetLimitNameInput extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: context.respDim(50),
+          height: context.respDim(40),
           child: TextField(
             controller: controller,
             maxLength: 30,
             style: textStyle,
             textAlignVertical: TextAlignVertical.center,
             cursorColor: context.ccColorScheme.primary,
+            onTap: onTap,
             decoration: InputDecoration(
               counterText: '',
               hintText: el.tr(CcLocaleKeys.budget_name_hint),
