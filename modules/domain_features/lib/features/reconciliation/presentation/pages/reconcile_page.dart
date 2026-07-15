@@ -79,12 +79,6 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         barrierDismissible: false,
         builder: (_) => const ReconciliationSuccessDialog(),
       );
-
-      Future.delayed(const Duration(seconds: 3), () {
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
-      });
     }
   }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -5,8 +7,43 @@ import 'package:get/get.dart';
 
 import '../get_x/reconciliation_controller.dart';
 
-class ReconciliationSuccessDialog extends StatelessWidget {
+class ReconciliationSuccessDialog extends StatefulWidget {
   const ReconciliationSuccessDialog({super.key});
+
+  @override
+  State<ReconciliationSuccessDialog> createState() =>
+      _ReconciliationSuccessDialogState();
+}
+
+class _ReconciliationSuccessDialogState
+    extends State<ReconciliationSuccessDialog> {
+  Timer? _timer;
+  bool _dismissed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer(const Duration(seconds: 3), () {
+      if (mounted && !_dismissed) {
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _dismiss() {
+    if (_dismissed) return;
+    _dismissed = true;
+    _timer?.cancel();
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,18 +51,20 @@ class ReconciliationSuccessDialog extends StatelessWidget {
     final count = controller.history.length;
     final size = MediaQuery.of(context).size;
 
-    return Center(
-      child: SizedBox(
-        width: size.width * 0.9,
-        height: size.height * 0.3,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+    return PopScope(
+      canPop: true,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: size.width * 0.9,
+            maxHeight: size.height * 0.2,
+          ),
           child: CcRewardCompletionBanner(
             message: el.tr(
               CcLocaleKeys.reconciliation_success_message,
               namedArgs: {'count': count.toString()},
             ),
-            onClose: () => Navigator.of(context).pop(),
+            onClose: _dismiss,
           ),
         ),
       ),

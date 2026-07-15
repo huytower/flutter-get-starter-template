@@ -19,7 +19,9 @@ class ReconciliationConfirmButton extends StatelessWidget {
         width: double.infinity,
         height: context.respDim(50),
         child: ElevatedButton(
-          onPressed: busy || hasWarning ? null : () => _showConfirmDialog(context),
+          onPressed: busy || hasWarning
+              ? null
+              : () => _showConfirmDialog(context),
           style: ElevatedButton.styleFrom(
             backgroundColor: context.ccColorScheme.primary,
             alignment: Alignment.center,
@@ -49,10 +51,20 @@ class ReconciliationConfirmButton extends StatelessWidget {
     });
   }
 
-  void _showConfirmDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => const ReconciliationSuccessDialog(),
-    );
+  void _showConfirmDialog(BuildContext context) async {
+    final controller = Get.find<ReconciliationController>();
+    final error = await controller.performReconciliation();
+
+    if (!context.mounted) return;
+
+    if (error != null) {
+      CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const ReconciliationSuccessDialog(),
+      );
+    }
   }
 }
