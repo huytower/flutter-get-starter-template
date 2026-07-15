@@ -98,7 +98,7 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisExtent: context.respDim(100),
+          mainAxisExtent: context.respDim(110),
           crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
           mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
         ),
@@ -136,7 +136,7 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
         feedback: Material(
           color: Colors.transparent,
           elevation: 10,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(context.respDim(20)),
           child: SizedBox(
             width: constraints.maxWidth,
             height: constraints.maxHeight,

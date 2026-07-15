@@ -64,12 +64,19 @@ class BudgetLimitGridCard extends StatelessWidget {
         // ── Main card ───────────────────────────────────────────────────────
         Container(
           padding: EdgeInsets.all(context.respDim(12)),
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: scheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(context.respDim(20)),
+            // Subtle border to define shape in light mode where surface color
+            // might blend into the background.
+            border: Border.all(
+              color: scheme.onSurface.withOpacity(0.08),
+              width: context.respDim(1),
+            ),
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Top Row: Icon + Name/Limit
               Row(
