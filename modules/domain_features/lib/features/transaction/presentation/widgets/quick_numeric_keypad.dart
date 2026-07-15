@@ -58,8 +58,8 @@ class QuickNumericKeypad extends StatelessWidget {
       isBouncing: true,
       onTap: () => isDelete ? onDelete() : onKeyPress(label),
       child: Container(
-        height: context.respDim(40),
-        margin: EdgeInsets.all(context.respDim(4)),
+        height: context.respDim(30),
+        margin: EdgeInsets.all(context.respDim(2)),
         decoration: BoxDecoration(
           color: context.ccColorScheme.surface,
           borderRadius: BorderRadius.circular(context.respDim(12)),
@@ -76,7 +76,7 @@ class QuickNumericKeypad extends StatelessWidget {
             ? Icon(
                 Icons.backspace_outlined,
                 color: context.ccColorScheme.onSurfaceVariant,
-                size: context.respIconSize(baseSize: 20),
+                size: context.respIconSize(baseSize: 18),
               )
             : CcText(
                 label,
@@ -84,7 +84,7 @@ class QuickNumericKeypad extends StatelessWidget {
                 textAlign: TextAlign.center,
                 textStyle: context.ccTextTheme.titleMedium?.copyWith(
                   fontWeight: CcTypographyParams.bold,
-                  fontSize: context.respFontSize(18),
+                  fontSize: context.respFontSize(16),
                   color: label == '000'
                       ? activeColor
                       : context.ccColorScheme.onSurface,
