@@ -54,7 +54,7 @@ flutter-get-starter-template/
 │   └── cc_mixin/                # Reusable Behaviors
 ├── modules/                      # App Support Modules
 │   ├── app_config/              # Env, Storage, Global DI
-│   ├── theme/                   # Brand Design Tokens (EB Garamond)
+  │   ├── theme/                   # Brand Design Tokens (Plus Jakarta Sans)
 │   └── message/                 # Centralized i18n
 └── docs/                        # Architecture & Onboarding Docs
 ```

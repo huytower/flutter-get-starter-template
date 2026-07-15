@@ -17,8 +17,8 @@ import '../../presentation/style/cc_text_style.dart';
 class CcThemes {
   static final int _primaryColor = PrjColors.primary.value;
 
-  static FontStyle? fontStyle = GoogleFonts.ebGaramond().fontStyle;
-  static String? fontFamily = GoogleFonts.ebGaramond().fontFamily;
+  static FontStyle? fontStyle = GoogleFonts.plusJakartaSans().fontStyle;
+  static String? fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 
   static TextTheme? textTheme;
   static MaterialColor primarySwatch =

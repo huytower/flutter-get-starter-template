@@ -55,7 +55,7 @@ SDK, UI, and feature modules.
 6. **Color & Typography (Single Source of Truth)**:
     - **Colors**: Flow from `CcBaseColors` (Primitives) → `PrjColors` (Semantic Roles) → `context.ccColorScheme` (
       Widgets). NEVER hardcode hex colors or use `Colors.*` directly.
-    - **Typography**: Standardized on **EB Garamond**. Access via `context.ccTextTheme`. NEVER hardcode font sizes,
+    - **Typography**: Standardized on **Plus Jakarta Sans**. Access via `context.ccTextTheme`. NEVER hardcode font sizes,
       weights, or families in widgets.
     - **Chain of Truth**: `CcTypographyParams` (tokens) → `CcTextStyle` (semantic) → `context.ccTextTheme` (widgets).
 
@@ -187,7 +187,7 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 
 - **State-Management Agnostic:** All widgets must be stateless or manage state via standard callbacks/ValueNotifiers. No
   GetX/Bloc allowed.
-- **Theme Sync:** Inherits typography (EB Garamond) and colors via `CcContextExtension`.
+- **Theme Sync:** Inherits typography (Plus Jakarta Sans) and colors via `CcContextExtension`.
 - **Responsive-First:** All widgets must use `context.resp*` helpers for dimensions.
 
 **DI File:** No DI file (stateless UI library)
