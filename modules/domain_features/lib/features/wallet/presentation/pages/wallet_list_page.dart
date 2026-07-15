@@ -137,9 +137,9 @@ class WalletListPage extends CcGetView<WalletController> {
     }
   }
 
-  @override
-  Widget onPageBodyWrapper(BuildContext context, Widget body) =>
-      ColoredBox(color: context.ccColorScheme.background, child: body);
+  // @override
+  // Widget onPageBodyWrapper(BuildContext context, Widget body) =>
+  //     ColoredBox(color: context.ccColorScheme.background, child: body);
 
   @override
   Widget? buildContent(BuildContext context) {

@@ -74,14 +74,6 @@ class BudgetLimitGridCard extends StatelessWidget {
           color: scheme.onSurface.withOpacity(0.08),
           width: context.respDim(1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: scheme.shadow.withOpacity(0.12),
-            blurRadius: context.respDim(20),
-            offset: Offset(0, context.respDim(10)),
-            spreadRadius: context.respDim(-5),
-          ),
-        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -118,9 +110,7 @@ class BudgetLimitGridCard extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              const Positioned.fill(
-                child: CcGlassyGradient(endColor: Color(0xFFE0E0E0)),
-              ),
+              const Positioned.fill(child: CcGlassyGradient()),
               Icon(
                 iconData,
                 size: context.respIconSize(baseSize: 20),
@@ -242,13 +232,6 @@ class _EditBadge extends StatelessWidget {
           color: color,
           shape: BoxShape.circle,
           border: Border.all(color: scheme.surface, width: context.respDim(2)),
-          boxShadow: [
-            BoxShadow(
-              color: scheme.shadow.withOpacity(0.2),
-              blurRadius: context.respDim(4),
-              offset: Offset(0, context.respDim(2)),
-            ),
-          ],
         ),
         child: Icon(
           icon,

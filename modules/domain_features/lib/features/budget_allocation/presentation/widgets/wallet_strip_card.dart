@@ -95,14 +95,6 @@ class _WalletCard extends StatelessWidget {
           color: scheme.onSurface.withOpacity(0.08),
           width: context.respDim(1),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: scheme.shadow.withOpacity(0.12),
-            blurRadius: context.respDim(20),
-            offset: Offset(0, context.respDim(10)),
-            spreadRadius: context.respDim(-5),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,9 +117,7 @@ class _WalletCard extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          const Positioned.fill(
-            child: CcGlassyGradient(endColor: Color(0xFFE0E0E0)),
-          ),
+          const Positioned.fill(child: CcGlassyGradient()),
           Icon(
             iconDataFromCode(wallet.iconCode),
             size: context.respIconSize(baseSize: 18),
