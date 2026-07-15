@@ -15,13 +15,13 @@ PreferredSizeWidget buildDomainGradientAppBar(
 
   return PreferredSize(
     preferredSize: Size.fromHeight(
-      context.respDim(80) +
+      context.respDim(90) +
           topPadding +
           (bottom != null ? context.respDim(56) : 0),
     ),
     child: AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
-      child: Container(
+      child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -32,12 +32,8 @@ PreferredSizeWidget buildDomainGradientAppBar(
             ],
           ),
         ),
-        // Stack cho phép chèn lớp overlay chiều sâu mà không phá cấu trúc
-        // padding/Column gốc bên dưới.
         child: Stack(
           children: [
-            // Overlay tạo chiều sâu: sáng nhẹ ở trên, tối nhẹ ở dưới —
-            // cùng kỹ thuật đang dùng cho card (gradient + shadow).
             const Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -45,11 +41,11 @@ PreferredSizeWidget buildDomainGradientAppBar(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Color(0x47FFFFFF), // 28% trắng — tăng từ 14%
-                      Color(0x00FFFFFF), // trong suốt
-                      Color(0x38000000), // 22% đen — tăng từ 10%
+                      Color(0x47FFFFFF),
+                      Color(0x00FFFFFF),
+                      Color(0x38000000),
                     ],
-                    stops: [0.0, 0.5, 1.0], // kéo dài điểm giữa từ 0.4 -> 0.5
+                    stops: [0.0, 0.5, 1.0],
                   ),
                 ),
               ),
@@ -74,7 +70,7 @@ PreferredSizeWidget buildDomainGradientAppBar(
                         ),
                       ],
                       Expanded(child: title),
-                      if (actions != null) ...actions,
+                      ...?actions,
                     ],
                   ),
                   if (bottom != null) ...[const CcSpaceSM(), bottom],

@@ -75,7 +75,7 @@ class _WalletCard extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          const Positioned.fill(child: CcGlassyGradient()),
+          const Positioned.fill(child: CcGlassyGradientBackground()),
           _buildMainCard(context),
         ],
       ),
@@ -117,7 +117,7 @@ class _WalletCard extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          const Positioned.fill(child: CcGlassyGradient()),
+          const Positioned.fill(child: CcGlassyGradientIcon()),
           Icon(
             iconDataFromCode(wallet.iconCode),
             size: context.respIconSize(baseSize: 18),

@@ -33,7 +33,7 @@ class WalletListCard extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          const Positioned.fill(child: CcGlassyGradient()),
+          const Positioned.fill(child: CcGlassyGradientBackground()),
           _buildMainCard(context),
           if (isEditMode) ..._buildEditBadges(context),
         ],
@@ -68,17 +68,22 @@ class WalletListCard extends StatelessWidget {
   Widget _buildIcon(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Container(
-      padding: EdgeInsets.all(context.respDim(10)),
-      decoration: BoxDecoration(
-        color: scheme.primary.withOpacity(0.12),
-        shape: BoxShape.circle,
-      ),
-      child: Icon(
-        iconDataFromCode(wallet.iconCode),
-        size: context.respIconSize(baseSize: 22),
-        color: scheme.primary,
-      ),
+    return Stack(
+      children: [
+        const Positioned.fill(child: CcGlassyGradientIcon()),
+        Container(
+          padding: EdgeInsets.all(context.respDim(10)),
+          decoration: BoxDecoration(
+            color: scheme.primary.withOpacity(0.12),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            iconDataFromCode(wallet.iconCode),
+            size: context.respIconSize(baseSize: 22),
+            color: scheme.primary,
+          ),
+        ),
+      ],
     );
   }
 

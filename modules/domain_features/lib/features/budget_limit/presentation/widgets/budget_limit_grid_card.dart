@@ -42,7 +42,7 @@ class BudgetLimitGridCard extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        const Positioned.fill(child: CcGlassyGradient()),
+        const Positioned.fill(child: CcGlassyGradientBackground()),
         // ── Main card ───────────────────────────────────────────────────────
         _buildMainCard(context, iconColor, iconData, pct, accent),
 
@@ -110,7 +110,7 @@ class BudgetLimitGridCard extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              const Positioned.fill(child: CcGlassyGradient()),
+              const Positioned.fill(child: CcGlassyGradientIcon()),
               Icon(
                 iconData,
                 size: context.respIconSize(baseSize: 20),
