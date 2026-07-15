@@ -182,10 +182,10 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i730.CommentController(gh<_i670.CommentRepository>()));
     gh.lazySingleton<_i580.CrashLogRemote>(
         () => _i580.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+    gh.lazySingleton<_i572.WalletRepository>(() =>
+        _i589.WalletRepositoryImpl(local: gh<_i1058.WalletLocalDataSource>()));
     gh.lazySingleton<_i270.ProfileRepository>(() =>
         _i609.ProfileRepositoryImpl(local: gh<_i755.ProfileLocalDataSource>()));
-    gh.lazySingleton<_i857.WalletRepository>(() =>
-        _i589.WalletRepositoryImpl(local: gh<_i1058.WalletLocalDataSource>()));
     gh.lazySingleton<_i544.BudgetLimitRepository>(() =>
         _i150.BudgetLimitRepositoryImpl(
             local: gh<_i585.BudgetLimitLocalDataSource>()));

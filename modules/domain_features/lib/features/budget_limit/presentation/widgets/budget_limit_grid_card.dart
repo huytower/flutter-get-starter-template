@@ -1,4 +1,3 @@
-import 'package:cc_sdk/core/extensions/common/cc_int_extension.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -48,10 +47,8 @@ class BudgetLimitGridCard extends StatelessWidget {
           padding: EdgeInsets.all(context.respDim(12)),
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest,
+            color: _cardBackgroundColor(context, stats.color),
             borderRadius: BorderRadius.circular(context.respDim(20)),
-            // Subtle border to define shape in light mode where surface color
-            // might blend into the background.
             border: Border.all(
               color: scheme.onSurface.withOpacity(0.08),
               width: context.respDim(1),
@@ -172,6 +169,12 @@ class BudgetLimitGridCard extends StatelessWidget {
           ),
       ],
     );
+  }
+
+  Color _cardBackgroundColor(BuildContext context, Color? categoryColor) {
+    if (categoryColor == null)
+      return context.ccColorScheme.surfaceContainerHighest;
+    return categoryColor.withValues(alpha: 0.30);
   }
 }
 

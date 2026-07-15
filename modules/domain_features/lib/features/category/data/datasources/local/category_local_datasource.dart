@@ -21,7 +21,9 @@ class CategoryLocalDataSource {
       // User-added categories (non-seed ids) are left untouched.
       final updates = <String, CategoryModel>{
         for (final c in CategorySeed.categories)
-          if (box.get(c.id) == null || box.get(c.id)!.iconCode != c.iconCode)
+          if (box.get(c.id) == null ||
+              box.get(c.id)!.iconCode != c.iconCode ||
+              box.get(c.id)!.colorValue != c.colorValue)
             c.id: c,
       };
       if (updates.isNotEmpty) await box.putAll(updates);
