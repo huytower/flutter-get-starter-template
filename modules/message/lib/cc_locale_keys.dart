@@ -59,6 +59,9 @@ class CodegenLoader extends AssetLoader {
       "add_source": "Add Source",
       "copy": "Copy",
       "clear": "Clear",
+      "unit_billion": "B",
+      "unit_million": "M",
+      "unit_thousand": "k",
     },
     "auth": {
       "login": "Login",
@@ -233,6 +236,8 @@ class CodegenLoader extends AssetLoader {
     },
     "budget": {
       "title": "Budget",
+      "description":
+          "Limit is the maximum amount you allow for a category per month — exceeding it means spending beyond your plan.",
       "empty": "No budgets yet.\nTap + to add a spending limit.",
       "edit_limit": "Edit Limit",
       "edit_title": "Edit Budget",
@@ -463,6 +468,9 @@ class CodegenLoader extends AssetLoader {
       "add_source": "Thêm nguồn",
       "copy": "Sao chép",
       "clear": "Xóa",
+      "unit_billion": "tỷ",
+      "unit_million": "tr",
+      "unit_thousand": "k",
     },
     "auth": {
       "login": "Đăng nhập",
@@ -639,6 +647,8 @@ class CodegenLoader extends AssetLoader {
     },
     "budget": {
       "title": "Ngân sách",
+      "description":
+          "Hạn mức là số tiền tối đa bạn cho phép chi cho 1 danh mục trong tháng — vượt qua đó nghĩa là bạn đang tiêu quá kế hoạch đã đặt ra.",
       "empty": "Chưa có ngân sách nào.\nNhấn + để thêm hạn mức chi tiêu.",
       "edit_limit": "Sửa định mức",
       "edit_title": "Sửa ngân sách",

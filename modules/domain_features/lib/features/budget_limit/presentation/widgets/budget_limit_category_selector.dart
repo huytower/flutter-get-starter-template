@@ -35,7 +35,7 @@ class BudgetLimitCategorySelector extends StatelessWidget {
         ),
         const CcSpaceSM(),
         HorizontalFadeScrollView(
-          height: context.respDim(90),
+          height: context.respDim(85),
           builder: (scrollController) {
             onScrollControllerCreated?.call(scrollController);
             return ListView.separated(

@@ -151,12 +151,12 @@ class BudgetLimitGridCard extends StatelessWidget {
         // ── Drag indicator (view mode only) ─────────────────────────────────
         if (!isEditMode)
           Positioned(
-            top: context.respDim(10),
-            right: context.respDim(10),
+            top: context.respDim(8),
+            right: context.respDim(8),
             child: Icon(
               Icons.drag_indicator,
               color: scheme.onSurfaceVariant.withOpacity(0.2),
-              size: context.respIconSize(baseSize: 14),
+              size: context.respIconSize(baseSize: 12),
             ),
           ),
         // ── Edit mode: delete badge (top-left) ───────────────────────────────

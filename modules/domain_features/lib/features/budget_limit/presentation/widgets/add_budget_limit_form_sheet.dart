@@ -232,6 +232,7 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                     if (_showKeypad) setState(() => _showKeypad = false);
                   },
                 ),
+                const CcSpaceXS(),
                 if (!_isEdit) ...[
                   BudgetLimitCategorySelector(
                     categories: _categories,
