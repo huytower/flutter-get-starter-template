@@ -8,7 +8,6 @@ export 'domain/usecases/undo_reconciliation_usecase.dart';
 // Presentation
 export 'presentation/get_x/reconciliation_controller.dart';
 export 'presentation/pages/reconcile_page.dart';
-export 'presentation/widgets/reconciliation_app_bar.dart';
 export 'presentation/widgets/reconciliation_dialogs.dart';
 export 'presentation/widgets/reconciliation_history_card.dart';
 export 'presentation/widgets/wallet_reconcile_tile.dart';

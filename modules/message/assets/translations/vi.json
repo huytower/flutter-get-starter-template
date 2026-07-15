@@ -264,6 +264,8 @@
     "actual": "Thực tế",
     "book_balance": "Sổ sách: {amount}",
     "cycle_subtitle": "Chu kỳ tuần này · đến hạn Chủ nhật",
+    "description_line_1": "Đối soát giúp bạn khớp số dư thực tế với ứng dụng để đảm bảo mọi ghi chép tài chính luôn chính xác và minh bạch.",
+    "description_line_2": "Tự động tạo lệnh điều chỉnh để khớp số dư ứng dụng với thực tế mà không cần rà soát lại các giao dịch đã bỏ lỡ.",
     "mismatch_warning": "{count} ví chưa khớp số, xử lý trước khi xác nhận",
     "create_adjustment": "Tạo khoản điều chỉnh",
     "matched": "Khớp sổ",

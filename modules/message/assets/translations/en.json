@@ -264,6 +264,8 @@
     "actual": "Actual",
     "book_balance": "Book: {amount}",
     "cycle_subtitle": "This week · due Sunday",
+    "description_line_1": "Reconciliation helps you match actual balances with the app to ensure all financial records are always accurate and transparent.",
+    "description_line_2": "Automatically generate adjustment entries to match app balances with reality without needing to review missed transactions.",
     "mismatch_warning": "{count} wallet(s) unmatched, handle before confirming",
     "create_adjustment": "Create adjustment",
     "matched": "Balanced",

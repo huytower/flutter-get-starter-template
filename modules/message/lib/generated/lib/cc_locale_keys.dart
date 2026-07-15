@@ -284,6 +284,10 @@ class CodegenLoader extends AssetLoader {
       "actual": "Actual",
       "book_balance": "Book: {amount}",
       "cycle_subtitle": "This week · due Sunday",
+      "description_line_1":
+          "Reconciliation helps you match actual balances with the app to ensure all financial records are always accurate and transparent.",
+      "description_line_2":
+          "Automatically generate adjustment entries to match app balances with reality without needing to review missed transactions.",
       "mismatch_warning":
           "{count} wallet(s) unmatched, handle before confirming",
       "create_adjustment": "Create adjustment",
@@ -680,6 +684,10 @@ class CodegenLoader extends AssetLoader {
       "actual": "Thực tế",
       "book_balance": "Sổ sách: {amount}",
       "cycle_subtitle": "Chu kỳ tuần này · đến hạn Chủ nhật",
+      "description_line_1":
+          "Đối soát giúp bạn khớp số dư thực tế với ứng dụng để đảm bảo mọi ghi chép tài chính luôn chính xác và minh bạch.",
+      "description_line_2":
+          "Tự động tạo lệnh điều chỉnh để khớp số dư ứng dụng với thực tế mà không cần rà soát lại các giao dịch đã bỏ lỡ.",
       "mismatch_warning": "{count} ví chưa khớp số, xử lý trước khi xác nhận",
       "create_adjustment": "Tạo khoản điều chỉnh",
       "matched": "Khớp sổ",

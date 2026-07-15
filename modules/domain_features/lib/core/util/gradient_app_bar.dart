@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/core/config/tokens/cc_base_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -34,18 +35,18 @@ PreferredSizeWidget buildDomainGradientAppBar(
         ),
         child: Stack(
           children: [
-            const Positioned.fill(
+            Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Color(0x47FFFFFF),
-                      Color(0x00FFFFFF),
-                      Color(0x38000000),
+                      context.ccColorScheme.surface.withOpacity(0.28),
+                      CcBaseColors.transparent,
+                      context.ccColorScheme.onSurface.withOpacity(0.22),
                     ],
-                    stops: [0.0, 0.5, 1.0],
+                    stops: const [0.0, 0.5, 1.0],
                   ),
                 ),
               ),

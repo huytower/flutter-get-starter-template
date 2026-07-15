@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../../core/util/money_format.dart';
+import '../../../../core/util/gradient_app_bar.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../get_x/reconciliation_controller.dart';
-import '../widgets/reconciliation_app_bar.dart';
+import '../widgets/reconciliation_confirm_button.dart';
 import '../widgets/reconciliation_dialogs.dart';
-import '../widgets/reconciliation_history_card.dart';
+import '../widgets/reconciliation_history_section.dart';
+import '../widgets/reconciliation_mismatch_warning.dart';
+import '../widgets/reconciliation_summary.dart';
 import '../widgets/wallet_reconcile_tile.dart';
 
 @RoutePage()
@@ -18,8 +20,76 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
   const ReconcilePage({super.key});
 
   @override
-  PreferredSizeWidget? buildAppBar(BuildContext context) =>
-      const ReconciliationAppBar();
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
+    final controller = Get.find<ReconciliationController>();
+    return buildDomainGradientAppBar(
+      context,
+      leading: CcIconButton.bouncing(
+        icon: Icon(
+          Icons.arrow_back_ios_new_rounded,
+          color: context.ccColorScheme.onPrimary,
+          size: context.respIconSize(baseSize: 24),
+        ),
+        onTap: () => Navigator.of(context).pop(),
+      ),
+      title: CcText(
+        el.tr(CcLocaleKeys.reconciliation_title),
+        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+          color: context.ccColorScheme.onPrimary,
+          fontWeight: CcTypographyParams.bold,
+          fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+        ),
+      ),
+      actions: [
+        Builder(
+          builder: (context) => Obx(() {
+            final enabled =
+                !controller.isSubmitting.value &&
+                controller.unhandledCount.value == 0 &&
+                controller.balances.isNotEmpty;
+            return CcIconButton.bouncing(
+              icon: Icon(
+                Icons.check_circle_outline,
+                size: context.respIconSize(baseSize: 24),
+                color: context.ccColorScheme.onPrimary,
+              ),
+              tooltip: el.tr(CcLocaleKeys.reconciliation_confirm),
+              onTap: enabled ? () => _confirm(context, controller) : () {},
+              isEnable: enabled,
+              useDebounce: true,
+            );
+          }),
+        ),
+        SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
+      ],
+    );
+  }
+
+  Future<void> _confirm(
+    BuildContext context,
+    ReconciliationController controller,
+  ) async {
+    final error = await controller.performReconciliation();
+    if (!context.mounted) return;
+    if (error != null) {
+      CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const ReconciliationSuccessDialog(),
+      );
+
+      Future.delayed(const Duration(seconds: 3), () {
+        if (context.mounted) {
+          Navigator.of(
+            context,
+          ).popUntil((route) => route.isFirst || route is! DialogRoute);
+          Navigator.of(context).pop();
+        }
+      });
+    }
+  }
 
   @override
   Widget? buildContent(BuildContext context) {
@@ -49,10 +119,42 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                 ),
                 children: [
                   CcText(
+                    el.tr(CcLocaleKeys.reconciliation_description_line_1),
+                    maxLines: 3,
+                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                      color: context.ccColorScheme.onSurfaceVariant.withOpacity(
+                        0.7,
+                      ),
+                    ),
+                  ),
+                  const CcSpaceXS(),
+                  CcText(
+                    el.tr(CcLocaleKeys.reconciliation_description_line_2),
+                    maxLines: 3,
+                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                      color: context.ccColorScheme.onSurfaceVariant.withOpacity(
+                        0.7,
+                      ),
+                    ),
+                  ),
+                  const CcSpaceXS(),
+                  CcText(
+                    el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
+                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                      color: context.ccColorScheme.onSurfaceVariant.withOpacity(
+                        0.6,
+                      ),
+                      fontSize: context.respFontSize(
+                        CcTypographyParams.bodySmall,
+                      ),
+                    ),
+                  ),
+                  const CcSpaceSM(),
+                  CcText(
                     el.tr(CcLocaleKeys.reconciliation_instruction),
                     textStyle: context.ccTextTheme.bodyMedium,
                   ),
-                  const CcSpaceSM(),
+                  const CcSpaceMD(),
                   Column(
                     children: controller.balances.map((balance) {
                       return WalletReconcileTile(
@@ -64,13 +166,13 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                       );
                     }).toList(),
                   ),
-                  _buildMismatchWarning(context),
+                  const ReconciliationMismatchWarning(),
                   const Divider(height: 24),
-                  _buildSummary(context),
+                  const ReconciliationSummary(),
                   const CcSpaceMD(),
-                  _buildConfirmButton(context),
+                  const ReconciliationConfirmButton(),
                   const Divider(height: 32),
-                  _buildHistorySection(context),
+                  const ReconciliationHistorySection(),
                 ],
               ),
             ),
@@ -98,190 +200,5 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         ],
       );
     });
-  }
-
-  Widget _buildMismatchWarning(BuildContext context) {
-    return Obx(() {
-      final count = controller.unhandledCount.value;
-      if (count == 0) return const SizedBox.shrink();
-      return Container(
-        margin: const EdgeInsets.only(top: 4, bottom: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: context.ccColorScheme.error.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: context.ccColorScheme.error.withValues(alpha: 0.4),
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              color: context.ccColorScheme.error,
-              size: 18,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: CcText(
-                el.tr(
-                  CcLocaleKeys.reconciliation_mismatch_warning,
-                  namedArgs: {'count': count.toString()},
-                ),
-                textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                  color: context.ccColorScheme.error,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    });
-  }
-
-  Widget _buildSummary(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    return Obx(() {
-      final diff = controller.difference;
-      final diffText = diff == 0
-          ? el.tr(CcLocaleKeys.reconciliation_balanced)
-          : '${diff < 0 ? '-' : '+'}${formatVndWithSymbol(diff.abs())}';
-      return Column(
-        children: [
-          _summaryRow(
-            context,
-            el.tr(CcLocaleKeys.reconciliation_book_total),
-            formatVndWithSymbol(controller.systemTotal.value),
-          ),
-          _summaryRow(
-            context,
-            el.tr(CcLocaleKeys.reconciliation_actual_total),
-            formatVndWithSymbol(controller.actualTotal.value),
-          ),
-          const CcSpaceXS(),
-          _summaryRow(
-            context,
-            el.tr(CcLocaleKeys.reconciliation_difference),
-            diffText,
-            color: diff == 0 ? scheme.primary : scheme.error,
-          ),
-        ],
-      );
-    });
-  }
-
-  Widget _summaryRow(
-    BuildContext context,
-    String label,
-    String value, {
-    Color? color,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CcText(
-            label,
-            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          CcText(
-            value,
-            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildConfirmButton(BuildContext context) {
-    return Obx(() {
-      final busy = controller.isSubmitting.value;
-      final hasWarning = controller.unhandledCount.value > 0;
-      return SizedBox(
-        width: double.infinity,
-        height: context.respDim(50),
-        child: ElevatedButton(
-          onPressed: busy || hasWarning ? null : () => _showConfirmDialog(context),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: context.ccColorScheme.primary,
-            alignment: Alignment.center,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          child: busy
-              ? SizedBox(
-                  width: context.respDim(20),
-                  height: context.respDim(20),
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: context.ccColorScheme.onPrimary,
-                  ),
-                )
-              : Text(
-                  el.tr(CcLocaleKeys.reconciliation_confirm),
-                  textAlign: TextAlign.center,
-                  style: context.ccTextTheme.labelMedium?.copyWith(
-                    color: context.ccColorScheme.onPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-        ),
-      );
-    });
-  }
-
-  Widget _buildHistorySection(BuildContext context) {
-    return Obx(() {
-      if (controller.history.isEmpty) {
-        return const SizedBox.shrink();
-      }
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CcText(
-                el.tr(CcLocaleKeys.reconciliation_history),
-                textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextButton.icon(
-                onPressed: () => _showUndoDialog(context),
-                icon: const Icon(Icons.undo, size: 18),
-                label: Text(el.tr(CcLocaleKeys.reconciliation_undo)),
-              ),
-            ],
-          ),
-          const CcSpaceSM(),
-          ...controller.history.map(
-            (r) => ReconciliationHistoryCard(reconciliation: r),
-          ),
-        ],
-      );
-    });
-  }
-
-  void _showConfirmDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => const ReconciliationSuccessDialog(),
-    );
-  }
-
-  void _showUndoDialog(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (_) => const ReconciliationUndoDialog(),
-    );
   }
 }

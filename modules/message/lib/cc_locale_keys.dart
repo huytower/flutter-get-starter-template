@@ -1078,6 +1078,10 @@ abstract class CcLocaleKeys {
   static const reconciliation_actual = 'reconciliation.actual';
   static const reconciliation_book_balance = 'reconciliation.book_balance';
   static const reconciliation_cycle_subtitle = 'reconciliation.cycle_subtitle';
+  static const reconciliation_description_line_1 =
+      'reconciliation.description_line_1';
+  static const reconciliation_description_line_2 =
+      'reconciliation.description_line_2';
   static const reconciliation_mismatch_warning =
       'reconciliation.mismatch_warning';
   static const reconciliation_create_adjustment =
