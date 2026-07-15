@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/util/horizontal_fade_scroll_view.dart';
 import '../../../../core/util/icon_utils.dart';
+import '../../../../core/util/money_format.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
@@ -22,7 +23,7 @@ class WalletStrip extends StatelessWidget {
     final controller = Get.find<WalletController>();
 
     return HorizontalFadeScrollView(
-      height: context.respDim(110),
+      height: context.respDim(90),
       builder: (scrollController) => Obx(
         () => ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -62,11 +63,6 @@ class _WalletCard extends StatelessWidget {
     required this.balance,
     required this.onMore,
   });
-
-  static String _fmt(int amount) => amount.toString().replaceAllMapped(
-    RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-    (m) => '${m[1]}.',
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +108,9 @@ class _WalletCard extends StatelessWidget {
                   ),
                 ),
                 CcText(
-                  balance != null ? '${_fmt(balance!)} đ' : '*****',
+                  balance != null
+                      ? '${formatVndWithSymbol(balance!)}'
+                      : '*****',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textStyle: context.ccTextTheme.labelMedium?.copyWith(

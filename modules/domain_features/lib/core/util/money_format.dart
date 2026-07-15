@@ -23,3 +23,5 @@ String formatVnd(num value) {
   final formatter = NumberFormat.decimalPattern('vi_VN');
   return formatter.format(value);
 }
+
+String formatVndWithSymbol(num value) => '${formatVnd(value)} đ';

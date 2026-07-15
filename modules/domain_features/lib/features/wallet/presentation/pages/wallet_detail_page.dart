@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/util/gradient_app_bar.dart';
+import '../../../../core/util/money_format.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 
@@ -95,7 +96,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
           ),
           const CcSpaceMD(),
           CcText(
-            '${_currentBalance.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} đ',
+            formatVndWithSymbol(_currentBalance),
             textStyle: context.ccTextTheme.headlineMedium?.copyWith(
               color: context.ccColorScheme.onPrimary,
               fontWeight: FontWeight.bold,

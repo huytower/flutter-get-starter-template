@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../../core/util/gradient_app_bar.dart';
+import '../../../../core/util/money_format.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../get_x/reconciliation_controller.dart';
+import '../widgets/reconciliation_app_bar.dart';
+import '../widgets/reconciliation_dialogs.dart';
 import '../widgets/reconciliation_history_card.dart';
 import '../widgets/wallet_reconcile_tile.dart';
 
@@ -15,114 +17,9 @@ import '../widgets/wallet_reconcile_tile.dart';
 class ReconcilePage extends CcGetView<ReconciliationController> {
   const ReconcilePage({super.key});
 
-  static String _money(int value) =>
-      '${value.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (m) => "${m[1]}.")} đ';
-
   @override
-  bool get enableAppBar => true;
-
-  @override
-  PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return buildDomainGradientAppBar(
-      context,
-      leading: CcIconButton.bouncing(
-        icon: Icon(
-          Icons.arrow_back_ios_new_rounded,
-          color: context.ccColorScheme.onPrimary,
-          size: context.respIconSize(baseSize: 24),
-        ),
-        onTap: () => Navigator.of(context).pop(),
-      ),
-      title: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CcText(
-              el.tr(CcLocaleKeys.reconciliation_title),
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                color: context.ccColorScheme.onPrimary,
-                fontWeight: CcTypographyParams.bold,
-                fontSize: context.respFontSize(CcTypographyParams.titleMedium),
-              ),
-            ),
-            CcText(
-              el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
-              textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                color: context.ccColorScheme.onPrimary.withOpacity(0.9),
-                fontSize: context.respFontSize(CcTypographyParams.bodySmall),
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        Builder(
-          builder: (context) => Obx(() {
-            final enabled =
-                !controller.isSubmitting.value &&
-                controller.unhandledCount.value == 0 &&
-                controller.balances.isNotEmpty;
-            return CcIconButton.bouncing(
-              icon: Icon(
-                Icons.check_circle_outline,
-                size: context.respIconSize(baseSize: 24),
-                color: context.ccColorScheme.onPrimary,
-              ),
-              tooltip: el.tr(CcLocaleKeys.reconciliation_confirm),
-              onTap: () => _confirm(context),
-              isEnable: enabled,
-              useDebounce: true,
-            );
-          }),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _confirm(BuildContext context) async {
-    final error = await controller.performReconciliation();
-    if (!context.mounted) return;
-    if (error != null) {
-      CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
-    } else {
-      final count = controller.history.length;
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) {
-          final size = MediaQuery.of(context).size;
-          return Center(
-            child: SizedBox(
-              width: size.width * 0.9,
-              height: size.height * 0.3,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: CcRewardCompletionBanner(
-                  message: el.tr(
-                    CcLocaleKeys.reconciliation_success_message,
-                    namedArgs: {'count': count.toString()},
-                  ),
-                  onClose: () => Navigator.of(context).pop(),
-                ),
-              ),
-            ),
-          );
-        },
-      );
-
-      // Auto-dismiss after 3 seconds and navigate back
-      Future.delayed(const Duration(seconds: 3), () {
-        if (context.mounted) {
-          // Check if the dialog is still open by checking the current route
-          Navigator.of(
-            context,
-          ).popUntil((route) => route.isFirst || route is! DialogRoute);
-          Navigator.of(context).pop();
-        }
-      });
-    }
-  }
+  PreferredSizeWidget? buildAppBar(BuildContext context) =>
+      const ReconciliationAppBar();
 
   @override
   Widget? buildContent(BuildContext context) {
@@ -249,18 +146,18 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
       final diff = controller.difference;
       final diffText = diff == 0
           ? el.tr(CcLocaleKeys.reconciliation_balanced)
-          : '${diff < 0 ? '-' : '+'}${_money(diff.abs())}';
+          : '${diff < 0 ? '-' : '+'}${formatVndWithSymbol(diff.abs())}';
       return Column(
         children: [
           _summaryRow(
             context,
             el.tr(CcLocaleKeys.reconciliation_book_total),
-            _money(controller.systemTotal.value),
+            formatVndWithSymbol(controller.systemTotal.value),
           ),
           _summaryRow(
             context,
             el.tr(CcLocaleKeys.reconciliation_actual_total),
-            _money(controller.actualTotal.value),
+            formatVndWithSymbol(controller.actualTotal.value),
           ),
           const CcSpaceXS(),
           _summaryRow(
@@ -311,7 +208,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         width: double.infinity,
         height: context.respDim(50),
         child: ElevatedButton(
-          onPressed: busy || hasWarning ? null : () => _confirm(context),
+          onPressed: busy || hasWarning ? null : () => _showConfirmDialog(context),
           style: ElevatedButton.styleFrom(
             backgroundColor: context.ccColorScheme.primary,
             alignment: Alignment.center,
@@ -359,7 +256,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                 ),
               ),
               TextButton.icon(
-                onPressed: () => _confirmUndo(context),
+                onPressed: () => _showUndoDialog(context),
                 icon: const Icon(Icons.undo, size: 18),
                 label: Text(el.tr(CcLocaleKeys.reconciliation_undo)),
               ),
@@ -374,34 +271,17 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
     });
   }
 
-  void _confirmUndo(BuildContext context) {
+  void _showConfirmDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => const ReconciliationSuccessDialog(),
+    );
+  }
+
+  void _showUndoDialog(BuildContext context) {
     showDialog<void>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(el.tr(CcLocaleKeys.reconciliation_undo_title)),
-        content: Text(el.tr(CcLocaleKeys.reconciliation_undo_confirm)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(el.tr(CcLocaleKeys.common_cancel)),
-          ),
-          TextButton(
-            onPressed: () async {
-              if (controller.isSubmitting.value) return;
-              Navigator.pop(dialogContext);
-              final error = await controller.undoLast();
-              if (!context.mounted) return;
-              if (error != null) {
-                CcSnackBarHelper.showErrorSnackBar(
-                  context: context,
-                  message: error,
-                );
-              }
-            },
-            child: Text(el.tr(CcLocaleKeys.reconciliation_undo)),
-          ),
-        ],
-      ),
+      builder: (_) => const ReconciliationUndoDialog(),
     );
   }
 }

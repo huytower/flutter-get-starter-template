@@ -1,3 +1,4 @@
+import 'package:cc_sdk/core/extensions/common/cc_int_extension.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -27,25 +28,6 @@ class BudgetLimitGridCard extends StatelessWidget {
     this.onEdit,
     this.onDelete,
   });
-
-  String _fmtShort(int value) {
-    if (value >= 1000000000) {
-      final val = value / 1000000000;
-      final unit = el.tr(CcLocaleKeys.common_unit_billion);
-      return '${val % 1 == 0 ? val.toInt() : val.toStringAsFixed(1)} $unit';
-    }
-    if (value >= 1000000) {
-      final val = value / 1000000;
-      final unit = el.tr(CcLocaleKeys.common_unit_million);
-      return '${val % 1 == 0 ? val.toInt() : val.toStringAsFixed(1)}$unit';
-    }
-    if (value >= 1000) {
-      final val = value / 1000;
-      final unit = el.tr(CcLocaleKeys.common_unit_thousand);
-      return '${val % 1 == 0 ? val.toInt() : val.toStringAsFixed(0)}$unit';
-    }
-    return '$value';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +95,7 @@ class BudgetLimitGridCard extends StatelessWidget {
                           ),
                         ),
                         CcText(
-                          _fmtShort(stats.budget.limit),
+                          stats.budget.limit.formatShort(),
                           textStyle: context.ccTextTheme.labelSmall?.copyWith(
                             color: scheme.onSurfaceVariant.withOpacity(0.6),
                             fontSize: context.respFontSize(11),

@@ -2,7 +2,6 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';

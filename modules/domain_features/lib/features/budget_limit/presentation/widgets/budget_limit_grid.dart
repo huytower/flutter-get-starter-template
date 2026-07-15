@@ -7,7 +7,7 @@ import '../../../category/export_category.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 import '../get_x/budget_limit_controller.dart';
-import 'budget_limit_card.dart';
+import 'budget_limit_grid_card.dart';
 
 /// 2-column grid that supports hold-to-drag reorder in view mode.
 ///

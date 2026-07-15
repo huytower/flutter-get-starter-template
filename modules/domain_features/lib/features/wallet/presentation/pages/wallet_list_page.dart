@@ -6,10 +6,11 @@ import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/util/gradient_app_bar.dart';
-import '../../../../core/util/icon_utils.dart';
-import '../../../budget_allocation/presentation/widgets/add_wallet_sheet.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
+import '../widgets/add_wallet_sheet.dart';
+import '../widgets/wallet_delete_confirm_sheet.dart';
+import '../widgets/wallet_list_card.dart';
 
 @RoutePage()
 class WalletListPage extends CcGetView<WalletController> {
@@ -97,88 +98,11 @@ class WalletListPage extends CcGetView<WalletController> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (sheetContext) {
-        final scheme = sheetContext.ccColorScheme;
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(
-              sheetContext.respPadding(CcPaddingParams.SPACE_LG),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.all(sheetContext.respDim(14)),
-                    decoration: BoxDecoration(
-                      color: scheme.error.withOpacity(0.12),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.delete_outline_rounded,
-                      color: scheme.error,
-                      size: sheetContext.respIconSize(baseSize: 28),
-                    ),
-                  ),
-                ),
-                const CcSpaceMD(),
-                CcText(
-                  el.tr(CcLocaleKeys.wallet_delete_title),
-                  align: Alignment.center,
-                  textAlign: TextAlign.center,
-                  textStyle: sheetContext.ccTextTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: scheme.onSurface,
-                  ),
-                ),
-                const CcSpaceSM(),
-                CcText(
-                  el.tr(CcLocaleKeys.wallet_delete_confirm_msg),
-                  align: Alignment.center,
-                  maxLines: 5,
-                  textAlign: TextAlign.center,
-                  textStyle: sheetContext.ccTextTheme.bodyMedium?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-                const CcSpaceLG(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CcBaseBtn(
-                        title: el.tr(CcLocaleKeys.common_cancel),
-                        bgColor: [
-                          scheme.surfaceContainerHighest,
-                          scheme.surfaceContainerHighest,
-                        ],
-                        textColor: scheme.onSurface,
-                        onTap: () => Navigator.of(sheetContext).pop(),
-                      ),
-                    ),
-                    SizedBox(width: sheetContext.respDim(12)),
-                    Expanded(
-                      child: CcBaseBtn(
-                        title: el.tr(CcLocaleKeys.common_delete),
-                        bgColor: [scheme.error, scheme.error],
-                        textColor: scheme.onError,
-                        onTap: () async {
-                          Navigator.of(sheetContext).pop();
-                          final outcome = await controller.deleteWallet(
-                            wallet.id,
-                          );
-                          if (!context.mounted) return;
-                          _handleDeleteOutcome(context, outcome);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+      builder: (_) => WalletDeleteConfirmSheet(
+        wallet: wallet,
+        onDelete: () => controller.deleteWallet(wallet.id),
+        onOutcome: (outcome) => _handleDeleteOutcome(context, outcome),
+      ),
     );
   }
 
@@ -235,7 +159,7 @@ class WalletListPage extends CcGetView<WalletController> {
           ),
           children: controller.wallets
               .map(
-                (wallet) => _WalletListCard(
+                (wallet) => WalletListCard(
                   wallet: wallet,
                   isEditMode: isEdit,
                   canDelete: controller.canDeleteWallet(wallet),
@@ -246,172 +170,6 @@ class WalletListPage extends CcGetView<WalletController> {
               .toList(),
         );
       }),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Wallet card — edit mode shows iOS-style delete/edit corner badges
-// (mirrors BudgetLimitGridCard).
-// ---------------------------------------------------------------------------
-
-class _WalletListCard extends StatelessWidget {
-  final WalletEntity wallet;
-  final bool isEditMode;
-  final bool canDelete;
-  final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
-
-  const _WalletListCard({
-    required this.wallet,
-    this.isEditMode = false,
-    this.canDelete = true,
-    this.onEdit,
-    this.onDelete,
-  });
-
-  static String _fmt(int value) => value.toString().replaceAllMapped(
-    RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-    (m) => '${m[1]}.',
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    final bgColor = Color.alphaBlend(
-      scheme.primary.withOpacity(0.10),
-      scheme.surface,
-    );
-
-    return Container(
-      margin: EdgeInsets.only(bottom: context.respDim(12)),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          // Reserve a top band so the corner badges sit fully inside the Stack
-          // bounds — a Positioned child painted outside its parent's box does
-          // not receive pointer events, which would make the badges untappable.
-          Padding(
-            padding: EdgeInsets.only(top: context.respDim(10)),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(context.respDim(16)),
-              child: _buildCardContent(context, bgColor),
-            ),
-          ),
-          if (isEditMode) ...[
-            if (canDelete)
-              Positioned(
-                top: 0,
-                left: 0,
-                child: _EditBadge(
-                  icon: Icons.remove,
-                  color: scheme.error,
-                  foregroundColor: scheme.onError,
-                  onTap: onDelete,
-                ),
-              ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: _EditBadge(
-                icon: Icons.edit,
-                color: scheme.primary,
-                foregroundColor: scheme.onPrimary,
-                onTap: onEdit,
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCardContent(BuildContext context, Color bgColor) {
-    final scheme = context.ccColorScheme;
-    final controller = Get.find<WalletController>();
-
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
-      color: bgColor,
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(context.respDim(10)),
-            decoration: BoxDecoration(
-              color: scheme.primary.withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              iconDataFromCode(wallet.iconCode),
-              size: context.respIconSize(baseSize: 22),
-              color: scheme.primary,
-            ),
-          ),
-          SizedBox(width: context.respDim(12)),
-          Expanded(
-            child: CcText(
-              wallet.name,
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: context.respFontSize(CcTypographyParams.titleMedium),
-              ),
-            ),
-          ),
-          Obx(() {
-            final balance = controller.bookBalanceOf(wallet.id);
-            final visible = controller.isBalanceVisible.value;
-            return CcText(
-              visible ? '${_fmt(balance)} đ' : '*****',
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: balance >= 0 ? scheme.onSurface : scheme.error,
-                fontSize: context.respFontSize(CcTypographyParams.titleMedium),
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-}
-
-class _EditBadge extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final Color foregroundColor;
-  final VoidCallback? onTap;
-
-  const _EditBadge({
-    required this.icon,
-    required this.color,
-    required this.foregroundColor,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        width: context.respDim(24),
-        height: context.respDim(24),
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          border: Border.all(color: scheme.surface, width: 1.5),
-          boxShadow: [
-            BoxShadow(color: scheme.shadow.withOpacity(0.3), blurRadius: 4),
-          ],
-        ),
-        child: Icon(
-          icon,
-          color: foregroundColor,
-          size: context.respIconSize(baseSize: 14),
-        ),
-      ),
     );
   }
 }

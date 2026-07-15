@@ -3,7 +3,6 @@ import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
@@ -12,8 +11,11 @@ import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/add_wallet_sheet.dart';
+import '../widgets/budget_hero_banner.dart';
 import '../widgets/budget_preview_section.dart';
-import '../widgets/wallet_strip.dart';
+import '../widgets/budget_wallets_section.dart';
+import '../widgets/wallet_actions_bottom_sheet.dart';
+import '../widgets/wallet_delete_confirmation_dialog.dart';
 
 @RoutePage()
 class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
@@ -63,44 +65,11 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   void _openWalletActions(BuildContext context, WalletEntity wallet) {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: Icon(
-                Icons.edit_outlined,
-                color: sheetContext.ccColorScheme.primary,
-              ),
-              title: CcText(el.tr(CcLocaleKeys.common_edit)),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                _editWallet(context, wallet);
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.delete_outline,
-                color: sheetContext.ccColorScheme.error,
-              ),
-              title: CcText(
-                el.tr(CcLocaleKeys.common_delete),
-                textStyle: TextStyle(color: sheetContext.ccColorScheme.error),
-              ),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                _confirmDelete(context, wallet);
-              },
-            ),
-          ],
-        ),
-      ),
+    WalletActionsBottomSheet.show(
+      context,
+      wallet: wallet,
+      onEdit: () => _editWallet(context, wallet),
+      onDelete: () => _confirmDelete(context, wallet),
     );
   }
 
@@ -117,91 +86,13 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   void _confirmDelete(BuildContext context, WalletEntity wallet) {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (sheetContext) {
-        final scheme = sheetContext.ccColorScheme;
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(
-              sheetContext.respPadding(CcPaddingParams.SPACE_LG),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.all(sheetContext.respDim(14)),
-                    decoration: BoxDecoration(
-                      color: scheme.error.withOpacity(0.12),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.delete_outline_rounded,
-                      color: scheme.error,
-                      size: sheetContext.respIconSize(baseSize: 28),
-                    ),
-                  ),
-                ),
-                const CcSpaceMD(),
-                CcText(
-                  el.tr(CcLocaleKeys.wallet_delete_title),
-                  align: Alignment.center,
-                  textAlign: TextAlign.center,
-                  textStyle: sheetContext.ccTextTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: scheme.onSurface,
-                  ),
-                ),
-                const CcSpaceSM(),
-                CcText(
-                  el.tr(CcLocaleKeys.wallet_delete_confirm_msg),
-                  align: Alignment.center,
-                  textAlign: TextAlign.center,
-                  textStyle: sheetContext.ccTextTheme.bodyMedium?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-                const CcSpaceLG(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CcBaseBtn(
-                        title: el.tr(CcLocaleKeys.common_cancel),
-                        bgColor: [
-                          scheme.surfaceContainerHighest,
-                          scheme.surfaceContainerHighest,
-                        ],
-                        textColor: scheme.onSurface,
-                        onTap: () => Navigator.of(sheetContext).pop(),
-                      ),
-                    ),
-                    SizedBox(width: sheetContext.respDim(12)),
-                    Expanded(
-                      child: CcBaseBtn(
-                        title: el.tr(CcLocaleKeys.common_delete),
-                        bgColor: [scheme.error, scheme.error],
-                        textColor: scheme.onError,
-                        onTap: () async {
-                          Navigator.of(sheetContext).pop();
-                          final outcome = await controller.walletController
-                              .deleteWallet(wallet.id);
-                          if (!context.mounted) return;
-                          _handleDeleteOutcome(context, outcome);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
+    WalletDeleteConfirmationDialog.show(
+      context,
+      wallet: wallet,
+      onConfirm: () async {
+        final outcome = await controller.walletController.deleteWallet(wallet.id);
+        if (!context.mounted) return;
+        _handleDeleteOutcome(context, outcome);
       },
     );
   }
@@ -257,149 +148,16 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   Widget _buildHeroBanner(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    final walletController = controller.walletController;
-
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        context.respPadding(CcPaddingParams.SPACE_LG),
-        context.respPadding(CcPaddingParams.SPACE_LG),
-        context.respPadding(CcPaddingParams.SPACE_LG),
-        context.respPadding(CcPaddingParams.SPACE_SM),
-      ),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: scheme.primary,
-          borderRadius: BorderRadius.circular(context.respDim(24)),
-          boxShadow: [
-            BoxShadow(
-              color: scheme.primary.withOpacity(0.25),
-              blurRadius: context.respDim(20),
-              offset: Offset(0, context.respDim(10)),
-            ),
-          ],
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-          vertical: context.respPadding(CcPaddingParams.SPACE_LG),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CcText(
-                    el.tr(CcLocaleKeys.wallet_total_assets),
-                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      color: scheme.onPrimary.withOpacity(0.85),
-                      fontSize: context.respFontSize(
-                        CcTypographyParams.labelMedium,
-                      ),
-                    ),
-                  ),
-                  const CcSpaceXS(),
-                  Obx(
-                    () => CcText(
-                      walletController.isBalanceVisible.value
-                          ? '${walletController.totalBalance.value.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} đ'
-                          : '*********',
-                      textStyle: context.ccTextTheme.headlineMedium?.copyWith(
-                        color: scheme.onPrimary,
-                        fontWeight: CcTypographyParams.bold,
-                        fontSize: context.respFontSize(
-                          CcTypographyParams.headlineMedium,
-                        ),
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const CcSpaceLG(),
-            Obx(
-              () => GestureDetector(
-                onTap: walletController.toggleBalanceVisibility,
-                child: Container(
-                  padding: EdgeInsets.all(context.respDim(12)),
-                  decoration: BoxDecoration(
-                    color: scheme.onPrimary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    walletController.isBalanceVisible.value
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    color: scheme.primary,
-                    size: context.respIconSize(baseSize: 24),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return BudgetHeroBanner(
+      walletController: controller.walletController,
     );
   }
 
   Widget _buildWalletsSection(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-            context.respPadding(CcPaddingParams.SPACE_LG),
-            context.respPadding(CcPaddingParams.SPACE_LG),
-            context.respPadding(CcPaddingParams.SPACE_MD),
-            context.respPadding(CcPaddingParams.SPACE_SM),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CcText(
-                el.tr(CcLocaleKeys.wallet_your_wallets),
-                textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                  fontWeight: CcTypographyParams.bold,
-                  color: scheme.onBackground,
-                  fontSize: context.respFontSize(CcTypographyParams.titleSmall),
-                ),
-              ),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => _openAddWallet(context),
-                    child: Icon(
-                      Icons.add_circle_outline_rounded,
-                      size: context.respIconSize(baseSize: 20),
-                      color: scheme.primary,
-                    ),
-                  ),
-                  SizedBox(width: context.respDim(8)),
-                  GestureDetector(
-                    onTap: () => context.router.push(const WalletListRoute()),
-                    child: CcText(
-                      el.tr(CcLocaleKeys.wallet_see_all),
-                      textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                        color: scheme.primary,
-                        fontWeight: CcTypographyParams.semiBold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        WalletStrip(
-          wallets: controller.walletController.wallets,
-          onMore: (wallet) => _openWalletActions(context, wallet),
-        ),
-      ],
+    return BudgetWalletsSection(
+      wallets: controller.walletController.wallets,
+      onAddWallet: () => _openAddWallet(context),
+      onMore: (wallet) => _openWalletActions(context, wallet),
     );
   }
 }

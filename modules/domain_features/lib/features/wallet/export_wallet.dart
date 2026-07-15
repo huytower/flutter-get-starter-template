@@ -9,6 +9,7 @@ export 'domain/usecases/wallet_balance_calculator.dart';
 export 'presentation/get_x/wallet_controller.dart';
 export 'presentation/pages/wallet_detail_page.dart';
 export 'presentation/pages/wallet_list_page.dart';
+export 'presentation/widgets/add_wallet_sheet.dart';
 export 'presentation/widgets/wallet_list_item.dart';
 export 'presentation/widgets/wallet_section_header.dart';
 // Data

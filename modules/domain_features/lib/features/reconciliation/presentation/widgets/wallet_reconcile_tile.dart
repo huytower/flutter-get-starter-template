@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/transaction_form_helpers.dart';
+import '../../../../core/util/money_format.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
 import '../get_x/reconciliation_controller.dart';
 
@@ -19,9 +20,6 @@ class WalletReconcileTile extends StatelessWidget {
     required this.onAcknowledge,
   });
 
-  static String _money(int value) =>
-      '${value.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (m) => "${m[1]}.")} đ';
-
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ReconciliationController>();
@@ -35,7 +33,6 @@ class WalletReconcileTile extends StatelessWidget {
       final isEditing = controller.editingWalletId.value == balance.wallet.id;
       final scheme = context.ccColorScheme;
 
-      // Color logic: Green if matched or acknowledged, otherwise Red if mismatch.
       final statusColor = isResolved ? scheme.primary : scheme.error;
 
       return Container(
@@ -51,7 +48,6 @@ class WalletReconcileTile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Row 1: Wallet name and Book balance
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -64,7 +60,7 @@ class WalletReconcileTile extends StatelessWidget {
                 CcText(
                   el.tr(
                     CcLocaleKeys.reconciliation_book_balance,
-                    namedArgs: {'amount': _money(balance.bookBalance)},
+                    namedArgs: {'amount': formatVndWithSymbol(balance.bookBalance)},
                   ),
                   textStyle: context.ccTextTheme.bodySmall?.copyWith(
                     color: scheme.onSurfaceVariant,
@@ -73,145 +69,192 @@ class WalletReconcileTile extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            // Row 2: Actual balance input field
-            Row(
-              children: [
-                CcText(
-                  el.tr(CcLocaleKeys.reconciliation_actual),
-                  textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
-                ),
-                const Spacer(),
-                const SizedBox(width: 12),
-                GestureDetector(
-                  onTap: () => controller.startEditing(balance.wallet.id),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: scheme.surface,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: isEditing
-                            ? scheme.primary
-                            : scheme.outline.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CcText(
-                          '${TransactionFormHelpers.formatAmount(actual.toString())} đ',
-                          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: isEditing ? scheme.primary : null,
-                          ),
-                        ),
-                        if (actual != 0) ...[
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: () {
-                              if (isEditing) {
-                                controller.clearAmount();
-                              } else {
-                                controller.setActual(balance.wallet.id, 0);
-                              }
-                            },
-                            child: Icon(
-                              Icons.cancel,
-                              size: 18,
-                              color: scheme.onSurfaceVariant.withOpacity(0.4),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+            WalletActualBalanceInput(
+              actual: actual,
+              isEditing: isEditing,
+              onTap: () => controller.startEditing(balance.wallet.id),
+              onClear: () {
+                if (isEditing) {
+                  controller.clearAmount();
+                } else {
+                  controller.setActual(balance.wallet.id, 0);
+                }
+              },
             ),
             const SizedBox(height: 10),
-            // Row 3: Reconciliation status
-            if (isBalanced)
-              // Case: Matched (Khớp số)
-              Row(
-                children: [
-                  Icon(
-                    Icons.check_circle_outline,
-                    color: scheme.primary,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 4),
-                  CcText(
-                    el.tr(CcLocaleKeys.reconciliation_matched),
-                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                      color: scheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              )
-            else
-              // Case: Mismatch (Lệch)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        isAcknowledged
-                            ? Icons.check_circle_outline
-                            : Icons.error_outline,
-                        color: statusColor,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      CcText(
-                        el.tr(
-                          CcLocaleKeys.reconciliation_lech,
-                          namedArgs: {
-                            'amount':
-                                '${diff > 0 ? '+' : ''}${diff < 0 ? '-' : ''}${_money(diff.abs())}',
-                          },
-                        ),
-                        textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                          color: statusColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (!isAcknowledged)
-                    // Discrepancy detected, need user to acknowledge
-                    GestureDetector(
-                      onTap: onAcknowledge,
-                      child: CcText(
-                        el.tr(CcLocaleKeys.reconciliation_create_adjustment),
-                        textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                          color: scheme.error,
-                          fontWeight: FontWeight.w600,
-                          decoration: TextDecoration.underline,
-                          decorationColor: scheme.error,
-                        ),
-                      ),
-                    )
-                  else
-                    // Already acknowledged
-                    CcText(
-                      el.tr(CcLocaleKeys.common_done),
-                      textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                        color: scheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                ],
-              ),
+            WalletReconcileStatusRow(
+              isBalanced: isBalanced,
+              isAcknowledged: isAcknowledged,
+              diff: diff,
+              statusColor: statusColor,
+              onAcknowledge: onAcknowledge,
+            ),
           ],
         ),
       );
     });
+  }
+}
+
+class WalletActualBalanceInput extends StatelessWidget {
+  final int actual;
+  final bool isEditing;
+  final VoidCallback onTap;
+  final VoidCallback onClear;
+
+  const WalletActualBalanceInput({
+    super.key,
+    required this.actual,
+    required this.isEditing,
+    required this.onTap,
+    required this.onClear,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
+    return Row(
+      children: [
+        CcText(
+          el.tr(CcLocaleKeys.reconciliation_actual),
+          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
+        ),
+        const Spacer(),
+        const SizedBox(width: 12),
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: scheme.surface,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isEditing
+                    ? scheme.primary
+                    : scheme.outline.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CcText(
+                  '${TransactionFormHelpers.formatAmount(actual.toString())} đ',
+                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: isEditing ? scheme.primary : null,
+                  ),
+                ),
+                if (actual != 0) ...[
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: onClear,
+                    child: Icon(
+                      Icons.cancel,
+                      size: 18,
+                      color: scheme.onSurfaceVariant.withOpacity(0.4),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class WalletReconcileStatusRow extends StatelessWidget {
+  final bool isBalanced;
+  final bool isAcknowledged;
+  final int diff;
+  final Color statusColor;
+  final VoidCallback onAcknowledge;
+
+  const WalletReconcileStatusRow({
+    super.key,
+    required this.isBalanced,
+    required this.isAcknowledged,
+    required this.diff,
+    required this.statusColor,
+    required this.onAcknowledge,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
+    if (isBalanced) {
+      return Row(
+        children: [
+          Icon(
+            Icons.check_circle_outline,
+            color: scheme.primary,
+            size: 16,
+          ),
+          const SizedBox(width: 4),
+          CcText(
+            el.tr(CcLocaleKeys.reconciliation_matched),
+            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+              color: scheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Icon(
+              isAcknowledged ? Icons.check_circle_outline : Icons.error_outline,
+              color: statusColor,
+              size: 16,
+            ),
+            const SizedBox(width: 4),
+            CcText(
+              el.tr(
+                CcLocaleKeys.reconciliation_lech,
+                namedArgs: {
+                  'amount':
+                      '${diff > 0 ? '+' : ''}${diff < 0 ? '-' : ''}${formatVndWithSymbol(diff.abs())}',
+                },
+              ),
+              textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                color: statusColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        if (!isAcknowledged)
+          GestureDetector(
+            onTap: onAcknowledge,
+            child: CcText(
+              el.tr(CcLocaleKeys.reconciliation_create_adjustment),
+              textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                color: scheme.error,
+                fontWeight: FontWeight.w600,
+                decoration: TextDecoration.underline,
+                decorationColor: scheme.error,
+              ),
+            ),
+          )
+        else
+          CcText(
+            el.tr(CcLocaleKeys.common_done),
+            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+              color: scheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+      ],
+    );
   }
 }

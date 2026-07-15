@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
+import '../../../../core/util/money_format.dart';
 import '../../domain/entities/reconciliation_entity.dart';
 
 /// Summary card for a past reconciliation in the history list.
@@ -9,9 +10,6 @@ class ReconciliationHistoryCard extends StatelessWidget {
   final ReconciliationEntity reconciliation;
 
   const ReconciliationHistoryCard({super.key, required this.reconciliation});
-
-  static String _money(int value) =>
-      '${value.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (m) => "${m[1]}.")} đ';
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +57,12 @@ class ReconciliationHistoryCard extends StatelessWidget {
           _row(
             context,
             el.tr(CcLocaleKeys.reconciliation_book),
-            _money(reconciliation.systemTotal),
+            formatVndWithSymbol(reconciliation.systemTotal),
           ),
           _row(
             context,
             el.tr(CcLocaleKeys.reconciliation_actual),
-            _money(reconciliation.actualTotal),
+            formatVndWithSymbol(reconciliation.actualTotal),
           ),
           const CcSpaceXS(),
           CcText(
@@ -74,7 +72,7 @@ class ReconciliationHistoryCard extends StatelessWidget {
                     diff > 0
                         ? CcLocaleKeys.reconciliation_surplus
                         : CcLocaleKeys.reconciliation_deficit,
-                    namedArgs: {'amount': _money(diff.abs())},
+                    namedArgs: {'amount': formatVndWithSymbol(diff.abs())},
                   ),
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(
               color: balanced ? scheme.primary : scheme.error,

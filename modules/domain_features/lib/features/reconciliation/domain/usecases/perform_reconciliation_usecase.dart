@@ -7,7 +7,7 @@ import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../entities/reconciliation_allocation_entity.dart';
 import '../entities/reconciliation_entity.dart';
-import '../reconciliation_period.dart';
+import '../reconciliation_period_utils.dart';
 import '../repositories/reconciliation_repository.dart';
 
 /// Performs a reconciliation (mirrors `KiemToanBCTCUseCase` +
