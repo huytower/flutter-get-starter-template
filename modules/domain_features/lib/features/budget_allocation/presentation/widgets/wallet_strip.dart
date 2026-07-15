@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 
 import '../../../../core/util/horizontal_fade_scroll_view.dart';
 import '../../../../core/util/icon_utils.dart';
-import '../../../../core/util/money_format.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
@@ -109,7 +108,7 @@ class _WalletCard extends StatelessWidget {
                 ),
                 CcText(
                   balance != null
-                      ? '${formatVndWithSymbol(balance!)}'
+                      ? '${balance!.formatShort()} đ'
                       : '*****',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

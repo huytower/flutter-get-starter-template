@@ -63,7 +63,7 @@ class BudgetHeroBanner extends StatelessWidget {
                   Obx(
                     () => CcText(
                       walletController.isBalanceVisible.value
-                          ? '${walletController.totalBalance.value.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} đ'
+                          ? '${walletController.totalBalance.value.formatShort()} đ'
                           : '*********',
                       textStyle: context.ccTextTheme.headlineMedium?.copyWith(
                         color: scheme.onPrimary,
