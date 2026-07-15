@@ -55,7 +55,7 @@ class CcAmountInputSection extends StatelessWidget {
             ),
             height: context.respDim(50),
             decoration: BoxDecoration(
-              color: context.ccColorScheme.surfaceContainerHighest,
+              color: context.ccColorScheme.surfaceVariant,
               borderRadius: BorderRadius.circular(context.respDim(12)),
               border: Border.all(
                 color: isKeypadVisible

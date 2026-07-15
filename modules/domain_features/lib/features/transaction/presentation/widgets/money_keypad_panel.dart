@@ -34,7 +34,11 @@ class MoneyKeypadPanel extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: context.ccColorScheme.surfaceContainerHighest,
-        border: Border(top: BorderSide(color: context.ccColorScheme.outlineVariant.withOpacity(0.1))),
+        border: Border(
+          top: BorderSide(
+            color: context.ccColorScheme.outlineVariant.withOpacity(0.1),
+          ),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -63,10 +67,10 @@ class MoneyKeypadPanel extends StatelessWidget {
                       horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
                     ),
                     child: CcText(
-                      'Xong',
+                      el.tr(CcLocaleKeys.common_done),
                       textStyle: context.ccTextTheme.labelMedium?.copyWith(
                         color: activeColor,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: CcTypographyParams.bold,
                         fontSize: context.respFontSize(13),
                       ),
                     ),
@@ -87,7 +91,7 @@ class MoneyKeypadPanel extends StatelessWidget {
   }
 
   Widget _buildSuggestionChips(BuildContext context) {
-    final formatter = el.NumberFormat('#,###', 'vi_VN');
+    final formatter = el.NumberFormat('#,###', context.locale.toString());
     return HorizontalFadeScrollView(
       height: context.respDim(32),
       builder: (scrollController) => ListView.separated(
@@ -100,17 +104,17 @@ class MoneyKeypadPanel extends StatelessWidget {
           return GestureDetector(
             onTap: () => onSuggestion?.call(amount),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
+              padding: EdgeInsets.symmetric(horizontal: context.respDim(14)),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: activeColor.withValues(alpha: 0.07),
-                borderRadius: BorderRadius.circular(18),
+                color: activeColor.withOpacity(0.07),
+                borderRadius: BorderRadius.circular(context.respDim(18)),
               ),
               child: CcText(
                 formatter.format(amount),
                 textStyle: context.ccTextTheme.labelMedium?.copyWith(
                   color: activeColor,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: CcTypographyParams.bold,
                   fontSize: context.respFontSize(12),
                 ),
               ),

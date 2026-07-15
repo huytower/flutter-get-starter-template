@@ -223,14 +223,13 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                     fontSize: context.respFontSize(19),
                   ),
                 ),
-                const CcSpaceSM(),
+                const CcSpaceXS(),
                 BudgetLimitNameInput(
                   controller: _nameController,
                   errorText: _nameError,
                   onClear: () => _nameController.clear(),
                 ),
                 if (!_isEdit) ...[
-                  const CcSpaceMD(),
                   BudgetLimitCategorySelector(
                     categories: _categories,
                     selectedCategoryId: _selectedCategoryId,
@@ -244,7 +243,6 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                         _categoryScrollController = controller,
                   ),
                 ],
-                const CcSpaceMD(),
                 if (_limitLocked)
                   const BudgetLimitLockNotice()
                 else

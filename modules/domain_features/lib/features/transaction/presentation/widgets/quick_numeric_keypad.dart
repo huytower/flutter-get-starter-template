@@ -19,12 +19,16 @@ class QuickNumericKeypad extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+        horizontal: context.respPadding(CcPaddingParams.PAGE_XS),
         vertical: context.respPadding(CcPaddingParams.PAGE_XS),
       ),
       decoration: BoxDecoration(
         color: context.ccColorScheme.surfaceContainerHighest,
-        border: Border(top: BorderSide(color: context.ccColorScheme.outlineVariant.withOpacity(0.1))),
+        border: Border(
+          top: BorderSide(
+            color: context.ccColorScheme.outlineVariant.withOpacity(0.1),
+          ),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -55,29 +59,35 @@ class QuickNumericKeypad extends StatelessWidget {
       onTap: () => isDelete ? onDelete() : onKeyPress(label),
       child: Container(
         height: context.respDim(40),
-        margin: const EdgeInsets.all(4),
+        margin: EdgeInsets.all(context.respDim(4)),
         decoration: BoxDecoration(
           color: context.ccColorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(context.respDim(12)),
           boxShadow: [
             BoxShadow(
               color: context.ccColorScheme.onSurface.withOpacity(0.02),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
+              blurRadius: context.respDim(2),
+              offset: Offset(0, context.respDim(1)),
             ),
           ],
         ),
         alignment: Alignment.center,
         child: isDelete
-            ? Icon(Icons.backspace_outlined, color: context.ccColorScheme.onSurfaceVariant, size: 20)
+            ? Icon(
+                Icons.backspace_outlined,
+                color: context.ccColorScheme.onSurfaceVariant,
+                size: context.respIconSize(baseSize: 20),
+              )
             : CcText(
                 label,
                 align: Alignment.center,
                 textAlign: TextAlign.center,
                 textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: CcTypographyParams.bold,
                   fontSize: context.respFontSize(18),
-                  color: label == '000' ? activeColor : context.ccColorScheme.onSurface,
+                  color: label == '000'
+                      ? activeColor
+                      : context.ccColorScheme.onSurface,
                 ),
               ),
       ),
