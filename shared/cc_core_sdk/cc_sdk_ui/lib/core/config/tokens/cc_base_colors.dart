@@ -40,8 +40,9 @@ class CcBaseColors {
   static const Color white10 = Color(0x1AFFFFFF);
 
   // -- Gray Scale
+  static const Color gray950 = Color(0xFF16181C);
   static const Color gray900 = Color(0xFF111827);
-  static const Color gray800 = Color(0xFF1F2937);
+  static const Color gray800 = Color(0xFF1E2126);
   static const Color gray700 = Color(0xFF374151);
   static const Color gray600 = Color(0xFF4B5563);
   static const Color gray500 = Color(0xFF6B7280);
