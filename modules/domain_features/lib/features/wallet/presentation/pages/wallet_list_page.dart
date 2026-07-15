@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/util/gradient_app_bar.dart';
+import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/add_wallet_sheet.dart';
@@ -109,6 +110,9 @@ class WalletListPage extends CcGetView<WalletController> {
   void _handleDeleteOutcome(BuildContext context, WalletDeleteOutcome outcome) {
     switch (outcome) {
       case WalletDeleteOutcome.success:
+        if (Get.isRegistered<ReconciliationController>()) {
+          Get.find<ReconciliationController>().loadBalances();
+        }
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(CcLocaleKeys.common_done),

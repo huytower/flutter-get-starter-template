@@ -254,7 +254,7 @@
     "deficit": "Hao hụt {amount}",
     "confirm": "Xác nhận đối soát",
     "success": "Đã xác nhận đối soát",
-    "success_message": "Chúc mừng! Bạn đã hoàn thành\nlần đối soát thứ {count} thành công.",
+    "success_message": "Chúc mừng! Bạn đã hoàn thành lần đối soát thứ {count} thành công.",
     "history": "Lịch sử đối soát",
     "undo": "Hoàn tác",
     "undo_title": "Hoàn tác đối soát",

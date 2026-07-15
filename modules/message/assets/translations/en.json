@@ -254,7 +254,7 @@
     "deficit": "Deficit {amount}",
     "confirm": "Confirm Reconciliation",
     "success": "Reconciliation confirmed",
-    "success_message": "Congratulations! You have completed\nreconciliation #{count} successfully.",
+    "success_message": "Congratulations! You have completed reconciliation #{count} successfully.",
     "history": "Reconciliation History",
     "undo": "Undo",
     "undo_title": "Undo Reconciliation",

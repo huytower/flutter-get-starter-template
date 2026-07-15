@@ -3,10 +3,13 @@ import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../../core/util/gradient_app_bar.dart';
+import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../get_x/budget_allocation_controller.dart';
@@ -90,7 +93,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       context,
       wallet: wallet,
       onConfirm: () async {
-        final outcome = await controller.walletController.deleteWallet(wallet.id);
+        final outcome = await controller.walletController.deleteWallet(
+          wallet.id,
+        );
         if (!context.mounted) return;
         _handleDeleteOutcome(context, outcome);
       },
@@ -100,6 +105,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   void _handleDeleteOutcome(BuildContext context, WalletDeleteOutcome outcome) {
     switch (outcome) {
       case WalletDeleteOutcome.success:
+        if (Get.isRegistered<ReconciliationController>()) {
+          Get.find<ReconciliationController>().loadBalances();
+        }
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(CcLocaleKeys.common_done),
@@ -148,9 +156,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   Widget _buildHeroBanner(BuildContext context) {
-    return BudgetHeroBanner(
-      walletController: controller.walletController,
-    );
+    return BudgetHeroBanner(walletController: controller.walletController);
   }
 
   Widget _buildWalletsSection(BuildContext context) {

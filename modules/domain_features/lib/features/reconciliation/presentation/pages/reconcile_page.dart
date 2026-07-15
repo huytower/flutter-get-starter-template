@@ -82,9 +82,6 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
 
       Future.delayed(const Duration(seconds: 3), () {
         if (context.mounted) {
-          Navigator.of(
-            context,
-          ).popUntil((route) => route.isFirst || route is! DialogRoute);
           Navigator.of(context).pop();
         }
       });
@@ -149,12 +146,12 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                       ),
                     ),
                   ),
-                  const CcSpaceSM(),
+                  const CcSpaceXS(),
                   CcText(
                     el.tr(CcLocaleKeys.reconciliation_instruction),
                     textStyle: context.ccTextTheme.bodyMedium,
                   ),
-                  const CcSpaceMD(),
+                  const CcSpaceXS(),
                   Column(
                     children: controller.balances.map((balance) {
                       return WalletReconcileTile(
