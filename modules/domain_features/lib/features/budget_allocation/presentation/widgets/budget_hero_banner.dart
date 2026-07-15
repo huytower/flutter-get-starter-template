@@ -7,10 +7,7 @@ import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
 /// Hero banner displaying total assets with balance visibility toggle.
 class BudgetHeroBanner extends StatelessWidget {
-  const BudgetHeroBanner({
-    required this.walletController,
-    super.key,
-  });
+  const BudgetHeroBanner({required this.walletController, super.key});
 
   final WalletController walletController;
 
@@ -83,7 +80,7 @@ class BudgetHeroBanner extends StatelessWidget {
               () => GestureDetector(
                 onTap: walletController.toggleBalanceVisibility,
                 child: Container(
-                  padding: EdgeInsets.all(context.respDim(12)),
+                  padding: EdgeInsets.all(context.respDim(4)),
                   decoration: BoxDecoration(
                     color: scheme.onPrimary,
                     shape: BoxShape.circle,
@@ -93,7 +90,7 @@ class BudgetHeroBanner extends StatelessWidget {
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined,
                     color: scheme.primary,
-                    size: context.respIconSize(baseSize: 24),
+                    size: context.respIconSize(baseSize: 16),
                   ),
                 ),
               ),

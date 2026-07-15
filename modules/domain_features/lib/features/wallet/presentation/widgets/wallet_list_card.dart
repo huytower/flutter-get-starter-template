@@ -7,6 +7,7 @@ import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import 'edit_badge.dart';
 
+/// Horizontal list card for wallets shown on the Wallet list page.
 class WalletListCard extends StatelessWidget {
   final WalletEntity wallet;
   final bool isEditMode;
@@ -25,98 +26,132 @@ class WalletListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    final bgColor = Color.alphaBlend(
-      scheme.primary.withOpacity(0.10),
-      scheme.surface,
-    );
-
     return Container(
-      margin: EdgeInsets.only(bottom: context.respDim(12)),
+      margin: EdgeInsets.only(
+        bottom: context.respDim(CcPaddingParams.SPACE_MD),
+      ),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          Padding(
-            padding: EdgeInsets.only(top: context.respDim(10)),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(context.respDim(16)),
-              child: _buildCardContent(context, bgColor),
-            ),
-          ),
-          if (isEditMode) ...[
-            if (canDelete)
-              Positioned(
-                top: 0,
-                left: 0,
-                child: EditBadge(
-                  icon: Icons.remove,
-                  color: scheme.error,
-                  foregroundColor: scheme.onError,
-                  onTap: onDelete,
-                ),
-              ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: EditBadge(
-                icon: Icons.edit,
-                color: scheme.primary,
-                foregroundColor: scheme.onPrimary,
-                onTap: onEdit,
-              ),
-            ),
-          ],
+          const Positioned.fill(child: CcGlassyGradient()),
+          _buildMainCard(context),
+          if (isEditMode) ..._buildEditBadges(context),
         ],
       ),
     );
   }
 
-  Widget _buildCardContent(BuildContext context, Color bgColor) {
+  Widget _buildMainCard(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final controller = Get.find<WalletController>();
 
     return Container(
-      width: double.infinity,
       padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
-      color: bgColor,
+      decoration: BoxDecoration(
+        color: scheme.primaryContainer.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(context.respDim(20)),
+        border: Border.all(
+          color: scheme.onSurface.withOpacity(0.08),
+          width: context.respDim(1),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: scheme.shadow.withOpacity(0.12),
+            blurRadius: context.respDim(20),
+            offset: Offset(0, context.respDim(10)),
+            spreadRadius: context.respDim(-5),
+          ),
+        ],
+      ),
       child: Row(
         children: [
-          Container(
-            padding: EdgeInsets.all(context.respDim(10)),
-            decoration: BoxDecoration(
-              color: scheme.primary.withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              iconDataFromCode(wallet.iconCode),
-              size: context.respIconSize(baseSize: 22),
-              color: scheme.primary,
-            ),
-          ),
+          _buildIcon(context),
           SizedBox(width: context.respDim(12)),
-          Expanded(
-            child: CcText(
-              wallet.name,
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: context.respFontSize(CcTypographyParams.titleMedium),
-              ),
-            ),
-          ),
-          Obx(() {
-            final balance = controller.bookBalanceOf(wallet.id);
-            final visible = controller.isBalanceVisible.value;
-            return CcText(
-              visible ? '${balance.formatShort()} đ' : '*****',
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: balance >= 0 ? scheme.onSurface : scheme.error,
-                fontSize: context.respFontSize(CcTypographyParams.titleMedium),
-              ),
-            );
-          }),
+          _buildName(context),
+          _buildBalance(context),
         ],
       ),
     );
+  }
+
+  Widget _buildIcon(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
+    return Container(
+      padding: EdgeInsets.all(context.respDim(10)),
+      decoration: BoxDecoration(
+        color: scheme.primary.withOpacity(0.12),
+        shape: BoxShape.circle,
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          const Positioned.fill(
+            child: CcGlassyGradient(endColor: Color(0xFFE0E0E0)),
+          ),
+          Icon(
+            iconDataFromCode(wallet.iconCode),
+            size: context.respIconSize(baseSize: 22),
+            color: scheme.primary,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildName(BuildContext context) {
+    return Expanded(
+      child: CcText(
+        wallet.name,
+        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+          fontWeight: CcTypographyParams.bold,
+          fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBalance(BuildContext context) {
+    final controller = Get.find<WalletController>();
+    final scheme = context.ccColorScheme;
+
+    return Obx(() {
+      final balance = controller.bookBalanceOf(wallet.id);
+      final visible = controller.isBalanceVisible.value;
+      return CcText(
+        visible ? '${balance.formatShort()} đ' : '*****',
+        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: balance >= 0 ? scheme.onSurface : scheme.error,
+          fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+        ),
+      );
+    });
+  }
+
+  List<Widget> _buildEditBadges(BuildContext context) {
+    final scheme = context.ccColorScheme;
+    return [
+      if (canDelete)
+        Positioned(
+          top: context.respDim(-6),
+          left: context.respDim(-6),
+          child: EditBadge(
+            icon: Icons.remove,
+            color: scheme.error,
+            foregroundColor: scheme.onError,
+            onTap: onDelete,
+          ),
+        ),
+      Positioned(
+        top: context.respDim(-6),
+        right: context.respDim(-6),
+        child: EditBadge(
+          icon: Icons.edit,
+          color: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+          onTap: onEdit,
+        ),
+      ),
+    ];
   }
 }

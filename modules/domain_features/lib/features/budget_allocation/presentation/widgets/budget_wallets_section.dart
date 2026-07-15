@@ -3,9 +3,9 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import 'wallet_strip.dart';
+import '../../../wallet/domain/entities/wallet_entity.dart';
+import 'wallet_strip_card.dart';
 
 /// Section displaying wallet list with add and see all actions.
 class BudgetWalletsSection extends StatelessWidget {
@@ -70,10 +70,7 @@ class BudgetWalletsSection extends StatelessWidget {
             ],
           ),
         ),
-        WalletStrip(
-          wallets: wallets,
-          onMore: onMore,
-        ),
+        WalletStripCard(wallets: wallets, onMore: onMore),
       ],
     );
   }
