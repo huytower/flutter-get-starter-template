@@ -68,23 +68,11 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-          ),
-          child: CcText(
-            el.tr(CcLocaleKeys.transaction_category),
-            textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.bold,
-              fontSize: context.respFontSize(CcTypographyParams.labelMedium),
-            ),
-          ),
-        ),
+        _buildTitle(context),
         const CcSpaceSM(),
         if (_isLoading)
           SizedBox(
-            height: context.respDim(80),
+            height: context.respDim(90),
             child: const Center(child: CircularProgressIndicator()),
           )
         else
@@ -93,9 +81,25 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
     );
   }
 
+  Widget _buildTitle(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+      ),
+      child: CcText(
+        el.tr(CcLocaleKeys.transaction_category),
+        textStyle: context.ccTextTheme.labelMedium?.copyWith(
+          color: context.ccColorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.bold,
+          fontSize: context.respFontSize(12),
+        ),
+      ),
+    );
+  }
+
   Widget _buildCategoryList(BuildContext context) {
     return HorizontalFadeScrollView(
-      height: context.respDim(95),
+      height: context.respDim(90),
       builder: (scrollController) => ListView.separated(
         scrollDirection: Axis.horizontal,
         controller: scrollController,
@@ -107,69 +111,108 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
         itemBuilder: (context, index) {
           final category = _categories[index];
           final isSelected = _selectedCategoryId == category.id;
+          return _buildCategoryItem(context, category, isSelected);
+        },
+      ),
+    );
+  }
 
-          return GestureDetector(
-            onTap: () {
-              setState(() => _selectedCategoryId = category.id);
-              widget.onCategorySelected?.call(category);
-            },
-            child: SizedBox(
-              width: context.respDim(68),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    width: context.respDim(52),
-                    height: context.respDim(52),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? widget.activeColor
-                          : context.ccColorScheme.surfaceVariant,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Center(
-                      child: CcIcon(
-                        icon: iconDataFromCode(
-                          category.iconCode,
-                          fontFamily: category.iconFamily,
-                        ),
-                        size: context.respIconSize(baseSize: 22),
-                        color: isSelected ? context.ccColorScheme.onPrimary : context.ccColorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                  const CcSpaceXS(),
-                  AnimatedDefaultTextStyle(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    style:
-                        (context.ccTextTheme.labelMedium ?? const TextStyle())
-                            .copyWith(
-                              fontSize: context.respFontSize(
-                                CcTypographyParams.labelSmall,
-                              ),
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              color: isSelected
-                                  ? widget.activeColor
-                                  : context.ccColorScheme.onSurfaceVariant,
-                            ),
-                    child: CcText(
-                      el.tr(category.nameKey),
-                      textAlign: TextAlign.center,
-                      align: Alignment.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+  Widget _buildCategoryItem(
+    BuildContext context,
+    CategoryEntity category,
+    bool isSelected,
+  ) {
+    final scheme = context.ccColorScheme;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() => _selectedCategoryId = category.id);
+        widget.onCategorySelected?.call(category);
+      },
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          if (isSelected)
+            Positioned.fill(
+              child: CcGlassyGradientBackground(
+                borderRadius: context.respDim(16),
+                endColor: widget.activeColor.withOpacity(0.2),
               ),
             ),
-          );
-        },
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: context.respDim(68),
+            padding: EdgeInsets.all(context.respDim(10)),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? widget.activeColor.withOpacity(0.1)
+                  : scheme.onSurface.withOpacity(0.04),
+              borderRadius: BorderRadius.circular(context.respDim(16)),
+              border: Border.all(
+                color: isSelected
+                    ? widget.activeColor.withOpacity(0.2)
+                    : scheme.onSurface.withOpacity(0.08),
+                width: context.respDim(1),
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildCategoryIcon(context, category, isSelected),
+                const CcSpaceXS(),
+                CcText(
+                  el.tr(category.nameKey),
+                  textAlign: TextAlign.center,
+                  align: Alignment.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                    fontSize: context.respFontSize(10),
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    color: isSelected
+                        ? widget.activeColor
+                        : scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryIcon(
+    BuildContext context,
+    CategoryEntity category,
+    bool isSelected,
+  ) {
+    final scheme = context.ccColorScheme;
+
+    return Container(
+      width: context.respDim(32),
+      height: context.respDim(32),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? widget.activeColor.withOpacity(0.12)
+            : scheme.onSurface.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(context.respDim(10)),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (isSelected) const Positioned.fill(child: CcGlassyGradientIcon()),
+          CcIcon(
+            icon: iconDataFromCode(
+              category.iconCode,
+              fontFamily: category.iconFamily,
+            ),
+            size: context.respIconSize(baseSize: 18),
+            color: isSelected ? widget.activeColor : scheme.onSurfaceVariant,
+          ),
+        ],
       ),
     );
   }

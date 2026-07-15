@@ -25,92 +25,133 @@ class BudgetLimitCategorySelector extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CcText(
-          el.tr(CcLocaleKeys.budget_category),
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold,
-            fontSize: context.respFontSize(12),
-          ),
-        ),
+        _buildTitle(context),
         const CcSpaceSM(),
-        HorizontalFadeScrollView(
-          height: context.respDim(85),
-          builder: (scrollController) {
-            onScrollControllerCreated?.call(scrollController);
-            return ListView.separated(
-              scrollDirection: Axis.horizontal,
-              controller: scrollController,
-              itemCount: categories.length,
-              separatorBuilder: (_, _) => const CcSpaceSM(),
-              itemBuilder: (context, index) {
-                final cat = categories[index];
-                final isSelected = selectedCategoryId == cat.id;
-                return GestureDetector(
-                  onTap: () => onCategorySelected(cat),
-                  child: SizedBox(
-                    width: context.respDim(68),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeInOut,
-                          width: context.respDim(52),
-                          height: context.respDim(52),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? context.ccColorScheme.primary
-                                : context.ccColorScheme.surfaceVariant,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Center(
-                            child: CcIcon(
-                              icon: iconDataFromCode(
-                                cat.iconCode,
-                                fontFamily: cat.iconFamily,
-                              ),
-                              size: context.respIconSize(baseSize: 22),
-                              color: isSelected
-                                  ? context.ccColorScheme.onPrimary
-                                  : context.ccColorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                        const CcSpaceXS(),
-                        AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeInOut,
-                          style:
-                              (context.ccTextTheme.bodySmall ??
-                                      const TextStyle())
-                                  .copyWith(
-                                    fontSize: context.respFontSize(9),
-                                    fontWeight: isSelected
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
-                                    color: isSelected
-                                        ? context.ccColorScheme.primary
-                                        : context
-                                              .ccColorScheme
-                                              .onSurfaceVariant,
-                                  ),
-                          child: Text(
-                            el.tr(cat.nameKey),
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        ),
+        _buildCategoryList(context),
       ],
+    );
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    return CcText(
+      el.tr(CcLocaleKeys.budget_category),
+      textStyle: context.ccTextTheme.labelMedium?.copyWith(
+        color: context.ccColorScheme.onSurfaceVariant,
+        fontWeight: FontWeight.bold,
+        fontSize: context.respFontSize(12),
+      ),
+    );
+  }
+
+  Widget _buildCategoryList(BuildContext context) {
+    return HorizontalFadeScrollView(
+      height: context.respDim(90),
+      builder: (scrollController) {
+        onScrollControllerCreated?.call(scrollController);
+        return ListView.separated(
+          scrollDirection: Axis.horizontal,
+          controller: scrollController,
+          itemCount: categories.length,
+          separatorBuilder: (_, _) => const CcSpaceSM(),
+          itemBuilder: (context, index) {
+            final cat = categories[index];
+            final isSelected = selectedCategoryId == cat.id;
+            return _buildCategoryItem(context, cat, isSelected);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildCategoryItem(
+    BuildContext context,
+    CategoryEntity cat,
+    bool isSelected,
+  ) {
+    final scheme = context.ccColorScheme;
+
+    return GestureDetector(
+      onTap: () => onCategorySelected(cat),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          if (isSelected)
+            Positioned.fill(
+              child: CcGlassyGradientBackground(
+                borderRadius: context.respDim(16),
+              ),
+            ),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: context.respDim(68),
+            padding: EdgeInsets.all(context.respDim(10)),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? scheme.primaryContainer.withValues(alpha: 0.1)
+                  : scheme.onSurface.withOpacity(0.04),
+              borderRadius: BorderRadius.circular(context.respDim(16)),
+              border: Border.all(
+                color: isSelected
+                    ? scheme.primary.withOpacity(0.2)
+                    : scheme.onSurface.withOpacity(0.08),
+                width: context.respDim(1),
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildCategoryIcon(context, cat, isSelected),
+                const CcSpaceXS(),
+                Text(
+                  el.tr(cat.nameKey),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.ccTextTheme.labelSmall?.copyWith(
+                    fontSize: context.respFontSize(10),
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    color: isSelected
+                        ? scheme.primary
+                        : scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryIcon(
+    BuildContext context,
+    CategoryEntity cat,
+    bool isSelected,
+  ) {
+    final scheme = context.ccColorScheme;
+
+    return Container(
+      width: context.respDim(32),
+      height: context.respDim(32),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? scheme.primary.withOpacity(0.12)
+            : scheme.onSurface.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(context.respDim(10)),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (isSelected) const Positioned.fill(child: CcGlassyGradientIcon()),
+          CcIcon(
+            icon: iconDataFromCode(cat.iconCode, fontFamily: cat.iconFamily),
+            size: context.respIconSize(baseSize: 18),
+            color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
+          ),
+        ],
+      ),
     );
   }
 }
