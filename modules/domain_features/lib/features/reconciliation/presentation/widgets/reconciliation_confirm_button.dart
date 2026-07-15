@@ -63,7 +63,9 @@ class ReconciliationConfirmButton extends StatelessWidget {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (_) => const ReconciliationSuccessDialog(),
+        builder: (_) => ReconciliationSuccessDialog(
+          onDismiss: () => Navigator.of(context).pop(),
+        ),
       );
     }
   }

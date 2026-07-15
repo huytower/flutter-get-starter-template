@@ -8,7 +8,9 @@ import 'package:get/get.dart';
 import '../get_x/reconciliation_controller.dart';
 
 class ReconciliationSuccessDialog extends StatefulWidget {
-  const ReconciliationSuccessDialog({super.key});
+  const ReconciliationSuccessDialog({super.key, this.onDismiss});
+
+  final VoidCallback? onDismiss;
 
   @override
   State<ReconciliationSuccessDialog> createState() =>
@@ -23,11 +25,7 @@ class _ReconciliationSuccessDialogState
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(seconds: 3), () {
-      if (mounted && !_dismissed) {
-        Navigator.of(context).pop();
-      }
-    });
+    _timer = Timer(const Duration(seconds: 3), _dismiss);
   }
 
   @override
@@ -37,12 +35,15 @@ class _ReconciliationSuccessDialogState
   }
 
   void _dismiss() {
-    if (_dismissed) return;
+    if (_dismissed || !mounted) return;
     _dismissed = true;
     _timer?.cancel();
-    if (mounted) {
-      Navigator.of(context).pop();
-    }
+
+    // 1. Pop the dialog
+    Navigator.of(context).pop();
+
+    // 2. Trigger the callback to pop the page or handle completion
+    widget.onDismiss?.call();
   }
 
   @override

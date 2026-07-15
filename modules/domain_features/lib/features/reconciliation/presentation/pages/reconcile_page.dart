@@ -77,7 +77,9 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (_) => const ReconciliationSuccessDialog(),
+        builder: (_) => ReconciliationSuccessDialog(
+          onDismiss: () => Navigator.of(context).pop(),
+        ),
       );
     }
   }
