@@ -32,29 +32,55 @@ PreferredSizeWidget buildDomainGradientAppBar(
             ],
           ),
         ),
-        padding: EdgeInsets.only(
-          top: topPadding + context.respPadding(CcPaddingParams.SPACE_MD),
-          left: horizontalPadding,
-          right: horizontalPadding,
-          bottom: verticalPadding,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        // Stack cho phép chèn lớp overlay chiều sâu mà không phá cấu trúc
+        // padding/Column gốc bên dưới.
+        child: Stack(
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if (leading != null) ...[
-                  leading,
-                  SizedBox(
-                    width: context.respPadding(CcPaddingParams.SPACE_MD),
+            // Overlay tạo chiều sâu: sáng nhẹ ở trên, tối nhẹ ở dưới —
+            // cùng kỹ thuật đang dùng cho card (gradient + shadow).
+            const Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0x47FFFFFF), // 28% trắng — tăng từ 14%
+                      Color(0x00FFFFFF), // trong suốt
+                      Color(0x38000000), // 22% đen — tăng từ 10%
+                    ],
+                    stops: [0.0, 0.5, 1.0], // kéo dài điểm giữa từ 0.4 -> 0.5
                   ),
-                ],
-                Expanded(child: title),
-                if (actions != null) ...actions,
-              ],
+                ),
+              ),
             ),
-            if (bottom != null) ...[const CcSpaceSM(), bottom],
+            Padding(
+              padding: EdgeInsets.only(
+                top: topPadding + context.respPadding(CcPaddingParams.SPACE_MD),
+                left: horizontalPadding,
+                right: horizontalPadding,
+                bottom: verticalPadding,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (leading != null) ...[
+                        leading,
+                        SizedBox(
+                          width: context.respPadding(CcPaddingParams.SPACE_MD),
+                        ),
+                      ],
+                      Expanded(child: title),
+                      if (actions != null) ...actions,
+                    ],
+                  ),
+                  if (bottom != null) ...[const CcSpaceSM(), bottom],
+                ],
+              ),
+            ),
           ],
         ),
       ),

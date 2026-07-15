@@ -91,59 +91,96 @@ abstract final class PrjColors {
   // ===========================================================================
   // CATEGORY COLORS
   // ===========================================================================
+  // ===========================================================================
+  // CATEGORY COLORS — 1 màu / nhóm cha
+  // ===========================================================================
+
+  // Nhóm 1: Ăn uống & Cà phê — đỏ
   static const Color categoryFoodDrink = Color(0xFFDC2626);
-  static const Color categoryCoffee = Color(0xFF7C2D12);
-  static const Color categoryWater = Color(0xFFFCA5A5);
-  static const Color categoryEatOut = Color(0xFFEA580C);
+  static const Color categoryCoffee = Color(0xFFDC2626);
+  static const Color categoryWater = Color(0xFFDC2626);
+  static const Color categoryEatOut = Color(0xFFDC2626);
+
+  // Nhóm 2: Di chuyển — xanh dương
   static const Color categoryTaxi = Color(0xFF2563EB);
-  static const Color categoryGas = Color(0xFF1D4ED8);
-  static const Color categoryParking = Color(0xFF60A5FA);
-  static const Color categoryMaintenance = Color(0xFF1E3A8A);
+  static const Color categoryGas = Color(0xFF2563EB);
+  static const Color categoryParking = Color(0xFF2563EB);
+  static const Color categoryMaintenance = Color(0xFF2563EB);
+
+  // Nhóm 3: Tiện ích — vàng hổ phách
   static const Color categoryElectricity = Color(0xFFF59E0B);
-  static const Color categoryInternet = Color(0xFFFBBF24);
-  static const Color categoryPhone = Color(0xFFD97706);
+  static const Color categoryInternet = Color(0xFFF59E0B);
+  static const Color categoryPhone = Color(0xFFF59E0B);
+
+  // Nhóm 4: Nhà ở — xanh lá
   static const Color categoryRent = Color(0xFF16A34A);
-  static const Color categoryFurniture = Color(0xFF4D7C0F);
-  static const Color categoryLaundry = Color(0xFF86EFAC);
-  static const Color categoryMortgage = Color(0xFF14532D);
-  static const Color categoryCondoFee = Color(0xFF65A30D);
+  static const Color categoryFurniture = Color(0xFF16A34A);
+  static const Color categoryLaundry = Color(0xFF16A34A);
+  static const Color categoryMortgage = Color(0xFF16A34A);
+  static const Color categoryCondoFee = Color(0xFF16A34A);
+
+  // Nhóm 5: Y tế & Sức khỏe — xanh ngọc
   static const Color categoryDoctor = Color(0xFF0D9488);
-  static const Color categoryMedicine = Color(0xFF14B8A6);
-  static const Color categoryHealthInsurance = Color(0xFF115E59);
-  static const Color categoryGym = Color(0xFF5EEAD4);
+  static const Color categoryMedicine = Color(0xFF0D9488);
+  static const Color categoryHealthInsurance = Color(0xFF0D9488);
+  static const Color categoryGym = Color(0xFF0D9488);
+
+  // Nhóm 6: Giáo dục — tím indigo
   static const Color categoryTuition = Color(0xFF4F46E5);
-  static const Color categoryBooks = Color(0xFF818CF8);
-  static const Color categoryCourses = Color(0xFF6D28D9);
+  static const Color categoryBooks = Color(0xFF4F46E5);
+  static const Color categoryCourses = Color(0xFF4F46E5);
+
+  // Nhóm 7: Giải trí — hồng magenta
   static const Color categoryCinema = Color(0xFFDB2777);
-  static const Color categoryTravel = Color(0xFFF472B6);
-  static const Color categoryGaming = Color(0xFF9D174D);
-  static const Color categoryEvents = Color(0xFFEC4899);
-  static const Color categoryAppliances = Color(0xFFC2410C);
+  static const Color categoryTravel = Color(0xFFDB2777);
+  static const Color categoryGaming = Color(0xFFDB2777);
+  static const Color categoryEvents = Color(0xFFDB2777);
+
+  // Nhóm 8: Mua sắm — cam
+  static const Color categoryAppliances = Color(0xFFEA580C);
   static const Color categoryElectronics = Color(0xFFEA580C);
-  static const Color categoryClothing = Color(0xFFFB923C);
-  static const Color categoryCosmetics = Color(0xFFFDBA74);
+  static const Color categoryClothing = Color(0xFFEA580C);
+  static const Color categoryCosmetics = Color(0xFFEA580C);
+
+  // Nhóm 9: Trả nợ & Vay — đỏ mận
   static const Color categoryInstallment = Color(0xFF991B1B);
-  static const Color categoryLoanInterest = Color(0xFF7F1D1D);
+  static const Color categoryLoanInterest = Color(0xFF991B1B);
+
+  // Nhóm 10: Bảo hiểm — navy
   static const Color categoryLifeInsurance = Color(0xFF1E3A8A);
-  static const Color categoryVehicleInsurance = Color(0xFF1D4ED8);
-  static const Color categoryHomeInsurance = Color(0xFF3B82F6);
+  static const Color categoryVehicleInsurance = Color(0xFF1E3A8A);
+  static const Color categoryHomeInsurance = Color(0xFF1E3A8A);
+
+  // Nhóm 11: Quà tặng & Từ thiện — hồng rose
   static const Color categoryGifts = Color(0xFFE11D48);
-  static const Color categoryCharity = Color(0xFFFB7185);
-  static const Color categoryHaircut = Color(0xFFF43F5E);
-  static const Color categorySpa = Color(0xFFFDA4AF);
-  static const Color categoryPersonalCareProduct = Color(0xFFBE123C);
+  static const Color categoryCharity = Color(0xFFE11D48);
+
+  // Nhóm 12: Chăm sóc cá nhân — hồng phấn
+  static const Color categoryHaircut = Color(0xFFEC4899);
+  static const Color categorySpa = Color(0xFFEC4899);
+  static const Color categoryPersonalCareProduct = Color(0xFFEC4899);
+
+  // Nhóm 13: Phí dịch vụ — xám xanh
   static const Color categoryBankFee = Color(0xFF475569);
-  static const Color categoryCardFee = Color(0xFF94A3B8);
-  static const Color categoryMilkFormula = Color(0xFFBAE6FD);
-  static const Color categoryDiapers = Color(0xFF7DD3FC);
+  static const Color categoryCardFee = Color(0xFF475569);
+
+  // Nhóm 14: Gia đình & Con cái — xanh trời pastel
+  static const Color categoryMilkFormula = Color(0xFF38BDF8);
+  static const Color categoryDiapers = Color(0xFF38BDF8);
   static const Color categoryBabyToys = Color(0xFF38BDF8);
-  static const Color categoryIncomeSalary = Color(0xFF16A34A);
-  static const Color categoryIncomeFreelance = Color(0xFF4ADE80);
-  static const Color categoryIncomeAllowance = Color(0xFF15803D);
+
+  // Thu nhập chủ động — xanh lá tươi
+  static const Color categoryIncomeSalary = Color(0xFF22C55E);
+  static const Color categoryIncomeFreelance = Color(0xFF22C55E);
+  static const Color categoryIncomeAllowance = Color(0xFF22C55E);
+
+  // Thu nhập đầu tư — emerald
   static const Color categoryIncomeSavingsInterest = Color(0xFF059669);
-  static const Color categoryIncomeDividends = Color(0xFF34D399);
-  static const Color categoryIncomeRental = Color(0xFF047857);
-  static const Color categoryIncomeBonus = Color(0xFFF59E0B);
-  static const Color categoryIncomeGift = Color(0xFFFCD34D);
-  static const Color categoryIncomeCashback = Color(0xFFB45309);
+  static const Color categoryIncomeDividends = Color(0xFF059669);
+  static const Color categoryIncomeRental = Color(0xFF059669);
+
+  // Thu nhập khác — vàng gold
+  static const Color categoryIncomeBonus = Color(0xFFCA8A04);
+  static const Color categoryIncomeGift = Color(0xFFCA8A04);
+  static const Color categoryIncomeCashback = Color(0xFFCA8A04);
 }
