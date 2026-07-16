@@ -9,7 +9,10 @@ import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../../core/util/gradient_app_bar.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
+import '../get_x/expense_form_controller.dart';
+import '../get_x/income_form_controller.dart';
 import '../get_x/transaction_controller.dart';
+import '../get_x/transfer_form_controller.dart';
 import '../widgets/expense_form.dart';
 import '../widgets/income_form.dart';
 import '../widgets/transaction_wallet_summary.dart';
@@ -17,11 +20,7 @@ import '../widgets/transfer_form.dart';
 
 @RoutePage()
 class TransactionPage extends CcGetView<TransactionController> {
-  TransactionPage({super.key});
-
-  final _expenseFormKey = GlobalKey<ExpenseFormState>();
-  final _incomeFormKey = GlobalKey<IncomeFormState>();
-  final _transferFormKey = GlobalKey<TransferFormState>();
+  const TransactionPage({super.key});
 
   @override
   bool get enableAppBar => true;
@@ -64,7 +63,7 @@ class TransactionPage extends CcGetView<TransactionController> {
       actions: [
         Obx(
           () => CcIconButton.bouncing(
-            onTap: _submitCurrentForm,
+            onTap: () => _submitCurrentForm(context),
             icon: Icon(
               Icons.check_circle_outline_rounded,
               size: context.respIconSize(baseSize: 24),
@@ -91,7 +90,7 @@ class TransactionPage extends CcGetView<TransactionController> {
     return Builder(
       builder: (context) {
         return DefaultTabController(
-          length: 1,
+          length: 3,
           child: FadePageWrapper(child: _buildTransactionContent(context)),
         );
       },
@@ -113,15 +112,9 @@ class TransactionPage extends CcGetView<TransactionController> {
     return Expanded(
       child: TabBarView(
         children: [
-          ExpenseForm(onSaved: controller.refreshData, key: _expenseFormKey),
-          // IncomeForm(
-          //   onSaved: controller.refreshData,
-          //   key: _incomeFormKey,
-          // ),
-          // TransferForm(
-          //   onSaved: controller.refreshData,
-          //   key: _transferFormKey,
-          // ),
+          ExpenseForm(onSaved: controller.refreshData),
+          IncomeForm(onSaved: controller.refreshData),
+          TransferForm(onSaved: controller.refreshData),
         ],
       ),
     );
@@ -134,18 +127,24 @@ class TransactionPage extends CcGetView<TransactionController> {
     context.router.push(const ReportRoute());
   }
 
-  void _submitCurrentForm() {
+  void _submitCurrentForm(BuildContext context) {
     controller.flashWalletSummary();
     switch (controller.selectedTabIndex.value) {
       case 0:
-        _expenseFormKey.currentState?.submitForm();
+        if (Get.isRegistered<ExpenseFormController>()) {
+          Get.find<ExpenseFormController>().submitForm(context);
+        }
         break;
-      // case 1:
-      //   _incomeFormKey.currentState?.submitForm();
-      //   break;
-      // case 2:
-      //   _transferFormKey.currentState?.submitForm();
-      //   break;
+      case 1:
+        if (Get.isRegistered<IncomeFormController>()) {
+          Get.find<IncomeFormController>().submitForm(context);
+        }
+        break;
+      case 2:
+        if (Get.isRegistered<TransferFormController>()) {
+          Get.find<TransferFormController>().submitForm(context);
+        }
+        break;
     }
   }
 
@@ -192,8 +191,8 @@ class TransactionPage extends CcGetView<TransactionController> {
           labelPadding: EdgeInsets.zero,
           tabs: [
             Tab(text: el.tr(CcLocaleKeys.transaction_expense_slip)),
-            // Tab(text: el.tr(CcLocaleKeys.transaction_income_slip)),
-            // Tab(text: el.tr(CcLocaleKeys.transaction_record_transfer)),
+            Tab(text: el.tr(CcLocaleKeys.transaction_income_slip)),
+            Tab(text: el.tr(CcLocaleKeys.transaction_record_transfer)),
           ],
         );
       }),

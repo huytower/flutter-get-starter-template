@@ -120,8 +120,14 @@ import 'package:domain_features/features/transaction/domain/usecases/create_tran
     as _i28;
 import 'package:domain_features/features/transaction/domain/usecases/create_transfer_usecase.dart'
     as _i627;
+import 'package:domain_features/features/transaction/presentation/get_x/expense_form_controller.dart'
+    as _i754;
+import 'package:domain_features/features/transaction/presentation/get_x/income_form_controller.dart'
+    as _i594;
 import 'package:domain_features/features/transaction/presentation/get_x/transaction_controller.dart'
     as _i700;
+import 'package:domain_features/features/transaction/presentation/get_x/transfer_form_controller.dart'
+    as _i973;
 import 'package:domain_features/features/wallet/data/datasources/local/wallet_local_datasource.dart'
     as _i1058;
 import 'package:domain_features/features/wallet/data/repositories/wallet_repository_impl.dart'
@@ -140,6 +146,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
+    gh.factory<_i754.ExpenseFormController>(
+        () => _i754.ExpenseFormController());
+    gh.factory<_i594.IncomeFormController>(() => _i594.IncomeFormController());
+    gh.factory<_i973.TransferFormController>(
+        () => _i973.TransferFormController());
     gh.lazySingleton<_i585.BudgetLimitLocalDataSource>(
         () => _i585.BudgetLimitLocalDataSource());
     gh.lazySingleton<_i250.SortBudgetLimitsByLimitUseCase>(
