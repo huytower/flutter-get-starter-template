@@ -55,8 +55,8 @@ class TransactionPage extends CcGetView<TransactionController> {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(context.respDim(32)),
-          bottomRight: Radius.circular(context.respDim(32)),
+          bottomLeft: Radius.circular(context.respDim(16)),
+          bottomRight: Radius.circular(context.respDim(16)),
         ),
       ),
       clipBehavior: Clip.antiAlias,
@@ -76,19 +76,22 @@ class TransactionPage extends CcGetView<TransactionController> {
   }
 
   Widget _buildHeroForeground(BuildContext context, double topPadding) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        context.respPadding(CcPaddingParams.PAGE_MD),
-        topPadding + context.respPadding(CcPaddingParams.SPACE_MD),
-        context.respPadding(CcPaddingParams.PAGE_MD),
-        0,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _buildHeaderTitleSection(context),
-          _buildHeaderActions(context),
-        ],
+    return Positioned(
+      top: -150,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _buildHeaderTitleSection(context),
+            _buildHeaderActions(context),
+          ],
+        ),
       ),
     );
   }
@@ -104,10 +107,7 @@ class TransactionPage extends CcGetView<TransactionController> {
           layoutBuilder: (currentChild, previousChildren) {
             return Stack(
               alignment: Alignment.centerLeft,
-              children: <Widget>[
-                ...previousChildren,
-                if (currentChild != null) currentChild,
-              ],
+              children: <Widget>[...previousChildren, ?currentChild],
             );
           },
           child: showSummary
@@ -125,7 +125,7 @@ class TransactionPage extends CcGetView<TransactionController> {
       textStyle: context.ccTextTheme.headlineSmall?.copyWith(
         color: context.ccColorScheme.onPrimary,
         fontWeight: CcTypographyParams.bold,
-        fontSize: context.respFontSize(26),
+        fontSize: context.respFontSize(16),
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
@@ -144,15 +144,20 @@ class TransactionPage extends CcGetView<TransactionController> {
   }
 
   Widget _buildSubmitButton(BuildContext context) {
-    return CcIconButton.bouncing(
-      onTap: () => _submitCurrentForm(context),
-      bgColor: Colors.white.withOpacity(0.15),
-      icon: Icon(
-        Icons.check_rounded,
-        size: context.respIconSize(baseSize: 22),
-        color: context.ccColorScheme.onPrimary,
-      ),
-    );
+    return Obx(() {
+      final selectedIndex = controller.selectedTabIndex.value;
+      final activeColor = _getTabColor(context, selectedIndex);
+
+      return CcIconButton.bouncing(
+        onTap: () => _submitCurrentForm(context),
+        bgColor: Colors.white.withOpacity(0.15),
+        icon: Icon(
+          Icons.check_rounded,
+          size: context.respIconSize(baseSize: 22),
+          color: activeColor,
+        ),
+      );
+    });
   }
 
   Widget _buildReportButton(BuildContext context) {
@@ -174,7 +179,7 @@ class TransactionPage extends CcGetView<TransactionController> {
   Widget _buildTransactionContent(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
     final headerHeight = context.respDim(200) + topPadding;
-    final tabBarHeight = context.respDim(60);
+    final tabBarHeight = context.respDim(130);
     final overlap = tabBarHeight / 2;
 
     return Column(
