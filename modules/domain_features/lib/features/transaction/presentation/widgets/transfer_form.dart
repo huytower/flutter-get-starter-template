@@ -125,58 +125,52 @@ class TransferFormState extends State<TransferForm> with TransactionFormMixin {
   }
 
   Widget _buildScrollableContent(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        if (showKeypad) hideKeypad();
-      },
-      child: SingleChildScrollView(
-        controller: scrollController,
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-          vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildAmountSection(context),
-            const CcSpaceLG(),
-            _buildFromWalletSection(context),
-            const CcSpaceMD(),
-            _buildTransferArrow(context),
-            const CcSpaceMD(),
-            _buildToWalletSection(context),
-            const CcSpaceLG(),
-              TransactionAdditionalDetailsSection(
-                isExpanded: showMoreDetails,
-                onToggle: () =>
-                    setState(() => showMoreDetails = !showMoreDetails),
-                selectedDate: date,
-                onDateSelected: (newDate) => setState(() {
-                  date = DateTime(
-                    newDate.year,
-                    newDate.month,
-                    newDate.day,
-                    date.hour,
-                    date.minute,
-                  );
-                }),
-                onCalendarTap: pickDate,
-                noteController: noteController,
-                hasNoteText: noteController.text.isNotEmpty,
-                activeColor: accentColor,
-              ),
-            const CcSpaceXL(),
-            TransactionSubmitButton(
-              text: el.tr(CcLocaleKeys.transaction_record_transfer),
-              isSubmitting: isSubmitting,
-              isEnabled: _canSubmit,
-              onTap: _onSubmit,
-              activeColor: accentColor,
-            ),
-            const CcSpaceLG(),
-          ],
-        ),
+    return SingleChildScrollView(
+      controller: scrollController,
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+        vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildAmountSection(context),
+          const CcSpaceLG(),
+          _buildFromWalletSection(context),
+          const CcSpaceMD(),
+          _buildTransferArrow(context),
+          const CcSpaceMD(),
+          _buildToWalletSection(context),
+          const CcSpaceLG(),
+          TransactionAdditionalDetailsSection(
+            isExpanded: showMoreDetails,
+            onToggle: () =>
+                setState(() => showMoreDetails = !showMoreDetails),
+            selectedDate: date,
+            onDateSelected: (newDate) => setState(() {
+              date = DateTime(
+                newDate.year,
+                newDate.month,
+                newDate.day,
+                date.hour,
+                date.minute,
+              );
+            }),
+            onCalendarTap: pickDate,
+            noteController: noteController,
+            hasNoteText: noteController.text.isNotEmpty,
+            activeColor: accentColor,
+          ),
+          const CcSpaceXL(),
+          TransactionSubmitButton(
+            text: el.tr(CcLocaleKeys.transaction_record_transfer),
+            isSubmitting: isSubmitting,
+            isEnabled: _canSubmit,
+            onTap: _onSubmit,
+            activeColor: accentColor,
+          ),
+          const CcSpaceLG(),
+        ],
       ),
     );
   }

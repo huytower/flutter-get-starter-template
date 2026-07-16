@@ -130,24 +130,18 @@ class ExpenseFormState extends State<ExpenseForm> with TransactionFormMixin {
   }
 
   Widget _buildScrollableContent(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        if (showKeypad) hideKeypad();
-      },
-      child: SingleChildScrollView(
-        controller: scrollController,
-        padding: EdgeInsets.symmetric(
-          vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildCategorySection(),
-            const CcSpaceLG(),
-            _buildFormFields(context),
-          ],
-        ),
+    return SingleChildScrollView(
+      controller: scrollController,
+      padding: EdgeInsets.symmetric(
+        vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildCategorySection(),
+          const CcSpaceLG(),
+          _buildFormFields(context),
+        ],
       ),
     );
   }

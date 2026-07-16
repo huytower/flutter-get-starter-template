@@ -36,10 +36,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: WalletListRoute.page, path: AppRoute.walletList.path),
     AutoRoute(page: WalletDetailRoute.page, path: AppRoute.walletDetail.path),
     AutoRoute(page: TransactionRoute.page, path: AppRoute.transaction.path),
-    AutoRoute(
-      page: TransactionDetailRoute.page,
-      path: AppRoute.transactionDetail.path,
-    ),
     AutoRoute(page: CommentRoute.page, path: AppRoute.comment.path),
     AutoRoute(page: CommentDetailRoute.page, path: AppRoute.commentDetail.path),
     AutoRoute(

@@ -265,7 +265,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i944.ReconciliationRepository>(),
             ));
-    gh.factory<_i229.WalletController>(() => _i229.WalletController(
+    gh.lazySingleton<_i229.WalletController>(() => _i229.WalletController(
           gh<_i572.WalletRepository>(),
           gh<_i1027.TransactionRepository>(),
           gh<_i105.GetWalletBookBalanceUseCase>(),
@@ -298,13 +298,14 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
             ));
-    gh.factory<_i1003.BudgetLimitController>(() => _i1003.BudgetLimitController(
-          gh<_i743.GetBudgetLimitStatsUseCase>(),
-          gh<_i77.CreateBudgetLimitUseCase>(),
-          gh<_i829.UpdateBudgetLimitUseCase>(),
-          gh<_i256.UpdateBudgetLimitOrdersUseCase>(),
-          gh<_i106.DeleteBudgetLimitUseCase>(),
-        ));
+    gh.lazySingleton<_i1003.BudgetLimitController>(
+        () => _i1003.BudgetLimitController(
+              gh<_i743.GetBudgetLimitStatsUseCase>(),
+              gh<_i77.CreateBudgetLimitUseCase>(),
+              gh<_i829.UpdateBudgetLimitUseCase>(),
+              gh<_i256.UpdateBudgetLimitOrdersUseCase>(),
+              gh<_i106.DeleteBudgetLimitUseCase>(),
+            ));
     gh.factory<_i1051.ReconciliationController>(
         () => _i1051.ReconciliationController(
               gh<_i167.GetWalletBalancesUseCase>(),

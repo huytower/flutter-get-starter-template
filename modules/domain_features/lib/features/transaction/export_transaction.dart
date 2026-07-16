@@ -1,14 +1,11 @@
 // Domain
+// Data
+export 'data/models/transaction_model.dart';
 export 'domain/entities/transaction_entity.dart';
 export 'domain/repositories/transaction_repository.dart';
 export 'domain/usecases/create_transaction_usecase.dart';
 export 'domain/usecases/create_transfer_usecase.dart';
 // Presentation
 export 'presentation/get_x/transaction_controller.dart';
-export 'presentation/pages/transaction_detail_page.dart';
-export 'presentation/pages/transaction_history_page.dart';
 export 'presentation/pages/transaction_page.dart';
 export 'presentation/widgets/shimmer_transaction_card.dart';
-export 'presentation/widgets/transaction_card.dart';
-// Data
-export 'data/models/transaction_model.dart';
