@@ -26,16 +26,7 @@ class FinancialRunwayWidget extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context, Color descColor) {
     return Column(
-      children: [
-        _buildSafetyIndexRow(context, descColor),
-        const CcSpaceSM(),
-        _buildDescriptions(context),
-      ],
-    );
-  }
-
-  Widget _buildSafetyIndexRow(BuildContext context, Color descColor) {
-    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(
           runway.status == FinancialRunwayStatus.caution
@@ -44,24 +35,6 @@ class FinancialRunwayWidget extends StatelessWidget {
           color: descColor,
           size: context.respIconSize(baseSize: 20),
         ),
-        const CcSpaceXS(),
-        CcText(
-          el.tr(CcLocaleKeys.report_safety_index),
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: descColor.withValues(alpha: 0.8),
-            fontWeight: CcTypographyParams.bold,
-            fontSize: context.respFontSize(CcTypographyParams.labelMedium),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDescriptions(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildDescription(context, el.tr(CcLocaleKeys.report_runway_desc_1)),
         const CcSpaceXS(),
         _buildDescription(context, el.tr(CcLocaleKeys.report_runway_desc_2)),
       ],
@@ -133,7 +106,7 @@ class FinancialRunwayWidget extends StatelessWidget {
   Widget _buildDescription(BuildContext context, String text) {
     return CcText(
       text,
-      maxLines: 3,
+      maxLines: 5,
       textStyle: context.ccTextTheme.labelSmall?.copyWith(
         color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.5),
         fontSize: context.respFontSize(CcTypographyParams.labelSmall),
