@@ -138,16 +138,34 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   @override
   Widget? buildContent(BuildContext context) {
+    final primaryColor = context.ccColorScheme.onPrimary;
+
     return FadePageWrapper(
       child: Builder(
         builder: (context) => buildPullToRefresh(
           context: context,
           onRefresh: controller.loadAll,
-          child: ListView(
+          child: Stack(
             children: [
-              _buildHeroBanner(context),
-              _buildWalletsSection(context),
-              const BudgetPreviewSection(),
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [primaryColor.withAlpha(1), Colors.white],
+                      stops: const [0.0, 1.0],
+                    ),
+                  ),
+                ),
+              ),
+              ListView(
+                children: [
+                  _buildHeroBanner(context),
+                  _buildWalletsSection(context),
+                  const BudgetPreviewSection(),
+                ],
+              ),
             ],
           ),
         ),

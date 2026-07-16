@@ -121,6 +121,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = context.ccColorScheme.primary;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
@@ -131,39 +133,48 @@ class _ProfilePageState extends State<ProfilePage> {
             final user = snapshot.data;
             final isLoggedIn = user != null;
 
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ProfileHeader(
-                    user: user,
-                    displayName: _displayName(context, user),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+            return Stack(
+              children: [
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [primaryColor.withOpacity(0.10), Colors.white],
+                      ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const CcSpaceMD(),
-                        ProfileStatsRow(daysToSunday: _daysToSunday),
-                        const CcSpaceMD(),
-                        ProfileMenuGroup(
-                          items: _buildMenuItems(context, isLoggedIn),
+                  ),
+                ),
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ProfileHeader(
+                        user: user,
+                        displayName: _displayName(context, user),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
                         ),
-                        // if (isLoggedIn) ...[
-                        //   const CcSpaceXL(),
-                        //   _buildLogoutButton(context),
-                        //   const CcSpaceSM(),
-                        //   _buildDeleteAccountText(context),
-                        // ],
-                        const CcSpaceXL(),
-                      ],
-                    ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const CcSpaceMD(),
+                            ProfileStatsRow(daysToSunday: _daysToSunday),
+                            const CcSpaceMD(),
+                            ProfileMenuGroup(
+                              items: _buildMenuItems(context, isLoggedIn),
+                            ),
+                            const CcSpaceXL(),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           },
         ),
