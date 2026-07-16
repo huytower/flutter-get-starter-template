@@ -187,7 +187,7 @@ class TransactionPage extends CcGetView<TransactionController> {
         SizedBox(height: headerHeight - overlap),
         _buildTabBar(context),
         const CcSpaceSM(),
-        _buildTabBarView(),
+        _buildTabBarView(context),
       ],
     );
   }
@@ -243,16 +243,38 @@ class TransactionPage extends CcGetView<TransactionController> {
     );
   }
 
-  Widget _buildTabBarView() {
-    return Expanded(
-      child: TabBarView(
-        children: [
-          ExpenseForm(onSaved: controller.refreshData),
-          IncomeForm(onSaved: controller.refreshData),
-          TransferForm(onSaved: controller.refreshData),
-        ],
-      ),
-    );
+  Widget _buildTabBarView(BuildContext context) {
+    return Obx(() {
+      final selectedIndex = controller.selectedTabIndex.value;
+      final activeColor = _getTabColor(context, selectedIndex);
+      final topColor = activeColor.withAlpha(5);
+      final bottomColor = activeColor.withAlpha(10);
+
+      return Expanded(
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [topColor, bottomColor],
+                  ),
+                ),
+              ),
+            ),
+            TabBarView(
+              children: [
+                ExpenseForm(onSaved: controller.refreshData),
+                IncomeForm(onSaved: controller.refreshData),
+                TransferForm(onSaved: controller.refreshData),
+              ],
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   // ===========================================================================
