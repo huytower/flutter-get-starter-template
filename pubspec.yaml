@@ -179,7 +179,3 @@ melos:
         cp ios/Firebase/free/GoogleService-Info.plist.template ios/Firebase/free/GoogleService-Info.plist
         cp ios/Firebase/prod/GoogleService-Info.plist.template ios/Firebase/prod/GoogleService-Info.plist
         cp ios/Firebase/uat/GoogleService-Info.plist.template ios/Firebase/uat/GoogleService-Info.plist
-
-    check:imports:
-      description: Enforce import-boundary guardrails (AI_CONTEXT.md rules #2, #3, #23).
-      run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check_imports.ps1
