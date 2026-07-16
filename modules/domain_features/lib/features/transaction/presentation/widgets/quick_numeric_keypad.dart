@@ -19,8 +19,8 @@ class QuickNumericKeypad extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_XS),
-        vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+        horizontal: context.respPadding(CcPaddingParams.SPACE_XS),
+        vertical: context.respPadding(CcPaddingParams.SPACE_XS),
       ),
       decoration: BoxDecoration(
         color: context.ccColorScheme.surfaceContainerHighest,

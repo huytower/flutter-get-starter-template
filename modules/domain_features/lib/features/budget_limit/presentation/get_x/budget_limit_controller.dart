@@ -2,7 +2,6 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 import '../../domain/usecases/create_budget_limit_usecase.dart';
@@ -11,7 +10,7 @@ import '../../domain/usecases/get_budget_limit_stats_usecase.dart';
 import '../../domain/usecases/update_budget_limit_orders_usecase.dart';
 import '../../domain/usecases/update_budget_limit_usecase.dart';
 
-@injectable
+@lazySingleton
 class BudgetLimitController extends CcGetController {
   BudgetLimitController(
     this._getBudgetStats,

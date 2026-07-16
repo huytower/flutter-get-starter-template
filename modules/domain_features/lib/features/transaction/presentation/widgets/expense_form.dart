@@ -2,18 +2,14 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/transaction_form_helpers.dart';
 import '../../../../core/transaction_form_mixin.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
-import '../get_x/transaction_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
-import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_submit_button.dart';
@@ -28,8 +24,7 @@ class ExpenseForm extends StatefulWidget {
   ExpenseFormState createState() => ExpenseFormState();
 }
 
-class ExpenseFormState extends State<ExpenseForm>
-    with TransactionFormMixin {
+class ExpenseFormState extends State<ExpenseForm> with TransactionFormMixin {
   Color get accentColor => context.ccColorScheme.error;
 
   static const List<int> _quickAmounts = [
@@ -54,8 +49,8 @@ class ExpenseFormState extends State<ExpenseForm>
 
   @override
   void Function(String) get onWalletSelected => (id) {
-        setState(() => _selectedWalletId = id);
-      };
+    setState(() => _selectedWalletId = id);
+  };
 
   @override
   void initState() {
@@ -128,108 +123,131 @@ class ExpenseFormState extends State<ExpenseForm>
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Expanded(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              if (showKeypad) hideKeypad();
-            },
-            child: SingleChildScrollView(
-              controller: scrollController,
-              padding: EdgeInsets.symmetric(
-                vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CategorySelectionSection(
-                    key: ValueKey(_categoryKey),
-                    activeColor: accentColor,
-                    autoSelectFirst: true,
-                    onCategorySelected: (category) =>
-                        setState(() => _selectedCategory = category),
-                  ),
-                  const CcSpaceLG(),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CcAmountInputSection(
-                          label: el.tr(CcLocaleKeys.transaction_amount),
-                          amountStr: amountStr,
-                          quickAmounts: _quickAmounts,
-                          isKeypadVisible: showKeypad,
-                          activeColor: accentColor,
-                          fieldKey: amountFieldKey,
-                          onTap: showKeypadAndScroll,
-                          onQuickAmountSelected: (amount) =>
-                              setState(() => amountStr = amount.toString()),
-                        ),
-                        const CcSpaceLG(),
-                        buildLabel(
-                          el.tr(CcLocaleKeys.transaction_source_expense),
-                        ),
-                        const CcSpaceXS(),
-                        TransactionWalletSelector(
-                          wallets: wallets,
-                          selectedWalletId: selectedWalletId,
-                          activeColor: accentColor,
-                          onWalletSelected: onWalletSelected,
-                        ),
-                        const CcSpaceLG(),
-                        TransactionAdditionalDetailsSection(
-                          isExpanded: showMoreDetails,
-                          onToggle: () => setState(
-                            () => showMoreDetails = !showMoreDetails,
-                          ),
-                          selectedDate: date,
-                          onDateSelected: (newDate) => setState(() {
-                            date = DateTime(
-                              newDate.year,
-                              newDate.month,
-                              newDate.day,
-                              date.hour,
-                              date.minute,
-                            );
-                          }),
-                          onCalendarTap: pickDate,
-                          noteController: noteController,
-                          onNoteTap: hideKeypad,
-                          activeColor: accentColor,
-                        ),
-                        const CcSpaceXL(),
-                        TransactionSubmitButton(
-                          text: el.tr(CcLocaleKeys.transaction_record_expense),
-                          isSubmitting: isSubmitting,
-                          isEnabled: _canSubmit,
-                          onTap: _onSubmit,
-                          activeColor: accentColor,
-                        ),
-                        const CcSpaceLG(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        if (showKeypad)
-          MoneyKeypadPanel(
-            onKeyPress: onKeyPress,
-            onDelete: onDelete,
-            onClear: () => setState(() => amountStr = '0'),
-            suggestions: _quickAmounts,
-            onSuggestion: (value) =>
-                setState(() => amountStr = value.toString()),
-            onDone: hideKeypad,
-            activeColor: accentColor,
-          ),
+        Expanded(child: _buildScrollableContent(context)),
+        if (showKeypad) _buildMoneyKeypadPanel(context),
       ],
     );
   }
 
+  Widget _buildScrollableContent(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        if (showKeypad) hideKeypad();
+      },
+      child: SingleChildScrollView(
+        controller: scrollController,
+        padding: EdgeInsets.symmetric(
+          vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildCategorySection(),
+            const CcSpaceLG(),
+            _buildFormFields(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategorySection() {
+    return CategorySelectionSection(
+      key: ValueKey(_categoryKey),
+      activeColor: accentColor,
+      autoSelectFirst: true,
+      onCategorySelected: (category) =>
+          setState(() => _selectedCategory = category),
+    );
+  }
+
+  Widget _buildFormFields(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildAmountSection(context),
+          const CcSpaceLG(),
+          _buildWalletSection(context),
+          const CcSpaceLG(),
+          transactionAdditionalDetailsSection(),
+          const CcSpaceXL(),
+          TransactionSubmitButton(
+            text: el.tr(CcLocaleKeys.transaction_record_expense),
+            isSubmitting: isSubmitting,
+            isEnabled: _canSubmit,
+            onTap: _onSubmit,
+            activeColor: accentColor,
+          ),
+          const CcSpaceLG(),
+        ],
+      ),
+    );
+  }
+
+  TransactionAdditionalDetailsSection transactionAdditionalDetailsSection() {
+    return TransactionAdditionalDetailsSection(
+      isExpanded: showMoreDetails,
+      onToggle: () => setState(() => showMoreDetails = !showMoreDetails),
+      selectedDate: date,
+      onDateSelected: (newDate) => setState(() {
+        date = DateTime(
+          newDate.year,
+          newDate.month,
+          newDate.day,
+          date.hour,
+          date.minute,
+        );
+      }),
+      onCalendarTap: pickDate,
+      noteController: noteController,
+      activeColor: accentColor,
+    );
+  }
+
+  Widget _buildAmountSection(BuildContext context) {
+    return CcAmountInputSection(
+      label: el.tr(CcLocaleKeys.transaction_amount),
+      amountStr: amountStr,
+      quickAmounts: _quickAmounts,
+      isKeypadVisible: showKeypad,
+      activeColor: accentColor,
+      fieldKey: amountFieldKey,
+      onTap: showKeypadAndScroll,
+      onQuickAmountSelected: (amount) =>
+          setState(() => amountStr = amount.toString()),
+    );
+  }
+
+  Widget _buildWalletSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildLabel(el.tr(CcLocaleKeys.transaction_source_expense)),
+        const CcSpaceXS(),
+        TransactionWalletSelector(
+          wallets: wallets,
+          selectedWalletId: selectedWalletId,
+          activeColor: accentColor,
+          onWalletSelected: onWalletSelected,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMoneyKeypadPanel(BuildContext context) {
+    return MoneyKeypadPanel(
+      onKeyPress: onKeyPress,
+      onDelete: onDelete,
+      onClear: () => setState(() => amountStr = '0'),
+      suggestions: _quickAmounts,
+      onSuggestion: (value) => setState(() => amountStr = value.toString()),
+      onDone: hideKeypad,
+      activeColor: accentColor,
+    );
+  }
 }

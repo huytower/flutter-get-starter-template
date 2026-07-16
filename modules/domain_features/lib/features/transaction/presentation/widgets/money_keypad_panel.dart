@@ -53,7 +53,7 @@ class MoneyKeypadPanel extends StatelessWidget {
         children: [
           Padding(
             padding: EdgeInsets.symmetric(
-              vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+              vertical: context.respPadding(CcPaddingParams.SPACE_XS),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -63,7 +63,7 @@ class MoneyKeypadPanel extends StatelessWidget {
                       ? const SizedBox.shrink()
                       : Padding(
                           padding: EdgeInsets.only(
-                            left: context.respPadding(CcPaddingParams.PAGE_SM),
+                            left: context.respPadding(CcPaddingParams.SPACE_SM),
                           ),
                           child: _buildSuggestionChips(context),
                         ),
@@ -72,7 +72,7 @@ class MoneyKeypadPanel extends StatelessWidget {
                   onTap: onDone,
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+                      horizontal: context.respPadding(CcPaddingParams.SPACE_XL),
                     ),
                     child: CcText(
                       el.tr(CcLocaleKeys.common_done),
@@ -101,7 +101,7 @@ class MoneyKeypadPanel extends StatelessWidget {
   Widget _buildSuggestionChips(BuildContext context) {
     final formatter = el.NumberFormat('#,###', context.locale.toString());
     return HorizontalFadeScrollView(
-      height: context.respDim(32),
+      height: context.respDim(25),
       builder: (scrollController) => ListView.separated(
         scrollDirection: Axis.horizontal,
         controller: scrollController,
@@ -112,11 +112,13 @@ class MoneyKeypadPanel extends StatelessWidget {
           return GestureDetector(
             onTap: () => onSuggestion?.call(amount),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: context.respDim(14)),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.respDim(CcPaddingParams.SPACE_XS),
+              ),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: activeColor.withOpacity(0.07),
-                borderRadius: BorderRadius.circular(context.respDim(18)),
+                borderRadius: BorderRadius.circular(context.respDim(16)),
               ),
               child: CcText(
                 formatter.format(amount),

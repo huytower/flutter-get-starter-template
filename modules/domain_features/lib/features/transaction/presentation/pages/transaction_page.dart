@@ -96,34 +96,42 @@ class TransactionPage extends CcGetView<TransactionController> {
         return DefaultTabController(
           length: 3,
           child: FadePageWrapper(
-            child: Column(
-              children: [
-                const CcSpaceMD(),
-                _buildTabBar(context),
-                const CcSpaceSM(),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      ExpenseForm(
-                        onSaved: controller.refreshData,
-                        key: _expenseFormKey,
-                      ),
-                      IncomeForm(
-                        onSaved: controller.refreshData,
-                        key: _incomeFormKey,
-                      ),
-                      TransferForm(
-                        onSaved: controller.refreshData,
-                        key: _transferFormKey,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            child: _buildTransactionContent(context),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildTransactionContent(BuildContext context) {
+    return Column(
+      children: [
+        const CcSpaceMD(),
+        _buildTabBar(context),
+        const CcSpaceSM(),
+        _buildTabBarView(context),
+      ],
+    );
+  }
+
+  Widget _buildTabBarView(BuildContext context) {
+    return Expanded(
+      child: TabBarView(
+        children: [
+          ExpenseForm(
+            onSaved: controller.refreshData,
+            key: _expenseFormKey,
+          ),
+          IncomeForm(
+            onSaved: controller.refreshData,
+            key: _incomeFormKey,
+          ),
+          TransferForm(
+            onSaved: controller.refreshData,
+            key: _transferFormKey,
+          ),
+        ],
+      ),
     );
   }
 

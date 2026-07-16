@@ -70,6 +70,9 @@ class CcAppStorage extends HiveObject {
   @HiveField(9)
   int? birthYear;
 
+  @HiveField(10)
+  bool? isDarkMode;
+
   CcAppStorage({
     this.accessToken,
     this.fcmToken,
@@ -81,5 +84,6 @@ class CcAppStorage extends HiveObject {
     this.weeklyAuditDayIndex,
     this.currencyCode,
     this.birthYear,
+    this.isDarkMode,
   });
 }

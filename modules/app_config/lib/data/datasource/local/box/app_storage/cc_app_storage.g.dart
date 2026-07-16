@@ -27,13 +27,14 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       weeklyAuditDayIndex: (fields[7] as num?)?.toInt(),
       currencyCode: fields[8] as String?,
       birthYear: (fields[9] as num?)?.toInt(),
+      isDarkMode: fields[10] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CcAppStorage obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..writeByte(8)
       ..write(obj.currencyCode)
       ..writeByte(9)
-      ..write(obj.birthYear);
+      ..write(obj.birthYear)
+      ..writeByte(10)
+      ..write(obj.isDarkMode);
   }
 
   @override
@@ -84,6 +87,7 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
   weeklyAuditDayIndex: (json['weeklyAuditDayIndex'] as num?)?.toInt(),
   currencyCode: json['currencyCode'] as String?,
   birthYear: (json['birthYear'] as num?)?.toInt(),
+  isDarkMode: json['isDarkMode'] as bool?,
 );
 
 Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
@@ -98,4 +102,5 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
       'weeklyAuditDayIndex': instance.weeklyAuditDayIndex,
       'currencyCode': instance.currencyCode,
       'birthYear': instance.birthYear,
+      'isDarkMode': instance.isDarkMode,
     };

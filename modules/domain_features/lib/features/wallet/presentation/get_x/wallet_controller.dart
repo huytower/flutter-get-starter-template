@@ -14,7 +14,7 @@ import '../../domain/usecases/wallet_balance_calculator.dart';
 /// Outcome of a wallet deletion attempt (rule: only empty wallets deletable).
 enum WalletDeleteOutcome { success, notEmpty, protected, error }
 
-@injectable
+@lazySingleton
 class WalletController extends CcGetController {
   WalletController(
     this._repository,
@@ -45,7 +45,7 @@ class WalletController extends CcGetController {
 
   /// Current (book) balance per wallet = opening balance ± transactions.
   /// This is what the UI shows, not [WalletEntity.balance] (the opening amount).
-  final Map<String, int> _bookBalances = <String, int>{};
+  final RxMap<String, int> _bookBalances = <String, int>{}.obs;
 
   int bookBalanceOf(String id) => _bookBalances[id] ?? 0;
 
@@ -55,9 +55,7 @@ class WalletController extends CcGetController {
   bool canDeleteWallet(WalletEntity wallet) {
     if (wallet.type == WalletType.cash) return false;
     if (wallet.type == WalletType.bank) {
-      final bankCount = wallets
-          .where((w) => w.type == WalletType.bank)
-          .length;
+      final bankCount = wallets.where((w) => w.type == WalletType.bank).length;
       if (bankCount <= 1) return false;
     }
     return true;
@@ -103,14 +101,15 @@ class WalletController extends CcGetController {
       ..clear()
       ..addAll(txns.map((t) => t.walletId));
 
-    _bookBalances.clear();
+    final newBalances = <String, int>{};
     for (final wallet in list) {
       final walletTxns = txns.where((t) => t.walletId == wallet.id).toList();
-      _bookBalances[wallet.id] = bookBalanceFromTransactions(
+      newBalances[wallet.id] = bookBalanceFromTransactions(
         wallet.balance,
         walletTxns,
       );
     }
+    _bookBalances.assignAll(newBalances);
   }
 
   void _calculateTotalBalance() {

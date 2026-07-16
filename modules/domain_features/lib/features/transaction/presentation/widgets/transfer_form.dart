@@ -1,16 +1,12 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/transaction_form_helpers.dart';
 import '../../../../core/transaction_form_mixin.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../domain/usecases/create_transfer_usecase.dart';
-import '../get_x/transaction_controller.dart';
 import 'cc_amount_input_section.dart';
-import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_submit_button.dart';
@@ -25,8 +21,7 @@ class TransferForm extends StatefulWidget {
   TransferFormState createState() => TransferFormState();
 }
 
-class TransferFormState extends State<TransferForm>
-    with TransactionFormMixin {
+class TransferFormState extends State<TransferForm> with TransactionFormMixin {
   Color get accentColor => context.ccColorScheme.secondary;
 
   static const List<int> _quickAmounts = [
@@ -50,13 +45,13 @@ class TransferFormState extends State<TransferForm>
 
   @override
   void Function(String) get onWalletSelected => (id) {
-        setState(() {
-          if (_toWalletId == id) {
-            _toWalletId = _fromWalletId;
-          }
-          _fromWalletId = id;
-        });
-      };
+    setState(() {
+      if (_toWalletId == id) {
+        _toWalletId = _fromWalletId;
+      }
+      _fromWalletId = id;
+    });
+  };
 
   @override
   void initState() {
@@ -123,112 +118,139 @@ class TransferFormState extends State<TransferForm>
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Expanded(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              if (showKeypad) hideKeypad();
-            },
-            child: SingleChildScrollView(
-              controller: scrollController,
-              padding: EdgeInsets.symmetric(
-                horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-                vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CcAmountInputSection(
-                    label: el.tr(CcLocaleKeys.transaction_amount),
-                    amountStr: amountStr,
-                    quickAmounts: _quickAmounts,
-                    isKeypadVisible: showKeypad,
-                    activeColor: accentColor,
-                    fieldKey: amountFieldKey,
-                    onTap: showKeypadAndScroll,
-                    onQuickAmountSelected: (amount) =>
-                        setState(() => amountStr = amount.toString()),
-                  ),
-                  const CcSpaceLG(),
-                  buildLabel(el.tr(CcLocaleKeys.transaction_transfer_from)),
-                  const CcSpaceXS(),
-                  TransactionWalletSelector(
-                    wallets: wallets,
-                    selectedWalletId: _fromWalletId,
-                    activeColor: accentColor,
-                    onWalletSelected: onWalletSelected,
-                  ),
-                  const CcSpaceMD(),
-
-                  Center(
-                    child: Icon(
-                      Icons.arrow_downward_rounded,
-                      color: accentColor,
-                      size: context.respIconSize(baseSize: 22),
-                    ),
-                  ),
-                  const CcSpaceMD(),
-
-                  buildLabel(el.tr(CcLocaleKeys.transaction_transfer_to)),
-                  const CcSpaceXS(),
-                  TransactionWalletSelector(
-                    wallets: wallets,
-                    selectedWalletId: _toWalletId,
-                    activeColor: accentColor,
-                    onWalletSelected: (id) => setState(() {
-                      if (_fromWalletId == id) {
-                        _fromWalletId = _toWalletId;
-                      }
-                      _toWalletId = id;
-                    }),
-                  ),
-                  const CcSpaceLG(),
-                  TransactionAdditionalDetailsSection(
-                    isExpanded: showMoreDetails,
-                    onToggle: () =>
-                        setState(() => showMoreDetails = !showMoreDetails),
-                    selectedDate: date,
-                    onDateSelected: (newDate) => setState(() {
-                      date = DateTime(
-                        newDate.year,
-                        newDate.month,
-                        newDate.day,
-                        date.hour,
-                        date.minute,
-                      );
-                    }),
-                    onCalendarTap: pickDate,
-                    noteController: noteController,
-                    onNoteTap: hideKeypad,
-                    activeColor: accentColor,
-                  ),
-                  const CcSpaceXL(),
-                  TransactionSubmitButton(
-                    text: el.tr(CcLocaleKeys.transaction_record_transfer),
-                    isSubmitting: isSubmitting,
-                    isEnabled: _canSubmit,
-                    onTap: _onSubmit,
-                    activeColor: accentColor,
-                  ),
-                  const CcSpaceLG(),
-                ],
-              ),
-            ),
-          ),
-        ),
-        if (showKeypad)
-          MoneyKeypadPanel(
-            onKeyPress: onKeyPress,
-            onDelete: onDelete,
-            onClear: () => setState(() => amountStr = '0'),
-            suggestions: _quickAmounts,
-            onSuggestion: (value) =>
-                setState(() => amountStr = value.toString()),
-            onDone: hideKeypad,
-            activeColor: accentColor,
-          ),
+        Expanded(child: _buildScrollableContent(context)),
+        if (showKeypad) _buildMoneyKeypadPanel(context),
       ],
     );
   }
 
+  Widget _buildScrollableContent(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        if (showKeypad) hideKeypad();
+      },
+      child: SingleChildScrollView(
+        controller: scrollController,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+          vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildAmountSection(context),
+            const CcSpaceLG(),
+            _buildFromWalletSection(context),
+            const CcSpaceMD(),
+            _buildTransferArrow(context),
+            const CcSpaceMD(),
+            _buildToWalletSection(context),
+            const CcSpaceLG(),
+            TransactionAdditionalDetailsSection(
+              isExpanded: showMoreDetails,
+              onToggle: () =>
+                  setState(() => showMoreDetails = !showMoreDetails),
+              selectedDate: date,
+              onDateSelected: (newDate) => setState(() {
+                date = DateTime(
+                  newDate.year,
+                  newDate.month,
+                  newDate.day,
+                  date.hour,
+                  date.minute,
+                );
+              }),
+              onCalendarTap: pickDate,
+              noteController: noteController,
+              activeColor: accentColor,
+            ),
+            const CcSpaceXL(),
+            TransactionSubmitButton(
+              text: el.tr(CcLocaleKeys.transaction_record_transfer),
+              isSubmitting: isSubmitting,
+              isEnabled: _canSubmit,
+              onTap: _onSubmit,
+              activeColor: accentColor,
+            ),
+            const CcSpaceLG(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAmountSection(BuildContext context) {
+    return CcAmountInputSection(
+      label: el.tr(CcLocaleKeys.transaction_amount),
+      amountStr: amountStr,
+      quickAmounts: _quickAmounts,
+      isKeypadVisible: showKeypad,
+      activeColor: accentColor,
+      fieldKey: amountFieldKey,
+      onTap: showKeypadAndScroll,
+      onQuickAmountSelected: (amount) =>
+          setState(() => amountStr = amount.toString()),
+    );
+  }
+
+  Widget _buildFromWalletSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildLabel(el.tr(CcLocaleKeys.transaction_transfer_from)),
+        const CcSpaceXS(),
+        TransactionWalletSelector(
+          wallets: wallets,
+          selectedWalletId: _fromWalletId,
+          activeColor: accentColor,
+          onWalletSelected: onWalletSelected,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTransferArrow(BuildContext context) {
+    return Center(
+      child: Icon(
+        Icons.arrow_downward_rounded,
+        color: accentColor,
+        size: context.respIconSize(baseSize: 22),
+      ),
+    );
+  }
+
+  Widget _buildToWalletSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildLabel(el.tr(CcLocaleKeys.transaction_transfer_to)),
+        const CcSpaceXS(),
+        TransactionWalletSelector(
+          wallets: wallets,
+          selectedWalletId: _toWalletId,
+          activeColor: accentColor,
+          onWalletSelected: (id) => setState(() {
+            if (_fromWalletId == id) {
+              _fromWalletId = _toWalletId;
+            }
+            _toWalletId = id;
+          }),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMoneyKeypadPanel(BuildContext context) {
+    return MoneyKeypadPanel(
+      onKeyPress: onKeyPress,
+      onDelete: onDelete,
+      onClear: () => setState(() => amountStr = '0'),
+      suggestions: _quickAmounts,
+      onSuggestion: (value) =>
+          setState(() => amountStr = value.toString()),
+      onDone: hideKeypad,
+      activeColor: accentColor,
+    );
+  }
 }

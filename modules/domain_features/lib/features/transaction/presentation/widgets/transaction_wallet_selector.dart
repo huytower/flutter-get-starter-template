@@ -82,7 +82,7 @@ class TransactionWalletSelector extends StatelessWidget {
             ),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: context.respDim(115),
+            width: context.respDim(120),
             padding: EdgeInsets.all(context.respDim(12)),
             decoration: BoxDecoration(
               color: isSelected
@@ -100,7 +100,7 @@ class TransactionWalletSelector extends StatelessWidget {
               children: [
                 _buildWalletIcon(context, wallet, isSelected),
                 const CcSpaceXS(),
-                _buildWalletFooter(context, wallet, isSelected),
+                Expanded(child: _buildWalletName(context, wallet, isSelected)),
               ],
             ),
           ),
@@ -139,7 +139,7 @@ class TransactionWalletSelector extends StatelessWidget {
     );
   }
 
-  Widget _buildWalletFooter(
+  Widget _buildWalletName(
     BuildContext context,
     WalletEntity wallet,
     bool isSelected,

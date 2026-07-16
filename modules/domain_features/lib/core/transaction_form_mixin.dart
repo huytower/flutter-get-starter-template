@@ -110,6 +110,7 @@ mixin TransactionFormMixin<T extends StatefulWidget> on State<T> {
 
   /// Shows the keypad and scrolls to the amount field.
   void showKeypadAndScroll() {
+    FocusScope.of(context).unfocus();
     setState(() => showKeypad = true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final ctx = amountFieldKey.currentContext;

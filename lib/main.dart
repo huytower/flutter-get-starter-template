@@ -1,13 +1,15 @@
 import 'dart:developer' as developer;
 import 'dart:ui';
 
+import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:catcher_2/catcher_2.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:theme/presentation/provider/theme_provider.dart';
 
 import 'core/di/di.dart';
 import 'core/di/hive_registrar.dart';
@@ -46,7 +48,18 @@ void main() async {
     // Starts the native security handshake without delaying the first frame.
     CcAppCheckHelper.initialize();
 
-    // 5. UI Launch
+    // 5. Restore persisted theme before the first frame so the shell opens
+    //    with the user's last preference instead of the system default.
+    try {
+      final savedDark = CcAppStorage.instance.isDarkMode;
+      if (savedDark != null && getIt.isRegistered<ThemeProvider>()) {
+        getIt<ThemeProvider>().setThemeMode(
+          savedDark ? ThemeMode.dark : ThemeMode.light,
+        );
+      }
+    } catch (_) {}
+
+    // 6. UI Launch
     _runApplication();
   } catch (error, stackTrace) {
     developer.log(

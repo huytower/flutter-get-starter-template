@@ -12,6 +12,7 @@ class ProfileLocalDataSource {
       weeklyAuditDayIndex: s.weeklyAuditDayIndex ?? 6,
       currencyCode: s.currencyCode ?? 'VND',
       birthYear: s.birthYear,
+      isDarkMode: s.isDarkMode ?? false,
     );
   }
 
@@ -21,6 +22,7 @@ class ProfileLocalDataSource {
     s.weeklyAuditDayIndex = entity.weeklyAuditDayIndex;
     s.currencyCode = entity.currencyCode;
     s.birthYear = entity.birthYear;
+    s.isDarkMode = entity.isDarkMode;
     await s.save();
   }
 }
