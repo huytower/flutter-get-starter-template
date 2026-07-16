@@ -325,6 +325,8 @@ class CodegenLoader extends AssetLoader {
       "three_months": "3 Months",
       "income_expense": "Income & Expense",
       "safety_index": "Safety Index (Runway)",
+      "runway_desc_1": "The Safety Index (Runway) shows how long you can maintain your lifestyle using your emergency fund if you lose your main income, helping you proactively control financial risk.",
+      "runway_desc_2": "Runway shows how long you could survive without income, and helps you see your accumulation through the monthly income & expense chart so you can adjust toward a more sustainable financial plan.",
       "runway_message": "You can sustain for {months} months {days} days.",
       "runway_perfect": "Your spending is excellent!",
       "runway_very_good": "Excellent! You have over a year of buffer.",
@@ -748,6 +750,8 @@ class CodegenLoader extends AssetLoader {
       "three_months": "3 tháng",
       "income_expense": "Thu nhập & Chi tiêu",
       "safety_index": "Chỉ số an toàn (Runway)",
+      "runway_desc_1": "Chỉ số an toàn (Runway) xác định khoảng thời gian bạn có thể duy trì cuộc sống bằng quỹ dự phòng khi mất nguồn thu nhập chính, giúp chủ động kiểm soát rủi ro tài chính.",
+      "runway_desc_2": "Runway cho biết bạn có thể sống sót được bao lâu nếu mất thu nhập, đồng thời giúp bạn nhìn ra bức tranh tích lũy thông qua biểu đồ thu chi hàng tháng để điều chỉnh kế hoạch tài chính bền vững hơn.",
       "runway_message": "Bạn có thể duy trì {months} tháng {days} ngày.",
       "runway_perfect": "Bạn đang chi tiêu rất tuyệt vời!",
       "runway_very_good": "Tuyệt vời! Bạn có đủ tiền dự phòng cho hơn 1 năm.",
@@ -1141,6 +1145,8 @@ abstract class CcLocaleKeys {
   static const report_three_months = 'report.three_months';
   static const report_income_expense = 'report.income_expense';
   static const report_safety_index = 'report.safety_index';
+  static const report_runway_desc_1 = 'report.runway_desc_1';
+  static const report_runway_desc_2 = 'report.runway_desc_2';
   static const report_runway_message = 'report.runway_message';
   static const report_runway_very_good = 'report.runway_very_good';
   static const report_runway_good = 'report.runway_good';

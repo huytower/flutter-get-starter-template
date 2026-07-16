@@ -293,6 +293,8 @@
     "three_months": "3 Months",
     "income_expense": "Income & Expense",
     "safety_index": "Safety Index (Runway)",
+    "runway_desc_1": "The Safety Index (Runway) shows how long you can maintain your lifestyle using your emergency fund if you lose your main income, helping you proactively control financial risk.",
+    "runway_desc_2": "Runway shows how long you could survive without income, and helps you see your accumulation through the monthly income & expense chart so you can adjust toward a more sustainable financial plan.",
     "runway_message": "You can sustain for {months} months {days} days.",
     "runway_perfect": "Your spending is excellent!",
     "runway_very_good": "Excellent! You have over a year of buffer.",
