@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
 import 'package:cc_micro_features/features/auth/domain/phone_auth_status.dart';
+import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -149,9 +149,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         );
       },
       verificationFailed: (e) => onStatus(
-        PhoneAuthStatusFailed(
-          ServerFailure(e.message ?? _serverError),
-        ),
+        PhoneAuthStatusFailed(ServerFailure(e.message ?? _serverError)),
       ),
       codeSent: (id, token) => onStatus(PhoneAuthStatusCodeSent(id, token)),
       codeAutoRetrievalTimeout: (id) =>

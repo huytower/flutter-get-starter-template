@@ -52,9 +52,8 @@ class _SplashPageState extends State<SplashPage>
             _controller.forward();
             // Navigate after 500ms from when animation loads
             Future.delayed(const Duration(milliseconds: 2000), () {
-              if (mounted) {
-                navigateFromSplash(context);
-              }
+              if (!mounted) return;
+              navigateFromSplash(context);
             });
           },
         ),

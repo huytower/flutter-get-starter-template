@@ -19,7 +19,7 @@ The CI/CD pipeline automatically:
 4. **Melos** installed locally for management (`dart pub global activate melos`).
 5. **Submodules**: This project uses submodules (e.g., `cc_core_sdk`). Ensure they are initialized locally (
    `git submodule update --init --recursive`).
-
+``````
 ---
 
 ## Required GitHub Secrets
@@ -123,8 +123,20 @@ The pipeline is defined in `.github/workflows/firebase-app-distribution.yml` and
 
 ### Submodule Issues
 
-- If the CI fails during checkout with "not our ref", ensure all local commits in `cc_core_sdk` (or other submodules)
-  have been pushed to their respective remote repositories.
+- **Pulling Latest SDK**: To get the latest changes from the remote SDK repository and merge them into your local submodule:
+  ```bash
+  git submodule update --remote --merge
+  ```
+- **Missing/Deleted Files**: If files inside `shared/cc_core_sdk` appear as "deleted" or are missing after a pull, run:
+  ```bash
+  git submodule update --init --recursive --force
+  ```
+- **"Embedded Repository" Warning**: If `git status` shows individual files inside a submodule, the boundary is broken. Fix it with:
+  ```bash
+  git rm -r --cached shared/cc_core_sdk
+  git add shared/cc_core_sdk
+  ```
+- **Out of Sync CI**: If the CI fails with "not our ref", ensure all local commits in `cc_core_sdk` have been pushed to its remote BEFORE pushing the main project.
 
 ### Melos Issues
 
