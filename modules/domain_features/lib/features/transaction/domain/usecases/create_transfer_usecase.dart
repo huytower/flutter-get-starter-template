@@ -1,5 +1,7 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
+import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
@@ -41,23 +43,35 @@ class CreateTransferUseCase {
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
 
   /// Denormalized label stored on both legs for any future display.
-  static const String _label = 'Chuyển khoản';
+  String get _label => el.tr(CcLocaleKeys.transaction_record_transfer);
 
   Future<Result<void, CcFailure>> call(CreateTransferParams params) async {
     if (params.amount <= 0) {
-      return const Error(ValidationFailure('Số tiền phải lớn hơn 0!'));
+      return Error(
+        ValidationFailure(
+          el.tr(CcLocaleKeys.transaction_validation_amount_required),
+        ),
+      );
     }
     if (params.fromWalletId.isEmpty || params.toWalletId.isEmpty) {
-      return const Error(ValidationFailure('Vui lòng chọn ví!'));
+      return Error(
+        ValidationFailure(
+          el.tr(CcLocaleKeys.transaction_validation_wallet_required),
+        ),
+      );
     }
     if (params.fromWalletId == params.toWalletId) {
-      return const Error(
-        ValidationFailure('Không thể chuyển vào cùng một ví!'),
+      return Error(
+        ValidationFailure(
+          el.tr(CcLocaleKeys.transaction_validation_same_wallet_transfer),
+        ),
       );
     }
     if (params.date.isAfter(DateTime.now())) {
-      return const Error(
-        ValidationFailure('Không thể ghi giao dịch ở tương lai!'),
+      return Error(
+        ValidationFailure(
+          el.tr(CcLocaleKeys.transaction_validation_future_date),
+        ),
       );
     }
 
@@ -67,7 +81,11 @@ class CreateTransferUseCase {
       return Error(balanceResult.tryGetError()!);
     }
     if (params.amount > balanceResult.tryGetSuccess()!) {
-      return const Error(ValidationFailure('Số dư ví không đủ!'));
+      return Error(
+        ValidationFailure(
+          el.tr(CcLocaleKeys.transaction_validation_insufficient_balance),
+        ),
+      );
     }
 
     final transferId = DateTime.now().microsecondsSinceEpoch.toString();

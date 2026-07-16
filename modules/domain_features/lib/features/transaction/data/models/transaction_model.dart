@@ -43,6 +43,12 @@ class TransactionModel {
   @HiveField(10)
   final String? transferId;
 
+  @HiveField(11)
+  final int? categoryIconCode;
+
+  @HiveField(12)
+  final String? categoryIconFamily;
+
   TransactionModel({
     this.id,
     this.type,
@@ -55,6 +61,8 @@ class TransactionModel {
     this.budgetId,
     this.deletedAt,
     this.transferId,
+    this.categoryIconCode,
+    this.categoryIconFamily,
   });
 
   TransactionModel copyWith({String? deletedAt}) => TransactionModel(
@@ -69,6 +77,8 @@ class TransactionModel {
     budgetId: budgetId,
     deletedAt: deletedAt ?? this.deletedAt,
     transferId: transferId,
+    categoryIconCode: categoryIconCode,
+    categoryIconFamily: categoryIconFamily,
   );
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) =>
@@ -89,6 +99,8 @@ class TransactionModel {
         budgetId: entity.budgetId,
         deletedAt: entity.deletedAt?.toIso8601String(),
         transferId: entity.transferId,
+        categoryIconCode: entity.categoryIconCode,
+        categoryIconFamily: entity.categoryIconFamily,
       );
 
   TransactionEntity toEntity() => TransactionEntity(
@@ -103,5 +115,7 @@ class TransactionModel {
     walletId: walletId ?? '',
     transferId: transferId,
     deletedAt: deletedAt != null ? DateTime.parse(deletedAt!) : null,
+    categoryIconCode: categoryIconCode,
+    categoryIconFamily: categoryIconFamily,
   );
 }

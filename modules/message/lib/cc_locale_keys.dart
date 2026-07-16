@@ -1035,6 +1035,18 @@ abstract class CcLocaleKeys {
   static const transaction_note = 'transaction.note';
   static const transaction_note_hint = 'transaction.note_hint';
   static const transaction_more_details = 'transaction.more_details';
+  static const transaction_validation_amount_required =
+      'transaction.validation.amount_required';
+  static const transaction_validation_wallet_required =
+      'transaction.validation.wallet_required';
+  static const transaction_validation_category_required =
+      'transaction.validation.category_required';
+  static const transaction_validation_future_date =
+      'transaction.validation.future_date';
+  static const transaction_validation_insufficient_balance =
+      'transaction.validation.insufficient_balance';
+  static const transaction_validation_same_wallet_transfer =
+      'transaction.validation.same_wallet_transfer';
 
   static const budget_title = 'budget.title';
   static const budget_description = 'budget.description';

@@ -73,6 +73,8 @@ class ExpenseFormState extends State<ExpenseForm> with TransactionFormMixin {
       categoryLabel: _selectedCategory != null
           ? el.tr(_selectedCategory!.nameKey)
           : '',
+      categoryIconCode: _selectedCategory?.iconCode,
+      categoryIconFamily: _selectedCategory?.iconFamily,
       walletId: selectedWalletId ?? '',
       note: composeNote(),
       date: date,

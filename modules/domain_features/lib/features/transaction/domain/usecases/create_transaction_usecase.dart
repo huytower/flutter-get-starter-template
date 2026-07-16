@@ -1,5 +1,7 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
+import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
@@ -18,6 +20,9 @@ class CreateTransactionParams {
   /// Denormalized category label stored for display.
   final String categoryLabel;
 
+  final int? categoryIconCode;
+  final String? categoryIconFamily;
+
   final String walletId;
   final String? note;
   final DateTime date;
@@ -27,6 +32,8 @@ class CreateTransactionParams {
     required this.amount,
     this.categoryId = '',
     this.categoryLabel = '',
+    this.categoryIconCode,
+    this.categoryIconFamily,
     required this.walletId,
     this.note,
     required this.date,
@@ -51,19 +58,33 @@ class CreateTransactionUseCase {
     CreateTransactionParams params,
   ) async {
     if (params.amount <= 0) {
-      return const Error(ValidationFailure('Số tiền phải lớn hơn 0!'));
+      return Error(
+        ValidationFailure(
+          el.tr(CcLocaleKeys.transaction_validation_amount_required),
+        ),
+      );
     }
     if (params.walletId.isEmpty) {
-      return const Error(ValidationFailure('Vui lòng chọn ví!'));
+      return Error(
+        ValidationFailure(
+          el.tr(CcLocaleKeys.transaction_validation_wallet_required),
+        ),
+      );
     }
     if (params.type == 'expense' && params.categoryId.isEmpty) {
-      return const Error(ValidationFailure('Vui lòng chọn hạng mục!'));
+      return Error(
+        ValidationFailure(
+          el.tr(CcLocaleKeys.transaction_validation_category_required),
+        ),
+      );
     }
     // A transaction can't happen in the future — guard in case a caller passes
     // one regardless of the date-picker's bounds.
     if (params.date.isAfter(DateTime.now())) {
-      return const Error(
-        ValidationFailure('Không thể ghi giao dịch ở tương lai!'),
+      return Error(
+        ValidationFailure(
+          el.tr(CcLocaleKeys.transaction_validation_future_date),
+        ),
       );
     }
 
@@ -75,7 +96,11 @@ class CreateTransactionUseCase {
         return Error(balanceResult.tryGetError()!);
       }
       if (params.amount > balanceResult.tryGetSuccess()!) {
-        return const Error(ValidationFailure('Số dư ví không đủ!'));
+        return Error(
+          ValidationFailure(
+            el.tr(CcLocaleKeys.transaction_validation_insufficient_balance),
+          ),
+        );
       }
     }
 
@@ -85,6 +110,8 @@ class CreateTransactionUseCase {
       amount: params.amount,
       category: params.categoryLabel,
       categoryId: params.categoryId,
+      categoryIconCode: params.categoryIconCode,
+      categoryIconFamily: params.categoryIconFamily,
       note: params.note,
       date: params.date,
       walletId: params.walletId,

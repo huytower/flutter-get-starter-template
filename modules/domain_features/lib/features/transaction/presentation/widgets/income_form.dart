@@ -81,6 +81,8 @@ class IncomeFormState extends State<IncomeForm> with TransactionFormMixin {
       categoryLabel: _selectedCategory != null
           ? el.tr(_selectedCategory!.nameKey)
           : '',
+      categoryIconCode: _selectedCategory?.iconCode,
+      categoryIconFamily: _selectedCategory?.iconFamily,
       walletId: selectedWalletId ?? '',
       note: composeNote(),
       date: date,
@@ -174,9 +176,7 @@ class IncomeFormState extends State<IncomeForm> with TransactionFormMixin {
           const CcSpaceLG(),
           TransactionAdditionalDetailsSection(
             isExpanded: showMoreDetails,
-            onToggle: () => setState(
-              () => showMoreDetails = !showMoreDetails,
-            ),
+            onToggle: () => setState(() => showMoreDetails = !showMoreDetails),
             selectedDate: date,
             onDateSelected: (newDate) => setState(() {
               date = DateTime(
@@ -214,7 +214,7 @@ class IncomeFormState extends State<IncomeForm> with TransactionFormMixin {
       isKeypadVisible: showKeypad,
       activeColor: accentColor,
       fieldKey: amountFieldKey,
-          onTap: showKeypadAndScroll,
+      onTap: showKeypadAndScroll,
       onQuickAmountSelected: (amount) =>
           setState(() => amountStr = amount.toString()),
     );
@@ -244,8 +244,7 @@ class IncomeFormState extends State<IncomeForm> with TransactionFormMixin {
         onDelete: onDelete,
         onClear: () => setState(() => amountStr = '0'),
         suggestions: _quickAmounts,
-        onSuggestion: (value) =>
-            setState(() => amountStr = value.toString()),
+        onSuggestion: (value) => setState(() => amountStr = value.toString()),
         onDone: hideKeypad,
         activeColor: accentColor,
       ),
