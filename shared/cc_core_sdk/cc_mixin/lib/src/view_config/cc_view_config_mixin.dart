@@ -132,7 +132,9 @@ mixin CcViewConfigMixin {
         return const EmptyPage();
       case CcLayoutStatus.error:
         return ErrorPage(
-            message: errorMessage, onRetry: () => onRetry(context));
+          message: errorMessage,
+          onRetry: () => onRetry(context),
+        );
       case CcLayoutStatus.refresh:
         return enableLoading
             ? const LoadingPage()

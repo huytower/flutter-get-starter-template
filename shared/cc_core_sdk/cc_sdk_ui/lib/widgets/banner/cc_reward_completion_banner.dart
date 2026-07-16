@@ -18,8 +18,7 @@ import 'package:flutter/material.dart';
 class CcRewardCompletionBanner extends StatefulWidget {
   const CcRewardCompletionBanner({
     super.key,
-    this.message =
-        'Congratulations ! You have successfully\nCompleted the 100 Days UI Challenge',
+    required this.message,
     this.backgroundColor,
     this.onClose,
   });
@@ -62,80 +61,50 @@ class _CcRewardCompletionBannerState extends State<CcRewardCompletionBanner>
     final scheme = context.ccColorScheme;
 
     return Material(
-      color: Colors.transparent,
+      color: CcBaseColors.transparent,
       child: Container(
-        color: widget.backgroundColor ?? CcBaseColors.brand500,
+        height: context.respDim(120),
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(
           horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
         ),
-        child: Container(
-          padding: EdgeInsets.fromLTRB(
-            context.respPadding(CcPaddingParams.PAGE_SM),
-            context.respPadding(CcPaddingParams.PAGE_SM),
-            context.respPadding(CcPaddingParams.PAGE_XL),
-            context.respPadding(CcPaddingParams.PAGE_SM),
-          ),
-          decoration: BoxDecoration(
-            color: scheme.surface,
-            borderRadius: BorderRadius.circular(context.respDim(20)),
-            boxShadow: [
-              BoxShadow(
-                color: scheme.shadow.withOpacity(0.15),
-                blurRadius: context.respDim(18),
-                offset: Offset(0, context.respDim(8)),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(context.respDim(20)),
+          boxShadow: [
+            BoxShadow(
+              color: scheme.shadow.withValues(alpha: 0.15),
+              blurRadius: context.respDim(18),
+              offset: Offset(0, context.respDim(8)),
+            ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            AnimatedBuilder(
+              animation: _wiggle,
+              builder: (context, child) {
+                return Transform.rotate(angle: _wiggle.value, child: child);
+              },
+              child: Text(
+                '🎁',
+                style: TextStyle(fontSize: context.respFontSize(48)),
               ),
-            ],
-          ),
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  AnimatedBuilder(
-                    animation: _wiggle,
-                    builder: (context, child) {
-                      return Transform.rotate(
-                        angle: _wiggle.value,
-                        child: child,
-                      );
-                    },
-                    child: Text(
-                      '🎁',
-                      style: TextStyle(fontSize: context.respFontSize(48)),
-                    ),
-                  ),
-                  SizedBox(width: context.respDim(12)),
-                  Expanded(
-                    child: Text(
-                      widget.message,
-                      style: context.ccTextTheme.titleLarge?.copyWith(
-                        fontWeight: CcTypographyParams.bold,
-                        color: scheme.onSurface,
-                        height: 1.2,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Positioned(
-                top: -context.respDim(8),
-                right: -context.respDim(32),
-                child: GestureDetector(
-                  onTap: widget.onClose,
-                  child: Padding(
-                    padding: EdgeInsets.all(context.respDim(8)),
-                    child: Icon(
-                      Icons.close,
-                      size: context.respIconSize(baseSize: 20),
-                      color: scheme.onSurfaceVariant,
-                    ),
-                  ),
+            ),
+            const CcSpaceMD(),
+            Expanded(
+              child: CcText(
+                widget.message,
+                maxLines: 5,
+                textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                  fontWeight: CcTypographyParams.bold,
+                  color: scheme.onSurface,
+                  height: 1.2,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

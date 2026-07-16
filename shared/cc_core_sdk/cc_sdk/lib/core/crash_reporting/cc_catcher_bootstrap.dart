@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:catcher_2/catcher_2.dart';
+import 'package:catcher_2/model/platform_type.dart';
 import 'package:cc_sdk/core/crash_reporting/cc_crashlytics_handler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -43,20 +44,60 @@ class _JsonConsoleHandler extends ConsoleHandler {
   }
 }
 
+/// Custom FileHandler wrapper to prevent concurrent access to the same file
+/// which causes "StreamSink is bound to a stream" errors in Catcher2.
+class _SynchronizedFileHandler extends ReportHandler {
+  final FileHandler _inner;
+  Future<void>? _currentOperation;
+
+  _SynchronizedFileHandler(File logFile, {bool printLogs = false})
+    : _inner = FileHandler(logFile, printLogs: printLogs);
+
+  @override
+  Future<bool> handle(Report report, BuildContext? context) async {
+    while (_currentOperation != null) {
+      await _currentOperation;
+    }
+
+    final operation = _inner.handle(report, context);
+    _currentOperation = operation;
+    try {
+      return await operation;
+    } finally {
+      _currentOperation = null;
+    }
+  }
+
+  @override
+  List<PlatformType> getSupportedPlatforms() => _inner.getSupportedPlatforms();
+}
+
 /// Builds [Catcher2Options] for debug / release with file + console (debug) handlers.
 abstract final class CcCatcherBootstrap {
   CcCatcherBootstrap._();
 
+  static _SynchronizedFileHandler? _cachedHandler;
+
+  static _SynchronizedFileHandler _getHandler(
+    File logFile, {
+    bool printLogs = false,
+  }) {
+    return _cachedHandler ??= _SynchronizedFileHandler(
+      logFile,
+      printLogs: printLogs,
+    );
+  }
+
   static Catcher2Options debugOptions(File logFile) =>
       Catcher2Options(SilentReportMode(), [
         _JsonConsoleHandler(),
-        FileHandler(logFile, printLogs: kDebugMode),
+        _getHandler(logFile, printLogs: kDebugMode),
         CcCrashlyticsHandler(),
       ]);
 
   static Catcher2Options releaseOptions(File logFile) => Catcher2Options(
     SilentReportMode(),
-    [FileHandler(logFile, printLogs: false), CcCrashlyticsHandler()],
+    [_getHandler(logFile, printLogs: false), CcCrashlyticsHandler()],
   );
 
   static Catcher2Options profileOptions(File logFile) =>

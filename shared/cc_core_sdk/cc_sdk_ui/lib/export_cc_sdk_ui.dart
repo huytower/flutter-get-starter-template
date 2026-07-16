@@ -71,6 +71,7 @@ export 'package:cc_sdk_ui/widgets/container/cc_container_rounded_corner_widget.d
     hide ContainerRoundedCornerTopLeftRight;
 // Container Widgets
 export 'package:cc_sdk_ui/widgets/container/cc_containers.dart';
+export 'package:cc_sdk_ui/widgets/container/cc_glassy_gradient.dart';
 export 'package:cc_sdk_ui/widgets/container/cc_gradient_card_layout.dart';
 export 'package:cc_sdk_ui/widgets/container/cc_gradient_layout.dart';
 export 'package:cc_sdk_ui/widgets/container/cc_responsive_container.dart';
@@ -114,6 +115,8 @@ export 'package:cc_sdk_ui/widgets/pages/status/retry_page.dart';
 export 'package:cc_sdk_ui/widgets/shimmer/cc_shimmer.dart';
 // Space Widgets
 export 'package:cc_sdk_ui/widgets/space/cc_space.dart';
+// Scroll Widgets
+export 'package:cc_sdk_ui/widgets/scroll/horizontal_fade_scroll_view.dart';
 // Special Status Widgets
 export 'package:cc_sdk_ui/widgets/spinners/spinkit_screen.dart';
 // Splash Widgets
