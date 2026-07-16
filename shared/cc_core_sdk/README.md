@@ -80,7 +80,7 @@ To synchronize with remote:
 
 ```
 bash
-git submodule update --remote cc_core_sdk
+git submodule update --remote
 ```
 
 To push changes to the cc_core_sdk submodule:
