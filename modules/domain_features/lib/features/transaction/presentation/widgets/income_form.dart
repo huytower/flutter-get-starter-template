@@ -16,21 +16,11 @@ import 'transaction_submit_button.dart';
 import 'transaction_wallet_selector.dart';
 
 class IncomeForm extends StatelessWidget {
-  final VoidCallback? onSaved;
-
-  const IncomeForm({super.key, this.onSaved});
+  const IncomeForm({super.key});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(getIt<IncomeFormController>());
-
-    if (onSaved != null) {
-      ever(controller.isSubmitting, (bool submitting) {
-        if (!submitting && controller.amountStr.value == '0') {
-          onSaved!();
-        }
-      });
-    }
 
     final accentColor = PrjColors.success;
 

@@ -35,13 +35,7 @@ class TransactionTabBarView extends StatelessWidget {
                 ),
               ),
             ),
-            TabBarView(
-              children: [
-                ExpenseForm(onSaved: controller.refreshData),
-                IncomeForm(onSaved: controller.refreshData),
-                TransferForm(onSaved: controller.refreshData),
-              ],
-            ),
+            TabBarView(children: [ExpenseForm(), IncomeForm(), TransferForm()]),
           ],
         ),
       );

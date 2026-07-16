@@ -14,9 +14,7 @@ import 'transaction_submit_button.dart';
 import 'transaction_wallet_selector.dart';
 
 class ExpenseForm extends StatelessWidget {
-  final VoidCallback? onSaved;
-
-  const ExpenseForm({super.key, this.onSaved});
+  const ExpenseForm({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +22,6 @@ class ExpenseForm extends StatelessWidget {
     // Usually TransactionPage or a Binding would do this, but for modularity
     // we can use Get.put here or Get.find if it's already there.
     final controller = Get.put(getIt<ExpenseFormController>());
-
-    // If onSaved is provided, we can wrap it
-    if (onSaved != null) {
-      ever(controller.isSubmitting, (bool submitting) {
-        if (!submitting && controller.amountStr.value == '0') {
-          // Assuming successful submit resets amount to '0'
-          onSaved!();
-        }
-      });
-    }
 
     final accentColor = context.ccColorScheme.error;
 

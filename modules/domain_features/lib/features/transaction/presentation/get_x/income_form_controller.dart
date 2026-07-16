@@ -82,6 +82,7 @@ class IncomeFormController extends TransactionFormController {
           ),
         );
         resetForm();
+        refreshParent();
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
         context: context,

@@ -91,6 +91,7 @@ class TransferFormController extends TransactionFormController {
           ),
         );
         resetForm();
+        refreshParent();
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
         context: context,

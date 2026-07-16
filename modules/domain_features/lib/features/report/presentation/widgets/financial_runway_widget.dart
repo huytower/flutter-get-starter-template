@@ -58,13 +58,14 @@ class FinancialRunwayWidget extends StatelessWidget {
       fontWeight: CcTypographyParams.bold,
     );
 
+    final status = runway.status ?? FinancialRunwayStatus.excellent;
+    final icon = _getStatusIcon(status);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(
-          runway.status == FinancialRunwayStatus.caution
-              ? Icons.warning_amber_rounded
-              : Icons.shield_outlined,
+          icon,
           color: statusColor,
           size: context.respIconSize(baseSize: 20),
         ),
@@ -119,12 +120,11 @@ class FinancialRunwayWidget extends StatelessWidget {
     final status = runway.status ?? FinancialRunwayStatus.excellent;
     switch (status) {
       case FinancialRunwayStatus.excellent:
+        return (PrjColors.success, PrjColors.success.withValues(alpha: 0.1));
       case FinancialRunwayStatus.good:
         return (scheme.primary, scheme.primaryContainer.withValues(alpha: 0.4));
       case FinancialRunwayStatus.safe:
-        // Use a yellowish/orange color for 'safe' (3-6 months)
-        final warningColor = PrjColors.warning;
-        return (warningColor, warningColor.withValues(alpha: 0.1));
+        return (PrjColors.info, PrjColors.info.withValues(alpha: 0.1));
       case FinancialRunwayStatus.caution:
         return (scheme.error, scheme.errorContainer.withValues(alpha: 0.4));
       case FinancialRunwayStatus.insufficient:
@@ -132,6 +132,21 @@ class FinancialRunwayWidget extends StatelessWidget {
           scheme.outline,
           scheme.surfaceContainerHighest.withValues(alpha: 0.4),
         );
+    }
+  }
+
+  IconData _getStatusIcon(FinancialRunwayStatus status) {
+    switch (status) {
+      case FinancialRunwayStatus.excellent:
+        return Icons.verified_rounded;
+      case FinancialRunwayStatus.good:
+        return Icons.check_circle_outline_rounded;
+      case FinancialRunwayStatus.safe:
+        return Icons.shield_outlined;
+      case FinancialRunwayStatus.caution:
+        return Icons.warning_amber_rounded;
+      case FinancialRunwayStatus.insufficient:
+        return Icons.info_outline_rounded;
     }
   }
 }

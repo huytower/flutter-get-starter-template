@@ -13,21 +13,11 @@ import 'transaction_submit_button.dart';
 import 'transaction_wallet_selector.dart';
 
 class TransferForm extends StatelessWidget {
-  final VoidCallback? onSaved;
-
-  const TransferForm({super.key, this.onSaved});
+  const TransferForm({super.key});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(getIt<TransferFormController>());
-
-    if (onSaved != null) {
-      ever(controller.isSubmitting, (bool submitting) {
-        if (!submitting && controller.amountStr.value == '0') {
-          onSaved!();
-        }
-      });
-    }
 
     final accentColor = context.ccColorScheme.secondary;
 
