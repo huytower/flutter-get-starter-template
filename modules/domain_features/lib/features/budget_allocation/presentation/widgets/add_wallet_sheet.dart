@@ -169,7 +169,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               top: context.respPadding(CcPaddingParams.SPACE_LG),
               bottom:
                   (_showKeypad ? 0 : MediaQuery.of(context).viewInsets.bottom) +
-                  context.respPadding(CcPaddingParams.SPACE_LG),
+                      context.respPadding(CcPaddingParams.SPACE_LG),
             ),
             decoration: BoxDecoration(
               color: context.ccColorScheme.surface,
@@ -178,83 +178,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               ),
             ),
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CcText(
-                    _isEditing
-                        ? el.tr(CcLocaleKeys.wallet_edit_title)
-                        : el.tr(CcLocaleKeys.wallet_add_title),
-                    textStyle: context.ccTextTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: context.ccColorScheme.primary,
-                      fontSize: context.respFontSize(19),
-                    ),
-                  ),
-                  const CcSpaceSM(),
-                  if (!_isEditing) ...[
-                    _buildTypeSelector(context),
-                    const CcSpaceMD(),
-                  ],
-                  TextField(
-                    controller: _nameController,
-                    maxLength: 20,
-                    decoration: InputDecoration(
-                      labelText: el.tr(CcLocaleKeys.wallet_name),
-                      hintText: el.tr(CcLocaleKeys.wallet_name_hint),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                  const CcSpaceMD(),
-                  if (_balanceLocked)
-                    _buildLockedBalance(context)
-                  else
-                    CcAmountInputSection(
-                      key: const Key('wallet_balance'),
-                      label: el.tr(CcLocaleKeys.wallet_initial_balance),
-                      amountStr: _amountStr,
-                      quickAmounts: _quickAmounts,
-                      isKeypadVisible: _showKeypad,
-                      activeColor: _accent,
-                      fieldKey: _amountFieldKey,
-                      onTap: _onAmountTap,
-                      onQuickAmountSelected: (amount) =>
-                          setState(() => _amountStr = amount.toString()),
-                    ),
-                  const CcSpaceMD(),
-                  Center(
-                    child: FractionallySizedBox(
-                      widthFactor: 0.4,
-                      child: SizedBox(
-                        height: context.respDim(40),
-                        child: ElevatedButton(
-                          onPressed: _isValid ? _onSave : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: context.ccColorScheme.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: CcText(
-                            el.tr(CcLocaleKeys.wallet_save_info),
-                            align: Alignment.center,
-                            textAlign: TextAlign.center,
-                            textStyle: context.ccTextTheme.titleMedium
-                                ?.copyWith(
-                                  color: context.ccColorScheme.onPrimary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: context.respFontSize(13),
-                                ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              child: _buildSheetContent(context),
             ),
           ),
         ),
@@ -273,6 +197,101 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
             ),
           ),
       ],
+    );
+  }
+
+  Widget _buildSheetContent(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildTitle(context),
+        const CcSpaceSM(),
+        if (!_isEditing) ...[
+          _buildTypeSelector(context),
+          const CcSpaceMD(),
+        ],
+        _buildNameField(),
+        const CcSpaceMD(),
+        if (_balanceLocked)
+          _buildLockedBalance(context)
+        else
+          _buildAmountSection(context),
+        const CcSpaceMD(),
+        _buildSaveButton(context),
+      ],
+    );
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    return CcText(
+      _isEditing
+          ? el.tr(CcLocaleKeys.wallet_edit_title)
+          : el.tr(CcLocaleKeys.wallet_add_title),
+      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+        fontWeight: FontWeight.bold,
+        color: context.ccColorScheme.primary,
+        fontSize: context.respFontSize(19),
+      ),
+    );
+  }
+
+  Widget _buildNameField() {
+    return TextField(
+      controller: _nameController,
+      maxLength: 20,
+      decoration: InputDecoration(
+        labelText: el.tr(CcLocaleKeys.wallet_name),
+        hintText: el.tr(CcLocaleKeys.wallet_name_hint),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAmountSection(BuildContext context) {
+    return CcAmountInputSection(
+      key: const Key('wallet_balance'),
+      label: el.tr(CcLocaleKeys.wallet_initial_balance),
+      amountStr: _amountStr,
+      quickAmounts: _quickAmounts,
+      isKeypadVisible: _showKeypad,
+      activeColor: _accent,
+      fieldKey: _amountFieldKey,
+      onTap: _onAmountTap,
+      onQuickAmountSelected: (amount) =>
+          setState(() => _amountStr = amount.toString()),
+    );
+  }
+
+  Widget _buildSaveButton(BuildContext context) {
+    return Center(
+      child: FractionallySizedBox(
+        widthFactor: 0.4,
+        child: SizedBox(
+          height: context.respDim(40),
+          child: ElevatedButton(
+            onPressed: _isValid ? _onSave : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: context.ccColorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: CcText(
+              el.tr(CcLocaleKeys.wallet_save_info),
+              align: Alignment.center,
+              textAlign: TextAlign.center,
+              textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                color: context.ccColorScheme.onPrimary,
+                fontWeight: FontWeight.bold,
+                fontSize: context.respFontSize(13),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 

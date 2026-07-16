@@ -108,122 +108,140 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.ccColorScheme.surface,
-      appBar: buildDomainGradientAppBar(
-        context,
-        leading: CcIconButton.bouncing(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: context.ccColorScheme.onPrimary,
-            size: context.respIconSize(baseSize: 24),
-          ),
-          onTap: () => Navigator.of(context).pop(),
+      appBar: _buildAppBar(context),
+      body: _buildBody(context),
+      bottomNavigationBar: _isLoading
+          ? null
+          : _buildBottomBar(context),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return buildDomainGradientAppBar(
+      context,
+      leading: CcIconButton.bouncing(
+        icon: Icon(
+          Icons.arrow_back_ios_new_rounded,
+          color: context.ccColorScheme.onPrimary,
+          size: context.respIconSize(baseSize: 24),
         ),
-        title: Center(
-          child: CcText(
-            el.tr(CcLocaleKeys.category_settings_title),
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-              fontWeight: CcTypographyParams.bold,
-              color: context.ccColorScheme.onPrimary,
-              fontSize: context.respFontSize(CcTypographyParams.titleMedium),
-            ),
+        onTap: () => Navigator.of(context).pop(),
+      ),
+      title: Center(
+        child: CcText(
+          el.tr(CcLocaleKeys.category_settings_title),
+          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            fontWeight: CcTypographyParams.bold,
+            color: context.ccColorScheme.onPrimary,
+            fontSize: context.respFontSize(CcTypographyParams.titleMedium),
           ),
         ),
       ),
-      body: _isLoading
-          ? const Center(child: CcLoadingIconWidget())
-          : Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-                    vertical: context.respDim(8),
-                  ),
-                  child: CcText(
-                    el.tr(CcLocaleKeys.category_settings_subtitle),
-                    textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                      color: context.ccColorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(bottom: context.respDim(100)),
-                    itemCount:
-                        1 +
-                        _groups.length +
-                        1 +
-                        CategorySeed.incomeGroups.length,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return _buildHeader(
-                          el.tr(CcLocaleKeys.category_expense_settings_title),
-                        );
-                      }
-                      final expenseIndex = index - 1;
-                      if (expenseIndex < _groups.length) {
-                        final group = _groups[expenseIndex];
-                        final cats = _byGroup[group.id] ?? [];
-                        if (cats.isEmpty) return const SizedBox.shrink();
-                        return CategoryGroupSection(
-                          group: group,
-                          categories: cats,
-                          isEnabled: _isEnabled,
-                          onToggle: _toggle,
-                          accentColor: context.ccColorScheme.error,
-                        );
-                      }
-                      if (expenseIndex == _groups.length) {
-                        return _buildHeader(
-                          el.tr(CcLocaleKeys.category_income_settings_title),
-                          topPadding: 24,
-                        );
-                      }
-                      final incomeIndex = expenseIndex - _groups.length - 1;
-                      final group = CategorySeed.incomeGroups[incomeIndex];
-                      final cats = _incomeByGroup[group.id] ?? [];
-                      if (cats.isEmpty) return const SizedBox.shrink();
-                      return CategoryGroupSection(
-                        group: group,
-                        categories: cats,
-                        isEnabled: _isEnabled,
-                        onToggle: _toggle,
-                        accentColor: PrjColors.success,
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-      bottomNavigationBar: _isLoading
-          ? null
-          : SafeArea(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  context.respPadding(CcPaddingParams.PAGE_SM),
-                  context.respDim(12),
-                  context.respPadding(CcPaddingParams.PAGE_SM),
-                  context.respDim(16),
-                ),
-                child: _isSaving
-                    ? const Center(child: CcLoadingIconWidget())
-                    : Builder(
-                        builder: (context) {
-                          final enabled = _hasAnyEnabled;
-                          return CcBaseBtn(
-                            onTap: enabled ? _save : null,
-                            isEnable: enabled,
-                            title: el.tr(CcLocaleKeys.category_settings_save),
-                            bgColor: enabled
-                                ? [
-                                    context.ccColorScheme.primary,
-                                    context.ccColorScheme.primary,
-                                  ]
-                                : null,
-                          );
-                        },
-                      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return _isLoading
+        ? const Center(child: CcLoadingIconWidget())
+        : Column(
+            children: [
+              _buildSubtitle(context),
+              Expanded(child: _buildCategoryList(context)),
+            ],
+          );
+  }
+
+  Widget _buildSubtitle(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+        vertical: context.respDim(8),
+      ),
+      child: CcText(
+        el.tr(CcLocaleKeys.category_settings_subtitle),
+        textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+          color: context.ccColorScheme.onSurfaceVariant,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryList(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.only(bottom: context.respDim(100)),
+      itemCount:
+          1 +
+          _groups.length +
+          1 +
+          CategorySeed.incomeGroups.length,
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return _buildHeader(
+            el.tr(CcLocaleKeys.category_expense_settings_title),
+          );
+        }
+        final expenseIndex = index - 1;
+        if (expenseIndex < _groups.length) {
+          final group = _groups[expenseIndex];
+          final cats = _byGroup[group.id] ?? [];
+          if (cats.isEmpty) return const SizedBox.shrink();
+          return CategoryGroupSection(
+            group: group,
+            categories: cats,
+            isEnabled: _isEnabled,
+            onToggle: _toggle,
+            accentColor: context.ccColorScheme.error,
+          );
+        }
+        if (expenseIndex == _groups.length) {
+          return _buildHeader(
+            el.tr(CcLocaleKeys.category_income_settings_title),
+            topPadding: 24,
+          );
+        }
+        final incomeIndex = expenseIndex - _groups.length - 1;
+        final group = CategorySeed.incomeGroups[incomeIndex];
+        final cats = _incomeByGroup[group.id] ?? [];
+        if (cats.isEmpty) return const SizedBox.shrink();
+        return CategoryGroupSection(
+          group: group,
+          categories: cats,
+          isEnabled: _isEnabled,
+          onToggle: _toggle,
+          accentColor: PrjColors.success,
+        );
+      },
+    );
+  }
+
+  Widget _buildBottomBar(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          context.respPadding(CcPaddingParams.PAGE_SM),
+          context.respDim(12),
+          context.respPadding(CcPaddingParams.PAGE_SM),
+          context.respDim(16),
+        ),
+        child: _isSaving
+            ? const Center(child: CcLoadingIconWidget())
+            : Builder(
+                builder: (context) {
+                  final enabled = _hasAnyEnabled;
+                  return CcBaseBtn(
+                    onTap: enabled ? _save : null,
+                    isEnable: enabled,
+                    title: el.tr(CcLocaleKeys.category_settings_save),
+                    bgColor: enabled
+                        ? [
+                            context.ccColorScheme.primary,
+                            context.ccColorScheme.primary,
+                          ]
+                        : null,
+                  );
+                },
               ),
-            ),
+      ),
     );
   }
 
