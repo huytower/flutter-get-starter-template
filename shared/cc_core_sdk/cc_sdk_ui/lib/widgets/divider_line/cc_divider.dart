@@ -31,6 +31,6 @@ class CcDividerHorizontalLine extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     height: height ?? 1,
     width: width ?? double.infinity,
-    color: color ?? context.ccColorScheme.outlineVariant.withOpacity(0.5),
+    color: color ?? context.ccColorScheme.outlineVariant.withAlpha(10),
   );
 }
