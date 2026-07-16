@@ -147,24 +147,25 @@ class TransferFormState extends State<TransferForm> with TransactionFormMixin {
             const CcSpaceMD(),
             _buildToWalletSection(context),
             const CcSpaceLG(),
-            TransactionAdditionalDetailsSection(
-              isExpanded: showMoreDetails,
-              onToggle: () =>
-                  setState(() => showMoreDetails = !showMoreDetails),
-              selectedDate: date,
-              onDateSelected: (newDate) => setState(() {
-                date = DateTime(
-                  newDate.year,
-                  newDate.month,
-                  newDate.day,
-                  date.hour,
-                  date.minute,
-                );
-              }),
-              onCalendarTap: pickDate,
-              noteController: noteController,
-              activeColor: accentColor,
-            ),
+              TransactionAdditionalDetailsSection(
+                isExpanded: showMoreDetails,
+                onToggle: () =>
+                    setState(() => showMoreDetails = !showMoreDetails),
+                selectedDate: date,
+                onDateSelected: (newDate) => setState(() {
+                  date = DateTime(
+                    newDate.year,
+                    newDate.month,
+                    newDate.day,
+                    date.hour,
+                    date.minute,
+                  );
+                }),
+                onCalendarTap: pickDate,
+                noteController: noteController,
+                hasNoteText: noteController.text.isNotEmpty,
+                activeColor: accentColor,
+              ),
             const CcSpaceXL(),
             TransactionSubmitButton(
               text: el.tr(CcLocaleKeys.transaction_record_transfer),

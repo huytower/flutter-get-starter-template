@@ -43,10 +43,7 @@ class TransactionPage extends CcGetView<TransactionController> {
           layoutBuilder: (currentChild, previousChildren) {
             return Stack(
               alignment: Alignment.centerLeft,
-              children: <Widget>[
-                ...previousChildren,
-                if (currentChild != null) currentChild,
-              ],
+              children: <Widget>[...previousChildren, ?currentChild],
             );
           },
           child: controller.showWalletSummaryTemporarily.value
@@ -94,10 +91,8 @@ class TransactionPage extends CcGetView<TransactionController> {
     return Builder(
       builder: (context) {
         return DefaultTabController(
-          length: 3,
-          child: FadePageWrapper(
-            child: _buildTransactionContent(context),
-          ),
+          length: 1,
+          child: FadePageWrapper(child: _buildTransactionContent(context)),
         );
       },
     );
@@ -118,18 +113,15 @@ class TransactionPage extends CcGetView<TransactionController> {
     return Expanded(
       child: TabBarView(
         children: [
-          ExpenseForm(
-            onSaved: controller.refreshData,
-            key: _expenseFormKey,
-          ),
-          IncomeForm(
-            onSaved: controller.refreshData,
-            key: _incomeFormKey,
-          ),
-          TransferForm(
-            onSaved: controller.refreshData,
-            key: _transferFormKey,
-          ),
+          ExpenseForm(onSaved: controller.refreshData, key: _expenseFormKey),
+          // IncomeForm(
+          //   onSaved: controller.refreshData,
+          //   key: _incomeFormKey,
+          // ),
+          // TransferForm(
+          //   onSaved: controller.refreshData,
+          //   key: _transferFormKey,
+          // ),
         ],
       ),
     );
@@ -148,12 +140,12 @@ class TransactionPage extends CcGetView<TransactionController> {
       case 0:
         _expenseFormKey.currentState?.submitForm();
         break;
-      case 1:
-        _incomeFormKey.currentState?.submitForm();
-        break;
-      case 2:
-        _transferFormKey.currentState?.submitForm();
-        break;
+      // case 1:
+      //   _incomeFormKey.currentState?.submitForm();
+      //   break;
+      // case 2:
+      //   _transferFormKey.currentState?.submitForm();
+      //   break;
     }
   }
 
@@ -200,8 +192,8 @@ class TransactionPage extends CcGetView<TransactionController> {
           labelPadding: EdgeInsets.zero,
           tabs: [
             Tab(text: el.tr(CcLocaleKeys.transaction_expense_slip)),
-            Tab(text: el.tr(CcLocaleKeys.transaction_income_slip)),
-            Tab(text: el.tr(CcLocaleKeys.transaction_record_transfer)),
+            // Tab(text: el.tr(CcLocaleKeys.transaction_income_slip)),
+            // Tab(text: el.tr(CcLocaleKeys.transaction_record_transfer)),
           ],
         );
       }),

@@ -195,6 +195,7 @@ class IncomeFormState extends State<IncomeForm> with TransactionFormMixin {
             }),
             onCalendarTap: pickDate,
             noteController: noteController,
+            hasNoteText: noteController.text.isNotEmpty,
             activeColor: accentColor,
           ),
           const CcSpaceXL(),

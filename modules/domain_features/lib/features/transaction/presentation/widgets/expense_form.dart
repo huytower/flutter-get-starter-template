@@ -205,6 +205,7 @@ class ExpenseFormState extends State<ExpenseForm> with TransactionFormMixin {
       }),
       onCalendarTap: pickDate,
       noteController: noteController,
+      hasNoteText: noteController.text.isNotEmpty,
       activeColor: accentColor,
     );
   }

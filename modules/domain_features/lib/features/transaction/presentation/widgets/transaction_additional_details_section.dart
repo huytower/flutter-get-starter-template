@@ -5,13 +5,15 @@ import 'package:flutter/services.dart';
 
 import 'quick_date_row.dart';
 
-class TransactionAdditionalDetailsSection extends StatefulWidget {
+class TransactionAdditionalDetailsSection extends StatelessWidget {
   final bool isExpanded;
   final VoidCallback onToggle;
   final DateTime selectedDate;
   final Function(DateTime) onDateSelected;
   final Future<void> Function() onCalendarTap;
   final TextEditingController noteController;
+  final bool hasNoteText;
+  final VoidCallback? onNoteTap;
   final Color activeColor;
 
   const TransactionAdditionalDetailsSection({
@@ -22,50 +24,10 @@ class TransactionAdditionalDetailsSection extends StatefulWidget {
     required this.onDateSelected,
     required this.onCalendarTap,
     required this.noteController,
+    required this.hasNoteText,
+    this.onNoteTap,
     required this.activeColor,
   });
-
-  @override
-  State<TransactionAdditionalDetailsSection> createState() =>
-      _TransactionAdditionalDetailsSectionState();
-}
-
-class _TransactionAdditionalDetailsSectionState
-    extends State<TransactionAdditionalDetailsSection> {
-  bool _hasNoteText = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _hasNoteText = widget.noteController.text.isNotEmpty;
-    widget.noteController.addListener(_onNoteChanged);
-  }
-
-  // @override
-  // void didUpdateWidget(
-  //   covariant TransactionAdditionalDetailsSection oldWidget,
-  // ) {
-  //   super.didUpdateWidget(oldWidget);
-  //   if (oldWidget.noteController != widget.noteController) {
-  //     oldWidget.noteController.removeListener(_onNoteChanged);
-  //     _hasNoteText = widget.noteController.text.isNotEmpty;
-  //     widget.noteController.addListener(_onNoteChanged);
-  //   }
-  // }
-
-  @override
-  void dispose() {
-    widget.noteController.removeListener(_onNoteChanged);
-    super.dispose();
-  }
-
-  void _onNoteChanged() {
-    if (mounted) {
-      setState(() {
-        _hasNoteText = widget.noteController.text.isNotEmpty;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +35,7 @@ class _TransactionAdditionalDetailsSectionState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildMoreDetailsToggle(context),
-        if (widget.isExpanded) _buildExpandedContent(context),
+        if (isExpanded) _buildExpandedContent(context),
       ],
     );
   }
@@ -82,11 +44,11 @@ class _TransactionAdditionalDetailsSectionState
     return SizedBox(
       width: context.respDim(120),
       child: CcInkWell(
-        onTap: widget.onToggle,
+        onTap: onToggle,
         child: Row(
           children: [
             Icon(
-              widget.isExpanded ? Icons.expand_less : Icons.expand_more,
+              isExpanded ? Icons.expand_less : Icons.expand_more,
               color: context.ccColorScheme.onSurfaceVariant,
               size: context.respDim(24),
             ),
@@ -108,10 +70,10 @@ class _TransactionAdditionalDetailsSectionState
       children: [
         const CcSpaceMD(),
         QuickDateRow(
-          selectedDate: widget.selectedDate,
-          onDateSelected: widget.onDateSelected,
-          onCalendarTap: widget.onCalendarTap,
-          activeColor: widget.activeColor,
+          selectedDate: selectedDate,
+          onDateSelected: onDateSelected,
+          onCalendarTap: onCalendarTap,
+          activeColor: activeColor,
         ),
         const CcSpaceMD(),
         _buildNoteField(context),
@@ -121,30 +83,29 @@ class _TransactionAdditionalDetailsSectionState
 
   Widget _buildNoteField(BuildContext context) {
     return CcTextField(
-      controller: widget.noteController,
+      controller: noteController,
       hintText: el.tr(CcLocaleKeys.transaction_note_hint),
       maxLines: 1,
+      onTap: onNoteTap,
       suffixIcon: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (_hasNoteText)
+          if (hasNoteText)
             IconButton(
               icon: Icon(Icons.copy, size: context.respIconSize(baseSize: 18)),
               color: context.ccColorScheme.onSurfaceVariant,
               onPressed: () {
-                Clipboard.setData(
-                  ClipboardData(text: widget.noteController.text),
-                );
+                Clipboard.setData(ClipboardData(text: noteController.text));
               },
               tooltip: el.tr(CcLocaleKeys.common_copy),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),
-          if (_hasNoteText)
+          if (hasNoteText)
             IconButton(
               icon: Icon(Icons.clear, size: context.respIconSize(baseSize: 18)),
               color: context.ccColorScheme.onSurfaceVariant,
-              onPressed: () => widget.noteController.clear(),
+              onPressed: () => noteController.clear(),
               tooltip: el.tr(CcLocaleKeys.common_clear),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
