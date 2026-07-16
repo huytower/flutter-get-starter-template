@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../domain/usecases/sign_in_with_phone_number_usecase.dart';
 import '../../domain/usecases/verify_phone_number_usecase.dart';
+import '../../domain/phone_auth_status.dart';
 import 'phone_auth_event.dart';
 import 'phone_auth_state.dart';
 
@@ -52,26 +53,26 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
         phoneNumber: event.phoneNumber,
       );
 
-      await emit.forEach<PhoneAuthEvent>(
+      await emit.forEach<PhoneAuthStatus>(
         verificationStream,
-        onData: (phoneEvent) {
+        onData: (status) {
           // If we already reached success (manually or automatically),
-          // don't let background events (like timeouts) overwrite it.
+          // don't let background statuses (like timeouts) overwrite it.
           if (state is PhoneAuthSuccess) {
             return state;
           }
 
-          if (phoneEvent is PhoneCodeSent) {
-            _verificationId = phoneEvent.verificationId;
+          if (status is PhoneAuthStatusCodeSent) {
+            _verificationId = status.verificationId;
             return PhoneAuthCodeSent(
-              phoneEvent.verificationId,
-              phoneEvent.resendToken,
+              status.verificationId,
+              status.resendToken,
             );
-          } else if (phoneEvent is PhoneVerificationCompleted) {
-            return PhoneAuthSuccess(phoneEvent.user);
-          } else if (phoneEvent is PhoneVerificationFailed) {
-            return PhoneAuthError(phoneEvent.failure.message);
-          } else if (phoneEvent is PhoneCodeAutoRetrievalTimeout) {
+          } else if (status is PhoneAuthStatusCompleted) {
+            return PhoneAuthSuccess(status.user);
+          } else if (status is PhoneAuthStatusFailed) {
+            return PhoneAuthError(status.failure.message);
+          } else if (status is PhoneAuthStatusAutoRetrievalTimeout) {
             // Keep the CodeSent state so the user can still enter the code manually
             return state;
           }

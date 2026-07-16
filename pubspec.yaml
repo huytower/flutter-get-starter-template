@@ -144,6 +144,9 @@ flutter_native_splash:
     image: assets/icon/app_icon.png
     color: "#36454F"
 
+# Single Source of Truth for workspace scripts: melos 7.8.1 reads scripts from
+# this `melos.scripts` block (NOT from melos.yaml). Do not duplicate them in
+# melos.yaml — duplication causes drift.
 melos:
   scripts:
     bootstrap:

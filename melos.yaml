@@ -6,52 +6,13 @@ packages:
   - shared/cc_core_sdk/cc_mixin
   - shared/cc_core_sdk/cc_sdk_data
 
-
   - cc_bridge
   - shared/cc_core_sdk/cc_sdk_ui
   - shared/cc_core_sdk/cc_sdk
 
-
-
   - shared/cc_micro_features
 
-
-
-
-
-scripts:
-  bootstrap:
-    description: Bootstrap the workspace and download all dependencies.
-    run: flutter pub get
-
-  rebuild:
-    description: Run bootstrap followed by code generation.
-    run: flutter pub get && melos exec --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs" && flutter pub run build_runner build --delete-conflicting-outputs
-
-  analyze:
-    description: Analyze all packages in the workspace.
-    run: melos exec -- "flutter analyze"
-
-  test:
-    description: Run tests for all packages in the workspace.
-    run: melos exec --dir-exists="test" -- "flutter test"
-
-  gen:
-    description: Generate code for all packages and the root project.
-    run: |
-      melos exec --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs"
-      flutter pub run build_runner build --delete-conflicting-outputs
-
-  gen-legacy:
-    description: Alias for gen.
-    run: melos run gen
-
-  setup:firebase:
-    description: Initialize Firebase configuration files from templates.
-    run: |
-      cp android/app/src/free/google-services.json.template android/app/src/free/google-services.json
-      cp android/app/src/prod/google-services.json.template android/app/src/prod/google-services.json
-      cp android/app/src/uat/google-services.json.template android/app/src/uat/google-services.json
-      cp ios/Firebase/free/GoogleService-Info.plist.template ios/Firebase/free/GoogleService-Info.plist
-      cp ios/Firebase/prod/GoogleService-Info.plist.template ios/Firebase/prod/GoogleService-Info.plist
-      cp ios/Firebase/uat/GoogleService-Info.plist.template ios/Firebase/uat/GoogleService-Info.plist
+# NOTE: Workspace scripts (bootstrap, gen, rebuild, analyze, test, setup:firebase,
+# check:imports) are defined ONCE in the root `pubspec.yaml` `melos.scripts`
+# block. melos 7.8.1 reads scripts from pubspec.yaml, not from this file, so
+# scripts are intentionally NOT duplicated here to avoid drift.
