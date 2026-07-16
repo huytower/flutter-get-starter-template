@@ -34,11 +34,9 @@ class ProfileHeader extends StatelessWidget {
       ),
       child: SafeArea(
         bottom: false,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-            vertical: context.respPadding(CcPaddingParams.SPACE_MD),
-          ),
+        child: CcSymmetricPadding(
+          horizontal: CcPaddingParams.PAGE_SM,
+          vertical: CcPaddingParams.SPACE_MD,
           child: Row(
             children: [
               CircleAvatar(
@@ -53,10 +51,9 @@ class ProfileHeader extends StatelessWidget {
                           fit: BoxFit.cover,
                         ),
                       )
-                    : Icon(
+                    : const CcIconToken(
                         Icons.person_rounded,
-                        size: context.respIconSize(baseSize: 30),
-                        color: context.ccColorScheme.primary,
+                        size: 30,
                       ),
               ),
               const CcSpaceMD(),

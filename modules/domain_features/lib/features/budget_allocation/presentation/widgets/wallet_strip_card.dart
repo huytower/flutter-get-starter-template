@@ -117,10 +117,9 @@ class _WalletCard extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           const Positioned.fill(child: CcGlassyGradientIcon()),
-          Icon(
+          CcIconToken(
             iconDataFromCode(wallet.iconCode),
-            size: context.respIconSize(baseSize: 18),
-            color: scheme.primary,
+            size: 18,
           ),
         ],
       ),

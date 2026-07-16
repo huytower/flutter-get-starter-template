@@ -81,10 +81,8 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
   }
 
   Widget _buildTitle(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-      ),
+    return CcSymmetricPadding(
+      horizontal: CcPaddingParams.PAGE_SM,
       child: CcText(
         el.tr(CcLocaleKeys.transaction_category),
         textStyle: context.ccTextTheme.labelMedium?.copyWith(

@@ -28,11 +28,9 @@ class WalletListItem extends StatelessWidget {
 
     return CcInkWell(
       onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-          vertical: context.respPadding(CcPaddingParams.SPACE_MD),
-        ),
+      child: CcSymmetricPadding(
+        horizontal: CcPaddingParams.SPACE_LG,
+        vertical: CcPaddingParams.SPACE_MD,
         child: Row(
           children: [
             Container(
@@ -46,10 +44,9 @@ class WalletListItem extends StatelessWidget {
                   color: context.ccColorScheme.outlineVariant.withOpacity(0.2),
                 ),
               ),
-              child: Icon(
+              child: CcIconToken(
                 icon,
-                color: context.ccColorScheme.primary,
-                size: context.respIconSize(baseSize: 28),
+                size: 28,
               ),
             ),
             const CcSpaceMD(),

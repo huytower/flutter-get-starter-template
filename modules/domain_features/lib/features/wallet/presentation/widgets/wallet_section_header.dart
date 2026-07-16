@@ -15,10 +15,8 @@ class WalletSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: context.respPadding(CcPaddingParams.SPACE_XS),
-      ),
+    return CcSymmetricPadding(
+      vertical: CcPaddingParams.SPACE_XS,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

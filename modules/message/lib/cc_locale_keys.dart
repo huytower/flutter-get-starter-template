@@ -325,7 +325,8 @@ class CodegenLoader extends AssetLoader {
       "three_months": "3 Months",
       "income_expense": "Income & Expense",
       "safety_index": "Safety Index (Runway)",
-      "runway_desc_2": "Runway shows how long you could survive without income, and helps you see your accumulation through the monthly income & expense chart so you can adjust toward a more sustainable financial plan.",
+      "runway_desc_2":
+          "Runway shows how long you could survive without income, and helps you see your accumulation through the monthly income & expense chart so you can adjust toward a more sustainable financial plan.",
       "runway_message": "You can sustain for {months} months {days} days.",
       "runway_perfect": "Your spending is excellent!",
       "runway_very_good": "Excellent! You have over a year of buffer.",
@@ -417,6 +418,7 @@ class CodegenLoader extends AssetLoader {
       "not_logged_in": "Not logged in",
       "register_login": "Register / Login",
       "birth_year": "Birth year",
+      "birth_year_subtitle": "Used to suggest appropriate categories",
       "birth_year_hint":
           "Choose your actual birth year, it affects your daily income and expense calculations",
       "weekly_audit": "Weekly audit",
@@ -426,12 +428,20 @@ class CodegenLoader extends AssetLoader {
       "debt_loan": "Debt / Loan",
       "unlock_at_lv": "Opens at LV{level}",
       "weekly_audit_day": "Weekly audit day",
+      "weekly_audit_day_subtitle": "The day you review your weekly balance",
       "reminder": "Reminders",
+      "reminder_subtitle": "Get notified to record your daily expenses",
+      "theme_subtitle": "Switch between light and dark mode",
+      "language_subtitle": "Select your preferred language",
       "currency": "Currency unit",
+      "currency_subtitle": "Change your primary currency unit",
       "currency_dong": "Dong",
       "view_tutorial": "View tutorial again",
+      "view_tutorial_subtitle": "Learn how to use the app effectively",
       "terms": "Terms of use",
+      "terms_subtitle": "Read our service terms and privacy policy",
       "about": "About app",
+      "about_subtitle": "App information and developer logs",
       "delete_account": "Delete account",
       "young_children_message":
           "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys).",
@@ -749,7 +759,8 @@ class CodegenLoader extends AssetLoader {
       "three_months": "3 tháng",
       "income_expense": "Thu nhập & Chi tiêu",
       "safety_index": "Chỉ số an toàn (Runway)",
-      "runway_desc_2": "Runway cho biết bạn có thể sống sót được bao lâu nếu mất thu nhập, đồng thời giúp bạn nhìn ra bức tranh tích lũy thông qua biểu đồ thu chi hàng tháng để điều chỉnh kế hoạch tài chính bền vững hơn.",
+      "runway_desc_2":
+          "Runway cho biết bạn có thể sống sót được bao lâu nếu mất thu nhập, đồng thời giúp bạn nhìn ra bức tranh tích lũy thông qua biểu đồ thu chi hàng tháng để điều chỉnh kế hoạch tài chính bền vững hơn.",
       "runway_message": "Bạn có thể duy trì {months} tháng {days} ngày.",
       "runway_perfect": "Bạn đang chi tiêu rất tuyệt vời!",
       "runway_very_good": "Tuyệt vời! Bạn có đủ tiền dự phòng cho hơn 1 năm.",
@@ -841,6 +852,7 @@ class CodegenLoader extends AssetLoader {
       "not_logged_in": "Chưa đăng nhập",
       "register_login": "Đăng ký / Đăng nhập",
       "birth_year": "Năm sinh",
+      "birth_year_subtitle": "Dùng để gợi ý các hạng mục phù hợp",
       "birth_year_hint":
           "Chọn năm sinh đúng thực tế, có ảnh hưởng đến số tiền thu nhập, chi tiêu hằng ngày của bạn",
       "weekly_audit": "Kiểm toán tuần",
@@ -850,12 +862,20 @@ class CodegenLoader extends AssetLoader {
       "debt_loan": "Nợ/Vay",
       "unlock_at_lv": "Mở ở LV{level}",
       "weekly_audit_day": "Ngày kiểm toán hàng tuần",
+      "weekly_audit_day_subtitle": "Ngày bạn đối soát số dư hàng tuần",
       "reminder": "Nhắc nhở",
+      "reminder_subtitle": "Nhận thông báo ghi chép chi tiêu hàng ngày",
+      "theme_subtitle": "Chuyển đổi giữa chế độ sáng và tối",
+      "language_subtitle": "Chọn ngôn ngữ bạn muốn sử dụng",
       "currency": "Đơn vị tiền tệ",
+      "currency_subtitle": "Thay đổi đơn vị tiền tệ chính",
       "currency_dong": "Đồng",
       "view_tutorial": "Xem hướng dẫn lại",
+      "view_tutorial_subtitle": "Học cách sử dụng ứng dụng hiệu quả",
       "terms": "Điều khoản sử dụng",
+      "terms_subtitle": "Đọc điều khoản dịch vụ và chính sách bảo mật",
       "about": "Về ứng dụng",
+      "about_subtitle": "Thông tin ứng dụng và nhật ký nhà phát triển",
       "delete_account": "Xoá tài khoản",
       "young_children_message":
           "Bạn có con nhỏ không? Nếu có, chúng tôi sẽ tự động bật các danh mục dành cho con (sữa, bỉm, đồ chơi trẻ em).",
@@ -1238,6 +1258,7 @@ abstract class CcLocaleKeys {
   static const profile_not_logged_in = 'profile.not_logged_in';
   static const profile_register_login = 'profile.register_login';
   static const profile_birth_year = 'profile.birth_year';
+  static const profile_birth_year_subtitle = 'profile.birth_year_subtitle';
   static const profile_birth_year_hint = 'profile.birth_year_hint';
   static const profile_weekly_audit = 'profile.weekly_audit';
   static const profile_weekly_audit_day_hint = 'profile.weekly_audit_day_hint';
@@ -1245,12 +1266,22 @@ abstract class CcLocaleKeys {
   static const profile_debt_loan = 'profile.debt_loan';
   static const profile_unlock_at_lv = 'profile.unlock_at_lv';
   static const profile_weekly_audit_day = 'profile.weekly_audit_day';
+  static const profile_weekly_audit_day_subtitle =
+      'profile.weekly_audit_day_subtitle';
   static const profile_reminder = 'profile.reminder';
+  static const profile_reminder_subtitle = 'profile.reminder_subtitle';
+  static const profile_theme_subtitle = 'profile.theme_subtitle';
+  static const profile_language_subtitle = 'profile.language_subtitle';
   static const profile_currency = 'profile.currency';
+  static const profile_currency_subtitle = 'profile.currency_subtitle';
   static const profile_currency_dong = 'profile.currency_dong';
   static const profile_view_tutorial = 'profile.view_tutorial';
+  static const profile_view_tutorial_subtitle =
+      'profile.view_tutorial_subtitle';
   static const profile_terms = 'profile.terms';
+  static const profile_terms_subtitle = 'profile.terms_subtitle';
   static const profile_about = 'profile.about';
+  static const profile_about_subtitle = 'profile.about_subtitle';
   static const profile_delete_account = 'profile.delete_account';
   static const profile_young_children_message =
       'profile.young_children_message';

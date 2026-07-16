@@ -76,10 +76,8 @@ class ExpenseForm extends StatelessWidget {
     ExpenseFormController controller,
     Color accentColor,
   ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-      ),
+    return CcSymmetricPadding(
+      horizontal: CcPaddingParams.PAGE_SM,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

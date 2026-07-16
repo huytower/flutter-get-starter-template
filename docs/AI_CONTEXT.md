@@ -68,6 +68,7 @@ SDK, UI, and feature modules.
 8. **Localization & Messaging**:
     - Use `el.tr(CcLocaleKeys.key)` for ALL user-facing strings. No hardcoded strings.
     - Reference keys from the `message` module.
+    - **Proactive Localization**: When adding new strings, manually update the localization JSON files (`en.json`, `vi.json`) AND the `CcLocaleKeys.dart` file (including the `CodegenLoader` maps). This ensures the app works immediately without needing an external `easy_localization:generate` build step.
 
 9. **SDK-First Component Reuse**: Prioritize using and extending components from `cc_core_sdk/cc_sdk_ui` before building
    custom widgets.
@@ -126,6 +127,7 @@ SDK, UI, and feature modules.
     - [ ] Functional responsiveness (`context.resp*`).
     - [ ] Import hygiene and Suffix-first naming.
     - [ ] Spacing uses `CcSpace*` components (not raw `SizedBox(respDim(N))` gaps).
+    - [ ] Proactive Localization (JSONs + `CcLocaleKeys` + `CodegenLoader` updated).
     - [ ] Linter compliance (zero errors/warnings).
 
 ## Project Structure
@@ -138,8 +140,8 @@ flutter-get-starter-template/
 │   ├── presentation/             # Shell UI (NavigationBar, Root Scaffold)
 │   └── main*.dart               # Entry points
 ├── modules/domain_features/      # Business Verticals (Vertical Features)
-│   └── lib/features/            # Home, Comment, Wallet, etc.
-├── cc_micro_features/            # Global Legos (Micro-Features)
+│   └── lib/features/            # Home, Comment, Wallet, Transaction, etc.
+├── shared/cc_micro_features/     # Global Legos (Micro-Features)
 │   └── lib/features/            # Auth, Biometric, Splash, etc.
 ├── cc_core_sdk/                  # Shared Core (Engine)
 │   ├── cc_sdk/                  # Core SDK (network, device, failures, ccGson)
@@ -229,11 +231,11 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 
 ### cc_micro_features/ (Feature Modules)
 
-**Source of Truth:** `cc_micro_features/README.md` (Refer to this for feature list and implementation flow)
+**Source of Truth:** `shared/cc_micro_features/README.md` (Refer to this for feature list and implementation flow)
 
 **Strategic Guardrails:**
 
-- **Project-Blind (STRICT):** MUST NOT import from `lib/` or `modules/data`. Use Dependency Inversion (Interfaces).
+- **Project-Blind (STRICT):** MUST NOT import from `lib/` or `modules/data_config`. Use Dependency Inversion (Interfaces).
 - **Architecture:** Must follow the 3-layer Clean Architecture (Data, Domain, Presentation).
 - **Agnostic Core:** Domain and Data layers MUST be state-management agnostic. Presentation layer can use Bloc or GetX.
 
@@ -254,11 +256,11 @@ The main app consolidates all modules in `lib/core/di/di.dart` using `@Injectabl
 **Purpose:** Application configuration, Environment management, and DI discovery.
 **DI File:** `modules/app_config/lib/core/di/di.dart`
 
-### modules/data
+### modules/data_config
 
-**Source of Truth:** `modules/data/README.md`
+**Source of Truth:** `modules/data_config/README.md`
 **Purpose:** App-specific data implementations and repository orchestration.
-**DI File:** `modules/data/lib/core/di/di.dart`
+**DI File:** `modules/data_config/lib/core/di/di.dart`
 
 ### modules/theme
 

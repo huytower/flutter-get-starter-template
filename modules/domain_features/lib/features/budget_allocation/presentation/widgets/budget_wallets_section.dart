@@ -48,10 +48,9 @@ class BudgetWalletsSection extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: onAddWallet,
-                    child: Icon(
+                    child: const CcIconToken(
                       Icons.add_circle_outline_rounded,
-                      size: context.respIconSize(baseSize: 20),
-                      color: scheme.primary,
+                      size: 20,
                     ),
                   ),
                   const CcSpaceSM(),

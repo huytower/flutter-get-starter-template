@@ -105,11 +105,9 @@ class _LanguageSelectionDialogContentState
     ColorScheme scheme,
     List<Locale> locales,
   ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        vertical: context.respPadding(CcPaddingParams.PAGE_SM),
-      ),
+    return CcSymmetricPadding(
+      horizontal: CcPaddingParams.PAGE_MD,
+      vertical: CcPaddingParams.PAGE_SM,
       child: Row(
         children: locales.map((locale) => _buildLanguageChip(context, scheme, locale, locales)).toList(),
       ),

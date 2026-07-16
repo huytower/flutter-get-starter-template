@@ -77,10 +77,9 @@ class WalletListCard extends StatelessWidget {
             color: scheme.primary.withOpacity(0.12),
             shape: BoxShape.circle,
           ),
-          child: Icon(
+          child: CcIconToken(
             iconDataFromCode(wallet.iconCode),
-            size: context.respIconSize(baseSize: 22),
-            color: scheme.primary,
+            size: 22,
           ),
         ),
       ],

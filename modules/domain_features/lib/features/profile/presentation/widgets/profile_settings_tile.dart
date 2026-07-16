@@ -6,6 +6,7 @@ class ProfileSettingsTile extends StatelessWidget {
     super.key,
     required this.icon,
     required this.label,
+    this.subtitle,
     this.onTap,
     this.onLongPress,
     this.trailingLabel,
@@ -15,6 +16,7 @@ class ProfileSettingsTile extends StatelessWidget {
 
   final IconData icon;
   final String label;
+  final String? subtitle;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
   final String? trailingLabel;
@@ -26,26 +28,44 @@ class ProfileSettingsTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       onLongPress: onLongPress,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respDim(16),
-          vertical: context.respDim(8),
-        ),
+      child: CcSymmetricPadding(
+        horizontal: CcPaddingParams.SPACE_LG,
+        vertical: CcPaddingParams.SPACE_LG,
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: context.respIconSize(baseSize: 20),
-              color: context.ccColorScheme.primary,
+            Container(
+              padding: EdgeInsets.all(context.respDim(10)),
+              decoration: BoxDecoration(
+                color: context.ccColorScheme.primary.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(context.respDim(12)),
+              ),
+              child: CcIconToken(icon, size: 22),
             ),
-            const CcSpaceMD(),
+            const CcSpaceLG(),
             Expanded(
-              child: CcText(
-                label,
-                textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: context.ccColorScheme.onSurface,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CcText(
+                    label,
+                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: context.ccColorScheme.onSurface,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const CcSpaceXS(),
+                    CcText(
+                      subtitle!,
+                      textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                        color: context.ccColorScheme.onSurfaceVariant,
+                        height: 1.4,
+                      ),
+                      maxLines: 2,
+                    ),
+                  ],
+                ],
               ),
             ),
             if (trailingWidget != null)
@@ -54,17 +74,17 @@ class ProfileSettingsTile extends StatelessWidget {
               if (trailingLabel != null) ...[
                 CcText(
                   trailingLabel!,
-                  textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                     color: context.ccColorScheme.onSurfaceVariant,
                   ),
                 ),
-                const SizedBox(width: 4),
+                const CcSpaceXS(),
               ],
               if (showChevron)
                 Icon(
                   Icons.chevron_right_rounded,
                   size: context.respIconSize(baseSize: 20),
-                  color: context.ccColorScheme.onSurfaceVariant,
+                  color: context.ccColorScheme.outline,
                 ),
             ],
           ],

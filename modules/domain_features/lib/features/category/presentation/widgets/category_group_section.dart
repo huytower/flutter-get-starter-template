@@ -32,10 +32,8 @@ class CategoryGroupSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-            ),
+          CcSymmetricPadding(
+            horizontal: CcPaddingParams.PAGE_SM,
             child: CcText(
               el.tr(group.nameKey),
               textStyle: context.ccTextTheme.labelLarge?.copyWith(

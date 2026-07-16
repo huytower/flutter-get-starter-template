@@ -45,10 +45,9 @@ class BudgetPreviewSection extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () => _openAddBudget(context),
-                    child: Icon(
+                    child: const CcIconToken(
                       Icons.add_circle_outline_rounded,
-                      size: context.respIconSize(baseSize: 20),
-                      color: scheme.primary,
+                      size: 20,
                     ),
                   ),
                   const CcSpaceSM(),
@@ -74,11 +73,9 @@ class BudgetPreviewSection extends StatelessWidget {
             limit: 4,
           );
           if (budgets.isEmpty) {
-            return Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-                vertical: context.respDim(12),
-              ),
+            return CcSymmetricPadding(
+              horizontal: CcPaddingParams.SPACE_LG,
+              vertical: 12,
               child: CcText(
                 el.tr(CcLocaleKeys.budget_empty),
                 textAlign: TextAlign.center,
@@ -88,10 +85,8 @@ class BudgetPreviewSection extends StatelessWidget {
               ),
             );
           }
-          return Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-            ),
+          return CcSymmetricPadding(
+            horizontal: CcPaddingParams.SPACE_LG,
             child: GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

@@ -17,8 +17,8 @@ class CategoryLegendTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: context.respDim(4)),
+    return CcSymmetricPadding(
+      vertical: 4,
       child: Row(
         children: [
           Container(

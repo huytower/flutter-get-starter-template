@@ -192,7 +192,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
     if (isBalanced) {
       return Row(
         children: [
-          Icon(Icons.check_circle_outline, color: scheme.primary, size: 16),
+          const CcIconToken(Icons.check_circle_outline, size: 16),
           const SizedBox(width: 4),
           CcText(
             el.tr(CcLocaleKeys.reconciliation_matched),

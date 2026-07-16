@@ -85,12 +85,11 @@ class BudgetHeroBanner extends StatelessWidget {
                     color: scheme.onPrimary,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: CcIconToken(
                     walletController.isBalanceVisible.value
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined,
-                    color: scheme.primary,
-                    size: context.respIconSize(baseSize: 16),
+                    size: 16,
                   ),
                 ),
               ),

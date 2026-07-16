@@ -62,10 +62,8 @@ class ReportPageHeader extends StatelessWidget {
   }
 
   Widget _buildTitleRow(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-      ),
+    return CcSymmetricPadding(
+      horizontal: CcPaddingParams.PAGE_MD,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -99,10 +97,8 @@ class ReportPageHeader extends StatelessWidget {
       final runway = controller.runway.value;
       if (runway == null) return const SizedBox.shrink();
 
-      return Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        ),
+      return CcSymmetricPadding(
+        horizontal: CcPaddingParams.PAGE_MD,
         child: FinancialRunwayWidget(runway: runway),
       );
     });

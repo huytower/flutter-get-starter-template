@@ -52,10 +52,8 @@ class TransactionPageHeader extends StatelessWidget {
       left: 0,
       right: 0,
       bottom: 0,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        ),
+      child: CcSymmetricPadding(
+        horizontal: CcPaddingParams.PAGE_MD,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
