@@ -8,8 +8,7 @@ import '../../domain/repositories/wallet_repository.dart';
 import '../datasources/local/wallet_local_datasource.dart';
 
 @LazySingleton(as: WalletRepository)
-class WalletRepositoryImpl with CcBaseRepository
-    implements WalletRepository {
+class WalletRepositoryImpl with CcBaseRepository implements WalletRepository {
   @factoryMethod
   WalletRepositoryImpl({required WalletLocalDataSource local}) : _local = local;
 

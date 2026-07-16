@@ -78,8 +78,9 @@ class PerformReconciliationUseCase {
           date: now,
           walletId: balance.wallet.id,
         );
-        final created =
-            await _transactionRepository.createTransaction(adjustment);
+        final created = await _transactionRepository.createTransaction(
+          adjustment,
+        );
         if (created.isError()) {
           // Compensating rollback: undo the adjustments already created so we
           // don't leave orphaned "khớp sổ" transactions.
@@ -102,8 +103,9 @@ class PerformReconciliationUseCase {
       date: now,
     );
 
-    final saved =
-        await _reconciliationRepository.saveReconciliation(reconciliation);
+    final saved = await _reconciliationRepository.saveReconciliation(
+      reconciliation,
+    );
     if (saved.isError()) {
       await _rollback(adjustmentIds);
       return Error(saved.tryGetError()!);

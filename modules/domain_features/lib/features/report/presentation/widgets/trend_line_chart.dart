@@ -44,7 +44,7 @@ class TrendLineChart extends StatelessWidget {
     return Column(
       children: [
         _buildHeader(context, incomeColor, expenseColor),
-        SizedBox(height: context.respDim(24)),
+        const CcSpaceXL(),
         SizedBox(
           height: context.respDim(220),
           child: LineChart(
@@ -207,9 +207,9 @@ class TrendLineChart extends StatelessWidget {
                 visualDensity: VisualDensity.compact,
               ),
             ],
-            SizedBox(width: context.respDim(8)),
+            const CcSpaceSM(),
             _legendDot(context, incomeColor, el.tr(CcLocaleKeys.common_income)),
-            SizedBox(width: context.respDim(12)),
+            const CcSpaceMD(),
             _legendDot(
               context,
               expenseColor,
@@ -229,7 +229,7 @@ class TrendLineChart extends StatelessWidget {
           height: context.respDim(8),
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
-        SizedBox(width: context.respDim(4)),
+        const CcSpaceXS(),
         CcText(label, textStyle: context.ccTextTheme.labelSmall),
       ],
     );

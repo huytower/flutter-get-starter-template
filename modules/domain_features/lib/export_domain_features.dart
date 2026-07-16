@@ -5,10 +5,10 @@ export 'core/di/di.dart';
 export 'core/getx/cc_get_controller.dart';
 export 'core/getx/cc_get_view.dart';
 export 'core/navigation/domain_router.gr.dart';
-// Budget Limit
-export 'features/budget_limit/export_budget_limit.dart';
 // Budget Allocation (composite: Wallet + Budget Limit)
 export 'features/budget_allocation/export_budget_allocation.dart';
+// Budget Limit
+export 'features/budget_limit/export_budget_limit.dart';
 // Category
 export 'features/category/export_category.dart';
 // Comment

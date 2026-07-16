@@ -26,10 +26,8 @@ class WalletDeleteConfirmationDialog extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => WalletDeleteConfirmationDialog(
-        wallet: wallet,
-        onConfirm: onConfirm,
-      ),
+      builder: (_) =>
+          WalletDeleteConfirmationDialog(wallet: wallet, onConfirm: onConfirm),
     );
   }
 
@@ -38,9 +36,7 @@ class WalletDeleteConfirmationDialog extends StatelessWidget {
     final scheme = context.ccColorScheme;
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.all(
-          context.respPadding(CcPaddingParams.SPACE_LG),
-        ),
+        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_LG)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -92,7 +88,7 @@ class WalletDeleteConfirmationDialog extends StatelessWidget {
                     onTap: () => Navigator.of(context).pop(),
                   ),
                 ),
-                SizedBox(width: context.respDim(12)),
+                const CcSpaceMD(),
                 Expanded(
                   child: CcBaseBtn(
                     title: el.tr(CcLocaleKeys.common_delete),

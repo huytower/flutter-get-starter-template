@@ -21,9 +21,18 @@ class CategorySeed {
   static const String incomeOtherGroupId = 'income_other';
 
   static const List<CategoryGroupEntity> incomeGroups = [
-    CategoryGroupEntity(id: incomeActiveGroupId, nameKey: CcLocaleKeys.category_income_group_active),
-    CategoryGroupEntity(id: incomeInvestGroupId, nameKey: CcLocaleKeys.category_income_group_invest),
-    CategoryGroupEntity(id: incomeOtherGroupId, nameKey: CcLocaleKeys.category_income_group_other),
+    CategoryGroupEntity(
+      id: incomeActiveGroupId,
+      nameKey: CcLocaleKeys.category_income_group_active,
+    ),
+    CategoryGroupEntity(
+      id: incomeInvestGroupId,
+      nameKey: CcLocaleKeys.category_income_group_invest,
+    ),
+    CategoryGroupEntity(
+      id: incomeOtherGroupId,
+      nameKey: CcLocaleKeys.category_income_group_other,
+    ),
   ];
 
   static const List<CategoryGroupEntity> groups = [
@@ -642,5 +651,4 @@ class CategorySeed {
       CcLocaleKeys.category_income_gift,
     ],
   };
-
 }

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../../transaction/domain/entities/transaction_entity.dart';
 
 class TrendPoint extends Equatable {

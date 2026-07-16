@@ -59,7 +59,7 @@ class ProfileHeader extends StatelessWidget {
                         color: context.ccColorScheme.primary,
                       ),
               ),
-              SizedBox(width: context.respDim(12)),
+              const CcSpaceMD(),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

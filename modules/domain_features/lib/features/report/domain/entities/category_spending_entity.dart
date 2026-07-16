@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:equatable/equatable.dart';
 
 /// One slice of the spending pie ("tỷ trọng chi tiêu"): the total expense in a
@@ -35,5 +36,13 @@ class CategorySpendingEntity extends Equatable {
   int get percent => (fraction * 100).round();
 
   @override
-  List<Object?> get props => [categoryId, amount, fraction, nameKey, iconCode, iconFamily, color];
+  List<Object?> get props => [
+    categoryId,
+    amount,
+    fraction,
+    nameKey,
+    iconCode,
+    iconFamily,
+    color,
+  ];
 }

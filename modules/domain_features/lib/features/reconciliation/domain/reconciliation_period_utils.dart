@@ -7,7 +7,6 @@
   final dayNum = d.weekday; // Mon = 1 .. Sun = 7
   final thursday = d.add(Duration(days: 4 - dayNum));
   final yearStart = DateTime.utc(thursday.year, 1, 1);
-  final week =
-      ((thursday.difference(yearStart).inDays) / 7).floor() + 1;
+  final week = ((thursday.difference(yearStart).inDays) / 7).floor() + 1;
   return (yearly: thursday.year, week: week);
 }

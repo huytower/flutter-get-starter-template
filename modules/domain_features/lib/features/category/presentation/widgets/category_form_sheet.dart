@@ -39,7 +39,9 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
   @override
   void initState() {
     super.initState();
-    final displayName = widget.target != null ? el.tr(widget.target!.nameKey) : '';
+    final displayName = widget.target != null
+        ? el.tr(widget.target!.nameKey)
+        : '';
     _originalDisplayName = displayName;
     _nameController = TextEditingController(text: displayName);
     _iconCode = widget.target?.iconCode ?? widget.iconPresets.first.codePoint;
@@ -95,7 +97,8 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
         left: context.respPadding(CcPaddingParams.SPACE_LG),
         right: context.respPadding(CcPaddingParams.SPACE_LG),
         top: context.respPadding(CcPaddingParams.SPACE_LG),
-        bottom: MediaQuery.of(context).viewInsets.bottom +
+        bottom:
+            MediaQuery.of(context).viewInsets.bottom +
             context.respPadding(CcPaddingParams.SPACE_LG),
       ),
       child: Column(
@@ -142,7 +145,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
                   borderRadius: BorderRadius.circular(context.respDim(12)),
                 ),
               ),
-              child: _isSaving 
+              child: _isSaving
                   ? const CcLoadingIconWidget()
                   : CcText(
                       el.tr(CcLocaleKeys.common_save),

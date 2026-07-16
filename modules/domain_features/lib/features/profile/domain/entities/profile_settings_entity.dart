@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class ProfileSettingsEntity {
   const ProfileSettingsEntity({
     this.reminderEnabled = true,
@@ -25,12 +23,11 @@ class ProfileSettingsEntity {
     String? currencyCode,
     int? birthYear,
     bool? isDarkMode,
-  }) =>
-      ProfileSettingsEntity(
-        reminderEnabled: reminderEnabled ?? this.reminderEnabled,
-        weeklyAuditDayIndex: weeklyAuditDayIndex ?? this.weeklyAuditDayIndex,
-        currencyCode: currencyCode ?? this.currencyCode,
-        birthYear: birthYear ?? this.birthYear,
-        isDarkMode: isDarkMode ?? this.isDarkMode,
-      );
+  }) => ProfileSettingsEntity(
+    reminderEnabled: reminderEnabled ?? this.reminderEnabled,
+    weeklyAuditDayIndex: weeklyAuditDayIndex ?? this.weeklyAuditDayIndex,
+    currencyCode: currencyCode ?? this.currencyCode,
+    birthYear: birthYear ?? this.birthYear,
+    isDarkMode: isDarkMode ?? this.isDarkMode,
+  );
 }

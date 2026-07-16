@@ -29,7 +29,7 @@ class CategoryLegendTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(context.respDim(3)),
             ),
           ),
-          SizedBox(width: context.respDim(12)),
+          const CcSpaceMD(),
           Expanded(
             child: CcText(
               el.tr(slice.nameKey),
@@ -42,7 +42,7 @@ class CategoryLegendTile extends StatelessWidget {
               color: context.ccColorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(width: context.respDim(12)),
+          const CcSpaceMD(),
           CcText(
             formatVndShort(slice.amount),
             textStyle: context.ccTextTheme.bodySmall?.copyWith(

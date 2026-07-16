@@ -1,4 +1,7 @@
 // Domain
+// Data (model adapters exported so the app shell can register them with Hive)
+export 'data/models/reconciliation_allocation_model.dart';
+export 'data/models/reconciliation_model.dart';
 export 'domain/entities/reconciliation_allocation_entity.dart';
 export 'domain/entities/reconciliation_entity.dart';
 export 'domain/repositories/reconciliation_repository.dart';
@@ -11,6 +14,3 @@ export 'presentation/pages/reconcile_page.dart';
 export 'presentation/widgets/reconciliation_dialogs.dart';
 export 'presentation/widgets/reconciliation_history_card.dart';
 export 'presentation/widgets/wallet_reconcile_tile.dart';
-// Data (model adapters exported so the app shell can register them with Hive)
-export 'data/models/reconciliation_allocation_model.dart';
-export 'data/models/reconciliation_model.dart';

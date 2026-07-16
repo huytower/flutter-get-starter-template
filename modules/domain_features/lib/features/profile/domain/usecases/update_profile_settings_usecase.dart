@@ -9,5 +9,6 @@ class UpdateProfileSettingsUseCase {
 
   final ProfileRepository _repo;
 
-  Future<void> call(ProfileSettingsEntity settings) => _repo.saveSettings(settings);
+  Future<void> call(ProfileSettingsEntity settings) =>
+      _repo.saveSettings(settings);
 }

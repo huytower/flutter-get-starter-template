@@ -296,7 +296,7 @@ class _TransactionDatePickerDialogContentState
                         ),
                       ),
                     ),
-                    SizedBox(width: context.respDim(8)),
+                    const CcSpaceSM(),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(_selectedDate),
                       child: CcText(

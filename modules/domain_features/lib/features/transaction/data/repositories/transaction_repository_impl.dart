@@ -10,7 +10,8 @@ import 'package:multiple_result/multiple_result.dart';
 import '../datasources/local/transaction_local_datasource.dart';
 
 @LazySingleton(as: TransactionRepository)
-class TransactionRepositoryImpl with CcBaseRepository
+class TransactionRepositoryImpl
+    with CcBaseRepository
     implements TransactionRepository {
   @factoryMethod
   TransactionRepositoryImpl({required TransactionLocalDataSource local})
@@ -22,11 +23,9 @@ class TransactionRepositoryImpl with CcBaseRepository
   /// are excluded from every read path.
   Future<List<TransactionEntity>> _allSortedDesc() async {
     final models = await _local.getAll();
-    final entities = models
-        .map((m) => m.toEntity())
-        .where((e) => !e.isDeleted)
-        .toList()
-      ..sort((a, b) => b.date.compareTo(a.date));
+    final entities =
+        models.map((m) => m.toEntity()).where((e) => !e.isDeleted).toList()
+          ..sort((a, b) => b.date.compareTo(a.date));
     return entities;
   }
 
@@ -98,9 +97,7 @@ class TransactionRepositoryImpl with CcBaseRepository
     return safeRequest(() async {
       final all = await _allSortedDesc();
       return all
-          .where(
-            (t) => !t.date.isBefore(start) && !t.date.isAfter(end),
-          )
+          .where((t) => !t.date.isBefore(start) && !t.date.isAfter(end))
           .toList();
     });
   }

@@ -26,4 +26,3 @@ int bookBalanceFromTransactions(
   }
   return balance;
 }
-

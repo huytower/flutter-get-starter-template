@@ -21,11 +21,11 @@ class FinancialRunwayEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        months,
-        days,
-        message,
-        totalBalance,
-        averageMonthlyExpense,
-        status,
-      ];
+    months,
+    days,
+    message,
+    totalBalance,
+    averageMonthlyExpense,
+    status,
+  ];
 }

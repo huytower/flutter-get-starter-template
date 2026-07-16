@@ -1,11 +1,11 @@
 // Domain
+// Data
+export 'data/datasources/local/profile_local_datasource.dart';
+export 'data/repositories/profile_repository_impl.dart';
 export 'domain/entities/profile_settings_entity.dart';
 export 'domain/repositories/profile_repository.dart';
 export 'domain/usecases/get_profile_settings_usecase.dart';
 export 'domain/usecases/update_profile_settings_usecase.dart';
-// Data
-export 'data/datasources/local/profile_local_datasource.dart';
-export 'data/repositories/profile_repository_impl.dart';
 // Presentation
 export 'presentation/get_x/profile_controller.dart';
 export 'presentation/pages/profile_page.dart';

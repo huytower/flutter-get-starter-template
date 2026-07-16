@@ -1,4 +1,3 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 import 'birth_year_dialog_content.dart';

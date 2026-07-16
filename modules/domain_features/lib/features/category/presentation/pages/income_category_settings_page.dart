@@ -86,7 +86,8 @@ class _IncomeCategorySettingsPageState
     final confirmed = await CategoryUiUtils.showDeleteConfirmation(
       context: context,
       category: category,
-      title: "${el.tr(CcLocaleKeys.common_delete)} ${el.tr(CcLocaleKeys.category_income_settings_title).toLowerCase()}",
+      title:
+          "${el.tr(CcLocaleKeys.common_delete)} ${el.tr(CcLocaleKeys.category_income_settings_title).toLowerCase()}",
     );
     if (confirmed != true) return;
 
@@ -133,29 +134,29 @@ class _IncomeCategorySettingsPageState
       body: _isLoading
           ? const Center(child: CcLoadingIconWidget())
           : _categories.isEmpty
-              ? Center(
-                  child: CcText(
-                    el.tr(CcLocaleKeys.common_no_data),
-                    textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                      color: context.ccColorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                )
-              : ListView.separated(
-                  padding: EdgeInsets.all(
-                    context.respPadding(CcPaddingParams.PAGE_SM),
-                  ),
-                  itemCount: _categories.length,
-                  separatorBuilder: (_, _) => const CcSpaceSM(),
-                  itemBuilder: (context, index) {
-                    final category = _categories[index];
-                    return CategoryListTile(
-                      category: category,
-                      onTap: () => _openForm(target: category),
-                      onDelete: () => _confirmDelete(category),
-                    );
-                  },
+          ? Center(
+              child: CcText(
+                el.tr(CcLocaleKeys.common_no_data),
+                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                  color: context.ccColorScheme.onSurfaceVariant,
                 ),
+              ),
+            )
+          : ListView.separated(
+              padding: EdgeInsets.all(
+                context.respPadding(CcPaddingParams.PAGE_SM),
+              ),
+              itemCount: _categories.length,
+              separatorBuilder: (_, _) => const CcSpaceSM(),
+              itemBuilder: (context, index) {
+                final category = _categories[index];
+                return CategoryListTile(
+                  category: category,
+                  onTap: () => _openForm(target: category),
+                  onDelete: () => _confirmDelete(category),
+                );
+              },
+            ),
     );
   }
 }

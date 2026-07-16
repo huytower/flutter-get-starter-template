@@ -45,10 +45,7 @@ class WalletActionsBottomSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            leading: Icon(
-              Icons.edit_outlined,
-              color: scheme.primary,
-            ),
+            leading: Icon(Icons.edit_outlined, color: scheme.primary),
             title: CcText(el.tr(CcLocaleKeys.common_edit)),
             onTap: () {
               Navigator.pop(context);
@@ -56,10 +53,7 @@ class WalletActionsBottomSheet extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(
-              Icons.delete_outline,
-              color: scheme.error,
-            ),
+            leading: Icon(Icons.delete_outline, color: scheme.error),
             title: CcText(
               el.tr(CcLocaleKeys.common_delete),
               textStyle: TextStyle(color: scheme.error),

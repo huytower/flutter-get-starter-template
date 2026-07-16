@@ -54,16 +54,18 @@ class CategoryListTile extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        trailing: trailing ?? (onDelete != null
-            ? CcIconButton.bouncing(
-                icon: Icon(
-                  Icons.delete_outline,
-                  color: scheme.error,
-                  size: context.respIconSize(baseSize: 24),
-                ),
-                onTap: onDelete!,
-              )
-            : null),
+        trailing:
+            trailing ??
+            (onDelete != null
+                ? CcIconButton.bouncing(
+                    icon: Icon(
+                      Icons.delete_outline,
+                      color: scheme.error,
+                      size: context.respIconSize(baseSize: 24),
+                    ),
+                    onTap: onDelete!,
+                  )
+                : null),
       ),
     );
   }

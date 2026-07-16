@@ -11,7 +11,8 @@ import '../datasources/local/category_seed.dart';
 import '../models/category_model.dart';
 
 @LazySingleton(as: CategoryRepository)
-class CategoryRepositoryImpl with CcBaseRepository
+class CategoryRepositoryImpl
+    with CcBaseRepository
     implements CategoryRepository {
   @factoryMethod
   CategoryRepositoryImpl({required CategoryLocalDataSource local})

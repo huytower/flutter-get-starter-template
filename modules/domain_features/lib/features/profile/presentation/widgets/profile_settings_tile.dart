@@ -38,7 +38,7 @@ class ProfileSettingsTile extends StatelessWidget {
               size: context.respIconSize(baseSize: 20),
               color: context.ccColorScheme.primary,
             ),
-            SizedBox(width: context.respDim(12)),
+            const CcSpaceMD(),
             Expanded(
               child: CcText(
                 label,

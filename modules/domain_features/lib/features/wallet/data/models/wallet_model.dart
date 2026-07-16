@@ -1,5 +1,6 @@
-import '../../domain/entities/wallet_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import '../../domain/entities/wallet_entity.dart';
 
 part 'wallet_model.g.dart';
 

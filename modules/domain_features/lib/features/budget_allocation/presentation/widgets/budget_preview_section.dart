@@ -51,7 +51,7 @@ class BudgetPreviewSection extends StatelessWidget {
                       color: scheme.primary,
                     ),
                   ),
-                  SizedBox(width: context.respDim(8)),
+                  const CcSpaceSM(),
                   GestureDetector(
                     onTap: () =>
                         context.router.push(const BudgetLimitManagementRoute()),
@@ -107,7 +107,7 @@ class BudgetPreviewSection extends StatelessWidget {
             ),
           );
         }),
-        SizedBox(height: context.respDim(24)),
+        const CcSpaceXL(),
       ],
     );
   }

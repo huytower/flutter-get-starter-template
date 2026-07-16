@@ -54,7 +54,7 @@ class BudgetWalletsSection extends StatelessWidget {
                       color: scheme.primary,
                     ),
                   ),
-                  SizedBox(width: context.respDim(8)),
+                  const CcSpaceSM(),
                   GestureDetector(
                     onTap: () => context.router.push(const WalletListRoute()),
                     child: CcText(

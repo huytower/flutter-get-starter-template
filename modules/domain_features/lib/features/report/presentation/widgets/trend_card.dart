@@ -58,7 +58,7 @@ class TrendCard extends StatelessWidget {
                     size: context.respIconSize(baseSize: 18),
                   ),
                 ),
-                SizedBox(width: context.respDim(12)),
+                const CcSpaceMD(),
                 CcText(
                   title,
                   textStyle: context.ccTextTheme.bodyMedium?.copyWith(
@@ -82,7 +82,7 @@ class TrendCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: context.respDim(24)),
+            const CcSpaceXL(),
             Expanded(
               child: SizedBox(
                 height: context.respDim(50),
@@ -146,7 +146,7 @@ class TrendCard extends StatelessWidget {
               ),
             ),
             if (range != ReportRange.weekly) ...[
-              SizedBox(height: context.respDim(12)),
+              const CcSpaceMD(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

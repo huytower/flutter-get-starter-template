@@ -36,9 +36,7 @@ class CategoryIconSelector extends StatelessWidget {
             child: Icon(
               icon,
               size: context.respIconSize(baseSize: 22),
-              color: isSelected 
-                  ? scheme.onPrimary 
-                  : scheme.onSurfaceVariant,
+              color: isSelected ? scheme.onPrimary : scheme.onSurfaceVariant,
             ),
           ),
         );

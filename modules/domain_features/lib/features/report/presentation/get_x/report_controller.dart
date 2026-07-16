@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../domain/entities/category_spending_entity.dart';
 import '../../domain/entities/financial_runway_entity.dart';
@@ -28,16 +27,20 @@ class ReportController extends CcGetController {
   final Rx<ReportRange> range = ReportRange.weekly.obs;
   final RxInt navigationOffset = 0.obs;
 
-  final RxList<CategorySpendingEntity> spending = <CategorySpendingEntity>[].obs;
+  final RxList<CategorySpendingEntity> spending =
+      <CategorySpendingEntity>[].obs;
   final Rx<TrendDataEntity?> trendData = Rx<TrendDataEntity?>(null);
   final Rx<FinancialRunwayEntity?> runway = Rx<FinancialRunwayEntity?>(null);
 
   int get rangeExpense => spending.fold<int>(0, (sum, s) => sum + s.amount);
 
   bool get canNext => navigationOffset.value > 0;
+
   bool get canPrevious {
-    if (range.value == ReportRange.monthly) return navigationOffset.value < 4; // Max 12 months (4 * 3)
-    if (range.value == ReportRange.yearly) return navigationOffset.value < 1; // Max 1 year back
+    if (range.value == ReportRange.monthly)
+      return navigationOffset.value < 4; // Max 12 months (4 * 3)
+    if (range.value == ReportRange.yearly)
+      return navigationOffset.value < 1; // Max 1 year back
     return false;
   }
 
@@ -74,14 +77,15 @@ class ReportController extends CcGetController {
     }
 
     final bounds = range.value.bounds();
-    
+
     final results = await Future.wait([
       _getCategorySpending.call(start: bounds.start, end: bounds.end),
       _getTrendData.call(range: range.value, offset: navigationOffset.value),
       _getFinancialRunway.call(),
     ]);
 
-    final spendingResult = results[0] as Result<List<CategorySpendingEntity>, dynamic>;
+    final spendingResult =
+        results[0] as Result<List<CategorySpendingEntity>, dynamic>;
     final trendResult = results[1] as Result<TrendDataEntity, dynamic>;
     final runwayResult = results[2] as Result<FinancialRunwayEntity, dynamic>;
 

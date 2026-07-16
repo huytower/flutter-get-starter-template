@@ -26,9 +26,10 @@ class GetFinancialRunwayUseCase {
     if (balancesResult.isError()) {
       return Error(balancesResult.tryGetError()!);
     }
-    final totalBalance = balancesResult
-        .tryGetSuccess()!
-        .fold<double>(0, (sum, b) => sum + b.bookBalance);
+    final totalBalance = balancesResult.tryGetSuccess()!.fold<double>(
+      0,
+      (sum, b) => sum + b.bookBalance,
+    );
 
     // 2. Get average expense from last 3 months + current month to be real-time
     final now = DateTime.now();
@@ -56,11 +57,13 @@ class GetFinancialRunwayUseCase {
       final earliestTxn = transactions
           .map((t) => t.date)
           .reduce((a, b) => a.isBefore(b) ? a : b);
-      
+
       // Calculate months between earliestTxn and today
-      final diffMonths = (now.year - earliestTxn.year) * 12 + 
-                         (now.month - earliestTxn.month) + 1;
-      
+      final diffMonths =
+          (now.year - earliestTxn.year) * 12 +
+          (now.month - earliestTxn.month) +
+          1;
+
       monthsCount = diffMonths.toDouble();
       if (monthsCount > 4) monthsCount = 4;
       if (monthsCount < 1) monthsCount = 1;
@@ -69,25 +72,29 @@ class GetFinancialRunwayUseCase {
     final averageMonthlyExpense = totalExpenses / monthsCount;
 
     if (averageMonthlyExpense <= 0) {
-      return Success(FinancialRunwayEntity(
-        months: 0,
-        days: 0,
-        message: CcLocaleKeys.report_runway_insufficient,
-        totalBalance: totalBalance,
-        averageMonthlyExpense: 0,
-        status: FinancialRunwayStatus.insufficient,
-      ));
+      return Success(
+        FinancialRunwayEntity(
+          months: 0,
+          days: 0,
+          message: CcLocaleKeys.report_runway_insufficient,
+          totalBalance: totalBalance,
+          averageMonthlyExpense: 0,
+          status: FinancialRunwayStatus.insufficient,
+        ),
+      );
     }
 
     if (totalBalance <= 0) {
-      return Success(FinancialRunwayEntity(
-        months: 0,
-        days: 0,
-        message: CcLocaleKeys.report_runway_caution,
-        totalBalance: totalBalance,
-        averageMonthlyExpense: averageMonthlyExpense,
-        status: FinancialRunwayStatus.caution,
-      ));
+      return Success(
+        FinancialRunwayEntity(
+          months: 0,
+          days: 0,
+          message: CcLocaleKeys.report_runway_caution,
+          totalBalance: totalBalance,
+          averageMonthlyExpense: averageMonthlyExpense,
+          status: FinancialRunwayStatus.caution,
+        ),
+      );
     }
 
     final totalMonths = totalBalance / averageMonthlyExpense;
@@ -111,13 +118,15 @@ class GetFinancialRunwayUseCase {
       status = FinancialRunwayStatus.caution;
     }
 
-    return Success(FinancialRunwayEntity(
-      months: months,
-      days: days,
-      message: messageKey,
-      totalBalance: totalBalance,
-      averageMonthlyExpense: averageMonthlyExpense,
-      status: status,
-    ));
+    return Success(
+      FinancialRunwayEntity(
+        months: months,
+        days: days,
+        message: messageKey,
+        totalBalance: totalBalance,
+        averageMonthlyExpense: averageMonthlyExpense,
+        status: status,
+      ),
+    );
   }
 }

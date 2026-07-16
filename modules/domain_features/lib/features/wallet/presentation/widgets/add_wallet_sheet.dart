@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 
 import '../../../../core/transaction_form_helpers.dart';
 import '../../../../core/util/icon_utils.dart';
-import '../../domain/entities/wallet_entity.dart';
-import '../get_x/wallet_controller.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
+import '../../domain/entities/wallet_entity.dart';
+import '../get_x/wallet_controller.dart';
 
 class AddWalletSheet extends StatefulWidget {
   const AddWalletSheet({super.key, this.wallet});
@@ -41,6 +41,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
   String _newType = WalletType.bank;
 
   bool get _isEditing => widget.wallet != null;
+
   bool get _isCash => widget.wallet?.type == WalletType.cash;
 
   bool get _balanceLocked =>
@@ -156,7 +157,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               top: context.respPadding(CcPaddingParams.SPACE_LG),
               bottom:
                   (_showKeypad ? 0 : MediaQuery.of(context).viewInsets.bottom) +
-                      context.respPadding(CcPaddingParams.SPACE_LG),
+                  context.respPadding(CcPaddingParams.SPACE_LG),
             ),
             decoration: BoxDecoration(
               color: context.ccColorScheme.surface,
@@ -228,11 +229,12 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                             el.tr(CcLocaleKeys.wallet_save_info),
                             align: Alignment.center,
                             textAlign: TextAlign.center,
-                            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                              color: context.ccColorScheme.onPrimary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: context.respFontSize(13),
-                            ),
+                            textStyle: context.ccTextTheme.titleMedium
+                                ?.copyWith(
+                                  color: context.ccColorScheme.onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: context.respFontSize(13),
+                                ),
                           ),
                         ),
                       ),
@@ -325,9 +327,9 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               duration: const Duration(milliseconds: 180),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                 color: isSelected
-                     ? context.ccColorScheme.primary
-                     : context.ccColorScheme.surfaceVariant,
+                color: isSelected
+                    ? context.ccColorScheme.primary
+                    : context.ccColorScheme.surfaceVariant,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
@@ -336,13 +338,17 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                   Icon(
                     walletIconFor(type),
                     size: 16,
-                    color: isSelected ? context.ccColorScheme.onPrimary : context.ccColorScheme.onSurfaceVariant,
+                    color: isSelected
+                        ? context.ccColorScheme.onPrimary
+                        : context.ccColorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 6),
                   CcText(
                     label,
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      color: isSelected ? context.ccColorScheme.onPrimary : context.ccColorScheme.onSurfaceVariant,
+                      color: isSelected
+                          ? context.ccColorScheme.onPrimary
+                          : context.ccColorScheme.onSurfaceVariant,
                       fontWeight: isSelected
                           ? FontWeight.bold
                           : FontWeight.normal,

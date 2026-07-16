@@ -1,6 +1,9 @@
 // Domain
-export 'domain/entities/wallet_entity.dart';
+// Data
+export 'data/models/wallet_hive_model.dart';
+export 'data/models/wallet_model.dart';
 export 'domain/entities/wallet_balance_entity.dart';
+export 'domain/entities/wallet_entity.dart';
 export 'domain/repositories/wallet_repository.dart';
 export 'domain/usecases/get_wallet_balances_usecase.dart';
 export 'domain/usecases/get_wallet_book_balance_usecase.dart';
@@ -12,6 +15,3 @@ export 'presentation/pages/wallet_list_page.dart';
 export 'presentation/widgets/add_wallet_sheet.dart';
 export 'presentation/widgets/wallet_list_item.dart';
 export 'presentation/widgets/wallet_section_header.dart';
-// Data
-export 'data/models/wallet_hive_model.dart';
-export 'data/models/wallet_model.dart';

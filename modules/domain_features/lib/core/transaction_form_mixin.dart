@@ -25,7 +25,9 @@ mixin TransactionFormMixin<T extends StatefulWidget> on State<T> {
 
   // Abstract getters that each form must implement
   Color get accentColor;
+
   String? get selectedWalletId;
+
   void Function(String) get onWalletSelected;
 
   @override

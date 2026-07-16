@@ -2,8 +2,8 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../get_x/wallet_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
+import '../get_x/wallet_controller.dart';
 
 class WalletDeleteConfirmSheet extends StatelessWidget {
   const WalletDeleteConfirmSheet({
@@ -22,9 +22,7 @@ class WalletDeleteConfirmSheet extends StatelessWidget {
     final scheme = context.ccColorScheme;
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.all(
-          context.respPadding(CcPaddingParams.SPACE_LG),
-        ),
+        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_LG)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -77,7 +75,7 @@ class WalletDeleteConfirmSheet extends StatelessWidget {
                     onTap: () => Navigator.of(context).pop(),
                   ),
                 ),
-                SizedBox(width: context.respDim(12)),
+                const CcSpaceMD(),
                 Expanded(
                   child: CcBaseBtn(
                     title: el.tr(CcLocaleKeys.common_delete),

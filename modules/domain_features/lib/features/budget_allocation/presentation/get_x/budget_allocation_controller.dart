@@ -1,9 +1,7 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/foundation.dart';
-
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
-
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';

@@ -103,13 +103,7 @@ class ReportPageHeader extends StatelessWidget {
         padding: EdgeInsets.symmetric(
           horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FinancialRunwayWidget(runway: runway),
-            const CcSpaceLG(),
-          ],
-        ),
+        child: FinancialRunwayWidget(runway: runway),
       );
     });
   }

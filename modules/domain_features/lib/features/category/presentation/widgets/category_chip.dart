@@ -71,7 +71,7 @@ class CategoryChip extends StatelessWidget {
               size: context.respIconSize(baseSize: 14),
               color: iconColor,
             ),
-            SizedBox(width: context.respDim(4)),
+            const CcSpaceXS(),
             CcText(
               el.tr(category.nameKey),
               textStyle: context.ccTextTheme.labelMedium?.copyWith(

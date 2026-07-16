@@ -59,10 +59,10 @@ class WalletListItem extends StatelessWidget {
                 children: [
                   CcText(
                     title,
-                  textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: context.ccColorScheme.onSurface,
-                  ),
+                    textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: context.ccColorScheme.onSurface,
+                    ),
                   ),
                   if (balance != null)
                     CcText(

@@ -37,7 +37,7 @@ class MonthlyBarChart extends StatelessWidget {
               _incomeColor,
               el.tr(CcLocaleKeys.report_income_short),
             ),
-            SizedBox(width: context.respDim(16)),
+            const CcSpaceLG(),
             _legendDot(
               context,
               _expenseColor,
@@ -45,7 +45,7 @@ class MonthlyBarChart extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: context.respDim(12)),
+        const CcSpaceMD(),
         SizedBox(
           height: context.respDim(200),
           child: BarChart(
@@ -112,8 +112,8 @@ class MonthlyBarChart extends StatelessWidget {
                       if (index < 0 || index >= months.length) {
                         return const SizedBox.shrink();
                       }
-                       return Padding(
-                         padding: EdgeInsets.only(top: context.respDim(6)),
+                      return Padding(
+                        padding: EdgeInsets.only(top: context.respDim(6)),
                         child: CcText(
                           months[index].shortLabel,
                           textStyle: context.ccTextTheme.labelSmall?.copyWith(
@@ -132,10 +132,10 @@ class MonthlyBarChart extends StatelessWidget {
                 for (var i = 0; i < months.length; i++)
                   BarChartGroupData(
                     x: i,
-                  barRods: [
-                    _rod(context, months[i].income, _incomeColor),
-                    _rod(context, months[i].expense, _expenseColor),
-                  ],
+                    barRods: [
+                      _rod(context, months[i].income, _incomeColor),
+                      _rod(context, months[i].expense, _expenseColor),
+                    ],
                   ),
               ],
             ),
@@ -150,7 +150,9 @@ class MonthlyBarChart extends StatelessWidget {
       toY: value.toDouble(),
       color: color,
       width: context.respDim(9),
-      borderRadius: BorderRadius.vertical(top: Radius.circular(context.respDim(3))),
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(context.respDim(3)),
+      ),
     );
   }
 

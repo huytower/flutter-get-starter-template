@@ -28,13 +28,12 @@ class ReconciliationAllocationModel {
 
   factory ReconciliationAllocationModel.fromEntity(
     ReconciliationAllocationEntity entity,
-  ) =>
-      ReconciliationAllocationModel(
-        walletId: entity.walletId,
-        walletName: entity.walletName,
-        bookBalance: entity.bookBalance,
-        actualBalance: entity.actualBalance,
-      );
+  ) => ReconciliationAllocationModel(
+    walletId: entity.walletId,
+    walletName: entity.walletName,
+    bookBalance: entity.bookBalance,
+    actualBalance: entity.actualBalance,
+  );
 
   ReconciliationAllocationEntity toEntity() => ReconciliationAllocationEntity(
     walletId: walletId,

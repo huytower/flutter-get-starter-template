@@ -40,7 +40,8 @@ class _SpendingPieChartState extends State<SpendingPieChart> {
                       _touchedIndex = -1;
                       return;
                     }
-                    _touchedIndex = response.touchedSection!.touchedSectionIndex;
+                    _touchedIndex =
+                        response.touchedSection!.touchedSectionIndex;
                   });
                 },
               ),
@@ -51,13 +52,15 @@ class _SpendingPieChartState extends State<SpendingPieChart> {
             ),
           ),
         ),
-        SizedBox(height: context.respDim(24)),
+        const CcSpaceXL(),
         Column(
           children: [
             for (var i = 0; i < widget.slices.length; i++)
               CategoryLegendTile(
                 slice: widget.slices[i],
-                color: widget.slices[i].color ?? reportPalette(context)[i % reportPalette(context).length],
+                color:
+                    widget.slices[i].color ??
+                    reportPalette(context)[i % reportPalette(context).length],
               ),
           ],
         ),

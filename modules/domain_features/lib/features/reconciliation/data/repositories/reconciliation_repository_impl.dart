@@ -9,12 +9,12 @@ import '../datasources/local/reconciliation_local_datasource.dart';
 import '../models/reconciliation_model.dart';
 
 @LazySingleton(as: ReconciliationRepository)
-class ReconciliationRepositoryImpl with CcBaseRepository
+class ReconciliationRepositoryImpl
+    with CcBaseRepository
     implements ReconciliationRepository {
   @factoryMethod
-  ReconciliationRepositoryImpl({
-    required ReconciliationLocalDataSource local,
-  }) : _local = local;
+  ReconciliationRepositoryImpl({required ReconciliationLocalDataSource local})
+    : _local = local;
 
   final ReconciliationLocalDataSource _local;
 

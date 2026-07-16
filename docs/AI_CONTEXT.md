@@ -22,9 +22,9 @@ SDK, UI, and feature modules.
 
 2. **Project-Blind Dependency Rules (STRICT)**:
     - Components in `cc_micro_features/` and `domain_features/` **MUST NOT** import from `lib/` (App Shell).
-    - `cc_micro_features/` MUST NOT import from `domain_features/` or `modules/data`.
+    - `cc_micro_features/` MUST NOT import from `domain_features/` or `modules/data_config`.
     - **Dependency Inversion**: Features define their own `Repository` interfaces in their `domain/` layer. The App
-      Shell or local `modules/data` implements these interfaces and injects them via DI.
+      Shell or local `modules/data_config` implements these interfaces and injects them via DI.
     - This ensures features can be moved or replaced without code changes in other modules.
 
 3. **State-Management Agnostic Core (STRICT)**:
@@ -88,8 +88,8 @@ SDK, UI, and feature modules.
     - **Order**: 1. Flutter/Dart, 2. External packages, 3. Project modules, 4. Local relative imports.
 
 12. **Standardized Functional Results**:
-    - All UseCases and Repositories must return `Result<T, Failure>` from the `multiple_result` package to ensure
-      consistent error handling.
+    - All UseCases and Repositories must return `Result<T, CcFailure>` from the `multiple_result` package to ensure
+      consistent error handling. (`CcFailure` is the project's failure type, defined in `cc_sdk`.)
 
 13. **Logging Strategy**:
     - Use the `.Log()` extension from `cc_sdk` for all debug logging.
@@ -101,22 +101,31 @@ SDK, UI, and feature modules.
     - Keep files focused (max 200-300 lines). Use Widget Composition to split large UIs.
     - Mark all possible constructors and widgets as `const`.
     - Extract constants to dedicated files when needed.
+    - **Extract many small methods from `build()`** (e.g. `_buildHeader`, `_buildListItem`, `_buildActions`). Small,
+      single-purpose methods localize changes to distinct regions, drastically reducing merge conflicts when multiple
+      developers edit the same screen. Prefer several focused methods over one large `build()` body.
+
+15. **Spacing Tokens — Use `CcSpace*` Instead of Raw `SizedBox` (STRICT)**: For layout gaps, never use raw
+    `SizedBox(height/width: context.respDim(N))`; always use the semantic `CcSpace*` spacers from `cc_sdk_ui`
+    (`XS=4`, `SM=8`, `MD=12`, `LG=16`, `XL=24`). Only exact token values have a `CcSpace` equivalent — keep raw
+    `SizedBox` for non-token gaps (e.g. 2/6pt) and for sizing shapes/icons/charts.
 
 ### IV. AI INTERACTION PROTOCOL (The Workflow)
 
-15. **Evidence-Based Implementation**: Always use `read_file` and `analyze_file` to verify current structure and linter
+16. **Evidence-Based Implementation**: Always use `read_file` and `analyze_file` to verify current structure and linter
     compliance before and after changes.
 
-16. **Final-State Delivery**: Provide final, production-ready implementation immediately. Skip intermediate placeholders
+17. **Final-State Delivery**: Provide final, production-ready implementation immediately. Skip intermediate placeholders
     or "TODOs".
 
-17. **Collaborative Evolution**: For structural changes (file movements, return type updates, DI shifts), present a
+18. **Collaborative Evolution**: For structural changes (file movements, return type updates, DI shifts), present a
     clear plan and proceed after developer confirmation.
 
-18. **Verification Protocol**: Before delivery, verify:
+19. **Verification Protocol**: Before delivery, verify:
     - [ ] No Hardcoded Strings/Colors/Typography.
     - [ ] Functional responsiveness (`context.resp*`).
-    - [ ] [ ] Import hygiene and Suffix-first naming.
+    - [ ] Import hygiene and Suffix-first naming.
+    - [ ] Spacing uses `CcSpace*` components (not raw `SizedBox(respDim(N))` gaps).
     - [ ] Linter compliance (zero errors/warnings).
 
 ## Project Structure
@@ -356,12 +365,13 @@ Use the following utilities from `cc_sdk` and `cc_sdk_ui`:
 
 ## CI/CD Configuration
 
-### Melos 7.x.x Workspace
+### Melos Workspace
 
-- **Workspace:** Melos 7.x.x pub workspaces (no melos.yaml, uses pubspec.yaml workspace config)
-- **Global Melos activation:** Required for script compatibility in CI
-- **Generated files:** Selected modules commit generated files for analysis
-- **Lint rules:** `prefer_relative_imports` disabled for generated files
+- **Workspace:** Melos 7.x.x. The workspace is declared via `pubspec.yaml` `workspace:` entries, and scripts
+  (`bootstrap`, `gen`, `analyze`, `test`, `rebuild`, `setup:firebase`) live in the root `melos.yaml`.
+- **Global Melos activation:** Required for script compatibility in CI (`melos bootstrap` / `melos run gen`).
+- **Generated files:** Selected modules commit generated files for analysis.
+- **Lint rules:** `prefer_relative_imports` disabled for generated files.
 
 ## Development Workflow
 

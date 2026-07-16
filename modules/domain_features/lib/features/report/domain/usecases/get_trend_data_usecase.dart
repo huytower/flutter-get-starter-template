@@ -49,7 +49,10 @@ class GetTrendDataUseCase {
         break;
     }
 
-    final txnResult = await _transactionRepository.getTransactionsByPeriod(start, end);
+    final txnResult = await _transactionRepository.getTransactionsByPeriod(
+      start,
+      end,
+    );
     if (txnResult.isError()) return Error(txnResult.tryGetError()!);
 
     final catResult = await _categoryRepository.getCategories();
@@ -78,48 +81,66 @@ class GetTrendDataUseCase {
       // Group by 7-day periods
       for (int i = 0; i < 4; i++) {
         final pStart = start.add(Duration(days: i * 7));
-        final pEnd = pStart.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
-        
-        final periodTxns = allTransactions.where((t) => 
-          t.date.isAfter(pStart.subtract(const Duration(seconds: 1))) && 
-          t.date.isBefore(pEnd.add(const Duration(seconds: 1)))
-        ).toList();
-        
+        final pEnd = pStart.add(
+          const Duration(days: 6, hours: 23, minutes: 59, seconds: 59),
+        );
+
+        final periodTxns = allTransactions
+            .where(
+              (t) =>
+                  t.date.isAfter(pStart.subtract(const Duration(seconds: 1))) &&
+                  t.date.isBefore(pEnd.add(const Duration(seconds: 1))),
+            )
+            .toList();
+
         final income = periodTxns
             .where((t) => t.type == TransactionType.income)
             .fold<double>(0, (sum, t) => sum + t.amount);
         final expense = periodTxns
             .where((t) => t.type == TransactionType.expense)
             .fold<double>(0, (sum, t) => sum + t.amount);
-        
+
         totalIncome += income;
         totalExpense += expense;
 
-        points.add(TrendPoint(
-          label: "Tuần ${i + 1}",
-          income: income,
-          expense: expense,
-          date: pStart,
-        ));
+        points.add(
+          TrendPoint(
+            label: "Tuần ${i + 1}",
+            income: income,
+            expense: expense,
+            date: pStart,
+          ),
+        );
       }
     } else {
       // Group by month
       for (int i = 0; i < pointsCount; i++) {
         final mDate = DateTime(start.year, start.month + i, 1);
-        final mEnd = DateTime(start.year, start.month + i + 1, 0, 23, 59, 59, 999);
-        
-        final periodTxns = allTransactions.where((t) => 
-          t.date.isAfter(mDate.subtract(const Duration(seconds: 1))) && 
-          t.date.isBefore(mEnd.add(const Duration(seconds: 1)))
-        ).toList();
-        
+        final mEnd = DateTime(
+          start.year,
+          start.month + i + 1,
+          0,
+          23,
+          59,
+          59,
+          999,
+        );
+
+        final periodTxns = allTransactions
+            .where(
+              (t) =>
+                  t.date.isAfter(mDate.subtract(const Duration(seconds: 1))) &&
+                  t.date.isBefore(mEnd.add(const Duration(seconds: 1))),
+            )
+            .toList();
+
         final income = periodTxns
             .where((t) => t.type == TransactionType.income)
             .fold<double>(0, (sum, t) => sum + t.amount);
         final expense = periodTxns
             .where((t) => t.type == TransactionType.expense)
             .fold<double>(0, (sum, t) => sum + t.amount);
-        
+
         totalIncome += income;
         totalExpense += expense;
 
@@ -128,25 +149,29 @@ class GetTrendDataUseCase {
           label = DateFormat('M/yy').format(mDate);
         } else {
           // Yearly: Quarterly labels (Aug/25, Nov/25, Feb/26, May/26)
-          // We show all 12 points, but labels might be sparse in UI. 
+          // We show all 12 points, but labels might be sparse in UI.
           // Here we provide the full label, UI can decide to skip.
           label = DateFormat('M/yy').format(mDate);
         }
 
-        points.add(TrendPoint(
-          label: label,
-          income: income,
-          expense: expense,
-          date: mDate,
-        ));
+        points.add(
+          TrendPoint(
+            label: label,
+            income: income,
+            expense: expense,
+            date: mDate,
+          ),
+        );
       }
     }
 
-    return Success(TrendDataEntity(
-      points: points,
-      totalIncome: totalIncome,
-      totalExpense: totalExpense,
-      transactions: allTransactions..sort((a, b) => b.date.compareTo(a.date)),
-    ));
+    return Success(
+      TrendDataEntity(
+        points: points,
+        totalIncome: totalIncome,
+        totalExpense: totalExpense,
+        transactions: allTransactions..sort((a, b) => b.date.compareTo(a.date)),
+      ),
+    );
   }
 }

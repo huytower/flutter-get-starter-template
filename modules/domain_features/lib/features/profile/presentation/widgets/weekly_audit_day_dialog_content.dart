@@ -165,7 +165,7 @@ class _WeeklyAuditDayDialogContentState
                         ),
                       ),
                     ),
-                    SizedBox(width: context.respDim(8)),
+                    const CcSpaceSM(),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(_selectedDay),
                       child: CcText(

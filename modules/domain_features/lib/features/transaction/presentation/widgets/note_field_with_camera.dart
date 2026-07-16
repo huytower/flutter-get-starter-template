@@ -26,7 +26,9 @@ class NoteFieldWithCamera extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.ccColorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: context.ccColorScheme.outlineVariant.withOpacity(0.2)),
+        border: Border.all(
+          color: context.ccColorScheme.outlineVariant.withOpacity(0.2),
+        ),
       ),
       child: Row(
         children: [

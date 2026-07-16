@@ -10,7 +10,10 @@ import 'wallet_balance_calculator.dart';
 /// transactions.
 @lazySingleton
 class GetWalletBookBalanceUseCase {
-  GetWalletBookBalanceUseCase(this._walletRepository, this._transactionRepository);
+  GetWalletBookBalanceUseCase(
+    this._walletRepository,
+    this._transactionRepository,
+  );
 
   final WalletRepository _walletRepository;
   final TransactionRepository _transactionRepository;

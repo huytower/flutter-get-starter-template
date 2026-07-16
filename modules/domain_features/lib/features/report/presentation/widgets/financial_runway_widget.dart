@@ -12,33 +12,19 @@ class FinancialRunwayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final descColor = context.ccColorScheme.onPrimary;
     final (statusColor, containerColor) = _getStatusColors(context);
 
     return Column(
       children: [
-        _buildHeader(context, descColor),
+        _buildHeader(context),
         const CcSpaceXS(),
         _buildStatusContainer(context, statusColor, containerColor),
       ],
     );
   }
 
-  Widget _buildHeader(BuildContext context, Color descColor) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          runway.status == FinancialRunwayStatus.caution
-              ? Icons.warning_amber_rounded
-              : Icons.shield_outlined,
-          color: descColor,
-          size: context.respIconSize(baseSize: 20),
-        ),
-        const CcSpaceXS(),
-        _buildDescription(context, el.tr(CcLocaleKeys.report_runway_desc_2)),
-      ],
-    );
+  Widget _buildHeader(BuildContext context) {
+    return _buildDescription(context, el.tr(CcLocaleKeys.report_runway_desc_2));
   }
 
   Widget _buildStatusContainer(
@@ -59,7 +45,7 @@ class FinancialRunwayWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildStatusMessage(context, statusColor),
-          SizedBox(height: context.respDim(12)),
+          const CcSpaceMD(),
           _buildStatusDetail(context),
         ],
       ),
@@ -67,29 +53,43 @@ class FinancialRunwayWidget extends StatelessWidget {
   }
 
   Widget _buildStatusMessage(BuildContext context, Color statusColor) {
-    return runway.status == FinancialRunwayStatus.insufficient
-        ? CcText(
-            el.tr(CcLocaleKeys.report_runway_not_available),
-            maxLines: 2,
-            textStyle: context.ccTextTheme.titleSmall?.copyWith(
-              color: statusColor,
-              fontWeight: CcTypographyParams.bold,
-            ),
-          )
-        : CcText(
-            el.tr(
-              CcLocaleKeys.report_runway_message,
-              namedArgs: {
-                'months': runway.months.toString(),
-                'days': runway.days.toString(),
-              },
-            ),
-            maxLines: 2,
-            textStyle: context.ccTextTheme.titleSmall?.copyWith(
-              color: statusColor,
-              fontWeight: CcTypographyParams.bold,
-            ),
-          );
+    final messageStyle = context.ccTextTheme.titleSmall?.copyWith(
+      color: statusColor,
+      fontWeight: CcTypographyParams.bold,
+    );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          runway.status == FinancialRunwayStatus.caution
+              ? Icons.warning_amber_rounded
+              : Icons.shield_outlined,
+          color: statusColor,
+          size: context.respIconSize(baseSize: 20),
+        ),
+        const CcSpaceXS(),
+        Expanded(
+          child: runway.status == FinancialRunwayStatus.insufficient
+              ? CcText(
+                  el.tr(CcLocaleKeys.report_runway_not_available),
+                  maxLines: 2,
+                  textStyle: messageStyle,
+                )
+              : CcText(
+                  el.tr(
+                    CcLocaleKeys.report_runway_message,
+                    namedArgs: {
+                      'months': runway.months.toString(),
+                      'days': runway.days.toString(),
+                    },
+                  ),
+                  maxLines: 2,
+                  textStyle: messageStyle,
+                ),
+        ),
+      ],
+    );
   }
 
   Widget _buildStatusDetail(BuildContext context) {

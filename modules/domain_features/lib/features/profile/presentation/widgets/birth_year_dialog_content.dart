@@ -196,7 +196,7 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
                         ),
                       ),
                     ),
-                    SizedBox(width: context.respDim(8)),
+                    const CcSpaceSM(),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(_selectedYear),
                       child: CcText(

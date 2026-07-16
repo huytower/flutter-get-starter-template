@@ -74,7 +74,7 @@ class _DailyGroup extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(width: context.respDim(12)),
+                const CcSpaceMD(),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -185,7 +185,7 @@ class _TransactionTile extends StatelessWidget {
             ),
             child: Center(child: getIcon()),
           ),
-          SizedBox(width: context.respDim(12)),
+          const CcSpaceMD(),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

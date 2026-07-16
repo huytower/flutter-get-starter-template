@@ -57,7 +57,7 @@ class WalletListCard extends StatelessWidget {
       child: Row(
         children: [
           _buildIcon(context),
-          SizedBox(width: context.respDim(12)),
+          const CcSpaceMD(),
           _buildName(context),
           _buildBalance(context),
         ],

@@ -1,8 +1,8 @@
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -77,9 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
   /// appear checked in the category settings.
   Future<void> _enableCategories(List<String> keys) async {
     final useCase = getIt<ToggleCategoryEnabledUseCase>();
-    final idByKey = {
-      for (final c in CategorySeed.categories) c.nameKey: c.id,
-    };
+    final idByKey = {for (final c in CategorySeed.categories) c.nameKey: c.id};
     for (final key in keys) {
       final id = idByKey[key];
       if (id != null) await useCase.call(id, true);
@@ -156,7 +154,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
-                          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+                          horizontal: context.respPadding(
+                            CcPaddingParams.PAGE_SM,
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -199,7 +199,9 @@ class _ProfilePageState extends State<ProfilePage> {
           }
           if (!context.mounted) return;
           Navigator.of(context).push(
-            MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),
+            MaterialPageRoute<bool>(
+              builder: (_) => const CategorySettingsPage(),
+            ),
           );
         },
       ),

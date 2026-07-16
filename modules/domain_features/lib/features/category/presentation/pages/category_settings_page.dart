@@ -6,7 +6,6 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/util/gradient_app_bar.dart';
-import '../../data/datasources/local/category_seed.dart';
 import '../widgets/category_group_section.dart';
 
 class CategorySettingsPage extends StatefulWidget {

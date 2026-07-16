@@ -60,7 +60,9 @@ class WalletReconcileTile extends StatelessWidget {
                 CcText(
                   el.tr(
                     CcLocaleKeys.reconciliation_book_balance,
-                    namedArgs: {'amount': formatVndWithSymbol(balance.bookBalance)},
+                    namedArgs: {
+                      'amount': formatVndWithSymbol(balance.bookBalance),
+                    },
                   ),
                   textStyle: context.ccTextTheme.bodySmall?.copyWith(
                     color: scheme.onSurfaceVariant,
@@ -190,11 +192,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
     if (isBalanced) {
       return Row(
         children: [
-          Icon(
-            Icons.check_circle_outline,
-            color: scheme.primary,
-            size: 16,
-          ),
+          Icon(Icons.check_circle_outline, color: scheme.primary, size: 16),
           const SizedBox(width: 4),
           CcText(
             el.tr(CcLocaleKeys.reconciliation_matched),
