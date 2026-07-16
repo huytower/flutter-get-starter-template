@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-
-import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:get/get.dart';
-
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/util/money_format.dart';
 import '../get_x/transaction_controller.dart';
@@ -25,6 +23,8 @@ class TransactionWalletSummary extends StatelessWidget {
             color: context.ccColorScheme.onPrimary.withOpacity(0.8),
           ),
           const CcSpaceXS(),
+          // Use a fixed width or let the parent Expanded handle overflow
+          // Avoid using Flexible here if it's placed inside AnimatedSwitcher/Stack
           CcText(
             '${el.tr(CcLocaleKeys.transaction_wallet)}  ${formatVndShort(controller.walletTotal.value)}',
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(
@@ -32,6 +32,8 @@ class TransactionWalletSummary extends StatelessWidget {
               fontWeight: CcTypographyParams.semiBold,
               fontSize: context.respFontSize(13),
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

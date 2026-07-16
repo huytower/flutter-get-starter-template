@@ -128,6 +128,7 @@ flutter:
     - env/.env.prod
     - assets/icon/
     - assets/lottie/
+    - assets/bg/
 
 flutter_launcher_icons:
   ios: true

@@ -7,7 +7,6 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../../core/util/gradient_app_bar.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../get_x/expense_form_controller.dart';
 import '../get_x/income_form_controller.dart';
@@ -23,92 +22,223 @@ class TransactionPage extends CcGetView<TransactionController> {
   const TransactionPage({super.key});
 
   @override
-  bool get enableAppBar => true;
+  bool get enableAppBar => false;
 
   @override
   bool get enableBottomNavigationBar => false;
 
   @override
-  PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return _buildAppBarWithContext(context);
+  Widget? buildContent(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: FadePageWrapper(
+        child: Stack(
+          children: [
+            _buildHeroHeader(context),
+            _buildTransactionContent(context),
+          ],
+        ),
+      ),
+    );
   }
 
-  PreferredSizeWidget _buildAppBarWithContext(BuildContext context) {
-    return buildDomainGradientAppBar(
-      context,
-      title: Obx(() {
+  // ===========================================================================
+  // HERO HEADER SECTION
+  // ===========================================================================
+
+  Widget _buildHeroHeader(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+    final headerHeight = context.respDim(200) + topPadding;
+
+    return Container(
+      height: headerHeight,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(context.respDim(32)),
+          bottomRight: Radius.circular(context.respDim(32)),
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          _buildHeroBackground(),
+          _buildHeroForeground(context, topPadding),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeroBackground() {
+    return Positioned.fill(
+      child: Image.asset('assets/bg/bg_header.webp', fit: BoxFit.cover),
+    );
+  }
+
+  Widget _buildHeroForeground(BuildContext context, double topPadding) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        context.respPadding(CcPaddingParams.PAGE_MD),
+        topPadding + context.respPadding(CcPaddingParams.SPACE_MD),
+        context.respPadding(CcPaddingParams.PAGE_MD),
+        0,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _buildHeaderTitleSection(context),
+          _buildHeaderActions(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderTitleSection(BuildContext context) {
+    return Expanded(
+      child: Obx(() {
+        // Explicitly access observable to register dependency for this Obx
+        final bool showSummary = controller.showWalletSummaryTemporarily.value;
+
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 400),
           layoutBuilder: (currentChild, previousChildren) {
             return Stack(
               alignment: Alignment.centerLeft,
-              children: <Widget>[...previousChildren, ?currentChild],
+              children: <Widget>[
+                ...previousChildren,
+                if (currentChild != null) currentChild,
+              ],
             );
           },
-          child: controller.showWalletSummaryTemporarily.value
+          child: showSummary
               ? const TransactionWalletSummary(key: ValueKey('wallet_summary'))
-              : CcText(
-                  el.tr(CcLocaleKeys.transaction_title),
-                  key: const ValueKey('transaction_title'),
-                  textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                    color: context.ccColorScheme.onPrimary,
-                    fontWeight: CcTypographyParams.bold,
-                    fontSize: context.respFontSize(
-                      CcTypographyParams.titleMedium,
-                    ),
-                  ),
-                ),
+              : _buildPageTitle(context),
         );
       }),
-      actions: [
-        Obx(
-          () => CcIconButton.bouncing(
-            onTap: () => _submitCurrentForm(context),
-            icon: Icon(
-              Icons.check_circle_outline_rounded,
-              size: context.respIconSize(baseSize: 24),
-              color: _getTabColor(context, controller.selectedTabIndex.value),
-            ),
-          ),
-        ),
+    );
+  }
+
+  Widget _buildPageTitle(BuildContext context) {
+    return CcText(
+      el.tr(CcLocaleKeys.transaction_title),
+      key: const ValueKey('transaction_title'),
+      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+        color: context.ccColorScheme.onPrimary,
+        fontWeight: CcTypographyParams.bold,
+        fontSize: context.respFontSize(26),
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _buildHeaderActions(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildSubmitButton(context),
         const CcSpaceXS(),
-        CcIconButton.bouncing(
-          onTap: () => _openReport(context),
-          icon: Icon(
-            Icons.bar_chart_rounded,
-            size: context.respIconSize(baseSize: 24),
-            color: context.ccColorScheme.onPrimary,
-          ),
-          tooltip: el.tr(CcLocaleKeys.report_title),
-        ),
+        _buildReportButton(context),
       ],
     );
   }
 
-  @override
-  Widget? buildContent(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        return DefaultTabController(
-          length: 3,
-          child: FadePageWrapper(child: _buildTransactionContent(context)),
-        );
-      },
+  Widget _buildSubmitButton(BuildContext context) {
+    return CcIconButton.bouncing(
+      onTap: () => _submitCurrentForm(context),
+      bgColor: Colors.white.withOpacity(0.15),
+      icon: Icon(
+        Icons.check_rounded,
+        size: context.respIconSize(baseSize: 22),
+        color: context.ccColorScheme.onPrimary,
+      ),
     );
   }
+
+  Widget _buildReportButton(BuildContext context) {
+    return CcIconButton.bouncing(
+      onTap: () => _openReport(context),
+      icon: Icon(
+        Icons.bar_chart_rounded,
+        size: context.respIconSize(baseSize: 28),
+        color: context.ccColorScheme.onPrimary,
+      ),
+      tooltip: el.tr(CcLocaleKeys.report_title),
+    );
+  }
+
+  // ===========================================================================
+  // CONTENT SECTION
+  // ===========================================================================
 
   Widget _buildTransactionContent(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+    final headerHeight = context.respDim(200) + topPadding;
+    final tabBarHeight = context.respDim(60);
+    final overlap = tabBarHeight / 2;
+
     return Column(
       children: [
-        const CcSpaceMD(),
+        SizedBox(height: headerHeight - overlap),
         _buildTabBar(context),
         const CcSpaceSM(),
-        _buildTabBarView(context),
+        _buildTabBarView(),
       ],
     );
   }
 
-  Widget _buildTabBarView(BuildContext context) {
+  Widget _buildTabBar(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+      ),
+      height: context.respDim(60),
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: BorderRadius.circular(context.respDim(20)),
+        boxShadow: [
+          BoxShadow(
+            color: scheme.onSurface.withOpacity(0.12),
+            blurRadius: context.respDim(12),
+            offset: Offset(0, context.respDim(6)),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.all(context.respDim(4)),
+      child: Obx(() => _buildActualTabBar(context, scheme)),
+    );
+  }
+
+  Widget _buildActualTabBar(BuildContext context, ColorScheme scheme) {
+    final selectedIndex = controller.selectedTabIndex.value;
+    final activeColor = _getTabColor(context, selectedIndex);
+
+    return TabBar(
+      onTap: controller.setTabIndex,
+      indicatorSize: TabBarIndicatorSize.tab,
+      dividerColor: Colors.transparent,
+      indicator: BoxDecoration(
+        color: activeColor.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(context.respDim(16)),
+      ),
+      labelColor: activeColor,
+      unselectedLabelColor: scheme.onSurfaceVariant,
+      labelStyle: context.ccTextTheme.labelMedium?.copyWith(
+        fontWeight: CcTypographyParams.bold,
+        fontSize: context.respFontSize(CcTypographyParams.labelMedium),
+      ),
+      labelPadding: EdgeInsets.zero,
+      tabs: [
+        Tab(text: el.tr(CcLocaleKeys.transaction_expense_slip)),
+        Tab(text: el.tr(CcLocaleKeys.transaction_income_slip)),
+        Tab(text: el.tr(CcLocaleKeys.transaction_record_transfer)),
+      ],
+    );
+  }
+
+  Widget _buildTabBarView() {
     return Expanded(
       child: TabBarView(
         children: [
@@ -119,6 +249,10 @@ class TransactionPage extends CcGetView<TransactionController> {
       ),
     );
   }
+
+  // ===========================================================================
+  // LOGIC & UTILS
+  // ===========================================================================
 
   void _openReport(BuildContext context) {
     if (Get.isRegistered<ReportController>()) {
@@ -154,48 +288,5 @@ class TransactionPage extends CcGetView<TransactionController> {
       2 => context.ccColorScheme.secondary,
       _ => PrjColors.success,
     };
-  }
-
-  Widget _buildTabBar(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-      ),
-      height: context.respDim(48),
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(context.respDim(25)),
-      ),
-      child: Obx(() {
-        return TabBar(
-          onTap: controller.setTabIndex,
-          indicatorSize: TabBarIndicatorSize.tab,
-          dividerColor: Colors.transparent,
-          indicator: BoxDecoration(
-            color: context.ccColorScheme.surface,
-            borderRadius: BorderRadius.circular(context.respDim(25)),
-            boxShadow: [
-              BoxShadow(
-                color: context.ccColorScheme.onSurface.withOpacity(0.05),
-                blurRadius: context.respDim(4),
-                offset: Offset(0, context.respDim(2)),
-              ),
-            ],
-          ),
-          labelColor: _getTabColor(context, controller.selectedTabIndex.value),
-          unselectedLabelColor: context.ccColorScheme.onSurfaceVariant,
-          labelStyle: context.ccTextTheme.labelMedium?.copyWith(
-            fontWeight: CcTypographyParams.bold,
-            fontSize: context.respFontSize(CcTypographyParams.labelMedium),
-          ),
-          labelPadding: EdgeInsets.zero,
-          tabs: [
-            Tab(text: el.tr(CcLocaleKeys.transaction_expense_slip)),
-            Tab(text: el.tr(CcLocaleKeys.transaction_income_slip)),
-            Tab(text: el.tr(CcLocaleKeys.transaction_record_transfer)),
-          ],
-        );
-      }),
-    );
   }
 }
