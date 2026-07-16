@@ -71,7 +71,7 @@ class ExpenseFormController extends TransactionFormController {
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
         context: context,
-        message: error.message,
+        message: el.tr(error.message),
       ),
     );
   }

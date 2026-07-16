@@ -1,5 +1,4 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -43,35 +42,30 @@ class CreateTransferUseCase {
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
 
   /// Denormalized label stored on both legs for any future display.
-  String get _label => el.tr(CcLocaleKeys.transaction_record_transfer);
+  /// (Note: this should ideally be passed in or translated at the UI layer)
+  static const String _label = 'Chuyển khoản';
 
   Future<Result<void, CcFailure>> call(CreateTransferParams params) async {
     if (params.amount <= 0) {
-      return Error(
-        ValidationFailure(
-          el.tr(CcLocaleKeys.transaction_validation_amount_required),
-        ),
+      return const Error(
+        ValidationFailure(CcLocaleKeys.transaction_validation_amount_required),
       );
     }
     if (params.fromWalletId.isEmpty || params.toWalletId.isEmpty) {
-      return Error(
-        ValidationFailure(
-          el.tr(CcLocaleKeys.transaction_validation_wallet_required),
-        ),
+      return const Error(
+        ValidationFailure(CcLocaleKeys.transaction_validation_wallet_required),
       );
     }
     if (params.fromWalletId == params.toWalletId) {
-      return Error(
+      return const Error(
         ValidationFailure(
-          el.tr(CcLocaleKeys.transaction_validation_same_wallet_transfer),
+          CcLocaleKeys.transaction_validation_same_wallet_transfer,
         ),
       );
     }
     if (params.date.isAfter(DateTime.now())) {
-      return Error(
-        ValidationFailure(
-          el.tr(CcLocaleKeys.transaction_validation_future_date),
-        ),
+      return const Error(
+        ValidationFailure(CcLocaleKeys.transaction_validation_future_date),
       );
     }
 
@@ -81,9 +75,9 @@ class CreateTransferUseCase {
       return Error(balanceResult.tryGetError()!);
     }
     if (params.amount > balanceResult.tryGetSuccess()!) {
-      return Error(
+      return const Error(
         ValidationFailure(
-          el.tr(CcLocaleKeys.transaction_validation_insufficient_balance),
+          CcLocaleKeys.transaction_validation_insufficient_balance,
         ),
       );
     }

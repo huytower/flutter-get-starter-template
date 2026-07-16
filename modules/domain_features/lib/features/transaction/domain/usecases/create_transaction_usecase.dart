@@ -1,5 +1,4 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -58,33 +57,27 @@ class CreateTransactionUseCase {
     CreateTransactionParams params,
   ) async {
     if (params.amount <= 0) {
-      return Error(
-        ValidationFailure(
-          el.tr(CcLocaleKeys.transaction_validation_amount_required),
-        ),
+      return const Error(
+        ValidationFailure(CcLocaleKeys.transaction_validation_amount_required),
       );
     }
     if (params.walletId.isEmpty) {
-      return Error(
-        ValidationFailure(
-          el.tr(CcLocaleKeys.transaction_validation_wallet_required),
-        ),
+      return const Error(
+        ValidationFailure(CcLocaleKeys.transaction_validation_wallet_required),
       );
     }
     if (params.type == 'expense' && params.categoryId.isEmpty) {
-      return Error(
+      return const Error(
         ValidationFailure(
-          el.tr(CcLocaleKeys.transaction_validation_category_required),
+          CcLocaleKeys.transaction_validation_category_required,
         ),
       );
     }
     // A transaction can't happen in the future — guard in case a caller passes
     // one regardless of the date-picker's bounds.
     if (params.date.isAfter(DateTime.now())) {
-      return Error(
-        ValidationFailure(
-          el.tr(CcLocaleKeys.transaction_validation_future_date),
-        ),
+      return const Error(
+        ValidationFailure(CcLocaleKeys.transaction_validation_future_date),
       );
     }
 
@@ -96,9 +89,9 @@ class CreateTransactionUseCase {
         return Error(balanceResult.tryGetError()!);
       }
       if (params.amount > balanceResult.tryGetSuccess()!) {
-        return Error(
+        return const Error(
           ValidationFailure(
-            el.tr(CcLocaleKeys.transaction_validation_insufficient_balance),
+            CcLocaleKeys.transaction_validation_insufficient_balance,
           ),
         );
       }

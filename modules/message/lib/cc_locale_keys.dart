@@ -233,6 +233,14 @@ class CodegenLoader extends AssetLoader {
       "note": "Note",
       "note_hint": "Note (optional)",
       "more_details": "More details",
+      "validation": {
+        "amount_required": "Amount must be greater than 0",
+        "wallet_required": "Please select a wallet",
+        "category_required": "Please select a category",
+        "future_date": "Cannot record a future transaction",
+        "insufficient_balance": "Insufficient wallet balance",
+        "same_wallet_transfer": "Cannot transfer to the same wallet",
+      },
     },
     "budget": {
       "title": "Budget",
@@ -650,6 +658,14 @@ class CodegenLoader extends AssetLoader {
       "note": "Ghi chú",
       "note_hint": "Ghi chú (không bắt buộc)",
       "more_details": "Thêm chi tiết",
+      "validation": {
+        "amount_required": "Số tiền phải lớn hơn 0!",
+        "wallet_required": "Vui lòng chọn ví!",
+        "category_required": "Vui lòng chọn hạng mục!",
+        "future_date": "Không thể ghi giao dịch ở tương lai!",
+        "insufficient_balance": "Số dư ví không đủ!",
+        "same_wallet_transfer": "Không thể chuyển vào cùng một ví!",
+      },
     },
     "budget": {
       "title": "Ngân sách",
