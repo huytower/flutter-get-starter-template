@@ -135,17 +135,18 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                     el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
                     textStyle: context.ccTextTheme.bodySmall?.copyWith(
                       color: context.ccColorScheme.onSurfaceVariant.withOpacity(
-                        0.6,
-                      ),
-                      fontSize: context.respFontSize(
-                        CcTypographyParams.bodySmall,
+                        0.7,
                       ),
                     ),
                   ),
                   const CcSpaceXS(),
                   CcText(
                     el.tr(CcLocaleKeys.reconciliation_instruction),
-                    textStyle: context.ccTextTheme.bodyMedium,
+                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                      color: context.ccColorScheme.onSurfaceVariant.withOpacity(
+                        0.7,
+                      ),
+                    ),
                   ),
                   const CcSpaceXS(),
                   Column(
