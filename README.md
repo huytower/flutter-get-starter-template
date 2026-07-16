@@ -32,7 +32,7 @@ project-blind.**
 ### Key Guidelines for Micro-Features
 
 - ✅ **ALLOWED**: Imports from `cc_core_sdk` and 3rd party utilities.
-- ❌ **FORBIDDEN**: Imports from the App Shell (`lib/`) or app-specific modules (`modules/data`).
+- ❌ **FORBIDDEN**: Imports from the App Shell (`lib/`) or app-specific modules (`modules/data_config`).
 - **Interface-Driven**: Micro-Features define their own `Repository` contracts. The App Shell or Data module implements
   these and injects them via DI.
 
@@ -44,9 +44,13 @@ flutter-get-starter-template/
 │   ├── core/                     # Startup, DI orchestration, Global Router
 │   ├── data/                     # Project-specific data implementations
 │   └── presentation/             # Local glue logic and UI
-├── cc_micro_features/            # Global Reusable Features (Project-Blind)
+├── shared/cc_micro_features/     # Global Reusable Features (Project-Blind)
 │   ├── auth/                     # Auth Micro-Feature
-│   ├── counter/                  # Counter Micro-Feature
+│   ├── biometric/                # Biometric Micro-Feature
+│   ├── crash_log/                # Crash Log Micro-Feature
+│   ├── messaging/                # Messaging Micro-Feature
+│   ├── splash/                   # Splash Micro-Feature
+│   ├── web/                      # Web Micro-Feature
 │   └── ...                       # Other business verticals
 ├── cc_core_sdk/                  # Shared Core SDK (Universal Engine)
 │   ├── cc_sdk/                  # Pure Logic, Network, Failures
@@ -54,7 +58,7 @@ flutter-get-starter-template/
 │   └── cc_mixin/                # Reusable Behaviors
 ├── modules/                      # App Support Modules
 │   ├── app_config/              # Env, Storage, Global DI
-│   ├── theme/                   # Brand Design Tokens (EB Garamond)
+  │   ├── theme/                   # Brand Design Tokens (Plus Jakarta Sans)
 │   └── message/                 # Centralized i18n
 └── docs/                        # Architecture & Onboarding Docs
 ```

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
-import 'package:cc_micro_features/features/auth/presentation/bloc/phone_auth_event.dart';
+import 'package:cc_micro_features/features/auth/domain/phone_auth_status.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -122,14 +122,14 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   }
 
   @override
-  Stream<PhoneAuthEvent> verifyPhoneNumber({required String phoneNumber}) {
-    final controller = StreamController<PhoneAuthEvent>();
+  Stream<PhoneAuthStatus> verifyPhoneNumber({required String phoneNumber}) {
+    final controller = StreamController<PhoneAuthStatus>();
 
-    void onEvent(PhoneAuthEvent event) {
+    void onStatus(PhoneAuthStatus status) {
       if (!controller.isClosed) {
-        controller.add(event);
-        if (event is PhoneVerificationCompleted ||
-            event is PhoneVerificationFailed) {
+        controller.add(status);
+        if (status is PhoneAuthStatusCompleted ||
+            status is PhoneAuthStatusFailed) {
           controller.close();
         }
       }
@@ -140,18 +140,18 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       verificationCompleted: (credential) async {
         final result = await _signInWithCredential(credential);
         result.when(
-          (u) => onEvent(PhoneVerificationCompleted(u)),
-          (f) => onEvent(PhoneVerificationFailed(f)),
+          (u) => onStatus(PhoneAuthStatusCompleted(u)),
+          (f) => onStatus(PhoneAuthStatusFailed(f)),
         );
       },
-      verificationFailed: (e) => onEvent(
-        PhoneVerificationFailed(
+      verificationFailed: (e) => onStatus(
+        PhoneAuthStatusFailed(
           ServerFailure(e.message ?? CcLocaleKeys.app_error_server),
         ),
       ),
-      codeSent: (id, token) => onEvent(PhoneCodeSent(id, token)),
+      codeSent: (id, token) => onStatus(PhoneAuthStatusCodeSent(id, token)),
       codeAutoRetrievalTimeout: (id) =>
-          onEvent(PhoneCodeAutoRetrievalTimeout(id)),
+          onStatus(PhoneAuthStatusAutoRetrievalTimeout(id)),
     );
 
     return controller.stream;
