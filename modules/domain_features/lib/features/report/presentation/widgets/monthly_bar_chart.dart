@@ -29,118 +29,114 @@ class MonthlyBarChart extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            _legendDot(
-              context,
-              _incomeColor,
-              el.tr(CcLocaleKeys.report_income_short),
-            ),
-            const CcSpaceLG(),
-            _legendDot(
-              context,
-              _expenseColor,
-              el.tr(CcLocaleKeys.report_expense_short),
-            ),
-          ],
-        ),
+        _buildLegend(context),
         const CcSpaceMD(),
-        SizedBox(
-          height: context.respDim(200),
-          child: BarChart(
-            BarChartData(
-              maxY: maxY,
-              alignment: BarChartAlignment.spaceAround,
-              barTouchData: BarTouchData(
-                touchTooltipData: BarTouchTooltipData(
-                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    return BarTooltipItem(
-                      formatVndShort(rod.toY),
-                      TextStyle(
-                        color: context.ccColorScheme.onPrimary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: context.respFontSize(
-                          CcTypographyParams.labelMedium,
-                        ),
-                      ),
-                    );
-                  },
-                ),
+        _buildBarChart(context, maxY),
+      ],
+    );
+  }
+
+  Widget _buildLegend(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        _legendDot(context, _incomeColor, el.tr(CcLocaleKeys.report_income_short)),
+        const CcSpaceLG(),
+        _legendDot(context, _expenseColor, el.tr(CcLocaleKeys.report_expense_short)),
+      ],
+    );
+  }
+
+  Widget _buildBarChart(BuildContext context, double maxY) {
+    return SizedBox(
+      height: context.respDim(200),
+      child: BarChart(_buildBarChartData(context, maxY)),
+    );
+  }
+
+  BarChartData _buildBarChartData(BuildContext context, double maxY) {
+    return BarChartData(
+      maxY: maxY,
+      alignment: BarChartAlignment.spaceAround,
+      barTouchData: BarTouchData(
+        touchTooltipData: BarTouchTooltipData(
+          getTooltipItem: (group, groupIndex, rod, rodIndex) {
+            return BarTooltipItem(
+              formatVndShort(rod.toY),
+              TextStyle(
+                color: context.ccColorScheme.onPrimary,
+                fontWeight: FontWeight.w600,
+                fontSize: context.respFontSize(CcTypographyParams.labelMedium),
               ),
-              gridData: FlGridData(
-                show: true,
-                drawVerticalLine: false,
-                horizontalInterval: maxY / 4,
-              ),
-              borderData: FlBorderData(show: false),
-              titlesData: FlTitlesData(
-                topTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                rightTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: context.respDim(40),
-                    interval: maxY / 4,
-                    getTitlesWidget: (value, meta) {
-                      if (value == 0) return const SizedBox.shrink();
-                      return Padding(
-                        padding: EdgeInsets.only(right: context.respDim(4)),
-                        child: CcText(
-                          formatVndShort(value),
-                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                            color: context.ccColorScheme.onSurfaceVariant,
-                            fontSize: context.respFontSize(
-                              CcTypographyParams.labelSmall,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+            );
+          },
+        ),
+      ),
+      gridData: FlGridData(
+        show: true,
+        drawVerticalLine: false,
+        horizontalInterval: maxY / 4,
+      ),
+      borderData: FlBorderData(show: false),
+      titlesData: FlTitlesData(
+        topTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: context.respDim(40),
+            interval: maxY / 4,
+            getTitlesWidget: (value, meta) {
+              if (value == 0) return const SizedBox.shrink();
+              return Padding(
+                padding: EdgeInsets.only(right: context.respDim(4)),
+                child: CcText(
+                  formatVndShort(value),
+                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                    color: context.ccColorScheme.onSurfaceVariant,
+                    fontSize: context.respFontSize(CcTypographyParams.labelSmall),
                   ),
                 ),
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: context.respDim(24),
-                    getTitlesWidget: (value, meta) {
-                      final index = value.toInt();
-                      if (index < 0 || index >= months.length) {
-                        return const SizedBox.shrink();
-                      }
-                      return Padding(
-                        padding: EdgeInsets.only(top: context.respDim(6)),
-                        child: CcText(
-                          months[index].shortLabel,
-                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                            color: context.ccColorScheme.onSurfaceVariant,
-                            fontSize: context.respFontSize(
-                              CcTypographyParams.labelSmall,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              barGroups: [
-                for (var i = 0; i < months.length; i++)
-                  BarChartGroupData(
-                    x: i,
-                    barRods: [
-                      _rod(context, months[i].income, _incomeColor),
-                      _rod(context, months[i].expense, _expenseColor),
-                    ],
-                  ),
-              ],
-            ),
+              );
+            },
           ),
         ),
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: context.respDim(24),
+            getTitlesWidget: (value, meta) {
+              final index = value.toInt();
+              if (index < 0 || index >= months.length) {
+                return const SizedBox.shrink();
+              }
+              return Padding(
+                padding: EdgeInsets.only(top: context.respDim(6)),
+                child: CcText(
+                  months[index].shortLabel,
+                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                    color: context.ccColorScheme.onSurfaceVariant,
+                    fontSize: context.respFontSize(CcTypographyParams.labelSmall),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+      barGroups: [
+        for (var i = 0; i < months.length; i++)
+          BarChartGroupData(
+            x: i,
+            barRods: [
+              _rod(context, months[i].income, _incomeColor),
+              _rod(context, months[i].expense, _expenseColor),
+            ],
+          ),
       ],
     );
   }

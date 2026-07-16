@@ -80,141 +80,155 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ---- Header ----
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-            vertical: context.respPadding(CcPaddingParams.PAGE_SM),
-          ),
+        _buildHeader(context, scheme),
+        _buildBody(context, scheme, totalYears),
+      ],
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, ColorScheme scheme) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+        vertical: context.respPadding(CcPaddingParams.PAGE_SM),
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [scheme.primary, scheme.primaryContainer],
+        ),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(context.respDim(12)),
+          topRight: Radius.circular(context.respDim(12)),
+        ),
+      ),
+      child: CcText(
+        el.tr(CcLocaleKeys.profile_birth_year_hint),
+        maxLines: 3,
+        textStyle: context.ccTextTheme.labelLarge?.copyWith(
+          color: scheme.onPrimary,
+          fontSize: context.respFontSize(13),
+          fontWeight: CcTypographyParams.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    ColorScheme scheme,
+    int totalYears,
+  ) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(context.respDim(12)),
+          bottomRight: Radius.circular(context.respDim(12)),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildYearGrid(context, scheme, totalYears),
+          _buildActions(context, scheme),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildYearGrid(
+    BuildContext context,
+    ColorScheme scheme,
+    int totalYears,
+  ) {
+    return SizedBox(
+      height: context.respDim(250),
+      child: GridView.builder(
+        controller: _scrollController,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+          vertical: context.respPadding(CcPaddingParams.PAGE_SM),
+        ),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisExtent: context.respDim(56),
+        ),
+        itemCount: totalYears,
+        itemBuilder: (context, index) =>
+            _buildYearChip(context, scheme, widget.minYear + index),
+      ),
+    );
+  }
+
+  Widget _buildYearChip(BuildContext context, ColorScheme scheme, int year) {
+    final bool isSelected = year == _selectedYear;
+
+    return Center(
+      child: GestureDetector(
+        onTap: () => _onYearTap(year),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          width: context.respDim(72),
+          height: context.respDim(40),
+          alignment: Alignment.center,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [scheme.primary, scheme.primaryContainer],
-            ),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(context.respDim(12)),
-              topRight: Radius.circular(context.respDim(12)),
-            ),
+            color: isSelected ? scheme.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(context.respDim(20)),
           ),
           child: CcText(
-            el.tr(CcLocaleKeys.profile_birth_year_hint),
-            maxLines: 3,
-            textStyle: context.ccTextTheme.labelLarge?.copyWith(
-              color: scheme.onPrimary,
-              fontSize: context.respFontSize(13),
-              fontWeight: CcTypographyParams.bold,
+            '$year',
+            align: Alignment.center,
+            textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+              fontSize: context.respFontSize(16),
+              fontWeight: isSelected
+                  ? CcTypographyParams.bold
+                  : CcTypographyParams.regular,
+              color: isSelected ? scheme.onPrimary : scheme.onSurface,
             ),
           ),
         ),
+      ),
+    );
+  }
 
-        // ---- Body ----
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(context.respDim(12)),
-              bottomRight: Radius.circular(context.respDim(12)),
+  Widget _buildActions(BuildContext context, ColorScheme scheme) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        context.respPadding(CcPaddingParams.PAGE_MD),
+        0,
+        context.respPadding(CcPaddingParams.PAGE_MD),
+        context.respPadding(CcPaddingParams.PAGE_XS),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(null),
+            child: CcText(
+              el.tr(CcLocaleKeys.common_cancel),
+              textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                color: scheme.primary,
+                fontWeight: CcTypographyParams.semiBold,
+              ),
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // ---- Year grid ----
-              SizedBox(
-                height: context.respDim(250),
-                child: GridView.builder(
-                  controller: _scrollController,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-                    vertical: context.respPadding(CcPaddingParams.PAGE_SM),
-                  ),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    mainAxisExtent: context.respDim(56),
-                  ),
-                  itemCount: totalYears,
-                  itemBuilder: (context, index) {
-                    final int year = widget.minYear + index;
-                    final bool isSelected = year == _selectedYear;
-
-                    return Center(
-                      child: GestureDetector(
-                        onTap: () => _onYearTap(year),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 150),
-                          width: context.respDim(72),
-                          height: context.respDim(40),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? scheme.primary
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(
-                              context.respDim(20),
-                            ),
-                          ),
-                          child: CcText(
-                            '$year',
-                            align: Alignment.center,
-                            textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-                              fontSize: context.respFontSize(16),
-                              fontWeight: isSelected
-                                  ? CcTypographyParams.bold
-                                  : CcTypographyParams.regular,
-                              color: isSelected
-                                  ? scheme.onPrimary
-                                  : scheme.onSurface,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+          const CcSpaceSM(),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(_selectedYear),
+            child: CcText(
+              el.tr(CcLocaleKeys.common_ok),
+              textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                color: scheme.primary,
+                fontWeight: CcTypographyParams.semiBold,
               ),
-
-              // ---- Actions ----
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  context.respPadding(CcPaddingParams.PAGE_MD),
-                  0,
-                  context.respPadding(CcPaddingParams.PAGE_MD),
-                  context.respPadding(CcPaddingParams.PAGE_XS),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(null),
-                      child: CcText(
-                        el.tr(CcLocaleKeys.common_cancel),
-                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                          color: scheme.primary,
-                          fontWeight: CcTypographyParams.semiBold,
-                        ),
-                      ),
-                    ),
-                    const CcSpaceSM(),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(_selectedYear),
-                      child: CcText(
-                        el.tr(CcLocaleKeys.common_ok),
-                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                          color: scheme.primary,
-                          fontWeight: CcTypographyParams.semiBold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

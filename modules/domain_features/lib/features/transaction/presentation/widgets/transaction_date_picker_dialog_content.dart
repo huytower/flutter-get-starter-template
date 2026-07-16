@@ -114,207 +114,246 @@ class _TransactionDatePickerDialogContentState
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ---- Header ----
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-            vertical: context.respPadding(CcPaddingParams.PAGE_SM),
-          ),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [scheme.primary, scheme.primaryContainer],
-            ),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(context.respDim(12)),
-              topRight: Radius.circular(context.respDim(12)),
-            ),
-          ),
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: _canGoPrevious ? _previousMonth : null,
-                icon: Icon(
-                  Icons.chevron_left_rounded,
-                  color: scheme.onPrimary,
-                  size: context.respIconSize(baseSize: 18),
-                ),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-              Expanded(
-                child: CcText(
-                  el.DateFormat('MMMM yyyy', languageCode).format(_viewedMonth),
-                  maxLines: 1,
-                  align: Alignment.center,
-                  textStyle: context.ccTextTheme.labelLarge?.copyWith(
-                    color: scheme.onPrimary,
-                    fontSize: context.respFontSize(13),
-                    fontWeight: CcTypographyParams.bold,
-                  ),
-                ),
-              ),
-              IconButton(
-                onPressed: _canGoNext ? _nextMonth : null,
-                icon: Icon(
-                  Icons.chevron_right_rounded,
-                  color: scheme.onPrimary,
-                  size: context.respIconSize(baseSize: 18),
-                ),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-        ),
-
-        // ---- Body ----
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: scheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(context.respDim(12)),
-              bottomRight: Radius.circular(context.respDim(12)),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // ---- Weekday labels ----
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-                  vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-                ),
-                child: Row(
-                  children: List.generate(7, (index) {
-                    final weekday = index + 1;
-                    final label = el.DateFormat.E(
-                      languageCode,
-                    ).format(DateTime(2024, 1, weekday));
-                    return Expanded(
-                      child: CcText(
-                        label,
-                        align: Alignment.center,
-                        textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                          color: scheme.primary.withOpacity(0.8),
-                          fontSize: context.respFontSize(10),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-              ),
-
-              // ---- Calendar grid ----
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-                  vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-                ),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  mainAxisExtent: context.respDim(40),
-                  crossAxisSpacing: context.respDim(4),
-                  mainAxisSpacing: context.respDim(4),
-                ),
-                itemCount: 42,
-                itemBuilder: (context, index) {
-                  final date = calendarDays[index];
-                  final isCurrentMonth = _isInMonth(date, _viewedMonth);
-                  final isSelected = _isSameDay(date, _selectedDate);
-                  final isToday = _isSameDay(date, today);
-
-                  return GestureDetector(
-                    onTap: () {
-                      if (date.isBefore(widget.firstDate) ||
-                          date.isAfter(widget.lastDate)) {
-                        return;
-                      }
-                      _onDateTap(date);
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 150),
-                      decoration: BoxDecoration(
-                        color: isSelected ? scheme.primary : Colors.transparent,
-                        borderRadius: BorderRadius.circular(
-                          context.respDim(20),
-                        ),
-                        border: Border.all(
-                          color: isSelected
-                              ? scheme.primary
-                              : isToday
-                              ? scheme.primary.withOpacity(0.3)
-                              : Colors.transparent,
-                          width: isSelected || isToday ? 1.5 : 0,
-                        ),
-                      ),
-                      child: Center(
-                        child: CcText(
-                          '${date.day}',
-                          align: Alignment.center,
-                          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                            fontSize: context.respFontSize(13),
-                            fontWeight: isSelected
-                                ? CcTypographyParams.bold
-                                : CcTypographyParams.regular,
-                            color: isSelected
-                                ? scheme.onPrimary
-                                : isCurrentMonth
-                                ? scheme.onSurface
-                                : scheme.onSurfaceVariant.withOpacity(0.4),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-
-              // ---- Actions ----
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  context.respPadding(CcPaddingParams.PAGE_MD),
-                  0,
-                  context.respPadding(CcPaddingParams.PAGE_MD),
-                  context.respPadding(CcPaddingParams.PAGE_XS),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(null),
-                      child: CcText(
-                        el.tr(CcLocaleKeys.common_cancel),
-                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                          color: scheme.primary,
-                          fontWeight: CcTypographyParams.semiBold,
-                        ),
-                      ),
-                    ),
-                    const CcSpaceSM(),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(_selectedDate),
-                      child: CcText(
-                        el.tr(CcLocaleKeys.common_ok),
-                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                          color: scheme.primary,
-                          fontWeight: CcTypographyParams.semiBold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
-            ],
-          ),
-        ),
+        _buildHeader(context, scheme, languageCode),
+        _buildBody(context, scheme, languageCode, calendarDays, today),
       ],
+    );
+  }
+
+  Widget _buildHeader(
+    BuildContext context,
+    ColorScheme scheme,
+    String languageCode,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+        vertical: context.respPadding(CcPaddingParams.PAGE_SM),
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [scheme.primary, scheme.primaryContainer],
+        ),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(context.respDim(12)),
+          topRight: Radius.circular(context.respDim(12)),
+        ),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: _canGoPrevious ? _previousMonth : null,
+            icon: Icon(
+              Icons.chevron_left_rounded,
+              color: scheme.onPrimary,
+              size: context.respIconSize(baseSize: 18),
+            ),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+          Expanded(
+            child: CcText(
+              el.DateFormat('MMMM yyyy', languageCode).format(_viewedMonth),
+              maxLines: 1,
+              align: Alignment.center,
+              textStyle: context.ccTextTheme.labelLarge?.copyWith(
+                color: scheme.onPrimary,
+                fontSize: context.respFontSize(13),
+                fontWeight: CcTypographyParams.bold,
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: _canGoNext ? _nextMonth : null,
+            icon: Icon(
+              Icons.chevron_right_rounded,
+              color: scheme.onPrimary,
+              size: context.respIconSize(baseSize: 18),
+            ),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    ColorScheme scheme,
+    String languageCode,
+    List<DateTime> calendarDays,
+    DateTime today,
+  ) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(context.respDim(12)),
+          bottomRight: Radius.circular(context.respDim(12)),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildWeekdayLabels(context, scheme, languageCode),
+          _buildCalendarGrid(context, scheme, calendarDays, today),
+          _buildActions(context, scheme),
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeekdayLabels(
+    BuildContext context,
+    ColorScheme scheme,
+    String languageCode,
+  ) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+        vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+      ),
+      child: Row(
+        children: List.generate(7, (index) {
+          final weekday = index + 1;
+          final label = el.DateFormat.E(
+            languageCode,
+          ).format(DateTime(2024, 1, weekday));
+          return Expanded(
+            child: CcText(
+              label,
+              align: Alignment.center,
+              textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                color: scheme.primary.withOpacity(0.8),
+                fontSize: context.respFontSize(10),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildCalendarGrid(
+    BuildContext context,
+    ColorScheme scheme,
+    List<DateTime> calendarDays,
+    DateTime today,
+  ) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+        vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+      ),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 7,
+        mainAxisExtent: context.respDim(40),
+        crossAxisSpacing: context.respDim(4),
+        mainAxisSpacing: context.respDim(4),
+      ),
+      itemCount: 42,
+      itemBuilder: (context, index) => _buildDayCell(
+        context,
+        scheme,
+        calendarDays[index],
+        today,
+      ),
+    );
+  }
+
+  Widget _buildDayCell(
+    BuildContext context,
+    ColorScheme scheme,
+    DateTime date,
+    DateTime today,
+  ) {
+    final isCurrentMonth = _isInMonth(date, _viewedMonth);
+    final isSelected = _isSameDay(date, _selectedDate);
+    final isToday = _isSameDay(date, today);
+
+    return GestureDetector(
+      onTap: () {
+        if (date.isBefore(widget.firstDate) || date.isAfter(widget.lastDate)) {
+          return;
+        }
+        _onDateTap(date);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        decoration: BoxDecoration(
+          color: isSelected ? scheme.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(context.respDim(20)),
+          border: Border.all(
+            color: isSelected
+                ? scheme.primary
+                : isToday
+                ? scheme.primary.withOpacity(0.3)
+                : Colors.transparent,
+            width: isSelected || isToday ? 1.5 : 0,
+          ),
+        ),
+        child: Center(
+          child: CcText(
+            '${date.day}',
+            align: Alignment.center,
+            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+              fontSize: context.respFontSize(13),
+              fontWeight: isSelected
+                  ? CcTypographyParams.bold
+                  : CcTypographyParams.regular,
+              color: isSelected
+                  ? scheme.onPrimary
+                  : isCurrentMonth
+                  ? scheme.onSurface
+                  : scheme.onSurfaceVariant.withOpacity(0.4),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActions(BuildContext context, ColorScheme scheme) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        context.respPadding(CcPaddingParams.PAGE_MD),
+        0,
+        context.respPadding(CcPaddingParams.PAGE_MD),
+        context.respPadding(CcPaddingParams.PAGE_XS),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(null),
+            child: CcText(
+              el.tr(CcLocaleKeys.common_cancel),
+              textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                color: scheme.primary,
+                fontWeight: CcTypographyParams.semiBold,
+              ),
+            ),
+          ),
+          const CcSpaceSM(),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(_selectedDate),
+            child: CcText(
+              el.tr(CcLocaleKeys.common_ok),
+              textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                color: scheme.primary,
+                fontWeight: CcTypographyParams.semiBold,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
