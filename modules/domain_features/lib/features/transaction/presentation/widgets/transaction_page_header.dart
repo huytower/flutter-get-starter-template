@@ -11,13 +11,15 @@ class TransactionPageHeader extends StatelessWidget {
   const TransactionPageHeader({
     super.key,
     required this.controller,
-    required this.onOpenReport,
-    required this.onSubmit,
+    this.onOpenNotification,
+    this.onOpenReport,
+    this.onSubmit,
   });
 
   final TransactionController controller;
-  final VoidCallback onOpenReport;
-  final VoidCallback onSubmit;
+  final VoidCallback? onOpenNotification;
+  final VoidCallback? onOpenReport;
+  final VoidCallback? onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -35,32 +37,50 @@ class TransactionPageHeader extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
-        children: [_buildHeroBackground(), _buildHeroForeground(context)],
+        children: [
+          _buildHeroBackground(context),
+          _buildHeroForeground(context),
+        ],
       ),
     );
   }
 
-  Widget _buildHeroBackground() {
-    return Positioned.fill(
-      child: Image.asset('assets/bg/bg_header.webp', fit: BoxFit.cover),
-    );
+  Widget _buildHeroBackground(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final assetPath = isDark
+        ? 'assets/bg/bg_header_dark.webp'
+        : 'assets/bg/bg_header_light.webp';
+    return Positioned.fill(child: Image.asset(assetPath, fit: BoxFit.cover));
   }
 
   Widget _buildHeroForeground(BuildContext context) {
     return Positioned(
-      top: -150,
+      top: MediaQuery.of(context).padding.top,
       left: 0,
       right: 0,
-      bottom: 0,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+      bottom: context.respDim(16),
+      child: CcSymmetricPadding(
+        horizontal: CcPaddingParams.PAGE_MD,
+        child: Column(
           children: [
-            _buildHeaderTitleSection(context),
-            _buildHeaderActions(context),
+            const CcSpaceSM(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildHeaderTitleSection(context),
+                _buildHeaderActions(context),
+              ],
+            ),
+            const CcSpaceXL(),
+            CcFrostedBanner(
+              badgeCount: 2,
+              message: el.tr(
+                CcLocaleKeys.transaction_claims_in_progress,
+                namedArgs: {'count': '2'},
+              ),
+              accentColor: context.ccColorScheme.primary,
+              onTap: onOpenNotification,
+            ),
           ],
         ),
       ),
@@ -119,7 +139,7 @@ class TransactionPageHeader extends StatelessWidget {
       final activeColor = _getTabColor(context, selectedIndex);
 
       return CcIconButton.bouncing(
-        onTap: onSubmit,
+        onTap: onSubmit ?? () {},
         bgColor: Colors.white.withOpacity(0.15),
         icon: Icon(
           Icons.check_rounded,
@@ -132,7 +152,7 @@ class TransactionPageHeader extends StatelessWidget {
 
   Widget _buildReportButton(BuildContext context) {
     return CcIconButton.bouncing(
-      onTap: onOpenReport,
+      onTap: onOpenReport ?? () {},
       icon: Icon(
         Icons.bar_chart_rounded,
         size: context.respIconSize(baseSize: 28),

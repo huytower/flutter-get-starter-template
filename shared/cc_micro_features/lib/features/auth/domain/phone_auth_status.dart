@@ -4,7 +4,6 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 ///
 /// This is intentionally state-management agnostic (no Bloc/GetX types) so the
 /// `auth` domain and data layers stay clean per the project constitution
-/// (rules #3 & #23). The presentation Bloc maps these statuses into its own
 /// `PhoneAuthEvent`/`PhoneAuthState`.
 sealed class PhoneAuthStatus {
   const PhoneAuthStatus();

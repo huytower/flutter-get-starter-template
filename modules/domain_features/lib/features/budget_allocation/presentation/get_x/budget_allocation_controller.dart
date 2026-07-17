@@ -55,7 +55,7 @@ class BudgetAllocationController extends CcGetController {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Error loading budget allocation: $e');
+        'Error loading budget allocation: $e'.Log();
       }
       errorMessage.value = e.toString();
       layoutStatus.value = CcLayoutStatus.error;

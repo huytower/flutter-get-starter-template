@@ -153,7 +153,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: context.ccColorScheme.primary),
+          CcIconToken(icon, size: 16),
           const CcSpaceXS(),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

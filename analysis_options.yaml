@@ -24,6 +24,8 @@ analyzer:
     use_super_parameters: ignore
     prefer_int_literals: ignore
     strict_top_level_inference: ignore
+    # Rule #21: import ordering is enforced and auto-fixed in CI (dart fix --apply).
+    directives_ordering: error
     unnecessary_overrides: ignore
     avoid_function_literals_in_foreach_calls: ignore
     deprecated_member_use: ignore
@@ -33,7 +35,7 @@ analyzer:
     annotate_overrides: ignore
     prefer_initializing_formals: ignore
     library_private_types_in_public_api: ignore
-    avoid_print: ignore
+    avoid_print: error
     use_key_in_widget_constructors: ignore
     sort_child_properties_last: ignore
     unnecessary_this: ignore

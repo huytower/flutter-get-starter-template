@@ -31,9 +31,9 @@ class ProfileStatCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
+          CcIconToken(
             icon,
-            size: context.respIconSize(baseSize: 18),
+            size: 18,
             color: isLocked ? dimColor : context.ccColorScheme.primary,
           ),
           const CcSpaceXS(),

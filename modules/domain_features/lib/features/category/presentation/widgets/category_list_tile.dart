@@ -39,12 +39,12 @@ class CategoryListTile extends StatelessWidget {
             color: (category.color ?? scheme.primary).withOpacity(0.12),
             borderRadius: BorderRadius.circular(context.respDim(12)),
           ),
-          child: Icon(
+          child: CcIconToken(
             iconDataFromCode(
               category.iconCode,
               fontFamily: category.iconFamily,
             ),
-            size: context.respIconSize(baseSize: 20),
+            size: 20,
             color: category.color ?? scheme.primary,
           ),
         ),

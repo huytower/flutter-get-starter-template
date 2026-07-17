@@ -41,7 +41,7 @@ class ReportPage extends CcGetView<ReportController> {
 
   Widget _buildReportContent(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
-    final headerHeight = context.respDim(170) + topPadding;
+    final headerHeight = context.respDim(220) + topPadding;
     final tabBarHeight = context.respDim(60);
     final overlap = tabBarHeight / 2;
 

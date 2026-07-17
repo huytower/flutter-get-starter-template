@@ -38,15 +38,15 @@ To set up Firebase for local development:
     - Critical initialization sequence (Env -> Parallel DI/Hive/I18n)
     - Crash log feature wrapper
 
-2. `lib/core/di/inject/inject.dart`
+2. `lib/core/di/di.dart`
     - Global DI assembly
-    - Includes module DI from `cc_micro_features`, `modules/data`, `modules/app_config`, etc.
+    - Includes module DI from `cc_micro_features`, `modules/data_config`, `modules/app_config`, etc.
 
-3. `cc_micro_features/lib/export_micro_features.dart`
+3. `shared/cc_micro_features/lib/export_micro_features.dart`
     - Exports reusable feature packages
     - New reusable features should be added here
 
-4. `modules/data/lib/core/di/di.dart`
+4. `modules/data_config/lib/core/di/di.dart`
     - Data module DI registration
     - Remote/local repository wiring
 
@@ -58,7 +58,7 @@ To set up Firebase for local development:
 
 ## Current feature pattern
 
-Reusable feature packages live under `cc_micro_features/lib/features/`.
+Reusable feature packages live under `shared/cc_micro_features/lib/features/`.
 
 Each feature should generally follow this structure:
 
@@ -82,9 +82,9 @@ Each feature should generally follow this structure:
 
 The crash log viewer was moved into:
 
-- `cc_micro_features/lib/features/crash_log/crash_log_viewer_page.dart`
-- `cc_micro_features/lib/features/crash_log/crash_log_dev_overlay.dart`
-- `cc_micro_features/lib/features/crash_log/export_crash_log.dart`
+- `shared/cc_micro_features/lib/features/crash_log/crash_log_viewer_page.dart`
+- `shared/cc_micro_features/lib/features/crash_log/crash_log_dev_overlay.dart`
+- `shared/cc_micro_features/lib/features/crash_log/export_crash_log.dart`
 
 Use the feature package import:
 
@@ -94,12 +94,12 @@ import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 
 ## How to add a new reusable feature
 
-1. Create a new feature folder under `cc_micro_features/lib/features/`.
+1. Create a new feature folder under `shared/cc_micro_features/lib/features/`.
 2. Add `core/di/di.dart` for feature DI registration. **CRITICAL**: Use `@lazySingleton` for all heavy services to maintain < 2s startup.
 3. Add domain contracts and use cases under `domain/`.
 4. Add data sources and repository implementations under `data/`.
 5. Add UI pages/widgets under `presentation/`.
-6. Export the feature from `cc_micro_features/lib/export_micro_features.dart`.
+6. Export the feature from `shared/cc_micro_features/lib/export_micro_features.dart`.
 7. Update the main app imports to use the feature package export.
 8. Run `flutter pub get` and `flutter analyze`.
 
@@ -129,5 +129,5 @@ import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 - Use package exports for cross-package imports
 - Keep module boundaries clean: domain should not depend on presentation
 - Prefer abstractions (interfaces, repositories) in DI
-- Document new feature package exports in `cc_micro_features/lib/export_micro_features.dart`
+- Document new feature package exports in `shared/cc_micro_features/lib/export_micro_features.dart`
 - Keep `README.md` and `docs/AI_CONTEXT.md` in sync with major structure changes

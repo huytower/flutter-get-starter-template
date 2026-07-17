@@ -119,8 +119,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = context.ccColorScheme.primary;
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
@@ -133,17 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             return Stack(
               children: [
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [primaryColor.withOpacity(0.10), Colors.white],
-                      ),
-                    ),
-                  ),
-                ),
+                const BgGradientWidget(),
                 SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -152,12 +140,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         user: user,
                         displayName: _displayName(context, user),
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.respPadding(
-                            CcPaddingParams.PAGE_SM,
-                          ),
-                        ),
+                      CcSymmetricPadding(
+                        horizontal: CcPaddingParams.PAGE_SM,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -167,6 +151,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             ProfileMenuGroup(
                               items: _buildMenuItems(context, isLoggedIn),
                             ),
+                            const CcSpaceXL(),
+                            if (isLoggedIn) ...[
+                              _buildLogoutButton(context),
+                              const CcSpaceLG(),
+                              _buildDeleteAccountText(context),
+                            ],
                             const CcSpaceXL(),
                           ],
                         ),
@@ -192,6 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ProfileSettingsTile(
         icon: Icons.tune_rounded,
         label: el.tr(CcLocaleKeys.category_settings_title),
+        subtitle: el.tr(CcLocaleKeys.category_settings_subtitle),
         onTap: () async {
           if (_c.settings.value.birthYear == null) {
             await _pickBirthYear(context);
@@ -209,6 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
         () => ProfileSettingsTile(
           icon: Icons.cake_rounded,
           label: el.tr(CcLocaleKeys.profile_birth_year),
+          subtitle: el.tr(CcLocaleKeys.profile_birth_year_subtitle),
           trailingLabel:
               _c.settings.value.birthYear?.toString() ??
               el.tr(CcLocaleKeys.common_not_set),
@@ -219,6 +211,7 @@ class _ProfilePageState extends State<ProfilePage> {
         () => ProfileSettingsTile(
           icon: Icons.calendar_today_rounded,
           label: el.tr(CcLocaleKeys.profile_weekly_audit_day),
+          subtitle: el.tr(CcLocaleKeys.profile_weekly_audit_day_subtitle),
           trailingLabel: _getDayName(_c.settings.value.weeklyAuditDayIndex + 1),
           onTap: () => _pickWeeklyAuditDay(context),
         ),
@@ -227,6 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
         () => ProfileSettingsTile(
           icon: Icons.notifications_rounded,
           label: el.tr(CcLocaleKeys.profile_reminder),
+          subtitle: el.tr(CcLocaleKeys.profile_reminder_subtitle),
           showChevron: false,
           trailingWidget: SizedBox(
             height: context.respIconSize(baseSize: 20),
@@ -246,6 +240,7 @@ class _ProfilePageState extends State<ProfilePage> {
         () => ProfileSettingsTile(
           icon: Icons.palette_rounded,
           label: el.tr(CcLocaleKeys.settings_theme),
+          subtitle: el.tr(CcLocaleKeys.profile_theme_subtitle),
           showChevron: false,
           trailingWidget: SizedBox(
             height: context.respIconSize(baseSize: 20),
@@ -264,6 +259,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ProfileSettingsTile(
         icon: Icons.language_rounded,
         label: el.tr(CcLocaleKeys.settings_language),
+        subtitle: el.tr(CcLocaleKeys.profile_language_subtitle),
         trailingLabel: context.locale.languageCode == 'vi'
             ? el.tr(CcLocaleKeys.settings_language_vietnamese)
             : el.tr(CcLocaleKeys.settings_language_english),
@@ -272,20 +268,24 @@ class _ProfilePageState extends State<ProfilePage> {
       ProfileSettingsTile(
         icon: Icons.attach_money_rounded,
         label: el.tr(CcLocaleKeys.profile_currency),
+        subtitle: el.tr(CcLocaleKeys.profile_currency_subtitle),
         trailingLabel: el.tr(CcLocaleKeys.profile_currency_dong),
       ),
       ProfileSettingsTile(
         icon: Icons.play_circle_outline_rounded,
         label: el.tr(CcLocaleKeys.profile_view_tutorial),
+        subtitle: el.tr(CcLocaleKeys.profile_view_tutorial_subtitle),
       ),
       ProfileSettingsTile(
         icon: Icons.description_rounded,
         label: el.tr(CcLocaleKeys.profile_terms),
+        subtitle: el.tr(CcLocaleKeys.profile_terms_subtitle),
       ),
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.info_outline_rounded,
           label: el.tr(CcLocaleKeys.profile_about),
+          subtitle: el.tr(CcLocaleKeys.profile_about_subtitle),
           trailingLabel: _c.appVersion.value.isEmpty
               ? null
               : 'v${_c.appVersion.value}',

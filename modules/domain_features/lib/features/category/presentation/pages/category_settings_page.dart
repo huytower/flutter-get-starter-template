@@ -152,11 +152,9 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
   }
 
   Widget _buildSubtitle(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-        vertical: context.respDim(8),
-      ),
+    return CcSymmetricPadding(
+      horizontal: CcPaddingParams.PAGE_SM,
+      vertical: 8,
       child: CcText(
         el.tr(CcLocaleKeys.category_settings_subtitle),
         textStyle: context.ccTextTheme.bodyMedium?.copyWith(

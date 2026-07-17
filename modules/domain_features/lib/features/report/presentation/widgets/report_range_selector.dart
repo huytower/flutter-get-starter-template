@@ -20,10 +20,8 @@ class ReportRangeSelector extends StatelessWidget {
     final primaryText = context.ccColorScheme.onPrimary;
     final scheme = context.ccColorScheme;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
-      ),
+    return CcSymmetricPadding(
+      horizontal: CcPaddingParams.SPACE_MD,
       child: Container(
         decoration: BoxDecoration(
           color: scheme.surface,

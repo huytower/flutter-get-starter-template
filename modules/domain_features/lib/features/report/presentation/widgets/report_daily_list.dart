@@ -167,11 +167,9 @@ class _TransactionTile extends StatelessWidget {
       );
     }
 
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
-        vertical: context.respPadding(CcPaddingParams.SPACE_SM),
-      ),
+    return CcSymmetricPadding(
+      horizontal: CcPaddingParams.SPACE_MD,
+      vertical: CcPaddingParams.SPACE_SM,
       child: Row(
         children: [
           Container(

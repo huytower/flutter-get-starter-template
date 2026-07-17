@@ -213,11 +213,9 @@ class _TransactionDatePickerDialogContentState
     ColorScheme scheme,
     String languageCode,
   ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-      ),
+    return CcSymmetricPadding(
+      horizontal: CcPaddingParams.PAGE_MD,
+      vertical: CcPaddingParams.PAGE_XS,
       child: Row(
         children: List.generate(7, (index) {
           final weekday = index + 1;

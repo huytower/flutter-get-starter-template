@@ -1,7 +1,9 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:get/get.dart';
+
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../domain/report_range.dart';
@@ -20,19 +22,21 @@ class ReportTabBar extends StatelessWidget {
       margin: EdgeInsets.symmetric(
         horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
       ),
-      height: context.respDim(60),
+      height: context.respDim(45),
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: BorderRadius.circular(context.respDim(20)),
+        borderRadius: BorderRadius.circular(
+          context.respDim(CcCircularParams.RADIUS_XL),
+        ),
         boxShadow: [
           BoxShadow(
             color: scheme.onSurface.withOpacity(0.12),
-            blurRadius: context.respDim(12),
+            blurRadius: context.respDim(CcPaddingParams.SPACE_MD),
             offset: Offset(0, context.respDim(6)),
           ),
         ],
       ),
-      padding: EdgeInsets.all(context.respDim(4)),
+      padding: EdgeInsets.all(context.respDim(CcPaddingParams.SPACE_XS)),
       child: Obx(() => _buildActualTabBar(context, scheme)),
     );
   }
@@ -44,10 +48,14 @@ class ReportTabBar extends StatelessWidget {
     return TabBar(
       onTap: (index) => controller.selectRange(ReportRange.values[index]),
       indicatorSize: TabBarIndicatorSize.tab,
-      dividerColor: Colors.transparent,
+      dividerColor: PrjColors.transparent,
+      splashFactory: NoSplash.splashFactory,
+      overlayColor: WidgetStateProperty.all(PrjColors.transparent),
       indicator: BoxDecoration(
         color: activeColor.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(context.respDim(16)),
+        borderRadius: BorderRadius.circular(
+          context.respDim(CcCircularParams.RADIUS_LG),
+        ),
       ),
       labelColor: activeColor,
       unselectedLabelColor: scheme.onSurfaceVariant,

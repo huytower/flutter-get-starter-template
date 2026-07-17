@@ -1,4 +1,5 @@
-import 'package:cc_sdk/core/constants/cc_constants.dart';
+import 'package:cc_sdk/export_cc_sdk.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 import '../config/http/http_client/http_client_config.dart';
@@ -13,7 +14,9 @@ class LoggerHelper {
       final timestamp = DateFormat(
         CcConstantsDateTime.datetimeFormatPattern2Encode,
       ).format(now);
-      print("$str $timestamp ${now.millisecond} ${now.microsecond}");
+      if (kDebugMode) {
+        "$str $timestamp ${now.millisecond} ${now.microsecond}".Log();
+      }
     }
   }
 }

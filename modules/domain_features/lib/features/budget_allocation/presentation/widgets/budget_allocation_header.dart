@@ -79,12 +79,11 @@ class BudgetAllocationHeader extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: EdgeInsets.all(context.respDim(6)),
-                      child: Icon(
+                      child: CcIconToken(
                         controller.isBalanceVisible.value
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
-                        color: context.ccColorScheme.primary,
-                        size: context.respIconSize(baseSize: 24),
+                        size: 24,
                       ),
                     ),
                   ),

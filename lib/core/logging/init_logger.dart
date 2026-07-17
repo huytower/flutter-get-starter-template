@@ -1,8 +1,7 @@
-import 'dart:developer' as developer;
-
 import 'package:app_config/core/config/http/http_client/http_client_config.dart';
 import 'package:app_config/core/enum/environment.dart';
 import 'package:app_config/data/datasource/remote/app_version_api.dart';
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Logs the current app version and build information
@@ -14,21 +13,15 @@ Future<void> logVersionInfo() async {
     final packageName = await versionService.getPackageName();
     final isPreRelease = await versionService.isPreRelease();
 
-    developer.log(
-      '📱 App Version Info\n'
-      '   • Version: $version\n'
-      '   • Build: $buildNumber\n'
-      '   • Package: $packageName\n'
-      '   • Pre-release: $isPreRelease',
-      name: 'AppVersion',
-    );
+    '📱 App Version Info\n'
+        '   • Version: $version\n'
+        '   • Build: $buildNumber\n'
+        '   • Package: $packageName\n'
+        '   • Pre-release: $isPreRelease'
+        .Log('AppVersion');
   } catch (e, stackTrace) {
-    developer.log(
-      '❌ Failed to get version info: $e',
-      error: e,
-      stackTrace: stackTrace,
-      name: 'AppVersion',
-    );
+    '❌ Failed to get version info: $e'.Log('AppVersion');
+    stackTrace.Log('AppVersion');
   }
 }
 
@@ -60,11 +53,8 @@ Future<void> logEnv() async {
     }
 
     // Log env info
-    developer.log('✅ Running in ${env.name} environment', name: 'EnvConfig');
-    developer.log(
-      '🌐 API URL: ${dotenv.get('API_URL', fallback: 'Not set')}',
-      name: 'EnvConfig',
-    );
+    '✅ Running in ${env.name} environment'.Log('EnvConfig');
+    '🌐 API URL: ${dotenv.get('API_URL', fallback: 'Not set')}'.Log('EnvConfig');
 
     // Log all loaded variables in debug mode
     assert(() {
@@ -74,17 +64,13 @@ Future<void> logEnv() async {
           '   $key: ${key.toLowerCase().contains('key') || key.toLowerCase().contains('secret') ? '***' : value}',
         );
       });
-      developer.log(buffer.toString(), name: 'EnvConfig');
+      buffer.toString().Log('EnvConfig');
 
       return true;
     }());
   } catch (e, stackTrace) {
-    developer.log(
-      '❌ Failed to load env variables: $e',
-      error: e,
-      stackTrace: stackTrace,
-      name: 'EnvConfig',
-    );
+    '❌ Failed to load env variables: $e'.Log('EnvConfig');
+    stackTrace.Log('EnvConfig');
     rethrow;
   }
 }

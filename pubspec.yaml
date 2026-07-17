@@ -149,34 +149,22 @@ flutter_native_splash:
 # melos.yaml — duplication causes drift.
 melos:
   scripts:
-    bootstrap:
-      description: Bootstrap the workspace and download all dependencies.
-      run: flutter pub get
-
     gen:
-      description: Generate code for all packages and the root project.
-      run: |
-        melos exec --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs"
-        flutter pub run build_runner build --delete-conflicting-outputs
+      run: melos exec -- "dart run build_runner build --delete-conflicting-outputs"
+      description: Generate code for all packages.
 
     rebuild:
-      description: Run bootstrap followed by code generation.
-      run: flutter pub get && melos run gen && flutter pub run build_runner build --delete-conflicting-outputs
+      run: melos exec -- "flutter clean && flutter pub get && dart run build_runner build --delete-conflicting-outputs"
+      description: Clean and rebuild all packages.
 
     analyze:
-      description: Analyze all packages in the workspace.
       run: melos exec -- "flutter analyze"
+      description: Run analysis for all packages.
 
     test:
-      description: Run tests for all packages in the workspace.
-      run: melos exec --dir-exists="test" -- "flutter test"
+      run: melos exec -- "flutter test"
+      description: Run tests for all packages.
 
     setup:firebase:
-      description: Initialize Firebase configuration files from templates.
-      run: |
-        cp android/app/src/free/google-services.json.template android/app/src/free/google-services.json
-        cp android/app/src/prod/google-services.json.template android/app/src/prod/google-services.json
-        cp android/app/src/uat/google-services.json.template android/app/src/uat/google-services.json
-        cp ios/Firebase/free/GoogleService-Info.plist.template ios/Firebase/free/GoogleService-Info.plist
-        cp ios/Firebase/prod/GoogleService-Info.plist.template ios/Firebase/prod/GoogleService-Info.plist
-        cp ios/Firebase/uat/GoogleService-Info.plist.template ios/Firebase/uat/GoogleService-Info.plist
+      run: bash scripts/setup_firebase_configs.sh
+      description: Generate local config files from templates.

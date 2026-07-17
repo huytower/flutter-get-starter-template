@@ -50,10 +50,8 @@ class MoneyKeypadPanel extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: context.respPadding(CcPaddingParams.SPACE_XS),
-            ),
+          CcSymmetricPadding(
+            vertical: CcPaddingParams.SPACE_XS,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -69,10 +67,8 @@ class MoneyKeypadPanel extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: onDone,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.respPadding(CcPaddingParams.SPACE_XL),
-                    ),
+                  child: CcSymmetricPadding(
+                    horizontal: CcPaddingParams.SPACE_XL,
                     child: CcText(
                       el.tr(CcLocaleKeys.common_done),
                       textStyle: context.ccTextTheme.labelMedium?.copyWith(
