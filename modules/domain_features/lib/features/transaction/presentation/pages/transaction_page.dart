@@ -33,7 +33,7 @@ class TransactionPage extends CcGetView<TransactionController> {
           children: [
             TransactionPageHeader(
               controller: controller,
-              onOpenNotification: () => {},
+              onOpenReport: () => _openReport(context),
               onSubmit: () => _submitCurrentForm(context),
             ),
             _buildTransactionContent(context),

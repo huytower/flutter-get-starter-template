@@ -11,13 +11,15 @@ class TransactionPageHeader extends StatelessWidget {
   const TransactionPageHeader({
     super.key,
     required this.controller,
-    required this.onOpenNotification,
-    required this.onSubmit,
+    this.onOpenNotification,
+    this.onOpenReport,
+    this.onSubmit,
   });
 
   final TransactionController controller;
-  final VoidCallback onOpenNotification;
-  final VoidCallback onSubmit;
+  final VoidCallback? onOpenNotification;
+  final VoidCallback? onOpenReport;
+  final VoidCallback? onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +139,7 @@ class TransactionPageHeader extends StatelessWidget {
       final activeColor = _getTabColor(context, selectedIndex);
 
       return CcIconButton.bouncing(
-        onTap: onSubmit,
+        onTap: onSubmit ?? () {},
         bgColor: Colors.white.withOpacity(0.15),
         icon: Icon(
           Icons.check_rounded,
@@ -150,7 +152,7 @@ class TransactionPageHeader extends StatelessWidget {
 
   Widget _buildReportButton(BuildContext context) {
     return CcIconButton.bouncing(
-      onTap: onOpenNotification,
+      onTap: onOpenReport ?? () {},
       icon: Icon(
         Icons.bar_chart_rounded,
         size: context.respIconSize(baseSize: 28),
