@@ -6,9 +6,14 @@ import 'package:theme/export_theme.dart';
 import '../../domain/entities/financial_runway_entity.dart';
 
 class FinancialRunwayWidget extends StatelessWidget {
-  const FinancialRunwayWidget({super.key, required this.runway});
+  const FinancialRunwayWidget({
+    super.key,
+    required this.runway,
+    this.showChevron = true,
+  });
 
   final FinancialRunwayEntity runway;
+  final bool showChevron;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +36,7 @@ class FinancialRunwayWidget extends StatelessWidget {
           message: message,
           accentColor: statusColor,
           icon: statusIcon,
+          showChevron: showChevron,
         ),
         const CcSpaceSM(),
         _buildDescription(context, el.tr(CcLocaleKeys.report_runway_desc_2)),

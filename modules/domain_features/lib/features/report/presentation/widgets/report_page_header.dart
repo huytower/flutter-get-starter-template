@@ -104,7 +104,7 @@ class ReportPageHeader extends StatelessWidget {
 
       return CcSymmetricPadding(
         horizontal: CcPaddingParams.PAGE_MD,
-        child: FinancialRunwayWidget(runway: runway),
+        child: FinancialRunwayWidget(runway: runway, showChevron: false),
       );
     });
   }

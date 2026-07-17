@@ -8,6 +8,7 @@ import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
+import '../../../budget_limit/domain/repositories/budget_limit_repository.dart';
 import '../entities/financial_runway_entity.dart';
 
 @lazySingleton
@@ -17,24 +18,26 @@ class GetFinancialRunwayUseCase {
     this._transactionRepository,
     this._getWalletBalances,
     this._categoryRepository,
+    this._budgetLimitRepository,
   );
 
   final WalletRepository _walletRepository;
   final TransactionRepository _transactionRepository;
   final GetWalletBalancesUseCase _getWalletBalances;
   final CategoryRepository _categoryRepository;
+  final BudgetLimitRepository _budgetLimitRepository;
 
-  /// Survival groups as defined in BUSINESS_REQUIREMENT.md & PrjColors
-  /// 1: Food, 2: Transport, 3: Utilities, 4: Housing, 5: Health, 9: Debt, 10: Insurance
-  static const Set<String> survivalGroups = {
-    'group_1',
-    'group_2',
-    'group_3',
-    'group_4',
-    'group_5',
-    'group_9',
-    'group_10',
-  };
+  /// Sums the monthly limits of all active fixed-price budgets. These are the
+  /// recurring mandatory costs (e.g. rent, electricity) the user has marked
+  /// with the fixed-price (bolt) flag in the budget limit feature.
+  Future<double> _getFixedMonthlyCost() async {
+    final result = await _budgetLimitRepository.getBudgets(activeOnly: true);
+    if (result.isError()) return 0;
+    return result
+        .tryGetSuccess()!
+        .where((b) => b.isFixedPrice)
+        .fold<double>(0, (sum, b) => sum + b.limit);
+  }
 
   Future<Result<FinancialRunwayEntity, CcFailure>> call() async {
     // 1. Get total balance (Book Balance)
@@ -53,11 +56,6 @@ class GetFinancialRunwayUseCase {
     if (categoriesResult.isError()) {
       return Error(categoriesResult.tryGetError()!);
     }
-    final survivalCategoryIds = categoriesResult
-        .tryGetSuccess()!
-        .where((c) => survivalGroups.contains(c.groupId))
-        .map((c) => c.id)
-        .toSet();
 
     // 3. Get average expense from last 3 months + current month
     final now = DateTime.now();
@@ -83,11 +81,8 @@ class GetFinancialRunwayUseCase {
       (sum, t) => sum + t.amount,
     );
 
-    // Filter survival expenses (essential for the "Safety Index")
-    // ignore: unused_local_variable
-    final survivalExpenses = expenseTransactions
-        .where((t) => survivalCategoryIds.contains(t.categoryId))
-        .fold<double>(0, (sum, t) => sum + t.amount);
+    // 4. Recurring mandatory cost: sum of fixed-price budget limits.
+    final fixedMonthlyCost = await _getFixedMonthlyCost();
 
     // Calculate how many months of data we actually have
     double monthsCount = 1;
@@ -106,21 +101,22 @@ class GetFinancialRunwayUseCase {
       if (monthsCount < 1) monthsCount = 1;
     }
 
-    // According to Business Requirements, Runway is based on Average Monthly Expenses.
-    // We use totalExpenses here as the primary "Lifestyle Runway".
+    // According to Business Requirements, Runway is based on Average Monthly
+    // Expenses. When fixed-price budgets are set, they represent the mandatory
+    // recurring burn, so we prefer that over the historical lifestyle average.
     final averageMonthlyExpense = totalExpenses / monthsCount;
+    final monthlyBurn =
+        fixedMonthlyCost > 0 ? fixedMonthlyCost : averageMonthlyExpense;
 
-    // Optional: Calculate survival-based average for a more accurate "Safety Index"
-    // final averageSurvivalExpense = survivalExpenses / monthsCount;
-
-    if (averageMonthlyExpense <= 0) {
+    if (monthlyBurn <= 0) {
       return Success(
         FinancialRunwayEntity(
           months: 0,
           days: 0,
           message: CcLocaleKeys.report_runway_insufficient,
           totalBalance: totalBalance,
-          averageMonthlyExpense: 0,
+          averageMonthlyExpense: averageMonthlyExpense,
+          fixedMonthlyCost: fixedMonthlyCost,
           status: FinancialRunwayStatus.insufficient,
         ),
       );
@@ -134,12 +130,13 @@ class GetFinancialRunwayUseCase {
           message: CcLocaleKeys.report_runway_caution,
           totalBalance: totalBalance,
           averageMonthlyExpense: averageMonthlyExpense,
+          fixedMonthlyCost: fixedMonthlyCost,
           status: FinancialRunwayStatus.caution,
         ),
       );
     }
 
-    final totalMonths = totalBalance / averageMonthlyExpense;
+    final totalMonths = totalBalance / monthlyBurn;
     final months = totalMonths.floor();
     final remainingFraction = totalMonths - months;
     final days = (remainingFraction * 30).round();
@@ -169,6 +166,7 @@ class GetFinancialRunwayUseCase {
         message: messageKey,
         totalBalance: totalBalance,
         averageMonthlyExpense: averageMonthlyExpense,
+        fixedMonthlyCost: fixedMonthlyCost,
         status: status,
       ),
     );

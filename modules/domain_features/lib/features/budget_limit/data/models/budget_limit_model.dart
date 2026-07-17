@@ -30,6 +30,9 @@ class BudgetLimitModel {
   @HiveField(7)
   final bool isClosed;
 
+  @HiveField(8)
+  final bool isFixedPrice;
+
   BudgetLimitModel({
     required this.id,
     required this.categoryId,
@@ -37,6 +40,7 @@ class BudgetLimitModel {
     required this.limit,
     required this.order,
     required this.isClosed,
+    this.isFixedPrice = false,
   });
 
   factory BudgetLimitModel.fromEntity(BudgetLimitEntity entity) =>
@@ -47,6 +51,7 @@ class BudgetLimitModel {
         limit: entity.limit,
         order: entity.order,
         isClosed: entity.isClosed,
+        isFixedPrice: entity.isFixedPrice,
       );
 
   BudgetLimitEntity toEntity() => BudgetLimitEntity(
@@ -56,5 +61,6 @@ class BudgetLimitModel {
     limit: limit,
     order: order,
     isClosed: isClosed,
+    isFixedPrice: isFixedPrice,
   );
 }

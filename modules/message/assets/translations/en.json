@@ -249,7 +249,9 @@
     "see_all": "See all",
     "drag_reorder_hint": "Hold and drag to reorder",
     "customize_category": "Customize category",
-    "percent_used": "{percent}% used"
+    "percent_used": "{percent}% used",
+    "fixed_price": "Fixed Price",
+    "fixed_price_description": "Fixed monthly costs (minimum survival cost), affecting your safety index in the report section."
   },
   "reconciliation": {
     "title": "Reconciliation",

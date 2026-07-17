@@ -25,12 +25,17 @@ class UpdateBudgetLimitUseCase {
     String id, {
     String? name,
     int? limit,
+    bool? isFixedPrice,
   }) async {
     final budgetResult = await _repository.getBudget(id);
     if (budgetResult.isError()) {
       return Error(budgetResult.tryGetError()!);
     }
     var budget = budgetResult.tryGetSuccess()!;
+
+    if (isFixedPrice != null) {
+      budget = budget.copyWith(isFixedPrice: isFixedPrice);
+    }
 
     if (name != null) {
       final trimmed = name.trim();

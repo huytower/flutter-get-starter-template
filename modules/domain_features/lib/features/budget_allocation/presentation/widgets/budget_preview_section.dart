@@ -52,8 +52,7 @@ class BudgetPreviewSection extends StatelessWidget {
                   ),
                   const CcSpaceSM(),
                   GestureDetector(
-                    onTap: () =>
-                        context.router.push(const BudgetLimitManagementRoute()),
+                    onTap: () => context.router.push(const BudgetLimitRoute()),
                     child: CcText(
                       el.tr(CcLocaleKeys.budget_see_all),
                       textStyle: context.ccTextTheme.titleMedium?.copyWith(
@@ -98,7 +97,7 @@ class BudgetPreviewSection extends StatelessWidget {
               ),
               itemCount: budgets.length,
               itemBuilder: (context, i) =>
-                  BudgetLimitGridCard(stats: budgets[i]),
+                  BudgetLimitGridCard(stats: budgets[i], showDragHandle: false),
             ),
           );
         }),

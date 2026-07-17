@@ -24,6 +24,9 @@ class BudgetLimitEntity extends Equatable {
   /// Soft-deleted/archived budgets are hidden but kept in storage.
   final bool isClosed;
 
+  /// True if the budget has a fixed price/cost.
+  final bool isFixedPrice;
+
   const BudgetLimitEntity({
     required this.id,
     required this.categoryId,
@@ -31,6 +34,7 @@ class BudgetLimitEntity extends Equatable {
     required this.limit,
     this.order = 0,
     this.isClosed = false,
+    this.isFixedPrice = false,
   });
 
   BudgetLimitEntity copyWith({
@@ -40,6 +44,7 @@ class BudgetLimitEntity extends Equatable {
     int? limit,
     int? order,
     bool? isClosed,
+    bool? isFixedPrice,
   }) {
     return BudgetLimitEntity(
       id: id ?? this.id,
@@ -48,9 +53,18 @@ class BudgetLimitEntity extends Equatable {
       limit: limit ?? this.limit,
       order: order ?? this.order,
       isClosed: isClosed ?? this.isClosed,
+      isFixedPrice: isFixedPrice ?? this.isFixedPrice,
     );
   }
 
   @override
-  List<Object?> get props => [id, categoryId, name, limit, order, isClosed];
+  List<Object?> get props => [
+    id,
+    categoryId,
+    name,
+    limit,
+    order,
+    isClosed,
+    isFixedPrice,
+  ];
 }

@@ -16,6 +16,7 @@ class BudgetLimitGridCard extends StatelessWidget {
   final BudgetLimitStatsEntity stats;
   final bool isEditMode;
   final bool isDragging;
+  final bool showDragHandle;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
@@ -24,6 +25,7 @@ class BudgetLimitGridCard extends StatelessWidget {
     required this.stats,
     this.isEditMode = false,
     this.isDragging = false,
+    this.showDragHandle = true,
     this.onEdit,
     this.onDelete,
   });
@@ -46,8 +48,8 @@ class BudgetLimitGridCard extends StatelessWidget {
         // ── Main card ───────────────────────────────────────────────────────
         _buildMainCard(context, iconColor, iconData, pct, accent),
 
-        // ── Drag indicator (view mode only) ─────────────────────────────────
-        if (!isEditMode) _buildDragIndicator(context),
+        // ── Indicator icons ────────────────────────────────────────────────
+        _buildIndicatorIcons(context, isEditMode: isEditMode),
 
         // ── Edit mode badges ───────────────────────────────────────────────
         if (isEditMode) ..._buildEditBadges(context),
@@ -171,14 +173,33 @@ class BudgetLimitGridCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDragIndicator(BuildContext context) {
+  Widget _buildIndicatorIcons(BuildContext context, {required bool isEditMode}) {
+    // In edit mode the top-right corner is occupied by the edit (pencil)
+    // badge, so the fixed-price bolt is shifted left to stay visible.
+    final rightOffset = isEditMode
+        ? context.respDim(8) + context.respDim(24) + context.respDim(2)
+        : context.respDim(8);
     return Positioned(
       top: context.respDim(8),
-      right: context.respDim(8),
-      child: Icon(
-        Icons.drag_indicator,
-        color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.2),
-        size: context.respIconSize(baseSize: 12),
+      right: rightOffset,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (stats.budget.isFixedPrice) ...[
+            Icon(
+              Icons.bolt_rounded,
+              color: context.ccColorScheme.primary,
+              size: context.respIconSize(baseSize: 14),
+            ),
+            if (showDragHandle) const CcSpaceXS(),
+          ],
+          if (showDragHandle)
+            Icon(
+              Icons.drag_indicator,
+              color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.2),
+              size: context.respIconSize(baseSize: 12),
+            ),
+        ],
       ),
     );
   }

@@ -9,6 +9,7 @@ class CreateBudgetLimitParams {
   final String categoryId;
   final String name;
   final int limit;
+  final bool isFixedPrice;
 
   /// Optional explicit order; when null the next order is computed.
   final int? order;
@@ -17,6 +18,7 @@ class CreateBudgetLimitParams {
     required this.categoryId,
     required this.name,
     required this.limit,
+    this.isFixedPrice = false,
     this.order,
   });
 }
@@ -64,6 +66,7 @@ class CreateBudgetLimitUseCase {
       name: name,
       limit: params.limit,
       order: order,
+      isFixedPrice: params.isFixedPrice,
     );
 
     final result = await _repository.createBudget(budget);

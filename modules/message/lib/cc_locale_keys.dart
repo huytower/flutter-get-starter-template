@@ -277,6 +277,9 @@ class CodegenLoader extends AssetLoader {
       "drag_reorder_hint": "Hold and drag to reorder",
       "customize_category": "Customize category",
       "percent_used": "{percent}% used",
+      "fixed_price": "Fixed Price",
+      "fixed_price_description":
+          "Fixed monthly costs (minimum survival cost), affecting your safety index in the report section.",
     },
     "reconciliation": {
       "title": "Reconciliation",
@@ -713,6 +716,9 @@ class CodegenLoader extends AssetLoader {
       "drag_reorder_hint": "Giữ và kéo để đổi thứ tự",
       "customize_category": "Tuỳ chỉnh danh mục",
       "percent_used": "{percent}% đã dùng",
+      "fixed_price": "Giá cố định",
+      "fixed_price_description":
+          "Chi phí cố định hàng tháng (mức sống tối thiểu cần có), ảnh hưởng đến chỉ số an toàn với lối sống của bạn ở phần báo cáo",
     },
     "reconciliation": {
       "title": "Đối soát",
@@ -1121,6 +1127,9 @@ abstract class CcLocaleKeys {
   static const budget_drag_reorder_hint = 'budget.drag_reorder_hint';
   static const budget_customize_category = 'budget.customize_category';
   static const budget_percent_used = 'budget.percent_used';
+  static const budget_fixed_price = 'budget.fixed_price';
+  static const budget_fixed_price_description =
+      'budget.fixed_price_description';
 
   static const reconciliation_title = 'reconciliation.title';
   static const reconciliation_empty = 'reconciliation.empty';

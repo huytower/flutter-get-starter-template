@@ -54,6 +54,7 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
   List<CategoryEntity> _categories = const [];
   String? _selectedCategoryId;
   ScrollController? _categoryScrollController;
+  bool _isFixedPrice = false;
 
   bool get _isEdit => widget.editTarget != null;
 
@@ -78,6 +79,7 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
       _nameController.text = target.name;
       _selectedCategoryId = target.categoryId;
       _limitStr = target.limit.toString();
+      _isFixedPrice = target.isFixedPrice;
     }
     _nameController.addListener(() {
       if (_nameError != null) setState(() => _nameError = null);
@@ -166,12 +168,14 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
             widget.editTarget!.id,
             name: _nameController.text,
             limit: _limitLocked ? null : limit,
+            isFixedPrice: _isFixedPrice,
           )
         : await _controller.createBudget(
             CreateBudgetLimitParams(
               categoryId: _selectedCategoryId ?? '',
               name: _nameController.text,
               limit: limit,
+              isFixedPrice: _isFixedPrice,
             ),
           );
 
@@ -188,6 +192,48 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
           : el.tr(CcLocaleKeys.budget_added, namedArgs: {'name': budgetName}),
     );
     Navigator.pop(context);
+  }
+
+  Widget _buildFixedPriceHeaderToggle(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
+    return InkWell(
+      onTap: () => setState(() => _isFixedPrice = !_isFixedPrice),
+      borderRadius: BorderRadius.circular(context.respDim(8)),
+      child: Tooltip(
+        message: el.tr(CcLocaleKeys.budget_fixed_price),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.respDim(8),
+            vertical: context.respDim(4),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CcIconToken(
+                Icons.bolt_rounded,
+                size: 18,
+                color: _isFixedPrice ? scheme.primary : scheme.outline,
+              ),
+              const CcSpaceXS(),
+              SizedBox(
+                width: context.respDim(20),
+                height: context.respDim(20),
+                child: Checkbox(
+                  value: _isFixedPrice,
+                  onChanged: (v) => setState(() => _isFixedPrice = v ?? false),
+                  activeColor: scheme.primary,
+                  side: BorderSide(color: scheme.outline, width: 1.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(context.respDim(4)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -213,15 +259,21 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CcText(
-                  _isEdit
-                      ? el.tr(CcLocaleKeys.budget_edit_title)
-                      : el.tr(CcLocaleKeys.budget_add_title),
-                  textStyle: context.ccTextTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: context.ccColorScheme.primary,
-                    fontSize: context.respFontSize(19),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CcText(
+                      _isEdit
+                          ? el.tr(CcLocaleKeys.budget_edit_title)
+                          : el.tr(CcLocaleKeys.budget_add_title),
+                      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: context.ccColorScheme.primary,
+                        fontSize: context.respFontSize(19),
+                      ),
+                    ),
+                    _buildFixedPriceHeaderToggle(context),
+                  ],
                 ),
                 const CcSpaceXS(),
                 BudgetLimitNameInput(

@@ -12,8 +12,8 @@ import '../widgets/add_budget_limit_form_sheet.dart';
 import '../widgets/budget_limit_grid.dart';
 
 @RoutePage()
-class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
-  const BudgetLimitManagementPage({super.key});
+class BudgetLimitPage extends CcGetView<BudgetLimitController> {
+  const BudgetLimitPage({super.key});
 
   @override
   bool get enableAppBar => true;
@@ -116,6 +116,31 @@ class BudgetLimitManagementPage extends CcGetView<BudgetLimitController> {
                           CcTypographyParams.labelSmall,
                         ),
                       ),
+                    ),
+                    const CcSpaceXS(),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.bolt_rounded,
+                          size: context.respIconSize(baseSize: 14),
+                          color: context.ccColorScheme.primary.withOpacity(0.5),
+                        ),
+                        const CcSpaceXS(),
+                        Expanded(
+                          child: CcText(
+                            el.tr(CcLocaleKeys.budget_fixed_price_description),
+                            maxLines: 3,
+                            textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                              color: context.ccColorScheme.onSurfaceVariant
+                                  .withOpacity(0.5),
+                              fontSize: context.respFontSize(
+                                CcTypographyParams.labelSmall,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const CcSpaceXS(),
                     isEdit

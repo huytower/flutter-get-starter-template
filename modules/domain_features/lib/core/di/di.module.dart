@@ -288,13 +288,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i167.GetWalletBalancesUseCase>(),
           gh<_i572.WalletRepository>(),
         ));
-    gh.lazySingleton<_i701.GetFinancialRunwayUseCase>(
-        () => _i701.GetFinancialRunwayUseCase(
-              gh<_i572.WalletRepository>(),
-              gh<_i1027.TransactionRepository>(),
-              gh<_i167.GetWalletBalancesUseCase>(),
-              gh<_i1059.CategoryRepository>(),
-            ));
     gh.lazySingleton<_i28.CreateTransactionUseCase>(
         () => _i28.CreateTransactionUseCase(
               gh<_i1027.TransactionRepository>(),
@@ -312,6 +305,14 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i829.UpdateBudgetLimitUseCase>(),
               gh<_i256.UpdateBudgetLimitOrdersUseCase>(),
               gh<_i106.DeleteBudgetLimitUseCase>(),
+            ));
+    gh.lazySingleton<_i701.GetFinancialRunwayUseCase>(
+        () => _i701.GetFinancialRunwayUseCase(
+              gh<_i572.WalletRepository>(),
+              gh<_i1027.TransactionRepository>(),
+              gh<_i167.GetWalletBalancesUseCase>(),
+              gh<_i1059.CategoryRepository>(),
+              gh<_i544.BudgetLimitRepository>(),
             ));
     gh.factory<_i1051.ReconciliationController>(
         () => _i1051.ReconciliationController(

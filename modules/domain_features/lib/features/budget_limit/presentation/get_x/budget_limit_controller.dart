@@ -66,8 +66,18 @@ class BudgetLimitController extends CcGetController {
     }, (error) => error.message);
   }
 
-  Future<String?> updateBudget(String id, {String? name, int? limit}) async {
-    final result = await _updateBudget.call(id, name: name, limit: limit);
+  Future<String?> updateBudget(
+    String id, {
+    String? name,
+    int? limit,
+    bool? isFixedPrice,
+  }) async {
+    final result = await _updateBudget.call(
+      id,
+      name: name,
+      limit: limit,
+      isFixedPrice: isFixedPrice,
+    );
     return result.when((_) {
       loadBudgets();
       return null;
