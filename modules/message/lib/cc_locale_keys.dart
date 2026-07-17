@@ -333,6 +333,8 @@ class CodegenLoader extends AssetLoader {
           "Runway shows how long you could survive without income, and helps you see your accumulation through the monthly income & expense chart so you can adjust toward a more sustainable financial plan.",
       "runway_message": "You can sustain for {months} months {days} days",
       "runway_fixed_price_desc": "Serious financial management lifestyle",
+      "runway_no_fixed_price_desc":
+          "Runway uses your actual spending. Set fixed costs for a more accurate estimate.",
       "runway_perfect": "Your spending is excellent!",
       "runway_very_good": "Excellent! You have over a year of buffer",
       "runway_good": "Very good! Your safety index is quite high",
@@ -772,6 +774,8 @@ class CodegenLoader extends AssetLoader {
           "Runway cho biết bạn có thể sống sót được bao lâu nếu mất thu nhập, đồng thời giúp bạn nhìn ra bức tranh tích lũy thông qua biểu đồ thu chi hàng tháng để điều chỉnh kế hoạch tài chính bền vững hơn.",
       "runway_message": "Bạn có thể duy trì {months} tháng {days} ngày",
       "runway_fixed_price_desc": "Lối sống quản lý tài chính nghiêm túc",
+      "runway_no_fixed_price_desc":
+          "Runway đang tính theo chi tiêu thực tế. Thiết lập chi phí cố định để ước tính chính xác hơn.",
       "runway_perfect": "Bạn đang chi tiêu rất tuyệt vời!",
       "runway_very_good": "Tuyệt vời! Bạn có đủ tiền dự phòng cho hơn 1 năm",
       "runway_good": "Rất tốt! Bạn có chỉ số an toàn tài chính khá cao",
@@ -1182,6 +1186,8 @@ abstract class CcLocaleKeys {
   static const report_runway_message = 'report.runway_message';
   static const report_runway_fixed_price_desc =
       'report.runway_fixed_price_desc';
+  static const report_runway_no_fixed_price_desc =
+      'report.runway_no_fixed_price_desc';
   static const report_runway_very_good = 'report.runway_very_good';
   static const report_runway_good = 'report.runway_good';
   static const report_runway_safe = 'report.runway_safe';

@@ -299,6 +299,7 @@
     "runway_desc_2": "Runway cho biết bạn có thể sống sót được bao lâu nếu mất thu nhập, đồng thời giúp bạn nhìn ra bức tranh tích lũy thông qua biểu đồ thu chi hàng tháng để điều chỉnh kế hoạch tài chính bền vững hơn.",
     "runway_message": "Bạn có thể duy trì {months} tháng {days} ngày",
     "runway_fixed_price_desc": "Lối sống quản lý tài chính nghiêm túc",
+    "runway_no_fixed_price_desc": "Runway đang tính theo chi tiêu thực tế. Thiết lập chi phí cố định để ước tính chính xác hơn.",
     "runway_perfect": "Bạn đang chi tiêu rất tuyệt vời!",
     "runway_very_good": "Tuyệt vời! Bạn có đủ tiền dự phòng cho hơn 1 năm",
     "runway_good": "Rất tốt! Bạn có chỉ số an toàn tài chính khá cao",

@@ -299,6 +299,7 @@
     "runway_desc_2": "Runway shows how long you could survive without income, and helps you see your accumulation through the monthly income & expense chart so you can adjust toward a more sustainable financial plan.",
     "runway_message": "You can sustain for {months} months {days} days",
     "runway_fixed_price_desc": "Serious financial management lifestyle",
+    "runway_no_fixed_price_desc": "Runway uses your actual spending. Set fixed costs for a more accurate estimate.",
     "runway_perfect": "Your spending is excellent!",
     "runway_very_good": "Excellent! You have over a year of buffer",
     "runway_good": "Very good! Your safety index is quite high",

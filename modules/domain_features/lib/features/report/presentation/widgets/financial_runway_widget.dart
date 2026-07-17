@@ -37,10 +37,10 @@ class FinancialRunwayWidget extends StatelessWidget {
           color: statusColor,
           description: runway.fixedMonthlyCost > 0
               ? el.tr(CcLocaleKeys.report_runway_fixed_price_desc)
-              : null,
+              : el.tr(CcLocaleKeys.report_runway_no_fixed_price_desc),
           descriptionIcon: runway.fixedMonthlyCost > 0
               ? Icons.bolt_rounded
-              : null,
+              : Icons.info_outline_rounded,
           suffixIcon: showChevron ? Icons.chevron_right : null,
           showChevron: false,
         ),
