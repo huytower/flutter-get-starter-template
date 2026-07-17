@@ -248,12 +248,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i572.WalletRepository>(),
               gh<_i1027.TransactionRepository>(),
             ));
-    gh.lazySingleton<_i701.GetFinancialRunwayUseCase>(
-        () => _i701.GetFinancialRunwayUseCase(
-              gh<_i572.WalletRepository>(),
-              gh<_i1027.TransactionRepository>(),
-              gh<_i167.GetWalletBalancesUseCase>(),
-            ));
     gh.lazySingleton<_i77.CreateBudgetLimitUseCase>(
         () => _i77.CreateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
     gh.lazySingleton<_i106.DeleteBudgetLimitUseCase>(() =>
@@ -265,11 +259,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             gh<_i544.BudgetLimitRepository>()));
     gh.lazySingleton<_i829.UpdateBudgetLimitUseCase>(() =>
         _i829.UpdateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
-    gh.factory<_i353.ReportController>(() => _i353.ReportController(
-          gh<_i169.GetCategorySpendingUseCase>(),
-          gh<_i701.GetFinancialRunwayUseCase>(),
-          gh<_i951.GetTrendDataUseCase>(),
-        ));
     gh.lazySingleton<_i804.PerformReconciliationUseCase>(
         () => _i804.PerformReconciliationUseCase(
               gh<_i167.GetWalletBalancesUseCase>(),
@@ -299,6 +288,13 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i167.GetWalletBalancesUseCase>(),
           gh<_i572.WalletRepository>(),
         ));
+    gh.lazySingleton<_i701.GetFinancialRunwayUseCase>(
+        () => _i701.GetFinancialRunwayUseCase(
+              gh<_i572.WalletRepository>(),
+              gh<_i1027.TransactionRepository>(),
+              gh<_i167.GetWalletBalancesUseCase>(),
+              gh<_i1059.CategoryRepository>(),
+            ));
     gh.lazySingleton<_i28.CreateTransactionUseCase>(
         () => _i28.CreateTransactionUseCase(
               gh<_i1027.TransactionRepository>(),
@@ -324,6 +320,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i195.UndoReconciliationUseCase>(),
               gh<_i446.GetReconciliationHistoryUseCase>(),
             ));
+    gh.factory<_i353.ReportController>(() => _i353.ReportController(
+          gh<_i169.GetCategorySpendingUseCase>(),
+          gh<_i701.GetFinancialRunwayUseCase>(),
+          gh<_i951.GetTrendDataUseCase>(),
+        ));
     gh.factory<_i451.BudgetAllocationController>(
         () => _i451.BudgetAllocationController(
               gh<_i229.WalletController>(),
