@@ -119,8 +119,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = context.ccColorScheme.primary;
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
@@ -133,17 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
             return Stack(
               children: [
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [primaryColor.withOpacity(0.10), Colors.white],
-                      ),
-                    ),
-                  ),
-                ),
+                const BgGradientWidget(),
                 SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,

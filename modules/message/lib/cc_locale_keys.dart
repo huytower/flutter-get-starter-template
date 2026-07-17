@@ -233,6 +233,7 @@ class CodegenLoader extends AssetLoader {
       "note": "Note",
       "note_hint": "Note (optional)",
       "more_details": "More details",
+      "claims_in_progress": "You have {count} claims in progress",
       "validation": {
         "amount_required": "Amount must be greater than 0",
         "wallet_required": "Please select a wallet",
@@ -669,6 +670,7 @@ class CodegenLoader extends AssetLoader {
       "note": "Ghi chú",
       "note_hint": "Ghi chú (không bắt buộc)",
       "more_details": "Thêm chi tiết",
+      "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
       "validation": {
         "amount_required": "Số tiền phải lớn hơn 0!",
         "wallet_required": "Vui lòng chọn ví!",
@@ -1073,6 +1075,8 @@ abstract class CcLocaleKeys {
   static const transaction_note = 'transaction.note';
   static const transaction_note_hint = 'transaction.note_hint';
   static const transaction_more_details = 'transaction.more_details';
+  static const transaction_claims_in_progress =
+      'transaction.claims_in_progress';
   static const transaction_validation_amount_required =
       'transaction.validation.amount_required';
   static const transaction_validation_wallet_required =

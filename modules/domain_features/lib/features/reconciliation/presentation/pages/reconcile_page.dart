@@ -99,7 +99,6 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
       }
 
       final isEditing = controller.editingWalletId.value != null;
-
       return Column(
         children: [
           Expanded(
@@ -139,7 +138,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                       ),
                     ),
                   ),
-                  const CcSpaceXS(),
+                  const CcSpaceMD(),
                   CcText(
                     el.tr(CcLocaleKeys.reconciliation_instruction),
                     textStyle: context.ccTextTheme.bodySmall?.copyWith(
@@ -148,7 +147,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                       ),
                     ),
                   ),
-                  const CcSpaceXS(),
+                  const CcSpaceMD(),
                   Column(
                     children: controller.balances.map((balance) {
                       return WalletReconcileTile(
@@ -161,11 +160,10 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                     }).toList(),
                   ),
                   const ReconciliationMismatchWarning(),
-                  const Divider(height: 24),
+                  const CcSpaceMD(),
                   const ReconciliationSummary(),
                   const CcSpaceMD(),
                   const ReconciliationConfirmButton(),
-                  const Divider(height: 32),
                   const ReconciliationHistorySection(),
                 ],
               ),

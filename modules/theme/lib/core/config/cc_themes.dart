@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../data/data_source/color/prj_color.dart';
 import '../../presentation/style/cc_text_style.dart';
+import 'package:cc_sdk_ui/core/config/tokens/cc_gradient_colors.dart';
 
 /// Colors from Tailwind CSS :
 /// https://tailwindcss.com/docs/customizing-colors
@@ -54,7 +55,13 @@ class CcThemes {
     primarySwatch: primarySwatch,
     brightness: Brightness.light,
     textTheme: CcTextStyle.light().textTheme,
-    extensions: <ThemeExtension<dynamic>>[CcTextStyle.light()],
+    extensions: <ThemeExtension<dynamic>>[
+      CcTextStyle.light(),
+      CcGradientColors.light(
+        top: PrjColors.gradientTop,
+        bottom: PrjColors.gradientBottom,
+      ),
+    ],
     colorScheme: const ColorScheme.light().copyWith(
       primary: PrjColors.primary,
       secondary: PrjColors.secondary,
@@ -86,7 +93,13 @@ class CcThemes {
     unselectedWidgetColor: PrjColors.secondary,
     brightness: Brightness.dark,
     textTheme: CcTextStyle.dark().textTheme,
-    extensions: <ThemeExtension<dynamic>>[CcTextStyle.dark()],
+    extensions: <ThemeExtension<dynamic>>[
+      CcTextStyle.dark(),
+      CcGradientColors.dark(
+        top: PrjColors.darkGradientTop,
+        bottom: PrjColors.darkGradientBottom,
+      ),
+    ],
     colorScheme: const ColorScheme.dark().copyWith(
       primary: PrjColors.primary,
       secondary: PrjColors.secondary,

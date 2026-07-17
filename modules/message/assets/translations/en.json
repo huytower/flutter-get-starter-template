@@ -208,6 +208,7 @@
     "note": "Note",
     "note_hint": "Note (optional)",
     "more_details": "More details",
+    "claims_in_progress": "You have {count} claims in progress",
     "validation": {
       "amount_required": "Amount must be greater than 0",
       "wallet_required": "Please select a wallet",

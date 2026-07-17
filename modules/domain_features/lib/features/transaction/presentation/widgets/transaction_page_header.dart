@@ -11,12 +11,12 @@ class TransactionPageHeader extends StatelessWidget {
   const TransactionPageHeader({
     super.key,
     required this.controller,
-    required this.onOpenReport,
+    required this.onOpenNotification,
     required this.onSubmit,
   });
 
   final TransactionController controller;
-  final VoidCallback onOpenReport;
+  final VoidCallback onOpenNotification;
   final VoidCallback onSubmit;
 
   @override
@@ -48,17 +48,32 @@ class TransactionPageHeader extends StatelessWidget {
 
   Widget _buildHeroForeground(BuildContext context) {
     return Positioned(
-      top: -150,
+      top: MediaQuery.of(context).padding.top,
       left: 0,
       right: 0,
-      bottom: 0,
+      bottom: context.respDim(16),
       child: CcSymmetricPadding(
         horizontal: CcPaddingParams.PAGE_MD,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
           children: [
-            _buildHeaderTitleSection(context),
-            _buildHeaderActions(context),
+            const CcSpaceSM(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildHeaderTitleSection(context),
+                _buildHeaderActions(context),
+              ],
+            ),
+            const CcSpaceXS(),
+            CcFrostedBanner(
+              badgeCount: 2,
+              message: el.tr(
+                CcLocaleKeys.transaction_claims_in_progress,
+                namedArgs: {'count': '2'},
+              ),
+              accentColor: PrjColors.warning,
+              onTap: onOpenNotification,
+            ),
           ],
         ),
       ),
@@ -130,7 +145,7 @@ class TransactionPageHeader extends StatelessWidget {
 
   Widget _buildReportButton(BuildContext context) {
     return CcIconButton.bouncing(
-      onTap: onOpenReport,
+      onTap: onOpenNotification,
       icon: Icon(
         Icons.bar_chart_rounded,
         size: context.respIconSize(baseSize: 28),

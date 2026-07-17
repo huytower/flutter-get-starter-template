@@ -208,6 +208,7 @@
     "note": "Ghi chú",
     "note_hint": "Ghi chú (không bắt buộc)",
     "more_details": "Thêm chi tiết",
+    "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
     "validation": {
       "amount_required": "Số tiền phải lớn hơn 0!",
       "wallet_required": "Vui lòng chọn ví!",
