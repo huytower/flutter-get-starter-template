@@ -80,6 +80,14 @@ class TransactionPageHeader extends StatelessWidget {
               ),
               accentColor: context.ccColorScheme.primary,
               onTap: onOpenNotification,
+              icon: CcClipboardChecklistIcon(
+                size: context.respDim(44) * 0.8,
+                bodyColor: context.ccColorScheme.onPrimary.withValues(
+                  alpha: 0.85,
+                ),
+                clipColor: context.ccColorScheme.onPrimary,
+                markColor: context.ccColorScheme.primary,
+              ),
             ),
           ],
         ),

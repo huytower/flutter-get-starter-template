@@ -123,7 +123,7 @@ class ReportPage extends CcGetView<ReportController> {
   Widget onPageBodyWrapper(BuildContext context, Widget body) {
     final primaryColor = context.ccColorScheme.primary;
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,

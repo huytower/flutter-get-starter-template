@@ -13,6 +13,7 @@ class FinancialRunwayWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final statusColor = _getStatusColor(context);
+    final statusIcon = _getStatusIcon(context);
     final message = runway.status == FinancialRunwayStatus.insufficient
         ? el.tr(CcLocaleKeys.report_runway_not_available)
         : el.tr(
@@ -29,11 +30,46 @@ class FinancialRunwayWidget extends StatelessWidget {
           badgeCount: runway.months,
           message: message,
           accentColor: statusColor,
+          icon: statusIcon,
         ),
         const CcSpaceSM(),
         _buildDescription(context, el.tr(CcLocaleKeys.report_runway_desc_2)),
       ],
     );
+  }
+
+  Widget _getStatusIcon(BuildContext context) {
+    final status = runway.status ?? FinancialRunwayStatus.excellent;
+    final size = context.respDim(24);
+    final color = context.ccColorScheme.onPrimary;
+
+    return switch (status) {
+      FinancialRunwayStatus.excellent => Icon(
+        Icons.auto_awesome_rounded,
+        size: size,
+        color: color,
+      ),
+      FinancialRunwayStatus.good => Icon(
+        Icons.sentiment_very_satisfied_rounded,
+        size: size,
+        color: color,
+      ),
+      FinancialRunwayStatus.safe => Icon(
+        Icons.shield_rounded,
+        size: size,
+        color: color,
+      ),
+      FinancialRunwayStatus.caution => Icon(
+        Icons.warning_amber_rounded,
+        size: size,
+        color: color,
+      ),
+      FinancialRunwayStatus.insufficient => Icon(
+        Icons.info_outline_rounded,
+        size: size,
+        color: color,
+      ),
+    };
   }
 
   Widget _buildDescription(BuildContext context, String text) {

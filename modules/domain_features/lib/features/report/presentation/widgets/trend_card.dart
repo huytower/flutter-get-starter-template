@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/util/money_format.dart';
 import '../../domain/entities/trend_data_entity.dart';
@@ -38,7 +39,7 @@ class TrendCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
       decoration: BoxDecoration(
-        color: context.ccColorScheme.surface,
+        color: context.ccColorScheme.surface.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(context.respDim(20)),
         border: Border.all(
           color: context.ccColorScheme.outlineVariant.withOpacity(0.1),
@@ -50,10 +51,8 @@ class TrendCard extends StatelessWidget {
           _buildHeaderRow(context),
           const CcSpaceXL(),
           Expanded(child: _buildChart(context, isCurved)),
-          if (range != ReportRange.weekly) ...[
-            const CcSpaceMD(),
-            _buildLabels(context),
-          ],
+          const CcSpaceMD(),
+          _buildLabels(context),
         ],
       ),
     );
@@ -63,7 +62,9 @@ class TrendCard extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_SM)),
+          padding: EdgeInsets.all(
+            context.respPadding(CcPaddingParams.SPACE_SM),
+          ),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(context.respDim(10)),
@@ -110,7 +111,9 @@ class TrendCard extends StatelessWidget {
       minX: 0,
       maxX: points.length.toDouble() - 1,
       minY: values.isEmpty ? 0 : values.reduce((a, b) => a < b ? a : b) * 0.95,
-      maxY: values.isEmpty ? 100 : values.reduce((a, b) => a > b ? a : b) * 1.05,
+      maxY: values.isEmpty
+          ? 100
+          : values.reduce((a, b) => a > b ? a : b) * 1.05,
       lineTouchData: const LineTouchData(enabled: false),
       gridData: const FlGridData(show: false),
       titlesData: const FlTitlesData(show: false),
@@ -119,7 +122,10 @@ class TrendCard extends StatelessWidget {
         LineChartBarData(
           spots: [
             for (int i = 0; i < points.length; i++)
-              FlSpot(i.toDouble(), isIncome ? points[i].income : points[i].expense),
+              FlSpot(
+                i.toDouble(),
+                isIncome ? points[i].income : points[i].expense,
+              ),
           ],
           isCurved: isCurved,
           curveSmoothness: 0.3,
@@ -127,11 +133,13 @@ class TrendCard extends StatelessWidget {
           barWidth: context.respDim(2),
           isStrokeCapRound: true,
           dotData: FlDotData(
-            show: range != ReportRange.weekly,
+            show: true,
             getDotPainter: (spot, percent, barData, index) {
               bool shouldShow = false;
+              if (range == ReportRange.weekly) shouldShow = true;
               if (range == ReportRange.monthly) shouldShow = true;
-              if (range == ReportRange.yearly && index % 3 == 0) shouldShow = true;
+              if (range == ReportRange.yearly && index % 3 == 0)
+                shouldShow = true;
 
               return FlDotCirclePainter(
                 radius: shouldShow ? context.respDim(2.5) : 0,
@@ -140,7 +148,10 @@ class TrendCard extends StatelessWidget {
               );
             },
           ),
-          belowBarData: BarAreaData(show: true, color: color.withValues(alpha: 0.2)),
+          belowBarData: BarAreaData(
+            show: true,
+            color: color.withValues(alpha: 0.2),
+          ),
         ),
       ],
     );
@@ -151,10 +162,13 @@ class TrendCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         for (int i = 0; i < points.length; i++)
-          if (range == ReportRange.monthly ||
+          if (range == ReportRange.weekly ||
+              range == ReportRange.monthly ||
               (range == ReportRange.yearly && i % 3 == 0))
             CcText(
-              points[i].label,
+              range == ReportRange.weekly
+                  ? DateFormat('dd/MM').format(points[i].date)
+                  : points[i].label,
               textStyle: context.ccTextTheme.labelSmall?.copyWith(
                 color: context.ccColorScheme.onSurfaceVariant,
                 fontSize: context.respFontSize(CcTypographyParams.labelSmall),
