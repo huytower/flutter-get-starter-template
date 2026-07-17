@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../get_x/transaction_controller.dart';
+import '../../../profile/presentation/get_x/profile_controller.dart';
 import 'transaction_wallet_summary.dart';
 
 class TransactionPageHeader extends StatelessWidget {
@@ -14,12 +15,14 @@ class TransactionPageHeader extends StatelessWidget {
     this.onOpenNotification,
     this.onOpenReport,
     this.onSubmit,
+    this.onNavigateToProfile,
   });
 
   final TransactionController controller;
   final VoidCallback? onOpenNotification;
   final VoidCallback? onOpenReport;
   final VoidCallback? onSubmit;
+  final VoidCallback? onNavigateToProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -72,25 +75,37 @@ class TransactionPageHeader extends StatelessWidget {
               ],
             ),
             const CcSpaceXL(),
-            CcFrostedBanner(
-              badgeCount: 2,
-              message: el.tr(
-                CcLocaleKeys.transaction_claims_in_progress,
-                namedArgs: {'count': '2'},
-              ),
-              accentColor: context.ccColorScheme.primary,
-              onTap: onOpenNotification,
-              icon: CcClipboardChecklistIcon(
-                size: context.respDim(44) * 0.8,
-                bodyColor: context.ccColorScheme.onPrimary.withValues(
-                  alpha: 0.85,
-                ),
-                clipColor: context.ccColorScheme.onPrimary,
-                markColor: context.ccColorScheme.primary,
-              ),
-            ),
+            buildBanner(context),
           ],
         ),
+      ),
+    );
+  }
+
+  CcFrostedBanner buildBanner(BuildContext context) {
+    return CcFrostedBanner(
+      title: el.tr(
+        CcLocaleKeys.transaction_claims_in_progress,
+        namedArgs: {'count': '2'},
+      ),
+      description: el.tr(CcLocaleKeys.profile_birth_year_task_desc),
+      accentColor: context.ccColorScheme.primary,
+      onTap: () {
+        if (onNavigateToProfile != null) {
+          onNavigateToProfile!();
+        }
+        Future.delayed(const Duration(milliseconds: 350), () {
+          if (Get.isRegistered<ProfileController>()) {
+            final profileController = Get.find<ProfileController>();
+            profileController.openBirthYearPicker.value = true;
+          }
+        });
+      },
+      icon: CcClipboardChecklistIcon(
+        size: context.respDim(44) * 0.8,
+        bodyColor: context.ccColorScheme.onPrimary.withValues(alpha: 0.85),
+        clipColor: context.ccColorScheme.onPrimary,
+        markColor: context.ccColorScheme.primary,
       ),
     );
   }

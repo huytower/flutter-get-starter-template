@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/util/money_format.dart';
+import '../../../../core/util/money_format_helper.dart';
 import '../get_x/transaction_controller.dart';
 
 class TransactionWalletSummary extends StatelessWidget {

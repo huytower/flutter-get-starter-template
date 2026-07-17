@@ -426,6 +426,7 @@ class CodegenLoader extends AssetLoader {
       "register_login": "Register / Login",
       "birth_year": "Birth year",
       "birth_year_subtitle": "Used to suggest appropriate categories",
+      "birth_year_task_desc": "Task: set up your birth year",
       "birth_year_hint":
           "Choose your actual birth year, it affects your daily income and expense calculations",
       "weekly_audit": "Weekly audit",
@@ -867,6 +868,8 @@ class CodegenLoader extends AssetLoader {
       "register_login": "Đăng ký / Đăng nhập",
       "birth_year": "Năm sinh",
       "birth_year_subtitle": "Dùng để gợi ý các hạng mục phù hợp",
+      "birth_year_task_desc":
+          "Thiết lập: năm sinh, để có danh mục chi tiêu phù hợp",
       "birth_year_hint":
           "Chọn năm sinh đúng thực tế, có ảnh hưởng đến số tiền thu nhập, chi tiêu hằng ngày của bạn",
       "weekly_audit": "Kiểm toán tuần",
@@ -1283,6 +1286,7 @@ abstract class CcLocaleKeys {
   static const profile_birth_year = 'profile.birth_year';
   static const profile_birth_year_subtitle = 'profile.birth_year_subtitle';
   static const profile_birth_year_hint = 'profile.birth_year_hint';
+  static const profile_birth_year_task_desc = 'profile.birth_year_task_desc';
   static const profile_weekly_audit = 'profile.weekly_audit';
   static const profile_weekly_audit_day_hint = 'profile.weekly_audit_day_hint';
   static const profile_days_left = 'profile.days_left';

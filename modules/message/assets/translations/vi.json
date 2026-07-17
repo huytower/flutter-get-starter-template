@@ -390,6 +390,7 @@
     "register_login": "Đăng ký / Đăng nhập",
     "birth_year": "Năm sinh",
     "birth_year_subtitle": "Dùng để gợi ý các hạng mục phù hợp",
+    "birth_year_task_desc": "Thiết lập: năm sinh, để có danh mục chi tiêu phù hợp",
     "weekly_audit": "Kiểm toán tuần",
     "days_left": "Còn {count} ngày",
     "debt_loan": "Nợ/Vay",

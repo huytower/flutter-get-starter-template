@@ -35,7 +35,9 @@ class TransactionTabBarView extends StatelessWidget {
                 ),
               ),
             ),
-            TabBarView(children: [ExpenseForm(), IncomeForm(), TransferForm()]),
+            const TabBarView(
+              children: [ExpenseForm(), IncomeForm(), TransferForm()],
+            ),
           ],
         ),
       );

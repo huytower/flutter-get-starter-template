@@ -90,7 +90,7 @@ class ReportController extends CcGetController {
     final runwayResult = results[2] as Result<FinancialRunwayEntity, dynamic>;
 
     if (spendingResult.isError()) {
-      errorMessage.value = spendingResult.tryGetError()!.message;
+      errorMessage.value = spendingResult.tryGetError()!.title;
       layoutStatus.value = CcLayoutStatus.error;
       return;
     }

@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/transaction_form_helpers.dart';
-import '../../../../core/util/icon_utils.dart';
+import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/util/wallet_icon_helper.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
@@ -169,7 +169,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               top: context.respPadding(CcPaddingParams.SPACE_LG),
               bottom:
                   (_showKeypad ? 0 : MediaQuery.of(context).viewInsets.bottom) +
-                      context.respPadding(CcPaddingParams.SPACE_LG),
+                  context.respPadding(CcPaddingParams.SPACE_LG),
             ),
             decoration: BoxDecoration(
               color: context.ccColorScheme.surface,
@@ -177,9 +177,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                 top: Radius.circular(20),
               ),
             ),
-            child: SingleChildScrollView(
-              child: _buildSheetContent(context),
-            ),
+            child: SingleChildScrollView(child: _buildSheetContent(context)),
           ),
         ),
         if (_showKeypad)
@@ -207,10 +205,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       children: [
         _buildTitle(context),
         const CcSpaceSM(),
-        if (!_isEditing) ...[
-          _buildTypeSelector(context),
-          const CcSpaceMD(),
-        ],
+        if (!_isEditing) ...[_buildTypeSelector(context), const CcSpaceMD()],
         _buildNameField(),
         const CcSpaceMD(),
         if (_balanceLocked)
@@ -243,9 +238,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       decoration: InputDecoration(
         labelText: el.tr(CcLocaleKeys.wallet_name),
         hintText: el.tr(CcLocaleKeys.wallet_name_hint),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }

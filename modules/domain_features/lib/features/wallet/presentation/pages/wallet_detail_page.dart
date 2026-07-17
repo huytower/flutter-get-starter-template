@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/util/gradient_app_bar.dart';
-import '../../../../core/util/money_format.dart';
+import '../../../../core/util/money_format_helper.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 

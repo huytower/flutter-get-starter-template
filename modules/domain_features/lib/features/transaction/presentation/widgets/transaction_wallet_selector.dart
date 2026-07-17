@@ -2,7 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../../core/util/icon_utils.dart';
+import '../../../../core/util/wallet_icon_helper.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 
 class TransactionWalletSelector extends StatelessWidget {

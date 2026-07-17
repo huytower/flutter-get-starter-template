@@ -2,7 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../../core/util/icon_utils.dart';
+import '../../../../core/util/wallet_icon_helper.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 import 'budget_limit_pie_chart.dart';
 
@@ -173,7 +173,10 @@ class BudgetLimitGridCard extends StatelessWidget {
     );
   }
 
-  Widget _buildIndicatorIcons(BuildContext context, {required bool isEditMode}) {
+  Widget _buildIndicatorIcons(
+    BuildContext context, {
+    required bool isEditMode,
+  }) {
     // In edit mode the top-right corner is occupied by the edit (pencil)
     // badge, so the fixed-price bolt is shifted left to stay visible.
     final rightOffset = isEditMode

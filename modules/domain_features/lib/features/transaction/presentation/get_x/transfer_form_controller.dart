@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/transaction_form_helpers.dart';
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/usecases/create_transfer_usecase.dart';
 import 'transaction_form_controller.dart';
 

@@ -4,7 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/util/money_format.dart';
+import '../../../../core/util/money_format_helper.dart';
 import '../../domain/entities/monthly_summary_entity.dart';
 
 /// Grouped bar chart comparing income vs expense per month
@@ -40,9 +40,17 @@ class MonthlyBarChart extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        _legendDot(context, _incomeColor, el.tr(CcLocaleKeys.report_income_short)),
+        _legendDot(
+          context,
+          _incomeColor,
+          el.tr(CcLocaleKeys.report_income_short),
+        ),
         const CcSpaceLG(),
-        _legendDot(context, _expenseColor, el.tr(CcLocaleKeys.report_expense_short)),
+        _legendDot(
+          context,
+          _expenseColor,
+          el.tr(CcLocaleKeys.report_expense_short),
+        ),
       ],
     );
   }
@@ -79,9 +87,7 @@ class MonthlyBarChart extends StatelessWidget {
       ),
       borderData: FlBorderData(show: false),
       titlesData: FlTitlesData(
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         rightTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
@@ -98,7 +104,9 @@ class MonthlyBarChart extends StatelessWidget {
                   formatVndShort(value),
                   textStyle: context.ccTextTheme.labelSmall?.copyWith(
                     color: context.ccColorScheme.onSurfaceVariant,
-                    fontSize: context.respFontSize(CcTypographyParams.labelSmall),
+                    fontSize: context.respFontSize(
+                      CcTypographyParams.labelSmall,
+                    ),
                   ),
                 ),
               );
@@ -120,7 +128,9 @@ class MonthlyBarChart extends StatelessWidget {
                   months[index].shortLabel,
                   textStyle: context.ccTextTheme.labelSmall?.copyWith(
                     color: context.ccColorScheme.onSurfaceVariant,
-                    fontSize: context.respFontSize(CcTypographyParams.labelSmall),
+                    fontSize: context.respFontSize(
+                      CcTypographyParams.labelSmall,
+                    ),
                   ),
                 ),
               );

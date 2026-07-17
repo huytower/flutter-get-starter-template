@@ -119,6 +119,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_c.openBirthYearPicker.value && mounted) {
+        _pickBirthYear(context);
+        _c.openBirthYearPicker.value = false;
+      }
+    });
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(

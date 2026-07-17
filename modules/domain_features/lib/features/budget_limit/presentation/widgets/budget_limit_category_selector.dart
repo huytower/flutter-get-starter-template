@@ -3,7 +3,7 @@ import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../../core/util/icon_utils.dart';
+import '../../../../core/util/wallet_icon_helper.dart';
 
 class BudgetLimitCategorySelector extends StatelessWidget {
   final List<CategoryEntity> categories;

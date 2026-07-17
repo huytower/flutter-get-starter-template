@@ -2,7 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/util/icon_utils.dart';
+import '../../../../core/util/wallet_icon_helper.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import 'edit_badge.dart';
@@ -77,10 +77,7 @@ class WalletListCard extends StatelessWidget {
             color: scheme.primary.withOpacity(0.12),
             shape: BoxShape.circle,
           ),
-          child: CcIconToken(
-            iconDataFromCode(wallet.iconCode),
-            size: 22,
-          ),
+          child: CcIconToken(iconDataFromCode(wallet.iconCode), size: 22),
         ),
       ],
     );

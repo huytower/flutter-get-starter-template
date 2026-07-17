@@ -390,6 +390,7 @@
     "register_login": "Register / Login",
     "birth_year": "Birth year",
     "birth_year_subtitle": "Used to suggest appropriate categories",
+    "birth_year_task_desc": "Task: set up your birth year",
     "weekly_audit": "Weekly audit",
     "days_left": "{count} days left",
     "debt_loan": "Debt / Loan",

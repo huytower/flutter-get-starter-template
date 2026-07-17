@@ -121,11 +121,15 @@ class _NavigationBarState extends State<NavigationBar>
       case _indexWalletAllocation:
         return const BudgetAllocationPage();
       case _indexEntry:
-        return TransactionPage();
+        return TransactionPage(
+          onNavigateToProfile: () => setIndex(_indexProfile),
+        );
       case _indexProfile:
         return const ProfilePage();
       default:
-        return TransactionPage();
+        return TransactionPage(
+          onNavigateToProfile: () => setIndex(_indexProfile),
+        );
     }
   }
 

@@ -27,6 +27,7 @@ class ProfileController extends GetxController {
 
   final Rx<ProfileSettingsEntity> settings = const ProfileSettingsEntity().obs;
   final RxString appVersion = ''.obs;
+  final RxBool openBirthYearPicker = false.obs;
 
   Stream<CcUserEntity?> get userStream => _session.userStream;
 

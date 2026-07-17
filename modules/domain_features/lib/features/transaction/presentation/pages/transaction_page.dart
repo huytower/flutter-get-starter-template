@@ -16,7 +16,12 @@ import '../widgets/transaction_tab_bar_view.dart';
 
 @RoutePage()
 class TransactionPage extends CcGetView<TransactionController> {
-  const TransactionPage({super.key});
+  const TransactionPage({
+    super.key,
+    this.onNavigateToProfile,
+  });
+
+  final VoidCallback? onNavigateToProfile;
 
   @override
   bool get enableAppBar => false;
@@ -35,6 +40,7 @@ class TransactionPage extends CcGetView<TransactionController> {
               controller: controller,
               onOpenReport: () => _openReport(context),
               onSubmit: () => _submitCurrentForm(context),
+              onNavigateToProfile: onNavigateToProfile,
             ),
             _buildTransactionContent(context),
           ],

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../features/transaction/presentation/widgets/transaction_date_picker_dialog.dart';
+import '../../features/transaction/presentation/widgets/transaction_date_picker_dialog.dart';
 
 /// Common helper functions for transaction forms.
 /// State-management agnostic - pure functions only.

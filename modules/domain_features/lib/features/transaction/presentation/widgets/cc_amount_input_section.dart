@@ -1,7 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/transaction_form_helpers.dart';
+import '../../../../core/helper/transaction_form_helpers.dart';
 
 class CcAmountInputSection extends StatelessWidget {
   final String label;
