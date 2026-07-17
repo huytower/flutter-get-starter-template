@@ -44,6 +44,8 @@ class TransactionTabBar extends StatelessWidget {
       onTap: controller.setTabIndex,
       indicatorSize: TabBarIndicatorSize.tab,
       dividerColor: Colors.transparent,
+      splashFactory: NoSplash.splashFactory,
+      overlayColor: WidgetStateProperty.all(Colors.transparent),
       indicator: BoxDecoration(
         color: activeColor.withOpacity(0.08),
         borderRadius: BorderRadius.circular(context.respDim(16)),

@@ -35,15 +35,20 @@ class TransactionPageHeader extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
-        children: [_buildHeroBackground(), _buildHeroForeground(context)],
+        children: [
+          _buildHeroBackground(context),
+          _buildHeroForeground(context),
+        ],
       ),
     );
   }
 
-  Widget _buildHeroBackground() {
-    return Positioned.fill(
-      child: Image.asset('assets/bg/bg_header.webp', fit: BoxFit.cover),
-    );
+  Widget _buildHeroBackground(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final assetPath = isDark
+        ? 'assets/bg/bg_header_dark.webp'
+        : 'assets/bg/bg_header_light.webp';
+    return Positioned.fill(child: Image.asset(assetPath, fit: BoxFit.cover));
   }
 
   Widget _buildHeroForeground(BuildContext context) {
@@ -71,7 +76,7 @@ class TransactionPageHeader extends StatelessWidget {
                 CcLocaleKeys.transaction_claims_in_progress,
                 namedArgs: {'count': '2'},
               ),
-              accentColor: PrjColors.warning,
+              accentColor: context.ccColorScheme.primary,
               onTap: onOpenNotification,
             ),
           ],
