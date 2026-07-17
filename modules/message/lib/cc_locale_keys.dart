@@ -331,14 +331,15 @@ class CodegenLoader extends AssetLoader {
       "safety_index": "Safety Index (Runway)",
       "runway_desc_2":
           "Runway shows how long you could survive without income, and helps you see your accumulation through the monthly income & expense chart so you can adjust toward a more sustainable financial plan.",
-      "runway_message": "You can sustain for {months} months {days} days.",
+      "runway_message": "You can sustain for {months} months {days} days",
+      "runway_fixed_price_desc": "Serious financial management lifestyle",
       "runway_perfect": "Your spending is excellent!",
-      "runway_very_good": "Excellent! You have over a year of buffer.",
-      "runway_good": "Very good! Your safety index is quite high.",
-      "runway_safe": "Safe! You have at least 3 months of buffer.",
-      "runway_caution": "Caution! You should build more buffer.",
+      "runway_very_good": "Excellent! You have over a year of buffer",
+      "runway_good": "Very good! Your safety index is quite high",
+      "runway_safe": "Safe! You have at least 3 months of buffer",
+      "runway_caution": "Caution! You should build more buffer",
       "runway_insufficient":
-          "Start recording expenses so the system can calculate your safety index.",
+          "Start recording expenses so the system can calculate your safety index",
       "runway_not_available": "Insufficient data",
       "daily_detail": "Daily Detail",
       "income_short": "Inc",
@@ -769,14 +770,15 @@ class CodegenLoader extends AssetLoader {
       "safety_index": "Chỉ số an toàn (Runway)",
       "runway_desc_2":
           "Runway cho biết bạn có thể sống sót được bao lâu nếu mất thu nhập, đồng thời giúp bạn nhìn ra bức tranh tích lũy thông qua biểu đồ thu chi hàng tháng để điều chỉnh kế hoạch tài chính bền vững hơn.",
-      "runway_message": "Bạn có thể duy trì {months} tháng {days} ngày.",
+      "runway_message": "Bạn có thể duy trì {months} tháng {days} ngày",
+      "runway_fixed_price_desc": "Lối sống quản lý tài chính nghiêm túc",
       "runway_perfect": "Bạn đang chi tiêu rất tuyệt vời!",
-      "runway_very_good": "Tuyệt vời! Bạn có đủ tiền dự phòng cho hơn 1 năm.",
-      "runway_good": "Rất tốt! Bạn có chỉ số an toàn tài chính khá cao.",
-      "runway_safe": "An toàn! Bạn có đủ tiền dự phòng cho ít nhất 3 tháng.",
-      "runway_caution": "Hãy cẩn trọng! Bạn nên tích lũy thêm quỹ dự phòng.",
+      "runway_very_good": "Tuyệt vời! Bạn có đủ tiền dự phòng cho hơn 1 năm",
+      "runway_good": "Rất tốt! Bạn có chỉ số an toàn tài chính khá cao",
+      "runway_safe": "An toàn! Bạn có đủ tiền dự phòng cho ít nhất 3 tháng",
+      "runway_caution": "Hãy cẩn trọng! Bạn nên tích lũy thêm quỹ dự phòng",
       "runway_insufficient":
-          "Hãy bắt đầu ghi chép chi tiêu để hệ thống tính toán chỉ số an toàn cho bạn.",
+          "Hãy bắt đầu ghi chép chi tiêu để hệ thống tính toán chỉ số an toàn cho bạn",
       "runway_not_available": "Chưa đủ dữ liệu",
       "daily_detail": "Chi tiết theo ngày",
       "income_short": "Thu",
@@ -1178,6 +1180,8 @@ abstract class CcLocaleKeys {
   static const report_safety_index = 'report.safety_index';
   static const report_runway_desc_2 = 'report.runway_desc_2';
   static const report_runway_message = 'report.runway_message';
+  static const report_runway_fixed_price_desc =
+      'report.runway_fixed_price_desc';
   static const report_runway_very_good = 'report.runway_very_good';
   static const report_runway_good = 'report.runway_good';
   static const report_runway_safe = 'report.runway_safe';

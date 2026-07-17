@@ -18,7 +18,7 @@ class FinancialRunwayWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final statusColor = _getStatusColor(context);
-    final statusIcon = _getStatusIcon(context);
+    final statusIcon = _getStatusIcon(runway.status);
     final message = runway.status == FinancialRunwayStatus.insufficient
         ? el.tr(CcLocaleKeys.report_runway_not_available)
         : el.tr(
@@ -31,12 +31,18 @@ class FinancialRunwayWidget extends StatelessWidget {
 
     return Column(
       children: [
-        CcFrostedBanner(
-          badgeCount: runway.months,
-          message: message,
-          accentColor: statusColor,
-          icon: statusIcon,
-          showChevron: showChevron,
+        CcListBanner(
+          leadingIcon: statusIcon,
+          title: message,
+          color: statusColor,
+          description: runway.fixedMonthlyCost > 0
+              ? el.tr(CcLocaleKeys.report_runway_fixed_price_desc)
+              : null,
+          descriptionIcon: runway.fixedMonthlyCost > 0
+              ? Icons.bolt_rounded
+              : null,
+          suffixIcon: showChevron ? Icons.chevron_right : null,
+          showChevron: false,
         ),
         const CcSpaceSM(),
         _buildDescription(context, el.tr(CcLocaleKeys.report_runway_desc_2)),
@@ -44,37 +50,14 @@ class FinancialRunwayWidget extends StatelessWidget {
     );
   }
 
-  Widget _getStatusIcon(BuildContext context) {
-    final status = runway.status ?? FinancialRunwayStatus.excellent;
-    final size = context.respDim(24);
-    final color = context.ccColorScheme.onPrimary;
-
-    return switch (status) {
-      FinancialRunwayStatus.excellent => Icon(
-        Icons.auto_awesome_rounded,
-        size: size,
-        color: color,
-      ),
-      FinancialRunwayStatus.good => Icon(
-        Icons.sentiment_very_satisfied_rounded,
-        size: size,
-        color: color,
-      ),
-      FinancialRunwayStatus.safe => Icon(
-        Icons.shield_rounded,
-        size: size,
-        color: color,
-      ),
-      FinancialRunwayStatus.caution => Icon(
-        Icons.warning_amber_rounded,
-        size: size,
-        color: color,
-      ),
-      FinancialRunwayStatus.insufficient => Icon(
-        Icons.info_outline_rounded,
-        size: size,
-        color: color,
-      ),
+  IconData _getStatusIcon(FinancialRunwayStatus? status) {
+    final s = status ?? FinancialRunwayStatus.excellent;
+    return switch (s) {
+      FinancialRunwayStatus.excellent => Icons.auto_awesome_rounded,
+      FinancialRunwayStatus.good => Icons.sentiment_very_satisfied_rounded,
+      FinancialRunwayStatus.safe => Icons.shield_rounded,
+      FinancialRunwayStatus.caution => Icons.warning_amber_rounded,
+      FinancialRunwayStatus.insufficient => Icons.info_outline_rounded,
     };
   }
 
