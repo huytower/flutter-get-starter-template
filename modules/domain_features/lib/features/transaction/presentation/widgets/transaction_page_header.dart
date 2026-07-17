@@ -64,7 +64,7 @@ class TransactionPageHeader extends StatelessWidget {
                 _buildHeaderActions(context),
               ],
             ),
-            const CcSpaceXS(),
+            const CcSpaceMD(),
             CcFrostedBanner(
               badgeCount: 2,
               message: el.tr(
