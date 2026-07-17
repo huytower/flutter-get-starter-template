@@ -16,10 +16,7 @@ import '../widgets/transaction_tab_bar_view.dart';
 
 @RoutePage()
 class TransactionPage extends CcGetView<TransactionController> {
-  const TransactionPage({
-    super.key,
-    this.onNavigateToProfile,
-  });
+  const TransactionPage({super.key, this.onNavigateToProfile});
 
   final VoidCallback? onNavigateToProfile;
 

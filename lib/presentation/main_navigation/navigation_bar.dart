@@ -122,13 +122,29 @@ class _NavigationBarState extends State<NavigationBar>
         return const BudgetAllocationPage();
       case _indexEntry:
         return TransactionPage(
-          onNavigateToProfile: () => setIndex(_indexProfile),
+          onNavigateToProfile: () {
+            setIndex(_indexProfile);
+            Future.delayed(const Duration(milliseconds: 350), () {
+              if (Get.isRegistered<ProfileController>()) {
+                final profileController = Get.find<ProfileController>();
+                profileController.openBirthYearPicker.value = true;
+              }
+            });
+          },
         );
       case _indexProfile:
         return const ProfilePage();
       default:
         return TransactionPage(
-          onNavigateToProfile: () => setIndex(_indexProfile),
+          onNavigateToProfile: () {
+            setIndex(_indexProfile);
+            Future.delayed(const Duration(milliseconds: 350), () {
+              if (Get.isRegistered<ProfileController>()) {
+                final profileController = Get.find<ProfileController>();
+                profileController.openBirthYearPicker.value = true;
+              }
+            });
+          },
         );
     }
   }

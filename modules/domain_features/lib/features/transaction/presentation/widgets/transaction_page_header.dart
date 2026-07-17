@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
-import '../get_x/transaction_controller.dart';
 import '../../../profile/presentation/get_x/profile_controller.dart';
+import '../get_x/transaction_controller.dart';
 import 'transaction_wallet_summary.dart';
 
 class TransactionPageHeader extends StatelessWidget {
