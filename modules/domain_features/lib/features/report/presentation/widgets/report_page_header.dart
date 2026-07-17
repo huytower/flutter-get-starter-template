@@ -59,7 +59,7 @@ class ReportPageHeader extends StatelessWidget {
         children: [
           const CcSpaceSM(),
           _buildTitleRow(context),
-          const CcSpaceMD(),
+          const CcSpaceXL(),
           _buildRunwaySection(context),
         ],
       ),

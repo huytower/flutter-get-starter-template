@@ -20,7 +20,7 @@ class ReportTabBar extends StatelessWidget {
       margin: EdgeInsets.symmetric(
         horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
       ),
-      height: context.respDim(60),
+      height: context.respDim(45),
       decoration: BoxDecoration(
         color: scheme.surface,
         borderRadius: BorderRadius.circular(context.respDim(20)),
@@ -45,6 +45,8 @@ class ReportTabBar extends StatelessWidget {
       onTap: (index) => controller.selectRange(ReportRange.values[index]),
       indicatorSize: TabBarIndicatorSize.tab,
       dividerColor: Colors.transparent,
+      splashFactory: NoSplash.splashFactory,
+      overlayColor: WidgetStateProperty.all(Colors.transparent),
       indicator: BoxDecoration(
         color: activeColor.withOpacity(0.08),
         borderRadius: BorderRadius.circular(context.respDim(16)),

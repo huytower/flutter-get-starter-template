@@ -45,8 +45,8 @@ class TransactionPage extends CcGetView<TransactionController> {
 
   Widget _buildTransactionContent(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
-    final headerHeight = context.respDim(200) + topPadding;
-    final tabBarHeight = context.respDim(130);
+    final headerHeight = context.respDim(180) + topPadding;
+    final tabBarHeight = context.respDim(60);
     final overlap = tabBarHeight / 2;
 
     return Column(

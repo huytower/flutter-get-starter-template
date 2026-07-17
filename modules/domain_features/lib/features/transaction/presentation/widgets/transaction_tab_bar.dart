@@ -19,7 +19,7 @@ class TransactionTabBar extends StatelessWidget {
       margin: EdgeInsets.symmetric(
         horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
       ),
-      height: context.respDim(60),
+      height: context.respDim(45),
       decoration: BoxDecoration(
         color: scheme.surface,
         borderRadius: BorderRadius.circular(context.respDim(20)),
