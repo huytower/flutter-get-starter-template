@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../profile/presentation/get_x/profile_controller.dart';
 import '../get_x/transaction_controller.dart';
 import 'transaction_wallet_summary.dart';
 
@@ -15,14 +14,12 @@ class TransactionPageHeader extends StatelessWidget {
     this.onOpenNotification,
     this.onOpenReport,
     this.onSubmit,
-    this.onNavigateToProfile,
   });
 
   final TransactionController controller;
   final VoidCallback? onOpenNotification;
   final VoidCallback? onOpenReport;
   final VoidCallback? onSubmit;
-  final VoidCallback? onNavigateToProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -90,17 +87,7 @@ class TransactionPageHeader extends StatelessWidget {
       ),
       description: el.tr(CcLocaleKeys.profile_birth_year_task_desc),
       accentColor: context.ccColorScheme.primary,
-      onTap: () {
-        if (onNavigateToProfile != null) {
-          onNavigateToProfile!();
-        }
-        Future.delayed(const Duration(milliseconds: 350), () {
-          if (Get.isRegistered<ProfileController>()) {
-            final profileController = Get.find<ProfileController>();
-            profileController.openBirthYearPicker.value = true;
-          }
-        });
-      },
+      onTap: () {},
       icon: CcClipboardChecklistIcon(
         size: context.respDim(44) * 0.8,
         bodyColor: context.ccColorScheme.onPrimary.withValues(alpha: 0.85),

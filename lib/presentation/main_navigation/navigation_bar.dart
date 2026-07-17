@@ -1,12 +1,9 @@
-import 'package:flutter/material.dart';
-
 import 'package:auto_route/auto_route.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:get/get.dart';
-
 import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/export_domain_features.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
 import 'logic/navigation_logic_mixin.dart';
@@ -121,31 +118,11 @@ class _NavigationBarState extends State<NavigationBar>
       case _indexWalletAllocation:
         return const BudgetAllocationPage();
       case _indexEntry:
-        return TransactionPage(
-          onNavigateToProfile: () {
-            setIndex(_indexProfile);
-            Future.delayed(const Duration(milliseconds: 350), () {
-              if (Get.isRegistered<ProfileController>()) {
-                final profileController = Get.find<ProfileController>();
-                profileController.openBirthYearPicker.value = true;
-              }
-            });
-          },
-        );
+        return const TransactionPage();
       case _indexProfile:
         return const ProfilePage();
       default:
-        return TransactionPage(
-          onNavigateToProfile: () {
-            setIndex(_indexProfile);
-            Future.delayed(const Duration(milliseconds: 350), () {
-              if (Get.isRegistered<ProfileController>()) {
-                final profileController = Get.find<ProfileController>();
-                profileController.openBirthYearPicker.value = true;
-              }
-            });
-          },
-        );
+        return const TransactionPage();
     }
   }
 
