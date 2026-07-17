@@ -20,7 +20,7 @@ class ReportPageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
-    final headerHeight = context.respDim(200) + topPadding;
+    final headerHeight = context.respDim(260) + topPadding;
 
     return Container(
       height: headerHeight,
@@ -33,30 +33,35 @@ class ReportPageHeader extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
-        children: [_buildHeroBackground(), _buildHeroForeground(context)],
+        children: [
+          _buildHeroBackground(context),
+          _buildHeroForeground(context),
+        ],
       ),
     );
   }
 
-  Widget _buildHeroBackground() {
-    return Positioned.fill(
-      child: Image.asset('assets/bg/bg_header.webp', fit: BoxFit.cover),
-    );
+  Widget _buildHeroBackground(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final assetPath = isDark
+        ? 'assets/bg/bg_header_dark.webp'
+        : 'assets/bg/bg_header_light.webp';
+    return Positioned.fill(child: Image.asset(assetPath, fit: BoxFit.cover));
   }
 
   Widget _buildHeroForeground(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
-      child: Padding(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTitleRow(context),
-            const CcSpaceSM(),
-            _buildRunwaySection(context),
-          ],
-        ),
+    return Positioned(
+      top: MediaQuery.of(context).padding.top,
+      left: 0,
+      right: 0,
+      bottom: context.respDim(16),
+      child: Column(
+        children: [
+          const CcSpaceSM(),
+          _buildTitleRow(context),
+          const CcSpaceMD(),
+          _buildRunwaySection(context),
+        ],
       ),
     );
   }

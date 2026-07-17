@@ -137,6 +137,10 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   @override
+  Widget onPageBodyWrapper(BuildContext context, Widget body) =>
+      ColoredBox(color: context.ccColorScheme.background, child: body);
+
+  @override
   Widget? buildContent(BuildContext context) {
     return FadePageWrapper(
       child: Builder(
@@ -145,7 +149,6 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           onRefresh: controller.loadAll,
           child: Stack(
             children: [
-              const BgGradientWidget(),
               ListView(
                 children: [
                   _buildHeroBanner(context),
