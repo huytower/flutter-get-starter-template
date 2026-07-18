@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-
-import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:get/get.dart';
-
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../domain/report_range.dart';
@@ -22,7 +20,7 @@ class ReportTabBar extends StatelessWidget {
       margin: EdgeInsets.symmetric(
         horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
       ),
-      height: context.respDim(45),
+      height: context.respDim(40),
       decoration: BoxDecoration(
         color: scheme.surface,
         borderRadius: BorderRadius.circular(
@@ -60,7 +58,7 @@ class ReportTabBar extends StatelessWidget {
       labelColor: activeColor,
       unselectedLabelColor: scheme.onSurfaceVariant,
       labelStyle: context.ccTextTheme.labelMedium?.copyWith(
-        fontWeight: CcTypographyParams.bold
+        fontWeight: CcTypographyParams.bold,
       ),
       labelPadding: EdgeInsets.zero,
       tabs: [

@@ -36,7 +36,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         el.tr(CcLocaleKeys.nav_budget_allocation),
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           color: context.ccColorScheme.onPrimary,
-          fontWeight: CcTypographyParams.bold
+          fontWeight: CcTypographyParams.bold,
         ),
       ),
       actions: [
@@ -146,15 +146,11 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         builder: (context) => buildPullToRefresh(
           context: context,
           onRefresh: controller.loadAll,
-          child: Stack(
+          child: ListView(
             children: [
-              ListView(
-                children: [
-                  _buildHeroBanner(context),
-                  _buildWalletsSection(context),
-                  const BudgetPreviewSection(),
-                ],
-              ),
+              _buildHeroBanner(context),
+              _buildWalletsSection(context),
+              const BudgetPreviewSection(),
             ],
           ),
         ),

@@ -23,10 +23,18 @@ class TransactionPageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Fill the parent height (constrained by TransactionPage). No hardcoded
-    // base height — the header keeps a correct responsive ratio across screen
-    // sizes via flex-based sections instead of a width-scaled respDim() magic
-    // number.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final assetPath = isDark
+        ? 'assets/bg/bg_header_dark.webp'
+        : 'assets/bg/bg_header_light.webp';
+
+    // We calculate the overlap locally to match TransactionPage's logic.
+    final overlap = context.respDim(60) / 2;
+
+    // Optimized approach: Instead of using a Stack to layer background and
+    // foreground, we move the background image into the Container's decoration.
+    // This reduces the depth of the widget tree and simplifies the layout
+    // phase by using a single flat child.
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -35,63 +43,52 @@ class TransactionPageHeader extends StatelessWidget {
           bottomLeft: Radius.circular(context.respDim(16)),
           bottomRight: Radius.circular(context.respDim(16)),
         ),
+        image: DecorationImage(
+          image: AssetImage(assetPath),
+          fit: BoxFit.cover,
+        ),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          _buildHeroBackground(context),
-          _buildHeroForeground(context),
-        ],
+      child: Padding(
+        padding: EdgeInsets.only(bottom: overlap),
+        child: _buildHeroForeground(context),
       ),
     );
   }
 
-  Widget _buildHeroBackground(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final assetPath = isDark
-        ? 'assets/bg/bg_header_dark.webp'
-        : 'assets/bg/bg_header_light.webp';
-    return Positioned.fill(child: Image.asset(assetPath, fit: BoxFit.cover));
-  }
-
   Widget _buildHeroForeground(BuildContext context) {
-    return Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: context.respDim(30),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (MediaQuery.of(context).padding.top > 0)
-            SizedBox(height: MediaQuery.of(context).padding.top),
+    // Content is now a direct child of the Container (with bottom overlap padding).
+    // We use a flex Column to distribute space proportionally.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (MediaQuery.of(context).padding.top > 0)
+          SizedBox(height: MediaQuery.of(context).padding.top),
 
-          // Using Spacers with flex factors to distribute space proportionally.
-          const Spacer(flex: 1),
-          CcSymmetricPadding(
+        const Spacer(flex: 1),
+        CcSymmetricPadding(
+          horizontal: CcPaddingParams.PAGE_MD,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildHeaderTitleSection(context),
+              _buildHeaderActions(context),
+            ],
+          ),
+        ),
+        const Spacer(flex: 1),
+
+        // Use Flexible to allow the banner to take its needed space
+        // without overflowing the Column's fixed height.
+        Flexible(
+          flex: 12,
+          child: CcSymmetricPadding(
             horizontal: CcPaddingParams.PAGE_MD,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildHeaderTitleSection(context),
-                _buildHeaderActions(context),
-              ],
-            ),
+            child: buildBanner(context),
           ),
-          const Spacer(flex: 1),
-
-          // Use Flexible to allow the banner to take its needed space
-          // without overflowing the Column's fixed height.
-          Flexible(
-            flex: 12,
-            child: CcSymmetricPadding(
-              horizontal: CcPaddingParams.PAGE_MD,
-              child: buildBanner(context),
-            ),
-          ),
-          const Spacer(flex: 1),
-        ],
-      ),
+        ),
+        const Spacer(flex: 1),
+      ],
     );
   }
 

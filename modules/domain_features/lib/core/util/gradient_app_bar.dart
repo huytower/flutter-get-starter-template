@@ -10,8 +10,8 @@ PreferredSizeWidget buildDomainGradientAppBar(
   Widget? leading,
 }) {
   final topPadding = MediaQuery.of(context).padding.top;
-  final horizontalPadding = context.respPadding(CcPaddingParams.SPACE_LG);
-  final verticalPadding = context.respPadding(CcPaddingParams.SPACE_LG);
+  final horizontalPadding = context.respPadding(CcPaddingParams.PAGE_XS);
+  final verticalPadding = context.respPadding(CcPaddingParams.SPACE_XS);
 
   return PreferredSize(
     preferredSize: Size.fromHeight(
