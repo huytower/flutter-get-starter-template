@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/util/money_constants.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../domain/entities/budget_limit_entity.dart';
@@ -20,17 +21,16 @@ import 'budget_limit_save_button.dart';
 /// [editTarget] is provided. The category is fixed after creation; the name
 /// can change any time, the limit only during days 1–7 of the month (the
 /// limit input is hidden outside that window).
-class AddBudgetLimitFormSheet extends StatefulWidget {
+class AddBudgetLimitForm extends StatefulWidget {
   final BudgetLimitEntity? editTarget;
 
-  const AddBudgetLimitFormSheet({super.key, this.editTarget});
+  const AddBudgetLimitForm({super.key, this.editTarget});
 
   @override
-  State<AddBudgetLimitFormSheet> createState() =>
-      _AddBudgetLimitFormSheetState();
+  State<AddBudgetLimitForm> createState() => _AddBudgetLimitFormState();
 }
 
-class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
+class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
   final _controller = Get.isRegistered<BudgetLimitController>()
       ? Get.find<BudgetLimitController>()
       : Get.put(getIt<BudgetLimitController>());
@@ -40,16 +40,6 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
   String _limitStr = '0';
   String? _nameError;
   bool _showKeypad = false;
-
-  static const List<int> _quickAmounts = [
-    100000,
-    200000,
-    500000,
-    1000000,
-    2000000,
-    5000000,
-    10000000,
-  ];
 
   List<CategoryEntity> _categories = const [];
   String? _selectedCategoryId;
@@ -268,7 +258,7 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                           : el.tr(CcLocaleKeys.budget_add_title),
                       textStyle: context.ccTextTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: context.ccColorScheme.primary
+                        color: context.ccColorScheme.primary,
                       ),
                     ),
                     _buildFixedPriceHeaderToggle(context),
@@ -306,7 +296,7 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                   CcAmountInputSection(
                     label: el.tr(CcLocaleKeys.budget_limit),
                     amountStr: _limitStr,
-                    quickAmounts: _quickAmounts,
+                    quickAmounts: MoneyConstants.budgetQuickAmounts,
                     isKeypadVisible: _showKeypad,
                     fieldKey: _amountFieldKey,
                     onTap: () {
@@ -337,7 +327,7 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
             onKeyPress: _onKeyPress,
             onDelete: _onDelete,
             onClear: () => setState(() => _limitStr = '0'),
-            suggestions: _quickAmounts,
+            suggestions: MoneyConstants.budgetQuickAmounts,
             onSuggestion: (value) =>
                 setState(() => _limitStr = value.toString()),
             onDone: () => setState(() => _showKeypad = false),

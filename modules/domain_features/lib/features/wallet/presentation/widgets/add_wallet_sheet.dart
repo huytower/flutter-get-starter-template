@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/util/money_constants.dart';
 import '../../../../core/util/wallet_icon_helper.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
@@ -20,17 +21,6 @@ class AddWalletSheet extends StatefulWidget {
 }
 
 class _AddWalletSheetState extends State<AddWalletSheet> {
-  static const List<int> _quickAmounts = [
-    100000,
-    500000,
-    1000000,
-    2000000,
-    5000000,
-    10000000,
-    20000000,
-    50000000,
-  ];
-
   late final TextEditingController _nameController;
   final _controller = Get.find<WalletController>();
 
@@ -157,7 +147,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               top: context.respPadding(CcPaddingParams.SPACE_LG),
               bottom:
                   (_showKeypad ? 0 : MediaQuery.of(context).viewInsets.bottom) +
-                      context.respPadding(CcPaddingParams.SPACE_LG),
+                  context.respPadding(CcPaddingParams.SPACE_LG),
             ),
             decoration: BoxDecoration(
               color: context.ccColorScheme.surface,
@@ -165,9 +155,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                 top: Radius.circular(20),
               ),
             ),
-            child: SingleChildScrollView(
-              child: _buildSheetContent(context),
-            ),
+            child: SingleChildScrollView(child: _buildSheetContent(context)),
           ),
         ),
         if (_showKeypad)
@@ -177,7 +165,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               onKeyPress: _onKeyPress,
               onDelete: _onDelete,
               onClear: () => setState(() => _amountStr = '0'),
-              suggestions: _quickAmounts,
+              suggestions: MoneyConstants.walletQuickAmounts,
               onSuggestion: (value) =>
                   setState(() => _amountStr = value.toString()),
               onDone: () => setState(() => _showKeypad = false),
@@ -195,10 +183,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       children: [
         _buildTitle(context),
         const CcSpaceSM(),
-        if (!_isEditing) ...[
-          _buildTypeSelector(context),
-          const CcSpaceMD(),
-        ],
+        if (!_isEditing) ...[_buildTypeSelector(context), const CcSpaceMD()],
         _buildNameField(),
         const CcSpaceMD(),
         if (_balanceLocked)
@@ -218,7 +203,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           : el.tr(CcLocaleKeys.wallet_add_title),
       textStyle: context.ccTextTheme.headlineSmall?.copyWith(
         fontWeight: FontWeight.bold,
-        color: context.ccColorScheme.primary
+        color: context.ccColorScheme.primary,
       ),
     );
   }
@@ -229,9 +214,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       decoration: InputDecoration(
         labelText: el.tr(CcLocaleKeys.wallet_name),
         hintText: el.tr(CcLocaleKeys.wallet_name_hint),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -241,7 +224,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       key: const Key('wallet_balance'),
       label: el.tr(CcLocaleKeys.wallet_initial_balance),
       amountStr: _amountStr,
-      quickAmounts: _quickAmounts,
+      quickAmounts: MoneyConstants.walletQuickAmounts,
       isKeypadVisible: _showKeypad,
       activeColor: _accent,
       fieldKey: _amountFieldKey,
@@ -271,7 +254,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: context.ccColorScheme.onPrimary,
-                fontWeight: FontWeight.bold
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -288,7 +271,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           el.tr(CcLocaleKeys.wallet_initial_balance),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold
+            fontWeight: FontWeight.bold,
           ),
         ),
         const CcSpaceXS(),
@@ -309,7 +292,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
             textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: context.ccColorScheme.primary
+              color: context.ccColorScheme.primary,
             ),
           ),
         ),
@@ -317,7 +300,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         CcText(
           el.tr(CcLocaleKeys.wallet_balance_locked_hint),
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
-            color: CcBaseColors.gray500
+            color: CcBaseColors.gray500,
           ),
         ),
       ],

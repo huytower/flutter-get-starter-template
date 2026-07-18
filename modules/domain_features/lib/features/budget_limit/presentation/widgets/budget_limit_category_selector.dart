@@ -36,7 +36,7 @@ class BudgetLimitCategorySelector extends StatelessWidget {
       el.tr(CcLocaleKeys.budget_category),
       textStyle: context.ccTextTheme.labelMedium?.copyWith(
         color: context.ccColorScheme.onSurfaceVariant,
-        fontWeight: FontWeight.bold
+        fontWeight: FontWeight.bold,
       ),
     );
   }
@@ -74,11 +74,7 @@ class BudgetLimitCategorySelector extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           if (isSelected)
-            Positioned.fill(
-              child: CcGlassyGradientBackground(
-                borderRadius: context.respDim(16),
-              ),
-            ),
+            const Positioned.fill(child: CcGlassyGradientBackground()),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             width: context.respDim(68),

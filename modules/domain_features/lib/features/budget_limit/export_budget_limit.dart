@@ -14,5 +14,5 @@ export 'domain/usecases/update_budget_limit_usecase.dart';
 // Presentation
 export 'presentation/get_x/budget_limit_controller.dart';
 export 'presentation/pages/budget_limit_page.dart';
-export 'presentation/widgets/add_budget_limit_form_sheet.dart';
+export 'presentation/widgets/add_budget_limit_form.dart';
 export 'presentation/widgets/budget_limit_grid_card.dart';

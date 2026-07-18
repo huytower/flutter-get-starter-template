@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../../core/util/wallet_icon_helper.dart';
@@ -21,26 +20,7 @@ class TransactionWalletSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (wallets.isEmpty) {
-      return _buildEmptyState(context);
-    }
-
     return _buildWalletList(context);
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: context.respPadding(CcPaddingParams.PAGE_SM),
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-      ),
-      child: CcText(
-        el.tr(CcLocaleKeys.wallet_empty),
-        textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant,
-        ),
-      ),
-    );
   }
 
   Widget _buildWalletList(BuildContext context) {
@@ -75,8 +55,8 @@ class TransactionWalletSelector extends StatelessWidget {
           if (isSelected)
             Positioned.fill(
               child: CcGlassyGradientBackground(
-                borderRadius: context.respDim(16),
-                endColor: activeColor.withOpacity(0.2),
+                centerColor: activeColor.withAlpha(30),
+                endColor: activeColor.withAlpha(50),
               ),
             ),
           AnimatedContainer(
@@ -85,13 +65,13 @@ class TransactionWalletSelector extends StatelessWidget {
             padding: EdgeInsets.all(context.respDim(12)),
             decoration: BoxDecoration(
               color: isSelected
-                  ? activeColor.withOpacity(0.1)
-                  : scheme.onSurface.withOpacity(0.04),
-              borderRadius: CcBorderRadius.lg(context),
+                  ? activeColor.withAlpha(10)
+                  : scheme.onSurface.withAlpha(10),
+              borderRadius: context.brLg,
               border: Border.all(
                 color: isSelected
-                    ? activeColor.withOpacity(0.2)
-                    : scheme.onSurface.withOpacity(0.08),
+                    ? activeColor.withAlpha(20)
+                    : scheme.onSurface.withAlpha(10),
                 width: context.respDim(1),
               ),
             ),
@@ -116,21 +96,27 @@ class TransactionWalletSelector extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     return Container(
-      width: context.respDim(32),
-      height: context.respDim(32),
+      width: context.respDim(35),
+      height: context.respDim(35),
       decoration: BoxDecoration(
         color: isSelected
-            ? activeColor.withOpacity(0.12)
-            : scheme.onSurface.withOpacity(0.08),
+            ? activeColor.withAlpha(10)
+            : scheme.onSurface.withAlpha(10),
         borderRadius: CcBorderRadius.lg(context),
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
-          if (isSelected) const Positioned.fill(child: CcGlassyGradientIcon()),
+          if (isSelected)
+            Positioned.fill(
+              child: CcGlassyGradientIcon(
+                centerColor: activeColor.withAlpha(30),
+                endColor: activeColor.withAlpha(50),
+              ),
+            ),
           Icon(
             iconDataFromCode(wallet.iconCode),
-            size: context.respIconSize(baseSize: 18),
+            size: context.respIconSize(baseSize: 20),
             color: isSelected ? activeColor : scheme.onSurfaceVariant,
           ),
         ],

@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
+import 'cc_quick_amount_chips.dart';
 import 'quick_numeric_keypad.dart';
 
 class MoneyKeypadPanel extends StatelessWidget {
@@ -56,14 +57,14 @@ class MoneyKeypadPanel extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
-                  child: suggestions.isEmpty
-                      ? const SizedBox.shrink()
-                      : Padding(
-                          padding: EdgeInsets.only(
-                            left: context.respPadding(CcPaddingParams.SPACE_SM),
-                          ),
-                          child: _buildSuggestionChips(context),
-                        ),
+                  child: CcQuickAmountChips(
+                    amounts: suggestions,
+                    onSelected: (val) => onSuggestion?.call(val),
+                    activeColor: activeColor,
+                    padding: EdgeInsets.only(
+                      left: context.respPadding(CcPaddingParams.SPACE_SM),
+                    ),
+                  ),
                 ),
                 GestureDetector(
                   onTap: onDone,
@@ -73,7 +74,7 @@ class MoneyKeypadPanel extends StatelessWidget {
                       el.tr(CcLocaleKeys.common_done),
                       textStyle: context.ccTextTheme.labelMedium?.copyWith(
                         color: activeColor,
-                        fontWeight: CcTypographyParams.bold
+                        fontWeight: CcTypographyParams.bold,
                       ),
                     ),
                   ),
@@ -88,42 +89,6 @@ class MoneyKeypadPanel extends StatelessWidget {
             activeColor: activeColor,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSuggestionChips(BuildContext context) {
-    final formatter = el.NumberFormat('#,###', context.locale.toString());
-    return HorizontalFadeScrollView(
-      height: context.respDim(25),
-      builder: (scrollController) => ListView.separated(
-        scrollDirection: Axis.horizontal,
-        controller: scrollController,
-        itemCount: suggestions.length,
-        separatorBuilder: (_, _) => const CcSpaceSM(),
-        itemBuilder: (context, index) {
-          final amount = suggestions[index];
-          return GestureDetector(
-            onTap: () => onSuggestion?.call(amount),
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: context.respDim(CcPaddingParams.SPACE_XS),
-              ),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: activeColor.withOpacity(0.07),
-                borderRadius: CcBorderRadius.lg(context),
-              ),
-              child: CcText(
-                formatter.format(amount),
-                textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                  color: activeColor,
-                  fontWeight: CcTypographyParams.bold
-                ),
-              ),
-            ),
-          );
-        },
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/util/money_constants.dart';
 import '../../../../core/util/wallet_icon_helper.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
@@ -22,17 +23,6 @@ class AddWalletSheet extends StatefulWidget {
 }
 
 class _AddWalletSheetState extends State<AddWalletSheet> {
-  static const List<int> _quickAmounts = [
-    100000,
-    500000,
-    1000000,
-    2000000,
-    5000000,
-    10000000,
-    20000000,
-    50000000,
-  ];
-
   late final TextEditingController _nameController;
   final _controller = Get.find<WalletController>();
 
@@ -187,7 +177,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               onKeyPress: _onKeyPress,
               onDelete: _onDelete,
               onClear: () => setState(() => _amountStr = '0'),
-              suggestions: _quickAmounts,
+              suggestions: MoneyConstants.walletQuickAmounts,
               onSuggestion: (value) =>
                   setState(() => _amountStr = value.toString()),
               onDone: () => setState(() => _showKeypad = false),
@@ -247,7 +237,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       key: const Key('wallet_balance'),
       label: el.tr(CcLocaleKeys.wallet_initial_balance),
       amountStr: _amountStr,
-      quickAmounts: _quickAmounts,
+      quickAmounts: MoneyConstants.walletQuickAmounts,
       isKeypadVisible: _showKeypad,
       activeColor: _accent,
       fieldKey: _amountFieldKey,

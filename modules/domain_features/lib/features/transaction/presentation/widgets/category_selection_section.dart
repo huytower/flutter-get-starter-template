@@ -68,15 +68,50 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildTitle(context),
-        const CcSpaceSM(),
+        const CcSpaceXS(),
         if (_isLoading)
-          SizedBox(
-            height: context.respDim(90),
-            child: const Center(child: CircularProgressIndicator()),
-          )
+          _buildShimmerList(context)
         else
           _buildCategoryList(context),
       ],
+    );
+  }
+
+  Widget _buildShimmerList(BuildContext context) {
+    return SizedBox(
+      height: context.respDim(90),
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+        ),
+        itemCount: 5,
+        separatorBuilder: (context, index) => const CcSpaceSM(),
+        itemBuilder: (context, index) => Container(
+          width: context.respDim(68),
+          padding: EdgeInsets.all(context.respDim(10)),
+          decoration: BoxDecoration(
+            color: context.ccColorScheme.onSurface.withAlpha(10),
+            borderRadius: context.brLg,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CcShimmer(
+                width: context.respDim(35),
+                height: context.respDim(35),
+                borderRadius: context.brMd,
+              ),
+              const CcSpaceXS(),
+              CcShimmer(
+                width: context.respDim(40),
+                height: context.respDim(10),
+                borderRadius: context.brXs,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -87,7 +122,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
         el.tr(CcLocaleKeys.transaction_category),
         textStyle: context.ccTextTheme.labelMedium?.copyWith(
           color: context.ccColorScheme.onSurfaceVariant,
-          fontWeight: FontWeight.bold
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -131,8 +166,8 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
           if (isSelected)
             Positioned.fill(
               child: CcGlassyGradientBackground(
-                borderRadius: context.respDim(16),
-                endColor: widget.activeColor.withOpacity(0.2),
+                centerColor: widget.activeColor.withAlpha(30),
+                endColor: widget.activeColor.withAlpha(50),
               ),
             ),
           AnimatedContainer(
@@ -141,13 +176,13 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
             padding: EdgeInsets.all(context.respDim(10)),
             decoration: BoxDecoration(
               color: isSelected
-                  ? widget.activeColor.withOpacity(0.1)
-                  : scheme.onSurface.withOpacity(0.04),
-              borderRadius: CcBorderRadius.lg(context),
+                  ? widget.activeColor.withAlpha(10)
+                  : scheme.onSurface.withAlpha(10),
+              borderRadius: context.brLg,
               border: Border.all(
                 color: isSelected
-                    ? widget.activeColor.withOpacity(0.2)
-                    : scheme.onSurface.withOpacity(0.08),
+                    ? widget.activeColor.withAlpha(20)
+                    : scheme.onSurface.withAlpha(10),
                 width: context.respDim(1),
               ),
             ),
@@ -187,18 +222,24 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
     final scheme = context.ccColorScheme;
 
     return Container(
-      width: context.respDim(32),
-      height: context.respDim(32),
+      width: context.respDim(35),
+      height: context.respDim(35),
       decoration: BoxDecoration(
         color: isSelected
-            ? widget.activeColor.withOpacity(0.12)
-            : scheme.onSurface.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(context.respDim(10)),
+            ? widget.activeColor.withAlpha(20)
+            : scheme.onSurface.withAlpha(10),
+        borderRadius: context.brMd,
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
-          if (isSelected) const Positioned.fill(child: CcGlassyGradientIcon()),
+          if (isSelected)
+            Positioned.fill(
+              child: CcGlassyGradientIcon(
+                centerColor: widget.activeColor.withAlpha(30),
+                endColor: widget.activeColor.withAlpha(50),
+              ),
+            ),
           CcIcon(
             icon: iconDataFromCode(
               category.iconCode,

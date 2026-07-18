@@ -97,18 +97,7 @@ class TransactionPage extends CcGetView<TransactionController> {
           ),
           TransactionTabBar(controller: controller),
           const CcSpaceSM(),
-          Expanded(
-            child: NotificationListener<ScrollNotification>(
-              onNotification: (notification) {
-                if (notification is ScrollUpdateNotification) {
-                  controller.isHeaderHidden.value =
-                      notification.metrics.pixels > 8;
-                }
-                return false;
-              },
-              child: TransactionTabBarView(controller: controller),
-            ),
-          ),
+          Expanded(child: TransactionTabBarView(controller: controller)),
         ],
       );
     });

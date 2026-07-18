@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
+import 'cc_quick_amount_chips.dart';
 
 class CcAmountInputSection extends StatelessWidget {
   final String label;
@@ -54,11 +55,11 @@ class CcAmountInputSection extends StatelessWidget {
             height: context.respDim(50),
             decoration: BoxDecoration(
               color: context.ccColorScheme.surfaceVariant,
-              borderRadius: CcBorderRadius.md(context),
+              borderRadius: context.brMd,
               border: Border.all(
                 color: isKeypadVisible
                     ? accent
-                    : context.ccColorScheme.outlineVariant,
+                    : context.ccColorScheme.outlineVariant.withAlpha(10),
                 width: isKeypadVisible ? 1 : 0.4,
               ),
             ),
@@ -75,45 +76,12 @@ class CcAmountInputSection extends StatelessWidget {
           ),
         ),
         const CcSpaceSM(),
-        _buildQuickAmounts(context, accent),
-      ],
-    );
-  }
-
-  Widget _buildQuickAmounts(BuildContext context, Color accent) {
-    return HorizontalFadeScrollView(
-      height: context.respDim(35),
-      builder: (scrollController) => SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        controller: scrollController,
-        child: Row(
-          children: quickAmounts.map((amount) {
-            return Padding(
-              padding: EdgeInsets.only(right: context.respDim(8)),
-              child: GestureDetector(
-                onTap: () => onQuickAmountSelected(amount),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-                    vertical: context.respPadding(CcPaddingParams.SPACE_XS),
-                  ),
-                  decoration: BoxDecoration(
-                    color: accent.withOpacity(0.12),
-                    borderRadius: CcBorderRadius.lg(context),
-                  ),
-                  child: CcText(
-                    TransactionFormHelpers.formatShort(amount),
-                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      color: accent,
-                      fontWeight: CcTypographyParams.semiBold,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
+        CcQuickAmountChips(
+          amounts: quickAmounts,
+          onSelected: onQuickAmountSelected,
+          activeColor: accent,
         ),
-      ),
+      ],
     );
   }
 }

@@ -8,7 +8,7 @@ import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/util/gradient_app_bar.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../get_x/budget_limit_controller.dart';
-import '../widgets/add_budget_limit_form_sheet.dart';
+import '../widgets/add_budget_limit_form.dart';
 import '../widgets/budget_limit_grid.dart';
 
 @RoutePage()
@@ -40,7 +40,7 @@ class BudgetLimitPage extends CcGetView<BudgetLimitController> {
           el.tr(CcLocaleKeys.budget_title),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
-            fontWeight: CcTypographyParams.bold
+            fontWeight: CcTypographyParams.bold,
           ),
         ),
       ),
@@ -110,7 +110,7 @@ class BudgetLimitPage extends CcGetView<BudgetLimitController> {
                       maxLines: 3,
                       textStyle: context.ccTextTheme.labelSmall?.copyWith(
                         color: context.ccColorScheme.onSurfaceVariant
-                            .withOpacity(0.5)
+                            .withOpacity(0.5),
                       ),
                     ),
                     const CcSpaceXS(),
@@ -129,7 +129,7 @@ class BudgetLimitPage extends CcGetView<BudgetLimitController> {
                             maxLines: 3,
                             textStyle: context.ccTextTheme.labelSmall?.copyWith(
                               color: context.ccColorScheme.onSurfaceVariant
-                                  .withOpacity(0.5)
+                                  .withOpacity(0.5),
                             ),
                           ),
                         ),
@@ -154,7 +154,7 @@ class BudgetLimitPage extends CcGetView<BudgetLimitController> {
                                       color: context
                                           .ccColorScheme
                                           .onSurfaceVariant
-                                          .withOpacity(0.5)
+                                          .withOpacity(0.5),
                                     ),
                               ),
                             ],
@@ -191,7 +191,7 @@ class BudgetLimitPage extends CcGetView<BudgetLimitController> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => AddBudgetLimitFormSheet(editTarget: editTarget),
+      builder: (_) => AddBudgetLimitForm(editTarget: editTarget),
     );
   }
 

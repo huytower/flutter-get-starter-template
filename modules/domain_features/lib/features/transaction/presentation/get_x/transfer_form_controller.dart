@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/util/money_constants.dart';
 import '../../domain/usecases/create_transfer_usecase.dart';
 import 'transaction_form_controller.dart';
 
@@ -13,18 +14,7 @@ import 'transaction_form_controller.dart';
 class TransferFormController extends TransactionFormController {
   final Rx<String?> toWalletId = Rx<String?>(null);
 
-  final List<int> quickAmounts = const [
-    10000,
-    20000,
-    30000,
-    50000,
-    100000,
-    200000,
-    300000,
-    500000,
-    1000000,
-    2000000,
-  ];
+  final List<int> quickAmounts = MoneyConstants.quickAmounts;
 
   @override
   void onInit() {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/util/money_constants.dart';
 import '../get_x/expense_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
@@ -124,18 +125,7 @@ class ExpenseForm extends StatelessWidget {
     return CcAmountInputSection(
       label: el.tr(CcLocaleKeys.transaction_amount),
       amountStr: controller.amountStr.value,
-      quickAmounts: const [
-        10000,
-        20000,
-        30000,
-        50000,
-        100000,
-        200000,
-        300000,
-        500000,
-        1000000,
-        2000000,
-      ],
+      quickAmounts: MoneyConstants.quickAmounts,
       isKeypadVisible: controller.showKeypad.value,
       activeColor: accentColor,
       fieldKey: controller.amountFieldKey,
@@ -174,38 +164,10 @@ class ExpenseForm extends StatelessWidget {
       onKeyPress: controller.handleKeyPress,
       onDelete: controller.handleDelete,
       onClear: () => controller.amountStr.value = '0',
-      suggestions: const [
-        10000,
-        20000,
-        30000,
-        50000,
-        100000,
-        200000,
-        300000,
-        500000,
-        1000000,
-        2000000,
-      ],
+      suggestions: MoneyConstants.quickAmounts,
       onSuggestion: (value) => controller.amountStr.value = value.toString(),
       onDone: controller.hideKeypad,
       activeColor: accentColor,
     );
   }
-}
-
-/// Helper class to keep static members for keypad if needed,
-/// but moved to controller/local list for now.
-abstract class ExpenseQuickAmounts {
-  static const List<int> standard = [
-    10000,
-    20000,
-    30000,
-    50000,
-    100000,
-    200000,
-    300000,
-    500000,
-    1000000,
-    2000000,
-  ];
 }

@@ -7,17 +7,17 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/util/money_constants.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
-import '../widgets/income_quick_amounts.dart';
 import 'transaction_form_controller.dart';
 
 @injectable
 class IncomeFormController extends TransactionFormController {
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   final RxInt categoryKey = 0.obs;
-  final RxList<int> quickAmounts = RxList<int>(IncomeQuickAmounts.fallback);
+  final RxList<int> quickAmounts = RxList<int>(MoneyConstants.quickAmounts);
 
   @override
   void onInit() {
@@ -27,7 +27,9 @@ class IncomeFormController extends TransactionFormController {
 
   Future<void> _loadSuggestions() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
-    quickAmounts.assignAll(IncomeQuickAmounts.forBirthYear(settings.birthYear));
+    quickAmounts.assignAll(
+      MoneyConstants.getIncomeSuggestions(settings.birthYear),
+    );
   }
 
   @override

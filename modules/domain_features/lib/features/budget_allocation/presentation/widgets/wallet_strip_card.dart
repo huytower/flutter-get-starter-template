@@ -111,7 +111,7 @@ class _WalletCard extends StatelessWidget {
       height: context.respDim(32),
       decoration: BoxDecoration(
         color: scheme.primary.withOpacity(0.12),
-        borderRadius: CcBorderRadius.lg(context),
+        borderRadius: context.brLg,
       ),
       child: Stack(
         alignment: Alignment.center,
