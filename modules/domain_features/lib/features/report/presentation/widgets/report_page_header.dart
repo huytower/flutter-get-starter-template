@@ -78,7 +78,7 @@ class ReportPageHeader extends StatelessWidget {
           const Spacer(flex: 1),
 
           Flexible(
-            flex: 15,
+            flex: 20,
             child: CcSymmetricPadding(
               horizontal: CcPaddingParams.PAGE_XS,
               child: _buildRunwaySection(context),

@@ -31,7 +31,7 @@ class FinancialRunwayWidget extends StatelessWidget {
 
     return Column(
       children: [
-        CcListBanner(
+        CcListBannerMedium(
           leadingIcon: statusIcon,
           title: message,
           color: statusColor,

@@ -71,7 +71,7 @@ class ReportPage extends CcGetView<ReportController> {
     final headerHeight = screenHeight * headerHeightFactor;
 
     // Tab bar height scaled responsively
-    final tabBarHeight = context.respDim(60);
+    final tabBarHeight = context.respDim(100);
     final overlap = tabBarHeight / 2;
 
     return Builder(

@@ -95,8 +95,8 @@ class TransactionPageHeader extends StatelessWidget {
     );
   }
 
-  CcFrostedBanner buildBanner(BuildContext context) {
-    return CcFrostedBanner(
+  CcListBannerSmall buildBanner(BuildContext context) {
+    return CcListBannerSmall(
       title: el.tr(
         CcLocaleKeys.transaction_claims_in_progress,
         namedArgs: {'count': '2'},
