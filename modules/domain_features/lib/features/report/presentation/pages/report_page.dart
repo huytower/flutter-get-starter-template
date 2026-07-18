@@ -22,9 +22,8 @@ class ReportPage extends CcGetView<ReportController> {
 
   @override
   Widget? buildContent(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
     final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
-    final headerHeight = context.respDim(260) + topPadding;
+    final headerHeight = MediaQuery.of(context).size.height * 0.32;
 
     return DefaultTabController(
       length: 3,
@@ -55,9 +54,8 @@ class ReportPage extends CcGetView<ReportController> {
   }
 
   Widget _buildReportContent(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-    final headerHeight = context.respDim(230) + topPadding;
-    final tabBarHeight = context.respDim(60);
+    final headerHeight = MediaQuery.of(context).size.height * 0.32;
+    final tabBarHeight = context.respDim(100);
     final overlap = tabBarHeight / 2;
 
     return Builder(

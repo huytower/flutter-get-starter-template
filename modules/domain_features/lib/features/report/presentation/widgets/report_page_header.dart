@@ -51,23 +51,26 @@ class ReportPageHeader extends StatelessWidget {
   }
 
   Widget _buildHeroForeground(BuildContext context) {
-    // The parent Stack gives unbounded height, so we cannot use
-    // FractionallySizedBox(heightFactor) here — it would fail layout with a
-    // "RenderBox was not laid out: hasSize" assertion. Instead we fill the
-    // header and use flex so the safe-area top, title, and runway banner keep
-    // their proportion on every screen size.
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Safe-area top spacer (proportional, only when there is a notch).
-        if (MediaQuery.of(context).padding.top > 0)
-          SizedBox(height: MediaQuery.of(context).padding.top),
-        const CcSpaceSM(),
-        _buildTitleRow(context),
-        const CcSpaceSM(),
-        // Runway banner grows with the header while the title stays compact.
-        Expanded(child: _buildRunwaySection(context)),
-      ],
+    // We wrap the foreground in Positioned.fill so the Column respects the
+    // header's bounded height (e.g. 25% of screen height). This allows the
+    // Expanded section to correctly fill the remaining space without
+    // "unbounded height" layout assertions.
+    return Positioned.fill(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Safe-area top spacer (proportional, only when there is a notch).
+          if (MediaQuery.of(context).padding.top > 0)
+            SizedBox(height: MediaQuery.of(context).padding.top),
+          const CcSpaceSM(),
+          _buildTitleRow(context),
+          const CcSpaceSM(),
+          // Runway banner grows with the header while the title stays compact.
+          Expanded(child: _buildRunwaySection(context)),
+          // Added a small spacer at bottom for breathing room
+          const CcSpaceSM(),
+        ],
+      ),
     );
   }
 
