@@ -32,8 +32,7 @@ class ReportPage extends CcGetView<ReportController> {
         child: Stack(
           children: [
             Obx(() {
-              final hidden =
-                  controller.isHeaderHidden.value || keyboardUp;
+              final hidden = controller.isHeaderHidden.value || keyboardUp;
               return AnimatedOpacity(
                 opacity: hidden ? 0 : 1,
                 duration: const Duration(milliseconds: 200),
@@ -57,7 +56,7 @@ class ReportPage extends CcGetView<ReportController> {
 
   Widget _buildReportContent(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
-    final headerHeight = context.respDim(220) + topPadding;
+    final headerHeight = context.respDim(230) + topPadding;
     final tabBarHeight = context.respDim(60);
     final overlap = tabBarHeight / 2;
 
@@ -74,8 +73,7 @@ class ReportPage extends CcGetView<ReportController> {
           if (data == null) return const SizedBox.shrink();
 
           // Hide the header when the body is scrolled down (or a keyboard is up).
-          final keyboardUp =
-              MediaQuery.of(context).viewInsets.bottom > 0;
+          final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
           final hidden = controller.isHeaderHidden.value || keyboardUp;
 
           return Column(

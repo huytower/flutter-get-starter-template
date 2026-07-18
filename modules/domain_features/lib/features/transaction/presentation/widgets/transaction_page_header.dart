@@ -112,12 +112,9 @@ class TransactionPageHeader extends StatelessWidget {
 
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 400),
-          layoutBuilder: (currentChild, previousChildren) {
-            return Stack(
-              alignment: Alignment.centerLeft,
-              children: <Widget>[...previousChildren, ?currentChild],
-            );
-          },
+          // Use the default layout builder. A custom Stack here conflicts with
+          // the Expanded (which lives under the header's outer Stack), causing
+          // a "Competing ParentDataWidgets" assertion during transitions.
           child: showSummary
               ? const TransactionWalletSummary(key: ValueKey('wallet_summary'))
               : _buildPageTitle(context),

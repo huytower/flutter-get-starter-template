@@ -21,25 +21,23 @@ class TransactionTabBarView extends StatelessWidget {
       final topColor = activeColor.withAlpha(5);
       final bottomColor = activeColor.withAlpha(10);
 
-      return Expanded(
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [topColor, bottomColor],
-                  ),
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [topColor, bottomColor],
                 ),
               ),
             ),
-            const TabBarView(
-              children: [ExpenseForm(), IncomeForm(), TransferForm()],
-            ),
-          ],
-        ),
+          ),
+          const TabBarView(
+            children: [ExpenseForm(), IncomeForm(), TransferForm()],
+          ),
+        ],
       );
     });
   }
