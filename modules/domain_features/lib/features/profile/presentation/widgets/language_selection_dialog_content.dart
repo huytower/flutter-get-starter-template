@@ -69,7 +69,6 @@ class _LanguageSelectionDialogContentState
         maxLines: 1,
         textStyle: context.ccTextTheme.headlineSmall?.copyWith(
           color: scheme.onPrimary,
-          fontSize: context.respFontSize(16),
           fontWeight: CcTypographyParams.semiBold,
         ),
       ),
@@ -147,7 +146,6 @@ class _LanguageSelectionDialogContentState
             label,
             align: Alignment.center,
             textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-              fontSize: context.respFontSize(14),
               fontWeight: isSelected
                   ? CcTypographyParams.bold
                   : CcTypographyParams.regular,

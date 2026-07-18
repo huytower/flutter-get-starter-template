@@ -132,8 +132,7 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
           el.tr(CcLocaleKeys.category_settings_title),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
-            color: context.ccColorScheme.onPrimary,
-            fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+            color: context.ccColorScheme.onPrimary
           ),
         ),
       ),

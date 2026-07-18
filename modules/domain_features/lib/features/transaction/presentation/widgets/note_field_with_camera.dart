@@ -37,13 +37,11 @@ class NoteFieldWithCamera extends StatelessWidget {
               controller: controller,
               onTap: onTap,
               style: context.ccTextTheme.bodyMedium?.copyWith(
-                fontSize: context.respFontSize(14),
               ),
               decoration: InputDecoration(
                 hintText: hintText ?? el.tr(CcLocaleKeys.transaction_note_hint),
                 hintStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  color: CcBaseColors.gray500,
-                  fontSize: context.respFontSize(13),
+                  color: CcBaseColors.gray500
                 ),
                 border: InputBorder.none,
                 isDense: true,

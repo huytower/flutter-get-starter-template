@@ -40,15 +40,13 @@ class ReconciliationHistoryCard extends StatelessWidget {
                   },
                 ),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                  fontWeight: CcTypographyParams.bold,
-                  fontSize: context.respFontSize(CcTypographyParams.titleSmall),
+                  fontWeight: CcTypographyParams.bold
                 ),
               ),
               CcText(
                 '${reconciliation.date.day}/${reconciliation.date.month}/${reconciliation.date.year}',
                 textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                  fontSize: context.respFontSize(CcTypographyParams.bodySmall),
+                  color: scheme.onSurfaceVariant
                 ),
               ),
             ],
@@ -76,8 +74,7 @@ class ReconciliationHistoryCard extends StatelessWidget {
                   ),
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(
               color: balanced ? scheme.primary : scheme.error,
-              fontWeight: CcTypographyParams.bold,
-              fontSize: context.respFontSize(CcTypographyParams.bodyMedium),
+              fontWeight: CcTypographyParams.bold
             ),
           ),
         ],
@@ -94,13 +91,11 @@ class ReconciliationHistoryCard extends StatelessWidget {
           CcText(
             label,
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              fontSize: context.respFontSize(CcTypographyParams.bodySmall),
             ),
           ),
           CcText(
             value,
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              fontSize: context.respFontSize(CcTypographyParams.bodySmall),
             ),
           ),
         ],

@@ -42,8 +42,7 @@ class WalletListPage extends CcGetView<WalletController> {
           el.tr(CcLocaleKeys.wallet_your_wallets),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
-            fontWeight: CcTypographyParams.bold,
-            fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+            fontWeight: CcTypographyParams.bold
           ),
         ),
       ),

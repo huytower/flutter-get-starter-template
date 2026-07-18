@@ -39,8 +39,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
           wallet.name,
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
-            fontWeight: CcTypographyParams.bold,
-            fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+            fontWeight: CcTypographyParams.bold
           ),
         ),
       ),
@@ -90,8 +89,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
           CcText(
             el.tr(CcLocaleKeys.wallet_total_assets),
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.onPrimary.withOpacity(0.8),
-              fontSize: context.respFontSize(16),
+              color: context.ccColorScheme.onPrimary.withOpacity(0.8)
             ),
           ),
           const CcSpaceMD(),
@@ -99,8 +97,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
             formatVndWithSymbol(_currentBalance),
             textStyle: context.ccTextTheme.headlineMedium?.copyWith(
               color: context.ccColorScheme.onPrimary,
-              fontWeight: FontWeight.bold,
-              fontSize: context.respFontSize(32),
+              fontWeight: FontWeight.bold
             ),
           ),
         ],

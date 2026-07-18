@@ -97,9 +97,6 @@ class TrendLineChart extends StatelessWidget {
                         child: CcText(
                           points[index].label,
                           textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                            fontSize: context.respFontSize(
-                              CcTypographyParams.labelSmall,
-                            ),
                             color: context.ccColorScheme.onSurfaceVariant,
                           ),
                         ),

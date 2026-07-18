@@ -66,20 +66,14 @@ class ProfileHeader extends StatelessWidget {
                       displayName,
                       textStyle: context.ccTextTheme.titleMedium?.copyWith(
                         color: context.ccColorScheme.onPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: context.respFontSize(
-                          CcTypographyParams.titleMedium,
-                        ),
+                        fontWeight: FontWeight.bold
                       ),
                     ),
                     const CcSpaceXS(),
                     CcText(
                       subtitle,
                       textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                        color: context.ccColorScheme.onPrimary.withOpacity(0.7),
-                        fontSize: context.respFontSize(
-                          CcTypographyParams.bodySmall,
-                        ),
+                        color: context.ccColorScheme.onPrimary.withOpacity(0.7)
                       ),
                     ),
                   ],

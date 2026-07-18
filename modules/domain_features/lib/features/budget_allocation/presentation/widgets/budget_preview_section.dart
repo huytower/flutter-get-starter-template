@@ -37,8 +37,7 @@ class BudgetPreviewSection extends StatelessWidget {
                 el.tr(CcLocaleKeys.budget_this_month),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
                   fontWeight: CcTypographyParams.bold,
-                  color: scheme.onBackground,
-                  fontSize: context.respFontSize(CcTypographyParams.titleSmall),
+                  color: scheme.onBackground
                 ),
               ),
               Row(

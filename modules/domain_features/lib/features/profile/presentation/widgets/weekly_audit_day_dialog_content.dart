@@ -71,7 +71,6 @@ class _WeeklyAuditDayDialogContentState
         maxLines: 3,
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           color: scheme.onPrimary,
-          fontSize: context.respFontSize(14),
           fontWeight: CcTypographyParams.bold,
         ),
       ),
@@ -141,7 +140,6 @@ class _WeeklyAuditDayDialogContentState
             _getDayName(day),
             align: Alignment.center,
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-              fontSize: context.respFontSize(13),
               fontWeight: isSelected
                   ? CcTypographyParams.bold
                   : CcTypographyParams.regular,

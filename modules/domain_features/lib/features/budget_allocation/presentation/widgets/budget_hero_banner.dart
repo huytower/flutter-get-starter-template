@@ -50,10 +50,7 @@ class BudgetHeroBanner extends StatelessWidget {
                   CcText(
                     el.tr(CcLocaleKeys.wallet_total_assets),
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      color: scheme.onPrimary.withOpacity(0.85),
-                      fontSize: context.respFontSize(
-                        CcTypographyParams.labelMedium,
-                      ),
+                      color: scheme.onPrimary.withOpacity(0.85)
                     ),
                   ),
                   const CcSpaceXS(),
@@ -65,9 +62,6 @@ class BudgetHeroBanner extends StatelessWidget {
                       textStyle: context.ccTextTheme.headlineMedium?.copyWith(
                         color: scheme.onPrimary,
                         fontWeight: CcTypographyParams.bold,
-                        fontSize: context.respFontSize(
-                          CcTypographyParams.headlineMedium,
-                        ),
                         letterSpacing: 0.2,
                       ),
                     ),

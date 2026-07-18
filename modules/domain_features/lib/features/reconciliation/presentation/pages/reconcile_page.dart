@@ -36,8 +36,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         el.tr(CcLocaleKeys.reconciliation_title),
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           color: context.ccColorScheme.onPrimary,
-          fontWeight: CcTypographyParams.bold,
-          fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+          fontWeight: CcTypographyParams.bold
         ),
       ),
       actions: [

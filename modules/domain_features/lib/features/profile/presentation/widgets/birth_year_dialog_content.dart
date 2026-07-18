@@ -109,7 +109,6 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
         maxLines: 3,
         textStyle: context.ccTextTheme.labelLarge?.copyWith(
           color: scheme.onPrimary,
-          fontSize: context.respFontSize(13),
           fontWeight: CcTypographyParams.bold,
         ),
       ),
@@ -183,7 +182,6 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
             '$year',
             align: Alignment.center,
             textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-              fontSize: context.respFontSize(16),
               fontWeight: isSelected
                   ? CcTypographyParams.bold
                   : CcTypographyParams.regular,

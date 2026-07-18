@@ -29,8 +29,7 @@ class TransactionWalletSummary extends StatelessWidget {
             '${el.tr(CcLocaleKeys.transaction_wallet)}  ${formatVndShort(controller.walletTotal.value)}',
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(
               color: context.ccColorScheme.onPrimary.withOpacity(0.9),
-              fontWeight: CcTypographyParams.semiBold,
-              fontSize: context.respFontSize(13),
+              fontWeight: CcTypographyParams.semiBold
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

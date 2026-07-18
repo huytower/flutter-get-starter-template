@@ -218,8 +218,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           : el.tr(CcLocaleKeys.wallet_add_title),
       textStyle: context.ccTextTheme.headlineSmall?.copyWith(
         fontWeight: FontWeight.bold,
-        color: context.ccColorScheme.primary,
-        fontSize: context.respFontSize(19),
+        color: context.ccColorScheme.primary
       ),
     );
   }
@@ -272,8 +271,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: context.ccColorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: context.respFontSize(13),
+                fontWeight: FontWeight.bold
               ),
             ),
           ),
@@ -290,8 +288,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           el.tr(CcLocaleKeys.wallet_initial_balance),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold,
-            fontSize: context.respFontSize(12),
+            fontWeight: FontWeight.bold
           ),
         ),
         const CcSpaceXS(),
@@ -312,8 +309,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
             textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: context.ccColorScheme.primary,
-              fontSize: context.respFontSize(24),
+              color: context.ccColorScheme.primary
             ),
           ),
         ),
@@ -321,8 +317,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         CcText(
           el.tr(CcLocaleKeys.wallet_balance_locked_hint),
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
-            color: CcBaseColors.gray500,
-            fontSize: context.respFontSize(11),
+            color: CcBaseColors.gray500
           ),
         ),
       ],

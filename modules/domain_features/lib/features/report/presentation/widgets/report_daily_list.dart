@@ -216,8 +216,7 @@ class _TransactionTile extends StatelessWidget {
               CcText(
                 el.DateFormat('dd/MM').format(transaction.date),
                 textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                  color: context.ccColorScheme.onSurfaceVariant,
-                  fontSize: context.respFontSize(CcTypographyParams.labelSmall),
+                  color: context.ccColorScheme.onSurfaceVariant
                 ),
               ),
             ],

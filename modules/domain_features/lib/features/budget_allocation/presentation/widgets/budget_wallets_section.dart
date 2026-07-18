@@ -40,8 +40,7 @@ class BudgetWalletsSection extends StatelessWidget {
                 el.tr(CcLocaleKeys.wallet_your_wallets),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
                   fontWeight: CcTypographyParams.bold,
-                  color: scheme.onBackground,
-                  fontSize: context.respFontSize(CcTypographyParams.titleSmall),
+                  color: scheme.onBackground
                 ),
               ),
               Row(

@@ -73,8 +73,7 @@ class MoneyKeypadPanel extends StatelessWidget {
                       el.tr(CcLocaleKeys.common_done),
                       textStyle: context.ccTextTheme.labelMedium?.copyWith(
                         color: activeColor,
-                        fontWeight: CcTypographyParams.bold,
-                        fontSize: context.respFontSize(13),
+                        fontWeight: CcTypographyParams.bold
                       ),
                     ),
                   ),
@@ -119,8 +118,7 @@ class MoneyKeypadPanel extends StatelessWidget {
                 formatter.format(amount),
                 textStyle: context.ccTextTheme.labelMedium?.copyWith(
                   color: activeColor,
-                  fontWeight: CcTypographyParams.bold,
-                  fontSize: context.respFontSize(12),
+                  fontWeight: CcTypographyParams.bold
                 ),
               ),
             ),

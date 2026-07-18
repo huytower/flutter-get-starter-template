@@ -124,8 +124,7 @@ class TransactionPageHeader extends StatelessWidget {
       key: const ValueKey('transaction_title'),
       textStyle: context.ccTextTheme.headlineSmall?.copyWith(
         color: context.ccColorScheme.onPrimary,
-        fontWeight: CcTypographyParams.bold,
-        fontSize: context.respFontSize(16),
+        fontWeight: CcTypographyParams.bold
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,

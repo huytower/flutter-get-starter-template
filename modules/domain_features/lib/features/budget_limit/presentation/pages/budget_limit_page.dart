@@ -40,8 +40,7 @@ class BudgetLimitPage extends CcGetView<BudgetLimitController> {
           el.tr(CcLocaleKeys.budget_title),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
-            fontWeight: CcTypographyParams.bold,
-            fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+            fontWeight: CcTypographyParams.bold
           ),
         ),
       ),
@@ -111,10 +110,7 @@ class BudgetLimitPage extends CcGetView<BudgetLimitController> {
                       maxLines: 3,
                       textStyle: context.ccTextTheme.labelSmall?.copyWith(
                         color: context.ccColorScheme.onSurfaceVariant
-                            .withOpacity(0.5),
-                        fontSize: context.respFontSize(
-                          CcTypographyParams.labelSmall,
-                        ),
+                            .withOpacity(0.5)
                       ),
                     ),
                     const CcSpaceXS(),
@@ -133,10 +129,7 @@ class BudgetLimitPage extends CcGetView<BudgetLimitController> {
                             maxLines: 3,
                             textStyle: context.ccTextTheme.labelSmall?.copyWith(
                               color: context.ccColorScheme.onSurfaceVariant
-                                  .withOpacity(0.5),
-                              fontSize: context.respFontSize(
-                                CcTypographyParams.labelSmall,
-                              ),
+                                  .withOpacity(0.5)
                             ),
                           ),
                         ),
@@ -161,10 +154,7 @@ class BudgetLimitPage extends CcGetView<BudgetLimitController> {
                                       color: context
                                           .ccColorScheme
                                           .onSurfaceVariant
-                                          .withOpacity(0.5),
-                                      fontSize: context.respFontSize(
-                                        CcTypographyParams.labelSmall,
-                                      ),
+                                          .withOpacity(0.5)
                                     ),
                               ),
                             ],

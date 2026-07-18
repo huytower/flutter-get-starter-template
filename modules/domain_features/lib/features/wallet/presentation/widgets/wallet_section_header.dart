@@ -23,8 +23,7 @@ class WalletSectionHeader extends StatelessWidget {
           CcText(
             count != null ? '$title ($count)' : title,
             textStyle: context.ccTextTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+              fontWeight: FontWeight.bold
             ),
           ),
           Icon(

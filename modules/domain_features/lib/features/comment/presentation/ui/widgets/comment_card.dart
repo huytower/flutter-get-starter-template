@@ -33,16 +33,14 @@ class CommentCard extends StatelessWidget {
               comment.name,
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 fontWeight: CcTypographyParams.bold,
-                color: context.ccColorScheme.primary,
-                fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+                color: context.ccColorScheme.primary
               ),
             ),
             const CcSpaceXS(),
             CcText(
               comment.email,
               textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                color: context.ccColorScheme.onSurfaceVariant,
-                fontSize: context.respFontSize(CcTypographyParams.bodySmall),
+                color: context.ccColorScheme.onSurfaceVariant
               ),
             ),
             const CcSpaceSM(),
@@ -50,7 +48,6 @@ class CommentCard extends StatelessWidget {
               child: CcText(
                 comment.body,
                 textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  fontSize: context.respFontSize(CcTypographyParams.bodyMedium),
                 ),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,

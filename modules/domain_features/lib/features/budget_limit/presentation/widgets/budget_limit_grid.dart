@@ -220,8 +220,7 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
                 el.tr(CcLocaleKeys.budget_customize_category),
                 textStyle: context.ccTextTheme.bodySmall?.copyWith(
                   color: scheme.onSurfaceVariant.withOpacity(0.5),
-                  fontWeight: FontWeight.w500,
-                  fontSize: context.respFontSize(12),
+                  fontWeight: FontWeight.w500
                 ),
                 align: Alignment.center,
                 textAlign: TextAlign.center,

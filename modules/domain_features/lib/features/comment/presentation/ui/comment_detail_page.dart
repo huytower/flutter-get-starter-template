@@ -62,8 +62,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
           comment.name,
           textStyle: context.ccTextTheme.headlineSmall?.copyWith(
             fontWeight: CcTypographyParams.bold,
-            color: context.ccColorScheme.primary,
-            fontSize: context.respFontSize(CcTypographyParams.headlineSmall),
+            color: context.ccColorScheme.primary
           ),
         ),
         const CcSpaceSM(),
@@ -128,8 +127,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
           comment.body,
           textStyle: context.ccTextTheme.bodyLarge?.copyWith(
             height: 1.6,
-            color: context.ccColorScheme.onSurface,
-            fontSize: context.respFontSize(CcTypographyParams.bodyLarge),
+            color: context.ccColorScheme.onSurface
           ),
         ),
       ],

@@ -26,8 +26,7 @@ class QuickDateRow extends StatelessWidget {
           el.tr(CcLocaleKeys.transaction_time),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: scheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold,
-            fontSize: context.respFontSize(CcTypographyParams.labelMedium),
+            fontWeight: FontWeight.bold
           ),
         ),
         const Spacer(),
@@ -87,8 +86,7 @@ class QuickDateRow extends StatelessWidget {
             color: isSelected
                 ? activeColor
                 : context.ccColorScheme.onSurfaceVariant,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            fontSize: context.respFontSize(CcTypographyParams.labelMedium),
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal
           ),
         ),
       ),

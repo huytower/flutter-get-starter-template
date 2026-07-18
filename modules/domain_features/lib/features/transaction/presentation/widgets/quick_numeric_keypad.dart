@@ -84,7 +84,6 @@ class QuickNumericKeypad extends StatelessWidget {
                 textAlign: TextAlign.center,
                 textStyle: context.ccTextTheme.titleMedium?.copyWith(
                   fontWeight: CcTypographyParams.bold,
-                  fontSize: context.respFontSize(16),
                   color: label == '000'
                       ? activeColor
                       : context.ccColorScheme.onSurface,

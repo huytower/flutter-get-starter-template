@@ -36,8 +36,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         el.tr(CcLocaleKeys.nav_budget_allocation),
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           color: context.ccColorScheme.onPrimary,
-          fontWeight: CcTypographyParams.bold,
-          fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+          fontWeight: CcTypographyParams.bold
         ),
       ),
       actions: [

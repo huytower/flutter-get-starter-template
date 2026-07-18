@@ -268,8 +268,7 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                           : el.tr(CcLocaleKeys.budget_add_title),
                       textStyle: context.ccTextTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: context.ccColorScheme.primary,
-                        fontSize: context.respFontSize(19),
+                        color: context.ccColorScheme.primary
                       ),
                     ),
                     _buildFixedPriceHeaderToggle(context),

@@ -151,7 +151,6 @@ class TransactionWalletSelector extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       textStyle: context.ccTextTheme.labelMedium?.copyWith(
         color: isSelected ? activeColor : scheme.onSurfaceVariant,
-        fontSize: context.respFontSize(11),
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
     );

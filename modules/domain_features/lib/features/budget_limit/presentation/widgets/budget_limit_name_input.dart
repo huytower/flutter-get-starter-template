@@ -75,8 +75,7 @@ class BudgetLimitNameInput extends StatelessWidget {
             child: CcText(
               errorText!,
               textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                color: context.ccColorScheme.error,
-                fontSize: context.respFontSize(11),
+                color: context.ccColorScheme.error
               ),
             ),
           ),

@@ -53,8 +53,7 @@ class TransactionTabBar extends StatelessWidget {
       labelColor: activeColor,
       unselectedLabelColor: scheme.onSurfaceVariant,
       labelStyle: context.ccTextTheme.labelMedium?.copyWith(
-        fontWeight: CcTypographyParams.bold,
-        fontSize: context.respFontSize(CcTypographyParams.labelMedium),
+        fontWeight: CcTypographyParams.bold
       ),
       labelPadding: EdgeInsets.zero,
       tabs: [

@@ -29,8 +29,7 @@ class BudgetLimitSaveButton extends StatelessWidget {
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: context.ccColorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: context.respFontSize(13),
+                fontWeight: FontWeight.bold
               ),
             ),
           ),

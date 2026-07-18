@@ -36,8 +36,7 @@ class BudgetLimitCategorySelector extends StatelessWidget {
       el.tr(CcLocaleKeys.budget_category),
       textStyle: context.ccTextTheme.labelMedium?.copyWith(
         color: context.ccColorScheme.onSurfaceVariant,
-        fontWeight: FontWeight.bold,
-        fontSize: context.respFontSize(12),
+        fontWeight: FontWeight.bold
       ),
     );
   }
@@ -107,7 +106,6 @@ class BudgetLimitCategorySelector extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: context.ccTextTheme.labelSmall?.copyWith(
-                    fontSize: context.respFontSize(10),
                     fontWeight: isSelected
                         ? FontWeight.bold
                         : FontWeight.normal,

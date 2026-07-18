@@ -109,8 +109,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
             widget.title,
             textStyle: context.ccTextTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: scheme.primary,
-              fontSize: context.respFontSize(CcTypographyParams.headlineSmall),
+              color: scheme.primary
             ),
           ),
           const CcSpaceMD(),

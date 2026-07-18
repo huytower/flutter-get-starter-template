@@ -117,8 +117,7 @@ class _CrashLogViewerPageState extends State<CrashLogViewerPage> {
               _logContent,
               style: context.ccTextTheme.labelSmall?.copyWith(
                 height: 1.4,
-                fontFamily: 'monospace',
-                fontSize: context.respFontSize(CcTypographyParams.labelSmall),
+                fontFamily: 'monospace'
               ),
             ),
           ),

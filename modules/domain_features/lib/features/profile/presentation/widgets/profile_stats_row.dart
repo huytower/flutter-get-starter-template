@@ -85,8 +85,7 @@ class ProfileStatsRow extends StatelessWidget {
           CcText(
             label,
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant,
-              fontSize: context.respFontSize(CcTypographyParams.labelMedium),
+              color: context.ccColorScheme.onSurfaceVariant
             ),
             align: Alignment.center,
             textAlign: TextAlign.center,
@@ -96,8 +95,7 @@ class ProfileStatsRow extends StatelessWidget {
             value,
             textStyle: context.ccTextTheme.titleSmall?.copyWith(
               color: valueColor,
-              fontWeight: FontWeight.bold,
-              fontSize: context.respFontSize(CcTypographyParams.titleSmall),
+              fontWeight: FontWeight.bold
             ),
             align: Alignment.center,
             textAlign: TextAlign.center,

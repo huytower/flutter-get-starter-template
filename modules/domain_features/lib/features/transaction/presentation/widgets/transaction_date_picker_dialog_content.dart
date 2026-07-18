@@ -161,7 +161,6 @@ class _TransactionDatePickerDialogContentState
               align: Alignment.center,
               textStyle: context.ccTextTheme.labelLarge?.copyWith(
                 color: scheme.onPrimary,
-                fontSize: context.respFontSize(13),
                 fontWeight: CcTypographyParams.bold,
               ),
             ),
@@ -227,8 +226,7 @@ class _TransactionDatePickerDialogContentState
               label,
               align: Alignment.center,
               textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                color: scheme.primary.withOpacity(0.8),
-                fontSize: context.respFontSize(10),
+                color: scheme.primary.withOpacity(0.8)
               ),
             ),
           );
@@ -302,7 +300,6 @@ class _TransactionDatePickerDialogContentState
             '${date.day}',
             align: Alignment.center,
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-              fontSize: context.respFontSize(13),
               fontWeight: isSelected
                   ? CcTypographyParams.bold
                   : CcTypographyParams.regular,

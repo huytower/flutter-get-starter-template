@@ -137,8 +137,7 @@ class BudgetLimitGridCard extends StatelessWidget {
               CcText(
                 stats.budget.limit.formatShort(),
                 textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                  color: scheme.onSurfaceVariant.withOpacity(0.6),
-                  fontSize: context.respFontSize(11),
+                  color: scheme.onSurfaceVariant.withOpacity(0.6)
                 ),
               ),
             ],
@@ -160,8 +159,7 @@ class BudgetLimitGridCard extends StatelessWidget {
             namedArgs: {'percent': '$pct'},
           ),
           textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            color: scheme.onSurfaceVariant.withOpacity(0.6),
-            fontSize: context.respFontSize(12),
+            color: scheme.onSurfaceVariant.withOpacity(0.6)
           ),
         ),
         BudgetLimitPieChart(

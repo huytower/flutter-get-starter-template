@@ -134,8 +134,7 @@ class _WalletCard extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: scheme.onSurfaceVariant.withOpacity(0.6),
-            fontSize: context.respFontSize(11),
+            color: scheme.onSurfaceVariant.withOpacity(0.6)
           ),
         ),
         CcText(
@@ -144,8 +143,7 @@ class _WalletCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
-            color: scheme.onSurface,
-            fontSize: context.respFontSize(13),
+            color: scheme.onSurface
           ),
         ),
       ],

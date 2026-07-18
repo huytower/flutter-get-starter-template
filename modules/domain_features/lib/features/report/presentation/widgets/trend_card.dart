@@ -80,8 +80,7 @@ class TrendCard extends StatelessWidget {
           title,
           textStyle: context.ccTextTheme.bodyMedium?.copyWith(
             fontWeight: CcTypographyParams.semiBold,
-            color: context.ccColorScheme.onSurface,
-            fontSize: context.respFontSize(CcTypographyParams.bodyMedium),
+            color: context.ccColorScheme.onSurface
           ),
         ),
         const Spacer(),
@@ -89,8 +88,7 @@ class TrendCard extends StatelessWidget {
           formatVndShort(amount),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
-            color: context.ccColorScheme.onSurface,
-            fontSize: context.respFontSize(CcTypographyParams.titleMedium),
+            color: context.ccColorScheme.onSurface
           ),
         ),
       ],
@@ -170,8 +168,7 @@ class TrendCard extends StatelessWidget {
                   ? DateFormat('dd/MM').format(points[i].date)
                   : points[i].label,
               textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                color: context.ccColorScheme.onSurfaceVariant,
-                fontSize: context.respFontSize(CcTypographyParams.labelSmall),
+                color: context.ccColorScheme.onSurfaceVariant
               ),
             ),
       ],

@@ -73,8 +73,7 @@ class MonthlyBarChart extends StatelessWidget {
               formatVndShort(rod.toY),
               TextStyle(
                 color: context.ccColorScheme.onPrimary,
-                fontWeight: FontWeight.w600,
-                fontSize: context.respFontSize(CcTypographyParams.labelMedium),
+                fontWeight: FontWeight.w600
               ),
             );
           },
@@ -103,10 +102,7 @@ class MonthlyBarChart extends StatelessWidget {
                 child: CcText(
                   formatVndShort(value),
                   textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                    color: context.ccColorScheme.onSurfaceVariant,
-                    fontSize: context.respFontSize(
-                      CcTypographyParams.labelSmall,
-                    ),
+                    color: context.ccColorScheme.onSurfaceVariant
                   ),
                 ),
               );
@@ -127,10 +123,7 @@ class MonthlyBarChart extends StatelessWidget {
                 child: CcText(
                   months[index].shortLabel,
                   textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                    color: context.ccColorScheme.onSurfaceVariant,
-                    fontSize: context.respFontSize(
-                      CcTypographyParams.labelSmall,
-                    ),
+                    color: context.ccColorScheme.onSurfaceVariant
                   ),
                 ),
               );
