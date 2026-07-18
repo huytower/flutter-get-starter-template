@@ -51,45 +51,40 @@ class ReportPageHeader extends StatelessWidget {
   }
 
   Widget _buildHeroForeground(BuildContext context) {
-    // We wrap the foreground in Positioned.fill so the Column respects the
-    // header's bounded height. Using flex and FittedBox ensures the content
-    // remains visible and responsive even on the smallest phone screens without
-    // overlapping with the TabBar below.
-    return Positioned.fill(
+    // We calculate the overlap locally to match ReportPage's logic.
+    final overlap = context.respDim(60) / 2;
+
+    // We use a flex-based layout within the bounded height (30% mobile / 25% tablet).
+    // Positioned(bottom: overlap) ensures content never bleeds into the area
+    // covered by the TabBar, eliminating overlap conflicts on small phones.
+    //
+    // Fixed "Cannot hit test a render box with no size" error:
+    // This Positioned widget provides explicit constraints to the foreground
+    // Column, ensuring it always has a valid size for hit testing and layout.
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: overlap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Safe-area top spacer (proportional to notch)
           if (MediaQuery.of(context).padding.top > 0)
             SizedBox(height: MediaQuery.of(context).padding.top),
 
-          const CcSpaceSM(),
+          // Using Spacers with flex factors to distribute space proportionally.
+          const Spacer(flex: 1),
           _buildTitleRow(context),
+          const Spacer(flex: 1),
 
-          // Using a Flexible/Expanded runway section with a FittedBox safety
-          // ensures that on small phones, the banner scales down rather than
-          // overflowing or overlapping.
-          Expanded(
+          Flexible(
+            flex: 15,
             child: CcSymmetricPadding(
               horizontal: CcPaddingParams.PAGE_XS,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.center,
-                child: ConstrainedBox(
-                  // Ensure the banner has a reasonable max width while scaling
-                  constraints: BoxConstraints(
-                    maxWidth:
-                        MediaQuery.of(context).size.width -
-                        context.respPadding(CcPaddingParams.PAGE_XS) * 2,
-                  ),
-                  child: _buildRunwaySection(context),
-                ),
-              ),
+              child: _buildRunwaySection(context),
             ),
           ),
-
-          // Bottom buffer space to avoid overlap with the overlapping TabBar
-          const CcSpaceLG(),
+          const Spacer(flex: 1),
         ],
       ),
     );

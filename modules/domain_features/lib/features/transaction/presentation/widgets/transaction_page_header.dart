@@ -23,20 +23,13 @@ class TransactionPageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-    // Header height is screen-type aware (not width-scaled) so it stays
-    // appropriate on tablets instead of ballooning with screen width.
-    final baseHeight = CcResponsiveHelper.getValue(
-      context: context,
-      mobile: 200.0,
-      tablet: 220.0,
-      desktop: 240.0,
-    );
-    final headerHeight = baseHeight + topPadding;
-
+    // Fill the parent height (constrained by TransactionPage). No hardcoded
+    // base height — the header keeps a correct responsive ratio across screen
+    // sizes via flex-based sections instead of a width-scaled respDim() magic
+    // number.
     return Container(
-      height: headerHeight,
       width: double.infinity,
+      height: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(context.respDim(16)),
@@ -63,26 +56,41 @@ class TransactionPageHeader extends StatelessWidget {
 
   Widget _buildHeroForeground(BuildContext context) {
     return Positioned(
-      top: MediaQuery.of(context).padding.top,
+      top: 0,
       left: 0,
       right: 0,
-      bottom: context.respDim(16),
-      child: CcSymmetricPadding(
-        horizontal: CcPaddingParams.PAGE_MD,
-        child: Column(
-          children: [
-            const CcSpaceSM(),
-            Row(
+      bottom: context.respDim(30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (MediaQuery.of(context).padding.top > 0)
+            SizedBox(height: MediaQuery.of(context).padding.top),
+
+          // Using Spacers with flex factors to distribute space proportionally.
+          const Spacer(flex: 1),
+          CcSymmetricPadding(
+            horizontal: CcPaddingParams.PAGE_MD,
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 _buildHeaderTitleSection(context),
                 _buildHeaderActions(context),
               ],
             ),
-            const CcSpaceSM(), // nice for small phone
-            buildBanner(context),
-          ],
-        ),
+          ),
+          const Spacer(flex: 1),
+
+          // Use Flexible to allow the banner to take its needed space
+          // without overflowing the Column's fixed height.
+          Flexible(
+            flex: 12,
+            child: CcSymmetricPadding(
+              horizontal: CcPaddingParams.PAGE_MD,
+              child: buildBanner(context),
+            ),
+          ),
+          const Spacer(flex: 1),
+        ],
       ),
     );
   }
@@ -97,7 +105,7 @@ class TransactionPageHeader extends StatelessWidget {
       accentColor: context.ccColorScheme.primary,
       onTap: () {},
       icon: CcClipboardChecklistIcon(
-        size: context.respDim(44) * 0.8,
+        size: context.respDim(40) * 0.8,
         bodyColor: context.ccColorScheme.onPrimary.withValues(alpha: 0.85),
         clipColor: context.ccColorScheme.onPrimary,
         markColor: context.ccColorScheme.primary,

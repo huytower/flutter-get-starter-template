@@ -24,14 +24,12 @@ class ReportPage extends CcGetView<ReportController> {
   Widget? buildContent(BuildContext context) {
     final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
 
-    // Responsive height factor based on screen height to prevent content overlap
-    // on small phones while maintaining aesthetic proportions on tablets.
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
-      mobile:
-          0.36, // Increased to 36% for mobile to accommodate all header info
-      tablet: 0.25, // Kept at 25% for tablets
+      mobile: 0.3, // Increased to 38% for mobile to accommodate all header
+      // info
+      tablet: 0.28, // Tablets
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
@@ -67,8 +65,8 @@ class ReportPage extends CcGetView<ReportController> {
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
-      mobile: 0.36,
-      tablet: 0.25,
+      mobile: 0.3,
+      tablet: 0.28,
     );
     final headerHeight = screenHeight * headerHeightFactor;
 

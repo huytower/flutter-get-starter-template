@@ -26,9 +26,17 @@ class TransactionPage extends CcGetView<TransactionController> {
 
   @override
   Widget? buildContent(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
     final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
-    final headerHeight = context.respDim(200) + topPadding;
+
+    // Responsive height factor based on screen height to prevent content overlap
+    // on small phones while maintaining aesthetic proportions on tablets.
+    final screenHeight = MediaQuery.of(context).size.height;
+    final headerHeightFactor = CcResponsiveHelper.getValue(
+      context: context,
+      mobile: 0.22, // Increased for mobile to accommodate all header info
+      tablet: 0.2, // Tablets
+    );
+    final headerHeight = screenHeight * headerHeightFactor;
 
     return DefaultTabController(
       length: 3,
@@ -36,7 +44,8 @@ class TransactionPage extends CcGetView<TransactionController> {
         child: Stack(
           children: [
             Obx(() {
-              final hidden = controller.isHeaderHidden.value ||
+              final hidden =
+                  controller.isHeaderHidden.value ||
                   keyboardUp ||
                   controller.isKeypadOpen.value;
               return AnimatedOpacity(
@@ -61,16 +70,22 @@ class TransactionPage extends CcGetView<TransactionController> {
   }
 
   Widget _buildTransactionContent(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-    final headerHeight = context.respDim(180) + topPadding;
-    final tabBarHeight = context.respDim(60);
+    final screenHeight = MediaQuery.of(context).size.height;
+    final headerHeightFactor = CcResponsiveHelper.getValue(
+      context: context,
+      mobile: 0.25,
+      tablet: 0.28,
+    );
+    final headerHeight = screenHeight * headerHeightFactor;
+
+    final tabBarHeight = context.respDim(130);
     final overlap = tabBarHeight / 2;
 
-    final keyboardUp =
-        MediaQuery.of(context).viewInsets.bottom > 0;
+    final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Obx(() {
-      final hidden = controller.isHeaderHidden.value ||
+      final hidden =
+          controller.isHeaderHidden.value ||
           keyboardUp ||
           controller.isKeypadOpen.value;
 
