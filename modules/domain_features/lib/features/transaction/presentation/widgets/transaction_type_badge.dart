@@ -24,10 +24,7 @@ class TransactionTypeBadge extends StatelessWidget {
         horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
         vertical: context.respPadding(CcPaddingParams.SPACE_XS),
       ),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: CcBorderRadius.sm(context),
-      ),
+      decoration: BoxDecoration(color: color, borderRadius: context.brSm),
       child: CcText(
         label,
         textStyle: context.ccTextTheme.labelSmall?.copyWith(

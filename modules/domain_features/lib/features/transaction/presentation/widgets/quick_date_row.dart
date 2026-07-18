@@ -72,7 +72,7 @@ class QuickDateRow extends StatelessWidget {
           color: isSelected
               ? activeColor.withOpacity(0.15)
               : Colors.transparent,
-          borderRadius: CcBorderRadius.lg(context),
+          borderRadius: context.brLg,
           border: Border.all(
             color: isSelected
                 ? activeColor

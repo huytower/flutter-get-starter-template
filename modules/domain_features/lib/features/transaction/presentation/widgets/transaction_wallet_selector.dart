@@ -102,7 +102,7 @@ class TransactionWalletSelector extends StatelessWidget {
         color: isSelected
             ? activeColor.withAlpha(10)
             : scheme.onSurface.withAlpha(10),
-        borderRadius: CcBorderRadius.lg(context),
+        borderRadius: context.brLg,
       ),
       child: Stack(
         alignment: Alignment.center,

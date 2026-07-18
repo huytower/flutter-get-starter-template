@@ -127,10 +127,7 @@ class _TransactionDatePickerDialogContentState
   ) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -225,7 +222,7 @@ class _TransactionDatePickerDialogContentState
               label,
               align: Alignment.center,
               textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                color: scheme.primary.withOpacity(0.8)
+                color: scheme.primary.withOpacity(0.8),
               ),
             ),
           );
@@ -251,12 +248,8 @@ class _TransactionDatePickerDialogContentState
         mainAxisSpacing: 4,
       ),
       itemCount: 42,
-      itemBuilder: (context, index) => _buildDayCell(
-        context,
-        scheme,
-        calendarDays[index],
-        today,
-      ),
+      itemBuilder: (context, index) =>
+          _buildDayCell(context, scheme, calendarDays[index], today),
     );
   }
 
@@ -281,7 +274,7 @@ class _TransactionDatePickerDialogContentState
         duration: const Duration(milliseconds: 150),
         decoration: BoxDecoration(
           color: isSelected ? scheme.primary : Colors.transparent,
-          borderRadius: CcBorderRadius.lg(context),
+          borderRadius: context.brLg,
           border: Border.all(
             color: isSelected
                 ? scheme.primary

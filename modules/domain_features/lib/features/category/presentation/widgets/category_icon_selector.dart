@@ -31,7 +31,7 @@ class CategoryIconSelector extends StatelessWidget {
               color: isSelected
                   ? scheme.primary
                   : scheme.surfaceContainerHighest,
-              borderRadius: CcBorderRadius.md(context),
+              borderRadius: context.brMd,
             ),
             child: Icon(
               icon,

@@ -44,10 +44,7 @@ class _WeeklyAuditDayDialogContentState
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildHeader(context, scheme),
-        _buildBody(context, scheme),
-      ],
+      children: [_buildHeader(context, scheme), _buildBody(context, scheme)],
     );
   }
 
@@ -112,7 +109,8 @@ class _WeeklyAuditDayDialogContentState
         mainAxisSpacing: context.respDim(8),
       ),
       itemCount: 7,
-      itemBuilder: (context, index) => _buildDayChip(context, scheme, index + 1),
+      itemBuilder: (context, index) =>
+          _buildDayChip(context, scheme, index + 1),
     );
   }
 
@@ -129,7 +127,7 @@ class _WeeklyAuditDayDialogContentState
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isSelected ? scheme.primary : Colors.transparent,
-            borderRadius: CcBorderRadius.lg(context),
+            borderRadius: context.brLg,
             border: Border.all(
               color: isSelected
                   ? scheme.primary

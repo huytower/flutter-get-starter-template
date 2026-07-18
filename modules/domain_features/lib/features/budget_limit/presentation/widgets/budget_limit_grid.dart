@@ -136,7 +136,7 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
         feedback: Material(
           color: Colors.transparent,
           elevation: 10,
-          borderRadius: CcBorderRadius.lg(context),
+          borderRadius: context.brLg,
           child: SizedBox(
             width: constraints.maxWidth,
             height: constraints.maxHeight,
@@ -201,7 +201,7 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: scheme.surfaceContainerHighest,
-            borderRadius: CcBorderRadius.lg(context),
+            borderRadius: context.brLg,
             border: Border.all(
               color: scheme.onSurface.withOpacity(0.06),
               width: 1.2,

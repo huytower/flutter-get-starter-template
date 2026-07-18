@@ -109,7 +109,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
             widget.title,
             textStyle: context.ccTextTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: scheme.primary
+              color: scheme.primary,
             ),
           ),
           const CcSpaceMD(),
@@ -119,9 +119,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
             decoration: InputDecoration(
               labelText: el.tr(CcLocaleKeys.transaction_category),
               hintText: el.tr(CcLocaleKeys.wallet_name_hint),
-              border: OutlineInputBorder(
-                borderRadius: CcBorderRadius.md(context),
-              ),
+              border: OutlineInputBorder(borderRadius: context.brMd),
             ),
           ),
           const CcSpaceMD(),
@@ -140,9 +138,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
                   : _onSave,
               style: ElevatedButton.styleFrom(
                 backgroundColor: scheme.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: CcBorderRadius.md(context),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: context.brMd),
               ),
               child: _isSaving
                   ? const CcLoadingIconWidget()

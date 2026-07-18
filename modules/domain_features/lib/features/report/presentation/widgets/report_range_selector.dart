@@ -25,7 +25,7 @@ class ReportRangeSelector extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: scheme.surface,
-          borderRadius: CcBorderRadius.lg(context),
+          borderRadius: context.brLg,
           boxShadow: [
             BoxShadow(
               color: scheme.onSurface.withOpacity(0.12),

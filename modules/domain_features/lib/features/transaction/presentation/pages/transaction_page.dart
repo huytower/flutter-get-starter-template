@@ -44,10 +44,7 @@ class TransactionPage extends CcGetView<TransactionController> {
         child: Stack(
           children: [
             Obx(() {
-              final hidden =
-                  controller.isHeaderHidden.value ||
-                  keyboardUp ||
-                  controller.isKeypadOpen.value;
+              final hidden = keyboardUp || controller.isKeypadOpen.value;
               return AnimatedOpacity(
                 opacity: hidden ? 0 : 1,
                 duration: const Duration(milliseconds: 200),
@@ -84,10 +81,7 @@ class TransactionPage extends CcGetView<TransactionController> {
     final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Obx(() {
-      final hidden =
-          controller.isHeaderHidden.value ||
-          keyboardUp ||
-          controller.isKeypadOpen.value;
+      final hidden = keyboardUp || controller.isKeypadOpen.value;
 
       return Column(
         children: [

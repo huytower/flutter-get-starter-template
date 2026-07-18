@@ -89,7 +89,7 @@ class _WalletCard extends StatelessWidget {
       padding: EdgeInsets.all(context.respDim(12)),
       decoration: BoxDecoration(
         color: scheme.primaryContainer.withValues(alpha: 0.1),
-        borderRadius: CcBorderRadius.lg(context),
+        borderRadius: context.brLg,
         border: Border.all(
           color: scheme.onSurface.withOpacity(0.08),
           width: context.respDim(1),

@@ -22,7 +22,7 @@ class TransactionTabBar extends StatelessWidget {
       height: context.respDim(40),
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: CcBorderRadius.lg(context),
+        borderRadius: context.brLg,
         boxShadow: [
           BoxShadow(
             color: scheme.onSurface.withOpacity(0.12),
@@ -48,7 +48,7 @@ class TransactionTabBar extends StatelessWidget {
       overlayColor: WidgetStateProperty.all(Colors.transparent),
       indicator: BoxDecoration(
         color: activeColor.withOpacity(0.08),
-        borderRadius: CcBorderRadius.lg(context),
+        borderRadius: context.brLg,
       ),
       labelColor: activeColor,
       unselectedLabelColor: scheme.onSurfaceVariant,

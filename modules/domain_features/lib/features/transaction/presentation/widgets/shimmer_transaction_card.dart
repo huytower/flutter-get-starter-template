@@ -25,7 +25,7 @@ class ShimmerTransactionCard extends StatelessWidget {
               CcShimmer(
                 width: context.respPadding(60),
                 height: context.respPadding(20),
-                borderRadius: CcBorderRadius.xs(context),
+                borderRadius: context.brXs,
               ),
             ],
           ),

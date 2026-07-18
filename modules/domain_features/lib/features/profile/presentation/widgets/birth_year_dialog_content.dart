@@ -172,7 +172,7 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isSelected ? scheme.primary : Colors.transparent,
-            borderRadius: CcBorderRadius.lg(context),
+            borderRadius: context.brLg,
           ),
           child: CcText(
             '$year',

@@ -26,29 +26,10 @@ abstract class TransactionFormController extends CcGetController {
     super.onInit();
     _loadWallets();
     layoutStatus.value = CcLayoutStatus.success;
-    _bindScrollToHeader();
-  }
-
-  /// Drives the page header's show/hide directly from this form's scroll
-  /// position, so the behaviour is identical across every transaction form
-  /// (expense / income / transfer) and does not depend on scroll
-  /// notifications bubbling up through the TabBarView.
-  void _bindScrollToHeader() {
-    scrollController.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    if (!Get.isRegistered<TransactionController>()) return;
-    final parent = Get.find<TransactionController>();
-    final shouldHide = scrollController.position.pixels > 8;
-    if (parent.isHeaderHidden.value != shouldHide) {
-      parent.isHeaderHidden.value = shouldHide;
-    }
   }
 
   @override
   void onClose() {
-    scrollController.removeListener(_onScroll);
     noteController.dispose();
     scrollController.dispose();
     super.onClose();

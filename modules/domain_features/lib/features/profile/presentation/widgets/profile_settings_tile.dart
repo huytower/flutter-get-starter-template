@@ -38,7 +38,7 @@ class ProfileSettingsTile extends StatelessWidget {
               padding: EdgeInsets.all(context.respDim(10)),
               decoration: BoxDecoration(
                 color: context.ccColorScheme.primary.withOpacity(0.08),
-                borderRadius: CcBorderRadius.md(context),
+                borderRadius: context.brMd,
               ),
               child: CcIconToken(icon, size: 22),
             ),

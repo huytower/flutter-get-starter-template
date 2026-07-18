@@ -83,7 +83,7 @@ class BudgetLimitCategorySelector extends StatelessWidget {
               color: isSelected
                   ? scheme.primaryContainer.withValues(alpha: 0.1)
                   : scheme.onSurface.withOpacity(0.04),
-              borderRadius: CcBorderRadius.lg(context),
+              borderRadius: context.brLg,
               border: Border.all(
                 color: isSelected
                     ? scheme.primary.withOpacity(0.2)
@@ -132,7 +132,7 @@ class BudgetLimitCategorySelector extends StatelessWidget {
         color: isSelected
             ? scheme.primary.withOpacity(0.12)
             : scheme.onSurface.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(context.respDim(10)),
+        borderRadius: context.brMd,
       ),
       child: Stack(
         alignment: Alignment.center,

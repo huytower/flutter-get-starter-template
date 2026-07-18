@@ -22,7 +22,7 @@ class ReconciliationHistoryCard extends StatelessWidget {
       padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: CcBorderRadius.lg(context),
+        borderRadius: context.brLg,
         border: Border.all(color: scheme.outlineVariant),
       ),
       child: Column(
@@ -40,13 +40,13 @@ class ReconciliationHistoryCard extends StatelessWidget {
                   },
                 ),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                  fontWeight: CcTypographyParams.bold
+                  fontWeight: CcTypographyParams.bold,
                 ),
               ),
               CcText(
                 '${reconciliation.date.day}/${reconciliation.date.month}/${reconciliation.date.year}',
                 textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant
+                  color: scheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -74,7 +74,7 @@ class ReconciliationHistoryCard extends StatelessWidget {
                   ),
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(
               color: balanced ? scheme.primary : scheme.error,
-              fontWeight: CcTypographyParams.bold
+              fontWeight: CcTypographyParams.bold,
             ),
           ),
         ],
@@ -88,16 +88,8 @@ class ReconciliationHistoryCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          CcText(
-            label,
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-            ),
-          ),
-          CcText(
-            value,
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-            ),
-          ),
+          CcText(label, textStyle: context.ccTextTheme.bodySmall?.copyWith()),
+          CcText(value, textStyle: context.ccTextTheme.bodySmall?.copyWith()),
         ],
       ),
     );

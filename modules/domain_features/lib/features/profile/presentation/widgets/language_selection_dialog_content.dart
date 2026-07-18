@@ -108,7 +108,11 @@ class _LanguageSelectionDialogContentState
       horizontal: CcPaddingParams.PAGE_MD,
       vertical: CcPaddingParams.PAGE_SM,
       child: Row(
-        children: locales.map((locale) => _buildLanguageChip(context, scheme, locale, locales)).toList(),
+        children: locales
+            .map(
+              (locale) => _buildLanguageChip(context, scheme, locale, locales),
+            )
+            .toList(),
       ),
     );
   }
@@ -119,8 +123,7 @@ class _LanguageSelectionDialogContentState
     Locale locale,
     List<Locale> locales,
   ) {
-    final bool isSelected =
-        locale.languageCode == _selectedLocale.languageCode;
+    final bool isSelected = locale.languageCode == _selectedLocale.languageCode;
     final String label = locale.languageCode.toUpperCase();
 
     return Expanded(
@@ -135,7 +138,7 @@ class _LanguageSelectionDialogContentState
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isSelected ? scheme.primary : Colors.transparent,
-            borderRadius: CcBorderRadius.md(context),
+            borderRadius: context.brMd,
             border: Border.all(
               color: isSelected
                   ? scheme.primary

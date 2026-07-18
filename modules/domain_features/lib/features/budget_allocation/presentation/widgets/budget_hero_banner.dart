@@ -26,7 +26,7 @@ class BudgetHeroBanner extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: scheme.primary,
-          borderRadius: CcBorderRadius.xl(context),
+          borderRadius: context.brXl,
           boxShadow: [
             BoxShadow(
               color: scheme.primary.withOpacity(0.25),
@@ -50,7 +50,7 @@ class BudgetHeroBanner extends StatelessWidget {
                   CcText(
                     el.tr(CcLocaleKeys.wallet_total_assets),
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      color: scheme.onPrimary.withOpacity(0.85)
+                      color: scheme.onPrimary.withOpacity(0.85),
                     ),
                   ),
                   const CcSpaceXS(),

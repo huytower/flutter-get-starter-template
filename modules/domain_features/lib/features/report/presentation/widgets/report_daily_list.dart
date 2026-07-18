@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/util/wallet_icon_helper.dart';
 import '../../../../core/util/money_format_helper.dart';
+import '../../../../core/util/wallet_icon_helper.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 
 class ReportDailyList extends StatelessWidget {
@@ -58,7 +58,7 @@ class _DailyGroup extends StatelessWidget {
       margin: EdgeInsets.only(bottom: context.respDim(16)),
       decoration: BoxDecoration(
         color: context.ccColorScheme.surfaceContainer,
-        borderRadius: CcBorderRadius.lg(context),
+        borderRadius: context.brLg,
       ),
       child: Column(
         children: [
@@ -216,7 +216,7 @@ class _TransactionTile extends StatelessWidget {
               CcText(
                 el.DateFormat('dd/MM').format(transaction.date),
                 textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                  color: context.ccColorScheme.onSurfaceVariant
+                  color: context.ccColorScheme.onSurfaceVariant,
                 ),
               ),
             ],

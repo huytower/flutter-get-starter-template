@@ -40,7 +40,7 @@ class TrendCard extends StatelessWidget {
       padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
       decoration: BoxDecoration(
         color: context.ccColorScheme.surface.withValues(alpha: 0.8),
-        borderRadius: CcBorderRadius.lg(context),
+        borderRadius: context.brLg,
         border: Border.all(
           color: context.ccColorScheme.outlineVariant.withOpacity(0.1),
         ),
@@ -67,7 +67,7 @@ class TrendCard extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(context.respDim(10)),
+            borderRadius: context.brMd,
           ),
           child: Icon(
             isIncome ? Icons.north_east : Icons.south_west,

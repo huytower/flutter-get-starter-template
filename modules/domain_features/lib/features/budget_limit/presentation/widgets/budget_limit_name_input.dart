@@ -41,15 +41,15 @@ class BudgetLimitNameInput extends StatelessWidget {
               filled: true,
               fillColor: context.ccColorScheme.surfaceVariant,
               border: OutlineInputBorder(
-                borderRadius: CcBorderRadius.md(context),
+                borderRadius: context.brMd,
                 borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: CcBorderRadius.md(context),
+                borderRadius: context.brMd,
                 borderSide: BorderSide.none,
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: CcBorderRadius.md(context),
+                borderRadius: context.brMd,
                 borderSide: BorderSide(
                   color: context.ccColorScheme.primary.withOpacity(0.5),
                   width: context.respDim(1),
@@ -75,7 +75,7 @@ class BudgetLimitNameInput extends StatelessWidget {
             child: CcText(
               errorText!,
               textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                color: context.ccColorScheme.error
+                color: context.ccColorScheme.error,
               ),
             ),
           ),

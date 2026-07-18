@@ -69,7 +69,7 @@ class FinancialRunwayWidget extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.1),
-        borderRadius: CcBorderRadius.sm(context),
+        borderRadius: context.brSm,
       ),
       child: CcText(
         text,

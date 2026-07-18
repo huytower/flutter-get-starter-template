@@ -24,7 +24,7 @@ class CategoryListTile extends StatelessWidget {
     final scheme = context.ccColorScheme;
     return Material(
       color: scheme.surfaceContainerHighest,
-      borderRadius: BorderRadius.circular(context.respDim(14)),
+      borderRadius: context.brLg,
       clipBehavior: Clip.antiAlias,
       child: ListTile(
         onTap: onTap,
@@ -37,7 +37,7 @@ class CategoryListTile extends StatelessWidget {
           height: context.respDim(40),
           decoration: BoxDecoration(
             color: (category.color ?? scheme.primary).withOpacity(0.12),
-            borderRadius: CcBorderRadius.md(context),
+            borderRadius: context.brMd,
           ),
           child: CcIconToken(
             iconDataFromCode(
