@@ -58,7 +58,7 @@ class _DailyGroup extends StatelessWidget {
       margin: EdgeInsets.only(bottom: context.respDim(16)),
       decoration: BoxDecoration(
         color: context.ccColorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(context.respDim(16)),
+        borderRadius: CcBorderRadius.lg(context),
       ),
       child: Column(
         children: [

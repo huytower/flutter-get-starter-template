@@ -125,7 +125,7 @@ class WalletActualBalanceInput extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        const SizedBox(width: 12),
+        const CcSpaceMD(),
         GestureDetector(
           onTap: onTap,
           child: Container(
@@ -150,7 +150,7 @@ class WalletActualBalanceInput extends StatelessWidget {
                   ),
                 ),
                 if (actual != 0) ...[
-                  const SizedBox(width: 8),
+                  const CcSpaceSM(),
                   GestureDetector(
                     onTap: onClear,
                     child: Icon(
@@ -193,7 +193,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
       return Row(
         children: [
           const CcIconToken(Icons.check_circle_outline, size: 16),
-          const SizedBox(width: 4),
+            const CcSpaceXS(),
           CcText(
             el.tr(CcLocaleKeys.reconciliation_matched),
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
@@ -215,7 +215,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
               color: statusColor,
               size: 16,
             ),
-            const SizedBox(width: 4),
+          const CcSpaceXS(),
             CcText(
               el.tr(
                 CcLocaleKeys.reconciliation_lech,

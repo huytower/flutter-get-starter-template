@@ -37,7 +37,7 @@ class BudgetPreviewSection extends StatelessWidget {
                 el.tr(CcLocaleKeys.budget_this_month),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
                   fontWeight: CcTypographyParams.bold,
-                  color: scheme.onBackground
+                  color: scheme.onBackground,
                 ),
               ),
               Row(
@@ -54,7 +54,7 @@ class BudgetPreviewSection extends StatelessWidget {
                     onTap: () => context.router.push(const BudgetLimitRoute()),
                     child: CcText(
                       el.tr(CcLocaleKeys.budget_see_all),
-                      textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                      textStyle: context.ccTextTheme.titleSmall?.copyWith(
                         color: scheme.primary,
                         fontWeight: CcTypographyParams.semiBold,
                       ),

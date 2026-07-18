@@ -115,11 +115,7 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
     );
   }
 
-  Widget _buildBody(
-    BuildContext context,
-    ColorScheme scheme,
-    int totalYears,
-  ) {
+  Widget _buildBody(BuildContext context, ColorScheme scheme, int totalYears) {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: scheme.surfaceContainerHighest,
@@ -176,7 +172,7 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isSelected ? scheme.primary : Colors.transparent,
-            borderRadius: BorderRadius.circular(context.respDim(20)),
+            borderRadius: CcBorderRadius.lg(context),
           ),
           child: CcText(
             '$year',

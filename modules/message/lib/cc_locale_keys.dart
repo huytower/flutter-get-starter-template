@@ -181,7 +181,7 @@ class CodegenLoader extends AssetLoader {
       "initial_balance_hint": "e.g. 1000000",
       "balance_locked_hint":
           "Cannot change opening balance once the wallet has transactions",
-      "save_info": "Save Information",
+      "save_info": "Save",
       "bank": "Bank",
       "credit": "Credit Card",
       "added_success": "New wallet added",
@@ -625,7 +625,7 @@ class CodegenLoader extends AssetLoader {
       "initial_balance_hint": "Ví dụ: 1000000",
       "balance_locked_hint":
           "Không thể sửa số dư đầu kỳ khi ví đã có giao dịch",
-      "save_info": "Lưu thông tin",
+      "save_info": "Lưu",
       "bank": "Ngân hàng",
       "credit": "Thẻ tín dụng",
       "added_success": "Đã thêm ví mới",

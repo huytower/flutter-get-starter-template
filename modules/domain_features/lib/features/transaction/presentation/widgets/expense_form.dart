@@ -43,18 +43,25 @@ class ExpenseForm extends StatelessWidget {
     ExpenseFormController controller,
     Color accentColor,
   ) {
-    return SingleChildScrollView(
-      controller: controller.scrollController,
-      padding: EdgeInsets.symmetric(
-        vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildCategorySection(controller, accentColor),
-          const CcSpaceLG(),
-          _buildFormFields(context, controller, accentColor),
-        ],
+    return GestureDetector(
+      // Tap on the body (outside the keypad) dismisses the keypad / keyboard.
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        controller.hideKeypad();
+      },
+      child: SingleChildScrollView(
+        controller: controller.scrollController,
+        padding: EdgeInsets.symmetric(
+          vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildCategorySection(controller, accentColor),
+            const CcSpaceLG(),
+            _buildFormFields(context, controller, accentColor),
+          ],
+        ),
       ),
     );
   }

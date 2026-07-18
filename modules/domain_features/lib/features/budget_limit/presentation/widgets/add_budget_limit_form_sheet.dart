@@ -199,7 +199,7 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
 
     return InkWell(
       onTap: () => setState(() => _isFixedPrice = !_isFixedPrice),
-      borderRadius: BorderRadius.circular(context.respDim(8)),
+      borderRadius: CcBorderRadius.sm(context),
       child: Tooltip(
         message: el.tr(CcLocaleKeys.budget_fixed_price),
         child: Padding(
@@ -225,7 +225,7 @@ class _AddBudgetLimitFormSheetState extends State<AddBudgetLimitFormSheet> {
                   activeColor: scheme.primary,
                   side: BorderSide(color: scheme.outline, width: 1.5),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(context.respDim(4)),
+                    borderRadius: CcBorderRadius.xs(context),
                   ),
                 ),
               ),

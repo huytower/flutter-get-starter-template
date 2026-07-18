@@ -42,7 +42,7 @@ class CategoryChip extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: chipBg,
-          borderRadius: BorderRadius.circular(context.respDim(24)),
+          borderRadius: CcBorderRadius.xl(context),
           border: Border.all(
             color: enabled ? primary.withOpacity(0.4) : Colors.transparent,
             width: 1.5,

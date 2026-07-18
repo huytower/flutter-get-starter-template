@@ -24,7 +24,15 @@ class TransactionPageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
-    final headerHeight = context.respDim(200) + topPadding;
+    // Header height is screen-type aware (not width-scaled) so it stays
+    // appropriate on tablets instead of ballooning with screen width.
+    final baseHeight = CcResponsiveHelper.getValue(
+      context: context,
+      mobile: 200.0,
+      tablet: 220.0,
+      desktop: 240.0,
+    );
+    final headerHeight = baseHeight + topPadding;
 
     return Container(
       height: headerHeight,
@@ -71,7 +79,7 @@ class TransactionPageHeader extends StatelessWidget {
                 _buildHeaderActions(context),
               ],
             ),
-            const CcSpaceXL(),
+            const CcSpaceSM(), // nice for small phone
             buildBanner(context),
           ],
         ),
@@ -124,7 +132,7 @@ class TransactionPageHeader extends StatelessWidget {
       key: const ValueKey('transaction_title'),
       textStyle: context.ccTextTheme.headlineSmall?.copyWith(
         color: context.ccColorScheme.onPrimary,
-        fontWeight: CcTypographyParams.bold
+        fontWeight: CcTypographyParams.bold,
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,

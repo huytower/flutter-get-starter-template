@@ -49,7 +49,7 @@ class NoteFieldWithCamera extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          const CcSpaceSM(),
           GestureDetector(
             onTap: onCameraTap,
             child: Icon(

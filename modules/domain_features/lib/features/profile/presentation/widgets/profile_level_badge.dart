@@ -1,4 +1,5 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 class ProfileLevelBadge extends StatelessWidget {
@@ -23,7 +24,7 @@ class ProfileLevelBadge extends StatelessWidget {
             size: 14,
             color: context.ccColorScheme.onPrimary,
           ),
-          const SizedBox(width: 4),
+          const CcSpaceXS(),
           CcText(
             label,
             textStyle: context.ccTextTheme.labelMedium?.copyWith(

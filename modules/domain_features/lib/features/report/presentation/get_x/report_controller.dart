@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -27,6 +28,13 @@ class ReportController extends CcGetController {
   final Rx<ReportRange> range = ReportRange.weekly.obs;
   final RxInt navigationOffset = 0.obs;
 
+  /// True when the page header should be auto-hidden (scrolled down, or a
+  /// soft keyboard is visible).
+  final RxBool isHeaderHidden = false.obs;
+
+  /// Scroll controller for the report body list, used to drive header hide.
+  final ScrollController scrollController = ScrollController();
+
   final RxList<CategorySpendingEntity> spending =
       <CategorySpendingEntity>[].obs;
   final Rx<TrendDataEntity?> trendData = Rx<TrendDataEntity?>(null);
@@ -48,6 +56,12 @@ class ReportController extends CcGetController {
   void onReady() {
     super.onReady();
     load();
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
   }
 
   void selectRange(ReportRange next) {

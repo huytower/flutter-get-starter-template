@@ -135,7 +135,7 @@ class _LanguageSelectionDialogContentState
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isSelected ? scheme.primary : Colors.transparent,
-            borderRadius: BorderRadius.circular(context.respDim(12)),
+            borderRadius: CcBorderRadius.md(context),
             border: Border.all(
               color: isSelected
                   ? scheme.primary

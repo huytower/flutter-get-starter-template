@@ -64,7 +64,7 @@ class _IncomeCategorySettingsPageState
       backgroundColor: context.ccColorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(context.respDim(20)),
+          top: Radius.circular(context.respDim(16)),
         ),
       ),
       builder: (_) => CategoryFormSheet(
@@ -121,7 +121,7 @@ class _IncomeCategorySettingsPageState
             el.tr(CcLocaleKeys.category_income_settings_title),
             textStyle: context.ccTextTheme.titleMedium?.copyWith(
               fontWeight: CcTypographyParams.bold,
-              color: context.ccColorScheme.onPrimary
+              color: context.ccColorScheme.onPrimary,
             ),
           ),
         ),

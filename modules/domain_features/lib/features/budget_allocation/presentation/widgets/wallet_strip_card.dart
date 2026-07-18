@@ -89,7 +89,7 @@ class _WalletCard extends StatelessWidget {
       padding: EdgeInsets.all(context.respDim(12)),
       decoration: BoxDecoration(
         color: scheme.primaryContainer.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(context.respDim(20)),
+        borderRadius: CcBorderRadius.lg(context),
         border: Border.all(
           color: scheme.onSurface.withOpacity(0.08),
           width: context.respDim(1),
@@ -111,7 +111,7 @@ class _WalletCard extends StatelessWidget {
       height: context.respDim(32),
       decoration: BoxDecoration(
         color: scheme.primary.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(context.respDim(20)),
+        borderRadius: CcBorderRadius.lg(context),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -134,7 +134,7 @@ class _WalletCard extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: scheme.onSurfaceVariant.withOpacity(0.6)
+            color: scheme.onSurfaceVariant.withOpacity(0.6),
           ),
         ),
         CcText(
@@ -143,7 +143,7 @@ class _WalletCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
-            color: scheme.onSurface
+            color: scheme.onSurface,
           ),
         ),
       ],

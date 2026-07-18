@@ -22,6 +22,13 @@ class TransactionController extends CcGetController {
 
   final RxInt selectedTabIndex = 0.obs;
 
+  /// True when the page header should be auto-hidden (scrolled down, or a
+  /// keypad / soft keyboard is visible).
+  final RxBool isHeaderHidden = false.obs;
+
+  /// True while the custom transaction keypad (or soft keyboard) is shown.
+  final RxBool isKeypadOpen = false.obs;
+
   /// Total book balance across all wallets, shown in the header "Ví" chip.
   final RxInt walletTotal = 0.obs;
 
@@ -34,6 +41,10 @@ class TransactionController extends CcGetController {
 
   void setTabIndex(int index) {
     selectedTabIndex.value = index;
+    // The newly selected form starts at scroll offset 0, so ensure the header
+    // is shown (scroll-driven hiding is handled per-form by each form's
+    // TransactionFormController).
+    isHeaderHidden.value = false;
   }
 
   /// Temporarily shows the wallet summary in place of the title for 2 seconds.

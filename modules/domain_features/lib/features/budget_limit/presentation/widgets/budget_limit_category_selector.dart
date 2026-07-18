@@ -87,7 +87,7 @@ class BudgetLimitCategorySelector extends StatelessWidget {
               color: isSelected
                   ? scheme.primaryContainer.withValues(alpha: 0.1)
                   : scheme.onSurface.withOpacity(0.04),
-              borderRadius: BorderRadius.circular(context.respDim(16)),
+              borderRadius: CcBorderRadius.lg(context),
               border: Border.all(
                 color: isSelected
                     ? scheme.primary.withOpacity(0.2)

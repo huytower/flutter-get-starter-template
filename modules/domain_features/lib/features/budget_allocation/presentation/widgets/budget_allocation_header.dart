@@ -46,7 +46,7 @@ class BudgetAllocationHeader extends StatelessWidget {
                     color: context.ccColorScheme.onPrimary.withOpacity(0.8)
                   ),
                 ),
-                const SizedBox(height: 12),
+                const CcSpaceMD(),
                 Obx(
                   () => CcText(
                     controller.isBalanceVisible.value

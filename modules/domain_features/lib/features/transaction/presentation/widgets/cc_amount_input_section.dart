@@ -39,7 +39,7 @@ class CcAmountInputSection extends StatelessWidget {
           label,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
-            fontWeight: CcTypographyParams.bold
+            fontWeight: CcTypographyParams.bold,
           ),
         ),
         const CcSpaceXS(),
@@ -54,7 +54,7 @@ class CcAmountInputSection extends StatelessWidget {
             height: context.respDim(50),
             decoration: BoxDecoration(
               color: context.ccColorScheme.surfaceVariant,
-              borderRadius: BorderRadius.circular(context.respDim(12)),
+              borderRadius: CcBorderRadius.md(context),
               border: Border.all(
                 color: isKeypadVisible
                     ? accent
@@ -69,7 +69,7 @@ class CcAmountInputSection extends StatelessWidget {
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.headlineMedium?.copyWith(
                 fontWeight: CcTypographyParams.bold,
-                color: accent
+                color: accent,
               ),
             ),
           ),
@@ -99,13 +99,13 @@ class CcAmountInputSection extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: accent.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(context.respDim(20)),
+                    borderRadius: CcBorderRadius.lg(context),
                   ),
                   child: CcText(
                     TransactionFormHelpers.formatShort(amount),
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
                       color: accent,
-                      fontWeight: CcTypographyParams.semiBold
+                      fontWeight: CcTypographyParams.semiBold,
                     ),
                   ),
                 ),

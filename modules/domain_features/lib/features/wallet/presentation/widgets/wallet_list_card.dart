@@ -48,7 +48,7 @@ class WalletListCard extends StatelessWidget {
       padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
       decoration: BoxDecoration(
         color: scheme.primaryContainer.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(context.respDim(20)),
+        borderRadius: CcBorderRadius.lg(context),
         border: Border.all(
           color: scheme.onSurface.withOpacity(0.08),
           width: context.respDim(1),
@@ -88,7 +88,7 @@ class WalletListCard extends StatelessWidget {
       child: CcText(
         wallet.name,
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
-          fontWeight: CcTypographyParams.bold
+          fontWeight: CcTypographyParams.bold,
         ),
       ),
     );
@@ -105,7 +105,7 @@ class WalletListCard extends StatelessWidget {
         visible ? '${balance.formatShort()} đ' : '*****',
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
-          color: balance >= 0 ? scheme.onSurface : scheme.error
+          color: balance >= 0 ? scheme.onSurface : scheme.error,
         ),
       );
     });

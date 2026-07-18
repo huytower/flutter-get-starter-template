@@ -31,7 +31,7 @@ class ReconciliationMismatchWarning extends StatelessWidget {
               color: context.ccColorScheme.error,
               size: 18,
             ),
-            const SizedBox(width: 8),
+            const CcSpaceSM(),
             Expanded(
               child: CcText(
                 el.tr(

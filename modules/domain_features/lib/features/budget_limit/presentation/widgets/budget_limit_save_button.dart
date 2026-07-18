@@ -11,7 +11,7 @@ class BudgetLimitSaveButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: FractionallySizedBox(
-        widthFactor: 0.4,
+        widthFactor: 0.6,
         child: SizedBox(
           width: double.infinity,
           height: context.respDim(40),
@@ -29,7 +29,7 @@ class BudgetLimitSaveButton extends StatelessWidget {
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: context.ccColorScheme.onPrimary,
-                fontWeight: FontWeight.bold
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

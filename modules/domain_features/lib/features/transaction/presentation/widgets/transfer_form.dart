@@ -39,25 +39,31 @@ class TransferForm extends StatelessWidget {
     TransferFormController controller,
     Color accentColor,
   ) {
-    return SingleChildScrollView(
-      controller: controller.scrollController,
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-        vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildAmountSection(context, controller, accentColor),
-          const CcSpaceLG(),
-          _buildFromWalletSection(context, controller, accentColor),
-          const CcSpaceMD(),
-          _buildTransferArrow(context, accentColor),
-          const CcSpaceMD(),
-          _buildToWalletSection(context, controller, accentColor),
-          const CcSpaceLG(),
-          TransactionAdditionalDetailsSection(
-            isExpanded: controller.showMoreDetails.value,
+    return GestureDetector(
+      // Tap on the body (outside the keypad) dismisses the keypad / keyboard.
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        controller.hideKeypad();
+      },
+      child: SingleChildScrollView(
+        controller: controller.scrollController,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+          vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildAmountSection(context, controller, accentColor),
+            const CcSpaceLG(),
+            _buildFromWalletSection(context, controller, accentColor),
+            const CcSpaceMD(),
+            _buildTransferArrow(context, accentColor),
+            const CcSpaceMD(),
+            _buildToWalletSection(context, controller, accentColor),
+            const CcSpaceLG(),
+            TransactionAdditionalDetailsSection(
+              isExpanded: controller.showMoreDetails.value,
             onToggle: controller.toggleMoreDetails,
             selectedDate: controller.date.value,
             onDateSelected: controller.setDate,
@@ -76,6 +82,7 @@ class TransferForm extends StatelessWidget {
           ),
           const CcSpaceLG(),
         ],
+      ),
       ),
     );
   }

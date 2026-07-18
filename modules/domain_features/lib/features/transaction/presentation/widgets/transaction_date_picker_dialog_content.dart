@@ -127,9 +127,9 @@ class _TransactionDatePickerDialogContentState
   ) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        vertical: context.respPadding(CcPaddingParams.PAGE_SM),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 8,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -212,9 +212,8 @@ class _TransactionDatePickerDialogContentState
     ColorScheme scheme,
     String languageCode,
   ) {
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.PAGE_MD,
-      vertical: CcPaddingParams.PAGE_XS,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: List.generate(7, (index) {
           final weekday = index + 1;
@@ -244,15 +243,12 @@ class _TransactionDatePickerDialogContentState
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-      ),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 7,
-        mainAxisExtent: context.respDim(40),
-        crossAxisSpacing: context.respDim(4),
-        mainAxisSpacing: context.respDim(4),
+        mainAxisExtent: 40,
+        crossAxisSpacing: 4,
+        mainAxisSpacing: 4,
       ),
       itemCount: 42,
       itemBuilder: (context, index) => _buildDayCell(
@@ -285,7 +281,7 @@ class _TransactionDatePickerDialogContentState
         duration: const Duration(milliseconds: 150),
         decoration: BoxDecoration(
           color: isSelected ? scheme.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(context.respDim(20)),
+          borderRadius: CcBorderRadius.lg(context),
           border: Border.all(
             color: isSelected
                 ? scheme.primary

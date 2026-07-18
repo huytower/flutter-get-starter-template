@@ -87,7 +87,7 @@ class TransactionWalletSelector extends StatelessWidget {
               color: isSelected
                   ? activeColor.withOpacity(0.1)
                   : scheme.onSurface.withOpacity(0.04),
-              borderRadius: BorderRadius.circular(context.respDim(16)),
+              borderRadius: CcBorderRadius.lg(context),
               border: Border.all(
                 color: isSelected
                     ? activeColor.withOpacity(0.2)
@@ -122,7 +122,7 @@ class TransactionWalletSelector extends StatelessWidget {
         color: isSelected
             ? activeColor.withOpacity(0.12)
             : scheme.onSurface.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(context.respDim(20)),
+        borderRadius: CcBorderRadius.lg(context),
       ),
       child: Stack(
         alignment: Alignment.center,

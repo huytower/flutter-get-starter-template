@@ -225,7 +225,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           : el.tr(CcLocaleKeys.wallet_add_title),
       textStyle: context.ccTextTheme.headlineSmall?.copyWith(
         fontWeight: FontWeight.bold,
-        color: context.ccColorScheme.primary
+        color: context.ccColorScheme.primary,
       ),
     );
   }
@@ -260,7 +260,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
   Widget _buildSaveButton(BuildContext context) {
     return Center(
       child: FractionallySizedBox(
-        widthFactor: 0.4,
+        widthFactor: 0.6,
         child: SizedBox(
           height: context.respDim(40),
           child: ElevatedButton(
@@ -277,7 +277,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: context.ccColorScheme.onPrimary,
-                fontWeight: FontWeight.bold
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -296,7 +296,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           el.tr(CcLocaleKeys.wallet_initial_balance),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold
+            fontWeight: FontWeight.bold,
           ),
         ),
         const CcSpaceXS(),
@@ -317,7 +317,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
             textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: context.ccColorScheme.primary
+              color: context.ccColorScheme.primary,
             ),
           ),
         ),
@@ -325,7 +325,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         CcText(
           el.tr(CcLocaleKeys.wallet_balance_locked_hint),
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
-            color: CcBaseColors.gray500
+            color: CcBaseColors.gray500,
           ),
         ),
       ],

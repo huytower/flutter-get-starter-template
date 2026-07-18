@@ -37,7 +37,7 @@ class CategoryListTile extends StatelessWidget {
           height: context.respDim(40),
           decoration: BoxDecoration(
             color: (category.color ?? scheme.primary).withOpacity(0.12),
-            borderRadius: BorderRadius.circular(context.respDim(12)),
+            borderRadius: CcBorderRadius.md(context),
           ),
           child: CcIconToken(
             iconDataFromCode(

@@ -22,16 +22,32 @@ class ReportPage extends CcGetView<ReportController> {
 
   @override
   Widget? buildContent(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+    final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
+    final headerHeight = context.respDim(260) + topPadding;
+
     return DefaultTabController(
       length: 3,
       child: FadePageWrapper(
         child: Stack(
           children: [
-            ReportPageHeader(
-              controller: controller,
-              title: el.tr(CcLocaleKeys.report_title),
-              onBackPressed: () => Navigator.of(context).pop(),
-            ),
+            Obx(() {
+              final hidden =
+                  controller.isHeaderHidden.value || keyboardUp;
+              return AnimatedOpacity(
+                opacity: hidden ? 0 : 1,
+                duration: const Duration(milliseconds: 200),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  height: hidden ? 0 : headerHeight,
+                  child: ReportPageHeader(
+                    controller: controller,
+                    title: el.tr(CcLocaleKeys.report_title),
+                    onBackPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+              );
+            }),
             _buildReportContent(context),
           ],
         ),
@@ -57,22 +73,40 @@ class ReportPage extends CcGetView<ReportController> {
           final data = controller.trendData.value;
           if (data == null) return const SizedBox.shrink();
 
+          // Hide the header when the body is scrolled down (or a keyboard is up).
+          final keyboardUp =
+              MediaQuery.of(context).viewInsets.bottom > 0;
+          final hidden = controller.isHeaderHidden.value || keyboardUp;
+
           return Column(
             children: [
-              SizedBox(height: headerHeight - overlap),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                height: hidden ? 0 : headerHeight - overlap,
+              ),
               ReportTabBar(controller: controller),
               const CcSpaceSM(),
               Expanded(
-                child: ListView(
-                  padding: EdgeInsets.symmetric(horizontal: padding),
-                  children: [
-                    const CcSpaceSM(),
-                    _buildTrendCards(context, data),
-                    const CcSpaceXL(),
-                    _buildDailyDetailHeader(context),
-                    const CcSpaceLG(),
-                    ReportDailyList(transactions: data.transactions),
-                  ],
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    if (notification is ScrollUpdateNotification) {
+                      controller.isHeaderHidden.value =
+                          notification.metrics.pixels > 8;
+                    }
+                    return false;
+                  },
+                  child: ListView(
+                    controller: controller.scrollController,
+                    padding: EdgeInsets.symmetric(horizontal: padding),
+                    children: [
+                      const CcSpaceSM(),
+                      _buildTrendCards(context, data),
+                      const CcSpaceXL(),
+                      _buildDailyDetailHeader(context),
+                      const CcSpaceLG(),
+                      ReportDailyList(transactions: data.transactions),
+                    ],
+                  ),
                 ),
               ),
             ],

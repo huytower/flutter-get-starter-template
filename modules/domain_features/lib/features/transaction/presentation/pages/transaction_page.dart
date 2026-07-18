@@ -26,16 +26,33 @@ class TransactionPage extends CcGetView<TransactionController> {
 
   @override
   Widget? buildContent(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+    final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
+    final headerHeight = context.respDim(200) + topPadding;
+
     return DefaultTabController(
       length: 3,
       child: FadePageWrapper(
         child: Stack(
           children: [
-            TransactionPageHeader(
-              controller: controller,
-              onOpenReport: () => _openReport(context),
-              onSubmit: () => _submitCurrentForm(context),
-            ),
+            Obx(() {
+              final hidden = controller.isHeaderHidden.value ||
+                  keyboardUp ||
+                  controller.isKeypadOpen.value;
+              return AnimatedOpacity(
+                opacity: hidden ? 0 : 1,
+                duration: const Duration(milliseconds: 200),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  height: hidden ? 0 : headerHeight,
+                  child: TransactionPageHeader(
+                    controller: controller,
+                    onOpenReport: () => _openReport(context),
+                    onSubmit: () => _submitCurrentForm(context),
+                  ),
+                ),
+              );
+            }),
             _buildTransactionContent(context),
           ],
         ),
@@ -49,14 +66,37 @@ class TransactionPage extends CcGetView<TransactionController> {
     final tabBarHeight = context.respDim(60);
     final overlap = tabBarHeight / 2;
 
-    return Column(
-      children: [
-        SizedBox(height: headerHeight - overlap),
-        TransactionTabBar(controller: controller),
-        const CcSpaceSM(),
-        TransactionTabBarView(controller: controller),
-      ],
-    );
+    final keyboardUp =
+        MediaQuery.of(context).viewInsets.bottom > 0;
+
+    return Obx(() {
+      final hidden = controller.isHeaderHidden.value ||
+          keyboardUp ||
+          controller.isKeypadOpen.value;
+
+      return Column(
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: hidden ? 0 : headerHeight - overlap,
+          ),
+          TransactionTabBar(controller: controller),
+          const CcSpaceSM(),
+          Expanded(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification is ScrollUpdateNotification) {
+                  controller.isHeaderHidden.value =
+                      notification.metrics.pixels > 8;
+                }
+                return false;
+              },
+              child: TransactionTabBarView(controller: controller),
+            ),
+          ),
+        ],
+      );
+    });
   }
 
   void _openReport(BuildContext context) {

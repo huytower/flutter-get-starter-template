@@ -143,7 +143,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
               color: isSelected
                   ? widget.activeColor.withOpacity(0.1)
                   : scheme.onSurface.withOpacity(0.04),
-              borderRadius: BorderRadius.circular(context.respDim(16)),
+              borderRadius: CcBorderRadius.lg(context),
               border: Border.all(
                 color: isSelected
                     ? widget.activeColor.withOpacity(0.2)

@@ -22,7 +22,7 @@ class ReconciliationHistoryCard extends StatelessWidget {
       padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
       decoration: BoxDecoration(
         color: scheme.surface,
-        borderRadius: BorderRadius.circular(context.respDim(16)),
+        borderRadius: CcBorderRadius.lg(context),
         border: Border.all(color: scheme.outlineVariant),
       ),
       child: Column(

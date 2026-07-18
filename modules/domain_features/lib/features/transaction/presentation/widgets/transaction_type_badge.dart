@@ -26,7 +26,7 @@ class TransactionTypeBadge extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(context.respDim(8)),
+        borderRadius: CcBorderRadius.sm(context),
       ),
       child: CcText(
         label,

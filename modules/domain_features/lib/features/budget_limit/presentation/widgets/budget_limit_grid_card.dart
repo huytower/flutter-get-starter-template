@@ -71,7 +71,7 @@ class BudgetLimitGridCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: _cardBackgroundColor(context, stats.color),
-        borderRadius: BorderRadius.circular(context.respDim(20)),
+        borderRadius: CcBorderRadius.lg(context),
         border: Border.all(
           color: scheme.onSurface.withOpacity(0.08),
           width: context.respDim(1),
@@ -107,7 +107,7 @@ class BudgetLimitGridCard extends StatelessWidget {
           height: context.respDim(35),
           decoration: BoxDecoration(
             color: iconColor.withOpacity(0.12),
-            borderRadius: BorderRadius.circular(context.respDim(20)),
+            borderRadius: CcBorderRadius.lg(context),
           ),
           child: Stack(
             alignment: Alignment.center,
@@ -137,7 +137,7 @@ class BudgetLimitGridCard extends StatelessWidget {
               CcText(
                 stats.budget.limit.formatShort(),
                 textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                  color: scheme.onSurfaceVariant.withOpacity(0.6)
+                  color: scheme.onSurfaceVariant.withOpacity(0.6),
                 ),
               ),
             ],
@@ -159,7 +159,7 @@ class BudgetLimitGridCard extends StatelessWidget {
             namedArgs: {'percent': '$pct'},
           ),
           textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            color: scheme.onSurfaceVariant.withOpacity(0.6)
+            color: scheme.onSurfaceVariant.withOpacity(0.6),
           ),
         ),
         BudgetLimitPieChart(

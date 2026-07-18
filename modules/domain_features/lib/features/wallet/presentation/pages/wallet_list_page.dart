@@ -42,7 +42,7 @@ class WalletListPage extends CcGetView<WalletController> {
           el.tr(CcLocaleKeys.wallet_your_wallets),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
-            fontWeight: CcTypographyParams.bold
+            fontWeight: CcTypographyParams.bold,
           ),
         ),
       ),
@@ -139,10 +139,6 @@ class WalletListPage extends CcGetView<WalletController> {
         break;
     }
   }
-
-  // @override
-  // Widget onPageBodyWrapper(BuildContext context, Widget body) =>
-  //     ColoredBox(color: context.ccColorScheme.background, child: body);
 
   @override
   Widget? buildContent(BuildContext context) {

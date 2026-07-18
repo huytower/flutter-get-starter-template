@@ -62,7 +62,7 @@ class QuickNumericKeypad extends StatelessWidget {
         margin: EdgeInsets.all(context.respDim(2)),
         decoration: BoxDecoration(
           color: context.ccColorScheme.surface,
-          borderRadius: BorderRadius.circular(context.respDim(12)),
+          borderRadius: CcBorderRadius.md(context),
           boxShadow: [
             BoxShadow(
               color: context.ccColorScheme.onSurface.withOpacity(0.02),

@@ -112,7 +112,7 @@ class MoneyKeypadPanel extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: activeColor.withOpacity(0.07),
-                borderRadius: BorderRadius.circular(context.respDim(16)),
+                borderRadius: CcBorderRadius.lg(context),
               ),
               child: CcText(
                 formatter.format(amount),

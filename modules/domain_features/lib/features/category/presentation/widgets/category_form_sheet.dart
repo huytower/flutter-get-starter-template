@@ -120,7 +120,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
               labelText: el.tr(CcLocaleKeys.transaction_category),
               hintText: el.tr(CcLocaleKeys.wallet_name_hint),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(context.respDim(12)),
+                borderRadius: CcBorderRadius.md(context),
               ),
             ),
           ),
@@ -141,7 +141,7 @@ class _CategoryFormSheetState extends State<CategoryFormSheet> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: scheme.primary,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(context.respDim(12)),
+                  borderRadius: CcBorderRadius.md(context),
                 ),
               ),
               child: _isSaving

@@ -40,7 +40,7 @@ class BudgetWalletsSection extends StatelessWidget {
                 el.tr(CcLocaleKeys.wallet_your_wallets),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
                   fontWeight: CcTypographyParams.bold,
-                  color: scheme.onBackground
+                  color: scheme.onBackground,
                 ),
               ),
               Row(
@@ -57,7 +57,7 @@ class BudgetWalletsSection extends StatelessWidget {
                     onTap: () => context.router.push(const WalletListRoute()),
                     child: CcText(
                       el.tr(CcLocaleKeys.wallet_see_all),
-                      textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                      textStyle: context.ccTextTheme.titleSmall?.copyWith(
                         color: scheme.primary,
                         fontWeight: CcTypographyParams.semiBold,
                       ),

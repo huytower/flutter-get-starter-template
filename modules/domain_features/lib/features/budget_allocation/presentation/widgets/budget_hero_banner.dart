@@ -26,7 +26,7 @@ class BudgetHeroBanner extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: scheme.primary,
-          borderRadius: BorderRadius.circular(context.respDim(24)),
+          borderRadius: CcBorderRadius.xl(context),
           boxShadow: [
             BoxShadow(
               color: scheme.primary.withOpacity(0.25),

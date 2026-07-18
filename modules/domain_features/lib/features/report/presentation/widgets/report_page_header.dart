@@ -19,12 +19,13 @@ class ReportPageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-    final headerHeight = context.respDim(260) + topPadding;
-
+    // Fill the parent height (already constrained by ReportPage). No hardcoded
+    // base height — the header keeps a correct responsive ratio across screen
+    // sizes via flex-based sections instead of a width-scaled respDim() magic
+    // number. The Column children resolve against this bounded height.
     return Container(
-      height: headerHeight,
       width: double.infinity,
+      height: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(context.respDim(16)),
@@ -50,19 +51,23 @@ class ReportPageHeader extends StatelessWidget {
   }
 
   Widget _buildHeroForeground(BuildContext context) {
-    return Positioned(
-      top: MediaQuery.of(context).padding.top,
-      left: 0,
-      right: 0,
-      bottom: context.respDim(16),
-      child: Column(
-        children: [
-          const CcSpaceSM(),
-          _buildTitleRow(context),
-          const CcSpaceXL(),
-          _buildRunwaySection(context),
-        ],
-      ),
+    // The parent Stack gives unbounded height, so we cannot use
+    // FractionallySizedBox(heightFactor) here — it would fail layout with a
+    // "RenderBox was not laid out: hasSize" assertion. Instead we fill the
+    // header and use flex so the safe-area top, title, and runway banner keep
+    // their proportion on every screen size.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Safe-area top spacer (proportional, only when there is a notch).
+        if (MediaQuery.of(context).padding.top > 0)
+          SizedBox(height: MediaQuery.of(context).padding.top),
+        const CcSpaceSM(),
+        _buildTitleRow(context),
+        const CcSpaceSM(),
+        // Runway banner grows with the header while the title stays compact.
+        Expanded(child: _buildRunwaySection(context)),
+      ],
     );
   }
 
@@ -89,7 +94,7 @@ class ReportPageHeader extends StatelessWidget {
       title,
       textStyle: context.ccTextTheme.headlineSmall?.copyWith(
         color: context.ccColorScheme.onPrimary,
-        fontWeight: CcTypographyParams.bold
+        fontWeight: CcTypographyParams.bold,
       ),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,

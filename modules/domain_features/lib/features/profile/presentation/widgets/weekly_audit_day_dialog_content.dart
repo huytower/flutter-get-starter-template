@@ -129,7 +129,7 @@ class _WeeklyAuditDayDialogContentState
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isSelected ? scheme.primary : Colors.transparent,
-            borderRadius: BorderRadius.circular(context.respDim(16)),
+            borderRadius: CcBorderRadius.lg(context),
             border: Border.all(
               color: isSelected
                   ? scheme.primary
