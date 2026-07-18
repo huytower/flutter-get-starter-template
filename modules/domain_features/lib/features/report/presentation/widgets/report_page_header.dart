@@ -52,23 +52,44 @@ class ReportPageHeader extends StatelessWidget {
 
   Widget _buildHeroForeground(BuildContext context) {
     // We wrap the foreground in Positioned.fill so the Column respects the
-    // header's bounded height (e.g. 25% of screen height). This allows the
-    // Expanded section to correctly fill the remaining space without
-    // "unbounded height" layout assertions.
+    // header's bounded height. Using flex and FittedBox ensures the content
+    // remains visible and responsive even on the smallest phone screens without
+    // overlapping with the TabBar below.
     return Positioned.fill(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Safe-area top spacer (proportional, only when there is a notch).
+          // Safe-area top spacer (proportional to notch)
           if (MediaQuery.of(context).padding.top > 0)
             SizedBox(height: MediaQuery.of(context).padding.top),
+
           const CcSpaceSM(),
           _buildTitleRow(context),
-          const CcSpaceSM(),
-          // Runway banner grows with the header while the title stays compact.
-          Expanded(child: _buildRunwaySection(context)),
-          // Added a small spacer at bottom for breathing room
-          const CcSpaceSM(),
+
+          // Using a Flexible/Expanded runway section with a FittedBox safety
+          // ensures that on small phones, the banner scales down rather than
+          // overflowing or overlapping.
+          Expanded(
+            child: CcSymmetricPadding(
+              horizontal: CcPaddingParams.PAGE_XS,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.center,
+                child: ConstrainedBox(
+                  // Ensure the banner has a reasonable max width while scaling
+                  constraints: BoxConstraints(
+                    maxWidth:
+                        MediaQuery.of(context).size.width -
+                        context.respPadding(CcPaddingParams.PAGE_XS) * 2,
+                  ),
+                  child: _buildRunwaySection(context),
+                ),
+              ),
+            ),
+          ),
+
+          // Bottom buffer space to avoid overlap with the overlapping TabBar
+          const CcSpaceLG(),
         ],
       ),
     );
@@ -76,20 +97,16 @@ class ReportPageHeader extends StatelessWidget {
 
   Widget _buildTitleRow(BuildContext context) {
     return CcSymmetricPadding(
-      horizontal: CcPaddingParams.PAGE_MD,
+      horizontal: CcPaddingParams.PAGE_XS,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildBackButton(context),
           const CcSpaceXS(),
-          _buildHeaderTitleSection(context),
+          Expanded(child: _buildPageTitle(context)),
         ],
       ),
     );
-  }
-
-  Widget _buildHeaderTitleSection(BuildContext context) {
-    return Expanded(child: _buildPageTitle(context));
   }
 
   Widget _buildPageTitle(BuildContext context) {
@@ -109,10 +126,7 @@ class ReportPageHeader extends StatelessWidget {
       final runway = controller.runway.value;
       if (runway == null) return const SizedBox.shrink();
 
-      return CcSymmetricPadding(
-        horizontal: CcPaddingParams.PAGE_MD,
-        child: FinancialRunwayWidget(runway: runway, showChevron: false),
-      );
+      return FinancialRunwayWidget(runway: runway, showChevron: false);
     });
   }
 

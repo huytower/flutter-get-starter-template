@@ -23,7 +23,17 @@ class ReportPage extends CcGetView<ReportController> {
   @override
   Widget? buildContent(BuildContext context) {
     final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
-    final headerHeight = MediaQuery.of(context).size.height * 0.32;
+
+    // Responsive height factor based on screen height to prevent content overlap
+    // on small phones while maintaining aesthetic proportions on tablets.
+    final screenHeight = MediaQuery.of(context).size.height;
+    final headerHeightFactor = CcResponsiveHelper.getValue(
+      context: context,
+      mobile:
+          0.36, // Increased to 36% for mobile to accommodate all header info
+      tablet: 0.25, // Kept at 25% for tablets
+    );
+    final headerHeight = screenHeight * headerHeightFactor;
 
     return DefaultTabController(
       length: 3,
@@ -54,8 +64,16 @@ class ReportPage extends CcGetView<ReportController> {
   }
 
   Widget _buildReportContent(BuildContext context) {
-    final headerHeight = MediaQuery.of(context).size.height * 0.32;
-    final tabBarHeight = context.respDim(100);
+    final screenHeight = MediaQuery.of(context).size.height;
+    final headerHeightFactor = CcResponsiveHelper.getValue(
+      context: context,
+      mobile: 0.36,
+      tablet: 0.25,
+    );
+    final headerHeight = screenHeight * headerHeightFactor;
+
+    // Tab bar height scaled responsively
+    final tabBarHeight = context.respDim(60);
     final overlap = tabBarHeight / 2;
 
     return Builder(
