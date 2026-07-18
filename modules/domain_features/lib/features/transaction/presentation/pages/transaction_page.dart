@@ -78,7 +78,7 @@ class TransactionPage extends CcGetView<TransactionController> {
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
-    final tabBarHeight = context.respDim(130);
+    final tabBarHeight = context.respDim(140);
     final overlap = tabBarHeight / 2;
 
     final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
