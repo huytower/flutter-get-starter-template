@@ -15,6 +15,9 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
   const CategorySettingsPage({super.key});
 
   @override
+  bool get enableAppBar => false;
+
+  @override
   Widget buildContent(BuildContext context) {
     // Manually register if needed, although normally handled by Binding or Get.put in parent
     if (!Get.isRegistered<CategorySettingsController>()) {

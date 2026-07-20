@@ -15,6 +15,9 @@ class ProfilePage extends CcGetView<ProfileController> {
   const ProfilePage({super.key});
 
   @override
+  bool get enableAppBar => false;
+
+  @override
   Widget buildContent(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (controller.openBirthYearPicker.value) {
