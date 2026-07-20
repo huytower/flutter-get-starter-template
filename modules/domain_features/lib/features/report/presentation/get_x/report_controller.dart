@@ -35,6 +35,16 @@ class ReportController extends CcGetController {
   /// Scroll controller for the report body list, used to drive header hide.
   final ScrollController scrollController = ScrollController();
 
+  void onScroll(ScrollNotification notification) {
+    if (notification is ScrollUpdateNotification) {
+      isHeaderHidden.value = notification.metrics.pixels > 8;
+    }
+  }
+
+  void onBack(BuildContext context) {
+    Navigator.of(context).pop();
+  }
+
   final RxList<CategorySpendingEntity> spending =
       <CategorySpendingEntity>[].obs;
   final Rx<TrendDataEntity?> trendData = Rx<TrendDataEntity?>(null);

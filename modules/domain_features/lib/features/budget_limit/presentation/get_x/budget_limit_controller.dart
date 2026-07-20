@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
@@ -30,6 +31,11 @@ class BudgetLimitController extends CcGetController {
   final RxBool isEditMode = false.obs;
 
   void toggleEditMode() => isEditMode.toggle();
+
+  void onCloseEditMode(BuildContext context) {
+    isEditMode.value = false;
+    Navigator.of(context).pop();
+  }
 
   @override
   void onReady() {

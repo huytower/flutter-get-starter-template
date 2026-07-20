@@ -4,12 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../report/presentation/get_x/report_controller.dart';
-import '../get_x/expense_form_controller.dart';
-import '../get_x/income_form_controller.dart';
 import '../get_x/transaction_controller.dart';
-import '../get_x/transfer_form_controller.dart';
 import '../widgets/transaction_page_header.dart';
 import '../widgets/transaction_tab_bar.dart';
 import '../widgets/transaction_tab_bar_view.dart';
@@ -53,8 +48,8 @@ class TransactionPage extends CcGetView<TransactionController> {
                   height: hidden ? 0 : headerHeight,
                   child: TransactionPageHeader(
                     controller: controller,
-                    onOpenReport: () => _openReport(context),
-                    onSubmit: () => _submitCurrentForm(context),
+                    onOpenReport: () => controller.openReport(context),
+                    onSubmit: () => controller.submitCurrentForm(context),
                   ),
                 ),
               );
@@ -95,33 +90,5 @@ class TransactionPage extends CcGetView<TransactionController> {
         ],
       );
     });
-  }
-
-  void _openReport(BuildContext context) {
-    if (Get.isRegistered<ReportController>()) {
-      Get.find<ReportController>().load(showLoading: false);
-    }
-    context.router.push(const ReportRoute());
-  }
-
-  void _submitCurrentForm(BuildContext context) {
-    controller.flashWalletSummary();
-    switch (controller.selectedTabIndex.value) {
-      case 0:
-        if (Get.isRegistered<ExpenseFormController>()) {
-          Get.find<ExpenseFormController>().submitForm(context);
-        }
-        break;
-      case 1:
-        if (Get.isRegistered<IncomeFormController>()) {
-          Get.find<IncomeFormController>().submitForm(context);
-        }
-        break;
-      case 2:
-        if (Get.isRegistered<TransferFormController>()) {
-          Get.find<TransferFormController>().submitForm(context);
-        }
-        break;
-    }
   }
 }

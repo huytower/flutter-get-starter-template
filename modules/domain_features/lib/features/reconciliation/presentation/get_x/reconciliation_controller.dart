@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
@@ -9,6 +10,7 @@ import '../../domain/entities/reconciliation_entity.dart';
 import '../../domain/usecases/get_reconciliation_history_usecase.dart';
 import '../../domain/usecases/perform_reconciliation_usecase.dart';
 import '../../domain/usecases/undo_reconciliation_usecase.dart';
+import '../widgets/reconciliation_dialogs.dart';
 
 @injectable
 class ReconciliationController extends CcGetController {
@@ -148,6 +150,22 @@ class ReconciliationController extends CcGetController {
   void _syncActual() {
     if (editingWalletId.value != null) {
       setActual(editingWalletId.value!, int.tryParse(amountStr.value) ?? 0);
+    }
+  }
+
+  Future<void> confirmReconciliation(BuildContext context) async {
+    final error = await performReconciliation();
+    if (!context.mounted) return;
+    if (error != null) {
+      CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => ReconciliationSuccessDialog(
+          onDismiss: () => Navigator.of(context).pop(),
+        ),
+      );
     }
   }
 

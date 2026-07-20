@@ -9,7 +9,6 @@ import '../../../../core/util/gradient_app_bar.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../get_x/reconciliation_controller.dart';
 import '../widgets/reconciliation_confirm_button.dart';
-import '../widgets/reconciliation_dialogs.dart';
 import '../widgets/reconciliation_history_section.dart';
 import '../widgets/reconciliation_mismatch_warning.dart';
 import '../widgets/reconciliation_summary.dart';
@@ -21,7 +20,6 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    final controller = Get.find<ReconciliationController>();
     return buildDomainGradientAppBar(
       context,
       leading: CcIconButton.bouncing(
@@ -36,7 +34,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         el.tr(CcLocaleKeys.reconciliation_title),
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           color: context.ccColorScheme.onPrimary,
-          fontWeight: CcTypographyParams.bold
+          fontWeight: CcTypographyParams.bold,
         ),
       ),
       actions: [
@@ -53,7 +51,9 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                 color: context.ccColorScheme.onPrimary,
               ),
               tooltip: el.tr(CcLocaleKeys.reconciliation_confirm),
-              onTap: enabled ? () => _confirm(context, controller) : () {},
+              onTap: enabled
+                  ? () => controller.confirmReconciliation(context)
+                  : () {},
               isEnable: enabled,
               useDebounce: true,
             );
@@ -62,25 +62,6 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
       ],
     );
-  }
-
-  Future<void> _confirm(
-    BuildContext context,
-    ReconciliationController controller,
-  ) async {
-    final error = await controller.performReconciliation();
-    if (!context.mounted) return;
-    if (error != null) {
-      CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
-    } else {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => ReconciliationSuccessDialog(
-          onDismiss: () => Navigator.of(context).pop(),
-        ),
-      );
-    }
   }
 
   @override

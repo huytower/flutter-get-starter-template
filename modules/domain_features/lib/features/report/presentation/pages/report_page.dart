@@ -27,9 +27,8 @@ class ReportPage extends CcGetView<ReportController> {
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
-      mobile: 0.3, // Increased to 38% for mobile to accommodate all header
-      // info
-      tablet: 0.28, // Tablets
+      mobile: 0.3,
+      tablet: 0.28,
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
@@ -49,7 +48,7 @@ class ReportPage extends CcGetView<ReportController> {
                   child: ReportPageHeader(
                     controller: controller,
                     title: el.tr(CcLocaleKeys.report_title),
-                    onBackPressed: () => Navigator.of(context).pop(),
+                    onBackPressed: () => controller.onBack(context),
                   ),
                 ),
               );
@@ -70,7 +69,6 @@ class ReportPage extends CcGetView<ReportController> {
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
-    // Tab bar height scaled responsively
     final tabBarHeight = context.respDim(90);
     final overlap = tabBarHeight / 2;
 
@@ -86,7 +84,6 @@ class ReportPage extends CcGetView<ReportController> {
           final data = controller.trendData.value;
           if (data == null) return const SizedBox.shrink();
 
-          // Hide the header when the body is scrolled down (or a keyboard is up).
           final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
           final hidden = controller.isHeaderHidden.value || keyboardUp;
 
@@ -101,10 +98,7 @@ class ReportPage extends CcGetView<ReportController> {
               Expanded(
                 child: NotificationListener<ScrollNotification>(
                   onNotification: (notification) {
-                    if (notification is ScrollUpdateNotification) {
-                      controller.isHeaderHidden.value =
-                          notification.metrics.pixels > 8;
-                    }
+                    controller.onScroll(notification);
                     return false;
                   },
                   child: ListView(

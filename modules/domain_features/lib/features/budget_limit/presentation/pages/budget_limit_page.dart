@@ -22,18 +22,17 @@ class BudgetLimitPage extends CcGetView<BudgetLimitController> {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return buildDomainGradientAppBar(
       context,
-      leading: CcIconButton.bouncing(
-        icon: Icon(
-          controller.isEditMode.value
-              ? Icons.close_rounded
-              : Icons.arrow_back_ios_new_rounded,
-          color: context.ccColorScheme.onPrimary,
-          size: context.respIconSize(baseSize: 24),
+      leading: Obx(
+        () => CcIconButton.bouncing(
+          icon: Icon(
+            controller.isEditMode.value
+                ? Icons.close_rounded
+                : Icons.arrow_back_ios_new_rounded,
+            color: context.ccColorScheme.onPrimary,
+            size: context.respIconSize(baseSize: 24),
+          ),
+          onTap: () => controller.onCloseEditMode(context),
         ),
-        onTap: () {
-          controller.isEditMode.value = false;
-          Navigator.of(context).pop();
-        },
       ),
       title: Center(
         child: CcText(
@@ -86,96 +85,87 @@ class BudgetLimitPage extends CcGetView<BudgetLimitController> {
 
   @override
   Widget? buildContent(BuildContext context) {
-    // Obx here so isEditMode.value is tracked directly in the reactive context —
-    // reading it inside a Builder callback (deferred build) would escape tracking.
     return Obx(() {
       final isEdit = controller.isEditMode.value;
-      return Builder(
-        builder: (context) => CustomScrollView(
-          slivers: [
-            // Always present so BudgetLimitGrid stays at sliver-index 1 and its
-            // StatefulWidget state survives mode switches.
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  context.respPadding(16),
-                  context.respPadding(12),
-                  context.respPadding(16),
-                  context.respPadding(6),
-                ),
-                child: Column(
-                  children: [
-                    CcText(
-                      el.tr(CcLocaleKeys.budget_description),
-                      maxLines: 3,
-                      textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                        color: context.ccColorScheme.onSurfaceVariant
-                            .withOpacity(0.5),
+      return CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                context.respPadding(16),
+                context.respPadding(12),
+                context.respPadding(16),
+                context.respPadding(6),
+              ),
+              child: Column(
+                children: [
+                  CcText(
+                    el.tr(CcLocaleKeys.budget_description),
+                    maxLines: 3,
+                    textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                      color: context.ccColorScheme.onSurfaceVariant.withOpacity(
+                        0.5,
                       ),
                     ),
-                    const CcSpaceXS(),
+                  ),
+                  const CcSpaceXS(),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.bolt_rounded,
+                        size: context.respIconSize(baseSize: 14),
+                        color: context.ccColorScheme.primary.withOpacity(0.5),
+                      ),
+                      const CcSpaceXS(),
+                      Expanded(
+                        child: CcText(
+                          el.tr(CcLocaleKeys.budget_fixed_price_description),
+                          maxLines: 3,
+                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                            color: context.ccColorScheme.onSurfaceVariant
+                                .withOpacity(0.5),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const CcSpaceXS(),
+                  if (!isEdit)
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(
-                          Icons.bolt_rounded,
+                          Icons.swap_vert,
                           size: context.respIconSize(baseSize: 14),
-                          color: context.ccColorScheme.primary.withOpacity(0.5),
+                          color: context.ccColorScheme.onSurfaceVariant
+                              .withOpacity(0.5),
                         ),
                         const CcSpaceXS(),
-                        Expanded(
-                          child: CcText(
-                            el.tr(CcLocaleKeys.budget_fixed_price_description),
-                            maxLines: 3,
-                            textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                              color: context.ccColorScheme.onSurfaceVariant
-                                  .withOpacity(0.5),
-                            ),
+                        CcText(
+                          el.tr(CcLocaleKeys.budget_drag_reorder_hint),
+                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                            color: context.ccColorScheme.onSurfaceVariant
+                                .withOpacity(0.5),
                           ),
                         ),
                       ],
                     ),
-                    const CcSpaceXS(),
-                    isEdit
-                        ? const CcSpaceMD()
-                        : Row(
-                            children: [
-                              Icon(
-                                Icons.swap_vert,
-                                size: context.respIconSize(baseSize: 14),
-                                color: context.ccColorScheme.onSurfaceVariant
-                                    .withOpacity(0.5),
-                              ),
-                              const CcSpaceXS(),
-                              CcText(
-                                el.tr(CcLocaleKeys.budget_drag_reorder_hint),
-                                textStyle: context.ccTextTheme.labelSmall
-                                    ?.copyWith(
-                                      color: context
-                                          .ccColorScheme
-                                          .onSurfaceVariant
-                                          .withOpacity(0.5),
-                                    ),
-                              ),
-                            ],
-                          ),
-                  ],
-                ),
+                ],
               ),
             ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: BudgetLimitGrid(
-                  key: const ValueKey('budget-limit-grid'),
-                  controller: controller,
-                  onOpenForm: _openAddBudgetLimitForm,
-                  onDelete: _confirmDeleteBudgetLimit,
-                ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: BudgetLimitGrid(
+                key: const ValueKey('budget-limit-grid'),
+                controller: controller,
+                onOpenForm: _openAddBudgetLimitForm,
+                onDelete: _confirmDeleteBudgetLimit,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       );
     });
   }

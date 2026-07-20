@@ -6,11 +6,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/util/gradient_app_bar.dart';
-import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
-import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
-import '../widgets/add_wallet_sheet.dart';
-import '../widgets/wallet_delete_confirm_sheet.dart';
 import '../widgets/wallet_list_card.dart';
 
 @RoutePage()
@@ -24,18 +20,17 @@ class WalletListPage extends CcGetView<WalletController> {
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return buildDomainGradientAppBar(
       context,
-      leading: CcIconButton.bouncing(
-        icon: Icon(
-          controller.isEditMode.value
-              ? Icons.close_rounded
-              : Icons.arrow_back_ios_new_rounded,
-          color: context.ccColorScheme.onPrimary,
-          size: context.respIconSize(baseSize: 24),
+      leading: Obx(
+        () => CcIconButton.bouncing(
+          icon: Icon(
+            controller.isEditMode.value
+                ? Icons.close_rounded
+                : Icons.arrow_back_ios_new_rounded,
+            color: context.ccColorScheme.onPrimary,
+            size: context.respIconSize(baseSize: 24),
+          ),
+          onTap: () => controller.onCloseEditMode(context),
         ),
-        onTap: () {
-          controller.isEditMode.value = false;
-          Navigator.of(context).pop();
-        },
       ),
       title: Center(
         child: CcText(
@@ -54,7 +49,7 @@ class WalletListPage extends CcGetView<WalletController> {
             size: context.respIconSize(baseSize: 24),
           ),
           tooltip: el.tr(CcLocaleKeys.wallet_add_title),
-          onTap: () => _openForm(context),
+          onTap: () => controller.openForm(context),
         ),
         Obx(
           () => CcIconButton.bouncing(
@@ -77,67 +72,6 @@ class WalletListPage extends CcGetView<WalletController> {
         ),
       ],
     );
-  }
-
-  void _openForm(BuildContext context, {WalletEntity? wallet}) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => AddWalletSheet(wallet: wallet),
-    );
-  }
-
-  void _confirmDelete(BuildContext context, WalletEntity wallet) {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => WalletDeleteConfirmSheet(
-        wallet: wallet,
-        onDelete: () => controller.deleteWallet(wallet.id),
-        onOutcome: (outcome) => _handleDeleteOutcome(context, outcome),
-      ),
-    );
-  }
-
-  void _handleDeleteOutcome(BuildContext context, WalletDeleteOutcome outcome) {
-    switch (outcome) {
-      case WalletDeleteOutcome.success:
-        if (Get.isRegistered<ReconciliationController>()) {
-          Get.find<ReconciliationController>().loadBalances();
-        }
-        CcSnackBarHelper.showSuccessSnackBar(
-          context: context,
-          message: el.tr(CcLocaleKeys.common_done),
-        );
-        break;
-      case WalletDeleteOutcome.notEmpty:
-        CcSnackBarHelper.showErrorSnackBar(
-          context: context,
-          message: el.tr(CcLocaleKeys.wallet_delete_error_not_empty),
-        );
-        break;
-      case WalletDeleteOutcome.protected:
-        CcSnackBarHelper.showErrorSnackBar(
-          context: context,
-          message: el.tr(CcLocaleKeys.wallet_delete_error_protected),
-        );
-        break;
-      case WalletDeleteOutcome.error:
-        CcSnackBarHelper.showErrorSnackBar(
-          context: context,
-          message: controller.errorMessage.value.isNotEmpty
-              ? controller.errorMessage.value
-              : el.tr(CcLocaleKeys.app_error_general),
-        );
-        break;
-    }
   }
 
   @override
@@ -166,8 +100,8 @@ class WalletListPage extends CcGetView<WalletController> {
                   wallet: wallet,
                   isEditMode: isEdit,
                   canDelete: controller.canDeleteWallet(wallet),
-                  onEdit: () => _openForm(context, wallet: wallet),
-                  onDelete: () => _confirmDelete(context, wallet),
+                  onEdit: () => controller.openForm(context, wallet: wallet),
+                  onDelete: () => controller.confirmDelete(context, wallet),
                 ),
               )
               .toList(),

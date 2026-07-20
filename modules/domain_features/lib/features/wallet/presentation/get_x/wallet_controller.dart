@@ -1,8 +1,11 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
@@ -10,6 +13,8 @@ import '../../domain/entities/wallet_entity.dart';
 import '../../domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../../domain/usecases/wallet_balance_calculator.dart';
+import '../widgets/add_wallet_sheet.dart';
+import '../widgets/wallet_delete_confirm_sheet.dart';
 
 /// Outcome of a wallet deletion attempt (rule: only empty wallets deletable).
 enum WalletDeleteOutcome { success, notEmpty, protected, error }
@@ -33,6 +38,72 @@ class WalletController extends CcGetController {
   final RxBool isEditMode = false.obs;
 
   void toggleEditMode() => isEditMode.toggle();
+
+  void onCloseEditMode(BuildContext context) {
+    isEditMode.value = false;
+    Navigator.of(context).pop();
+  }
+
+  void openForm(BuildContext context, {WalletEntity? wallet}) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.ccColorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => AddWalletSheet(wallet: wallet),
+    );
+  }
+
+  void confirmDelete(BuildContext context, WalletEntity wallet) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: context.ccColorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => WalletDeleteConfirmSheet(
+        wallet: wallet,
+        onDelete: () => deleteWallet(wallet.id),
+        onOutcome: (outcome) => _handleDeleteOutcome(context, outcome),
+      ),
+    );
+  }
+
+  void _handleDeleteOutcome(BuildContext context, WalletDeleteOutcome outcome) {
+    switch (outcome) {
+      case WalletDeleteOutcome.success:
+        if (Get.isRegistered<ReconciliationController>()) {
+          Get.find<ReconciliationController>().loadBalances();
+        }
+        CcSnackBarHelper.showSuccessSnackBar(
+          context: context,
+          message: el.tr(CcLocaleKeys.common_done),
+        );
+        break;
+      case WalletDeleteOutcome.notEmpty:
+        CcSnackBarHelper.showErrorSnackBar(
+          context: context,
+          message: el.tr(CcLocaleKeys.wallet_delete_error_not_empty),
+        );
+        break;
+      case WalletDeleteOutcome.protected:
+        CcSnackBarHelper.showErrorSnackBar(
+          context: context,
+          message: el.tr(CcLocaleKeys.wallet_delete_error_protected),
+        );
+        break;
+      case WalletDeleteOutcome.error:
+        CcSnackBarHelper.showErrorSnackBar(
+          context: context,
+          message: errorMessage.value.isNotEmpty
+              ? errorMessage.value
+              : el.tr(CcLocaleKeys.app_error_general),
+        );
+        break;
+    }
+  }
 
   final RxList<WalletEntity> wallets = <WalletEntity>[].obs;
   final RxInt totalBalance = 0.obs;

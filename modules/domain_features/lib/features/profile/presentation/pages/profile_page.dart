@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../category/export_category.dart';
 import '../get_x/profile_controller.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_group.dart';
@@ -40,7 +39,7 @@ class ProfilePage extends CcGetView<ProfileController> {
                       tag: 'profile_hero_banner',
                       child: ProfileHeader(
                         user: controller.user.value,
-                        displayName: _displayName(context, controller.user.value),
+                        displayName: controller.displayName,
                       ),
                     ),
                   ),
@@ -50,14 +49,12 @@ class ProfilePage extends CcGetView<ProfileController> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         const CcSpaceMD(),
-                        ProfileStatsRow(daysToSunday: _daysToSunday),
+                        ProfileStatsRow(daysToSunday: controller.daysToSunday),
                         const CcSpaceMD(),
-                        ProfileMenuGroup(
-                          items: _buildMenuItems(context),
-                        ),
+                        ProfileMenuGroup(items: _buildMenuItems(context)),
                         const CcSpaceXL(),
                         Obx(
-                          () => controller.user.value != null
+                          () => controller.isLoggedIn
                               ? Column(
                                   children: [
                                     _buildLogoutButton(context),
@@ -80,37 +77,21 @@ class ProfilePage extends CcGetView<ProfileController> {
     );
   }
 
-  int get _daysToSunday {
-    final daysLeft = 7 - DateTime.now().weekday;
-    return daysLeft;
-  }
-
   List<Widget> _buildMenuItems(BuildContext context) {
-    final isLoggedIn = controller.user.value != null;
     return [
       ProfileSettingsTile(
         icon: Icons.tune_rounded,
         label: el.tr(CcLocaleKeys.category_settings_title),
         subtitle: el.tr(CcLocaleKeys.category_settings_subtitle),
-        onTap: () async {
-          if (controller.settings.value.birthYear == null) {
-            await controller.pickBirthYear(context);
-            if (controller.settings.value.birthYear == null) return;
-          }
-          if (!context.mounted) return;
-          Navigator.of(context).push(
-            MaterialPageRoute<bool>(
-              builder: (_) => const CategorySettingsPage(),
-            ),
-          );
-        },
+        onTap: () => controller.navigateToCategorySettings(context),
       ),
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.cake_rounded,
           label: el.tr(CcLocaleKeys.profile_birth_year),
           subtitle: el.tr(CcLocaleKeys.profile_birth_year_subtitle),
-          trailingLabel: controller.settings.value.birthYear?.toString() ??
+          trailingLabel:
+              controller.settings.value.birthYear?.toString() ??
               el.tr(CcLocaleKeys.common_not_set),
           onTap: () => controller.pickBirthYear(context),
         ),
@@ -120,7 +101,7 @@ class ProfilePage extends CcGetView<ProfileController> {
           icon: Icons.calendar_today_rounded,
           label: el.tr(CcLocaleKeys.profile_weekly_audit_day),
           subtitle: el.tr(CcLocaleKeys.profile_weekly_audit_day_subtitle),
-          trailingLabel: _getDayName(controller.settings.value.weeklyAuditDayIndex + 1),
+          trailingLabel: controller.weeklyAuditDayName,
           onTap: () => controller.pickWeeklyAuditDay(context),
         ),
       ),
@@ -168,9 +149,7 @@ class ProfilePage extends CcGetView<ProfileController> {
         icon: Icons.language_rounded,
         label: el.tr(CcLocaleKeys.settings_language),
         subtitle: el.tr(CcLocaleKeys.profile_language_subtitle),
-        trailingLabel: context.locale.languageCode == 'vi'
-            ? el.tr(CcLocaleKeys.settings_language_vietnamese)
-            : el.tr(CcLocaleKeys.settings_language_english),
+        trailingLabel: controller.currentLanguageName(context),
         onTap: () => controller.pickLanguage(context),
       ),
       ProfileSettingsTile(
@@ -218,9 +197,7 @@ class ProfilePage extends CcGetView<ProfileController> {
 
   Widget _buildDeleteAccountText(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // TODO(profile): show confirmation dialog then call delete account use case
-      },
+      onTap: controller.deleteAccount,
       child: CcText(
         el.tr(CcLocaleKeys.profile_delete_account),
         textStyle: context.ccTextTheme.bodyMedium?.copyWith(
@@ -231,22 +208,5 @@ class ProfilePage extends CcGetView<ProfileController> {
         textAlign: TextAlign.center,
       ),
     );
-  }
-
-  String _getDayName(int day) {
-    final names = el.tr(CcLocaleKeys.common_weekday_names).split('|');
-    if (day >= 1 && day <= 7) {
-      return names[day - 1];
-    }
-    return '';
-  }
-
-  String _displayName(BuildContext context, CcUserEntity? user) {
-    if (user == null) return el.tr(CcLocaleKeys.profile_guest);
-    final parts = [
-      user.firstName,
-      user.lastName,
-    ].whereType<String>().where((s) => s.isNotEmpty).join(' ');
-    return parts.isNotEmpty ? parts : user.email;
   }
 }

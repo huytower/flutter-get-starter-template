@@ -9,10 +9,10 @@ import 'package:theme/presentation/provider/theme_provider.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../category/export_category.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/usecases/update_profile_settings_usecase.dart';
-import '../../../category/export_category.dart';
 import '../widgets/birth_year_dialog.dart';
 import '../widgets/language_selection_dialog.dart';
 import '../widgets/weekly_audit_day_dialog.dart';
@@ -63,6 +63,43 @@ class ProfileController extends CcGetController {
       layoutStatus.value = CcLayoutStatus.error;
     }
   }
+
+  // ===========================================================================
+  // COMPUTED PROPERTIES
+  // ===========================================================================
+
+  bool get isLoggedIn => user.value != null;
+
+  String get displayName {
+    final u = user.value;
+    if (u == null) return el.tr(CcLocaleKeys.profile_guest);
+    final parts = [
+      u.firstName,
+      u.lastName,
+    ].whereType<String>().where((s) => s.isNotEmpty).join(' ');
+    return parts.isNotEmpty ? parts : u.email;
+  }
+
+  int get daysToSunday => 7 - DateTime.now().weekday;
+
+  String get weeklyAuditDayName {
+    final day = settings.value.weeklyAuditDayIndex + 1;
+    final names = el.tr(CcLocaleKeys.common_weekday_names).split('|');
+    if (day >= 1 && day <= 7) {
+      return names[day - 1];
+    }
+    return '';
+  }
+
+  String currentLanguageName(BuildContext context) {
+    return context.locale.languageCode == 'vi'
+        ? el.tr(CcLocaleKeys.settings_language_vietnamese)
+        : el.tr(CcLocaleKeys.settings_language_english);
+  }
+
+  // ===========================================================================
+  // ACTIONS
+  // ===========================================================================
 
   /// Enables the given category `nameKey`s (mapped to their seed ids) so they
   /// appear checked in the category settings.
@@ -156,5 +193,20 @@ class ProfileController extends CcGetController {
     if (picked != null && context.mounted) {
       await el.EasyLocalization.of(context)!.setLocale(picked);
     }
+  }
+
+  Future<void> navigateToCategorySettings(BuildContext context) async {
+    if (settings.value.birthYear == null) {
+      await pickBirthYear(context);
+      if (settings.value.birthYear == null) return;
+    }
+    if (!context.mounted) return;
+    Navigator.of(context).push(
+      MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),
+    );
+  }
+
+  void deleteAccount() {
+    // TODO(profile): show confirmation dialog then call delete account use case
   }
 }

@@ -1,12 +1,19 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../../domain/repositories/transaction_repository.dart';
+import 'expense_form_controller.dart';
+import 'income_form_controller.dart';
+import 'transfer_form_controller.dart';
 
 @injectable
 class TransactionController extends CcGetController {
@@ -84,5 +91,33 @@ class TransactionController extends CcGetController {
 
   Future<void> refreshData() async {
     await refreshWalletTotal();
+  }
+
+  void openReport(BuildContext context) {
+    if (Get.isRegistered<ReportController>()) {
+      Get.find<ReportController>().load(showLoading: false);
+    }
+    context.router.push(const ReportRoute());
+  }
+
+  void submitCurrentForm(BuildContext context) {
+    flashWalletSummary();
+    switch (selectedTabIndex.value) {
+      case 0:
+        if (Get.isRegistered<ExpenseFormController>()) {
+          Get.find<ExpenseFormController>().submitForm(context);
+        }
+        break;
+      case 1:
+        if (Get.isRegistered<IncomeFormController>()) {
+          Get.find<IncomeFormController>().submitForm(context);
+        }
+        break;
+      case 2:
+        if (Get.isRegistered<TransferFormController>()) {
+          Get.find<TransferFormController>().submitForm(context);
+        }
+        break;
+    }
   }
 }

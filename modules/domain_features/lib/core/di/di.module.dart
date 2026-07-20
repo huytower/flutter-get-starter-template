@@ -52,6 +52,10 @@ import 'package:domain_features/features/category/domain/usecases/toggle_categor
     as _i110;
 import 'package:domain_features/features/category/domain/usecases/update_category_usecase.dart'
     as _i989;
+import 'package:domain_features/features/category/export_category.dart'
+    as _i1041;
+import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart'
+    as _i174;
 import 'package:domain_features/features/comment/data/datasources/remote/comment_remote.dart'
     as _i130;
 import 'package:domain_features/features/comment/data/repositories/comment_repository_impl.dart'
@@ -259,6 +263,14 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             gh<_i544.BudgetLimitRepository>()));
     gh.lazySingleton<_i829.UpdateBudgetLimitUseCase>(() =>
         _i829.UpdateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
+    gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
+          gh<_i569.GetProfileSettingsUseCase>(),
+          gh<_i220.UpdateProfileSettingsUseCase>(),
+          gh<_i1041.ToggleCategoryEnabledUseCase>(),
+          gh<_i727.SessionContract>(),
+          gh<_i727.CcDeviceInfoHelper>(),
+          gh<_i727.AuthCoordinator>(),
+        ));
     gh.lazySingleton<_i804.PerformReconciliationUseCase>(
         () => _i804.PerformReconciliationUseCase(
               gh<_i167.GetWalletBalancesUseCase>(),
@@ -276,13 +288,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i1059.CategoryRepository>(),
             ));
-    gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
-          gh<_i569.GetProfileSettingsUseCase>(),
-          gh<_i220.UpdateProfileSettingsUseCase>(),
-          gh<_i727.SessionContract>(),
-          gh<_i727.CcDeviceInfoHelper>(),
-          gh<_i727.AuthCoordinator>(),
-        ));
+    gh.factory<_i174.CategorySettingsController>(
+        () => _i174.CategorySettingsController(
+              gh<_i397.GetCategoryGroupsUseCase>(),
+              gh<_i224.GetCategoriesUseCase>(),
+              gh<_i110.ToggleCategoryEnabledUseCase>(),
+            ));
     gh.factory<_i700.TransactionController>(() => _i700.TransactionController(
           gh<_i1027.TransactionRepository>(),
           gh<_i167.GetWalletBalancesUseCase>(),
