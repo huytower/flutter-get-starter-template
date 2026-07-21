@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,6 +24,7 @@ class PhoneAuthPage extends StatelessWidget {
             current is PhoneAuthLoading ||
             current is PhoneAuthError,
         builder: (context, state) {
+          'Phone Auth Page state: $state'.Log('PhoneAuthPage');
           // If code is sent, we show the OTP page.
           // We stay on OTP page even during loading/error of the verification step.
           final bool showOtp =

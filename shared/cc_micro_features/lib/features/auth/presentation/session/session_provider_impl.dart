@@ -1,7 +1,9 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../../domain/usecases/auth_state_changes_usecase.dart';
 import '../../domain/usecases/get_current_user_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 
@@ -12,23 +14,36 @@ import '../../domain/usecases/logout_usecase.dart';
 @LazySingleton(as: SessionContract)
 class SessionProviderImpl implements SessionContract {
   final GetCurrentUserUseCase _getCurrentUserUseCase;
+  final AuthStateChangesUseCase _authStateChangesUseCase;
   final LogoutUseCase _logoutUseCase;
 
   // Internal state using the stable Bridge Entity
   final BehaviorSubject<CcUserEntity?> _userSubject =
       BehaviorSubject<CcUserEntity?>.seeded(null);
 
-  SessionProviderImpl(this._getCurrentUserUseCase, this._logoutUseCase) {
+  SessionProviderImpl(
+    this._getCurrentUserUseCase,
+    this._authStateChangesUseCase,
+    this._logoutUseCase,
+  ) {
     _init();
   }
 
   Future<void> _init() async {
+    // Initial load
     final result = await _getCurrentUserUseCase();
     result.when((userEntity) {
       if (userEntity != null) {
+        'Initial session user: ${userEntity.id}'.Log('SessionProvider');
         _userSubject.add(_mapToBridge(userEntity));
       }
     }, (failure) => _userSubject.add(null));
+
+    // Listen to changes
+    _authStateChangesUseCase().listen((userEntity) {
+      'Auth state changed: ${userEntity?.id}'.Log('SessionProvider');
+      _userSubject.add(userEntity != null ? _mapToBridge(userEntity) : null);
+    });
   }
 
   @override

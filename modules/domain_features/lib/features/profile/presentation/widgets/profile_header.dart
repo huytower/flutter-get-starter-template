@@ -19,7 +19,7 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtitle = user != null
-        ? user!.email
+        ? user!.displayIdentifier
         : el.tr(CcLocaleKeys.profile_not_logged_in);
 
     return GestureDetector(
@@ -55,10 +55,7 @@ class ProfileHeader extends StatelessWidget {
                             fit: BoxFit.cover,
                           ),
                         )
-                      : const CcIconToken(
-                          Icons.person_rounded,
-                          size: 30,
-                        ),
+                      : const CcIconToken(Icons.person_rounded, size: 30),
                 ),
                 const CcSpaceMD(),
                 Expanded(
@@ -70,14 +67,16 @@ class ProfileHeader extends StatelessWidget {
                         displayName,
                         textStyle: context.ccTextTheme.titleMedium?.copyWith(
                           color: context.ccColorScheme.onPrimary,
-                          fontWeight: FontWeight.bold
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       const CcSpaceXS(),
                       CcText(
                         subtitle,
                         textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                          color: context.ccColorScheme.onPrimary.withOpacity(0.7)
+                          color: context.ccColorScheme.onPrimary.withOpacity(
+                            0.7,
+                          ),
                         ),
                       ),
                     ],

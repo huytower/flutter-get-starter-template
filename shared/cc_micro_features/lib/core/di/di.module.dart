@@ -11,6 +11,8 @@ import 'package:cc_micro_features/features/auth/data/repositories/firebase_auth_
     as _i832;
 import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart'
     as _i745;
+import 'package:cc_micro_features/features/auth/domain/usecases/auth_state_changes_usecase.dart'
+    as _i684;
 import 'package:cc_micro_features/features/auth/domain/usecases/get_current_user_usecase.dart'
     as _i380;
 import 'package:cc_micro_features/features/auth/domain/usecases/login_anonymously_usecase.dart'
@@ -72,6 +74,8 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i59.FirebaseAuth>(),
               gh<_i116.GoogleSignIn>(),
             ));
+    gh.lazySingleton<_i684.AuthStateChangesUseCase>(() =>
+        _i684.AuthStateChangesUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i380.GetCurrentUserUseCase>(
         () => _i380.GetCurrentUserUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i566.LoginAnonymouslyUseCase>(() =>
@@ -102,6 +106,7 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
             gh<_i521.BiometricRepository>()));
     gh.lazySingleton<_i727.SessionContract>(() => _i638.SessionProviderImpl(
           gh<_i380.GetCurrentUserUseCase>(),
+          gh<_i684.AuthStateChangesUseCase>(),
           gh<_i732.LogoutUseCase>(),
         ));
     gh.factory<_i384.BiometricBloc>(() => _i384.BiometricBloc(

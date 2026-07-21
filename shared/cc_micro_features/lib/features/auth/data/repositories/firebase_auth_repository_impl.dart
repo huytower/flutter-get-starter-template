@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:cc_micro_features/features/auth/domain/phone_auth_status.dart';
 import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -30,18 +31,26 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
     String password,
   ) async {
     try {
+      'Signing in with email: $email'.Log('FirebaseAuthRepository');
       final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
       final user = userCredential.user;
-      return switch (user) {
-        firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
-        _ => const Error(UnauthorizedFailure('Login failed')),
-      };
+      if (user != null) {
+        'Email sign in success: ${user.uid}'.Log('FirebaseAuthRepository');
+        return Success(_mapFirebaseUserToEntity(user));
+      } else {
+        'Email sign in failed: user is null'.Log('FirebaseAuthRepository');
+        return const Error(UnauthorizedFailure('Login failed'));
+      }
     } on firebase_auth.FirebaseAuthException catch (e) {
+      'Email sign in Firebase Auth Exception: ${e.message}'.Log(
+        'FirebaseAuthRepository',
+      );
       return Error(ServerFailure(e.message ?? 'Server error'));
     } catch (e) {
+      'Email sign in error: $e'.Log('FirebaseAuthRepository');
       return const Error(UnknownFailure('An error occurred'));
     }
   }
@@ -49,15 +58,23 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   @override
   Future<Result<CcUserEntity, CcFailure>> signInAnonymously() async {
     try {
+      'Signing in anonymously'.Log('FirebaseAuthRepository');
       final userCredential = await _firebaseAuth.signInAnonymously();
       final user = userCredential.user;
-      return switch (user) {
-        firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
-        _ => const Error(UnauthorizedFailure('Login failed')),
-      };
+      if (user != null) {
+        'Anonymous sign in success: ${user.uid}'.Log('FirebaseAuthRepository');
+        return Success(_mapFirebaseUserToEntity(user));
+      } else {
+        'Anonymous sign in failed: user is null'.Log('FirebaseAuthRepository');
+        return const Error(UnauthorizedFailure('Login failed'));
+      }
     } on firebase_auth.FirebaseAuthException catch (e) {
+      'Anonymous sign in Firebase Auth Exception: ${e.message}'.Log(
+        'FirebaseAuthRepository',
+      );
       return Error(ServerFailure(e.message ?? 'Server error'));
     } catch (e) {
+      'Anonymous sign in error: $e'.Log('FirebaseAuthRepository');
       return const Error(UnknownFailure('An error occurred'));
     }
   }
@@ -65,28 +82,39 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   @override
   Future<Result<CcUserEntity, CcFailure>> signInWithGoogle() async {
     try {
+      'Initializing Google Sign In'.Log('FirebaseAuthRepository');
       await _googleSignIn.initialize();
+      'Authenticating Google User'.Log('FirebaseAuthRepository');
       final googleUser = await _googleSignIn.authenticate();
 
       final googleAuth = googleUser.authentication;
+      'Google authentication received'.Log('FirebaseAuthRepository');
 
       final credential = firebase_auth.GoogleAuthProvider.credential(
         accessToken: null, // Access token is now separate in 7.x
         idToken: googleAuth.idToken,
       );
 
+      'Signing in to Firebase with Google credentials'.Log(
+        'FirebaseAuthRepository',
+      );
       final userCredential = await _firebaseAuth.signInWithCredential(
         credential,
       );
       final user = userCredential.user;
 
-      return switch (user) {
-        firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
-        _ => const Error(UnauthorizedFailure('Login failed')),
-      };
+      if (user != null) {
+        'Firebase sign in success: ${user.uid}'.Log('FirebaseAuthRepository');
+        return Success(_mapFirebaseUserToEntity(user));
+      } else {
+        'Firebase sign in failed: user is null'.Log('FirebaseAuthRepository');
+        return const Error(UnauthorizedFailure('Login failed'));
+      }
     } on firebase_auth.FirebaseAuthException catch (e) {
+      'Firebase Auth Exception: ${e.message}'.Log('FirebaseAuthRepository');
       return Error(ServerFailure(e.message ?? 'Server error'));
     } catch (e) {
+      'Google Sign In Error: $e'.Log('FirebaseAuthRepository');
       return const Error(UnknownFailure('An error occurred'));
     }
   }
@@ -94,6 +122,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   @override
   Future<Result<CcUserEntity, CcFailure>> signInWithApple() async {
     try {
+      'Starting Apple Sign In flow'.Log('FirebaseAuthRepository');
       final rawNonce = _generateNonce();
       final nonce = _sha256ofString(rawNonce);
 
@@ -105,22 +134,34 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         nonce: nonce,
       );
 
+      'Apple ID credential received'.Log('FirebaseAuthRepository');
+
       final credential = firebase_auth.OAuthProvider(
         'apple.com',
       ).credential(idToken: appleCredential.identityToken, rawNonce: rawNonce);
 
+      'Signing in to Firebase with Apple credentials'.Log(
+        'FirebaseAuthRepository',
+      );
       final userCredential = await _firebaseAuth.signInWithCredential(
         credential,
       );
       final user = userCredential.user;
 
-      return switch (user) {
-        firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
-        _ => const Error(UnauthorizedFailure('Login failed')),
-      };
+      if (user != null) {
+        'Apple sign in success: ${user.uid}'.Log('FirebaseAuthRepository');
+        return Success(_mapFirebaseUserToEntity(user));
+      } else {
+        'Apple sign in failed: user is null'.Log('FirebaseAuthRepository');
+        return const Error(UnauthorizedFailure('Login failed'));
+      }
     } on firebase_auth.FirebaseAuthException catch (e) {
+      'Apple sign in Firebase Auth Exception: ${e.message}'.Log(
+        'FirebaseAuthRepository',
+      );
       return Error(ServerFailure(e.message ?? 'Server error'));
     } catch (e) {
+      'Apple sign in error: $e'.Log('FirebaseAuthRepository');
       return const Error(UnknownFailure('An error occurred'));
     }
   }

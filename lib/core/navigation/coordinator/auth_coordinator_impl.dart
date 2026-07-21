@@ -9,7 +9,7 @@ import 'package:injectable/injectable.dart';
 class AuthCoordinatorImpl implements AuthCoordinator {
   @override
   void navigateToLogin(BuildContext context) {
-    context.router.replace(LoginRoute());
+    context.router.push(LoginRoute());
   }
 
   @override

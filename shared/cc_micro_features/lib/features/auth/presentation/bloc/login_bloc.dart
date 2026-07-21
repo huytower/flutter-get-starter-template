@@ -1,3 +1,4 @@
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -34,11 +35,23 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     emit(const LoginLoading());
 
+    'Logging in with email: ${event.email}'.Log('LoginBloc');
+
     final result = await _loginUseCase(event.email, event.password);
 
     result.when(
-      (user) => emit(LoginSuccess(user)),
-      (failure) => emit(LoginError(failure.message)),
+      (user) {
+        'Login success:\n'
+                '   ID: ${user.id}\n'
+                '   Email: ${user.email}\n'
+                '   Name: ${user.firstName} ${user.lastName}'
+            .Log('LoginBloc');
+        emit(LoginSuccess(user));
+      },
+      (failure) {
+        'Login failure: ${failure.message}'.Log('LoginBloc');
+        emit(LoginError(failure.message));
+      },
     );
   }
 
@@ -47,10 +60,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     emit(const LoginLoading());
+    'Logging in with Google'.Log('LoginBloc');
     final result = await _loginWithGoogleUseCase();
     result.when(
-      (user) => emit(LoginSuccess(user)),
-      (failure) => emit(LoginError(failure.message)),
+      (user) {
+        'Google Login success:\n'
+                '   ID: ${user.id}\n'
+                '   Email: ${user.email}\n'
+                '   Name: ${user.firstName} ${user.lastName}'
+            .Log('LoginBloc');
+        emit(LoginSuccess(user));
+      },
+      (failure) {
+        'Google Login failure: ${failure.message}'.Log('LoginBloc');
+        emit(LoginError(failure.message));
+      },
     );
   }
 

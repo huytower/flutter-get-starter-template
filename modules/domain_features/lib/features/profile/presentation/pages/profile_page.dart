@@ -37,16 +37,18 @@ class ProfilePage extends CcGetView<ProfileController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Obx(
-                    () => Hero(
+                  Obx(() {
+                    'Rebuilding ProfileHeader with user: ${controller.user.value?.id}'
+                        .Log('ProfilePage');
+                    return Hero(
                       tag: 'profile_hero_banner',
                       child: ProfileHeader(
                         user: controller.user.value,
                         displayName: controller.displayName,
                         onTap: () => controller.handleHeroBannerTap(context),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                   CcSymmetricPadding(
                     horizontal: CcPaddingParams.PAGE_SM,
                     child: Column(

@@ -1,11 +1,12 @@
 import 'dart:async';
 
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../domain/phone_auth_status.dart';
 import '../../domain/usecases/sign_in_with_phone_number_usecase.dart';
 import '../../domain/usecases/verify_phone_number_usecase.dart';
-import '../../domain/phone_auth_status.dart';
 import 'phone_auth_event.dart';
 import 'phone_auth_state.dart';
 
@@ -48,6 +49,8 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     _phoneNumber = event.phoneNumber;
     emit(const PhoneAuthLoading());
 
+    'Verifying phone number: ${event.phoneNumber}'.Log('PhoneAuthBloc');
+
     try {
       final verificationStream = _verifyPhoneNumberUseCase(
         phoneNumber: event.phoneNumber,
@@ -56,6 +59,7 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
       await emit.forEach<PhoneAuthStatus>(
         verificationStream,
         onData: (status) {
+          'Phone Auth Status: $status'.Log('PhoneAuthBloc');
           // If we already reached success (manually or automatically),
           // don't let background statuses (like timeouts) overwrite it.
           if (state is PhoneAuthSuccess) {
@@ -63,26 +67,33 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
           }
 
           if (status is PhoneAuthStatusCodeSent) {
+            'Code sent: ${status.verificationId}'.Log('PhoneAuthBloc');
             _verificationId = status.verificationId;
-            return PhoneAuthCodeSent(
-              status.verificationId,
-              status.resendToken,
-            );
+            return PhoneAuthCodeSent(status.verificationId, status.resendToken);
           } else if (status is PhoneAuthStatusCompleted) {
+            'Phone Auth completed automatically: ${status.user.id}'.Log(
+              'PhoneAuthBloc',
+            );
             return PhoneAuthSuccess(status.user);
           } else if (status is PhoneAuthStatusFailed) {
+            'Phone Auth failed: ${status.failure.message}'.Log('PhoneAuthBloc');
             return PhoneAuthError(status.failure.message);
           } else if (status is PhoneAuthStatusAutoRetrievalTimeout) {
+            'Phone Auth auto retrieval timeout: ${status.verificationId}'.Log(
+              'PhoneAuthBloc',
+            );
             // Keep the CodeSent state so the user can still enter the code manually
             return state;
           }
           return state;
         },
         onError: (error, stackTrace) {
+          'Phone Auth error in stream: $error'.Log('PhoneAuthBloc');
           return const PhoneAuthError('An error occurred');
         },
       );
     } catch (e) {
+      'Phone Auth exception: $e'.Log('PhoneAuthBloc');
       emit(const PhoneAuthError('An error occurred'));
     }
   }
@@ -97,11 +108,16 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     }
 
     if (_verificationId == null) {
+      'Cannot sign in: verificationId is null'.Log('PhoneAuthBloc');
       emit(const PhoneAuthError('An error occurred'));
       return;
     }
 
     emit(const PhoneAuthLoading());
+
+    'Signing in with code: ${event.smsCode} for id: $_verificationId'.Log(
+      'PhoneAuthBloc',
+    );
 
     final result = await _signInWithPhoneNumberUseCase(
       verificationId: _verificationId!,
@@ -110,9 +126,15 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
 
     result.when(
       (user) {
+        'Phone Sign In success:\n'
+                '   ID: ${user.id}\n'
+                '   Phone: ${user.phoneNumber}\n'
+                '   Email: ${user.email}'
+            .Log('PhoneAuthBloc');
         emit(PhoneAuthSuccess(user));
       },
       (failure) {
+        'Phone Sign In failure: ${failure.message}'.Log('PhoneAuthBloc');
         // Map failure message to specific OTP error messages
         final errorMessage = _mapOtpErrorToMessage(failure.message);
         emit(PhoneAuthError(errorMessage));

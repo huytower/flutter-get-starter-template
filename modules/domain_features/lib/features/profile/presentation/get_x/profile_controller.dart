@@ -44,6 +44,18 @@ class ProfileController extends CcGetController {
   void onInit() {
     super.onInit();
     user.bindStream(_session.userStream);
+    ever(user, (u) {
+      if (u != null) {
+        'ProfileController user updated:\n'
+                '   ID: ${u.id}\n'
+                '   Email: ${u.email}\n'
+                '   Phone: ${u.phoneNumber}\n'
+                '   Name: ${u.firstName} ${u.lastName}'
+            .Log('ProfileController');
+      } else {
+        'ProfileController user is now NULL'.Log('ProfileController');
+      }
+    });
     _load();
   }
 
@@ -77,7 +89,11 @@ class ProfileController extends CcGetController {
       u.firstName,
       u.lastName,
     ].whereType<String>().where((s) => s.isNotEmpty).join(' ');
-    return parts.isNotEmpty ? parts : u.email;
+
+    if (parts.isNotEmpty) return parts;
+    if (u.email.isNotEmpty) return u.email;
+    if (u.phoneNumber != null) return u.phoneNumber!;
+    return el.tr(CcLocaleKeys.profile_guest);
   }
 
   int get daysToSunday => 7 - DateTime.now().weekday;
@@ -140,7 +156,6 @@ class ProfileController extends CcGetController {
 
   Future<void> logout(BuildContext context) async {
     await _session.clearSession();
-    if (context.mounted) _authCoordinator.navigateToLogin(context);
   }
 
   void handleHeroBannerTap(BuildContext context) {
