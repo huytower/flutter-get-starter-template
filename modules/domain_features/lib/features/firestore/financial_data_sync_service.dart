@@ -45,27 +45,35 @@ class FinancialDataSyncService {
   String? get _userId => _session.currentUser?.id;
 
   Future<void> syncAll() async {
-    final userId = _userId;
-    if (userId == null) return;
-    if (!await _connection.hasInternetAccess) return;
+    try {
+      final userId = _userId;
+      if (userId == null) return;
+      if (!await _connection.hasInternetAccess) return;
 
-    await _syncPendingWallets(userId);
-    await _syncPendingTransactions(userId);
-    await _syncPendingBudgets(userId);
-    await _syncPendingReconciliations(userId);
-    await _syncPendingCategories(userId);
+      await _syncPendingWallets(userId);
+      await _syncPendingTransactions(userId);
+      await _syncPendingBudgets(userId);
+      await _syncPendingReconciliations(userId);
+      await _syncPendingCategories(userId);
+    } catch (e) {
+      developer.log('syncAll failed: $e', error: e);
+    }
   }
 
   Future<void> pullFromFirestore() async {
-    final userId = _userId;
-    if (userId == null) return;
-    if (!await _connection.hasInternetAccess) return;
+    try {
+      final userId = _userId;
+      if (userId == null) return;
+      if (!await _connection.hasInternetAccess) return;
 
-    await _pullWallets(userId);
-    await _pullTransactions(userId);
-    await _pullBudgets(userId);
-    await _pullReconciliations(userId);
-    await _pullCategories(userId);
+      await _pullWallets(userId);
+      await _pullTransactions(userId);
+      await _pullBudgets(userId);
+      await _pullReconciliations(userId);
+      await _pullCategories(userId);
+    } catch (e) {
+      developer.log('pullFromFirestore failed: $e', error: e);
+    }
   }
 
   Future<void> _syncPendingWallets(String userId) async {

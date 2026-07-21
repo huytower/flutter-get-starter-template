@@ -1,59 +1,29 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:data_config/core/util/firestore_sync_service.dart';
+import 'package:data_config/core/util/generic_sync_datasource.dart';
 import 'package:injectable/injectable.dart';
 
 import '../models/budget_limit_model.dart';
 
 @injectable
 class BudgetLimitSyncDataSource {
-  final FirestoreSyncService _syncService;
-  final SessionContract _session;
+  final GenericSyncDataSource _delegate;
 
-  BudgetLimitSyncDataSource(this._syncService, this._session);
+  BudgetLimitSyncDataSource(
+    FirestoreSyncService syncService,
+    SessionContract session,
+  ) : _delegate = GenericSyncDataSource(syncService, session, 'budgets');
 
-  Future<String?> syncBudget(BudgetLimitModel budget) async {
-    final user = _session.currentUser;
-    if (user == null) throw SyncException('User not authenticated');
+  Future<String?> syncBudget(BudgetLimitModel budget) => _delegate.sync(
+        localId: budget.id,
+        data: budget.toFirestoreData(),
+        remoteId: budget.syncMetadata.remoteId,
+        lastSyncedAt: budget.syncMetadata.lastSyncedAt,
+      );
 
-    final metadata = budget.syncMetadata;
-    return await _syncService.syncToFirestore(
-      userId: user.id,
-      collectionName: 'budgets',
-      localId: budget.id,
-      data: budget.toFirestoreData(),
-      remoteId: metadata.remoteId,
-      lastSyncedAt: metadata.lastSyncedAt,
-    );
-  }
+  Future<List<Map<String, dynamic>>> fetchBudgets() => _delegate.fetch();
 
-  Future<List<Map<String, dynamic>>> fetchBudgets() async {
-    final user = _session.currentUser;
-    if (user == null) throw SyncException('User not authenticated');
+  Future<void> deleteBudget(String remoteId) => _delegate.delete(remoteId);
 
-    return await _syncService.fetchFromFirestore(
-      userId: user.id,
-      collectionName: 'budgets',
-    );
-  }
-
-  Future<void> deleteBudget(String remoteId) async {
-    final user = _session.currentUser;
-    if (user == null) throw SyncException('User not authenticated');
-
-    await _syncService.deleteFromFirestore(
-      userId: user.id,
-      collectionName: 'budgets',
-      remoteId: remoteId,
-    );
-  }
-
-  Stream<List<Map<String, dynamic>>> streamBudgets() {
-    final user = _session.currentUser;
-    if (user == null) throw SyncException('User not authenticated');
-
-    return _syncService.streamFromFirestore(
-      userId: user.id,
-      collectionName: 'budgets',
-    );
-  }
+  Stream<List<Map<String, dynamic>>> streamBudgets() => _delegate.stream();
 }

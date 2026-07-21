@@ -190,8 +190,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i648.TransactionLocalDataSource());
     gh.lazySingleton<_i1058.WalletLocalDataSource>(
         () => _i1058.WalletLocalDataSource());
-    gh.lazySingleton<_i130.CommentRemote>(
-        () => _i130.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
     gh.factory<_i540.BudgetLimitSyncDataSource>(
         () => _i540.BudgetLimitSyncDataSource(
               gh<_i954.FirestoreSyncService>(),
@@ -215,22 +213,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i954.FirestoreSyncService>(),
           gh<_i727.SessionContract>(),
         ));
-    gh.lazySingleton<_i402.SimpleCubitInterface>(
-      () => _i691.SimpleCubit(),
-      dispose: (i) => i.close(),
-    );
-    gh.lazySingleton<_i857.CommentRepository>(
-        () => _i536.CommentRepositoryImpl(remote: gh<_i130.CommentRemote>()));
-    gh.factory<_i730.CommentController>(
-        () => _i730.CommentController(gh<_i670.CommentRepository>()));
-    gh.lazySingleton<_i580.CrashLogRemote>(
-        () => _i580.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.lazySingleton<_i270.ProfileRepository>(() =>
-        _i609.ProfileRepositoryImpl(local: gh<_i755.ProfileLocalDataSource>()));
-    gh.lazySingleton<_i572.WalletRepository>(() => _i589.WalletRepositoryImpl(
-          local: gh<_i1058.WalletLocalDataSource>(),
-          sync: gh<_i156.WalletSyncDataSource>(),
-        ));
+    gh.lazySingleton<_i130.CommentRemote>(
+        () => _i130.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
     gh.lazySingleton<_i963.FinancialDataSyncService>(
         () => _i963.FinancialDataSyncService(
               gh<_i954.FirestoreSyncService>(),
@@ -242,14 +226,10 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i945.ReconciliationSyncDataSource>(),
               gh<_i589.CategorySyncDataSource>(),
             ));
-    gh.lazySingleton<_i473.CrashLogRepository>(
-        () => _i689.CrashLogRepositoryImpl(gh<_i580.CrashLogRemote>()));
-    gh.lazySingleton<_i569.GetProfileSettingsUseCase>(
-        () => _i569.GetProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
-    gh.lazySingleton<_i220.UpdateProfileSettingsUseCase>(() =>
-        _i220.UpdateProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
-    gh.lazySingleton<_i892.UploadPendingCrashLogsUseCase>(() =>
-        _i892.UploadPendingCrashLogsUseCase(gh<_i473.CrashLogRepository>()));
+    gh.lazySingleton<_i402.SimpleCubitInterface>(
+      () => _i691.SimpleCubit(),
+      dispose: (i) => i.close(),
+    );
     gh.lazySingleton<_i544.BudgetLimitRepository>(
         () => _i150.BudgetLimitRepositoryImpl(
               local: gh<_i585.BudgetLimitLocalDataSource>(),
@@ -266,6 +246,18 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             gh<_i544.BudgetLimitRepository>()));
     gh.lazySingleton<_i829.UpdateBudgetLimitUseCase>(() =>
         _i829.UpdateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
+    gh.lazySingleton<_i857.CommentRepository>(
+        () => _i536.CommentRepositoryImpl(remote: gh<_i130.CommentRemote>()));
+    gh.factory<_i730.CommentController>(
+        () => _i730.CommentController(gh<_i670.CommentRepository>()));
+    gh.lazySingleton<_i580.CrashLogRemote>(
+        () => _i580.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+    gh.lazySingleton<_i270.ProfileRepository>(() =>
+        _i609.ProfileRepositoryImpl(local: gh<_i755.ProfileLocalDataSource>()));
+    gh.lazySingleton<_i572.WalletRepository>(() => _i589.WalletRepositoryImpl(
+          local: gh<_i1058.WalletLocalDataSource>(),
+          sync: gh<_i156.WalletSyncDataSource>(),
+        ));
     gh.lazySingleton<_i857.TransactionRepository>(
         () => _i1032.TransactionRepositoryImpl(
               local: gh<_i648.TransactionLocalDataSource>(),
@@ -307,6 +299,14 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i944.ReconciliationRepository>(),
               gh<_i1027.TransactionRepository>(),
             ));
+    gh.lazySingleton<_i473.CrashLogRepository>(
+        () => _i689.CrashLogRepositoryImpl(gh<_i580.CrashLogRemote>()));
+    gh.lazySingleton<_i569.GetProfileSettingsUseCase>(
+        () => _i569.GetProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
+    gh.lazySingleton<_i220.UpdateProfileSettingsUseCase>(() =>
+        _i220.UpdateProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
+    gh.lazySingleton<_i892.UploadPendingCrashLogsUseCase>(() =>
+        _i892.UploadPendingCrashLogsUseCase(gh<_i473.CrashLogRepository>()));
     gh.lazySingleton<_i167.GetWalletBalancesUseCase>(
         () => _i167.GetWalletBalancesUseCase(
               gh<_i572.WalletRepository>(),

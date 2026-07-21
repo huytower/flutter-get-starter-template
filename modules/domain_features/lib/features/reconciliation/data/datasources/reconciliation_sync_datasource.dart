@@ -1,59 +1,34 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:data_config/core/util/firestore_sync_service.dart';
+import 'package:data_config/core/util/generic_sync_datasource.dart';
 import 'package:injectable/injectable.dart';
 
 import '../models/reconciliation_model.dart';
 
 @injectable
 class ReconciliationSyncDataSource {
-  final FirestoreSyncService _syncService;
-  final SessionContract _session;
+  final GenericSyncDataSource _delegate;
 
-  ReconciliationSyncDataSource(this._syncService, this._session);
+  ReconciliationSyncDataSource(
+    FirestoreSyncService syncService,
+    SessionContract session,
+  ) : _delegate =
+        GenericSyncDataSource(syncService, session, 'reconciliations');
 
-  Future<String?> syncReconciliation(ReconciliationModel reconciliation) async {
-    final user = _session.currentUser;
-    if (user == null) throw SyncException('User not authenticated');
+  Future<String?> syncReconciliation(ReconciliationModel reconciliation) =>
+      _delegate.sync(
+        localId: reconciliation.id,
+        data: reconciliation.toFirestoreData(),
+        remoteId: reconciliation.syncMetadata.remoteId,
+        lastSyncedAt: reconciliation.syncMetadata.lastSyncedAt,
+      );
 
-    final metadata = reconciliation.syncMetadata;
-    return await _syncService.syncToFirestore(
-      userId: user.id,
-      collectionName: 'reconciliations',
-      localId: reconciliation.id,
-      data: reconciliation.toFirestoreData(),
-      remoteId: metadata.remoteId,
-      lastSyncedAt: metadata.lastSyncedAt,
-    );
-  }
+  Future<List<Map<String, dynamic>>> fetchReconciliations() =>
+      _delegate.fetch();
 
-  Future<List<Map<String, dynamic>>> fetchReconciliations() async {
-    final user = _session.currentUser;
-    if (user == null) throw SyncException('User not authenticated');
+  Future<void> deleteReconciliation(String remoteId) =>
+      _delegate.delete(remoteId);
 
-    return await _syncService.fetchFromFirestore(
-      userId: user.id,
-      collectionName: 'reconciliations',
-    );
-  }
-
-  Future<void> deleteReconciliation(String remoteId) async {
-    final user = _session.currentUser;
-    if (user == null) throw SyncException('User not authenticated');
-
-    await _syncService.deleteFromFirestore(
-      userId: user.id,
-      collectionName: 'reconciliations',
-      remoteId: remoteId,
-    );
-  }
-
-  Stream<List<Map<String, dynamic>>> streamReconciliations() {
-    final user = _session.currentUser;
-    if (user == null) throw SyncException('User not authenticated');
-
-    return _syncService.streamFromFirestore(
-      userId: user.id,
-      collectionName: 'reconciliations',
-    );
-  }
+  Stream<List<Map<String, dynamic>>> streamReconciliations() =>
+      _delegate.stream();
 }
