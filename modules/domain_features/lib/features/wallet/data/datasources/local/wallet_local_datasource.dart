@@ -95,4 +95,19 @@ class WalletLocalDataSource {
     final box = await _box;
     await box.delete(id);
   }
+
+  Future<WalletHiveModel?> getWalletModel(String id) async {
+    final box = await _box;
+    return box.get(id);
+  }
+
+  Future<void> addWalletModel(WalletHiveModel wallet) async {
+    final box = await _box;
+    await box.put(wallet.id, wallet);
+  }
+
+  Future<void> updateWalletModel(WalletHiveModel wallet) async {
+    final box = await _box;
+    await box.put(wallet.id, wallet);
+  }
 }

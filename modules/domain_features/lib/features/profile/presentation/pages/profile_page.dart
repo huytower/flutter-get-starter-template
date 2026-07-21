@@ -43,6 +43,7 @@ class ProfilePage extends CcGetView<ProfileController> {
                       child: ProfileHeader(
                         user: controller.user.value,
                         displayName: controller.displayName,
+                        onTap: () => controller.handleHeroBannerTap(context),
                       ),
                     ),
                   ),

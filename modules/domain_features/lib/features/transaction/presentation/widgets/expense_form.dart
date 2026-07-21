@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/util/money_constants.dart';
 import '../get_x/expense_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';

@@ -20,6 +20,7 @@ export 'features/comment/presentation/ui/comment_page.dart';
 // Examples
 export 'features/examples/bloc_simple_page/cubit/simple/simple_cubit_page.dart';
 export 'features/examples/bloc_simple_page/origin/advance/advance_bloc_page.dart';
+export 'features/firestore/financial_data_sync_service.dart';
 // Profile
 export 'features/profile/export_profile.dart';
 // Reconciliation

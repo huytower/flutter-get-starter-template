@@ -4,6 +4,7 @@ import 'package:cc_sdk_data/data/models/pagination_request.dart';
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:data_config/core/repository/cc_base_repository.dart';
 import 'package:domain_features/export_domain_features.dart';
+import 'package:domain_features/features/firestore/model/sync_metadata.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -14,13 +15,15 @@ class TransactionRepositoryImpl
     with CcBaseRepository
     implements TransactionRepository {
   @factoryMethod
-  TransactionRepositoryImpl({required TransactionLocalDataSource local})
-    : _local = local;
+  TransactionRepositoryImpl({
+    required TransactionLocalDataSource local,
+    required FinancialDataSyncService syncService,
+  }) : _local = local,
+       _syncService = syncService;
 
   final TransactionLocalDataSource _local;
+  final FinancialDataSyncService _syncService;
 
-  /// All *active* transactions as entities, newest first. Soft-deleted rows
-  /// are excluded from every read path.
   Future<List<TransactionEntity>> _allSortedDesc() async {
     final models = await _local.getAll();
     final entities =
@@ -51,7 +54,15 @@ class TransactionRepositoryImpl
     TransactionEntity transaction,
   ) {
     return safeRequest(() async {
-      await _local.add(TransactionModel.fromEntity(transaction));
+      final model = TransactionModel.fromEntity(transaction);
+      await _local.add(model);
+
+      final pending = model.copyWithSyncMetadata(
+        SyncMetadata.pending(model.id ?? ''),
+      );
+      await _local.update(pending);
+
+      _syncService.syncAll();
     });
   }
 
@@ -59,6 +70,7 @@ class TransactionRepositoryImpl
   Future<Result<void, CcFailure>> deleteTransaction(String id) {
     return safeRequest(() async {
       await _local.delete(id);
+      _syncService.syncAll();
     });
   }
 
@@ -66,6 +78,7 @@ class TransactionRepositoryImpl
   Future<Result<void, CcFailure>> softDeleteByWallet(String walletId) {
     return safeRequest(() async {
       await _local.softDeleteByWallet(walletId, DateTime.now());
+      _syncService.syncAll();
     });
   }
 

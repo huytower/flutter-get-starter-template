@@ -1,5 +1,7 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:data_config/core/repository/cc_base_repository.dart';
+import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
+import 'package:domain_features/features/firestore/model/sync_metadata.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -13,10 +15,14 @@ class ReconciliationRepositoryImpl
     with CcBaseRepository
     implements ReconciliationRepository {
   @factoryMethod
-  ReconciliationRepositoryImpl({required ReconciliationLocalDataSource local})
-    : _local = local;
+  ReconciliationRepositoryImpl({
+    required ReconciliationLocalDataSource local,
+    required FinancialDataSyncService syncService,
+  }) : _local = local,
+       _syncService = syncService;
 
   final ReconciliationLocalDataSource _local;
+  final FinancialDataSyncService _syncService;
 
   Future<List<ReconciliationEntity>> _allSortedDesc() async {
     final models = await _local.getAll();
@@ -43,7 +49,15 @@ class ReconciliationRepositoryImpl
     ReconciliationEntity reconciliation,
   ) {
     return safeRequest(() async {
-      await _local.put(ReconciliationModel.fromEntity(reconciliation));
+      final model = ReconciliationModel.fromEntity(reconciliation);
+      await _local.put(model);
+
+      final pending = model.copyWithSyncMetadata(
+        SyncMetadata.pending(model.id),
+      );
+      await _local.put(pending);
+
+      _syncService.syncAll();
     });
   }
 
@@ -51,6 +65,7 @@ class ReconciliationRepositoryImpl
   Future<Result<void, CcFailure>> deleteReconciliation(String id) {
     return safeRequest(() async {
       await _local.delete(id);
+      _syncService.syncAll();
     });
   }
 }

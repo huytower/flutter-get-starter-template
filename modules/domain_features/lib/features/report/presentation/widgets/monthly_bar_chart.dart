@@ -4,7 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/util/money_format_helper.dart';
+import '../../../../core/helper/money_format_helper.dart';
 import '../../domain/entities/monthly_summary_entity.dart';
 
 /// Grouped bar chart comparing income vs expense per month
@@ -73,7 +73,7 @@ class MonthlyBarChart extends StatelessWidget {
               formatVndShort(rod.toY),
               TextStyle(
                 color: context.ccColorScheme.onPrimary,
-                fontWeight: FontWeight.w600
+                fontWeight: FontWeight.w600,
               ),
             );
           },
@@ -102,7 +102,7 @@ class MonthlyBarChart extends StatelessWidget {
                 child: CcText(
                   formatVndShort(value),
                   textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                    color: context.ccColorScheme.onSurfaceVariant
+                    color: context.ccColorScheme.onSurfaceVariant,
                   ),
                 ),
               );
@@ -123,7 +123,7 @@ class MonthlyBarChart extends StatelessWidget {
                 child: CcText(
                   months[index].shortLabel,
                   textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                    color: context.ccColorScheme.onSurfaceVariant
+                    color: context.ccColorScheme.onSurfaceVariant,
                   ),
                 ),
               );

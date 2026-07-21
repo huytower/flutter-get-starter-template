@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
+import 'dart:developer' as developer;
 
+import 'package:flutter/material.dart';
+import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:cc_micro_features/features/splash/core/splash_manager.dart';
+import 'package:domain_features/export_domain_features.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-
-import 'package:cc_micro_features/features/splash/core/splash_manager.dart';
-import 'package:domain_features/export_domain_features.dart';
 
 import '../../../core/logging/init_logger.dart';
 import '../tabs/quick_test_tab_content.dart';
@@ -22,16 +23,28 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
     showQuickTestAsSecondTab = _isQuickTestRoute(startRoute);
     checkSplash();
 
-    // Trigger deferred telemetry and logging once the UI shell is initialized
     _initAppTelemetry();
+    _initCloudSync();
   }
 
   void _initAppTelemetry() {
-    // Non-blocking, deferred execution using microtask to allow UI to render first
     Future.microtask(() {
       FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
       logEnv();
       logVersionInfo();
+    });
+  }
+
+  void _initCloudSync() {
+    Future.microtask(() async {
+      final session = getIt<SessionContract>();
+      if (session.isAuthenticated) {
+        try {
+          await getIt<FinancialDataSyncService>().pullFromFirestore();
+        } catch (e) {
+          developer.log('Initial cloud sync failed', error: e);
+        }
+      }
     });
   }
 

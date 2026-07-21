@@ -2,7 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/util/wallet_icon_helper.dart';
+import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 

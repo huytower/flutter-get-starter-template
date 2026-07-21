@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../../core/util/money_format_helper.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
 import '../get_x/reconciliation_controller.dart';
 
@@ -193,7 +193,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
       return Row(
         children: [
           const CcIconToken(Icons.check_circle_outline, size: 16),
-            const CcSpaceXS(),
+          const CcSpaceXS(),
           CcText(
             el.tr(CcLocaleKeys.reconciliation_matched),
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
@@ -215,7 +215,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
               color: statusColor,
               size: 16,
             ),
-          const CcSpaceXS(),
+            const CcSpaceXS(),
             CcText(
               el.tr(
                 CcLocaleKeys.reconciliation_lech,

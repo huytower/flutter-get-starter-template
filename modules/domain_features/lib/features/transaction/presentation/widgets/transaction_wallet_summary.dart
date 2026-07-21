@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/util/money_format_helper.dart';
+import '../../../../core/helper/money_format_helper.dart';
 import '../get_x/transaction_controller.dart';
 
 class TransactionWalletSummary extends StatelessWidget {
@@ -29,7 +29,7 @@ class TransactionWalletSummary extends StatelessWidget {
             '${el.tr(CcLocaleKeys.transaction_wallet)}  ${formatVndShort(controller.walletTotal.value)}',
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(
               color: context.ccColorScheme.onPrimary.withOpacity(0.9),
-              fontWeight: CcTypographyParams.semiBold
+              fontWeight: CcTypographyParams.semiBold,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

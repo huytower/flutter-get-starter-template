@@ -5,7 +5,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../../core/util/gradient_app_bar.dart';
+import '../../../../core/widgets/gradient_app_bar.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_hero_banner.dart';
 import '../widgets/budget_preview_section.dart';

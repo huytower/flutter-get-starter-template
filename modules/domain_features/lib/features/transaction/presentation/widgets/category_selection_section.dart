@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/util/wallet_icon_helper.dart';
+import '../../../../core/helper/wallet_icon_helper.dart';
 
 class CategorySelectionSection extends StatefulWidget {
   final Function(CategoryEntity)? onCategorySelected;

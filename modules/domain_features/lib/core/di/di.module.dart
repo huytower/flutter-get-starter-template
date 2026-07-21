@@ -6,10 +6,13 @@
 import 'dart:async' as _i687;
 
 import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
+import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
 import 'package:dio/dio.dart' as _i361;
 import 'package:domain_features/export_domain_features.dart' as _i857;
 import 'package:domain_features/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart'
     as _i451;
+import 'package:domain_features/features/budget_limit/data/datasources/budget_limit_sync_datasource.dart'
+    as _i540;
 import 'package:domain_features/features/budget_limit/data/datasources/local/budget_limit_local_datasource.dart'
     as _i585;
 import 'package:domain_features/features/budget_limit/data/repositories/budget_limit_repository_impl.dart'
@@ -34,6 +37,8 @@ import 'package:domain_features/features/budget_limit/domain/usecases/update_bud
     as _i829;
 import 'package:domain_features/features/budget_limit/presentation/get_x/budget_limit_controller.dart'
     as _i1003;
+import 'package:domain_features/features/category/data/datasources/category_sync_datasource.dart'
+    as _i589;
 import 'package:domain_features/features/category/data/datasources/local/category_local_datasource.dart'
     as _i547;
 import 'package:domain_features/features/category/data/repositories/category_repository_impl.dart'
@@ -78,6 +83,8 @@ import 'package:domain_features/features/examples/bloc_simple_page/cubit/simple/
     as _i402;
 import 'package:domain_features/features/examples/bloc_simple_page/origin/advance/advance_bloc.dart'
     as _i1004;
+import 'package:domain_features/features/firestore/financial_data_sync_service.dart'
+    as _i963;
 import 'package:domain_features/features/profile/data/datasources/local/profile_local_datasource.dart'
     as _i755;
 import 'package:domain_features/features/profile/data/repositories/profile_repository_impl.dart'
@@ -92,6 +99,8 @@ import 'package:domain_features/features/profile/presentation/get_x/profile_cont
     as _i920;
 import 'package:domain_features/features/reconciliation/data/datasources/local/reconciliation_local_datasource.dart'
     as _i896;
+import 'package:domain_features/features/reconciliation/data/datasources/reconciliation_sync_datasource.dart'
+    as _i945;
 import 'package:domain_features/features/reconciliation/data/repositories/reconciliation_repository_impl.dart'
     as _i513;
 import 'package:domain_features/features/reconciliation/domain/repositories/reconciliation_repository.dart'
@@ -116,6 +125,8 @@ import 'package:domain_features/features/report/presentation/get_x/report_contro
     as _i353;
 import 'package:domain_features/features/transaction/data/datasources/local/transaction_local_datasource.dart'
     as _i648;
+import 'package:domain_features/features/transaction/data/datasources/transaction_sync_datasource.dart'
+    as _i784;
 import 'package:domain_features/features/transaction/data/repositories/transaction_repository_impl.dart'
     as _i1032;
 import 'package:domain_features/features/transaction/domain/repositories/transaction_repository.dart'
@@ -134,6 +145,8 @@ import 'package:domain_features/features/transaction/presentation/get_x/transfer
     as _i973;
 import 'package:domain_features/features/wallet/data/datasources/local/wallet_local_datasource.dart'
     as _i1058;
+import 'package:domain_features/features/wallet/data/datasources/wallet_sync_datasource.dart'
+    as _i156;
 import 'package:domain_features/features/wallet/data/repositories/wallet_repository_impl.dart'
     as _i589;
 import 'package:domain_features/features/wallet/domain/repositories/wallet_repository.dart'
@@ -145,6 +158,8 @@ import 'package:domain_features/features/wallet/domain/usecases/get_wallet_book_
 import 'package:domain_features/features/wallet/presentation/get_x/wallet_controller.dart'
     as _i229;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart'
+    as _i161;
 
 class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -175,39 +190,97 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i648.TransactionLocalDataSource());
     gh.lazySingleton<_i1058.WalletLocalDataSource>(
         () => _i1058.WalletLocalDataSource());
-    gh.lazySingleton<_i857.TransactionRepository>(() =>
-        _i1032.TransactionRepositoryImpl(
-            local: gh<_i648.TransactionLocalDataSource>()));
     gh.lazySingleton<_i130.CommentRemote>(
         () => _i130.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.lazySingleton<_i944.ReconciliationRepository>(() =>
-        _i513.ReconciliationRepositoryImpl(
-            local: gh<_i896.ReconciliationLocalDataSource>()));
+    gh.factory<_i540.BudgetLimitSyncDataSource>(
+        () => _i540.BudgetLimitSyncDataSource(
+              gh<_i954.FirestoreSyncService>(),
+              gh<_i727.SessionContract>(),
+            ));
+    gh.factory<_i589.CategorySyncDataSource>(() => _i589.CategorySyncDataSource(
+          gh<_i954.FirestoreSyncService>(),
+          gh<_i727.SessionContract>(),
+        ));
+    gh.factory<_i945.ReconciliationSyncDataSource>(
+        () => _i945.ReconciliationSyncDataSource(
+              gh<_i954.FirestoreSyncService>(),
+              gh<_i727.SessionContract>(),
+            ));
+    gh.factory<_i784.TransactionSyncDataSource>(
+        () => _i784.TransactionSyncDataSource(
+              gh<_i954.FirestoreSyncService>(),
+              gh<_i727.SessionContract>(),
+            ));
+    gh.factory<_i156.WalletSyncDataSource>(() => _i156.WalletSyncDataSource(
+          gh<_i954.FirestoreSyncService>(),
+          gh<_i727.SessionContract>(),
+        ));
     gh.lazySingleton<_i402.SimpleCubitInterface>(
       () => _i691.SimpleCubit(),
       dispose: (i) => i.close(),
     );
-    gh.lazySingleton<_i1059.CategoryRepository>(() =>
-        _i658.CategoryRepositoryImpl(
-            local: gh<_i547.CategoryLocalDataSource>()));
-    gh.lazySingleton<_i850.GetMonthlySummaryUseCase>(() =>
-        _i850.GetMonthlySummaryUseCase(gh<_i1027.TransactionRepository>()));
     gh.lazySingleton<_i857.CommentRepository>(
         () => _i536.CommentRepositoryImpl(remote: gh<_i130.CommentRemote>()));
-    gh.lazySingleton<_i446.GetReconciliationHistoryUseCase>(() =>
-        _i446.GetReconciliationHistoryUseCase(
-            gh<_i944.ReconciliationRepository>()));
     gh.factory<_i730.CommentController>(
         () => _i730.CommentController(gh<_i670.CommentRepository>()));
     gh.lazySingleton<_i580.CrashLogRemote>(
         () => _i580.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.lazySingleton<_i572.WalletRepository>(() =>
-        _i589.WalletRepositoryImpl(local: gh<_i1058.WalletLocalDataSource>()));
     gh.lazySingleton<_i270.ProfileRepository>(() =>
         _i609.ProfileRepositoryImpl(local: gh<_i755.ProfileLocalDataSource>()));
-    gh.lazySingleton<_i544.BudgetLimitRepository>(() =>
-        _i150.BudgetLimitRepositoryImpl(
-            local: gh<_i585.BudgetLimitLocalDataSource>()));
+    gh.lazySingleton<_i572.WalletRepository>(() => _i589.WalletRepositoryImpl(
+          local: gh<_i1058.WalletLocalDataSource>(),
+          sync: gh<_i156.WalletSyncDataSource>(),
+        ));
+    gh.lazySingleton<_i963.FinancialDataSyncService>(
+        () => _i963.FinancialDataSyncService(
+              gh<_i954.FirestoreSyncService>(),
+              gh<_i727.SessionContract>(),
+              gh<_i161.InternetConnection>(),
+              gh<_i156.WalletSyncDataSource>(),
+              gh<_i784.TransactionSyncDataSource>(),
+              gh<_i540.BudgetLimitSyncDataSource>(),
+              gh<_i945.ReconciliationSyncDataSource>(),
+              gh<_i589.CategorySyncDataSource>(),
+            ));
+    gh.lazySingleton<_i473.CrashLogRepository>(
+        () => _i689.CrashLogRepositoryImpl(gh<_i580.CrashLogRemote>()));
+    gh.lazySingleton<_i569.GetProfileSettingsUseCase>(
+        () => _i569.GetProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
+    gh.lazySingleton<_i220.UpdateProfileSettingsUseCase>(() =>
+        _i220.UpdateProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
+    gh.lazySingleton<_i892.UploadPendingCrashLogsUseCase>(() =>
+        _i892.UploadPendingCrashLogsUseCase(gh<_i473.CrashLogRepository>()));
+    gh.lazySingleton<_i544.BudgetLimitRepository>(
+        () => _i150.BudgetLimitRepositoryImpl(
+              local: gh<_i585.BudgetLimitLocalDataSource>(),
+              syncService: gh<_i963.FinancialDataSyncService>(),
+            ));
+    gh.lazySingleton<_i77.CreateBudgetLimitUseCase>(
+        () => _i77.CreateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
+    gh.lazySingleton<_i106.DeleteBudgetLimitUseCase>(() =>
+        _i106.DeleteBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
+    gh.lazySingleton<_i847.GetBudgetLimitsUseCase>(
+        () => _i847.GetBudgetLimitsUseCase(gh<_i544.BudgetLimitRepository>()));
+    gh.lazySingleton<_i256.UpdateBudgetLimitOrdersUseCase>(() =>
+        _i256.UpdateBudgetLimitOrdersUseCase(
+            gh<_i544.BudgetLimitRepository>()));
+    gh.lazySingleton<_i829.UpdateBudgetLimitUseCase>(() =>
+        _i829.UpdateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
+    gh.lazySingleton<_i857.TransactionRepository>(
+        () => _i1032.TransactionRepositoryImpl(
+              local: gh<_i648.TransactionLocalDataSource>(),
+              syncService: gh<_i857.FinancialDataSyncService>(),
+            ));
+    gh.lazySingleton<_i944.ReconciliationRepository>(
+        () => _i513.ReconciliationRepositoryImpl(
+              local: gh<_i896.ReconciliationLocalDataSource>(),
+              syncService: gh<_i963.FinancialDataSyncService>(),
+            ));
+    gh.lazySingleton<_i1059.CategoryRepository>(
+        () => _i658.CategoryRepositoryImpl(
+              local: gh<_i547.CategoryLocalDataSource>(),
+              syncService: gh<_i963.FinancialDataSyncService>(),
+            ));
     gh.lazySingleton<_i169.GetCategorySpendingUseCase>(
         () => _i169.GetCategorySpendingUseCase(
               gh<_i1027.TransactionRepository>(),
@@ -234,14 +307,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i944.ReconciliationRepository>(),
               gh<_i1027.TransactionRepository>(),
             ));
-    gh.lazySingleton<_i473.CrashLogRepository>(
-        () => _i689.CrashLogRepositoryImpl(gh<_i580.CrashLogRemote>()));
-    gh.lazySingleton<_i569.GetProfileSettingsUseCase>(
-        () => _i569.GetProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
-    gh.lazySingleton<_i220.UpdateProfileSettingsUseCase>(() =>
-        _i220.UpdateProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
-    gh.lazySingleton<_i892.UploadPendingCrashLogsUseCase>(() =>
-        _i892.UploadPendingCrashLogsUseCase(gh<_i473.CrashLogRepository>()));
     gh.lazySingleton<_i167.GetWalletBalancesUseCase>(
         () => _i167.GetWalletBalancesUseCase(
               gh<_i572.WalletRepository>(),
@@ -252,17 +317,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i572.WalletRepository>(),
               gh<_i1027.TransactionRepository>(),
             ));
-    gh.lazySingleton<_i77.CreateBudgetLimitUseCase>(
-        () => _i77.CreateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
-    gh.lazySingleton<_i106.DeleteBudgetLimitUseCase>(() =>
-        _i106.DeleteBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
-    gh.lazySingleton<_i847.GetBudgetLimitsUseCase>(
-        () => _i847.GetBudgetLimitsUseCase(gh<_i544.BudgetLimitRepository>()));
-    gh.lazySingleton<_i256.UpdateBudgetLimitOrdersUseCase>(() =>
-        _i256.UpdateBudgetLimitOrdersUseCase(
-            gh<_i544.BudgetLimitRepository>()));
-    gh.lazySingleton<_i829.UpdateBudgetLimitUseCase>(() =>
-        _i829.UpdateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
+    gh.lazySingleton<_i850.GetMonthlySummaryUseCase>(() =>
+        _i850.GetMonthlySummaryUseCase(gh<_i1027.TransactionRepository>()));
     gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
           gh<_i569.GetProfileSettingsUseCase>(),
           gh<_i220.UpdateProfileSettingsUseCase>(),
@@ -271,6 +327,9 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i727.CcDeviceInfoHelper>(),
           gh<_i727.AuthCoordinator>(),
         ));
+    gh.lazySingleton<_i446.GetReconciliationHistoryUseCase>(() =>
+        _i446.GetReconciliationHistoryUseCase(
+            gh<_i944.ReconciliationRepository>()));
     gh.lazySingleton<_i804.PerformReconciliationUseCase>(
         () => _i804.PerformReconciliationUseCase(
               gh<_i167.GetWalletBalancesUseCase>(),

@@ -4,7 +4,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../../core/util/gradient_app_bar.dart';
+import '../../../../core/widgets/gradient_app_bar.dart';
 import '../../domain/entities/comment_entity.dart';
 
 @RoutePage()
@@ -62,7 +62,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
           comment.name,
           textStyle: context.ccTextTheme.headlineSmall?.copyWith(
             fontWeight: CcTypographyParams.bold,
-            color: context.ccColorScheme.primary
+            color: context.ccColorScheme.primary,
           ),
         ),
         const CcSpaceSM(),
@@ -127,7 +127,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
           comment.body,
           textStyle: context.ccTextTheme.bodyLarge?.copyWith(
             height: 1.6,
-            color: context.ccColorScheme.onSurface
+            color: context.ccColorScheme.onSurface,
           ),
         ),
       ],

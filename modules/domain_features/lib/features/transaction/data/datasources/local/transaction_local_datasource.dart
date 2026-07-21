@@ -26,6 +26,11 @@ class TransactionLocalDataSource {
     await box.put(transaction.id, transaction);
   }
 
+  Future<void> update(TransactionModel transaction) async {
+    final box = await _box;
+    await box.put(transaction.id, transaction);
+  }
+
   Future<void> delete(String id) async {
     final box = await _box;
     await box.delete(id);

@@ -1,5 +1,7 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:data_config/core/repository/cc_base_repository.dart';
+import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
+import 'package:domain_features/features/firestore/model/sync_metadata.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -13,10 +15,14 @@ class BudgetLimitRepositoryImpl
     with CcBaseRepository
     implements BudgetLimitRepository {
   @factoryMethod
-  BudgetLimitRepositoryImpl({required BudgetLimitLocalDataSource local})
-    : _local = local;
+  BudgetLimitRepositoryImpl({
+    required BudgetLimitLocalDataSource local,
+    required FinancialDataSyncService syncService,
+  }) : _local = local,
+       _syncService = syncService;
 
   final BudgetLimitLocalDataSource _local;
+  final FinancialDataSyncService _syncService;
 
   @override
   Future<Result<List<BudgetLimitEntity>, CcFailure>> getBudgets({
@@ -48,14 +54,30 @@ class BudgetLimitRepositoryImpl
   @override
   Future<Result<void, CcFailure>> createBudget(BudgetLimitEntity budget) {
     return safeRequest(() async {
-      await _local.put(BudgetLimitModel.fromEntity(budget));
+      final model = BudgetLimitModel.fromEntity(budget);
+      await _local.put(model);
+
+      final pending = model.copyWithSyncMetadata(
+        SyncMetadata.pending(model.id),
+      );
+      await _local.put(pending);
+
+      _syncService.syncAll();
     });
   }
 
   @override
   Future<Result<void, CcFailure>> updateBudget(BudgetLimitEntity budget) {
     return safeRequest(() async {
-      await _local.put(BudgetLimitModel.fromEntity(budget));
+      final model = BudgetLimitModel.fromEntity(budget);
+      await _local.put(model);
+
+      final pending = model.copyWithSyncMetadata(
+        SyncMetadata.pending(model.id),
+      );
+      await _local.put(pending);
+
+      _syncService.syncAll();
     });
   }
 
@@ -63,6 +85,7 @@ class BudgetLimitRepositoryImpl
   Future<Result<void, CcFailure>> deleteBudget(String id) {
     return safeRequest(() async {
       await _local.delete(id);
+      _syncService.syncAll();
     });
   }
 }

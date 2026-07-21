@@ -41,4 +41,22 @@ class ReconciliationAllocationModel {
     bookBalance: bookBalance,
     actualBalance: actualBalance,
   );
+
+  Map<String, dynamic> toJson() {
+    return {
+      'walletId': walletId,
+      'walletName': walletName,
+      'bookBalance': bookBalance,
+      'actualBalance': actualBalance,
+    };
+  }
+
+  factory ReconciliationAllocationModel.fromJson(Map<String, dynamic> json) {
+    return ReconciliationAllocationModel(
+      walletId: json['walletId'] as String,
+      walletName: json['walletName'] as String,
+      bookBalance: json['bookBalance'] as int,
+      actualBalance: json['actualBalance'] as int,
+    );
+  }
 }

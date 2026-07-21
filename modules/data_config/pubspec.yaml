@@ -28,6 +28,7 @@ dependencies:
   dio_smart_retry: ^7.0.1
 
   firebase_core: ^4.11.0
+  cloud_firestore: ^6.0.0
   firebase_auth: ^6.5.4
   google_sign_in: ^7.2.0
   sign_in_with_apple: ^8.1.0

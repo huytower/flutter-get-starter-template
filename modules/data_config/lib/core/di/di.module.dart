@@ -7,6 +7,7 @@ import 'dart:async' as _i687;
 
 import 'package:data_config/core/di/di.dart' as _i177;
 import 'package:data_config/core/di/module/data_module.dart' as _i291;
+import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
 import 'package:dio/dio.dart' as _i361;
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
@@ -20,6 +21,8 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
     final dataModule = _$DataModule();
     gh.lazySingleton<_i59.FirebaseAuth>(() => firebaseModule.firebaseAuth);
     gh.lazySingleton<_i116.GoogleSignIn>(() => firebaseModule.googleSignIn);
+    gh.lazySingleton<_i954.FirestoreSyncService>(
+        () => _i954.FirestoreSyncService());
     gh.lazySingleton<_i361.Interceptor>(
       () => dataModule.cacheInterceptor,
       instanceName: 'cacheInterceptor',

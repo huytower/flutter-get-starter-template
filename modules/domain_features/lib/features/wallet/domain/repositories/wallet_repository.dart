@@ -13,4 +13,10 @@ abstract class WalletRepository {
   Future<Result<void, CcFailure>> updateWallet(WalletEntity wallet);
 
   Future<Result<void, CcFailure>> deleteWallet(String id);
+
+  /// Syncs a specific wallet to Firestore.
+  Future<Result<void, CcFailure>> syncWallet(String id);
+
+  /// Syncs all wallets from Firestore to local storage.
+  Future<Result<void, CcFailure>> syncFromFirestore();
 }

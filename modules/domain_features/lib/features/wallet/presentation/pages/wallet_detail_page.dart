@@ -5,8 +5,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/util/gradient_app_bar.dart';
-import '../../../../core/util/money_format_helper.dart';
+import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/widgets/gradient_app_bar.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 
@@ -39,7 +39,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
           wallet.name,
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
-            fontWeight: CcTypographyParams.bold
+            fontWeight: CcTypographyParams.bold,
           ),
         ),
       ),
@@ -89,7 +89,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
           CcText(
             el.tr(CcLocaleKeys.wallet_total_assets),
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.onPrimary.withOpacity(0.8)
+              color: context.ccColorScheme.onPrimary.withOpacity(0.8),
             ),
           ),
           const CcSpaceMD(),
@@ -97,7 +97,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
             formatVndWithSymbol(_currentBalance),
             textStyle: context.ccTextTheme.headlineMedium?.copyWith(
               color: context.ccColorScheme.onPrimary,
-              fontWeight: FontWeight.bold
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],

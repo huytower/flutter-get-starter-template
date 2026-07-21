@@ -143,6 +143,12 @@ class ProfileController extends CcGetController {
     if (context.mounted) _authCoordinator.navigateToLogin(context);
   }
 
+  void handleHeroBannerTap(BuildContext context) {
+    if (!isLoggedIn) {
+      _authCoordinator.navigateToLogin(context);
+    }
+  }
+
   void openCrashLogViewer(BuildContext context) {
     if (!CrashLogDevOverlay.isViewerEnabled) return;
     final navContext = Catcher2.navigatorKey.currentContext ?? context;

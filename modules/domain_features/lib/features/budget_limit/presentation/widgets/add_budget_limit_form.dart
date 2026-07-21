@@ -4,8 +4,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/util/money_constants.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../domain/entities/budget_limit_entity.dart';
