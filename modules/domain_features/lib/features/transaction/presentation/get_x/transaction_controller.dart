@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
@@ -91,6 +92,9 @@ class TransactionController extends CcGetController {
 
   Future<void> refreshData() async {
     await refreshWalletTotal();
+    if (Get.isRegistered<BudgetAllocationController>()) {
+      Get.find<BudgetAllocationController>().loadAll();
+    }
   }
 
   void openReport(BuildContext context) {
@@ -101,7 +105,6 @@ class TransactionController extends CcGetController {
   }
 
   void submitCurrentForm(BuildContext context) {
-    flashWalletSummary();
     switch (selectedTabIndex.value) {
       case 0:
         if (Get.isRegistered<ExpenseFormController>()) {

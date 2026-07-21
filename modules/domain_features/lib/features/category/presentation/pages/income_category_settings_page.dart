@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/widgets/gradient_app_bar.dart';
 import '../../data/datasources/local/category_seed.dart';
 import '../../domain/entities/category_entity.dart';
 import '../../domain/usecases/delete_category_usecase.dart';

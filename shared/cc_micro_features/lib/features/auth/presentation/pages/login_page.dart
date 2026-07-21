@@ -43,12 +43,16 @@ class _LoginViewState extends State<LoginView> {
       },
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded),
-            onPressed: () => Navigator.of(context).pop(),
+        appBar: buildDomainGradientAppBar(
+          context,
+          title: const SizedBox.shrink(),
+          leading: CcIconButton.bouncing(
+            icon: Icon(
+              Icons.arrow_back_ios_rounded,
+              color: context.ccColorScheme.onPrimary,
+              size: context.respIconSize(baseSize: 24),
+            ),
+            onTap: () => Navigator.of(context).pop(),
           ),
         ),
         body: SafeArea(

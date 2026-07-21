@@ -7,7 +7,6 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../../core/widgets/gradient_app_bar.dart';
 import '../get_x/category_settings_controller.dart';
 import '../widgets/category_group_section.dart';
 

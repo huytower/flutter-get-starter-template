@@ -18,9 +18,15 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitle = user != null
+    final rawSubtitle = user != null
         ? user!.displayIdentifier
         : el.tr(CcLocaleKeys.profile_not_logged_in);
+
+    // If the display name is already the same as the identifier (common in
+    // phone-only auth), hide the subtitle to avoid duplicate info.
+    final subtitle = (user != null && displayName == rawSubtitle)
+        ? ''
+        : rawSubtitle;
 
     return GestureDetector(
       onTap: onTap,
@@ -70,15 +76,17 @@ class ProfileHeader extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const CcSpaceXS(),
-                      CcText(
-                        subtitle,
-                        textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                          color: context.ccColorScheme.onPrimary.withOpacity(
-                            0.7,
+                      if (subtitle.isNotEmpty) ...[
+                        const CcSpaceXS(),
+                        CcText(
+                          subtitle,
+                          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                            color: context.ccColorScheme.onPrimary.withOpacity(
+                              0.7,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),

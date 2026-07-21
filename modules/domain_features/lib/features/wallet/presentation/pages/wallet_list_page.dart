@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../../core/widgets/gradient_app_bar.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/wallet_list_card.dart';
 
