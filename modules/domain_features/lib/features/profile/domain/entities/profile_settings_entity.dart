@@ -4,7 +4,7 @@ class ProfileSettingsEntity {
     this.weeklyAuditDayIndex = 6,
     this.currencyCode = 'VND',
     this.birthYear,
-    this.isDarkMode = false,
+    this.isDarkMode,
   });
 
   final bool reminderEnabled;
@@ -14,8 +14,8 @@ class ProfileSettingsEntity {
   /// Used to pick age-appropriate income suggestions; null until set.
   final int? birthYear;
 
-  /// Theme mode preference: true for dark, false for light
-  final bool isDarkMode;
+  /// Theme mode preference: true for dark, false for light, null for system default
+  final bool? isDarkMode;
 
   ProfileSettingsEntity copyWith({
     bool? reminderEnabled,

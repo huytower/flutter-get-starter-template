@@ -7,12 +7,14 @@ import '../../../domain/entities/profile_settings_entity.dart';
 class ProfileLocalDataSource {
   ProfileSettingsEntity getSettings() {
     final s = CcAppStorage.instance;
+    // Don't default isDarkMode to false - keep it null if not set
+    // This allows the system theme to be used as default
     return ProfileSettingsEntity(
       reminderEnabled: s.reminderEnabled ?? true,
       weeklyAuditDayIndex: s.weeklyAuditDayIndex ?? 6,
       currencyCode: s.currencyCode ?? 'VND',
       birthYear: s.birthYear,
-      isDarkMode: s.isDarkMode ?? false,
+      isDarkMode: s.isDarkMode,
     );
   }
 

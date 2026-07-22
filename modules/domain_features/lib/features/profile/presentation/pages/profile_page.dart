@@ -142,7 +142,7 @@ class ProfilePage extends CcGetView<ProfileController> {
             child: FittedBox(
               fit: BoxFit.contain,
               child: Switch(
-                value: controller.settings.value.isDarkMode,
+                value: controller.settings.value.isDarkMode ?? false,
                 onChanged: controller.setThemeMode,
                 activeColor: context.ccColorScheme.primary,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

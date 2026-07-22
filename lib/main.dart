@@ -49,18 +49,7 @@ void main() async {
     // Starts the native security handshake without delaying the first frame.
     CcAppCheckHelper.initialize();
 
-    // 5. Restore persisted theme before the first frame so the shell opens
-    //    with the user's last preference instead of the system default.
-    try {
-      final savedDark = CcAppStorage.instance.isDarkMode;
-      if (savedDark != null && getIt.isRegistered<ThemeProvider>()) {
-        getIt<ThemeProvider>().setThemeMode(
-          savedDark ? ThemeMode.dark : ThemeMode.light,
-        );
-      }
-    } catch (_) {}
-
-    // 6. UI Launch
+    // 5. UI Launch
     _runApplication();
   } catch (error, stackTrace) {
     developer.log(
