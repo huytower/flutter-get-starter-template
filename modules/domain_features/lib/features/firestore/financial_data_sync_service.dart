@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:data_config/core/util/firestore_sync_service.dart';
@@ -56,7 +54,7 @@ class FinancialDataSyncService {
       await _syncPendingReconciliations(userId);
       await _syncPendingCategories(userId);
     } catch (e) {
-      developer.log('syncAll failed: $e', error: e);
+      'syncAll failed: $e'.Log('FinancialDataSyncService');
     }
   }
 
@@ -72,12 +70,19 @@ class FinancialDataSyncService {
       await _pullReconciliations(userId);
       await _pullCategories(userId);
     } catch (e) {
-      developer.log('pullFromFirestore failed: $e', error: e);
+      'pullFromFirestore failed: $e'.Log('FinancialDataSyncService');
     }
   }
 
   Future<void> _syncPendingWallets(String userId) async {
-    final box = Hive.box<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
+    if (!Hive.isBoxOpen(CcHiveBox.WALLET_BOX_NAME)) return;
+    Box<WalletHiveModel> box;
+    try {
+      box = Hive.box<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
+    } on HiveError catch (e) {
+      if (e.message.contains('already open')) return;
+      rethrow;
+    }
     for (final model in box.values) {
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
@@ -98,7 +103,14 @@ class FinancialDataSyncService {
   }
 
   Future<void> _syncPendingTransactions(String userId) async {
-    final box = Hive.box<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME);
+    if (!Hive.isBoxOpen(CcHiveBox.TRANSACTION_BOX_NAME)) return;
+    Box<TransactionModel> box;
+    try {
+      box = Hive.box<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME);
+    } on HiveError catch (e) {
+      if (e.message.contains('already open')) return;
+      rethrow;
+    }
     for (final model in box.values) {
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
@@ -119,7 +131,14 @@ class FinancialDataSyncService {
   }
 
   Future<void> _syncPendingBudgets(String userId) async {
-    final box = Hive.box<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
+    if (!Hive.isBoxOpen(CcHiveBox.BUDGET_BOX_NAME)) return;
+    Box<BudgetLimitModel> box;
+    try {
+      box = Hive.box<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
+    } on HiveError catch (e) {
+      if (e.message.contains('already open')) return;
+      rethrow;
+    }
     for (final model in box.values) {
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
@@ -140,9 +159,16 @@ class FinancialDataSyncService {
   }
 
   Future<void> _syncPendingReconciliations(String userId) async {
-    final box = Hive.box<ReconciliationModel>(
-      CcHiveBox.RECONCILIATION_BOX_NAME,
-    );
+    if (!Hive.isBoxOpen(CcHiveBox.RECONCILIATION_BOX_NAME)) return;
+    Box<ReconciliationModel> box;
+    try {
+      box = Hive.box<ReconciliationModel>(
+        CcHiveBox.RECONCILIATION_BOX_NAME,
+      );
+    } on HiveError catch (e) {
+      if (e.message.contains('already open')) return;
+      rethrow;
+    }
     for (final model in box.values) {
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
@@ -163,7 +189,14 @@ class FinancialDataSyncService {
   }
 
   Future<void> _syncPendingCategories(String userId) async {
-    final box = Hive.box<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
+    if (!Hive.isBoxOpen(CcHiveBox.CATEGORY_BOX_NAME)) return;
+    Box<CategoryModel> box;
+    try {
+      box = Hive.box<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
+    } on HiveError catch (e) {
+      if (e.message.contains('already open')) return;
+      rethrow;
+    }
     for (final model in box.values) {
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
@@ -184,48 +217,74 @@ class FinancialDataSyncService {
   }
 
   Future<void> _pullWallets(String userId) async {
+    final box = await _openBox<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
+    if (box == null) return;
     await _pullAndMerge<WalletHiveModel>(
       userId: userId,
       collectionName: 'wallets',
-      boxName: CcHiveBox.WALLET_BOX_NAME,
+      box: box,
       fromFirestore: WalletHiveModel.fromFirestoreData,
     );
   }
 
   Future<void> _pullTransactions(String userId) async {
+    final box = await _openBox<TransactionModel>(
+      CcHiveBox.TRANSACTION_BOX_NAME,
+    );
+    if (box == null) return;
     await _pullAndMerge<TransactionModel>(
       userId: userId,
       collectionName: 'transactions',
-      boxName: CcHiveBox.TRANSACTION_BOX_NAME,
+      box: box,
       fromFirestore: TransactionModel.fromFirestoreData,
     );
   }
 
   Future<void> _pullBudgets(String userId) async {
+    final box = await _openBox<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
+    if (box == null) return;
     await _pullAndMerge<BudgetLimitModel>(
       userId: userId,
       collectionName: 'budgets',
-      boxName: CcHiveBox.BUDGET_BOX_NAME,
+      box: box,
       fromFirestore: BudgetLimitModel.fromFirestoreData,
     );
   }
 
   Future<void> _pullReconciliations(String userId) async {
+    final box = await _openBox<ReconciliationModel>(
+      CcHiveBox.RECONCILIATION_BOX_NAME,
+    );
+    if (box == null) return;
     await _pullAndMerge<ReconciliationModel>(
       userId: userId,
       collectionName: 'reconciliations',
-      boxName: CcHiveBox.RECONCILIATION_BOX_NAME,
+      box: box,
       fromFirestore: ReconciliationModel.fromFirestoreData,
     );
   }
 
   Future<void> _pullCategories(String userId) async {
+    final box = await _openBox<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
+    if (box == null) return;
     await _pullAndMerge<CategoryModel>(
       userId: userId,
       collectionName: 'categories',
-      boxName: CcHiveBox.CATEGORY_BOX_NAME,
+      box: box,
       fromFirestore: CategoryModel.fromFirestoreData,
     );
+  }
+
+  Future<Box<T>?> _openBox<T>(String boxName) async {
+    try {
+      if (Hive.isBoxOpen(boxName)) {
+        return Hive.box<T>(boxName);
+      }
+      return await Hive.openBox<T>(boxName);
+    } catch (e) {
+      'Failed to open box $boxName: $e'.Log('FinancialDataSyncService');
+      return null;
+    }
   }
 
   Future<void> _syncEntity<T>({
@@ -242,14 +301,14 @@ class FinancialDataSyncService {
         if (key != null) await box.put(key, updated);
       }
     } catch (e) {
-      developer.log('Sync failed for entity: $e', error: e);
+      'Sync failed for entity: $e'.Log('FinancialDataSyncService');
     }
   }
 
   Future<void> _pullAndMerge<T>({
     required String userId,
     required String collectionName,
-    required String boxName,
+    required Box<T> box,
     required T Function(Map<String, dynamic>, String) fromFirestore,
   }) async {
     try {
@@ -257,8 +316,6 @@ class FinancialDataSyncService {
         userId: userId,
         collectionName: collectionName,
       );
-
-      final box = Hive.box(boxName);
 
       for (final data in remoteData) {
         final localId = data['localId'] as String;
@@ -283,7 +340,7 @@ class FinancialDataSyncService {
         }
       }
     } catch (e) {
-      developer.log('Pull failed for $collectionName: $e', error: e);
+      'Pull failed for $collectionName: $e'.Log('FinancialDataSyncService');
     }
   }
 

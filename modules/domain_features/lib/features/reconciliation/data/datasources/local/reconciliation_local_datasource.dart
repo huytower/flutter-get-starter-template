@@ -8,6 +8,9 @@ import '../../models/reconciliation_model.dart';
 @lazySingleton
 class ReconciliationLocalDataSource {
   Future<Box<ReconciliationModel>> get _box async {
+    if (Hive.isBoxOpen(CcHiveBox.RECONCILIATION_BOX_NAME)) {
+      return Hive.box<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME);
+    }
     return Hive.openBox<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME);
   }
 

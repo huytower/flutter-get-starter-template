@@ -8,6 +8,9 @@ import '../../models/budget_limit_model.dart';
 @lazySingleton
 class BudgetLimitLocalDataSource {
   Future<Box<BudgetLimitModel>> get _box async {
+    if (Hive.isBoxOpen(CcHiveBox.BUDGET_BOX_NAME)) {
+      return Hive.box<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
+    }
     return Hive.openBox<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
   }
 

@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:flutter/material.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_micro_features/features/splash/core/splash_manager.dart';
@@ -36,13 +34,13 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
   }
 
   void _initCloudSync() {
-    Future.microtask(() async {
+    Future.delayed(const Duration(seconds: 3), () async {
       final session = getIt<SessionContract>();
       if (session.isAuthenticated) {
         try {
           await getIt<FinancialDataSyncService>().pullFromFirestore();
         } catch (e) {
-          developer.log('Initial cloud sync failed', error: e);
+          'Initial cloud sync failed: $e'.Log('NavigationLogicMixin');
         }
       }
     });

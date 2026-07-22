@@ -8,6 +8,9 @@ import '../../models/transaction_model.dart';
 @lazySingleton
 class TransactionLocalDataSource {
   Future<Box<TransactionModel>> get _box async {
+    if (Hive.isBoxOpen(CcHiveBox.TRANSACTION_BOX_NAME)) {
+      return Hive.box<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME);
+    }
     return Hive.openBox<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME);
   }
 

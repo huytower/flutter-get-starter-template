@@ -29,6 +29,9 @@ class WalletLocalDataSource {
   );
 
   Future<Box<WalletHiveModel>> get _box async {
+    if (Hive.isBoxOpen(CcHiveBox.WALLET_BOX_NAME)) {
+      return Hive.box<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
+    }
     final box = await Hive.openBox<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
     if (_initialized) return box;
     _initialized = true;
