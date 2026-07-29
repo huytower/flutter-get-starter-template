@@ -101,6 +101,7 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
 
   Widget _buildCategoryList(BuildContext context) {
     return Obx(() {
+      controller.pending.keys.length; // Access to trigger Obx on toggle changes
       final groups = controller.groups;
       final byGroup = controller.byGroup;
       final incomeByGroup = controller.incomeByGroup;
