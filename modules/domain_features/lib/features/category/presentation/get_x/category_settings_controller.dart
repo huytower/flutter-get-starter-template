@@ -1,6 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
@@ -30,7 +28,6 @@ class CategorySettingsController extends CcGetController {
       <String, List<CategoryEntity>>{}.obs;
 
   final RxMap<String, bool> pending = <String, bool>{}.obs;
-  final RxBool isSaving = false.obs;
 
   @override
   void onInit() {
@@ -64,44 +61,19 @@ class CategorySettingsController extends CcGetController {
   bool isEnabled(CategoryEntity cat) =>
       pending.containsKey(cat.id) ? pending[cat.id]! : cat.isEnabled;
 
-  bool get hasAnyEnabled => [
-    ...byGroup.values.expand((c) => c),
-    ...incomeByGroup.values.expand((c) => c),
-  ].any(isEnabled);
-
-  void toggle(CategoryEntity cat) {
+  void toggle(CategoryEntity cat) async {
     final current = isEnabled(cat);
-    pending[cat.id] = !current;
-    pending.refresh();
-  }
+    final next = !current;
 
-  Future<void> save(BuildContext context) async {
-    if (pending.isEmpty) {
-      Navigator.of(context).pop();
-      return;
-    }
-    isSaving.value = true;
-    for (final entry in pending.entries) {
-      final result = await _toggleEnabled(entry.key, entry.value);
-      if (result.isError()) {
-        isSaving.value = false;
-        if (context.mounted) {
-          CcSnackBarHelper.showErrorSnackBar(
-            context: context,
-            message: result.tryGetError()!.message,
-          );
-        }
-        return;
-      }
-    }
-    isSaving.value = false;
-    if (context.mounted) {
-      CcSnackBarHelper.showSuccessSnackBar(
-        context: context,
-        message: el.tr(CcLocaleKeys.category_settings_saved),
-      );
-      await Future.delayed(const Duration(milliseconds: 600));
-      if (context.mounted) Navigator.of(context).pop(true);
+    // Optimistic UI update
+    pending[cat.id] = next;
+    pending.refresh();
+
+    final result = await _toggleEnabled(cat.id, next);
+    if (result.isError()) {
+      // Revert UI on error
+      pending[cat.id] = current;
+      pending.refresh();
     }
   }
 }

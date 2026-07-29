@@ -13,4 +13,3 @@ export 'domain/usecases/toggle_category_enabled_usecase.dart';
 export 'domain/usecases/update_category_usecase.dart';
 // Presentation
 export 'presentation/pages/category_settings_page.dart';
-export 'presentation/pages/income_category_settings_page.dart';

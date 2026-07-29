@@ -24,47 +24,46 @@ class CategoryGroupSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        top: context.respDim(16),
-        bottom: context.respDim(4),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CcSymmetricPadding(
-            horizontal: CcPaddingParams.PAGE_SM,
-            child: CcText(
-              el.tr(group.nameKey),
-              textStyle: context.ccTextTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: context.ccColorScheme.onSurface,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcSymmetricPadding(
+          horizontal: CcPaddingParams.PAGE_SM,
+          child: CcText(
+            el.tr(group.nameKey),
+            textStyle: context.ccTextTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: context.ccColorScheme.onSurface,
             ),
           ),
-          const CcSpaceSM(),
-          SingleChildScrollView(
+        ),
+        const CcSpaceSM(),
+        HorizontalFadeScrollView(
+          height: context.respDim(30),
+          builder: (controller) => ListView.builder(
+            controller: controller,
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.symmetric(
               horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
             ),
-            child: Row(
-              children: categories.map((cat) {
-                final enabled = isEnabled(cat);
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: CategoryChip(
-                    category: cat,
-                    enabled: enabled,
-                    onTap: () => onToggle(cat),
-                    accentColor: accentColor,
-                  ),
-                );
-              }).toList(),
-            ),
+            itemCount: categories.length,
+            itemBuilder: (context, index) {
+              final cat = categories[index];
+              final enabled = isEnabled(cat);
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: CategoryChip(
+                  category: cat,
+                  enabled: enabled,
+                  onTap: () => onToggle(cat),
+                  accentColor: accentColor,
+                ),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+        const CcSpaceSM(),
+      ],
     );
   }
 }

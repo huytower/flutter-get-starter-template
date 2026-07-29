@@ -27,11 +27,6 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
       backgroundColor: context.ccColorScheme.surface,
       appBar: _buildAppBar(context),
       body: _buildBody(context),
-      bottomNavigationBar: Obx(
-        () => controller.layoutStatus.value == CcLayoutStatus.loading
-            ? const SizedBox.shrink()
-            : _buildBottomBar(context),
-      ),
     );
   }
 
@@ -63,11 +58,30 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
       if (controller.layoutStatus.value == CcLayoutStatus.loading) {
         return const Center(child: CcLoadingIconWidget());
       }
-      return Column(
-        children: [
-          _buildSubtitle(context),
-          Expanded(child: _buildCategoryList(context)),
-        ],
+      return FadePageWrapper(
+        child: Column(
+          children: [
+            _buildSubtitle(context),
+            Expanded(
+              child: ShaderMask(
+                shaderCallback: (Rect rect) {
+                  return LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      context.ccColorScheme.surface,
+                      context.ccColorScheme.surface,
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.92, 1.0],
+                  ).createShader(rect);
+                },
+                blendMode: BlendMode.dstIn,
+                child: _buildCategoryList(context),
+              ),
+            ),
+          ],
+        ),
       );
     });
   }
@@ -75,7 +89,7 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
   Widget _buildSubtitle(BuildContext context) {
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_SM,
-      vertical: 8,
+      vertical: CcPaddingParams.SPACE_SM,
       child: CcText(
         el.tr(CcLocaleKeys.category_settings_subtitle),
         textStyle: context.ccTextTheme.bodyMedium?.copyWith(
@@ -109,7 +123,10 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
             return CategoryGroupSection(
               group: group,
               categories: cats,
-              isEnabled: controller.isEnabled,
+              isEnabled: (cat) {
+                controller.pending.keys.length; // Access to trigger Obx
+                return controller.isEnabled(cat);
+              },
               onToggle: controller.toggle,
               accentColor: context.ccColorScheme.error,
             );
@@ -128,40 +145,16 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
           return CategoryGroupSection(
             group: group,
             categories: cats,
-            isEnabled: controller.isEnabled,
+            isEnabled: (cat) {
+              controller.pending.keys.length; // Access to trigger Obx
+              return controller.isEnabled(cat);
+            },
             onToggle: controller.toggle,
             accentColor: PrjColors.success,
           );
         },
       );
     });
-  }
-
-  Widget _buildBottomBar(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(
-          context.respPadding(CcPaddingParams.PAGE_SM),
-          context.respDim(12),
-          context.respPadding(CcPaddingParams.PAGE_SM),
-          context.respDim(16),
-        ),
-        child: Obx(() {
-          if (controller.isSaving.value) {
-            return const Center(child: CcLoadingIconWidget());
-          }
-          final enabled = controller.hasAnyEnabled;
-          return CcBaseBtn(
-            onTap: enabled ? () => controller.save(context) : null,
-            isEnable: enabled,
-            title: el.tr(CcLocaleKeys.category_settings_save),
-            bgColor: enabled
-                ? [context.ccColorScheme.primary, context.ccColorScheme.primary]
-                : null,
-          );
-        }),
-      ),
-    );
   }
 
   Widget _buildHeader(
@@ -171,10 +164,10 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
   }) {
     return Padding(
       padding: EdgeInsets.only(
-        top: context.respDim(topPadding),
+        top: context.respPadding(topPadding),
         left: context.respPadding(CcPaddingParams.PAGE_SM),
         right: context.respPadding(CcPaddingParams.PAGE_SM),
-        bottom: context.respDim(4),
+        bottom: context.respPadding(CcPaddingParams.SPACE_XS),
       ),
       child: CcText(
         title,
