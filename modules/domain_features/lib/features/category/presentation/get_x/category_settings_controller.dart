@@ -26,6 +26,10 @@ class CategorySettingsController extends CcGetController {
       <String, List<CategoryEntity>>{}.obs;
   final RxMap<String, List<CategoryEntity>> incomeByGroup =
       <String, List<CategoryEntity>>{}.obs;
+  final RxMap<String, List<CategoryEntity>> debtLoanByGroup =
+      <String, List<CategoryEntity>>{}.obs;
+  final RxMap<String, List<CategoryEntity>> investmentByGroup =
+      <String, List<CategoryEntity>>{}.obs;
 
   final RxMap<String, bool> pending = <String, bool>{}.obs;
 
@@ -41,18 +45,57 @@ class CategorySettingsController extends CcGetController {
     final categoriesResult = await _getCategories();
 
     groupsResult.when((g) => groups.assignAll(g), (_) {});
-    categoriesResult.when((categories) {
+    categoriesResult.when((categories) async {
+      // FIX: Force migration for legacy Debt categories.
+      // If we see IDs starting with 'd' but they aren't 'debtLoan' type, they are stale.
+      final needsMigration = categories.any(
+        (c) => c.id.startsWith('d') && c.type != CategoryType.debtLoan,
+      );
+
+      if (needsMigration) {
+        'Fixing stale database records...'.Log('CategorySettingsController');
+        for (final cat in categories) {
+          if (cat.id.startsWith('d') || cat.id.startsWith('inv')) {
+            // This triggers an update in CategoryLocalDataSource using the latest seed data
+            await _toggleEnabled(cat.id, cat.isEnabled);
+          }
+        }
+        await load(); // Recursive reload to pick up fixed data
+        return;
+      }
+
       final bg = <String, List<CategoryEntity>>{};
       final ibg = <String, List<CategoryEntity>>{};
+      final dlbg = <String, List<CategoryEntity>>{};
+      final invbg = <String, List<CategoryEntity>>{};
       for (final cat in categories) {
         if (cat.type == CategoryType.income) {
           ibg.putIfAbsent(cat.groupId, () => []).add(cat);
+        } else if (cat.type == CategoryType.debtLoan) {
+          dlbg.putIfAbsent(cat.groupId, () => []).add(cat);
+        } else if (cat.type == CategoryType.investment) {
+          invbg.putIfAbsent(cat.groupId, () => []).add(cat);
         } else {
           bg.putIfAbsent(cat.groupId, () => []).add(cat);
         }
       }
+
+      'Loaded categories: ${categories.length}'.Log(
+        'CategorySettingsController',
+      );
+      'Debt/Loan groups: ${dlbg.keys.join(', ')}'.Log(
+        'CategorySettingsController',
+      );
+      for (final entry in dlbg.entries) {
+        'Group ${entry.key}: ${entry.value.length} items'.Log(
+          'CategorySettingsController',
+        );
+      }
+
       byGroup.assignAll(bg);
       incomeByGroup.assignAll(ibg);
+      debtLoanByGroup.assignAll(dlbg);
+      investmentByGroup.assignAll(invbg);
     }, (_) {});
 
     layoutStatus.value = CcLayoutStatus.success;

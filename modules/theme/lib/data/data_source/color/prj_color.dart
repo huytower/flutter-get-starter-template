@@ -188,6 +188,7 @@ abstract final class PrjColors {
   static const Color categoryIncomeSavingsInterest = Color(0xFF059669);
   static const Color categoryIncomeDividends = Color(0xFF059669);
   static const Color categoryIncomeRental = Color(0xFF059669);
+  static const Color categoryInvestment = Color(0xFF059669);
 
   // Thu nhập khác — vàng gold
   static const Color categoryIncomeBonus = Color(0xFFCA8A04);

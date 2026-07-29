@@ -20,6 +20,24 @@ class CategorySeed {
   static const String incomeInvestGroupId = 'income_invest';
   static const String incomeOtherGroupId = 'income_other';
 
+  static const String debtLoanGroupId = 'debt_loan';
+
+  static const String investmentDefaultGroupId = 'investment_default';
+
+  static const List<CategoryGroupEntity> investmentGroups = [
+    CategoryGroupEntity(
+      id: investmentDefaultGroupId,
+      nameKey: CcLocaleKeys.category_investment_group_default,
+    ),
+  ];
+
+  static const List<CategoryGroupEntity> debtLoanGroups = [
+    CategoryGroupEntity(
+      id: debtLoanGroupId,
+      nameKey: CcLocaleKeys.category_debt_loan_settings_title,
+    ),
+  ];
+
   static const List<CategoryGroupEntity> incomeGroups = [
     CategoryGroupEntity(
       id: incomeActiveGroupId,
@@ -482,6 +500,148 @@ class CategorySeed {
       groupId: incomeOtherGroupId,
       type: CategoryType.income,
       colorValue: PrjColors.categoryIncomeCashback.value,
+    ),
+
+    // Debt & Loan
+    CategoryModel(
+      id: 'd1',
+      nameKey: CcLocaleKeys.category_debt_personal_borrow,
+      iconCode: Icons.person_outline.codePoint,
+      groupId: debtLoanGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.categoryInstallment.value,
+    ),
+    CategoryModel(
+      id: 'd2',
+      nameKey: CcLocaleKeys.category_debt_bank_borrow,
+      iconCode: Icons.account_balance.codePoint,
+      groupId: debtLoanGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.categoryInstallment.value,
+    ),
+    CategoryModel(
+      id: 'd3',
+      nameKey: CcLocaleKeys.category_debt_mortgage,
+      iconCode: Icons.home.codePoint,
+      groupId: debtLoanGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.categoryInstallment.value,
+    ),
+    CategoryModel(
+      id: 'd4',
+      nameKey: CcLocaleKeys.category_debt_credit_card,
+      iconCode: Icons.credit_card.codePoint,
+      groupId: debtLoanGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.categoryInstallment.value,
+    ),
+    CategoryModel(
+      id: 'd5',
+      nameKey: CcLocaleKeys.category_debt_installment,
+      iconCode: Icons.shopping_cart_checkout.codePoint,
+      groupId: debtLoanGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.categoryInstallment.value,
+    ),
+
+    // Debt & Loan — Cho vay
+    CategoryModel(
+      id: 'd6',
+      nameKey: CcLocaleKeys.category_debt_personal_lend,
+      iconCode: Icons.handshake.codePoint,
+      groupId: debtLoanGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.secondary.value,
+    ),
+    CategoryModel(
+      id: 'd7',
+      nameKey: CcLocaleKeys.category_debt_other,
+      iconCode: Icons.more_horiz.codePoint,
+      groupId: debtLoanGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.mediumEmphasis.value,
+    ),
+
+    // Investment
+    CategoryModel(
+      id: 'inv1',
+      nameKey: CcLocaleKeys.category_investment_stock,
+      iconCode: Icons.show_chart.codePoint,
+      groupId: investmentDefaultGroupId,
+      type: CategoryType.investment,
+      colorValue: PrjColors.categoryInvestment.value,
+    ),
+    CategoryModel(
+      id: 'inv2',
+      nameKey: CcLocaleKeys.category_investment_fund,
+      iconCode: Icons.pie_chart_outline.codePoint,
+      groupId: investmentDefaultGroupId,
+      type: CategoryType.investment,
+      colorValue: PrjColors.categoryInvestment.value,
+    ),
+    CategoryModel(
+      id: 'inv3',
+      nameKey: CcLocaleKeys.category_investment_bond,
+      iconCode: Icons.description.codePoint,
+      groupId: investmentDefaultGroupId,
+      type: CategoryType.investment,
+      colorValue: PrjColors.categoryInvestment.value,
+    ),
+    CategoryModel(
+      id: 'inv4',
+      nameKey: CcLocaleKeys.category_investment_term_deposit,
+      iconCode: Icons.lock_clock.codePoint,
+      groupId: investmentDefaultGroupId,
+      type: CategoryType.investment,
+      colorValue: PrjColors.categoryInvestment.value,
+    ),
+    CategoryModel(
+      id: 'inv5',
+      nameKey: CcLocaleKeys.category_investment_gold,
+      iconCode: Icons.savings.codePoint,
+      groupId: investmentDefaultGroupId,
+      type: CategoryType.investment,
+      colorValue: PrjColors.categoryInvestment.value,
+    ),
+    CategoryModel(
+      id: 'inv6',
+      nameKey: CcLocaleKeys.category_investment_real_estate,
+      iconCode: Icons.domain.codePoint,
+      groupId: investmentDefaultGroupId,
+      type: CategoryType.investment,
+      colorValue: PrjColors.categoryInvestment.value,
+    ),
+    CategoryModel(
+      id: 'inv7',
+      nameKey: CcLocaleKeys.category_investment_crypto,
+      iconCode: Icons.currency_bitcoin.codePoint,
+      groupId: investmentDefaultGroupId,
+      type: CategoryType.investment,
+      colorValue: PrjColors.categoryInvestment.value,
+    ),
+    CategoryModel(
+      id: 'inv8',
+      nameKey: CcLocaleKeys.category_investment_business,
+      iconCode: Icons.storefront.codePoint,
+      groupId: investmentDefaultGroupId,
+      type: CategoryType.investment,
+      colorValue: PrjColors.categoryInvestment.value,
+    ),
+    CategoryModel(
+      id: 'inv9',
+      nameKey: CcLocaleKeys.category_investment_linked_insurance,
+      iconCode: Icons.health_and_safety.codePoint,
+      groupId: investmentDefaultGroupId,
+      type: CategoryType.investment,
+      colorValue: PrjColors.categoryInvestment.value,
+    ),
+    CategoryModel(
+      id: 'inv10',
+      nameKey: CcLocaleKeys.category_investment_other,
+      iconCode: Icons.more_horiz.codePoint,
+      groupId: investmentDefaultGroupId,
+      type: CategoryType.investment,
+      colorValue: PrjColors.categoryInvestment.value,
     ),
   ];
 

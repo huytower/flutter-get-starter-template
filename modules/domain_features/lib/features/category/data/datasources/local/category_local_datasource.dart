@@ -20,15 +20,20 @@ class CategoryLocalDataSource {
     } else {
       // Migration: insert seed categories missing from the box (e.g. income
       // seeds added in an update) and refresh a seeded category whenever its
-      // icon changes in [CategorySeed], so existing installs pick up fixes.
+      // fields change in [CategorySeed], so existing installs pick up fixes.
       // User-added categories (non-seed ids) are left untouched.
-      final updates = <String, CategoryModel>{
-        for (final c in CategorySeed.categories)
-          if (box.get(c.id) == null ||
-              box.get(c.id)!.iconCode != c.iconCode ||
-              box.get(c.id)!.colorValue != c.colorValue)
-            c.id: c,
-      };
+      final updates = <String, CategoryModel>{};
+      for (final c in CategorySeed.categories) {
+        final existing = box.get(c.id);
+        if (existing == null ||
+            existing.iconCode != c.iconCode ||
+            existing.colorValue != c.colorValue ||
+            existing.type != c.type ||
+            existing.groupId != c.groupId ||
+            existing.nameKey != c.nameKey) {
+          updates[c.id] = c;
+        }
+      }
       if (updates.isNotEmpty) await box.putAll(updates);
     }
     return box;

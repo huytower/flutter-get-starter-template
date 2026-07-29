@@ -418,6 +418,28 @@ class CodegenLoader extends AssetLoader {
       "income_bonus": "Bonus",
       "income_gift": "Gifts/Presents",
       "income_cashback": "Cashback",
+      "debt_loan_settings_title": "Debt & Loan Categories",
+      "debt_group_borrow": "Borrowing",
+      "debt_group_lend": "Lending",
+      "debt_personal_borrow": "Personal Borrowing",
+      "debt_bank_borrow": "Bank/Financial Loan",
+      "debt_mortgage": "Mortgage",
+      "debt_credit_card": "Credit Card Debt",
+      "debt_installment": "Installment",
+      "debt_personal_lend": "Personal Lending",
+      "debt_other": "Other",
+      "investment_settings_title": "Investment Categories",
+      "investment_group_default": "Investments",
+      "investment_stock": "Stock",
+      "investment_fund": "Fund",
+      "investment_bond": "Bond",
+      "investment_term_deposit": "Term Deposit",
+      "investment_gold": "Gold",
+      "investment_real_estate": "Real Estate",
+      "investment_crypto": "Crypto",
+      "investment_business": "Business",
+      "investment_linked_insurance": "Investment-linked Insurance",
+      "investment_other": "Other",
       "expense_settings_title": "Expense Categories",
     },
     "profile": {
@@ -860,6 +882,28 @@ class CodegenLoader extends AssetLoader {
       "income_bonus": "Thưởng",
       "income_gift": "Được tặng/Biếu",
       "income_cashback": "Hoàn tiền (Cashback)",
+      "debt_loan_settings_title": "Hạng mục Vay & Nợ",
+      "debt_group_borrow": "Đi vay",
+      "debt_group_lend": "Cho vay",
+      "debt_personal_borrow": "Vay cá nhân",
+      "debt_bank_borrow": "Vay ngân hàng/TCTD",
+      "debt_mortgage": "Vay thế chấp",
+      "debt_credit_card": "Nợ thẻ tín dụng",
+      "debt_installment": "Vay trả góp",
+      "debt_personal_lend": "Cho vay cá nhân",
+      "debt_other": "Khác",
+      "investment_settings_title": "Hạng mục Đầu tư",
+      "investment_group_default": "Đầu tư",
+      "investment_stock": "Cổ phiếu",
+      "investment_fund": "Chứng chỉ quỹ",
+      "investment_bond": "Trái phiếu",
+      "investment_term_deposit": "Tiền gửi tiết kiệm có kỳ hạn",
+      "investment_gold": "Vàng",
+      "investment_real_estate": "Bất động sản",
+      "investment_crypto": "Tiền điện tử",
+      "investment_business": "Kinh doanh cá nhân",
+      "investment_linked_insurance": "Bảo hiểm nhân thọ có tích luỹ",
+      "investment_other": "Khác",
       "expense_settings_title": "Hạng mục chi tiêu",
     },
     "profile": {
@@ -1274,6 +1318,34 @@ abstract class CcLocaleKeys {
   static const category_income_bonus = 'category.income_bonus';
   static const category_income_gift = 'category.income_gift';
   static const category_income_cashback = 'category.income_cashback';
+  static const category_debt_loan_settings_title =
+      'category.debt_loan_settings_title';
+  static const category_debt_group_borrow = 'category.debt_group_borrow';
+  static const category_debt_group_lend = 'category.debt_group_lend';
+  static const category_debt_personal_borrow = 'category.debt_personal_borrow';
+  static const category_debt_bank_borrow = 'category.debt_bank_borrow';
+  static const category_debt_mortgage = 'category.debt_mortgage';
+  static const category_debt_credit_card = 'category.debt_credit_card';
+  static const category_debt_installment = 'category.debt_installment';
+  static const category_debt_personal_lend = 'category.debt_personal_lend';
+  static const category_debt_other = 'category.debt_other';
+  static const category_investment_settings_title =
+      'category.investment_settings_title';
+  static const category_investment_group_default =
+      'category.investment_group_default';
+  static const category_investment_stock = 'category.investment_stock';
+  static const category_investment_fund = 'category.investment_fund';
+  static const category_investment_bond = 'category.investment_bond';
+  static const category_investment_term_deposit =
+      'category.investment_term_deposit';
+  static const category_investment_gold = 'category.investment_gold';
+  static const category_investment_real_estate =
+      'category.investment_real_estate';
+  static const category_investment_crypto = 'category.investment_crypto';
+  static const category_investment_business = 'category.investment_business';
+  static const category_investment_linked_insurance =
+      'category.investment_linked_insurance';
+  static const category_investment_other = 'category.investment_other';
 
   static const comment_detail_title = 'comment.detail.title';
   static const comment_detail_content = 'comment.detail.content';

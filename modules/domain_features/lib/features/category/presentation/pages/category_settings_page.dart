@@ -101,61 +101,145 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
 
   Widget _buildCategoryList(BuildContext context) {
     return Obx(() {
-      controller.pending.keys.length; // Access to trigger Obx on toggle changes
+      controller.pending.keys.length; // Access to trigger Obx
       final groups = controller.groups;
-      final byGroup = controller.byGroup;
-      final incomeByGroup = controller.incomeByGroup;
+      const incomeGroups = CategorySeed.incomeGroups;
+      const investmentGroups = CategorySeed.investmentGroups;
+      const debtLoanGroups = CategorySeed.debtLoanGroups;
+
+      final sections = <Widget>[];
+
+      // 1. Expense Section
+      sections.add(
+        _buildHeader(
+          context,
+          el.tr(CcLocaleKeys.category_expense_settings_title),
+        ),
+      );
+      for (final group in groups) {
+        final groupWidget = _buildExpenseGroup(context, group);
+        if (groupWidget is! SizedBox) {
+          sections.add(groupWidget);
+        }
+      }
+
+      // 2. Income Section
+      sections.add(
+        _buildHeader(
+          context,
+          el.tr(CcLocaleKeys.category_income_settings_title),
+          topPadding: 24,
+        ),
+      );
+      for (final group in incomeGroups) {
+        final groupWidget = _buildIncomeGroup(context, group);
+        if (groupWidget is! SizedBox) {
+          sections.add(groupWidget);
+        }
+      }
+
+      // 3. Investment Section
+      sections.add(
+        _buildHeader(
+          context,
+          el.tr(CcLocaleKeys.category_investment_settings_title),
+          topPadding: 24,
+        ),
+      );
+      for (final group in investmentGroups) {
+        final groupWidget = _buildInvestmentGroup(context, group);
+        if (groupWidget is! SizedBox) {
+          sections.add(groupWidget);
+        }
+      }
+
+      // 4. Debt & Loan Section
+      sections.add(
+        _buildHeader(
+          context,
+          el.tr(CcLocaleKeys.category_debt_loan_settings_title),
+          topPadding: 24,
+        ),
+      );
+      for (final group in debtLoanGroups) {
+        final groupWidget = _buildDebtLoanGroup(context, group);
+        if (groupWidget is! SizedBox) {
+          sections.add(groupWidget);
+        }
+      }
 
       return ListView.builder(
         padding: EdgeInsets.only(bottom: context.respDim(100)),
-        itemCount: 1 + groups.length + 1 + CategorySeed.incomeGroups.length,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return _buildHeader(
-              context,
-              el.tr(CcLocaleKeys.category_expense_settings_title),
-            );
-          }
-          final expenseIndex = index - 1;
-          if (expenseIndex < groups.length) {
-            final group = groups[expenseIndex];
-            final cats = byGroup[group.id] ?? [];
-            if (cats.isEmpty) return const SizedBox.shrink();
-            return CategoryGroupSection(
-              group: group,
-              categories: cats,
-              isEnabled: (cat) {
-                controller.pending.keys.length; // Access to trigger Obx
-                return controller.isEnabled(cat);
-              },
-              onToggle: controller.toggle,
-              accentColor: context.ccColorScheme.error,
-            );
-          }
-          if (expenseIndex == groups.length) {
-            return _buildHeader(
-              context,
-              el.tr(CcLocaleKeys.category_income_settings_title),
-              topPadding: 24,
-            );
-          }
-          final incomeIndex = expenseIndex - groups.length - 1;
-          final group = CategorySeed.incomeGroups[incomeIndex];
-          final cats = incomeByGroup[group.id] ?? [];
-          if (cats.isEmpty) return const SizedBox.shrink();
-          return CategoryGroupSection(
-            group: group,
-            categories: cats,
-            isEnabled: (cat) {
-              controller.pending.keys.length; // Access to trigger Obx
-              return controller.isEnabled(cat);
-            },
-            onToggle: controller.toggle,
-            accentColor: PrjColors.success,
-          );
-        },
+        itemCount: sections.length,
+        itemBuilder: (context, index) => sections[index],
       );
     });
+  }
+
+  Widget _buildExpenseGroup(BuildContext context, CategoryGroupEntity group) {
+    final cats = controller.byGroup[group.id] ?? [];
+    if (cats.isEmpty) return const SizedBox.shrink();
+    return _buildGroupSection(
+      group: group,
+      categories: cats,
+      accentColor: context.ccColorScheme.error,
+    );
+  }
+
+  Widget _buildIncomeGroup(BuildContext context, CategoryGroupEntity group) {
+    final cats = controller.incomeByGroup[group.id] ?? [];
+    if (cats.isEmpty) return const SizedBox.shrink();
+    return _buildGroupSection(
+      group: group,
+      categories: cats,
+      accentColor: PrjColors.success,
+    );
+  }
+
+  Widget _buildDebtLoanGroup(BuildContext context, CategoryGroupEntity group) {
+    // Check both group ID and any categories of this type as a fallback
+    var cats = controller.debtLoanByGroup[group.id] ?? [];
+    if (cats.isEmpty) {
+      // Fallback: Just get all debtLoan type categories regardless of group
+      cats = controller.debtLoanByGroup.values.expand((e) => e).toList();
+    }
+
+    if (cats.isEmpty) return const SizedBox.shrink();
+    return _buildGroupSection(
+      group: group,
+      categories: cats,
+      accentColor: PrjColors.primary,
+    );
+  }
+
+  Widget _buildInvestmentGroup(
+    BuildContext context,
+    CategoryGroupEntity group,
+  ) {
+    final cats = controller.investmentByGroup[group.id] ?? [];
+    if (cats.isEmpty) return const SizedBox.shrink();
+    return _buildGroupSection(
+      group: group,
+      categories: cats,
+      accentColor: PrjColors.categoryInvestment,
+    );
+  }
+
+  Widget _buildGroupSection({
+    required CategoryGroupEntity group,
+    required List<CategoryEntity> categories,
+    required Color accentColor,
+  }) {
+    return CategoryGroupSection(
+      group: group,
+      categories: categories,
+      isEnabled: (cat) {
+        controller.pending.keys.length; // Access to trigger Obx
+        return controller.isEnabled(cat);
+      },
+      onToggle: controller.toggle,
+      accentColor: accentColor,
+    );
   }
 
   Widget _buildHeader(
