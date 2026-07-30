@@ -147,7 +147,7 @@
     "my_account": "My Account",
     "spending_account": "Spending Account",
     "total_assets": "Total Assets",
-    "your_wallets": "Your wallets",
+    "your_wallets": "Liquid wallets",
     "see_all": "See all",
     "empty": "No wallets yet.\nTap + to add one.",
     "add_title": "Add New Wallet",
@@ -159,13 +159,19 @@
     "balance_locked_hint": "Cannot change opening balance once the wallet has transactions",
     "save_info": "Save",
     "bank": "Bank",
-    "credit": "Credit Card",
+    "ewallet": "E-wallet",
     "added_success": "New wallet added",
     "updated_success": "Wallet updated",
     "delete_title": "Delete Wallet",
     "delete_confirm_msg": "A wallet can only be deleted when its balance is 0. All transactions of the wallet will be soft-deleted. Continue?",
     "delete_error_not_empty": "Cannot delete: wallet balance must be 0",
-    "delete_error_protected": "This wallet is required and cannot be deleted"
+    "delete_error_protected": "This wallet is required and cannot be deleted",
+    "liquid_assets": "Liquid Assets",
+    "liquid_assets_desc": "Cash + Bank + E-wallet · ready to spend",
+    "investments": "Investments / Accumulation",
+    "investments_desc": "Stocks, funds, real estate... · Avg ROI 4.2%",
+    "liabilities": "Liabilities",
+    "liabilities_desc": "Loans + Credit cards · balance tracking, stress monitor"
   },
   "comment": {
     "detail": {

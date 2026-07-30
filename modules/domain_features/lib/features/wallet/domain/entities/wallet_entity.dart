@@ -8,7 +8,8 @@ import 'package:equatable/equatable.dart';
 abstract class WalletType {
   static const String cash = 'cash';
   static const String bank = 'bank';
-  static const String credit = 'credit';
+  static const String ewallet = 'ewallet';
+  static const String investment = 'investment';
 }
 
 class WalletEntity extends Equatable {

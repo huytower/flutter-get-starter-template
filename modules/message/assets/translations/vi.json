@@ -147,7 +147,7 @@
     "my_account": "Tài khoản của tôi",
     "spending_account": "Tài khoản chi tiêu",
     "total_assets": "Tổng tài sản",
-    "your_wallets": "Ví của bạn",
+    "your_wallets": "Ví thanh khoản",
     "see_all": "Xem tất cả",
     "empty": "Chưa có ví nào.\nNhấn + để thêm ví.",
     "add_title": "Thêm ví mới",
@@ -159,13 +159,19 @@
     "balance_locked_hint": "Không thể sửa số dư đầu kỳ khi ví đã có giao dịch",
     "save_info": "Lưu",
     "bank": "Ngân hàng",
-    "credit": "Thẻ tín dụng",
+    "ewallet": "Ví điện tử",
     "added_success": "Đã thêm ví mới",
     "updated_success": "Đã cập nhật ví",
     "delete_title": "Xóa ví",
     "delete_confirm_msg": "Chỉ có thể xóa ví khi số dư bằng 0. Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?",
     "delete_error_not_empty": "Không thể xóa: số dư của ví phải bằng 0",
-    "delete_error_protected": "Ví này là bắt buộc và không thể xóa"
+    "delete_error_protected": "Ví này là bắt buộc và không thể xóa",
+    "liquid_assets": "Tổng tiền thanh khoản",
+    "liquid_assets_desc": "Tiền mặt + Ngân hàng + Ví điện tử · sẵn sàng chi tiêu ngay",
+    "investments": "Đầu tư / Tích lũy",
+    "investments_desc": "Cổ phiếu, quỹ, bất động sản... · ROI trung bình 4.2%",
+    "liabilities": "Nợ phải trả",
+    "liabilities_desc": "Vay + Thẻ tín dụng · dư nợ còn lại, theo dõi áp lực tài chính"
   },
   "comment": {
     "detail": {

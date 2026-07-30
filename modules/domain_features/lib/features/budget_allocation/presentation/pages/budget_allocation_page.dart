@@ -3,6 +3,8 @@ import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../get_x/budget_allocation_controller.dart';
@@ -30,6 +32,25 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         ),
       ),
       actions: [
+        Obx(
+          () => GestureDetector(
+            onTap: controller.walletController.toggleBalanceVisibility,
+            child: Container(
+              padding: EdgeInsets.all(context.respDim(4)),
+              decoration: BoxDecoration(
+                color: context.ccColorScheme.onPrimary,
+                shape: BoxShape.circle,
+              ),
+              child: CcIconToken(
+                controller.walletController.isBalanceVisible.value
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                size: 16,
+              ),
+            ),
+          ),
+        ),
+        const CcSpaceMD(),
         CcIconButton.bouncing(
           icon: Icon(
             Icons.fact_check_outlined,
@@ -57,8 +78,10 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           onRefresh: controller.loadAll,
           child: ListView(
             children: [
-              _buildHeroBanner(context),
-              _buildWalletsSection(context),
+              _buildLiquidHeroBanner(context),
+              _buildBudgetWalletsSection(context),
+              _buildInvestmentHeroBanner(context),
+              _buildLiabilityHeroBanner(context),
               const BudgetPreviewSection(),
             ],
           ),
@@ -67,11 +90,44 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
     );
   }
 
-  Widget _buildHeroBanner(BuildContext context) {
-    return BudgetHeroBanner(walletController: controller.walletController);
+  Widget _buildLiquidHeroBanner(BuildContext context) {
+    return BudgetHeroBanner(
+      walletController: controller.walletController,
+      titleKey: CcLocaleKeys.wallet_liquid_assets,
+      balance: controller.walletController.liquidBalance,
+      subtitleKey: CcLocaleKeys.wallet_liquid_assets_desc,
+      icon: Icons.account_balance_wallet_outlined,
+      color: PrjColors.primary,
+      bottomPadding: CcPaddingParams.SPACE_XS,
+    );
   }
 
-  Widget _buildWalletsSection(BuildContext context) {
+  Widget _buildInvestmentHeroBanner(BuildContext context) {
+    return BudgetHeroBanner(
+      walletController: controller.walletController,
+      titleKey: CcLocaleKeys.wallet_investments,
+      balance: controller.walletController.investmentBalance,
+      subtitleKey: CcLocaleKeys.wallet_investments_desc,
+      icon: Icons.trending_up_outlined,
+      color: CcBaseColors.yellow600,
+      topPadding: CcPaddingParams.SPACE_SM,
+      bottomPadding: CcPaddingParams.SPACE_XS,
+    );
+  }
+
+  Widget _buildLiabilityHeroBanner(BuildContext context) {
+    return BudgetHeroBanner(
+      walletController: controller.walletController,
+      titleKey: CcLocaleKeys.wallet_liabilities,
+      balance: controller.walletController.liabilityBalance,
+      subtitleKey: CcLocaleKeys.wallet_liabilities_desc,
+      icon: Icons.report_problem_outlined,
+      color: CcBaseColors.violet600,
+      topPadding: CcPaddingParams.SPACE_SM,
+    );
+  }
+
+  Widget _buildBudgetWalletsSection(BuildContext context) {
     return BudgetWalletsSection(
       wallets: controller.walletController.wallets,
       onAddWallet: () => controller.openAddWallet(context),

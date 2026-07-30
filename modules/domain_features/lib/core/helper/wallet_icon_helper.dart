@@ -12,15 +12,15 @@ IconData iconDataFromCode(int codePoint, {String? fontFamily}) {
   return IconData(codePoint, fontFamily: fontFamily ?? 'MaterialIcons');
 }
 
-/// Default icon per wallet type ('cash' / 'bank' / 'credit').
+/// Default icon per wallet type ('cash' / 'bank' / 'ewallet').
 ///
 /// Referencing the `Icons` constants keeps these glyphs tree-shake-safe.
 IconData walletIconFor(String type) {
   switch (type) {
     case 'cash':
       return Icons.payments;
-    case 'credit':
-      return Icons.credit_card;
+    case 'ewallet':
+      return Icons.account_balance_wallet;
     default:
       return Icons.account_balance;
   }

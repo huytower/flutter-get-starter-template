@@ -107,6 +107,9 @@ class WalletController extends CcGetController {
 
   final RxList<WalletEntity> wallets = <WalletEntity>[].obs;
   final RxInt totalBalance = 0.obs;
+  final RxInt liquidBalance = 0.obs;
+  final RxInt investmentBalance = 0.obs;
+  final RxInt liabilityBalance = 0.obs;
 
   /// Ids of wallets that have at least one (non-deleted) transaction. Used to
   /// lock the opening balance once a wallet has activity.
@@ -188,6 +191,21 @@ class WalletController extends CcGetController {
       0,
       (sum, item) => sum + bookBalanceOf(item.id),
     );
+
+    liquidBalance.value = wallets
+        .where(
+          (w) =>
+              w.type == WalletType.cash ||
+              w.type == WalletType.bank ||
+              w.type == WalletType.ewallet,
+        )
+        .fold(0, (sum, item) => sum + bookBalanceOf(item.id));
+
+    investmentBalance.value = wallets
+        .where((w) => w.type == WalletType.investment)
+        .fold(0, (sum, item) => sum + bookBalanceOf(item.id));
+
+    liabilityBalance.value = 0;
   }
 
   Future<void> addWallet({

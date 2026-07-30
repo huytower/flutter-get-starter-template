@@ -170,7 +170,7 @@ class CodegenLoader extends AssetLoader {
       "my_account": "My Account",
       "spending_account": "Spending Account",
       "total_assets": "Total Assets",
-      "your_wallets": "Your wallets",
+      "your_wallets": "Liquid wallets",
       "see_all": "See all",
       "empty": "No wallets yet.\nTap + to add one.",
       "add_title": "Add New Wallet",
@@ -183,7 +183,7 @@ class CodegenLoader extends AssetLoader {
           "Cannot change opening balance once the wallet has transactions",
       "save_info": "Save",
       "bank": "Bank",
-      "credit": "Credit Card",
+      "ewallet": "E-wallet",
       "added_success": "New wallet added",
       "updated_success": "Wallet updated",
       "delete_title": "Delete Wallet",
@@ -191,6 +191,13 @@ class CodegenLoader extends AssetLoader {
           "A wallet can only be deleted when its balance is 0. All transactions of the wallet will be soft-deleted. Continue?",
       "delete_error_not_empty": "Cannot delete: wallet balance must be 0",
       "delete_error_protected": "This wallet is required and cannot be deleted",
+      "liquid_assets": "Liquid Assets",
+      "liquid_assets_desc": "Cash + Bank + E-wallet · ready to spend",
+      "investments": "Investments / Accumulation",
+      "investments_desc": "Stocks, funds, real estate... · Avg ROI 4.2%",
+      "liabilities": "Liabilities",
+      "liabilities_desc":
+          "Loans + Credit cards · balance tracking, stress monitor",
     },
     "comment": {
       "detail": {
@@ -631,7 +638,7 @@ class CodegenLoader extends AssetLoader {
       "my_account": "Tài khoản của tôi",
       "spending_account": "Tài khoản chi tiêu",
       "total_assets": "Tổng tài sản",
-      "your_wallets": "Ví của bạn",
+      "your_wallets": "Ví thanh khoản",
       "see_all": "Xem tất cả",
       "empty": "Chưa có ví nào.\nNhấn + để thêm ví.",
       "add_title": "Thêm ví mới",
@@ -644,7 +651,7 @@ class CodegenLoader extends AssetLoader {
           "Không thể sửa số dư đầu kỳ khi ví đã có giao dịch",
       "save_info": "Lưu",
       "bank": "Ngân hàng",
-      "credit": "Thẻ tín dụng",
+      "ewallet": "Ví điện tử",
       "added_success": "Đã thêm ví mới",
       "updated_success": "Đã cập nhật ví",
       "delete_title": "Xóa ví",
@@ -652,6 +659,15 @@ class CodegenLoader extends AssetLoader {
           "Chỉ có thể xóa ví khi số dư bằng 0. Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?",
       "delete_error_not_empty": "Không thể xóa: số dư của ví phải bằng 0",
       "delete_error_protected": "Ví này là bắt buộc và không thể xóa",
+      "liquid_assets": "Tổng tiền thanh khoản",
+      "liquid_assets_desc":
+          "Tiền mặt + Ngân hàng + Ví điện tử · sẵn sàng chi tiêu ngay",
+      "investments": "Đầu tư / Tích lũy",
+      "investments_desc":
+          "Cổ phiếu, quỹ, bất động sản... · ROI trung bình 4.2%",
+      "liabilities": "Nợ phải trả",
+      "liabilities_desc":
+          "Vay + Thẻ tín dụng · dư nợ còn lại, theo dõi áp lực tài chính",
     },
     "comment": {
       "detail": {
@@ -1084,13 +1100,19 @@ abstract class CcLocaleKeys {
   static const wallet_balance_locked_hint = 'wallet.balance_locked_hint';
   static const wallet_save_info = 'wallet.save_info';
   static const wallet_bank = 'wallet.bank';
-  static const wallet_credit = 'wallet.credit';
+  static const wallet_ewallet = 'wallet.ewallet';
   static const wallet_added_success = 'wallet.added_success';
   static const wallet_updated_success = 'wallet.updated_success';
   static const wallet_delete_title = 'wallet.delete_title';
   static const wallet_delete_confirm_msg = 'wallet.delete_confirm_msg';
   static const wallet_delete_error_not_empty = 'wallet.delete_error_not_empty';
   static const wallet_delete_error_protected = 'wallet.delete_error_protected';
+  static const wallet_liquid_assets = 'wallet.liquid_assets';
+  static const wallet_liquid_assets_desc = 'wallet.liquid_assets_desc';
+  static const wallet_investments = 'wallet.investments';
+  static const wallet_investments_desc = 'wallet.investments_desc';
+  static const wallet_liabilities = 'wallet.liabilities';
+  static const wallet_liabilities_desc = 'wallet.liabilities_desc';
 
   static const transaction_title = 'transaction.title';
   static const transaction_wallet = 'transaction.wallet';

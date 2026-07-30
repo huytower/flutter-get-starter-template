@@ -310,7 +310,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
   Widget _buildTypeSelector(BuildContext context) {
     final options = [
       (WalletType.bank, el.tr(CcLocaleKeys.wallet_bank)),
-      (WalletType.credit, el.tr(CcLocaleKeys.wallet_credit)),
+      (WalletType.ewallet, el.tr(CcLocaleKeys.wallet_ewallet)),
     ];
     return Row(
       children: options.map((option) {

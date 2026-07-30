@@ -5,11 +5,28 @@ import 'package:get/get.dart';
 
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
-/// Hero banner displaying total assets with balance visibility toggle.
+/// Hero banner displaying a specific asset category with its balance.
 class BudgetHeroBanner extends StatelessWidget {
-  const BudgetHeroBanner({required this.walletController, super.key});
+  const BudgetHeroBanner({
+    required this.walletController,
+    required this.titleKey,
+    required this.balance,
+    required this.subtitleKey,
+    required this.icon,
+    required this.color,
+    this.topPadding = CcPaddingParams.SPACE_LG,
+    this.bottomPadding = CcPaddingParams.SPACE_SM,
+    super.key,
+  });
 
   final WalletController walletController;
+  final String titleKey;
+  final RxInt balance;
+  final String subtitleKey;
+  final IconData icon;
+  final Color color;
+  final double topPadding;
+  final double bottomPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -18,18 +35,18 @@ class BudgetHeroBanner extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(
         context.respPadding(CcPaddingParams.SPACE_LG),
+        context.respPadding(topPadding),
         context.respPadding(CcPaddingParams.SPACE_LG),
-        context.respPadding(CcPaddingParams.SPACE_LG),
-        context.respPadding(CcPaddingParams.SPACE_SM),
+        context.respPadding(bottomPadding),
       ),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: scheme.primary,
+          color: color,
           borderRadius: context.brXl,
           boxShadow: [
             BoxShadow(
-              color: scheme.primary.withOpacity(0.25),
+              color: color.withOpacity(0.25),
               blurRadius: context.respDim(20),
               offset: Offset(0, context.respDim(10)),
             ),
@@ -48,7 +65,7 @@ class BudgetHeroBanner extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CcText(
-                    el.tr(CcLocaleKeys.wallet_total_assets),
+                    el.tr(titleKey),
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
                       color: scheme.onPrimary.withOpacity(0.85),
                     ),
@@ -57,7 +74,7 @@ class BudgetHeroBanner extends StatelessWidget {
                   Obx(
                     () => CcText(
                       walletController.isBalanceVisible.value
-                          ? '${walletController.totalBalance.value.formatShort()} đ'
+                          ? '${balance.value.formatShort()} đ'
                           : '*********',
                       textStyle: context.ccTextTheme.headlineMedium?.copyWith(
                         color: scheme.onPrimary,
@@ -66,26 +83,28 @@ class BudgetHeroBanner extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const CcSpaceXS(),
+                  CcText(
+                    el.tr(subtitleKey),
+                    maxLines: 2,
+                    textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                      color: scheme.onPrimary.withOpacity(0.7),
+                    ),
+                  ),
                 ],
               ),
             ),
             const CcSpaceLG(),
-            Obx(
-              () => GestureDetector(
-                onTap: walletController.toggleBalanceVisibility,
-                child: Container(
-                  padding: EdgeInsets.all(context.respDim(4)),
-                  decoration: BoxDecoration(
-                    color: scheme.onPrimary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: CcIconToken(
-                    walletController.isBalanceVisible.value
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                    size: 16,
-                  ),
-                ),
+            Container(
+              padding: EdgeInsets.all(context.respDim(10)),
+              decoration: BoxDecoration(
+                color: scheme.onPrimary.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: CcIconToken(
+                icon,
+                color: scheme.onPrimary,
+                size: context.respIconSize(baseSize: 20),
               ),
             ),
           ],
