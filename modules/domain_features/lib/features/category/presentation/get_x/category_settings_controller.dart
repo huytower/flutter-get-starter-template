@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../data/datasources/local/category_seed.dart';
 import '../../domain/entities/category_entity.dart';
 import '../../domain/entities/category_group_entity.dart';
 import '../../domain/usecases/get_categories_usecase.dart';
@@ -64,6 +65,12 @@ class CategorySettingsController extends CcGetController {
         return;
       }
 
+      // Create index map to preserve seed order
+      final seedIndexMap = <String, int>{};
+      for (int i = 0; i < CategorySeed.categories.length; i++) {
+        seedIndexMap[CategorySeed.categories[i].id] = i;
+      }
+
       final bg = <String, List<CategoryEntity>>{};
       final ibg = <String, List<CategoryEntity>>{};
       final dlbg = <String, List<CategoryEntity>>{};
@@ -78,6 +85,36 @@ class CategorySettingsController extends CcGetController {
         } else {
           bg.putIfAbsent(cat.groupId, () => []).add(cat);
         }
+      }
+
+      // Sort each group by seed order to preserve the UX-optimized arrangement
+      for (final group in bg.values) {
+        group.sort((a, b) {
+          final indexA = seedIndexMap[a.id] ?? 999;
+          final indexB = seedIndexMap[b.id] ?? 999;
+          return indexA.compareTo(indexB);
+        });
+      }
+      for (final group in ibg.values) {
+        group.sort((a, b) {
+          final indexA = seedIndexMap[a.id] ?? 999;
+          final indexB = seedIndexMap[b.id] ?? 999;
+          return indexA.compareTo(indexB);
+        });
+      }
+      for (final group in dlbg.values) {
+        group.sort((a, b) {
+          final indexA = seedIndexMap[a.id] ?? 999;
+          final indexB = seedIndexMap[b.id] ?? 999;
+          return indexA.compareTo(indexB);
+        });
+      }
+      for (final group in invbg.values) {
+        group.sort((a, b) {
+          final indexA = seedIndexMap[a.id] ?? 999;
+          final indexB = seedIndexMap[b.id] ?? 999;
+          return indexA.compareTo(indexB);
+        });
       }
 
       'Loaded categories: ${categories.length}'.Log(

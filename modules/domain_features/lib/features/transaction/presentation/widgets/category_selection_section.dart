@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:domain_features/features/category/data/datasources/local/category_seed.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -47,9 +48,22 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
     if (!mounted) return;
     setState(() {
       result.when(
-        (categories) => _categories = categories
-            .where((c) => c.isEnabled && c.type == widget.type)
-            .toList(),
+        (categories) {
+          // Create index map to preserve seed order
+          final seedIndexMap = <String, int>{};
+          for (int i = 0; i < CategorySeed.categories.length; i++) {
+            seedIndexMap[CategorySeed.categories[i].id] = i;
+          }
+
+          _categories = categories
+              .where((c) => c.isEnabled && c.type == widget.type)
+              .toList()
+            ..sort((a, b) {
+              final indexA = seedIndexMap[a.id] ?? 999;
+              final indexB = seedIndexMap[b.id] ?? 999;
+              return indexA.compareTo(indexB);
+            });
+        },
         (_) {},
       );
       _isLoading = false;

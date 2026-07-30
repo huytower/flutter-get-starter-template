@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:domain_features/features/category/data/datasources/local/category_seed.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -82,10 +83,21 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
     final result = await getIt<GetCategoriesUseCase>().call();
     if (!mounted) return;
     result.when((categories) {
+      // Create index map to preserve seed order
+      final seedIndexMap = <String, int>{};
+      for (int i = 0; i < CategorySeed.categories.length; i++) {
+        seedIndexMap[CategorySeed.categories[i].id] = i;
+      }
+
       // Budgets only cap expenses.
       final enabled = categories
           .where((c) => c.isEnabled && c.type == CategoryType.expense)
-          .toList();
+          .toList()
+        ..sort((a, b) {
+          final indexA = seedIndexMap[a.id] ?? 999;
+          final indexB = seedIndexMap[b.id] ?? 999;
+          return indexA.compareTo(indexB);
+        });
       setState(() {
         _categories = enabled;
         if (_selectedCategoryId == null && enabled.isNotEmpty) {

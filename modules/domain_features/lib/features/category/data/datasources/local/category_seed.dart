@@ -62,7 +62,7 @@ class CategorySeed {
     CategoryGroupEntity(id: '6', nameKey: 'Giáo dục'),
     CategoryGroupEntity(id: '7', nameKey: 'Giải trí'),
     CategoryGroupEntity(id: '8', nameKey: 'Mua sắm'),
-    CategoryGroupEntity(id: '9', nameKey: 'Trả nợ & Vay'),
+    // Group 9 (Trả nợ & Vay) removed - debt payments now properly classified as Debt/Loan type
     CategoryGroupEntity(id: '10', nameKey: 'Bảo hiểm'),
     CategoryGroupEntity(id: '11', nameKey: 'Quà tặng & Từ thiện'),
     CategoryGroupEntity(id: '12', nameKey: 'Chăm sóc cá nhân'),
@@ -71,13 +71,20 @@ class CategorySeed {
   ];
 
   static final List<CategoryModel> categories = [
-    // Group 1: Ăn uống & Cà phê
+    // Group 1: Ăn uống & Cà phê (reordered by usage frequency)
     CategoryModel(
       id: 'c1',
       nameKey: CcLocaleKeys.category_food_drink,
       iconCode: Icons.restaurant.codePoint,
       groupId: '1',
       colorValue: PrjColors.categoryFoodDrink.value,
+    ),
+    CategoryModel(
+      id: 'c4',
+      nameKey: CcLocaleKeys.category_eat_out,
+      iconCode: Icons.dinner_dining.codePoint,
+      groupId: '1',
+      colorValue: PrjColors.categoryEatOut.value,
     ),
     CategoryModel(
       id: 'c2',
@@ -93,28 +100,21 @@ class CategorySeed {
       groupId: '1',
       colorValue: PrjColors.categoryWater.value,
     ),
-    CategoryModel(
-      id: 'c4',
-      nameKey: CcLocaleKeys.category_eat_out,
-      iconCode: Icons.dinner_dining.codePoint,
-      groupId: '1',
-      colorValue: PrjColors.categoryEatOut.value,
-    ),
 
-    // Group 2: Di chuyển
-    CategoryModel(
-      id: 'c5',
-      nameKey: CcLocaleKeys.category_taxi,
-      iconCode: Icons.local_taxi.codePoint,
-      groupId: '2',
-      colorValue: PrjColors.categoryTaxi.value,
-    ),
+    // Group 2: Di chuyển (reordered by usage frequency)
     CategoryModel(
       id: 'c6',
       nameKey: CcLocaleKeys.category_gas,
       iconCode: Icons.local_gas_station.codePoint,
       groupId: '2',
       colorValue: PrjColors.categoryGas.value,
+    ),
+    CategoryModel(
+      id: 'c5',
+      nameKey: CcLocaleKeys.category_taxi,
+      iconCode: Icons.local_taxi.codePoint,
+      groupId: '2',
+      colorValue: PrjColors.categoryTaxi.value,
     ),
     CategoryModel(
       id: 'c7',
@@ -131,7 +131,14 @@ class CategorySeed {
       colorValue: PrjColors.categoryMaintenance.value,
     ),
 
-    // Group 3: Tiện ích
+    // Group 3: Tiện ích (reordered by usage frequency)
+    CategoryModel(
+      id: 'c11',
+      nameKey: CcLocaleKeys.category_phone,
+      iconCode: Icons.smartphone.codePoint,
+      groupId: '3',
+      colorValue: PrjColors.categoryPhone.value,
+    ),
     CategoryModel(
       id: 'c9',
       nameKey: CcLocaleKeys.category_electricity,
@@ -146,15 +153,8 @@ class CategorySeed {
       groupId: '3',
       colorValue: PrjColors.categoryInternet.value,
     ),
-    CategoryModel(
-      id: 'c11',
-      nameKey: CcLocaleKeys.category_phone,
-      iconCode: Icons.smartphone.codePoint,
-      groupId: '3',
-      colorValue: PrjColors.categoryPhone.value,
-    ),
 
-    // Group 4: Nhà ở
+    // Group 4: Nhà ở (reordered by usage frequency)
     CategoryModel(
       id: 'c12',
       nameKey: CcLocaleKeys.category_rent,
@@ -163,11 +163,11 @@ class CategorySeed {
       colorValue: PrjColors.categoryRent.value,
     ),
     CategoryModel(
-      id: 'c13',
-      nameKey: CcLocaleKeys.category_furniture,
-      iconCode: Icons.chair.codePoint,
+      id: 'c16',
+      nameKey: CcLocaleKeys.category_condo_fee,
+      iconCode: Icons.apartment.codePoint,
       groupId: '4',
-      colorValue: PrjColors.categoryFurniture.value,
+      colorValue: PrjColors.categoryCondoFee.value,
     ),
     CategoryModel(
       id: 'c14',
@@ -177,28 +177,15 @@ class CategorySeed {
       colorValue: PrjColors.categoryLaundry.value,
     ),
     CategoryModel(
-      id: 'c15',
-      nameKey: CcLocaleKeys.category_mortgage,
-      iconCode: Icons.account_balance.codePoint,
+      id: 'c13',
+      nameKey: CcLocaleKeys.category_furniture,
+      iconCode: Icons.chair.codePoint,
       groupId: '4',
-      colorValue: PrjColors.categoryMortgage.value,
+      colorValue: PrjColors.categoryFurniture.value,
     ),
-    CategoryModel(
-      id: 'c16',
-      nameKey: CcLocaleKeys.category_condo_fee,
-      iconCode: Icons.apartment.codePoint,
-      groupId: '4',
-      colorValue: PrjColors.categoryCondoFee.value,
-    ),
+    // Mortgage moved to Debt/Loan type - it's a debt obligation, not housing expense
 
-    // Group 5: Y tế & Sức khỏe
-    CategoryModel(
-      id: 'c17',
-      nameKey: CcLocaleKeys.category_doctor,
-      iconCode: Icons.local_hospital.codePoint,
-      groupId: '5',
-      colorValue: PrjColors.categoryDoctor.value,
-    ),
+    // Group 5: Y tế & Sức khỏe (reordered by usage frequency)
     CategoryModel(
       id: 'c18',
       nameKey: CcLocaleKeys.category_medicine,
@@ -207,11 +194,11 @@ class CategorySeed {
       colorValue: PrjColors.categoryMedicine.value,
     ),
     CategoryModel(
-      id: 'c19',
-      nameKey: CcLocaleKeys.category_health_insurance,
-      iconCode: Icons.health_and_safety.codePoint,
+      id: 'c17',
+      nameKey: CcLocaleKeys.category_doctor,
+      iconCode: Icons.local_hospital.codePoint,
       groupId: '5',
-      colorValue: PrjColors.categoryHealthInsurance.value,
+      colorValue: PrjColors.categoryDoctor.value,
     ),
     CategoryModel(
       id: 'c20',
@@ -220,8 +207,15 @@ class CategorySeed {
       groupId: '5',
       colorValue: PrjColors.categoryGym.value,
     ),
+    CategoryModel(
+      id: 'c19',
+      nameKey: CcLocaleKeys.category_health_insurance,
+      iconCode: Icons.health_and_safety.codePoint,
+      groupId: '5',
+      colorValue: PrjColors.categoryHealthInsurance.value,
+    ),
 
-    // Group 6: Giáo dục
+    // Group 6: Giáo dục (reordered by usage frequency)
     CategoryModel(
       id: 'c21',
       nameKey: CcLocaleKeys.category_tuition,
@@ -230,35 +224,21 @@ class CategorySeed {
       colorValue: PrjColors.categoryTuition.value,
     ),
     CategoryModel(
-      id: 'c22',
-      nameKey: CcLocaleKeys.category_books,
-      iconCode: Icons.menu_book.codePoint,
-      groupId: '6',
-      colorValue: PrjColors.categoryBooks.value,
-    ),
-    CategoryModel(
       id: 'c23',
       nameKey: CcLocaleKeys.category_courses,
       iconCode: Icons.cast_for_education.codePoint,
       groupId: '6',
       colorValue: PrjColors.categoryCourses.value,
     ),
+    CategoryModel(
+      id: 'c22',
+      nameKey: CcLocaleKeys.category_books,
+      iconCode: Icons.menu_book.codePoint,
+      groupId: '6',
+      colorValue: PrjColors.categoryBooks.value,
+    ),
 
-    // Group 7: Giải trí
-    CategoryModel(
-      id: 'c24',
-      nameKey: CcLocaleKeys.category_cinema,
-      iconCode: Icons.movie.codePoint,
-      groupId: '7',
-      colorValue: PrjColors.categoryCinema.value,
-    ),
-    CategoryModel(
-      id: 'c25',
-      nameKey: CcLocaleKeys.category_travel,
-      iconCode: Icons.flight.codePoint,
-      groupId: '7',
-      colorValue: PrjColors.categoryTravel.value,
-    ),
+    // Group 7: Giải trí (reordered by usage frequency)
     CategoryModel(
       id: 'c26',
       nameKey: CcLocaleKeys.category_gaming,
@@ -267,20 +247,34 @@ class CategorySeed {
       colorValue: PrjColors.categoryGaming.value,
     ),
     CategoryModel(
+      id: 'c24',
+      nameKey: CcLocaleKeys.category_cinema,
+      iconCode: Icons.movie.codePoint,
+      groupId: '7',
+      colorValue: PrjColors.categoryCinema.value,
+    ),
+    CategoryModel(
       id: 'c27',
       nameKey: CcLocaleKeys.category_events,
       iconCode: Icons.event.codePoint,
       groupId: '7',
       colorValue: PrjColors.categoryEvents.value,
     ),
-
-    // Group 8: Mua sắm
     CategoryModel(
-      id: 'c28',
-      nameKey: CcLocaleKeys.category_appliances,
-      iconCode: Icons.kitchen.codePoint,
+      id: 'c25',
+      nameKey: CcLocaleKeys.category_travel,
+      iconCode: Icons.flight.codePoint,
+      groupId: '7',
+      colorValue: PrjColors.categoryTravel.value,
+    ),
+
+    // Group 8: Mua sắm (reordered by usage frequency)
+    CategoryModel(
+      id: 'c30',
+      nameKey: CcLocaleKeys.category_clothing,
+      iconCode: Icons.checkroom.codePoint,
       groupId: '8',
-      colorValue: PrjColors.categoryAppliances.value,
+      colorValue: PrjColors.categoryClothing.value,
     ),
     CategoryModel(
       id: 'c29',
@@ -290,35 +284,21 @@ class CategorySeed {
       colorValue: PrjColors.categoryElectronics.value,
     ),
     CategoryModel(
-      id: 'c30',
-      nameKey: CcLocaleKeys.category_clothing,
-      iconCode: Icons.checkroom.codePoint,
-      groupId: '8',
-      colorValue: PrjColors.categoryClothing.value,
-    ),
-    CategoryModel(
       id: 'c31',
       nameKey: CcLocaleKeys.category_cosmetics,
       iconCode: Icons.face_retouching_natural.codePoint,
       groupId: '8',
       colorValue: PrjColors.categoryCosmetics.value,
     ),
+    CategoryModel(
+      id: 'c28',
+      nameKey: CcLocaleKeys.category_appliances,
+      iconCode: Icons.kitchen.codePoint,
+      groupId: '8',
+      colorValue: PrjColors.categoryAppliances.value,
+    ),
 
-    // Group 9: Trả nợ & Vay
-    CategoryModel(
-      id: 'c32',
-      nameKey: CcLocaleKeys.category_installment,
-      iconCode: Icons.credit_card.codePoint,
-      groupId: '9',
-      colorValue: PrjColors.categoryInstallment.value,
-    ),
-    CategoryModel(
-      id: 'c33',
-      nameKey: CcLocaleKeys.category_loan_interest,
-      iconCode: Icons.account_balance_wallet.codePoint,
-      groupId: '9',
-      colorValue: PrjColors.categoryLoanInterest.value,
-    ),
+    // Group 9: Trả nợ & Vay - MOVED to Debt/Loan type for proper financial classification
 
     // Group 10: Bảo hiểm
     CategoryModel(
@@ -359,7 +339,14 @@ class CategorySeed {
       colorValue: PrjColors.categoryCharity.value,
     ),
 
-    // Group 12: Chăm sóc cá nhân
+    // Group 12: Chăm sóc cá nhân (reordered by usage frequency)
+    CategoryModel(
+      id: 'c41',
+      nameKey: CcLocaleKeys.category_personal_care_product,
+      iconCode: Icons.soap.codePoint,
+      groupId: '12',
+      colorValue: PrjColors.categoryPersonalCareProduct.value,
+    ),
     CategoryModel(
       id: 'c39',
       nameKey: CcLocaleKeys.category_haircut,
@@ -373,13 +360,6 @@ class CategorySeed {
       iconCode: Icons.spa.codePoint,
       groupId: '12',
       colorValue: PrjColors.categorySpa.value,
-    ),
-    CategoryModel(
-      id: 'c41',
-      nameKey: CcLocaleKeys.category_personal_care_product,
-      iconCode: Icons.soap.codePoint,
-      groupId: '12',
-      colorValue: PrjColors.categoryPersonalCareProduct.value,
     ),
 
     // Group 13: Phí dịch vụ
@@ -424,7 +404,7 @@ class CategorySeed {
       colorValue: PrjColors.categoryBabyToys.value,
     ),
 
-    // Income — Thu nhập chủ động
+    // Income — Thu nhập chủ động (reordered by importance/frequency)
     CategoryModel(
       id: 'i1',
       nameKey: CcLocaleKeys.category_income_salary,
@@ -450,7 +430,7 @@ class CategorySeed {
       colorValue: PrjColors.categoryIncomeAllowance.value,
     ),
 
-    // Income — Thu nhập đầu tư
+    // Income — Thu nhập đầu tư (reordered by market popularity)
     CategoryModel(
       id: 'i4',
       nameKey: CcLocaleKeys.category_income_savings_interest,
@@ -476,7 +456,15 @@ class CategorySeed {
       colorValue: PrjColors.categoryIncomeRental.value,
     ),
 
-    // Income — Thu nhập khác
+    // Income — Thu nhập khác (reordered by usage frequency)
+    CategoryModel(
+      id: 'i9',
+      nameKey: CcLocaleKeys.category_income_cashback,
+      iconCode: Icons.replay.codePoint,
+      groupId: incomeOtherGroupId,
+      type: CategoryType.income,
+      colorValue: PrjColors.categoryIncomeCashback.value,
+    ),
     CategoryModel(
       id: 'i7',
       nameKey: CcLocaleKeys.category_income_bonus,
@@ -493,32 +481,8 @@ class CategorySeed {
       type: CategoryType.income,
       colorValue: PrjColors.categoryIncomeGift.value,
     ),
-    CategoryModel(
-      id: 'i9',
-      nameKey: CcLocaleKeys.category_income_cashback,
-      iconCode: Icons.replay.codePoint,
-      groupId: incomeOtherGroupId,
-      type: CategoryType.income,
-      colorValue: PrjColors.categoryIncomeCashback.value,
-    ),
 
-    // Debt & Loan
-    CategoryModel(
-      id: 'd1',
-      nameKey: CcLocaleKeys.category_debt_personal_borrow,
-      iconCode: Icons.person_outline.codePoint,
-      groupId: debtLoanGroupId,
-      type: CategoryType.debtLoan,
-      colorValue: PrjColors.categoryInstallment.value,
-    ),
-    CategoryModel(
-      id: 'd2',
-      nameKey: CcLocaleKeys.category_debt_bank_borrow,
-      iconCode: Icons.account_balance.codePoint,
-      groupId: debtLoanGroupId,
-      type: CategoryType.debtLoan,
-      colorValue: PrjColors.categoryInstallment.value,
-    ),
+    // Debt & Loan - Borrowing (Debt) - reordered by importance
     CategoryModel(
       id: 'd3',
       nameKey: CcLocaleKeys.category_debt_mortgage,
@@ -536,9 +500,51 @@ class CategorySeed {
       colorValue: PrjColors.categoryInstallment.value,
     ),
     CategoryModel(
+      id: 'd2',
+      nameKey: CcLocaleKeys.category_debt_bank_borrow,
+      iconCode: Icons.account_balance.codePoint,
+      groupId: debtLoanGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.categoryInstallment.value,
+    ),
+    CategoryModel(
+      id: 'd1',
+      nameKey: CcLocaleKeys.category_debt_personal_borrow,
+      iconCode: Icons.person_outline.codePoint,
+      groupId: debtLoanGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.categoryInstallment.value,
+    ),
+    CategoryModel(
       id: 'd5',
       nameKey: CcLocaleKeys.category_debt_installment,
       iconCode: Icons.shopping_cart_checkout.codePoint,
+      groupId: debtLoanGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.categoryInstallment.value,
+    ),
+
+    // Debt & Loan - Debt Payments (moved from Expense Group 9) - reordered by importance
+    CategoryModel(
+      id: 'c15',
+      nameKey: CcLocaleKeys.category_mortgage,
+      iconCode: Icons.account_balance.codePoint,
+      groupId: debtLoanGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.categoryMortgage.value,
+    ),
+    CategoryModel(
+      id: 'c33',
+      nameKey: CcLocaleKeys.category_loan_interest,
+      iconCode: Icons.account_balance_wallet.codePoint,
+      groupId: debtLoanGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.categoryLoanInterest.value,
+    ),
+    CategoryModel(
+      id: 'c32',
+      nameKey: CcLocaleKeys.category_installment,
+      iconCode: Icons.credit_card.codePoint,
       groupId: debtLoanGroupId,
       type: CategoryType.debtLoan,
       colorValue: PrjColors.categoryInstallment.value,
@@ -562,7 +568,7 @@ class CategorySeed {
       colorValue: PrjColors.mediumEmphasis.value,
     ),
 
-    // Investment
+    // Investment - reordered by market popularity
     CategoryModel(
       id: 'inv1',
       nameKey: CcLocaleKeys.category_investment_stock,
@@ -580,25 +586,9 @@ class CategorySeed {
       colorValue: PrjColors.categoryInvestment.value,
     ),
     CategoryModel(
-      id: 'inv3',
-      nameKey: CcLocaleKeys.category_investment_bond,
-      iconCode: Icons.description.codePoint,
-      groupId: investmentDefaultGroupId,
-      type: CategoryType.investment,
-      colorValue: PrjColors.categoryInvestment.value,
-    ),
-    CategoryModel(
       id: 'inv4',
       nameKey: CcLocaleKeys.category_investment_term_deposit,
       iconCode: Icons.lock_clock.codePoint,
-      groupId: investmentDefaultGroupId,
-      type: CategoryType.investment,
-      colorValue: PrjColors.categoryInvestment.value,
-    ),
-    CategoryModel(
-      id: 'inv5',
-      nameKey: CcLocaleKeys.category_investment_gold,
-      iconCode: Icons.savings.codePoint,
       groupId: investmentDefaultGroupId,
       type: CategoryType.investment,
       colorValue: PrjColors.categoryInvestment.value,
@@ -612,9 +602,25 @@ class CategorySeed {
       colorValue: PrjColors.categoryInvestment.value,
     ),
     CategoryModel(
+      id: 'inv5',
+      nameKey: CcLocaleKeys.category_investment_gold,
+      iconCode: Icons.savings.codePoint,
+      groupId: investmentDefaultGroupId,
+      type: CategoryType.investment,
+      colorValue: PrjColors.categoryInvestment.value,
+    ),
+    CategoryModel(
       id: 'inv7',
       nameKey: CcLocaleKeys.category_investment_crypto,
       iconCode: Icons.currency_bitcoin.codePoint,
+      groupId: investmentDefaultGroupId,
+      type: CategoryType.investment,
+      colorValue: PrjColors.categoryInvestment.value,
+    ),
+    CategoryModel(
+      id: 'inv3',
+      nameKey: CcLocaleKeys.category_investment_bond,
+      iconCode: Icons.description.codePoint,
       groupId: investmentDefaultGroupId,
       type: CategoryType.investment,
       colorValue: PrjColors.categoryInvestment.value,
@@ -691,7 +697,7 @@ class CategorySeed {
       CcLocaleKeys.category_electronics,
       CcLocaleKeys.category_clothing,
       CcLocaleKeys.category_cosmetics,
-      CcLocaleKeys.category_installment,
+      // category_installment removed - now classified as Debt/Loan type
       CcLocaleKeys.category_vehicle_insurance,
       CcLocaleKeys.category_gifts,
       CcLocaleKeys.category_haircut,
@@ -713,7 +719,7 @@ class CategorySeed {
       CcLocaleKeys.category_internet,
       CcLocaleKeys.category_phone,
       CcLocaleKeys.category_rent,
-      CcLocaleKeys.category_mortgage,
+      // category_mortgage removed - now classified as Debt/Loan type
       CcLocaleKeys.category_furniture,
       CcLocaleKeys.category_laundry,
       CcLocaleKeys.category_condo_fee,
@@ -729,8 +735,8 @@ class CategorySeed {
       CcLocaleKeys.category_electronics,
       CcLocaleKeys.category_clothing,
       CcLocaleKeys.category_cosmetics,
-      CcLocaleKeys.category_installment,
-      CcLocaleKeys.category_loan_interest,
+      // category_installment removed - now classified as Debt/Loan type
+      // category_loan_interest removed - now classified as Debt/Loan type
       CcLocaleKeys.category_vehicle_insurance,
       CcLocaleKeys.category_life_insurance,
       CcLocaleKeys.category_gifts,
@@ -751,7 +757,7 @@ class CategorySeed {
       CcLocaleKeys.category_internet,
       CcLocaleKeys.category_phone,
       CcLocaleKeys.category_rent,
-      CcLocaleKeys.category_mortgage,
+      // category_mortgage removed - now classified as Debt/Loan type
       CcLocaleKeys.category_furniture,
       CcLocaleKeys.category_laundry,
       CcLocaleKeys.category_condo_fee,
@@ -766,8 +772,8 @@ class CategorySeed {
       CcLocaleKeys.category_appliances,
       CcLocaleKeys.category_electronics,
       CcLocaleKeys.category_clothing,
-      CcLocaleKeys.category_installment,
-      CcLocaleKeys.category_loan_interest,
+      // category_installment removed - now classified as Debt/Loan type
+      // category_loan_interest removed - now classified as Debt/Loan type
       CcLocaleKeys.category_vehicle_insurance,
       CcLocaleKeys.category_life_insurance,
       CcLocaleKeys.category_home_insurance,
