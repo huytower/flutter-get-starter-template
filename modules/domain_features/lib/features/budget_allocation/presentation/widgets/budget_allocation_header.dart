@@ -43,7 +43,7 @@ class BudgetAllocationHeader extends StatelessWidget {
                 CcText(
                   el.tr(CcLocaleKeys.wallet_total_assets),
                   textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                    color: context.ccColorScheme.onPrimary.withOpacity(0.8)
+                    color: context.ccColorScheme.onPrimary.withOpacity(0.8),
                   ),
                 ),
                 const CcSpaceMD(),
@@ -54,7 +54,7 @@ class BudgetAllocationHeader extends StatelessWidget {
                         : '*********',
                     textStyle: context.ccTextTheme.headlineMedium?.copyWith(
                       color: context.ccColorScheme.onPrimary,
-                      fontWeight: CcTypographyParams.bold
+                      fontWeight: CcTypographyParams.bold,
                     ),
                   ),
                 ),

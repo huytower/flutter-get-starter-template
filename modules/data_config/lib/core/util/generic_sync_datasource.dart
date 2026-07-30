@@ -6,11 +6,7 @@ class GenericSyncDataSource {
   final SessionContract _session;
   final String collectionName;
 
-  GenericSyncDataSource(
-    this._syncService,
-    this._session,
-    this.collectionName,
-  );
+  GenericSyncDataSource(this._syncService, this._session, this.collectionName);
 
   Future<String?> sync({
     required String localId,

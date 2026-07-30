@@ -15,11 +15,11 @@ class CategorySyncDataSource {
   ) : _delegate = GenericSyncDataSource(syncService, session, 'categories');
 
   Future<String?> syncCategory(CategoryModel category) => _delegate.sync(
-        localId: category.id,
-        data: category.toFirestoreData(),
-        remoteId: category.syncMetadata.remoteId,
-        lastSyncedAt: category.syncMetadata.lastSyncedAt,
-      );
+    localId: category.id,
+    data: category.toFirestoreData(),
+    remoteId: category.syncMetadata.remoteId,
+    lastSyncedAt: category.syncMetadata.lastSyncedAt,
+  );
 
   Future<List<Map<String, dynamic>>> fetchCategories() => _delegate.fetch();
 

@@ -40,6 +40,7 @@ class FinancialDataSyncService {
   );
 
   bool get _isAuthenticated => _session.currentUser != null;
+
   String? get _userId => _session.currentUser?.id;
 
   Future<void> syncAll() async {
@@ -162,9 +163,7 @@ class FinancialDataSyncService {
     if (!Hive.isBoxOpen(CcHiveBox.RECONCILIATION_BOX_NAME)) return;
     Box<ReconciliationModel> box;
     try {
-      box = Hive.box<ReconciliationModel>(
-        CcHiveBox.RECONCILIATION_BOX_NAME,
-      );
+      box = Hive.box<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME);
     } on HiveError catch (e) {
       if (e.message.contains('already open')) return;
       rethrow;

@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-
 import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:flutter/material.dart';
 
 class ProfileSettingsTile extends StatelessWidget {
   const ProfileSettingsTile({

@@ -43,7 +43,7 @@ class FirestoreSyncService {
         if (doc.exists) {
           final remoteData = doc.data() as Map<String, dynamic>;
           final remoteModifiedAt = remoteData['lastModifiedAt'] as String?;
-          
+
           // Conflict resolution: use last-write-wins
           if (remoteModifiedAt != null && lastSyncedAt != null) {
             final remoteTime = DateTime.parse(remoteModifiedAt);
@@ -52,7 +52,7 @@ class FirestoreSyncService {
               return remoteId;
             }
           }
-          
+
           await collection.doc(remoteId).update(syncData);
           return remoteId;
         } else {
@@ -78,7 +78,7 @@ class FirestoreSyncService {
     try {
       final collectionPath = getUserCollectionPath(userId, collectionName);
       final snapshot = await _firestore.collection(collectionPath).get();
-      
+
       return snapshot.docs.map((doc) {
         final data = doc.data();
         data['remoteId'] = doc.id;
@@ -112,17 +112,20 @@ class FirestoreSyncService {
     return _firestore
         .collection(collectionPath)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) {
-              final data = doc.data();
-              data['remoteId'] = doc.id;
-              return data;
-            }).toList());
+        .map(
+          (snapshot) => snapshot.docs.map((doc) {
+            final data = doc.data();
+            data['remoteId'] = doc.id;
+            return data;
+          }).toList(),
+        );
   }
 }
 
 /// Exception thrown when sync operations fail.
 class SyncException implements Exception {
   final String message;
+
   SyncException(this.message);
 
   @override

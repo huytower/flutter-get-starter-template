@@ -3,12 +3,12 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../budget_limit/domain/repositories/budget_limit_repository.dart';
 import '../../../category/domain/repositories/category_repository.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
-import '../../../budget_limit/domain/repositories/budget_limit_repository.dart';
 import '../entities/financial_runway_entity.dart';
 
 @lazySingleton
@@ -105,8 +105,9 @@ class GetFinancialRunwayUseCase {
     // Expenses. When fixed-price budgets are set, they represent the mandatory
     // recurring burn, so we prefer that over the historical lifestyle average.
     final averageMonthlyExpense = totalExpenses / monthsCount;
-    final monthlyBurn =
-        fixedMonthlyCost > 0 ? fixedMonthlyCost : averageMonthlyExpense;
+    final monthlyBurn = fixedMonthlyCost > 0
+        ? fixedMonthlyCost
+        : averageMonthlyExpense;
 
     if (monthlyBurn <= 0) {
       return Success(

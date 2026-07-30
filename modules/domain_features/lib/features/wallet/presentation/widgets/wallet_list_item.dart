@@ -44,10 +44,7 @@ class WalletListItem extends StatelessWidget {
                   color: context.ccColorScheme.outlineVariant.withOpacity(0.2),
                 ),
               ),
-              child: CcIconToken(
-                icon,
-                size: 28,
-              ),
+              child: CcIconToken(icon, size: 28),
             ),
             const CcSpaceMD(),
             Expanded(

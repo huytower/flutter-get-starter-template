@@ -43,10 +43,7 @@ class TransactionPageHeader extends StatelessWidget {
           bottomLeft: Radius.circular(context.respDim(16)),
           bottomRight: Radius.circular(context.respDim(16)),
         ),
-        image: DecorationImage(
-          image: AssetImage(assetPath),
-          fit: BoxFit.cover,
-        ),
+        image: DecorationImage(image: AssetImage(assetPath), fit: BoxFit.cover),
       ),
       clipBehavior: Clip.antiAlias,
       child: Padding(

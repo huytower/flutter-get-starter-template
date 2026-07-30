@@ -12,8 +12,11 @@ class ReconciliationSyncDataSource {
   ReconciliationSyncDataSource(
     FirestoreSyncService syncService,
     SessionContract session,
-  ) : _delegate =
-        GenericSyncDataSource(syncService, session, 'reconciliations');
+  ) : _delegate = GenericSyncDataSource(
+        syncService,
+        session,
+        'reconciliations',
+      );
 
   Future<String?> syncReconciliation(ReconciliationModel reconciliation) =>
       _delegate.sync(

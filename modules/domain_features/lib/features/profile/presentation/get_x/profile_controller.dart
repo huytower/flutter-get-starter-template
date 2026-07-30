@@ -66,8 +66,10 @@ class ProfileController extends CcGetController {
       settings.value = s;
       appVersion.value = await _deviceInfo.getAppVersion();
 
-      'ProfileController loaded settings - isDarkMode: ${s.isDarkMode}'.Log('ProfileController');
-      
+      'ProfileController loaded settings - isDarkMode: ${s.isDarkMode}'.Log(
+        'ProfileController',
+      );
+
       // Theme is already restored in main.dart from CcAppStorage
       // Don't re-apply it here to avoid overriding user's current theme
       layoutStatus.value = CcLayoutStatus.success;

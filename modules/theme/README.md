@@ -1,6 +1,7 @@
 # Theme Module — Hybrid-Shell Architecture
 
-This module follows Clean Architecture to keep theme-related code organized and testable. It serves as the **Semantic Layer** for the Super App Hybrid-Shell, mapping design tokens to brand-specific colors.
+This module follows Clean Architecture to keep theme-related code organized and testable. It serves as the **Semantic
+Layer** for the Super App Hybrid-Shell, mapping design tokens to brand-specific colors.
 
 ## Architecture
 

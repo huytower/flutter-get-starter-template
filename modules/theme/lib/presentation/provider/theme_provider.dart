@@ -16,11 +16,12 @@ class ThemeProvider extends ChangeNotifier {
   /// Checks if the app is following system theme
   bool get followSystem => _followSystem;
 
-  ThemeProvider({bool? initialDarkMode}) 
-      : _themeMode = initialDarkMode != null 
+  ThemeProvider({bool? initialDarkMode})
+    : _themeMode = initialDarkMode != null
           ? (initialDarkMode ? ThemeMode.dark : ThemeMode.light)
           : _detectSystemTheme() {
-    _followSystem = initialDarkMode == null; // Follow system only if no preference set
+    _followSystem =
+        initialDarkMode == null; // Follow system only if no preference set
     _listenToSystemBrightnessChanges();
   }
 

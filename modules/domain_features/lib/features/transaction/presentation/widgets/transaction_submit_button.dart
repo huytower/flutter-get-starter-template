@@ -50,7 +50,7 @@ class TransactionSubmitButton extends StatelessWidget {
                     textAlign: TextAlign.center,
                     textStyle: context.ccTextTheme.titleMedium?.copyWith(
                       color: scheme.onPrimary,
-                      fontWeight: FontWeight.bold
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
           ),

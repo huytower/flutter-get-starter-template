@@ -6,7 +6,8 @@ Config remote server-side, includes :
 - server-response handler,
 - json parser
 
-This module supports the **Hybrid-Shell App Architecture** by providing app-specific repository implementations that fulfill contracts defined in Micro-Features.
+This module supports the **Hybrid-Shell App Architecture** by providing app-specific repository implementations that
+fulfill contracts defined in Micro-Features.
 
 ### Getting Started
 
@@ -28,25 +29,25 @@ This module supports the **Hybrid-Shell App Architecture** by providing app-spec
 
 3. `response.dart` : serves for these targets :
 
-     - Json parser
-       
-      ex.
-       ```dart
-       Map<String, dynamic> toJson() {
-          final map = <String, dynamic>{};
-          if (status != null) {
-             map['status'] = status?.toJson();
-          }
-          if (_elements != null) {
-             map['elements'] = _elements?.map((v) => jsonEncode(v)).toList();
-          }
-          return map;
-       }
-       ```
+    - Json parser
 
-     - Server response handler
-       
-      ex.
+   ex.
+   ```dart
+   Map<String, dynamic> toJson() {
+      final map = <String, dynamic>{};
+      if (status != null) {
+         map['status'] = status?.toJson();
+      }
+      if (_elements != null) {
+         map['elements'] = _elements?.map((v) => jsonEncode(v)).toList();
+      }
+      return map;
+   }
+   ```
+
+    - Server response handler
+
+   ex.
 
        ```
        when(

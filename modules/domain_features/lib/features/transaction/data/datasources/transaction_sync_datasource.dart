@@ -14,7 +14,8 @@ class TransactionSyncDataSource {
     SessionContract session,
   ) : _delegate = GenericSyncDataSource(syncService, session, 'transactions');
 
-  Future<String?> syncTransaction(TransactionModel transaction) => _delegate.sync(
+  Future<String?> syncTransaction(TransactionModel transaction) =>
+      _delegate.sync(
         localId: transaction.id ?? '',
         data: transaction.toFirestoreData(),
         remoteId: transaction.syncMetadata.remoteId,

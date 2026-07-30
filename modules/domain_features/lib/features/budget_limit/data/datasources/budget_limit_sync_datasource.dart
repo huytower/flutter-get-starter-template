@@ -15,11 +15,11 @@ class BudgetLimitSyncDataSource {
   ) : _delegate = GenericSyncDataSource(syncService, session, 'budgets');
 
   Future<String?> syncBudget(BudgetLimitModel budget) => _delegate.sync(
-        localId: budget.id,
-        data: budget.toFirestoreData(),
-        remoteId: budget.syncMetadata.remoteId,
-        lastSyncedAt: budget.syncMetadata.lastSyncedAt,
-      );
+    localId: budget.id,
+    data: budget.toFirestoreData(),
+    remoteId: budget.syncMetadata.remoteId,
+    lastSyncedAt: budget.syncMetadata.lastSyncedAt,
+  );
 
   Future<List<Map<String, dynamic>>> fetchBudgets() => _delegate.fetch();
 

@@ -15,11 +15,11 @@ class WalletSyncDataSource {
   ) : _delegate = GenericSyncDataSource(syncService, session, 'wallets');
 
   Future<String?> syncWallet(WalletHiveModel wallet) => _delegate.sync(
-        localId: wallet.id,
-        data: wallet.toFirestoreData(),
-        remoteId: wallet.syncMetadata.remoteId,
-        lastSyncedAt: wallet.syncMetadata.lastSyncedAt,
-      );
+    localId: wallet.id,
+    data: wallet.toFirestoreData(),
+    remoteId: wallet.syncMetadata.remoteId,
+    lastSyncedAt: wallet.syncMetadata.lastSyncedAt,
+  );
 
   Future<List<Map<String, dynamic>>> fetchWallets() => _delegate.fetch();
 

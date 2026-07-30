@@ -30,6 +30,7 @@ abstract final class PrjColors {
   // Light mode: faint primary tint fading into the light surface.
   static const Color gradientTop = CcBaseColors.teal600;
   static const Color gradientBottom = CcBaseColors.white100;
+
   // Dark mode: faint primary tint fading into the dark background.
   static const Color darkGradientTop = CcBaseColors.teal600;
   static const Color darkGradientBottom = CcBaseColors.gray950;
