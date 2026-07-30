@@ -54,20 +54,44 @@ class CategorySeed {
   ];
 
   static const List<CategoryGroupEntity> groups = [
-    CategoryGroupEntity(id: '1', nameKey: 'Ăn uống & Cà phê'),
-    CategoryGroupEntity(id: '2', nameKey: 'Di chuyển'),
-    CategoryGroupEntity(id: '3', nameKey: 'Tiện ích'),
-    CategoryGroupEntity(id: '4', nameKey: 'Nhà ở'),
-    CategoryGroupEntity(id: '5', nameKey: 'Y tế & Sức khỏe'),
-    CategoryGroupEntity(id: '6', nameKey: 'Giáo dục'),
-    CategoryGroupEntity(id: '7', nameKey: 'Giải trí'),
-    CategoryGroupEntity(id: '8', nameKey: 'Mua sắm'),
+    CategoryGroupEntity(
+      id: '1',
+      nameKey: CcLocaleKeys.category_group_food_drink,
+    ),
+    CategoryGroupEntity(
+      id: '2',
+      nameKey: CcLocaleKeys.category_group_transport,
+    ),
+    CategoryGroupEntity(
+      id: '3',
+      nameKey: CcLocaleKeys.category_group_utilities,
+    ),
+    CategoryGroupEntity(id: '4', nameKey: CcLocaleKeys.category_group_housing),
+    CategoryGroupEntity(id: '5', nameKey: CcLocaleKeys.category_group_health),
+    CategoryGroupEntity(
+      id: '6',
+      nameKey: CcLocaleKeys.category_group_education,
+    ),
+    CategoryGroupEntity(
+      id: '7',
+      nameKey: CcLocaleKeys.category_group_entertainment,
+    ),
+    CategoryGroupEntity(id: '8', nameKey: CcLocaleKeys.category_group_shopping),
     // Group 9 (Trả nợ & Vay) removed - debt payments now properly classified as Debt/Loan type
-    CategoryGroupEntity(id: '10', nameKey: 'Bảo hiểm'),
-    CategoryGroupEntity(id: '11', nameKey: 'Quà tặng & Từ thiện'),
-    CategoryGroupEntity(id: '12', nameKey: 'Chăm sóc cá nhân'),
-    CategoryGroupEntity(id: '13', nameKey: 'Phí dịch vụ'),
-    CategoryGroupEntity(id: '14', nameKey: 'Gia đình & Con cái'),
+    CategoryGroupEntity(
+      id: '10',
+      nameKey: CcLocaleKeys.category_group_insurance,
+    ),
+    CategoryGroupEntity(id: '11', nameKey: CcLocaleKeys.category_group_gifts),
+    CategoryGroupEntity(
+      id: '12',
+      nameKey: CcLocaleKeys.category_group_personal_care,
+    ),
+    CategoryGroupEntity(
+      id: '13',
+      nameKey: CcLocaleKeys.category_group_service_fees,
+    ),
+    CategoryGroupEntity(id: '14', nameKey: CcLocaleKeys.category_group_family),
   ];
 
   static final List<CategoryModel> categories = [

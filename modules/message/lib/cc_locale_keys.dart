@@ -353,6 +353,19 @@ class CodegenLoader extends AssetLoader {
     "category": {
       "group_daily": "Daily",
       "group_personal": "Personal",
+      "group_food_drink": "Dining & Coffee",
+      "group_transport": "Transportation",
+      "group_utilities": "Utilities",
+      "group_housing": "Housing",
+      "group_health": "Medical & Health",
+      "group_education": "Education",
+      "group_entertainment": "Entertainment",
+      "group_shopping": "Shopping",
+      "group_insurance": "Insurance",
+      "group_gifts": "Gifts & Charity",
+      "group_personal_care": "Personal Care",
+      "group_service_fees": "Service Fees",
+      "group_family": "Family & Children",
       "food": "Food",
       "transport": "Transport",
       "shopping": "Shopping",
@@ -821,6 +834,19 @@ class CodegenLoader extends AssetLoader {
     "category": {
       "group_daily": "Hàng ngày",
       "group_personal": "Cá nhân",
+      "group_food_drink": "Ăn uống & Cà phê",
+      "group_transport": "Di chuyển",
+      "group_utilities": "Tiện ích",
+      "group_housing": "Nhà ở",
+      "group_health": "Y tế & Sức khỏe",
+      "group_education": "Giáo dục",
+      "group_entertainment": "Giải trí",
+      "group_shopping": "Mua sắm",
+      "group_insurance": "Bảo hiểm",
+      "group_gifts": "Quà tặng & Từ thiện",
+      "group_personal_care": "Chăm sóc cá nhân",
+      "group_service_fees": "Phí dịch vụ",
+      "group_family": "Gia đình & Con cái",
       "food": "Đồ ăn",
       "transport": "Di chuyển",
       "shopping": "Mua sắm",
@@ -1260,6 +1286,19 @@ abstract class CcLocaleKeys {
       'category.expense_settings_title';
   static const category_income_settings_title =
       'category.income_settings_title';
+  static const category_group_food_drink = 'category.group_food_drink';
+  static const category_group_transport = 'category.group_transport';
+  static const category_group_utilities = 'category.group_utilities';
+  static const category_group_housing = 'category.group_housing';
+  static const category_group_health = 'category.group_health';
+  static const category_group_education = 'category.group_education';
+  static const category_group_entertainment = 'category.group_entertainment';
+  static const category_group_shopping = 'category.group_shopping';
+  static const category_group_insurance = 'category.group_insurance';
+  static const category_group_gifts = 'category.group_gifts';
+  static const category_group_personal_care = 'category.group_personal_care';
+  static const category_group_service_fees = 'category.group_service_fees';
+  static const category_group_family = 'category.group_family';
   static const category_food = 'category.food';
   static const category_transport = 'category.transport';
   static const category_shopping = 'category.shopping';

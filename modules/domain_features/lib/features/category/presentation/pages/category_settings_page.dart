@@ -208,7 +208,7 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
     return _buildGroupSection(
       group: group,
       categories: cats,
-      accentColor: CcBaseColors.violet600,
+      accentColor: PrjColors.debtLoan,
     );
   }
 
@@ -221,7 +221,7 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
     return _buildGroupSection(
       group: group,
       categories: cats,
-      accentColor: CcBaseColors.yellow600,
+      accentColor: PrjColors.investment,
     );
   }
 
@@ -257,7 +257,7 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
       child: CcText(
         title,
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
+          fontWeight: CcTypographyParams.bold,
           color: context.ccColorScheme.primary,
         ),
       ),

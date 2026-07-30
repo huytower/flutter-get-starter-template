@@ -58,6 +58,9 @@ abstract final class PrjColors {
   static const Color info = CcBaseColors.infoBlue;
   static const Color onInfo = CcBaseColors.white100;
 
+  static const Color investment = CcBaseColors.yellow600;
+  static const Color debtLoan = CcBaseColors.violet600;
+
   // ===========================================================================
   // SURFACES & BACKGROUNDS
   // ===========================================================================
