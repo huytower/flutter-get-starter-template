@@ -6,7 +6,6 @@ import 'package:theme/export_theme.dart';
 import '../get_x/transaction_controller.dart';
 import 'expense_form.dart';
 import 'income_form.dart';
-import 'transfer_form.dart';
 
 class TransactionTabBarView extends StatelessWidget {
   const TransactionTabBarView({super.key, required this.controller});
@@ -34,9 +33,7 @@ class TransactionTabBarView extends StatelessWidget {
               ),
             ),
           ),
-          const TabBarView(
-            children: [ExpenseForm(), IncomeForm(), TransferForm()],
-          ),
+          const TabBarView(children: [ExpenseForm(), IncomeForm()]),
         ],
       );
     });
@@ -45,7 +42,7 @@ class TransactionTabBarView extends StatelessWidget {
   Color _getTabColor(BuildContext context, int index) {
     return switch (index) {
       0 => context.ccColorScheme.error,
-      2 => context.ccColorScheme.secondary,
+      1 => context.ccColorScheme.primary,
       _ => PrjColors.success,
     };
   }

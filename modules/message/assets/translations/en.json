@@ -192,10 +192,6 @@
     "record_expense": "Record Expense",
     "expense_saved": "Expense of {amount} đ saved successfully!",
     "income_saved": "Income of {amount} đ saved successfully!",
-    "transfer_saved": "Transferred {amount} đ successfully!",
-    "transfer_from": "From Wallet",
-    "transfer_to": "To Wallet",
-    "record_transfer": "Transfer",
     "source_income": "Source of Income",
     "reason_income": "Reason for Income",
     "recipient": "Recipient",
@@ -214,8 +210,7 @@
       "wallet_required": "Please select a wallet",
       "category_required": "Please select a category",
       "future_date": "Cannot record a future transaction",
-      "insufficient_balance": "Insufficient wallet balance",
-      "same_wallet_transfer": "Cannot transfer to the same wallet"
+      "insufficient_balance": "Insufficient wallet balance"
     }
   },
   "budget": {

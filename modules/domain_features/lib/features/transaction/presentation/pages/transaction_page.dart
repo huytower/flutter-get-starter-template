@@ -34,7 +34,7 @@ class TransactionPage extends CcGetView<TransactionController> {
     final headerHeight = screenHeight * headerHeightFactor;
 
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: FadePageWrapper(
         child: Stack(
           children: [

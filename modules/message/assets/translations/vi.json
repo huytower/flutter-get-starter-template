@@ -192,10 +192,6 @@
     "record_expense": "Ghi chép chi tiêu",
     "expense_saved": "Đã lưu chi tiêu {amount} đ thành công!",
     "income_saved": "Đã lưu thu nhập {amount} đ thành công!",
-    "transfer_saved": "Đã chuyển {amount} đ thành công!",
-    "transfer_from": "Từ ví",
-    "transfer_to": "Đến ví",
-    "record_transfer": "Chuyển khoản",
     "source_income": "Nguồn thu nhập",
     "reason_income": "Lý do thu nhập",
     "recipient": "Người nhận",
@@ -214,8 +210,7 @@
       "wallet_required": "Vui lòng chọn ví!",
       "category_required": "Vui lòng chọn hạng mục!",
       "future_date": "Không thể ghi giao dịch ở tương lai!",
-      "insufficient_balance": "Số dư ví không đủ!",
-      "same_wallet_transfer": "Không thể chuyển vào cùng một ví!"
+      "insufficient_balance": "Số dư ví không đủ!"
     }
   },
   "budget": {

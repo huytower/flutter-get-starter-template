@@ -59,7 +59,6 @@ class TransactionTabBar extends StatelessWidget {
       tabs: [
         Tab(text: el.tr(CcLocaleKeys.transaction_expense_slip)),
         Tab(text: el.tr(CcLocaleKeys.transaction_income_slip)),
-        Tab(text: el.tr(CcLocaleKeys.transaction_record_transfer)),
       ],
     );
   }

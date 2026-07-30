@@ -14,7 +14,6 @@ import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import 'expense_form_controller.dart';
 import 'income_form_controller.dart';
-import 'transfer_form_controller.dart';
 
 @injectable
 class TransactionController extends CcGetController {
@@ -114,11 +113,6 @@ class TransactionController extends CcGetController {
       case 1:
         if (Get.isRegistered<IncomeFormController>()) {
           Get.find<IncomeFormController>().submitForm(context);
-        }
-        break;
-      case 2:
-        if (Get.isRegistered<TransferFormController>()) {
-          Get.find<TransferFormController>().submitForm(context);
         }
         break;
     }

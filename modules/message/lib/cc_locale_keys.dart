@@ -217,10 +217,6 @@ class CodegenLoader extends AssetLoader {
       "record_expense": "Record Expense",
       "expense_saved": "Expense of {amount} đ saved successfully!",
       "income_saved": "Income of {amount} đ saved successfully!",
-      "transfer_saved": "Transferred {amount} đ successfully!",
-      "transfer_from": "From Wallet",
-      "transfer_to": "To Wallet",
-      "record_transfer": "Transfer",
       "source_income": "Source of Income",
       "reason_income": "Reason for Income",
       "recipient": "Recipient",
@@ -240,7 +236,6 @@ class CodegenLoader extends AssetLoader {
         "category_required": "Please select a category",
         "future_date": "Cannot record a future transaction",
         "insufficient_balance": "Insufficient wallet balance",
-        "same_wallet_transfer": "Cannot transfer to the same wallet",
       },
     },
     "budget": {
@@ -683,10 +678,6 @@ class CodegenLoader extends AssetLoader {
       "record_expense": "Ghi chép chi tiêu",
       "expense_saved": "Đã lưu chi tiêu {amount} đ thành công!",
       "income_saved": "Đã lưu thu nhập {amount} đ thành công!",
-      "transfer_saved": "Đã chuyển {amount} đ thành công!",
-      "transfer_from": "Từ ví",
-      "transfer_to": "Đến ví",
-      "record_transfer": "Chuyển khoản",
       "source_income": "Nguồn thu nhập",
       "reason_income": "Lý do thu nhập",
       "recipient": "Người nhận",
@@ -706,7 +697,6 @@ class CodegenLoader extends AssetLoader {
         "category_required": "Vui lòng chọn hạng mục!",
         "future_date": "Không thể ghi giao dịch ở tương lai!",
         "insufficient_balance": "Số dư ví không đủ!",
-        "same_wallet_transfer": "Không thể chuyển vào cùng một ví!",
       },
     },
     "budget": {
@@ -1118,10 +1108,6 @@ abstract class CcLocaleKeys {
   static const transaction_record_expense = 'transaction.record_expense';
   static const transaction_expense_saved = 'transaction.expense_saved';
   static const transaction_income_saved = 'transaction.income_saved';
-  static const transaction_transfer_saved = 'transaction.transfer_saved';
-  static const transaction_transfer_from = 'transaction.transfer_from';
-  static const transaction_transfer_to = 'transaction.transfer_to';
-  static const transaction_record_transfer = 'transaction.record_transfer';
   static const transaction_source_income = 'transaction.source_income';
   static const transaction_reason_income = 'transaction.reason_income';
   static const transaction_recipient = 'transaction.recipient';
@@ -1146,8 +1132,6 @@ abstract class CcLocaleKeys {
       'transaction.validation.future_date';
   static const transaction_validation_insufficient_balance =
       'transaction.validation.insufficient_balance';
-  static const transaction_validation_same_wallet_transfer =
-      'transaction.validation.same_wallet_transfer';
 
   static const budget_title = 'budget.title';
   static const budget_description = 'budget.description';
