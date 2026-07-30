@@ -208,7 +208,7 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
     return _buildGroupSection(
       group: group,
       categories: cats,
-      accentColor: PrjColors.primary,
+      accentColor: CcBaseColors.violet600,
     );
   }
 
@@ -221,7 +221,7 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
     return _buildGroupSection(
       group: group,
       categories: cats,
-      accentColor: PrjColors.categoryInvestment,
+      accentColor: CcBaseColors.yellow600,
     );
   }
 
