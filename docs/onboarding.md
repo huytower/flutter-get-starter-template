@@ -123,6 +123,7 @@ import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 - `flutter analyze`
 - `flutter pub run build_runner build --delete-conflicting-outputs`
 - `flutter test`
+- `flutter run -d emulator-5554 --flavor free -t lib/main_free.dart` - run app with emulator in terminal
 
 ## Recommended workflow
 
