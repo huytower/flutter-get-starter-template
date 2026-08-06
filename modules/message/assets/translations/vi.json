@@ -1,4 +1,4 @@
-{
+﻿{
   "app": {
     "name": "Sổ Sách Xịn",
     "version": "Phiên bản {version}",
@@ -428,8 +428,8 @@
     "young_children_message": "Bạn có con nhỏ không? Nếu có, chúng tôi sẽ tự động bật các danh mục dành cho con (sữa, bỉm, đồ chơi trẻ em)."
   },
   "guideline": {
-    "banner_title_completed": "Chúc mừng! Bạn đã hoàn thành các bước hướng dẫn thiết lập.",
-    "banner_title_in_progress": "Hướng dẫn: Bước {current}/{total}",
+    "banner_title_completed": "Chúc mừng! Bước hướng dẫn đã hoàn tất.",
+    "banner_title_in_progress": "Thử thách: còn {remaining} bước",
     "banner_desc_completed": "Bây giờ bạn có thể bắt đầu quản lý tài chính một cách kỷ luật.",
     "banner_desc_birth_year": "Thiết lập năm sinh để nhận gợi ý phù hợp",
     "banner_desc_categories": "Lựa chọn danh mục chi tiêu & thu nhập",

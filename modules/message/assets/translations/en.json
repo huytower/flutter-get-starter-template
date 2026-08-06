@@ -428,8 +428,8 @@
     "young_children_message": "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys)."
   },
   "guideline": {
-    "banner_title_completed": "Congratulations! You have completed all setup steps.",
-    "banner_title_in_progress": "Guide: Step {current}/{total}",
+    "banner_title_completed": "Congrats! All setup steps completed",
+    "banner_title_in_progress": "Challenge: {remaining} remaining steps",
     "banner_desc_completed": "Now you can start managing your finances in a disciplined way.",
     "banner_desc_birth_year": "Set your birth year to receive suitable suggestions",
     "banner_desc_categories": "Select your expense and income categories",

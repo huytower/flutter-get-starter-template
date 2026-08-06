@@ -110,11 +110,11 @@ class GuidelineController extends GetxController {
   }
 
   String get bannerTitle {
+    final remaining = taskSequence.length - completedTasks.length;
     return el.tr(
       CcLocaleKeys.guideline_banner_title_in_progress,
       namedArgs: {
-        'current': currentStep.toString(),
-        'total': taskSequence.length.toString(),
+        'remaining': remaining.toString(),
       },
     );
   }
