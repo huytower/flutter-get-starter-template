@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điều Khoản Sử Dụng - Sổ Sách Xịn</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 20px;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .update-date {
+            color: #7f8c8d;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .contact-section {
+            background-color: #e8f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        .language-toggle {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .language-toggle button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: 2px solid #3498db;
+            background: white;
+            color: #3498db;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .language-toggle button.active {
+            background: #3498db;
+            color: white;
+        }
+        .english-content {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="language-toggle">
+        <button onclick="showVietnamese()" class="active" id="btn-vi">Tiếng Việt</button>
+        <button onclick="showEnglish()" id="btn-en">English</button>
+    </div>
+
+    <!-- Vietnamese Content -->
+    <div class="container vietnamese-content" id="content-vi">
+        <h1>Điều Khoản Sử Dụng Sổ Sách Xịn</h1>
+        <p class="update-date">Cập nhật lần cuối: 06/08/2026</p>
+
+        <div class="highlight">
+            <strong>QUAN TRỌNG:</strong> Bằng cách sử dụng ứng dụng Sổ Sách Xịn, bạn đồng ý với các điều khoản sử dụng này. Vui lòng đọc kỹ trước khi sử dụng ứng dụng.
+        </div>
+
+        <h2>1. Chấp Nhận Điều Khoản</h2>
+        <p>Bằng cách tải, cài đặt, hoặc sử dụng ứng dụng Sổ Sách Xịn ("Ứng dụng"), bạn đồng ý bị ràng buộc bởi các Điều khoản Sử Dụng này ("Điều khoản"). Nếu bạn không đồng ý với các Điều khoản này, vui lòng không sử dụng Ứng dụng.</p>
+
+        <h2>2. Mô Tả Dịch Vụ</h2>
+        <p>Sổ Sách Xịn là ứng dụng quản lý tài chính cá nhân giúp người dùng:</p>
+        <ul>
+            <li>Ghi chép thu nhập, chi tiêu, và chuyển tiền giữa các ví</li>
+            <li>Quản lý ngân sách và đặt cảnh báo chi tiêu</li>
+            <li>Theo dõi đầu tư và quỹ khẩn cấp</li>
+            <li>Xem báo cáo tài chính theo tuần/tháng/năm</li>
+            <li>Đối soát sổ sách với số dư thực tế</li>
+        </ul>
+
+        <h2>3. Quyền Riêng Tư và Dữ Liệu</h2>
+        <h3>3.1 Thu Thập Dữ Liệu</h3>
+        <p>Ứng dụng có thể thu thập các thông tin sau:</p>
+        <ul>
+            <li><strong>Dữ liệu tài chính:</strong> Giao dịch, số dư ví, ngân sách</li>
+            <li><strong>Dữ liệu thiết bị:</strong> Mô hình thiết bị, hệ điều hành</li>
+            <li><strong>Dữ liệu sử dụng:</strong> Thời gian sử dụng, tính năng được sử dụng</li>
+            <li><strong>Dữ liệu vị trí:</strong> Để cung cấp gợi ý chi tiêu thông minh (tùy chọn)</li>
+        </ul>
+
+        <h3>3.2 Bảo Mật Dữ Liệu</h3>
+        <p>Chúng tôi cam kết bảo vệ dữ liệu của bạn:</p>
+        <ul>
+            <li>Dữ liệu được lưu trữ cục bộ trên thiết bị của bạn</li>
+            <li>Dữ liệu được mã hóa khi đồng bộ với đám mây</li>
+            <li>Chúng tôi không bán dữ liệu cá nhân của bạn cho bên thứ ba</li>
+            <li>Bạn có thể xóa dữ liệu của mình bất cứ lúc nào</li>
+        </ul>
+
+        <h3>3.3 Chính Sách Quyền Riêng Tư</h3>
+        <p>Để biết thêm chi tiết về cách chúng tôi xử lý dữ liệu của bạn, vui lòng xem <a href="#">Chính Sách Quyền Riêng Tư</a> của chúng tôi.</p>
+
+        <h2>4. Trách Nhiệm Người Dùng</h2>
+        <p>Bạn đồng ý:</p>
+        <ul>
+            <li>Cung cấp thông tin chính xác và cập nhật</li>
+            <li>Không sử dụng Ứng dụng cho bất kỳ mục đích bất hợp pháp nào</li>
+            <li>Không cố gắng truy cập trái phép vào hệ thống hoặc dữ liệu</li>
+            <li>Không chia sẻ tài khoản của mình với người khác</li>
+            <li>Chịu trách nhiệm về tất cả hoạt động diễn ra trên tài khoản của bạn</li>
+        </ul>
+
+        <h2>5. Hạn Chế Trách Nhiệm</h2>
+        <p>Ứng dụng được cung cấp "nguyên trạng" mà không có bất kỳ bảo đảm nào, dù là rõ ràng hay ngầm định. Chúng tôi không đảm bảo rằng Ứng dụng sẽ:</p>
+        <ul>
+            <li>Hoạt động không bị gián đoạn hoặc không có lỗi</li>
+            <li>Đáp ứng các yêu cầu cụ thể của bạn</li>
+            <li>Tương thích với tất cả các thiết bị</li>
+        </ul>
+        <p>Chúng tôi không chịu trách nhiệm cho bất kỳ thiệt hại nào phát sinh từ việc sử dụng hoặc không thể sử dụng Ứng dụng.</p>
+
+        <h2>6. Quyền Sở Hữu Trí Tuệ</h2>
+        <p>Tất cả nội dung, tính năng, và thiết kế của Ứng dụng thuộc sở hữu của chúng tôi và được bảo vệ bởi luật bản quyền. Bạn không được:</p>
+        <ul>
+            <li>Sao chép, sửa đổi, hoặc phân phối Ứng dụng</li>
+            <li>Sử dụng nội dung của Ứng dụng cho mục đích thương mại</li>
+            <li>Tạo các ứng dụng dựa trên Ứng dụng của chúng tôi</li>
+        </ul>
+
+        <h2>7. Chấm Dứt Sử Dụng</h2>
+        <p>Chúng tôi có quyền:</p>
+        <ul>
+            <li>Ngừng cung cấp Ứng dụng hoặc tính năng bất cứ lúc nào</li>
+            <li>Thu hồi quyền truy cập của bạn nếu bạn vi phạm các Điều khoản này</li>
+            <li>Xóa tài khoản của bạn nếu không có hoạt động trong thời gian dài</li>
+        </ul>
+        <p>Bạn cũng có thể xóa tài khoản của mình bất cứ lúc nào thông qua cài đặt trong Ứng dụng.</p>
+
+        <h2>8. Thay Đổi Điều Khoản</h2>
+        <p>Chúng tôi có thể cập nhật các Điều khoản này theo thời gian. Bạn sẽ được thông báo về các thay đổi quan trọng. Việc bạn tiếp tục sử dụng Ứng dụng sau khi thay đổi có hiệu lực đồng nghĩa với việc bạn chấp nhận các Điều khoản mới.</p>
+
+        <h2>9. Giải Quyết Tranh Chấp</h2>
+        <p>Mọi tranh chấp phát sinh từ việc sử dụng Ứng dụng sẽ được giải quyết theo luật pháp Việt Nam. Trước khi khởi kiện, chúng tôi khuyến khích bạn liên hệ trực tiếp với chúng tôi để giải quyết vấn đề.</p>
+
+        <h2>10. Thông Tin Liên Hệ</h2>
+        <div class="contact-section">
+            <p>Nếu bạn có câu hỏi hoặc thắc mắc về các Điều khoản này, vui lòng liên hệ:</p>
+            <ul>
+                <li><strong>Email:</strong> support@qltc.app</li>
+                <li><strong>Website:</strong> https://app-qltc.vercel.app</li>
+                <li><strong>Địa chỉ:</strong> [Địa chỉ của bạn]</li>
+            </ul>
+        </div>
+
+        <h2>11. Điều Khoản Bổ Sung</h2>
+        <h3>11.1 Xác Thực</h3>
+        <p>Ứng dụng hỗ trợ xác thực qua số điện thoại, Google, và Apple. Bạn đồng ý cung cấp thông tin chính xác và giữ bảo mật thông tin đăng nhập.</p>
+
+        <h3>11.2 Đồng Bộ Dữ Liệu</h3>
+        <p>Dữ liệu của bạn có thể được đồng bộ giữa các thiết bị thông qua tài khoản của bạn. Bạn chịu trách nhiệm duy trì bảo mật tài khoản.</p>
+
+        <h3>11.3 Dữ Liệu Tài Chính</h3>
+        <p>Ứng dụng là công cụ quản lý tài chính cá nhân và không thay thế cho tư vấn tài chính chuyên nghiệp. Chúng tôi không chịu trách nhiệm cho các quyết định tài chính của bạn.</p>
+
+        <div class="highlight">
+            <strong>LƯU Ý QUAN TRỌNG:</strong> Ứng dụng này chỉ là công cụ ghi chép và quản lý tài chính cá nhân. Không có dữ liệu nào được chuyển đến ngân hàng hoặc tổ chức tài chính nào khác mà không có sự đồng ý của bạn.
+        </div>
+    </div>
+
+    <!-- English Content -->
+    <div class="container english-content" id="content-en">
+        <h1>Terms of Service - Sổ Sách Xịn</h1>
+        <p class="update-date">Last updated: August 6, 2026</p>
+
+        <div class="highlight">
+            <strong>IMPORTANT:</strong> By using the Sổ Sách Xịn application, you agree to these Terms of Service. Please read them carefully before using the application.
+        </div>
+
+        <h2>1. Acceptance of Terms</h2>
+        <p>By downloading, installing, or using the Sổ Sách Xịn application ("App"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not use the App.</p>
+
+        <h2>2. Service Description</h2>
+        <p>Sổ Sách Xịn is a personal finance management application that helps users:</p>
+        <ul>
+            <li>Record income, expenses, and transfers between wallets</li>
+            <li>Manage budgets and set spending alerts</li>
+            <li>Track investments and emergency funds</li>
+            <li>View financial reports by week/month/year</li>
+            <li>Reconcile book balances with actual balances</li>
+        </ul>
+
+        <h2>3. Privacy and Data</h2>
+        <h3>3.1 Data Collection</h3>
+        <p>The App may collect the following information:</p>
+        <ul>
+            <li><strong>Financial Data:</strong> Transactions, wallet balances, budgets</li>
+            <li><strong>Device Data:</strong> Device model, operating system</li>
+            <li><strong>Usage Data:</strong> Usage time, features used</li>
+            <li><strong>Location Data:</strong> To provide smart spending suggestions (optional)</li>
+        </ul>
+
+        <h3>3.2 Data Protection</h3>
+        <p>We are committed to protecting your data:</p>
+        <ul>
+            <li>Data is stored locally on your device</li>
+            <li>Data is encrypted when synced to the cloud</li>
+            <li>We do not sell your personal data to third parties</li>
+            <li>You can delete your data at any time</li>
+        </ul>
+
+        <h3>3.3 Privacy Policy</h3>
+        <p>For more details on how we handle your data, please review our <a href="#">Privacy Policy</a>.</p>
+
+        <h2>4. User Responsibilities</h2>
+        <p>You agree to:</p>
+        <ul>
+            <li>Provide accurate and up-to-date information</li>
+            <li>Not use the App for any illegal purposes</li>
+            <li>Not attempt to gain unauthorized access to the system or data</li>
+            <li>Not share your account with others</li>
+            <li>Be responsible for all activities on your account</li>
+        </ul>
+
+        <h2>5. Limitation of Liability</h2>
+        <p>The App is provided "as is" without any warranties, express or implied. We do not guarantee that the App will:</p>
+        <ul>
+            <li>Operate uninterrupted or error-free</li>
+            <li>Meet your specific requirements</li>
+            <li>Be compatible with all devices</li>
+        </ul>
+        <p>We are not liable for any damages arising from the use or inability to use the App.</p>
+
+        <h2>6. Intellectual Property</h2>
+        <p>All content, features, and design of the App are owned by us and are protected by copyright law. You may not:</p>
+        <ul>
+            <li>Copy, modify, or distribute the App</li>
+            <li>Use App content for commercial purposes</li>
+            <li>Create applications based on our App</li>
+        </ul>
+
+        <h2>7. Termination of Use</h2>
+        <p>We reserve the right to:</p>
+        <ul>
+            <li>Discontinue the App or features at any time</li>
+            <li>Revoke your access if you violate these Terms</li>
+            <li>Delete your account if inactive for an extended period</li>
+        </ul>
+        <p>You may also delete your account at any time through the App settings.</p>
+
+        <h2>8. Changes to Terms</h2>
+        <p>We may update these Terms from time to time. You will be notified of significant changes. Your continued use of the App after changes take effect constitutes acceptance of the new Terms.</p>
+
+        <h2>9. Dispute Resolution</h2>
+        <p>Any disputes arising from the use of the App will be resolved under Vietnamese law. Before filing a lawsuit, we encourage you to contact us directly to resolve issues.</p>
+
+        <h2>10. Contact Information</h2>
+        <div class="contact-section">
+            <p>If you have questions or concerns about these Terms, please contact:</p>
+            <ul>
+                <li><strong>Email:</strong> support@qltc.app</li>
+                <li><strong>Website:</strong> https://app-qltc.vercel.app</li>
+                <li><strong>Address:</strong> [Your Address]</li>
+            </ul>
+        </div>
+
+        <h2>11. Additional Terms</h2>
+        <h3>11.1 Authentication</h3>
+        <p>The App supports authentication via phone number, Google, and Apple. You agree to provide accurate information and keep your login credentials secure.</p>
+
+        <h3>11.2 Data Synchronization</h3>
+        <p>Your data may be synchronized across devices through your account. You are responsible for maintaining account security.</p>
+
+        <h3>11.3 Financial Data</h3>
+        <p>The App is a personal finance management tool and does not replace professional financial advice. We are not responsible for your financial decisions.</p>
+
+        <div class="highlight">
+            <strong>IMPORTANT NOTE:</strong> This application is only a personal finance recording and management tool. No data is transferred to any bank or financial institution without your consent.
+        </div>
+    </div>
+
+    <script>
+        function showVietnamese() {
+            document.getElementById('content-vi').style.display = 'block';
+            document.getElementById('content-en').style.display = 'none';
+            document.getElementById('btn-vi').classList.add('active');
+            document.getElementById('btn-en').classList.remove('active');
+        }
+
+        function showEnglish() {
+            document.getElementById('content-vi').style.display = 'none';
+            document.getElementById('content-en').style.display = 'block';
+            document.getElementById('btn-vi').classList.remove('active');
+            document.getElementById('btn-en').classList.add('active');
+        }
+    </script>
+</body>
+</html>
