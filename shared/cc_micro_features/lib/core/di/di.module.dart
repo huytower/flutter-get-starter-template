@@ -7,6 +7,8 @@ import 'dart:async' as _i687;
 
 import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
 import 'package:cc_micro_features/core/di/di.dart' as _i407;
+import 'package:cc_micro_features/features/auth/data/datasources/auth_preference_datasource.dart'
+    as _i951;
 import 'package:cc_micro_features/features/auth/data/repositories/firebase_auth_repository_impl.dart'
     as _i832;
 import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart'
@@ -62,6 +64,8 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
     final messagingModule = _$MessagingModule();
     gh.lazySingleton<_i892.FirebaseMessaging>(
         () => messagingModule.firebaseMessaging);
+    gh.lazySingleton<_i951.AuthPreferenceDataSource>(
+        () => _i951.AuthPreferenceDataSource());
     gh.lazySingleton<_i350.BiometricLocalDataSource>(
         () => _i350.BiometricLocalDataSource());
     gh.lazySingleton<_i354.WebCubit>(() => _i354.WebCubit());
@@ -92,14 +96,15 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
         _i189.SignInWithPhoneNumberUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i120.VerifyPhoneNumberUseCase>(() =>
         _i120.VerifyPhoneNumberUseCase(gh<_i745.FirebaseAuthRepository>()));
+    gh.factory<_i902.PhoneAuthBloc>(() => _i902.PhoneAuthBloc(
+          gh<_i120.VerifyPhoneNumberUseCase>(),
+          gh<_i189.SignInWithPhoneNumberUseCase>(),
+        ));
     gh.factory<_i345.LoginBloc>(() => _i345.LoginBloc(
           gh<_i23.LoginUseCase>(),
           gh<_i811.LoginWithGoogleUseCase>(),
           gh<_i632.LoginWithAppleUseCase>(),
-        ));
-    gh.factory<_i902.PhoneAuthBloc>(() => _i902.PhoneAuthBloc(
-          gh<_i120.VerifyPhoneNumberUseCase>(),
-          gh<_i189.SignInWithPhoneNumberUseCase>(),
+          gh<_i951.AuthPreferenceDataSource>(),
         ));
     gh.lazySingleton<_i721.AuthenticateWithBiometricsUseCase>(() =>
         _i721.AuthenticateWithBiometricsUseCase(

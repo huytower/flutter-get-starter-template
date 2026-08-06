@@ -2,6 +2,7 @@ import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../data/datasources/auth_preference_datasource.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/login_with_apple_usecase.dart';
 import '../../domain/usecases/login_with_google_usecase.dart';
@@ -13,11 +14,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginUseCase _loginUseCase;
   final LoginWithGoogleUseCase _loginWithGoogleUseCase;
   final LoginWithAppleUseCase _loginWithAppleUseCase;
+  final AuthPreferenceDataSource _preferenceDataSource;
 
   LoginBloc(
     this._loginUseCase,
     this._loginWithGoogleUseCase,
     this._loginWithAppleUseCase,
+    this._preferenceDataSource,
   ) : super(const LoginInitial()) {
     on<LoginStarted>(_onLoginStarted);
     on<LoginWithGoogleStarted>(_onLoginWithGoogleStarted);
@@ -40,7 +43,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     final result = await _loginUseCase(event.email, event.password);
 
     result.when(
-      (user) {
+      (user) async {
+        await _preferenceDataSource.setTermsAccepted(true);
         'Login success:\n'
                 '   ID: ${user.id}\n'
                 '   Email: ${user.email}\n'
@@ -63,7 +67,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     'Logging in with Google'.Log('LoginBloc');
     final result = await _loginWithGoogleUseCase();
     result.when(
-      (user) {
+      (user) async {
+        await _preferenceDataSource.setTermsAccepted(true);
         'Google Login success:\n'
                 '   ID: ${user.id}\n'
                 '   Email: ${user.email}\n'
@@ -84,9 +89,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) async {
     emit(const LoginLoading());
     final result = await _loginWithAppleUseCase();
-    result.when(
-      (user) => emit(LoginSuccess(user)),
-      (failure) => emit(LoginError(failure.message)),
-    );
+    result.when((user) async {
+      await _preferenceDataSource.setTermsAccepted(true);
+      emit(LoginSuccess(user));
+    }, (failure) => emit(LoginError(failure.message)));
   }
 }

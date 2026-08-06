@@ -3,6 +3,8 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../core/di/di.dart';
+import '../../../data/datasources/auth_preference_datasource.dart';
 import 'login_or_divider.dart';
 import 'login_social_buttons.dart';
 
@@ -30,6 +32,19 @@ class LoginCardContent extends StatefulWidget {
 
 class _LoginCardContentState extends State<LoginCardContent> {
   bool _isAgreed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreference();
+  }
+
+  Future<void> _loadPreference() async {
+    final accepted = await getIt<AuthPreferenceDataSource>().isTermsAccepted();
+    if (mounted && accepted) {
+      setState(() => _isAgreed = true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

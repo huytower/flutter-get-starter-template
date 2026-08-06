@@ -341,12 +341,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i1059.CategoryRepository>(),
             ));
-    gh.factory<_i174.CategorySettingsController>(
-        () => _i174.CategorySettingsController(
-              gh<_i397.GetCategoryGroupsUseCase>(),
-              gh<_i224.GetCategoriesUseCase>(),
-              gh<_i110.ToggleCategoryEnabledUseCase>(),
-            ));
     gh.factory<_i700.TransactionController>(() => _i700.TransactionController(
           gh<_i1027.TransactionRepository>(),
           gh<_i167.GetWalletBalancesUseCase>(),
@@ -356,6 +350,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i28.CreateTransactionUseCase(
               gh<_i1027.TransactionRepository>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
+            ));
+    gh.factory<_i174.CategorySettingsController>(
+        () => _i174.CategorySettingsController(
+              gh<_i397.GetCategoryGroupsUseCase>(),
+              gh<_i224.GetCategoriesUseCase>(),
+              gh<_i110.ToggleCategoryEnabledUseCase>(),
             ));
     gh.lazySingleton<_i1003.BudgetLimitController>(
         () => _i1003.BudgetLimitController(
