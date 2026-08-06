@@ -9,7 +9,7 @@ import 'package:theme/presentation/provider/theme_provider.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
-import '../../../../core/getx/guideline_controller.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../category/export_category.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../domain/usecases/get_profile_settings_usecase.dart';

@@ -491,6 +491,22 @@ class CodegenLoader extends AssetLoader {
       "young_children_message":
           "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys).",
     },
+    "guideline": {
+      "banner_title_completed": "Congratulations! You have completed all setup steps.",
+      "banner_title_in_progress": "Guide: Step {current}/{total}",
+      "banner_desc_completed": "Now you can start managing your finances in a disciplined way.",
+      "banner_desc_birth_year": "Set your birth year to receive suitable suggestions",
+      "banner_desc_categories": "Select your expense and income categories",
+      "banner_desc_wallet_balance": "Set the current balance for your wallet",
+      "banner_desc_budget_limit": "Set spending limits for each category",
+      "banner_desc_min_living": "Define your minimum monthly living expenses",
+      "banner_desc_first_transaction": "Record your first expense transaction",
+      "banner_desc_default": "You are ready to manage your finances!",
+      "success_dialog_message": "Congratulations!\nYou have completed the initial setup.",
+      "reset_confirm_desc": "You have {count} completed tasks. Resetting will undo all progress.",
+      "reset_confirm_agree": "View Tutorial",
+      "reset_confirm_cancel": "Cancel"
+    },
   };
   static const Map<String, dynamic> _vi = {
     "app": {
@@ -973,6 +989,22 @@ class CodegenLoader extends AssetLoader {
       "young_children_message":
           "Bạn có con nhỏ không? Nếu có, chúng tôi sẽ tự động bật các danh mục dành cho con (sữa, bỉm, đồ chơi trẻ em).",
     },
+    "guideline": {
+      "banner_title_completed": "Chúc mừng! Bạn đã hoàn thành các bước hướng dẫn thiết lập.",
+      "banner_title_in_progress": "Hướng dẫn: Bước {current}/{total}",
+      "banner_desc_completed": "Bây giờ bạn có thể bắt đầu quản lý tài chính một cách kỷ luật.",
+      "banner_desc_birth_year": "Thiết lập năm sinh để nhận gợi ý phù hợp",
+      "banner_desc_categories": "Lựa chọn danh mục chi tiêu & thu nhập",
+      "banner_desc_wallet_balance": "Thiết lập số dư hiện tại cho Ví",
+      "banner_desc_budget_limit": "Đặt ngân sách chi tiêu cho từng danh mục",
+      "banner_desc_min_living": "Xác định mức sống tối thiểu hàng tháng",
+      "banner_desc_first_transaction": "Ghi chép giao dịch chi tiêu đầu tiên",
+      "banner_desc_default": "Bạn đã sặn sàng quản lý tài chính!",
+      "success_dialog_message": "Chúc mừng!\nBạn đã hoàn thành thiết lập ban đầu.",
+      "reset_confirm_desc": "Bạn có {count} tác vụ đã hoàn thành. Đặt lại sẽ hoàn tác toàn bộ tiến trình.",
+      "reset_confirm_agree": "Xem hướng dẫn",
+      "reset_confirm_cancel": "Hủy"
+    },
   };
   static const Map<String, Map<String, dynamic>> mapLocales = {
     "en": _en,
@@ -1429,4 +1461,33 @@ abstract class CcLocaleKeys {
   static const profile_delete_account = 'profile.delete_account';
   static const profile_young_children_message =
       'profile.young_children_message';
+
+  static const guideline_banner_title_completed =
+      'guideline.banner_title_completed';
+  static const guideline_banner_title_in_progress =
+      'guideline.banner_title_in_progress';
+  static const guideline_banner_desc_completed =
+      'guideline.banner_desc_completed';
+  static const guideline_banner_desc_birth_year =
+      'guideline.banner_desc_birth_year';
+  static const guideline_banner_desc_categories =
+      'guideline.banner_desc_categories';
+  static const guideline_banner_desc_wallet_balance =
+      'guideline.banner_desc_wallet_balance';
+  static const guideline_banner_desc_budget_limit =
+      'guideline.banner_desc_budget_limit';
+  static const guideline_banner_desc_min_living =
+      'guideline.banner_desc_min_living';
+  static const guideline_banner_desc_first_transaction =
+      'guideline.banner_desc_first_transaction';
+  static const guideline_banner_desc_default =
+      'guideline.banner_desc_default';
+  static const guideline_success_dialog_message =
+      'guideline.success_dialog_message';
+  static const guideline_reset_confirm_desc =
+      'guideline.reset_confirm_desc';
+  static const guideline_reset_confirm_agree =
+      'guideline.reset_confirm_agree';
+  static const guideline_reset_confirm_cancel =
+      'guideline.reset_confirm_cancel';
 }

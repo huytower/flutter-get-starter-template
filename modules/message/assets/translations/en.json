@@ -426,5 +426,21 @@
     "about_subtitle": "App information and developer logs",
     "delete_account": "Delete account",
     "young_children_message": "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys)."
+  },
+  "guideline": {
+    "banner_title_completed": "Congratulations! You have completed all setup steps.",
+    "banner_title_in_progress": "Guide: Step {current}/{total}",
+    "banner_desc_completed": "Now you can start managing your finances in a disciplined way.",
+    "banner_desc_birth_year": "Set your birth year to receive suitable suggestions",
+    "banner_desc_categories": "Select your expense and income categories",
+    "banner_desc_wallet_balance": "Set the current balance for your wallet",
+    "banner_desc_budget_limit": "Set spending limits for each category",
+    "banner_desc_min_living": "Define your minimum monthly living expenses",
+    "banner_desc_first_transaction": "Record your first expense transaction",
+    "banner_desc_default": "You are ready to manage your finances!",
+    "success_dialog_message": "Congratulations!\nYou have completed the initial setup.",
+    "reset_confirm_desc": "You have {count} completed tasks. Resetting will undo all progress.",
+    "reset_confirm_agree": "View Tutorial",
+    "reset_confirm_cancel": "Cancel"
   }
 }

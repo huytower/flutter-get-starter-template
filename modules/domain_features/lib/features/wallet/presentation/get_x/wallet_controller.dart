@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
-import '../../../../core/getx/guideline_controller.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';

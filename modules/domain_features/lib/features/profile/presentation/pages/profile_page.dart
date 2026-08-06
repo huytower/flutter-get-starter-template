@@ -1,12 +1,13 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:domain_features/core/getx/cc_get_view.dart';
-import 'package:domain_features/core/getx/guideline_controller.dart';
+import 'package:domain_features/features/guideline/guideline_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../get_x/profile_controller.dart';
+import '../widgets/guideline_reset_bottom_sheet.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_group.dart';
 import '../widgets/profile_settings_tile.dart';
@@ -189,6 +190,19 @@ class ProfilePage extends CcGetView<ProfileController> {
         icon: Icons.play_circle_outline_rounded,
         label: el.tr(CcLocaleKeys.profile_view_tutorial),
         subtitle: el.tr(CcLocaleKeys.profile_view_tutorial_subtitle),
+        onTap: () {
+          final count = guideline.completedTasks.length;
+          final desc = el.tr(
+            CcLocaleKeys.guideline_reset_confirm_desc,
+            namedArgs: {'count': count.toString()},
+          );
+          GuidelineResetBottomSheet.show(
+            context,
+            desc: desc,
+            count: count,
+            onConfirm: () => guideline.resetGuideline(),
+          );
+        },
       ),
       ProfileSettingsTile(
         icon: Icons.description_rounded,

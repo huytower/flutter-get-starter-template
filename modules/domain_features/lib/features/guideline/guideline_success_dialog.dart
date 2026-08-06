@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 class GuidelineSuccessDialog extends StatefulWidget {
@@ -46,7 +47,7 @@ class _GuidelineSuccessDialogState extends State<GuidelineSuccessDialog> {
             maxHeight: size.height * 0.2,
           ),
           child: CcRewardCompletionBanner(
-            message: 'Chúc mừng!\nBạn đã hoàn thành thiết lập ban đầu.',
+            message: el.tr(CcLocaleKeys.guideline_success_dialog_message),
             onClose: _dismiss,
           ),
         ),

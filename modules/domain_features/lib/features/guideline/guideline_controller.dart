@@ -1,5 +1,6 @@
 import 'package:app_config/export_app_config.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
@@ -94,40 +95,49 @@ class GuidelineController extends GetxController {
     CcAppStorage.instance.completedGuidelineTaskIds = completedTasks.toList();
     await CcAppStorage.instance.save();
 
-    'Task completed: $taskId. Next: $currentTaskId'.Log('GuidelineController');
-
     if (currentTaskId == null) {
       // All tasks completed! Show the congrats dialog.
       Get.dialog(const GuidelineSuccessDialog(), barrierDismissible: true);
     }
   }
 
+  /// Resets all completed guideline tasks, showing the guide banner again.
+  Future<void> resetGuideline() async {
+    completedTasks.clear();
+    CcAppStorage.instance.completedGuidelineTaskIds = [];
+    await CcAppStorage.instance.save();
+    triggerBounce();
+  }
+
   String get bannerTitle {
-    if (currentTaskId == null) {
-      return 'Chúc mừng! Bạn đã hoàn thành các bước hướng dẫn thiết lập.';
-    }
-    return 'Hướng dẫn: Bước $currentStep/${taskSequence.length}';
+    return el.tr(
+      CcLocaleKeys.guideline_banner_title_in_progress,
+      namedArgs: {
+        'current': currentStep.toString(),
+        'total': taskSequence.length.toString(),
+      },
+    );
   }
 
   String get bannerDescription {
     if (currentTaskId == null) {
-      return 'Bây giờ bạn có thể bắt đầu quản lý tài chính một cách kỷ luật.';
+      return el.tr(CcLocaleKeys.guideline_banner_desc_completed);
     }
     switch (currentTaskId) {
       case 'birth_year':
-        return 'Thiết lập năm sinh để nhận gợi ý phù hợp';
+        return el.tr(CcLocaleKeys.guideline_banner_desc_birth_year);
       case 'categories':
-        return 'Lựa chọn danh mục chi tiêu & thu nhập';
+        return el.tr(CcLocaleKeys.guideline_banner_desc_categories);
       case 'wallet_balance':
-        return 'Thiết lập số dư hiện tại cho Ví';
+        return el.tr(CcLocaleKeys.guideline_banner_desc_wallet_balance);
       case 'budget_limit':
-        return 'Đặt ngân sách chi tiêu cho từng danh mục';
+        return el.tr(CcLocaleKeys.guideline_banner_desc_budget_limit);
       case 'min_living':
-        return 'Xác định mức sống tối thiểu hàng tháng';
+        return el.tr(CcLocaleKeys.guideline_banner_desc_min_living);
       case 'first_transaction':
-        return 'Ghi chép giao dịch chi tiêu đầu tiên';
+        return el.tr(CcLocaleKeys.guideline_banner_desc_first_transaction);
       default:
-        return 'Bạn đã sẵn sàng quản lý tài chính!';
+        return el.tr(CcLocaleKeys.guideline_banner_desc_default);
     }
   }
 }

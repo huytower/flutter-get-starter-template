@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/getx/guideline_controller.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../get_x/income_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';

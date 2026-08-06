@@ -2,7 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/getx/guideline_controller.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../data/datasources/local/category_seed.dart';
 import '../../domain/entities/category_entity.dart';

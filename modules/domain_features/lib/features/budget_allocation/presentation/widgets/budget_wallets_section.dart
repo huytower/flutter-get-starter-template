@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/getx/guideline_controller.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import 'wallet_strip_card.dart';

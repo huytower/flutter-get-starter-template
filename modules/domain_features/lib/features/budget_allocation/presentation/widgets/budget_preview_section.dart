@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/getx/guideline_controller.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_limit/domain/usecases/sort_budget_limits_by_progress_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';

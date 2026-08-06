@@ -426,5 +426,21 @@
     "about_subtitle": "Thông tin ứng dụng và nhật ký nhà phát triển",
     "delete_account": "Xoá tài khoản",
     "young_children_message": "Bạn có con nhỏ không? Nếu có, chúng tôi sẽ tự động bật các danh mục dành cho con (sữa, bỉm, đồ chơi trẻ em)."
+  },
+  "guideline": {
+    "banner_title_completed": "Chúc mừng! Bạn đã hoàn thành các bước hướng dẫn thiết lập.",
+    "banner_title_in_progress": "Hướng dẫn: Bước {current}/{total}",
+    "banner_desc_completed": "Bây giờ bạn có thể bắt đầu quản lý tài chính một cách kỷ luật.",
+    "banner_desc_birth_year": "Thiết lập năm sinh để nhận gợi ý phù hợp",
+    "banner_desc_categories": "Lựa chọn danh mục chi tiêu & thu nhập",
+    "banner_desc_wallet_balance": "Thiết lập số dư hiện tại cho Ví",
+    "banner_desc_budget_limit": "Đặt ngân sách chi tiêu cho từng danh mục",
+    "banner_desc_min_living": "Xác định mức sống tối thiểu hàng tháng",
+    "banner_desc_first_transaction": "Ghi chép giao dịch chi tiêu đầu tiên",
+    "banner_desc_default": "Bạn đã sẵn sàng quản lý tài chính!",
+    "success_dialog_message": "Chúc mừng!\nBạn đã hoàn thành thiết lập ban đầu.",
+    "reset_confirm_desc": "Bạn có {count} tác vụ đã hoàn thành. Đặt lại sẽ hoàn tác toàn bộ tiến trình.",
+    "reset_confirm_agree": "Xem hướng dẫn",
+    "reset_confirm_cancel": "Hủy"
   }
 }

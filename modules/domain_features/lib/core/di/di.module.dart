@@ -8,7 +8,6 @@ import 'dart:async' as _i687;
 import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
 import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
 import 'package:dio/dio.dart' as _i361;
-import 'package:domain_features/core/getx/guideline_controller.dart' as _i894;
 import 'package:domain_features/export_domain_features.dart' as _i857;
 import 'package:domain_features/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart'
     as _i451;
@@ -86,6 +85,8 @@ import 'package:domain_features/features/examples/bloc_simple_page/origin/advanc
     as _i1004;
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart'
     as _i963;
+import 'package:domain_features/features/guideline/guideline_controller.dart'
+    as _i128;
 import 'package:domain_features/features/profile/data/datasources/local/profile_local_datasource.dart'
     as _i755;
 import 'package:domain_features/features/profile/data/repositories/profile_repository_impl.dart'
@@ -165,8 +166,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.factory<_i754.ExpenseFormController>(
         () => _i754.ExpenseFormController());
     gh.factory<_i594.IncomeFormController>(() => _i594.IncomeFormController());
-    gh.lazySingleton<_i894.GuidelineController>(
-        () => _i894.GuidelineController());
     gh.lazySingleton<_i585.BudgetLimitLocalDataSource>(
         () => _i585.BudgetLimitLocalDataSource());
     gh.lazySingleton<_i250.SortBudgetLimitsByLimitUseCase>(
@@ -179,6 +178,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
       () => _i1004.AdvanceBloc(),
       dispose: (i) => i.close(),
     );
+    gh.lazySingleton<_i128.GuidelineController>(
+        () => _i128.GuidelineController());
     gh.lazySingleton<_i755.ProfileLocalDataSource>(
         () => _i755.ProfileLocalDataSource());
     gh.lazySingleton<_i896.ReconciliationLocalDataSource>(

@@ -4,7 +4,7 @@ library domain_features;
 export 'core/di/di.dart';
 export 'core/getx/cc_get_controller.dart';
 export 'core/getx/cc_get_view.dart';
-export 'core/getx/guideline_controller.dart';
+export 'features/guideline/guideline_controller.dart';
 export 'core/navigation/domain_router.gr.dart';
 // Budget Allocation (composite: Wallet + Budget Limit)
 export 'features/budget_allocation/export_budget_allocation.dart';
