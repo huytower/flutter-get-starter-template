@@ -2,7 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../../../core/getx/guideline_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import 'wallet_strip_card.dart';
@@ -23,6 +25,8 @@ class BudgetWalletsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
+    final guideline = Get.find<GuidelineController>();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -45,11 +49,28 @@ class BudgetWalletsSection extends StatelessWidget {
               ),
               Row(
                 children: [
-                  GestureDetector(
-                    onTap: onAddWallet,
-                    child: const CcIconToken(
-                      Icons.add_circle_outline_rounded,
-                      size: 20,
+                  Obx(
+                    () => Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        GestureDetector(
+                          onTap: onAddWallet,
+                          child: const CcIconToken(
+                            Icons.add_circle_outline_rounded,
+                            size: 20,
+                          ),
+                        ),
+                        if (guideline.isTaskActive('wallet_balance'))
+                          Positioned(
+                            top: -10,
+                            right: -10,
+                            child: CcGuidelineBadge(
+                              size: 6,
+                              color: guideline.currentColor,
+                              bounceTrigger: guideline.bounceTrigger,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   const CcSpaceSM(),

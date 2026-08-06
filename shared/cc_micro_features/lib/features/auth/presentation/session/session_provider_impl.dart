@@ -1,5 +1,4 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
-import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
 

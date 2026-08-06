@@ -2,11 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/getx/guideline_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_limit/domain/usecases/sort_budget_limits_by_progress_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
@@ -19,6 +18,7 @@ class BudgetPreviewSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
+    final guideline = Get.find<GuidelineController>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,11 +42,29 @@ class BudgetPreviewSection extends StatelessWidget {
               ),
               Row(
                 children: [
-                  GestureDetector(
-                    onTap: () => _openAddBudget(context),
-                    child: const CcIconToken(
-                      Icons.add_circle_outline_rounded,
-                      size: 20,
+                  Obx(
+                    () => Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        GestureDetector(
+                          onTap: () => _openAddBudget(context),
+                          child: const CcIconToken(
+                            Icons.add_circle_outline_rounded,
+                            size: 20,
+                          ),
+                        ),
+                        if (guideline.isTaskActive('budget_limit') ||
+                            guideline.isTaskActive('min_living'))
+                          Positioned(
+                            top: -10,
+                            right: -10,
+                            child: CcGuidelineBadge(
+                              size: 6,
+                              color: guideline.currentColor,
+                              bounceTrigger: guideline.bounceTrigger,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   const CcSpaceSM(),

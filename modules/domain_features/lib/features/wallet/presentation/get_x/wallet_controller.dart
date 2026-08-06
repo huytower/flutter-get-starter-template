@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/getx/guideline_controller.dart';
 import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
@@ -235,6 +236,11 @@ class WalletController extends CcGetController {
         if (Get.isRegistered<TransactionController>()) {
           Get.find<TransactionController>().wallets.add(newWallet);
         }
+
+        // Guideline: wallet_balance completed if initial balance > 0
+        if (initialBalance > 0) {
+          Get.find<GuidelineController>().completeTask('wallet_balance');
+        }
       },
       (error) {
         errorMessage.value = error.message;
@@ -271,6 +277,11 @@ class WalletController extends CcGetController {
               bookBalanceOf(wallet.id) + (toSave.balance - original.balance);
           wallets[index] = toSave;
           _calculateTotalBalance();
+
+          // Guideline: wallet_balance completed if new balance > 0
+          if (toSave.balance > 0) {
+            Get.find<GuidelineController>().completeTask('wallet_balance');
+          }
         }
       },
       (error) {

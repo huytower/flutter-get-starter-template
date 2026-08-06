@@ -8,6 +8,7 @@ import 'dart:async' as _i687;
 import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
 import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
 import 'package:dio/dio.dart' as _i361;
+import 'package:domain_features/core/getx/guideline_controller.dart' as _i894;
 import 'package:domain_features/export_domain_features.dart' as _i857;
 import 'package:domain_features/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart'
     as _i451;
@@ -164,6 +165,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.factory<_i754.ExpenseFormController>(
         () => _i754.ExpenseFormController());
     gh.factory<_i594.IncomeFormController>(() => _i594.IncomeFormController());
+    gh.lazySingleton<_i894.GuidelineController>(
+        () => _i894.GuidelineController());
     gh.lazySingleton<_i585.BudgetLimitLocalDataSource>(
         () => _i585.BudgetLimitLocalDataSource());
     gh.lazySingleton<_i250.SortBudgetLimitsByLimitUseCase>(

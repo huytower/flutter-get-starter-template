@@ -1,5 +1,4 @@
-import 'package:cc_bridge/export_cc_bridge.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +19,6 @@ class LoginCardContent extends StatefulWidget {
 
   final VoidCallback onPhoneLogin;
 
-  /// Semantic tokens for the card labels.
   final String? loginTitle;
   final String? phoneLoginTitle;
   final String? agreeText;
@@ -52,13 +50,8 @@ class _LoginCardContentState extends State<LoginCardContent> {
       mainAxisSize: MainAxisSize.min,
       children: [
         const CcSpaceLG(),
-
-        // Speech bubble icon
         const CcSpeechBubbleIcon(),
-
         const CcSpaceLG(),
-
-        // Title
         CcText(
           widget.loginTitle ?? 'Login',
           textStyle: context.ccTextTheme.headlineMedium?.copyWith(
@@ -67,10 +60,7 @@ class _LoginCardContentState extends State<LoginCardContent> {
           ),
           textAlign: TextAlign.center,
         ),
-
         const CcSpaceXL(),
-
-        // Social login buttons
         Opacity(
           opacity: _isAgreed ? 1.0 : 0.5,
           child: IgnorePointer(
@@ -78,15 +68,9 @@ class _LoginCardContentState extends State<LoginCardContent> {
             child: const LoginSocialButtons(),
           ),
         ),
-
         const CcSpaceXL(),
-
-        // OR divider
         const LoginOrDivider(),
-
         const CcSpaceXL(),
-
-        // Login with phone number button
         Opacity(
           opacity: _isAgreed ? 1.0 : 0.5,
           child: CcBaseBtn(
@@ -99,12 +83,8 @@ class _LoginCardContentState extends State<LoginCardContent> {
             textColor: CcBaseColors.white100,
           ),
         ),
-
         const CcSpaceLG(),
-
-        // Agree with terms checkbox
         _buildTermsCheckbox(context),
-
         const CcSpaceLG(),
       ],
     );

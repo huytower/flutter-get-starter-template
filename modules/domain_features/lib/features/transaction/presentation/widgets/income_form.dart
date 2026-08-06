@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/getx/guideline_controller.dart';
 import '../get_x/income_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
@@ -20,15 +21,16 @@ class IncomeForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(getIt<IncomeFormController>());
+    final controller = Get.find<IncomeFormController>();
+    final guideline = Get.find<GuidelineController>();
 
-    final accentColor = PrjColors.success;
+    const accentColor = PrjColors.success;
 
     return Obx(
       () => Column(
         children: [
           Expanded(
-            child: _buildScrollableContent(context, controller, accentColor),
+            child: _buildScrollableContent(context, controller, guideline, accentColor),
           ),
           if (controller.showKeypad.value)
             _buildMoneyKeypadPanel(context, controller, accentColor),
@@ -40,6 +42,7 @@ class IncomeForm extends StatelessWidget {
   Widget _buildScrollableContent(
     BuildContext context,
     IncomeFormController controller,
+    GuidelineController guideline,
     Color accentColor,
   ) {
     return GestureDetector(
@@ -58,7 +61,7 @@ class IncomeForm extends StatelessWidget {
           children: [
             _buildCategorySection(controller, accentColor),
             const CcSpaceLG(),
-            _buildFormFields(context, controller, accentColor),
+            _buildFormFields(context, controller, guideline, accentColor),
           ],
         ),
       ),
@@ -81,6 +84,7 @@ class IncomeForm extends StatelessWidget {
   Widget _buildFormFields(
     BuildContext context,
     IncomeFormController controller,
+    GuidelineController guideline,
     Color accentColor,
   ) {
     return CcSymmetricPadding(
@@ -109,6 +113,13 @@ class IncomeForm extends StatelessWidget {
             isEnabled: controller.canSubmit,
             onTap: () => controller.submitForm(context),
             activeColor: accentColor,
+            badge: guideline.isTaskActive('first_transaction')
+                ? CcGuidelineBadge(
+                  size: 8,
+                  color: guideline.currentColor,
+                  bounceTrigger: guideline.bounceTrigger,
+                )
+                : null,
           ),
           const CcSpaceLG(),
         ],

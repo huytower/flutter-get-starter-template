@@ -21,6 +21,8 @@ dependencies:
     path: ../../shared/cc_micro_features
   
   auto_route: ^11.1.0
+  app_config:
+    path: ../../modules/app_config
   data_config:
     path: ../../modules/data_config
   theme:

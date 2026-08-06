@@ -1,4 +1,4 @@
-import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 class ProfileSettingsTile extends StatelessWidget {
@@ -12,6 +12,7 @@ class ProfileSettingsTile extends StatelessWidget {
     this.trailingLabel,
     this.trailingWidget,
     this.showChevron = true,
+    this.badge,
   });
 
   final IconData icon;
@@ -22,10 +23,13 @@ class ProfileSettingsTile extends StatelessWidget {
   final String? trailingLabel;
   final Widget? trailingWidget;
   final bool showChevron;
+  final Widget? badge;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final scheme = context.ccColorScheme;
+
+    return CcInkWell(
       onTap: onTap,
       onLongPress: onLongPress,
       child: CcSymmetricPadding(
@@ -33,13 +37,20 @@ class ProfileSettingsTile extends StatelessWidget {
         vertical: CcPaddingParams.SPACE_LG,
         child: Row(
           children: [
-            Container(
-              padding: EdgeInsets.all(context.respDim(10)),
-              decoration: BoxDecoration(
-                color: context.ccColorScheme.primary.withOpacity(0.08),
-                borderRadius: context.brMd,
-              ),
-              child: CcIconToken(icon, size: 22),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(context.respDim(10)),
+                  decoration: BoxDecoration(
+                    color: scheme.primary.withOpacity(0.08),
+                    borderRadius: context.brMd,
+                  ),
+                  child: CcIconToken(icon, size: 22),
+                ),
+                if (badge != null)
+                  Positioned(top: -4, right: -4, child: badge!),
+              ],
             ),
             const CcSpaceLG(),
             Expanded(
@@ -51,7 +62,7 @@ class ProfileSettingsTile extends StatelessWidget {
                     label,
                     textStyle: context.ccTextTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: context.ccColorScheme.onSurface,
+                      color: scheme.onSurface,
                     ),
                   ),
                   if (subtitle != null) ...[
@@ -59,7 +70,7 @@ class ProfileSettingsTile extends StatelessWidget {
                     CcText(
                       subtitle!,
                       textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                        color: context.ccColorScheme.onSurfaceVariant,
+                        color: scheme.onSurfaceVariant,
                         height: 1.4,
                       ),
                       maxLines: 2,
@@ -75,7 +86,7 @@ class ProfileSettingsTile extends StatelessWidget {
                 CcText(
                   trailingLabel!,
                   textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                    color: context.ccColorScheme.onSurfaceVariant,
+                    color: scheme.onSurfaceVariant,
                   ),
                 ),
                 const CcSpaceXS(),
@@ -84,7 +95,7 @@ class ProfileSettingsTile extends StatelessWidget {
                 Icon(
                   Icons.chevron_right_rounded,
                   size: context.respIconSize(baseSize: 20),
-                  color: context.ccColorScheme.outline,
+                  color: scheme.outline,
                 ),
             ],
           ],

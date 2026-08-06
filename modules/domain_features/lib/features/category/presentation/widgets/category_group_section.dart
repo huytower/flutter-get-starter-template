@@ -63,7 +63,7 @@ class CategoryGroupSection extends StatelessWidget {
                     horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
                   ),
                   itemCount: categories.length,
-                  separatorBuilder: (_, __) => const CcSpaceSM(),
+                  separatorBuilder: (_, _) => const CcSpaceSM(),
                   itemBuilder: (context, index) {
                     final cat = categories[index];
                     final enabled = isEnabled(cat);

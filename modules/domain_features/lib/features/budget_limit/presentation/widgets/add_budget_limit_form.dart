@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:domain_features/features/category/data/datasources/local/category_seed.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
+import '../../../../core/getx/guideline_controller.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../domain/entities/budget_limit_entity.dart';
@@ -90,14 +90,15 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
       }
 
       // Budgets only cap expenses.
-      final enabled = categories
-          .where((c) => c.isEnabled && c.type == CategoryType.expense)
-          .toList()
-        ..sort((a, b) {
-          final indexA = seedIndexMap[a.id] ?? 999;
-          final indexB = seedIndexMap[b.id] ?? 999;
-          return indexA.compareTo(indexB);
-        });
+      final enabled =
+          categories
+              .where((c) => c.isEnabled && c.type == CategoryType.expense)
+              .toList()
+            ..sort((a, b) {
+              final indexA = seedIndexMap[a.id] ?? 999;
+              final indexB = seedIndexMap[b.id] ?? 999;
+              return indexA.compareTo(indexB);
+            });
       setState(() {
         _categories = enabled;
         if (_selectedCategoryId == null && enabled.isNotEmpty) {
@@ -187,6 +188,14 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
       return;
     }
 
+    // Guideline tasks
+    if (!_isEdit) {
+      Get.find<GuidelineController>().completeTask('budget_limit');
+      if (_isFixedPrice) {
+        Get.find<GuidelineController>().completeTask('min_living');
+      }
+    }
+
     CcSnackBarHelper.showSuccessSnackBar(
       context: context,
       message: _isEdit
@@ -198,6 +207,7 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
 
   Widget _buildFixedPriceHeaderToggle(BuildContext context) {
     final scheme = context.ccColorScheme;
+    final guideline = Get.find<GuidelineController>();
 
     return InkWell(
       onTap: () => setState(() => _isFixedPrice = !_isFixedPrice),
@@ -212,10 +222,27 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CcIconToken(
-                Icons.bolt_rounded,
-                size: 18,
-                color: _isFixedPrice ? scheme.primary : scheme.outline,
+              Obx(
+                () => Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    CcIconToken(
+                      Icons.bolt_rounded,
+                      size: 18,
+                      color: _isFixedPrice ? scheme.primary : scheme.outline,
+                    ),
+                    if (guideline.isTaskActive('min_living'))
+                      Positioned(
+                        top: -6,
+                        right: -6,
+                        child: CcGuidelineBadge(
+                          size: 4,
+                          color: guideline.currentColor,
+                          bounceTrigger: guideline.bounceTrigger,
+                        ),
+                      ),
+                  ],
+                ),
               ),
               const CcSpaceXS(),
               SizedBox(

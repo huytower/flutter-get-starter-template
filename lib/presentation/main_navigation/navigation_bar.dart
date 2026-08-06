@@ -4,6 +4,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/export_domain_features.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import 'logic/navigation_logic_mixin.dart';
@@ -76,24 +77,51 @@ class _NavigationBarState extends State<NavigationBar>
   }
 
   @override
-  List<CcCurvedNavigationItem> get navigationItems => [
-    CcCurvedNavigationItem(
-      inactiveIcon: Icons.pie_chart_outline,
-      activeIcon: Icons.pie_chart,
-      label: el.tr(CcLocaleKeys.nav_budget_allocation),
-    ),
-    // Centre "＋" — opens the Chi/Thu entry form.
-    CcCurvedNavigationItem(
-      inactiveIcon: Icons.add,
-      activeIcon: Icons.add,
-      label: el.tr(CcLocaleKeys.nav_transaction),
-    ),
-    CcCurvedNavigationItem(
-      inactiveIcon: Icons.person_outline_rounded,
-      activeIcon: Icons.person_rounded,
-      label: el.tr(CcLocaleKeys.nav_profile),
-    ),
-  ];
+  List<CcCurvedNavigationItem> get navigationItems {
+    final guideline = Get.find<GuidelineController>();
+    final activeTabIndex = guideline.activeTabIndex;
+    final color = guideline.currentColor;
+
+    return [
+      CcCurvedNavigationItem(
+        inactiveIcon: Icons.pie_chart_outline,
+        activeIcon: Icons.pie_chart,
+        label: el.tr(CcLocaleKeys.nav_budget_allocation),
+        badgeWidget: activeTabIndex == 0
+            ? CcGuidelineBadge(
+                size: 8,
+                color: color,
+                bounceTrigger: guideline.bounceTrigger,
+              )
+            : null,
+      ),
+      // Centre "＋" — opens the Chi/Thu entry form.
+      CcCurvedNavigationItem(
+        inactiveIcon: Icons.add,
+        activeIcon: Icons.add,
+        label: el.tr(CcLocaleKeys.nav_transaction),
+        badgeWidget: activeTabIndex == 1
+            ? CcGuidelineBadge(
+                size: 8,
+                color: color,
+                bounceTrigger: guideline.bounceTrigger,
+              )
+            : null,
+      ),
+      CcCurvedNavigationItem(
+        inactiveIcon: Icons.person_outline_rounded,
+        activeIcon: Icons.person_rounded,
+        label: el.tr(CcLocaleKeys.nav_profile),
+        badgeWidget: activeTabIndex == 2
+            ? CcGuidelineBadge(
+                size: 8,
+                color: color,
+                bounceTrigger: guideline.bounceTrigger,
+              )
+            : null,
+      ),
+    ];
+  }
 
   bool get enableAppBar => false;
 
@@ -102,7 +130,7 @@ class _NavigationBarState extends State<NavigationBar>
   PreferredSizeWidget? buildAppBar(BuildContext context) => null;
 
   Widget? buildBottomNavigationBar(BuildContext context) =>
-      buildCurvedNavigationBar();
+      Obx(() => buildCurvedNavigationBar());
 
   Widget onBodyWrapper(BuildContext context, Widget body) => body;
 

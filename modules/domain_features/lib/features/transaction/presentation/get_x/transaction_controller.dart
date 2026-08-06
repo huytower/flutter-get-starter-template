@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
@@ -65,6 +66,15 @@ class TransactionController extends CcGetController {
   @override
   void onInit() {
     super.onInit();
+    // Register form controllers early to avoid "setState() called during build"
+    // errors when they are initialized during the view's build phase.
+    if (!Get.isRegistered<ExpenseFormController>()) {
+      Get.put(getIt<ExpenseFormController>());
+    }
+    if (!Get.isRegistered<IncomeFormController>()) {
+      Get.put(getIt<IncomeFormController>());
+    }
+
     // The transaction tab hosts an always-visible entry form, not a data-gated
     // list, so keep the layout in the success state.
     layoutStatus.value = CcLayoutStatus.success;

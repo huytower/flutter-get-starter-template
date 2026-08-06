@@ -9,14 +9,15 @@ import 'package:theme/presentation/provider/theme_provider.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/getx/guideline_controller.dart';
 import '../../../category/export_category.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/usecases/update_profile_settings_usecase.dart';
+import '../pages/terms_of_service_page.dart';
 import '../widgets/birth_year_dialog.dart';
 import '../widgets/language_selection_dialog.dart';
 import '../widgets/weekly_audit_day_dialog.dart';
-import '../pages/terms_of_service_page.dart';
 
 @lazySingleton
 class ProfileController extends CcGetController {
@@ -198,6 +199,8 @@ class ProfileController extends CcGetController {
           ...CategorySeed.defaultExpenseCategoryKeys[group]!,
           ...CategorySeed.defaultIncomeCategoryKeys[group]!,
         ]);
+        // Guideline: birth_year completed
+        Get.find<GuidelineController>().completeTask('birth_year');
       }
     }
   }

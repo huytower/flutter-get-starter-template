@@ -28,13 +28,14 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       currencyCode: fields[8] as String?,
       birthYear: (fields[9] as num?)?.toInt(),
       isDarkMode: fields[10] as bool?,
+      completedGuidelineTaskIds: (fields[11] as List?)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CcAppStorage obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..writeByte(9)
       ..write(obj.birthYear)
       ..writeByte(10)
-      ..write(obj.isDarkMode);
+      ..write(obj.isDarkMode)
+      ..writeByte(11)
+      ..write(obj.completedGuidelineTaskIds);
   }
 
   @override
@@ -88,6 +91,10 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
   currencyCode: json['currencyCode'] as String?,
   birthYear: (json['birthYear'] as num?)?.toInt(),
   isDarkMode: json['isDarkMode'] as bool?,
+  completedGuidelineTaskIds:
+      (json['completedGuidelineTaskIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
 );
 
 Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
@@ -103,4 +110,5 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
       'currencyCode': instance.currencyCode,
       'birthYear': instance.birthYear,
       'isDarkMode': instance.isDarkMode,
+      'completedGuidelineTaskIds': instance.completedGuidelineTaskIds,
     };

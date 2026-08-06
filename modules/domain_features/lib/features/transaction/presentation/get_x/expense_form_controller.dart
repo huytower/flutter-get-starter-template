@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/getx/guideline_controller.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/entities/transaction_entity.dart';
@@ -69,6 +70,8 @@ class ExpenseFormController extends TransactionFormController {
         );
         resetForm();
         refreshParent();
+        // Guideline: first_transaction completed
+        Get.find<GuidelineController>().completeTask('first_transaction');
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
         context: context,

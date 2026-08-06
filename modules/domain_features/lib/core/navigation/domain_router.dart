@@ -1,6 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-
-import '../../features/profile/presentation/pages/terms_of_service_page.dart';
 import 'domain_router.gr.dart';
 
 @AutoRouterConfig()

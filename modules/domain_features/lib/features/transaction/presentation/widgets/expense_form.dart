@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
-import '../../../../core/di/di.dart';
+import '../../../../core/getx/guideline_controller.dart';
 import '../get_x/expense_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
@@ -19,10 +19,8 @@ class ExpenseForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Register the controller if not already present.
-    // Usually TransactionPage or a Binding would do this, but for modularity
-    // we can use Get.put here or Get.find if it's already there.
-    final controller = Get.put(getIt<ExpenseFormController>());
+    final controller = Get.find<ExpenseFormController>();
+    final guideline = Get.find<GuidelineController>();
 
     final accentColor = context.ccColorScheme.error;
 
@@ -30,7 +28,12 @@ class ExpenseForm extends StatelessWidget {
       () => Column(
         children: [
           Expanded(
-            child: _buildScrollableContent(context, controller, accentColor),
+            child: _buildScrollableContent(
+              context,
+              controller,
+              guideline,
+              accentColor,
+            ),
           ),
           if (controller.showKeypad.value)
             _buildMoneyKeypadPanel(context, controller, accentColor),
@@ -42,6 +45,7 @@ class ExpenseForm extends StatelessWidget {
   Widget _buildScrollableContent(
     BuildContext context,
     ExpenseFormController controller,
+    GuidelineController guideline,
     Color accentColor,
   ) {
     return GestureDetector(
@@ -60,7 +64,7 @@ class ExpenseForm extends StatelessWidget {
           children: [
             _buildCategorySection(controller, accentColor),
             const CcSpaceLG(),
-            _buildFormFields(context, controller, accentColor),
+            _buildFormFields(context, controller, guideline, accentColor),
           ],
         ),
       ),
@@ -82,6 +86,7 @@ class ExpenseForm extends StatelessWidget {
   Widget _buildFormFields(
     BuildContext context,
     ExpenseFormController controller,
+    GuidelineController guideline,
     Color accentColor,
   ) {
     return CcSymmetricPadding(
@@ -110,6 +115,13 @@ class ExpenseForm extends StatelessWidget {
             isEnabled: controller.canSubmit,
             onTap: () => controller.submitForm(context),
             activeColor: accentColor,
+            badge: guideline.isTaskActive('first_transaction')
+                ? CcGuidelineBadge(
+                    size: 8,
+                    color: guideline.currentColor,
+                    bounceTrigger: guideline.bounceTrigger,
+                  )
+                : null,
           ),
           const CcSpaceLG(),
         ],

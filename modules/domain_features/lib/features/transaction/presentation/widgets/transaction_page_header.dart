@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/getx/guideline_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -54,6 +55,9 @@ class TransactionPageHeader extends StatelessWidget {
   }
 
   Widget _buildHeroForeground(BuildContext context) {
+    // Inject GuidelineController
+    final guideline = Get.find<GuidelineController>();
+
     // Content is now a direct child of the Container (with bottom overlap padding).
     // We use a flex Column to distribute space proportionally.
     return Column(
@@ -81,7 +85,7 @@ class TransactionPageHeader extends StatelessWidget {
           flex: 12,
           child: CcSymmetricPadding(
             horizontal: CcPaddingParams.PAGE_MD,
-            child: buildBanner(context),
+            child: Obx(() => buildBanner(context, guideline)),
           ),
         ),
         const Spacer(flex: 1),
@@ -89,20 +93,23 @@ class TransactionPageHeader extends StatelessWidget {
     );
   }
 
-  CcListBannerSmall buildBanner(BuildContext context) {
+  Widget buildBanner(BuildContext context, GuidelineController guideline) {
+    final activeId = guideline.currentTaskId;
+    final accentColor = guideline.currentColor;
+
     return CcListBannerSmall(
-      title: el.tr(
-        CcLocaleKeys.transaction_claims_in_progress,
-        namedArgs: {'count': '2'},
-      ),
-      description: el.tr(CcLocaleKeys.profile_birth_year_task_desc),
-      accentColor: context.ccColorScheme.primary,
-      onTap: () {},
+      title: guideline.bannerTitle,
+      description: guideline.bannerDescription,
+      accentColor: accentColor,
+      onTap: () {
+        // Trigger bounce animation on the tab bar badge
+        guideline.triggerBounce();
+      },
       icon: CcClipboardChecklistIcon(
         size: context.respDim(40) * 0.8,
         bodyColor: context.ccColorScheme.onPrimary.withValues(alpha: 0.85),
         clipColor: context.ccColorScheme.onPrimary,
-        markColor: context.ccColorScheme.primary,
+        markColor: accentColor,
       ),
     );
   }

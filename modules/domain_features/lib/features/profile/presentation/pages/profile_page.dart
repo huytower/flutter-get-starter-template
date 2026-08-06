@@ -1,10 +1,11 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:domain_features/core/getx/cc_get_view.dart';
+import 'package:domain_features/core/getx/guideline_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/getx/cc_get_view.dart';
 import '../get_x/profile_controller.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_group.dart';
@@ -84,12 +85,25 @@ class ProfilePage extends CcGetView<ProfileController> {
   }
 
   List<Widget> _buildMenuItems(BuildContext context) {
+    final guideline = Get.find<GuidelineController>();
+
+    final color = guideline.currentColor;
+
     return [
-      ProfileSettingsTile(
-        icon: Icons.tune_rounded,
-        label: el.tr(CcLocaleKeys.category_settings_title),
-        subtitle: el.tr(CcLocaleKeys.category_settings_subtitle),
-        onTap: () => controller.navigateToCategorySettings(context),
+      Obx(
+        () => ProfileSettingsTile(
+          icon: Icons.tune_rounded,
+          label: el.tr(CcLocaleKeys.category_settings_title),
+          subtitle: el.tr(CcLocaleKeys.category_settings_subtitle),
+          onTap: () => controller.navigateToCategorySettings(context),
+          badge: guideline.isTaskActive('categories')
+              ? CcGuidelineBadge(
+                  size: 8,
+                  color: color,
+                  bounceTrigger: guideline.bounceTrigger,
+                )
+              : null,
+        ),
       ),
       Obx(
         () => ProfileSettingsTile(
@@ -100,6 +114,13 @@ class ProfilePage extends CcGetView<ProfileController> {
               controller.settings.value.birthYear?.toString() ??
               el.tr(CcLocaleKeys.common_not_set),
           onTap: () => controller.pickBirthYear(context),
+          badge: guideline.isTaskActive('birth_year')
+              ? CcGuidelineBadge(
+                  size: 8,
+                  color: color,
+                  bounceTrigger: guideline.bounceTrigger,
+                )
+              : null,
         ),
       ),
       Obx(

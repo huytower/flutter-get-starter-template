@@ -50,7 +50,6 @@ class _SplashPageState extends State<SplashPage>
           onLoaded: (composition) {
             _controller.duration = composition.duration;
             _controller.forward();
-            // Navigate after 500ms from when animation loads
             Future.delayed(const Duration(milliseconds: 2000), () {
               if (!mounted) return;
               navigateFromSplash(context);

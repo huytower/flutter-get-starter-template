@@ -17,7 +17,7 @@ import 'widgets/phone_otp_input.dart';
 const String _weJustSentSms = 'We just sent an SMS';
 const String _enterSecurityCode = 'Enter the security code we sent to';
 const String _verifyText = 'Verify';
-const String _didntReceiveCode = 'Didn\'t receive code?';
+const String _didntReceiveCode = "Didn't receive code?";
 const String _resendText = 'Resend after';
 
 @RoutePage()

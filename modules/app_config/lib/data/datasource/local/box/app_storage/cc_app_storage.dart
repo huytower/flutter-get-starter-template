@@ -73,6 +73,9 @@ class CcAppStorage extends HiveObject {
   @HiveField(10)
   bool? isDarkMode;
 
+  @HiveField(11)
+  List<String>? completedGuidelineTaskIds;
+
   CcAppStorage({
     this.accessToken,
     this.fcmToken,
@@ -85,5 +88,6 @@ class CcAppStorage extends HiveObject {
     this.currencyCode,
     this.birthYear,
     this.isDarkMode,
+    this.completedGuidelineTaskIds,
   });
 }
