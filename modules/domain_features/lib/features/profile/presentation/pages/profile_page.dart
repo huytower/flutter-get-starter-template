@@ -173,6 +173,7 @@ class ProfilePage extends CcGetView<ProfileController> {
         icon: Icons.description_rounded,
         label: el.tr(CcLocaleKeys.profile_terms),
         subtitle: el.tr(CcLocaleKeys.profile_terms_subtitle),
+        onTap: () => controller.navigateToTerms(context),
       ),
       Obx(
         () => ProfileSettingsTile(

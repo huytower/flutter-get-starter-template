@@ -1,7 +1,7 @@
-# Business Requirement - Personal Finance Management (QLTC)
+# Business Requirement - Personal Finance Management (Sổ Sách Xịn)
 
 ## 1. Overview
-The QLTC (Quản Lý Tài Chính) application is a modular personal finance management system designed with the philosophy: **"Smart, Effective, and Disciplined Spending"**. It aims to help users track their income/expenses, manage multiple wallets, maintain a financial "survival" runway, and eventually leverage AI for optimized budgeting and fast data entry.
+The Sổ Sách Xịn (Quản Lý Tài Chính) application is a modular personal finance management system designed with the philosophy: **"Smart, Effective, and Disciplined Spending"**. It aims to help users track their income/expenses, manage multiple wallets, maintain a financial "survival" runway, and eventually leverage AI for optimized budgeting and fast data entry.
 
 **Reference:** https://app-qltc.vercel.app/dashboard
 
@@ -31,14 +31,12 @@ The QLTC (Quản Lý Tài Chính) application is a modular personal finance mana
 - Advanced AI features (image processing, voice input)
 - Budget estimation and smart suggestions
 - AI-powered warnings and actions
-- VIP system for advanced users
 - Multi-currency support by location
 - Enhanced animations
 
 **Phase 4**
 - App Store deployment (Android/iOS)
 - Google Ads banner integration
-- Subscription model
 - Gaming theme layout option
 - Online ebook with AI language translation
 
@@ -70,14 +68,6 @@ The QLTC (Quản Lý Tài Chính) application is a modular personal finance mana
 3. System auto-suggests additional zeros and currency unit "đ"
 4. Press "Lưu" (Local save) button - top-right
 5. App remains open
-
-**Deep Link Flow (Optimized):**
-1. User long-presses App Icon → Selects "Chi tiền"
-2. App opens directly to Expense screen (Deep link) in < 500ms
-3. Number keypad auto-opens, user types "50000"
-4. Press "Lưu" (Local save)
-5. App closes or returns to Home immediately
-6. Total time: < 3 seconds
 
 ### C. Reconciliation & Audit (Weekly/Monthly)
 - **Financial Audit (Kiểm toán)**: Compare system balances with actual physical cash/bank balances.
@@ -124,7 +114,6 @@ The QLTC (Quản Lý Tài Chính) application is a modular personal finance mana
 - **Animations**: `animations` (https://pub.dev/packages/animations)
 - **Tutorial**: `hotspot` (https://pub.dev/packages/hotspot) - one-time onboarding
 - **Scroll Snap**: `scroll_snap_list` (https://pub.dev/packages/scroll_snap_list) for horizontal lists
-- **Quick Actions**: `quick_actions` for long-press app icon menu
 
 ### Mobile App Architecture
 - **Offline First**: Local database (Isar recommended over SQLite for Flutter performance)
@@ -135,8 +124,6 @@ The QLTC (Quản Lý Tài Chính) application is a modular personal finance mana
 
 ### Home Screen Widgets
 - **Android/iOS Widgets**: Display balance and 2 quick buttons: [+ Chi] and [+ Thu]
-- **Deep Link**: `qltc://add-transaction?type=expense` to open directly to entry screen, bypassing Splash/Home
-- **Quick Actions**: Long-press app icon shows menu: "Nhập chi tiêu nhanh", "Xem báo cáo"
 
 ### UI/UX Guidelines
 - **Minimal Text**: Use icons extensively, very little text
@@ -223,11 +210,6 @@ Users set monthly spending limits per category (e.g., "Only 1M for shopping this
 - **Debt Tracking**: Monitor outstanding debts with payment schedules
 - **Loan Tracking**: Track money lent to others with repayment tracking
 
-**VIP Feature:**
-- VIP users can create custom investment category names (e.g., "CP Vietjet", "CP HAGL")
-- VIP users can create custom debt/loan names (e.g., "Nợ thẻ HSBC", "Credit Card VCB")
-- Non-VIP users limited to predefined categories (general categories like Stocks, Crypto, etc.)
-
 ### Emergency Fund & Financial Runway (LV3)
 **Emergency Fund ("Quỹ dự phòng khẩn cấp" or "Chỉ số an toàn tài chính")**
 
@@ -261,10 +243,6 @@ In those 6 months, user has time to find new work or start a business without fi
 - Monitor investment performance over time
 - Separate from daily spending to ensure clear financial visibility
 - **Unlocks at LV2**: Investment tab appears in Transaction page
-
-**VIP Feature:**
-- VIP users can create custom investment category names
-- Non-VIP users limited to predefined categories
 
 ### AI Integration (Phase 3)
 
@@ -388,13 +366,6 @@ In those 6 months, user has time to find new work or start a business without fi
 - **Rationale**: This is an advanced, complex, difficult-to-manage feature
 - Users must understand LV1 and LV2 business logic before accessing
 
-### VIP (Independent from Level)
-- **Benefit**: Increase limits for:
-  - Number of Investment categories that can be created
-  - Number of Debt/Loan entries that can be created
-- **Non-VIP**: Limited to predefined categories
-- **VIP**: Can create custom category names
-
 ## 9. Wallet Management (Budget Allocation)
 
 ### Wallet Types
@@ -414,13 +385,13 @@ In those 6 months, user has time to find new work or start a business without fi
 ## 10. Data Schema Overview
 Based on the SQL Schema, the following entities are required:
 
-| Entity | Description |
-| :--- | :--- |
-| **User/Profile** | Authentication and preferences. |
-| **Wallet (Nguồn Tiền)** | Physical or digital locations of money. |
-| **Category** | Classification of income/expenses. |
-| **Transaction (Phiếu Thu/Chi)** | Individual financial records. |
-| **Budget (Ngân Sách)** | Spending limits per category/cycle. |
-| **TimeBlock** | Habit and time management tracking linked to roles. |
-| **Audit (Kiểm Toán)** | System vs. Actual balance reconciliation. |
-| **Weekly Snapshot** | Historical performance tracking. |
+ Entity | Description |
+ :--- | :--- |
+ **User/Profile** | Authentication and preferences. |
+ **Wallet (Nguồn Tiền)** | Physical or digital locations of money. |
+ **Category** | Classification of income/expenses. |
+ **Transaction (Phiếu Thu/Chi)** | Individual financial records. |
+ **Budget (Ngân Sách)** | Spending limits per category/cycle. |
+ **TimeBlock** | Habit and time management tracking linked to roles. |
+ **Audit (Kiểm Toán)** | System vs. Actual balance reconciliation. |
+ **Weekly Snapshot** | Historical performance tracking. |

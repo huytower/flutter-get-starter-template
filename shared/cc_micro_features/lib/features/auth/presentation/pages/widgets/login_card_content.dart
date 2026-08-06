@@ -1,24 +1,35 @@
+import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'login_or_divider.dart';
 import 'login_social_buttons.dart';
 
-class LoginCardContent extends StatelessWidget {
+class LoginCardContent extends StatefulWidget {
   const LoginCardContent({
     super.key,
     required this.onPhoneLogin,
     this.loginTitle,
     this.phoneLoginTitle,
+    this.termsText,
+    this.agreeText,
   });
 
   final VoidCallback onPhoneLogin;
 
   /// Semantic tokens for the card labels.
-  /// Default to plain English tokens so this project-blind widget does not
-  /// depend on the `message` module (follows `CcNextBtn.title` pattern).
   final String? loginTitle;
   final String? phoneLoginTitle;
+  final String? agreeText;
+  final String? termsText;
+
+  @override
+  State<LoginCardContent> createState() => _LoginCardContentState();
+}
+
+class _LoginCardContentState extends State<LoginCardContent> {
+  bool _isAgreed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +45,7 @@ class LoginCardContent extends StatelessWidget {
 
         // Title
         CcText(
-          loginTitle ?? 'Login',
+          widget.loginTitle ?? 'Login',
           textStyle: context.ccTextTheme.headlineMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: context.ccColorScheme.onSurface,
@@ -45,7 +56,13 @@ class LoginCardContent extends StatelessWidget {
         const CcSpaceXL(),
 
         // Social login buttons
-        const LoginSocialButtons(),
+        Opacity(
+          opacity: _isAgreed ? 1.0 : 0.5,
+          child: IgnorePointer(
+            ignoring: !_isAgreed,
+            child: const LoginSocialButtons(),
+          ),
+        ),
 
         const CcSpaceXL(),
 
@@ -55,17 +72,60 @@ class LoginCardContent extends StatelessWidget {
         const CcSpaceXL(),
 
         // Login with phone number button
-        CcBaseBtn(
-          onTap: onPhoneLogin,
-          title: phoneLoginTitle ?? 'Login with Phone Number',
-          bgColor: [
-            context.ccColorScheme.primary,
-            context.ccColorScheme.primary,
-          ],
-          textColor: CcBaseColors.white100,
+        Opacity(
+          opacity: _isAgreed ? 1.0 : 0.5,
+          child: CcBaseBtn(
+            onTap: _isAgreed ? widget.onPhoneLogin : null,
+            title: widget.phoneLoginTitle ?? 'Login with Phone Number',
+            bgColor: [
+              context.ccColorScheme.primary,
+              context.ccColorScheme.primary,
+            ],
+            textColor: CcBaseColors.white100,
+          ),
         ),
 
         const CcSpaceLG(),
+
+        // Agree with terms checkbox
+        _buildTermsCheckbox(context),
+
+        const CcSpaceLG(),
+      ],
+    );
+  }
+
+  Widget _buildTermsCheckbox(BuildContext context) {
+    return Row(
+      children: [
+        Checkbox(
+          value: _isAgreed,
+          onChanged: (value) => setState(() => _isAgreed = value ?? false),
+          activeColor: context.ccColorScheme.primary,
+          shape: RoundedRectangleBorder(borderRadius: context.brSm),
+        ),
+        Expanded(
+          child: Text.rich(
+            TextSpan(
+              text: widget.agreeText ?? 'I agree with ',
+              style: context.ccTextTheme.bodySmall,
+              children: [
+                TextSpan(
+                  text: widget.termsText ?? 'Term of Services',
+                  style: context.ccTextTheme.bodySmall?.copyWith(
+                    color: context.ccColorScheme.primary,
+                    fontWeight: CcTypographyParams.bold,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      getIt<AuthCoordinator>().navigateToTerms(context);
+                    },
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

@@ -3,6 +3,7 @@ import 'package:cc_bridge/core/di/di.module.dart';
 import 'package:cc_micro_features/core/di/di.module.dart';
 import 'package:cc_sdk/core/di/di.module.dart';
 import 'package:data_config/core/di/di.module.dart';
+import 'package:domain_features/core/di/di.module.dart';
 import 'package:injectable/injectable.dart';
 
 /// Configuration for Dependency Injection.
@@ -18,5 +19,6 @@ class CcDiModuleConfig {
     ExternalModule(AppConfigPackageModule),
     ExternalModule(CcMicroFeaturesPackageModule),
     ExternalModule(CcBridgePackageModule),
+    ExternalModule(DomainFeaturesPackageModule),
   ];
 }

@@ -130,6 +130,7 @@ flutter:
     - assets/icon/
     - assets/lottie/
     - assets/bg/
+    - assets/legal/terms_of_service.html
 
 flutter_launcher_icons:
   ios: true

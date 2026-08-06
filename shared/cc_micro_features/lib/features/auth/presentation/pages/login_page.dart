@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -35,6 +36,8 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
+    final isVietnamese = context.locale.languageCode == 'vi';
+
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
@@ -65,6 +68,14 @@ class _LoginViewState extends State<LoginView> {
                 child: LoginCardContent(
                   onPhoneLogin: () =>
                       getIt<AuthCoordinator>().navigateToPhoneAuth(context),
+                  loginTitle: isVietnamese ? 'Đăng nhập' : 'Login',
+                  phoneLoginTitle: isVietnamese
+                      ? 'Đăng nhập bằng số điện thoại'
+                      : 'Login with Phone Number',
+                  agreeText: isVietnamese ? 'Tôi đồng ý với ' : 'I agree with ',
+                  termsText: isVietnamese
+                      ? 'Điều khoản dịch vụ'
+                      : 'Term of Services',
                 ),
               );
             },

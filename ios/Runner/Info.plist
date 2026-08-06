@@ -19,10 +19,16 @@
       <string>en</string>
       <string>vi</string>
     </array>
+    <key>CFBundleSpokenName</key>
+    <string>Sổ Sách Xịn</string>
     <key>CFBundleName</key>
     <string>$(BUNDLE_NAME)</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
+    <key>CFBundleGetInfoString</key>
+    <string>Sổ Sách Xịn - Quản Lý Tài Chính cá nhân: Ứng dụng quản lý thu chi, ngân sách và đầu tư thông minh với AI</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.finance</string>
     <key>CFBundleShortVersionString</key>
     <string>$(MARKETING_VERSION)</string>
     <key>CFBundleSignature</key>
@@ -32,17 +38,19 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSFaceIDUsageDescription</key>
-    <string>My app use face id for authentication</string>
+    <string>Sổ Sách Xịn uses Face ID to securely authenticate your account and protect your financial data from unauthorized access.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>This app needs access to your photo library to save and access images</string>
+    <string>Sổ Sách Xịn needs access to your photo library to attach receipt images to your transactions and import expense photos for automatic data entry.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>This app needs permission to save photos to your photo library</string>
+    <string>Sổ Sách Xịn needs permission to save receipt images and transaction photos to your photo library for your records.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Sổ Sách Xịn needs camera access to capture receipt images and expense photos for automatic transaction entry and record keeping.</string>
     <key>NSDocumentsFolderUsageDescription</key>
-    <string>This app needs access to your documents folder to save files</string>
+    <string>Sổ Sách Xịn needs access to your documents folder to save and export your financial reports and transaction data.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app needs access to your location to detect your country code for phone number input</string>
+    <string>Sổ Sách Xịn uses your location to detect your country code for phone number formatting and provide smart spending suggestions based on nearby merchants (optional feature).</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>This app needs access to your location to detect your country code for phone number input</string>
+    <string>Sổ Sách Xịn uses your location to detect your country code for phone number formatting and provide smart spending suggestions based on nearby merchants (optional feature).</string>
     <key>UILaunchStoryboardName</key>
     <string>LaunchScreen</string>
     <key>UIMainStoryboardFile</key>
@@ -69,6 +77,28 @@
     <false/>
     <key>UIStatusBarHidden</key>
     <false/>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSAllowsArbitraryLoads</key>
+      <false/>
+      <key>NSExceptionDomains</key>
+      <dict>
+        <key>firebaseio.com</key>
+        <dict>
+          <key>NSIncludesSubdomains</key>
+          <true/>
+          <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+          <false/>
+        </dict>
+        <key>googleapis.com</key>
+        <dict>
+          <key>NSIncludesSubdomains</key>
+          <true/>
+          <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+          <false/>
+        </dict>
+      </dict>
+    </dict>
     <key>CFBundleURLTypes</key>
     <array>
       <dict>

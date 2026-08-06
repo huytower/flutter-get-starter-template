@@ -13,4 +13,7 @@ abstract class AuthCoordinator {
 
   /// Navigates to the Main/Dashboard screen after successful login.
   void navigateToDashboard(BuildContext context);
+
+  /// Navigates to the Terms of Service / Privacy Policy screen.
+  void navigateToTerms(BuildContext context);
 }

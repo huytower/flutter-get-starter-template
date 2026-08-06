@@ -28,6 +28,7 @@ enum AppRoute {
   budgetLimit,
   reconcile,
   report,
+  termsOfService,
 }
 
 extension AppRoutePath on AppRoute {

@@ -5,7 +5,18 @@ targets:
         generate_for:
           include:
             - lib/**
+          exclude:
+            - modules/**
+            - shared/**
+            - cc_bridge/**
       injectable_generator:injectable_builder:
+        generate_for:
+          include:
+            - lib/**
+          exclude:
+            - modules/**
+            - shared/**
+            - cc_bridge/**
         options:
           auto_register: true
           class_name_pattern:

@@ -16,6 +16,7 @@ import '../../domain/usecases/update_profile_settings_usecase.dart';
 import '../widgets/birth_year_dialog.dart';
 import '../widgets/language_selection_dialog.dart';
 import '../widgets/weekly_audit_day_dialog.dart';
+import '../pages/terms_of_service_page.dart';
 
 @lazySingleton
 class ProfileController extends CcGetController {
@@ -228,6 +229,12 @@ class ProfileController extends CcGetController {
     Navigator.of(context).push(
       MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),
     );
+  }
+
+  void navigateToTerms(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const TermsOfServicePage()));
   }
 
   void deleteAccount() {
