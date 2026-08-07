@@ -434,6 +434,7 @@
     "banner_desc_birth_year": "Set your birth year to receive suitable suggestions",
     "banner_desc_categories": "Select your expense and income categories",
     "banner_desc_wallet_balance": "Set the current balance for your wallet",
+    "banner_desc_modify_cash": "Modify the amount value in your cash wallet",
     "banner_desc_budget_limit": "Set spending limits for each category",
     "banner_desc_min_living": "Define your minimum monthly living expenses",
     "banner_desc_first_transaction": "Record your first expense transaction",

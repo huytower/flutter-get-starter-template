@@ -500,6 +500,7 @@ class CodegenLoader extends AssetLoader {
           "Set your birth year to receive suitable suggestions",
       "banner_desc_categories": "Select your expense and income categories",
       "banner_desc_wallet_balance": "Set the current balance for your wallet",
+      "banner_desc_modify_cash": "Modify the amount value in your cash wallet",
       "banner_desc_budget_limit": "Set spending limits for each category",
       "banner_desc_min_living": "Define your minimum monthly living expenses",
       "banner_desc_first_transaction": "Record your first expense transaction",
@@ -1001,6 +1002,7 @@ class CodegenLoader extends AssetLoader {
       "banner_desc_birth_year": "Thiết lập năm sinh để nhận gợi ý phù hợp",
       "banner_desc_categories": "Lựa chọn danh mục chi tiêu & thu nhập",
       "banner_desc_wallet_balance": "Thiết lập số dư hiện tại cho Ví",
+      "banner_desc_modify_cash": "Điều chỉnh số tiền thực tế cho ví tiền mặt",
       "banner_desc_budget_limit": "Đặt ngân sách chi tiêu cho từng danh mục",
       "banner_desc_min_living": "Xác định mức sống tối thiểu hàng tháng",
       "banner_desc_first_transaction": "Ghi chép giao dịch chi tiêu đầu tiên",
@@ -1481,6 +1483,8 @@ abstract class CcLocaleKeys {
       'guideline.banner_desc_categories';
   static const guideline_banner_desc_wallet_balance =
       'guideline.banner_desc_wallet_balance';
+  static const guideline_banner_desc_modify_cash =
+      'guideline.banner_desc_modify_cash';
   static const guideline_banner_desc_budget_limit =
       'guideline.banner_desc_budget_limit';
   static const guideline_banner_desc_min_living =

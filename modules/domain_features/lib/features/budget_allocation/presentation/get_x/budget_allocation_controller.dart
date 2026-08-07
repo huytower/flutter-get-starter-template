@@ -13,7 +13,7 @@ import '../../../reconciliation/presentation/get_x/reconciliation_controller.dar
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../widgets/add_wallet_sheet.dart';
-import '../widgets/wallet_actions_bottom_sheet.dart';
+import '../widgets/edit_wallet_sheet.dart';
 import '../widgets/wallet_delete_confirmation_dialog.dart';
 
 @injectable
@@ -40,7 +40,7 @@ class BudgetAllocationController extends CcGetController {
   }
 
   void openWalletActions(BuildContext context, WalletEntity wallet) {
-    WalletActionsBottomSheet.show(
+    EditWalletSheet.show(
       context,
       wallet: wallet,
       onEdit: () => _editWallet(context, wallet),

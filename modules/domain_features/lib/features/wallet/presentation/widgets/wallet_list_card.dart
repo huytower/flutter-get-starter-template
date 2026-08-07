@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/wallet_icon_helper.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import 'edit_badge.dart';
@@ -128,11 +129,33 @@ class WalletListCard extends StatelessWidget {
       Positioned(
         top: context.respDim(-6),
         right: context.respDim(-6),
-        child: EditBadge(
-          icon: Icons.edit,
-          color: scheme.primary,
-          foregroundColor: scheme.onPrimary,
-          onTap: onEdit,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            EditBadge(
+              icon: Icons.edit,
+              color: scheme.primary,
+              foregroundColor: scheme.onPrimary,
+              onTap: onEdit,
+            ),
+            if (Get.isRegistered<GuidelineController>())
+              Obx(() {
+                final guideline = Get.find<GuidelineController>();
+                final showing =
+                    guideline.isTaskActive('reconcile_wallet') &&
+                    wallet.type == WalletType.cash;
+                return Positioned(
+                  top: -4,
+                  right: -4,
+                  child: CcGuidelineBadge(
+                    showing: showing,
+                    color: guideline.currentColor,
+                    bounceTrigger: guideline.bounceTrigger,
+                    size: 8,
+                  ),
+                );
+              }),
+          ],
         ),
       ),
     ];

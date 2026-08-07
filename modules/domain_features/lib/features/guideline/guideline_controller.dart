@@ -13,6 +13,7 @@ class GuidelineController extends GetxController {
     'birth_year', // Profile -> _pickBirthYear
     'categories', // Profile -> CategorySettingsPage
     'wallet_balance', // Budget Allocation -> AddWalletSheet (Cash)
+    'reconcile_wallet', // Budget Allocation -> ReconcilePage
     'budget_limit', // Budget Allocation -> BudgetLimitPage
     'min_living', // Budget Allocation -> AddBudgetLimitForm (storm icon)
     'first_transaction', // Transaction -> ExpenseForm
@@ -22,6 +23,7 @@ class GuidelineController extends GetxController {
     'birth_year': Colors.purple,
     'categories': Colors.deepOrange,
     'wallet_balance': Colors.indigo,
+    'reconcile_wallet': Colors.pinkAccent,
     'budget_limit': Colors.cyan,
     'min_living': Colors.amber,
     'first_transaction': Colors.pink,
@@ -73,6 +75,7 @@ class GuidelineController extends GetxController {
       return 2; // Profile tab
     }
     if (activeId == 'wallet_balance' ||
+        activeId == 'reconcile_wallet' ||
         activeId == 'budget_limit' ||
         activeId == 'min_living') {
       return 0; // Budget Allocation tab
@@ -113,9 +116,7 @@ class GuidelineController extends GetxController {
     final remaining = taskSequence.length - completedTasks.length;
     return el.tr(
       CcLocaleKeys.guideline_banner_title_in_progress,
-      namedArgs: {
-        'remaining': remaining.toString(),
-      },
+      namedArgs: {'remaining': remaining.toString()},
     );
   }
 
@@ -130,6 +131,8 @@ class GuidelineController extends GetxController {
         return el.tr(CcLocaleKeys.guideline_banner_desc_categories);
       case 'wallet_balance':
         return el.tr(CcLocaleKeys.guideline_banner_desc_wallet_balance);
+      case 'reconcile_wallet':
+        return el.tr(CcLocaleKeys.guideline_banner_desc_modify_cash);
       case 'budget_limit':
         return el.tr(CcLocaleKeys.guideline_banner_desc_budget_limit);
       case 'min_living':

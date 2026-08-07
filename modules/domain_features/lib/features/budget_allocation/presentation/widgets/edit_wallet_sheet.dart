@@ -1,12 +1,14 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 
 /// Bottom sheet for wallet actions (edit/delete).
-class WalletActionsBottomSheet extends StatelessWidget {
-  const WalletActionsBottomSheet({
+class EditWalletSheet extends StatelessWidget {
+  const EditWalletSheet({
     required this.wallet,
     required this.onEdit,
     required this.onDelete,
@@ -29,11 +31,8 @@ class WalletActionsBottomSheet extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => WalletActionsBottomSheet(
-        wallet: wallet,
-        onEdit: onEdit,
-        onDelete: onDelete,
-      ),
+      builder: (_) =>
+          EditWalletSheet(wallet: wallet, onEdit: onEdit, onDelete: onDelete),
     );
   }
 
@@ -44,13 +43,35 @@ class WalletActionsBottomSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListTile(
-            leading: Icon(Icons.edit_outlined, color: scheme.primary),
-            title: CcText(el.tr(CcLocaleKeys.common_edit)),
-            onTap: () {
-              Navigator.pop(context);
-              onEdit();
-            },
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              ListTile(
+                leading: Icon(Icons.edit_outlined, color: scheme.primary),
+                title: CcText(el.tr(CcLocaleKeys.common_edit)),
+                onTap: () {
+                  Navigator.pop(context);
+                  onEdit();
+                },
+              ),
+              if (Get.isRegistered<GuidelineController>())
+                Obx(() {
+                  final guideline = Get.find<GuidelineController>();
+                  final showing =
+                      guideline.isTaskActive('reconcile_wallet') &&
+                      wallet.type == WalletType.cash;
+                  return Positioned(
+                    top: 12,
+                    left: 40,
+                    child: CcGuidelineBadge(
+                      showing: showing,
+                      color: guideline.currentColor,
+                      bounceTrigger: guideline.bounceTrigger,
+                      size: 8,
+                    ),
+                  );
+                }),
+            ],
           ),
           ListTile(
             leading: Icon(Icons.delete_outline, color: scheme.error),

@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
+import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../get_x/reconciliation_controller.dart';
 
 class WalletReconcileTile extends StatelessWidget {
@@ -45,53 +47,80 @@ class WalletReconcileTile extends StatelessWidget {
               ? Border.all(color: scheme.primary, width: 2)
               : null,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CcText(
-                  balance.wallet.name,
-                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CcText(
+                      balance.wallet.name,
+                      textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    CcText(
+                      el.tr(
+                        CcLocaleKeys.reconciliation_book_balance,
+                        namedArgs: {
+                          'amount': formatVndWithSymbol(balance.bookBalance),
+                        },
+                      ),
+                      textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ),
-                CcText(
-                  el.tr(
-                    CcLocaleKeys.reconciliation_book_balance,
-                    namedArgs: {
-                      'amount': formatVndWithSymbol(balance.bookBalance),
-                    },
-                  ),
-                  textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
+                const SizedBox(height: 10),
+                WalletActualBalanceInput(
+                  actual: actual,
+                  isEditing: isEditing,
+                  onTap: () => controller.startEditing(balance.wallet.id),
+                  onClear: () {
+                    if (isEditing) {
+                      controller.clearAmount();
+                    } else {
+                      controller.setActual(balance.wallet.id, 0);
+                    }
+                  },
+                ),
+                const SizedBox(height: 10),
+                WalletReconcileStatusRow(
+                  isBalanced: isBalanced,
+                  isAcknowledged: isAcknowledged,
+                  diff: diff,
+                  statusColor: statusColor,
+                  onAcknowledge: onAcknowledge,
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            WalletActualBalanceInput(
-              actual: actual,
-              isEditing: isEditing,
-              onTap: () => controller.startEditing(balance.wallet.id),
-              onClear: () {
-                if (isEditing) {
-                  controller.clearAmount();
-                } else {
-                  controller.setActual(balance.wallet.id, 0);
-                }
-              },
-            ),
-            const SizedBox(height: 10),
-            WalletReconcileStatusRow(
-              isBalanced: isBalanced,
-              isAcknowledged: isAcknowledged,
-              diff: diff,
-              statusColor: statusColor,
-              onAcknowledge: onAcknowledge,
-            ),
+            _buildGuidelineBadge(context),
           ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildGuidelineBadge(BuildContext context) {
+    if (!Get.isRegistered<GuidelineController>()) return const SizedBox();
+    final guideline = Get.find<GuidelineController>();
+
+    return Obx(() {
+      final isCashWallet = balance.wallet.type == WalletType.cash;
+      final isReconcileActive = guideline.isTaskActive('reconcile_wallet');
+      final showing = isCashWallet && isReconcileActive;
+
+      return Positioned(
+        top: -8,
+        left: -8,
+        child: CcGuidelineBadge(
+          showing: showing,
+          color: guideline.currentColor,
+          bounceTrigger: guideline.bounceTrigger,
         ),
       );
     });

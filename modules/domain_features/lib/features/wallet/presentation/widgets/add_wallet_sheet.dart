@@ -8,6 +8,7 @@ import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 
@@ -220,17 +221,38 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
   }
 
   Widget _buildAmountSection(BuildContext context) {
-    return CcAmountInputSection(
-      key: const Key('wallet_balance'),
-      label: el.tr(CcLocaleKeys.wallet_initial_balance),
-      amountStr: _amountStr,
-      quickAmounts: MoneyConstants.walletQuickAmounts,
-      isKeypadVisible: _showKeypad,
-      activeColor: _accent,
-      fieldKey: _amountFieldKey,
-      onTap: _onAmountTap,
-      onQuickAmountSelected: (amount) =>
-          setState(() => _amountStr = amount.toString()),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        CcAmountInputSection(
+          key: const Key('wallet_balance'),
+          label: el.tr(CcLocaleKeys.wallet_initial_balance),
+          amountStr: _amountStr,
+          quickAmounts: MoneyConstants.walletQuickAmounts,
+          isKeypadVisible: _showKeypad,
+          activeColor: _accent,
+          fieldKey: _amountFieldKey,
+          onTap: _onAmountTap,
+          onQuickAmountSelected: (amount) =>
+              setState(() => _amountStr = amount.toString()),
+        ),
+        if (Get.isRegistered<GuidelineController>())
+          Obx(() {
+            final guideline = Get.find<GuidelineController>();
+            final showing =
+                guideline.isTaskActive('reconcile_wallet') && _isCash;
+            return Positioned(
+              top: 0,
+              right: 0,
+              child: CcGuidelineBadge(
+                showing: showing,
+                color: guideline.currentColor,
+                bounceTrigger: guideline.bounceTrigger,
+                size: 10,
+              ),
+            );
+          }),
+      ],
     );
   }
 

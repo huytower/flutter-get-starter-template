@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/wallet_list_card.dart';
 
@@ -51,22 +52,44 @@ class WalletListPage extends CcGetView<WalletController> {
           onTap: () => controller.openForm(context),
         ),
         Obx(
-          () => CcIconButton.bouncing(
-            onTap: controller.toggleEditMode,
-            tooltip: controller.isEditMode.value
-                ? el.tr(CcLocaleKeys.common_done)
-                : el.tr(CcLocaleKeys.common_edit),
-            icon: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: Icon(
-                controller.isEditMode.value
-                    ? Icons.check_circle_outline_rounded
-                    : Icons.tune_rounded,
-                key: ValueKey(controller.isEditMode.value),
-                color: context.ccColorScheme.onPrimary,
-                size: context.respIconSize(baseSize: 24),
+          () => Stack(
+            clipBehavior: Clip.none,
+            children: [
+              CcIconButton.bouncing(
+                onTap: controller.toggleEditMode,
+                tooltip: controller.isEditMode.value
+                    ? el.tr(CcLocaleKeys.common_done)
+                    : el.tr(CcLocaleKeys.common_edit),
+                icon: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(
+                    controller.isEditMode.value
+                        ? Icons.check_circle_outline_rounded
+                        : Icons.tune_rounded,
+                    key: ValueKey(controller.isEditMode.value),
+                    color: context.ccColorScheme.onPrimary,
+                    size: context.respIconSize(baseSize: 24),
+                  ),
+                ),
               ),
-            ),
+              if (Get.isRegistered<GuidelineController>())
+                Obx(() {
+                  final guideline = Get.find<GuidelineController>();
+                  final showing =
+                      guideline.isTaskActive('reconcile_wallet') &&
+                      !controller.isEditMode.value;
+                  return Positioned(
+                    top: 0,
+                    right: 0,
+                    child: CcGuidelineBadge(
+                      showing: showing,
+                      color: guideline.currentColor,
+                      bounceTrigger: guideline.bounceTrigger,
+                      size: 10,
+                    ),
+                  );
+                }),
+            ],
           ),
         ),
       ],

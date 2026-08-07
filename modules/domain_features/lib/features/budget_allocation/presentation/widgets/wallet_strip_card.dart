@@ -1,8 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/wallet_icon_helper.dart';
+import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
@@ -70,15 +73,38 @@ class _WalletCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () => context.router.push(const WalletListRoute()),
       onLongPress: onMore,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           const Positioned.fill(child: CcGlassyGradientBackground()),
           _buildMainCard(context),
+          _buildGuidelineBadge(context),
         ],
       ),
     );
+  }
+
+  Widget _buildGuidelineBadge(BuildContext context) {
+    if (!Get.isRegistered<GuidelineController>()) return const SizedBox();
+    final guideline = Get.find<GuidelineController>();
+
+    return Obx(() {
+      final isCashWallet = wallet.type == WalletType.cash;
+      final isReconcileActive = guideline.isTaskActive('reconcile_wallet');
+      final showing = isCashWallet && isReconcileActive;
+
+      return Positioned(
+        top: -6,
+        right: -6,
+        child: CcGuidelineBadge(
+          showing: showing,
+          color: guideline.currentColor,
+          bounceTrigger: guideline.bounceTrigger,
+        ),
+      );
+    });
   }
 
   Widget _buildMainCard(BuildContext context) {

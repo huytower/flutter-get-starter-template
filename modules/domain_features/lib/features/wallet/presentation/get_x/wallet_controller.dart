@@ -282,6 +282,12 @@ class WalletController extends CcGetController {
           if (toSave.balance > 0) {
             Get.find<GuidelineController>().completeTask('wallet_balance');
           }
+
+          // Complete the modify_cash task if the balance of the cash wallet is updated
+          if (wallet.type == WalletType.cash &&
+              toSave.balance != original.balance) {
+            Get.find<GuidelineController>().completeTask('reconcile_wallet');
+          }
         }
       },
       (error) {

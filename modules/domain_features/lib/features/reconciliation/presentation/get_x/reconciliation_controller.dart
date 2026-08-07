@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../../domain/entities/reconciliation_entity.dart';
@@ -178,6 +179,9 @@ class ReconciliationController extends CcGetController {
       return result.when((_) {
         loadBalances();
         loadHistory();
+        if (Get.isRegistered<GuidelineController>()) {
+          Get.find<GuidelineController>().completeTask('reconcile_wallet');
+        }
         return null;
       }, (error) => error.message);
     } finally {
@@ -193,6 +197,9 @@ class ReconciliationController extends CcGetController {
       return result.when((_) {
         loadBalances();
         loadHistory();
+        if (Get.isRegistered<GuidelineController>()) {
+          Get.find<GuidelineController>().completeTask('reconcile_wallet');
+        }
         return null;
       }, (error) => error.message);
     } finally {
