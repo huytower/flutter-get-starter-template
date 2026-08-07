@@ -133,18 +133,19 @@ flutter:
     - assets/legal/terms_of_service.html
 
 flutter_launcher_icons:
+  android: true
   ios: true
   image_path: "assets/icon/app_icon.png"
-  adaptive_icon_background: "#ffffff"
+  adaptive_icon_background: "#F5F5F0"
 
 flutter_native_splash:
-  color: "#36454F"
+  color: "#F5F5F0"
   image: assets/icon/app_icon.png
   android_gravity: center
   ios_content_mode: center
   android_12:
     image: assets/icon/app_icon.png
-    color: "#36454F"
+    color: "#F5F5F0"
 
 # Single Source of Truth for workspace scripts: melos 7.8.1 reads scripts from
 # this `melos.scripts` block (NOT from melos.yaml). Do not duplicate them in
