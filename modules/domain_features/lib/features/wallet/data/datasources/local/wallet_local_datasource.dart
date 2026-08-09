@@ -58,7 +58,8 @@ class WalletLocalDataSource {
         if (m.type != WalletType.cash &&
             m.type != WalletType.bank &&
             m.type != WalletType.ewallet &&
-            m.type != WalletType.investment)
+            m.type != WalletType.investment &&
+            m.type != WalletType.emergencyFund)
           m.id: WalletHiveModel(
             id: m.id,
             name: m.name,

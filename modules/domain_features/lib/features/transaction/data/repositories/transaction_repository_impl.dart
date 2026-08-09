@@ -67,6 +67,21 @@ class TransactionRepositoryImpl
   }
 
   @override
+  Future<Result<void, CcFailure>> updateTransaction(
+    TransactionEntity transaction,
+  ) {
+    return safeRequest(() async {
+      final model = TransactionModel.fromEntity(transaction);
+      final pending = model.copyWithSyncMetadata(
+        SyncMetadata.pending(model.id ?? ''),
+      );
+      await _local.update(pending);
+
+      _syncService.syncAll();
+    });
+  }
+
+  @override
   Future<Result<void, CcFailure>> deleteTransaction(String id) {
     return safeRequest(() async {
       await _local.delete(id);
@@ -89,6 +104,16 @@ class TransactionRepositoryImpl
     return safeRequest(() async {
       final all = await _allSortedDesc();
       return all.where((t) => t.walletId == walletId).toList();
+    });
+  }
+
+  @override
+  Future<Result<List<TransactionEntity>, CcFailure>> getTransactionsByLoan(
+    String loanId,
+  ) {
+    return safeRequest(() async {
+      final all = await _allSortedDesc();
+      return all.where((t) => t.loanId == loanId).toList();
     });
   }
 

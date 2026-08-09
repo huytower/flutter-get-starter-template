@@ -21,6 +21,8 @@ IconData walletIconFor(String type) {
       return Icons.payments;
     case 'ewallet':
       return Icons.account_balance_wallet;
+    case 'emergency_fund':
+      return Icons.shield_outlined;
     default:
       return Icons.account_balance;
   }

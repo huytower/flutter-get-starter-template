@@ -5,7 +5,9 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../guideline/guideline_controller.dart';
+import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
+import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../../domain/entities/reconciliation_entity.dart';
 import '../../domain/usecases/get_reconciliation_history_usecase.dart';
@@ -20,12 +22,14 @@ class ReconciliationController extends CcGetController {
     this._performReconciliation,
     this._undoReconciliation,
     this._getHistory,
+    this._userLevel,
   );
 
   final GetWalletBalancesUseCase _getWalletBalances;
   final PerformReconciliationUseCase _performReconciliation;
   final UndoReconciliationUseCase _undoReconciliation;
   final GetReconciliationHistoryUseCase _getHistory;
+  final UserLevelController _userLevel;
 
   final RxList<WalletBalanceEntity> balances = <WalletBalanceEntity>[].obs;
   final RxList<ReconciliationEntity> history = <ReconciliationEntity>[].obs;
@@ -75,16 +79,23 @@ class ReconciliationController extends CcGetController {
     final result = await _getWalletBalances.call();
     result.when(
       (success) {
-        balances.assignAll(success);
+        // Investment positions are excluded — "Thu vào" now credits a real
+        // liquid wallet directly, so an investment wallet's own balance is
+        // just cumulative contributed capital, nothing real to count here.
+        // The Emergency Fund stays reconciled normally, like cash/bank.
+        final liquid = success
+            .where((b) => b.wallet.type != WalletType.investment)
+            .toList();
+        balances.assignAll(liquid);
         _actuals
           ..clear()
-          ..addEntries(success.map((b) => MapEntry(b.wallet.id, 0)));
+          ..addEntries(liquid.map((b) => MapEntry(b.wallet.id, 0)));
         _acknowledged.clear();
-        systemTotal.value = success.fold(0, (sum, b) => sum + b.bookBalance);
+        systemTotal.value = liquid.fold(0, (sum, b) => sum + b.bookBalance);
         actualTotal.value = 0;
         unhandledCount.value = 0;
         _updateUnhandledCount();
-        layoutStatus.value = success.isEmpty
+        layoutStatus.value = liquid.isEmpty
             ? CcLayoutStatus.empty
             : CcLayoutStatus.success;
       },
@@ -182,6 +193,7 @@ class ReconciliationController extends CcGetController {
         if (Get.isRegistered<GuidelineController>()) {
           Get.find<GuidelineController>().completeTask('reconcile_wallet');
         }
+        _userLevel.refresh();
         return null;
       }, (error) => error.message);
     } finally {
@@ -200,6 +212,7 @@ class ReconciliationController extends CcGetController {
         if (Get.isRegistered<GuidelineController>()) {
           Get.find<GuidelineController>().completeTask('reconcile_wallet');
         }
+        _userLevel.refresh();
         return null;
       }, (error) => error.message);
     } finally {

@@ -1,11 +1,12 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:theme/export_theme.dart';
 
+import '../../../loan/presentation/widgets/loan_form.dart';
 import '../get_x/transaction_controller.dart';
 import 'expense_form.dart';
 import 'income_form.dart';
+import 'investment_form.dart';
+import 'transaction_tab_bar.dart';
 
 class TransactionTabBarView extends StatelessWidget {
   const TransactionTabBarView({super.key, required this.controller});
@@ -15,8 +16,12 @@ class TransactionTabBarView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final selectedIndex = controller.selectedTabIndex.value;
-      final activeColor = _getTabColor(context, selectedIndex);
+      final tabs = controller.visibleTabs;
+      final selectedIndex = controller.selectedTabIndex.value.clamp(
+        0,
+        tabs.length - 1,
+      );
+      final activeColor = tabs[selectedIndex].color(context);
       final topColor = activeColor.withAlpha(5);
       final bottomColor = activeColor.withAlpha(10);
 
@@ -33,17 +38,18 @@ class TransactionTabBarView extends StatelessWidget {
               ),
             ),
           ),
-          const TabBarView(children: [ExpenseForm(), IncomeForm()]),
+          TabBarView(children: [for (final tab in tabs) _formFor(tab)]),
         ],
       );
     });
   }
 
-  Color _getTabColor(BuildContext context, int index) {
-    return switch (index) {
-      0 => context.ccColorScheme.error,
-      1 => context.ccColorScheme.primary,
-      _ => PrjColors.success,
+  Widget _formFor(TransactionTabKind tab) {
+    return switch (tab) {
+      TransactionTabKind.expense => const ExpenseForm(),
+      TransactionTabKind.income => const IncomeForm(),
+      TransactionTabKind.investment => const InvestmentForm(),
+      TransactionTabKind.debtLoan => const LoanForm(),
     };
   }
 }

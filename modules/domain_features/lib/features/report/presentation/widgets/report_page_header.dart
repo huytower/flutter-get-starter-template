@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -99,9 +100,68 @@ class ReportPageHeader extends StatelessWidget {
           _buildBackButton(context),
           const CcSpaceXS(),
           Expanded(child: _buildPageTitle(context)),
+          _buildFilterButton(context),
         ],
       ),
     );
+  }
+
+  /// Selected-wallet label + filter icon, one combined tap target. The label
+  /// always shows something ("Tất cả" when unfiltered, the wallet name
+  /// otherwise) and is width-capped + ellipsized so a long wallet name can
+  /// never grow into (and push around) the "Báo cáo" title — [_buildTitleRow]
+  /// gives this group fixed size and lets the title's own `Expanded` absorb
+  /// the squeeze instead.
+  Widget _buildFilterButton(BuildContext context) {
+    return Obx(() {
+      final name = controller.filterWalletName.value;
+      final isActive = name != null;
+      final label = name ?? el.tr(CcLocaleKeys.report_filter_all_wallets);
+      final scheme = context.ccColorScheme;
+
+      return Tooltip(
+        message: el.tr(CcLocaleKeys.report_filter_by_wallet),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(context.respDim(8)),
+          onTap: () => controller.openWalletFilterPicker(context),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: context.respPadding(CcPaddingParams.SPACE_XS),
+              vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: context.respDim(72)),
+                  // Right-aligned so any unused width from the cap opens up
+                  // on the left (toward the flexible title) instead of
+                  // leaving a gap between the label and the filter icon.
+                  child: CcText(
+                    label,
+                    align: Alignment.centerRight,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                      color: scheme.onPrimary.withValues(alpha: 0.85),
+                      fontWeight: isActive
+                          ? CcTypographyParams.bold
+                          : CcTypographyParams.regular,
+                    ),
+                  ),
+                ),
+                const CcSpaceXS(),
+                Icon(
+                  isActive ? Icons.filter_alt_rounded : Icons.filter_alt_outlined,
+                  color: scheme.onPrimary,
+                  size: context.respIconSize(baseSize: 22),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildPageTitle(BuildContext context) {

@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
 import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -11,11 +14,14 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../category/export_category.dart';
+import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/usecases/update_profile_settings_usecase.dart';
+import '../pages/link_account_page.dart';
 import '../pages/terms_of_service_page.dart';
 import '../widgets/birth_year_dialog.dart';
+import '../widgets/display_name_dialog.dart';
 import '../widgets/language_selection_dialog.dart';
 import '../widgets/weekly_audit_day_dialog.dart';
 
@@ -28,6 +34,7 @@ class ProfileController extends CcGetController {
     this._session,
     this._deviceInfo,
     this._authCoordinator,
+    this.userLevel,
   );
 
   final GetProfileSettingsUseCase _getSettings;
@@ -36,6 +43,7 @@ class ProfileController extends CcGetController {
   final SessionContract _session;
   final CcDeviceInfoHelper _deviceInfo;
   final AuthCoordinator _authCoordinator;
+  final UserLevelController userLevel;
 
   final Rxn<CcUserEntity> user = Rxn<CcUserEntity>();
   final Rx<ProfileSettingsEntity> settings = const ProfileSettingsEntity().obs;
@@ -67,6 +75,7 @@ class ProfileController extends CcGetController {
       final s = await _getSettings();
       settings.value = s;
       appVersion.value = await _deviceInfo.getAppVersion();
+      unawaited(userLevel.refresh());
 
       'ProfileController loaded settings - isDarkMode: ${s.isDarkMode}'.Log(
         'ProfileController',
@@ -101,7 +110,13 @@ class ProfileController extends CcGetController {
     return el.tr(CcLocaleKeys.profile_guest);
   }
 
-  int get daysToSunday => 7 - DateTime.now().weekday;
+  /// Days remaining until the next occurrence of the user's configured
+  /// audit weekday (1=Monday..7=Sunday, matching [DateTime.weekday]) — 0
+  /// when today is the audit day.
+  int get daysToNextAudit {
+    final auditWeekday = settings.value.weeklyAuditDayIndex + 1;
+    return (auditWeekday - DateTime.now().weekday) % 7;
+  }
 
   String get weeklyAuditDayName {
     final day = settings.value.weeklyAuditDayIndex + 1;
@@ -145,9 +160,31 @@ class ProfileController extends CcGetController {
   }
 
   Future<void> setWeeklyAuditDay(int dayIndex) async {
-    final updated = settings.value.copyWith(weeklyAuditDayIndex: dayIndex);
+    final changed = dayIndex != settings.value.weeklyAuditDayIndex;
+    // Changing the audit day invalidates prior reconciliation-streak
+    // progress (user-level feature), so re-stamp the anchor whenever the
+    // day actually changes.
+    final updated = settings.value.copyWith(
+      weeklyAuditDayIndex: dayIndex,
+      weeklyAuditDayChangedAt: changed ? DateTime.now() : null,
+    );
     settings.value = updated;
     await _updateSettings(updated);
+  }
+
+  Future<void> setVip(bool value) async {
+    final updated = settings.value.copyWith(isVip: value);
+    settings.value = updated;
+    await _updateSettings(updated);
+  }
+
+  /// Debug/QA override — unlocks Investment + Debt/Loan (LV3) instantly,
+  /// regardless of actual reconciliation/budget/cash-flow progress.
+  Future<void> setForceFullAccess(bool value) async {
+    final updated = settings.value.copyWith(forceFullAccess: value);
+    settings.value = updated;
+    await _updateSettings(updated);
+    await userLevel.refresh();
   }
 
   Future<void> setThemeMode(bool isDarkMode) async {
@@ -216,11 +253,53 @@ class ProfileController extends CcGetController {
     if (picked != null) await setWeeklyAuditDay(picked - 1);
   }
 
+  /// Guests have no Firebase account to update — the edit affordance is
+  /// hidden for them in [ProfileHeader], but guard here too.
+  Future<void> pickDisplayName(BuildContext context) async {
+    if (!isLoggedIn) return;
+
+    final name = await DisplayNameDialog.show(context, currentName: displayName);
+    if (name == null || name.trim().isEmpty) return;
+
+    final result = await getIt<FirebaseAuthRepository>().updateDisplayName(
+      name.trim(),
+    );
+    result.when(
+      // authStateChanges() won't re-emit for a profile-only update, so apply
+      // the refreshed entity directly rather than waiting on the stream.
+      (updatedUser) {
+        user.value = updatedUser;
+        if (context.mounted) {
+          CcSnackBarHelper.showSuccessSnackBar(
+            context: context,
+            message: el.tr(CcLocaleKeys.profile_display_name_updated),
+          );
+        }
+      },
+      (error) {
+        if (context.mounted) {
+          CcSnackBarHelper.showErrorSnackBar(
+            context: context,
+            message: error.message,
+          );
+        }
+      },
+    );
+  }
+
   Future<void> pickLanguage(BuildContext context) async {
     final picked = await LanguageSelectionDialog.show(context);
     if (picked != null && context.mounted) {
       await el.EasyLocalization.of(context)!.setLocale(picked);
     }
+  }
+
+  /// Guests have no Firebase account to link a second provider to.
+  void navigateToLinkAccount(BuildContext context) {
+    if (!isLoggedIn) return;
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const LinkAccountPage()));
   }
 
   Future<void> navigateToCategorySettings(BuildContext context) async {

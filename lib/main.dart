@@ -5,6 +5,7 @@ import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:domain_features/export_domain_features.dart' hide getIt;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,8 @@ void main() async {
     // 4. PRIORITY BACKGROUND (Non-blocking)
     // Starts the native security handshake without delaying the first frame.
     CcAppCheckHelper.initialize();
+    getIt<NotificationService>().init();
+    getIt<FinancialDataSyncService>().startWatching();
 
     // 5. UI Launch
     _runApplication();

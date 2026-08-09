@@ -27,6 +27,8 @@ enum AppRoute {
   transactionDetail,
   budgetLimit,
   reconcile,
+  loanList,
+  loanDetail,
   report,
   termsOfService,
 }

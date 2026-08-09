@@ -15,15 +15,33 @@ class CategorySelectionSection extends StatefulWidget {
   /// [CategoryType.income].
   final String type;
 
+  /// When non-null, further restricts [type]'s categories to these
+  /// `groupId`s — e.g. the Loan form passes only the Borrow or Lend
+  /// `debt_loan` group depending on the selected direction. Null (the
+  /// default) leaves every enabled category of [type] unfiltered.
+  final List<String>? groupIds;
+
   /// Pre-select (and report) the first category once loaded.
   final bool autoSelectFirst;
+
+  /// Overrides the section title (defaults to the localized "Category"
+  /// label) — e.g. the Loan form's Đi vay direction relabels this "Hình
+  /// thức vay" since it's picking a loan type, not a spending category.
+  final String? title;
+
+  /// Pre-select this category id once loaded (e.g. editing a transaction
+  /// that already has a category). Takes priority over [autoSelectFirst].
+  final String? initialSelectedCategoryId;
 
   const CategorySelectionSection({
     super.key,
     this.onCategorySelected,
     this.activeColor = PrjColors.primary,
     this.type = CategoryType.expense,
+    this.groupIds,
     this.autoSelectFirst = false,
+    this.title,
+    this.initialSelectedCategoryId,
   });
 
   @override
@@ -39,34 +57,63 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
   @override
   void initState() {
     super.initState();
+    _selectedCategoryId = widget.initialSelectedCategoryId;
     _loadCategories();
   }
 
   Future<void> _loadCategories() async {
     final result = await getIt<GetCategoriesUseCase>().call();
     if (!mounted) return;
+    List<CategoryEntity> allCategories = const [];
     setState(() {
-      result.when(
-        (categories) {
-          // Create index map to preserve seed order
-          final seedIndexMap = <String, int>{};
-          for (int i = 0; i < CategorySeed.categories.length; i++) {
-            seedIndexMap[CategorySeed.categories[i].id] = i;
-          }
+      result.when((categories) {
+        allCategories = categories;
+        // Create index map to preserve seed order
+        final seedIndexMap = <String, int>{};
+        for (int i = 0; i < CategorySeed.categories.length; i++) {
+          seedIndexMap[CategorySeed.categories[i].id] = i;
+        }
 
-          _categories = categories
-              .where((c) => c.isEnabled && c.type == widget.type)
-              .toList()
-            ..sort((a, b) {
-              final indexA = seedIndexMap[a.id] ?? 999;
-              final indexB = seedIndexMap[b.id] ?? 999;
-              return indexA.compareTo(indexB);
-            });
-        },
-        (_) {},
-      );
+        _categories =
+            categories
+                .where(
+                  (c) =>
+                      c.isEnabled &&
+                      c.type == widget.type &&
+                      (widget.groupIds == null ||
+                          widget.groupIds!.contains(c.groupId)),
+                )
+                .toList()
+              ..sort((a, b) {
+                final indexA = seedIndexMap[a.id] ?? 999;
+                final indexB = seedIndexMap[b.id] ?? 999;
+                return indexA.compareTo(indexB);
+              });
+      }, (_) {});
       _isLoading = false;
     });
+
+    if (_selectedCategoryId != null) {
+      // Resolve the real CategoryEntity for a pre-selected id (e.g. editing
+      // a transaction) so the caller gets full entity data, not just an id.
+      // Look this up against the *unfiltered* category list, not the
+      // enabled-only [_categories]: a transaction may have been recorded
+      // with a category that was since disabled, and editing it must still
+      // report that category back to the caller — otherwise the caller's
+      // selected category stays null and Save is permanently blocked.
+      CategoryEntity? preselected;
+      for (final c in allCategories) {
+        if (c.id == _selectedCategoryId) {
+          preselected = c;
+          break;
+        }
+      }
+      if (preselected != null) {
+        widget.onCategorySelected?.call(preselected);
+        return;
+      }
+    }
+
     if (widget.autoSelectFirst &&
         _selectedCategoryId == null &&
         _categories.isNotEmpty) {
@@ -132,7 +179,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_SM,
       child: CcText(
-        el.tr(CcLocaleKeys.transaction_category),
+        widget.title ?? el.tr(CcLocaleKeys.transaction_category),
         textStyle: context.ccTextTheme.labelMedium?.copyWith(
           color: context.ccColorScheme.onSurfaceVariant,
           fontWeight: FontWeight.bold,

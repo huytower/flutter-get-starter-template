@@ -10,6 +10,14 @@ abstract class WalletType {
   static const String bank = 'bank';
   static const String ewallet = 'ewallet';
   static const String investment = 'investment';
+
+  /// "Quỹ dự phòng" — a real, user-managed wallet like [bank]/[ewallet], but
+  /// tracked in its own Budget Allocation hero banner (mirrors [investment])
+  /// instead of the liquid-wallets strip. Its balance is user-entered
+  /// directly (no formula), and it still counts as spendable cash for the
+  /// Financial Runway calculation and as a normal wallet in Expense/Income
+  /// pickers — only [investment] is excluded from those.
+  static const String emergencyFund = 'emergency_fund';
 }
 
 class WalletEntity extends Equatable {
@@ -20,6 +28,11 @@ class WalletEntity extends Equatable {
   final String type;
   final DateTime createdAt;
 
+  /// FK to a [CategoryEntity] of type `investment` — classifies which
+  /// investment category (Cổ phiếu, Kinh doanh cá nhân, ...) this wallet
+  /// represents. Null for cash/bank/ewallet wallets.
+  final String? categoryId;
+
   const WalletEntity({
     required this.id,
     required this.name,
@@ -27,8 +40,17 @@ class WalletEntity extends Equatable {
     required this.iconCode,
     required this.type,
     required this.createdAt,
+    this.categoryId,
   });
 
   @override
-  List<Object?> get props => [id, name, balance, iconCode, type, createdAt];
+  List<Object?> get props => [
+    id,
+    name,
+    balance,
+    iconCode,
+    type,
+    createdAt,
+    categoryId,
+  ];
 }

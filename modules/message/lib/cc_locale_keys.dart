@@ -184,6 +184,12 @@ class CodegenLoader extends AssetLoader {
       "save_info": "Save",
       "bank": "Bank",
       "ewallet": "E-wallet",
+      "emergency_fund": "Emergency Fund",
+      "emergency_fund_desc":
+          "For emergencies · aim to keep 3-6 months of expenses",
+      "emergency_fund_locked_hint":
+          "Opens at LV2, after you've read the Emergency Fund guide",
+      "emergency_fund_view_ebook": "Read the guide",
       "added_success": "New wallet added",
       "updated_success": "Wallet updated",
       "delete_title": "Delete Wallet",
@@ -194,7 +200,7 @@ class CodegenLoader extends AssetLoader {
       "liquid_assets": "Liquid Assets",
       "liquid_assets_desc": "Cash + Bank + E-wallet · ready to spend",
       "investments": "Investments / Accumulation",
-      "investments_desc": "Stocks, funds, real estate... · Avg ROI 4.2%",
+      "investments_desc": "Stocks, funds, real estate... · Avg ROI {roi}%",
       "liabilities": "Liabilities",
       "liabilities_desc":
           "Loans + Credit cards · balance tracking, stress monitor",
@@ -212,6 +218,7 @@ class CodegenLoader extends AssetLoader {
       "wallet": "Total Wallet",
       "emergency": "Emergency",
       "investment": "Investment",
+      "debt": "Debt & Loan",
       "category": "Category",
       "amount": "Amount",
       "source_expense": "Source of Expense",
@@ -224,10 +231,62 @@ class CodegenLoader extends AssetLoader {
       "record_expense": "Record Expense",
       "expense_saved": "Expense of {amount} đ saved successfully!",
       "income_saved": "Income of {amount} đ saved successfully!",
+      "expense_updated": "Expense of {amount} đ updated!",
+      "income_updated": "Income of {amount} đ updated!",
+      "edit_title": "Edit transaction",
       "source_income": "Source of Income",
       "reason_income": "Reason for Income",
       "recipient": "Recipient",
       "record_income": "Record Income",
+      "source_investment": "Source of Investment",
+      "destination_investment": "Receiving wallet",
+      "record_investment": "Record Investment",
+      "investment_saved": "Investment of {amount} đ saved successfully!",
+      "source_debt": "Source of Debt",
+      "record_debt": "Record Debt",
+      "debt_saved": "Debt of {amount} đ saved successfully!",
+      "loan_direction_borrow": "Borrow",
+      "loan_direction_lend": "Lend",
+      "loan_category_borrow_label": "Loan type",
+      "loan_amount_borrow_label": "Loan amount",
+      "loan_wallet_borrow_label": "Receiving wallet",
+      "loan_category_lend_label": "Lending type",
+      "loan_amount_lend_label": "Lending amount",
+      "loan_wallet_lend_label": "Lending wallet",
+      "loan_borrower_label": "Loan name",
+      "loan_borrower_hint": "e.g. House purchase loan, Loan to a friend...",
+      "loan_collection_method_label": "Collection method",
+      "loan_method_installment_lend": "Installments",
+      "loan_method_lump_sum_lend": "Due date / Collect once",
+      "loan_schedule_lend_label": "Collection schedule",
+      "loan_reminder_once_label": "Remind 1 day before",
+      "loan_reminder_recurring_label": "Remind 1 day before each due date",
+      "loan_name_label": "Loan name",
+      "loan_name_hint": "e.g. Laptop purchase, Bank loan...",
+      "loan_counterparty_vip_locked":
+          "Free plan uses the category's default name '{name}'. Upgrade to VIP to set a custom name.",
+      "loan_repayment_method_label": "Repayment method",
+      "loan_method_installment": "Installment",
+      "loan_method_lump_sum": "Lump sum at maturity",
+      "loan_final_due_date_label": "Due date",
+      "loan_schedule_label": "Installment schedule",
+      "loan_add_period": "Add period",
+      "loan_saved": "Loan of {amount} đ recorded!",
+      "loan_payment_saved": "Payment of {amount} đ recorded!",
+      "record_loan": "Record Loan",
+      "record_repay": "Repay",
+      "record_collect": "Collect",
+      "investment_contribution": "Contribute",
+      "investment_return": "Return",
+      "dest_investment": "Receive into wallet",
+      "record_investment_return": "Record Return",
+      "investment_item": "Investment Item",
+      "add_new_investment_item": "New item",
+      "new_investment_item_hint": "Item name (e.g. Coffee shop)",
+      "no_investment_items_hint":
+          "No investment items in this category yet — contribute first.",
+      "investment_item_vip_locked":
+          "Free plan uses the category's default name '{name}'. Upgrade to VIP to set a custom item name.",
       "expense_slip": "Expense",
       "income_slip": "Income",
       "category_sub": "Sub-category",
@@ -243,7 +302,47 @@ class CodegenLoader extends AssetLoader {
         "category_required": "Please select a category",
         "future_date": "Cannot record a future transaction",
         "insufficient_balance": "Insufficient wallet balance",
+        "counterparty_required": "Please enter who the loan is with",
+        "schedule_required": "Please enter the repayment schedule",
+        "amount_exceeds_outstanding": "Amount exceeds remaining balance",
+        "loan_settled": "This loan is already settled",
+        "not_editable": "This transaction can't be edited",
+        "edit_window": "You can only edit transactions from the last 30 days",
       },
+    },
+    "loan": {
+      "list_title": "Loans",
+      "status_outstanding": "Outstanding",
+      "status_settled": "Settled",
+      "remaining_balance": "Remaining",
+      "principal_amount": "Principal",
+      "empty_state": "No loans yet",
+      "history_title": "Transaction history",
+      "no_history": "No repayment/collection yet",
+    },
+    "notification": {
+      "channel_name": "Reminders",
+      "channel_description":
+          "Notifications for audit reminders, Cloud registration, and loan due dates",
+      "audit_approaching_title": "Audit day is approaching",
+      "audit_approaching_body":
+          "Tomorrow is your weekly audit day. Don't forget to reconcile your balances!",
+      "audit_due_title": "Audit day is here",
+      "audit_due_body":
+          "Today is your weekly audit day. Reconcile your balances now!",
+      "cloud_backup_title": "Protect your data",
+      "cloud_backup_body":
+          "Register an account to back up your data to the Cloud and avoid losing it.",
+      "loan_due_title": "Loan due date approaching",
+      "loan_due_body": "Loan '{name}' is due on {date}.",
+    },
+    "tutorial": {
+      "nav_title": "Your navigation bar",
+      "nav_desc":
+          "Phân bổ shows your wallets and budgets, Giao dịch logs a transaction, Hồ sơ is your profile and settings.",
+      "transaction_title": "Log a transaction",
+      "transaction_desc":
+          "Pick Chi tiêu/Thu nhập/Đầu tư/Vay-Nợ here, then fill in the amount and save.",
     },
     "budget": {
       "title": "Budget",
@@ -272,6 +371,8 @@ class CodegenLoader extends AssetLoader {
       "period_started": "New period started for \"{name}\"",
       "over_limit": "You exceeded the limit!",
       "near_limit": "Approaching the limit!",
+      "over_limit_count":
+          "You've exceeded the \"{name}\" limit {count} times this month!",
       "over_by": "Over by {amount}",
       "remaining": "Remaining {amount}",
       "this_month": "This month's budgets",
@@ -316,6 +417,7 @@ class CodegenLoader extends AssetLoader {
       "create_adjustment": "Create adjustment",
       "matched": "Balanced",
       "lech": "Off by {amount}",
+      "review_transactions": "Review transactions",
     },
     "report": {
       "title": "Report",
@@ -345,10 +447,20 @@ class CodegenLoader extends AssetLoader {
       "runway_insufficient":
           "Start recording expenses so the system can calculate your safety index",
       "runway_not_available": "Insufficient data",
+      "investment_title": "Investments",
+      "investment_contributed": "Contributed",
+      "investment_returned": "Returns",
+      "loan_title": "Loans",
+      "loan_in": "Borrowed / Collected",
+      "loan_out": "Lent / Repaid",
       "daily_detail": "Daily Detail",
       "income_short": "Inc",
       "expense_short": "Exp",
       "uncategorized": "Uncategorized",
+      "filtering_wallet": "Filtering: {wallet}",
+      "filter_by_wallet": "Filter by wallet",
+      "filter_all_wallets": "All wallets",
+      "trend_week_label": "Week {number}",
     },
     "category": {
       "group_daily": "Daily",
@@ -402,7 +514,6 @@ class CodegenLoader extends AssetLoader {
       "clothing": "Clothing",
       "cosmetics": "Cosmetics",
       "installment": "Installment",
-      "loan_interest": "Loan Interest",
       "life_insurance": "Life Insurance",
       "vehicle_insurance": "Vehicle Insurance",
       "home_insurance": "Home Insurance",
@@ -436,13 +547,14 @@ class CodegenLoader extends AssetLoader {
       "debt_loan_settings_title": "Debt & Loan Categories",
       "debt_group_borrow": "Borrowing",
       "debt_group_lend": "Lending",
-      "debt_personal_borrow": "Personal Borrowing",
-      "debt_bank_borrow": "Bank/Financial Loan",
+      "debt_personal_borrow": "Personal Loan",
+      "debt_bank_borrow": "Bank/Financial Institution Loan",
       "debt_mortgage": "Mortgage",
       "debt_credit_card": "Credit Card Debt",
       "debt_installment": "Installment",
       "debt_personal_lend": "Personal Lending",
       "debt_other": "Other",
+      "debt_other_lend": "Other",
       "investment_settings_title": "Investment Categories",
       "investment_group_default": "Investments",
       "investment_stock": "Stock",
@@ -457,10 +569,30 @@ class CodegenLoader extends AssetLoader {
       "investment_other": "Other",
       "expense_settings_title": "Expense Categories",
     },
+    "sync": {
+      "offline_tooltip":
+          "Offline — your data is only saved on this device until you reconnect",
+      "pending_tooltip": "{count} item(s) not yet backed up to Cloud — tap to sync",
+      "synced_tooltip": "All data backed up to Cloud",
+    },
     "profile": {
       "guest": "Guest",
       "not_logged_in": "Not logged in",
       "register_login": "Register / Login",
+      "display_name_title": "Edit name",
+      "display_name_hint": "Enter your display name",
+      "display_name_save": "Save",
+      "display_name_updated": "Name updated",
+      "link_account_title": "Link account",
+      "link_account_subtitle": "Sign in with either phone or Google",
+      "link_account_google": "Google",
+      "link_account_phone": "Phone number",
+      "link_account_linked": "Linked",
+      "link_account_action": "Link",
+      "link_account_success": "Linked successfully",
+      "link_account_phone_hint": "Enter phone number",
+      "link_account_send_code": "Send code",
+      "link_account_verify_code": "Verify",
       "birth_year": "Birth year",
       "birth_year_subtitle": "Used to suggest appropriate categories",
       "birth_year_task_desc": "Task: set up your birth year",
@@ -472,6 +604,13 @@ class CodegenLoader extends AssetLoader {
       "days_left": "{count} days left",
       "debt_loan": "Debt / Loan",
       "unlock_at_lv": "Opens at LV{level}",
+      "unlocked": "Unlocked",
+      "vip": "VIP",
+      "vip_subtitle":
+          "Lifts the free-tier limit on Investment items / Loan records (local toggle, no real payment yet)",
+      "force_full_access": "Unlock all features",
+      "force_full_access_subtitle":
+          "Debug/QA override — instantly unlocks Investment + Debt/Loan (LV3), regardless of your actual progress",
       "weekly_audit_day": "Weekly audit day",
       "weekly_audit_day_subtitle": "The day you review your weekly balance",
       "reminder": "Reminders",
@@ -686,6 +825,12 @@ class CodegenLoader extends AssetLoader {
       "save_info": "Lưu",
       "bank": "Ngân hàng",
       "ewallet": "Ví điện tử",
+      "emergency_fund": "Quỹ dự phòng",
+      "emergency_fund_desc":
+          "Dự phòng cho tình huống khẩn cấp · nên duy trì 3-6 tháng chi tiêu",
+      "emergency_fund_locked_hint":
+          "Mở khoá ở LV2, sau khi bạn đã đọc hướng dẫn về Quỹ dự phòng",
+      "emergency_fund_view_ebook": "Đọc hướng dẫn",
       "added_success": "Đã thêm ví mới",
       "updated_success": "Đã cập nhật ví",
       "delete_title": "Xóa ví",
@@ -698,7 +843,7 @@ class CodegenLoader extends AssetLoader {
           "Tiền mặt + Ngân hàng + Ví điện tử · sẵn sàng chi tiêu ngay",
       "investments": "Đầu tư / Tích lũy",
       "investments_desc":
-          "Cổ phiếu, quỹ, bất động sản... · ROI trung bình 4.2%",
+          "Cổ phiếu, quỹ, bất động sản... · ROI trung bình {roi}%",
       "liabilities": "Nợ phải trả",
       "liabilities_desc":
           "Vay + Thẻ tín dụng · dư nợ còn lại, theo dõi áp lực tài chính",
@@ -716,6 +861,7 @@ class CodegenLoader extends AssetLoader {
       "wallet": "Tổng ví",
       "emergency": "Khẩn cấp",
       "investment": "Đầu tư",
+      "debt": "Vay / Nợ",
       "category": "Danh mục",
       "amount": "Số tiền",
       "source_expense": "Nguồn chi tiêu",
@@ -728,10 +874,62 @@ class CodegenLoader extends AssetLoader {
       "record_expense": "Ghi chép chi tiêu",
       "expense_saved": "Đã lưu chi tiêu {amount} đ thành công!",
       "income_saved": "Đã lưu thu nhập {amount} đ thành công!",
+      "expense_updated": "Đã cập nhật chi tiêu {amount} đ!",
+      "income_updated": "Đã cập nhật thu nhập {amount} đ!",
+      "edit_title": "Sửa giao dịch",
       "source_income": "Nguồn thu nhập",
       "reason_income": "Lý do thu nhập",
       "recipient": "Người nhận",
       "record_income": "Ghi chép thu nhập",
+      "source_investment": "Nguồn đầu tư",
+      "destination_investment": "Ví nhận tiền",
+      "record_investment": "Ghi chép đầu tư",
+      "investment_saved": "Đã lưu khoản đầu tư {amount} đ thành công!",
+      "source_debt": "Nguồn vay nợ",
+      "record_debt": "Ghi chép vay nợ",
+      "debt_saved": "Đã lưu khoản vay nợ {amount} đ thành công!",
+      "loan_direction_borrow": "Đi vay",
+      "loan_direction_lend": "Cho vay",
+      "loan_category_borrow_label": "Hình thức vay",
+      "loan_amount_borrow_label": "Số tiền vay",
+      "loan_wallet_borrow_label": "Ví nhận tiền",
+      "loan_category_lend_label": "Hình thức cho vay",
+      "loan_amount_lend_label": "Số tiền cho vay",
+      "loan_wallet_lend_label": "Nguồn tiền cho vay",
+      "loan_borrower_label": "Tên khoản cho vay",
+      "loan_borrower_hint": "VD: Cho vay mua nhà, Cho bạn vay...",
+      "loan_collection_method_label": "Hình thức thu nợ",
+      "loan_method_installment_lend": "Thu góp",
+      "loan_method_lump_sum_lend": "Đáo hạn / Thu 1 lần",
+      "loan_schedule_lend_label": "Lịch thu góp",
+      "loan_reminder_once_label": "Nhắc trước 1 ngày",
+      "loan_reminder_recurring_label": "Nhắc trước 1 ngày mỗi kỳ",
+      "loan_name_label": "Tên khoản vay",
+      "loan_name_hint": "VD: Mua laptop, Vay ngân hàng...",
+      "loan_counterparty_vip_locked":
+          "Gói miễn phí dùng tên mặc định theo danh mục '{name}'. Nâng cấp VIP để đặt tên riêng.",
+      "loan_repayment_method_label": "Hình thức trả nợ",
+      "loan_method_installment": "Trả góp",
+      "loan_method_lump_sum": "Đáo hạn / Trả 1 lần",
+      "loan_final_due_date_label": "Ngày đáo hạn",
+      "loan_schedule_label": "Lịch trả góp",
+      "loan_add_period": "Thêm kỳ",
+      "loan_saved": "Đã ghi nhận khoản vay {amount} đ!",
+      "loan_payment_saved": "Đã ghi nhận thanh toán {amount} đ!",
+      "record_loan": "Ghi nhận khoản vay",
+      "record_repay": "Trả nợ",
+      "record_collect": "Thu nợ",
+      "investment_contribution": "Chi ra",
+      "investment_return": "Thu vào",
+      "dest_investment": "Nhận vào ví",
+      "record_investment_return": "Ghi chép Thu vào",
+      "investment_item": "Khoản đầu tư",
+      "add_new_investment_item": "Khoản mới",
+      "new_investment_item_hint": "Tên khoản đầu tư (vd: Tiệm lẩu bò)",
+      "no_investment_items_hint":
+          "Chưa có khoản đầu tư nào trong danh mục này — hãy Chi ra trước.",
+      "investment_item_vip_locked":
+          "Gói miễn phí dùng tên mặc định theo danh mục '{name}'. Nâng cấp VIP để đặt tên riêng cho khoản đầu tư.",
       "expense_slip": "Chi tiêu",
       "income_slip": "Thu nhập",
       "category_sub": "Danh mục con",
@@ -747,7 +945,47 @@ class CodegenLoader extends AssetLoader {
         "category_required": "Vui lòng chọn hạng mục!",
         "future_date": "Không thể ghi giao dịch ở tương lai!",
         "insufficient_balance": "Số dư ví không đủ!",
+        "counterparty_required": "Vui lòng nhập đối tượng vay/cho vay!",
+        "schedule_required": "Vui lòng nhập lịch trả nợ!",
+        "amount_exceeds_outstanding": "Số tiền vượt quá số dư còn lại!",
+        "loan_settled": "Khoản vay này đã tất toán!",
+        "not_editable": "Không thể sửa giao dịch này!",
+        "edit_window": "Chỉ có thể sửa giao dịch trong 30 ngày gần nhất!",
       },
+    },
+    "loan": {
+      "list_title": "Vay & Cho vay",
+      "status_outstanding": "Còn nợ",
+      "status_settled": "Đã tất toán",
+      "remaining_balance": "Còn lại",
+      "principal_amount": "Gốc vay",
+      "empty_state": "Chưa có khoản vay nào",
+      "history_title": "Lịch sử giao dịch",
+      "no_history": "Chưa có giao dịch trả/thu nợ nào",
+    },
+    "notification": {
+      "channel_name": "Nhắc nhở",
+      "channel_description":
+          "Thông báo nhắc kiểm toán, đăng ký Cloud, hạn trả nợ",
+      "audit_approaching_title": "Sắp đến ngày kiểm toán",
+      "audit_approaching_body":
+          "Ngày mai là ngày kiểm toán hàng tuần của bạn. Đừng quên đối soát số dư nhé!",
+      "audit_due_title": "Đã đến ngày kiểm toán",
+      "audit_due_body":
+          "Hôm nay là ngày kiểm toán hàng tuần của bạn. Hãy đối soát số dư ngay!",
+      "cloud_backup_title": "Bảo vệ dữ liệu của bạn",
+      "cloud_backup_body":
+          "Đăng ký tài khoản để sao lưu dữ liệu lên Cloud, tránh mất dữ liệu khi đổi máy.",
+      "loan_due_title": "Sắp đến hạn trả nợ",
+      "loan_due_body": "Khoản vay '{name}' sắp đến hạn thanh toán vào {date}.",
+    },
+    "tutorial": {
+      "nav_title": "Thanh điều hướng",
+      "nav_desc":
+          "Phân bổ xem ví và ngân sách, Giao dịch để ghi chép, Hồ sơ là trang cá nhân và cài đặt.",
+      "transaction_title": "Ghi chép giao dịch",
+      "transaction_desc":
+          "Chọn Chi tiêu/Thu nhập/Đầu tư/Vay-Nợ ở đây, sau đó nhập số tiền và lưu lại.",
     },
     "budget": {
       "title": "Ngân sách",
@@ -775,6 +1013,8 @@ class CodegenLoader extends AssetLoader {
       "period_started": "Đã mở kỳ mới cho ngân sách \"{name}\"",
       "over_limit": "Bạn đã tiêu quá hạn mức!",
       "near_limit": "Sắp chạm hạn mức!",
+      "over_limit_count":
+          "Bạn đã vượt hạn mức \"{name}\" {count} lần trong tháng này!",
       "over_by": "Vượt {amount}",
       "remaining": "Còn {amount}",
       "this_month": "Ngân sách tháng này",
@@ -818,6 +1058,7 @@ class CodegenLoader extends AssetLoader {
       "create_adjustment": "Tạo khoản điều chỉnh",
       "matched": "Khớp sổ",
       "lech": "Lệch {amount}",
+      "review_transactions": "Rà soát giao dịch",
     },
     "report": {
       "title": "Báo cáo",
@@ -847,10 +1088,19 @@ class CodegenLoader extends AssetLoader {
       "runway_insufficient":
           "Hãy bắt đầu ghi chép chi tiêu để hệ thống tính toán chỉ số an toàn cho bạn",
       "runway_not_available": "Chưa đủ dữ liệu",
+      "investment_title": "Đầu tư",
+      "investment_contributed": "Đã đầu tư",
+      "investment_returned": "Lợi nhuận thu về",
+      "loan_title": "Vay nợ",
+      "loan_in": "Vay vào / Thu nợ",
+      "loan_out": "Cho vay / Trả nợ",
       "daily_detail": "Chi tiết theo ngày",
       "income_short": "Thu",
       "expense_short": "Chi",
       "uncategorized": "Chưa phân loại",
+      "filtering_wallet": "Đang lọc: {wallet}",
+      "filter_by_wallet": "Lọc theo ví",
+      "filter_all_wallets": "Tất cả các ví",
     },
     "category": {
       "group_daily": "Hàng ngày",
@@ -904,7 +1154,6 @@ class CodegenLoader extends AssetLoader {
       "clothing": "Quần áo",
       "cosmetics": "Mỹ phẩm",
       "installment": "Trả góp",
-      "loan_interest": "Lãi vay",
       "life_insurance": "Bảo hiểm nhân thọ",
       "vehicle_insurance": "Bảo hiểm xe",
       "home_insurance": "Bảo hiểm nhà",
@@ -939,12 +1188,13 @@ class CodegenLoader extends AssetLoader {
       "debt_group_borrow": "Đi vay",
       "debt_group_lend": "Cho vay",
       "debt_personal_borrow": "Vay cá nhân",
-      "debt_bank_borrow": "Vay ngân hàng/TCTD",
+      "debt_bank_borrow": "Vay ngân hàng/tổ chức tài chính",
       "debt_mortgage": "Vay thế chấp",
       "debt_credit_card": "Nợ thẻ tín dụng",
       "debt_installment": "Vay trả góp",
       "debt_personal_lend": "Cho vay cá nhân",
       "debt_other": "Khác",
+      "debt_other_lend": "Khác",
       "investment_settings_title": "Hạng mục Đầu tư",
       "investment_group_default": "Đầu tư",
       "investment_stock": "Cổ phiếu",
@@ -959,10 +1209,30 @@ class CodegenLoader extends AssetLoader {
       "investment_other": "Khác",
       "expense_settings_title": "Hạng mục chi tiêu",
     },
+    "sync": {
+      "offline_tooltip":
+          "Ngoại tuyến — dữ liệu chỉ lưu trên máy này cho đến khi kết nối lại",
+      "pending_tooltip": "{count} mục chưa sao lưu lên Cloud — chạm để đồng bộ",
+      "synced_tooltip": "Đã sao lưu toàn bộ dữ liệu lên Cloud",
+    },
     "profile": {
       "guest": "Khách",
       "not_logged_in": "Chưa đăng nhập",
       "register_login": "Đăng ký / Đăng nhập",
+      "display_name_title": "Sửa tên hiển thị",
+      "display_name_hint": "Nhập tên hiển thị của bạn",
+      "display_name_save": "Lưu",
+      "display_name_updated": "Đã cập nhật tên",
+      "link_account_title": "Liên kết tài khoản",
+      "link_account_subtitle": "Đăng nhập bằng SĐT hoặc Google đều được",
+      "link_account_google": "Google",
+      "link_account_phone": "Số điện thoại",
+      "link_account_linked": "Đã liên kết",
+      "link_account_action": "Liên kết",
+      "link_account_success": "Liên kết thành công",
+      "link_account_phone_hint": "Nhập số điện thoại",
+      "link_account_send_code": "Gửi mã",
+      "link_account_verify_code": "Xác nhận",
       "birth_year": "Năm sinh",
       "birth_year_subtitle": "Dùng để gợi ý các hạng mục phù hợp",
       "birth_year_task_desc":
@@ -975,6 +1245,13 @@ class CodegenLoader extends AssetLoader {
       "days_left": "Còn {count} ngày",
       "debt_loan": "Nợ/Vay",
       "unlock_at_lv": "Mở ở LV{level}",
+      "unlocked": "Đã mở khoá",
+      "vip": "VIP",
+      "vip_subtitle":
+          "Bỏ giới hạn số lượng mục Đầu tư/khoản Nợ-Vay (bật thủ công, chưa có thanh toán thật)",
+      "force_full_access": "Mở khoá toàn bộ tính năng",
+      "force_full_access_subtitle":
+          "Dành cho test/QA — mở ngay Đầu tư + Nợ/Vay (LV3), bất kể tiến trình thực tế",
       "weekly_audit_day": "Ngày kiểm toán hàng tuần",
       "weekly_audit_day_subtitle": "Ngày bạn đối soát số dư hàng tuần",
       "reminder": "Nhắc nhở",
@@ -1168,6 +1445,12 @@ abstract class CcLocaleKeys {
   static const wallet_save_info = 'wallet.save_info';
   static const wallet_bank = 'wallet.bank';
   static const wallet_ewallet = 'wallet.ewallet';
+  static const wallet_emergency_fund = 'wallet.emergency_fund';
+  static const wallet_emergency_fund_desc = 'wallet.emergency_fund_desc';
+  static const wallet_emergency_fund_locked_hint =
+      'wallet.emergency_fund_locked_hint';
+  static const wallet_emergency_fund_view_ebook =
+      'wallet.emergency_fund_view_ebook';
   static const wallet_added_success = 'wallet.added_success';
   static const wallet_updated_success = 'wallet.updated_success';
   static const wallet_delete_title = 'wallet.delete_title';
@@ -1185,6 +1468,7 @@ abstract class CcLocaleKeys {
   static const transaction_wallet = 'transaction.wallet';
   static const transaction_emergency = 'transaction.emergency';
   static const transaction_investment = 'transaction.investment';
+  static const transaction_debt = 'transaction.debt';
   static const transaction_category = 'transaction.category';
   static const transaction_amount = 'transaction.amount';
   static const transaction_source_expense = 'transaction.source_expense';
@@ -1197,10 +1481,89 @@ abstract class CcLocaleKeys {
   static const transaction_record_expense = 'transaction.record_expense';
   static const transaction_expense_saved = 'transaction.expense_saved';
   static const transaction_income_saved = 'transaction.income_saved';
+  static const transaction_expense_updated = 'transaction.expense_updated';
+  static const transaction_income_updated = 'transaction.income_updated';
+  static const transaction_edit_title = 'transaction.edit_title';
   static const transaction_source_income = 'transaction.source_income';
   static const transaction_reason_income = 'transaction.reason_income';
   static const transaction_recipient = 'transaction.recipient';
   static const transaction_record_income = 'transaction.record_income';
+  static const transaction_source_investment = 'transaction.source_investment';
+  static const transaction_destination_investment =
+      'transaction.destination_investment';
+  static const transaction_record_investment = 'transaction.record_investment';
+  static const transaction_investment_saved = 'transaction.investment_saved';
+  static const transaction_source_debt = 'transaction.source_debt';
+  static const transaction_record_debt = 'transaction.record_debt';
+  static const transaction_debt_saved = 'transaction.debt_saved';
+  static const transaction_loan_direction_borrow =
+      'transaction.loan_direction_borrow';
+  static const transaction_loan_direction_lend =
+      'transaction.loan_direction_lend';
+  static const transaction_loan_category_borrow_label =
+      'transaction.loan_category_borrow_label';
+  static const transaction_loan_amount_borrow_label =
+      'transaction.loan_amount_borrow_label';
+  static const transaction_loan_wallet_borrow_label =
+      'transaction.loan_wallet_borrow_label';
+  static const transaction_loan_category_lend_label =
+      'transaction.loan_category_lend_label';
+  static const transaction_loan_amount_lend_label =
+      'transaction.loan_amount_lend_label';
+  static const transaction_loan_wallet_lend_label =
+      'transaction.loan_wallet_lend_label';
+  static const transaction_loan_borrower_label =
+      'transaction.loan_borrower_label';
+  static const transaction_loan_borrower_hint =
+      'transaction.loan_borrower_hint';
+  static const transaction_loan_collection_method_label =
+      'transaction.loan_collection_method_label';
+  static const transaction_loan_method_installment_lend =
+      'transaction.loan_method_installment_lend';
+  static const transaction_loan_method_lump_sum_lend =
+      'transaction.loan_method_lump_sum_lend';
+  static const transaction_loan_schedule_lend_label =
+      'transaction.loan_schedule_lend_label';
+  static const transaction_loan_reminder_once_label =
+      'transaction.loan_reminder_once_label';
+  static const transaction_loan_reminder_recurring_label =
+      'transaction.loan_reminder_recurring_label';
+  static const transaction_loan_name_label = 'transaction.loan_name_label';
+  static const transaction_loan_name_hint = 'transaction.loan_name_hint';
+  static const transaction_loan_counterparty_vip_locked =
+      'transaction.loan_counterparty_vip_locked';
+  static const transaction_loan_repayment_method_label =
+      'transaction.loan_repayment_method_label';
+  static const transaction_loan_method_installment =
+      'transaction.loan_method_installment';
+  static const transaction_loan_method_lump_sum =
+      'transaction.loan_method_lump_sum';
+  static const transaction_loan_final_due_date_label =
+      'transaction.loan_final_due_date_label';
+  static const transaction_loan_schedule_label =
+      'transaction.loan_schedule_label';
+  static const transaction_loan_add_period = 'transaction.loan_add_period';
+  static const transaction_loan_saved = 'transaction.loan_saved';
+  static const transaction_loan_payment_saved =
+      'transaction.loan_payment_saved';
+  static const transaction_record_loan = 'transaction.record_loan';
+  static const transaction_record_repay = 'transaction.record_repay';
+  static const transaction_record_collect = 'transaction.record_collect';
+  static const transaction_investment_contribution =
+      'transaction.investment_contribution';
+  static const transaction_investment_return = 'transaction.investment_return';
+  static const transaction_dest_investment = 'transaction.dest_investment';
+  static const transaction_record_investment_return =
+      'transaction.record_investment_return';
+  static const transaction_investment_item = 'transaction.investment_item';
+  static const transaction_add_new_investment_item =
+      'transaction.add_new_investment_item';
+  static const transaction_new_investment_item_hint =
+      'transaction.new_investment_item_hint';
+  static const transaction_no_investment_items_hint =
+      'transaction.no_investment_items_hint';
+  static const transaction_investment_item_vip_locked =
+      'transaction.investment_item_vip_locked';
   static const transaction_expense_slip = 'transaction.expense_slip';
   static const transaction_income_slip = 'transaction.income_slip';
   static const transaction_category_sub = 'transaction.category_sub';
@@ -1221,6 +1584,46 @@ abstract class CcLocaleKeys {
       'transaction.validation.future_date';
   static const transaction_validation_insufficient_balance =
       'transaction.validation.insufficient_balance';
+  static const transaction_validation_counterparty_required =
+      'transaction.validation.counterparty_required';
+  static const transaction_validation_schedule_required =
+      'transaction.validation.schedule_required';
+  static const transaction_validation_amount_exceeds_outstanding =
+      'transaction.validation.amount_exceeds_outstanding';
+  static const transaction_validation_loan_settled =
+      'transaction.validation.loan_settled';
+  static const transaction_validation_not_editable =
+      'transaction.validation.not_editable';
+  static const transaction_validation_edit_window =
+      'transaction.validation.edit_window';
+  static const loan_list_title = 'loan.list_title';
+  static const loan_status_outstanding = 'loan.status_outstanding';
+  static const loan_status_settled = 'loan.status_settled';
+  static const loan_remaining_balance = 'loan.remaining_balance';
+  static const loan_principal_amount = 'loan.principal_amount';
+  static const loan_empty_state = 'loan.empty_state';
+  static const loan_history_title = 'loan.history_title';
+  static const loan_no_history = 'loan.no_history';
+
+  static const notification_channel_name = 'notification.channel_name';
+  static const notification_channel_description =
+      'notification.channel_description';
+  static const notification_audit_approaching_title =
+      'notification.audit_approaching_title';
+  static const notification_audit_approaching_body =
+      'notification.audit_approaching_body';
+  static const notification_audit_due_title = 'notification.audit_due_title';
+  static const notification_audit_due_body = 'notification.audit_due_body';
+  static const notification_cloud_backup_title =
+      'notification.cloud_backup_title';
+  static const notification_cloud_backup_body =
+      'notification.cloud_backup_body';
+  static const notification_loan_due_title = 'notification.loan_due_title';
+  static const notification_loan_due_body = 'notification.loan_due_body';
+  static const tutorial_nav_title = 'tutorial.nav_title';
+  static const tutorial_nav_desc = 'tutorial.nav_desc';
+  static const tutorial_transaction_title = 'tutorial.transaction_title';
+  static const tutorial_transaction_desc = 'tutorial.transaction_desc';
 
   static const budget_title = 'budget.title';
   static const budget_description = 'budget.description';
@@ -1246,6 +1649,7 @@ abstract class CcLocaleKeys {
   static const budget_period_started = 'budget.period_started';
   static const budget_over_limit = 'budget.over_limit';
   static const budget_near_limit = 'budget.near_limit';
+  static const budget_over_limit_count = 'budget.over_limit_count';
   static const budget_over_by = 'budget.over_by';
   static const budget_remaining = 'budget.remaining';
   static const budget_this_month = 'budget.this_month';
@@ -1289,6 +1693,8 @@ abstract class CcLocaleKeys {
       'reconciliation.create_adjustment';
   static const reconciliation_matched = 'reconciliation.matched';
   static const reconciliation_lech = 'reconciliation.lech';
+  static const reconciliation_review_transactions =
+      'reconciliation.review_transactions';
 
   static const report_title = 'report.title';
   static const report_spending_proportion = 'report.spending_proportion';
@@ -1314,10 +1720,20 @@ abstract class CcLocaleKeys {
   static const report_runway_caution = 'report.runway_caution';
   static const report_runway_insufficient = 'report.runway_insufficient';
   static const report_runway_not_available = 'report.runway_not_available';
+  static const report_investment_title = 'report.investment_title';
+  static const report_investment_contributed = 'report.investment_contributed';
+  static const report_investment_returned = 'report.investment_returned';
+  static const report_loan_title = 'report.loan_title';
+  static const report_loan_in = 'report.loan_in';
+  static const report_loan_out = 'report.loan_out';
   static const report_daily_detail = 'report.daily_detail';
   static const report_income_short = 'report.income_short';
   static const report_expense_short = 'report.expense_short';
   static const report_uncategorized = 'report.uncategorized';
+  static const report_filtering_wallet = 'report.filtering_wallet';
+  static const report_filter_by_wallet = 'report.filter_by_wallet';
+  static const report_filter_all_wallets = 'report.filter_all_wallets';
+  static const report_trend_week_label = 'report.trend_week_label';
 
   static const category_settings_title = 'category.settings_title';
   static const category_settings_subtitle = 'category.settings_subtitle';
@@ -1376,7 +1792,6 @@ abstract class CcLocaleKeys {
   static const category_clothing = 'category.clothing';
   static const category_cosmetics = 'category.cosmetics';
   static const category_installment = 'category.installment';
-  static const category_loan_interest = 'category.loan_interest';
   static const category_life_insurance = 'category.life_insurance';
   static const category_vehicle_insurance = 'category.vehicle_insurance';
   static const category_home_insurance = 'category.home_insurance';
@@ -1415,6 +1830,7 @@ abstract class CcLocaleKeys {
   static const category_debt_installment = 'category.debt_installment';
   static const category_debt_personal_lend = 'category.debt_personal_lend';
   static const category_debt_other = 'category.debt_other';
+  static const category_debt_other_lend = 'category.debt_other_lend';
   static const category_investment_settings_title =
       'category.investment_settings_title';
   static const category_investment_group_default =
@@ -1438,9 +1854,31 @@ abstract class CcLocaleKeys {
   static const comment_detail_post_id = 'comment.detail.post_id';
   static const comment_detail_id = 'comment.detail.id';
 
+  static const sync_offline_tooltip = 'sync.offline_tooltip';
+  static const sync_pending_tooltip = 'sync.pending_tooltip';
+  static const sync_synced_tooltip = 'sync.synced_tooltip';
+
   static const profile_guest = 'profile.guest';
   static const profile_not_logged_in = 'profile.not_logged_in';
   static const profile_register_login = 'profile.register_login';
+  static const profile_display_name_title = 'profile.display_name_title';
+  static const profile_display_name_hint = 'profile.display_name_hint';
+  static const profile_display_name_save = 'profile.display_name_save';
+  static const profile_display_name_updated = 'profile.display_name_updated';
+  static const profile_link_account_title = 'profile.link_account_title';
+  static const profile_link_account_subtitle =
+      'profile.link_account_subtitle';
+  static const profile_link_account_google = 'profile.link_account_google';
+  static const profile_link_account_phone = 'profile.link_account_phone';
+  static const profile_link_account_linked = 'profile.link_account_linked';
+  static const profile_link_account_action = 'profile.link_account_action';
+  static const profile_link_account_success = 'profile.link_account_success';
+  static const profile_link_account_phone_hint =
+      'profile.link_account_phone_hint';
+  static const profile_link_account_send_code =
+      'profile.link_account_send_code';
+  static const profile_link_account_verify_code =
+      'profile.link_account_verify_code';
   static const profile_birth_year = 'profile.birth_year';
   static const profile_birth_year_subtitle = 'profile.birth_year_subtitle';
   static const profile_birth_year_hint = 'profile.birth_year_hint';
@@ -1450,6 +1888,12 @@ abstract class CcLocaleKeys {
   static const profile_days_left = 'profile.days_left';
   static const profile_debt_loan = 'profile.debt_loan';
   static const profile_unlock_at_lv = 'profile.unlock_at_lv';
+  static const profile_unlocked = 'profile.unlocked';
+  static const profile_vip = 'profile.vip';
+  static const profile_vip_subtitle = 'profile.vip_subtitle';
+  static const profile_force_full_access = 'profile.force_full_access';
+  static const profile_force_full_access_subtitle =
+      'profile.force_full_access_subtitle';
   static const profile_weekly_audit_day = 'profile.weekly_audit_day';
   static const profile_weekly_audit_day_subtitle =
       'profile.weekly_audit_day_subtitle';

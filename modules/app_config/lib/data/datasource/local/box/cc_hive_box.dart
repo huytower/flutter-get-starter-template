@@ -36,8 +36,10 @@ class CcHiveBox {
   static const int BUDGET_TYPE_ID = 8;
   static const int RECONCILIATION_TYPE_ID = 9;
   static const int RECONCILIATION_ALLOCATION_TYPE_ID = 10;
+  static const int LOAN_TYPE_ID = 11;
+  static const int LOAN_INSTALLMENT_TYPE_ID = 12;
 
-  // Add new type IDs here (next would be 11)
+  // Add new type IDs here (next would be 13)
 
   // ===== Box Names =====
   // Use these with Hive.openBox()
@@ -53,6 +55,7 @@ class CcHiveBox {
   static const String TRANSACTION_BOX_NAME = 'transaction';
   static const String BUDGET_BOX_NAME = 'budget';
   static const String RECONCILIATION_BOX_NAME = 'reconciliation';
+  static const String LOAN_BOX_NAME = 'loan';
 
   static const keyDefault = 'key_default';
 
@@ -66,6 +69,7 @@ class CcHiveBox {
       TRANSACTION_BOX_NAME,
       BUDGET_BOX_NAME,
       RECONCILIATION_BOX_NAME,
+      LOAN_BOX_NAME,
     ].contains(boxName);
   }
 
@@ -85,6 +89,7 @@ class CcHiveBox {
     TRANSACTION_BOX_NAME,
     BUDGET_BOX_NAME,
     RECONCILIATION_BOX_NAME,
+    LOAN_BOX_NAME,
   ];
 
   /// List of all non-financial box names.

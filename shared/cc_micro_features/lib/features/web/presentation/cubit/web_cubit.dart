@@ -7,11 +7,15 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import 'web_state.dart';
 
-@lazySingleton
+@injectable
 class WebCubit extends Cubit<WebState> {
   WebCubit() : super(WebState.init());
 
-  void initController() {
+  /// [url] overrides the page currently loaded — defaults to the previous
+  /// state's url (or [WebState.init]'s default) when omitted, so existing
+  /// callers keep working unchanged.
+  void initController({String? url}) {
+    final targetUrl = url ?? state.url;
     final controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
@@ -42,8 +46,8 @@ class WebCubit extends Cubit<WebState> {
           },
         ),
       )
-      ..loadRequest(Uri.parse(state.url));
+      ..loadRequest(Uri.parse(targetUrl));
 
-    emit(state.copyWith(controller: controller));
+    emit(state.copyWith(controller: controller, url: targetUrl));
   }
 }

@@ -10,12 +10,18 @@ class TransactionWalletSelector extends StatelessWidget {
   final Color activeColor;
   final Function(String) onWalletSelected;
 
+  /// When set, appends a trailing "add new" chip after the wallet list.
+  final VoidCallback? onAddNew;
+  final String? addNewLabel;
+
   const TransactionWalletSelector({
     super.key,
     required this.wallets,
     required this.selectedWalletId,
     required this.activeColor,
     required this.onWalletSelected,
+    this.onAddNew,
+    this.addNewLabel,
   });
 
   @override
@@ -24,18 +30,66 @@ class TransactionWalletSelector extends StatelessWidget {
   }
 
   Widget _buildWalletList(BuildContext context) {
+    final showAddNew = onAddNew != null;
+    final itemCount = wallets.length + (showAddNew ? 1 : 0);
+
     return HorizontalFadeScrollView(
       height: context.respDim(45),
       builder: (scrollController) => ListView.separated(
         scrollDirection: Axis.horizontal,
         controller: scrollController,
-        itemCount: wallets.length,
+        itemCount: itemCount,
         separatorBuilder: (_, _) => const CcSpaceSM(),
         itemBuilder: (context, index) {
+          if (showAddNew && index == wallets.length) {
+            return _buildAddNewItem(context);
+          }
           final wallet = wallets[index];
           final isSelected = wallet.id == selectedWalletId;
           return _buildWalletItem(context, wallet, isSelected);
         },
+      ),
+    );
+  }
+
+  Widget _buildAddNewItem(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
+    return GestureDetector(
+      onTap: onAddNew,
+      child: Container(
+        width: context.respDim(120),
+        padding: EdgeInsets.all(context.respDim(12)),
+        decoration: BoxDecoration(
+          color: scheme.onSurface.withAlpha(10),
+          borderRadius: context.brLg,
+          border: Border.all(
+            color: activeColor.withAlpha(60),
+            width: context.respDim(1),
+            style: BorderStyle.solid,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.add_rounded,
+              size: context.respIconSize(baseSize: 20),
+              color: activeColor,
+            ),
+            const CcSpaceXS(),
+            Expanded(
+              child: CcText(
+                addNewLabel ?? '',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                  color: activeColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

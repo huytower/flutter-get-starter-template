@@ -14,12 +14,14 @@ class WalletReconcileTile extends StatelessWidget {
   final WalletBalanceEntity balance;
   final ValueChanged<int> onActualChanged;
   final VoidCallback onAcknowledge;
+  final VoidCallback onReview;
 
   const WalletReconcileTile({
     super.key,
     required this.balance,
     required this.onActualChanged,
     required this.onAcknowledge,
+    required this.onReview,
   });
 
   @override
@@ -95,6 +97,7 @@ class WalletReconcileTile extends StatelessWidget {
                   diff: diff,
                   statusColor: statusColor,
                   onAcknowledge: onAcknowledge,
+                  onReview: onReview,
                 ),
               ],
             ),
@@ -204,6 +207,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
   final int diff;
   final Color statusColor;
   final VoidCallback onAcknowledge;
+  final VoidCallback onReview;
 
   const WalletReconcileStatusRow({
     super.key,
@@ -212,6 +216,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
     required this.diff,
     required this.statusColor,
     required this.onAcknowledge,
+    required this.onReview,
   });
 
   @override
@@ -260,27 +265,43 @@ class WalletReconcileStatusRow extends StatelessWidget {
             ),
           ],
         ),
-        if (!isAcknowledged)
-          GestureDetector(
-            onTap: onAcknowledge,
-            child: CcText(
-              el.tr(CcLocaleKeys.reconciliation_create_adjustment),
-              textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                color: scheme.error,
-                fontWeight: FontWeight.w600,
-                decoration: TextDecoration.underline,
-                decorationColor: scheme.error,
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (!isAcknowledged)
+              GestureDetector(
+                onTap: onAcknowledge,
+                child: CcText(
+                  el.tr(CcLocaleKeys.reconciliation_create_adjustment),
+                  textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                    color: scheme.error,
+                    fontWeight: FontWeight.w600,
+                    decoration: TextDecoration.underline,
+                    decorationColor: scheme.error,
+                  ),
+                ),
+              )
+            else
+              CcText(
+                el.tr(CcLocaleKeys.common_done),
+                textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                  color: scheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
+            CcIconButton.bouncing(
+              icon: Icon(
+                Icons.fact_check_outlined,
+                size: context.respIconSize(baseSize: 16),
+                color: scheme.onSurfaceVariant,
+              ),
+              height: context.respDim(28),
+              width: context.respDim(28),
+              tooltip: el.tr(CcLocaleKeys.reconciliation_review_transactions),
+              onTap: onReview,
             ),
-          )
-        else
-          CcText(
-            el.tr(CcLocaleKeys.common_done),
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              color: scheme.primary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          ],
+        ),
       ],
     );
   }

@@ -6,6 +6,65 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
+import '../../../transaction/presentation/widgets/edit_transaction_sheet.dart';
+
+/// Only plain income/expense entries within [transactionEditWindowDays] can
+/// be corrected — shares that constant with `UpdateTransactionUseCase`'s own
+/// window guard so the two can't drift out of sync.
+bool _isEditableTransaction(TransactionEntity transaction) {
+  final isPlainEntry =
+      transaction.type == TransactionType.income ||
+      transaction.type == TransactionType.expense;
+  if (!isPlainEntry) return false;
+  return DateTime.now().difference(transaction.date).inDays <=
+      transactionEditWindowDays;
+}
+
+/// Whether [transaction] is a cash-in row for direction (`+` prefix,
+/// north-east arrow fallback) — covers real income plus the "money arrives"
+/// leg of Investment/Loan activity.
+bool _isInflow(TransactionEntity transaction) {
+  switch (transaction.type) {
+    case TransactionType.income:
+    case TransactionType.investmentReturn:
+    case TransactionType.debtBorrow:
+    case TransactionType.debtCollect:
+      return true;
+    default:
+      return false;
+  }
+}
+
+/// Alpha applied to the "money arrives" leg of Investment/Loan activity, so
+/// both directions read as the same hero color family (matching Budget
+/// Allocation's [BudgetHeroBanner] accents) while staying visually distinct.
+const double _inflowShadeAlpha = 0.5;
+
+/// Per-type accent color: income/expense keep the P&L green/red. Investment
+/// and Loan each reuse their own Budget Allocation hero color
+/// ([PrjColors.investment]/[PrjColors.debtLoan]) — full strength for the
+/// "money leaves" leg, [_inflowShadeAlpha] for the "money arrives" leg — so
+/// they read as one consistent "capital movement" family per category
+/// rather than real P&L when mixed into this list.
+Color _amountColor(TransactionEntity transaction) {
+  switch (transaction.type) {
+    case TransactionType.income:
+      return PrjColors.success;
+    case TransactionType.investmentOut:
+      return PrjColors.investment.withValues(alpha: _inflowShadeAlpha);
+    case TransactionType.investmentReturn:
+      return PrjColors.investment;
+    case TransactionType.debtLend:
+    case TransactionType.debtRepay:
+      return PrjColors.debtLoan.withValues(alpha: _inflowShadeAlpha);
+    case TransactionType.debtBorrow:
+    case TransactionType.debtCollect:
+      return PrjColors.debtLoan;
+    case TransactionType.expense:
+    default:
+      return PrjColors.error;
+  }
+}
 
 class ReportDailyList extends StatelessWidget {
   const ReportDailyList({super.key, required this.transactions});
@@ -141,9 +200,10 @@ class _TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isIncome = transaction.type == TransactionType.income;
+    final isInflow = _isInflow(transaction);
+    final amountColor = _amountColor(transaction);
     final amountText =
-        "${isIncome ? '+' : '-'}${formatVnd(transaction.amount)} đ";
+        "${isInflow ? '+' : '-'}${formatVnd(transaction.amount)} đ";
 
     Widget getIcon() {
       if (transaction.categoryIconCode != null) {
@@ -153,75 +213,76 @@ class _TransactionTile extends StatelessWidget {
             fontFamily: transaction.categoryIconFamily,
           ),
           size: context.respIconSize(baseSize: 20),
-          color: isIncome
-              ? context.ccColorScheme.primary
-              : context.ccColorScheme.error,
+          color: amountColor,
         );
       }
       return Icon(
-        isIncome ? Icons.north_east : Icons.south_west,
+        isInflow ? Icons.north_east : Icons.south_west,
         size: context.respIconSize(baseSize: 20),
-        color: isIncome
-            ? context.ccColorScheme.primary
-            : context.ccColorScheme.error,
+        color: amountColor,
       );
     }
 
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.SPACE_MD,
-      vertical: CcPaddingParams.SPACE_SM,
-      child: Row(
-        children: [
-          Container(
-            width: context.respDim(40),
-            height: context.respDim(40),
-            decoration: BoxDecoration(
-              color: isIncome
-                  ? context.ccColorScheme.primary.withValues(alpha: 0.1)
-                  : context.ccColorScheme.error.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
+    final editable = _isEditableTransaction(transaction);
+
+    return InkWell(
+      onTap: editable
+          ? () => EditTransactionSheet.show(context, transaction)
+          : null,
+      child: CcSymmetricPadding(
+        horizontal: CcPaddingParams.SPACE_MD,
+        vertical: CcPaddingParams.SPACE_SM,
+        child: Row(
+          children: [
+            Container(
+              width: context.respDim(40),
+              height: context.respDim(40),
+              decoration: BoxDecoration(
+                color: amountColor.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Center(child: getIcon()),
             ),
-            child: Center(child: getIcon()),
-          ),
-          const CcSpaceMD(),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const CcSpaceMD(),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CcText(
+                    transaction.category,
+                    textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  CcText(
+                    transaction.note ?? transaction.category,
+                    textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                      color: context.ccColorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 CcText(
-                  transaction.category,
-                  textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w500,
+                  amountText,
+                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: amountColor,
                   ),
                 ),
                 CcText(
-                  transaction.note ?? transaction.category,
+                  el.DateFormat('dd/MM').format(transaction.date),
                   textStyle: context.ccTextTheme.labelSmall?.copyWith(
                     color: context.ccColorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              CcText(
-                amountText,
-                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isIncome ? PrjColors.success : PrjColors.error,
-                ),
-              ),
-              CcText(
-                el.DateFormat('dd/MM').format(transaction.date),
-                textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                  color: context.ccColorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

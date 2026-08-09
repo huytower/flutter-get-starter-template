@@ -13,6 +13,10 @@ import '../widgets/report_page_header.dart';
 import '../widgets/report_tab_bar.dart';
 import '../widgets/trend_card.dart';
 
+/// Shared shade alpha for the Investment/Debt-Loan trend card fills — mirrors
+/// [report_daily_list]'s constant of the same name/value for the same rows.
+const double _inflowShadeAlpha = 0.5;
+
 @RoutePage()
 class ReportPage extends CcGetView<ReportController> {
   const ReportPage({super.key});
@@ -45,10 +49,25 @@ class ReportPage extends CcGetView<ReportController> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   height: hidden ? 0 : headerHeight,
-                  child: ReportPageHeader(
-                    controller: controller,
-                    title: el.tr(CcLocaleKeys.report_title),
-                    onBackPressed: () => controller.onBack(context),
+                  // ReportPageHeader's internal Spacer/Flexible layout is
+                  // only correct at the full headerHeight — feeding it the
+                  // shrinking height directly (as this AnimatedContainer
+                  // animates toward 0) squeezes that layout mid-animation
+                  // and throws a transient RenderFlex overflow. Pin the
+                  // header's own constraints to headerHeight via OverflowBox
+                  // and let ClipRect clip the paint instead, so the content
+                  // never sees a too-small height.
+                  child: ClipRect(
+                    child: OverflowBox(
+                      alignment: Alignment.topCenter,
+                      minHeight: headerHeight,
+                      maxHeight: headerHeight,
+                      child: ReportPageHeader(
+                        controller: controller,
+                        title: el.tr(CcLocaleKeys.report_title),
+                        onBackPressed: () => controller.onBack(context),
+                      ),
+                    ),
                   ),
                 ),
               );
@@ -104,13 +123,25 @@ class ReportPage extends CcGetView<ReportController> {
                   child: ListView(
                     controller: controller.scrollController,
                     padding: EdgeInsets.symmetric(horizontal: padding),
+                    // The report body is a bounded, finite set of sections
+                    // (not an infinite feed) — a generous cacheExtent forces
+                    // every section to mount eagerly instead of staying
+                    // lazily unbuilt while off-screen, which is required for
+                    // ReportController's scroll-to-daily-detail (a GlobalKey
+                    // has no BuildContext to scroll to until its widget has
+                    // actually been mounted at least once).
+                    cacheExtent: 3000,
                     children: [
                       const CcSpaceSM(),
                       _buildTrendCards(context, data),
                       const CcSpaceXL(),
+                      _buildInvestmentSection(context),
+                      _buildLoanSection(context),
                       _buildDailyDetailHeader(context),
                       const CcSpaceLG(),
-                      ReportDailyList(transactions: data.transactions),
+                      ReportDailyList(
+                        transactions: controller.dailyListTransactions,
+                      ),
                     ],
                   ),
                 ),
@@ -150,11 +181,100 @@ class ReportPage extends CcGetView<ReportController> {
     );
   }
 
+  Widget _buildInvestmentSection(BuildContext context) {
+    return Obx(() {
+      final data = controller.investmentTrend.value;
+      if (!controller.userLevel.status.value.canUseInvestment ||
+          data == null ||
+          (data.totalIncome == 0 && data.totalExpense == 0)) {
+        return const SizedBox.shrink();
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CcText(
+            el.tr(CcLocaleKeys.report_investment_title),
+            textStyle: context.ccTextTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const CcSpaceMD(),
+          TrendCard(
+            title: el.tr(CcLocaleKeys.report_investment_contributed),
+            amount: data.totalExpense,
+            points: data.points,
+            color: PrjColors.investment.withValues(alpha: _inflowShadeAlpha),
+            range: controller.range.value,
+            isIncome: false,
+          ),
+          const CcSpaceLG(),
+          TrendCard(
+            title: el.tr(CcLocaleKeys.report_investment_returned),
+            amount: data.totalIncome,
+            points: data.points,
+            // Same hero color as "Chi ra", lighter to mark the inflow leg.
+            color: PrjColors.investment,
+            range: controller.range.value,
+            isIncome: true,
+          ),
+          const CcSpaceXL(),
+        ],
+      );
+    });
+  }
+
+  Widget _buildLoanSection(BuildContext context) {
+    return Obx(() {
+      final data = controller.loanTrend.value;
+      if (!controller.userLevel.status.value.canUseDebtLoan ||
+          data == null ||
+          (data.totalIncome == 0 && data.totalExpense == 0)) {
+        return const SizedBox.shrink();
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CcText(
+            el.tr(CcLocaleKeys.report_loan_title),
+            textStyle: context.ccTextTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const CcSpaceMD(),
+          TrendCard(
+            title: el.tr(CcLocaleKeys.report_loan_out),
+            amount: data.totalExpense,
+            points: data.points,
+            color: PrjColors.debtLoan.withValues(alpha: _inflowShadeAlpha),
+            range: controller.range.value,
+            isIncome: false,
+          ),
+          const CcSpaceLG(),
+          TrendCard(
+            title: el.tr(CcLocaleKeys.report_loan_in),
+            amount: data.totalIncome,
+            points: data.points,
+            // Same hero color as "ra", lighter to mark the inflow leg.
+            color: PrjColors.debtLoan,
+            range: controller.range.value,
+            isIncome: true,
+          ),
+          const CcSpaceXL(),
+        ],
+      );
+    });
+  }
+
   Widget _buildDailyDetailHeader(BuildContext context) {
-    return CcText(
-      el.tr(CcLocaleKeys.report_daily_detail),
-      textStyle: context.ccTextTheme.titleSmall?.copyWith(
-        fontWeight: FontWeight.bold,
+    return KeyedSubtree(
+      key: controller.dailyDetailKey,
+      child: CcText(
+        el.tr(CcLocaleKeys.report_daily_detail),
+        textStyle: context.ccTextTheme.titleSmall?.copyWith(
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

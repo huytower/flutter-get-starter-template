@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:data_config/core/util/firestore_sync_service.dart';
+import 'package:get/get.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -9,6 +12,8 @@ import '../../../features/budget_limit/data/datasources/budget_limit_sync_dataso
 import '../../../features/budget_limit/data/models/budget_limit_model.dart';
 import '../../../features/category/data/datasources/category_sync_datasource.dart';
 import '../../../features/category/data/models/category_model.dart';
+import '../../../features/loan/data/datasources/loan_sync_datasource.dart';
+import '../../../features/loan/data/models/loan_model.dart';
 import '../../../features/reconciliation/data/datasources/reconciliation_sync_datasource.dart';
 import '../../../features/reconciliation/data/models/reconciliation_model.dart';
 import '../../../features/transaction/data/datasources/transaction_sync_datasource.dart';
@@ -27,6 +32,7 @@ class FinancialDataSyncService {
   final BudgetLimitSyncDataSource _budgetSync;
   final ReconciliationSyncDataSource _reconciliationSync;
   final CategorySyncDataSource _categorySync;
+  final LoanSyncDataSource _loanSync;
 
   FinancialDataSyncService(
     this._syncService,
@@ -37,25 +43,93 @@ class FinancialDataSyncService {
     this._budgetSync,
     this._reconciliationSync,
     this._categorySync,
+    this._loanSync,
   );
 
   bool get _isAuthenticated => _session.currentUser != null;
 
   String? get _userId => _session.currentUser?.id;
 
+  /// Whether the device currently has internet access — drives the
+  /// sync-status icon (see `SyncStatusIcon`). Kept live by [startWatching].
+  final RxBool isOnline = true.obs;
+
+  /// Count of locally-stored records not yet backed up to Cloud (across all
+  /// synced entity types) — also drives the sync-status icon. Recomputed
+  /// after every [syncAll] call, so it stays fresh automatically since every
+  /// write-repository already fires `syncAll()` after each local write.
+  final RxInt pendingCount = 0.obs;
+
+  StreamSubscription<InternetStatus>? _connectivitySubscription;
+
+  /// Starts watching connectivity in the background and seeds the initial
+  /// [pendingCount]. Call once at app boot (mirrors `NotificationService
+  /// .init()`); safe to call more than once.
+  void startWatching() {
+    _connectivitySubscription ??= _connection.onStatusChange.listen((status) {
+      isOnline.value = status == InternetStatus.connected;
+    });
+    pendingCount.value = _countPending();
+  }
+
   Future<void> syncAll() async {
     try {
       final userId = _userId;
-      if (userId == null) return;
-      if (!await _connection.hasInternetAccess) return;
-
-      await _syncPendingWallets(userId);
-      await _syncPendingTransactions(userId);
-      await _syncPendingBudgets(userId);
-      await _syncPendingReconciliations(userId);
-      await _syncPendingCategories(userId);
+      if (userId != null && await _connection.hasInternetAccess) {
+        await _syncPendingWallets(userId);
+        await _syncPendingTransactions(userId);
+        await _syncPendingBudgets(userId);
+        await _syncPendingReconciliations(userId);
+        await _syncPendingCategories(userId);
+        await _syncPendingLoans(userId);
+      }
     } catch (e) {
       'syncAll failed: $e'.Log('FinancialDataSyncService');
+    } finally {
+      pendingCount.value = _countPending();
+    }
+  }
+
+  int _countPending() {
+    return _countPendingInBox<WalletHiveModel>(
+          CcHiveBox.WALLET_BOX_NAME,
+          (m) => m.syncMetadata.status,
+        ) +
+        _countPendingInBox<TransactionModel>(
+          CcHiveBox.TRANSACTION_BOX_NAME,
+          (m) => m.syncMetadata.status,
+        ) +
+        _countPendingInBox<BudgetLimitModel>(
+          CcHiveBox.BUDGET_BOX_NAME,
+          (m) => m.syncMetadata.status,
+        ) +
+        _countPendingInBox<ReconciliationModel>(
+          CcHiveBox.RECONCILIATION_BOX_NAME,
+          (m) => m.syncMetadata.status,
+        ) +
+        _countPendingInBox<CategoryModel>(
+          CcHiveBox.CATEGORY_BOX_NAME,
+          (m) => m.syncMetadata.status,
+        ) +
+        _countPendingInBox<LoanModel>(
+          CcHiveBox.LOAN_BOX_NAME,
+          (m) => m.syncMetadata.status,
+        );
+  }
+
+  int _countPendingInBox<T>(
+    String boxName,
+    SyncStatus Function(T) statusOf,
+  ) {
+    try {
+      if (!Hive.isBoxOpen(boxName)) return 0;
+      final box = Hive.box<T>(boxName);
+      return box.values.where((m) {
+        final status = statusOf(m);
+        return status == SyncStatus.pending || status == SyncStatus.failed;
+      }).length;
+    } catch (_) {
+      return 0;
     }
   }
 
@@ -70,6 +144,7 @@ class FinancialDataSyncService {
       await _pullBudgets(userId);
       await _pullReconciliations(userId);
       await _pullCategories(userId);
+      await _pullLoans(userId);
     } catch (e) {
       'pullFromFirestore failed: $e'.Log('FinancialDataSyncService');
     }
@@ -215,6 +290,34 @@ class FinancialDataSyncService {
     }
   }
 
+  Future<void> _syncPendingLoans(String userId) async {
+    if (!Hive.isBoxOpen(CcHiveBox.LOAN_BOX_NAME)) return;
+    Box<LoanModel> box;
+    try {
+      box = Hive.box<LoanModel>(CcHiveBox.LOAN_BOX_NAME);
+    } on HiveError catch (e) {
+      if (e.message.contains('already open')) return;
+      rethrow;
+    }
+    for (final model in box.values) {
+      final status = model.syncMetadata.status;
+      if (status == SyncStatus.pending || status == SyncStatus.failed) {
+        await _syncEntity<LoanModel>(
+          model: model,
+          syncFn: _loanSync.syncLoan,
+          box: box,
+          updateFn: (m, remoteId) => m.copyWithSyncMetadata(
+            m.syncMetadata.copyWith(
+              remoteId: remoteId,
+              status: SyncStatus.synced,
+              lastSyncedAt: DateTime.now(),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _pullWallets(String userId) async {
     final box = await _openBox<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
     if (box == null) return;
@@ -271,6 +374,17 @@ class FinancialDataSyncService {
       collectionName: 'categories',
       box: box,
       fromFirestore: CategoryModel.fromFirestoreData,
+    );
+  }
+
+  Future<void> _pullLoans(String userId) async {
+    final box = await _openBox<LoanModel>(CcHiveBox.LOAN_BOX_NAME);
+    if (box == null) return;
+    await _pullAndMerge<LoanModel>(
+      userId: userId,
+      collectionName: 'loans',
+      box: box,
+      fromFirestore: LoanModel.fromFirestoreData,
     );
   }
 
@@ -349,6 +463,7 @@ class FinancialDataSyncService {
     if (model is BudgetLimitModel) return model.id;
     if (model is ReconciliationModel) return model.id;
     if (model is CategoryModel) return model.id;
+    if (model is LoanModel) return model.id;
     return null;
   }
 
@@ -358,6 +473,7 @@ class FinancialDataSyncService {
     if (model is BudgetLimitModel) return model.lastModifiedAt;
     if (model is ReconciliationModel) return model.lastModifiedAt;
     if (model is CategoryModel) return model.lastModifiedAt;
+    if (model is LoanModel) return model.lastModifiedAt;
     return null;
   }
 }

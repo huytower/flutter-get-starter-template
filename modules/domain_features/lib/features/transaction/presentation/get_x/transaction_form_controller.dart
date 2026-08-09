@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
+import '../../domain/entities/transaction_entity.dart';
 import 'transaction_controller.dart';
 
 abstract class TransactionFormController extends CcGetController {
@@ -21,6 +22,18 @@ abstract class TransactionFormController extends CcGetController {
 
   final Rx<String?> selectedWalletId = Rx<String?>(null);
 
+  Worker? _walletsWorker;
+
+  /// Set (via [loadForEdit]) when this controller instance is editing an
+  /// existing transaction rather than recording a new one.
+  TransactionEntity? editingTransaction;
+
+  bool get isEditing => editingTransaction != null;
+
+  /// Called by [submitForm] after a successful edit — the edit sheet uses
+  /// this to close itself instead of the create flow's reset-and-stay.
+  VoidCallback? onEditSaved;
+
   @override
   void onInit() {
     super.onInit();
@@ -30,6 +43,7 @@ abstract class TransactionFormController extends CcGetController {
 
   @override
   void onClose() {
+    _walletsWorker?.dispose();
     noteController.dispose();
     scrollController.dispose();
     super.onClose();
@@ -37,20 +51,40 @@ abstract class TransactionFormController extends CcGetController {
 
   void _loadWallets() {
     final parentController = Get.find<TransactionController>();
-    wallets.assignAll(parentController.wallets);
+    wallets.assignAll(_liquidOnly(parentController.wallets));
 
     if (selectedWalletId.value == null && wallets.isNotEmpty) {
       selectedWalletId.value = wallets.first.id;
     }
 
     // Listen to changes in parent's wallets
-    ever(parentController.wallets, (List<WalletEntity> newWallets) {
-      wallets.assignAll(newWallets);
+    _walletsWorker = ever(parentController.wallets, (
+      List<WalletEntity> newWallets,
+    ) {
+      wallets.assignAll(_liquidOnly(newWallets));
       if (selectedWalletId.value == null && wallets.isNotEmpty) {
         selectedWalletId.value = wallets.first.id;
       }
     });
   }
+
+  /// Prefills the form from [transaction] for editing. Category selection is
+  /// left to the category picker itself (pass `transaction.categoryId` as
+  /// its initial-selection id) so it resolves the real [CategoryEntity] from
+  /// its own data source instead of reconstructing one from denormalized
+  /// fields here.
+  void loadForEdit(TransactionEntity transaction) {
+    editingTransaction = transaction;
+    amountStr.value = transaction.amount.toString();
+    selectedWalletId.value = transaction.walletId;
+    date.value = transaction.date;
+    noteController.text = transaction.note ?? '';
+  }
+
+  /// Investment positions (`WalletType.investment`) aren't spendable/receivable
+  /// like a normal wallet, so they never appear as a liquid-wallet choice here.
+  List<WalletEntity> _liquidOnly(List<WalletEntity> source) =>
+      source.where((w) => w.type != WalletType.investment).toList();
 
   void handleKeyPress(String key) {
     if (amountStr.value == '0') {

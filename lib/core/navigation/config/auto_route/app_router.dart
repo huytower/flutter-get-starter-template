@@ -40,6 +40,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: CommentDetailRoute.page, path: AppRoute.commentDetail.path),
     AutoRoute(page: BudgetLimitRoute.page, path: AppRoute.budgetLimit.path),
     AutoRoute(page: ReconcileRoute.page, path: AppRoute.reconcile.path),
+    AutoRoute(page: LoanListRoute.page, path: AppRoute.loanList.path),
+    AutoRoute(page: LoanDetailRoute.page, path: AppRoute.loanDetail.path),
     AutoRoute(page: ReportRoute.page, path: AppRoute.report.path),
     AutoRoute(
       page: TermsOfServiceRoute.page,

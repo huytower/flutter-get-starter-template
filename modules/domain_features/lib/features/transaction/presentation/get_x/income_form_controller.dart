@@ -11,6 +11,7 @@ import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
+import '../../domain/usecases/update_transaction_usecase.dart';
 import 'transaction_form_controller.dart';
 
 @injectable
@@ -54,21 +55,39 @@ class IncomeFormController extends TransactionFormController {
     if (isSubmitting.value || !canSubmit) return;
     isSubmitting.value = true;
 
-    final params = CreateTransactionParams(
-      type: TransactionType.income,
-      amount: int.tryParse(amountStr.value) ?? 0,
-      categoryId: selectedCategory.value?.id ?? '',
-      categoryLabel: selectedCategory.value != null
-          ? el.tr(selectedCategory.value!.nameKey)
-          : '',
-      categoryIconCode: selectedCategory.value?.iconCode,
-      categoryIconFamily: selectedCategory.value?.iconFamily,
-      walletId: selectedWalletId.value ?? '',
-      note: composeNote(),
-      date: date.value,
-    );
+    final categoryId = selectedCategory.value?.id ?? '';
+    final categoryLabel = selectedCategory.value != null
+        ? el.tr(selectedCategory.value!.nameKey)
+        : '';
+    final amount = int.tryParse(amountStr.value) ?? 0;
 
-    final result = await getIt<CreateTransactionUseCase>().call(params);
+    final result = isEditing
+        ? await getIt<UpdateTransactionUseCase>().call(
+            UpdateTransactionParams(
+              original: editingTransaction!,
+              amount: amount,
+              categoryId: categoryId,
+              categoryLabel: categoryLabel,
+              categoryIconCode: selectedCategory.value?.iconCode,
+              categoryIconFamily: selectedCategory.value?.iconFamily,
+              walletId: selectedWalletId.value ?? '',
+              note: composeNote(),
+              date: date.value,
+            ),
+          )
+        : await getIt<CreateTransactionUseCase>().call(
+            CreateTransactionParams(
+              type: TransactionType.income,
+              amount: amount,
+              categoryId: categoryId,
+              categoryLabel: categoryLabel,
+              categoryIconCode: selectedCategory.value?.iconCode,
+              categoryIconFamily: selectedCategory.value?.iconFamily,
+              walletId: selectedWalletId.value ?? '',
+              note: composeNote(),
+              date: date.value,
+            ),
+          );
     isSubmitting.value = false;
 
     result.when(
@@ -79,11 +98,17 @@ class IncomeFormController extends TransactionFormController {
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(
-            CcLocaleKeys.transaction_income_saved,
+            isEditing
+                ? CcLocaleKeys.transaction_income_updated
+                : CcLocaleKeys.transaction_income_saved,
             namedArgs: {'amount': savedAmount},
           ),
         );
-        resetForm();
+        if (isEditing) {
+          onEditSaved?.call();
+        } else {
+          resetForm();
+        }
         refreshParent();
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(

@@ -6,6 +6,24 @@ import 'package:theme/export_theme.dart';
 
 import '../get_x/transaction_controller.dart';
 
+extension TransactionTabKindStyle on TransactionTabKind {
+  String label(BuildContext context) => switch (this) {
+    TransactionTabKind.expense => el.tr(CcLocaleKeys.transaction_expense_slip),
+    TransactionTabKind.income => el.tr(CcLocaleKeys.transaction_income_slip),
+    TransactionTabKind.investment => el.tr(
+      CcLocaleKeys.transaction_investment,
+    ),
+    TransactionTabKind.debtLoan => el.tr(CcLocaleKeys.transaction_debt),
+  };
+
+  Color color(BuildContext context) => switch (this) {
+    TransactionTabKind.expense => context.ccColorScheme.error,
+    TransactionTabKind.income => PrjColors.success,
+    TransactionTabKind.investment => PrjColors.investment,
+    TransactionTabKind.debtLoan => PrjColors.debtLoan,
+  };
+}
+
 class TransactionTabBar extends StatelessWidget {
   const TransactionTabBar({super.key, required this.controller});
 
@@ -37,8 +55,11 @@ class TransactionTabBar extends StatelessWidget {
   }
 
   Widget _buildActualTabBar(BuildContext context, ColorScheme scheme) {
+    final tabs = controller.visibleTabs;
     final selectedIndex = controller.selectedTabIndex.value;
-    final activeColor = _getTabColor(context, selectedIndex);
+    final activeColor = tabs[selectedIndex.clamp(0, tabs.length - 1)].color(
+      context,
+    );
 
     return TabBar(
       onTap: controller.setTabIndex,
@@ -56,18 +77,7 @@ class TransactionTabBar extends StatelessWidget {
         fontWeight: CcTypographyParams.bold,
       ),
       labelPadding: EdgeInsets.zero,
-      tabs: [
-        Tab(text: el.tr(CcLocaleKeys.transaction_expense_slip)),
-        Tab(text: el.tr(CcLocaleKeys.transaction_income_slip)),
-      ],
+      tabs: [for (final tab in tabs) Tab(text: tab.label(context))],
     );
-  }
-
-  Color _getTabColor(BuildContext context, int index) {
-    return switch (index) {
-      0 => context.ccColorScheme.error,
-      2 => context.ccColorScheme.secondary,
-      _ => PrjColors.success,
-    };
   }
 }

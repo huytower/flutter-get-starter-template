@@ -9,7 +9,10 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
+import '../../../loan/domain/entities/loan_balance_entity.dart';
+import '../../../loan/domain/usecases/get_loan_balances_usecase.dart';
 import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
+import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../widgets/add_wallet_sheet.dart';
@@ -18,10 +21,19 @@ import '../widgets/wallet_delete_confirmation_dialog.dart';
 
 @injectable
 class BudgetAllocationController extends CcGetController {
-  BudgetAllocationController(this.walletController, this.budgetLimitController);
+  BudgetAllocationController(
+    this.walletController,
+    this.budgetLimitController,
+    this._getLoanBalances,
+    this.userLevel,
+  );
 
   final WalletController walletController;
   final BudgetLimitController budgetLimitController;
+  final GetLoanBalancesUseCase _getLoanBalances;
+  final UserLevelController userLevel;
+
+  final RxInt liabilityBalance = 0.obs;
 
   void navigateToReconcile(BuildContext context) {
     context.router.push(const ReconcileRoute());
@@ -132,6 +144,8 @@ class BudgetAllocationController extends CcGetController {
       await Future.wait([
         walletController.loadWallets(),
         budgetLimitController.loadBudgets(),
+        loadLiabilities(),
+        userLevel.refresh(),
       ]);
 
       // Aggregate status: if either fails, we could show error
@@ -152,5 +166,17 @@ class BudgetAllocationController extends CcGetController {
       errorMessage.value = e.toString();
       layoutStatus.value = CcLayoutStatus.error;
     }
+  }
+
+  /// Sums outstanding borrow-direction loans for the "Nợ phải trả" banner.
+  /// Failures are swallowed rather than folded into [layoutStatus] — a loan
+  /// fetch error shouldn't blank out the wallets/budgets sections too.
+  Future<void> loadLiabilities() async {
+    final result = await _getLoanBalances();
+    result.when((balances) {
+      liabilityBalance.value = balances
+          .where((b) => b.loan.isBorrow && b.status == LoanStatus.outstanding)
+          .fold(0, (sum, b) => sum + b.outstandingBalance);
+    }, (_) {});
   }
 }

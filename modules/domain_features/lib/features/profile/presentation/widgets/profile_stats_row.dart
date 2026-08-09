@@ -2,10 +2,17 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-class ProfileStatsRow extends StatelessWidget {
-  final int daysToSunday;
+import '../../../user_level/domain/entities/user_level_status_entity.dart';
 
-  const ProfileStatsRow({super.key, required this.daysToSunday});
+class ProfileStatsRow extends StatelessWidget {
+  final int daysToNextAudit;
+  final UserLevelStatusEntity levelStatus;
+
+  const ProfileStatsRow({
+    super.key,
+    required this.daysToNextAudit,
+    required this.levelStatus,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +37,7 @@ class ProfileStatsRow extends StatelessWidget {
                   label: el.tr(CcLocaleKeys.profile_weekly_audit),
                   value: el.tr(
                     CcLocaleKeys.profile_days_left,
-                    namedArgs: {'count': '$daysToSunday'},
+                    namedArgs: {'count': '$daysToNextAudit'},
                   ),
                   valueColor: context.ccColorScheme.primary,
                 ),
@@ -38,15 +45,22 @@ class ProfileStatsRow extends StatelessWidget {
               Expanded(
                 child: _buildStatCell(
                   context,
-                  icon: Icons.lock_rounded,
+                  icon: levelStatus.canUseDebtLoan
+                      ? Icons.lock_open_rounded
+                      : Icons.lock_rounded,
                   label: el.tr(CcLocaleKeys.profile_debt_loan),
-                  value: el.tr(
-                    CcLocaleKeys.profile_unlock_at_lv,
-                    namedArgs: {'level': '3'},
-                  ),
-                  valueColor: context.ccColorScheme.onSurfaceVariant
-                      .withOpacity(0.5),
-                  isLocked: true,
+                  value: levelStatus.canUseDebtLoan
+                      ? el.tr(CcLocaleKeys.profile_unlocked)
+                      : el.tr(
+                          CcLocaleKeys.profile_unlock_at_lv,
+                          namedArgs: {'level': '3'},
+                        ),
+                  valueColor: levelStatus.canUseDebtLoan
+                      ? context.ccColorScheme.primary
+                      : context.ccColorScheme.onSurfaceVariant.withOpacity(
+                          0.5,
+                        ),
+                  isLocked: !levelStatus.canUseDebtLoan,
                 ),
               ),
             ],

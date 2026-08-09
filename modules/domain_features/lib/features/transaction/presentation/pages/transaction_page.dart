@@ -33,8 +33,23 @@ class TransactionPage extends CcGetView<TransactionController> {
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
+    // Read once at construction time: this TabController is fresh on every
+    // mount (the page is popped on tab-bar navigation), so a level unlocked
+    // elsewhere is always reflected by the time the user revisits this page.
+    final visibleTabCount = controller.visibleTabs.length;
+
     return DefaultTabController(
-      length: 2,
+      length: visibleTabCount,
+      // Reads the GetX tab index at construction time so a tab selected
+      // programmatically before this page mounts (e.g. LoanListController
+      // jumping into the Loan tab's Settle sub-mode) actually lands on that
+      // tab — this TabController is fresh on every mount (the page is popped
+      // on tab-bar navigation), so without this it would always reset to 0
+      // regardless of TransactionController.selectedTabIndex.
+      initialIndex: controller.selectedTabIndex.value.clamp(
+        0,
+        visibleTabCount - 1,
+      ),
       child: FadePageWrapper(
         child: Stack(
           children: [

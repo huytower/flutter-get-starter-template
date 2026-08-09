@@ -10,3 +10,8 @@
   final week = ((thursday.difference(yearStart).inDays) / 7).floor() + 1;
   return (yearly: thursday.year, week: week);
 }
+
+/// Number of ISO-8601 weeks in [year] — 52 for most years, 53 for "leap
+/// weeks" years. December 28 always falls in the last ISO week of its
+/// calendar year, so its week number is the answer.
+int lastIsoWeekOfYear(int year) => isoWeekOf(DateTime.utc(year, 12, 28)).week;

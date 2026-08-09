@@ -20,7 +20,8 @@ class CategorySeed {
   static const String incomeInvestGroupId = 'income_invest';
   static const String incomeOtherGroupId = 'income_other';
 
-  static const String debtLoanGroupId = 'debt_loan';
+  static const String debtLoanBorrowGroupId = 'debt_loan_borrow';
+  static const String debtLoanLendGroupId = 'debt_loan_lend';
 
   static const String investmentDefaultGroupId = 'investment_default';
 
@@ -33,8 +34,12 @@ class CategorySeed {
 
   static const List<CategoryGroupEntity> debtLoanGroups = [
     CategoryGroupEntity(
-      id: debtLoanGroupId,
-      nameKey: CcLocaleKeys.category_debt_loan_settings_title,
+      id: debtLoanBorrowGroupId,
+      nameKey: CcLocaleKeys.category_debt_group_borrow,
+    ),
+    CategoryGroupEntity(
+      id: debtLoanLendGroupId,
+      nameKey: CcLocaleKeys.category_debt_group_lend,
     ),
   ];
 
@@ -506,20 +511,12 @@ class CategorySeed {
       colorValue: PrjColors.categoryIncomeGift.value,
     ),
 
-    // Debt & Loan - Borrowing (Debt) - reordered by importance
+    // Debt & Loan — Đi vay (Borrowing)
     CategoryModel(
-      id: 'd3',
-      nameKey: CcLocaleKeys.category_debt_mortgage,
-      iconCode: Icons.home.codePoint,
-      groupId: debtLoanGroupId,
-      type: CategoryType.debtLoan,
-      colorValue: PrjColors.categoryInstallment.value,
-    ),
-    CategoryModel(
-      id: 'd4',
-      nameKey: CcLocaleKeys.category_debt_credit_card,
-      iconCode: Icons.credit_card.codePoint,
-      groupId: debtLoanGroupId,
+      id: 'd1',
+      nameKey: CcLocaleKeys.category_debt_personal_borrow,
+      iconCode: Icons.person_outline.codePoint,
+      groupId: debtLoanBorrowGroupId,
       type: CategoryType.debtLoan,
       colorValue: PrjColors.categoryInstallment.value,
     ),
@@ -527,15 +524,23 @@ class CategorySeed {
       id: 'd2',
       nameKey: CcLocaleKeys.category_debt_bank_borrow,
       iconCode: Icons.account_balance.codePoint,
-      groupId: debtLoanGroupId,
+      groupId: debtLoanBorrowGroupId,
       type: CategoryType.debtLoan,
       colorValue: PrjColors.categoryInstallment.value,
     ),
     CategoryModel(
-      id: 'd1',
-      nameKey: CcLocaleKeys.category_debt_personal_borrow,
-      iconCode: Icons.person_outline.codePoint,
-      groupId: debtLoanGroupId,
+      id: 'd3',
+      nameKey: CcLocaleKeys.category_debt_mortgage,
+      iconCode: Icons.home.codePoint,
+      groupId: debtLoanBorrowGroupId,
+      type: CategoryType.debtLoan,
+      colorValue: PrjColors.categoryInstallment.value,
+    ),
+    CategoryModel(
+      id: 'd4',
+      nameKey: CcLocaleKeys.category_debt_credit_card,
+      iconCode: Icons.credit_card.codePoint,
+      groupId: debtLoanBorrowGroupId,
       type: CategoryType.debtLoan,
       colorValue: PrjColors.categoryInstallment.value,
     ),
@@ -543,51 +548,39 @@ class CategorySeed {
       id: 'd5',
       nameKey: CcLocaleKeys.category_debt_installment,
       iconCode: Icons.shopping_cart_checkout.codePoint,
-      groupId: debtLoanGroupId,
+      groupId: debtLoanBorrowGroupId,
       type: CategoryType.debtLoan,
       colorValue: PrjColors.categoryInstallment.value,
     ),
-
-    // Debt & Loan - Debt Payments (moved from Expense Group 9) - reordered by importance
     CategoryModel(
-      id: 'c15',
-      nameKey: CcLocaleKeys.category_mortgage,
-      iconCode: Icons.account_balance.codePoint,
-      groupId: debtLoanGroupId,
+      // NOTE: intentionally not 'd7' — before the borrow/lend group split,
+      // 'd7' was a single generic "Debt Other" shared by both borrow and
+      // lend transactions. Reusing it here for the borrow-only "Other"
+      // would let CategoryLocalDataSource's id-matched seed sync silently
+      // reclassify existing users' lend-side 'd7' transactions as borrow.
+      // 'd7' is retired via staleIds cleanup below instead.
+      id: 'd9',
+      nameKey: CcLocaleKeys.category_debt_other,
+      iconCode: Icons.more_horiz.codePoint,
+      groupId: debtLoanBorrowGroupId,
       type: CategoryType.debtLoan,
-      colorValue: PrjColors.categoryMortgage.value,
-    ),
-    CategoryModel(
-      id: 'c33',
-      nameKey: CcLocaleKeys.category_loan_interest,
-      iconCode: Icons.account_balance_wallet.codePoint,
-      groupId: debtLoanGroupId,
-      type: CategoryType.debtLoan,
-      colorValue: PrjColors.categoryLoanInterest.value,
-    ),
-    CategoryModel(
-      id: 'c32',
-      nameKey: CcLocaleKeys.category_installment,
-      iconCode: Icons.credit_card.codePoint,
-      groupId: debtLoanGroupId,
-      type: CategoryType.debtLoan,
-      colorValue: PrjColors.categoryInstallment.value,
+      colorValue: PrjColors.mediumEmphasis.value,
     ),
 
-    // Debt & Loan — Cho vay
+    // Debt & Loan — Cho vay (Lending)
     CategoryModel(
       id: 'd6',
       nameKey: CcLocaleKeys.category_debt_personal_lend,
       iconCode: Icons.handshake.codePoint,
-      groupId: debtLoanGroupId,
+      groupId: debtLoanLendGroupId,
       type: CategoryType.debtLoan,
       colorValue: PrjColors.secondary.value,
     ),
     CategoryModel(
-      id: 'd7',
-      nameKey: CcLocaleKeys.category_debt_other,
+      id: 'd8',
+      nameKey: CcLocaleKeys.category_debt_other_lend,
       iconCode: Icons.more_horiz.codePoint,
-      groupId: debtLoanGroupId,
+      groupId: debtLoanLendGroupId,
       type: CategoryType.debtLoan,
       colorValue: PrjColors.mediumEmphasis.value,
     ),

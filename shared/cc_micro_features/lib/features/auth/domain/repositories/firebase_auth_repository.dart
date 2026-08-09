@@ -37,4 +37,29 @@ abstract class FirebaseAuthRepository {
 
   /// Streams the authentication state changes.
   Stream<CcUserEntity?> authStateChanges();
+
+  /// Updates the current user's display name. Fails if there's no
+  /// signed-in user (guests have no Firebase account to update).
+  Future<Result<CcUserEntity, CcFailure>> updateDisplayName(String name);
+
+  /// Links a Google account to the currently signed-in user, so they can
+  /// subsequently log in with either method. Fails with `credential-already
+  /// -in-use` if that Google identity already belongs to a different
+  /// account, or `provider-already-linked` if already linked to this one.
+  Future<Result<CcUserEntity, CcFailure>> linkWithGoogle();
+
+  /// Starts phone verification for linking (not signing in) — deliberately
+  /// separate from [verifyPhoneNumber], whose `verificationCompleted`
+  /// auto-retrieval callback signs in with the credential; that would
+  /// silently replace the current session instead of linking to it.
+  Stream<PhoneAuthStatus> verifyPhoneNumberForLinking({
+    required String phoneNumber,
+  });
+
+  /// Links a phone number (verified via [verifyPhoneNumberForLinking]) to
+  /// the currently signed-in user.
+  Future<Result<CcUserEntity, CcFailure>> linkWithPhoneNumber({
+    required String verificationId,
+    required String smsCode,
+  });
 }

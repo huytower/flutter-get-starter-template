@@ -1,14 +1,20 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_micro_features/features/web/export_web.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constant/emergency_fund_constants.dart';
 import '../../../../core/constant/money_constants.dart';
+import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
+import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
+import '../../../profile/domain/usecases/update_profile_settings_usecase.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
-import '../../../guideline/guideline_controller.dart';
+import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 
@@ -31,6 +37,9 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
 
   String _newType = WalletType.bank;
 
+  bool _emergencyFundUnlocked = false;
+  bool _showEmergencyFundLockedHint = false;
+
   bool get _isEditing => widget.wallet != null;
 
   bool get _isCash => widget.wallet?.type == WalletType.cash;
@@ -49,6 +58,34 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
     _nameController.addListener(() => setState(() {}));
     if (_isEditing) {
       _amountStr = _controller.bookBalanceOf(widget.wallet!.id).toString();
+    }
+    _loadEmergencyFundGate();
+  }
+
+  Future<void> _loadEmergencyFundGate() async {
+    final level = getIt<UserLevelController>().status.value.level;
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    if (!mounted) return;
+    setState(() {
+      _emergencyFundUnlocked = level >= 2 && settings.hasViewedEmergencyFundEbook;
+    });
+  }
+
+  Future<void> _openEmergencyFundEbook(BuildContext context) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const WebPage(url: emergencyFundEbookUrl)),
+    );
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    await getIt<UpdateProfileSettingsUseCase>().call(
+      settings.copyWith(hasViewedEmergencyFundEbook: true),
+    );
+    await _loadEmergencyFundGate();
+    if (_emergencyFundUnlocked && mounted) {
+      setState(() {
+        _newType = WalletType.emergencyFund;
+        _showEmergencyFundLockedHint = false;
+      });
     }
   }
 
@@ -109,6 +146,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           iconCode: original.iconCode,
           type: original.type,
           createdAt: original.createdAt,
+          categoryId: original.categoryId,
         ),
       );
     } else {
@@ -184,7 +222,14 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
       children: [
         _buildTitle(context),
         const CcSpaceSM(),
-        if (!_isEditing) ...[_buildTypeSelector(context), const CcSpaceMD()],
+        if (!_isEditing) ...[
+          _buildTypeSelector(context),
+          if (_showEmergencyFundLockedHint) ...[
+            const CcSpaceXS(),
+            _buildEmergencyFundLockedHint(context),
+          ],
+          const CcSpaceMD(),
+        ],
         _buildNameField(),
         const CcSpaceMD(),
         if (_balanceLocked)
@@ -329,56 +374,120 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
     );
   }
 
+  Widget _buildEmergencyFundLockedHint(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(12),
+        vertical: context.respPadding(10),
+      ),
+      decoration: BoxDecoration(
+        color: context.ccColorScheme.onSurface.withAlpha(10),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.lock_outline_rounded,
+            size: context.respIconSize(baseSize: 18),
+            color: _accent,
+          ),
+          const CcSpaceXS(),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CcText(
+                  el.tr(CcLocaleKeys.wallet_emergency_fund_locked_hint),
+                  textStyle: context.ccTextTheme.bodySmall,
+                ),
+                const CcSpaceXS(),
+                GestureDetector(
+                  onTap: () => _openEmergencyFundEbook(context),
+                  child: CcText(
+                    el.tr(CcLocaleKeys.wallet_emergency_fund_view_ebook),
+                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                      color: _accent,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTypeSelector(BuildContext context) {
     final options = [
       (WalletType.bank, el.tr(CcLocaleKeys.wallet_bank)),
       (WalletType.ewallet, el.tr(CcLocaleKeys.wallet_ewallet)),
+      (WalletType.emergencyFund, el.tr(CcLocaleKeys.wallet_emergency_fund)),
     ];
-    return Row(
-      children: options.map((option) {
-        final (type, label) = option;
-        final isSelected = _newType == type;
-        return Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: GestureDetector(
-            onTap: () => setState(() => _newType = type),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? context.ccColorScheme.primary
-                    : context.ccColorScheme.surfaceVariant,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    walletIconFor(type),
-                    size: 16,
-                    color: isSelected
-                        ? context.ccColorScheme.onPrimary
-                        : context.ccColorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 6),
-                  CcText(
-                    label,
-                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: options.map((option) {
+          final (type, label) = option;
+          final isSelected = _newType == type;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: GestureDetector(
+              onTap: () {
+                if (type == WalletType.emergencyFund &&
+                    !_emergencyFundUnlocked) {
+                  setState(() => _showEmergencyFundLockedHint = true);
+                  return;
+                }
+                setState(() {
+                  _newType = type;
+                  _showEmergencyFundLockedHint = false;
+                });
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? context.ccColorScheme.primary
+                      : context.ccColorScheme.surfaceVariant,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      walletIconFor(type),
+                      size: 16,
                       color: isSelected
                           ? context.ccColorScheme.onPrimary
                           : context.ccColorScheme.onSurfaceVariant,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 6),
+                    CcText(
+                      label,
+                      textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                        color: isSelected
+                            ? context.ccColorScheme.onPrimary
+                            : context.ccColorScheme.onSurfaceVariant,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 }
