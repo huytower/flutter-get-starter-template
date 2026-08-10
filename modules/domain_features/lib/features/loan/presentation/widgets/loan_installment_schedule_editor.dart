@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../get_x/loan_form_controller.dart';
+import 'loan_date_row.dart';
 
 /// Repeatable due-date + amount row editor for a Trả góp (installment) loan's
 /// repayment schedule, driven by [LoanFormController.installmentDrafts].
@@ -40,8 +41,9 @@ class LoanInstallmentScheduleEditor extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: GestureDetector(
+            child: CcInkWell(
               onTap: () => controller.pickInstallmentDueDate(context, index),
+              borderRadius: context.brMd,
               child: Container(
                 height: context.respDim(48),
                 padding: EdgeInsets.symmetric(
@@ -51,21 +53,12 @@ class LoanInstallmentScheduleEditor extends StatelessWidget {
                   color: context.ccColorScheme.onSurface.withAlpha(10),
                   borderRadius: context.brMd,
                 ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today_outlined,
-                      size: context.respIconSize(baseSize: 16),
-                      color: activeColor,
-                    ),
-                    const CcSpaceXS(),
-                    Obx(
-                      () => CcText(
-                        el.DateFormat('dd/MM/yyyy').format(draft.dueDate.value),
-                        textStyle: context.ccTextTheme.bodyMedium,
-                      ),
-                    ),
-                  ],
+                child: Obx(
+                  () => LoanDateRow(
+                    date: draft.dueDate.value,
+                    icon: Icons.calendar_today_outlined,
+                    iconColor: activeColor,
+                  ),
                 ),
               ),
             ),

@@ -158,8 +158,9 @@ class WalletActualBalanceInput extends StatelessWidget {
         ),
         const Spacer(),
         const CcSpaceMD(),
-        GestureDetector(
+        CcInkWell(
           onTap: onTap,
+          borderRadius: BorderRadius.circular(8),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
@@ -183,7 +184,7 @@ class WalletActualBalanceInput extends StatelessWidget {
                 ),
                 if (actual != 0) ...[
                   const CcSpaceSM(),
-                  GestureDetector(
+                  CcInkWell(
                     onTap: onClear,
                     child: Icon(
                       Icons.cancel,
@@ -269,7 +270,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (!isAcknowledged)
-              GestureDetector(
+              CcInkWell(
                 onTap: onAcknowledge,
                 child: CcText(
                   el.tr(CcLocaleKeys.reconciliation_create_adjustment),

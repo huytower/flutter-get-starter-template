@@ -44,9 +44,10 @@ class CcAmountInputSection extends StatelessWidget {
           ),
         ),
         const CcSpaceXS(),
-        GestureDetector(
+        CcInkWell(
           key: fieldKey,
           onTap: onTap,
+          borderRadius: context.brMd,
           child: Container(
             padding: EdgeInsets.symmetric(
               horizontal: context.respPadding(CcPaddingParams.SPACE_LG),

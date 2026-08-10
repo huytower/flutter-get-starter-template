@@ -148,7 +148,7 @@ class WalletFilterPickerSheet extends StatelessWidget {
   }) {
     final scheme = context.ccColorScheme;
 
-    return InkWell(
+    return CcInkWell(
       onTap: onTap,
       child: Padding(
         padding: EdgeInsets.symmetric(

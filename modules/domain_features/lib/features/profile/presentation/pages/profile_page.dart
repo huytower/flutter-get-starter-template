@@ -2,7 +2,6 @@ import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:domain_features/core/getx/cc_get_view.dart';
 import 'package:domain_features/features/guideline/guideline_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -147,10 +146,11 @@ class ProfilePage extends CcGetView<ProfileController> {
           onTap: () => controller.pickWeeklyAuditDay(context),
         ),
       ),
-      // Debug-only escape hatches for QA to bypass VIP/LV1-3 gating without
-      // real IAP/billing infra. Must never reach real users, so they're only
-      // built in debug binaries (kDebugMode is compiled out of profile/release).
-      if (kDebugMode) ...[
+      // QA-only escape hatches to bypass VIP/LV1-3 gating without real
+      // IAP/billing infra. Gated by ENABLE_QA_DEBUG_TOOLS (.env) rather than
+      // kDebugMode so QA can flip it on in a UAT build; must resolve to
+      // false in .env.prod so it never reaches real users.
+      if (CcFeatureFlags.isQaDebugToolsEnabled) ...[
         Obx(
           () => ProfileSettingsTile(
             icon: Icons.workspace_premium_rounded,
@@ -297,7 +297,7 @@ class ProfilePage extends CcGetView<ProfileController> {
   }
 
   Widget _buildDeleteAccountText(BuildContext context) {
-    return GestureDetector(
+    return CcInkWell(
       onTap: controller.deleteAccount,
       child: CcText(
         el.tr(CcLocaleKeys.profile_delete_account),

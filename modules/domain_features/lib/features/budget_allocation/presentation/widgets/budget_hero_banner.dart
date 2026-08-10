@@ -46,8 +46,9 @@ class BudgetHeroBanner extends StatelessWidget {
         context.respPadding(CcPaddingParams.SPACE_LG),
         context.respPadding(bottomPadding),
       ),
-      child: GestureDetector(
+      child: CcInkWell(
         onTap: onTap,
+        borderRadius: context.brXl,
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(

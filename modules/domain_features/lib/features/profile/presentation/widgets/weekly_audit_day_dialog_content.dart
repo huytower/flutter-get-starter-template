@@ -118,8 +118,9 @@ class _WeeklyAuditDayDialogContentState
     final bool isSelected = day == _selectedDay;
 
     return Center(
-      child: GestureDetector(
+      child: CcInkWell(
         onTap: () => _onDayTap(day),
+        borderRadius: context.brLg,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           width: context.respDim(64),

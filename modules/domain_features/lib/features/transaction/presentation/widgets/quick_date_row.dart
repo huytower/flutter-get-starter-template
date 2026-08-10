@@ -42,7 +42,7 @@ class QuickDateRow extends StatelessWidget {
           DateTime.now().subtract(const Duration(days: 1)),
         ),
         const CcSpaceSM(),
-        GestureDetector(
+        CcInkWell(
           onTap: onCalendarTap,
           child: Icon(
             Icons.calendar_month,
@@ -60,8 +60,9 @@ class QuickDateRow extends StatelessWidget {
     DateTime date,
   ) {
     final isSelected = _isSameDay(selectedDate, date);
-    return GestureDetector(
+    return CcInkWell(
       onTap: () => onDateSelected(date),
+      borderRadius: context.brLg,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         padding: EdgeInsets.symmetric(

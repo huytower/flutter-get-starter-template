@@ -29,7 +29,7 @@ class LoanBalanceList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (balances.isEmpty) {
-      return _buildEmptyState(context);
+      return NoDataResponseWidget(message: emptyMessage);
     }
     return ListView.separated(
       shrinkWrap: shrinkWrap,
@@ -56,21 +56,6 @@ class LoanBalanceList extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    return CcSymmetricPadding(
-      vertical: CcPaddingParams.SPACE_XL,
-      child: Center(
-        child: CcText(
-          emptyMessage,
-          textAlign: TextAlign.center,
-          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant,
-          ),
-        ),
-      ),
     );
   }
 }

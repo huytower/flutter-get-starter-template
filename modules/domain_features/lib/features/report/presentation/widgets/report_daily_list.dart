@@ -225,7 +225,7 @@ class _TransactionTile extends StatelessWidget {
 
     final editable = _isEditableTransaction(transaction);
 
-    return InkWell(
+    return CcInkWell(
       onTap: editable
           ? () => EditTransactionSheet.show(context, transaction)
           : null,

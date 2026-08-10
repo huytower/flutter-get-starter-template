@@ -32,8 +32,9 @@ class ProfileHeader extends StatelessWidget {
         ? ''
         : rawSubtitle;
 
-    return GestureDetector(
+    return CcInkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.zero,
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -90,7 +91,7 @@ class ProfileHeader extends StatelessWidget {
                           ),
                           if (user != null && onEditName != null) ...[
                             const CcSpaceXS(),
-                            GestureDetector(
+                            CcInkWell(
                               onTap: onEditName,
                               child: Icon(
                                 Icons.edit_rounded,

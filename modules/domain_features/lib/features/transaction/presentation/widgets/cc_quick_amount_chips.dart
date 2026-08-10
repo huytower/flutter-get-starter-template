@@ -33,8 +33,9 @@ class CcQuickAmountChips extends StatelessWidget {
           children: amounts.map((amount) {
             return Padding(
               padding: EdgeInsets.only(right: context.respDim(8)),
-              child: GestureDetector(
+              child: CcInkWell(
                 onTap: () => onSelected(amount),
+                borderRadius: context.brLg,
                 child: Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: context.respPadding(CcPaddingParams.SPACE_LG),

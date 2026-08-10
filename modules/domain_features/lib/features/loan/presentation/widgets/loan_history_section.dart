@@ -6,6 +6,7 @@ import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/presentation/widgets/cc_form_label.dart';
 import '../get_x/loan_detail_controller.dart';
+import 'loan_date_row.dart';
 
 /// Repay/collect transaction history list at the bottom of [LoanDetailPage].
 class LoanHistorySection extends StatelessWidget {
@@ -72,10 +73,7 @@ class _LoanHistoryRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CcText(
-                  el.DateFormat('dd/MM/yyyy').format(txn.date),
-                  textStyle: context.ccTextTheme.bodyMedium,
-                ),
+                LoanDateRow(date: txn.date),
                 if (txn.note != null && txn.note!.isNotEmpty)
                   CcText(
                     txn.note!,

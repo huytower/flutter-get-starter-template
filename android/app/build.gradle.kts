@@ -34,6 +34,11 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
+        // Required by flutter_local_notifications 10+ (scheduled/local
+        // reminders) even on our minSdk 28 — the plugin's own Android code
+        // needs the desugared JDK libs to compile. See coreLibraryDesugaring
+        // dependency below; doesn't affect release build correctness, only
+        // adds the desugared library at compile time.
         isCoreLibraryDesugaringEnabled = true
     }
 

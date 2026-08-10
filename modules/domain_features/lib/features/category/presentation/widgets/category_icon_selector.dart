@@ -21,8 +21,9 @@ class CategoryIconSelector extends StatelessWidget {
       runSpacing: context.respDim(10),
       children: icons.map((icon) {
         final isSelected = selectedIconCode == icon.codePoint;
-        return GestureDetector(
+        return CcInkWell(
           onTap: () => onIconSelected(icon.codePoint),
+          borderRadius: context.brMd,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
             width: context.respDim(46),

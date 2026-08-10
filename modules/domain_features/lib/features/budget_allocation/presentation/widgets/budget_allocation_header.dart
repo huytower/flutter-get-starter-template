@@ -61,9 +61,8 @@ class BudgetAllocationHeader extends StatelessWidget {
               ],
             ),
             Obx(
-              () => GestureDetector(
+              () => CcInkWell(
                 onTap: controller.toggleBalanceVisibility,
-                behavior: HitTestBehavior.opaque,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: DecoratedBox(

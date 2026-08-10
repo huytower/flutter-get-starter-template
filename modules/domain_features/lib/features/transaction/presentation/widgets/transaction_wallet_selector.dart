@@ -55,8 +55,9 @@ class TransactionWalletSelector extends StatelessWidget {
   Widget _buildAddNewItem(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return GestureDetector(
+    return CcInkWell(
       onTap: onAddNew,
+      borderRadius: context.brLg,
       child: Container(
         width: context.respDim(120),
         padding: EdgeInsets.all(context.respDim(12)),
@@ -101,8 +102,9 @@ class TransactionWalletSelector extends StatelessWidget {
   ) {
     final scheme = context.ccColorScheme;
 
-    return GestureDetector(
+    return CcInkWell(
       onTap: () => onWalletSelected(wallet.id),
+      borderRadius: context.brLg,
       child: Stack(
         clipBehavior: Clip.none,
         children: [

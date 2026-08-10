@@ -15,7 +15,7 @@ import '../../../reconciliation/presentation/get_x/reconciliation_controller.dar
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
-import '../widgets/add_wallet_sheet.dart';
+import '../../../wallet/presentation/widgets/add_wallet_sheet.dart';
 import '../widgets/edit_wallet_sheet.dart';
 import '../widgets/wallet_delete_confirmation_dialog.dart';
 

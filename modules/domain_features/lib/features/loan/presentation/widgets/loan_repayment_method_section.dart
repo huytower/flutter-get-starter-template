@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../transaction/presentation/widgets/cc_form_label.dart';
 import '../../domain/entities/loan_entity.dart';
 import '../get_x/loan_form_controller.dart';
+import 'loan_date_row.dart';
 import 'loan_installment_schedule_editor.dart';
 import 'loan_pill_toggle.dart';
 
@@ -114,32 +115,22 @@ class _FinalDueDate extends StatelessWidget {
           text: el.tr(CcLocaleKeys.transaction_loan_final_due_date_label),
         ),
         const CcSpaceXS(),
-        GestureDetector(
+        CcInkWell(
           onTap: () => controller.pickFinalDueDate(context),
+          borderRadius: context.brMd,
           child: Container(
+            width: double.infinity,
             height: context.respDim(48),
             padding: EdgeInsets.symmetric(horizontal: context.respPadding(12)),
             decoration: BoxDecoration(
               color: context.ccColorScheme.onSurface.withAlpha(10),
               borderRadius: context.brMd,
             ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.event_outlined,
-                  size: context.respIconSize(baseSize: 18),
-                  color: accentColor,
-                ),
-                const CcSpaceXS(),
-                CcText(
-                  controller.finalDueDate.value != null
-                      ? el.DateFormat(
-                          'dd/MM/yyyy',
-                        ).format(controller.finalDueDate.value!)
-                      : '—',
-                  textStyle: context.ccTextTheme.bodyMedium,
-                ),
-              ],
+            child: LoanDateRow(
+              date: controller.finalDueDate.value,
+              icon: Icons.event_outlined,
+              iconSize: 18,
+              iconColor: accentColor,
             ),
           ),
         ),
@@ -167,7 +158,7 @@ class _ReminderToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return CcInkWell(
       onTap: () => controller.setReminderBeforeDueDate(
         !controller.reminderBeforeDueDate.value,
       ),

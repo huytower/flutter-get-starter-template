@@ -215,11 +215,12 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
   ) {
     final scheme = context.ccColorScheme;
 
-    return GestureDetector(
+    return CcInkWell(
       onTap: () {
         setState(() => _selectedCategoryId = category.id);
         widget.onCategorySelected?.call(category);
       },
+      borderRadius: context.brLg,
       child: Stack(
         clipBehavior: Clip.none,
         children: [

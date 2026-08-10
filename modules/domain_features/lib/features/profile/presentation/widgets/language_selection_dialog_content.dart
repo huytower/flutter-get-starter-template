@@ -127,8 +127,9 @@ class _LanguageSelectionDialogContentState
     final String label = locale.languageCode.toUpperCase();
 
     return Expanded(
-      child: GestureDetector(
+      child: CcInkWell(
         onTap: () => _onLocaleTap(locale),
+        borderRadius: context.brMd,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           margin: EdgeInsets.only(

@@ -245,7 +245,7 @@ class _EditBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return GestureDetector(
+    return CcInkWell(
       onTap: onTap,
       child: Container(
         width: context.respDim(24),

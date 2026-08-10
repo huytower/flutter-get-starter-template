@@ -75,9 +75,10 @@ class _WalletCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return CcInkWell(
       onTap: () => context.router.push(const WalletListRoute()),
       onLongPress: onMore,
+      borderRadius: context.brLg,
       child: Stack(
         clipBehavior: Clip.none,
         children: [

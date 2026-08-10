@@ -201,6 +201,8 @@ import 'package:domain_features/features/wallet/domain/usecases/get_wallet_balan
     as _i167;
 import 'package:domain_features/features/wallet/domain/usecases/get_wallet_book_balance_usecase.dart'
     as _i105;
+import 'package:domain_features/features/wallet/presentation/get_x/add_wallet_sheet_controller.dart'
+    as _i933;
 import 'package:domain_features/features/wallet/presentation/get_x/wallet_controller.dart'
     as _i229;
 import 'package:injectable/injectable.dart' as _i526;
@@ -440,6 +442,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i1059.CategoryRepository>(),
             ));
+    gh.factory<_i933.AddWalletSheetController>(
+        () => _i933.AddWalletSheetController(gh<_i229.WalletController>()));
     gh.lazySingleton<_i628.GetLoanBalancesUseCase>(
         () => _i628.GetLoanBalancesUseCase(
               gh<_i798.LoanRepository>(),

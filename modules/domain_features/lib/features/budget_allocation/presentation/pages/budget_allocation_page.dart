@@ -34,7 +34,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       ),
       actions: [
         Obx(
-          () => GestureDetector(
+          () => CcInkWell(
             onTap: controller.walletController.toggleBalanceVisibility,
             child: Container(
               padding: EdgeInsets.all(context.respDim(4)),
@@ -143,10 +143,12 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   Widget _buildBudgetWalletsSection(BuildContext context) {
-    return BudgetWalletsSection(
-      wallets: controller.walletController.liquidWallets,
-      onAddWallet: () => controller.openAddWallet(context),
-      onMore: (wallet) => controller.openWalletActions(context, wallet),
+    return Obx(
+      () => BudgetWalletsSection(
+        wallets: controller.walletController.liquidWallets,
+        onAddWallet: () => controller.openAddWallet(context),
+        onMore: (wallet) => controller.openWalletActions(context, wallet),
+      ),
     );
   }
 }

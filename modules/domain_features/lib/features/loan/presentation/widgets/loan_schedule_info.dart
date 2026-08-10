@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../transaction/presentation/widgets/cc_form_label.dart';
 import '../../domain/entities/loan_entity.dart';
+import 'loan_date_row.dart';
 
 /// Repayment schedule for [LoanDetailPage]: per-installment due dates for
 /// installment loans, or the single final due date otherwise.
@@ -34,15 +35,10 @@ class LoanScheduleInfo extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.calendar_today_outlined,
-                    size: context.respIconSize(baseSize: 16),
-                    color: accentColor,
-                  ),
-                  const CcSpaceXS(),
-                  CcText(
-                    el.DateFormat('dd/MM/yyyy').format(period.dueDate),
-                    textStyle: context.ccTextTheme.bodyMedium,
+                  LoanDateRow(
+                    date: period.dueDate,
+                    icon: Icons.calendar_today_outlined,
+                    iconColor: accentColor,
                   ),
                   const Spacer(),
                   CcText(
@@ -67,19 +63,11 @@ class LoanScheduleInfo extends StatelessWidget {
           text: el.tr(CcLocaleKeys.transaction_loan_final_due_date_label),
         ),
         const CcSpaceXS(),
-        Row(
-          children: [
-            Icon(
-              Icons.event_outlined,
-              size: context.respIconSize(baseSize: 18),
-              color: accentColor,
-            ),
-            const CcSpaceXS(),
-            CcText(
-              el.DateFormat('dd/MM/yyyy').format(dueDate),
-              textStyle: context.ccTextTheme.bodyMedium,
-            ),
-          ],
+        LoanDateRow(
+          date: dueDate,
+          icon: Icons.event_outlined,
+          iconSize: 18,
+          iconColor: accentColor,
         ),
       ],
     );
