@@ -60,8 +60,9 @@ class GetBudgetOverLimitCountUseCase {
     var running = 0;
     var count = 0;
     for (final t in monthTxns) {
+      final before = running;
       running += t.amount;
-      if (running > budget.limit) count++;
+      if (before <= budget.limit && running > budget.limit) count++;
     }
 
     if (count == 0) return const Success(null);

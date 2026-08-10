@@ -311,7 +311,8 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       if (!controller.isClosed) {
         controller.add(status);
         if (status is PhoneAuthStatusCompleted ||
-            status is PhoneAuthStatusFailed) {
+            status is PhoneAuthStatusFailed ||
+            status is PhoneAuthStatusAutoRetrievalTimeout) {
           controller.close();
         }
       }

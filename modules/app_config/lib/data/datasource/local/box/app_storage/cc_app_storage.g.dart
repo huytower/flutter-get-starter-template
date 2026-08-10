@@ -28,16 +28,16 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       currencyCode: fields[8] as String?,
       birthYear: (fields[9] as num?)?.toInt(),
       isDarkMode: fields[10] as bool?,
-      weeklyAuditDayChangedAt: fields[11] as DateTime?,
-      levelFeatureAnchorAt: fields[12] as DateTime?,
-      isVip: fields[13] as bool?,
-      forceFullAccess: fields[14] as bool?,
-      highestUserLevelReached: (fields[15] as num?)?.toInt(),
-      firstLaunchAt: fields[16] as DateTime?,
-      cloudBackupReminderSentAt: fields[17] as DateTime?,
-      hasViewedEmergencyFundEbook: fields[18] as bool?,
-      hasSeenTutorial: fields[19] as bool?,
-      completedGuidelineTaskIds: (fields[20] as List?)?.cast<String>(),
+      completedGuidelineTaskIds: (fields[11] as List?)?.cast<String>(),
+      weeklyAuditDayChangedAt: fields[12] as DateTime?,
+      levelFeatureAnchorAt: fields[13] as DateTime?,
+      isVip: fields[14] as bool?,
+      forceFullAccess: fields[15] as bool?,
+      highestUserLevelReached: (fields[16] as num?)?.toInt(),
+      firstLaunchAt: fields[17] as DateTime?,
+      cloudBackupReminderSentAt: fields[18] as DateTime?,
+      hasViewedEmergencyFundEbook: fields[19] as bool?,
+      hasSeenTutorial: fields[20] as bool?,
     );
   }
 
@@ -68,25 +68,25 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..writeByte(10)
       ..write(obj.isDarkMode)
       ..writeByte(11)
-      ..write(obj.weeklyAuditDayChangedAt)
+      ..write(obj.completedGuidelineTaskIds)
       ..writeByte(12)
-      ..write(obj.levelFeatureAnchorAt)
+      ..write(obj.weeklyAuditDayChangedAt)
       ..writeByte(13)
-      ..write(obj.isVip)
+      ..write(obj.levelFeatureAnchorAt)
       ..writeByte(14)
-      ..write(obj.forceFullAccess)
+      ..write(obj.isVip)
       ..writeByte(15)
-      ..write(obj.highestUserLevelReached)
+      ..write(obj.forceFullAccess)
       ..writeByte(16)
-      ..write(obj.firstLaunchAt)
+      ..write(obj.highestUserLevelReached)
       ..writeByte(17)
-      ..write(obj.cloudBackupReminderSentAt)
+      ..write(obj.firstLaunchAt)
       ..writeByte(18)
-      ..write(obj.hasViewedEmergencyFundEbook)
+      ..write(obj.cloudBackupReminderSentAt)
       ..writeByte(19)
-      ..write(obj.hasSeenTutorial)
+      ..write(obj.hasViewedEmergencyFundEbook)
       ..writeByte(20)
-      ..write(obj.completedGuidelineTaskIds);
+      ..write(obj.hasSeenTutorial);
   }
 
   @override
@@ -118,6 +118,10 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
   currencyCode: json['currencyCode'] as String?,
   birthYear: (json['birthYear'] as num?)?.toInt(),
   isDarkMode: json['isDarkMode'] as bool?,
+  completedGuidelineTaskIds:
+      (json['completedGuidelineTaskIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
   weeklyAuditDayChangedAt: json['weeklyAuditDayChangedAt'] == null
       ? null
       : DateTime.parse(json['weeklyAuditDayChangedAt'] as String),
@@ -135,10 +139,6 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
       : DateTime.parse(json['cloudBackupReminderSentAt'] as String),
   hasViewedEmergencyFundEbook: json['hasViewedEmergencyFundEbook'] as bool?,
   hasSeenTutorial: json['hasSeenTutorial'] as bool?,
-  completedGuidelineTaskIds:
-      (json['completedGuidelineTaskIds'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
 );
 
 Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
@@ -154,6 +154,7 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
       'currencyCode': instance.currencyCode,
       'birthYear': instance.birthYear,
       'isDarkMode': instance.isDarkMode,
+      'completedGuidelineTaskIds': instance.completedGuidelineTaskIds,
       'weeklyAuditDayChangedAt': instance.weeklyAuditDayChangedAt
           ?.toIso8601String(),
       'levelFeatureAnchorAt': instance.levelFeatureAnchorAt?.toIso8601String(),
@@ -165,5 +166,4 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
           ?.toIso8601String(),
       'hasViewedEmergencyFundEbook': instance.hasViewedEmergencyFundEbook,
       'hasSeenTutorial': instance.hasSeenTutorial,
-      'completedGuidelineTaskIds': instance.completedGuidelineTaskIds,
     };
