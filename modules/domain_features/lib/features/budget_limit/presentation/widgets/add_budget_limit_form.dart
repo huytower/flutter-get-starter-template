@@ -209,7 +209,7 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
     final scheme = context.ccColorScheme;
     final guideline = Get.find<GuidelineController>();
 
-    return InkWell(
+    return CcInkWell(
       onTap: () => setState(() => _isFixedPrice = !_isFixedPrice),
       borderRadius: context.brSm,
       child: Tooltip(

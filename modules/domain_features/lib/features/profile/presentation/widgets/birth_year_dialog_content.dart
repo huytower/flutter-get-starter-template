@@ -163,8 +163,9 @@ class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
     final bool isSelected = year == _selectedYear;
 
     return Center(
-      child: GestureDetector(
+      child: CcInkWell(
         onTap: () => _onYearTap(year),
+        borderRadius: context.brLg,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           width: context.respDim(72),

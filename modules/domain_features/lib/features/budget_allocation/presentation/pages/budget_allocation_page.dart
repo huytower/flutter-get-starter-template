@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../firestore/presentation/widgets/sync_status_icon.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_hero_banner.dart';
 import '../widgets/budget_preview_section.dart';
@@ -33,7 +34,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       ),
       actions: [
         Obx(
-          () => GestureDetector(
+          () => CcInkWell(
             onTap: controller.walletController.toggleBalanceVisibility,
             child: Container(
               padding: EdgeInsets.all(context.respDim(4)),
@@ -60,6 +61,8 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           tooltip: el.tr(CcLocaleKeys.reconciliation_title),
           onTap: () => controller.navigateToReconcile(context),
         ),
+        const CcSpaceXS(),
+        const SyncStatusIcon(),
         SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
       ],
     );
@@ -103,35 +106,49 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   Widget _buildInvestmentHeroBanner(BuildContext context) {
-    return BudgetHeroBanner(
-      walletController: controller.walletController,
-      titleKey: CcLocaleKeys.wallet_investments,
-      balance: controller.walletController.investmentBalance,
-      subtitleKey: CcLocaleKeys.wallet_investments_desc,
-      icon: Icons.trending_up_outlined,
-      color: CcBaseColors.yellow600,
-      topPadding: CcPaddingParams.SPACE_SM,
-      bottomPadding: CcPaddingParams.SPACE_XS,
-    );
+    return Obx(() {
+      if (!controller.userLevel.status.value.canUseInvestment) {
+        return const SizedBox.shrink();
+      }
+      final roi = controller.walletController.investmentRoiPercent.value;
+      return BudgetHeroBanner(
+        walletController: controller.walletController,
+        titleKey: CcLocaleKeys.wallet_investments,
+        balance: controller.walletController.investmentBalance,
+        subtitleKey: CcLocaleKeys.wallet_investments_desc,
+        subtitleArgs: {'roi': roi.toStringAsFixed(1)},
+        icon: Icons.trending_up_outlined,
+        color: CcBaseColors.yellow600,
+        topPadding: CcPaddingParams.SPACE_SM,
+        bottomPadding: CcPaddingParams.SPACE_XS,
+      );
+    });
   }
 
   Widget _buildLiabilityHeroBanner(BuildContext context) {
-    return BudgetHeroBanner(
-      walletController: controller.walletController,
-      titleKey: CcLocaleKeys.wallet_liabilities,
-      balance: controller.walletController.liabilityBalance,
-      subtitleKey: CcLocaleKeys.wallet_liabilities_desc,
-      icon: Icons.report_problem_outlined,
-      color: CcBaseColors.violet600,
-      topPadding: CcPaddingParams.SPACE_SM,
-    );
+    return Obx(() {
+      if (!controller.userLevel.status.value.canUseDebtLoan) {
+        return const SizedBox.shrink();
+      }
+      return BudgetHeroBanner(
+        walletController: controller.walletController,
+        titleKey: CcLocaleKeys.wallet_liabilities,
+        balance: controller.liabilityBalance,
+        subtitleKey: CcLocaleKeys.wallet_liabilities_desc,
+        icon: Icons.report_problem_outlined,
+        color: CcBaseColors.violet600,
+        topPadding: CcPaddingParams.SPACE_SM,
+      );
+    });
   }
 
   Widget _buildBudgetWalletsSection(BuildContext context) {
-    return BudgetWalletsSection(
-      wallets: controller.walletController.wallets,
-      onAddWallet: () => controller.openAddWallet(context),
-      onMore: (wallet) => controller.openWalletActions(context, wallet),
+    return Obx(
+      () => BudgetWalletsSection(
+        wallets: controller.walletController.liquidWallets,
+        onAddWallet: () => controller.openAddWallet(context),
+        onMore: (wallet) => controller.openWalletActions(context, wallet),
+      ),
     );
   }
 }

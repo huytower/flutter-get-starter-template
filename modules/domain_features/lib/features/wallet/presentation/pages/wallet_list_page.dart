@@ -100,7 +100,8 @@ class WalletListPage extends CcGetView<WalletController> {
   Widget? buildContent(BuildContext context) {
     return Builder(
       builder: (context) => Obx(() {
-        if (controller.wallets.isEmpty) {
+        final liquidWallets = controller.liquidWallets;
+        if (liquidWallets.isEmpty) {
           return Center(
             child: CcText(
               el.tr(CcLocaleKeys.wallet_empty),
@@ -116,7 +117,7 @@ class WalletListPage extends CcGetView<WalletController> {
           padding: EdgeInsets.all(
             context.respPadding(CcPaddingParams.SPACE_MD),
           ),
-          children: controller.wallets
+          children: liquidWallets
               .map(
                 (wallet) => WalletListCard(
                   wallet: wallet,

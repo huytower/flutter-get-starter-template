@@ -13,7 +13,7 @@ class HomeCoordinatorImpl implements HomeCoordinator {
     required String url,
     String? title,
   }) {
-    context.router.push(const WebRoute());
+    context.router.push(WebRoute(url: url));
   }
 
   @override

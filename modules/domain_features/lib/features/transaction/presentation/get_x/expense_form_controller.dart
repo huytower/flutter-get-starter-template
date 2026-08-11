@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:domain_features/features/budget_limit/export_budget_limit.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -7,9 +8,11 @@ import 'package:injectable/injectable.dart';
 
 import '../../../guideline/guideline_controller.dart';
 import '../../../../core/di/di.dart';
+import '../../../../core/helper/budget_over_limit_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
+import '../../domain/usecases/update_transaction_usecase.dart';
 import 'transaction_form_controller.dart';
 
 @injectable
@@ -39,36 +42,86 @@ class ExpenseFormController extends TransactionFormController {
     if (isSubmitting.value || !canSubmit) return;
     isSubmitting.value = true;
 
-    final params = CreateTransactionParams(
-      type: TransactionType.expense,
-      amount: int.tryParse(amountStr.value) ?? 0,
-      categoryId: selectedCategory.value?.id ?? '',
-      categoryLabel: selectedCategory.value != null
-          ? el.tr(selectedCategory.value!.nameKey)
-          : '',
-      categoryIconCode: selectedCategory.value?.iconCode,
-      categoryIconFamily: selectedCategory.value?.iconFamily,
-      walletId: selectedWalletId.value ?? '',
-      note: composeNote(),
-      date: date.value,
-    );
+    final categoryId = selectedCategory.value?.id ?? '';
+    final categoryLabel = selectedCategory.value != null
+        ? el.tr(selectedCategory.value!.nameKey)
+        : '';
+    final amount = int.tryParse(amountStr.value) ?? 0;
 
-    final result = await getIt<CreateTransactionUseCase>().call(params);
+    final result = isEditing
+        ? await getIt<UpdateTransactionUseCase>().call(
+            UpdateTransactionParams(
+              original: editingTransaction!,
+              amount: amount,
+              categoryId: categoryId,
+              categoryLabel: categoryLabel,
+              categoryIconCode: selectedCategory.value?.iconCode,
+              categoryIconFamily: selectedCategory.value?.iconFamily,
+              walletId: selectedWalletId.value ?? '',
+              note: composeNote(),
+              date: date.value,
+            ),
+          )
+        : await getIt<CreateTransactionUseCase>().call(
+            CreateTransactionParams(
+              type: TransactionType.expense,
+              amount: amount,
+              categoryId: categoryId,
+              categoryLabel: categoryLabel,
+              categoryIconCode: selectedCategory.value?.iconCode,
+              categoryIconFamily: selectedCategory.value?.iconFamily,
+              walletId: selectedWalletId.value ?? '',
+              note: composeNote(),
+              date: date.value,
+            ),
+          );
     isSubmitting.value = false;
 
     result.when(
-      (_) {
+      (_) async {
         final savedAmount = TransactionFormHelpers.formatAmount(
           amountStr.value,
         );
-        CcSnackBarHelper.showSuccessSnackBar(
-          context: context,
-          message: el.tr(
-            CcLocaleKeys.transaction_expense_saved,
-            namedArgs: {'amount': savedAmount},
-          ),
-        );
-        resetForm();
+
+        BudgetOverLimitEntity? overLimit;
+        if (categoryId.isNotEmpty) {
+          final overResult = await getIt<GetBudgetOverLimitCountUseCase>()
+              .call(categoryId);
+          overLimit = overResult.tryGetSuccess();
+        }
+        if (!context.mounted) return;
+
+        if (overLimit != null) {
+          CcSnackBarHelper.showSnackBar(
+            context: context,
+            message: el.tr(
+              CcLocaleKeys.budget_over_limit_count,
+              namedArgs: {
+                'name': overLimit.budgetName,
+                'count': '${overLimit.count}',
+              },
+            ),
+            textColor: budgetOverLimitColor(
+              overLimit.count,
+              context.ccColorScheme,
+            ),
+          );
+        } else {
+          CcSnackBarHelper.showSuccessSnackBar(
+            context: context,
+            message: el.tr(
+              isEditing
+                  ? CcLocaleKeys.transaction_expense_updated
+                  : CcLocaleKeys.transaction_expense_saved,
+              namedArgs: {'amount': savedAmount},
+            ),
+          );
+        }
+        if (isEditing) {
+          onEditSaved?.call();
+        } else {
+          resetForm();
+        }
         refreshParent();
         // Guideline: first_transaction completed
         Get.find<GuidelineController>().completeTask('first_transaction');

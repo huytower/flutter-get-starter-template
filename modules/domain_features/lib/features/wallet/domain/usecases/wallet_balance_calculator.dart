@@ -16,10 +16,17 @@ int bookBalanceFromTransactions(
     switch (txn.type) {
       case TransactionType.income:
       case TransactionType.transferIn:
+      case TransactionType.investmentIn:
+      case TransactionType.investmentReturn:
+      case TransactionType.debtBorrow:
+      case TransactionType.debtCollect:
         balance += txn.amount;
         break;
       case TransactionType.expense:
       case TransactionType.transferOut:
+      case TransactionType.investmentOut:
+      case TransactionType.debtLend:
+      case TransactionType.debtRepay:
         balance -= txn.amount;
         break;
     }

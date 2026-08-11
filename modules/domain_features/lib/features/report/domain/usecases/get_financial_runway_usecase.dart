@@ -7,6 +7,7 @@ import '../../../budget_limit/domain/repositories/budget_limit_repository.dart';
 import '../../../category/domain/repositories/category_repository.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
+import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../entities/financial_runway_entity.dart';
@@ -40,16 +41,17 @@ class GetFinancialRunwayUseCase {
   }
 
   Future<Result<FinancialRunwayEntity, CcFailure>> call() async {
-    // 1. Get total balance (Book Balance)
-    // In LV3, we might filter out WalletType.investment here.
+    // 1. Get total balance (Book Balance) — liquid wallets + Quỹ dự phòng
+    // and any other non-investment wallet. Investment positions are excluded
+    // per spec: they're capital tied up in an asset, not available runway.
     final balancesResult = await _getWalletBalances.call();
     if (balancesResult.isError()) {
       return Error(balancesResult.tryGetError()!);
     }
-    final totalBalance = balancesResult.tryGetSuccess()!.fold<double>(
-      0,
-      (sum, b) => sum + b.bookBalance,
-    );
+    final totalBalance = balancesResult
+        .tryGetSuccess()!
+        .where((b) => b.wallet.type != WalletType.investment)
+        .fold<double>(0, (sum, b) => sum + b.bookBalance);
 
     // 2. Get categories to identify survival expenses
     final categoriesResult = await _categoryRepository.getCategories();

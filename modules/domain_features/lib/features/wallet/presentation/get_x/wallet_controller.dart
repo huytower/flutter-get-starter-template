@@ -4,16 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../guideline/guideline_controller.dart';
+import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../../domain/repositories/wallet_repository.dart';
+import '../../domain/usecases/get_investment_roi_usecase.dart';
 import '../../domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../../domain/usecases/wallet_balance_calculator.dart';
+import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../widgets/add_wallet_sheet.dart';
 import '../widgets/wallet_delete_confirm_sheet.dart';
 
@@ -26,11 +30,13 @@ class WalletController extends CcGetController {
     this._repository,
     this._transactionRepository,
     this._getWalletBookBalance,
+    this._getInvestmentRoi,
   );
 
   final WalletRepository _repository;
   final TransactionRepository _transactionRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
+  final GetInvestmentRoiUseCase _getInvestmentRoi;
 
   final RxInt currentNavIndex = 1.obs;
   final RxBool isBalanceVisible = true.obs;
@@ -110,7 +116,22 @@ class WalletController extends CcGetController {
   final RxInt totalBalance = 0.obs;
   final RxInt liquidBalance = 0.obs;
   final RxInt investmentBalance = 0.obs;
+  final RxInt emergencyFundBalance = 0.obs;
   final RxInt liabilityBalance = 0.obs;
+
+  /// Σ Thu vào ÷ Σ Chi ra across every investment position (see
+  /// [GetInvestmentRoiUseCase]).
+  final RxDouble investmentRoiPercent = 0.0.obs;
+
+  /// Σ realized Thu vào not already reflected in any wallet's own book
+  /// balance — added on top of [investmentBalance] so that card still reads
+  /// as "capital + profit" even though profit now lands in a liquid wallet.
+  /// Only counts new-style records (`investmentWalletId != null`); older
+  /// records (written before this field existed) still have `walletId`
+  /// pointing at the investment wallet itself, so they're already counted
+  /// once via that wallet's own book balance — counting them here too would
+  /// double them up.
+  int _investmentReturnsTotal = 0;
 
   /// Ids of wallets that have at least one (non-deleted) transaction. Used to
   /// lock the opening balance once a wallet has activity.
@@ -123,6 +144,35 @@ class WalletController extends CcGetController {
   final RxMap<String, int> _bookBalances = <String, int>{}.obs;
 
   int bookBalanceOf(String id) => _bookBalances[id] ?? 0;
+
+  /// Type order for the Budget Allocation screen's "Ví của bạn" strip: cash
+  /// → bank → e-wallet → emergency fund. (Credit-card wallets aren't a
+  /// [WalletType] yet; add them here, between bank and e-wallet, if that
+  /// type is introduced.) Investment wallets are excluded; they get their
+  /// own hero banner instead.
+  static const List<String> _liquidTypeOrder = [
+    WalletType.cash,
+    WalletType.bank,
+    WalletType.ewallet,
+    WalletType.emergencyFund,
+  ];
+
+  /// Liquid wallets for the Budget Allocation screen's "Ví của bạn" strip,
+  /// ordered per [_liquidTypeOrder]; wallets of the same type sort by name
+  /// A-Z/0-9.
+  List<WalletEntity> get liquidWallets {
+    final liquid = wallets
+        .where((w) => _liquidTypeOrder.contains(w.type))
+        .toList();
+    liquid.sort((a, b) {
+      final typeCompare = _liquidTypeOrder
+          .indexOf(a.type)
+          .compareTo(_liquidTypeOrder.indexOf(b.type));
+      if (typeCompare != 0) return typeCompare;
+      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    });
+    return liquid;
+  }
 
   /// Protected wallets can be renamed but never deleted:
   /// - the `cash` wallet is a fixed singleton, and
@@ -160,10 +210,20 @@ class WalletController extends CcGetController {
 
     final list = result.tryGetSuccess()!;
     await _rebuildDerivedBalances(list);
+    await _loadInvestmentRoi();
     wallets.assignAll(list);
     _calculateTotalBalance();
 
     layoutStatus.value = CcLayoutStatus.success;
+  }
+
+  Future<void> _loadInvestmentRoi() async {
+    final result = await _getInvestmentRoi.call();
+    result.when((roi) {
+      investmentRoiPercent.value = roi.totalContributed == 0
+          ? 0
+          : roi.totalReturned / roi.totalContributed * 100;
+    }, (_) {});
   }
 
   /// Fetches transactions once and derives, per wallet, both the activity flag
@@ -185,6 +245,14 @@ class WalletController extends CcGetController {
       );
     }
     _bookBalances.assignAll(newBalances);
+
+    _investmentReturnsTotal = txns
+        .where(
+          (t) =>
+              t.type == TransactionType.investmentReturn &&
+              t.investmentWalletId != null,
+        )
+        .fold(0, (sum, t) => sum + t.amount);
   }
 
   void _calculateTotalBalance() {
@@ -202,8 +270,14 @@ class WalletController extends CcGetController {
         )
         .fold(0, (sum, item) => sum + bookBalanceOf(item.id));
 
-    investmentBalance.value = wallets
-        .where((w) => w.type == WalletType.investment)
+    investmentBalance.value =
+        wallets
+            .where((w) => w.type == WalletType.investment)
+            .fold(0, (sum, item) => sum + bookBalanceOf(item.id)) +
+        _investmentReturnsTotal;
+
+    emergencyFundBalance.value = wallets
+        .where((w) => w.type == WalletType.emergencyFund)
         .fold(0, (sum, item) => sum + bookBalanceOf(item.id));
 
     liabilityBalance.value = 0;
@@ -215,6 +289,17 @@ class WalletController extends CcGetController {
     required int iconCode,
     required String type,
   }) async {
+    if (type == WalletType.emergencyFund) {
+      final level = getIt<UserLevelController>().status.value.level;
+      final settings = await getIt<GetProfileSettingsUseCase>().call();
+      if (level < 2 || !settings.hasViewedEmergencyFundEbook) {
+        errorMessage.value = el.tr(
+          CcLocaleKeys.wallet_emergency_fund_locked_hint,
+        );
+        return;
+      }
+    }
+
     final newWallet = WalletEntity(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       name: name,
@@ -263,6 +348,7 @@ class WalletController extends CcGetController {
         iconCode: wallet.iconCode,
         type: wallet.type,
         createdAt: wallet.createdAt,
+        categoryId: wallet.categoryId,
       );
     }
 

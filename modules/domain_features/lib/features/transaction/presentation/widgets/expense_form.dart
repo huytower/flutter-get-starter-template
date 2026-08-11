@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
+import '../../../../core/di/di.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../get_x/expense_form_controller.dart';
 import 'category_selection_section.dart';
@@ -15,11 +16,25 @@ import 'transaction_submit_button.dart';
 import 'transaction_wallet_selector.dart';
 
 class ExpenseForm extends StatelessWidget {
-  const ExpenseForm({super.key});
+  const ExpenseForm({super.key, this.tag});
+
+  /// GetX tag for the underlying [ExpenseFormController] instance. Leave
+  /// null for the persistent entry-tab form; pass a distinct tag (e.g. from
+  /// [EditTransactionSheet]) to get an isolated instance so editing an old
+  /// transaction never touches the entry tab's in-progress draft.
+  final String? tag;
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ExpenseFormController>();
+    // The untagged (entry-tab) instance is registered early by
+    // TransactionController.onInit(), so it's always already findable here —
+    // Get.put-ing it directly in build() previously caused a "setState
+    // during build" bug. Edit-mode's tagged instance is never pre-registered
+    // (only TransactionController's own default tag is), so it still needs
+    // an on-demand Get.put here.
+    final controller = tag == null
+        ? Get.find<ExpenseFormController>()
+        : Get.put(getIt<ExpenseFormController>(), tag: tag);
     final guideline = Get.find<GuidelineController>();
 
     final accentColor = context.ccColorScheme.error;
@@ -78,7 +93,8 @@ class ExpenseForm extends StatelessWidget {
     return CategorySelectionSection(
       key: ValueKey(controller.categoryKey.value),
       activeColor: accentColor,
-      autoSelectFirst: true,
+      autoSelectFirst: !controller.isEditing,
+      initialSelectedCategoryId: controller.editingTransaction?.categoryId,
       onCategorySelected: controller.setCategory,
     );
   }

@@ -29,13 +29,22 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       birthYear: (fields[9] as num?)?.toInt(),
       isDarkMode: fields[10] as bool?,
       completedGuidelineTaskIds: (fields[11] as List?)?.cast<String>(),
+      weeklyAuditDayChangedAt: fields[12] as DateTime?,
+      levelFeatureAnchorAt: fields[13] as DateTime?,
+      isVip: fields[14] as bool?,
+      forceFullAccess: fields[15] as bool?,
+      highestUserLevelReached: (fields[16] as num?)?.toInt(),
+      firstLaunchAt: fields[17] as DateTime?,
+      cloudBackupReminderSentAt: fields[18] as DateTime?,
+      hasViewedEmergencyFundEbook: fields[19] as bool?,
+      hasSeenTutorial: fields[20] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CcAppStorage obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(21)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)
@@ -59,7 +68,25 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..writeByte(10)
       ..write(obj.isDarkMode)
       ..writeByte(11)
-      ..write(obj.completedGuidelineTaskIds);
+      ..write(obj.completedGuidelineTaskIds)
+      ..writeByte(12)
+      ..write(obj.weeklyAuditDayChangedAt)
+      ..writeByte(13)
+      ..write(obj.levelFeatureAnchorAt)
+      ..writeByte(14)
+      ..write(obj.isVip)
+      ..writeByte(15)
+      ..write(obj.forceFullAccess)
+      ..writeByte(16)
+      ..write(obj.highestUserLevelReached)
+      ..writeByte(17)
+      ..write(obj.firstLaunchAt)
+      ..writeByte(18)
+      ..write(obj.cloudBackupReminderSentAt)
+      ..writeByte(19)
+      ..write(obj.hasViewedEmergencyFundEbook)
+      ..writeByte(20)
+      ..write(obj.hasSeenTutorial);
   }
 
   @override
@@ -95,6 +122,23 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
       (json['completedGuidelineTaskIds'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+  weeklyAuditDayChangedAt: json['weeklyAuditDayChangedAt'] == null
+      ? null
+      : DateTime.parse(json['weeklyAuditDayChangedAt'] as String),
+  levelFeatureAnchorAt: json['levelFeatureAnchorAt'] == null
+      ? null
+      : DateTime.parse(json['levelFeatureAnchorAt'] as String),
+  isVip: json['isVip'] as bool?,
+  forceFullAccess: json['forceFullAccess'] as bool?,
+  highestUserLevelReached: (json['highestUserLevelReached'] as num?)?.toInt(),
+  firstLaunchAt: json['firstLaunchAt'] == null
+      ? null
+      : DateTime.parse(json['firstLaunchAt'] as String),
+  cloudBackupReminderSentAt: json['cloudBackupReminderSentAt'] == null
+      ? null
+      : DateTime.parse(json['cloudBackupReminderSentAt'] as String),
+  hasViewedEmergencyFundEbook: json['hasViewedEmergencyFundEbook'] as bool?,
+  hasSeenTutorial: json['hasSeenTutorial'] as bool?,
 );
 
 Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
@@ -111,4 +155,15 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
       'birthYear': instance.birthYear,
       'isDarkMode': instance.isDarkMode,
       'completedGuidelineTaskIds': instance.completedGuidelineTaskIds,
+      'weeklyAuditDayChangedAt': instance.weeklyAuditDayChangedAt
+          ?.toIso8601String(),
+      'levelFeatureAnchorAt': instance.levelFeatureAnchorAt?.toIso8601String(),
+      'isVip': instance.isVip,
+      'forceFullAccess': instance.forceFullAccess,
+      'highestUserLevelReached': instance.highestUserLevelReached,
+      'firstLaunchAt': instance.firstLaunchAt?.toIso8601String(),
+      'cloudBackupReminderSentAt': instance.cloudBackupReminderSentAt
+          ?.toIso8601String(),
+      'hasViewedEmergencyFundEbook': instance.hasViewedEmergencyFundEbook,
+      'hasSeenTutorial': instance.hasSeenTutorial,
     };

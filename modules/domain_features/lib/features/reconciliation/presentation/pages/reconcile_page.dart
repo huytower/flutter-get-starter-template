@@ -4,7 +4,10 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../get_x/reconciliation_controller.dart';
 import '../widgets/reconciliation_confirm_button.dart';
@@ -135,6 +138,11 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                             controller.setActual(balance.wallet.id, value),
                         onAcknowledge: () =>
                             controller.acknowledgeAdjustment(balance.wallet.id),
+                        onReview: () => _openWalletReview(
+                          context,
+                          balance.wallet.id,
+                          balance.wallet.name,
+                        ),
                       );
                     }).toList(),
                   ),
@@ -172,4 +180,30 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
       );
     });
   }
+}
+
+/// Opens the Report page pre-filtered to [walletId] and scrolled to the
+/// daily transaction detail table, so the user can review that wallet's
+/// income/expense entries before committing a reconciliation adjustment.
+///
+/// [ReportController] is a long-lived GetX singleton (see [CcGetView.build]),
+/// so its filter must be set on the live instance before the route is
+/// pushed rather than passed as a route param — the same pattern other
+/// report entry points already use to force a refresh on re-entry.
+void _openWalletReview(BuildContext context, String walletId, String walletName) {
+  final alreadyRegistered = Get.isRegistered<ReportController>();
+  final report = alreadyRegistered
+      ? Get.find<ReportController>()
+      : getIt<ReportController>();
+
+  report.setWalletFilter(walletId, walletName);
+  report.requestScrollToDaily();
+
+  if (alreadyRegistered) {
+    report.load(showLoading: false);
+  } else {
+    Get.put(report);
+  }
+
+  context.router.push(const ReportRoute());
 }

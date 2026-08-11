@@ -47,7 +47,9 @@ class ProfilePage extends CcGetView<ProfileController> {
                       child: ProfileHeader(
                         user: controller.user.value,
                         displayName: controller.displayName,
+                        level: controller.userLevel.status.value.level,
                         onTap: () => controller.handleHeroBannerTap(context),
+                        onEditName: () => controller.pickDisplayName(context),
                       ),
                     );
                   }),
@@ -57,7 +59,12 @@ class ProfilePage extends CcGetView<ProfileController> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         const CcSpaceMD(),
-                        ProfileStatsRow(daysToSunday: controller.daysToSunday),
+                        Obx(
+                          () => ProfileStatsRow(
+                            daysToNextAudit: controller.daysToNextAudit,
+                            levelStatus: controller.userLevel.status.value,
+                          ),
+                        ),
                         const CcSpaceMD(),
                         ProfileMenuGroup(items: _buildMenuItems(context)),
                         const CcSpaceXL(),
@@ -106,6 +113,12 @@ class ProfilePage extends CcGetView<ProfileController> {
               : null,
         ),
       ),
+      ProfileSettingsTile(
+        icon: Icons.link_rounded,
+        label: el.tr(CcLocaleKeys.profile_link_account_title),
+        subtitle: el.tr(CcLocaleKeys.profile_link_account_subtitle),
+        onTap: () => controller.navigateToLinkAccount(context),
+      ),
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.cake_rounded,
@@ -133,6 +146,52 @@ class ProfilePage extends CcGetView<ProfileController> {
           onTap: () => controller.pickWeeklyAuditDay(context),
         ),
       ),
+      // QA-only escape hatches to bypass VIP/LV1-3 gating without real
+      // IAP/billing infra. Gated by ENABLE_QA_DEBUG_TOOLS (.env) rather than
+      // kDebugMode so QA can flip it on in a UAT build; must resolve to
+      // false in .env.prod so it never reaches real users.
+      if (CcFeatureFlags.isQaDebugToolsEnabled) ...[
+        Obx(
+          () => ProfileSettingsTile(
+            icon: Icons.workspace_premium_rounded,
+            label: el.tr(CcLocaleKeys.profile_vip),
+            subtitle: el.tr(CcLocaleKeys.profile_vip_subtitle),
+            showChevron: false,
+            trailingWidget: SizedBox(
+              height: context.respIconSize(baseSize: 20),
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Switch(
+                  value: controller.settings.value.isVip,
+                  onChanged: controller.setVip,
+                  activeColor: context.ccColorScheme.primary,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Obx(
+          () => ProfileSettingsTile(
+            icon: Icons.lock_open_rounded,
+            label: el.tr(CcLocaleKeys.profile_force_full_access),
+            subtitle: el.tr(CcLocaleKeys.profile_force_full_access_subtitle),
+            showChevron: false,
+            trailingWidget: SizedBox(
+              height: context.respIconSize(baseSize: 20),
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Switch(
+                  value: controller.settings.value.forceFullAccess,
+                  onChanged: controller.setForceFullAccess,
+                  activeColor: context.ccColorScheme.primary,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.notifications_rounded,
@@ -238,7 +297,7 @@ class ProfilePage extends CcGetView<ProfileController> {
   }
 
   Widget _buildDeleteAccountText(BuildContext context) {
-    return GestureDetector(
+    return CcInkWell(
       onTap: controller.deleteAccount,
       child: CcText(
         el.tr(CcLocaleKeys.profile_delete_account),

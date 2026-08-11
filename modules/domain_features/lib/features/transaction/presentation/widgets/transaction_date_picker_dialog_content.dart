@@ -263,13 +263,14 @@ class _TransactionDatePickerDialogContentState
     final isSelected = _isSameDay(date, _selectedDate);
     final isToday = _isSameDay(date, today);
 
-    return GestureDetector(
+    return CcInkWell(
       onTap: () {
         if (date.isBefore(widget.firstDate) || date.isAfter(widget.lastDate)) {
           return;
         }
         _onDateTap(date);
       },
+      borderRadius: context.brLg,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         decoration: BoxDecoration(

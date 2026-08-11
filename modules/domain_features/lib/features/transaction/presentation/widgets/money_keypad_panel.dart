@@ -66,7 +66,7 @@ class MoneyKeypadPanel extends StatelessWidget {
                     ),
                   ),
                 ),
-                GestureDetector(
+                CcInkWell(
                   onTap: onDone,
                   child: CcSymmetricPadding(
                     horizontal: CcPaddingParams.SPACE_XL,

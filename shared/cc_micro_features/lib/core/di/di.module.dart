@@ -62,13 +62,13 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
     final messagingModule = _$MessagingModule();
+    gh.factory<_i354.WebCubit>(() => _i354.WebCubit());
     gh.lazySingleton<_i892.FirebaseMessaging>(
         () => messagingModule.firebaseMessaging);
     gh.lazySingleton<_i951.AuthPreferenceDataSource>(
         () => _i951.AuthPreferenceDataSource());
     gh.lazySingleton<_i350.BiometricLocalDataSource>(
         () => _i350.BiometricLocalDataSource());
-    gh.lazySingleton<_i354.WebCubit>(() => _i354.WebCubit());
     gh.lazySingleton<_i4.CcMessagingService>(() =>
         _i441.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()));
     gh.lazySingleton<_i521.BiometricRepository>(() =>

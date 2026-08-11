@@ -68,8 +68,9 @@ class BudgetLimitCategorySelector extends StatelessWidget {
   ) {
     final scheme = context.ccColorScheme;
 
-    return GestureDetector(
+    return CcInkWell(
       onTap: () => onCategorySelected(cat),
+      borderRadius: context.brLg,
       child: Stack(
         clipBehavior: Clip.none,
         children: [

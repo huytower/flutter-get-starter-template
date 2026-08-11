@@ -39,6 +39,9 @@ class WalletHiveModel extends HiveObject {
   @HiveField(9)
   final DateTime? lastModifiedAt;
 
+  @HiveField(10)
+  final String? categoryId;
+
   WalletHiveModel({
     required this.id,
     required this.name,
@@ -50,6 +53,7 @@ class WalletHiveModel extends HiveObject {
     this.syncStatus,
     this.lastSyncedAt,
     this.lastModifiedAt,
+    this.categoryId,
   });
 
   factory WalletHiveModel.fromEntity(WalletEntity entity) => WalletHiveModel(
@@ -59,6 +63,7 @@ class WalletHiveModel extends HiveObject {
     iconCode: entity.iconCode,
     type: entity.type,
     createdAt: entity.createdAt,
+    categoryId: entity.categoryId,
   );
 
   WalletEntity toEntity() => WalletEntity(
@@ -68,6 +73,7 @@ class WalletHiveModel extends HiveObject {
     iconCode: iconCode,
     type: type,
     createdAt: createdAt,
+    categoryId: categoryId,
   );
 
   SyncMetadata get syncMetadata => SyncMetadata(
@@ -91,6 +97,7 @@ class WalletHiveModel extends HiveObject {
       iconCode: iconCode,
       type: type,
       createdAt: createdAt,
+      categoryId: categoryId,
       remoteId: metadata.remoteId,
       syncStatus: metadata.status.name,
       lastSyncedAt: metadata.lastSyncedAt,
@@ -105,6 +112,7 @@ class WalletHiveModel extends HiveObject {
       'iconCode': iconCode,
       'type': type,
       'createdAt': createdAt.toIso8601String(),
+      'categoryId': categoryId,
     };
   }
 
@@ -123,6 +131,7 @@ class WalletHiveModel extends HiveObject {
       syncStatus: SyncStatus.synced.name,
       lastSyncedAt: DateTime.now(),
       lastModifiedAt: DateTime.now(),
+      categoryId: data['categoryId'] as String?,
     );
   }
 }

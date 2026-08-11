@@ -63,6 +63,15 @@ class TransactionModel {
   @HiveField(16)
   final DateTime? lastModifiedAt;
 
+  /// FK to the Loan this leg belongs to; null for non-loan records.
+  @HiveField(17)
+  final String? loanId;
+
+  /// FK to the investment position this leg belongs to; null for non-investment
+  /// records. See [TransactionEntity.investmentWalletId].
+  @HiveField(18)
+  final String? investmentWalletId;
+
   TransactionModel({
     this.id,
     this.type,
@@ -81,6 +90,8 @@ class TransactionModel {
     this.syncStatus,
     this.lastSyncedAt,
     this.lastModifiedAt,
+    this.loanId,
+    this.investmentWalletId,
   });
 
   TransactionModel copyWith({String? deletedAt}) => TransactionModel(
@@ -97,6 +108,8 @@ class TransactionModel {
     transferId: transferId,
     categoryIconCode: categoryIconCode,
     categoryIconFamily: categoryIconFamily,
+    loanId: loanId,
+    investmentWalletId: investmentWalletId,
   );
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) =>
@@ -119,6 +132,8 @@ class TransactionModel {
         transferId: entity.transferId,
         categoryIconCode: entity.categoryIconCode,
         categoryIconFamily: entity.categoryIconFamily,
+        loanId: entity.loanId,
+        investmentWalletId: entity.investmentWalletId,
       );
 
   TransactionEntity toEntity() => TransactionEntity(
@@ -135,6 +150,8 @@ class TransactionModel {
     deletedAt: deletedAt != null ? DateTime.parse(deletedAt!) : null,
     categoryIconCode: categoryIconCode,
     categoryIconFamily: categoryIconFamily,
+    loanId: loanId,
+    investmentWalletId: investmentWalletId,
   );
 
   SyncMetadata get syncMetadata => SyncMetadata(
@@ -169,6 +186,8 @@ class TransactionModel {
       syncStatus: metadata.status.name,
       lastSyncedAt: metadata.lastSyncedAt,
       lastModifiedAt: metadata.lastModifiedAt,
+      loanId: loanId,
+      investmentWalletId: investmentWalletId,
     );
   }
 
@@ -186,6 +205,8 @@ class TransactionModel {
       'transferId': transferId,
       'categoryIconCode': categoryIconCode,
       'categoryIconFamily': categoryIconFamily,
+      'loanId': loanId,
+      'investmentWalletId': investmentWalletId,
     };
   }
 
@@ -216,6 +237,8 @@ class TransactionModel {
       syncStatus: SyncStatus.synced.name,
       lastSyncedAt: parsedModifiedAt,
       lastModifiedAt: parsedModifiedAt,
+      loanId: data['loanId'] as String?,
+      investmentWalletId: data['investmentWalletId'] as String?,
     );
   }
 }

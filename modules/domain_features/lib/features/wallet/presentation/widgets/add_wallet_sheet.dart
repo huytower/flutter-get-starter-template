@@ -1,17 +1,21 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
+import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
-import '../get_x/wallet_controller.dart';
+import '../get_x/add_wallet_sheet_controller.dart';
 
+/// Bottom sheet for creating a new wallet, or editing an existing one when
+/// [wallet] is provided. Shared by the Wallets tab and Budget Allocation's
+/// "add wallet" entry point.
 class AddWalletSheet extends StatefulWidget {
   const AddWalletSheet({super.key, this.wallet});
 
@@ -22,196 +26,121 @@ class AddWalletSheet extends StatefulWidget {
 }
 
 class _AddWalletSheetState extends State<AddWalletSheet> {
-  late final TextEditingController _nameController;
-  final _controller = Get.find<WalletController>();
-
-  String _amountStr = '0';
-  bool _showKeypad = false;
-  final _amountFieldKey = GlobalKey();
-
-  String _newType = WalletType.bank;
-
-  bool get _isEditing => widget.wallet != null;
-
-  bool get _isCash => widget.wallet?.type == WalletType.cash;
-
-  bool get _balanceLocked =>
-      _isEditing && _controller.walletHasTransactions(widget.wallet!.id);
-
-  bool get _isValid => _nameController.text.trim().isNotEmpty;
-
-  Color get _accent => context.ccColorScheme.primary;
+  late final AddWalletSheetController _controller;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.wallet?.name ?? '');
-    _nameController.addListener(() => setState(() {}));
-    if (_isEditing) {
-      _amountStr = _controller.bookBalanceOf(widget.wallet!.id).toString();
-    }
+    _controller = Get.put(getIt<AddWalletSheetController>());
+    _controller.init(widget.wallet);
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
+    Get.delete<AddWalletSheetController>();
     super.dispose();
   }
 
-  void _onKeyPress(String key) {
-    setState(() {
-      if (_amountStr == '0') {
-        if (key != '0' && key != '000') {
-          _amountStr = key;
-        }
-      } else {
-        _amountStr += key;
-      }
-    });
-  }
-
-  void _onDelete() {
-    setState(() {
-      if (_amountStr.length > 1) {
-        _amountStr = _amountStr.substring(0, _amountStr.length - 1);
-      } else {
-        _amountStr = '0';
-      }
-    });
-  }
-
-  void _onAmountTap() {
-    FocusScope.of(context).unfocus();
-    setState(() => _showKeypad = true);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ctx = _amountFieldKey.currentContext;
-      if (ctx != null) {
-        Scrollable.ensureVisible(
-          ctx,
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeOut,
-        );
-      }
-    });
-  }
-
-  void _onSave() async {
-    final name = _nameController.text.trim();
-    final balance = int.tryParse(_amountStr) ?? 0;
-
-    if (_isEditing) {
-      final original = widget.wallet!;
-      await _controller.updateWallet(
-        WalletEntity(
-          id: original.id,
-          name: name,
-          balance: balance,
-          iconCode: original.iconCode,
-          type: original.type,
-          createdAt: original.createdAt,
-        ),
-      );
-    } else {
-      await _controller.addWallet(
-        name: name,
-        initialBalance: balance,
-        iconCode: walletIconFor(_newType).codePoint,
-        type: _newType,
-      );
-    }
-
-    if (mounted) {
-      Navigator.pop(context);
-      CcSnackBarHelper.showSuccessSnackBar(
-        context: context,
-        message: _isEditing
-            ? el.tr(CcLocaleKeys.wallet_updated_success)
-            : el.tr(CcLocaleKeys.wallet_added_success),
-      );
-    }
-  }
+  Color get _accent => context.ccColorScheme.primary;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () {
-            if (_showKeypad) setState(() => _showKeypad = false);
-          },
-          child: Container(
-            padding: EdgeInsets.only(
-              left: context.respPadding(CcPaddingParams.SPACE_LG),
-              right: context.respPadding(CcPaddingParams.SPACE_LG),
-              top: context.respPadding(CcPaddingParams.SPACE_LG),
-              bottom:
-                  (_showKeypad ? 0 : MediaQuery.of(context).viewInsets.bottom) +
-                  context.respPadding(CcPaddingParams.SPACE_LG),
-            ),
-            decoration: BoxDecoration(
-              color: context.ccColorScheme.surface,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
+    return Obx(
+      () => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              if (_controller.showKeypad.value) _controller.hideKeypad();
+            },
+            child: Container(
+              padding: EdgeInsets.only(
+                left: context.respPadding(CcPaddingParams.SPACE_LG),
+                right: context.respPadding(CcPaddingParams.SPACE_LG),
+                top: context.respPadding(CcPaddingParams.SPACE_LG),
+                bottom:
+                    (_controller.showKeypad.value
+                        ? 0
+                        : MediaQuery.of(context).viewInsets.bottom) +
+                    context.respPadding(CcPaddingParams.SPACE_LG),
+              ),
+              decoration: BoxDecoration(
+                color: context.ccColorScheme.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: _buildSheetContent(context, _controller),
               ),
             ),
-            child: SingleChildScrollView(child: _buildSheetContent(context)),
           ),
-        ),
-        if (_showKeypad)
-          SafeArea(
-            top: false,
-            child: MoneyKeypadPanel(
-              onKeyPress: _onKeyPress,
-              onDelete: _onDelete,
-              onClear: () => setState(() => _amountStr = '0'),
-              suggestions: MoneyConstants.walletQuickAmounts,
-              onSuggestion: (value) =>
-                  setState(() => _amountStr = value.toString()),
-              onDone: () => setState(() => _showKeypad = false),
-              activeColor: _accent,
+          if (_controller.showKeypad.value)
+            SafeArea(
+              top: false,
+              child: MoneyKeypadPanel(
+                onKeyPress: _controller.handleKeyPress,
+                onDelete: _controller.handleDelete,
+                onClear: () => _controller.amountStr.value = '0',
+                suggestions: MoneyConstants.walletQuickAmounts,
+                onSuggestion: (value) =>
+                    _controller.amountStr.value = value.toString(),
+                onDone: _controller.hideKeypad,
+                activeColor: _accent,
+              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildSheetContent(BuildContext context) {
+  Widget _buildSheetContent(
+    BuildContext context,
+    AddWalletSheetController controller,
+  ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildTitle(context),
+        _buildTitle(context, controller),
         const CcSpaceSM(),
-        if (!_isEditing) ...[_buildTypeSelector(context), const CcSpaceMD()],
-        _buildNameField(),
+        if (!controller.isEditing) ...[
+          _buildTypeSelector(context, controller),
+          if (controller.showEmergencyFundLockedHint.value) ...[
+            const CcSpaceXS(),
+            _buildEmergencyFundLockedHint(context, controller),
+          ],
+          const CcSpaceMD(),
+        ],
+        _buildNameField(controller),
         const CcSpaceMD(),
-        if (_balanceLocked)
-          _buildLockedBalance(context)
+        if (controller.balanceLocked)
+          _buildLockedBalance(context, controller)
         else
-          _buildAmountSection(context),
+          _buildAmountSection(context, controller),
         const CcSpaceMD(),
-        _buildSaveButton(context),
+        _buildSaveButton(context, controller),
       ],
     );
   }
 
-  Widget _buildTitle(BuildContext context) {
+  Widget _buildTitle(BuildContext context, AddWalletSheetController controller) {
     return CcText(
-      _isEditing
+      controller.isEditing
           ? el.tr(CcLocaleKeys.wallet_edit_title)
           : el.tr(CcLocaleKeys.wallet_add_title),
       textStyle: context.ccTextTheme.headlineSmall?.copyWith(
-        fontWeight: FontWeight.bold,
+        fontWeight: CcTypographyParams.bold,
         color: context.ccColorScheme.primary,
       ),
     );
   }
 
-  Widget _buildNameField() {
+  Widget _buildNameField(AddWalletSheetController controller) {
     return TextField(
-      controller: _nameController,
+      controller: controller.nameController,
+      maxLength: 20,
       decoration: InputDecoration(
         labelText: el.tr(CcLocaleKeys.wallet_name),
         hintText: el.tr(CcLocaleKeys.wallet_name_hint),
@@ -220,27 +149,30 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
     );
   }
 
-  Widget _buildAmountSection(BuildContext context) {
+  Widget _buildAmountSection(
+    BuildContext context,
+    AddWalletSheetController controller,
+  ) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
         CcAmountInputSection(
           key: const Key('wallet_balance'),
           label: el.tr(CcLocaleKeys.wallet_initial_balance),
-          amountStr: _amountStr,
+          amountStr: controller.amountStr.value,
           quickAmounts: MoneyConstants.walletQuickAmounts,
-          isKeypadVisible: _showKeypad,
+          isKeypadVisible: controller.showKeypad.value,
           activeColor: _accent,
-          fieldKey: _amountFieldKey,
-          onTap: _onAmountTap,
+          fieldKey: controller.amountFieldKey,
+          onTap: () => controller.showKeypadAndScroll(context),
           onQuickAmountSelected: (amount) =>
-              setState(() => _amountStr = amount.toString()),
+              controller.amountStr.value = amount.toString(),
         ),
         if (Get.isRegistered<GuidelineController>())
           Obx(() {
             final guideline = Get.find<GuidelineController>();
             final showing =
-                guideline.isTaskActive('reconcile_wallet') && _isCash;
+                guideline.isTaskActive('reconcile_wallet') && controller.isCash;
             return Positioned(
               top: 0,
               right: 0,
@@ -256,14 +188,19 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
     );
   }
 
-  Widget _buildSaveButton(BuildContext context) {
+  Widget _buildSaveButton(
+    BuildContext context,
+    AddWalletSheetController controller,
+  ) {
     return Center(
       child: FractionallySizedBox(
-        widthFactor: 0.4,
+        widthFactor: 0.6,
         child: SizedBox(
           height: context.respDim(40),
           child: ElevatedButton(
-            onPressed: _isValid ? _onSave : null,
+            onPressed: controller.isNameValid.value
+                ? () => controller.save(context)
+                : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: context.ccColorScheme.primary,
               shape: RoundedRectangleBorder(
@@ -276,7 +213,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: context.ccColorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
+                fontWeight: CcTypographyParams.bold,
               ),
             ),
           ),
@@ -285,7 +222,12 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
     );
   }
 
-  Widget _buildLockedBalance(BuildContext context) {
+  /// Read-only display for a balance that can no longer be edited (a wallet
+  /// that already has transactions).
+  Widget _buildLockedBalance(
+    BuildContext context,
+    AddWalletSheetController controller,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -293,7 +235,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           el.tr(CcLocaleKeys.wallet_initial_balance),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold,
+            fontWeight: CcTypographyParams.bold,
           ),
         ),
         const CcSpaceXS(),
@@ -309,11 +251,11 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           ),
           alignment: Alignment.center,
           child: CcText(
-            '${TransactionFormHelpers.formatAmount(_amountStr)} đ',
+            '${TransactionFormHelpers.formatAmount(controller.amountStr.value)} đ',
             align: Alignment.center,
             textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: CcTypographyParams.bold,
               color: context.ccColorScheme.primary,
             ),
           ),
@@ -322,63 +264,124 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         CcText(
           el.tr(CcLocaleKeys.wallet_balance_locked_hint),
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
-            color: CcBaseColors.gray500,
+            color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.6),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildTypeSelector(BuildContext context) {
+  Widget _buildEmergencyFundLockedHint(
+    BuildContext context,
+    AddWalletSheetController controller,
+  ) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(12),
+        vertical: context.respPadding(10),
+      ),
+      decoration: BoxDecoration(
+        color: context.ccColorScheme.onSurface.withAlpha(10),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.lock_outline_rounded,
+            size: context.respIconSize(baseSize: 18),
+            color: _accent,
+          ),
+          const CcSpaceXS(),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CcText(
+                  el.tr(CcLocaleKeys.wallet_emergency_fund_locked_hint),
+                  textStyle: context.ccTextTheme.bodySmall,
+                ),
+                const CcSpaceXS(),
+                CcInkWell(
+                  onTap: () => controller.openEmergencyFundEbook(context),
+                  child: CcText(
+                    el.tr(CcLocaleKeys.wallet_emergency_fund_view_ebook),
+                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                      color: _accent,
+                      fontWeight: CcTypographyParams.bold,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTypeSelector(
+    BuildContext context,
+    AddWalletSheetController controller,
+  ) {
     final options = [
       (WalletType.bank, el.tr(CcLocaleKeys.wallet_bank)),
       (WalletType.ewallet, el.tr(CcLocaleKeys.wallet_ewallet)),
+      (WalletType.emergencyFund, el.tr(CcLocaleKeys.wallet_emergency_fund)),
     ];
-    return Row(
-      children: options.map((option) {
-        final (type, label) = option;
-        final isSelected = _newType == type;
-        return Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: GestureDetector(
-            onTap: () => setState(() => _newType = type),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? context.ccColorScheme.primary
-                    : context.ccColorScheme.surfaceVariant,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    walletIconFor(type),
-                    size: 16,
-                    color: isSelected
-                        ? context.ccColorScheme.onPrimary
-                        : context.ccColorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 6),
-                  CcText(
-                    label,
-                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: options.map((option) {
+          final (type, label) = option;
+          final isSelected = controller.newType.value == type;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: CcInkWell(
+              onTap: () => controller.selectType(type),
+              borderRadius: BorderRadius.circular(20),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? context.ccColorScheme.primary
+                      : context.ccColorScheme.surfaceVariant,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      walletIconFor(type),
+                      size: 16,
                       color: isSelected
                           ? context.ccColorScheme.onPrimary
                           : context.ccColorScheme.onSurfaceVariant,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 6),
+                    CcText(
+                      label,
+                      textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                        color: isSelected
+                            ? context.ccColorScheme.onPrimary
+                            : context.ccColorScheme.onSurfaceVariant,
+                        fontWeight: isSelected
+                            ? CcTypographyParams.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 }

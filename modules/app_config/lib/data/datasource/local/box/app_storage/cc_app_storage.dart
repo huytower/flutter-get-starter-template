@@ -73,8 +73,62 @@ class CcAppStorage extends HiveObject {
   @HiveField(10)
   bool? isDarkMode;
 
+  /// Ids of qltc's guideline onboarding tasks (birth_year, categories,
+  /// wallet_balance, ...) already completed by the user.
+  ///
+  /// Kept at field 11 — this predates the fields below and some installs
+  /// already persisted data under this field number, so it must not move.
   @HiveField(11)
   List<String>? completedGuidelineTaskIds;
+
+  /// Timestamp of the last time the user changed [weeklyAuditDayIndex].
+  /// Used to reset user-level streak progress when the audit day changes.
+  @HiveField(12)
+  DateTime? weeklyAuditDayChangedAt;
+
+  /// Stamped once, the first time the user-level feature reads settings.
+  /// User-level progress (reconciliation streaks etc.) only counts data
+  /// from this point forward, so pre-existing dev/test data can't grant
+  /// an instant level.
+  @HiveField(13)
+  DateTime? levelFeatureAnchorAt;
+
+  /// Manual VIP flag (no real IAP/store billing infra exists yet).
+  @HiveField(14)
+  bool? isVip;
+
+  /// Debug/QA override — when true, the user-level feature reports LV3
+  /// (all features unlocked) regardless of actual reconciliation/budget/
+  /// cash-flow progress. Independent of [isVip], which only lifts item caps.
+  @HiveField(15)
+  bool? forceFullAccess;
+
+  /// Highest LV1-3 user level ever computed. Level is monotonic — never
+  /// decreases once reached — so this floor is re-applied on every
+  /// recomputation even if the live signals (streak/budgets/cash-flow)
+  /// later regress.
+  @HiveField(16)
+  int? highestUserLevelReached;
+
+  /// Stamped once, the first time settings are ever read on this install.
+  /// Anchors the "2 weeks after install" Cloud-backup reminder.
+  @HiveField(17)
+  DateTime? firstLaunchAt;
+
+  /// Stamped once the Cloud-backup registration reminder has been shown, so
+  /// it only ever fires a single time per install.
+  @HiveField(18)
+  DateTime? cloudBackupReminderSentAt;
+
+  /// Stamped once the user has opened the Emergency Fund ebook — one of the
+  /// two conditions (with LV2) that unlocks the Emergency Fund wallet type.
+  @HiveField(19)
+  bool? hasViewedEmergencyFundEbook;
+
+  /// Stamped once the first-launch tutorial has been shown (or replayed —
+  /// re-running it via "Xem hướng dẫn lại" doesn't unset this).
+  @HiveField(20)
+  bool? hasSeenTutorial;
 
   CcAppStorage({
     this.accessToken,
@@ -89,5 +143,14 @@ class CcAppStorage extends HiveObject {
     this.birthYear,
     this.isDarkMode,
     this.completedGuidelineTaskIds,
+    this.weeklyAuditDayChangedAt,
+    this.levelFeatureAnchorAt,
+    this.isVip,
+    this.forceFullAccess,
+    this.highestUserLevelReached,
+    this.firstLaunchAt,
+    this.cloudBackupReminderSentAt,
+    this.hasViewedEmergencyFundEbook,
+    this.hasSeenTutorial,
   });
 }

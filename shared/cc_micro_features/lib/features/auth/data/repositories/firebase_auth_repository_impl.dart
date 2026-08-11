@@ -240,6 +240,26 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
     });
   }
 
+  @override
+  Future<Result<CcUserEntity, CcFailure>> updateDisplayName(
+    String name,
+  ) async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user == null) {
+        return const Error(UnauthorizedFailure('Login failed'));
+      }
+      await user.updateDisplayName(name);
+      await user.reload();
+      final refreshed = _firebaseAuth.currentUser ?? user;
+      return Success(_mapFirebaseUserToEntity(refreshed));
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return Error(ServerFailure(e.message ?? 'Server error'));
+    } catch (e) {
+      return const Error(UnknownFailure('An error occurred'));
+    }
+  }
+
   Future<Result<CcUserEntity, CcFailure>> _signInWithCredential(
     firebase_auth.AuthCredential credential,
   ) async {
@@ -256,6 +276,115 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       return Error(ServerFailure(e.message ?? 'Server error'));
     } catch (e) {
       return const Error(UnknownFailure('An error occurred'));
+    }
+  }
+
+  @override
+  Future<Result<CcUserEntity, CcFailure>> linkWithGoogle() async {
+    try {
+      'Initializing Google Sign In for linking'.Log('FirebaseAuthRepository');
+      await _googleSignIn.initialize();
+      final googleUser = await _googleSignIn.authenticate();
+      final googleAuth = googleUser.authentication;
+
+      final credential = firebase_auth.GoogleAuthProvider.credential(
+        accessToken: null,
+        idToken: googleAuth.idToken,
+      );
+
+      return _linkWithCredential(credential);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return Error(_mapLinkException(e));
+    } catch (e) {
+      'Link with Google error: $e'.Log('FirebaseAuthRepository');
+      return const Error(UnknownFailure('An error occurred'));
+    }
+  }
+
+  @override
+  Stream<PhoneAuthStatus> verifyPhoneNumberForLinking({
+    required String phoneNumber,
+  }) {
+    final controller = StreamController<PhoneAuthStatus>();
+
+    void onStatus(PhoneAuthStatus status) {
+      if (!controller.isClosed) {
+        controller.add(status);
+        if (status is PhoneAuthStatusCompleted ||
+            status is PhoneAuthStatusFailed ||
+            status is PhoneAuthStatusAutoRetrievalTimeout) {
+          controller.close();
+        }
+      }
+    }
+
+    _firebaseAuth.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      verificationCompleted: (credential) async {
+        // Link, not sign in — auto-retrieval must not replace the session.
+        final result = await _linkWithCredential(credential);
+        result.when(
+          (u) => onStatus(PhoneAuthStatusCompleted(u)),
+          (f) => onStatus(PhoneAuthStatusFailed(f)),
+        );
+      },
+      verificationFailed: (e) => onStatus(
+        PhoneAuthStatusFailed(ServerFailure(e.message ?? _serverError)),
+      ),
+      codeSent: (id, token) => onStatus(PhoneAuthStatusCodeSent(id, token)),
+      codeAutoRetrievalTimeout: (id) =>
+          onStatus(PhoneAuthStatusAutoRetrievalTimeout(id)),
+    );
+
+    return controller.stream;
+  }
+
+  @override
+  Future<Result<CcUserEntity, CcFailure>> linkWithPhoneNumber({
+    required String verificationId,
+    required String smsCode,
+  }) {
+    return _linkWithCredential(
+      firebase_auth.PhoneAuthProvider.credential(
+        verificationId: verificationId,
+        smsCode: smsCode,
+      ),
+    );
+  }
+
+  Future<Result<CcUserEntity, CcFailure>> _linkWithCredential(
+    firebase_auth.AuthCredential credential,
+  ) async {
+    try {
+      final current = _firebaseAuth.currentUser;
+      if (current == null) {
+        return const Error(UnauthorizedFailure('Login failed'));
+      }
+      final userCredential = await current.linkWithCredential(credential);
+      final user = userCredential.user ?? current;
+      return Success(_mapFirebaseUserToEntity(user));
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return Error(_mapLinkException(e));
+    } catch (e) {
+      'Link with credential error: $e'.Log('FirebaseAuthRepository');
+      return const Error(UnknownFailure('An error occurred'));
+    }
+  }
+
+  /// Firebase's two standard linking-specific error codes get clearer
+  /// messages; everything else falls back to the generic server message.
+  CcFailure _mapLinkException(firebase_auth.FirebaseAuthException e) {
+    switch (e.code) {
+      case 'credential-already-in-use':
+        return const ServerFailure(
+          'This account is already linked to a different user.',
+        );
+      case 'provider-already-linked':
+        return const ServerFailure(
+          'This account is already linked.',
+        );
+      default:
+        return ServerFailure(e.message ?? 'Server error');
     }
   }
 
@@ -283,6 +412,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       createdAt: user.metadata.creationTime ?? DateTime.now(),
       updatedAt: user.metadata.lastSignInTime ?? DateTime.now(),
       lastActiveAt: user.metadata.lastSignInTime,
+      linkedProviderIds: user.providerData.map((p) => p.providerId).toList(),
     );
   }
 

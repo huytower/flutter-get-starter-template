@@ -46,7 +46,7 @@ class BudgetPreviewSection extends StatelessWidget {
                     () => Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        GestureDetector(
+                        CcInkWell(
                           onTap: () => _openAddBudget(context),
                           child: const CcIconToken(
                             Icons.add_circle_outline_rounded,
@@ -68,7 +68,7 @@ class BudgetPreviewSection extends StatelessWidget {
                     ),
                   ),
                   const CcSpaceSM(),
-                  GestureDetector(
+                  CcInkWell(
                     onTap: () => context.router.push(const BudgetLimitRoute()),
                     child: CcText(
                       el.tr(CcLocaleKeys.budget_see_all),

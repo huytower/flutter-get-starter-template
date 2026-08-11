@@ -30,6 +30,10 @@ class HiveRegistrar {
     Hive.registerAdapter(ReconciliationAllocationModelAdapter());
     Hive.registerAdapter(ReconciliationModelAdapter());
 
+    // Register Loan adapters (record + nested installment)
+    Hive.registerAdapter(LoanInstallmentModelAdapter());
+    Hive.registerAdapter(LoanModelAdapter());
+
     // Add other feature adapters here as needed
   }
 }

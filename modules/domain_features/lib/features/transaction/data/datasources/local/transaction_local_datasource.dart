@@ -43,8 +43,15 @@ class TransactionLocalDataSource {
   Future<void> softDeleteByWallet(String walletId, DateTime deletedAt) async {
     final box = await _box;
     final iso = deletedAt.toIso8601String();
+    // Also matches investmentWalletId so deleting an investment position
+    // soft-deletes its Thu vào records too, even though those now live on a
+    // liquid wallet's walletId rather than the position's.
     final targets = box.values
-        .where((m) => m.walletId == walletId && m.deletedAt == null)
+        .where(
+          (m) =>
+              (m.walletId == walletId || m.investmentWalletId == walletId) &&
+              m.deletedAt == null,
+        )
         .toList();
     for (final model in targets) {
       final id = model.id;

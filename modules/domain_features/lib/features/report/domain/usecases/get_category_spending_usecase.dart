@@ -21,6 +21,7 @@ class GetCategorySpendingUseCase {
   Future<Result<List<CategorySpendingEntity>, CcFailure>> call({
     required DateTime start,
     required DateTime end,
+    String? walletId,
   }) async {
     final txnResult = await _transactionRepository.getTransactionsByPeriod(
       start,
@@ -42,6 +43,7 @@ class GetCategorySpendingUseCase {
     final totals = <String, int>{};
     for (final t in txnResult.tryGetSuccess()!) {
       if (t.type != 'expense') continue;
+      if (walletId != null && t.walletId != walletId) continue;
       totals.update(
         t.categoryId,
         (value) => value + t.amount,

@@ -10,12 +10,16 @@ import '../cubit/web_cubit.dart';
 
 @RoutePage()
 class WebPage extends StatelessWidget {
-  const WebPage({super.key});
+  const WebPage({super.key, this.url});
+
+  /// Overrides the loaded page — omit to keep the cubit's current/default
+  /// url (existing behavior unchanged).
+  final String? url;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<WebCubit>()..initController(),
+      create: (context) => getIt<WebCubit>()..initController(url: url),
       child: const WebView(),
     );
   }

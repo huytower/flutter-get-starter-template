@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../firestore/presentation/widgets/sync_status_icon.dart';
 import '../get_x/transaction_controller.dart';
 import 'transaction_wallet_summary.dart';
 
@@ -149,6 +150,8 @@ class TransactionPageHeader extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        const SyncStatusIcon(),
+        const CcSpaceXS(),
         _buildSubmitButton(context),
         const CcSpaceXS(),
         _buildReportButton(context),

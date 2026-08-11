@@ -53,7 +53,7 @@ class BudgetWalletsSection extends StatelessWidget {
                     () => Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        GestureDetector(
+                        CcInkWell(
                           onTap: onAddWallet,
                           child: const CcIconToken(
                             Icons.add_circle_outline_rounded,
@@ -74,7 +74,7 @@ class BudgetWalletsSection extends StatelessWidget {
                     ),
                   ),
                   const CcSpaceSM(),
-                  GestureDetector(
+                  CcInkWell(
                     onTap: () => context.router.push(const WalletListRoute()),
                     child: CcText(
                       el.tr(CcLocaleKeys.wallet_see_all),

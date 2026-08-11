@@ -32,8 +32,9 @@ class CategoryChip extends StatelessWidget {
         ? primary
         : context.ccColorScheme.onSurfaceVariant;
 
-    return GestureDetector(
+    return CcInkWell(
       onTap: onTap,
+      borderRadius: context.brXl,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         padding: EdgeInsets.symmetric(

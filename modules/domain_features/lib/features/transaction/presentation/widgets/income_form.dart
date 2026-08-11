@@ -17,11 +17,22 @@ import 'transaction_submit_button.dart';
 import 'transaction_wallet_selector.dart';
 
 class IncomeForm extends StatelessWidget {
-  const IncomeForm({super.key});
+  const IncomeForm({super.key, this.tag});
+
+  /// GetX tag for the underlying [IncomeFormController] instance. Leave null
+  /// for the persistent entry-tab form; pass a distinct tag (e.g. from
+  /// [EditTransactionSheet]) to get an isolated instance so editing an old
+  /// transaction never touches the entry tab's in-progress draft.
+  final String? tag;
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<IncomeFormController>();
+    // See ExpenseForm.build() for why untagged vs. tagged resolve
+    // differently: the untagged instance is pre-registered by
+    // TransactionController.onInit(), the tagged edit-mode instance isn't.
+    final controller = tag == null
+        ? Get.find<IncomeFormController>()
+        : Get.put(getIt<IncomeFormController>(), tag: tag);
     final guideline = Get.find<GuidelineController>();
 
     const accentColor = PrjColors.success;
@@ -76,7 +87,8 @@ class IncomeForm extends StatelessWidget {
       key: ValueKey(controller.categoryKey.value),
       type: CategoryType.income,
       activeColor: accentColor,
-      autoSelectFirst: true,
+      autoSelectFirst: !controller.isEditing,
+      initialSelectedCategoryId: controller.editingTransaction?.categoryId,
       onCategorySelected: controller.setCategory,
     );
   }

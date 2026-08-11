@@ -35,6 +35,20 @@ class CategoryLocalDataSource {
         }
       }
       if (updates.isNotEmpty) await box.putAll(updates);
+
+      // Debt/Loan taxonomy rework: these ids were dropped from the seed
+      // (duplicated other debt items) but never get cleaned up by the loop
+      // above, since it only ever visits current seed ids. Delete them so
+      // existing installs stop seeing them in the transaction category
+      // picker, which filters by type/isEnabled only (not groupId).
+      // 'd7' is included here rather than reused: pre-rework it was a single
+      // generic "Debt Other" shared by both borrow and lend transactions, so
+      // it can't be safely reassigned to either group's new id-matched seed
+      // entry without silently reclassifying existing users' transactions.
+      const staleIds = ['c15', 'c32', 'c33', 'd7'];
+      for (final id in staleIds) {
+        if (box.containsKey(id)) await box.delete(id);
+      }
     }
     return box;
   }

@@ -7,13 +7,17 @@ import 'profile_level_badge.dart';
 class ProfileHeader extends StatelessWidget {
   final CcUserEntity? user;
   final String displayName;
+  final int level;
   final VoidCallback? onTap;
+  final VoidCallback? onEditName;
 
   const ProfileHeader({
     super.key,
     required this.user,
     required this.displayName,
+    required this.level,
     this.onTap,
+    this.onEditName,
   });
 
   @override
@@ -28,8 +32,9 @@ class ProfileHeader extends StatelessWidget {
         ? ''
         : rawSubtitle;
 
-    return GestureDetector(
+    return CcInkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.zero,
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -69,12 +74,34 @@ class ProfileHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      CcText(
-                        displayName,
-                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                          color: context.ccColorScheme.onPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: CcText(
+                              displayName,
+                              textStyle: context.ccTextTheme.titleMedium
+                                  ?.copyWith(
+                                    color: context.ccColorScheme.onPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (user != null && onEditName != null) ...[
+                            const CcSpaceXS(),
+                            CcInkWell(
+                              onTap: onEditName,
+                              child: Icon(
+                                Icons.edit_rounded,
+                                size: context.respIconSize(baseSize: 16),
+                                color: context.ccColorScheme.onPrimary
+                                    .withOpacity(0.85),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                       if (subtitle.isNotEmpty) ...[
                         const CcSpaceXS(),
@@ -90,7 +117,7 @@ class ProfileHeader extends StatelessWidget {
                     ],
                   ),
                 ),
-                const ProfileLevelBadge('LV1'),
+                ProfileLevelBadge('LV$level'),
               ],
             ),
           ),

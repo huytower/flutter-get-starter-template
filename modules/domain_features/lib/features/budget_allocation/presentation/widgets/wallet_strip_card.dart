@@ -29,31 +29,34 @@ class WalletStripCard extends StatelessWidget {
 
     return HorizontalFadeScrollView(
       height: context.respDim(110),
-      builder: (scrollController) => Obx(
-        () => ListView.builder(
-          scrollDirection: Axis.horizontal,
-          controller: scrollController,
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-            vertical: context.respDim(8),
-          ),
-          itemCount: wallets.length,
-          itemBuilder: (context, index) {
-            final wallet = wallets[index];
-            return Padding(
-              padding: EdgeInsets.only(right: context.respDim(12)),
-              child: Obx(
-                () => _WalletCard(
-                  wallet: wallet,
-                  balance: controller.isBalanceVisible.value
-                      ? controller.bookBalanceOf(wallet.id)
-                      : null,
-                  onMore: () => onMore(wallet),
-                ),
-              ),
-            );
-          },
+      // No outer Obx here: `wallets` is a plain (already-resolved) list param,
+      // not an Rx read, and ListView.builder's itemBuilder runs lazily during
+      // layout — after an Obx callback's own synchronous scope closes — so
+      // wrapping the whole builder in one Obx tracks zero observables and
+      // throws "no observables found". Reactivity is handled per-card below.
+      builder: (scrollController) => ListView.builder(
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
+          vertical: context.respDim(8),
         ),
+        itemCount: wallets.length,
+        itemBuilder: (context, index) {
+          final wallet = wallets[index];
+          return Padding(
+            padding: EdgeInsets.only(right: context.respDim(12)),
+            child: Obx(
+              () => _WalletCard(
+                wallet: wallet,
+                balance: controller.isBalanceVisible.value
+                    ? controller.bookBalanceOf(wallet.id)
+                    : null,
+                onMore: () => onMore(wallet),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -72,9 +75,10 @@ class _WalletCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return CcInkWell(
       onTap: () => context.router.push(const WalletListRoute()),
       onLongPress: onMore,
+      borderRadius: context.brLg,
       child: Stack(
         clipBehavior: Clip.none,
         children: [

@@ -8,13 +8,21 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
+import '../../../loan/presentation/get_x/loan_form_controller.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
+import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import 'expense_form_controller.dart';
 import 'income_form_controller.dart';
+import 'investment_form_controller.dart';
+
+/// Which real tab a `TabBar`/`TabBarView` slot represents. The Investment
+/// and Debt/Loan slots only appear in [TransactionController.visibleTabs]
+/// once unlocked — see [UserLevelStatusEntity].
+enum TransactionTabKind { expense, income, investment, debtLoan }
 
 @injectable
 class TransactionController extends CcGetController {
@@ -22,13 +30,28 @@ class TransactionController extends CcGetController {
     this._repository,
     this._getWalletBalances,
     this._walletRepository,
+    this._userLevel,
   );
 
   final TransactionRepository _repository;
   final GetWalletBalancesUseCase _getWalletBalances;
   final WalletRepository _walletRepository;
+  final UserLevelController _userLevel;
 
   final RxInt selectedTabIndex = 0.obs;
+
+  /// Tabs currently visible, in display order. Investment/Debt-Loan only
+  /// appear once unlocked (LV2/LV3) — see [UserLevelStatusEntity]. Read once
+  /// at page-mount time by `transaction_page.dart`'s `DefaultTabController`
+  /// (the page fully remounts on every visit, so a level unlocked elsewhere
+  /// is always reflected on the next visit without needing a mid-session
+  /// resize of that fixed-length TabController).
+  List<TransactionTabKind> get visibleTabs => [
+    TransactionTabKind.expense,
+    TransactionTabKind.income,
+    if (_userLevel.status.value.canUseInvestment) TransactionTabKind.investment,
+    if (_userLevel.status.value.canUseDebtLoan) TransactionTabKind.debtLoan,
+  ];
 
   /// True when the page header should be auto-hidden (scrolled down, or a
   /// keypad / soft keyboard is visible).
@@ -92,10 +115,12 @@ class TransactionController extends CcGetController {
   Future<void> refreshWalletTotal() async {
     final result = await _getWalletBalances();
     result.when((balances) {
-      walletTotal.value = balances.fold<int>(
-        0,
-        (sum, b) => sum + b.bookBalance,
-      );
+      // Investment positions aren't spendable cash, so they're excluded from
+      // the "Ví" total shown in the header — matches [_liquidOnly] in
+      // TransactionFormController.
+      walletTotal.value = balances
+          .where((b) => b.wallet.type != WalletType.investment)
+          .fold<int>(0, (sum, b) => sum + b.bookBalance);
     }, (_) {});
   }
 
@@ -114,15 +139,27 @@ class TransactionController extends CcGetController {
   }
 
   void submitCurrentForm(BuildContext context) {
-    switch (selectedTabIndex.value) {
-      case 0:
+    final tabs = visibleTabs;
+    if (selectedTabIndex.value >= tabs.length) return;
+    switch (tabs[selectedTabIndex.value]) {
+      case TransactionTabKind.expense:
         if (Get.isRegistered<ExpenseFormController>()) {
           Get.find<ExpenseFormController>().submitForm(context);
         }
         break;
-      case 1:
+      case TransactionTabKind.income:
         if (Get.isRegistered<IncomeFormController>()) {
           Get.find<IncomeFormController>().submitForm(context);
+        }
+        break;
+      case TransactionTabKind.investment:
+        if (Get.isRegistered<InvestmentFormController>()) {
+          Get.find<InvestmentFormController>().submitForm(context);
+        }
+        break;
+      case TransactionTabKind.debtLoan:
+        if (Get.isRegistered<LoanFormController>()) {
+          Get.find<LoanFormController>().submitForm(context);
         }
         break;
     }

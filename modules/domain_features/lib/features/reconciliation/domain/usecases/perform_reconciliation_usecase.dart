@@ -4,6 +4,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
+import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../entities/reconciliation_allocation_entity.dart';
 import '../entities/reconciliation_entity.dart';
@@ -39,7 +40,16 @@ class PerformReconciliationUseCase {
     if (balancesResult.isError()) {
       return Error(balancesResult.tryGetError()!);
     }
-    final balances = balancesResult.tryGetSuccess()!;
+    // Investment positions are excluded: "Thu vào" now credits a real
+    // liquid wallet directly (see CreateInvestmentTransactionUseCase), so an
+    // investment wallet's own book balance is just cumulative contributed
+    // capital (cost basis) — nothing real ever lands there to physically
+    // count or mismatch. The Emergency Fund, by contrast, is a real
+    // user-managed wallet like cash/bank and stays reconciled normally.
+    final balances = balancesResult
+        .tryGetSuccess()!
+        .where((b) => b.wallet.type != WalletType.investment)
+        .toList();
 
     final now = DateTime.now();
     final stamp = now.microsecondsSinceEpoch;
@@ -69,7 +79,7 @@ class PerformReconciliationUseCase {
         final isSurplus = diff > 0;
         final adjustment = TransactionEntity(
           id: '${stamp}_${balance.wallet.id}',
-          type: isSurplus ? 'income' : 'expense',
+          type: isSurplus ? TransactionType.income : TransactionType.expense,
           amount: diff.abs(),
           category: 'Điều chỉnh khớp sổ',
           note: isSurplus

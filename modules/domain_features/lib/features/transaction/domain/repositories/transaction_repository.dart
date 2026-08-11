@@ -15,6 +15,11 @@ abstract class TransactionRepository {
     TransactionEntity transaction,
   );
 
+  /// Overwrites a previously recorded transaction (same [TransactionEntity.id]).
+  Future<Result<void, CcFailure>> updateTransaction(
+    TransactionEntity transaction,
+  );
+
   Future<Result<void, CcFailure>> deleteTransaction(String id);
 
   /// Soft-deletes every transaction (income and expense) of a wallet.
@@ -23,6 +28,11 @@ abstract class TransactionRepository {
   /// Transactions belonging to a wallet.
   Future<Result<List<TransactionEntity>, CcFailure>> getTransactionsByWallet(
     String walletId,
+  );
+
+  /// Transactions linked to a loan (initiation + repay/collect legs).
+  Future<Result<List<TransactionEntity>, CcFailure>> getTransactionsByLoan(
+    String loanId,
   );
 
   /// Transactions counting against a budget.
