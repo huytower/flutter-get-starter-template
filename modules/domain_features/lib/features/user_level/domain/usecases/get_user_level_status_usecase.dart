@@ -1,4 +1,3 @@
-import 'package:app_config/export_app_config.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:injectable/injectable.dart';
@@ -86,13 +85,6 @@ class GetUserLevelStatusUseCase {
     final completedGuidelineCount = settings.completedGuidelineTaskIds.length;
     final guidelineCompleted =
         completedGuidelineCount >= UserLevelStatusEntity.lv1RequiredGuidelines;
-
-    'UserLevelProgress Debug:\n'
-            '   Guideline IDs from Settings: ${settings.completedGuidelineTaskIds}\n'
-            '   Count: $completedGuidelineCount\n'
-            '   Streak: $streak\n'
-            '   Raw Storage IDs: ${CcAppStorage.instance.completedGuidelineTaskIds}'
-        .Log('GetUserLevelStatusUseCase');
 
     int level = 1;
     if (streak >= UserLevelStatusEntity.lv3RequiredStreak &&

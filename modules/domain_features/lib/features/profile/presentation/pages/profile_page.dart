@@ -40,8 +40,6 @@ class ProfilePage extends CcGetView<ProfileController> {
                 children: [
                   const CcSpaceMD(),
                   Obx(() {
-                    'Rebuilding ProfileHeader with user: ${controller.user.value?.id}'
-                        .Log('ProfilePage');
                     return Hero(
                       tag: 'profile_hero_banner',
                       child: ProfilePageHeader(
@@ -72,11 +70,13 @@ class ProfilePage extends CcGetView<ProfileController> {
                         const CcSpaceXL(),
                         Obx(
                           () => controller.isLoggedIn
-                              ? Column(
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    _buildLogoutButton(context),
-                                    const CcSpaceLG(),
                                     _buildDeleteAccountText(context),
+                                    const CcSpaceSM(),
+                                    _buildLogoutButton(context),
+                                    const CcSpaceMD(),
                                   ],
                                 )
                               : const SizedBox.shrink(),
@@ -282,14 +282,17 @@ class ProfilePage extends CcGetView<ProfileController> {
   }
 
   Widget _buildLogoutButton(BuildContext context) {
-    return CcBaseBtn(
+    return CcInkWell(
       onTap: () => controller.logout(context),
-      title: el.tr(CcLocaleKeys.auth_logout),
-      bgColor: [
-        context.ccColorScheme.surfaceContainerHighest,
-        context.ccColorScheme.surfaceContainerHighest,
-      ],
-      textColor: context.ccColorScheme.onSurface,
+      child: CcText(
+        el.tr(CcLocaleKeys.auth_logout),
+        textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+          color: context.ccColorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.w500,
+        ),
+        align: Alignment.center,
+        textAlign: TextAlign.center,
+      ),
     );
   }
 
@@ -299,7 +302,7 @@ class ProfilePage extends CcGetView<ProfileController> {
       child: CcText(
         el.tr(CcLocaleKeys.profile_delete_account),
         textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-          color: context.ccColorScheme.error,
+          color: context.ccColorScheme.onSurfaceVariant,
           fontWeight: FontWeight.w500,
         ),
         align: Alignment.center,

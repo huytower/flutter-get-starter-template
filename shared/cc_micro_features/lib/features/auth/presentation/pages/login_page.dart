@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -34,6 +35,8 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  bool get _isLinking => FirebaseAuth.instance.currentUser != null;
+
   @override
   Widget build(BuildContext context) {
     final isVietnamese = context.locale.languageCode == 'vi';
@@ -68,14 +71,21 @@ class _LoginViewState extends State<LoginView> {
                 child: LoginCardContent(
                   onPhoneLogin: () =>
                       getIt<AuthCoordinator>().navigateToPhoneAuth(context),
-                  loginTitle: isVietnamese ? 'Đăng nhập' : 'Login',
+                  loginTitle: isVietnamese
+                      ? (_isLinking ? 'Liên kết tài khoản' : 'Đăng nhập')
+                      : (_isLinking ? 'Link Account' : 'Login'),
                   phoneLoginTitle: isVietnamese
-                      ? 'Đăng nhập bằng số điện thoại'
-                      : 'Login with Phone Number',
+                      ? (_isLinking
+                          ? 'Liên kết số điện thoại'
+                          : 'Đăng nhập bằng số điện thoại')
+                      : (_isLinking
+                          ? 'Link Phone Number'
+                          : 'Login with Phone Number'),
                   agreeText: isVietnamese ? 'Tôi đồng ý với ' : 'I agree with ',
                   termsText: isVietnamese
                       ? 'Điều khoản dịch vụ'
                       : 'Term of Services',
+                  isLinking: _isLinking,
                 ),
               );
             },

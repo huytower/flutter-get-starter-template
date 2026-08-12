@@ -6,7 +6,9 @@ import '../../bloc/login_bloc.dart';
 import '../../bloc/login_event.dart';
 
 class LoginSocialButtons extends StatelessWidget {
-  const LoginSocialButtons({super.key});
+  const LoginSocialButtons({super.key, this.isLinking = false});
+
+  final bool isLinking;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,11 @@ class LoginSocialButtons extends StatelessWidget {
         CcSocialLoginBtn(
           type: SocialLoginType.google,
           onTap: () =>
-              context.read<LoginBloc>().add(const LoginWithGoogleStarted()),
+              context.read<LoginBloc>().add(
+                    isLinking
+                        ? const LinkWithGoogleStarted()
+                        : const LoginWithGoogleStarted(),
+                  ),
         ),
 
         const CcSpaceMD(),

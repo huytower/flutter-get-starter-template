@@ -395,15 +395,28 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       status = CcUserStatus.pendingVerification;
     }
 
+    // Parse display name for first/last name
+    String? firstName;
+    String? lastName;
+    final displayName = user.displayName;
+    if (displayName != null && displayName.isNotEmpty) {
+      final nameParts = displayName.trim().split(' ');
+      if (nameParts.length >= 2) {
+        firstName = nameParts.first;
+        lastName = nameParts.sublist(1).join(' ');
+      } else if (nameParts.length == 1) {
+        firstName = nameParts.first;
+        lastName = '';
+      }
+    }
+
     return CcUserEntity(
       id: user.uid,
       email: user.email ?? '',
       phoneNumber: user.phoneNumber,
       status: status,
-      firstName: user.displayName?.split(' ').first,
-      lastName: user.displayName?.contains(' ') == true
-          ? user.displayName?.split(' ').last
-          : null,
+      firstName: firstName ?? '',
+      lastName: lastName ?? '',
       avatarUrl: user.photoURL,
       isEmailVerified: user.emailVerified,
       isPhoneVerified: user.phoneNumber != null,

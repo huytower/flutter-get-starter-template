@@ -73,14 +73,7 @@ class ProfileController extends CcGetController {
 
     ever(user, (u) {
       if (u != null) {
-        'ProfileController user updated:\n'
-                '   ID: ${u.id}\n'
-                '   Email: ${u.email}\n'
-                '   Phone: ${u.phoneNumber}\n'
-                '   Name: ${u.firstName} ${u.lastName}'
-            .Log('ProfileController');
       } else {
-        'ProfileController user is now NULL'.Log('ProfileController');
       }
     });
     _load();
@@ -94,12 +87,6 @@ class ProfileController extends CcGetController {
       appVersion.value = await _deviceInfo.getAppVersion();
       unawaited(userLevel.refresh());
 
-      'ProfileController loaded settings - isDarkMode: ${s.isDarkMode}'.Log(
-        'ProfileController',
-      );
-
-      // Theme is already restored in main.dart from CcAppStorage
-      // Don't re-apply it here to avoid overriding user's current theme
       layoutStatus.value = CcLayoutStatus.success;
     } catch (e) {
       Catcher2.reportCheckedError(e, StackTrace.current);

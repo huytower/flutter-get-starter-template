@@ -15,6 +15,7 @@ class LoginCardContent extends StatefulWidget {
     this.phoneLoginTitle,
     this.termsText,
     this.agreeText,
+    this.isLinking = false,
   });
 
   final VoidCallback onPhoneLogin;
@@ -23,6 +24,7 @@ class LoginCardContent extends StatefulWidget {
   final String? phoneLoginTitle;
   final String? agreeText;
   final String? termsText;
+  final bool isLinking;
 
   @override
   State<LoginCardContent> createState() => _LoginCardContentState();
@@ -53,7 +55,9 @@ class _LoginCardContentState extends State<LoginCardContent> {
         const CcSpeechBubbleIcon(),
         const CcSpaceLG(),
         CcText(
-          widget.loginTitle ?? 'Login',
+          widget.isLinking
+              ? (widget.loginTitle ?? 'Link Account')
+              : (widget.loginTitle ?? 'Login'),
           textStyle: context.ccTextTheme.headlineMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: context.ccColorScheme.onSurface,
@@ -65,7 +69,7 @@ class _LoginCardContentState extends State<LoginCardContent> {
           opacity: _isAgreed ? 1.0 : 0.5,
           child: IgnorePointer(
             ignoring: !_isAgreed,
-            child: const LoginSocialButtons(),
+            child: LoginSocialButtons(isLinking: widget.isLinking),
           ),
         ),
         const CcSpaceXL(),
@@ -75,7 +79,9 @@ class _LoginCardContentState extends State<LoginCardContent> {
           opacity: _isAgreed ? 1.0 : 0.5,
           child: CcBaseBtn(
             onTap: _isAgreed ? widget.onPhoneLogin : null,
-            title: widget.phoneLoginTitle ?? 'Login with Phone Number',
+            title: widget.isLinking
+                ? (widget.phoneLoginTitle ?? 'Link Phone Number')
+                : (widget.phoneLoginTitle ?? 'Login with Phone Number'),
             bgColor: [
               context.ccColorScheme.primary,
               context.ccColorScheme.primary,

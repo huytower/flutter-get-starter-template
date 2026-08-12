@@ -382,15 +382,17 @@ class ProfileInfoCard extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        const CcSpaceXS(),
-        CcInkWell(
-          onTap: onLink,
-          child: Icon(
-            Icons.link_rounded,
-            size: context.respIconSize(baseSize: 14),
-            color: context.ccColorScheme.onPrimary.withOpacity(0.85),
+        if (onLink != null && email.isEmpty) ...[
+          const CcSpaceXS(),
+          CcInkWell(
+            onTap: onLink,
+            child: Icon(
+              Icons.link_rounded,
+              size: context.respIconSize(baseSize: 14),
+              color: context.ccColorScheme.onPrimary.withOpacity(0.85),
+            ),
           ),
-        ),
+        ],
       ],
     );
   }
@@ -415,7 +417,7 @@ class ProfileInfoCard extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        if (onLink != null) ...[
+        if (onLink != null && phoneNumber.isEmpty) ...[
           const CcSpaceXS(),
           CcInkWell(
             onTap: onLink,

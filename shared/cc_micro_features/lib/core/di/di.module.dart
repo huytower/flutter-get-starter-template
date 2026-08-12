@@ -17,6 +17,8 @@ import 'package:cc_micro_features/features/auth/domain/usecases/auth_state_chang
     as _i684;
 import 'package:cc_micro_features/features/auth/domain/usecases/get_current_user_usecase.dart'
     as _i380;
+import 'package:cc_micro_features/features/auth/domain/usecases/link_with_google_usecase.dart'
+    as _i1032;
 import 'package:cc_micro_features/features/auth/domain/usecases/login_anonymously_usecase.dart'
     as _i566;
 import 'package:cc_micro_features/features/auth/domain/usecases/login_usecase.dart'
@@ -82,6 +84,8 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
         _i684.AuthStateChangesUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i380.GetCurrentUserUseCase>(
         () => _i380.GetCurrentUserUseCase(gh<_i745.FirebaseAuthRepository>()));
+    gh.lazySingleton<_i1032.LinkWithGoogleUseCase>(
+        () => _i1032.LinkWithGoogleUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i566.LoginAnonymouslyUseCase>(() =>
         _i566.LoginAnonymouslyUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i23.LoginUseCase>(
@@ -100,12 +104,6 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i120.VerifyPhoneNumberUseCase>(),
           gh<_i189.SignInWithPhoneNumberUseCase>(),
         ));
-    gh.factory<_i345.LoginBloc>(() => _i345.LoginBloc(
-          gh<_i23.LoginUseCase>(),
-          gh<_i811.LoginWithGoogleUseCase>(),
-          gh<_i632.LoginWithAppleUseCase>(),
-          gh<_i951.AuthPreferenceDataSource>(),
-        ));
     gh.lazySingleton<_i721.AuthenticateWithBiometricsUseCase>(() =>
         _i721.AuthenticateWithBiometricsUseCase(
             gh<_i521.BiometricRepository>()));
@@ -113,6 +111,13 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i380.GetCurrentUserUseCase>(),
           gh<_i684.AuthStateChangesUseCase>(),
           gh<_i732.LogoutUseCase>(),
+        ));
+    gh.factory<_i345.LoginBloc>(() => _i345.LoginBloc(
+          gh<_i23.LoginUseCase>(),
+          gh<_i811.LoginWithGoogleUseCase>(),
+          gh<_i1032.LinkWithGoogleUseCase>(),
+          gh<_i632.LoginWithAppleUseCase>(),
+          gh<_i951.AuthPreferenceDataSource>(),
         ));
     gh.factory<_i384.BiometricBloc>(() => _i384.BiometricBloc(
           gh<_i721.AuthenticateWithBiometricsUseCase>(),

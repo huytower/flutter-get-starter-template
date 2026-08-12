@@ -126,16 +126,9 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
 
     result.when(
       (user) {
-        'Phone Sign In success:\n'
-                '   ID: ${user.id}\n'
-                '   Phone: ${user.phoneNumber}\n'
-                '   Email: ${user.email}'
-            .Log('PhoneAuthBloc');
         emit(PhoneAuthSuccess(user));
       },
       (failure) {
-        'Phone Sign In failure: ${failure.message}'.Log('PhoneAuthBloc');
-        // Map failure message to specific OTP error messages
         final errorMessage = _mapOtpErrorToMessage(failure.message);
         emit(PhoneAuthError(errorMessage));
       },
