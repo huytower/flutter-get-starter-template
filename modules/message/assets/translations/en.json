@@ -561,7 +561,7 @@
     "weekly_audit_day_subtitle": "The day you review your weekly balance",
     "weekly_audit_day_hint": "Select your weekly audit day, usually at the end of your spending cycle",
     "reminder": "Reminders",
-    "reminder_subtitle": "Get notified to record your daily expenses",
+    "reminder_subtitle": "Get notified to record your reconcile",
     "theme_subtitle": "Switch between light and dark mode",
     "language_subtitle": "Select your preferred language",
     "currency": "Currency unit",
@@ -581,7 +581,8 @@
     "streak_weeks": "Streak: {count} weeks",
     "level_master": "Master",
     "level_intermediate": "Intermediate",
-    "level_novice": "Novice"
+    "level_novice": "Novice",
+    "progress_steps": "Progress: {completed}/{total}"
   },
   "guideline": {
     "banner_title_completed": "Congrats! All setup steps completed",

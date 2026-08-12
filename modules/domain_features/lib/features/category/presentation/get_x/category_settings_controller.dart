@@ -45,6 +45,8 @@ class CategorySettingsController extends CcGetController {
       const ProfileSettingsEntity().obs;
   bool _categoriesLoaded = false;
 
+  static final Rx<bool> onCategoryDefaultsApplied = false.obs;
+
   /// Get recommended categories for the current age group
   List<String> getRecommendedCategoryKeys() {
     if (profileSettings.value.hasCustomizedCategories) return [];
@@ -85,17 +87,32 @@ class CategorySettingsController extends CcGetController {
     }
   }
 
-  void _applyAgeDefaults() {
+  Future<void> _applyAgeDefaults() async {
     final recommendedKeys = getRecommendedCategoryKeys();
-    for (final cat in [
+    final allCategories = [
       ...byGroup.values.expand((e) => e),
       ...incomeByGroup.values.expand((e) => e),
       ...debtLoanByGroup.values.expand((e) => e),
       ...investmentByGroup.values.expand((e) => e),
-    ]) {
+    ];
+
+    for (final cat in allCategories) {
       pending[cat.id] = recommendedKeys.contains(cat.nameKey);
     }
     pending.refresh();
+
+    final futures = <Future>[];
+    for (final cat in allCategories) {
+      final shouldBeEnabled = recommendedKeys.contains(cat.nameKey);
+      if (cat.isEnabled != shouldBeEnabled) {
+        futures.add(_toggleEnabled(cat.id, shouldBeEnabled));
+      }
+    }
+    await Future.wait(futures);
+
+    if (Get.isRegistered<CategorySettingsController>()) {
+      onCategoryDefaultsApplied.value = !onCategoryDefaultsApplied.value;
+    }
   }
 
   Future<void> load() async {
@@ -195,16 +212,7 @@ class CategorySettingsController extends CcGetController {
       _categoriesLoaded = true;
       if (!profileSettings.value.hasCustomizedCategories &&
           profileSettings.value.birthYear != null) {
-        final recommendedKeys = getRecommendedCategoryKeys();
-        for (final cat in [
-          ...byGroup.values.expand((e) => e),
-          ...incomeByGroup.values.expand((e) => e),
-          ...debtLoanByGroup.values.expand((e) => e),
-          ...investmentByGroup.values.expand((e) => e),
-        ]) {
-          pending[cat.id] = recommendedKeys.contains(cat.nameKey);
-        }
-        pending.refresh();
+        _applyAgeDefaults();
       }
       layoutStatus.value = CcLayoutStatus.success;
     }, (_) {

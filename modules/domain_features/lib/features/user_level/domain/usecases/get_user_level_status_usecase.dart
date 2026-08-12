@@ -31,7 +31,8 @@ class GetUserLevelStatusUseCase {
     // the last time the audit day was changed, or (if never changed) the
     // moment this feature first initialized. Pre-existing dev/test data
     // never counts.
-    final since = settings.weeklyAuditDayChangedAt ??
+    final since =
+        settings.weeklyAuditDayChangedAt ??
         settings.levelFeatureAnchorAt ??
         DateTime.now();
     final auditWeekday = settings.weeklyAuditDayIndex + 1;
@@ -79,12 +80,16 @@ class GetUserLevelStatusUseCase {
     }
     final hasPositiveCashFlow = (income - expense) > 0;
 
+    // Level 2 logic: all guideline tasks completed AND reconciliation streak >= 2.
+    final guidelineCompleted = settings.completedGuidelineTaskIds.length >= 6;
+
     int level = 1;
     if (streak >= UserLevelStatusEntity.lv3RequiredStreak &&
         hasMinBudgets &&
         hasPositiveCashFlow) {
       level = 3;
-    } else if (streak >= UserLevelStatusEntity.lv2RequiredStreak) {
+    } else if (streak >= UserLevelStatusEntity.lv2RequiredStreak &&
+        guidelineCompleted) {
       level = 2;
     }
 

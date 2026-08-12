@@ -14,6 +14,7 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../category/export_category.dart';
 import '../../../guideline/guideline_controller.dart';
+import '../../../notification/notification_service.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../domain/usecases/get_profile_settings_usecase.dart';
@@ -34,6 +35,7 @@ class ProfileController extends CcGetController {
     this._deviceInfo,
     this._authCoordinator,
     this.userLevel,
+    this._notificationService,
   );
 
   final GetProfileSettingsUseCase _getSettings;
@@ -43,6 +45,7 @@ class ProfileController extends CcGetController {
   final CcDeviceInfoHelper _deviceInfo;
   final AuthCoordinator _authCoordinator;
   final UserLevelController userLevel;
+  final NotificationService _notificationService;
 
   final Rxn<CcUserEntity> user = Rxn<CcUserEntity>();
   final Rx<ProfileSettingsEntity> settings = const ProfileSettingsEntity().obs;
@@ -147,6 +150,10 @@ class ProfileController extends CcGetController {
   }
 
   Future<void> toggleReminder(bool value) async {
+    if (value) {
+      final granted = await _notificationService.requestPermission();
+      if (!granted) return;
+    }
     final updated = settings.value.copyWith(reminderEnabled: value);
     settings.value = updated;
     await _updateSettings(updated);
@@ -238,7 +245,7 @@ class ProfileController extends CcGetController {
       final group = CategorySeed.ageGroup(picked);
       if (group != null) {
         await setBirthYear(picked);
-        
+
         // Only apply age-based categories if user hasn't customized their categories yet
         if (!settings.value.hasCustomizedCategories) {
           await enableCategories([
@@ -248,7 +255,7 @@ class ProfileController extends CcGetController {
             ...CategorySeed.defaultInvestmentCategoryKeys[group]!,
           ]);
         }
-        
+
         // Guideline: birth_year completed
         Get.find<GuidelineController>().completeTask('birth_year');
       }

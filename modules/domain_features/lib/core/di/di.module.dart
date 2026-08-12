@@ -233,8 +233,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
       () => _i1004.AdvanceBloc(),
       dispose: (i) => i.close(),
     );
-    gh.lazySingleton<_i128.GuidelineController>(
-        () => _i128.GuidelineController());
     gh.lazySingleton<_i372.LoanLocalDataSource>(
         () => _i372.LoanLocalDataSource());
     gh.lazySingleton<_i483.NotificationService>(
@@ -525,6 +523,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i572.WalletRepository>(),
           gh<_i356.UserLevelController>(),
         ));
+    gh.lazySingleton<_i128.GuidelineController>(
+        () => _i128.GuidelineController(gh<_i356.UserLevelController>()));
     gh.factory<_i430.LoanDetailController>(() => _i430.LoanDetailController(
           gh<_i798.LoanRepository>(),
           gh<_i1027.TransactionRepository>(),
@@ -538,6 +538,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i727.CcDeviceInfoHelper>(),
           gh<_i727.AuthCoordinator>(),
           gh<_i356.UserLevelController>(),
+          gh<_i483.NotificationService>(),
         ));
     gh.factory<_i1051.ReconciliationController>(
         () => _i1051.ReconciliationController(

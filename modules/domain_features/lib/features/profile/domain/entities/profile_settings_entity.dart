@@ -1,6 +1,6 @@
 class ProfileSettingsEntity {
   const ProfileSettingsEntity({
-    this.reminderEnabled = true,
+    this.reminderEnabled = false,
     this.weeklyAuditDayIndex = 6,
     this.currencyCode = 'VND',
     this.birthYear,
@@ -16,6 +16,7 @@ class ProfileSettingsEntity {
     this.hasSeenTutorial = false,
     this.isHeaderFlipped = false,
     this.hasCustomizedCategories = false,
+    this.completedGuidelineTaskIds = const [],
   });
 
   final bool reminderEnabled;
@@ -74,6 +75,9 @@ class ProfileSettingsEntity {
   /// When true, age-based recommendations won't override their choices.
   final bool hasCustomizedCategories;
 
+  /// List of completed guideline task IDs.
+  final List<String> completedGuidelineTaskIds;
+
   ProfileSettingsEntity copyWith({
     bool? reminderEnabled,
     int? weeklyAuditDayIndex,
@@ -91,6 +95,7 @@ class ProfileSettingsEntity {
     bool? hasSeenTutorial,
     bool? isHeaderFlipped,
     bool? hasCustomizedCategories,
+    List<String>? completedGuidelineTaskIds,
   }) => ProfileSettingsEntity(
     reminderEnabled: reminderEnabled ?? this.reminderEnabled,
     weeklyAuditDayIndex: weeklyAuditDayIndex ?? this.weeklyAuditDayIndex,
@@ -111,6 +116,9 @@ class ProfileSettingsEntity {
         hasViewedEmergencyFundEbook ?? this.hasViewedEmergencyFundEbook,
     hasSeenTutorial: hasSeenTutorial ?? this.hasSeenTutorial,
     isHeaderFlipped: isHeaderFlipped ?? this.isHeaderFlipped,
-    hasCustomizedCategories: hasCustomizedCategories ?? this.hasCustomizedCategories,
+    hasCustomizedCategories:
+        hasCustomizedCategories ?? this.hasCustomizedCategories,
+    completedGuidelineTaskIds:
+        completedGuidelineTaskIds ?? this.completedGuidelineTaskIds,
   );
 }

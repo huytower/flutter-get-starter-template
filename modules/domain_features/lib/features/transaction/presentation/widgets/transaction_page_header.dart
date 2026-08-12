@@ -159,15 +159,18 @@ class TransactionPageHeader extends StatelessWidget {
   Widget _buildSubmitButton(BuildContext context) {
     return Obx(() {
       final selectedIndex = controller.selectedTabIndex.value;
-      final activeColor = _getTabColor(context, selectedIndex);
+      final tabKind = controller.visibleTabs[selectedIndex];
+      final activeColor = _getTabColor(context, tabKind);
 
       return CcIconButton.bouncing(
         onTap: onSubmit ?? () {},
-        bgColor: Colors.white.withOpacity(0.15),
+        bgColor: activeColor,
+        height: context.respDim(40),
+        width: context.respDim(40),
         icon: Icon(
           Icons.check_rounded,
           size: context.respIconSize(baseSize: 22),
-          color: activeColor,
+          color: context.ccColorScheme.onPrimary,
         ),
       );
     });
@@ -185,11 +188,12 @@ class TransactionPageHeader extends StatelessWidget {
     );
   }
 
-  Color _getTabColor(BuildContext context, int index) {
-    return switch (index) {
-      0 => context.ccColorScheme.error,
-      2 => context.ccColorScheme.secondary,
-      _ => PrjColors.success,
+  Color _getTabColor(BuildContext context, TransactionTabKind tab) {
+    return switch (tab) {
+      TransactionTabKind.expense => context.ccColorScheme.error,
+      TransactionTabKind.income => PrjColors.success,
+      TransactionTabKind.investment => PrjColors.investment,
+      TransactionTabKind.debtLoan => PrjColors.debtLoan,
     };
   }
 }

@@ -5,6 +5,7 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../category/data/datasources/local/category_seed.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
+import '../../../category/presentation/get_x/category_settings_controller.dart';
 
 @injectable
 class CategorySelectionController extends CcGetController {
@@ -23,6 +24,7 @@ class CategorySelectionController extends CcGetController {
   void onInit() {
     super.onInit();
     loadCategories();
+    ever(CategorySettingsController.onCategoryDefaultsApplied, (_) => loadCategories());
   }
 
   Future<void> loadCategories() async {

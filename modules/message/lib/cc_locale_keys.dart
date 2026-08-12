@@ -615,7 +615,7 @@ class CodegenLoader extends AssetLoader {
       "weekly_audit_day": "Weekly audit day",
       "weekly_audit_day_subtitle": "The day you review your weekly balance",
       "reminder": "Reminders",
-      "reminder_subtitle": "Get notified to record your daily expenses",
+      "reminder_subtitle": "Get notified to record your reconcile",
       "theme_subtitle": "Switch between light and dark mode",
       "language_subtitle": "Select your preferred language",
       "currency": "Currency unit",
@@ -637,6 +637,7 @@ class CodegenLoader extends AssetLoader {
       "level_master": "Master",
       "level_intermediate": "Intermediate",
       "level_novice": "Novice",
+      "progress_steps": "Progress: {completed}/{total}",
     },
     "guideline": {
       "banner_title_completed": "Congrats! All setup steps completed",
@@ -1263,7 +1264,7 @@ class CodegenLoader extends AssetLoader {
       "weekly_audit_day": "Ngày kiểm toán hàng tuần",
       "weekly_audit_day_subtitle": "Ngày bạn đối soát số dư hàng tuần",
       "reminder": "Nhắc nhở",
-      "reminder_subtitle": "Nhận thông báo ghi chép chi tiêu hàng ngày",
+      "reminder_subtitle": "Nhận thông báo đối soát hàng tuần",
       "theme_subtitle": "Chuyển đổi giữa chế độ sáng và tối",
       "language_subtitle": "Chọn ngôn ngữ bạn muốn sử dụng",
       "currency": "Đơn vị tiền tệ",
@@ -1285,6 +1286,7 @@ class CodegenLoader extends AssetLoader {
       "level_master": "Bậc thầy",
       "level_intermediate": "Trung cấp",
       "level_novice": "Người mới",
+      "progress_steps": "Tiến độ: {completed}/{total}",
     },
     "guideline": {
       "banner_title_completed": "Chúc mừng! Bước hướng dẫn đã hoàn tất.",
@@ -1936,6 +1938,7 @@ abstract class CcLocaleKeys {
   static const profile_level_master = 'profile.level_master';
   static const profile_level_intermediate = 'profile.level_intermediate';
   static const profile_level_novice = 'profile.level_novice';
+  static const profile_progress_steps = 'profile.progress_steps';
 
   static const guideline_banner_title_completed =
       'guideline.banner_title_completed';

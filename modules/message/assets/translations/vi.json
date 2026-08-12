@@ -561,7 +561,7 @@
     "weekly_audit_day_subtitle": "Ngày bạn đối soát số dư hàng tuần",
     "weekly_audit_day_hint": "Chọn ngày kiểm toán hàng tuần của bạn, thường là ngày cuối cùng trong chu kỳ chi tiêu",
     "reminder": "Nhắc nhở",
-    "reminder_subtitle": "Nhận thông báo ghi chép chi tiêu hàng ngày",
+    "reminder_subtitle": "Nhận thông báo đối soát hàng tuần",
     "theme_subtitle": "Chuyển đổi giữa chế độ sáng và tối",
     "language_subtitle": "Chọn ngôn ngữ bạn muốn sử dụng",
     "currency": "Đơn vị tiền tệ",
@@ -581,7 +581,8 @@
     "streak_weeks": "Chuỗi: {count} tuần",
     "level_master": "Bậc thầy",
     "level_intermediate": "Trung cấp",
-    "level_novice": "Người mới"
+    "level_novice": "Người mới",
+    "progress_steps": "Tiến độ: {completed}/{total}"
   },
   "guideline": {
     "banner_title_completed": "Chúc mừng! Bước hướng dẫn đã hoàn tất.",

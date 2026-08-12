@@ -74,8 +74,6 @@ class InvestmentForm extends StatelessWidget {
             const CcSpaceLG(),
             _buildCategorySection(controller, accentColor),
             const CcSpaceLG(),
-            _buildItemSection(context, controller, accentColor),
-            const CcSpaceLG(),
             _buildFormFields(context, controller, accentColor),
           ],
         ),
@@ -112,11 +110,7 @@ class InvestmentForm extends StatelessWidget {
         children: [
           CcFormLabel(text: el.tr(CcLocaleKeys.transaction_investment_item)),
           const CcSpaceXS(),
-          if (controller.isAddingNewItem.value)
-            controller.isVip.value
-                ? _buildNewItemInput(context, controller, accentColor)
-                : _buildVipLockedNameHint(context, controller, accentColor)
-          else if (controller.investmentItems.isEmpty &&
+          if (controller.investmentItems.isEmpty &&
               controller.direction.value == InvestmentDirection.returnProfit)
             _buildEmptyItemsHint(context)
           else
@@ -135,73 +129,6 @@ class InvestmentForm extends StatelessWidget {
                 CcLocaleKeys.transaction_add_new_investment_item,
               ),
             ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNewItemInput(
-    BuildContext context,
-    InvestmentFormController controller,
-    Color accentColor,
-  ) {
-    return Row(
-      children: [
-        Expanded(
-          child: CcTextField(
-            controller: controller.newItemNameController,
-            hintText: el.tr(CcLocaleKeys.transaction_new_investment_item_hint),
-            maxLines: 1,
-            onChanged: controller.setNewItemName,
-          ),
-        ),
-        const CcSpaceXS(),
-        CcIconButton.bouncing(
-          icon: Icon(
-            Icons.close_rounded,
-            size: context.respIconSize(baseSize: 20),
-            color: context.ccColorScheme.onSurfaceVariant,
-          ),
-          onTap: controller.cancelAddingNewItem,
-        ),
-      ],
-    );
-  }
-
-  /// Free-tier read-only substitute for [_buildNewItemInput]: the item name
-  /// is fixed to the category's own label — no text field to edit it.
-  Widget _buildVipLockedNameHint(
-    BuildContext context,
-    InvestmentFormController controller,
-    Color accentColor,
-  ) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(12),
-        vertical: context.respPadding(10),
-      ),
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.onSurface.withAlpha(10),
-        borderRadius: context.brMd,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.lock_outline_rounded,
-            size: context.respIconSize(baseSize: 18),
-            color: accentColor,
-          ),
-          const CcSpaceXS(),
-          Expanded(
-            child: CcText(
-              el.tr(
-                CcLocaleKeys.transaction_investment_item_vip_locked,
-                namedArgs: {'name': controller.newItemName.value},
-              ),
-              textStyle: context.ccTextTheme.bodySmall,
-            ),
-          ),
         ],
       ),
     );
@@ -283,7 +210,8 @@ class InvestmentForm extends StatelessWidget {
     InvestmentFormController controller,
     Color accentColor,
   ) {
-    final labelKey = controller.direction.value == InvestmentDirection.contribute
+    final labelKey =
+        controller.direction.value == InvestmentDirection.contribute
         ? CcLocaleKeys.transaction_source_investment
         : CcLocaleKeys.transaction_destination_investment;
     return Column(

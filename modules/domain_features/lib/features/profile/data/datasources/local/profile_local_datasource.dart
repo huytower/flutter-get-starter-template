@@ -28,7 +28,7 @@ class ProfileLocalDataSource {
     // Don't default isDarkMode to false - keep it null if not set
     // This allows the system theme to be used as default
     return ProfileSettingsEntity(
-      reminderEnabled: s.reminderEnabled ?? true,
+      reminderEnabled: s.reminderEnabled ?? false,
       weeklyAuditDayIndex: s.weeklyAuditDayIndex ?? 6,
       currencyCode: s.currencyCode ?? 'VND',
       birthYear: s.birthYear,
@@ -44,6 +44,7 @@ class ProfileLocalDataSource {
       hasSeenTutorial: s.hasSeenTutorial ?? false,
       isHeaderFlipped: s.isProfileHeaderFlipped ?? false,
       hasCustomizedCategories: s.hasCustomizedCategories ?? false,
+      completedGuidelineTaskIds: s.completedGuidelineTaskIds ?? const [],
     );
   }
 
@@ -65,6 +66,7 @@ class ProfileLocalDataSource {
     s.hasSeenTutorial = entity.hasSeenTutorial;
     s.isProfileHeaderFlipped = entity.isHeaderFlipped;
     s.hasCustomizedCategories = entity.hasCustomizedCategories;
+    s.completedGuidelineTaskIds = entity.completedGuidelineTaskIds;
     await s.save();
   }
 }

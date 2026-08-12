@@ -31,6 +31,7 @@ class CheckCloudBackupReminderUseCase {
     if (_session.currentUser != null) return;
 
     final settings = await _profileRepository.getSettings();
+    if (!settings.reminderEnabled) return;
     if (settings.cloudBackupReminderSentAt != null) return;
 
     final firstLaunchAt = settings.firstLaunchAt;

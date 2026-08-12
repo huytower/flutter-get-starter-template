@@ -2,7 +2,9 @@ import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../../guideline/guideline_controller.dart';
 import '../../../user_level/domain/entities/user_level_status_entity.dart';
 
 class ProfileExperienceCard extends StatelessWidget {
@@ -46,53 +48,58 @@ class ProfileExperienceCard extends StatelessWidget {
   }
 
   Widget _buildBackgroundWave(BuildContext context) {
-    return Positioned.fill(
-      bottom: -20,
+    return Positioned(
+      top: context.respDim(-5),
+      right: context.respDim(-10),
       child: Opacity(
-        opacity: 0.6,
-        child: LineChart(
-          LineChartData(
-            minX: 0,
-            maxX: 10,
-            minY: 0,
-            maxY: 10,
-            titlesData: const FlTitlesData(show: false),
-            gridData: const FlGridData(show: false),
-            borderData: FlBorderData(show: false),
-            lineBarsData: [
-              LineChartBarData(
-                isCurved: true,
-                curveSmoothness: 0.5,
-                color: context.ccColorScheme.primary,
-                barWidth: 3,
-                isStrokeCapRound: true,
-                dotData: const FlDotData(show: false),
-                belowBarData: BarAreaData(
-                  show: true,
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      context.ccColorScheme.primary.withOpacity(0.2),
-                      context.ccColorScheme.primary.withOpacity(0),
-                    ],
+        opacity: 0.4,
+        child: SizedBox(
+          width: context.respDim(120),
+          height: context.respDim(80),
+          child: LineChart(
+            LineChartData(
+              minX: 0,
+              maxX: 10,
+              minY: 0,
+              maxY: 10,
+              titlesData: const FlTitlesData(show: false),
+              gridData: const FlGridData(show: false),
+              borderData: FlBorderData(show: false),
+              lineBarsData: [
+                LineChartBarData(
+                  isCurved: true,
+                  curveSmoothness: 0.5,
+                  color: context.ccColorScheme.primary,
+                  barWidth: 2,
+                  isStrokeCapRound: true,
+                  dotData: const FlDotData(show: false),
+                  belowBarData: BarAreaData(
+                    show: true,
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        context.ccColorScheme.primary.withOpacity(0.2),
+                        context.ccColorScheme.primary.withOpacity(0),
+                      ],
+                    ),
                   ),
+                  spots: const [
+                    FlSpot(0, 4),
+                    FlSpot(1, 7),
+                    FlSpot(2, 3),
+                    FlSpot(3, 8),
+                    FlSpot(4, 5),
+                    FlSpot(5, 6),
+                    FlSpot(6, 4),
+                    FlSpot(7, 9),
+                    FlSpot(8, 2),
+                    FlSpot(9, 5),
+                    FlSpot(10, 4),
+                  ],
                 ),
-                spots: const [
-                  FlSpot(0, 4),
-                  FlSpot(1, 7),
-                  FlSpot(2, 3),
-                  FlSpot(3, 8),
-                  FlSpot(4, 5),
-                  FlSpot(5, 6),
-                  FlSpot(6, 4),
-                  FlSpot(7, 9),
-                  FlSpot(8, 2),
-                  FlSpot(9, 5),
-                  FlSpot(10, 4),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -140,11 +147,35 @@ class ProfileExperienceCard extends StatelessWidget {
   }
 
   Widget _buildProgressBar(BuildContext context) {
-    final double progress =
-        levelStatus.reconciliationStreak /
-        (level >= 2
-            ? UserLevelStatusEntity.lv3RequiredStreak
-            : UserLevelStatusEntity.lv2RequiredStreak);
+    final guideline = Get.find<GuidelineController>();
+
+    final double progress;
+    final String progressText;
+
+    if (level < 2) {
+      // LV1 -> LV2: 6 guideline tasks + 2 reconciliations = 8 steps
+      final completedGuideline = guideline.completedTasks.length;
+      final streak = levelStatus.reconciliationStreak.clamp(0, 2);
+      progress = (completedGuideline + streak) / 8.0;
+
+      progressText = el.tr(
+        CcLocaleKeys.profile_progress_steps,
+        namedArgs: {
+          'completed': '${completedGuideline + streak}',
+          'total': '8',
+        },
+      );
+    } else {
+      // LV2 -> LV3: streak based
+      progress =
+          levelStatus.reconciliationStreak /
+          UserLevelStatusEntity.lv3RequiredStreak;
+
+      progressText = el.tr(
+        CcLocaleKeys.profile_streak_weeks,
+        namedArgs: {'count': '${levelStatus.reconciliationStreak}'},
+      );
+    }
 
     return Column(
       children: [
@@ -173,10 +204,7 @@ class ProfileExperienceCard extends StatelessWidget {
         ),
         const CcSpaceXS(),
         CcText(
-          el.tr(
-            CcLocaleKeys.profile_streak_weeks,
-            namedArgs: {'count': '${levelStatus.reconciliationStreak}'},
-          ),
+          progressText,
           textStyle: context.ccTextTheme.labelSmall?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
           ),

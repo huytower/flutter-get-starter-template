@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_config/export_app_config.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
@@ -5,15 +7,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../user_level/presentation/get_x/user_level_controller.dart';
 import 'guideline_success_dialog.dart';
 
 @lazySingleton
 class GuidelineController extends GetxController {
+  GuidelineController(this._userLevelController);
+
+  final UserLevelController _userLevelController;
+
   final List<String> taskSequence = [
     'birth_year', // Profile -> _pickBirthYear
     'categories', // Profile -> CategorySettingsPage
     'wallet_balance', // Budget Allocation -> AddWalletSheet (Cash)
-    'reconcile_wallet', // Budget Allocation -> ReconcilePage
     'budget_limit', // Budget Allocation -> BudgetLimitPage
     'min_living', // Budget Allocation -> AddBudgetLimitForm (storm icon)
     'first_transaction', // Transaction -> ExpenseForm
@@ -97,6 +103,9 @@ class GuidelineController extends GetxController {
     completedTasks.add(taskId);
     CcAppStorage.instance.completedGuidelineTaskIds = completedTasks.toList();
     await CcAppStorage.instance.save();
+
+    // Trigger level refresh so the progress bar in ProfileExperienceCard updates
+    unawaited(_userLevelController.refresh());
 
     if (currentTaskId == null) {
       // All tasks completed! Show the congrats dialog.
