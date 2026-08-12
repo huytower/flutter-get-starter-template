@@ -104,6 +104,12 @@ class GuidelineController extends GetxController {
     CcAppStorage.instance.completedGuidelineTaskIds = completedTasks.toList();
     await CcAppStorage.instance.save();
 
+    'Guideline Progress Update:\n'
+            '   Task: $taskId\n'
+            '   Completed Count: ${completedTasks.length}\n'
+            '   Storage Count: ${CcAppStorage.instance.completedGuidelineTaskIds?.length}'
+        .Log('GuidelineController');
+
     // Trigger level refresh so the progress bar in ProfileExperienceCard updates
     unawaited(_userLevelController.refresh());
 

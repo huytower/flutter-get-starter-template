@@ -2,9 +2,7 @@ import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-import '../../../guideline/guideline_controller.dart';
 import '../../../user_level/domain/entities/user_level_status_entity.dart';
 
 class ProfileExperienceCard extends StatelessWidget {
@@ -147,23 +145,25 @@ class ProfileExperienceCard extends StatelessWidget {
   }
 
   Widget _buildProgressBar(BuildContext context) {
-    final guideline = Get.find<GuidelineController>();
-
     final double progress;
     final String progressText;
 
     if (level < 2) {
       // LV1 -> LV2: 6 guideline tasks + 2 reconciliations = 8 steps
-      final completedGuideline = guideline.completedTasks.length;
       final streak = levelStatus.reconciliationStreak.clamp(0, 2);
-      progress = (completedGuideline + streak) / 8.0;
+      final completed = levelStatus.completedGuidelineCount + streak;
+      progress = completed / 8.0;
+
+      'ProfileExperienceCard LV1 Debug:\n'
+              '   Guideline Count: ${levelStatus.completedGuidelineCount}\n'
+              '   Streak: $streak\n'
+              '   Total Completed: $completed\n'
+              '   Progress: $progress'
+          .Log('ProfileExperienceCard');
 
       progressText = el.tr(
         CcLocaleKeys.profile_progress_steps,
-        namedArgs: {
-          'completed': '${completedGuideline + streak}',
-          'total': '8',
-        },
+        namedArgs: {'completed': '$completed', 'total': '8'},
       );
     } else {
       // LV2 -> LV3: streak based
@@ -186,20 +186,35 @@ class ProfileExperienceCard extends StatelessWidget {
             color: context.ccColorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(4),
           ),
-          child: FractionallySizedBox(
-            alignment: Alignment.centerLeft,
-            widthFactor: progress.clamp(0.0, 1.0),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    context.ccColorScheme.primary,
-                    context.ccColorScheme.primaryContainer,
-                  ],
+          child: TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 1200),
+            curve: Curves.easeOutBack,
+            tween: Tween<double>(begin: 0, end: progress.clamp(0.0, 1.0)),
+            builder: (context, value, child) {
+              return FractionallySizedBox(
+                alignment: Alignment.centerLeft,
+                widthFactor: value,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        context.ccColorScheme.primary,
+                        context.ccColorScheme.primaryContainer,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: [
+                      if (value > 0)
+                        BoxShadow(
+                          color: context.ccColorScheme.primary.withOpacity(0.3),
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                        ),
+                    ],
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
+              );
+            },
           ),
         ),
         const CcSpaceXS(),

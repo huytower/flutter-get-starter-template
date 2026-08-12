@@ -56,6 +56,21 @@ class ProfileController extends CcGetController {
   void onInit() {
     super.onInit();
     user.bindStream(_session.userStream);
+
+    // Sync guideline progress into profile settings to avoid "Split Brain"
+    // overwrites when updating other settings (theme, birth year, etc.)
+    if (Get.isRegistered<GuidelineController>()) {
+      ever(Get.find<GuidelineController>().completedTasks, (
+        List<String> tasks,
+      ) {
+        if (settings.value.completedGuidelineTaskIds != tasks) {
+          settings.value = settings.value.copyWith(
+            completedGuidelineTaskIds: tasks,
+          );
+        }
+      });
+    }
+
     ever(user, (u) {
       if (u != null) {
         'ProfileController user updated:\n'

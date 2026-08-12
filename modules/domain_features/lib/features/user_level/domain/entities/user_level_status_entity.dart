@@ -4,7 +4,8 @@ import 'package:equatable/equatable.dart';
 ///
 /// LV1 (default): Investment and Debt/Loan are hidden everywhere, to build
 /// the habit of disciplined weekly reconciliation first.
-/// LV2: unlocks Investment once [reconciliationStreak] reaches 2.
+/// LV2: unlocks Investment once [reconciliationStreak] reaches 2 AND
+/// [completedGuidelineCount] reaches 6.
 /// LV3: unlocks Debt/Loan once [reconciliationStreak] reaches 4 AND
 /// [hasMinBudgets] AND [hasPositiveCashFlow] all hold.
 class UserLevelStatusEntity extends Equatable {
@@ -25,17 +26,22 @@ class UserLevelStatusEntity extends Equatable {
   /// Number of active fixed-price budgets (for progress display).
   final int fixedBudgetCount;
 
+  /// Number of completed initial setup tasks (from GuidelineController).
+  final int completedGuidelineCount;
+
   const UserLevelStatusEntity({
     required this.level,
     required this.reconciliationStreak,
     required this.hasMinBudgets,
     required this.hasPositiveCashFlow,
     required this.fixedBudgetCount,
+    required this.completedGuidelineCount,
   });
 
   static const int lv2RequiredStreak = 2;
   static const int lv3RequiredStreak = 4;
   static const int lv3RequiredBudgets = 3;
+  static const int lv1RequiredGuidelines = 6;
 
   bool get canUseInvestment => level >= 2;
 
@@ -46,7 +52,8 @@ class UserLevelStatusEntity extends Equatable {
       reconciliationStreak = 0,
       hasMinBudgets = false,
       hasPositiveCashFlow = false,
-      fixedBudgetCount = 0;
+      fixedBudgetCount = 0,
+      completedGuidelineCount = 0;
 
   @override
   List<Object?> get props => [
@@ -55,5 +62,6 @@ class UserLevelStatusEntity extends Equatable {
     hasMinBudgets,
     hasPositiveCashFlow,
     fixedBudgetCount,
+    completedGuidelineCount,
   ];
 }

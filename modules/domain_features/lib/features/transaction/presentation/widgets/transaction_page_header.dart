@@ -164,13 +164,13 @@ class TransactionPageHeader extends StatelessWidget {
 
       return CcIconButton.bouncing(
         onTap: onSubmit ?? () {},
-        bgColor: activeColor,
-        height: context.respDim(40),
-        width: context.respDim(40),
+        bgColor: context.ccColorScheme.onPrimary.withAlpha(10),
+        height: context.respDim(30),
+        width: context.respDim(30),
         icon: Icon(
           Icons.check_rounded,
           size: context.respIconSize(baseSize: 22),
-          color: context.ccColorScheme.onPrimary,
+          color: activeColor,
         ),
       );
     });

@@ -1,3 +1,5 @@
+import 'package:app_config/export_app_config.dart';
+import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -81,7 +83,16 @@ class GetUserLevelStatusUseCase {
     final hasPositiveCashFlow = (income - expense) > 0;
 
     // Level 2 logic: all guideline tasks completed AND reconciliation streak >= 2.
-    final guidelineCompleted = settings.completedGuidelineTaskIds.length >= 6;
+    final completedGuidelineCount = settings.completedGuidelineTaskIds.length;
+    final guidelineCompleted =
+        completedGuidelineCount >= UserLevelStatusEntity.lv1RequiredGuidelines;
+
+    'UserLevelProgress Debug:\n'
+            '   Guideline IDs from Settings: ${settings.completedGuidelineTaskIds}\n'
+            '   Count: $completedGuidelineCount\n'
+            '   Streak: $streak\n'
+            '   Raw Storage IDs: ${CcAppStorage.instance.completedGuidelineTaskIds}'
+        .Log('GetUserLevelStatusUseCase');
 
     int level = 1;
     if (streak >= UserLevelStatusEntity.lv3RequiredStreak &&
@@ -119,6 +130,7 @@ class GetUserLevelStatusUseCase {
         hasMinBudgets: hasMinBudgets,
         hasPositiveCashFlow: hasPositiveCashFlow,
         fixedBudgetCount: fixedBudgetCount,
+        completedGuidelineCount: completedGuidelineCount,
       ),
     );
   }
