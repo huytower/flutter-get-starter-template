@@ -15,6 +15,8 @@ import 'package:cc_micro_features/features/auth/domain/repositories/firebase_aut
     as _i745;
 import 'package:cc_micro_features/features/auth/domain/usecases/auth_state_changes_usecase.dart'
     as _i684;
+import 'package:cc_micro_features/features/auth/domain/usecases/delete_account_usecase.dart'
+    as _i308;
 import 'package:cc_micro_features/features/auth/domain/usecases/get_current_user_usecase.dart'
     as _i380;
 import 'package:cc_micro_features/features/auth/domain/usecases/link_with_google_usecase.dart'
@@ -82,6 +84,8 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.lazySingleton<_i684.AuthStateChangesUseCase>(() =>
         _i684.AuthStateChangesUseCase(gh<_i745.FirebaseAuthRepository>()));
+    gh.lazySingleton<_i308.DeleteAccountUseCase>(
+        () => _i308.DeleteAccountUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i380.GetCurrentUserUseCase>(
         () => _i380.GetCurrentUserUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i1032.LinkWithGoogleUseCase>(

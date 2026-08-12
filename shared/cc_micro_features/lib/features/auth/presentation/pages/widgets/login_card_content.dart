@@ -48,6 +48,9 @@ class _LoginCardContentState extends State<LoginCardContent> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDisabled = widget.isLinking;
+    final double opacity = isDisabled ? 0.3 : (_isAgreed ? 1.0 : 0.5);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -66,9 +69,9 @@ class _LoginCardContentState extends State<LoginCardContent> {
         ),
         const CcSpaceXL(),
         Opacity(
-          opacity: _isAgreed ? 1.0 : 0.5,
+          opacity: opacity,
           child: IgnorePointer(
-            ignoring: !_isAgreed,
+            ignoring: isDisabled || !_isAgreed,
             child: LoginSocialButtons(isLinking: widget.isLinking),
           ),
         ),
@@ -76,9 +79,9 @@ class _LoginCardContentState extends State<LoginCardContent> {
         const LoginOrDivider(),
         const CcSpaceXL(),
         Opacity(
-          opacity: _isAgreed ? 1.0 : 0.5,
+          opacity: opacity,
           child: CcBaseBtn(
-            onTap: _isAgreed ? widget.onPhoneLogin : null,
+            onTap: (isDisabled || !_isAgreed) ? null : widget.onPhoneLogin,
             title: widget.isLinking
                 ? (widget.phoneLoginTitle ?? 'Link Phone Number')
                 : (widget.phoneLoginTitle ?? 'Login with Phone Number'),
@@ -90,18 +93,20 @@ class _LoginCardContentState extends State<LoginCardContent> {
           ),
         ),
         const CcSpaceLG(),
-        _buildTermsCheckbox(context),
+        _buildTermsCheckbox(context, isDisabled: isDisabled),
         const CcSpaceLG(),
       ],
     );
   }
 
-  Widget _buildTermsCheckbox(BuildContext context) {
+  Widget _buildTermsCheckbox(BuildContext context, {required bool isDisabled}) {
     return Row(
       children: [
         Checkbox(
           value: _isAgreed,
-          onChanged: (value) => setState(() => _isAgreed = value ?? false),
+          onChanged: isDisabled
+              ? null
+              : (value) => setState(() => _isAgreed = value ?? false),
           activeColor: context.ccColorScheme.primary,
           shape: RoundedRectangleBorder(borderRadius: context.brSm),
         ),
@@ -119,9 +124,11 @@ class _LoginCardContentState extends State<LoginCardContent> {
                     decoration: TextDecoration.underline,
                   ),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      getIt<AuthCoordinator>().navigateToTerms(context);
-                    },
+                    ..onTap = isDisabled
+                        ? null
+                        : () {
+                            getIt<AuthCoordinator>().navigateToTerms(context);
+                          },
                 ),
               ],
             ),

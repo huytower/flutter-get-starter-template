@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
 import '../bloc/login_bloc.dart';
@@ -45,6 +46,12 @@ class _LoginViewState extends State<LoginView> {
       listener: (context, state) {
         if (state is LoginSuccess) {
           getIt<AuthCoordinator>().navigateToDashboard(context);
+        } else if (state is LoginLoading) {
+          CcDialogHelper.showLoadingDialog(context: context);
+        } else {
+          if (Get.isDialogOpen ?? false) {
+            Get.back();
+          }
         }
       },
       child: Scaffold(
@@ -65,7 +72,7 @@ class _LoginViewState extends State<LoginView> {
           child: BlocBuilder<LoginBloc, LoginState>(
             builder: (context, state) {
               return CcGradientCardLayout(
-                maxWidth: context.isPortrait
+                maxWidth: CcContextExtension(context).isPortrait
                     ? context.respDim(400)
                     : context.respDim(600),
                 child: LoginCardContent(

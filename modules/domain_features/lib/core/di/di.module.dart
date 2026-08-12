@@ -6,6 +6,8 @@
 import 'dart:async' as _i687;
 
 import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
+import 'package:cc_micro_features/features/auth/domain/usecases/delete_account_usecase.dart'
+    as _i308;
 import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
 import 'package:dio/dio.dart' as _i361;
 import 'package:domain_features/export_domain_features.dart' as _i857;
@@ -444,8 +446,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i1059.CategoryRepository>(),
             ));
-    gh.factory<_i933.AddWalletSheetController>(
-        () => _i933.AddWalletSheetController(gh<_i229.WalletController>()));
     gh.lazySingleton<_i628.GetLoanBalancesUseCase>(
         () => _i628.GetLoanBalancesUseCase(
               gh<_i798.LoanRepository>(),
@@ -539,6 +539,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i727.AuthCoordinator>(),
           gh<_i356.UserLevelController>(),
           gh<_i483.NotificationService>(),
+          gh<_i308.DeleteAccountUseCase>(),
         ));
     gh.factory<_i1051.ReconciliationController>(
         () => _i1051.ReconciliationController(
@@ -553,6 +554,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i229.WalletController>(),
               gh<_i1003.BudgetLimitController>(),
               gh<_i628.GetLoanBalancesUseCase>(),
+              gh<_i356.UserLevelController>(),
+            ));
+    gh.factory<_i933.AddWalletSheetController>(
+        () => _i933.AddWalletSheetController(
+              gh<_i229.WalletController>(),
+              gh<_i224.GetCategoriesUseCase>(),
               gh<_i356.UserLevelController>(),
             ));
   }

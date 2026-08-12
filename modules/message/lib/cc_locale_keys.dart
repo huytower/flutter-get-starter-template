@@ -173,6 +173,7 @@ class CodegenLoader extends AssetLoader {
       "your_wallets": "Liquid wallets",
       "see_all": "See all",
       "empty": "No wallets yet.\nTap + to add one.",
+      "investment_empty": "No investment wallets yet",
       "add_title": "Add New Wallet",
       "edit_title": "Edit Wallet",
       "name": "Wallet Name",
@@ -628,6 +629,9 @@ class CodegenLoader extends AssetLoader {
       "about": "About app",
       "about_subtitle": "App information and developer logs",
       "delete_account": "Delete account",
+      "delete_confirm": "Delete Account?",
+      "delete_confirm_desc":
+          "This will permanently delete your account and all associated data. This action cannot be undone.",
       "young_children_message":
           "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys).",
       "experience_level_progress": "Experience Level Progress",
@@ -823,6 +827,7 @@ class CodegenLoader extends AssetLoader {
       "your_wallets": "Ví thanh khoản",
       "see_all": "Xem tất cả",
       "empty": "Chưa có ví nào.\nNhấn + để thêm ví.",
+      "investment_empty": "Chưa có danh mục đầu tư nào",
       "add_title": "Thêm ví mới",
       "edit_title": "Sửa ví",
       "name": "Tên ví",
@@ -1277,6 +1282,9 @@ class CodegenLoader extends AssetLoader {
       "about": "Về ứng dụng",
       "about_subtitle": "Thông tin ứng dụng và nhật ký nhà phát triển",
       "delete_account": "Xoá tài khoản",
+      "delete_confirm": "Xoá tài khoản?",
+      "delete_confirm_desc":
+          "Hành động này sẽ xóa vĩnh viễn tài khoản và tất cả dữ liệu liên quan. Không thể hoàn tác.",
       "young_children_message":
           "Bạn có con nhỏ không? Nếu có, chúng tôi sẽ tự động bật các danh mục dành cho con (sữa, bỉm, đồ chơi trẻ em).",
       "experience_level_progress": "Tiến trình cấp độ kinh nghiệm",
@@ -1453,6 +1461,7 @@ abstract class CcLocaleKeys {
   static const wallet_your_wallets = 'wallet.your_wallets';
   static const wallet_see_all = 'wallet.see_all';
   static const wallet_empty = 'wallet.empty';
+  static const wallet_investment_empty = 'wallet.investment_empty';
   static const wallet_add_title = 'wallet.add_title';
   static const wallet_edit_title = 'wallet.edit_title';
   static const wallet_name = 'wallet.name';
@@ -1928,6 +1937,8 @@ abstract class CcLocaleKeys {
   static const profile_about = 'profile.about';
   static const profile_about_subtitle = 'profile.about_subtitle';
   static const profile_delete_account = 'profile.delete_account';
+  static const profile_delete_confirm = 'profile.delete_confirm';
+  static const profile_delete_confirm_desc = 'profile.delete_confirm_desc';
   static const profile_young_children_message =
       'profile.young_children_message';
   static const profile_experience_level_progress =

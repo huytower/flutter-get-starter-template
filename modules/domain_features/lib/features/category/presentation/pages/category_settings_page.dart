@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../get_x/category_settings_controller.dart';
 import '../widgets/category_group_section.dart';
@@ -14,24 +13,7 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
   const CategorySettingsPage({super.key});
 
   @override
-  bool get enableAppBar => false;
-
-  @override
-  Widget buildContent(BuildContext context) {
-    if (!Get.isRegistered<CategorySettingsController>()) {
-      Get.put(getIt<CategorySettingsController>());
-    }
-
-    controller.loadProfileSettings();
-
-    return Scaffold(
-      backgroundColor: context.ccColorScheme.surface,
-      appBar: _buildAppBar(context),
-      body: _buildBody(context),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
+  PreferredSizeWidget buildAppBar(BuildContext context) {
     return buildDomainGradientAppBar(
       context,
       leading: CcIconButton.bouncing(
@@ -42,16 +24,24 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
         ),
         onTap: () => Navigator.of(context).pop(),
       ),
-      title: Center(
-        child: CcText(
-          el.tr(CcLocaleKeys.category_settings_title),
-          textStyle: context.ccTextTheme.titleMedium?.copyWith(
-            fontWeight: CcTypographyParams.bold,
-            color: context.ccColorScheme.onPrimary,
-          ),
+      title: CcText(
+        el.tr(CcLocaleKeys.category_settings_title),
+        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+          fontWeight: CcTypographyParams.bold,
+          color: context.ccColorScheme.onPrimary,
         ),
       ),
     );
+  }
+
+  @override
+  Widget buildContent(BuildContext context) {
+    return _buildBody(context);
+  }
+
+  @override
+  Widget onPageBodyWrapper(BuildContext context, Widget body) {
+    return ColoredBox(color: context.ccColorScheme.surface, child: body);
   }
 
   Widget _buildBody(BuildContext context) {

@@ -23,6 +23,8 @@ IconData walletIconFor(String type) {
       return Icons.account_balance_wallet;
     case 'emergency_fund':
       return Icons.shield_outlined;
+    case 'investment':
+      return Icons.trending_up_rounded;
     default:
       return Icons.account_balance;
   }

@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 import 'budget_limit_pie_chart.dart';
@@ -135,7 +136,7 @@ class BudgetLimitGridCard extends StatelessWidget {
                 ),
               ),
               CcText(
-                stats.budget.limit.formatShort(),
+                TransactionFormHelpers.formatShort(stats.budget.limit),
                 textStyle: context.ccTextTheme.labelSmall?.copyWith(
                   color: scheme.onSurfaceVariant.withOpacity(0.6),
                 ),

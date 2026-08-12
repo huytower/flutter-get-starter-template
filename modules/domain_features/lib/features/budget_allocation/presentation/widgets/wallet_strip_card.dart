@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../guideline/guideline_controller.dart';
@@ -16,16 +18,32 @@ import '../../../wallet/presentation/get_x/wallet_controller.dart';
 class WalletStripCard extends StatelessWidget {
   final List<WalletEntity> wallets;
   final void Function(WalletEntity) onMore;
+  final String? emptyMessageKey;
 
   const WalletStripCard({
     super.key,
     required this.wallets,
     required this.onMore,
+    this.emptyMessageKey,
   });
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<WalletController>();
+
+    if (wallets.isEmpty) {
+      return CcSymmetricPadding(
+        horizontal: CcPaddingParams.SPACE_LG,
+        vertical: 12,
+        child: CcText(
+          el.tr(emptyMessageKey ?? CcLocaleKeys.wallet_empty),
+          textAlign: TextAlign.center,
+          textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+            color: context.ccColorScheme.onSurfaceVariant,
+          ),
+        ),
+      );
+    }
 
     return HorizontalFadeScrollView(
       height: context.respDim(110),
@@ -168,7 +186,7 @@ class _WalletCard extends StatelessWidget {
           ),
         ),
         CcText(
-          balance != null ? '${balance!.formatShort()} đ' : '*****',
+          balance != null ? TransactionFormHelpers.formatShort(balance!) : '*****',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(

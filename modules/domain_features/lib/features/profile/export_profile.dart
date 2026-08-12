@@ -12,3 +12,4 @@ export 'presentation/pages/profile_page.dart';
 export 'presentation/widgets/profile_experience_card.dart';
 export 'presentation/widgets/profile_info_card.dart';
 export 'presentation/widgets/profile_page_header.dart';
+export 'presentation/widgets/profile_delete_confirm_sheet.dart';

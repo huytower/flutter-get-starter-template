@@ -12,37 +12,46 @@ class LoginSocialButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CcSocialLoginBtn(
-          type: SocialLoginType.google,
-          onTap: () =>
-              context.read<LoginBloc>().add(
-                    isLinking
-                        ? const LinkWithGoogleStarted()
-                        : const LoginWithGoogleStarted(),
-                  ),
+    final bool isDisabled = isLinking;
+    final double opacity = isDisabled ? 0.3 : 1.0;
+
+    return Opacity(
+      opacity: opacity,
+      child: IgnorePointer(
+        ignoring: isDisabled,
+        child: Column(
+          children: [
+            CcSocialLoginBtn(
+              type: SocialLoginType.google,
+              onTap: () =>
+                  context.read<LoginBloc>().add(
+                        isLinking
+                            ? const LinkWithGoogleStarted()
+                            : const LoginWithGoogleStarted(),
+                      ),
+            ),
+
+            const CcSpaceMD(),
+
+            // Facebook login temporarily hidden
+            // CcSocialLoginBtn(
+            //   type: SocialLoginType.facebook,
+            //   onTap: () => context.read<LoginBloc>().add(
+            //     const LoginWithFacebookStarted(),
+            //   ),
+            // ),
+            // Apple login only on iOS
+            if (CcDeviceHelper.isIOS) ...[
+              const CcSpaceMD(),
+              CcSocialLoginBtn(
+                type: SocialLoginType.apple,
+                onTap: () =>
+                    context.read<LoginBloc>().add(const LoginWithAppleStarted()),
+              ),
+            ],
+          ],
         ),
-
-        const CcSpaceMD(),
-
-        // Facebook login temporarily hidden
-        // CcSocialLoginBtn(
-        //   type: SocialLoginType.facebook,
-        //   onTap: () => context.read<LoginBloc>().add(
-        //     const LoginWithFacebookStarted(),
-        //   ),
-        // ),
-        // Apple login only on iOS
-        if (CcDeviceHelper.isIOS) ...[
-          const CcSpaceMD(),
-          CcSocialLoginBtn(
-            type: SocialLoginType.apple,
-            onTap: () =>
-                context.read<LoginBloc>().add(const LoginWithAppleStarted()),
-          ),
-        ],
-      ],
+      ),
     );
   }
 }

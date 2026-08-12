@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_hero_banner.dart';
 import '../widgets/budget_preview_section.dart';
 import '../widgets/budget_wallets_section.dart';
+import '../widgets/investment_wallets_section.dart';
 
 @RoutePage()
 class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
@@ -81,6 +83,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
               _buildLiquidHeroBanner(context),
               _buildBudgetWalletsSection(context),
               _buildInvestmentHeroBanner(context),
+              _buildInvestmentWalletsSection(context),
               _buildLiabilityHeroBanner(context),
               const BudgetPreviewSection(),
             ],
@@ -104,7 +107,11 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   Widget _buildInvestmentHeroBanner(BuildContext context) {
     return Obx(() {
-      if (!controller.userLevel.status.value.canUseInvestment) {
+      final canShow =
+          controller.userLevel.status.value.level >= 2 ||
+          CcFeatureFlags.isForceFullAccessEnabled;
+
+      if (!canShow) {
         return const SizedBox.shrink();
       }
       final roi = controller.walletController.investmentRoiPercent.value;
@@ -124,7 +131,11 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   Widget _buildLiabilityHeroBanner(BuildContext context) {
     return Obx(() {
-      if (!controller.userLevel.status.value.canUseDebtLoan) {
+      final canShow =
+          controller.userLevel.status.value.level >= 3 ||
+          CcFeatureFlags.isForceFullAccessEnabled;
+
+      if (!canShow) {
         return const SizedBox.shrink();
       }
       return BudgetHeroBanner(
@@ -147,5 +158,24 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         onMore: (wallet) => controller.openWalletActions(context, wallet),
       ),
     );
+  }
+
+  Widget _buildInvestmentWalletsSection(BuildContext context) {
+    return Obx(() {
+      final canShow =
+          controller.userLevel.status.value.level >= 2 ||
+          CcFeatureFlags.isForceFullAccessEnabled;
+
+      if (!canShow) {
+        return const SizedBox.shrink();
+      }
+      final wallets = controller.walletController.investmentWallets;
+
+      return InvestmentWalletsSection(
+        wallets: wallets,
+        onAddWallet: () => controller.openAddWallet(context),
+        onMore: (wallet) => controller.openWalletActions(context, wallet),
+      );
+    });
   }
 }

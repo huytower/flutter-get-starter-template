@@ -62,4 +62,9 @@ abstract class FirebaseAuthRepository {
     required String verificationId,
     required String smsCode,
   });
+
+  /// Deletes the currently signed-in user account. Requires recent
+  /// authentication. If the user has linked providers (phone + Google),
+  /// all providers are deleted together with the user record.
+  Future<Result<Unit, CcFailure>> deleteAccount();
 }

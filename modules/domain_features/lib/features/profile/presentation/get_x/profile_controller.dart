@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
+import 'package:cc_micro_features/features/auth/domain/usecases/delete_account_usecase.dart';
 import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
+import 'package:multiple_result/multiple_result.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';
 
 import '../../../../core/di/di.dart';
@@ -36,6 +38,7 @@ class ProfileController extends CcGetController {
     this._authCoordinator,
     this.userLevel,
     this._notificationService,
+    this._deleteAccount,
   );
 
   final GetProfileSettingsUseCase _getSettings;
@@ -46,6 +49,7 @@ class ProfileController extends CcGetController {
   final AuthCoordinator _authCoordinator;
   final UserLevelController userLevel;
   final NotificationService _notificationService;
+  final DeleteAccountUseCase _deleteAccount;
 
   final Rxn<CcUserEntity> user = Rxn<CcUserEntity>();
   final Rx<ProfileSettingsEntity> settings = const ProfileSettingsEntity().obs;
@@ -354,7 +358,15 @@ class ProfileController extends CcGetController {
     ).push(MaterialPageRoute(builder: (_) => const TermsOfServicePage()));
   }
 
-  void deleteAccount() {
-    // TODO(profile): show confirmation dialog then call delete account use case
+  Future<Result<Unit, CcFailure>> deleteAccount() async {
+    final result = await _performDeleteAccount();
+    if (result.isSuccess()) {
+      await _session.clearSession();
+    }
+    return result;
+  }
+
+  Future<Result<Unit, CcFailure>> _performDeleteAccount() async {
+    return _deleteAccount.call();
   }
 }

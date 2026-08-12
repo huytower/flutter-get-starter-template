@@ -113,6 +113,10 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           ],
           const CcSpaceMD(),
         ],
+        if (controller.newType.value == WalletType.investment) ...[
+          _buildInvestmentCategoryPicker(context, controller),
+          const CcSpaceMD(),
+        ],
         _buildNameField(controller),
         const CcSpaceMD(),
         if (controller.balanceLocked)
@@ -125,7 +129,10 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
     );
   }
 
-  Widget _buildTitle(BuildContext context, AddWalletSheetController controller) {
+  Widget _buildTitle(
+    BuildContext context,
+    AddWalletSheetController controller,
+  ) {
     return CcText(
       controller.isEditing
           ? el.tr(CcLocaleKeys.wallet_edit_title)
@@ -192,15 +199,18 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
     BuildContext context,
     AddWalletSheetController controller,
   ) {
+    final bool canSave =
+        controller.isNameValid.value &&
+        (controller.newType.value != WalletType.investment ||
+            controller.selectedInvestmentCategory.value != null);
+
     return Center(
       child: FractionallySizedBox(
         widthFactor: 0.6,
         child: SizedBox(
           height: context.respDim(40),
           child: ElevatedButton(
-            onPressed: controller.isNameValid.value
-                ? () => controller.save(context)
-                : null,
+            onPressed: canSave ? () => controller.save(context) : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: context.ccColorScheme.primary,
               shape: RoundedRectangleBorder(
@@ -325,10 +335,16 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
     BuildContext context,
     AddWalletSheetController controller,
   ) {
+    final canUseInvestment =
+        controller.userLevel.status.value.level >= 2 ||
+        CcFeatureFlags.isForceFullAccessEnabled;
+
     final options = [
       (WalletType.bank, el.tr(CcLocaleKeys.wallet_bank)),
       (WalletType.ewallet, el.tr(CcLocaleKeys.wallet_ewallet)),
       (WalletType.emergencyFund, el.tr(CcLocaleKeys.wallet_emergency_fund)),
+      if (canUseInvestment)
+        (WalletType.investment, el.tr(CcLocaleKeys.transaction_investment)),
     ];
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -382,6 +398,79 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           );
         }).toList(),
       ),
+    );
+  }
+
+  Widget _buildInvestmentCategoryPicker(
+    BuildContext context,
+    AddWalletSheetController controller,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcText(
+          el.tr(CcLocaleKeys.transaction_category),
+          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+            color: context.ccColorScheme.onSurfaceVariant,
+            fontWeight: CcTypographyParams.bold,
+          ),
+        ),
+        const CcSpaceXS(),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: controller.investmentCategories.map((category) {
+              final isSelected =
+                  controller.selectedInvestmentCategory.value?.id ==
+                  category.id;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: CcInkWell(
+                  onTap: () => controller.selectInvestmentCategory(category),
+                  borderRadius: BorderRadius.circular(12),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? context.ccColorScheme.primary.withOpacity(0.1)
+                          : context.ccColorScheme.surfaceVariant.withOpacity(
+                              0.5,
+                            ),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? context.ccColorScheme.primary
+                            : Colors.transparent,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          iconDataFromCode(category.iconCode),
+                          size: 24,
+                          color: isSelected
+                              ? context.ccColorScheme.primary
+                              : context.ccColorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(height: 4),
+                        CcText(
+                          el.tr(category.nameKey),
+                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                            color: isSelected
+                                ? context.ccColorScheme.primary
+                                : context.ccColorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 }

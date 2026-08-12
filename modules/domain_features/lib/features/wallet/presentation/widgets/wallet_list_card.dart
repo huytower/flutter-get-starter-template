@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
@@ -103,7 +104,7 @@ class WalletListCard extends StatelessWidget {
       final balance = controller.bookBalanceOf(wallet.id);
       final visible = controller.isBalanceVisible.value;
       return CcText(
-        visible ? '${balance.formatShort()} đ' : '*****',
+        visible ? TransactionFormHelpers.formatShort(balance) : '*****',
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
           color: balance >= 0 ? scheme.onSurface : scheme.error,

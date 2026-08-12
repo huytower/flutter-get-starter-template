@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
 /// Hero banner displaying a specific asset category with its balance.
@@ -84,7 +85,7 @@ class BudgetHeroBanner extends StatelessWidget {
                     Obx(
                       () => CcText(
                         walletController.isBalanceVisible.value
-                            ? '${balance.value.formatShort()} đ'
+                            ? TransactionFormHelpers.formatShort(balance.value)
                             : '*********',
                         textStyle: context.ccTextTheme.headlineMedium?.copyWith(
                           color: scheme.onPrimary,

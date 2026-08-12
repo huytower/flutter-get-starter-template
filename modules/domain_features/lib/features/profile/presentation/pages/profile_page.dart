@@ -1,13 +1,15 @@
-import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:domain_features/core/getx/cc_get_view.dart';
 import 'package:domain_features/features/guideline/guideline_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:multiple_result/multiple_result.dart';
 
 import '../get_x/profile_controller.dart';
 import '../widgets/guideline_reset_bottom_sheet.dart';
+import '../widgets/profile_delete_confirm_sheet.dart';
 import '../widgets/profile_menu_group.dart';
 import '../widgets/profile_page_header.dart';
 import '../widgets/profile_settings_tile.dart';
@@ -298,7 +300,33 @@ class ProfilePage extends CcGetView<ProfileController> {
 
   Widget _buildDeleteAccountText(BuildContext context) {
     return CcInkWell(
-      onTap: controller.deleteAccount,
+      onTap: () async {
+        final result = await showModalBottomSheet<Result<Unit, CcFailure>>(
+          context: context,
+          isScrollControlled: true,
+          builder: (_) => ProfileDeleteConfirmSheet(
+            onConfirm: (sheetContext) => controller.deleteAccount(),
+          ),
+        );
+
+        if (result == null) return;
+
+        result.when(
+          (success) {
+            // After delete success, we stay on this page.
+            // The Obx wrappers will automatically refresh the UI to the
+            // Guest state because session.clearSession() was called.
+          },
+          (failure) {
+            if (context.mounted) {
+              CcSnackBarHelper.showErrorSnackBar(
+                context: context,
+                message: failure.message,
+              );
+            }
+          },
+        );
+      },
       child: CcText(
         el.tr(CcLocaleKeys.profile_delete_account),
         textStyle: context.ccTextTheme.bodyMedium?.copyWith(

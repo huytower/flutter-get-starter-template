@@ -12,12 +12,12 @@ import '../../../reconciliation/presentation/get_x/reconciliation_controller.dar
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
+import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../../domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/get_investment_roi_usecase.dart';
 import '../../domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../../domain/usecases/wallet_balance_calculator.dart';
-import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../widgets/add_wallet_sheet.dart';
 import '../widgets/wallet_delete_confirm_sheet.dart';
 
@@ -172,6 +172,17 @@ class WalletController extends CcGetController {
       return a.name.toLowerCase().compareTo(b.name.toLowerCase());
     });
     return liquid;
+  }
+
+  /// Investment wallets for the Budget Allocation screen.
+  List<WalletEntity> get investmentWallets {
+    final investment = wallets
+        .where((w) => w.type == WalletType.investment)
+        .toList();
+    investment.sort(
+      (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+    );
+    return investment;
   }
 
   /// Protected wallets can be renamed but never deleted:

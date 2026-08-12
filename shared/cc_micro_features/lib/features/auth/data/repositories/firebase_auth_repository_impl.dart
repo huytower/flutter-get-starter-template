@@ -352,6 +352,32 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
     );
   }
 
+  @override
+  Future<Result<Unit, CcFailure>> deleteAccount() async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user == null) {
+        return const Error(UnauthorizedFailure('Not logged in'));
+      }
+
+      try {
+        await user.delete();
+      } on firebase_auth.FirebaseAuthException catch (e) {
+        if (e.code == 'requires-recent-login') {
+          return const Error(ServerFailure(
+            'Please re-login before deleting your account.',
+          ));
+        }
+        return Error(_mapLinkException(e));
+      }
+
+      return const Success(unit);
+    } catch (e) {
+      'Delete account error: $e'.Log('FirebaseAuthRepository');
+      return const Error(UnknownFailure('An error occurred'));
+    }
+  }
+
   Future<Result<CcUserEntity, CcFailure>> _linkWithCredential(
     firebase_auth.AuthCredential credential,
   ) async {
@@ -364,6 +390,21 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       final user = userCredential.user ?? current;
       return Success(_mapFirebaseUserToEntity(user));
     } on firebase_auth.FirebaseAuthException catch (e) {
+      if (e.code == 'credential-already-in-use') {
+        // The credential is already linked to another Firebase user.
+        // Sign in with the credential to switch to that user.
+        try {
+          final newCredential = await _firebaseAuth.signInWithCredential(credential);
+          final newUser = newCredential.user;
+          if (newUser != null) {
+            return Success(_mapFirebaseUserToEntity(newUser));
+          }
+          return const Error(UnauthorizedFailure('Login failed'));
+        } catch (signInError) {
+          'Sign in after link conflict failed: $signInError'.Log('FirebaseAuthRepository');
+          return const Error(UnknownFailure('An error occurred'));
+        }
+      }
       return Error(_mapLinkException(e));
     } catch (e) {
       'Link with credential error: $e'.Log('FirebaseAuthRepository');

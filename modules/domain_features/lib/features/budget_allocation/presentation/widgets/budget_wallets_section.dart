@@ -4,8 +4,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../guideline/guideline_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import 'wallet_strip_card.dart';
 
@@ -15,12 +15,18 @@ class BudgetWalletsSection extends StatelessWidget {
     required this.wallets,
     required this.onAddWallet,
     required this.onMore,
+    this.titleKey = CcLocaleKeys.wallet_your_wallets,
+    this.showAddButton = true,
+    this.emptyMessageKey,
     super.key,
   });
 
   final List<WalletEntity> wallets;
   final VoidCallback onAddWallet;
   final ValueChanged<WalletEntity> onMore;
+  final String titleKey;
+  final bool showAddButton;
+  final String? emptyMessageKey;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +47,7 @@ class BudgetWalletsSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CcText(
-                el.tr(CcLocaleKeys.wallet_your_wallets),
+                el.tr(titleKey),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
                   fontWeight: CcTypographyParams.bold,
                   color: scheme.onBackground,
@@ -49,31 +55,32 @@ class BudgetWalletsSection extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Obx(
-                    () => Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        CcInkWell(
-                          onTap: onAddWallet,
-                          child: const CcIconToken(
-                            Icons.add_circle_outline_rounded,
-                            size: 20,
-                          ),
-                        ),
-                        if (guideline.isTaskActive('wallet_balance'))
-                          Positioned(
-                            top: -10,
-                            right: -10,
-                            child: CcGuidelineBadge(
-                              size: 6,
-                              color: guideline.currentColor,
-                              bounceTrigger: guideline.bounceTrigger,
+                  if (showAddButton)
+                    Obx(
+                      () => Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          CcInkWell(
+                            onTap: onAddWallet,
+                            child: const CcIconToken(
+                              Icons.add_circle_outline_rounded,
+                              size: 20,
                             ),
                           ),
-                      ],
+                          if (guideline.isTaskActive('wallet_balance'))
+                            Positioned(
+                              top: -10,
+                              right: -10,
+                              child: CcGuidelineBadge(
+                                size: 6,
+                                color: guideline.currentColor,
+                                bounceTrigger: guideline.bounceTrigger,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const CcSpaceSM(),
+                  if (showAddButton) const CcSpaceSM(),
                   CcInkWell(
                     onTap: () => context.router.push(const WalletListRoute()),
                     child: CcText(
@@ -89,7 +96,11 @@ class BudgetWalletsSection extends StatelessWidget {
             ],
           ),
         ),
-        WalletStripCard(wallets: wallets, onMore: onMore),
+        WalletStripCard(
+          wallets: wallets,
+          onMore: onMore,
+          emptyMessageKey: emptyMessageKey,
+        ),
       ],
     );
   }
