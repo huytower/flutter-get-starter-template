@@ -130,6 +130,16 @@ class CcAppStorage extends HiveObject {
   @HiveField(20)
   bool? hasSeenTutorial;
 
+  /// Whether the profile header card is currently showing the back surface
+  /// (experience chart). Persisted to last through app restarts.
+  @HiveField(21)
+  bool? isProfileHeaderFlipped;
+
+  /// Whether the user has manually customized their category settings.
+  /// When true, age-based recommendations won't override their choices.
+  @HiveField(22)
+  bool? hasCustomizedCategories;
+
   CcAppStorage({
     this.accessToken,
     this.fcmToken,
@@ -152,5 +162,7 @@ class CcAppStorage extends HiveObject {
     this.cloudBackupReminderSentAt,
     this.hasViewedEmergencyFundEbook,
     this.hasSeenTutorial,
+    this.isProfileHeaderFlipped,
+    this.hasCustomizedCategories,
   });
 }

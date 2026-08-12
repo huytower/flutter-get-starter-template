@@ -30,9 +30,6 @@ Future<void> initEnv() async {
   final env = HttpClientConfig.environment;
   String envFile;
   switch (env) {
-    case Environment.FREE_FAKE_API:
-      envFile = '.env.development';
-      break;
     case Environment.UAT:
       envFile = '.env.uat';
       break;

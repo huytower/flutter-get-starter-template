@@ -23,8 +23,8 @@ To set up Firebase for local development:
    ```bash
    melos run setup:firebase
    ```
-   This will copy the `.template` files to the required `.json` and `.plist` locations for all flavors (`free`, `prod`,
-   `uat`).
+    This will copy the `.template` files to the required `.json` and `.plist` locations for all flavors (`prod`,
+    `uat`).
 
 2. **Manual Setup:**
    If you need to use your own Firebase project, manually create/update:
@@ -123,7 +123,7 @@ import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 - `flutter analyze`
 - `flutter pub run build_runner build --delete-conflicting-outputs`
 - `flutter test`
-- `flutter run -d emulator-5554 --flavor free -t lib/main_free.dart` - run app with emulator in terminal
+- `flutter run -d emulator-5554 --flavor uat -t lib/main_uat.dart` - run app with emulator in terminal
 
 ## Recommended workflow
 

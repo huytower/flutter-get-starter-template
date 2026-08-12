@@ -86,11 +86,6 @@ android {
 
     flavorDimensions += "environment"
     productFlavors {
-        create("free") {
-            dimension = "environment"
-            applicationIdSuffix = ".free"
-            versionNameSuffix = "-free"
-        }
         create("uat") {
             dimension = "environment"
             applicationIdSuffix = ".uat"

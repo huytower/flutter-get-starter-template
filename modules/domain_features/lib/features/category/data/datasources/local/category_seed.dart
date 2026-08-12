@@ -7,7 +7,7 @@ import '../../../domain/entities/category_group_entity.dart';
 import '../../models/category_model.dart';
 
 /// Life stage derived from the user's birth year.
-enum AgeGroup { youngAdult, adult, mature }
+enum AgeGroup { youngAdult, adult, midLife, mature }
 
 /// Default categories + groups seeded into Hive on first launch.
 class CategorySeed {
@@ -669,18 +669,20 @@ class CategorySeed {
   ];
 
   /// Computes the life stage from [birthYear]:
-  /// - [youngAdult]: under 25 (single, no children)
-  /// - [adult]: 25–39 (transitional)
-  /// - [mature]: 40+ (settled family / career)
+  /// - [youngAdult]: under 23
+  /// - [adult]: 23–30
+  /// - [midLife]: 31–45
+  /// - [mature]: 45+
   static AgeGroup? ageGroup(int? birthYear) {
     if (birthYear == null) return null;
     final age = DateTime.now().year - birthYear;
-    if (age < 25) return AgeGroup.youngAdult;
-    if (age < 40) return AgeGroup.adult;
+    if (age < 23) return AgeGroup.youngAdult;
+    if (age <= 30) return AgeGroup.adult;
+    if (age <= 45) return AgeGroup.midLife;
     return AgeGroup.mature;
   }
 
-  /// Whether [birthYear] indicates the user is under 25 years old.
+  /// Whether [birthYear] indicates the user is under 23 years old.
   static bool isYoungAdult(int? birthYear) =>
       ageGroup(birthYear) == AgeGroup.youngAdult;
 
@@ -689,37 +691,19 @@ class CategorySeed {
   static const Map<AgeGroup, List<String>> defaultExpenseCategoryKeys = {
     AgeGroup.youngAdult: [
       CcLocaleKeys.category_food_drink,
-      CcLocaleKeys.category_coffee,
       CcLocaleKeys.category_water,
       CcLocaleKeys.category_eat_out,
       CcLocaleKeys.category_taxi,
-      CcLocaleKeys.category_gas,
-      CcLocaleKeys.category_parking,
-      CcLocaleKeys.category_maintenance,
       CcLocaleKeys.category_electricity,
       CcLocaleKeys.category_internet,
       CcLocaleKeys.category_phone,
       CcLocaleKeys.category_rent,
-      CcLocaleKeys.category_furniture,
       CcLocaleKeys.category_laundry,
-      CcLocaleKeys.category_gym,
       CcLocaleKeys.category_doctor,
       CcLocaleKeys.category_medicine,
       CcLocaleKeys.category_tuition,
       CcLocaleKeys.category_courses,
-      CcLocaleKeys.category_cinema,
-      CcLocaleKeys.category_travel,
-      CcLocaleKeys.category_gaming,
-      CcLocaleKeys.category_events,
-      CcLocaleKeys.category_electronics,
       CcLocaleKeys.category_clothing,
-      CcLocaleKeys.category_cosmetics,
-      // category_installment removed - now classified as Debt/Loan type
-      CcLocaleKeys.category_vehicle_insurance,
-      CcLocaleKeys.category_gifts,
-      CcLocaleKeys.category_haircut,
-      CcLocaleKeys.category_spa,
-      CcLocaleKeys.category_personal_care_product,
       CcLocaleKeys.category_bank_fee,
       CcLocaleKeys.category_card_fee,
     ],
@@ -736,7 +720,40 @@ class CategorySeed {
       CcLocaleKeys.category_internet,
       CcLocaleKeys.category_phone,
       CcLocaleKeys.category_rent,
-      // category_mortgage removed - now classified as Debt/Loan type
+      CcLocaleKeys.category_furniture,
+      CcLocaleKeys.category_laundry,
+      CcLocaleKeys.category_condo_fee,
+      CcLocaleKeys.category_doctor,
+      CcLocaleKeys.category_medicine,
+      CcLocaleKeys.category_health_insurance,
+      CcLocaleKeys.category_gym,
+      CcLocaleKeys.category_courses,
+      CcLocaleKeys.category_cinema,
+      CcLocaleKeys.category_travel,
+      CcLocaleKeys.category_events,
+      CcLocaleKeys.category_electronics,
+      CcLocaleKeys.category_clothing,
+      CcLocaleKeys.category_cosmetics,
+      CcLocaleKeys.category_gifts,
+      CcLocaleKeys.category_haircut,
+      CcLocaleKeys.category_spa,
+      CcLocaleKeys.category_personal_care_product,
+      CcLocaleKeys.category_bank_fee,
+      CcLocaleKeys.category_card_fee,
+    ],
+    AgeGroup.midLife: [
+      CcLocaleKeys.category_food_drink,
+      CcLocaleKeys.category_coffee,
+      CcLocaleKeys.category_water,
+      CcLocaleKeys.category_eat_out,
+      CcLocaleKeys.category_taxi,
+      CcLocaleKeys.category_gas,
+      CcLocaleKeys.category_parking,
+      CcLocaleKeys.category_maintenance,
+      CcLocaleKeys.category_electricity,
+      CcLocaleKeys.category_internet,
+      CcLocaleKeys.category_phone,
+      CcLocaleKeys.category_rent,
       CcLocaleKeys.category_furniture,
       CcLocaleKeys.category_laundry,
       CcLocaleKeys.category_condo_fee,
@@ -752,11 +769,8 @@ class CategorySeed {
       CcLocaleKeys.category_electronics,
       CcLocaleKeys.category_clothing,
       CcLocaleKeys.category_cosmetics,
-      // category_installment removed - now classified as Debt/Loan type
-      // category_loan_interest removed - now classified as Debt/Loan type
-      CcLocaleKeys.category_vehicle_insurance,
-      CcLocaleKeys.category_life_insurance,
       CcLocaleKeys.category_gifts,
+      CcLocaleKeys.category_charity,
       CcLocaleKeys.category_haircut,
       CcLocaleKeys.category_spa,
       CcLocaleKeys.category_personal_care_product,
@@ -774,7 +788,6 @@ class CategorySeed {
       CcLocaleKeys.category_internet,
       CcLocaleKeys.category_phone,
       CcLocaleKeys.category_rent,
-      // category_mortgage removed - now classified as Debt/Loan type
       CcLocaleKeys.category_furniture,
       CcLocaleKeys.category_laundry,
       CcLocaleKeys.category_condo_fee,
@@ -782,18 +795,12 @@ class CategorySeed {
       CcLocaleKeys.category_medicine,
       CcLocaleKeys.category_health_insurance,
       CcLocaleKeys.category_gym,
-      CcLocaleKeys.category_tuition,
       CcLocaleKeys.category_books,
       CcLocaleKeys.category_courses,
       CcLocaleKeys.category_travel,
       CcLocaleKeys.category_appliances,
       CcLocaleKeys.category_electronics,
       CcLocaleKeys.category_clothing,
-      // category_installment removed - now classified as Debt/Loan type
-      // category_loan_interest removed - now classified as Debt/Loan type
-      CcLocaleKeys.category_vehicle_insurance,
-      CcLocaleKeys.category_life_insurance,
-      CcLocaleKeys.category_home_insurance,
       CcLocaleKeys.category_gifts,
       CcLocaleKeys.category_charity,
       CcLocaleKeys.category_haircut,
@@ -807,13 +814,21 @@ class CategorySeed {
   /// Default-on income category `nameKey`s per life stage.
   static const Map<AgeGroup, List<String>> defaultIncomeCategoryKeys = {
     AgeGroup.youngAdult: [
+      CcLocaleKeys.category_income_allowance,
+      CcLocaleKeys.category_income_salary,
+      CcLocaleKeys.category_income_freelance,
+      CcLocaleKeys.category_income_gift,
+    ],
+    AgeGroup.adult: [
       CcLocaleKeys.category_income_salary,
       CcLocaleKeys.category_income_freelance,
       CcLocaleKeys.category_income_allowance,
       CcLocaleKeys.category_income_bonus,
       CcLocaleKeys.category_income_cashback,
+      CcLocaleKeys.category_income_gift,
+      CcLocaleKeys.category_income_savings_interest,
     ],
-    AgeGroup.adult: [
+    AgeGroup.midLife: [
       CcLocaleKeys.category_income_salary,
       CcLocaleKeys.category_income_freelance,
       CcLocaleKeys.category_income_allowance,
@@ -830,8 +845,83 @@ class CategorySeed {
       CcLocaleKeys.category_income_savings_interest,
       CcLocaleKeys.category_income_dividends,
       CcLocaleKeys.category_income_rental,
-      CcLocaleKeys.category_income_bonus,
       CcLocaleKeys.category_income_gift,
+      CcLocaleKeys.category_income_bonus,
+    ],
+  };
+
+  /// Default-on debt/loan category `nameKey`s per life stage.
+  static const Map<AgeGroup, List<String>> defaultDebtLoanCategoryKeys = {
+    AgeGroup.youngAdult: [
+      CcLocaleKeys.category_debt_personal_borrow,
+      CcLocaleKeys.category_debt_credit_card,
+      CcLocaleKeys.category_debt_installment,
+      CcLocaleKeys.category_debt_other,
+    ],
+    AgeGroup.adult: [
+      CcLocaleKeys.category_debt_personal_borrow,
+      CcLocaleKeys.category_debt_bank_borrow,
+      CcLocaleKeys.category_debt_credit_card,
+      CcLocaleKeys.category_debt_installment,
+      CcLocaleKeys.category_debt_other,
+      CcLocaleKeys.category_debt_personal_lend,
+    ],
+    AgeGroup.midLife: [
+      CcLocaleKeys.category_debt_personal_borrow,
+      CcLocaleKeys.category_debt_bank_borrow,
+      CcLocaleKeys.category_debt_mortgage,
+      CcLocaleKeys.category_debt_credit_card,
+      CcLocaleKeys.category_debt_installment,
+      CcLocaleKeys.category_debt_other,
+      CcLocaleKeys.category_debt_personal_lend,
+      CcLocaleKeys.category_debt_other_lend,
+    ],
+    AgeGroup.mature: [
+      CcLocaleKeys.category_debt_personal_borrow,
+      CcLocaleKeys.category_debt_bank_borrow,
+      CcLocaleKeys.category_debt_mortgage,
+      CcLocaleKeys.category_debt_credit_card,
+      CcLocaleKeys.category_debt_installment,
+      CcLocaleKeys.category_debt_other,
+      CcLocaleKeys.category_debt_personal_lend,
+    ],
+  };
+
+  /// Default-on investment category `nameKey`s per life stage.
+  static const Map<AgeGroup, List<String>> defaultInvestmentCategoryKeys = {
+    AgeGroup.youngAdult: [
+      CcLocaleKeys.category_investment_term_deposit,
+      CcLocaleKeys.category_investment_gold,
+      CcLocaleKeys.category_investment_crypto,
+    ],
+    AgeGroup.adult: [
+      CcLocaleKeys.category_investment_stock,
+      CcLocaleKeys.category_investment_fund,
+      CcLocaleKeys.category_investment_term_deposit,
+      CcLocaleKeys.category_investment_gold,
+      CcLocaleKeys.category_investment_crypto,
+      CcLocaleKeys.category_investment_other,
+    ],
+    AgeGroup.midLife: [
+      CcLocaleKeys.category_investment_stock,
+      CcLocaleKeys.category_investment_fund,
+      CcLocaleKeys.category_investment_term_deposit,
+      CcLocaleKeys.category_investment_real_estate,
+      CcLocaleKeys.category_investment_gold,
+      CcLocaleKeys.category_investment_crypto,
+      CcLocaleKeys.category_investment_bond,
+      CcLocaleKeys.category_investment_business,
+      CcLocaleKeys.category_investment_other,
+    ],
+    AgeGroup.mature: [
+      CcLocaleKeys.category_investment_stock,
+      CcLocaleKeys.category_investment_fund,
+      CcLocaleKeys.category_investment_term_deposit,
+      CcLocaleKeys.category_investment_real_estate,
+      CcLocaleKeys.category_investment_gold,
+      CcLocaleKeys.category_investment_bond,
+      CcLocaleKeys.category_investment_linked_insurance,
+      CcLocaleKeys.category_investment_other,
     ],
   };
 }

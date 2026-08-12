@@ -51,7 +51,7 @@ class FinancialDataSyncService {
   String? get _userId => _session.currentUser?.id;
 
   /// Whether the device currently has internet access — drives the
-  /// sync-status icon (see `SyncStatusIcon`). Kept live by [startWatching].
+  /// sync-status indicator. Kept live by [startWatching].
   final RxBool isOnline = true.obs;
 
   /// Count of locally-stored records not yet backed up to Cloud (across all

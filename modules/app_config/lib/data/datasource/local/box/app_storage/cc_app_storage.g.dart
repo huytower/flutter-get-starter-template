@@ -38,13 +38,15 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       cloudBackupReminderSentAt: fields[18] as DateTime?,
       hasViewedEmergencyFundEbook: fields[19] as bool?,
       hasSeenTutorial: fields[20] as bool?,
+      isProfileHeaderFlipped: fields[21] as bool?,
+      hasCustomizedCategories: fields[22] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CcAppStorage obj) {
     writer
-      ..writeByte(21)
+      ..writeByte(23)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)
@@ -86,7 +88,11 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..writeByte(19)
       ..write(obj.hasViewedEmergencyFundEbook)
       ..writeByte(20)
-      ..write(obj.hasSeenTutorial);
+      ..write(obj.hasSeenTutorial)
+      ..writeByte(21)
+      ..write(obj.isProfileHeaderFlipped)
+      ..writeByte(22)
+      ..write(obj.hasCustomizedCategories);
   }
 
   @override
@@ -139,6 +145,8 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
       : DateTime.parse(json['cloudBackupReminderSentAt'] as String),
   hasViewedEmergencyFundEbook: json['hasViewedEmergencyFundEbook'] as bool?,
   hasSeenTutorial: json['hasSeenTutorial'] as bool?,
+  isProfileHeaderFlipped: json['isProfileHeaderFlipped'] as bool?,
+  hasCustomizedCategories: json['hasCustomizedCategories'] as bool?,
 );
 
 Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
@@ -166,4 +174,6 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
           ?.toIso8601String(),
       'hasViewedEmergencyFundEbook': instance.hasViewedEmergencyFundEbook,
       'hasSeenTutorial': instance.hasSeenTutorial,
+      'isProfileHeaderFlipped': instance.isProfileHeaderFlipped,
+      'hasCustomizedCategories': instance.hasCustomizedCategories,
     };

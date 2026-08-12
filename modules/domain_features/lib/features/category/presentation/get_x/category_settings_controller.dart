@@ -2,8 +2,11 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../guideline/guideline_controller.dart';
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../guideline/guideline_controller.dart';
+import '../../../profile/domain/entities/profile_settings_entity.dart';
+import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
+import '../../../profile/domain/usecases/update_profile_settings_usecase.dart';
 import '../../data/datasources/local/category_seed.dart';
 import '../../domain/entities/category_entity.dart';
 import '../../domain/entities/category_group_entity.dart';
@@ -17,11 +20,15 @@ class CategorySettingsController extends CcGetController {
     this._getGroups,
     this._getCategories,
     this._toggleEnabled,
+    this._getProfileSettings,
+    this._updateProfileSettings,
   );
 
   final GetCategoryGroupsUseCase _getGroups;
   final GetCategoriesUseCase _getCategories;
   final ToggleCategoryEnabledUseCase _toggleEnabled;
+  final GetProfileSettingsUseCase _getProfileSettings;
+  final UpdateProfileSettingsUseCase _updateProfileSettings;
 
   final RxList<CategoryGroupEntity> groups = <CategoryGroupEntity>[].obs;
   final RxMap<String, List<CategoryEntity>> byGroup =
@@ -34,11 +41,61 @@ class CategorySettingsController extends CcGetController {
       <String, List<CategoryEntity>>{}.obs;
 
   final RxMap<String, bool> pending = <String, bool>{}.obs;
+  final Rx<ProfileSettingsEntity> profileSettings =
+      const ProfileSettingsEntity().obs;
+  bool _categoriesLoaded = false;
+
+  /// Get recommended categories for the current age group
+  List<String> getRecommendedCategoryKeys() {
+    if (profileSettings.value.hasCustomizedCategories) return [];
+    final birthYear = profileSettings.value.birthYear;
+    if (birthYear == null) return [];
+    final group = CategorySeed.ageGroup(birthYear);
+    if (group == null) return [];
+    return [
+      ...CategorySeed.defaultExpenseCategoryKeys[group] ?? [],
+      ...CategorySeed.defaultIncomeCategoryKeys[group] ?? [],
+      ...CategorySeed.defaultDebtLoanCategoryKeys[group] ?? [],
+      ...CategorySeed.defaultInvestmentCategoryKeys[group] ?? [],
+    ];
+  }
+
+  Future<void> loadProfileSettings() async {
+    final settings = await _getProfileSettings();
+    profileSettings.value = settings;
+  }
 
   @override
   void onInit() {
     super.onInit();
-    load();
+    _init();
+    ever(profileSettings, _onProfileSettingsChanged);
+  }
+
+  Future<void> _init() async {
+    await loadProfileSettings();
+    await load();
+  }
+
+  void _onProfileSettingsChanged(ProfileSettingsEntity settings) {
+    if (_categoriesLoaded &&
+        !settings.hasCustomizedCategories &&
+        settings.birthYear != null) {
+      _applyAgeDefaults();
+    }
+  }
+
+  void _applyAgeDefaults() {
+    final recommendedKeys = getRecommendedCategoryKeys();
+    for (final cat in [
+      ...byGroup.values.expand((e) => e),
+      ...incomeByGroup.values.expand((e) => e),
+      ...debtLoanByGroup.values.expand((e) => e),
+      ...investmentByGroup.values.expand((e) => e),
+    ]) {
+      pending[cat.id] = recommendedKeys.contains(cat.nameKey);
+    }
+    pending.refresh();
   }
 
   Future<void> load() async {
@@ -134,9 +191,25 @@ class CategorySettingsController extends CcGetController {
       incomeByGroup.assignAll(ibg);
       debtLoanByGroup.assignAll(dlbg);
       investmentByGroup.assignAll(invbg);
-    }, (_) {});
 
-    layoutStatus.value = CcLayoutStatus.success;
+      _categoriesLoaded = true;
+      if (!profileSettings.value.hasCustomizedCategories &&
+          profileSettings.value.birthYear != null) {
+        final recommendedKeys = getRecommendedCategoryKeys();
+        for (final cat in [
+          ...byGroup.values.expand((e) => e),
+          ...incomeByGroup.values.expand((e) => e),
+          ...debtLoanByGroup.values.expand((e) => e),
+          ...investmentByGroup.values.expand((e) => e),
+        ]) {
+          pending[cat.id] = recommendedKeys.contains(cat.nameKey);
+        }
+        pending.refresh();
+      }
+      layoutStatus.value = CcLayoutStatus.success;
+    }, (_) {
+      layoutStatus.value = CcLayoutStatus.success;
+    });
   }
 
   bool isEnabled(CategoryEntity cat) =>
@@ -146,7 +219,6 @@ class CategorySettingsController extends CcGetController {
     final current = isEnabled(cat);
     final next = !current;
 
-    // Optimistic UI update
     pending[cat.id] = next;
     pending.refresh();
 
@@ -156,6 +228,15 @@ class CategorySettingsController extends CcGetController {
       pending[cat.id] = current;
       pending.refresh();
     } else {
+      // Mark user as having customized categories
+      if (!profileSettings.value.hasCustomizedCategories) {
+        final updatedSettings = profileSettings.value.copyWith(
+          hasCustomizedCategories: true,
+        );
+        profileSettings.value = updatedSettings;
+        await _updateProfileSettings(updatedSettings);
+      }
+
       // Guideline: categories completed
       Get.find<GuidelineController>().completeTask('categories');
     }

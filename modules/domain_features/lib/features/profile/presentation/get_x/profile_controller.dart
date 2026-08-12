@@ -12,13 +12,12 @@ import 'package:theme/presentation/provider/theme_provider.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../category/export_category.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/usecases/update_profile_settings_usecase.dart';
-import '../pages/link_account_page.dart';
 import '../pages/terms_of_service_page.dart';
 import '../widgets/birth_year_dialog.dart';
 import '../widgets/display_name_dialog.dart';
@@ -196,6 +195,13 @@ class ProfileController extends CcGetController {
     await _updateSettings(updated);
   }
 
+  Future<void> setHeaderFlipped(bool isFlipped) async {
+    if (settings.value.isHeaderFlipped == isFlipped) return;
+    final updated = settings.value.copyWith(isHeaderFlipped: isFlipped);
+    settings.value = updated;
+    await _updateSettings(updated);
+  }
+
   Future<void> logout(BuildContext context) async {
     await _session.clearSession();
   }
@@ -232,10 +238,17 @@ class ProfileController extends CcGetController {
       final group = CategorySeed.ageGroup(picked);
       if (group != null) {
         await setBirthYear(picked);
-        await enableCategories([
-          ...CategorySeed.defaultExpenseCategoryKeys[group]!,
-          ...CategorySeed.defaultIncomeCategoryKeys[group]!,
-        ]);
+        
+        // Only apply age-based categories if user hasn't customized their categories yet
+        if (!settings.value.hasCustomizedCategories) {
+          await enableCategories([
+            ...CategorySeed.defaultExpenseCategoryKeys[group]!,
+            ...CategorySeed.defaultIncomeCategoryKeys[group]!,
+            ...CategorySeed.defaultDebtLoanCategoryKeys[group]!,
+            ...CategorySeed.defaultInvestmentCategoryKeys[group]!,
+          ]);
+        }
+        
         // Guideline: birth_year completed
         Get.find<GuidelineController>().completeTask('birth_year');
       }
@@ -258,7 +271,13 @@ class ProfileController extends CcGetController {
   Future<void> pickDisplayName(BuildContext context) async {
     if (!isLoggedIn) return;
 
-    final name = await DisplayNameDialog.show(context, currentName: displayName);
+    final u = user.value;
+    final fullName = [
+      u?.firstName,
+      u?.lastName,
+    ].whereType<String>().where((s) => s.isNotEmpty).join(' ');
+
+    final name = await DisplayNameDialog.show(context, currentName: fullName);
     if (name == null || name.trim().isEmpty) return;
 
     final result = await getIt<FirebaseAuthRepository>().updateDisplayName(
@@ -294,12 +313,19 @@ class ProfileController extends CcGetController {
     }
   }
 
-  /// Guests have no Firebase account to link a second provider to.
-  void navigateToLinkAccount(BuildContext context) {
-    if (!isLoggedIn) return;
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const LinkAccountPage()));
+  /// Handle link account tap - navigate to login page for account linking
+  void handleLinkAccountTap(BuildContext context) {
+    _authCoordinator.navigateToLogin(context);
+  }
+
+  /// Handle avatar tap - navigate to login page
+  void handleAvatarTap(BuildContext context) {
+    _authCoordinator.navigateToLogin(context);
+  }
+
+  /// Handle phone number link tap - navigate to login page
+  void handlePhoneLinkTap(BuildContext context) {
+    _authCoordinator.navigateToLogin(context);
   }
 
   Future<void> navigateToCategorySettings(BuildContext context) async {

@@ -175,6 +175,8 @@ import 'package:domain_features/features/transaction/domain/usecases/create_tran
     as _i28;
 import 'package:domain_features/features/transaction/domain/usecases/update_transaction_usecase.dart'
     as _i756;
+import 'package:domain_features/features/transaction/presentation/get_x/category_selection_controller.dart'
+    as _i615;
 import 'package:domain_features/features/transaction/presentation/get_x/expense_form_controller.dart'
     as _i754;
 import 'package:domain_features/features/transaction/presentation/get_x/income_form_controller.dart'
@@ -420,6 +422,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i944.ReconciliationRepository>(),
             ));
+    gh.factory<_i615.CategorySelectionController>(() =>
+        _i615.CategorySelectionController(gh<_i224.GetCategoriesUseCase>()));
     gh.lazySingleton<_i467.GetBudgetOverLimitCountUseCase>(
         () => _i467.GetBudgetOverLimitCountUseCase(
               gh<_i544.BudgetLimitRepository>(),
@@ -471,6 +475,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i397.GetCategoryGroupsUseCase>(),
               gh<_i224.GetCategoriesUseCase>(),
               gh<_i110.ToggleCategoryEnabledUseCase>(),
+              gh<_i569.GetProfileSettingsUseCase>(),
+              gh<_i220.UpdateProfileSettingsUseCase>(),
             ));
     gh.lazySingleton<_i1003.BudgetLimitController>(
         () => _i1003.BudgetLimitController(

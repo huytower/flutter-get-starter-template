@@ -109,13 +109,13 @@ The pipeline is defined in `.github/workflows/firebase-app-distribution.yml` and
 1. **Quality Check**: Runs `melos run analyze` and `melos run test`. **Must pass** for any build to start.
 2. **Android Distribute**: Triggered on push to `main` or manual dispatch. Uses Fastlane `distribute_firebase`.
 3. **iOS Distribute**: Triggered on push to `main` or manual dispatch. Uses Fastlane `beta` (Gym + Pilot).
-4. **PR Smoke Test**: Runs on Pull Requests to ensure the app compiles (`free` flavor).
+4. **PR Smoke Test**: Runs on Pull Requests to ensure the app compiles (`uat` flavor).
 
 ### Manual Deployment
 
 1. Go to **Actions** tab.
 2. Select **CI/CD Pipeline**.
-3. Click **Run workflow**, choose your branch and **Flavor** (free, uat, prod).
+3. Click **Run workflow**, choose your branch and **Flavor** (uat, prod).
 
 ---
 

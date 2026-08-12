@@ -572,7 +572,8 @@ class CodegenLoader extends AssetLoader {
     "sync": {
       "offline_tooltip":
           "Offline — your data is only saved on this device until you reconnect",
-      "pending_tooltip": "{count} item(s) not yet backed up to Cloud — tap to sync",
+      "pending_tooltip":
+          "{count} item(s) not yet backed up to Cloud — tap to sync",
       "synced_tooltip": "All data backed up to Cloud",
     },
     "profile": {
@@ -629,6 +630,13 @@ class CodegenLoader extends AssetLoader {
       "delete_account": "Delete account",
       "young_children_message":
           "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys).",
+      "experience_level_progress": "Experience Level Progress",
+      "level_title": "Level {level} ({title})",
+      "tap_to_return": "Tap to return to profile",
+      "streak_weeks": "Streak: {count} weeks",
+      "level_master": "Master",
+      "level_intermediate": "Intermediate",
+      "level_novice": "Novice",
     },
     "guideline": {
       "banner_title_completed": "Congrats! All setup steps completed",
@@ -1270,6 +1278,13 @@ class CodegenLoader extends AssetLoader {
       "delete_account": "Xoá tài khoản",
       "young_children_message":
           "Bạn có con nhỏ không? Nếu có, chúng tôi sẽ tự động bật các danh mục dành cho con (sữa, bỉm, đồ chơi trẻ em).",
+      "experience_level_progress": "Tiến trình cấp độ kinh nghiệm",
+      "level_title": "Cấp độ {level} ({title})",
+      "tap_to_return": "Chạm để quay lại hồ sơ",
+      "streak_weeks": "Chuỗi: {count} tuần",
+      "level_master": "Bậc thầy",
+      "level_intermediate": "Trung cấp",
+      "level_novice": "Người mới",
     },
     "guideline": {
       "banner_title_completed": "Chúc mừng! Bước hướng dẫn đã hoàn tất.",
@@ -1866,8 +1881,7 @@ abstract class CcLocaleKeys {
   static const profile_display_name_save = 'profile.display_name_save';
   static const profile_display_name_updated = 'profile.display_name_updated';
   static const profile_link_account_title = 'profile.link_account_title';
-  static const profile_link_account_subtitle =
-      'profile.link_account_subtitle';
+  static const profile_link_account_subtitle = 'profile.link_account_subtitle';
   static const profile_link_account_google = 'profile.link_account_google';
   static const profile_link_account_phone = 'profile.link_account_phone';
   static const profile_link_account_linked = 'profile.link_account_linked';
@@ -1914,6 +1928,14 @@ abstract class CcLocaleKeys {
   static const profile_delete_account = 'profile.delete_account';
   static const profile_young_children_message =
       'profile.young_children_message';
+  static const profile_experience_level_progress =
+      'profile.experience_level_progress';
+  static const profile_level_title = 'profile.level_title';
+  static const profile_tap_to_return = 'profile.tap_to_return';
+  static const profile_streak_weeks = 'profile.streak_weeks';
+  static const profile_level_master = 'profile.level_master';
+  static const profile_level_intermediate = 'profile.level_intermediate';
+  static const profile_level_novice = 'profile.level_novice';
 
   static const guideline_banner_title_completed =
       'guideline.banner_title_completed';

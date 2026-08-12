@@ -8,10 +8,9 @@ import 'package:get/get.dart';
 
 import '../get_x/profile_controller.dart';
 import '../widgets/guideline_reset_bottom_sheet.dart';
-import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_group.dart';
+import '../widgets/profile_page_header.dart';
 import '../widgets/profile_settings_tile.dart';
-import '../widgets/profile_stats_row.dart';
 
 class ProfilePage extends CcGetView<ProfileController> {
   const ProfilePage({super.key});
@@ -39,17 +38,27 @@ class ProfilePage extends CcGetView<ProfileController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const CcSpaceMD(),
                   Obx(() {
                     'Rebuilding ProfileHeader with user: ${controller.user.value?.id}'
                         .Log('ProfilePage');
                     return Hero(
                       tag: 'profile_hero_banner',
-                      child: ProfileHeader(
+                      child: ProfilePageHeader(
                         user: controller.user.value,
                         displayName: controller.displayName,
                         level: controller.userLevel.status.value.level,
-                        onTap: () => controller.handleHeroBannerTap(context),
+                        daysToNextAudit: controller.daysToNextAudit,
+                        levelStatus: controller.userLevel.status.value,
+                        initialFlipped:
+                            controller.settings.value.isHeaderFlipped,
+                        onFlip: controller.setHeaderFlipped,
                         onEditName: () => controller.pickDisplayName(context),
+                        onLinkAccount: () =>
+                            controller.handleLinkAccountTap(context),
+                        onAvatarTap: () => controller.handleAvatarTap(context),
+                        onLinkPhone: () =>
+                            controller.handlePhoneLinkTap(context),
                       ),
                     );
                   }),
@@ -58,13 +67,6 @@ class ProfilePage extends CcGetView<ProfileController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const CcSpaceMD(),
-                        Obx(
-                          () => ProfileStatsRow(
-                            daysToNextAudit: controller.daysToNextAudit,
-                            levelStatus: controller.userLevel.status.value,
-                          ),
-                        ),
                         const CcSpaceMD(),
                         ProfileMenuGroup(items: _buildMenuItems(context)),
                         const CcSpaceXL(),
@@ -113,12 +115,6 @@ class ProfilePage extends CcGetView<ProfileController> {
               : null,
         ),
       ),
-      ProfileSettingsTile(
-        icon: Icons.link_rounded,
-        label: el.tr(CcLocaleKeys.profile_link_account_title),
-        subtitle: el.tr(CcLocaleKeys.profile_link_account_subtitle),
-        onTap: () => controller.navigateToLinkAccount(context),
-      ),
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.cake_rounded,
@@ -150,7 +146,8 @@ class ProfilePage extends CcGetView<ProfileController> {
       // IAP/billing infra. Gated by ENABLE_QA_DEBUG_TOOLS (.env) rather than
       // kDebugMode so QA can flip it on in a UAT build; must resolve to
       // false in .env.prod so it never reaches real users.
-      if (CcFeatureFlags.isQaDebugToolsEnabled) ...[
+      // TEMPORARILY DISABLED VIP LINE
+      if (CcFeatureFlags.isQaDebugToolsEnabled)
         Obx(
           () => ProfileSettingsTile(
             icon: Icons.workspace_premium_rounded,
@@ -171,6 +168,7 @@ class ProfilePage extends CcGetView<ProfileController> {
             ),
           ),
         ),
+      if (CcFeatureFlags.isForceFullAccessEnabled)
         Obx(
           () => ProfileSettingsTile(
             icon: Icons.lock_open_rounded,
@@ -191,7 +189,6 @@ class ProfilePage extends CcGetView<ProfileController> {
             ),
           ),
         ),
-      ],
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.notifications_rounded,

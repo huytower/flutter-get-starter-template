@@ -10,7 +10,7 @@ on:
         required: true
         default: 'uat'
         type: choice
-        options: [ free, uat, prod ]
+        options: [ uat, prod ]
 
 env:
   FLUTTER_VERSION: '3.44.3'
@@ -122,4 +122,4 @@ jobs:
       - name: Generate Code
         run: melos run gen
       - name: Compile Check
-        run: flutter build appbundle --release --flavor free
+        run: flutter build appbundle --release --flavor uat

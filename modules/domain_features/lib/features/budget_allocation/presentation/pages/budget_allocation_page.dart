@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../firestore/presentation/widgets/sync_status_icon.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_hero_banner.dart';
 import '../widgets/budget_preview_section.dart';
@@ -61,8 +60,6 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           tooltip: el.tr(CcLocaleKeys.reconciliation_title),
           onTap: () => controller.navigateToReconcile(context),
         ),
-        const CcSpaceXS(),
-        const SyncStatusIcon(),
         SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
       ],
     );

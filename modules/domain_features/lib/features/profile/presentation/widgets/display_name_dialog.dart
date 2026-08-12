@@ -74,10 +74,20 @@ class _DisplayNameDialogState extends State<DisplayNameDialog> {
           const CcSpaceSM(),
           TextField(
             controller: _nameController,
-            maxLength: 40,
+            maxLength: 20,
             autofocus: true,
             decoration: InputDecoration(
               hintText: el.tr(CcLocaleKeys.profile_display_name_hint),
+              suffixIcon: _nameController.text.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.clear_rounded,
+                        color: context.ccColorScheme.onSurfaceVariant,
+                        size: context.respIconSize(baseSize: 20),
+                      ),
+                      onPressed: () => _nameController.clear(),
+                    )
+                  : null,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),

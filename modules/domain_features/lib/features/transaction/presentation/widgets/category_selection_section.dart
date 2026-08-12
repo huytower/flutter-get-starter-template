@@ -2,12 +2,14 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
+import '../get_x/category_selection_controller.dart';
 
-class CategorySelectionSection extends StatefulWidget {
+class CategorySelectionSection extends StatelessWidget {
   final Function(CategoryEntity)? onCategorySelected;
   final Color activeColor;
 
@@ -45,96 +47,64 @@ class CategorySelectionSection extends StatefulWidget {
   });
 
   @override
-  State<CategorySelectionSection> createState() =>
-      _CategorySelectionSectionState();
-}
-
-class _CategorySelectionSectionState extends State<CategorySelectionSection> {
-  List<CategoryEntity> _categories = const [];
-  String? _selectedCategoryId;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedCategoryId = widget.initialSelectedCategoryId;
-    _loadCategories();
-  }
-
-  Future<void> _loadCategories() async {
-    final result = await getIt<GetCategoriesUseCase>().call();
-    if (!mounted) return;
-    List<CategoryEntity> allCategories = const [];
-    setState(() {
-      result.when((categories) {
-        allCategories = categories;
-        // Create index map to preserve seed order
-        final seedIndexMap = <String, int>{};
-        for (int i = 0; i < CategorySeed.categories.length; i++) {
-          seedIndexMap[CategorySeed.categories[i].id] = i;
-        }
-
-        _categories =
-            categories
-                .where(
-                  (c) =>
-                      c.isEnabled &&
-                      c.type == widget.type &&
-                      (widget.groupIds == null ||
-                          widget.groupIds!.contains(c.groupId)),
-                )
-                .toList()
-              ..sort((a, b) {
-                final indexA = seedIndexMap[a.id] ?? 999;
-                final indexB = seedIndexMap[b.id] ?? 999;
-                return indexA.compareTo(indexB);
-              });
-      }, (_) {});
-      _isLoading = false;
-    });
-
-    if (_selectedCategoryId != null) {
-      // Resolve the real CategoryEntity for a pre-selected id (e.g. editing
-      // a transaction) so the caller gets full entity data, not just an id.
-      // Look this up against the *unfiltered* category list, not the
-      // enabled-only [_categories]: a transaction may have been recorded
-      // with a category that was since disabled, and editing it must still
-      // report that category back to the caller — otherwise the caller's
-      // selected category stays null and Save is permanently blocked.
-      CategoryEntity? preselected;
-      for (final c in allCategories) {
-        if (c.id == _selectedCategoryId) {
-          preselected = c;
-          break;
-        }
-      }
-      if (preselected != null) {
-        widget.onCategorySelected?.call(preselected);
-        return;
-      }
-    }
-
-    if (widget.autoSelectFirst &&
-        _selectedCategoryId == null &&
-        _categories.isNotEmpty) {
-      setState(() => _selectedCategoryId = _categories.first.id);
-      widget.onCategorySelected?.call(_categories.first);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildTitle(context),
-        const CcSpaceXS(),
-        if (_isLoading)
-          _buildShimmerList(context)
-        else
-          _buildCategoryList(context),
-      ],
+    // Create controller with dependencies
+    final controller = Get.put(
+      CategorySelectionController(getIt<GetCategoriesUseCase>()),
+      tag: 'category_selection_${type}_${groupIds?.join('_') ?? 'all'}',
     );
+
+    // Set controller properties
+    controller.type = type;
+    controller.groupIds = groupIds;
+
+    // Initialize with initial selection if provided
+    if (initialSelectedCategoryId != null) {
+      controller.preselectCategory(initialSelectedCategoryId!);
+    }
+
+    // Handle initial selection callback
+    if (initialSelectedCategoryId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final preselected = controller.getCategoryById(initialSelectedCategoryId!);
+        if (preselected != null) {
+          onCategorySelected?.call(preselected);
+        }
+      });
+    }
+
+    // Auto-select first if requested
+    if (autoSelectFirst) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.autoSelectFirst();
+        final selected = controller.getSelectedCategory();
+        if (selected != null) {
+          onCategorySelected?.call(selected);
+        }
+      });
+    }
+
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTitle(context),
+            const CcSpaceXS(),
+            _buildShimmerList(context),
+          ],
+        );
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTitle(context),
+          const CcSpaceXS(),
+          _buildCategoryList(context, controller),
+        ],
+      );
+    });
   }
 
   Widget _buildShimmerList(BuildContext context) {
@@ -179,7 +149,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_SM,
       child: CcText(
-        widget.title ?? el.tr(CcLocaleKeys.transaction_category),
+        title ?? el.tr(CcLocaleKeys.transaction_category),
         textStyle: context.ccTextTheme.labelMedium?.copyWith(
           color: context.ccColorScheme.onSurfaceVariant,
           fontWeight: FontWeight.bold,
@@ -188,7 +158,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
     );
   }
 
-  Widget _buildCategoryList(BuildContext context) {
+  Widget _buildCategoryList(BuildContext context, CategorySelectionController controller) {
     return HorizontalFadeScrollView(
       height: context.respDim(90),
       builder: (scrollController) => ListView.separated(
@@ -197,12 +167,12 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
         padding: EdgeInsets.symmetric(
           horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
         ),
-        itemCount: _categories.length,
+        itemCount: controller.categories.length,
         separatorBuilder: (context, index) => const CcSpaceSM(),
         itemBuilder: (context, index) {
-          final category = _categories[index];
-          final isSelected = _selectedCategoryId == category.id;
-          return _buildCategoryItem(context, category, isSelected);
+          final category = controller.categories[index];
+          final isSelected = controller.selectedCategoryId.value == category.id;
+          return _buildCategoryItem(context, category, isSelected, controller);
         },
       ),
     );
@@ -212,13 +182,14 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
     BuildContext context,
     CategoryEntity category,
     bool isSelected,
+    CategorySelectionController controller,
   ) {
     final scheme = context.ccColorScheme;
 
     return CcInkWell(
       onTap: () {
-        setState(() => _selectedCategoryId = category.id);
-        widget.onCategorySelected?.call(category);
+        controller.selectCategory(category);
+        onCategorySelected?.call(category);
       },
       borderRadius: context.brLg,
       child: Stack(
@@ -227,8 +198,8 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
           if (isSelected)
             Positioned.fill(
               child: CcGlassyGradientBackground(
-                centerColor: widget.activeColor.withAlpha(30),
-                endColor: widget.activeColor.withAlpha(50),
+                centerColor: activeColor.withAlpha(30),
+                endColor: activeColor.withAlpha(50),
               ),
             ),
           AnimatedContainer(
@@ -237,12 +208,12 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
             padding: EdgeInsets.all(context.respDim(10)),
             decoration: BoxDecoration(
               color: isSelected
-                  ? widget.activeColor.withAlpha(10)
+                  ? activeColor.withAlpha(10)
                   : scheme.onSurface.withAlpha(10),
               borderRadius: context.brLg,
               border: Border.all(
                 color: isSelected
-                    ? widget.activeColor.withAlpha(20)
+                    ? activeColor.withAlpha(20)
                     : scheme.onSurface.withAlpha(10),
                 width: context.respDim(1),
               ),
@@ -263,7 +234,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
                         ? FontWeight.bold
                         : FontWeight.normal,
                     color: isSelected
-                        ? widget.activeColor
+                        ? activeColor
                         : scheme.onSurfaceVariant,
                   ),
                 ),
@@ -287,7 +258,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
       height: context.respDim(35),
       decoration: BoxDecoration(
         color: isSelected
-            ? widget.activeColor.withAlpha(20)
+            ? activeColor.withAlpha(20)
             : scheme.onSurface.withAlpha(10),
         borderRadius: context.brMd,
       ),
@@ -297,8 +268,8 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
           if (isSelected)
             Positioned.fill(
               child: CcGlassyGradientIcon(
-                centerColor: widget.activeColor.withAlpha(30),
-                endColor: widget.activeColor.withAlpha(50),
+                centerColor: activeColor.withAlpha(30),
+                endColor: activeColor.withAlpha(50),
               ),
             ),
           CcIcon(
@@ -307,7 +278,7 @@ class _CategorySelectionSectionState extends State<CategorySelectionSection> {
               fontFamily: category.iconFamily,
             ),
             size: context.respIconSize(baseSize: 18),
-            color: isSelected ? widget.activeColor : scheme.onSurfaceVariant,
+            color: isSelected ? activeColor : scheme.onSurfaceVariant,
           ),
         ],
       ),

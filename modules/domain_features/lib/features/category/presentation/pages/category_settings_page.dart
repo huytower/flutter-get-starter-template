@@ -18,10 +18,11 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
 
   @override
   Widget buildContent(BuildContext context) {
-    // Manually register if needed, although normally handled by Binding or Get.put in parent
     if (!Get.isRegistered<CategorySettingsController>()) {
       Get.put(getIt<CategorySettingsController>());
     }
+
+    controller.loadProfileSettings();
 
     return Scaffold(
       backgroundColor: context.ccColorScheme.surface,
@@ -101,7 +102,7 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
 
   Widget _buildCategoryList(BuildContext context) {
     return Obx(() {
-      controller.pending.keys.length; // Access to trigger Obx
+      controller.pending.length;
       final groups = controller.groups;
       const incomeGroups = CategorySeed.incomeGroups;
       const investmentGroups = CategorySeed.investmentGroups;
@@ -234,7 +235,7 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
       group: group,
       categories: categories,
       isEnabled: (cat) {
-        controller.pending.keys.length; // Access to trigger Obx
+        controller.pending.length;
         return controller.isEnabled(cat);
       },
       onToggle: controller.toggle,

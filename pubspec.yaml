@@ -124,7 +124,6 @@ flutter:
 
   # Environment files
   assets:
-    - env/.env.development
     - env/.env.uat
     - env/.env.prod
     - assets/icon/

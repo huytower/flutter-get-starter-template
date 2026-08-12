@@ -23,10 +23,8 @@ env/.env.*
 !env/.env.example
 
 # Block the native configuration files from being tracked
-android/app/src/free/google-services.json
 android/app/src/uat/google-services.json
 android/app/src/prod/google-services.json
-ios/Firebase/free/GoogleService-Info.plist
 ios/Firebase/prod/GoogleService-Info.plist
 ios/Firebase/uat/GoogleService-Info.plist
 

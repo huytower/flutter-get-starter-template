@@ -9,3 +9,6 @@ export 'domain/usecases/update_profile_settings_usecase.dart';
 // Presentation
 export 'presentation/get_x/profile_controller.dart';
 export 'presentation/pages/profile_page.dart';
+export 'presentation/widgets/profile_experience_card.dart';
+export 'presentation/widgets/profile_info_card.dart';
+export 'presentation/widgets/profile_page_header.dart';

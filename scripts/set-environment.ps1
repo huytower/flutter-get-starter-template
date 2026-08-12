@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet('development', 'uat', 'production')]
+    [ValidateSet('uat', 'production')]
     [string]$Environment
 )
 
@@ -58,7 +58,6 @@ foreach ($template in $templates) {
 
 # Map input environment to enum value
 $enumValue = switch ($Environment) {
-    "development" { "FREE_FAKE_API" }
     "uat" { "UAT" }
     "production" { "PROD" }
 }

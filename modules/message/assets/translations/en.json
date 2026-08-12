@@ -574,7 +574,14 @@
     "about": "About app",
     "about_subtitle": "App information and developer logs",
     "delete_account": "Delete account",
-    "young_children_message": "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys)."
+    "young_children_message": "Do you have young children? If yes, we'll automatically enable kid-related categories (milk, diapers, toys).",
+    "experience_level_progress": "Experience Level Progress",
+    "level_title": "Level {level} ({title})",
+    "tap_to_return": "Tap to return to profile",
+    "streak_weeks": "Streak: {count} weeks",
+    "level_master": "Master",
+    "level_intermediate": "Intermediate",
+    "level_novice": "Novice"
   },
   "guideline": {
     "banner_title_completed": "Congrats! All setup steps completed",

@@ -42,6 +42,8 @@ class ProfileLocalDataSource {
       cloudBackupReminderSentAt: s.cloudBackupReminderSentAt,
       hasViewedEmergencyFundEbook: s.hasViewedEmergencyFundEbook ?? false,
       hasSeenTutorial: s.hasSeenTutorial ?? false,
+      isHeaderFlipped: s.isProfileHeaderFlipped ?? false,
+      hasCustomizedCategories: s.hasCustomizedCategories ?? false,
     );
   }
 
@@ -61,6 +63,8 @@ class ProfileLocalDataSource {
     s.cloudBackupReminderSentAt = entity.cloudBackupReminderSentAt;
     s.hasViewedEmergencyFundEbook = entity.hasViewedEmergencyFundEbook;
     s.hasSeenTutorial = entity.hasSeenTutorial;
+    s.isProfileHeaderFlipped = entity.isHeaderFlipped;
+    s.hasCustomizedCategories = entity.hasCustomizedCategories;
     await s.save();
   }
 }

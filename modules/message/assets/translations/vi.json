@@ -574,7 +574,14 @@
     "about": "Về ứng dụng",
     "about_subtitle": "Thông tin ứng dụng và nhật ký nhà phát triển",
     "delete_account": "Xoá tài khoản",
-    "young_children_message": "Bạn có con nhỏ không? Nếu có, chúng tôi sẽ tự động bật các danh mục dành cho con (sữa, bỉm, đồ chơi trẻ em)."
+    "young_children_message": "Bạn có con nhỏ không? Nếu có, chúng tôi sẽ tự động bật các danh mục dành cho con (sữa, bỉm, đồ chơi trẻ em).",
+    "experience_level_progress": "Tiến trình cấp độ kinh nghiệm",
+    "level_title": "Cấp độ {level} ({title})",
+    "tap_to_return": "Chạm để quay lại hồ sơ",
+    "streak_weeks": "Chuỗi: {count} tuần",
+    "level_master": "Bậc thầy",
+    "level_intermediate": "Trung cấp",
+    "level_novice": "Người mới"
   },
   "guideline": {
     "banner_title_completed": "Chúc mừng! Bước hướng dẫn đã hoàn tất.",

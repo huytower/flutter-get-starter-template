@@ -14,6 +14,8 @@ class ProfileSettingsEntity {
     this.cloudBackupReminderSentAt,
     this.hasViewedEmergencyFundEbook = false,
     this.hasSeenTutorial = false,
+    this.isHeaderFlipped = false,
+    this.hasCustomizedCategories = false,
   });
 
   final bool reminderEnabled;
@@ -64,6 +66,14 @@ class ProfileSettingsEntity {
   /// Whether the first-launch tutorial has been shown at least once.
   final bool hasSeenTutorial;
 
+  /// Whether the profile header card is currently showing the back surface
+  /// (experience chart).
+  final bool isHeaderFlipped;
+
+  /// Whether the user has manually customized their category settings.
+  /// When true, age-based recommendations won't override their choices.
+  final bool hasCustomizedCategories;
+
   ProfileSettingsEntity copyWith({
     bool? reminderEnabled,
     int? weeklyAuditDayIndex,
@@ -79,6 +89,8 @@ class ProfileSettingsEntity {
     DateTime? cloudBackupReminderSentAt,
     bool? hasViewedEmergencyFundEbook,
     bool? hasSeenTutorial,
+    bool? isHeaderFlipped,
+    bool? hasCustomizedCategories,
   }) => ProfileSettingsEntity(
     reminderEnabled: reminderEnabled ?? this.reminderEnabled,
     weeklyAuditDayIndex: weeklyAuditDayIndex ?? this.weeklyAuditDayIndex,
@@ -98,5 +110,7 @@ class ProfileSettingsEntity {
     hasViewedEmergencyFundEbook:
         hasViewedEmergencyFundEbook ?? this.hasViewedEmergencyFundEbook,
     hasSeenTutorial: hasSeenTutorial ?? this.hasSeenTutorial,
+    isHeaderFlipped: isHeaderFlipped ?? this.isHeaderFlipped,
+    hasCustomizedCategories: hasCustomizedCategories ?? this.hasCustomizedCategories,
   );
 }
