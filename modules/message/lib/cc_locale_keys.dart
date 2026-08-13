@@ -1468,6 +1468,11 @@ abstract class CcLocaleKeys {
   static const wallet_investment_empty = 'wallet.investment_empty';
   static const wallet_investment_name = 'wallet.investment_name';
   static const wallet_investment_name_hint = 'wallet.investment_name_hint';
+  static const wallet_investment_delete_title =
+      'wallet.investment_delete_title';
+  static const wallet_investment_delete_confirm =
+      'wallet.investment_delete_confirm';
+  static const wallet_investment_edit_title = 'wallet.investment_edit_title';
   static const wallet_add_title = 'wallet.add_title';
   static const wallet_edit_title = 'wallet.edit_title';
   static const wallet_name = 'wallet.name';

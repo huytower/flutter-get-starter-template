@@ -123,7 +123,7 @@ class _AddInvestmentSheetState extends State<AddInvestmentSheet> {
   ) {
     return CcText(
       controller.isEditing
-          ? el.tr(CcLocaleKeys.wallet_edit_title)
+          ? el.tr(CcLocaleKeys.wallet_investment_edit_title)
           : el.tr(CcLocaleKeys.transaction_record_investment),
       textStyle: context.ccTextTheme.headlineSmall?.copyWith(
         fontWeight: CcTypographyParams.bold,
@@ -243,7 +243,7 @@ class _AddInvestmentSheetState extends State<AddInvestmentSheet> {
               ),
             ),
             child: CcText(
-              el.tr(CcLocaleKeys.wallet_save_info),
+              el.tr(CcLocaleKeys.common_save),
               align: Alignment.center,
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.titleMedium?.copyWith(

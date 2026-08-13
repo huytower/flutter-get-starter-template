@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:theme/data/data_source/color/prj_color.dart';
 
@@ -31,11 +32,13 @@ class InvestmentWalletListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: context.respDim(6),
-        vertical: context.respDim(CcPaddingParams.SPACE_XS),
-      ).copyWith(bottom: context.respDim(CcPaddingParams.SPACE_MD)),
+    'Investment Item: ${wallet.name} | Contributed: $contributed | Returned: $returned'
+        .Log('InvestmentWalletListItem');
+
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: context.respPadding(CcPaddingParams.SPACE_MD),
+      ),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -43,12 +46,19 @@ class InvestmentWalletListItem extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(context.respDim(16)),
             decoration: BoxDecoration(
-              color: scheme.primaryContainer.withValues(alpha: 0.1),
+              color: scheme.surface,
               borderRadius: context.brLg,
               border: Border.all(
                 color: scheme.onSurface.withOpacity(0.08),
                 width: context.respDim(1),
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: scheme.onSurface.withOpacity(0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,38 +110,25 @@ class InvestmentWalletListItem extends StatelessWidget {
   }
 
   Widget _buildStats(BuildContext context) {
-    final scheme = context.ccColorScheme;
-
-    return Row(
+    return Column(
       children: [
-        // ── Return Section ───────────────────────────────────────────────────
-        Icon(
-          Icons.auto_graph_rounded,
-          size: context.respIconSize(baseSize: 18),
-          color: PrjColors.success.withOpacity(0.8),
+        _StatItem(
+          label: el.tr(CcLocaleKeys.report_investment_returned),
+          value: returned,
+          color: PrjColors.success,
+          icon: Icons.auto_graph_rounded,
         ),
-        const CcSpaceXS(),
-        CcText(
-          TransactionFormHelpers.formatShort(returned),
-          textStyle: context.ccTextTheme.titleSmall?.copyWith(
-            fontWeight: CcTypographyParams.bold,
-            color: PrjColors.success,
-          ),
+        const CcSpaceSM(),
+        Divider(
+          color: context.ccColorScheme.onSurface.withOpacity(0.06),
+          height: 1,
         ),
-        const CcSpaceXL(),
-        // ── Contribute Section ───────────────────────────────────────────────
-        Icon(
-          Icons.token_rounded,
-          size: context.respIconSize(baseSize: 18),
-          color: scheme.onSurfaceVariant.withOpacity(0.8),
-        ),
-        const CcSpaceXS(),
-        CcText(
-          TransactionFormHelpers.formatShort(contributed),
-          textStyle: context.ccTextTheme.titleSmall?.copyWith(
-            fontWeight: CcTypographyParams.bold,
-            color: scheme.onSurfaceVariant,
-          ),
+        const CcSpaceSM(),
+        _StatItem(
+          label: el.tr(CcLocaleKeys.report_investment_contributed),
+          value: contributed,
+          color: context.ccColorScheme.onSurfaceVariant,
+          icon: Icons.eco,
         ),
       ],
     );
@@ -162,5 +159,47 @@ class InvestmentWalletListItem extends StatelessWidget {
         ),
       ),
     ];
+  }
+}
+
+class _StatItem extends StatelessWidget {
+  final String label;
+  final int value;
+  final Color color;
+  final IconData icon;
+
+  const _StatItem({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: context.respIconSize(baseSize: 18),
+          color: color.withOpacity(0.8),
+        ),
+        const CcSpaceXS(),
+        CcText(
+          label,
+          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+            color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.6),
+          ),
+        ),
+        const Spacer(),
+        CcText(
+          TransactionFormHelpers.formatShort(value),
+          textStyle: context.ccTextTheme.labelLarge?.copyWith(
+            fontWeight: CcTypographyParams.bold,
+            color: color,
+          ),
+        ),
+      ],
+    );
   }
 }

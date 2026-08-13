@@ -19,6 +19,7 @@ import '../../domain/usecases/get_investment_roi_usecase.dart';
 import '../../domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../../domain/usecases/wallet_balance_calculator.dart';
 import '../widgets/add_wallet_sheet.dart';
+import '../widgets/investment_delete_confirm_sheet.dart';
 import '../widgets/wallet_delete_confirm_sheet.dart';
 
 /// Outcome of a wallet deletion attempt (rule: only empty wallets deletable).
@@ -84,11 +85,20 @@ class WalletController extends CcGetController {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => WalletDeleteConfirmSheet(
-        wallet: wallet,
-        onDelete: () => deleteWallet(wallet.id),
-        onOutcome: (outcome) => _handleDeleteOutcome(context, outcome),
-      ),
+      builder: (_) {
+        if (wallet.type == WalletType.investment) {
+          return InvestmentDeleteConfirmSheet(
+            wallet: wallet,
+            onDelete: () => deleteWallet(wallet.id),
+            onOutcome: (outcome) => _handleDeleteOutcome(context, outcome),
+          );
+        }
+        return WalletDeleteConfirmSheet(
+          wallet: wallet,
+          onDelete: () => deleteWallet(wallet.id),
+          onOutcome: (outcome) => _handleDeleteOutcome(context, outcome),
+        );
+      },
     );
   }
 
