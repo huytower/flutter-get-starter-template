@@ -1,13 +1,9 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/features/budget_allocation/presentation/widgets/investment_wallet_preview_card.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:theme/data/data_source/color/prj_color.dart';
 
-import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
-import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
 /// Section displaying investment wallets in a grid layout, following the
 /// Budget Allocation design pattern.
@@ -74,7 +70,10 @@ class InvestmentWalletsSection extends StatelessWidget {
             ],
           ),
         ),
-        if (wallets.isEmpty) _buildEmptyState(context) else _buildGrid(context),
+        if (wallets.isEmpty)
+          _buildEmptyState(context)
+        else
+          _buildHorizontalList(context),
       ],
     );
   }
@@ -93,158 +92,28 @@ class InvestmentWalletsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildGrid(BuildContext context) {
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.SPACE_LG,
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisExtent: context.respDim(135),
-          crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
-          mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
+  Widget _buildHorizontalList(BuildContext context) {
+    return HorizontalFadeScrollView(
+      height: context.respDim(95),
+      builder: (scrollController) => ListView.builder(
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
+          vertical: context.respDim(4),
         ),
         itemCount: wallets.length,
-        itemBuilder: (context, i) => _InvestmentWalletCard(
-          wallet: wallets[i],
-          onMore: () => onMore(wallets[i]),
-          onTap: onSeeAll,
-        ),
-      ),
-    );
-  }
-}
-
-class _InvestmentWalletCard extends StatelessWidget {
-  final WalletEntity wallet;
-  final VoidCallback onMore;
-  final VoidCallback onTap;
-
-  const _InvestmentWalletCard({
-    required this.wallet,
-    required this.onMore,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    final controller = Get.find<WalletController>();
-    final stats = controller.investmentStatsOf(wallet.id);
-
-    return CcInkWell(
-      onTap: onTap,
-      onLongPress: onMore,
-      borderRadius: context.brLg,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          const Positioned.fill(child: CcGlassyGradientBackground()),
-          Container(
-            padding: EdgeInsets.all(context.respDim(12)),
-            decoration: BoxDecoration(
-              color: scheme.primaryContainer.withValues(alpha: 0.1),
-              borderRadius: context.brLg,
-              border: Border.all(
-                color: scheme.onSurface.withOpacity(0.08),
-                width: context.respDim(1),
-              ),
+        itemBuilder: (context, index) {
+          final wallet = wallets[index];
+          return Padding(
+            padding: EdgeInsets.only(right: context.respDim(12)),
+            child: InvestmentWalletPreviewCard(
+              wallet: wallet,
+              onMore: () => onMore(wallet),
+              onTap: onSeeAll,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: context.respDim(32),
-                      height: context.respDim(32),
-                      decoration: BoxDecoration(
-                        color: scheme.primary.withOpacity(0.12),
-                        borderRadius: context.brLg,
-                      ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const Positioned.fill(child: CcGlassyGradientIcon()),
-                          CcIconToken(
-                            iconDataFromCode(wallet.iconCode),
-                            size: 18,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const CcSpaceSM(),
-                    Expanded(
-                      child: CcText(
-                        wallet.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                          fontWeight: CcTypographyParams.bold,
-                          color: scheme.onSurface,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const CcSpaceSM(),
-                Divider(
-                  color: scheme.onSurface.withOpacity(0.06),
-                  height: context.respDim(1),
-                ),
-                const CcSpaceSM(),
-                _buildCompactStat(
-                  context,
-                  icon: Icons.keyboard_double_arrow_down_rounded,
-                  color: PrjColors.success,
-                  value: stats.returned,
-                ),
-                const SizedBox(height: 4),
-                _buildCompactStat(
-                  context,
-                  icon: Icons.keyboard_double_arrow_up_rounded,
-                  color: scheme.onSurfaceVariant,
-                  value: stats.contributed,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCompactStat(
-    BuildContext context, {
-    required IconData icon,
-    required Color color,
-    required int value,
-  }) {
-    final controller = Get.find<WalletController>();
-
-    return Obx(
-      () => Row(
-        children: [
-          Icon(
-            icon,
-            size: context.respIconSize(baseSize: 12),
-            color: color.withOpacity(0.8),
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: CcText(
-              controller.isBalanceVisible.value
-                  ? TransactionFormHelpers.formatShort(value)
-                  : '*****',
-              textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                color: color.withOpacity(0.8),
-                fontWeight: CcTypographyParams.semiBold,
-              ),
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
