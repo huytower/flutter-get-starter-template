@@ -99,6 +99,14 @@ class CreateInvestmentTransactionUseCase {
     }
     final investmentWallet = walletResult.tryGetSuccess()!;
 
+    // High Priority Logic: Update updatedAt so this asset jumps to the front
+    // of the Transaction page picker next time.
+    if (params.investmentWalletId != null) {
+      await _walletRepository.updateWallet(
+        investmentWallet.copyWith(updatedAt: DateTime.now()),
+      );
+    }
+
     if (params.direction == InvestmentDirection.contribute) {
       return _contribute(params, investmentWallet);
     }
@@ -200,6 +208,7 @@ class CreateInvestmentTransactionUseCase {
       type: WalletType.investment,
       categoryId: params.categoryId,
       createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
     );
     final addResult = await _walletRepository.addWallet(newWallet);
     if (addResult.isError()) {

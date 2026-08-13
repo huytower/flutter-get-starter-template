@@ -16,7 +16,6 @@ import '../../../transaction/presentation/widgets/transaction_submit_button.dart
 import '../../../transaction/presentation/widgets/transaction_wallet_selector.dart';
 import '../../domain/entities/loan_entity.dart';
 import '../get_x/loan_form_controller.dart';
-import 'loan_counterparty_field.dart';
 import 'loan_pill_toggle.dart';
 import 'loan_repayment_method_section.dart';
 
@@ -115,10 +114,6 @@ class LoanForm extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LoanCounterpartyField(
-                controller: controller,
-                accentColor: accentColor,
-              ),
               _buildAmountSection(context, controller, accentColor),
               const CcSpaceLG(),
               _buildWalletSection(context, controller, accentColor),
@@ -206,9 +201,9 @@ class LoanForm extends StatelessWidget {
     return MoneyKeypadPanel(
       onKeyPress: controller.handleKeyPress,
       onDelete: controller.handleDelete,
-      onClear: () => controller.amountStr.value = '0',
+      onClear: controller.handleClear,
       suggestions: MoneyConstants.quickAmounts,
-      onSuggestion: (value) => controller.amountStr.value = value.toString(),
+      onSuggestion: (value) => controller.handleSuggestion(value.toInt()),
       onDone: controller.hideKeypad,
       activeColor: accentColor,
     );

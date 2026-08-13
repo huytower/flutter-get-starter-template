@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../transaction/presentation/widgets/cc_form_label.dart';
 import '../../domain/entities/loan_entity.dart';
@@ -24,43 +25,48 @@ class LoanRepaymentMethodSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isBorrowSide = controller.direction.value == LoanDirection.borrow;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcFormLabel(
-          text: isBorrowSide
-              ? el.tr(CcLocaleKeys.transaction_loan_repayment_method_label)
-              : el.tr(CcLocaleKeys.transaction_loan_collection_method_label),
-        ),
-        const CcSpaceXS(),
-        LoanPillToggle(
-          selectedIndex:
-              controller.repaymentMethod.value ==
-                  LoanRepaymentMethod.installment
-              ? 0
-              : 1,
-          firstLabel: isBorrowSide
-              ? el.tr(CcLocaleKeys.transaction_loan_method_installment)
-              : el.tr(CcLocaleKeys.transaction_loan_method_installment_lend),
-          secondLabel: isBorrowSide
-              ? el.tr(CcLocaleKeys.transaction_loan_method_lump_sum)
-              : el.tr(CcLocaleKeys.transaction_loan_method_lump_sum_lend),
-          activeColor: accentColor,
-          onChanged: (index) => controller.setRepaymentMethod(
-            index == 0
-                ? LoanRepaymentMethod.installment
-                : LoanRepaymentMethod.lumpSum,
+    return Obx(() {
+      final isBorrowSide = controller.direction.value == LoanDirection.borrow;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CcFormLabel(
+            text: isBorrowSide
+                ? el.tr(CcLocaleKeys.transaction_loan_repayment_method_label)
+                : el.tr(CcLocaleKeys.transaction_loan_collection_method_label),
           ),
-        ),
-        const CcSpaceLG(),
-        if (controller.repaymentMethod.value ==
-            LoanRepaymentMethod.installment)
-          _InstallmentSchedule(controller: controller, accentColor: accentColor)
-        else
-          _FinalDueDate(controller: controller, accentColor: accentColor),
-      ],
-    );
+          const CcSpaceXS(),
+          LoanPillToggle(
+            selectedIndex:
+                controller.repaymentMethod.value ==
+                    LoanRepaymentMethod.installment
+                ? 0
+                : 1,
+            firstLabel: isBorrowSide
+                ? el.tr(CcLocaleKeys.transaction_loan_method_installment)
+                : el.tr(CcLocaleKeys.transaction_loan_method_installment_lend),
+            secondLabel: isBorrowSide
+                ? el.tr(CcLocaleKeys.transaction_loan_method_lump_sum)
+                : el.tr(CcLocaleKeys.transaction_loan_method_lump_sum_lend),
+            activeColor: accentColor,
+            onChanged: (index) => controller.setRepaymentMethod(
+              index == 0
+                  ? LoanRepaymentMethod.installment
+                  : LoanRepaymentMethod.lumpSum,
+            ),
+          ),
+          const CcSpaceLG(),
+          if (controller.repaymentMethod.value ==
+              LoanRepaymentMethod.installment)
+            _InstallmentSchedule(
+              controller: controller,
+              accentColor: accentColor,
+            )
+          else
+            _FinalDueDate(controller: controller, accentColor: accentColor),
+        ],
+      );
+    });
   }
 }
 
@@ -158,35 +164,37 @@ class _ReminderToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CcInkWell(
-      onTap: () => controller.setReminderBeforeDueDate(
-        !controller.reminderBeforeDueDate.value,
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.notifications_active_outlined,
-            size: context.respIconSize(baseSize: 18),
-            color: accentColor,
-          ),
-          const CcSpaceXS(),
-          Expanded(
-            child: CcText(label, textStyle: context.ccTextTheme.bodyMedium),
-          ),
-          SizedBox(
-            width: context.respDim(20),
-            height: context.respDim(20),
-            child: Checkbox(
-              value: controller.reminderBeforeDueDate.value,
-              onChanged: (value) =>
-                  controller.setReminderBeforeDueDate(value ?? false),
-              activeColor: accentColor,
-              side: BorderSide(color: context.ccColorScheme.outline),
-              shape: RoundedRectangleBorder(borderRadius: context.brXs),
+    return Obx(() {
+      return CcInkWell(
+        onTap: () => controller.setReminderBeforeDueDate(
+          !controller.reminderBeforeDueDate.value,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.notifications_active_outlined,
+              size: context.respIconSize(baseSize: 18),
+              color: accentColor,
             ),
-          ),
-        ],
-      ),
-    );
+            const CcSpaceXS(),
+            Expanded(
+              child: CcText(label, textStyle: context.ccTextTheme.bodyMedium),
+            ),
+            SizedBox(
+              width: context.respDim(20),
+              height: context.respDim(20),
+              child: Checkbox(
+                value: controller.reminderBeforeDueDate.value,
+                onChanged: (value) =>
+                    controller.setReminderBeforeDueDate(value ?? false),
+                activeColor: accentColor,
+                side: BorderSide(color: context.ccColorScheme.outline),
+                shape: RoundedRectangleBorder(borderRadius: context.brXs),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

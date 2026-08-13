@@ -17,14 +17,16 @@ class TransactionFormHelpers {
   /// Returns the selected date or null if cancelled.
   static Future<DateTime?> pickDate(
     BuildContext context,
-    DateTime initialDate,
-  ) async {
+    DateTime initialDate, {
+    DateTime? firstDate,
+    DateTime? lastDate,
+  }) async {
     final now = DateTime.now();
     final picked = await TransactionDatePickerDialog.show(
       context,
       initialDate: initialDate,
-      firstDate: DateTime(now.year, now.month - 6, now.day),
-      lastDate: now,
+      firstDate: firstDate ?? DateTime(now.year, now.month - 6, now.day),
+      lastDate: lastDate ?? now,
     );
     return picked;
   }

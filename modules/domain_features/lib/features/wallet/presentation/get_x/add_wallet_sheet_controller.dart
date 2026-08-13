@@ -202,6 +202,7 @@ class AddWalletSheetController extends CcGetController {
               : wallet.iconCode,
           type: wallet.type,
           createdAt: wallet.createdAt,
+          updatedAt: DateTime.now(),
           categoryId: newType.value == WalletType.investment
               ? selectedInvestmentCategory.value?.id
               : wallet.categoryId,

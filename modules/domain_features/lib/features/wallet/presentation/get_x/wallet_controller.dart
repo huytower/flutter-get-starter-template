@@ -210,10 +210,35 @@ class WalletController extends CcGetController {
     final investment = wallets
         .where((w) => w.type == WalletType.investment)
         .toList();
-    investment.sort(
-      (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
-    );
+    investment.sort((a, b) {
+      if (a.displayOrder != b.displayOrder) {
+        return a.displayOrder.compareTo(b.displayOrder);
+      }
+      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    });
     return investment;
+  }
+
+  /// Manually reorders investment assets (drag-and-drop).
+  Future<void> reorderInvestments(int oldIndex, int newIndex) async {
+    final items = investmentWallets;
+    if (newIndex > oldIndex) newIndex -= 1;
+    if (oldIndex == newIndex) return;
+
+    final item = items.removeAt(oldIndex);
+    items.insert(newIndex, item);
+
+    // Persist new orders
+    for (int i = 0; i < items.length; i++) {
+      final updated = items[i].copyWith(displayOrder: i);
+      await _repository.updateWallet(updated);
+
+      // Update local 'wallets' list
+      final localIdx = wallets.indexWhere((w) => w.id == updated.id);
+      if (localIdx != -1) wallets[localIdx] = updated;
+    }
+
+    _calculateTotalBalance();
   }
 
   /// Protected wallets can be renamed but never deleted:
@@ -377,6 +402,8 @@ class WalletController extends CcGetController {
       iconCode: iconCode,
       type: type,
       createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      displayOrder: wallets.length,
     );
 
     final result = await _repository.addWallet(newWallet);
@@ -418,6 +445,18 @@ class WalletController extends CcGetController {
         iconCode: wallet.iconCode,
         type: wallet.type,
         createdAt: wallet.createdAt,
+        updatedAt: DateTime.now(),
+        categoryId: wallet.categoryId,
+      );
+    } else {
+      toSave = WalletEntity(
+        id: wallet.id,
+        name: wallet.name,
+        balance: wallet.balance,
+        iconCode: wallet.iconCode,
+        type: wallet.type,
+        createdAt: wallet.createdAt,
+        updatedAt: DateTime.now(),
         categoryId: wallet.categoryId,
       );
     }

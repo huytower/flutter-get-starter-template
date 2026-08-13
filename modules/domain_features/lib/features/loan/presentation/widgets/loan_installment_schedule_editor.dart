@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../get_x/loan_form_controller.dart';
 import 'loan_date_row.dart';
 
@@ -32,7 +33,11 @@ class LoanInstallmentScheduleEditor extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(BuildContext context, int index, LoanInstallmentDraft draft) {
+  Widget _buildRow(
+    BuildContext context,
+    int index,
+    LoanInstallmentDraft draft,
+  ) {
     return Padding(
       padding: EdgeInsets.only(
         bottom: context.respPadding(CcPaddingParams.SPACE_XS),
@@ -65,13 +70,42 @@ class LoanInstallmentScheduleEditor extends StatelessWidget {
           ),
           const CcSpaceXS(),
           Expanded(
-            child: CcTextField(
-              controller: draft.amountController,
-              hintText: '0',
-              keyboardType: TextInputType.number,
-              maxLines: 1,
-              margin: EdgeInsets.zero,
-              onChanged: draft.setAmount,
+            child: CcInkWell(
+              onTap: () => controller.showKeypadForInstallment(context, index),
+              borderRadius: context.brMd,
+              child: Obx(() {
+                final isEditingThis =
+                    controller.editingInstallmentIndex.value == index;
+                final amount = draft.amount.value;
+
+                return Container(
+                  height: context.respDim(48),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.respPadding(12),
+                  ),
+                  decoration: BoxDecoration(
+                    color: context.ccColorScheme.onSurface.withAlpha(10),
+                    borderRadius: context.brMd,
+                    border: isEditingThis
+                        ? Border.all(color: activeColor, width: 2)
+                        : null,
+                  ),
+                  alignment: Alignment.centerLeft,
+                  child: CcText(
+                    amount == 0
+                        ? '0'
+                        : TransactionFormHelpers.formatAmount(
+                            amount.toString(),
+                          ),
+                    textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: amount > 0
+                          ? activeColor
+                          : context.ccColorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                );
+              }),
             ),
           ),
           CcIconButton.bouncing(

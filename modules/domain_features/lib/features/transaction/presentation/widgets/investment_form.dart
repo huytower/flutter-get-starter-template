@@ -7,9 +7,10 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
+import '../../../../core/helper/wallet_icon_helper.dart';
+import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
-import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
 import 'cc_form_label.dart';
 import 'investment_direction_toggle.dart';
@@ -40,8 +41,6 @@ class InvestmentForm extends StatelessWidget {
     });
   }
 
-  // Mirrors report_page.dart: outflow (Chi ra) is the shaded half-alpha
-  // leg, inflow (Thu vào) is the full-strength color.
   Color _accentColor(InvestmentDirection direction) =>
       direction == InvestmentDirection.contribute
       ? PrjColors.investment.withValues(alpha: 0.5)
@@ -53,7 +52,6 @@ class InvestmentForm extends StatelessWidget {
     Color accentColor,
   ) {
     return GestureDetector(
-      // Tap on the body (outside the keypad) dismisses the keypad / keyboard.
       onTap: () {
         FocusScope.of(context).unfocus();
         controller.hideKeypad();
@@ -72,7 +70,7 @@ class InvestmentForm extends StatelessWidget {
               onChanged: controller.setDirection,
             ),
             const CcSpaceLG(),
-            _buildCategorySection(controller, accentColor),
+            _buildMergedSelectionSection(context, controller, accentColor),
             const CcSpaceLG(),
             _buildFormFields(context, controller, accentColor),
           ],
@@ -81,64 +79,290 @@ class InvestmentForm extends StatelessWidget {
     );
   }
 
-  Widget _buildCategorySection(
+  Widget _buildMergedSelectionSection(
+    BuildContext context,
     InvestmentFormController controller,
-    Color accentColor,
+    Color activeColor,
   ) {
-    return CategorySelectionSection(
-      key: ValueKey(controller.categoryKey.value),
-      type: CategoryType.investment,
-      activeColor: accentColor,
-      autoSelectFirst: true,
-      onCategorySelected: controller.setCategory,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcSymmetricPadding(
+          horizontal: CcPaddingParams.PAGE_SM,
+          child: CcText(
+            el.tr(CcLocaleKeys.transaction_category),
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
+              color: context.ccColorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const CcSpaceXS(),
+        Obx(() {
+          if (controller.isLoadingMerged.value) {
+            return _buildShimmerList(context);
+          }
+
+          return HorizontalFadeScrollView(
+            height: context.respDim(95),
+            builder: (scrollController) => ListView.separated(
+              scrollDirection: Axis.horizontal,
+              controller: scrollController,
+              padding: EdgeInsets.symmetric(
+                horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+              ),
+              itemCount: controller.mergedItems.length,
+              separatorBuilder: (context, index) => const CcSpaceSM(),
+              itemBuilder: (context, index) {
+                final item = controller.mergedItems[index];
+                if (item is WalletEntity) {
+                  final isSelected =
+                      controller.selectedInvestmentWalletId.value == item.id;
+                  return _buildAssetItem(
+                    context,
+                    item,
+                    isSelected,
+                    controller,
+                    activeColor,
+                  );
+                } else if (item is CategoryEntity) {
+                  final isSelected =
+                      controller.selectedCategory.value?.id == item.id &&
+                      controller.isAddingNewItem.value;
+                  return _buildCategoryItem(
+                    context,
+                    item,
+                    isSelected,
+                    controller,
+                    activeColor,
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          );
+        }),
+      ],
     );
   }
 
-  Widget _buildItemSection(
+  Widget _buildAssetItem(
     BuildContext context,
+    WalletEntity wallet,
+    bool isSelected,
     InvestmentFormController controller,
-    Color accentColor,
+    Color activeColor,
   ) {
-    if (controller.selectedCategory.value == null) {
-      return const SizedBox.shrink();
-    }
-
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.PAGE_SM,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    final scheme = context.ccColorScheme;
+    return CcInkWell(
+      onTap: () => controller.selectAsset(wallet),
+      borderRadius: context.brLg,
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          CcFormLabel(text: el.tr(CcLocaleKeys.transaction_investment_item)),
-          const CcSpaceXS(),
-          if (controller.investmentItems.isEmpty &&
-              controller.direction.value == InvestmentDirection.returnProfit)
-            _buildEmptyItemsHint(context)
-          else
-            TransactionWalletSelector(
-              wallets: controller.investmentItems,
-              selectedWalletId: controller.selectedInvestmentWalletId.value,
-              activeColor: accentColor,
-              onWalletSelected: controller.selectInvestmentItem,
-              onAddNew:
-                  controller.isVip.value &&
-                      controller.direction.value ==
-                          InvestmentDirection.contribute
-                  ? controller.startAddingNewItem
-                  : null,
-              addNewLabel: el.tr(
-                CcLocaleKeys.transaction_add_new_investment_item,
+          if (isSelected)
+            Positioned.fill(
+              child: CcGlassyGradientBackground(
+                centerColor: activeColor.withAlpha(30),
+                endColor: activeColor.withAlpha(50),
               ),
             ),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: context.respDim(75),
+            padding: EdgeInsets.all(context.respDim(10)),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? activeColor.withAlpha(10)
+                  : scheme.onSurface.withAlpha(10),
+              borderRadius: context.brLg,
+              border: Border.all(
+                color: isSelected
+                    ? activeColor.withAlpha(20)
+                    : scheme.onSurface.withAlpha(10),
+                width: context.respDim(1),
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildIconContainer(
+                  context,
+                  iconDataFromCode(wallet.iconCode),
+                  isSelected,
+                  activeColor,
+                ),
+                const CcSpaceXS(),
+                CcText(
+                  wallet.name,
+                  textAlign: TextAlign.center,
+                  align: Alignment.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    color: isSelected ? activeColor : scheme.onSurfaceVariant,
+                    fontSize: context.respFontSize(10),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildEmptyItemsHint(BuildContext context) {
-    return CcText(
-      el.tr(CcLocaleKeys.transaction_no_investment_items_hint),
-      textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-        color: context.ccColorScheme.onSurfaceVariant,
+  Widget _buildCategoryItem(
+    BuildContext context,
+    CategoryEntity category,
+    bool isSelected,
+    InvestmentFormController controller,
+    Color activeColor,
+  ) {
+    final scheme = context.ccColorScheme;
+    return CcInkWell(
+      onTap: () => controller.selectCategory(category),
+      borderRadius: context.brLg,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          if (isSelected)
+            Positioned.fill(
+              child: CcGlassyGradientBackground(
+                centerColor: activeColor.withAlpha(30),
+                endColor: activeColor.withAlpha(50),
+              ),
+            ),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: context.respDim(75),
+            padding: EdgeInsets.all(context.respDim(10)),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? activeColor.withAlpha(10)
+                  : scheme.onSurface.withAlpha(5),
+              borderRadius: context.brLg,
+              border: Border.all(
+                color: isSelected
+                    ? activeColor.withAlpha(20)
+                    : scheme.onSurface.withAlpha(5),
+                width: context.respDim(1),
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildIconContainer(
+                  context,
+                  iconDataFromCode(
+                    category.iconCode,
+                    fontFamily: category.iconFamily,
+                  ),
+                  isSelected,
+                  activeColor,
+                  isCategory: true,
+                ),
+                const CcSpaceXS(),
+                CcText(
+                  el.tr(category.nameKey),
+                  textAlign: TextAlign.center,
+                  align: Alignment.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    color: isSelected
+                        ? activeColor
+                        : scheme.onSurfaceVariant.withOpacity(0.6),
+                    fontSize: context.respFontSize(10),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIconContainer(
+    BuildContext context,
+    IconData icon,
+    bool isSelected,
+    Color activeColor, {
+    bool isCategory = false,
+  }) {
+    final scheme = context.ccColorScheme;
+    return Container(
+      width: context.respDim(35),
+      height: context.respDim(35),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? activeColor.withAlpha(20)
+            : scheme.onSurface.withAlpha(10),
+        borderRadius: context.brMd,
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (isSelected)
+            Positioned.fill(
+              child: CcGlassyGradientIcon(
+                centerColor: activeColor.withAlpha(30),
+                endColor: activeColor.withAlpha(50),
+              ),
+            ),
+          Icon(
+            icon,
+            size: context.respIconSize(baseSize: 18),
+            color: isSelected
+                ? activeColor
+                : scheme.onSurfaceVariant.withOpacity(isCategory ? 0.5 : 1.0),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerList(BuildContext context) {
+    return SizedBox(
+      height: context.respDim(95),
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+        ),
+        itemCount: 5,
+        separatorBuilder: (context, index) => const CcSpaceSM(),
+        itemBuilder: (context, index) => Container(
+          width: context.respDim(75),
+          padding: EdgeInsets.all(context.respDim(10)),
+          decoration: BoxDecoration(
+            color: context.ccColorScheme.onSurface.withAlpha(10),
+            borderRadius: context.brLg,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CcShimmer(
+                width: context.respDim(35),
+                height: context.respDim(35),
+                borderRadius: context.brMd,
+              ),
+              const CcSpaceXS(),
+              CcShimmer(
+                width: context.respDim(40),
+                height: context.respDim(10),
+                borderRadius: context.brXs,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -153,6 +377,12 @@ class InvestmentForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (controller.isVip.value &&
+              controller.isAddingNewItem.value &&
+              controller.selectedCategory.value != null) ...[
+            _buildNewItemNameField(context, controller, accentColor),
+            const CcSpaceLG(),
+          ],
           _buildAmountSection(context, controller, accentColor),
           const CcSpaceLG(),
           _buildWalletSection(context, controller, accentColor),
@@ -185,6 +415,32 @@ class InvestmentForm extends StatelessWidget {
     );
   }
 
+  Widget _buildNewItemNameField(
+    BuildContext context,
+    InvestmentFormController controller,
+    Color accentColor,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcFormLabel(text: el.tr(CcLocaleKeys.wallet_investment_name)),
+        const CcSpaceXS(),
+        TextField(
+          controller: controller.newItemNameController,
+          onChanged: controller.setNewItemName,
+          decoration: InputDecoration(
+            hintText: el.tr(CcLocaleKeys.wallet_investment_name_hint),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildAmountSection(
     BuildContext context,
     InvestmentFormController controller,
@@ -203,8 +459,6 @@ class InvestmentForm extends StatelessWidget {
     );
   }
 
-  /// Called for both directions — Chi ra debits this wallet, Thu vào
-  /// credits it (real profit lands in real spendable cash).
   Widget _buildWalletSection(
     BuildContext context,
     InvestmentFormController controller,

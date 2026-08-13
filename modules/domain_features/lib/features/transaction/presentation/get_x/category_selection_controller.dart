@@ -24,39 +24,46 @@ class CategorySelectionController extends CcGetController {
   void onInit() {
     super.onInit();
     loadCategories();
-    ever(CategorySettingsController.onCategoryDefaultsApplied, (_) => loadCategories());
+    ever(
+      CategorySettingsController.onCategoryDefaultsApplied,
+      (_) => loadCategories(),
+    );
   }
 
   Future<void> loadCategories() async {
     isLoading.value = true;
     final result = await _getCategories();
-    
-    result.when((allCategories) {
-      // Create index map to preserve seed order
-      final seedIndexMap = <String, int>{};
-      for (int i = 0; i < CategorySeed.categories.length; i++) {
-        seedIndexMap[CategorySeed.categories[i].id] = i;
-      }
 
-      final filteredCategories = allCategories
-          .where(
-            (c) =>
-                c.isEnabled &&
-                c.type == type &&
-                (groupIds == null || groupIds!.contains(c.groupId)),
-          )
-          .toList()
-        ..sort((a, b) {
-          final indexA = seedIndexMap[a.id] ?? 999;
-          final indexB = seedIndexMap[b.id] ?? 999;
-          return indexA.compareTo(indexB);
-        });
+    result.when(
+      (allCategories) {
+        // Create index map to preserve seed order
+        final seedIndexMap = <String, int>{};
+        for (int i = 0; i < CategorySeed.categories.length; i++) {
+          seedIndexMap[CategorySeed.categories[i].id] = i;
+        }
 
-      categories.assignAll(filteredCategories);
-      isLoading.value = false;
-    }, (error) {
-      isLoading.value = false;
-    });
+        final filteredCategories =
+            allCategories
+                .where(
+                  (c) =>
+                      c.isEnabled &&
+                      c.type == type &&
+                      (groupIds == null || groupIds!.contains(c.groupId)),
+                )
+                .toList()
+              ..sort((a, b) {
+                final indexA = seedIndexMap[a.id] ?? 999;
+                final indexB = seedIndexMap[b.id] ?? 999;
+                return indexA.compareTo(indexB);
+              });
+
+        categories.assignAll(filteredCategories);
+        isLoading.value = false;
+      },
+      (error) {
+        isLoading.value = false;
+      },
+    );
   }
 
   void selectCategory(CategoryEntity category) {

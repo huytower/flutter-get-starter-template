@@ -88,8 +88,13 @@ class InvestmentListPage extends CcGetView<WalletController> {
         );
       }
 
-      return ListView.builder(
-        clipBehavior: Clip.none,
+      return ReorderableListView.builder(
+        onReorder: controller.reorderInvestments,
+        buildDefaultDragHandles: isEdit,
+        proxyDecorator: (child, index, animation) => Material(
+          color: Colors.transparent,
+          child: child,
+        ),
         padding: EdgeInsets.only(
           left: context.respPadding(CcPaddingParams.PAGE_SM),
           right: context.respPadding(CcPaddingParams.PAGE_SM),
@@ -101,6 +106,7 @@ class InvestmentListPage extends CcGetView<WalletController> {
           final wallet = wallets[index];
           final stats = controller.investmentStatsOf(wallet.id);
           return InvestmentWalletListItem(
+            key: ValueKey(wallet.id),
             wallet: wallet,
             contributed: stats.contributed,
             returned: stats.returned,

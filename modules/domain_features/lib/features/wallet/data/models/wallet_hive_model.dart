@@ -42,6 +42,9 @@ class WalletHiveModel extends HiveObject {
   @HiveField(10)
   final String? categoryId;
 
+  @HiveField(11)
+  final int displayOrder;
+
   WalletHiveModel({
     required this.id,
     required this.name,
@@ -54,6 +57,7 @@ class WalletHiveModel extends HiveObject {
     this.lastSyncedAt,
     this.lastModifiedAt,
     this.categoryId,
+    this.displayOrder = 0,
   });
 
   factory WalletHiveModel.fromEntity(WalletEntity entity) => WalletHiveModel(
@@ -63,7 +67,9 @@ class WalletHiveModel extends HiveObject {
     iconCode: entity.iconCode,
     type: entity.type,
     createdAt: entity.createdAt,
+    lastModifiedAt: entity.updatedAt,
     categoryId: entity.categoryId,
+    displayOrder: entity.displayOrder,
   );
 
   WalletEntity toEntity() => WalletEntity(
@@ -73,7 +79,9 @@ class WalletHiveModel extends HiveObject {
     iconCode: iconCode,
     type: type,
     createdAt: createdAt,
+    updatedAt: lastModifiedAt ?? createdAt,
     categoryId: categoryId,
+    displayOrder: displayOrder,
   );
 
   SyncMetadata get syncMetadata => SyncMetadata(
@@ -98,6 +106,7 @@ class WalletHiveModel extends HiveObject {
       type: type,
       createdAt: createdAt,
       categoryId: categoryId,
+      displayOrder: displayOrder,
       remoteId: metadata.remoteId,
       syncStatus: metadata.status.name,
       lastSyncedAt: metadata.lastSyncedAt,
@@ -112,7 +121,10 @@ class WalletHiveModel extends HiveObject {
       'iconCode': iconCode,
       'type': type,
       'createdAt': createdAt.toIso8601String(),
+      'updatedAt':
+          lastModifiedAt?.toIso8601String() ?? DateTime.now().toIso8601String(),
       'categoryId': categoryId,
+      'displayOrder': displayOrder,
     };
   }
 
@@ -130,8 +142,11 @@ class WalletHiveModel extends HiveObject {
       remoteId: data['remoteId'] as String?,
       syncStatus: SyncStatus.synced.name,
       lastSyncedAt: DateTime.now(),
-      lastModifiedAt: DateTime.now(),
+      lastModifiedAt: data['updatedAt'] != null
+          ? DateTime.parse(data['updatedAt'] as String)
+          : DateTime.now(),
       categoryId: data['categoryId'] as String?,
+      displayOrder: (data['displayOrder'] as num?)?.toInt() ?? 0,
     );
   }
 }

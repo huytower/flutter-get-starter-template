@@ -46,6 +46,7 @@ class CategorySettingsController extends CcGetController {
   bool _categoriesLoaded = false;
 
   static final Rx<bool> onCategoryDefaultsApplied = false.obs;
+  static final RxInt onCategoriesChanged = 0.obs;
 
   /// Get recommended categories for the current age group
   List<String> getRecommendedCategoryKeys() {
@@ -121,103 +122,106 @@ class CategorySettingsController extends CcGetController {
     final categoriesResult = await _getCategories();
 
     groupsResult.when((g) => groups.assignAll(g), (_) {});
-    categoriesResult.when((categories) async {
-      // FIX: Force migration for legacy Debt categories.
-      // If we see IDs starting with 'd' but they aren't 'debtLoan' type, they are stale.
-      final needsMigration = categories.any(
-        (c) => c.id.startsWith('d') && c.type != CategoryType.debtLoan,
-      );
+    categoriesResult.when(
+      (categories) async {
+        // FIX: Force migration for legacy Debt categories.
+        // If we see IDs starting with 'd' but they aren't 'debtLoan' type, they are stale.
+        final needsMigration = categories.any(
+          (c) => c.id.startsWith('d') && c.type != CategoryType.debtLoan,
+        );
 
-      if (needsMigration) {
-        'Fixing stale database records...'.Log('CategorySettingsController');
+        if (needsMigration) {
+          'Fixing stale database records...'.Log('CategorySettingsController');
+          for (final cat in categories) {
+            if (cat.id.startsWith('d') || cat.id.startsWith('inv')) {
+              // This triggers an update in CategoryLocalDataSource using the latest seed data
+              await _toggleEnabled(cat.id, cat.isEnabled);
+            }
+          }
+          await load(); // Recursive reload to pick up fixed data
+          return;
+        }
+
+        // Create index map to preserve seed order
+        final seedIndexMap = <String, int>{};
+        for (int i = 0; i < CategorySeed.categories.length; i++) {
+          seedIndexMap[CategorySeed.categories[i].id] = i;
+        }
+
+        final bg = <String, List<CategoryEntity>>{};
+        final ibg = <String, List<CategoryEntity>>{};
+        final dlbg = <String, List<CategoryEntity>>{};
+        final invbg = <String, List<CategoryEntity>>{};
         for (final cat in categories) {
-          if (cat.id.startsWith('d') || cat.id.startsWith('inv')) {
-            // This triggers an update in CategoryLocalDataSource using the latest seed data
-            await _toggleEnabled(cat.id, cat.isEnabled);
+          if (cat.type == CategoryType.income) {
+            ibg.putIfAbsent(cat.groupId, () => []).add(cat);
+          } else if (cat.type == CategoryType.debtLoan) {
+            dlbg.putIfAbsent(cat.groupId, () => []).add(cat);
+          } else if (cat.type == CategoryType.investment) {
+            invbg.putIfAbsent(cat.groupId, () => []).add(cat);
+          } else {
+            bg.putIfAbsent(cat.groupId, () => []).add(cat);
           }
         }
-        await load(); // Recursive reload to pick up fixed data
-        return;
-      }
 
-      // Create index map to preserve seed order
-      final seedIndexMap = <String, int>{};
-      for (int i = 0; i < CategorySeed.categories.length; i++) {
-        seedIndexMap[CategorySeed.categories[i].id] = i;
-      }
-
-      final bg = <String, List<CategoryEntity>>{};
-      final ibg = <String, List<CategoryEntity>>{};
-      final dlbg = <String, List<CategoryEntity>>{};
-      final invbg = <String, List<CategoryEntity>>{};
-      for (final cat in categories) {
-        if (cat.type == CategoryType.income) {
-          ibg.putIfAbsent(cat.groupId, () => []).add(cat);
-        } else if (cat.type == CategoryType.debtLoan) {
-          dlbg.putIfAbsent(cat.groupId, () => []).add(cat);
-        } else if (cat.type == CategoryType.investment) {
-          invbg.putIfAbsent(cat.groupId, () => []).add(cat);
-        } else {
-          bg.putIfAbsent(cat.groupId, () => []).add(cat);
+        // Sort each group by seed order to preserve the UX-optimized arrangement
+        for (final group in bg.values) {
+          group.sort((a, b) {
+            final indexA = seedIndexMap[a.id] ?? 999;
+            final indexB = seedIndexMap[b.id] ?? 999;
+            return indexA.compareTo(indexB);
+          });
         }
-      }
+        for (final group in ibg.values) {
+          group.sort((a, b) {
+            final indexA = seedIndexMap[a.id] ?? 999;
+            final indexB = seedIndexMap[b.id] ?? 999;
+            return indexA.compareTo(indexB);
+          });
+        }
+        for (final group in dlbg.values) {
+          group.sort((a, b) {
+            final indexA = seedIndexMap[a.id] ?? 999;
+            final indexB = seedIndexMap[b.id] ?? 999;
+            return indexA.compareTo(indexB);
+          });
+        }
+        for (final group in invbg.values) {
+          group.sort((a, b) {
+            final indexA = seedIndexMap[a.id] ?? 999;
+            final indexB = seedIndexMap[b.id] ?? 999;
+            return indexA.compareTo(indexB);
+          });
+        }
 
-      // Sort each group by seed order to preserve the UX-optimized arrangement
-      for (final group in bg.values) {
-        group.sort((a, b) {
-          final indexA = seedIndexMap[a.id] ?? 999;
-          final indexB = seedIndexMap[b.id] ?? 999;
-          return indexA.compareTo(indexB);
-        });
-      }
-      for (final group in ibg.values) {
-        group.sort((a, b) {
-          final indexA = seedIndexMap[a.id] ?? 999;
-          final indexB = seedIndexMap[b.id] ?? 999;
-          return indexA.compareTo(indexB);
-        });
-      }
-      for (final group in dlbg.values) {
-        group.sort((a, b) {
-          final indexA = seedIndexMap[a.id] ?? 999;
-          final indexB = seedIndexMap[b.id] ?? 999;
-          return indexA.compareTo(indexB);
-        });
-      }
-      for (final group in invbg.values) {
-        group.sort((a, b) {
-          final indexA = seedIndexMap[a.id] ?? 999;
-          final indexB = seedIndexMap[b.id] ?? 999;
-          return indexA.compareTo(indexB);
-        });
-      }
-
-      'Loaded categories: ${categories.length}'.Log(
-        'CategorySettingsController',
-      );
-      'Debt/Loan groups: ${dlbg.keys.join(', ')}'.Log(
-        'CategorySettingsController',
-      );
-      for (final entry in dlbg.entries) {
-        'Group ${entry.key}: ${entry.value.length} items'.Log(
+        'Loaded categories: ${categories.length}'.Log(
           'CategorySettingsController',
         );
-      }
+        'Debt/Loan groups: ${dlbg.keys.join(', ')}'.Log(
+          'CategorySettingsController',
+        );
+        for (final entry in dlbg.entries) {
+          'Group ${entry.key}: ${entry.value.length} items'.Log(
+            'CategorySettingsController',
+          );
+        }
 
-      byGroup.assignAll(bg);
-      incomeByGroup.assignAll(ibg);
-      debtLoanByGroup.assignAll(dlbg);
-      investmentByGroup.assignAll(invbg);
+        byGroup.assignAll(bg);
+        incomeByGroup.assignAll(ibg);
+        debtLoanByGroup.assignAll(dlbg);
+        investmentByGroup.assignAll(invbg);
 
-      _categoriesLoaded = true;
-      if (!profileSettings.value.hasCustomizedCategories &&
-          profileSettings.value.birthYear != null) {
-        _applyAgeDefaults();
-      }
-      layoutStatus.value = CcLayoutStatus.success;
-    }, (_) {
-      layoutStatus.value = CcLayoutStatus.success;
-    });
+        _categoriesLoaded = true;
+        if (!profileSettings.value.hasCustomizedCategories &&
+            profileSettings.value.birthYear != null) {
+          _applyAgeDefaults();
+        }
+        layoutStatus.value = CcLayoutStatus.success;
+      },
+      (_) {
+        layoutStatus.value = CcLayoutStatus.success;
+      },
+    );
   }
 
   bool isEnabled(CategoryEntity cat) =>
@@ -247,6 +251,9 @@ class CategorySettingsController extends CcGetController {
 
       // Guideline: categories completed
       Get.find<GuidelineController>().completeTask('categories');
+
+      // Global refresh for selection pickers
+      onCategoriesChanged.value++;
     }
   }
 }

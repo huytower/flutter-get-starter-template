@@ -12,6 +12,8 @@ class WalletModel {
   final int? iconCode;
   final String? type;
   final String? createdAt;
+  final String? updatedAt;
+  final int? displayOrder;
 
   WalletModel({
     this.id,
@@ -20,6 +22,8 @@ class WalletModel {
     this.iconCode,
     this.type,
     this.createdAt,
+    this.updatedAt,
+    this.displayOrder,
   });
 
   factory WalletModel.fromJson(Map<String, dynamic> json) =>
@@ -34,5 +38,9 @@ class WalletModel {
     iconCode: iconCode ?? 0,
     type: type ?? 'spending',
     createdAt: createdAt != null ? DateTime.parse(createdAt!) : DateTime.now(),
+    updatedAt: updatedAt != null
+        ? DateTime.parse(updatedAt!)
+        : (createdAt != null ? DateTime.parse(createdAt!) : DateTime.now()),
+    displayOrder: displayOrder ?? 0,
   );
 }

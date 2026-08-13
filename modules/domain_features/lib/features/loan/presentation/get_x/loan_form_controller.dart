@@ -21,8 +21,7 @@ class LoanInstallmentDraft {
   final TextEditingController amountController = TextEditingController();
   final RxInt amount = 0.obs;
 
-  LoanInstallmentDraft(DateTime initialDueDate)
-    : dueDate = initialDueDate.obs;
+  LoanInstallmentDraft(DateTime initialDueDate) : dueDate = initialDueDate.obs;
 
   void setAmount(String value) {
     amount.value = int.tryParse(value) ?? 0;
@@ -47,6 +46,10 @@ class LoanFormController extends TransactionFormController {
   final RxList<LoanInstallmentDraft> installmentDrafts =
       <LoanInstallmentDraft>[].obs;
   final RxBool reminderBeforeDueDate = false.obs;
+
+  /// Index of the installment currently being edited via the money keypad.
+  /// Null when editing the main loan amount.
+  final RxnInt editingInstallmentIndex = RxnInt();
 
   /// Free-tier gate: non-VIP users can only name a loan/lend after its
   /// category (e.g. "Vay ngân hàng/TCTD") — only VIP unlocks typing a
@@ -138,25 +141,112 @@ class LoanFormController extends TransactionFormController {
   ) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    return showDatePicker(
-      context: context,
-      initialDate: initial.isBefore(today) ? today : initial,
+
+    return TransactionFormHelpers.pickDate(
+      context,
+      initial.isBefore(today) ? today : initial,
       firstDate: today,
       lastDate: DateTime(now.year + 10),
     );
   }
 
   void addInstallmentPeriod() {
-    final lastDate = installmentDrafts.isNotEmpty
-        ? installmentDrafts.last.dueDate.value
-        : DateTime.now();
-    installmentDrafts.add(
-      LoanInstallmentDraft(lastDate.add(const Duration(days: 30))),
-    );
+    final DateTime lastDate;
+    if (installmentDrafts.isNotEmpty) {
+      lastDate = installmentDrafts.last.dueDate.value;
+    } else {
+      // For the first installment, default to 1 month after the loan start date
+      lastDate = date.value;
+    }
+
+    // Logic: if the first installment has an amount, use it as default for new rows
+    final defaultAmount = installmentDrafts.isNotEmpty
+        ? installmentDrafts.first.amount.value
+        : 0;
+
+    // Use the same day in the next month (e.g. 12/09 -> 12/10)
+    final nextDate = DateTime(lastDate.year, lastDate.month + 1, lastDate.day);
+
+    final newDraft = LoanInstallmentDraft(nextDate);
+    newDraft.amount.value = defaultAmount;
+
+    installmentDrafts.add(newDraft);
   }
 
   void removeInstallmentPeriod(int index) {
     installmentDrafts.removeAt(index).dispose();
+    if (editingInstallmentIndex.value == index) {
+      hideKeypad();
+    }
+  }
+
+  @override
+  void handleKeyPress(String key) {
+    if (editingInstallmentIndex.value != null) {
+      final index = editingInstallmentIndex.value!;
+      if (index >= installmentDrafts.length) return;
+
+      final draft = installmentDrafts[index];
+      String current = draft.amount.value.toString();
+      if (current == '0') {
+        if (key != '0' && key != '000') current = key;
+      } else {
+        current += key;
+      }
+      draft.amount.value = int.tryParse(current) ?? 0;
+    } else {
+      super.handleKeyPress(key);
+    }
+  }
+
+  @override
+  void handleDelete() {
+    if (editingInstallmentIndex.value != null) {
+      final index = editingInstallmentIndex.value!;
+      if (index >= installmentDrafts.length) return;
+
+      final draft = installmentDrafts[index];
+      String current = draft.amount.value.toString();
+      if (current.length > 1) {
+        current = current.substring(0, current.length - 1);
+      } else {
+        current = '0';
+      }
+      draft.amount.value = int.tryParse(current) ?? 0;
+    } else {
+      super.handleDelete();
+    }
+  }
+
+  void handleClear() {
+    if (editingInstallmentIndex.value != null) {
+      final index = editingInstallmentIndex.value!;
+      if (index >= installmentDrafts.length) return;
+      installmentDrafts[index].amount.value = 0;
+    } else {
+      amountStr.value = '0';
+    }
+  }
+
+  void handleSuggestion(int value) {
+    if (editingInstallmentIndex.value != null) {
+      final index = editingInstallmentIndex.value!;
+      if (index >= installmentDrafts.length) return;
+      installmentDrafts[index].amount.value = value;
+    } else {
+      amountStr.value = value.toString();
+    }
+  }
+
+  void showKeypadForInstallment(BuildContext context, int index) {
+    editingInstallmentIndex.value = index;
+    showKeypadAndScroll(context);
+  }
+
+  @override
+  void hideKeypad() {
+    super.hideKeypad();
+    editingInstallmentIndex.value = null;
   }
 
   @override
@@ -181,7 +271,8 @@ class LoanFormController extends TransactionFormController {
 
     final category = selectedCategory.value!;
     final categoryLabel = el.tr(category.nameKey);
-    final isInstallment = repaymentMethod.value == LoanRepaymentMethod.installment;
+    final isInstallment =
+        repaymentMethod.value == LoanRepaymentMethod.installment;
 
     final params = CreateLoanParams(
       direction: direction.value,
