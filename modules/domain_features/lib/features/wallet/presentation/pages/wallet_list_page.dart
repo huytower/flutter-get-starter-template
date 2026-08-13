@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../get_x/wallet_controller.dart';
-import '../widgets/wallet_list_card.dart';
+import '../widgets/liquid_wallet_list_item.dart';
 
 @RoutePage()
 class WalletListPage extends CcGetView<WalletController> {
@@ -119,7 +119,7 @@ class WalletListPage extends CcGetView<WalletController> {
           ),
           children: liquidWallets
               .map(
-                (wallet) => WalletListCard(
+                (wallet) => LiquidWalletListItem(
                   wallet: wallet,
                   isEditMode: isEdit,
                   canDelete: controller.canDeleteWallet(wallet),

@@ -9,15 +9,15 @@ import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import 'edit_badge.dart';
 
-/// Horizontal list card for wallets shown on the Wallet list page.
-class WalletListCard extends StatelessWidget {
+/// Horizontal list card for liquid wallets shown on the Wallet list page.
+class LiquidWalletListItem extends StatelessWidget {
   final WalletEntity wallet;
   final bool isEditMode;
   final bool canDelete;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
-  const WalletListCard({
+  const LiquidWalletListItem({
     super.key,
     required this.wallet,
     this.isEditMode = false,
