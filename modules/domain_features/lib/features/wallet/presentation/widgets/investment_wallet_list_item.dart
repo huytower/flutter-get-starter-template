@@ -116,7 +116,7 @@ class InvestmentWalletListItem extends StatelessWidget {
           label: el.tr(CcLocaleKeys.report_investment_returned),
           value: returned,
           color: PrjColors.success,
-          icon: Icons.keyboard_double_arrow_down_rounded,
+          icon: Icons.auto_graph_rounded,
         ),
         const CcSpaceSM(),
         Divider(
@@ -128,7 +128,7 @@ class InvestmentWalletListItem extends StatelessWidget {
           label: el.tr(CcLocaleKeys.report_investment_contributed),
           value: contributed,
           color: context.ccColorScheme.onSurfaceVariant,
-          icon: Icons.keyboard_double_arrow_up_rounded,
+          icon: Icons.eco,
         ),
       ],
     );

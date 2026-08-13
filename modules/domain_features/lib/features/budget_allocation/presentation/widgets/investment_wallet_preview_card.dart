@@ -96,13 +96,13 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
                   children: [
                     _buildCompactStat(
                       context,
-                      icon: Icons.keyboard_double_arrow_down_rounded,
+                      icon: Icons.auto_graph_rounded,
                       color: PrjColors.success,
                       value: stats.returned,
                     ),
                     _buildCompactStat(
                       context,
-                      icon: Icons.arrow_circle_up_rounded,
+                      icon: Icons.eco,
                       color: scheme.onSurfaceVariant,
                       value: stats.contributed,
                     ),
