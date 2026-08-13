@@ -75,6 +75,7 @@ class InvestmentListPage extends CcGetView<WalletController> {
   Widget buildContent(BuildContext context) {
     return Obx(() {
       final wallets = controller.investmentWallets;
+      final isEdit = controller.isEditMode.value;
 
       if (wallets.isEmpty) {
         return Center(
@@ -88,6 +89,7 @@ class InvestmentListPage extends CcGetView<WalletController> {
       }
 
       return ListView.builder(
+        clipBehavior: Clip.none,
         padding: EdgeInsets.only(
           left: context.respPadding(CcPaddingParams.PAGE_SM),
           right: context.respPadding(CcPaddingParams.PAGE_SM),
@@ -102,7 +104,7 @@ class InvestmentListPage extends CcGetView<WalletController> {
             wallet: wallet,
             contributed: stats.contributed,
             returned: stats.returned,
-            isEditMode: controller.isEditMode.value,
+            isEditMode: isEdit,
             canDelete: controller.canDeleteWallet(wallet),
             onEdit: () => _openAddInvestment(context, wallet: wallet),
             onDelete: () => controller.confirmDelete(context, wallet),
