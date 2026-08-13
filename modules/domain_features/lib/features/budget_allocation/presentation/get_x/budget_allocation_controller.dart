@@ -15,6 +15,7 @@ import '../../../reconciliation/presentation/get_x/reconciliation_controller.dar
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
+import '../../../wallet/presentation/widgets/add_investment_sheet.dart';
 import '../../../wallet/presentation/widgets/add_wallet_sheet.dart';
 import '../widgets/edit_wallet_sheet.dart';
 import '../widgets/wallet_delete_confirmation_dialog.dart';
@@ -39,6 +40,10 @@ class BudgetAllocationController extends CcGetController {
     context.router.push(const ReconcileRoute());
   }
 
+  void navigateToInvestmentList(BuildContext context) {
+    context.router.push(const InvestmentListRoute());
+  }
+
   void openAddWallet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
@@ -51,11 +56,25 @@ class BudgetAllocationController extends CcGetController {
     );
   }
 
+  void openAddInvestment(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.ccColorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => const AddInvestmentSheet(),
+    );
+  }
+
   void openWalletActions(BuildContext context, WalletEntity wallet) {
     EditWalletSheet.show(
       context,
       wallet: wallet,
-      onEdit: () => _editWallet(context, wallet),
+      onEdit: () => wallet.type == WalletType.investment
+          ? _editInvestment(context, wallet)
+          : _editWallet(context, wallet),
       onDelete: () => _confirmDelete(context, wallet),
     );
   }
@@ -69,6 +88,18 @@ class BudgetAllocationController extends CcGetController {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => AddWalletSheet(wallet: wallet),
+    );
+  }
+
+  void _editInvestment(BuildContext context, WalletEntity wallet) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.ccColorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => AddInvestmentSheet(wallet: wallet),
     );
   }
 

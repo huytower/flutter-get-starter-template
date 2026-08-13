@@ -152,6 +152,8 @@
     "see_all": "Xem tất cả",
     "empty": "Chưa có ví nào.\nNhấn + để thêm ví.",
     "investment_empty": "Chưa có danh mục đầu tư nào",
+    "investment_name": "Tên khoản đầu tư",
+    "investment_name_hint": "Ví dụ: BTC, Cổ phiếu Apple...",
     "add_title": "Thêm ví mới",
     "edit_title": "Sửa ví",
     "name": "Tên ví",

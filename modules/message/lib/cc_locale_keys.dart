@@ -174,6 +174,8 @@ class CodegenLoader extends AssetLoader {
       "see_all": "See all",
       "empty": "No wallets yet.\nTap + to add one.",
       "investment_empty": "No investment wallets yet",
+      "investment_name": "Investment Name",
+      "investment_name_hint": "e.g. BTC, Apple Stock...",
       "add_title": "Add New Wallet",
       "edit_title": "Edit Wallet",
       "name": "Wallet Name",
@@ -828,6 +830,8 @@ class CodegenLoader extends AssetLoader {
       "see_all": "Xem tất cả",
       "empty": "Chưa có ví nào.\nNhấn + để thêm ví.",
       "investment_empty": "Chưa có danh mục đầu tư nào",
+      "investment_name": "Tên khoản đầu tư",
+      "investment_name_hint": "Ví dụ: BTC, Cổ phiếu Apple...",
       "add_title": "Thêm ví mới",
       "edit_title": "Sửa ví",
       "name": "Tên ví",
@@ -1462,6 +1466,8 @@ abstract class CcLocaleKeys {
   static const wallet_see_all = 'wallet.see_all';
   static const wallet_empty = 'wallet.empty';
   static const wallet_investment_empty = 'wallet.investment_empty';
+  static const wallet_investment_name = 'wallet.investment_name';
+  static const wallet_investment_name_hint = 'wallet.investment_name_hint';
   static const wallet_add_title = 'wallet.add_title';
   static const wallet_edit_title = 'wallet.edit_title';
   static const wallet_name = 'wallet.name';

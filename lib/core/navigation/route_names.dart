@@ -31,6 +31,7 @@ enum AppRoute {
   loanDetail,
   report,
   termsOfService,
+  investmentList,
 }
 
 extension AppRoutePath on AppRoute {

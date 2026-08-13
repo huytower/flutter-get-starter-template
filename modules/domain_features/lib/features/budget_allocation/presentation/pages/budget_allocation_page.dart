@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
-import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -173,8 +172,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
       return InvestmentWalletsSection(
         wallets: wallets,
-        onAddWallet: () => controller.openAddWallet(context),
+        onAddInvestment: () => controller.openAddInvestment(context),
         onMore: (wallet) => controller.openWalletActions(context, wallet),
+        onSeeAll: () => controller.navigateToInvestmentList(context),
       );
     });
   }

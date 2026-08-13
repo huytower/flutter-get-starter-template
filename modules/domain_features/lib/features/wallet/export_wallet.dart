@@ -10,6 +10,7 @@ export 'domain/usecases/get_wallet_book_balance_usecase.dart';
 export 'domain/usecases/wallet_balance_calculator.dart';
 // Presentation
 export 'presentation/get_x/wallet_controller.dart';
+export 'presentation/pages/investment_list_page.dart';
 export 'presentation/pages/wallet_detail_page.dart';
 export 'presentation/pages/wallet_list_page.dart';
 export 'presentation/widgets/add_wallet_sheet.dart';

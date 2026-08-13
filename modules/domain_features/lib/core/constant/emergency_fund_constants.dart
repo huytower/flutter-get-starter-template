@@ -3,4 +3,4 @@
 /// explainer so the "view guide" flow is genuinely functional in the
 /// meantime rather than a dead link.
 const String emergencyFundEbookUrl =
-    'https://www.investopedia.com/terms/e/emergency_fund.asp';
+    'https://example.com/terms-of-service';

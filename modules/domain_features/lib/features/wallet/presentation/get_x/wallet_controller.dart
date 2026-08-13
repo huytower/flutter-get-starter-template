@@ -31,12 +31,14 @@ class WalletController extends CcGetController {
     this._transactionRepository,
     this._getWalletBookBalance,
     this._getInvestmentRoi,
+    this._getProfileSettings,
   );
 
   final WalletRepository _repository;
   final TransactionRepository _transactionRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
   final GetInvestmentRoiUseCase _getInvestmentRoi;
+  final GetProfileSettingsUseCase _getProfileSettings;
 
   final RxInt currentNavIndex = 1.obs;
   final RxBool isBalanceVisible = true.obs;
@@ -44,11 +46,23 @@ class WalletController extends CcGetController {
   /// When true, the wallet list shows edit/delete affordances on each item.
   final RxBool isEditMode = false.obs;
 
-  void toggleEditMode() => isEditMode.toggle();
+  final RxBool isVip = false.obs;
+
+  void toggleEditMode() {
+    if (!isEditMode.value && !isVip.value) {
+      // If trying to enter edit mode but not VIP, do nothing or show toast
+      // (The UI should handle the visibility of the edit button anyway)
+      return;
+    }
+    isEditMode.toggle();
+  }
 
   void onCloseEditMode(BuildContext context) {
-    isEditMode.value = false;
-    Navigator.of(context).pop();
+    if (isEditMode.value) {
+      isEditMode.value = false;
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 
   void openForm(BuildContext context, {WalletEntity? wallet}) {
@@ -145,6 +159,13 @@ class WalletController extends CcGetController {
 
   int bookBalanceOf(String id) => _bookBalances[id] ?? 0;
 
+  /// Performance stats for investment wallets: (capital contributed, profit returned).
+  final RxMap<String, ({int contributed, int returned})> _investmentStats =
+      <String, ({int contributed, int returned})>{}.obs;
+
+  ({int contributed, int returned}) investmentStatsOf(String id) =>
+      _investmentStats[id] ?? (contributed: 0, returned: 0);
+
   /// Type order for the Budget Allocation screen's "Ví của bạn" strip: cash
   /// → bank → e-wallet → emergency fund. (Credit-card wallets aren't a
   /// [WalletType] yet; add them here, between bank and e-wallet, if that
@@ -211,6 +232,9 @@ class WalletController extends CcGetController {
   Future<void> loadWallets() async {
     layoutStatus.value = CcLayoutStatus.loading;
 
+    final settings = await _getProfileSettings();
+    isVip.value = settings.isVip || CcFeatureFlags.isForceFullAccessEnabled;
+
     final result = await _repository.getWallets();
 
     if (result.isError()) {
@@ -248,14 +272,39 @@ class WalletController extends CcGetController {
       ..addAll(txns.map((t) => t.walletId));
 
     final newBalances = <String, int>{};
+    final newStats = <String, ({int contributed, int returned})>{};
+
     for (final wallet in list) {
       final walletTxns = txns.where((t) => t.walletId == wallet.id).toList();
       newBalances[wallet.id] = bookBalanceFromTransactions(
         wallet.balance,
         walletTxns,
       );
+
+      if (wallet.type == WalletType.investment) {
+        final contributed =
+            txns
+                .where(
+                  (t) =>
+                      t.investmentWalletId == wallet.id &&
+                      t.type == TransactionType.investmentIn,
+                )
+                .fold(0, (sum, t) => sum + t.amount) +
+            wallet.balance;
+
+        final returned = txns
+            .where(
+              (t) =>
+                  t.investmentWalletId == wallet.id &&
+                  t.type == TransactionType.investmentReturn,
+            )
+            .fold(0, (sum, t) => sum + t.amount);
+
+        newStats[wallet.id] = (contributed: contributed, returned: returned);
+      }
     }
     _bookBalances.assignAll(newBalances);
+    _investmentStats.assignAll(newStats);
 
     _investmentReturnsTotal = txns
         .where(

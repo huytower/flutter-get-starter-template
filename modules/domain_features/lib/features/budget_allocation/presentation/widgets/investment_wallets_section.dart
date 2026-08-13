@@ -1,12 +1,11 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:theme/data/data_source/color/prj_color.dart';
 
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
-import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
@@ -15,14 +14,16 @@ import '../../../wallet/presentation/get_x/wallet_controller.dart';
 class InvestmentWalletsSection extends StatelessWidget {
   const InvestmentWalletsSection({
     required this.wallets,
-    required this.onAddWallet,
+    required this.onAddInvestment,
     required this.onMore,
+    required this.onSeeAll,
     super.key,
   });
 
   final List<WalletEntity> wallets;
-  final VoidCallback onAddWallet;
+  final VoidCallback onAddInvestment;
   final ValueChanged<WalletEntity> onMore;
+  final VoidCallback onSeeAll;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,7 @@ class InvestmentWalletsSection extends StatelessWidget {
               Row(
                 children: [
                   CcInkWell(
-                    onTap: onAddWallet,
+                    onTap: onAddInvestment,
                     child: const CcIconToken(
                       Icons.add_circle_outline_rounded,
                       size: 20,
@@ -59,7 +60,7 @@ class InvestmentWalletsSection extends StatelessWidget {
                   ),
                   const CcSpaceSM(),
                   CcInkWell(
-                    onTap: () => context.router.push(const WalletListRoute()),
+                    onTap: onSeeAll,
                     child: CcText(
                       el.tr(CcLocaleKeys.wallet_see_all),
                       textStyle: context.ccTextTheme.titleSmall?.copyWith(
@@ -100,7 +101,7 @@ class InvestmentWalletsSection extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisExtent: context.respDim(100),
+          mainAxisExtent: context.respDim(135),
           crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
           mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
         ),
@@ -108,6 +109,7 @@ class InvestmentWalletsSection extends StatelessWidget {
         itemBuilder: (context, i) => _InvestmentWalletCard(
           wallet: wallets[i],
           onMore: () => onMore(wallets[i]),
+          onTap: onSeeAll,
         ),
       ),
     );
@@ -117,16 +119,22 @@ class InvestmentWalletsSection extends StatelessWidget {
 class _InvestmentWalletCard extends StatelessWidget {
   final WalletEntity wallet;
   final VoidCallback onMore;
+  final VoidCallback onTap;
 
-  const _InvestmentWalletCard({required this.wallet, required this.onMore});
+  const _InvestmentWalletCard({
+    required this.wallet,
+    required this.onMore,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
     final controller = Get.find<WalletController>();
+    final stats = controller.investmentStatsOf(wallet.id);
 
     return CcInkWell(
-      onTap: () => context.router.push(const WalletListRoute()),
+      onTap: onTap,
       onLongPress: onMore,
       borderRadius: context.brLg,
       child: Stack(
@@ -187,20 +195,53 @@ class _InvestmentWalletCard extends StatelessWidget {
                   height: context.respDim(1),
                 ),
                 const CcSpaceSM(),
-                Obx(
-                  () => CcText(
-                    controller.isBalanceVisible.value
-                        ? formatVndWithSymbol(
-                            controller.bookBalanceOf(wallet.id),
-                          )
-                        : '*****',
-                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      color: scheme.onSurfaceVariant.withOpacity(0.8),
-                      fontWeight: CcTypographyParams.semiBold,
-                    ),
-                  ),
+                _buildCompactStat(
+                  context,
+                  icon: Icons.keyboard_double_arrow_down_rounded,
+                  color: PrjColors.success,
+                  value: stats.returned,
+                ),
+                const SizedBox(height: 4),
+                _buildCompactStat(
+                  context,
+                  icon: Icons.keyboard_double_arrow_up_rounded,
+                  color: scheme.onSurfaceVariant,
+                  value: stats.contributed,
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompactStat(
+    BuildContext context, {
+    required IconData icon,
+    required Color color,
+    required int value,
+  }) {
+    final controller = Get.find<WalletController>();
+
+    return Obx(
+      () => Row(
+        children: [
+          Icon(
+            icon,
+            size: context.respIconSize(baseSize: 12),
+            color: color.withOpacity(0.8),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: CcText(
+              controller.isBalanceVisible.value
+                  ? TransactionFormHelpers.formatShort(value)
+                  : '*****',
+              textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                color: color.withOpacity(0.8),
+                fontWeight: CcTypographyParams.semiBold,
+              ),
             ),
           ),
         ],

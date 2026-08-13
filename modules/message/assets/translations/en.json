@@ -152,6 +152,8 @@
     "see_all": "See all",
     "empty": "No wallets yet.\nTap + to add one.",
     "investment_empty": "No investment wallets yet",
+    "investment_name": "Investment Name",
+    "investment_name_hint": "e.g. BTC, Apple Stock...",
     "add_title": "Add New Wallet",
     "edit_title": "Edit Wallet",
     "name": "Wallet Name",

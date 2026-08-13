@@ -205,6 +205,8 @@ import 'package:domain_features/features/wallet/domain/usecases/get_wallet_balan
     as _i167;
 import 'package:domain_features/features/wallet/domain/usecases/get_wallet_book_balance_usecase.dart'
     as _i105;
+import 'package:domain_features/features/wallet/presentation/get_x/add_investment_sheet_controller.dart'
+    as _i797;
 import 'package:domain_features/features/wallet/presentation/get_x/add_wallet_sheet_controller.dart'
     as _i933;
 import 'package:domain_features/features/wallet/presentation/get_x/wallet_controller.dart'
@@ -429,12 +431,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i544.BudgetLimitRepository>(),
               gh<_i1027.TransactionRepository>(),
             ));
-    gh.lazySingleton<_i229.WalletController>(() => _i229.WalletController(
-          gh<_i572.WalletRepository>(),
-          gh<_i1027.TransactionRepository>(),
-          gh<_i105.GetWalletBookBalanceUseCase>(),
-          gh<_i845.GetInvestmentRoiUseCase>(),
-        ));
     gh.lazySingleton<_i742.CreateLoanUseCase>(() => _i742.CreateLoanUseCase(
           gh<_i798.LoanRepository>(),
           gh<_i1027.TransactionRepository>(),
@@ -491,6 +487,13 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i781.GetLoanOutstandingBalanceUseCase>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
             ));
+    gh.lazySingleton<_i229.WalletController>(() => _i229.WalletController(
+          gh<_i572.WalletRepository>(),
+          gh<_i1027.TransactionRepository>(),
+          gh<_i105.GetWalletBookBalanceUseCase>(),
+          gh<_i845.GetInvestmentRoiUseCase>(),
+          gh<_i569.GetProfileSettingsUseCase>(),
+        ));
     gh.lazySingleton<_i701.GetFinancialRunwayUseCase>(
         () => _i701.GetFinancialRunwayUseCase(
               gh<_i572.WalletRepository>(),
@@ -508,6 +511,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.lazySingleton<_i356.UserLevelController>(
         () => _i356.UserLevelController(gh<_i585.GetUserLevelStatusUseCase>()));
+    gh.factory<_i797.AddInvestmentSheetController>(
+        () => _i797.AddInvestmentSheetController(
+              gh<_i229.WalletController>(),
+              gh<_i224.GetCategoriesUseCase>(),
+              gh<_i569.GetProfileSettingsUseCase>(),
+            ));
     gh.factory<_i700.TransactionController>(() => _i700.TransactionController(
           gh<_i1027.TransactionRepository>(),
           gh<_i167.GetWalletBalancesUseCase>(),
