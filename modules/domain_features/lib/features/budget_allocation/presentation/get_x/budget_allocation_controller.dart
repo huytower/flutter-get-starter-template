@@ -35,6 +35,7 @@ class BudgetAllocationController extends CcGetController {
   final UserLevelController userLevel;
 
   final RxInt liabilityBalance = 0.obs;
+  final RxList<LoanBalanceEntity> loanBalances = <LoanBalanceEntity>[].obs;
 
   void navigateToReconcile(BuildContext context) {
     context.router.push(const ReconcileRoute());
@@ -42,6 +43,10 @@ class BudgetAllocationController extends CcGetController {
 
   void navigateToInvestmentList(BuildContext context) {
     context.router.push(const InvestmentListRoute());
+  }
+
+  void navigateToLoanList(BuildContext context) {
+    context.router.push(const LoanListRoute());
   }
 
   void openAddWallet(BuildContext context) {
@@ -205,6 +210,7 @@ class BudgetAllocationController extends CcGetController {
   Future<void> loadLiabilities() async {
     final result = await _getLoanBalances();
     result.when((balances) {
+      loanBalances.assignAll(balances);
       liabilityBalance.value = balances
           .where((b) => b.loan.isBorrow && b.status == LoanStatus.outstanding)
           .fold(0, (sum, b) => sum + b.outstandingBalance);

@@ -66,7 +66,9 @@ class CategorySelectionSection extends StatelessWidget {
     // Handle initial selection callback
     if (initialSelectedCategoryId != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        final preselected = controller.getCategoryById(initialSelectedCategoryId!);
+        final preselected = controller.getCategoryById(
+          initialSelectedCategoryId!,
+        );
         if (preselected != null) {
           onCategorySelected?.call(preselected);
         }
@@ -109,7 +111,7 @@ class CategorySelectionSection extends StatelessWidget {
 
   Widget _buildShimmerList(BuildContext context) {
     return SizedBox(
-      height: context.respDim(90),
+      height: context.respDim(75),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(
@@ -158,9 +160,12 @@ class CategorySelectionSection extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryList(BuildContext context, CategorySelectionController controller) {
+  Widget _buildCategoryList(
+    BuildContext context,
+    CategorySelectionController controller,
+  ) {
     return HorizontalFadeScrollView(
-      height: context.respDim(90),
+      height: context.respDim(80),
       builder: (scrollController) => ListView.separated(
         scrollDirection: Axis.horizontal,
         controller: scrollController,
@@ -204,8 +209,7 @@ class CategorySelectionSection extends StatelessWidget {
             ),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: context.respDim(68),
-            padding: EdgeInsets.all(context.respDim(10)),
+            width: context.respDim(75),
             decoration: BoxDecoration(
               color: isSelected
                   ? activeColor.withAlpha(10)
@@ -218,27 +222,31 @@ class CategorySelectionSection extends StatelessWidget {
                 width: context.respDim(1),
               ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildCategoryIcon(context, category, isSelected),
-                const CcSpaceXS(),
-                CcText(
-                  el.tr(category.nameKey),
-                  textAlign: TextAlign.center,
-                  align: Alignment.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    color: isSelected
-                        ? activeColor
-                        : scheme.onSurfaceVariant,
+            child: CcPadding(
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildCategoryIcon(context, category, isSelected),
+                  const CcSpaceXS(),
+                  CcText(
+                    el.tr(category.nameKey),
+                    textAlign: TextAlign.center,
+                    align: Alignment.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                      color: isSelected ? activeColor : scheme.onSurfaceVariant,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+              4,
+              6,
+              6,
+              4,
             ),
           ),
         ],

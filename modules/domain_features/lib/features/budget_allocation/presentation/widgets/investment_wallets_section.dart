@@ -54,17 +54,19 @@ class InvestmentWalletsSection extends StatelessWidget {
                       size: 20,
                     ),
                   ),
-                  const CcSpaceSM(),
-                  CcInkWell(
-                    onTap: onSeeAll,
-                    child: CcText(
-                      el.tr(CcLocaleKeys.wallet_see_all),
-                      textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                        color: scheme.primary,
-                        fontWeight: CcTypographyParams.semiBold,
+                  if (wallets.isNotEmpty) ...[
+                    const CcSpaceSM(),
+                    CcInkWell(
+                      onTap: onSeeAll,
+                      child: CcText(
+                        el.tr(CcLocaleKeys.wallet_see_all),
+                        textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                          color: scheme.primary,
+                          fontWeight: CcTypographyParams.semiBold,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ],

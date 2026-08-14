@@ -1,4 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:domain_features/features/transaction/presentation/widgets/transaction_additional_details_section.dart';
+import 'package:domain_features/features/transaction/presentation/widgets/transaction_submit_button.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,14 +8,12 @@ import 'package:get/get.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../guideline/guideline_controller.dart';
+import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
 import '../get_x/expense_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
 import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
-import 'transaction_additional_details_section.dart';
-import 'transaction_submit_button.dart';
-import 'transaction_wallet_selector.dart';
 
 class ExpenseForm extends StatelessWidget {
   const ExpenseForm({super.key, this.tag});
@@ -105,42 +105,56 @@ class ExpenseForm extends StatelessWidget {
     GuidelineController guideline,
     Color accentColor,
   ) {
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.PAGE_SM,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildAmountSection(context, controller, accentColor),
-          const CcSpaceLG(),
-          _buildWalletSection(context, controller, accentColor),
-          const CcSpaceLG(),
-          TransactionAdditionalDetailsSection(
-            isExpanded: controller.showMoreDetails.value,
-            onToggle: controller.toggleMoreDetails,
-            selectedDate: controller.date.value,
-            onDateSelected: controller.setDate,
-            onCalendarTap: () => controller.pickDate(context),
-            noteController: controller.noteController,
-            hasNoteText: controller.noteController.text.isNotEmpty,
-            activeColor: accentColor,
-          ),
-          const CcSpaceXL(),
-          TransactionSubmitButton(
-            text: el.tr(CcLocaleKeys.transaction_record_expense),
-            isSubmitting: controller.isSubmitting.value,
-            isEnabled: controller.canSubmit,
-            onTap: () => controller.submitForm(context),
-            activeColor: accentColor,
-            badge: guideline.isTaskActive('first_transaction')
-                ? CcGuidelineBadge(
-                    size: 8,
-                    color: guideline.currentColor,
-                    bounceTrigger: guideline.bounceTrigger,
-                  )
-                : null,
-          ),
-          const CcSpaceLG(),
-        ],
+    final scheme = context.ccColorScheme;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: scheme.primaryContainer.withValues(alpha: 0.1),
+        borderRadius: context.brLg,
+        border: Border.all(
+          color: scheme.onSurface.withOpacity(0.08),
+          width: context.respDim(1),
+        ),
+      ),
+      child: CcPadding(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildAmountSection(context, controller, accentColor),
+            const CcSpaceLG(),
+            _buildWalletSection(context, controller, accentColor),
+            const CcSpaceLG(),
+            TransactionAdditionalDetailsSection(
+              isExpanded: controller.showMoreDetails.value,
+              onToggle: controller.toggleMoreDetails,
+              selectedDate: controller.date.value,
+              onDateSelected: controller.setDate,
+              onCalendarTap: () => controller.pickDate(context),
+              noteController: controller.noteController,
+              hasNoteText: controller.noteController.text.isNotEmpty,
+              activeColor: accentColor,
+            ),
+            const CcSpaceXL(),
+            TransactionSubmitButton(
+              text: el.tr(CcLocaleKeys.transaction_record_expense),
+              isSubmitting: controller.isSubmitting.value,
+              isEnabled: controller.canSubmit,
+              onTap: () => controller.submitForm(context),
+              activeColor: accentColor,
+              badge: guideline.isTaskActive('first_transaction')
+                  ? CcGuidelineBadge(
+                      size: 8,
+                      color: guideline.currentColor,
+                      bounceTrigger: guideline.bounceTrigger,
+                    )
+                  : null,
+            ),
+            const CcSpaceLG(),
+          ],
+        ),
+        6,
+        12,
+        12,
+        6,
       ),
     );
   }
@@ -173,7 +187,7 @@ class ExpenseForm extends StatelessWidget {
       children: [
         CcFormLabel(text: el.tr(CcLocaleKeys.transaction_source_expense)),
         const CcSpaceXS(),
-        TransactionWalletSelector(
+        CcWalletStripCard(
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
           activeColor: accentColor,

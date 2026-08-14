@@ -10,9 +10,10 @@ import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_hero_banner.dart';
-import '../widgets/budget_preview_section.dart';
+import '../widgets/budget_limit_preview_section.dart';
 import '../widgets/budget_wallets_section.dart';
 import '../widgets/investment_wallets_section.dart';
+import '../widgets/liability_wallets_section.dart';
 
 @RoutePage()
 class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
@@ -85,7 +86,8 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
               _buildInvestmentHeroBanner(context),
               _buildInvestmentWalletsSection(context),
               _buildLiabilityHeroBanner(context),
-              const BudgetPreviewSection(),
+              _buildLiabilityWalletsSection(context),
+              const BudgetLimitPreviewSection(),
             ],
           ),
         ),
@@ -228,6 +230,24 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         onAddInvestment: () => controller.openAddInvestment(context),
         onMore: (wallet) => controller.openWalletActions(context, wallet),
         onSeeAll: () => controller.navigateToInvestmentList(context),
+      );
+    });
+  }
+
+  Widget _buildLiabilityWalletsSection(BuildContext context) {
+    return Obx(() {
+      final canShow =
+          controller.userLevel.status.value.level >= 3 ||
+          CcFeatureFlags.isForceFullAccessEnabled;
+
+      if (!canShow) {
+        return const SizedBox.shrink();
+      }
+      final balances = controller.loanBalances;
+
+      return LiabilityWalletsSection(
+        balances: balances,
+        onSeeAll: () => controller.navigateToLoanList(context),
       );
     });
   }

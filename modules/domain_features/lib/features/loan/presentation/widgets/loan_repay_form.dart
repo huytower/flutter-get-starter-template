@@ -7,7 +7,7 @@ import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/cc_form_label.dart';
 import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
-import '../../../transaction/presentation/widgets/transaction_wallet_selector.dart';
+import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
 import '../../domain/entities/loan_entity.dart';
 import '../get_x/loan_detail_controller.dart';
 
@@ -44,7 +44,7 @@ class LoanRepayForm extends StatelessWidget {
         const CcSpaceLG(),
         CcFormLabel(text: el.tr(CcLocaleKeys.transaction_source_debt)),
         const CcSpaceXS(),
-        TransactionWalletSelector(
+        CcWalletStripCard(
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
           activeColor: accentColor,

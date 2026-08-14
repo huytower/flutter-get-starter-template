@@ -9,6 +9,7 @@ import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
+import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
 import 'cc_amount_input_section.dart';
@@ -17,7 +18,6 @@ import 'investment_direction_toggle.dart';
 import 'money_keypad_panel.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_submit_button.dart';
-import 'transaction_wallet_selector.dart';
 
 class InvestmentForm extends StatelessWidget {
   const InvestmentForm({super.key});
@@ -104,7 +104,7 @@ class InvestmentForm extends StatelessWidget {
           }
 
           return HorizontalFadeScrollView(
-            height: context.respDim(95),
+            height: context.respDim(70),
             builder: (scrollController) => ListView.separated(
               scrollDirection: Axis.horizontal,
               controller: scrollController,
@@ -169,7 +169,7 @@ class InvestmentForm extends StatelessWidget {
             ),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: context.respDim(75),
+            width: context.respDim(68),
             padding: EdgeInsets.all(context.respDim(10)),
             decoration: BoxDecoration(
               color: isSelected
@@ -204,7 +204,6 @@ class InvestmentForm extends StatelessWidget {
                         ? FontWeight.bold
                         : FontWeight.normal,
                     color: isSelected ? activeColor : scheme.onSurfaceVariant,
-                    fontSize: context.respFontSize(10),
                   ),
                 ),
               ],
@@ -238,7 +237,7 @@ class InvestmentForm extends StatelessWidget {
             ),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: context.respDim(75),
+            width: context.respDim(68),
             padding: EdgeInsets.all(context.respDim(10)),
             decoration: BoxDecoration(
               color: isSelected
@@ -279,7 +278,6 @@ class InvestmentForm extends StatelessWidget {
                     color: isSelected
                         ? activeColor
                         : scheme.onSurfaceVariant.withOpacity(0.6),
-                    fontSize: context.respFontSize(10),
                   ),
                 ),
               ],
@@ -331,7 +329,7 @@ class InvestmentForm extends StatelessWidget {
 
   Widget _buildShimmerList(BuildContext context) {
     return SizedBox(
-      height: context.respDim(95),
+      height: context.respDim(70),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(
@@ -340,7 +338,7 @@ class InvestmentForm extends StatelessWidget {
         itemCount: 5,
         separatorBuilder: (context, index) => const CcSpaceSM(),
         itemBuilder: (context, index) => Container(
-          width: context.respDim(75),
+          width: context.respDim(68),
           padding: EdgeInsets.all(context.respDim(10)),
           decoration: BoxDecoration(
             color: context.ccColorScheme.onSurface.withAlpha(10),
@@ -372,45 +370,59 @@ class InvestmentForm extends StatelessWidget {
     InvestmentFormController controller,
     Color accentColor,
   ) {
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.PAGE_SM,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (controller.isVip.value &&
-              controller.isAddingNewItem.value &&
-              controller.selectedCategory.value != null) ...[
-            _buildNewItemNameField(context, controller, accentColor),
+    final scheme = context.ccColorScheme;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: scheme.primaryContainer.withValues(alpha: 0.1),
+        borderRadius: context.brLg,
+        border: Border.all(
+          color: scheme.onSurface.withOpacity(0.08),
+          width: context.respDim(1),
+        ),
+      ),
+      child: CcPadding(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (controller.isVip.value &&
+                controller.isAddingNewItem.value &&
+                controller.selectedCategory.value != null) ...[
+              _buildNewItemNameField(context, controller, accentColor),
+              const CcSpaceLG(),
+            ],
+            _buildAmountSection(context, controller, accentColor),
+            const CcSpaceLG(),
+            _buildWalletSection(context, controller, accentColor),
+            const CcSpaceLG(),
+            TransactionAdditionalDetailsSection(
+              isExpanded: controller.showMoreDetails.value,
+              onToggle: controller.toggleMoreDetails,
+              selectedDate: controller.date.value,
+              onDateSelected: controller.setDate,
+              onCalendarTap: () => controller.pickDate(context),
+              noteController: controller.noteController,
+              hasNoteText: controller.noteController.text.isNotEmpty,
+              activeColor: accentColor,
+            ),
+            const CcSpaceXL(),
+            TransactionSubmitButton(
+              text: el.tr(
+                controller.direction.value == InvestmentDirection.contribute
+                    ? CcLocaleKeys.transaction_record_investment
+                    : CcLocaleKeys.transaction_record_investment_return,
+              ),
+              isSubmitting: controller.isSubmitting.value,
+              isEnabled: controller.canSubmit,
+              onTap: () => controller.submitForm(context),
+              activeColor: accentColor,
+            ),
             const CcSpaceLG(),
           ],
-          _buildAmountSection(context, controller, accentColor),
-          const CcSpaceLG(),
-          _buildWalletSection(context, controller, accentColor),
-          const CcSpaceLG(),
-          TransactionAdditionalDetailsSection(
-            isExpanded: controller.showMoreDetails.value,
-            onToggle: controller.toggleMoreDetails,
-            selectedDate: controller.date.value,
-            onDateSelected: controller.setDate,
-            onCalendarTap: () => controller.pickDate(context),
-            noteController: controller.noteController,
-            hasNoteText: controller.noteController.text.isNotEmpty,
-            activeColor: accentColor,
-          ),
-          const CcSpaceXL(),
-          TransactionSubmitButton(
-            text: el.tr(
-              controller.direction.value == InvestmentDirection.contribute
-                  ? CcLocaleKeys.transaction_record_investment
-                  : CcLocaleKeys.transaction_record_investment_return,
-            ),
-            isSubmitting: controller.isSubmitting.value,
-            isEnabled: controller.canSubmit,
-            onTap: () => controller.submitForm(context),
-            activeColor: accentColor,
-          ),
-          const CcSpaceLG(),
-        ],
+        ),
+        6,
+        12,
+        12,
+        6,
       ),
     );
   }
@@ -473,7 +485,7 @@ class InvestmentForm extends StatelessWidget {
       children: [
         CcFormLabel(text: el.tr(labelKey)),
         const CcSpaceXS(),
-        TransactionWalletSelector(
+        CcWalletStripCard(
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
           activeColor: accentColor,

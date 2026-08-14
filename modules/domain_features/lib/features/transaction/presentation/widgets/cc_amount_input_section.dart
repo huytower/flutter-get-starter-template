@@ -53,7 +53,7 @@ class CcAmountInputSection extends StatelessWidget {
               horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
               vertical: context.respPadding(CcPaddingParams.SPACE_SM),
             ),
-            height: context.respDim(50),
+            height: context.respDim(45),
             decoration: BoxDecoration(
               color: context.ccColorScheme.surfaceVariant,
               borderRadius: context.brMd,

@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
-import 'wallet_strip_card.dart';
+import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
 
 /// Section displaying wallet list with add and see all actions.
 class BudgetWalletsSection extends StatelessWidget {
@@ -81,23 +81,24 @@ class BudgetWalletsSection extends StatelessWidget {
                       ),
                     ),
                   if (showAddButton) const CcSpaceSM(),
-                  CcInkWell(
-                    onTap: () =>
-                        context.router.push(const LiquidWalletListRoute()),
-                    child: CcText(
-                      el.tr(CcLocaleKeys.wallet_see_all),
-                      textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                        color: scheme.primary,
-                        fontWeight: CcTypographyParams.semiBold,
+                  if (wallets.isNotEmpty)
+                    CcInkWell(
+                      onTap: () =>
+                          context.router.push(const LiquidWalletListRoute()),
+                      child: CcText(
+                        el.tr(CcLocaleKeys.wallet_see_all),
+                        textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                          color: scheme.primary,
+                          fontWeight: CcTypographyParams.semiBold,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ],
           ),
         ),
-        WalletStripCard(
+        CcWalletStripCard(
           wallets: wallets,
           onMore: onMore,
           emptyMessageKey: emptyMessageKey,

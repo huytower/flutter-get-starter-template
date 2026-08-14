@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
+import '../../../category/domain/entities/category_entity.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/add_investment_sheet_controller.dart';
 
@@ -143,68 +144,120 @@ class _AddInvestmentSheetState extends State<AddInvestmentSheet> {
           el.tr(CcLocaleKeys.transaction_category),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant,
-            fontWeight: CcTypographyParams.bold,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        const CcSpaceXS(),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: controller.investmentCategories.map((category) {
+        const CcSpaceSM(),
+        HorizontalFadeScrollView(
+          height: context.respDim(70),
+          builder: (scrollController) => ListView.separated(
+            scrollDirection: Axis.horizontal,
+            controller: scrollController,
+            itemCount: controller.investmentCategories.length,
+            separatorBuilder: (_, _) => const CcSpaceSM(),
+            itemBuilder: (context, index) {
+              final category = controller.investmentCategories[index];
               final isSelected =
                   controller.selectedInvestmentCategory.value?.id ==
                   category.id;
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: CcInkWell(
-                  onTap: () => controller.selectInvestmentCategory(category),
-                  borderRadius: BorderRadius.circular(12),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? context.ccColorScheme.primary.withOpacity(0.1)
-                          : context.ccColorScheme.surfaceVariant.withOpacity(
-                              0.5,
-                            ),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isSelected
-                            ? context.ccColorScheme.primary
-                            : Colors.transparent,
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          iconDataFromCode(
-                            category.iconCode,
-                            fontFamily: category.iconFamily,
-                          ),
-                          size: 24,
-                          color: isSelected
-                              ? context.ccColorScheme.primary
-                              : context.ccColorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(height: 4),
-                        CcText(
-                          el.tr(category.nameKey),
-                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                            color: isSelected
-                                ? context.ccColorScheme.primary
-                                : context.ccColorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              return _buildCategoryItem(
+                context,
+                controller,
+                category,
+                isSelected,
               );
-            }).toList(),
+            },
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildCategoryItem(
+    BuildContext context,
+    AddInvestmentSheetController controller,
+    CategoryEntity category,
+    bool isSelected,
+  ) {
+    final scheme = context.ccColorScheme;
+
+    return CcInkWell(
+      onTap: () => controller.selectInvestmentCategory(category),
+      borderRadius: context.brLg,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          if (isSelected)
+            const Positioned.fill(child: CcGlassyGradientBackground()),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: context.respDim(50),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? scheme.primaryContainer.withValues(alpha: 0.1)
+                  : scheme.onSurface.withOpacity(0.04),
+              borderRadius: context.brLg,
+              border: Border.all(
+                color: isSelected
+                    ? scheme.primary.withOpacity(0.2)
+                    : scheme.onSurface.withOpacity(0.08),
+                width: context.respDim(1),
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildCategoryIcon(context, category, isSelected),
+                const CcSpaceXS(),
+                Text(
+                  el.tr(category.nameKey),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.ccTextTheme.labelSmall?.copyWith(
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    color: isSelected
+                        ? scheme.primary
+                        : scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryIcon(
+    BuildContext context,
+    CategoryEntity cat,
+    bool isSelected,
+  ) {
+    final scheme = context.ccColorScheme;
+
+    return Container(
+      width: context.respDim(32),
+      height: context.respDim(32),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? scheme.primary.withOpacity(0.12)
+            : scheme.onSurface.withOpacity(0.08),
+        borderRadius: context.brMd,
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (isSelected) const Positioned.fill(child: CcGlassyGradientIcon()),
+          CcIcon(
+            icon: iconDataFromCode(cat.iconCode, fontFamily: cat.iconFamily),
+            size: context.respIconSize(baseSize: 18),
+            color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
+          ),
+        ],
+      ),
     );
   }
 
