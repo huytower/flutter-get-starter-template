@@ -10,6 +10,8 @@ import 'package:cc_micro_features/features/auth/domain/usecases/delete_account_u
     as _i308;
 import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
 import 'package:dio/dio.dart' as _i361;
+import 'package:domain_features/core/helper/ai_fallback_preference_datasource.dart'
+    as _i967;
 import 'package:domain_features/export_domain_features.dart' as _i857;
 import 'package:domain_features/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart'
     as _i451;
@@ -185,6 +187,8 @@ import 'package:domain_features/features/transaction/domain/usecases/create_tran
     as _i28;
 import 'package:domain_features/features/transaction/domain/usecases/get_month_to_date_cash_flow_usecase.dart'
     as _i774;
+import 'package:domain_features/features/transaction/domain/usecases/parse_quick_entry_usecase.dart'
+    as _i121;
 import 'package:domain_features/features/transaction/domain/usecases/update_transaction_usecase.dart'
     as _i756;
 import 'package:domain_features/features/transaction/presentation/get_x/category_selection_controller.dart'
@@ -233,6 +237,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.factory<_i594.IncomeFormController>(() => _i594.IncomeFormController());
     gh.factory<_i135.InvestmentFormController>(
         () => _i135.InvestmentFormController());
+    gh.lazySingleton<_i967.AiFallbackPreferenceDataSource>(
+        () => _i967.AiFallbackPreferenceDataSource());
     gh.lazySingleton<_i585.BudgetLimitLocalDataSource>(
         () => _i585.BudgetLimitLocalDataSource());
     gh.lazySingleton<_i250.SortBudgetLimitsByLimitUseCase>(
@@ -442,6 +448,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.factory<_i615.CategorySelectionController>(() =>
         _i615.CategorySelectionController(gh<_i224.GetCategoriesUseCase>()));
+    gh.lazySingleton<_i121.ParseQuickEntryUseCase>(
+        () => _i121.ParseQuickEntryUseCase(gh<_i224.GetCategoriesUseCase>()));
     gh.lazySingleton<_i467.GetBudgetOverLimitCountUseCase>(
         () => _i467.GetBudgetOverLimitCountUseCase(
               gh<_i544.BudgetLimitRepository>(),

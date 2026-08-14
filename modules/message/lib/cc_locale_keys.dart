@@ -300,6 +300,15 @@ class CodegenLoader extends AssetLoader {
       "more_details": "More details",
       "merchant_match_hint": "Like last time: {label}",
       "location_match_hint": "You're nearby: {label}",
+      "quick_entry_label": "Quick entry (AI)",
+      "quick_entry_hint": "e.g. \"50k coffee\" — type or tap the mic",
+      "quick_entry_parsed_result": "Got it: {label}",
+      "quick_entry_could_not_parse": "Couldn't understand that — please fill in manually",
+      "quick_entry_cloud_consent_message": "To understand this, we'd send your text to an AI service (Gemini). Continue?",
+      "quick_entry_cloud_consent_accept": "Allow",
+      "quick_entry_cloud_consent_decline": "Not now",
+      "quick_entry_daily_limit_reached": "Daily AI quick-entry limit reached — please fill in manually",
+      "quick_entry_mic_permission_denied": "Microphone access is needed for voice entry",
       "claims_in_progress": "You have {count} claims in progress",
       "validation": {
         "amount_required": "Amount must be greater than 0",
@@ -970,6 +979,15 @@ class CodegenLoader extends AssetLoader {
       "more_details": "Thêm chi tiết",
       "merchant_match_hint": "Giống lần trước: {label}",
       "location_match_hint": "Bạn đang ở gần đây: {label}",
+      "quick_entry_label": "Nhập nhanh (AI)",
+      "quick_entry_hint": "vd: \"50k cà phê\" — gõ hoặc nhấn mic",
+      "quick_entry_parsed_result": "Đã nhận diện: {label}",
+      "quick_entry_could_not_parse": "Không hiểu được nội dung này — vui lòng nhập thủ công",
+      "quick_entry_cloud_consent_message": "Để hiểu nội dung này, ứng dụng cần gửi văn bản của bạn tới dịch vụ AI (Gemini). Tiếp tục?",
+      "quick_entry_cloud_consent_accept": "Đồng ý",
+      "quick_entry_cloud_consent_decline": "Để sau",
+      "quick_entry_daily_limit_reached": "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
+      "quick_entry_mic_permission_denied": "Cần quyền truy cập micro để nhập bằng giọng nói",
       "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
       "validation": {
         "amount_required": "Số tiền phải lớn hơn 0!",
@@ -1637,6 +1655,22 @@ abstract class CcLocaleKeys {
       'transaction.merchant_match_hint';
   static const transaction_location_match_hint =
       'transaction.location_match_hint';
+  static const quick_entry_label = 'transaction.quick_entry_label';
+  static const quick_entry_hint = 'transaction.quick_entry_hint';
+  static const quick_entry_parsed_result =
+      'transaction.quick_entry_parsed_result';
+  static const quick_entry_could_not_parse =
+      'transaction.quick_entry_could_not_parse';
+  static const quick_entry_cloud_consent_message =
+      'transaction.quick_entry_cloud_consent_message';
+  static const quick_entry_cloud_consent_accept =
+      'transaction.quick_entry_cloud_consent_accept';
+  static const quick_entry_cloud_consent_decline =
+      'transaction.quick_entry_cloud_consent_decline';
+  static const quick_entry_daily_limit_reached =
+      'transaction.quick_entry_daily_limit_reached';
+  static const quick_entry_mic_permission_denied =
+      'transaction.quick_entry_mic_permission_denied';
   static const transaction_claims_in_progress =
       'transaction.claims_in_progress';
   static const transaction_validation_amount_required =

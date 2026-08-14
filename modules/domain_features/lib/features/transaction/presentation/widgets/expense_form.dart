@@ -7,12 +7,14 @@ import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../guideline/guideline_controller.dart';
+import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../get_x/expense_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
 import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
+import 'quick_entry_section.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_submit_button.dart';
 import 'transaction_wallet_selector.dart';
@@ -129,12 +131,16 @@ class _ExpenseFormState extends State<ExpenseForm> {
     Color accentColor,
   ) {
     final suggestionLabel = _suggestionLabel(controller);
+    final canUseAiSmartEntry =
+        getIt<UserLevelController>().status.value.canUseAiSmartEntry;
 
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_SM,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (canUseAiSmartEntry)
+            _buildQuickEntrySection(controller, accentColor),
           if (suggestionLabel != null) ...[
             CcSuggestionChip(
               label: suggestionLabel,
@@ -179,6 +185,30 @@ class _ExpenseFormState extends State<ExpenseForm> {
           const CcSpaceLG(),
         ],
       ),
+    );
+  }
+
+  Widget _buildQuickEntrySection(
+    ExpenseFormController controller,
+    Color accentColor,
+  ) {
+    final suggestion = controller.quickEntrySuggestion.value;
+    final errorKey = controller.quickEntryErrorKey.value;
+    return QuickEntrySection(
+      controller: controller.quickEntryController,
+      isParsing: controller.isParsingQuickEntry.value,
+      isListening: controller.isListeningQuickEntry.value,
+      suggestionLabel: suggestion != null
+          ? controller.quickEntryResultLabel(suggestion)
+          : null,
+      errorText: errorKey != null ? el.tr(errorKey) : null,
+      activeColor: accentColor,
+      onSubmitted: (_) => controller.submitQuickEntry(),
+      onMicTap: controller.toggleVoiceQuickEntry,
+      onApplySuggestion: () {
+        if (suggestion != null) controller.applyQuickEntryParse(suggestion);
+      },
+      onDismissSuggestion: controller.dismissQuickEntrySuggestion,
     );
   }
 

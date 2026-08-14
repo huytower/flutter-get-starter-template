@@ -11,9 +11,12 @@ import 'package:injectable/injectable.dart';
 
 import '../../../guideline/guideline_controller.dart';
 import '../../../../core/di/di.dart';
+import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/budget_over_limit_helper.dart';
 import '../../../../core/helper/location_suggestion_helper.dart';
 import '../../../../core/helper/merchant_match_helper.dart';
+import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../../core/helper/time_based_suggestion_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
@@ -21,6 +24,7 @@ import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
+import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import '../../domain/usecases/update_transaction_usecase.dart';
 import 'transaction_form_controller.dart';
 
@@ -70,6 +74,39 @@ class ExpenseFormController extends TransactionFormController {
   List<TransactionEntity> _recentExpenses = [];
   Timer? _merchantMatchDebounce;
 
+  /// Phase 3.6 "NLP Simple" quick entry — free text or dictated speech like
+  /// "50k cafe", parsed locally first (see [ParseQuickEntryUseCase]) with a
+  /// consent-gated, daily-capped cloud fallback when the local parse can't
+  /// determine both fields. Only ever non-null when both amount and
+  /// category are resolved — same "prefill, user still confirms" contract
+  /// as [merchantMatchSuggestion]/[locationMatchSuggestion], applied via
+  /// [applyQuickEntryParse].
+  final TextEditingController quickEntryController = TextEditingController();
+  final Rx<QuickEntryParseResult?> quickEntrySuggestion =
+      Rx<QuickEntryParseResult?>(null);
+  final RxBool isParsingQuickEntry = false.obs;
+  final RxBool isListeningQuickEntry = false.obs;
+
+  /// Locale key for an inline status message (e.g. "couldn't understand" /
+  /// "daily AI limit reached") — null means no message to show.
+  final Rx<String?> quickEntryErrorKey = Rx<String?>(null);
+
+  List<CategoryEntity> _expenseCategoriesForQuickEntry = [];
+  Timer? _quickEntryDebounce;
+  bool _isDisposed = false;
+
+  /// Bumped by [onReset] to invalidate any quick-entry submission still
+  /// in flight (e.g. an abandoned cloud call from a transaction the user
+  /// already saved and moved on from). A stale submission's continuation
+  /// recognizes it's no longer current generation and skips touching
+  /// [isParsingQuickEntry] itself — letting [onReset] safely reset that
+  /// flag immediately for the next entry without a late-arriving stale
+  /// result re-disabling it or, worse, racing a brand new submission that
+  /// started in the meantime (which would reintroduce the very
+  /// double-submit hazard [submitQuickEntry]'s reentrancy guard exists to
+  /// prevent).
+  int _quickEntryGeneration = 0;
+
   @override
   bool get canSubmit =>
       selectedCategory.value != null &&
@@ -84,6 +121,8 @@ class ExpenseFormController extends TransactionFormController {
       DateTime.now().hour,
     );
     noteController.addListener(_onNoteChanged);
+    quickEntryController.addListener(_onQuickEntryTextChanged);
+    _loadExpenseCategoriesForQuickEntry();
     // Not calling refreshLocationSuggestion() here: ExpenseForm's initState
     // always calls it right after this controller is put/found (covers both
     // the fresh-instance case this onInit handles and the remount-without-
@@ -93,8 +132,19 @@ class ExpenseFormController extends TransactionFormController {
 
   @override
   void onClose() {
+    _isDisposed = true;
     _merchantMatchDebounce?.cancel();
+    _quickEntryDebounce?.cancel();
     noteController.removeListener(_onNoteChanged);
+    quickEntryController
+      ..removeListener(_onQuickEntryTextChanged)
+      ..dispose();
+    // Only stop the (global, singleton) recognizer if this instance is the
+    // one actually holding it — e.g. an edit sheet dismissed mid-dictation
+    // shouldn't cut off a still-active session on the entry tab.
+    if (isListeningQuickEntry.value) {
+      CcSpeechHelper.stopListening();
+    }
     super.onClose();
   }
 
@@ -103,6 +153,15 @@ class ExpenseFormController extends TransactionFormController {
     selectedCategory.value = null;
     pendingPrefillCategoryId.value = null;
     merchantMatchSuggestion.value = null;
+    quickEntrySuggestion.value = null;
+    quickEntryErrorKey.value = null;
+    quickEntryController.clear();
+    // Invalidates any quick-entry submission still awaiting the cloud
+    // fallback (see _quickEntryGeneration's doc) and safely reclaims the
+    // "busy" flag for the next entry immediately, rather than leaving it
+    // disabled until that abandoned call happens to finish.
+    _quickEntryGeneration++;
+    isParsingQuickEntry.value = false;
     timeBasedSuggestedCategoryId = suggestExpenseCategoryIdForHour(
       DateTime.now().hour,
     );
@@ -246,6 +305,207 @@ class ExpenseFormController extends TransactionFormController {
     pendingPrefillCategoryId.value = match.categoryId;
     categoryKey.value++;
     locationMatchSuggestion.value = null;
+  }
+
+  Future<void> _loadExpenseCategoriesForQuickEntry() async {
+    final result = await getIt<GetCategoriesUseCase>().call();
+    _expenseCategoriesForQuickEntry =
+        result.tryGetSuccess()
+            ?.where((c) => c.isEnabled && c.type == CategoryType.expense)
+            .toList() ??
+        [];
+  }
+
+  CategoryEntity? _findQuickEntryCategory(String id) {
+    for (final c in _expenseCategoriesForQuickEntry) {
+      if (c.id == id) return c;
+    }
+    return null;
+  }
+
+  /// Display label for a resolved (i.e. [QuickEntryParseResult.isComplete])
+  /// suggestion, e.g. "50.00k · Cà phê" — mirrors `_formatSuggestionLabel`
+  /// in `expense_form.dart` for the merchant/location chips.
+  String quickEntryResultLabel(QuickEntryParseResult result) {
+    final category = _findQuickEntryCategory(result.categoryId!);
+    final categoryLabel = category != null ? el.tr(category.nameKey) : '';
+    return '${formatVndShort(result.amount!)}đ · $categoryLabel';
+  }
+
+  void _onQuickEntryTextChanged() {
+    quickEntryErrorKey.value = null;
+    _quickEntryDebounce?.cancel();
+    _quickEntryDebounce = Timer(
+      const Duration(milliseconds: 400),
+      _runLocalQuickEntryParse,
+    );
+  }
+
+  Future<void> _runLocalQuickEntryParse() async {
+    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+    final text = quickEntryController.text.trim();
+    if (text.isEmpty) {
+      quickEntrySuggestion.value = null;
+      return;
+    }
+    final local = await getIt<ParseQuickEntryUseCase>().parseLocally(text);
+    if (_isDisposed || text != quickEntryController.text.trim()) return;
+    quickEntrySuggestion.value = local.isComplete ? local : null;
+  }
+
+  /// Explicit "done" trigger (text field submit, or a finished voice
+  /// dictation) — unlike the as-you-type local-only debounce above, this is
+  /// the sole path that may escalate to the consent-gated, daily-capped
+  /// cloud fallback, so a network call only ever fires on a deliberate user
+  /// action, never silently while someone is still mid-typing.
+  Future<void> submitQuickEntry() async {
+    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+    // Reentrancy guard: without this, a fast double-submit (double-tap
+    // Enter while the first call is still awaiting the cloud round trip, or
+    // voice auto-submit racing a manual submit) would fire two concurrent
+    // cloud calls and desync `quickEntrySuggestion` between them.
+    if (isParsingQuickEntry.value) return;
+    final text = quickEntryController.text.trim();
+    if (text.isEmpty) return;
+
+    _quickEntryDebounce?.cancel();
+    quickEntryErrorKey.value = null;
+    isParsingQuickEntry.value = true;
+    // Captured once at the start of this specific submission — see
+    // _quickEntryGeneration's doc. [onReset] bumps the counter to
+    // invalidate an abandoned in-flight submission (e.g. the user already
+    // saved the transaction and moved on) without this call clobbering
+    // state that a newer submission now owns.
+    final generation = _quickEntryGeneration;
+    bool isCurrentGeneration() =>
+        !_isDisposed && generation == _quickEntryGeneration;
+    void resetParsingIfCurrent() {
+      if (isCurrentGeneration()) isParsingQuickEntry.value = false;
+    }
+
+    final parseUseCase = getIt<ParseQuickEntryUseCase>();
+    final local = await parseUseCase.parseLocally(text);
+    if (!isCurrentGeneration()) return;
+
+    if (local.isComplete) {
+      resetParsingIfCurrent();
+      quickEntrySuggestion.value = local;
+      return;
+    }
+
+    final prefs = getIt<AiFallbackPreferenceDataSource>();
+    if (!await prefs.isConsentGiven()) {
+      final agreed = await _promptCloudConsent();
+      if (!isCurrentGeneration()) return;
+      if (!agreed) {
+        resetParsingIfCurrent();
+        quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
+        return;
+      }
+      await prefs.setConsentGiven(true);
+    }
+
+    // Atomically checks-and-reserves a slot under the daily cap — see
+    // AiFallbackPreferenceDataSource.tryConsumeDailyCall's doc for why a
+    // separate isUnderDailyLimit()+incrementTodayFallbackCount() pair would
+    // be a check-then-act race across concurrent callers.
+    if (!await prefs.tryConsumeDailyCall()) {
+      if (!isCurrentGeneration()) return;
+      resetParsingIfCurrent();
+      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_daily_limit_reached;
+      return;
+    }
+
+    final cloudResult = await parseUseCase.parseWithCloud(
+      text: text,
+      localResult: local,
+    );
+    resetParsingIfCurrent();
+    // The text field stays editable throughout this round trip (the mic
+    // and submit are locked, but typing isn't blocked) — re-check the text
+    // still matches what was actually sent before applying anything, same
+    // as the local-parse leg already does. Without this, a slow cloud
+    // response could land after the user cleared the field or started a
+    // different entry and silently pop up a suggestion for stale text.
+    if (!isCurrentGeneration() || text != quickEntryController.text.trim()) {
+      return;
+    }
+
+    if (cloudResult == null || !cloudResult.isComplete) {
+      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
+      return;
+    }
+
+    quickEntrySuggestion.value = cloudResult;
+  }
+
+  Future<bool> _promptCloudConsent() async {
+    var agreed = false;
+    await CcDialogHelper.showConfirmationDialog(
+      desc: el.tr(CcLocaleKeys.quick_entry_cloud_consent_message),
+      agreeText: el.tr(CcLocaleKeys.quick_entry_cloud_consent_accept),
+      cancelText: el.tr(CcLocaleKeys.quick_entry_cloud_consent_decline),
+      isCancelBtnShown: true,
+      status: CcDialogStatus.INFO,
+      onTapConfirm: () {
+        agreed = true;
+        Get.back();
+      },
+      onTapCancel: () => Get.back(),
+    );
+    return agreed;
+  }
+
+  Future<void> toggleVoiceQuickEntry() async {
+    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+    if (isListeningQuickEntry.value) {
+      await CcSpeechHelper.stopListening();
+      isListeningQuickEntry.value = false;
+      return;
+    }
+
+    quickEntryErrorKey.value = null;
+    isListeningQuickEntry.value = true;
+    final started = await CcSpeechHelper.startListening(
+      onResult: (recognizedWords, isFinal) {
+        if (_isDisposed) return;
+        quickEntryController.text = recognizedWords;
+        quickEntryController.selection = TextSelection.collapsed(
+          offset: recognizedWords.length,
+        );
+        if (isFinal) {
+          isListeningQuickEntry.value = false;
+          submitQuickEntry();
+        }
+      },
+      // The recognizer can stop itself (e.g. a silence timeout) without
+      // ever delivering a final result — without this, isListeningQuickEntry
+      // would never reset in that case and the mic icon would stay showing
+      // "actively listening" until the user taps it again.
+      onListeningStopped: () {
+        if (_isDisposed) return;
+        isListeningQuickEntry.value = false;
+      },
+    );
+    if (_isDisposed) return;
+    if (!started) {
+      isListeningQuickEntry.value = false;
+      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_mic_permission_denied;
+    }
+  }
+
+  /// Pre-fills category/amount from a resolved quick-entry parse — same
+  /// "prefill, user still confirms" contract as [applyMerchantMatch].
+  void applyQuickEntryParse(QuickEntryParseResult result) {
+    amountStr.value = result.amount!.toString();
+    pendingPrefillCategoryId.value = result.categoryId;
+    categoryKey.value++;
+    quickEntrySuggestion.value = null;
+    quickEntryController.clear();
+  }
+
+  void dismissQuickEntrySuggestion() {
+    quickEntrySuggestion.value = null;
   }
 
   @override

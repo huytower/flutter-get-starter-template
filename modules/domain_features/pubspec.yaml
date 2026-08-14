@@ -47,6 +47,7 @@ dependencies:
   timezone: ^0.11.1
   flutter_timezone: ^5.1.0
   string_similarity: ^2.0.0
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   auto_route_generator: ^10.5.0

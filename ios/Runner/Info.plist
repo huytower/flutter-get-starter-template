@@ -51,6 +51,10 @@
 		<string>Sổ Sách Xịn uses your location to detect your country code for phone number formatting and provide smart spending suggestions based on nearby merchants (optional feature).</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 		<string>Sổ Sách Xịn uses your location to detect your country code for phone number formatting and provide smart spending suggestions based on nearby merchants (optional feature).</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Sổ Sách Xịn uses your microphone to let you speak a quick expense entry like "50k cà phê" instead of typing (optional feature).</string>
+		<key>NSSpeechRecognitionUsageDescription</key>
+		<string>Sổ Sách Xịn uses on-device speech recognition to transcribe your voice into text for quick expense entry (optional feature).</string>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>

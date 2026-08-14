@@ -21,17 +21,26 @@ const Map<String, String> _vietnameseDiacriticsMap = {
 final RegExp _nonAlphanumeric = RegExp(r'[^a-z0-9\s]');
 final RegExp _extraWhitespace = RegExp(r'\s+');
 
-/// Lowercases, strips Vietnamese diacritics and punctuation, and collapses
-/// whitespace — so "Trà sữa Phúc Long!" and "tra sua phuc long" normalize to
-/// the same comparable string before fuzzy matching.
-String normalizeMerchantText(String input) {
+/// Lowercases and strips Vietnamese diacritics only — punctuation (incl.
+/// `.`/`,`) is left untouched. Split out from [normalizeMerchantText] so
+/// callers that still need punctuation preserved (e.g. `quick_entry_parser
+/// _helper.dart`'s amount regex, which relies on `.`/`,` surviving as
+/// decimal/thousands separators) don't have to reimplement the diacritics
+/// map.
+String stripVietnameseDiacritics(String input) {
   final buffer = StringBuffer();
   for (final rune in input.toLowerCase().runes) {
     final ch = String.fromCharCode(rune);
     buffer.write(_vietnameseDiacriticsMap[ch] ?? ch);
   }
-  return buffer
-      .toString()
+  return buffer.toString();
+}
+
+/// Lowercases, strips Vietnamese diacritics and punctuation, and collapses
+/// whitespace — so "Trà sữa Phúc Long!" and "tra sua phuc long" normalize to
+/// the same comparable string before fuzzy matching.
+String normalizeMerchantText(String input) {
+  return stripVietnameseDiacritics(input)
       .replaceAll(_nonAlphanumeric, ' ')
       .replaceAll(_extraWhitespace, ' ')
       .trim();
