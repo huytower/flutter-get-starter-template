@@ -488,6 +488,19 @@ class CodegenLoader extends AssetLoader {
       "filter_by_wallet": "Filter by wallet",
       "filter_all_wallets": "All wallets",
       "trend_week_label": "Week {number}",
+      "ai_advice_title": "AI Financial Advice",
+      "ai_advice_empty_body":
+          "Get a personalized review of this month's spending and suggestions to improve your finances.",
+      "ai_advice_generate_cta": "Generate advice",
+      "ai_advice_loading": "Generating advice...",
+      "ai_advice_generate_failed":
+          "Couldn't generate advice right now, please try again.",
+      "ai_advice_daily_limit_reached":
+          "You've reached today's AI advice limit. Please try again tomorrow.",
+      "ai_advice_generated_just_now": "Generated just now",
+      "ai_advice_generated_minutes_ago": "Generated {count} minutes ago",
+      "ai_advice_generated_hours_ago": "Generated {count} hours ago",
+      "ai_advice_generated_days_ago": "Generated {count} days ago",
     },
     "category": {
       "group_daily": "Daily",
@@ -1167,6 +1180,19 @@ class CodegenLoader extends AssetLoader {
       "filtering_wallet": "Đang lọc: {wallet}",
       "filter_by_wallet": "Lọc theo ví",
       "filter_all_wallets": "Tất cả các ví",
+      "ai_advice_title": "Gợi ý tài chính từ AI",
+      "ai_advice_empty_body":
+          "Nhận đánh giá chi tiêu tháng này và gợi ý cải thiện tài chính, được cá nhân hóa cho bạn.",
+      "ai_advice_generate_cta": "Tạo gợi ý",
+      "ai_advice_loading": "Đang tạo gợi ý...",
+      "ai_advice_generate_failed":
+          "Không thể tạo gợi ý lúc này, vui lòng thử lại.",
+      "ai_advice_daily_limit_reached":
+          "Bạn đã dùng hết lượt gợi ý AI hôm nay. Vui lòng thử lại vào ngày mai.",
+      "ai_advice_generated_just_now": "Vừa tạo xong",
+      "ai_advice_generated_minutes_ago": "Tạo {count} phút trước",
+      "ai_advice_generated_hours_ago": "Tạo {count} giờ trước",
+      "ai_advice_generated_days_ago": "Tạo {count} ngày trước",
     },
     "category": {
       "group_daily": "Hàng ngày",
@@ -1855,6 +1881,22 @@ abstract class CcLocaleKeys {
   static const report_filter_by_wallet = 'report.filter_by_wallet';
   static const report_filter_all_wallets = 'report.filter_all_wallets';
   static const report_trend_week_label = 'report.trend_week_label';
+  static const report_ai_advice_title = 'report.ai_advice_title';
+  static const report_ai_advice_empty_body = 'report.ai_advice_empty_body';
+  static const report_ai_advice_generate_cta = 'report.ai_advice_generate_cta';
+  static const report_ai_advice_loading = 'report.ai_advice_loading';
+  static const report_ai_advice_generate_failed =
+      'report.ai_advice_generate_failed';
+  static const report_ai_advice_daily_limit_reached =
+      'report.ai_advice_daily_limit_reached';
+  static const report_ai_advice_generated_just_now =
+      'report.ai_advice_generated_just_now';
+  static const report_ai_advice_generated_minutes_ago =
+      'report.ai_advice_generated_minutes_ago';
+  static const report_ai_advice_generated_hours_ago =
+      'report.ai_advice_generated_hours_ago';
+  static const report_ai_advice_generated_days_ago =
+      'report.ai_advice_generated_days_ago';
 
   static const category_settings_title = 'category.settings_title';
   static const category_settings_subtitle = 'category.settings_subtitle';

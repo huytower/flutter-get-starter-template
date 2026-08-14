@@ -441,7 +441,17 @@
     "filtering_wallet": "Filtering: {wallet}",
     "filter_by_wallet": "Filter by wallet",
     "filter_all_wallets": "All wallets",
-    "trend_week_label": "Week {number}"
+    "trend_week_label": "Week {number}",
+    "ai_advice_title": "AI Financial Advice",
+    "ai_advice_empty_body": "Get a personalized review of this month's spending and suggestions to improve your finances.",
+    "ai_advice_generate_cta": "Generate advice",
+    "ai_advice_loading": "Generating advice...",
+    "ai_advice_generate_failed": "Couldn't generate advice right now, please try again.",
+    "ai_advice_daily_limit_reached": "You've reached today's AI advice limit. Please try again tomorrow.",
+    "ai_advice_generated_just_now": "Generated just now",
+    "ai_advice_generated_minutes_ago": "Generated {count} minutes ago",
+    "ai_advice_generated_hours_ago": "Generated {count} hours ago",
+    "ai_advice_generated_days_ago": "Generated {count} days ago"
   },
   "category": {
     "group_daily": "Daily",

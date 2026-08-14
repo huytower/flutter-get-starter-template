@@ -1,8 +1,10 @@
 // Domain
+export 'domain/entities/ai_advice_entity.dart';
 export 'domain/entities/category_spending_entity.dart';
 export 'domain/entities/financial_runway_entity.dart';
 export 'domain/entities/trend_data_entity.dart';
 export 'domain/report_range.dart';
+export 'domain/usecases/generate_ai_financial_advice_usecase.dart';
 export 'domain/usecases/get_category_spending_usecase.dart';
 export 'domain/usecases/get_financial_runway_usecase.dart';
 export 'domain/usecases/get_investment_trend_usecase.dart';

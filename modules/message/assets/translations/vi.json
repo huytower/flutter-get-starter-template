@@ -441,7 +441,17 @@
     "filtering_wallet": "Đang lọc: {wallet}",
     "filter_by_wallet": "Lọc theo ví",
     "filter_all_wallets": "Tất cả các ví",
-    "trend_week_label": "Tuần {number}"
+    "trend_week_label": "Tuần {number}",
+    "ai_advice_title": "Gợi ý tài chính từ AI",
+    "ai_advice_empty_body": "Nhận đánh giá chi tiêu tháng này và gợi ý cải thiện tài chính, được cá nhân hóa cho bạn.",
+    "ai_advice_generate_cta": "Tạo gợi ý",
+    "ai_advice_loading": "Đang tạo gợi ý...",
+    "ai_advice_generate_failed": "Không thể tạo gợi ý lúc này, vui lòng thử lại.",
+    "ai_advice_daily_limit_reached": "Bạn đã dùng hết lượt gợi ý AI hôm nay. Vui lòng thử lại vào ngày mai.",
+    "ai_advice_generated_just_now": "Vừa tạo xong",
+    "ai_advice_generated_minutes_ago": "Tạo {count} phút trước",
+    "ai_advice_generated_hours_ago": "Tạo {count} giờ trước",
+    "ai_advice_generated_days_ago": "Tạo {count} ngày trước"
   },
   "category": {
     "group_daily": "Hàng ngày",
