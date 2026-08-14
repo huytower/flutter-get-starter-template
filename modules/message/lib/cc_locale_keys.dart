@@ -314,15 +314,6 @@ class CodegenLoader extends AssetLoader {
         "edit_window": "You can only edit transactions from the last 30 days",
       },
     },
-    "transaction_template": {
-      "title": "Quick templates",
-      "add_title": "New template",
-      "name_hint": "e.g. Gas 50k",
-      "name_required": "Please enter a template name",
-      "delete_title": "Delete template",
-      "delete_confirm": "Delete \"{name}\"?",
-      "created": "Template \"{name}\" created",
-    },
     "loan": {
       "list_title": "Loans",
       "status_outstanding": "Outstanding",
@@ -991,15 +982,6 @@ class CodegenLoader extends AssetLoader {
         "not_editable": "Không thể sửa giao dịch này!",
         "edit_window": "Chỉ có thể sửa giao dịch trong 30 ngày gần nhất!",
       },
-    },
-    "transaction_template": {
-      "title": "Mẫu nhanh",
-      "add_title": "Mẫu mới",
-      "name_hint": "VD: Đổ xăng 50k",
-      "name_required": "Vui lòng nhập tên mẫu!",
-      "delete_title": "Xoá mẫu nhanh",
-      "delete_confirm": "Xoá \"{name}\"?",
-      "created": "Đã tạo mẫu \"{name}\"",
     },
     "loan": {
       "list_title": "Vay & Cho vay",
@@ -1675,19 +1657,6 @@ abstract class CcLocaleKeys {
       'transaction.validation.not_editable';
   static const transaction_validation_edit_window =
       'transaction.validation.edit_window';
-
-  static const transaction_template_title = 'transaction_template.title';
-  static const transaction_template_add_title =
-      'transaction_template.add_title';
-  static const transaction_template_name_hint =
-      'transaction_template.name_hint';
-  static const transaction_template_name_required =
-      'transaction_template.name_required';
-  static const transaction_template_delete_title =
-      'transaction_template.delete_title';
-  static const transaction_template_delete_confirm =
-      'transaction_template.delete_confirm';
-  static const transaction_template_created = 'transaction_template.created';
 
   static const loan_list_title = 'loan.list_title';
   static const loan_status_outstanding = 'loan.status_outstanding';

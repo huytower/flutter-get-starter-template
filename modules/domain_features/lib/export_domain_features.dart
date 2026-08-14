@@ -39,8 +39,6 @@ export 'features/report/export_report.dart';
 export 'features/transaction/domain/entities/transaction_entity.dart';
 export 'features/transaction/domain/repositories/transaction_repository.dart';
 export 'features/transaction/export_transaction.dart';
-// Transaction Template
-export 'features/transaction_template/export_transaction_template.dart';
 // User Level
 export 'features/user_level/export_user_level.dart';
 // Wallet

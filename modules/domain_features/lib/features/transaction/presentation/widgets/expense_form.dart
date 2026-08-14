@@ -7,8 +7,6 @@ import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../guideline/guideline_controller.dart';
-import '../../../transaction_template/presentation/widgets/transaction_template_chip_list.dart';
-import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../get_x/expense_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
@@ -80,7 +78,6 @@ class ExpenseForm extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTemplateSection(context, controller, accentColor),
             _buildCategorySection(controller, accentColor),
             const CcSpaceLG(),
             _buildFormFields(context, controller, guideline, accentColor),
@@ -88,33 +85,6 @@ class ExpenseForm extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  /// LV3-gated "Quick templates" strip — same tier as Debt/Loan, see
-  /// [UserLevelStatusEntity.canUseAiSmartEntry].
-  Widget _buildTemplateSection(
-    BuildContext context,
-    ExpenseFormController controller,
-    Color accentColor,
-  ) {
-    // UserLevelController is a plain getIt singleton (constructor-injected
-    // into TransactionController elsewhere) — it's never `Get.put` into
-    // GetX's own locator, so it must be read via getIt here, not
-    // `Get.find`/`Get.isRegistered`. Its `status` Rx still drives this Obx
-    // like any other reactive value regardless of how it was obtained.
-    return Obx(() {
-      final unlocked = getIt<UserLevelController>().status.value.canUseAiSmartEntry;
-      if (!unlocked) return const SizedBox();
-
-      return Padding(
-        padding: EdgeInsets.only(bottom: context.respDim(16)),
-        child: TransactionTemplateChipList(
-          activeColor: accentColor,
-          wallets: controller.wallets,
-          onApply: controller.applyTemplate,
-        ),
-      );
-    });
   }
 
   Widget _buildCategorySection(

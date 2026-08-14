@@ -287,15 +287,6 @@
       "edit_window": "Chỉ có thể sửa giao dịch trong 30 ngày gần nhất!"
     }
   },
-  "transaction_template": {
-    "title": "Mẫu nhanh",
-    "add_title": "Mẫu mới",
-    "name_hint": "VD: Đổ xăng 50k",
-    "name_required": "Vui lòng nhập tên mẫu!",
-    "delete_title": "Xoá mẫu nhanh",
-    "delete_confirm": "Xoá \"{name}\"?",
-    "created": "Đã tạo mẫu \"{name}\""
-  },
   "loan": {
     "list_title": "Vay & Cho vay",
     "status_outstanding": "Còn nợ",

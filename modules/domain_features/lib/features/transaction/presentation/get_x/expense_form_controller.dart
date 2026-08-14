@@ -16,7 +16,6 @@ import '../../../../core/helper/merchant_match_helper.dart';
 import '../../../../core/helper/time_based_suggestion_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
-import '../../../transaction_template/domain/entities/transaction_template_entity.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
@@ -33,17 +32,17 @@ class ExpenseFormController extends TransactionFormController {
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   final RxInt categoryKey = 0.obs;
 
-  /// Set right before [categoryKey] is bumped by [applyTemplate] or
-  /// [applyMerchantMatch], so the remounted `CategorySelectionSection`
-  /// resolves and reports back the real [CategoryEntity] for this id — same
-  /// mechanism edit-mode already uses via `editingTransaction?.categoryId`.
+  /// Set right before [categoryKey] is bumped by [applyMerchantMatch], so the
+  /// remounted `CategorySelectionSection` resolves and reports back the real
+  /// [CategoryEntity] for this id — same mechanism edit-mode already uses via
+  /// `editingTransaction?.categoryId`.
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 
   /// Phase 3.2 time-based suggestion (see [suggestExpenseCategoryIdForHour])
   /// — recomputed on every fresh blank form (init + after each reset) so it
   /// always reflects "now", not just whenever this singleton was created.
-  /// Lowest priority in `_buildCategorySection`'s fallback chain — a template,
-  /// merchant match, or an in-progress edit always wins.
+  /// Lowest priority in `_buildCategorySection`'s fallback chain — a merchant
+  /// match or an in-progress edit always wins.
   String? timeBasedSuggestedCategoryId;
 
   /// Phase 3.3 "AI Autofill" — the best fuzzy match (see
@@ -95,18 +94,6 @@ class ExpenseFormController extends TransactionFormController {
 
   void setCategory(CategoryEntity category) {
     selectedCategory.value = category;
-  }
-
-  /// Pre-fills category/amount/wallet from a quick-entry template — the user
-  /// still taps the form's own Save button to confirm, matching how edit
-  /// mode and every other pre-fill flow in this app works.
-  void applyTemplate(TransactionTemplateEntity template) {
-    amountStr.value = template.amount.toString();
-    if (wallets.any((w) => w.id == template.walletId)) {
-      selectedWalletId.value = template.walletId;
-    }
-    pendingPrefillCategoryId.value = template.categoryId;
-    categoryKey.value++;
   }
 
   Future<void> _loadRecentExpenseCandidates() async {

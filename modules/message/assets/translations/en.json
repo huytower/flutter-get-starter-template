@@ -287,15 +287,6 @@
       "edit_window": "You can only edit transactions from the last 30 days"
     }
   },
-  "transaction_template": {
-    "title": "Quick templates",
-    "add_title": "New template",
-    "name_hint": "e.g. Gas 50k",
-    "name_required": "Please enter a template name",
-    "delete_title": "Delete template",
-    "delete_confirm": "Delete \"{name}\"?",
-    "created": "Template \"{name}\" created"
-  },
   "loan": {
     "list_title": "Loans",
     "status_outstanding": "Outstanding",
