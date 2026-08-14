@@ -16,6 +16,7 @@ class InvestmentWalletListItem extends StatelessWidget {
   final bool canDelete;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final Widget? dragHandle;
 
   const InvestmentWalletListItem({
     super.key,
@@ -26,6 +27,7 @@ class InvestmentWalletListItem extends StatelessWidget {
     this.canDelete = true,
     required this.onEdit,
     required this.onDelete,
+    this.dragHandle,
   });
 
   @override
@@ -151,11 +153,17 @@ class InvestmentWalletListItem extends StatelessWidget {
       Positioned(
         top: context.respDim(-6),
         right: context.respDim(-6),
-        child: EditBadge(
-          icon: Icons.edit,
-          color: scheme.primary,
-          foregroundColor: scheme.onPrimary,
-          onTap: onEdit,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (dragHandle != null) ...[dragHandle!, const CcSpaceXS()],
+            EditBadge(
+              icon: Icons.edit,
+              color: scheme.primary,
+              foregroundColor: scheme.onPrimary,
+              onTap: onEdit,
+            ),
+          ],
         ),
       ),
     ];

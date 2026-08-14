@@ -56,14 +56,7 @@ class BudgetLimitNameInput extends StatelessWidget {
                 ),
               ),
               suffixIcon: controller.text.isNotEmpty
-                  ? CcIconButton.bouncing(
-                      icon: Icon(
-                        Icons.cancel_rounded,
-                        size: context.respIconSize(baseSize: 20),
-                        color: context.ccColorScheme.onSurfaceVariant,
-                      ),
-                      onTap: onClear,
-                    )
+                  ? CcClearBtn(onTap: onClear)
                   : null,
             ),
           ),

@@ -43,7 +43,7 @@ class WalletHiveModel extends HiveObject {
   final String? categoryId;
 
   @HiveField(11)
-  final int displayOrder;
+  final int? displayOrder;
 
   WalletHiveModel({
     required this.id,
@@ -81,7 +81,7 @@ class WalletHiveModel extends HiveObject {
     createdAt: createdAt,
     updatedAt: lastModifiedAt ?? createdAt,
     categoryId: categoryId,
-    displayOrder: displayOrder,
+    displayOrder: displayOrder ?? 0,
   );
 
   SyncMetadata get syncMetadata => SyncMetadata(

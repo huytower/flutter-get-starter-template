@@ -43,7 +43,7 @@ class BudgetLimitCategorySelector extends StatelessWidget {
 
   Widget _buildCategoryList(BuildContext context) {
     return HorizontalFadeScrollView(
-      height: context.respDim(90),
+      height: context.respDim(70),
       builder: (scrollController) {
         onScrollControllerCreated?.call(scrollController);
         return ListView.separated(
@@ -78,8 +78,7 @@ class BudgetLimitCategorySelector extends StatelessWidget {
             const Positioned.fill(child: CcGlassyGradientBackground()),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: context.respDim(68),
-            padding: EdgeInsets.all(context.respDim(10)),
+            width: context.respDim(50),
             decoration: BoxDecoration(
               color: isSelected
                   ? scheme.primaryContainer.withValues(alpha: 0.1)

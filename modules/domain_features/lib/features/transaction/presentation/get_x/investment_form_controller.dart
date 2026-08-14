@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:collection/collection.dart' hide IterableFirstOrNull;
 import 'package:domain_features/features/category/export_category.dart';
+import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -63,6 +64,12 @@ class InvestmentFormController extends TransactionFormController {
     _loadAll();
     final parentController = Get.find<TransactionController>();
     ever(parentController.wallets, (_) => _recomputeMergedItems());
+
+    // Listen to global category changes (e.g. from Settings)
+    ever(
+      CategorySettingsController.onCategoriesChanged,
+      (_) => _recomputeMergedItems(),
+    );
   }
 
   Future<void> _loadAll() async {
@@ -73,7 +80,7 @@ class InvestmentFormController extends TransactionFormController {
   }
 
   /// Refreshes the merged list of investment categories and existing assets.
-  /// Assets have high priority and appear first.
+  /// Assets have high priority and appear first, matching Dashboard order.
   Future<void> _recomputeMergedItems() async {
     final catResult = await _getCategories();
     final List<CategoryEntity> allCategories = catResult.when(
@@ -100,8 +107,13 @@ class InvestmentFormController extends TransactionFormController {
         .where((w) => w.type == WalletType.investment)
         .toList();
 
-    // Sorting assets: recently modified first
-    assets.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    // High Priority Sorting: Match Dashboard (DisplayOrder) + Recency (UpdatedAt)
+    assets.sort((a, b) {
+      if (a.displayOrder != b.displayOrder) {
+        return a.displayOrder.compareTo(b.displayOrder);
+      }
+      return b.updatedAt.compareTo(a.updatedAt);
+    });
 
     mergedItems.assignAll([...assets, ...allCategories]);
 

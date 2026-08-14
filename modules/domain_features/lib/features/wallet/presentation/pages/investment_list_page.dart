@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/add_investment_sheet.dart';
+import '../widgets/edit_badge.dart';
 import '../widgets/investment_wallet_list_item.dart';
 
 @RoutePage()
@@ -90,10 +91,10 @@ class InvestmentListPage extends CcGetView<WalletController> {
 
       return ReorderableListView.builder(
         onReorder: controller.reorderInvestments,
-        buildDefaultDragHandles: isEdit,
-        proxyDecorator: (child, index, animation) => Material(
-          color: Colors.transparent,
-          child: child,
+        buildDefaultDragHandles: false,
+        proxyDecorator: (child, index, animation) => ScaleTransition(
+          scale: animation.drive(Tween(begin: 1.0, end: 0.9)),
+          child: Material(color: Colors.transparent, child: child),
         ),
         padding: EdgeInsets.only(
           left: context.respPadding(CcPaddingParams.PAGE_SM),
@@ -114,6 +115,16 @@ class InvestmentListPage extends CcGetView<WalletController> {
             canDelete: controller.canDeleteWallet(wallet),
             onEdit: () => _openAddInvestment(context, wallet: wallet),
             onDelete: () => controller.confirmDelete(context, wallet),
+            dragHandle: isEdit
+                ? ReorderableDragStartListener(
+                    index: index,
+                    child: EditBadge(
+                      icon: Icons.drag_indicator,
+                      color: context.ccColorScheme.surfaceContainerHighest,
+                      foregroundColor: context.ccColorScheme.onSurfaceVariant,
+                    ),
+                  )
+                : null,
           );
         },
       );

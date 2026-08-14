@@ -82,7 +82,8 @@ class BudgetWalletsSection extends StatelessWidget {
                     ),
                   if (showAddButton) const CcSpaceSM(),
                   CcInkWell(
-                    onTap: () => context.router.push(const WalletListRoute()),
+                    onTap: () =>
+                        context.router.push(const LiquidWalletListRoute()),
                     child: CcText(
                       el.tr(CcLocaleKeys.wallet_see_all),
                       textStyle: context.ccTextTheme.titleSmall?.copyWith(

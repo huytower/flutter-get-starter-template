@@ -15,37 +15,24 @@ class ReconciliationConfirmButton extends StatelessWidget {
     return Obx(() {
       final busy = controller.isSubmitting.value;
       final hasWarning = controller.unhandledCount.value > 0;
-      return SizedBox(
-        width: double.infinity,
-        height: context.respDim(50),
-        child: ElevatedButton(
-          onPressed: busy || hasWarning
-              ? null
-              : () => _showConfirmDialog(context),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: context.ccColorScheme.primary,
-            alignment: Alignment.center,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: context.ccColorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: ListTile(
+          leading: Icon(
+            Icons.check_circle_outline,
+            color: context.ccColorScheme.primary,
+          ),
+          title: CcText(
+            el.tr(CcLocaleKeys.reconciliation_confirm),
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
+              color: context.ccColorScheme.primary,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          child: busy
-              ? SizedBox(
-                  width: context.respDim(20),
-                  height: context.respDim(20),
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: context.ccColorScheme.onPrimary,
-                  ),
-                )
-              : Text(
-                  el.tr(CcLocaleKeys.reconciliation_confirm),
-                  textAlign: TextAlign.center,
-                  style: context.ccTextTheme.labelMedium?.copyWith(
-                    color: context.ccColorScheme.onPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          onTap: busy || hasWarning ? null : () => _showConfirmDialog(context),
         ),
       );
     });

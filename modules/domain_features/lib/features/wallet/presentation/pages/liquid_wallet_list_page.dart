@@ -10,8 +10,8 @@ import '../get_x/wallet_controller.dart';
 import '../widgets/liquid_wallet_list_item.dart';
 
 @RoutePage()
-class WalletListPage extends CcGetView<WalletController> {
-  const WalletListPage({super.key});
+class LiquidWalletListPage extends CcGetView<WalletController> {
+  const LiquidWalletListPage({super.key});
 
   @override
   bool get enableAppBar => true;

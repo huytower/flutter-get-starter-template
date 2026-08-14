@@ -94,7 +94,7 @@ class _WalletCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CcInkWell(
-      onTap: () => context.router.push(const WalletListRoute()),
+      onTap: () => context.router.push(const LiquidWalletListRoute()),
       onLongPress: onMore,
       borderRadius: context.brLg,
       child: Stack(
@@ -186,7 +186,9 @@ class _WalletCard extends StatelessWidget {
           ),
         ),
         CcText(
-          balance != null ? TransactionFormHelpers.formatShort(balance!) : '*****',
+          balance != null
+              ? TransactionFormHelpers.formatShort(balance!)
+              : '*****',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(

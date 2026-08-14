@@ -8,6 +8,14 @@ import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
 /// Hero banner displaying a specific asset category with its balance.
 class BudgetHeroBanner extends StatelessWidget {
+  /// Optional widget to display additional information in the balance area
+  /// (e.g. detailed investment metrics).
+  final Widget? trailingBalanceWidget;
+
+  /// Optional widget to display before the balance value
+  /// (e.g. specialized asset icons).
+  final Widget? leadingBalanceWidget;
+
   const BudgetHeroBanner({
     required this.walletController,
     required this.titleKey,
@@ -16,6 +24,8 @@ class BudgetHeroBanner extends StatelessWidget {
     required this.icon,
     required this.color,
     this.subtitleArgs,
+    this.trailingBalanceWidget,
+    this.leadingBalanceWidget,
     this.topPadding = CcPaddingParams.SPACE_LG,
     this.bottomPadding = CcPaddingParams.SPACE_SM,
     this.onTap,
@@ -83,15 +93,30 @@ class BudgetHeroBanner extends StatelessWidget {
                     ),
                     const CcSpaceXS(),
                     Obx(
-                      () => CcText(
-                        walletController.isBalanceVisible.value
-                            ? TransactionFormHelpers.formatShort(balance.value)
-                            : '*********',
-                        textStyle: context.ccTextTheme.headlineMedium?.copyWith(
-                          color: scheme.onPrimary,
-                          fontWeight: CcTypographyParams.bold,
-                          letterSpacing: 0.2,
-                        ),
+                      () => Row(
+                        children: [
+                          if (leadingBalanceWidget != null) ...[
+                            leadingBalanceWidget!,
+                            const SizedBox(width: 4),
+                          ],
+                          CcText(
+                            walletController.isBalanceVisible.value
+                                ? TransactionFormHelpers.formatShort(
+                                    balance.value,
+                                  )
+                                : '*********',
+                            textStyle: context.ccTextTheme.headlineMedium
+                                ?.copyWith(
+                                  color: scheme.onPrimary,
+                                  fontWeight: CcTypographyParams.bold,
+                                  letterSpacing: 0.2,
+                                ),
+                          ),
+                          if (trailingBalanceWidget != null) ...[
+                            const CcSpaceMD(),
+                            trailingBalanceWidget!,
+                          ],
+                        ],
                       ),
                     ),
                     const CcSpaceXS(),
@@ -107,7 +132,7 @@ class BudgetHeroBanner extends StatelessWidget {
               ),
               const CcSpaceLG(),
               Container(
-                padding: EdgeInsets.all(context.respDim(10)),
+                padding: EdgeInsets.all(context.respDim(6)),
                 decoration: BoxDecoration(
                   color: scheme.onPrimary.withOpacity(0.2),
                   shape: BoxShape.circle,
@@ -115,7 +140,7 @@ class BudgetHeroBanner extends StatelessWidget {
                 child: CcIconToken(
                   icon,
                   color: scheme.onPrimary,
-                  size: context.respIconSize(baseSize: 20),
+                  size: context.respIconSize(baseSize: 12),
                 ),
               ),
             ],

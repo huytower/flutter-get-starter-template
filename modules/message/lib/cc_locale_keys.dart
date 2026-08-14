@@ -18,6 +18,8 @@ class CodegenLoader extends AssetLoader {
     "app": {
       "name": "Starter App",
       "version": "Version {version}",
+      "description": "Lean and efficient personal finance management",
+      "author": "by Huy Tower",
       "loading": "Loading...",
       "error": {
         "general": "An error occurred",
@@ -173,7 +175,7 @@ class CodegenLoader extends AssetLoader {
       "your_wallets": "Liquid wallets",
       "see_all": "See all",
       "empty": "No wallets yet.\nTap + to add one.",
-      "investment_empty": "No investment wallets yet",
+      "investment_empty": "No investment wallets yet\nTap + to add ",
       "investment_name": "Investment Name",
       "investment_name_hint": "e.g. BTC, Apple Stock...",
       "add_title": "Add New Wallet",
@@ -671,6 +673,8 @@ class CodegenLoader extends AssetLoader {
     "app": {
       "name": "Ứng dụng mẫu",
       "version": "Phiên bản {version}",
+      "description": "Quản lý tài chính cá nhân tinh gọn và hiệu quả",
+      "author": "bởi Huy Tower",
       "loading": "Đang tải...",
       "error": {
         "general": "Đã xảy ra lỗi",
@@ -829,7 +833,7 @@ class CodegenLoader extends AssetLoader {
       "your_wallets": "Ví thanh khoản",
       "see_all": "Xem tất cả",
       "empty": "Chưa có ví nào.\nNhấn + để thêm ví.",
-      "investment_empty": "Chưa có danh mục đầu tư nào",
+      "investment_empty": "Chưa có danh mục đầu tư nào\nNhấn + để thêm ",
       "investment_name": "Tên khoản đầu tư",
       "investment_name_hint": "Ví dụ: BTC, Cổ phiếu Apple...",
       "add_title": "Thêm ví mới",
@@ -1330,6 +1334,8 @@ class CodegenLoader extends AssetLoader {
 abstract class CcLocaleKeys {
   static const app_name = 'app.name';
   static const app_version = 'app.version';
+  static const app_description = 'app.description';
+  static const app_author = 'app.author';
   static const app_loading = 'app.loading';
   static const app_error_general = 'app.error.general';
   static const app_error_retry = 'app.error.retry';

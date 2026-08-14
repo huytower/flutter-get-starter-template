@@ -74,7 +74,7 @@ class LiquidWalletListItem extends StatelessWidget {
       children: [
         const Positioned.fill(child: CcGlassyGradientIcon()),
         Container(
-          padding: EdgeInsets.all(context.respDim(10)),
+          padding: EdgeInsets.all(context.respDim(6)),
           decoration: BoxDecoration(
             color: scheme.primary.withOpacity(0.12),
             shape: BoxShape.circle,

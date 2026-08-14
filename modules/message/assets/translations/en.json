@@ -1,7 +1,9 @@
 {
   "app": {
-    "name": "Sổ Sách Xịn",
+    "name": "So Sach Xin",
     "version": "Version {version}",
+    "description": "Lean and efficient personal finance management",
+    "author": "by Tran Huy",
     "loading": "Loading...",
     "error": {
       "general": "An error occurred",
@@ -151,7 +153,7 @@
     "your_wallets": "Liquid wallets",
     "see_all": "See all",
     "empty": "No wallets yet.\nTap + to add one.",
-    "investment_empty": "No investment wallets yet",
+    "investment_empty": "No investment wallets yet\nTap + to add ",
     "investment_name": "Investment Name",
     "investment_name_hint": "e.g. BTC, Apple Stock...",
     "investment_delete_title": "Delete Investment",

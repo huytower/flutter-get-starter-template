@@ -223,8 +223,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.factory<_i754.ExpenseFormController>(
         () => _i754.ExpenseFormController());
     gh.factory<_i594.IncomeFormController>(() => _i594.IncomeFormController());
-    gh.factory<_i135.InvestmentFormController>(
-        () => _i135.InvestmentFormController());
     gh.lazySingleton<_i585.BudgetLimitLocalDataSource>(
         () => _i585.BudgetLimitLocalDataSource());
     gh.lazySingleton<_i250.SortBudgetLimitsByLimitUseCase>(
@@ -486,6 +484,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i781.GetLoanOutstandingBalanceUseCase>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
+            ));
+    gh.factory<_i135.InvestmentFormController>(
+        () => _i135.InvestmentFormController(
+              gh<_i1041.GetCategoriesUseCase>(),
+              gh<_i569.GetProfileSettingsUseCase>(),
+              gh<_i240.CreateInvestmentTransactionUseCase>(),
             ));
     gh.lazySingleton<_i229.WalletController>(() => _i229.WalletController(
           gh<_i572.WalletRepository>(),

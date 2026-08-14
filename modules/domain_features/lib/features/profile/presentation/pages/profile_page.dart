@@ -84,6 +84,8 @@ class ProfilePage extends CcGetView<ProfileController> {
                               : const SizedBox.shrink(),
                         ),
                         const CcSpaceXL(),
+                        _buildFooter(context),
+                        const CcSpaceXL(),
                       ],
                     ),
                   ),
@@ -268,18 +270,6 @@ class ProfilePage extends CcGetView<ProfileController> {
         subtitle: el.tr(CcLocaleKeys.profile_terms_subtitle),
         onTap: () => controller.navigateToTerms(context),
       ),
-      Obx(
-        () => ProfileSettingsTile(
-          icon: Icons.info_outline_rounded,
-          label: el.tr(CcLocaleKeys.profile_about),
-          subtitle: el.tr(CcLocaleKeys.profile_about_subtitle),
-          trailingLabel: controller.appVersion.value.isEmpty
-              ? null
-              : 'v${controller.appVersion.value}',
-          showChevron: false,
-          onLongPress: () => controller.openCrashLogViewer(context),
-        ),
-      ),
     ];
   }
 
@@ -335,6 +325,49 @@ class ProfilePage extends CcGetView<ProfileController> {
         ),
         align: Alignment.center,
         textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildFooter(BuildContext context) {
+    final scheme = context.ccColorScheme;
+    final textTheme = context.ccTextTheme;
+
+    return GestureDetector(
+      onLongPress: () => controller.openCrashLogViewer(context),
+      child: Column(
+        children: [
+          CcText(
+            el.tr(CcLocaleKeys.app_description),
+            textStyle: textTheme.bodySmall?.copyWith(
+              color: scheme.onSurfaceVariant.withOpacity(0.6),
+            ),
+            textAlign: TextAlign.center,
+            align: Alignment.center,
+          ),
+          const SizedBox(height: 2),
+          CcText(
+            el.tr(CcLocaleKeys.app_author),
+            textStyle: textTheme.labelSmall?.copyWith(
+              color: scheme.onSurfaceVariant.withOpacity(0.5),
+              fontWeight: CcTypographyParams.medium,
+            ),
+            textAlign: TextAlign.center,
+            align: Alignment.center,
+          ),
+          const SizedBox(height: 4),
+          Obx(
+            () => CcText(
+              '${el.tr(CcLocaleKeys.app_name)} - v${controller.appVersion.value}',
+              textStyle: textTheme.labelSmall?.copyWith(
+                color: scheme.onSurfaceVariant.withOpacity(0.4),
+                letterSpacing: 0.5,
+              ),
+              textAlign: TextAlign.center,
+              align: Alignment.center,
+            ),
+          ),
+        ],
       ),
     );
   }
