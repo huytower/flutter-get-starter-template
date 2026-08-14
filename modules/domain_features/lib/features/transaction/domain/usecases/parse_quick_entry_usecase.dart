@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
@@ -15,6 +16,11 @@ import '../../../../core/helper/quick_entry_parser_helper.dart';
 /// check all need a `BuildContext`/user-facing dialog, so those live in
 /// `ExpenseFormController`, which calls [parseLocally] first (always safe)
 /// and only calls [parseWithCloud] after that gating passes.
+///
+/// Phase 3.7 receipt-photo entry reuses [parseLocally] as-is (on-device OCR
+/// text is just another free-text string) and adds [parseImageWithCloud] as
+/// a second cloud escalation path that sends the image itself instead of
+/// text.
 @lazySingleton
 class ParseQuickEntryUseCase {
   ParseQuickEntryUseCase(this._getCategories);
@@ -54,21 +60,79 @@ class ParseQuickEntryUseCase {
     final categories = await _loadExpenseCategories();
     if (categories.isEmpty) return null;
 
-    final categoryOptions = categories
-        .map((c) => '${c.id}: ${el.tr(c.nameKey)}')
-        .join(', ');
     final prompt =
         'You extract a Vietnamese personal-expense amount in VND and a '
         'category id from a short free-text or dictated quick-entry string. '
         'Text: "$text". '
-        'Available categories (id: label): $categoryOptions. '
-        'Reply with ONLY compact JSON, no markdown fences, no explanation: '
-        '{"amount": <integer VND or null>, "categoryId": <one of the ids '
-        'above as a string, or null>}.';
+        '${_buildCategoryOptionsPrompt(categories)} '
+        '${_jsonReplyInstruction}';
 
     final response = await CcGeminiHelper.generateText(prompt: prompt);
     if (response == null) return null;
 
+    return _mergeCloudResponse(
+      response,
+      categories: categories,
+      localResult: localResult,
+    );
+  }
+
+  /// Same contract as [parseWithCloud], but for a Phase 3.7 receipt photo —
+  /// sends the image itself to Gemini (multimodal) rather than pre-extracted
+  /// OCR text, since small/faded receipt print often garbles the on-device
+  /// OCR pass badly enough that the amount/category are unrecoverable from
+  /// text alone.
+  Future<QuickEntryParseResult?> parseImageWithCloud({
+    required Uint8List imageBytes,
+    required String mimeType,
+    required QuickEntryParseResult localResult,
+  }) async {
+    if (localResult.isComplete) return localResult;
+
+    final categories = await _loadExpenseCategories();
+    if (categories.isEmpty) return null;
+
+    final prompt =
+        'This image is a Vietnamese personal-expense receipt or payment '
+        'screenshot. Extract the total amount in VND and the best-matching '
+        'expense category id. '
+        '${_buildCategoryOptionsPrompt(categories)} '
+        '${_jsonReplyInstruction}';
+
+    final response = await CcGeminiHelper.generateFromImage(
+      imageBytes: imageBytes,
+      mimeType: mimeType,
+      prompt: prompt,
+    );
+    if (response == null) return null;
+
+    return _mergeCloudResponse(
+      response,
+      categories: categories,
+      localResult: localResult,
+    );
+  }
+
+  String _buildCategoryOptionsPrompt(List<CategoryEntity> categories) {
+    final categoryOptions = categories
+        .map((c) => '${c.id}: ${el.tr(c.nameKey)}')
+        .join(', ');
+    return 'Available categories (id: label): $categoryOptions.';
+  }
+
+  static const String _jsonReplyInstruction =
+      'Reply with ONLY compact JSON, no markdown fences, no explanation: '
+      '{"amount": <integer VND or null>, "categoryId": <one of the ids '
+      'above as a string, or null>}.';
+
+  /// Validates and merges a raw Gemini JSON response against [localResult] —
+  /// local fields always win over the cloud response when both are present,
+  /// since the local parse is deterministic and free.
+  QuickEntryParseResult? _mergeCloudResponse(
+    String response, {
+    required List<CategoryEntity> categories,
+    required QuickEntryParseResult localResult,
+  }) {
     final validIds = categories.map((c) => c.id).toSet();
     final cloudResult = _parseJsonResponse(response, validIds: validIds);
     if (cloudResult == null) return null;

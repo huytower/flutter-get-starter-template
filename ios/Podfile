@@ -1,4 +1,8 @@
-platform :ios, '12.0'
+# 15.5 minimum required by google_mlkit_text_recognition (Phase 3.7 receipt
+# OCR) and its GoogleMLKit/TextRecognition pod — firebase_ai/firebase_app_check
+# already pinned to 15.0 before this, so this is a small increment, not a new
+# floor.
+platform :ios, '15.5'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -45,7 +49,7 @@ post_install do |installer|
      installer.generated_projects.each do |project|
            project.targets.each do |target|
                target.build_configurations.each do |config|
-                 config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+                 config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.5'
                 end
            end
      end

@@ -15,6 +15,7 @@ import 'cc_amount_input_section.dart';
 import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
 import 'quick_entry_section.dart';
+import 'receipt_source_sheet.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_submit_button.dart';
 import 'transaction_wallet_selector.dart';
@@ -140,7 +141,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (canUseAiSmartEntry)
-            _buildQuickEntrySection(controller, accentColor),
+            _buildQuickEntrySection(context, controller, accentColor),
           if (suggestionLabel != null) ...[
             CcSuggestionChip(
               label: suggestionLabel,
@@ -189,6 +190,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
   }
 
   Widget _buildQuickEntrySection(
+    BuildContext context,
     ExpenseFormController controller,
     Color accentColor,
   ) {
@@ -205,11 +207,28 @@ class _ExpenseFormState extends State<ExpenseForm> {
       activeColor: accentColor,
       onSubmitted: (_) => controller.submitQuickEntry(),
       onMicTap: controller.toggleVoiceQuickEntry,
+      onScanTap: () => _pickReceiptSource(context, controller),
       onApplySuggestion: () {
         if (suggestion != null) controller.applyQuickEntryParse(suggestion);
       },
       onDismissSuggestion: controller.dismissQuickEntrySuggestion,
     );
+  }
+
+  Future<void> _pickReceiptSource(
+    BuildContext context,
+    ExpenseFormController controller,
+  ) async {
+    // Takes the quick-entry lock before the sheet even opens (not after it
+    // resolves) so the text/voice path can't run concurrently with this one
+    // during the sheet interaction — see beginQuickEntryImage's doc.
+    if (!controller.beginQuickEntryImage()) return;
+    final fromCamera = await ReceiptSourceSheet.show(context);
+    if (fromCamera == null) {
+      controller.cancelQuickEntryImage();
+      return;
+    }
+    controller.submitQuickEntryFromImage(fromCamera: fromCamera);
   }
 
   /// AI Smart Entry suggestion row — Phase 3.3 note-based merchant match

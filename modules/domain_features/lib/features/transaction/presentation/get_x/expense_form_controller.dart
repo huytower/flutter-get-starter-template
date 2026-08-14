@@ -439,6 +439,107 @@ class ExpenseFormController extends TransactionFormController {
     quickEntrySuggestion.value = cloudResult;
   }
 
+  /// Reentrancy gate for Phase 3.7 receipt-photo entry. Must be called (and,
+  /// on success, followed by either [submitQuickEntryFromImage] or
+  /// [cancelQuickEntryImage]) *before* showing the take-photo/choose-gallery
+  /// sheet — not after it resolves — so the lock covers that whole UI round
+  /// trip, not just the OCR/cloud portion. [submitQuickEntry] closes the
+  /// equivalent window for free by checking-then-setting [isParsingQuickEntry]
+  /// with no `await` in between; the photo path needs an explicit method to
+  /// get the same property since a whole sheet interaction sits between "user
+  /// tapped scan" and "we know which image to process."
+  bool beginQuickEntryImage() {
+    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) {
+      return false;
+    }
+    if (isParsingQuickEntry.value) return false;
+    quickEntryErrorKey.value = null;
+    isParsingQuickEntry.value = true;
+    return true;
+  }
+
+  /// Releases the lock [beginQuickEntryImage] took, for when the user
+  /// dismissed the source-selection sheet without picking anything.
+  void cancelQuickEntryImage() {
+    isParsingQuickEntry.value = false;
+  }
+
+  /// Phase 3.7 receipt-photo entry — picks an image (camera or gallery),
+  /// runs on-device OCR, then feeds the recognized text through the exact
+  /// same local-parse/cloud-fallback pipeline [submitQuickEntry] uses for
+  /// typed/dictated text, landing in the same [quickEntrySuggestion] so the
+  /// UI needs no separate suggestion state or chip. The cloud leg sends the
+  /// image itself (see [ParseQuickEntryUseCase.parseImageWithCloud]), not
+  /// the OCR text, since receipt print is small/faded enough that OCR often
+  /// can't be trusted as the sole cloud input.
+  ///
+  /// Assumes the caller already holds the [isParsingQuickEntry] lock via a
+  /// successful [beginQuickEntryImage] call.
+  Future<void> submitQuickEntryFromImage({required bool fromCamera}) async {
+    final generation = _quickEntryGeneration;
+    bool isCurrentGeneration() =>
+        !_isDisposed && generation == _quickEntryGeneration;
+    void resetParsingIfCurrent() {
+      if (isCurrentGeneration()) isParsingQuickEntry.value = false;
+    }
+
+    final picked = await CcReceiptScanHelper.pickReceiptImage(
+      fromCamera: fromCamera,
+    );
+    if (!isCurrentGeneration()) return;
+    if (picked == null) {
+      resetParsingIfCurrent();
+      return;
+    }
+
+    final ocrText = await CcReceiptScanHelper.recognizeText(picked.path);
+    if (!isCurrentGeneration()) return;
+
+    final parseUseCase = getIt<ParseQuickEntryUseCase>();
+    final local = await parseUseCase.parseLocally(ocrText);
+    if (!isCurrentGeneration()) return;
+
+    if (local.isComplete) {
+      resetParsingIfCurrent();
+      quickEntrySuggestion.value = local;
+      return;
+    }
+
+    final prefs = getIt<AiFallbackPreferenceDataSource>();
+    if (!await prefs.isConsentGiven()) {
+      final agreed = await _promptCloudConsent();
+      if (!isCurrentGeneration()) return;
+      if (!agreed) {
+        resetParsingIfCurrent();
+        quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
+        return;
+      }
+      await prefs.setConsentGiven(true);
+    }
+
+    if (!await prefs.tryConsumeDailyCall()) {
+      if (!isCurrentGeneration()) return;
+      resetParsingIfCurrent();
+      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_daily_limit_reached;
+      return;
+    }
+
+    final cloudResult = await parseUseCase.parseImageWithCloud(
+      imageBytes: picked.bytes,
+      mimeType: picked.mimeType,
+      localResult: local,
+    );
+    resetParsingIfCurrent();
+    if (!isCurrentGeneration()) return;
+
+    if (cloudResult == null || !cloudResult.isComplete) {
+      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
+      return;
+    }
+
+    quickEntrySuggestion.value = cloudResult;
+  }
+
   Future<bool> _promptCloudConsent() async {
     var agreed = false;
     await CcDialogHelper.showConfirmationDialog(

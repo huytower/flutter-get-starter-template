@@ -10,6 +10,10 @@ import 'cc_form_label.dart';
 /// the consent-gated cloud fallback — see `ExpenseFormController`). Purely
 /// presentational, mirrors `TransactionAdditionalDetailsSection`'s
 /// primitive-params shape rather than taking the whole controller.
+///
+/// Also carries Phase 3.7's receipt-photo entry point (the leading camera
+/// icon) — it feeds the exact same suggestion/error state as the text/voice
+/// path, so no separate UI is needed for it here.
 class QuickEntrySection extends StatelessWidget {
   const QuickEntrySection({
     super.key,
@@ -21,6 +25,7 @@ class QuickEntrySection extends StatelessWidget {
     required this.activeColor,
     required this.onSubmitted,
     required this.onMicTap,
+    required this.onScanTap,
     required this.onApplySuggestion,
     required this.onDismissSuggestion,
   });
@@ -33,6 +38,7 @@ class QuickEntrySection extends StatelessWidget {
   final Color activeColor;
   final ValueChanged<String> onSubmitted;
   final VoidCallback onMicTap;
+  final VoidCallback onScanTap;
   final VoidCallback onApplySuggestion;
   final VoidCallback onDismissSuggestion;
 
@@ -48,6 +54,7 @@ class QuickEntrySection extends StatelessWidget {
           hintText: el.tr(CcLocaleKeys.quick_entry_hint),
           textInputAction: TextInputAction.done,
           onSubmitted: onSubmitted,
+          prefixIcon: _buildScanIcon(context),
           suffixIcon: _buildTrailingIcon(context),
           // Locked while a parse/cloud-call is in flight — belt-and-braces
           // alongside the controller's own reentrancy guard, so a fast
@@ -77,6 +84,20 @@ class QuickEntrySection extends StatelessWidget {
           const CcSpaceSM(),
         ],
       ],
+    );
+  }
+
+  /// Phase 3.7 receipt-photo entry point — opens the take-photo/choose-
+  /// gallery action sheet (built by the caller in `expense_form.dart`, which
+  /// owns a `BuildContext` for `showModalBottomSheet`).
+  Widget _buildScanIcon(BuildContext context) {
+    return IconButton(
+      icon: Icon(
+        Icons.camera_alt_outlined,
+        color: context.ccColorScheme.onSurfaceVariant,
+        size: context.respIconSize(baseSize: 20),
+      ),
+      onPressed: isParsing ? null : onScanTap,
     );
   }
 
