@@ -7,6 +7,7 @@ import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../guideline/guideline_controller.dart';
+import '../../domain/entities/transaction_entity.dart';
 import '../get_x/expense_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
@@ -16,7 +17,7 @@ import 'transaction_additional_details_section.dart';
 import 'transaction_submit_button.dart';
 import 'transaction_wallet_selector.dart';
 
-class ExpenseForm extends StatelessWidget {
+class ExpenseForm extends StatefulWidget {
   const ExpenseForm({super.key, this.tag});
 
   /// GetX tag for the underlying [ExpenseFormController] instance. Leave
@@ -26,16 +27,34 @@ class ExpenseForm extends StatelessWidget {
   final String? tag;
 
   @override
-  Widget build(BuildContext context) {
+  State<ExpenseForm> createState() => _ExpenseFormState();
+}
+
+class _ExpenseFormState extends State<ExpenseForm> {
+  late final ExpenseFormController controller;
+
+  @override
+  void initState() {
+    super.initState();
     // The untagged (entry-tab) instance is registered early by
-    // TransactionController.onInit(), so it's always already findable here —
-    // Get.put-ing it directly in build() previously caused a "setState
-    // during build" bug. Edit-mode's tagged instance is never pre-registered
-    // (only TransactionController's own default tag is), so it still needs
-    // an on-demand Get.put here.
-    final controller = tag == null
+    // TransactionController.onInit(), so it's always already findable here.
+    // Edit-mode's tagged instance is never pre-registered (only
+    // TransactionController's own default tag is), so it still needs an
+    // on-demand Get.put here.
+    controller = widget.tag == null
         ? Get.find<ExpenseFormController>()
-        : Get.put(getIt<ExpenseFormController>(), tag: tag);
+        : Get.put(getIt<ExpenseFormController>(), tag: widget.tag);
+    // Phase 3.5: this widget is rebuilt fresh every time the user returns to
+    // the Transaction page (it's popped on bottom-nav navigation — see
+    // TransactionPage), but the untagged controller is a persistent singleton
+    // whose onInit only fires once ever — so this is the sole place that
+    // refreshes the location suggestion on every screen-open (onInit
+    // deliberately does not also call it; see ExpenseFormController.onInit).
+    controller.refreshLocationSuggestion();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final guideline = Get.find<GuidelineController>();
 
     final accentColor = context.ccColorScheme.error;
@@ -109,11 +128,25 @@ class ExpenseForm extends StatelessWidget {
     GuidelineController guideline,
     Color accentColor,
   ) {
+    final suggestionLabel = _suggestionLabel(controller);
+
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_SM,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (suggestionLabel != null) ...[
+            CcSuggestionChip(
+              label: suggestionLabel,
+              accentColor: accentColor,
+              icon: controller.merchantMatchSuggestion.value != null
+                  ? Icons.auto_awesome
+                  : Icons.place,
+              onTap: () => _applySuggestion(controller),
+              onDismiss: () => _dismissSuggestion(controller),
+            ),
+            const CcSpaceLG(),
+          ],
           _buildAmountSection(context, controller, accentColor),
           const CcSpaceLG(),
           _buildWalletSection(context, controller, accentColor),
@@ -127,12 +160,6 @@ class ExpenseForm extends StatelessWidget {
             noteController: controller.noteController,
             hasNoteText: controller.noteController.text.isNotEmpty,
             activeColor: accentColor,
-            merchantSuggestionLabel: _merchantSuggestionLabel(controller),
-            onApplyMerchantSuggestion: () {
-              final match = controller.merchantMatchSuggestion.value;
-              if (match != null) controller.applyMerchantMatch(match);
-            },
-            onDismissMerchantSuggestion: controller.dismissMerchantMatch,
           ),
           const CcSpaceXL(),
           TransactionSubmitButton(
@@ -155,13 +182,47 @@ class ExpenseForm extends StatelessWidget {
     );
   }
 
-  /// Phase 3.3 "AI Autofill" — formats the fuzzy-matched past expense (if
-  /// any) as "Cà phê · 30.000đ" for [TransactionAdditionalDetailsSection]'s
-  /// suggestion row.
-  String? _merchantSuggestionLabel(ExpenseFormController controller) {
-    final match = controller.merchantMatchSuggestion.value;
-    if (match == null) return null;
-    return '${match.category} · ${formatVndShort(match.amount)}đ';
+  /// AI Smart Entry suggestion row — Phase 3.3 note-based merchant match
+  /// takes priority over Phase 3.5 location match (a note is a more specific
+  /// signal than "you're near a place you've spent before"); only one is
+  /// ever shown at a time.
+  String? _suggestionLabel(ExpenseFormController controller) {
+    final merchantMatch = controller.merchantMatchSuggestion.value;
+    if (merchantMatch != null) {
+      return el.tr(
+        CcLocaleKeys.transaction_merchant_match_hint,
+        namedArgs: {'label': _formatSuggestionLabel(merchantMatch)},
+      );
+    }
+    final locationMatch = controller.locationMatchSuggestion.value;
+    if (locationMatch != null) {
+      return el.tr(
+        CcLocaleKeys.transaction_location_match_hint,
+        namedArgs: {'label': _formatSuggestionLabel(locationMatch)},
+      );
+    }
+    return null;
+  }
+
+  String _formatSuggestionLabel(TransactionEntity match) =>
+      '${match.category} · ${formatVndShort(match.amount)}đ';
+
+  void _applySuggestion(ExpenseFormController controller) {
+    final merchantMatch = controller.merchantMatchSuggestion.value;
+    if (merchantMatch != null) {
+      controller.applyMerchantMatch(merchantMatch);
+      return;
+    }
+    final locationMatch = controller.locationMatchSuggestion.value;
+    if (locationMatch != null) controller.applyLocationMatch(locationMatch);
+  }
+
+  void _dismissSuggestion(ExpenseFormController controller) {
+    if (controller.merchantMatchSuggestion.value != null) {
+      controller.dismissMerchantMatch();
+    } else {
+      controller.dismissLocationMatch();
+    }
   }
 
   Widget _buildAmountSection(

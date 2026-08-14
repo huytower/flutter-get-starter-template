@@ -272,6 +272,7 @@
     "note_hint": "Ghi chú (không bắt buộc)",
     "more_details": "Thêm chi tiết",
     "merchant_match_hint": "Giống lần trước: {label}",
+    "location_match_hint": "Bạn đang ở gần đây: {label}",
     "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
     "validation": {
       "amount_required": "Số tiền phải lớn hơn 0!",

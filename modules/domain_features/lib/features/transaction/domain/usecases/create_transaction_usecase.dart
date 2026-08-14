@@ -26,6 +26,11 @@ class CreateTransactionParams {
   final String? note;
   final DateTime date;
 
+  /// Foreground-only GPS fix captured when the entry form opened (Phase 3.5
+  /// location-based suggestion). Null when unavailable/denied.
+  final double? lat;
+  final double? lng;
+
   const CreateTransactionParams({
     required this.type,
     required this.amount,
@@ -36,6 +41,8 @@ class CreateTransactionParams {
     required this.walletId,
     this.note,
     required this.date,
+    this.lat,
+    this.lng,
   });
 }
 
@@ -108,6 +115,8 @@ class CreateTransactionUseCase {
       note: params.note,
       date: params.date,
       walletId: params.walletId,
+      lat: params.lat,
+      lng: params.lng,
     );
 
     final result = await _transactionRepository.createTransaction(transaction);

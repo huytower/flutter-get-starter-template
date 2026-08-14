@@ -299,6 +299,7 @@ class CodegenLoader extends AssetLoader {
       "note_hint": "Note (optional)",
       "more_details": "More details",
       "merchant_match_hint": "Like last time: {label}",
+      "location_match_hint": "You're nearby: {label}",
       "claims_in_progress": "You have {count} claims in progress",
       "validation": {
         "amount_required": "Amount must be greater than 0",
@@ -968,6 +969,7 @@ class CodegenLoader extends AssetLoader {
       "note_hint": "Ghi chú (không bắt buộc)",
       "more_details": "Thêm chi tiết",
       "merchant_match_hint": "Giống lần trước: {label}",
+      "location_match_hint": "Bạn đang ở gần đây: {label}",
       "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
       "validation": {
         "amount_required": "Số tiền phải lớn hơn 0!",
@@ -1633,6 +1635,8 @@ abstract class CcLocaleKeys {
   static const transaction_more_details = 'transaction.more_details';
   static const transaction_merchant_match_hint =
       'transaction.merchant_match_hint';
+  static const transaction_location_match_hint =
+      'transaction.location_match_hint';
   static const transaction_claims_in_progress =
       'transaction.claims_in_progress';
   static const transaction_validation_amount_required =

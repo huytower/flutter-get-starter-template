@@ -94,6 +94,12 @@ class TransactionEntity extends Equatable {
   /// When non-null the record is soft-deleted and excluded from all reads.
   final DateTime? deletedAt;
 
+  /// Foreground-only GPS fix captured when the entry form was opened (Phase
+  /// 3.5 location-based suggestion). Null when location was unavailable/
+  /// denied/not an expense — never backfilled for older records.
+  final double? lat;
+  final double? lng;
+
   const TransactionEntity({
     required this.id,
     required this.type,
@@ -110,6 +116,8 @@ class TransactionEntity extends Equatable {
     this.loanId,
     this.investmentWalletId,
     this.deletedAt,
+    this.lat,
+    this.lng,
   });
 
   /// True for either leg of a transfer.
@@ -156,6 +164,8 @@ class TransactionEntity extends Equatable {
     String? loanId,
     String? investmentWalletId,
     DateTime? deletedAt,
+    double? lat,
+    double? lng,
   }) {
     return TransactionEntity(
       id: id ?? this.id,
@@ -173,6 +183,8 @@ class TransactionEntity extends Equatable {
       loanId: loanId ?? this.loanId,
       investmentWalletId: investmentWalletId ?? this.investmentWalletId,
       deletedAt: deletedAt ?? this.deletedAt,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
     );
   }
 
@@ -193,5 +205,7 @@ class TransactionEntity extends Equatable {
     loanId,
     investmentWalletId,
     deletedAt,
+    lat,
+    lng,
   ];
 }

@@ -135,6 +135,8 @@ class UpdateTransactionUseCase {
       walletId: params.walletId,
       transferId: original.transferId,
       loanId: original.loanId,
+      lat: original.lat,
+      lng: original.lng,
     );
 
     final result = await _transactionRepository.updateTransaction(updated);

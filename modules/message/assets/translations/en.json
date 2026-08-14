@@ -272,6 +272,7 @@
     "note_hint": "Note (optional)",
     "more_details": "More details",
     "merchant_match_hint": "Like last time: {label}",
+    "location_match_hint": "You're nearby: {label}",
     "claims_in_progress": "You have {count} claims in progress",
     "validation": {
       "amount_required": "Amount must be greater than 0",

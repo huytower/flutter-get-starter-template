@@ -16,13 +16,6 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
   final VoidCallback? onNoteTap;
   final Color activeColor;
 
-  /// Phase 3.3 "AI Autofill" — when non-null, shows a one-tap suggestion row
-  /// below the note field (e.g. "Cà phê · 30.000đ") from the closest-matching
-  /// past expense note. Null hides the row entirely.
-  final String? merchantSuggestionLabel;
-  final VoidCallback? onApplyMerchantSuggestion;
-  final VoidCallback? onDismissMerchantSuggestion;
-
   const TransactionAdditionalDetailsSection({
     super.key,
     required this.isExpanded,
@@ -34,9 +27,6 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
     required this.hasNoteText,
     this.onNoteTap,
     required this.activeColor,
-    this.merchantSuggestionLabel,
-    this.onApplyMerchantSuggestion,
-    this.onDismissMerchantSuggestion,
   });
 
   @override
@@ -87,63 +77,7 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
         ),
         const CcSpaceMD(),
         _buildNoteField(context),
-        if (merchantSuggestionLabel != null) ...[
-          const CcSpaceXS(),
-          _buildMerchantSuggestion(context),
-        ],
       ],
-    );
-  }
-
-  Widget _buildMerchantSuggestion(BuildContext context) {
-    final scheme = context.ccColorScheme;
-
-    return CcInkWell(
-      onTap: onApplyMerchantSuggestion,
-      borderRadius: context.brMd,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respDim(10),
-          vertical: context.respDim(8),
-        ),
-        decoration: BoxDecoration(
-          color: activeColor.withAlpha(15),
-          borderRadius: context.brMd,
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.auto_awesome,
-              size: context.respIconSize(baseSize: 16),
-              color: activeColor,
-            ),
-            const CcSpaceXS(),
-            Expanded(
-              child: CcText(
-                el.tr(
-                  CcLocaleKeys.transaction_merchant_match_hint,
-                  namedArgs: {'label': merchantSuggestionLabel ?? ''},
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                  color: activeColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            CcInkWell(
-              onTap: onDismissMerchantSuggestion,
-              borderRadius: context.brSm,
-              child: Icon(
-                Icons.close,
-                size: context.respIconSize(baseSize: 16),
-                color: scheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
