@@ -46,7 +46,7 @@ class WalletStripCard extends StatelessWidget {
     }
 
     return HorizontalFadeScrollView(
-      height: context.respDim(110),
+      height: context.respDim(60),
       // No outer Obx here: `wallets` is a plain (already-resolved) list param,
       // not an Rx read, and ListView.builder's itemBuilder runs lazily during
       // layout — after an Obx callback's own synchronous scope closes — so
@@ -132,9 +132,7 @@ class _WalletCard extends StatelessWidget {
   Widget _buildMainCard(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Container(
-      width: context.respDim(115),
-      padding: EdgeInsets.all(context.respDim(12)),
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: scheme.primaryContainer.withValues(alpha: 0.1),
         borderRadius: context.brLg,
@@ -143,10 +141,20 @@ class _WalletCard extends StatelessWidget {
           width: context.respDim(1),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [_buildHeader(context), _buildFooter(context)],
+      child: CcPadding(
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _buildHeader(context),
+            const CcSpaceSM(),
+            _buildFooter(context),
+          ],
+        ),
+        6,
+        12,
+        12,
+        6,
       ),
     );
   }
@@ -176,6 +184,7 @@ class _WalletCard extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CcText(
           wallet.name,
