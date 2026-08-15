@@ -34,6 +34,9 @@ class HiveRegistrar {
     Hive.registerAdapter(LoanInstallmentModelAdapter());
     Hive.registerAdapter(LoanModelAdapter());
 
+    // Register Transaction Template adapter (data-layer model)
+    Hive.registerAdapter(TransactionTemplateModelAdapter());
+
     // Add other feature adapters here as needed
   }
 }

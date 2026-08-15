@@ -18,6 +18,8 @@ import '../../../features/reconciliation/data/datasources/reconciliation_sync_da
 import '../../../features/reconciliation/data/models/reconciliation_model.dart';
 import '../../../features/transaction/data/datasources/transaction_sync_datasource.dart';
 import '../../../features/transaction/data/models/transaction_model.dart';
+import '../../../features/transaction_template/data/datasources/transaction_template_sync_datasource.dart';
+import '../../../features/transaction_template/data/models/transaction_template_model.dart';
 import '../../../features/wallet/data/datasources/wallet_sync_datasource.dart';
 import '../../../features/wallet/data/models/wallet_hive_model.dart';
 import 'enum/sync_status.dart';
@@ -33,6 +35,7 @@ class FinancialDataSyncService {
   final ReconciliationSyncDataSource _reconciliationSync;
   final CategorySyncDataSource _categorySync;
   final LoanSyncDataSource _loanSync;
+  final TransactionTemplateSyncDataSource _templateSync;
 
   FinancialDataSyncService(
     this._syncService,
@@ -44,6 +47,7 @@ class FinancialDataSyncService {
     this._reconciliationSync,
     this._categorySync,
     this._loanSync,
+    this._templateSync,
   );
 
   bool get _isAuthenticated => _session.currentUser != null;
@@ -82,6 +86,7 @@ class FinancialDataSyncService {
         await _syncPendingReconciliations(userId);
         await _syncPendingCategories(userId);
         await _syncPendingLoans(userId);
+        await _syncPendingTemplates(userId);
       }
     } catch (e) {
       'syncAll failed: $e'.Log('FinancialDataSyncService');
@@ -114,6 +119,10 @@ class FinancialDataSyncService {
         _countPendingInBox<LoanModel>(
           CcHiveBox.LOAN_BOX_NAME,
           (m) => m.syncMetadata.status,
+        ) +
+        _countPendingInBox<TransactionTemplateModel>(
+          CcHiveBox.TRANSACTION_TEMPLATE_BOX_NAME,
+          (m) => m.syncMetadata.status,
         );
   }
 
@@ -145,6 +154,7 @@ class FinancialDataSyncService {
       await _pullReconciliations(userId);
       await _pullCategories(userId);
       await _pullLoans(userId);
+      await _pullTemplates(userId);
     } catch (e) {
       'pullFromFirestore failed: $e'.Log('FinancialDataSyncService');
     }
@@ -318,6 +328,36 @@ class FinancialDataSyncService {
     }
   }
 
+  Future<void> _syncPendingTemplates(String userId) async {
+    if (!Hive.isBoxOpen(CcHiveBox.TRANSACTION_TEMPLATE_BOX_NAME)) return;
+    Box<TransactionTemplateModel> box;
+    try {
+      box = Hive.box<TransactionTemplateModel>(
+        CcHiveBox.TRANSACTION_TEMPLATE_BOX_NAME,
+      );
+    } on HiveError catch (e) {
+      if (e.message.contains('already open')) return;
+      rethrow;
+    }
+    for (final model in box.values) {
+      final status = model.syncMetadata.status;
+      if (status == SyncStatus.pending || status == SyncStatus.failed) {
+        await _syncEntity<TransactionTemplateModel>(
+          model: model,
+          syncFn: _templateSync.syncTemplate,
+          box: box,
+          updateFn: (m, remoteId) => m.copyWithSyncMetadata(
+            m.syncMetadata.copyWith(
+              remoteId: remoteId,
+              status: SyncStatus.synced,
+              lastSyncedAt: DateTime.now(),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _pullWallets(String userId) async {
     final box = await _openBox<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
     if (box == null) return;
@@ -385,6 +425,19 @@ class FinancialDataSyncService {
       collectionName: 'loans',
       box: box,
       fromFirestore: LoanModel.fromFirestoreData,
+    );
+  }
+
+  Future<void> _pullTemplates(String userId) async {
+    final box = await _openBox<TransactionTemplateModel>(
+      CcHiveBox.TRANSACTION_TEMPLATE_BOX_NAME,
+    );
+    if (box == null) return;
+    await _pullAndMerge<TransactionTemplateModel>(
+      userId: userId,
+      collectionName: 'transaction_templates',
+      box: box,
+      fromFirestore: TransactionTemplateModel.fromFirestoreData,
     );
   }
 
@@ -464,6 +517,7 @@ class FinancialDataSyncService {
     if (model is ReconciliationModel) return model.id;
     if (model is CategoryModel) return model.id;
     if (model is LoanModel) return model.id;
+    if (model is TransactionTemplateModel) return model.id;
     return null;
   }
 
@@ -474,6 +528,7 @@ class FinancialDataSyncService {
     if (model is ReconciliationModel) return model.lastModifiedAt;
     if (model is CategoryModel) return model.lastModifiedAt;
     if (model is LoanModel) return model.lastModifiedAt;
+    if (model is TransactionTemplateModel) return model.lastModifiedAt;
     return null;
   }
 }

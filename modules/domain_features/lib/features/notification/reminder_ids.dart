@@ -16,6 +16,14 @@ class ReminderIds {
   static int loanReminder(String loanId, int index) =>
       1000 + (_fnv1a32('$loanId#$index') & 0x0fffffff);
 
+  /// Stable id for budget [budgetId] crossing warning [tier] ("near"/"over").
+  /// Hash-derived like [loanReminder], but with bit 30 forced on so its
+  /// range can never collide with [loanReminder]'s (which tops out well
+  /// below that bit) — true disjointness by construction, without touching
+  /// the existing loan formula.
+  static int budgetThreshold(String budgetId, String tier) =>
+      0x40000000 | (_fnv1a32('$budgetId#$tier') & 0x0fffffff);
+
   /// FNV-1a (32-bit) — used instead of [String.hashCode], which is not a
   /// documented-stable algorithm across Dart/Flutter SDK versions. An SDK
   /// upgrade changing hashCode's implementation would silently orphan every

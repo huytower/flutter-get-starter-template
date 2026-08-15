@@ -298,6 +298,7 @@ class CodegenLoader extends AssetLoader {
       "note": "Note",
       "note_hint": "Note (optional)",
       "more_details": "More details",
+      "merchant_match_hint": "Like last time: {label}",
       "claims_in_progress": "You have {count} claims in progress",
       "validation": {
         "amount_required": "Amount must be greater than 0",
@@ -312,6 +313,15 @@ class CodegenLoader extends AssetLoader {
         "not_editable": "This transaction can't be edited",
         "edit_window": "You can only edit transactions from the last 30 days",
       },
+    },
+    "transaction_template": {
+      "title": "Quick templates",
+      "add_title": "New template",
+      "name_hint": "e.g. Gas 50k",
+      "name_required": "Please enter a template name",
+      "delete_title": "Delete template",
+      "delete_confirm": "Delete \"{name}\"?",
+      "created": "Template \"{name}\" created",
     },
     "loan": {
       "list_title": "Loans",
@@ -338,6 +348,8 @@ class CodegenLoader extends AssetLoader {
           "Register an account to back up your data to the Cloud and avoid losing it.",
       "loan_due_title": "Loan due date approaching",
       "loan_due_body": "Loan '{name}' is due on {date}.",
+      "budget_near_limit_body": "Budget \"{name}\" reached 80%.",
+      "budget_over_body": "Budget \"{name}\" exceeded its limit.",
     },
     "tutorial": {
       "nav_title": "Your navigation bar",
@@ -386,6 +398,14 @@ class CodegenLoader extends AssetLoader {
       "fixed_price": "Fixed Price",
       "fixed_price_description":
           "Fixed monthly costs (minimum survival cost), affecting your safety index in the report section.",
+      "pacing_hint": "{name}: {days} days left · Suggested ≤{amount}/day",
+      "penalty_warning": "{name} exceeded {percent}%!",
+      "deficit_warning":
+          "Spending more than income this month (deficit {amount})",
+      "anomaly_hint": "{count} unusual expense(s) vs. the last 3 months' average",
+      "insights_title": "Insights & warnings",
+      "insights_action_review": "View report",
+      "estimate_hint": "Suggested: {amount} (last 3-month avg)",
     },
     "reconciliation": {
       "title": "Reconciliation",
@@ -956,6 +976,7 @@ class CodegenLoader extends AssetLoader {
       "note": "Ghi chú",
       "note_hint": "Ghi chú (không bắt buộc)",
       "more_details": "Thêm chi tiết",
+      "merchant_match_hint": "Giống lần trước: {label}",
       "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
       "validation": {
         "amount_required": "Số tiền phải lớn hơn 0!",
@@ -970,6 +991,15 @@ class CodegenLoader extends AssetLoader {
         "not_editable": "Không thể sửa giao dịch này!",
         "edit_window": "Chỉ có thể sửa giao dịch trong 30 ngày gần nhất!",
       },
+    },
+    "transaction_template": {
+      "title": "Mẫu nhanh",
+      "add_title": "Mẫu mới",
+      "name_hint": "VD: Đổ xăng 50k",
+      "name_required": "Vui lòng nhập tên mẫu!",
+      "delete_title": "Xoá mẫu nhanh",
+      "delete_confirm": "Xoá \"{name}\"?",
+      "created": "Đã tạo mẫu \"{name}\"",
     },
     "loan": {
       "list_title": "Vay & Cho vay",
@@ -996,6 +1026,8 @@ class CodegenLoader extends AssetLoader {
           "Đăng ký tài khoản để sao lưu dữ liệu lên Cloud, tránh mất dữ liệu khi đổi máy.",
       "loan_due_title": "Sắp đến hạn trả nợ",
       "loan_due_body": "Khoản vay '{name}' sắp đến hạn thanh toán vào {date}.",
+      "budget_near_limit_body": "Ngân sách \"{name}\" đã dùng 80%.",
+      "budget_over_body": "Ngân sách \"{name}\" đã vượt hạn mức.",
     },
     "tutorial": {
       "nav_title": "Thanh điều hướng",
@@ -1043,6 +1075,14 @@ class CodegenLoader extends AssetLoader {
       "fixed_price": "Giá cố định",
       "fixed_price_description":
           "Chi phí cố định hàng tháng (mức sống tối thiểu cần có), ảnh hưởng đến chỉ số an toàn với lối sống của bạn ở phần báo cáo",
+      "pacing_hint": "{name}: Còn {days} ngày · Nên chi ≤{amount}/ngày",
+      "penalty_warning": "{name} đã vượt {percent}%!",
+      "deficit_warning": "Thu ít hơn chi tháng này (thâm hụt {amount})",
+      "anomaly_hint":
+          "{count} khoản chi bất thường so với trung bình 3 tháng qua",
+      "insights_title": "Gợi ý & cảnh báo",
+      "insights_action_review": "Xem báo cáo",
+      "estimate_hint": "Gợi ý: {amount} (TB 3 tháng gần nhất)",
     },
     "reconciliation": {
       "title": "Đối soát",
@@ -1609,6 +1649,8 @@ abstract class CcLocaleKeys {
   static const transaction_note = 'transaction.note';
   static const transaction_note_hint = 'transaction.note_hint';
   static const transaction_more_details = 'transaction.more_details';
+  static const transaction_merchant_match_hint =
+      'transaction.merchant_match_hint';
   static const transaction_claims_in_progress =
       'transaction.claims_in_progress';
   static const transaction_validation_amount_required =
@@ -1633,6 +1675,20 @@ abstract class CcLocaleKeys {
       'transaction.validation.not_editable';
   static const transaction_validation_edit_window =
       'transaction.validation.edit_window';
+
+  static const transaction_template_title = 'transaction_template.title';
+  static const transaction_template_add_title =
+      'transaction_template.add_title';
+  static const transaction_template_name_hint =
+      'transaction_template.name_hint';
+  static const transaction_template_name_required =
+      'transaction_template.name_required';
+  static const transaction_template_delete_title =
+      'transaction_template.delete_title';
+  static const transaction_template_delete_confirm =
+      'transaction_template.delete_confirm';
+  static const transaction_template_created = 'transaction_template.created';
+
   static const loan_list_title = 'loan.list_title';
   static const loan_status_outstanding = 'loan.status_outstanding';
   static const loan_status_settled = 'loan.status_settled';
@@ -1657,6 +1713,10 @@ abstract class CcLocaleKeys {
       'notification.cloud_backup_body';
   static const notification_loan_due_title = 'notification.loan_due_title';
   static const notification_loan_due_body = 'notification.loan_due_body';
+  static const notification_budget_near_limit_body =
+      'notification.budget_near_limit_body';
+  static const notification_budget_over_body =
+      'notification.budget_over_body';
   static const tutorial_nav_title = 'tutorial.nav_title';
   static const tutorial_nav_desc = 'tutorial.nav_desc';
   static const tutorial_transaction_title = 'tutorial.transaction_title';
@@ -1697,6 +1757,13 @@ abstract class CcLocaleKeys {
   static const budget_fixed_price = 'budget.fixed_price';
   static const budget_fixed_price_description =
       'budget.fixed_price_description';
+  static const budget_pacing_hint = 'budget.pacing_hint';
+  static const budget_penalty_warning = 'budget.penalty_warning';
+  static const budget_deficit_warning = 'budget.deficit_warning';
+  static const budget_anomaly_hint = 'budget.anomaly_hint';
+  static const budget_insights_title = 'budget.insights_title';
+  static const budget_insights_action_review = 'budget.insights_action_review';
+  static const budget_estimate_hint = 'budget.estimate_hint';
 
   static const reconciliation_title = 'reconciliation.title';
   static const reconciliation_empty = 'reconciliation.empty';

@@ -271,6 +271,7 @@
     "note": "Ghi chú",
     "note_hint": "Ghi chú (không bắt buộc)",
     "more_details": "Thêm chi tiết",
+    "merchant_match_hint": "Giống lần trước: {label}",
     "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
     "validation": {
       "amount_required": "Số tiền phải lớn hơn 0!",
@@ -285,6 +286,15 @@
       "not_editable": "Không thể sửa giao dịch này!",
       "edit_window": "Chỉ có thể sửa giao dịch trong 30 ngày gần nhất!"
     }
+  },
+  "transaction_template": {
+    "title": "Mẫu nhanh",
+    "add_title": "Mẫu mới",
+    "name_hint": "VD: Đổ xăng 50k",
+    "name_required": "Vui lòng nhập tên mẫu!",
+    "delete_title": "Xoá mẫu nhanh",
+    "delete_confirm": "Xoá \"{name}\"?",
+    "created": "Đã tạo mẫu \"{name}\""
   },
   "loan": {
     "list_title": "Vay & Cho vay",
@@ -306,7 +316,9 @@
     "cloud_backup_title": "Bảo vệ dữ liệu của bạn",
     "cloud_backup_body": "Đăng ký tài khoản để sao lưu dữ liệu lên Cloud, tránh mất dữ liệu khi đổi máy.",
     "loan_due_title": "Sắp đến hạn trả nợ",
-    "loan_due_body": "Khoản vay '{name}' sắp đến hạn thanh toán vào {date}."
+    "loan_due_body": "Khoản vay '{name}' sắp đến hạn thanh toán vào {date}.",
+    "budget_near_limit_body": "Ngân sách \"{name}\" đã dùng 80%.",
+    "budget_over_body": "Ngân sách \"{name}\" đã vượt hạn mức."
   },
   "tutorial": {
     "nav_title": "Thanh điều hướng",
@@ -348,7 +360,14 @@
     "customize_category": "Tuỳ chỉnh danh mục",
     "percent_used": "{percent}% đã dùng",
     "fixed_price": "Giá cố định",
-    "fixed_price_description": "Chi phí cố định hàng tháng (mức sống tối thiểu cần có), ảnh hưởng đến chỉ số an toàn với lối sống của bạn ở phần báo cáo"
+    "fixed_price_description": "Chi phí cố định hàng tháng (mức sống tối thiểu cần có), ảnh hưởng đến chỉ số an toàn với lối sống của bạn ở phần báo cáo",
+    "pacing_hint": "{name}: Còn {days} ngày · Nên chi ≤{amount}/ngày",
+    "penalty_warning": "{name} đã vượt {percent}%!",
+    "deficit_warning": "Thu ít hơn chi tháng này (thâm hụt {amount})",
+    "anomaly_hint": "{count} khoản chi bất thường so với trung bình 3 tháng qua",
+    "insights_title": "Gợi ý & cảnh báo",
+    "insights_action_review": "Xem báo cáo",
+    "estimate_hint": "Gợi ý: {amount} (TB 3 tháng gần nhất)"
   },
   "reconciliation": {
     "title": "Đối soát",

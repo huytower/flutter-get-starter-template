@@ -47,6 +47,10 @@ class UserLevelStatusEntity extends Equatable {
 
   bool get canUseDebtLoan => level >= 3;
 
+  /// Unlocks the Phase 3 "AI Smart Entry" feature set (quick templates,
+  /// autofill, NLP/voice/image capture) — same tier as Debt/Loan.
+  bool get canUseAiSmartEntry => level >= 3;
+
   const UserLevelStatusEntity.initial()
     : level = 1,
       reconciliationStreak = 0,
