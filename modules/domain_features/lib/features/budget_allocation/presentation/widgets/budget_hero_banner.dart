@@ -140,7 +140,7 @@ class BudgetHeroBanner extends StatelessWidget {
                 child: CcIconToken(
                   icon,
                   color: scheme.onPrimary,
-                  size: context.respIconSize(baseSize: 12),
+                  size: context.respIconSize(baseSize: 16),
                 ),
               ),
             ],

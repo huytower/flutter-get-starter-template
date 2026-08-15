@@ -210,7 +210,9 @@ class BudgetAllocationController extends CcGetController {
   Future<void> loadLiabilities() async {
     final result = await _getLoanBalances();
     result.when((balances) {
-      loanBalances.assignAll(balances);
+      final sorted = List<LoanBalanceEntity>.from(balances)
+        ..sort((a, b) => b.loan.updatedAt.compareTo(a.loan.updatedAt));
+      loanBalances.assignAll(sorted);
       liabilityBalance.value = balances
           .where((b) => b.loan.isBorrow && b.status == LoanStatus.outstanding)
           .fold(0, (sum, b) => sum + b.outstandingBalance);

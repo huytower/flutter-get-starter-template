@@ -74,6 +74,15 @@ class SyncMetadata {
     );
   }
 
+  /// Marks a previously synced or pending entity as having a new local change.
+  SyncMetadata withLocalChange(String localId) {
+    return copyWith(
+      localId: localId,
+      status: SyncStatus.pending,
+      lastModifiedAt: DateTime.now(),
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'localId': localId,

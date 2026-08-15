@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../get_x/reconciliation_controller.dart';
 import 'reconciliation_dialogs.dart';
 
@@ -15,25 +16,14 @@ class ReconciliationConfirmButton extends StatelessWidget {
     return Obx(() {
       final busy = controller.isSubmitting.value;
       final hasWarning = controller.unhandledCount.value > 0;
-      return DecoratedBox(
-        decoration: BoxDecoration(
-          color: context.ccColorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: ListTile(
-          leading: Icon(
-            Icons.check_circle_outline,
-            color: context.ccColorScheme.primary,
-          ),
-          title: CcText(
-            el.tr(CcLocaleKeys.reconciliation_confirm),
-            textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.primary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          onTap: busy || hasWarning ? null : () => _showConfirmDialog(context),
-        ),
+      final isEmpty = controller.balances.isEmpty;
+
+      return TransactionSubmitButton(
+        text: el.tr(CcLocaleKeys.reconciliation_confirm),
+        isSubmitting: busy,
+        isEnabled: !hasWarning && !isEmpty,
+        onTap: () => _showConfirmDialog(context),
+        activeColor: context.ccColorScheme.primary,
       );
     });
   }

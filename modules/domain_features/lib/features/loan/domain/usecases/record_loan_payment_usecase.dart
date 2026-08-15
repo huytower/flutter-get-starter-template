@@ -110,7 +110,9 @@ class RecordLoanPaymentUseCase {
 
     final txn = TransactionEntity(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
-      type: loan.isBorrow ? TransactionType.debtRepay : TransactionType.debtCollect,
+      type: loan.isBorrow
+          ? TransactionType.debtRepay
+          : TransactionType.debtCollect,
       amount: params.amount,
       category: loan.categoryLabel,
       categoryId: loan.categoryId,
@@ -127,6 +129,28 @@ class RecordLoanPaymentUseCase {
       return Error(txnResult.tryGetError()!);
     }
 
-    return Success(loan);
+    // High Priority Logic: Update updatedAt so this loan jumps to the front
+    // of the list on the dashboard next time.
+    final updatedLoan = LoanEntity(
+      id: loan.id,
+      direction: loan.direction,
+      counterpartyName: loan.counterpartyName,
+      principalAmount: loan.principalAmount,
+      categoryId: loan.categoryId,
+      categoryLabel: loan.categoryLabel,
+      categoryIconCode: loan.categoryIconCode,
+      categoryIconFamily: loan.categoryIconFamily,
+      walletId: loan.walletId,
+      repaymentMethod: loan.repaymentMethod,
+      installments: loan.installments,
+      finalDueDate: loan.finalDueDate,
+      note: loan.note,
+      createdAt: loan.createdAt,
+      updatedAt: DateTime.now(),
+      reminderBeforeDueDate: loan.reminderBeforeDueDate,
+    );
+    await _loanRepository.updateLoan(updatedLoan);
+
+    return Success(updatedLoan);
   }
 }

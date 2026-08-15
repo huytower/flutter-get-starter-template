@@ -207,7 +207,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   Widget _buildBudgetWalletsSection(BuildContext context) {
     return Obx(
       () => BudgetWalletsSection(
-        wallets: controller.walletController.liquidWallets,
+        wallets: controller.walletController.recentLiquidWallets,
         onAddWallet: () => controller.openAddWallet(context),
         onMore: (wallet) => controller.openWalletActions(context, wallet),
       ),
@@ -223,7 +223,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       if (!canShow) {
         return const SizedBox.shrink();
       }
-      final wallets = controller.walletController.investmentWallets;
+      final wallets = controller.walletController.recentInvestmentWallets;
 
       return InvestmentWalletsSection(
         wallets: wallets,

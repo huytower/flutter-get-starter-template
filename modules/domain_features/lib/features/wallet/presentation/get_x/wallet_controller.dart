@@ -205,6 +205,15 @@ class WalletController extends CcGetController {
     return liquid;
   }
 
+  /// Liquid wallets sorted by most recent changes. Used for the dashboard.
+  List<WalletEntity> get recentLiquidWallets {
+    final liquid = wallets
+        .where((w) => _liquidTypeOrder.contains(w.type))
+        .toList();
+    liquid.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    return liquid;
+  }
+
   /// Investment wallets for the Budget Allocation screen.
   List<WalletEntity> get investmentWallets {
     final investment = wallets
@@ -216,6 +225,16 @@ class WalletController extends CcGetController {
       }
       return a.name.toLowerCase().compareTo(b.name.toLowerCase());
     });
+    return investment;
+  }
+
+  /// Investment wallets sorted by most recent changes (amount value change, reorder, etc).
+  /// Used for the dashboard (Budget Allocation page).
+  List<WalletEntity> get recentInvestmentWallets {
+    final investment = wallets
+        .where((w) => w.type == WalletType.investment)
+        .toList();
+    investment.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
     return investment;
   }
 

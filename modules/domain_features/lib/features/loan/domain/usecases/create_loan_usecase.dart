@@ -94,7 +94,8 @@ class CreateLoanUseCase {
         ValidationFailure(CcLocaleKeys.transaction_validation_future_date),
       );
     }
-    final scheduleMissing = params.repaymentMethod == LoanRepaymentMethod.installment
+    final scheduleMissing =
+        params.repaymentMethod == LoanRepaymentMethod.installment
         ? (params.installments == null || params.installments!.isEmpty)
         : params.finalDueDate == null;
     if (scheduleMissing) {
@@ -134,6 +135,7 @@ class CreateLoanUseCase {
       finalDueDate: params.finalDueDate,
       note: params.note,
       createdAt: params.date,
+      updatedAt: DateTime.now(),
       reminderBeforeDueDate: params.reminderBeforeDueDate,
     );
 

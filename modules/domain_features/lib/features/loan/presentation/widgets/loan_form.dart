@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +6,8 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
+import '../../../category/data/datasources/local/category_seed.dart';
+import '../../../category/domain/entities/category_entity.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/cc_form_label.dart';
@@ -111,7 +112,9 @@ class LoanForm extends StatelessWidget {
         const CcSpaceLG(),
         DecoratedBox(
           decoration: BoxDecoration(
-            color: context.ccColorScheme.primaryContainer.withValues(alpha: 0.1),
+            color: context.ccColorScheme.primaryContainer.withValues(
+              alpha: 0.1,
+            ),
             borderRadius: context.brLg,
             border: Border.all(
               color: context.ccColorScheme.onSurface.withOpacity(0.08),

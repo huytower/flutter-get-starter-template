@@ -80,7 +80,6 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         );
       }
 
-      final isEditing = controller.editingWalletId.value != null;
       return Column(
         children: [
           Expanded(
@@ -150,32 +149,44 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
                   const CcSpaceMD(),
                   const ReconciliationSummary(),
                   const CcSpaceMD(),
-                  const ReconciliationConfirmButton(),
                   const ReconciliationHistorySection(),
                 ],
               ),
             ),
           ),
-          if (isEditing)
-            SafeArea(
-              top: false,
-              child: MoneyKeypadPanel(
-                onKeyPress: controller.updateAmount,
-                onDelete: controller.deleteChar,
-                onClear: controller.clearAmount,
-                suggestions: const [
-                  100000,
-                  200000,
-                  500000,
-                  1000000,
-                  2000000,
-                  5000000,
-                ],
-                onSuggestion: (value) => controller.setAmount(value),
-                onDone: controller.stopEditing,
-                activeColor: context.ccColorScheme.primary,
+          Obx(() {
+            final isEditing = controller.editingWalletId.value != null;
+            if (isEditing) {
+              return SafeArea(
+                top: false,
+                child: MoneyKeypadPanel(
+                  onKeyPress: controller.updateAmount,
+                  onDelete: controller.deleteChar,
+                  onClear: controller.clearAmount,
+                  suggestions: const [
+                    100000,
+                    200000,
+                    500000,
+                    1000000,
+                    2000000,
+                    5000000,
+                  ],
+                  onSuggestion: (value) => controller.setAmount(value),
+                  onDone: controller.stopEditing,
+                  activeColor: context.ccColorScheme.primary,
+                ),
+              );
+            }
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom:
+                    MediaQuery.of(context).padding.bottom +
+                    context.respPadding(CcPaddingParams.SPACE_MD),
+                top: context.respPadding(CcPaddingParams.SPACE_SM),
               ),
-            ),
+              child: const ReconciliationConfirmButton(),
+            );
+          }),
         ],
       );
     });
@@ -190,7 +201,11 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
 /// so its filter must be set on the live instance before the route is
 /// pushed rather than passed as a route param — the same pattern other
 /// report entry points already use to force a refresh on re-entry.
-void _openWalletReview(BuildContext context, String walletId, String walletName) {
+void _openWalletReview(
+  BuildContext context,
+  String walletId,
+  String walletName,
+) {
   final alreadyRegistered = Get.isRegistered<ReportController>();
   final report = alreadyRegistered
       ? Get.find<ReportController>()
