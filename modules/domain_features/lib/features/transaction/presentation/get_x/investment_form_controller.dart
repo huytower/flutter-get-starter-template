@@ -79,29 +79,9 @@ class InvestmentFormController extends TransactionFormController {
     isLoadingMerged.value = false;
   }
 
-  /// Refreshes the merged list of investment categories and existing assets.
-  /// Assets have high priority and appear first, matching Dashboard order.
+  /// Refreshes the list of investment assets. Synchronized with the
+  /// Investment List page (only shows existing positions).
   Future<void> _recomputeMergedItems() async {
-    final catResult = await _getCategories();
-    final List<CategoryEntity> allCategories = catResult.when(
-      (c) => c
-          .where((e) => e.isEnabled && e.type == CategoryType.investment)
-          .toList(),
-      (_) => [],
-    );
-
-    // Create index map to preserve seed order
-    final seedIndexMap = <String, int>{};
-    for (int i = 0; i < CategorySeed.categories.length; i++) {
-      seedIndexMap[CategorySeed.categories[i].id] = i;
-    }
-
-    allCategories.sort((a, b) {
-      final indexA = seedIndexMap[a.id] ?? 999;
-      final indexB = seedIndexMap[b.id] ?? 999;
-      return indexA.compareTo(indexB);
-    });
-
     final parentWallets = Get.find<TransactionController>().wallets;
     final assets = parentWallets
         .where((w) => w.type == WalletType.investment)
@@ -115,30 +95,30 @@ class InvestmentFormController extends TransactionFormController {
       return b.updatedAt.compareTo(a.updatedAt);
     });
 
-    mergedItems.assignAll([...assets, ...allCategories]);
+    mergedItems.assignAll(assets);
 
     // Auto-select first if nothing selected
-    if (selectedCategory.value == null && mergedItems.isNotEmpty) {
+    if (selectedInvestmentWalletId.value == null && mergedItems.isNotEmpty) {
       final first = mergedItems.first;
       if (first is WalletEntity) {
         selectAsset(first);
-      } else if (first is CategoryEntity) {
-        selectCategory(first);
       }
     }
   }
 
-  void selectAsset(WalletEntity wallet) {
+  void selectAsset(WalletEntity wallet) async {
     selectedInvestmentWalletId.value = wallet.id;
     isAddingNewItem.value = false;
 
-    // Resolve parent category
-    final parentCat = mergedItems.whereType<CategoryEntity>().firstWhereOrNull(
-      (c) => c.id == wallet.categoryId,
-    );
-
-    if (parentCat != null) {
-      selectedCategory.value = parentCat;
+    // Resolve parent category to ensure correct icon/type in transaction
+    if (wallet.categoryId != null) {
+      final catResult = await _getCategories();
+      catResult.when((categories) {
+        final cat = categories.firstWhereOrNull((c) => c.id == wallet.categoryId);
+        if (cat != null) {
+          selectedCategory.value = cat;
+        }
+      }, (_) {});
     }
   }
 

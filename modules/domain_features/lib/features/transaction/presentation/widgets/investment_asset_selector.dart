@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -65,21 +64,6 @@ class InvestmentAssetSelector extends StatelessWidget {
                       isSelected: isSelected,
                       onTap: () => controller.selectAsset(item),
                     );
-                  } else if (item is CategoryEntity) {
-                    final isSelected =
-                        controller.selectedCategory.value?.id == item.id &&
-                        controller.isAddingNewItem.value;
-                    return _buildItem(
-                      context,
-                      label: el.tr(item.nameKey),
-                      icon: iconDataFromCode(
-                        item.iconCode,
-                        fontFamily: item.iconFamily,
-                      ),
-                      isSelected: isSelected,
-                      onTap: () => controller.selectCategory(item),
-                      isCategory: true,
-                    );
                   }
                   return const SizedBox.shrink();
                 });
@@ -97,7 +81,6 @@ class InvestmentAssetSelector extends StatelessWidget {
     required IconData icon,
     required bool isSelected,
     required VoidCallback onTap,
-    bool isCategory = false,
   }) {
     final scheme = context.ccColorScheme;
 

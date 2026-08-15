@@ -207,6 +207,7 @@ class ReportPage extends CcGetView<ReportController> {
             color: PrjColors.investment.withValues(alpha: _inflowShadeAlpha),
             range: controller.range.value,
             isIncome: false,
+            icon: Icons.eco,
           ),
           const CcSpaceLG(),
           TrendCard(
@@ -217,6 +218,7 @@ class ReportPage extends CcGetView<ReportController> {
             color: PrjColors.investment,
             range: controller.range.value,
             isIncome: true,
+            icon: Icons.auto_graph_rounded,
           ),
           const CcSpaceXL(),
         ],
