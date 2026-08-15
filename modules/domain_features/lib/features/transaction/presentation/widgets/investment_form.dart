@@ -15,6 +15,7 @@ import 'investment_asset_selector.dart';
 import 'investment_direction_toggle.dart';
 import 'money_keypad_panel.dart';
 import 'transaction_additional_details_section.dart';
+import 'transaction_form_container.dart';
 import 'transaction_submit_button.dart';
 
 class InvestmentForm extends StatelessWidget {
@@ -85,53 +86,38 @@ class InvestmentForm extends StatelessWidget {
     InvestmentFormController controller,
     Color accentColor,
   ) {
-    final scheme = context.ccColorScheme;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: scheme.primaryContainer.withValues(alpha: 0.1),
-        borderRadius: context.brLg,
-        border: Border.all(
-          color: scheme.onSurface.withOpacity(0.08),
-          width: context.respDim(1),
-        ),
-      ),
-      child: CcPadding(
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildAmountSection(context, controller, accentColor),
-            const CcSpaceLG(),
-            _buildWalletSection(context, controller, accentColor),
-            const CcSpaceLG(),
-            TransactionAdditionalDetailsSection(
-              isExpanded: controller.showMoreDetails.value,
-              onToggle: controller.toggleMoreDetails,
-              selectedDate: controller.date.value,
-              onDateSelected: controller.setDate,
-              onCalendarTap: () => controller.pickDate(context),
-              noteController: controller.noteController,
-              hasNoteText: controller.noteController.text.isNotEmpty,
-              activeColor: accentColor,
+    return TransactionFormContainer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildAmountSection(context, controller, accentColor),
+          const CcSpaceLG(),
+          _buildWalletSection(context, controller, accentColor),
+          const CcSpaceLG(),
+          TransactionAdditionalDetailsSection(
+            isExpanded: controller.showMoreDetails.value,
+            onToggle: controller.toggleMoreDetails,
+            selectedDate: controller.date.value,
+            onDateSelected: controller.setDate,
+            onCalendarTap: () => controller.pickDate(context),
+            noteController: controller.noteController,
+            hasNoteText: controller.noteController.text.isNotEmpty,
+            activeColor: accentColor,
+          ),
+          const CcSpaceXL(),
+          TransactionSubmitButton(
+            text: el.tr(
+              controller.direction.value == InvestmentDirection.contribute
+                  ? CcLocaleKeys.transaction_record_investment
+                  : CcLocaleKeys.transaction_record_investment_return,
             ),
-            const CcSpaceXL(),
-            TransactionSubmitButton(
-              text: el.tr(
-                controller.direction.value == InvestmentDirection.contribute
-                    ? CcLocaleKeys.transaction_record_investment
-                    : CcLocaleKeys.transaction_record_investment_return,
-              ),
-              isSubmitting: controller.isSubmitting.value,
-              isEnabled: controller.canSubmit,
-              onTap: () => controller.submitForm(context),
-              activeColor: accentColor,
-            ),
-            const CcSpaceLG(),
-          ],
-        ),
-        6,
-        12,
-        12,
-        6,
+            isSubmitting: controller.isSubmitting.value,
+            isEnabled: controller.canSubmit,
+            onTap: () => controller.submitForm(context),
+            activeColor: accentColor,
+          ),
+          const CcSpaceLG(),
+        ],
       ),
     );
   }
