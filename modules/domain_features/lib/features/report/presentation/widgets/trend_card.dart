@@ -16,6 +16,7 @@ class TrendCard extends StatelessWidget {
     required this.color,
     required this.range,
     this.isIncome = false,
+    this.icon,
   });
 
   final String title;
@@ -24,6 +25,7 @@ class TrendCard extends StatelessWidget {
   final Color color;
   final ReportRange range;
   final bool isIncome;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +72,7 @@ class TrendCard extends StatelessWidget {
             borderRadius: context.brMd,
           ),
           child: Icon(
-            isIncome ? Icons.north_east : Icons.south_west,
+            icon ?? (isIncome ? Icons.north_east : Icons.south_west),
             color: color,
             size: context.respIconSize(baseSize: 18),
           ),

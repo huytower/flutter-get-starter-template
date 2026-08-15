@@ -2,6 +2,8 @@
   "app": {
     "name": "Sổ Sách Xịn",
     "version": "Phiên bản {version}",
+    "description": "Quản lý tài chính cá nhân tinh gọn và hiệu quả",
+    "author": "bởi Huy Tower",
     "loading": "Đang tải...",
     "error": {
       "general": "Đã xảy ra lỗi",
@@ -151,7 +153,7 @@
     "your_wallets": "Ví thanh khoản",
     "see_all": "Xem tất cả",
     "empty": "Chưa có ví nào.\nNhấn + để thêm ví.",
-    "investment_empty": "Chưa có danh mục đầu tư nào",
+    "investment_empty": "Chưa có danh mục đầu tư nào\nNhấn + để thêm ",
     "investment_name": "Tên khoản đầu tư",
     "investment_name_hint": "Ví dụ: BTC, Cổ phiếu Apple...",
     "investment_delete_title": "Xoá khoản đầu tư",

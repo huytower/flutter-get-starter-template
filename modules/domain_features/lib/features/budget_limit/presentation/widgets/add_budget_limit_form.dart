@@ -269,10 +269,9 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
                   ],
                 ),
               ),
-              const CcSpaceXS(),
               SizedBox(
-                width: context.respDim(20),
-                height: context.respDim(20),
+                width: context.respDim(30),
+                height: context.respDim(30),
                 child: Checkbox(
                   value: _isFixedPrice,
                   onChanged: (v) => setState(() => _isFixedPrice = v ?? false),

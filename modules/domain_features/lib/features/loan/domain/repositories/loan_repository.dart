@@ -10,6 +10,8 @@ abstract class LoanRepository {
 
   Future<Result<void, CcFailure>> createLoan(LoanEntity loan);
 
+  Future<Result<void, CcFailure>> updateLoan(LoanEntity loan);
+
   /// Only used to roll back a loan when its initiating transaction write
   /// fails (see `CreateLoanUseCase`) — this feature has no edit/delete UI.
   Future<Result<void, CcFailure>> deleteLoan(String id);

@@ -141,7 +141,7 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
             width: constraints.maxWidth,
             height: constraints.maxHeight,
             child: Transform.scale(
-              scale: 1.08,
+              scale: 0.9,
               child: BudgetLimitGridCard(stats: stats, isDragging: true),
             ),
           ),

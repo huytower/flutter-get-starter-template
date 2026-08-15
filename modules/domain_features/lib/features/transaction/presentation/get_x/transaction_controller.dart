@@ -14,6 +14,7 @@ import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import 'expense_form_controller.dart';
 import 'income_form_controller.dart';
@@ -89,6 +90,12 @@ class TransactionController extends CcGetController {
   @override
   void onInit() {
     super.onInit();
+
+    // Ensure WalletController is available for book balance lookups in selectors
+    if (!Get.isRegistered<WalletController>()) {
+      Get.put(getIt<WalletController>());
+    }
+
     // Register form controllers early to avoid "setState() called during build"
     // errors when they are initialized during the view's build phase.
     if (!Get.isRegistered<ExpenseFormController>()) {

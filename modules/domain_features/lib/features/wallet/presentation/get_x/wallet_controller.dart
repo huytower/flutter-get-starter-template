@@ -205,6 +205,15 @@ class WalletController extends CcGetController {
     return liquid;
   }
 
+  /// Liquid wallets sorted by most recent changes. Used for the dashboard.
+  List<WalletEntity> get recentLiquidWallets {
+    final liquid = wallets
+        .where((w) => _liquidTypeOrder.contains(w.type))
+        .toList();
+    liquid.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    return liquid;
+  }
+
   /// Investment wallets for the Budget Allocation screen.
   List<WalletEntity> get investmentWallets {
     final investment = wallets
@@ -219,6 +228,16 @@ class WalletController extends CcGetController {
     return investment;
   }
 
+  /// Investment wallets sorted by most recent changes (amount value change, reorder, etc).
+  /// Used for the dashboard (Budget Allocation page).
+  List<WalletEntity> get recentInvestmentWallets {
+    final investment = wallets
+        .where((w) => w.type == WalletType.investment)
+        .toList();
+    investment.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    return investment;
+  }
+
   /// Manually reorders investment assets (drag-and-drop).
   Future<void> reorderInvestments(int oldIndex, int newIndex) async {
     final items = investmentWallets;
@@ -230,7 +249,10 @@ class WalletController extends CcGetController {
 
     // Persist new orders
     for (int i = 0; i < items.length; i++) {
-      final updated = items[i].copyWith(displayOrder: i);
+      final updated = items[i].copyWith(
+        displayOrder: i,
+        updatedAt: DateTime.now(),
+      );
       await _repository.updateWallet(updated);
 
       // Update local 'wallets' list
@@ -280,20 +302,10 @@ class WalletController extends CcGetController {
 
     final list = result.tryGetSuccess()!;
     await _rebuildDerivedBalances(list);
-    await _loadInvestmentRoi();
     wallets.assignAll(list);
     _calculateTotalBalance();
 
     layoutStatus.value = CcLayoutStatus.success;
-  }
-
-  Future<void> _loadInvestmentRoi() async {
-    final result = await _getInvestmentRoi.call();
-    result.when((roi) {
-      investmentRoiPercent.value = roi.totalContributed == 0
-          ? 0
-          : roi.totalReturned / roi.totalContributed * 100;
-    }, (_) {});
   }
 
   /// Fetches transactions once and derives, per wallet, both the activity flag
@@ -365,11 +377,20 @@ class WalletController extends CcGetController {
         )
         .fold(0, (sum, item) => sum + bookBalanceOf(item.id));
 
-    investmentBalance.value =
-        wallets
-            .where((w) => w.type == WalletType.investment)
-            .fold(0, (sum, item) => sum + bookBalanceOf(item.id)) +
-        _investmentReturnsTotal;
+    int totalInvested = 0;
+    int totalReturned = 0;
+    for (final wallet in wallets) {
+      if (wallet.type == WalletType.investment) {
+        final stats = investmentStatsOf(wallet.id);
+        totalInvested += stats.contributed;
+        totalReturned += stats.returned;
+      }
+    }
+
+    investmentBalance.value = totalInvested;
+    investmentRoiPercent.value = totalInvested == 0
+        ? 0
+        : (totalReturned / totalInvested) * 100;
 
     emergencyFundBalance.value = wallets
         .where((w) => w.type == WalletType.emergencyFund)

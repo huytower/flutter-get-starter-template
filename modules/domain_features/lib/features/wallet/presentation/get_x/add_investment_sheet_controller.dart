@@ -134,9 +134,7 @@ class AddInvestmentSheetController extends CcGetController {
 
   void selectInvestmentCategory(CategoryEntity category) {
     selectedInvestmentCategory.value = category;
-    if (nameController.text.trim().isEmpty) {
-      nameController.text = el.tr(category.nameKey);
-    }
+    nameController.text = el.tr(category.nameKey);
   }
 
   Future<void> save(BuildContext context) async {

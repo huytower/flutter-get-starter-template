@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../get_x/reconciliation_controller.dart';
 import 'reconciliation_dialogs.dart';
 
@@ -15,38 +16,14 @@ class ReconciliationConfirmButton extends StatelessWidget {
     return Obx(() {
       final busy = controller.isSubmitting.value;
       final hasWarning = controller.unhandledCount.value > 0;
-      return SizedBox(
-        width: double.infinity,
-        height: context.respDim(50),
-        child: ElevatedButton(
-          onPressed: busy || hasWarning
-              ? null
-              : () => _showConfirmDialog(context),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: context.ccColorScheme.primary,
-            alignment: Alignment.center,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          child: busy
-              ? SizedBox(
-                  width: context.respDim(20),
-                  height: context.respDim(20),
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: context.ccColorScheme.onPrimary,
-                  ),
-                )
-              : Text(
-                  el.tr(CcLocaleKeys.reconciliation_confirm),
-                  textAlign: TextAlign.center,
-                  style: context.ccTextTheme.labelMedium?.copyWith(
-                    color: context.ccColorScheme.onPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-        ),
+      final isEmpty = controller.balances.isEmpty;
+
+      return TransactionSubmitButton(
+        text: el.tr(CcLocaleKeys.reconciliation_confirm),
+        isSubmitting: busy,
+        isEnabled: !hasWarning && !isEmpty,
+        onTap: () => _showConfirmDialog(context),
+        activeColor: context.ccColorScheme.primary,
       );
     });
   }

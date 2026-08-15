@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../entities/transaction_entity.dart';
 import '../repositories/transaction_repository.dart';
@@ -54,10 +55,12 @@ class CreateTransactionParams {
 class CreateTransactionUseCase {
   CreateTransactionUseCase(
     this._transactionRepository,
+    this._walletRepository,
     this._getWalletBookBalance,
   );
 
   final TransactionRepository _transactionRepository;
+  final WalletRepository _walletRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
 
   Future<Result<TransactionEntity, CcFailure>> call(
@@ -123,6 +126,17 @@ class CreateTransactionUseCase {
     if (result.isError()) {
       return Error(result.tryGetError()!);
     }
+
+    // High Priority Logic: Update updatedAt so this wallet jumps to the front
+    // of the horizontal strip on the dashboard.
+    final walletResult = await _walletRepository.getWallet(params.walletId);
+    if (walletResult.isSuccess()) {
+      final wallet = walletResult.tryGetSuccess()!;
+      await _walletRepository.updateWallet(
+        wallet.copyWith(updatedAt: DateTime.now()),
+      );
+    }
+
     return Success(transaction);
   }
 }

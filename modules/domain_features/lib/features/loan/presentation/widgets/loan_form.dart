@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,13 +6,16 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
+import '../../../category/data/datasources/local/category_seed.dart';
+import '../../../category/domain/entities/category_entity.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/cc_form_label.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
+import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
-import '../../../transaction/presentation/widgets/transaction_wallet_selector.dart';
+import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
 import '../../domain/entities/loan_entity.dart';
 import '../get_x/loan_form_controller.dart';
 import 'loan_pill_toggle.dart';
@@ -103,14 +105,14 @@ class LoanForm extends StatelessWidget {
           ],
           activeColor: accentColor,
           autoSelectFirst: true,
+          initialSelectedCategoryId: controller.selectedCategory.value?.id,
           title: controller.direction.value == LoanDirection.borrow
               ? el.tr(CcLocaleKeys.transaction_loan_category_borrow_label)
               : el.tr(CcLocaleKeys.transaction_loan_category_lend_label),
           onCategorySelected: controller.setCategory,
         ),
         const CcSpaceLG(),
-        CcSymmetricPadding(
-          horizontal: CcPaddingParams.PAGE_SM,
+        TransactionFormContainer(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -183,7 +185,7 @@ class LoanForm extends StatelessWidget {
               : el.tr(CcLocaleKeys.transaction_loan_wallet_lend_label),
         ),
         const CcSpaceXS(),
-        TransactionWalletSelector(
+        CcWalletStripCard(
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
           activeColor: accentColor,

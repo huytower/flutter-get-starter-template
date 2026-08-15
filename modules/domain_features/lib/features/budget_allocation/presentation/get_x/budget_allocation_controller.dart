@@ -39,6 +39,7 @@ class BudgetAllocationController extends CcGetController {
   final GetBudgetInsightsUseCase _getBudgetInsights;
 
   final RxInt liabilityBalance = 0.obs;
+  final RxList<LoanBalanceEntity> loanBalances = <LoanBalanceEntity>[].obs;
 
   /// Phase 3.4 "AI Actions" — null while loading/on error, in which case the
   /// insights panel simply doesn't render (see [BudgetInsightsEntity.hasAnything]).
@@ -50,6 +51,10 @@ class BudgetAllocationController extends CcGetController {
 
   void navigateToInvestmentList(BuildContext context) {
     context.router.push(const InvestmentListRoute());
+  }
+
+  void navigateToLoanList(BuildContext context) {
+    context.router.push(const LoanListRoute());
   }
 
   void openAddWallet(BuildContext context) {
@@ -223,6 +228,9 @@ class BudgetAllocationController extends CcGetController {
   Future<void> loadLiabilities() async {
     final result = await _getLoanBalances();
     result.when((balances) {
+      final sorted = List<LoanBalanceEntity>.from(balances)
+        ..sort((a, b) => b.loan.updatedAt.compareTo(a.loan.updatedAt));
+      loanBalances.assignAll(sorted);
       liabilityBalance.value = balances
           .where((b) => b.loan.isBorrow && b.status == LoanStatus.outstanding)
           .fold(0, (sum, b) => sum + b.outstandingBalance);

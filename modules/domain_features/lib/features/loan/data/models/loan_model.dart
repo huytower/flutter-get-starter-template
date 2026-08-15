@@ -108,6 +108,7 @@ class LoanModel {
     finalDueDate: entity.finalDueDate?.toIso8601String(),
     note: entity.note,
     createdAt: entity.createdAt.toIso8601String(),
+    lastModifiedAt: entity.updatedAt,
     reminderBeforeDueDate: entity.reminderBeforeDueDate,
   );
 
@@ -126,6 +127,7 @@ class LoanModel {
     finalDueDate: finalDueDate != null ? DateTime.parse(finalDueDate!) : null,
     note: note,
     createdAt: DateTime.parse(createdAt),
+    updatedAt: lastModifiedAt ?? DateTime.parse(createdAt),
     reminderBeforeDueDate: reminderBeforeDueDate,
   );
 

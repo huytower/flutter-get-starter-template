@@ -7,14 +7,15 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../guideline/guideline_controller.dart';
+import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
 import '../get_x/income_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
 import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
 import 'transaction_additional_details_section.dart';
+import 'transaction_form_container.dart';
 import 'transaction_submit_button.dart';
-import 'transaction_wallet_selector.dart';
 
 class IncomeForm extends StatelessWidget {
   const IncomeForm({super.key, this.tag});
@@ -41,7 +42,12 @@ class IncomeForm extends StatelessWidget {
       () => Column(
         children: [
           Expanded(
-            child: _buildScrollableContent(context, controller, guideline, accentColor),
+            child: _buildScrollableContent(
+              context,
+              controller,
+              guideline,
+              accentColor,
+            ),
           ),
           if (controller.showKeypad.value)
             _buildMoneyKeypadPanel(context, controller, accentColor),
@@ -99,8 +105,7 @@ class IncomeForm extends StatelessWidget {
     GuidelineController guideline,
     Color accentColor,
   ) {
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.PAGE_SM,
+    return TransactionFormContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -127,10 +132,10 @@ class IncomeForm extends StatelessWidget {
             activeColor: accentColor,
             badge: guideline.isTaskActive('first_transaction')
                 ? CcGuidelineBadge(
-                  size: 8,
-                  color: guideline.currentColor,
-                  bounceTrigger: guideline.bounceTrigger,
-                )
+                    size: 8,
+                    color: guideline.currentColor,
+                    bounceTrigger: guideline.bounceTrigger,
+                  )
                 : null,
           ),
           const CcSpaceLG(),
@@ -167,7 +172,7 @@ class IncomeForm extends StatelessWidget {
       children: [
         CcFormLabel(text: el.tr(CcLocaleKeys.transaction_source_income)),
         const CcSpaceXS(),
-        TransactionWalletSelector(
+        CcWalletStripCard(
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
           activeColor: accentColor,

@@ -70,6 +70,7 @@ class LoanEntity extends Equatable {
 
   final String? note;
   final DateTime createdAt;
+  final DateTime updatedAt;
 
   /// Whether local reminders should be scheduled ahead of the due date(s)
   /// (see `ScheduleLoanRemindersUseCase`) — installment: 1 day before each;
@@ -91,6 +92,7 @@ class LoanEntity extends Equatable {
     this.finalDueDate,
     this.note,
     required this.createdAt,
+    required this.updatedAt,
     this.reminderBeforeDueDate = false,
   });
 
@@ -111,6 +113,7 @@ class LoanEntity extends Equatable {
     finalDueDate,
     note,
     createdAt,
+    updatedAt,
     reminderBeforeDueDate,
   ];
 }

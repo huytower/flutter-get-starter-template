@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_limit/domain/usecases/sort_budget_limits_by_progress_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
 import '../../../budget_limit/presentation/widgets/add_budget_limit_form.dart';
 import '../../../budget_limit/presentation/widgets/budget_limit_grid_card.dart';
+import '../../../guideline/guideline_controller.dart';
 
-class BudgetPreviewSection extends StatelessWidget {
-  const BudgetPreviewSection({super.key});
+class BudgetLimitPreviewSection extends StatelessWidget {
+  const BudgetLimitPreviewSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -67,17 +67,29 @@ class BudgetPreviewSection extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const CcSpaceSM(),
-                  CcInkWell(
-                    onTap: () => context.router.push(const BudgetLimitRoute()),
-                    child: CcText(
-                      el.tr(CcLocaleKeys.budget_see_all),
-                      textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                        color: scheme.primary,
-                        fontWeight: CcTypographyParams.semiBold,
-                      ),
-                    ),
-                  ),
+                  Obx(() {
+                    final hasBudgets =
+                        Get.find<BudgetLimitController>().budgets.isNotEmpty;
+                    if (!hasBudgets) return const SizedBox.shrink();
+
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CcSpaceSM(),
+                        CcInkWell(
+                          onTap: () =>
+                              context.router.push(const BudgetLimitRoute()),
+                          child: CcText(
+                            el.tr(CcLocaleKeys.budget_see_all),
+                            textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                              color: scheme.primary,
+                              fontWeight: CcTypographyParams.semiBold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
                 ],
               ),
             ],

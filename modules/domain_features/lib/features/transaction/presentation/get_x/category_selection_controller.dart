@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
@@ -19,6 +21,9 @@ class CategorySelectionController extends CcGetController {
 
   List<String>? groupIds;
   String type = CategoryType.expense;
+  bool autoSelectFirstEnabled = false;
+  String? initialId;
+  Function(CategoryEntity)? onSelected;
 
   @override
   void onInit() {
@@ -28,6 +33,56 @@ class CategorySelectionController extends CcGetController {
       CategorySettingsController.onCategoryDefaultsApplied,
       (_) => loadCategories(),
     );
+
+    // Ensure auto-selection/pre-selection happens even if categories load async
+    ever(isLoading, (loading) {
+      if (!loading) {
+        _applyInitialSelection();
+      }
+    });
+  }
+
+  void _applyInitialSelection() {
+    if (initialId != null) {
+      final cat = getCategoryById(initialId!);
+      if (cat != null) {
+        selectedCategoryId.value = cat.id;
+        initialId = null;
+      }
+    } else if (autoSelectFirstEnabled && categories.isNotEmpty) {
+      // If parent has no selection (initialId was null), we must enforce
+      // the auto-selection or re-report our current selection to sync.
+      if (selectedCategoryId.value == null) {
+        final cat = categories.first;
+        selectedCategoryId.value = cat.id;
+        _reportToParent(cat);
+      } else {
+        // Controller was reused and has a selection, but parent has null.
+        // Sync parent to our current selection.
+        final current = getSelectedCategory();
+        if (current != null) {
+          _reportToParent(current);
+        }
+      }
+    }
+  }
+
+  void _reportToParent(CategoryEntity cat) {
+    // Use post-frame callback if currently in a build phase to avoid
+    // "setState() or markNeedsBuild() called during build" errors.
+    if (WidgetsBinding.instance.schedulerPhase != SchedulerPhase.idle) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        onSelected?.call(cat);
+      });
+    } else {
+      onSelected?.call(cat);
+    }
+  }
+
+  void refreshSelection() {
+    if (!isLoading.value) {
+      _applyInitialSelection();
+    }
   }
 
   Future<void> loadCategories() async {

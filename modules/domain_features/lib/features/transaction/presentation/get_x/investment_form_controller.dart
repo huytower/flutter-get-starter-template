@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:collection/collection.dart' hide IterableFirstOrNull;
 import 'package:domain_features/features/category/export_category.dart';
+import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -63,6 +64,12 @@ class InvestmentFormController extends TransactionFormController {
     _loadAll();
     final parentController = Get.find<TransactionController>();
     ever(parentController.wallets, (_) => _recomputeMergedItems());
+
+    // Listen to global category changes (e.g. from Settings)
+    ever(
+      CategorySettingsController.onCategoriesChanged,
+      (_) => _recomputeMergedItems(),
+    );
   }
 
   Future<void> _loadAll() async {
@@ -72,41 +79,40 @@ class InvestmentFormController extends TransactionFormController {
     isLoadingMerged.value = false;
   }
 
-  /// Refreshes the merged list of investment categories and existing assets.
-  /// Assets have high priority and appear first.
+  /// Refreshes the list of investment assets and categories.
   Future<void> _recomputeMergedItems() async {
-    final catResult = await _getCategories();
-    final List<CategoryEntity> allCategories = catResult.when(
-      (c) => c
-          .where((e) => e.isEnabled && e.type == CategoryType.investment)
-          .toList(),
-      (_) => [],
-    );
-
-    // Create index map to preserve seed order
-    final seedIndexMap = <String, int>{};
-    for (int i = 0; i < CategorySeed.categories.length; i++) {
-      seedIndexMap[CategorySeed.categories[i].id] = i;
-    }
-
-    allCategories.sort((a, b) {
-      final indexA = seedIndexMap[a.id] ?? 999;
-      final indexB = seedIndexMap[b.id] ?? 999;
-      return indexA.compareTo(indexB);
-    });
-
     final parentWallets = Get.find<TransactionController>().wallets;
     final assets = parentWallets
         .where((w) => w.type == WalletType.investment)
         .toList();
 
-    // Sorting assets: recently modified first
-    assets.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    // High Priority Sorting: Match Dashboard (DisplayOrder) + Recency (UpdatedAt)
+    assets.sort((a, b) {
+      if (a.displayOrder != b.displayOrder) {
+        return a.displayOrder.compareTo(b.displayOrder);
+      }
+      return b.updatedAt.compareTo(a.updatedAt);
+    });
 
-    mergedItems.assignAll([...assets, ...allCategories]);
+    final List<dynamic> items = [...assets];
+
+    // If contributing, also show investment categories to allow new items
+    if (direction.value == InvestmentDirection.contribute) {
+      final catResult = await _getCategories();
+      catResult.when((categories) {
+        final investCats = categories
+            .where((c) => c.isEnabled && c.type == CategoryType.investment)
+            .toList();
+        items.addAll(investCats);
+      }, (_) {});
+    }
+
+    mergedItems.assignAll(items);
 
     // Auto-select first if nothing selected
-    if (selectedCategory.value == null && mergedItems.isNotEmpty) {
+    if (selectedInvestmentWalletId.value == null &&
+        selectedCategory.value == null &&
+        mergedItems.isNotEmpty) {
       final first = mergedItems.first;
       if (first is WalletEntity) {
         selectAsset(first);
@@ -116,17 +122,21 @@ class InvestmentFormController extends TransactionFormController {
     }
   }
 
-  void selectAsset(WalletEntity wallet) {
+  void selectAsset(WalletEntity wallet) async {
     selectedInvestmentWalletId.value = wallet.id;
     isAddingNewItem.value = false;
 
-    // Resolve parent category
-    final parentCat = mergedItems.whereType<CategoryEntity>().firstWhereOrNull(
-      (c) => c.id == wallet.categoryId,
-    );
-
-    if (parentCat != null) {
-      selectedCategory.value = parentCat;
+    // Resolve parent category to ensure correct icon/type in transaction
+    if (wallet.categoryId != null) {
+      final catResult = await _getCategories();
+      catResult.when((categories) {
+        final cat = categories.firstWhereOrNull(
+          (c) => c.id == wallet.categoryId,
+        );
+        if (cat != null) {
+          selectedCategory.value = cat;
+        }
+      }, (_) {});
     }
   }
 
@@ -143,6 +153,7 @@ class InvestmentFormController extends TransactionFormController {
       // Free tier: attach to category name
       isAddingNewItem.value = true;
       newItemName.value = el.tr(category.nameKey);
+      newItemNameController.text = newItemName.value;
     }
   }
 
@@ -160,6 +171,7 @@ class InvestmentFormController extends TransactionFormController {
   void setDirection(InvestmentDirection value) {
     if (direction.value == value) return;
     direction.value = value;
+    _recomputeMergedItems();
     if (value == InvestmentDirection.returnProfit) {
       // Logic for return profit: must pick existing asset if available
       if (isAddingNewItem.value || selectedInvestmentWalletId.value == null) {

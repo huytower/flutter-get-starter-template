@@ -58,6 +58,24 @@ class LoanRepositoryImpl with CcBaseRepository implements LoanRepository {
   }
 
   @override
+  Future<Result<void, CcFailure>> updateLoan(LoanEntity loan) {
+    return safeRequest(() async {
+      final existing = await _local.getById(loan.id);
+      final model = LoanModel.fromEntity(loan);
+
+      // Preserve remoteId and lastSyncedAt from existing model
+      final toSave = existing != null
+          ? model.copyWithSyncMetadata(
+              existing.syncMetadata.withLocalChange(model.id),
+            )
+          : model.copyWithSyncMetadata(SyncMetadata.pending(model.id));
+
+      await _local.put(toSave);
+      _syncService.syncAll();
+    });
+  }
+
+  @override
   Future<Result<void, CcFailure>> deleteLoan(String id) {
     return safeRequest(() async {
       await _local.delete(id);

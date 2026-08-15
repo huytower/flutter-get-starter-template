@@ -1,4 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:domain_features/features/transaction/presentation/widgets/transaction_additional_details_section.dart';
+import 'package:domain_features/features/transaction/presentation/widgets/transaction_submit_button.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +11,7 @@ import '../../../../core/helper/money_format_helper.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
+import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
 import '../get_x/expense_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
@@ -16,9 +19,7 @@ import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
 import 'quick_entry_section.dart';
 import 'receipt_source_sheet.dart';
-import 'transaction_additional_details_section.dart';
-import 'transaction_submit_button.dart';
-import 'transaction_wallet_selector.dart';
+import 'transaction_form_container.dart';
 
 class ExpenseForm extends StatefulWidget {
   const ExpenseForm({super.key, this.tag});
@@ -142,8 +143,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
     final canUseAiSmartEntry =
         getIt<UserLevelController>().status.value.canUseAiSmartEntry;
 
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.PAGE_SM,
+    return TransactionFormContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -309,7 +309,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
       children: [
         CcFormLabel(text: el.tr(CcLocaleKeys.transaction_source_expense)),
         const CcSpaceXS(),
-        TransactionWalletSelector(
+        CcWalletStripCard(
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
           activeColor: accentColor,

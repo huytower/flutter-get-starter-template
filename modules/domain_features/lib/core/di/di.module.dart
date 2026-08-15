@@ -441,6 +441,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i572.WalletRepository>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
             ));
+    gh.lazySingleton<_i28.CreateTransactionUseCase>(
+        () => _i28.CreateTransactionUseCase(
+              gh<_i1027.TransactionRepository>(),
+              gh<_i572.WalletRepository>(),
+              gh<_i105.GetWalletBookBalanceUseCase>(),
+            ));
     gh.lazySingleton<_i446.GetReconciliationHistoryUseCase>(() =>
         _i446.GetReconciliationHistoryUseCase(
             gh<_i944.ReconciliationRepository>()));
@@ -482,11 +488,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.factory<_i902.LoanListController>(
         () => _i902.LoanListController(gh<_i628.GetLoanBalancesUseCase>()));
-    gh.lazySingleton<_i28.CreateTransactionUseCase>(
-        () => _i28.CreateTransactionUseCase(
-              gh<_i1027.TransactionRepository>(),
-              gh<_i105.GetWalletBookBalanceUseCase>(),
-            ));
     gh.lazySingleton<_i756.UpdateTransactionUseCase>(
         () => _i756.UpdateTransactionUseCase(
               gh<_i1027.TransactionRepository>(),
