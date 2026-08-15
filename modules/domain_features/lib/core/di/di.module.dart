@@ -239,8 +239,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
     gh.factory<_i411.LoanFormController>(() => _i411.LoanFormController());
     gh.factory<_i594.IncomeFormController>(() => _i594.IncomeFormController());
-    gh.factory<_i135.InvestmentFormController>(
-        () => _i135.InvestmentFormController());
     gh.lazySingleton<_i994.AiAdviceCacheDataSource>(
         () => _i994.AiAdviceCacheDataSource());
     gh.lazySingleton<_i967.AiFallbackPreferenceDataSource>(
@@ -452,10 +450,10 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i944.ReconciliationRepository>(),
             ));
-    gh.factory<_i615.CategorySelectionController>(() =>
-        _i615.CategorySelectionController(gh<_i224.GetCategoriesUseCase>()));
     gh.lazySingleton<_i121.ParseQuickEntryUseCase>(
         () => _i121.ParseQuickEntryUseCase(gh<_i224.GetCategoriesUseCase>()));
+    gh.factory<_i615.CategorySelectionController>(() =>
+        _i615.CategorySelectionController(gh<_i224.GetCategoriesUseCase>()));
     gh.lazySingleton<_i467.GetBudgetOverLimitCountUseCase>(
         () => _i467.GetBudgetOverLimitCountUseCase(
               gh<_i544.BudgetLimitRepository>(),
@@ -517,6 +515,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i781.GetLoanOutstandingBalanceUseCase>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
             ));
+    gh.factory<_i135.InvestmentFormController>(
+        () => _i135.InvestmentFormController(
+              gh<_i1041.GetCategoriesUseCase>(),
+              gh<_i569.GetProfileSettingsUseCase>(),
+              gh<_i240.CreateInvestmentTransactionUseCase>(),
+            ));
     gh.lazySingleton<_i229.WalletController>(() => _i229.WalletController(
           gh<_i572.WalletRepository>(),
           gh<_i1027.TransactionRepository>(),
@@ -551,17 +555,17 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.lazySingleton<_i356.UserLevelController>(
         () => _i356.UserLevelController(gh<_i585.GetUserLevelStatusUseCase>()));
-    gh.factory<_i797.AddInvestmentSheetController>(
-        () => _i797.AddInvestmentSheetController(
-              gh<_i229.WalletController>(),
-              gh<_i224.GetCategoriesUseCase>(),
-              gh<_i569.GetProfileSettingsUseCase>(),
-            ));
     gh.lazySingleton<_i206.GetBudgetInsightsUseCase>(
         () => _i206.GetBudgetInsightsUseCase(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
               gh<_i774.GetMonthToDateCashFlowUseCase>(),
               gh<_i463.GetBudgetAnomaliesUseCase>(),
+            ));
+    gh.factory<_i797.AddInvestmentSheetController>(
+        () => _i797.AddInvestmentSheetController(
+              gh<_i229.WalletController>(),
+              gh<_i224.GetCategoriesUseCase>(),
+              gh<_i569.GetProfileSettingsUseCase>(),
             ));
     gh.factory<_i700.TransactionController>(() => _i700.TransactionController(
           gh<_i1027.TransactionRepository>(),
@@ -569,17 +573,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i572.WalletRepository>(),
           gh<_i356.UserLevelController>(),
         ));
-    gh.factory<_i353.ReportController>(() => _i353.ReportController(
-          gh<_i169.GetCategorySpendingUseCase>(),
-          gh<_i701.GetFinancialRunwayUseCase>(),
-          gh<_i951.GetTrendDataUseCase>(),
-          gh<_i229.GetInvestmentTrendUseCase>(),
-          gh<_i224.GetLoanTrendUseCase>(),
-          gh<_i572.WalletRepository>(),
-          gh<_i356.UserLevelController>(),
-        ));
-    gh.lazySingleton<_i128.GuidelineController>(
-        () => _i128.GuidelineController(gh<_i356.UserLevelController>()));
     gh.lazySingleton<_i436.GenerateAiFinancialAdviceUseCase>(
         () => _i436.GenerateAiFinancialAdviceUseCase(
               gh<_i206.GetBudgetInsightsUseCase>(),
@@ -588,6 +581,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i774.GetMonthToDateCashFlowUseCase>(),
               gh<_i994.AiAdviceCacheDataSource>(),
             ));
+    gh.lazySingleton<_i128.GuidelineController>(
+        () => _i128.GuidelineController(gh<_i356.UserLevelController>()));
     gh.factory<_i430.LoanDetailController>(() => _i430.LoanDetailController(
           gh<_i798.LoanRepository>(),
           gh<_i1027.TransactionRepository>(),
@@ -629,13 +624,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i804.PerformReconciliationUseCase>(),
               gh<_i195.UndoReconciliationUseCase>(),
               gh<_i446.GetReconciliationHistoryUseCase>(),
-              gh<_i356.UserLevelController>(),
-            ));
-    gh.factory<_i451.BudgetAllocationController>(
-        () => _i451.BudgetAllocationController(
-              gh<_i229.WalletController>(),
-              gh<_i1003.BudgetLimitController>(),
-              gh<_i628.GetLoanBalancesUseCase>(),
               gh<_i356.UserLevelController>(),
             ));
     gh.factory<_i933.AddWalletSheetController>(
