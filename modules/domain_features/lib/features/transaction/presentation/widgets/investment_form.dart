@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,13 +6,12 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/wallet_icon_helper.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
 import 'cc_amount_input_section.dart';
 import 'cc_form_label.dart';
+import 'investment_asset_selector.dart';
 import 'investment_direction_toggle.dart';
 import 'money_keypad_panel.dart';
 import 'transaction_additional_details_section.dart';
@@ -70,120 +68,13 @@ class InvestmentForm extends StatelessWidget {
               onChanged: controller.setDirection,
             ),
             const CcSpaceLG(),
-            _buildMergedSelectionSection(context, controller, accentColor),
+            InvestmentAssetSelector(
+              controller: controller,
+              activeColor: accentColor,
+            ),
             const CcSpaceLG(),
             _buildFormFields(context, controller, accentColor),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMergedSelectionSection(
-    BuildContext context,
-    InvestmentFormController controller,
-    Color activeColor,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcSymmetricPadding(
-          horizontal: CcPaddingParams.PAGE_SM,
-          child: CcText(
-            el.tr(CcLocaleKeys.transaction_category),
-            textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const CcSpaceXS(),
-        Obx(() {
-          if (controller.isLoadingMerged.value) {
-            return _buildShimmerList(context);
-          }
-
-          return HorizontalFadeScrollView(
-            height: context.respDim(80),
-            builder: (scrollController) => ListView.separated(
-              scrollDirection: Axis.horizontal,
-              controller: scrollController,
-              padding: EdgeInsets.symmetric(
-                horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-              ),
-              itemCount: controller.mergedItems.length,
-              separatorBuilder: (context, index) => const CcSpaceSM(),
-              itemBuilder: (context, index) {
-                final item = controller.mergedItems[index];
-                if (item is WalletEntity) {
-                  final isSelected =
-                      controller.selectedInvestmentWalletId.value == item.id;
-                  return CcCategory(
-                    icon: iconDataFromCode(item.iconCode),
-                    label: item.name,
-                    isSelected: isSelected,
-                    isCategory: false,
-                    activeColor: activeColor,
-                    onTap: () => controller.selectAsset(item),
-                  );
-                } else if (item is CategoryEntity) {
-                  final isSelected =
-                      controller.selectedCategory.value?.id == item.id &&
-                      controller.isAddingNewItem.value;
-                  return CcCategory(
-                    icon: iconDataFromCode(
-                      item.iconCode,
-                      fontFamily: item.iconFamily,
-                    ),
-                    label: el.tr(item.nameKey),
-                    isSelected: isSelected,
-                    isCategory: true,
-                    activeColor: activeColor,
-                    onTap: () => controller.selectCategory(item),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          );
-        }),
-      ],
-    );
-  }
-
-  Widget _buildShimmerList(BuildContext context) {
-    return SizedBox(
-      height: context.respDim(70),
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-        ),
-        itemCount: 5,
-        separatorBuilder: (context, index) => const CcSpaceSM(),
-        itemBuilder: (context, index) => Container(
-          width: context.respDim(68),
-          padding: EdgeInsets.all(context.respDim(10)),
-          decoration: BoxDecoration(
-            color: context.ccColorScheme.onSurface.withAlpha(10),
-            borderRadius: context.brLg,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CcShimmer(
-                width: context.respDim(35),
-                height: context.respDim(35),
-                borderRadius: context.brMd,
-              ),
-              const CcSpaceXS(),
-              CcShimmer(
-                width: context.respDim(40),
-                height: context.respDim(10),
-                borderRadius: context.brXs,
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -208,12 +99,6 @@ class InvestmentForm extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (controller.isVip.value &&
-                controller.isAddingNewItem.value &&
-                controller.selectedCategory.value != null) ...[
-              _buildNewItemNameField(context, controller, accentColor),
-              const CcSpaceLG(),
-            ],
             _buildAmountSection(context, controller, accentColor),
             const CcSpaceLG(),
             _buildWalletSection(context, controller, accentColor),
