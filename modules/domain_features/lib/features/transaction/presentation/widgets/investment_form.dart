@@ -104,7 +104,7 @@ class InvestmentForm extends StatelessWidget {
           }
 
           return HorizontalFadeScrollView(
-            height: context.respDim(70),
+            height: context.respDim(80),
             builder: (scrollController) => ListView.separated(
               scrollDirection: Axis.horizontal,
               controller: scrollController,
@@ -118,23 +118,28 @@ class InvestmentForm extends StatelessWidget {
                 if (item is WalletEntity) {
                   final isSelected =
                       controller.selectedInvestmentWalletId.value == item.id;
-                  return _buildAssetItem(
-                    context,
-                    item,
-                    isSelected,
-                    controller,
-                    activeColor,
+                  return CcCategory(
+                    icon: iconDataFromCode(item.iconCode),
+                    label: item.name,
+                    isSelected: isSelected,
+                    isCategory: false,
+                    activeColor: activeColor,
+                    onTap: () => controller.selectAsset(item),
                   );
                 } else if (item is CategoryEntity) {
                   final isSelected =
                       controller.selectedCategory.value?.id == item.id &&
                       controller.isAddingNewItem.value;
-                  return _buildCategoryItem(
-                    context,
-                    item,
-                    isSelected,
-                    controller,
-                    activeColor,
+                  return CcCategory(
+                    icon: iconDataFromCode(
+                      item.iconCode,
+                      fontFamily: item.iconFamily,
+                    ),
+                    label: el.tr(item.nameKey),
+                    isSelected: isSelected,
+                    isCategory: true,
+                    activeColor: activeColor,
+                    onTap: () => controller.selectCategory(item),
                   );
                 }
                 return const SizedBox.shrink();
@@ -143,187 +148,6 @@ class InvestmentForm extends StatelessWidget {
           );
         }),
       ],
-    );
-  }
-
-  Widget _buildAssetItem(
-    BuildContext context,
-    WalletEntity wallet,
-    bool isSelected,
-    InvestmentFormController controller,
-    Color activeColor,
-  ) {
-    final scheme = context.ccColorScheme;
-    return CcInkWell(
-      onTap: () => controller.selectAsset(wallet),
-      borderRadius: context.brLg,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          if (isSelected)
-            Positioned.fill(
-              child: CcGlassyGradientBackground(
-                centerColor: activeColor.withAlpha(30),
-                endColor: activeColor.withAlpha(50),
-              ),
-            ),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: context.respDim(68),
-            padding: EdgeInsets.all(context.respDim(10)),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? activeColor.withAlpha(10)
-                  : scheme.onSurface.withAlpha(10),
-              borderRadius: context.brLg,
-              border: Border.all(
-                color: isSelected
-                    ? activeColor.withAlpha(20)
-                    : scheme.onSurface.withAlpha(10),
-                width: context.respDim(1),
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildIconContainer(
-                  context,
-                  iconDataFromCode(wallet.iconCode),
-                  isSelected,
-                  activeColor,
-                ),
-                const CcSpaceXS(),
-                CcText(
-                  wallet.name,
-                  textAlign: TextAlign.center,
-                  align: Alignment.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    color: isSelected ? activeColor : scheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryItem(
-    BuildContext context,
-    CategoryEntity category,
-    bool isSelected,
-    InvestmentFormController controller,
-    Color activeColor,
-  ) {
-    final scheme = context.ccColorScheme;
-    return CcInkWell(
-      onTap: () => controller.selectCategory(category),
-      borderRadius: context.brLg,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          if (isSelected)
-            Positioned.fill(
-              child: CcGlassyGradientBackground(
-                centerColor: activeColor.withAlpha(30),
-                endColor: activeColor.withAlpha(50),
-              ),
-            ),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: context.respDim(68),
-            padding: EdgeInsets.all(context.respDim(10)),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? activeColor.withAlpha(10)
-                  : scheme.onSurface.withAlpha(5),
-              borderRadius: context.brLg,
-              border: Border.all(
-                color: isSelected
-                    ? activeColor.withAlpha(20)
-                    : scheme.onSurface.withAlpha(5),
-                width: context.respDim(1),
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildIconContainer(
-                  context,
-                  iconDataFromCode(
-                    category.iconCode,
-                    fontFamily: category.iconFamily,
-                  ),
-                  isSelected,
-                  activeColor,
-                  isCategory: true,
-                ),
-                const CcSpaceXS(),
-                CcText(
-                  el.tr(category.nameKey),
-                  textAlign: TextAlign.center,
-                  align: Alignment.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    color: isSelected
-                        ? activeColor
-                        : scheme.onSurfaceVariant.withOpacity(0.6),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildIconContainer(
-    BuildContext context,
-    IconData icon,
-    bool isSelected,
-    Color activeColor, {
-    bool isCategory = false,
-  }) {
-    final scheme = context.ccColorScheme;
-    return Container(
-      width: context.respDim(35),
-      height: context.respDim(35),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? activeColor.withAlpha(20)
-            : scheme.onSurface.withAlpha(10),
-        borderRadius: context.brMd,
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (isSelected)
-            Positioned.fill(
-              child: CcGlassyGradientIcon(
-                centerColor: activeColor.withAlpha(30),
-                endColor: activeColor.withAlpha(50),
-              ),
-            ),
-          Icon(
-            icon,
-            size: context.respIconSize(baseSize: 18),
-            color: isSelected
-                ? activeColor
-                : scheme.onSurfaceVariant.withOpacity(isCategory ? 0.5 : 1.0),
-          ),
-        ],
-      ),
     );
   }
 

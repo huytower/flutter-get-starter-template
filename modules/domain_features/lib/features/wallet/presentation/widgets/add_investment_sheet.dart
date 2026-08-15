@@ -149,7 +149,7 @@ class _AddInvestmentSheetState extends State<AddInvestmentSheet> {
         ),
         const CcSpaceSM(),
         HorizontalFadeScrollView(
-          height: context.respDim(70),
+          height: context.respDim(80),
           builder: (scrollController) => ListView.separated(
             scrollDirection: Axis.horizontal,
             controller: scrollController,

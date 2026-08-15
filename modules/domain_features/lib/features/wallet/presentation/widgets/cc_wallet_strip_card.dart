@@ -172,8 +172,8 @@ class _WalletItem extends StatelessWidget {
           if (isSelected)
             Positioned.fill(
               child: CcGlassyGradientBackground(
-                centerColor: activeColor.withAlpha(30),
-                endColor: activeColor.withAlpha(50),
+                centerColor: activeColor.withAlpha(5),
+                endColor: activeColor.withAlpha(10),
               ),
             ),
           _buildMainCard(context),
@@ -211,19 +211,19 @@ class _WalletItem extends StatelessWidget {
         borderRadius: context.brLg,
         border: Border.all(
           color: isSelected
-              ? activeColor.withAlpha(60)
+              ? activeColor.withAlpha(30)
               : scheme.onSurface.withOpacity(0.08),
           width: context.respDim(1),
         ),
       ),
       child: CcPadding(
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildHeader(context),
+            _buildCategoryIcon(context),
             const CcSpaceSM(),
-            _buildFooter(context),
+            _buildDesc(context),
           ],
         ),
         6,
@@ -234,7 +234,7 @@ class _WalletItem extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildCategoryIcon(BuildContext context) {
     final scheme = context.ccColorScheme;
 
     return Container(
@@ -254,7 +254,7 @@ class _WalletItem extends StatelessWidget {
     );
   }
 
-  Widget _buildFooter(BuildContext context) {
+  Widget _buildDesc(BuildContext context) {
     final scheme = context.ccColorScheme;
 
     return Column(
