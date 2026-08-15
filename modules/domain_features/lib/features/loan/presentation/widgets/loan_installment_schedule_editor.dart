@@ -80,39 +80,35 @@ class LoanInstallmentScheduleEditor extends StatelessWidget {
                 final isLimitReached =
                     controller.installmentsTotal == controller.principalAmount;
 
-                return AnimatedScale(
-                  scale: isLimitReached ? 1.1 : 1.0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Container(
-                    height: context.respDim(48),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.respPadding(12),
-                    ),
-                    decoration: BoxDecoration(
-                      color: context.ccColorScheme.onSurface.withAlpha(10),
-                      borderRadius: context.brMd,
-                      border: isEditingThis
-                          ? Border.all(color: activeColor, width: 2)
-                          : isLimitReached
-                          ? Border.all(
-                              color: activeColor.withAlpha(100),
-                              width: 1,
-                            )
-                          : null,
-                    ),
-                    alignment: Alignment.centerLeft,
-                    child: CcText(
-                      amount == 0
-                          ? '0'
-                          : TransactionFormHelpers.formatAmount(
-                              amount.toString(),
-                            ),
-                      textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: amount > 0
-                            ? activeColor
-                            : context.ccColorScheme.onSurfaceVariant,
-                      ),
+                return Container(
+                  height: context.respDim(48),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.respPadding(12),
+                  ),
+                  decoration: BoxDecoration(
+                    color: context.ccColorScheme.onSurface.withAlpha(10),
+                    borderRadius: context.brMd,
+                    border: isEditingThis
+                        ? Border.all(color: activeColor, width: 2)
+                        : isLimitReached
+                        ? Border.all(
+                            color: activeColor.withAlpha(100),
+                            width: 1.5,
+                          )
+                        : null,
+                  ),
+                  alignment: Alignment.centerLeft,
+                  child: CcText(
+                    amount == 0
+                        ? '0'
+                        : TransactionFormHelpers.formatAmount(
+                            amount.toString(),
+                          ),
+                    textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: amount > 0
+                          ? activeColor
+                          : context.ccColorScheme.onSurfaceVariant,
                     ),
                   ),
                 );

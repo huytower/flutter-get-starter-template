@@ -210,15 +210,7 @@ class LoanFormController extends TransactionFormController {
         current += key;
       }
 
-      final newValue = int.tryParse(current) ?? 0;
-      // Cap at remaining principal if needed? Or just let it exceed and
-      // show error in canSubmit?
-      // The user said "current is wrong" and "can not add new period".
-      // Let's cap the entry to ensure total doesn't exceed principal.
-      final otherInstallmentsTotal = installmentsTotal - draft.amount.value;
-      if (newValue + otherInstallmentsTotal <= principalAmount) {
-        draft.amount.value = newValue;
-      }
+      draft.amount.value = int.tryParse(current) ?? 0;
     } else {
       super.handleKeyPress(key);
     }
@@ -257,14 +249,7 @@ class LoanFormController extends TransactionFormController {
     if (editingInstallmentIndex.value != null) {
       final index = editingInstallmentIndex.value!;
       if (index >= installmentDrafts.length) return;
-      final draft = installmentDrafts[index];
-      final otherInstallmentsTotal = installmentsTotal - draft.amount.value;
-
-      if (value + otherInstallmentsTotal <= principalAmount) {
-        draft.amount.value = value;
-      } else {
-        draft.amount.value = principalAmount - otherInstallmentsTotal;
-      }
+      installmentDrafts[index].amount.value = value;
     } else {
       amountStr.value = value.toString();
     }
