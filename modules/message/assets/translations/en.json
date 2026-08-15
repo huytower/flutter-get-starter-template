@@ -273,6 +273,21 @@
     "note": "Note",
     "note_hint": "Note (optional)",
     "more_details": "More details",
+    "merchant_match_hint": "Like last time: {label}",
+    "location_match_hint": "You're nearby: {label}",
+    "quick_entry_label": "Quick entry (AI)",
+    "quick_entry_hint": "e.g. \"50k coffee\" — type or tap the mic",
+    "quick_entry_parsed_result": "Got it: {label}",
+    "quick_entry_could_not_parse": "Couldn't understand that — please fill in manually",
+    "quick_entry_cloud_consent_message": "To understand this, we'd send it to an AI service (Gemini). Continue?",
+    "quick_entry_cloud_consent_accept": "Allow",
+    "quick_entry_cloud_consent_decline": "Not now",
+    "quick_entry_daily_limit_reached": "Daily AI quick-entry limit reached — please fill in manually",
+    "quick_entry_mic_permission_denied": "Microphone access is needed for voice entry",
+    "quick_entry_photo_permission_denied": "Camera/photo access is needed to scan a receipt",
+    "quick_entry_scan_receipt": "Scan a receipt",
+    "quick_entry_take_photo": "Take photo",
+    "quick_entry_choose_gallery": "Choose from gallery",
     "claims_in_progress": "You have {count} claims in progress",
     "validation": {
       "amount_required": "Amount must be greater than 0",
@@ -308,7 +323,9 @@
     "cloud_backup_title": "Protect your data",
     "cloud_backup_body": "Register an account to back up your data to the Cloud and avoid losing it.",
     "loan_due_title": "Loan due date approaching",
-    "loan_due_body": "Loan '{name}' is due on {date}."
+    "loan_due_body": "Loan '{name}' is due on {date}.",
+    "budget_near_limit_body": "Budget \"{name}\" reached 80%.",
+    "budget_over_body": "Budget \"{name}\" exceeded its limit."
   },
   "tutorial": {
     "nav_title": "Your navigation bar",
@@ -350,7 +367,14 @@
     "customize_category": "Customize category",
     "percent_used": "{percent}% used",
     "fixed_price": "Fixed Price",
-    "fixed_price_description": "Fixed monthly costs (minimum survival cost), affecting your safety index in the report section."
+    "fixed_price_description": "Fixed monthly costs (minimum survival cost), affecting your safety index in the report section.",
+    "pacing_hint": "{name}: {days} days left · Suggested ≤{amount}/day",
+    "penalty_warning": "{name} exceeded {percent}%!",
+    "deficit_warning": "Spending more than income this month (deficit {amount})",
+    "anomaly_hint": "{count} unusual expense(s) vs. the last 3 months' average",
+    "insights_title": "Insights & warnings",
+    "insights_action_review": "View report",
+    "estimate_hint": "Suggested: {amount} (last 3-month avg)"
   },
   "reconciliation": {
     "title": "Reconciliation",
@@ -420,7 +444,17 @@
     "filtering_wallet": "Filtering: {wallet}",
     "filter_by_wallet": "Filter by wallet",
     "filter_all_wallets": "All wallets",
-    "trend_week_label": "Week {number}"
+    "trend_week_label": "Week {number}",
+    "ai_advice_title": "AI Financial Advice",
+    "ai_advice_empty_body": "Get a personalized review of this month's spending and suggestions to improve your finances.",
+    "ai_advice_generate_cta": "Generate advice",
+    "ai_advice_loading": "Generating advice...",
+    "ai_advice_generate_failed": "Couldn't generate advice right now, please try again.",
+    "ai_advice_daily_limit_reached": "You've reached today's AI advice limit. Please try again tomorrow.",
+    "ai_advice_generated_just_now": "Generated just now",
+    "ai_advice_generated_minutes_ago": "Generated {count} minutes ago",
+    "ai_advice_generated_hours_ago": "Generated {count} hours ago",
+    "ai_advice_generated_days_ago": "Generated {count} days ago"
   },
   "category": {
     "group_daily": "Daily",

@@ -259,6 +259,8 @@ class ProfileController extends CcGetController {
             ...CategorySeed.defaultIncomeCategoryKeys[group]!,
             ...CategorySeed.defaultDebtLoanCategoryKeys[group]!,
             ...CategorySeed.defaultInvestmentCategoryKeys[group]!,
+            if (CategorySeed.qualifiesForFamilyDefaults(picked))
+              ...CategorySeed.familyCategoryKeys,
           ]);
         }
 

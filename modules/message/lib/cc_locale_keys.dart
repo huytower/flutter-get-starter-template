@@ -300,6 +300,21 @@ class CodegenLoader extends AssetLoader {
       "note": "Note",
       "note_hint": "Note (optional)",
       "more_details": "More details",
+      "merchant_match_hint": "Like last time: {label}",
+      "location_match_hint": "You're nearby: {label}",
+      "quick_entry_label": "Quick entry (AI)",
+      "quick_entry_hint": "e.g. \"50k coffee\" — type or tap the mic",
+      "quick_entry_parsed_result": "Got it: {label}",
+      "quick_entry_could_not_parse": "Couldn't understand that — please fill in manually",
+      "quick_entry_cloud_consent_message": "To understand this, we'd send it to an AI service (Gemini). Continue?",
+      "quick_entry_cloud_consent_accept": "Allow",
+      "quick_entry_cloud_consent_decline": "Not now",
+      "quick_entry_daily_limit_reached": "Daily AI quick-entry limit reached — please fill in manually",
+      "quick_entry_mic_permission_denied": "Microphone access is needed for voice entry",
+      "quick_entry_photo_permission_denied": "Camera/photo access is needed to scan a receipt",
+      "quick_entry_scan_receipt": "Scan a receipt",
+      "quick_entry_take_photo": "Take photo",
+      "quick_entry_choose_gallery": "Choose from gallery",
       "claims_in_progress": "You have {count} claims in progress",
       "validation": {
         "amount_required": "Amount must be greater than 0",
@@ -340,6 +355,8 @@ class CodegenLoader extends AssetLoader {
           "Register an account to back up your data to the Cloud and avoid losing it.",
       "loan_due_title": "Loan due date approaching",
       "loan_due_body": "Loan '{name}' is due on {date}.",
+      "budget_near_limit_body": "Budget \"{name}\" reached 80%.",
+      "budget_over_body": "Budget \"{name}\" exceeded its limit.",
     },
     "tutorial": {
       "nav_title": "Your navigation bar",
@@ -388,6 +405,14 @@ class CodegenLoader extends AssetLoader {
       "fixed_price": "Fixed Price",
       "fixed_price_description":
           "Fixed monthly costs (minimum survival cost), affecting your safety index in the report section.",
+      "pacing_hint": "{name}: {days} days left · Suggested ≤{amount}/day",
+      "penalty_warning": "{name} exceeded {percent}%!",
+      "deficit_warning":
+          "Spending more than income this month (deficit {amount})",
+      "anomaly_hint": "{count} unusual expense(s) vs. the last 3 months' average",
+      "insights_title": "Insights & warnings",
+      "insights_action_review": "View report",
+      "estimate_hint": "Suggested: {amount} (last 3-month avg)",
     },
     "reconciliation": {
       "title": "Reconciliation",
@@ -466,6 +491,19 @@ class CodegenLoader extends AssetLoader {
       "filter_by_wallet": "Filter by wallet",
       "filter_all_wallets": "All wallets",
       "trend_week_label": "Week {number}",
+      "ai_advice_title": "AI Financial Advice",
+      "ai_advice_empty_body":
+          "Get a personalized review of this month's spending and suggestions to improve your finances.",
+      "ai_advice_generate_cta": "Generate advice",
+      "ai_advice_loading": "Generating advice...",
+      "ai_advice_generate_failed":
+          "Couldn't generate advice right now, please try again.",
+      "ai_advice_daily_limit_reached":
+          "You've reached today's AI advice limit. Please try again tomorrow.",
+      "ai_advice_generated_just_now": "Generated just now",
+      "ai_advice_generated_minutes_ago": "Generated {count} minutes ago",
+      "ai_advice_generated_hours_ago": "Generated {count} hours ago",
+      "ai_advice_generated_days_ago": "Generated {count} days ago",
     },
     "category": {
       "group_daily": "Daily",
@@ -960,6 +998,21 @@ class CodegenLoader extends AssetLoader {
       "note": "Ghi chú",
       "note_hint": "Ghi chú (không bắt buộc)",
       "more_details": "Thêm chi tiết",
+      "merchant_match_hint": "Giống lần trước: {label}",
+      "location_match_hint": "Bạn đang ở gần đây: {label}",
+      "quick_entry_label": "Nhập nhanh (AI)",
+      "quick_entry_hint": "vd: \"50k cà phê\" — gõ hoặc nhấn mic",
+      "quick_entry_parsed_result": "Đã nhận diện: {label}",
+      "quick_entry_could_not_parse": "Không hiểu được nội dung này — vui lòng nhập thủ công",
+      "quick_entry_cloud_consent_message": "Để hiểu nội dung này, ứng dụng cần gửi tới dịch vụ AI (Gemini). Tiếp tục?",
+      "quick_entry_cloud_consent_accept": "Đồng ý",
+      "quick_entry_cloud_consent_decline": "Để sau",
+      "quick_entry_daily_limit_reached": "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
+      "quick_entry_mic_permission_denied": "Cần quyền truy cập micro để nhập bằng giọng nói",
+      "quick_entry_photo_permission_denied": "Cần quyền truy cập máy ảnh/thư viện ảnh để quét hóa đơn",
+      "quick_entry_scan_receipt": "Quét hóa đơn",
+      "quick_entry_take_photo": "Chụp ảnh",
+      "quick_entry_choose_gallery": "Chọn từ thư viện",
       "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
       "validation": {
         "amount_required": "Số tiền phải lớn hơn 0!",
@@ -1000,6 +1053,8 @@ class CodegenLoader extends AssetLoader {
           "Đăng ký tài khoản để sao lưu dữ liệu lên Cloud, tránh mất dữ liệu khi đổi máy.",
       "loan_due_title": "Sắp đến hạn trả nợ",
       "loan_due_body": "Khoản vay '{name}' sắp đến hạn thanh toán vào {date}.",
+      "budget_near_limit_body": "Ngân sách \"{name}\" đã dùng 80%.",
+      "budget_over_body": "Ngân sách \"{name}\" đã vượt hạn mức.",
     },
     "tutorial": {
       "nav_title": "Thanh điều hướng",
@@ -1047,6 +1102,14 @@ class CodegenLoader extends AssetLoader {
       "fixed_price": "Giá cố định",
       "fixed_price_description":
           "Chi phí cố định hàng tháng (mức sống tối thiểu cần có), ảnh hưởng đến chỉ số an toàn với lối sống của bạn ở phần báo cáo",
+      "pacing_hint": "{name}: Còn {days} ngày · Nên chi ≤{amount}/ngày",
+      "penalty_warning": "{name} đã vượt {percent}%!",
+      "deficit_warning": "Thu ít hơn chi tháng này (thâm hụt {amount})",
+      "anomaly_hint":
+          "{count} khoản chi bất thường so với trung bình 3 tháng qua",
+      "insights_title": "Gợi ý & cảnh báo",
+      "insights_action_review": "Xem báo cáo",
+      "estimate_hint": "Gợi ý: {amount} (TB 3 tháng gần nhất)",
     },
     "reconciliation": {
       "title": "Đối soát",
@@ -1123,6 +1186,19 @@ class CodegenLoader extends AssetLoader {
       "filtering_wallet": "Đang lọc: {wallet}",
       "filter_by_wallet": "Lọc theo ví",
       "filter_all_wallets": "Tất cả các ví",
+      "ai_advice_title": "Gợi ý tài chính từ AI",
+      "ai_advice_empty_body":
+          "Nhận đánh giá chi tiêu tháng này và gợi ý cải thiện tài chính, được cá nhân hóa cho bạn.",
+      "ai_advice_generate_cta": "Tạo gợi ý",
+      "ai_advice_loading": "Đang tạo gợi ý...",
+      "ai_advice_generate_failed":
+          "Không thể tạo gợi ý lúc này, vui lòng thử lại.",
+      "ai_advice_daily_limit_reached":
+          "Bạn đã dùng hết lượt gợi ý AI hôm nay. Vui lòng thử lại vào ngày mai.",
+      "ai_advice_generated_just_now": "Vừa tạo xong",
+      "ai_advice_generated_minutes_ago": "Tạo {count} phút trước",
+      "ai_advice_generated_hours_ago": "Tạo {count} giờ trước",
+      "ai_advice_generated_days_ago": "Tạo {count} ngày trước",
     },
     "category": {
       "group_daily": "Hàng ngày",
@@ -1615,6 +1691,32 @@ abstract class CcLocaleKeys {
   static const transaction_note = 'transaction.note';
   static const transaction_note_hint = 'transaction.note_hint';
   static const transaction_more_details = 'transaction.more_details';
+  static const transaction_merchant_match_hint =
+      'transaction.merchant_match_hint';
+  static const transaction_location_match_hint =
+      'transaction.location_match_hint';
+  static const quick_entry_label = 'transaction.quick_entry_label';
+  static const quick_entry_hint = 'transaction.quick_entry_hint';
+  static const quick_entry_parsed_result =
+      'transaction.quick_entry_parsed_result';
+  static const quick_entry_could_not_parse =
+      'transaction.quick_entry_could_not_parse';
+  static const quick_entry_cloud_consent_message =
+      'transaction.quick_entry_cloud_consent_message';
+  static const quick_entry_cloud_consent_accept =
+      'transaction.quick_entry_cloud_consent_accept';
+  static const quick_entry_cloud_consent_decline =
+      'transaction.quick_entry_cloud_consent_decline';
+  static const quick_entry_daily_limit_reached =
+      'transaction.quick_entry_daily_limit_reached';
+  static const quick_entry_mic_permission_denied =
+      'transaction.quick_entry_mic_permission_denied';
+  static const quick_entry_photo_permission_denied =
+      'transaction.quick_entry_photo_permission_denied';
+  static const quick_entry_scan_receipt = 'transaction.quick_entry_scan_receipt';
+  static const quick_entry_take_photo = 'transaction.quick_entry_take_photo';
+  static const quick_entry_choose_gallery =
+      'transaction.quick_entry_choose_gallery';
   static const transaction_claims_in_progress =
       'transaction.claims_in_progress';
   static const transaction_validation_amount_required =
@@ -1639,6 +1741,7 @@ abstract class CcLocaleKeys {
       'transaction.validation.not_editable';
   static const transaction_validation_edit_window =
       'transaction.validation.edit_window';
+
   static const loan_list_title = 'loan.list_title';
   static const loan_status_outstanding = 'loan.status_outstanding';
   static const loan_status_settled = 'loan.status_settled';
@@ -1663,6 +1766,10 @@ abstract class CcLocaleKeys {
       'notification.cloud_backup_body';
   static const notification_loan_due_title = 'notification.loan_due_title';
   static const notification_loan_due_body = 'notification.loan_due_body';
+  static const notification_budget_near_limit_body =
+      'notification.budget_near_limit_body';
+  static const notification_budget_over_body =
+      'notification.budget_over_body';
   static const tutorial_nav_title = 'tutorial.nav_title';
   static const tutorial_nav_desc = 'tutorial.nav_desc';
   static const tutorial_transaction_title = 'tutorial.transaction_title';
@@ -1703,6 +1810,13 @@ abstract class CcLocaleKeys {
   static const budget_fixed_price = 'budget.fixed_price';
   static const budget_fixed_price_description =
       'budget.fixed_price_description';
+  static const budget_pacing_hint = 'budget.pacing_hint';
+  static const budget_penalty_warning = 'budget.penalty_warning';
+  static const budget_deficit_warning = 'budget.deficit_warning';
+  static const budget_anomaly_hint = 'budget.anomaly_hint';
+  static const budget_insights_title = 'budget.insights_title';
+  static const budget_insights_action_review = 'budget.insights_action_review';
+  static const budget_estimate_hint = 'budget.estimate_hint';
 
   static const reconciliation_title = 'reconciliation.title';
   static const reconciliation_empty = 'reconciliation.empty';
@@ -1777,6 +1891,22 @@ abstract class CcLocaleKeys {
   static const report_filter_by_wallet = 'report.filter_by_wallet';
   static const report_filter_all_wallets = 'report.filter_all_wallets';
   static const report_trend_week_label = 'report.trend_week_label';
+  static const report_ai_advice_title = 'report.ai_advice_title';
+  static const report_ai_advice_empty_body = 'report.ai_advice_empty_body';
+  static const report_ai_advice_generate_cta = 'report.ai_advice_generate_cta';
+  static const report_ai_advice_loading = 'report.ai_advice_loading';
+  static const report_ai_advice_generate_failed =
+      'report.ai_advice_generate_failed';
+  static const report_ai_advice_daily_limit_reached =
+      'report.ai_advice_daily_limit_reached';
+  static const report_ai_advice_generated_just_now =
+      'report.ai_advice_generated_just_now';
+  static const report_ai_advice_generated_minutes_ago =
+      'report.ai_advice_generated_minutes_ago';
+  static const report_ai_advice_generated_hours_ago =
+      'report.ai_advice_generated_hours_ago';
+  static const report_ai_advice_generated_days_ago =
+      'report.ai_advice_generated_days_ago';
 
   static const category_settings_title = 'category.settings_title';
   static const category_settings_subtitle = 'category.settings_subtitle';

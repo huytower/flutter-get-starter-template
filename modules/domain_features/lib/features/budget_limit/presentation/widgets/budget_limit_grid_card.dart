@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
@@ -35,8 +36,12 @@ class BudgetLimitGridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
     final iconColor = stats.color ?? scheme.primary;
-    final accent = stats.isOver ? scheme.error : iconColor;
-    final pct = (stats.progress * 100).round();
+    final accent = switch (stats.status) {
+      BudgetLimitStatus.over => scheme.error,
+      BudgetLimitStatus.nearLimit => PrjColors.warning,
+      BudgetLimitStatus.safe => iconColor,
+    };
+    final pct = (stats.percentUsed * 100).round();
 
     final iconData = stats.iconCode > 0
         ? iconDataFromCode(stats.iconCode, fontFamily: stats.iconFamily)
@@ -150,6 +155,7 @@ class BudgetLimitGridCard extends StatelessWidget {
 
   Widget _buildFooter(BuildContext context, int pct, Color accent) {
     final scheme = context.ccColorScheme;
+    final inPenalty = stats.penaltyTier != BudgetPenaltyTier.none;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -160,7 +166,10 @@ class BudgetLimitGridCard extends StatelessWidget {
             namedArgs: {'percent': '$pct'},
           ),
           textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            color: scheme.onSurfaceVariant.withOpacity(0.6),
+            color: inPenalty
+                ? scheme.error
+                : scheme.onSurfaceVariant.withOpacity(0.6),
+            fontWeight: inPenalty ? FontWeight.bold : null,
           ),
         ),
         BudgetLimitPieChart(
@@ -187,6 +196,18 @@ class BudgetLimitGridCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (stats.status != BudgetLimitStatus.safe) ...[
+            Icon(
+              stats.status == BudgetLimitStatus.over
+                  ? Icons.error_rounded
+                  : Icons.warning_amber_rounded,
+              color: stats.status == BudgetLimitStatus.over
+                  ? context.ccColorScheme.error
+                  : PrjColors.warning,
+              size: context.respIconSize(baseSize: 14),
+            ),
+            const CcSpaceXS(),
+          ],
           if (stats.budget.isFixedPrice) ...[
             Icon(
               Icons.bolt_rounded,

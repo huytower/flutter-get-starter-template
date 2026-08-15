@@ -72,6 +72,13 @@ class TransactionModel {
   @HiveField(18)
   final String? investmentWalletId;
 
+  /// Phase 3.5 location-based suggestion. See [TransactionEntity.lat]/[lng].
+  @HiveField(19)
+  final double? lat;
+
+  @HiveField(20)
+  final double? lng;
+
   TransactionModel({
     this.id,
     this.type,
@@ -92,6 +99,8 @@ class TransactionModel {
     this.lastModifiedAt,
     this.loanId,
     this.investmentWalletId,
+    this.lat,
+    this.lng,
   });
 
   TransactionModel copyWith({String? deletedAt}) => TransactionModel(
@@ -110,6 +119,8 @@ class TransactionModel {
     categoryIconFamily: categoryIconFamily,
     loanId: loanId,
     investmentWalletId: investmentWalletId,
+    lat: lat,
+    lng: lng,
   );
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) =>
@@ -134,6 +145,8 @@ class TransactionModel {
         categoryIconFamily: entity.categoryIconFamily,
         loanId: entity.loanId,
         investmentWalletId: entity.investmentWalletId,
+        lat: entity.lat,
+        lng: entity.lng,
       );
 
   TransactionEntity toEntity() => TransactionEntity(
@@ -152,6 +165,8 @@ class TransactionModel {
     categoryIconFamily: categoryIconFamily,
     loanId: loanId,
     investmentWalletId: investmentWalletId,
+    lat: lat,
+    lng: lng,
   );
 
   SyncMetadata get syncMetadata => SyncMetadata(
@@ -188,6 +203,8 @@ class TransactionModel {
       lastModifiedAt: metadata.lastModifiedAt,
       loanId: loanId,
       investmentWalletId: investmentWalletId,
+      lat: lat,
+      lng: lng,
     );
   }
 
@@ -207,6 +224,8 @@ class TransactionModel {
       'categoryIconFamily': categoryIconFamily,
       'loanId': loanId,
       'investmentWalletId': investmentWalletId,
+      'lat': lat,
+      'lng': lng,
     };
   }
 
@@ -239,6 +258,8 @@ class TransactionModel {
       lastModifiedAt: parsedModifiedAt,
       loanId: data['loanId'] as String?,
       investmentWalletId: data['investmentWalletId'] as String?,
+      lat: (data['lat'] as num?)?.toDouble(),
+      lng: (data['lng'] as num?)?.toDouble(),
     );
   }
 }

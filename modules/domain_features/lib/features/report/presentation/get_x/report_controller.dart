@@ -1,17 +1,23 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/helper/ai_advice_cache_datasource.dart';
+import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
+import '../../domain/entities/ai_advice_entity.dart';
 import '../../domain/entities/category_spending_entity.dart';
 import '../../domain/entities/financial_runway_entity.dart';
 import '../../domain/entities/trend_data_entity.dart';
 import '../../domain/report_range.dart';
+import '../../domain/usecases/generate_ai_financial_advice_usecase.dart';
 import '../../domain/usecases/get_category_spending_usecase.dart';
 import '../../domain/usecases/get_financial_runway_usecase.dart';
 import '../../domain/usecases/get_investment_trend_usecase.dart';
@@ -30,6 +36,8 @@ class ReportController extends CcGetController {
     this._getLoanTrend,
     this._walletRepository,
     this.userLevel,
+    this._generateAiAdvice,
+    this._aiAdviceCache,
   );
 
   final GetCategorySpendingUseCase _getCategorySpending;
@@ -38,6 +46,8 @@ class ReportController extends CcGetController {
   final GetInvestmentTrendUseCase _getInvestmentTrend;
   final GetLoanTrendUseCase _getLoanTrend;
   final WalletRepository _walletRepository;
+  final GenerateAiFinancialAdviceUseCase _generateAiAdvice;
+  final AiAdviceCacheDataSource _aiAdviceCache;
 
   /// Gates the Investment/Loan trend sections (see `report_page.dart`) —
   /// same LV2/LV3 unlock rule as every other Investment/Loan surface.
@@ -108,6 +118,13 @@ class ReportController extends CcGetController {
   final Rx<TrendDataEntity?> investmentTrend = Rx<TrendDataEntity?>(null);
   final Rx<TrendDataEntity?> loanTrend = Rx<TrendDataEntity?>(null);
 
+  /// Phase 3.8 — last generated (or cached) AI advice, if any. Separate
+  /// from [aiAdviceErrorKey] so a failed refresh never blanks out a still-
+  /// valid previously cached result.
+  final Rx<AiAdviceEntity?> aiAdvice = Rx<AiAdviceEntity?>(null);
+  final RxBool isGeneratingAdvice = false.obs;
+  final RxnString aiAdviceErrorKey = RxnString();
+
   int get rangeExpense => spending.fold<int>(0, (sum, s) => sum + s.amount);
 
   /// Merges the already period/wallet-filtered Income/Expense, Investment,
@@ -140,6 +157,91 @@ class ReportController extends CcGetController {
     super.onReady();
     load();
     loadWallets();
+    loadCachedAiAdvice();
+  }
+
+  /// Free, local-only read of the last cached AI advice — deliberately
+  /// separate from [load]'s `Future.wait` block so it's structurally
+  /// impossible for a future refactor of that auto-refreshing block to
+  /// accidentally wire in a cloud call on every Report page visit.
+  Future<void> loadCachedAiAdvice() async {
+    final text = await _aiAdviceCache.getCachedText();
+    final generatedAt = await _aiAdviceCache.getCachedGeneratedAt();
+    if (text != null && generatedAt != null) {
+      aiAdvice.value = AiAdviceEntity(text: text, generatedAt: generatedAt);
+    }
+  }
+
+  /// Phase 3.8 — the sole path that may escalate to the consent-gated,
+  /// daily-capped cloud call, so it only ever fires on an explicit
+  /// "Tạo gợi ý"/refresh tap, mirroring
+  /// `ExpenseFormController.submitQuickEntry`'s exact consent→cap→call
+  /// sequence. The [isClosed] guards after each `await` are a cheap
+  /// belt-and-braces against a disposed controller, but in practice
+  /// `ReportController` is `Get.put` by `CcGetView` with no matching
+  /// `Get.delete` anywhere and this app's `MaterialApp.router`/auto_route
+  /// setup never drives GetX's own route-based auto-dispose, so the same
+  /// instance is realistically reused for the whole session — if
+  /// [isGeneratingAdvice] ever got stuck at `true` (e.g. an unhandled
+  /// exception from one of the composed use cases), it would stay stuck
+  /// for the rest of the session on the Report tab, not reset on next
+  /// visit. No generation-counter machinery like
+  /// `ExpenseFormController`'s is needed here regardless, since nothing
+  /// re-`Get.put`s a second live instance over this one the way a tagged
+  /// `EditTransactionSheet` controller can.
+  Future<void> generateAiAdvice() async {
+    if (!userLevel.status.value.canUseAiSmartEntry) return;
+    // Reentrancy guard: checked-then-set with no `await` in between, so a
+    // fast double-tap can't fire two concurrent cloud calls / consume two
+    // daily-cap slots.
+    if (isGeneratingAdvice.value) return;
+    isGeneratingAdvice.value = true;
+    aiAdviceErrorKey.value = null;
+
+    final prefs = getIt<AiFallbackPreferenceDataSource>();
+    if (!await prefs.isConsentGiven()) {
+      final agreed = await _promptCloudConsent();
+      if (isClosed) return;
+      if (!agreed) {
+        isGeneratingAdvice.value = false;
+        return;
+      }
+      await prefs.setConsentGiven(true);
+    }
+
+    if (!await prefs.tryConsumeDailyCall()) {
+      if (isClosed) return;
+      isGeneratingAdvice.value = false;
+      aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_daily_limit_reached;
+      return;
+    }
+
+    final result = await _generateAiAdvice.call();
+    if (isClosed) return;
+    isGeneratingAdvice.value = false;
+
+    if (result == null) {
+      aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_generate_failed;
+      return;
+    }
+    aiAdvice.value = result;
+  }
+
+  Future<bool> _promptCloudConsent() async {
+    var agreed = false;
+    await CcDialogHelper.showConfirmationDialog(
+      desc: el.tr(CcLocaleKeys.quick_entry_cloud_consent_message),
+      agreeText: el.tr(CcLocaleKeys.quick_entry_cloud_consent_accept),
+      cancelText: el.tr(CcLocaleKeys.quick_entry_cloud_consent_decline),
+      isCancelBtnShown: true,
+      status: CcDialogStatus.INFO,
+      onTapConfirm: () {
+        agreed = true;
+        Get.back();
+      },
+      onTapCancel: () => Get.back(),
+    );
+    return agreed;
   }
 
   @override

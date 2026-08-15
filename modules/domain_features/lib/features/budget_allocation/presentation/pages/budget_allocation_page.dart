@@ -10,6 +10,7 @@ import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_hero_banner.dart';
+import '../widgets/budget_insights_section.dart';
 import '../widgets/budget_limit_preview_section.dart';
 import '../widgets/budget_wallets_section.dart';
 import '../widgets/investment_wallets_section.dart';
@@ -86,7 +87,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
               _buildInvestmentHeroBanner(context),
               _buildInvestmentWalletsSection(context),
               _buildLiabilityHeroBanner(context),
-              _buildLiabilityWalletsSection(context),
+              BudgetInsightsSection(controller: controller),
               const BudgetLimitPreviewSection(),
             ],
           ),

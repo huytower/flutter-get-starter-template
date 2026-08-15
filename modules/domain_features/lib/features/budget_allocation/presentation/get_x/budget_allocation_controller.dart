@@ -8,6 +8,8 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
+import '../../../budget_limit/domain/usecases/get_budget_insights_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
 import '../../../loan/domain/entities/loan_balance_entity.dart';
 import '../../../loan/domain/usecases/get_loan_balances_usecase.dart';
@@ -27,15 +29,21 @@ class BudgetAllocationController extends CcGetController {
     this.budgetLimitController,
     this._getLoanBalances,
     this.userLevel,
+    this._getBudgetInsights,
   );
 
   final WalletController walletController;
   final BudgetLimitController budgetLimitController;
   final GetLoanBalancesUseCase _getLoanBalances;
   final UserLevelController userLevel;
+  final GetBudgetInsightsUseCase _getBudgetInsights;
 
   final RxInt liabilityBalance = 0.obs;
   final RxList<LoanBalanceEntity> loanBalances = <LoanBalanceEntity>[].obs;
+
+  /// Phase 3.4 "AI Actions" — null while loading/on error, in which case the
+  /// insights panel simply doesn't render (see [BudgetInsightsEntity.hasAnything]).
+  final Rx<BudgetInsightsEntity?> insights = Rx<BudgetInsightsEntity?>(null);
 
   void navigateToReconcile(BuildContext context) {
     context.router.push(const ReconcileRoute());
@@ -182,6 +190,7 @@ class BudgetAllocationController extends CcGetController {
         budgetLimitController.loadBudgets(),
         loadLiabilities(),
         userLevel.refresh(),
+        loadInsights(),
       ]);
 
       // Aggregate status: if either fails, we could show error
@@ -202,6 +211,15 @@ class BudgetAllocationController extends CcGetController {
       errorMessage.value = e.toString();
       layoutStatus.value = CcLayoutStatus.error;
     }
+  }
+
+  /// Phase 3.4 budget insights (pacing/penalty/deficit/anomaly warnings) for
+  /// the allocation page's insights panel. Failures are swallowed like
+  /// [loadLiabilities] — an insights fetch error shouldn't blank out the
+  /// wallets/budgets sections too.
+  Future<void> loadInsights() async {
+    final result = await _getBudgetInsights.call();
+    result.when((success) => insights.value = success, (_) {});
   }
 
   /// Sums outstanding borrow-direction loans for the "Nợ phải trả" banner.

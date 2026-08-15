@@ -5,15 +5,57 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../get_x/category_settings_controller.dart';
 import '../widgets/category_group_section.dart';
 
-class CategorySettingsPage extends CcGetView<CategorySettingsController> {
+class CategorySettingsPage extends StatefulWidget {
   const CategorySettingsPage({super.key});
 
   @override
-  PreferredSizeWidget buildAppBar(BuildContext context) {
+  State<CategorySettingsPage> createState() => _CategorySettingsPageState();
+}
+
+class _CategorySettingsPageState extends State<CategorySettingsPage> {
+  @override
+  void initState() {
+    super.initState();
+    // CategorySettingsController is a permanent GetX singleton (see
+    // CcGetView.build()) whose onInit()/load() only fires the first time
+    // this page is ever opened in the app session. Categories toggled
+    // elsewhere (e.g. ProfileController.pickBirthYear's age-based defaults)
+    // persist to Hive correctly but never reach this already-loaded
+    // instance, so reload explicitly on every subsequent visit. Get.put()
+    // itself already triggers onInit() -> load() on first registration, so
+    // only the already-registered case needs an explicit call here.
+    if (!Get.isRegistered<CategorySettingsController>()) {
+      Get.put(getIt<CategorySettingsController>());
+    } else {
+      Get.find<CategorySettingsController>().load();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => const _CategorySettingsView();
+}
+
+class _CategorySettingsView extends CcGetView<CategorySettingsController> {
+  const _CategorySettingsView();
+
+  @override
+  bool get enableAppBar => false;
+
+  @override
+  Widget buildContent(BuildContext context) {
+    return Scaffold(
+      backgroundColor: context.ccColorScheme.surface,
+      appBar: _buildAppBar(context),
+      body: _buildBody(context),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
     return buildDomainGradientAppBar(
       context,
       leading: CcIconButton.bouncing(
@@ -32,16 +74,6 @@ class CategorySettingsPage extends CcGetView<CategorySettingsController> {
         ),
       ),
     );
-  }
-
-  @override
-  Widget buildContent(BuildContext context) {
-    return _buildBody(context);
-  }
-
-  @override
-  Widget onPageBodyWrapper(BuildContext context, Widget body) {
-    return ColoredBox(color: context.ccColorScheme.surface, child: body);
   }
 
   Widget _buildBody(BuildContext context) {

@@ -273,6 +273,21 @@
     "note": "Ghi chú",
     "note_hint": "Ghi chú (không bắt buộc)",
     "more_details": "Thêm chi tiết",
+    "merchant_match_hint": "Giống lần trước: {label}",
+    "location_match_hint": "Bạn đang ở gần đây: {label}",
+    "quick_entry_label": "Nhập nhanh (AI)",
+    "quick_entry_hint": "vd: \"50k cà phê\" — gõ hoặc nhấn mic",
+    "quick_entry_parsed_result": "Đã nhận diện: {label}",
+    "quick_entry_could_not_parse": "Không hiểu được nội dung này — vui lòng nhập thủ công",
+    "quick_entry_cloud_consent_message": "Để hiểu nội dung này, ứng dụng cần gửi tới dịch vụ AI (Gemini). Tiếp tục?",
+    "quick_entry_cloud_consent_accept": "Đồng ý",
+    "quick_entry_cloud_consent_decline": "Để sau",
+    "quick_entry_daily_limit_reached": "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
+    "quick_entry_mic_permission_denied": "Cần quyền truy cập micro để nhập bằng giọng nói",
+    "quick_entry_photo_permission_denied": "Cần quyền truy cập máy ảnh/thư viện ảnh để quét hóa đơn",
+    "quick_entry_scan_receipt": "Quét hóa đơn",
+    "quick_entry_take_photo": "Chụp ảnh",
+    "quick_entry_choose_gallery": "Chọn từ thư viện",
     "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
     "validation": {
       "amount_required": "Số tiền phải lớn hơn 0!",
@@ -308,7 +323,9 @@
     "cloud_backup_title": "Bảo vệ dữ liệu của bạn",
     "cloud_backup_body": "Đăng ký tài khoản để sao lưu dữ liệu lên Cloud, tránh mất dữ liệu khi đổi máy.",
     "loan_due_title": "Sắp đến hạn trả nợ",
-    "loan_due_body": "Khoản vay '{name}' sắp đến hạn thanh toán vào {date}."
+    "loan_due_body": "Khoản vay '{name}' sắp đến hạn thanh toán vào {date}.",
+    "budget_near_limit_body": "Ngân sách \"{name}\" đã dùng 80%.",
+    "budget_over_body": "Ngân sách \"{name}\" đã vượt hạn mức."
   },
   "tutorial": {
     "nav_title": "Thanh điều hướng",
@@ -350,7 +367,14 @@
     "customize_category": "Tuỳ chỉnh danh mục",
     "percent_used": "{percent}% đã dùng",
     "fixed_price": "Giá cố định",
-    "fixed_price_description": "Chi phí cố định hàng tháng (mức sống tối thiểu cần có), ảnh hưởng đến chỉ số an toàn với lối sống của bạn ở phần báo cáo"
+    "fixed_price_description": "Chi phí cố định hàng tháng (mức sống tối thiểu cần có), ảnh hưởng đến chỉ số an toàn với lối sống của bạn ở phần báo cáo",
+    "pacing_hint": "{name}: Còn {days} ngày · Nên chi ≤{amount}/ngày",
+    "penalty_warning": "{name} đã vượt {percent}%!",
+    "deficit_warning": "Thu ít hơn chi tháng này (thâm hụt {amount})",
+    "anomaly_hint": "{count} khoản chi bất thường so với trung bình 3 tháng qua",
+    "insights_title": "Gợi ý & cảnh báo",
+    "insights_action_review": "Xem báo cáo",
+    "estimate_hint": "Gợi ý: {amount} (TB 3 tháng gần nhất)"
   },
   "reconciliation": {
     "title": "Đối soát",
@@ -420,7 +444,17 @@
     "filtering_wallet": "Đang lọc: {wallet}",
     "filter_by_wallet": "Lọc theo ví",
     "filter_all_wallets": "Tất cả các ví",
-    "trend_week_label": "Tuần {number}"
+    "trend_week_label": "Tuần {number}",
+    "ai_advice_title": "Gợi ý tài chính từ AI",
+    "ai_advice_empty_body": "Nhận đánh giá chi tiêu tháng này và gợi ý cải thiện tài chính, được cá nhân hóa cho bạn.",
+    "ai_advice_generate_cta": "Tạo gợi ý",
+    "ai_advice_loading": "Đang tạo gợi ý...",
+    "ai_advice_generate_failed": "Không thể tạo gợi ý lúc này, vui lòng thử lại.",
+    "ai_advice_daily_limit_reached": "Bạn đã dùng hết lượt gợi ý AI hôm nay. Vui lòng thử lại vào ngày mai.",
+    "ai_advice_generated_just_now": "Vừa tạo xong",
+    "ai_advice_generated_minutes_ago": "Tạo {count} phút trước",
+    "ai_advice_generated_hours_ago": "Tạo {count} giờ trước",
+    "ai_advice_generated_days_ago": "Tạo {count} ngày trước"
   },
   "category": {
     "group_daily": "Hàng ngày",

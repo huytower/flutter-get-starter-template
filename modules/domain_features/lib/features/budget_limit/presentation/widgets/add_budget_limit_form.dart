@@ -6,11 +6,13 @@ import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
+import '../../../../core/helper/money_format_helper.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../../domain/usecases/create_budget_limit_usecase.dart';
+import '../../domain/usecases/get_category_average_monthly_spend_usecase.dart';
 import '../../domain/usecases/update_budget_limit_usecase.dart';
 import '../get_x/budget_limit_controller.dart';
 import 'budget_limit_category_selector.dart';
@@ -46,6 +48,12 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
   String? _selectedCategoryId;
   ScrollController? _categoryScrollController;
   bool _isFixedPrice = false;
+
+  /// Phase 3.4 "Smart Budget Setup" estimate — average of the selected
+  /// category's last 3 months of actual spend, offered as a tappable
+  /// suggestion for the limit. Null hides the suggestion (no history, or
+  /// already applied/dismissed).
+  int? _estimatedLimit;
 
   bool get _isEdit => widget.editTarget != null;
 
@@ -107,7 +115,24 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
         }
       });
       _scrollToSelectedCategory(enabled);
+      if (_selectedCategoryId != null) _loadEstimate(_selectedCategoryId!);
     }, (_) {});
+  }
+
+  Future<void> _loadEstimate(String categoryId) async {
+    final result = await getIt<GetCategoryAverageMonthlySpendUseCase>().call(
+      categoryId,
+    );
+    if (!mounted) return;
+    final estimate = result.tryGetSuccess() ?? 0;
+    setState(() => _estimatedLimit = estimate > 0 ? estimate : null);
+  }
+
+  void _applyEstimate() {
+    setState(() {
+      _limitStr = _estimatedLimit.toString();
+      _estimatedLimit = null;
+    });
   }
 
   void _scrollToSelectedCategory(List<CategoryEntity> categories) {
@@ -262,6 +287,63 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
     );
   }
 
+  Widget _buildEstimateSuggestion(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: context.respDim(8)),
+      child: CcInkWell(
+        onTap: _applyEstimate,
+        borderRadius: context.brMd,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.respDim(10),
+            vertical: context.respDim(8),
+          ),
+          decoration: BoxDecoration(
+            color: scheme.primary.withOpacity(0.08),
+            borderRadius: context.brMd,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.auto_awesome,
+                size: context.respIconSize(baseSize: 16),
+                color: scheme.primary,
+              ),
+              const CcSpaceXS(),
+              Expanded(
+                child: CcText(
+                  el.tr(
+                    CcLocaleKeys.budget_estimate_hint,
+                    namedArgs: {
+                      'amount': formatVndWithSymbol(_estimatedLimit ?? 0),
+                    },
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                    color: scheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              CcInkWell(
+                onTap: () => setState(() => _estimatedLimit = null),
+                borderRadius: context.brSm,
+                child: Icon(
+                  Icons.close,
+                  size: context.respIconSize(baseSize: 16),
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -318,15 +400,20 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
                       setState(() {
                         _selectedCategoryId = cat.id;
                         _nameController.text = el.tr(cat.nameKey);
+                        _estimatedLimit = null;
                         if (_showKeypad) _showKeypad = false;
                       });
                       FocusScope.of(context).unfocus();
+                      _loadEstimate(cat.id);
                     },
                     onScrollControllerCreated: (controller) =>
                         _categoryScrollController = controller,
                   ),
                 ],
-                const CcSpaceXS(),
+                if (!_isEdit && _estimatedLimit != null) ...[
+                  const CcSpaceSM(),
+                  _buildEstimateSuggestion(context),
+                ],
                 if (_limitLocked)
                   const BudgetLimitLockNotice()
                 else
