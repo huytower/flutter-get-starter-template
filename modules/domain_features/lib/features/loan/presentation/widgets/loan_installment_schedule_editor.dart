@@ -77,31 +77,42 @@ class LoanInstallmentScheduleEditor extends StatelessWidget {
                 final isEditingThis =
                     controller.editingInstallmentIndex.value == index;
                 final amount = draft.amount.value;
+                final isLimitReached =
+                    controller.installmentsTotal == controller.principalAmount;
 
-                return Container(
-                  height: context.respDim(48),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.respPadding(12),
-                  ),
-                  decoration: BoxDecoration(
-                    color: context.ccColorScheme.onSurface.withAlpha(10),
-                    borderRadius: context.brMd,
-                    border: isEditingThis
-                        ? Border.all(color: activeColor, width: 2)
-                        : null,
-                  ),
-                  alignment: Alignment.centerLeft,
-                  child: CcText(
-                    amount == 0
-                        ? '0'
-                        : TransactionFormHelpers.formatAmount(
-                            amount.toString(),
-                          ),
-                    textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: amount > 0
-                          ? activeColor
-                          : context.ccColorScheme.onSurfaceVariant,
+                return AnimatedScale(
+                  scale: isLimitReached ? 1.1 : 1.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Container(
+                    height: context.respDim(48),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.respPadding(12),
+                    ),
+                    decoration: BoxDecoration(
+                      color: context.ccColorScheme.onSurface.withAlpha(10),
+                      borderRadius: context.brMd,
+                      border: isEditingThis
+                          ? Border.all(color: activeColor, width: 2)
+                          : isLimitReached
+                          ? Border.all(
+                              color: activeColor.withAlpha(100),
+                              width: 1,
+                            )
+                          : null,
+                    ),
+                    alignment: Alignment.centerLeft,
+                    child: CcText(
+                      amount == 0
+                          ? '0'
+                          : TransactionFormHelpers.formatAmount(
+                              amount.toString(),
+                            ),
+                      textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: amount > 0
+                            ? activeColor
+                            : context.ccColorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 );
@@ -122,20 +133,25 @@ class LoanInstallmentScheduleEditor extends StatelessWidget {
   }
 
   Widget _buildAddButton(BuildContext context) {
-    return TextButton.icon(
-      onPressed: controller.addInstallmentPeriod,
-      icon: Icon(
-        Icons.add,
-        size: context.respIconSize(baseSize: 18),
-        color: activeColor,
-      ),
-      label: CcText(
-        el.tr(CcLocaleKeys.transaction_loan_add_period),
-        textStyle: context.ccTextTheme.labelMedium?.copyWith(
-          color: activeColor,
-          fontWeight: FontWeight.bold,
+    return Obx(() {
+      final isEnabled = controller.canAddInstallment;
+      final color = isEnabled ? activeColor : context.ccColorScheme.outline;
+
+      return TextButton.icon(
+        onPressed: isEnabled ? controller.addInstallmentPeriod : null,
+        icon: Icon(
+          Icons.add,
+          size: context.respIconSize(baseSize: 18),
+          color: color,
         ),
-      ),
-    );
+        label: CcText(
+          el.tr(CcLocaleKeys.transaction_loan_add_period),
+          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+            color: color,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    });
   }
 }

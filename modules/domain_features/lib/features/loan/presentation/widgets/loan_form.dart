@@ -105,6 +105,7 @@ class LoanForm extends StatelessWidget {
           ],
           activeColor: accentColor,
           autoSelectFirst: true,
+          initialSelectedCategoryId: controller.selectedCategory.value?.id,
           title: controller.direction.value == LoanDirection.borrow
               ? el.tr(CcLocaleKeys.transaction_loan_category_borrow_label)
               : el.tr(CcLocaleKeys.transaction_loan_category_lend_label),

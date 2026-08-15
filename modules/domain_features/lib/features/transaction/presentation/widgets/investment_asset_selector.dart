@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -41,6 +42,27 @@ class InvestmentAssetSelector extends StatelessWidget {
           // Capture items list to track its changes in this scope.
           final items = controller.mergedItems;
 
+          if (items.isEmpty) {
+            return Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(
+                vertical: context.respDim(20),
+                horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+              ),
+              child: CcText(
+                el.tr(CcLocaleKeys.transaction_no_investment_items_hint),
+                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                  color: context.ccColorScheme.onSurfaceVariant.withOpacity(
+                    0.6,
+                  ),
+                  fontStyle: FontStyle.italic,
+                ),
+                align: Alignment.center,
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
+
           return HorizontalFadeScrollView(
             height: context.respDim(90),
             builder: (scrollController) => ListView.separated(
@@ -63,6 +85,20 @@ class InvestmentAssetSelector extends StatelessWidget {
                       icon: iconDataFromCode(item.iconCode),
                       isSelected: isSelected,
                       onTap: () => controller.selectAsset(item),
+                    );
+                  } else if (item is CategoryEntity) {
+                    final isSelected =
+                        controller.selectedCategory.value?.id == item.id &&
+                        controller.isAddingNewItem.value;
+                    return _buildItem(
+                      context,
+                      label: el.tr(item.nameKey),
+                      icon: iconDataFromCode(
+                        item.iconCode,
+                        fontFamily: item.iconFamily,
+                      ),
+                      isSelected: isSelected,
+                      onTap: () => controller.selectCategory(item),
                     );
                   }
                   return const SizedBox.shrink();

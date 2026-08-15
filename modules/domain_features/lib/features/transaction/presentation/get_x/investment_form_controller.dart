@@ -79,8 +79,7 @@ class InvestmentFormController extends TransactionFormController {
     isLoadingMerged.value = false;
   }
 
-  /// Refreshes the list of investment assets. Synchronized with the
-  /// Investment List page (only shows existing positions).
+  /// Refreshes the list of investment assets and categories.
   Future<void> _recomputeMergedItems() async {
     final parentWallets = Get.find<TransactionController>().wallets;
     final assets = parentWallets
@@ -95,13 +94,30 @@ class InvestmentFormController extends TransactionFormController {
       return b.updatedAt.compareTo(a.updatedAt);
     });
 
-    mergedItems.assignAll(assets);
+    final List<dynamic> items = [...assets];
+
+    // If contributing, also show investment categories to allow new items
+    if (direction.value == InvestmentDirection.contribute) {
+      final catResult = await _getCategories();
+      catResult.when((categories) {
+        final investCats = categories
+            .where((c) => c.isEnabled && c.type == CategoryType.investment)
+            .toList();
+        items.addAll(investCats);
+      }, (_) {});
+    }
+
+    mergedItems.assignAll(items);
 
     // Auto-select first if nothing selected
-    if (selectedInvestmentWalletId.value == null && mergedItems.isNotEmpty) {
+    if (selectedInvestmentWalletId.value == null &&
+        selectedCategory.value == null &&
+        mergedItems.isNotEmpty) {
       final first = mergedItems.first;
       if (first is WalletEntity) {
         selectAsset(first);
+      } else if (first is CategoryEntity) {
+        selectCategory(first);
       }
     }
   }
@@ -114,7 +130,9 @@ class InvestmentFormController extends TransactionFormController {
     if (wallet.categoryId != null) {
       final catResult = await _getCategories();
       catResult.when((categories) {
-        final cat = categories.firstWhereOrNull((c) => c.id == wallet.categoryId);
+        final cat = categories.firstWhereOrNull(
+          (c) => c.id == wallet.categoryId,
+        );
         if (cat != null) {
           selectedCategory.value = cat;
         }
@@ -135,6 +153,7 @@ class InvestmentFormController extends TransactionFormController {
       // Free tier: attach to category name
       isAddingNewItem.value = true;
       newItemName.value = el.tr(category.nameKey);
+      newItemNameController.text = newItemName.value;
     }
   }
 
@@ -152,6 +171,7 @@ class InvestmentFormController extends TransactionFormController {
   void setDirection(InvestmentDirection value) {
     if (direction.value == value) return;
     direction.value = value;
+    _recomputeMergedItems();
     if (value == InvestmentDirection.returnProfit) {
       // Logic for return profit: must pick existing asset if available
       if (isAddingNewItem.value || selectedInvestmentWalletId.value == null) {

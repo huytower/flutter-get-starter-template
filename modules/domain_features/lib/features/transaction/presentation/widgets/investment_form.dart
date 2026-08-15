@@ -94,6 +94,18 @@ class InvestmentForm extends StatelessWidget {
           const CcSpaceLG(),
           _buildWalletSection(context, controller, accentColor),
           const CcSpaceLG(),
+          Obx(() {
+            if (controller.isAddingNewItem.value) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildNewItemNameField(context, controller, accentColor),
+                  const CcSpaceLG(),
+                ],
+              );
+            }
+            return const SizedBox.shrink();
+          }),
           TransactionAdditionalDetailsSection(
             isExpanded: controller.showMoreDetails.value,
             onToggle: controller.toggleMoreDetails,
@@ -130,18 +142,37 @@ class InvestmentForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CcFormLabel(text: el.tr(CcLocaleKeys.wallet_investment_name)),
+        CcFormLabel(text: el.tr(CcLocaleKeys.transaction_investment_item)),
         const CcSpaceXS(),
         TextField(
           controller: controller.newItemNameController,
+          enabled: controller.isVip.value,
           onChanged: controller.setNewItemName,
+          style: context.ccTextTheme.bodyLarge,
           decoration: InputDecoration(
-            hintText: el.tr(CcLocaleKeys.wallet_investment_name_hint),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
+            hintText: el.tr(CcLocaleKeys.transaction_new_investment_item_hint),
+            border: OutlineInputBorder(borderRadius: context.brMd),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: context.respDim(12),
+              vertical: context.respDim(10),
             ),
+            suffixIcon: !controller.isVip.value
+                ? Tooltip(
+                    message: el.tr(
+                      CcLocaleKeys.transaction_investment_item_vip_locked,
+                      namedArgs: {
+                        'name': el.tr(
+                          controller.selectedCategory.value?.nameKey ?? '',
+                        ),
+                      },
+                    ),
+                    child: Icon(
+                      Icons.lock_outline,
+                      size: 16,
+                      color: context.ccColorScheme.outline,
+                    ),
+                  )
+                : null,
           ),
         ),
       ],

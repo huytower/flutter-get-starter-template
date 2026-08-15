@@ -57,34 +57,10 @@ class CategorySelectionSection extends StatelessWidget {
     // Set controller properties
     controller.type = type;
     controller.groupIds = groupIds;
-
-    // Initialize with initial selection if provided
-    if (initialSelectedCategoryId != null) {
-      controller.preselectCategory(initialSelectedCategoryId!);
-    }
-
-    // Handle initial selection callback
-    if (initialSelectedCategoryId != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final preselected = controller.getCategoryById(
-          initialSelectedCategoryId!,
-        );
-        if (preselected != null) {
-          onCategorySelected?.call(preselected);
-        }
-      });
-    }
-
-    // Auto-select first if requested
-    if (autoSelectFirst) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        controller.autoSelectFirst();
-        final selected = controller.getSelectedCategory();
-        if (selected != null) {
-          onCategorySelected?.call(selected);
-        }
-      });
-    }
+    controller.autoSelectFirstEnabled = autoSelectFirst;
+    controller.initialId = initialSelectedCategoryId;
+    controller.onSelected = onCategorySelected;
+    controller.refreshSelection();
 
     return Obx(() {
       if (controller.isLoading.value) {

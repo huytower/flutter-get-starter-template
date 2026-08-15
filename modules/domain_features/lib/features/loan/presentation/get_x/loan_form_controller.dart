@@ -57,6 +57,14 @@ class LoanFormController extends TransactionFormController {
   /// [_loadVipStatus] resolves.
   final RxBool isVip = false.obs;
 
+  int get principalAmount => int.tryParse(amountStr.value) ?? 0;
+
+  int get installmentsTotal =>
+      installmentDrafts.fold(0, (sum, d) => sum + d.amount.value);
+
+  bool get canAddInstallment =>
+      principalAmount > 0 && installmentsTotal < principalAmount;
+
   @override
   void onInit() {
     super.onInit();
@@ -79,6 +87,8 @@ class LoanFormController extends TransactionFormController {
     if (counterpartyName.value.trim().isEmpty) return false;
     if (repaymentMethod.value == LoanRepaymentMethod.installment) {
       if (installmentDrafts.isEmpty) return false;
+      // Total installments must equal principal amount
+      if (installmentsTotal != principalAmount) return false;
       return installmentDrafts.every((d) => d.amount.value > 0);
     }
     return finalDueDate.value != null;
@@ -106,6 +116,7 @@ class LoanFormController extends TransactionFormController {
     // no custom counterparty name until VIP.
     if (!isVip.value) {
       counterpartyName.value = el.tr(category.nameKey);
+      counterpartyController.text = counterpartyName.value;
     }
   }
 
@@ -151,6 +162,8 @@ class LoanFormController extends TransactionFormController {
   }
 
   void addInstallmentPeriod() {
+    if (!canAddInstallment) return;
+
     final DateTime lastDate;
     if (installmentDrafts.isNotEmpty) {
       lastDate = installmentDrafts.last.dueDate.value;
@@ -160,9 +173,12 @@ class LoanFormController extends TransactionFormController {
     }
 
     // Logic: if the first installment has an amount, use it as default for new rows
-    final defaultAmount = installmentDrafts.isNotEmpty
+    // but cap it by the remaining balance
+    final remaining = principalAmount - installmentsTotal;
+    var defaultAmount = installmentDrafts.isNotEmpty
         ? installmentDrafts.first.amount.value
         : 0;
+    if (defaultAmount > remaining) defaultAmount = remaining;
 
     // Use the same day in the next month (e.g. 12/09 -> 12/10)
     final nextDate = DateTime(lastDate.year, lastDate.month + 1, lastDate.day);
@@ -193,7 +209,16 @@ class LoanFormController extends TransactionFormController {
       } else {
         current += key;
       }
-      draft.amount.value = int.tryParse(current) ?? 0;
+
+      final newValue = int.tryParse(current) ?? 0;
+      // Cap at remaining principal if needed? Or just let it exceed and
+      // show error in canSubmit?
+      // The user said "current is wrong" and "can not add new period".
+      // Let's cap the entry to ensure total doesn't exceed principal.
+      final otherInstallmentsTotal = installmentsTotal - draft.amount.value;
+      if (newValue + otherInstallmentsTotal <= principalAmount) {
+        draft.amount.value = newValue;
+      }
     } else {
       super.handleKeyPress(key);
     }
@@ -232,7 +257,14 @@ class LoanFormController extends TransactionFormController {
     if (editingInstallmentIndex.value != null) {
       final index = editingInstallmentIndex.value!;
       if (index >= installmentDrafts.length) return;
-      installmentDrafts[index].amount.value = value;
+      final draft = installmentDrafts[index];
+      final otherInstallmentsTotal = installmentsTotal - draft.amount.value;
+
+      if (value + otherInstallmentsTotal <= principalAmount) {
+        draft.amount.value = value;
+      } else {
+        draft.amount.value = principalAmount - otherInstallmentsTotal;
+      }
     } else {
       amountStr.value = value.toString();
     }
