@@ -53,6 +53,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
     // whose onInit only fires once ever — so this is the sole place that
     // refreshes the location suggestion on every screen-open (onInit
     // deliberately does not also call it; see ExpenseFormController.onInit).
+    // Same reasoning applies to the Phase 3.2 time-based suggestion, which
+    // also needs "now" re-evaluated on every revisit, not just once.
+    controller.refreshTimeBasedSuggestion();
     controller.refreshLocationSuggestion();
   }
 
@@ -117,9 +120,13 @@ class _ExpenseFormState extends State<ExpenseForm> {
       key: ValueKey(controller.categoryKey.value),
       activeColor: accentColor,
       autoSelectFirst: !controller.isEditing,
+      // pendingPrefillCategoryId must win over editingTransaction?.categoryId:
+      // categoryId is a non-nullable String, so while editing it would always
+      // short-circuit the `??` chain and silently discard a just-applied
+      // merchant/location/quick-entry suggestion's category.
       initialSelectedCategoryId:
-          controller.editingTransaction?.categoryId ??
           controller.pendingPrefillCategoryId.value ??
+          controller.editingTransaction?.categoryId ??
           controller.timeBasedSuggestedCategoryId,
       onCategorySelected: controller.setCategory,
     );

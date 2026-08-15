@@ -282,6 +282,7 @@
     "quick_entry_cloud_consent_decline": "Not now",
     "quick_entry_daily_limit_reached": "Daily AI quick-entry limit reached — please fill in manually",
     "quick_entry_mic_permission_denied": "Microphone access is needed for voice entry",
+    "quick_entry_photo_permission_denied": "Camera/photo access is needed to scan a receipt",
     "quick_entry_scan_receipt": "Scan a receipt",
     "quick_entry_take_photo": "Take photo",
     "quick_entry_choose_gallery": "Choose from gallery",

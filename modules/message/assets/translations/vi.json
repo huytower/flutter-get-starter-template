@@ -282,6 +282,7 @@
     "quick_entry_cloud_consent_decline": "Để sau",
     "quick_entry_daily_limit_reached": "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
     "quick_entry_mic_permission_denied": "Cần quyền truy cập micro để nhập bằng giọng nói",
+    "quick_entry_photo_permission_denied": "Cần quyền truy cập máy ảnh/thư viện ảnh để quét hóa đơn",
     "quick_entry_scan_receipt": "Quét hóa đơn",
     "quick_entry_take_photo": "Chụp ảnh",
     "quick_entry_choose_gallery": "Chọn từ thư viện",

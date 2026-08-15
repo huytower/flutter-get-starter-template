@@ -62,10 +62,10 @@ class GetBudgetAnomaliesUseCase {
 
     final anomalies = <BudgetAnomalyEntity>[];
     for (final stat in stats) {
-      final prevSpend = prevExpenses
+      final categoryPrevExpenses = prevExpenses
           .where((t) => t.categoryId == stat.budget.categoryId)
-          .fold<int>(0, (sum, t) => sum + t.amount);
-      final avgPrev = prevSpend / 3;
+          .toList();
+      final avgPrev = _averageMonthlySpend(categoryPrevExpenses, startOfMonth);
 
       if (isAnomalousSpend(stat.spent, avgPrev)) {
         anomalies.add(
@@ -78,5 +78,30 @@ class GetBudgetAnomaliesUseCase {
       }
     }
     return Success(anomalies);
+  }
+
+  /// Averages [expenses] over however many of the preceding 3 calendar
+  /// months actually contain data for this category, not a flat 3 — a
+  /// category with e.g. only 1 of the last 3 months populated would
+  /// otherwise get an artificially deflated baseline (total / 3 instead of
+  /// total / 1), causing normal spend to be flagged as a false "spike".
+  /// Same clamping idea as [GetCategoryAverageMonthlySpendUseCase]'s
+  /// average, computed independently here since that use case's window
+  /// includes the current partial month while this one deliberately
+  /// excludes it (see [prevExpenses] above).
+  double _averageMonthlySpend(
+    List<TransactionEntity> expenses,
+    DateTime startOfMonth,
+  ) {
+    if (expenses.isEmpty) return 0;
+    final total = expenses.fold<int>(0, (sum, t) => sum + t.amount);
+    final earliest = expenses
+        .map((t) => t.date)
+        .reduce((a, b) => a.isBefore(b) ? a : b);
+    final monthsOfData =
+        ((startOfMonth.year - earliest.year) * 12 +
+                (startOfMonth.month - earliest.month))
+            .clamp(1, 3);
+    return total / monthsOfData;
   }
 }

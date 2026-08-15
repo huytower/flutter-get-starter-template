@@ -309,6 +309,7 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_cloud_consent_decline": "Not now",
       "quick_entry_daily_limit_reached": "Daily AI quick-entry limit reached — please fill in manually",
       "quick_entry_mic_permission_denied": "Microphone access is needed for voice entry",
+      "quick_entry_photo_permission_denied": "Camera/photo access is needed to scan a receipt",
       "quick_entry_scan_receipt": "Scan a receipt",
       "quick_entry_take_photo": "Take photo",
       "quick_entry_choose_gallery": "Choose from gallery",
@@ -1004,6 +1005,7 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_cloud_consent_decline": "Để sau",
       "quick_entry_daily_limit_reached": "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
       "quick_entry_mic_permission_denied": "Cần quyền truy cập micro để nhập bằng giọng nói",
+      "quick_entry_photo_permission_denied": "Cần quyền truy cập máy ảnh/thư viện ảnh để quét hóa đơn",
       "quick_entry_scan_receipt": "Quét hóa đơn",
       "quick_entry_take_photo": "Chụp ảnh",
       "quick_entry_choose_gallery": "Chọn từ thư viện",
@@ -1703,6 +1705,8 @@ abstract class CcLocaleKeys {
       'transaction.quick_entry_daily_limit_reached';
   static const quick_entry_mic_permission_denied =
       'transaction.quick_entry_mic_permission_denied';
+  static const quick_entry_photo_permission_denied =
+      'transaction.quick_entry_photo_permission_denied';
   static const quick_entry_scan_receipt = 'transaction.quick_entry_scan_receipt';
   static const quick_entry_take_photo = 'transaction.quick_entry_take_photo';
   static const quick_entry_choose_gallery =

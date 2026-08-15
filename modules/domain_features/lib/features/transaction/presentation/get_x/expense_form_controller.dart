@@ -44,8 +44,8 @@ class ExpenseFormController extends TransactionFormController {
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 
   /// Phase 3.2 time-based suggestion (see [suggestExpenseCategoryIdForHour])
-  /// — recomputed on every fresh blank form (init + after each reset) so it
-  /// always reflects "now", not just whenever this singleton was created.
+  /// — recomputed by [refreshTimeBasedSuggestion] so it always reflects
+  /// "now", not just whenever this singleton was created or last reset.
   /// Lowest priority in `_buildCategorySection`'s fallback chain — a merchant
   /// match, a location match, or an in-progress edit always wins.
   String? timeBasedSuggestedCategoryId;
@@ -70,6 +70,12 @@ class ExpenseFormController extends TransactionFormController {
   /// was unavailable/denied or the gate/lookup hasn't resolved yet.
   double? _currentLat;
   double? _currentLng;
+
+  /// The last GPS-derived nearby-expense match computed this screen-open,
+  /// kept regardless of whether it's currently suppressed by a merchant
+  /// match — so it can be re-surfaced once that merchant match clears
+  /// instead of being permanently lost (see [_publishLocationMatch]).
+  TransactionEntity? _lastLocationMatch;
 
   List<TransactionEntity> _recentExpenses = [];
   Timer? _merchantMatchDebounce;
@@ -117,9 +123,7 @@ class ExpenseFormController extends TransactionFormController {
   @override
   void onInit() {
     super.onInit();
-    timeBasedSuggestedCategoryId = suggestExpenseCategoryIdForHour(
-      DateTime.now().hour,
-    );
+    refreshTimeBasedSuggestion();
     noteController.addListener(_onNoteChanged);
     quickEntryController.addListener(_onQuickEntryTextChanged);
     _loadExpenseCategoriesForQuickEntry();
@@ -162,9 +166,7 @@ class ExpenseFormController extends TransactionFormController {
     // disabled until that abandoned call happens to finish.
     _quickEntryGeneration++;
     isParsingQuickEntry.value = false;
-    timeBasedSuggestedCategoryId = suggestExpenseCategoryIdForHour(
-      DateTime.now().hour,
-    );
+    refreshTimeBasedSuggestion();
     categoryKey.value++;
     // The just-submitted transaction should be matchable for the very next
     // entry in this same session.
@@ -173,6 +175,19 @@ class ExpenseFormController extends TransactionFormController {
 
   void setCategory(CategoryEntity category) {
     selectedCategory.value = category;
+  }
+
+  /// Recomputes [timeBasedSuggestedCategoryId] for "now" — call whenever the
+  /// Expense form becomes visible again (e.g. the user switches to another
+  /// bottom-nav tab and comes back), same "persistent singleton, onInit only
+  /// fires once" reason as [refreshLocationSuggestion]. Unlike that method
+  /// this is synchronous and cheap, so it's safe to call directly from
+  /// `initState` before the first build rather than needing an awaited
+  /// refresh.
+  void refreshTimeBasedSuggestion() {
+    timeBasedSuggestedCategoryId = suggestExpenseCategoryIdForHour(
+      DateTime.now().hour,
+    );
   }
 
   Future<void> _loadRecentExpenses() async {
@@ -206,10 +221,15 @@ class ExpenseFormController extends TransactionFormController {
       candidates: candidates,
     );
     merchantMatchSuggestion.value = match;
+    // A merchant match here supersedes any cached location match; typing
+    // past one (e.g. clearing the note) should let it reappear rather than
+    // stay lost for the rest of the screen-open.
+    _publishLocationMatch();
   }
 
   void dismissMerchantMatch() {
     merchantMatchSuggestion.value = null;
+    _publishLocationMatch();
   }
 
   /// Pre-fills category/amount/wallet from the fuzzy-matched past expense —
@@ -238,6 +258,7 @@ class ExpenseFormController extends TransactionFormController {
   /// first app-session open, silently matching against an empty list.
   Future<void> refreshLocationSuggestion() async {
     locationMatchSuggestion.value = null;
+    _lastLocationMatch = null;
     _currentLat = null;
     _currentLng = null;
     await _loadRecentExpenses();
@@ -278,15 +299,24 @@ class ExpenseFormController extends TransactionFormController {
     final candidates = _recentExpenses
         .where((t) => t.lat != null && t.lng != null)
         .toList();
-    final match = findNearbyExpenseMatch(
+    // Always cache the computed match, even when a merchant match is
+    // currently suppressing it — otherwise the location match is discarded
+    // outright (this runs at most twice per screen-open) instead of being
+    // re-offered once the merchant match clears (see _publishLocationMatch).
+    _lastLocationMatch = findNearbyExpenseMatch(
       lat: lat,
       lng: lng,
       candidates: candidates,
     );
-    // A merchant match (typed after the location lookup resolved) is a more
-    // specific signal — don't clobber it.
+    _publishLocationMatch();
+  }
+
+  /// A merchant match is a more specific signal than "you're near a place
+  /// you've spent before" — shows the cached location match only when no
+  /// merchant match is currently active.
+  void _publishLocationMatch() {
     if (merchantMatchSuggestion.value == null) {
-      locationMatchSuggestion.value = match;
+      locationMatchSuggestion.value = _lastLocationMatch;
     }
   }
 
@@ -305,6 +335,7 @@ class ExpenseFormController extends TransactionFormController {
     pendingPrefillCategoryId.value = match.categoryId;
     categoryKey.value++;
     locationMatchSuggestion.value = null;
+    _lastLocationMatch = null;
   }
 
   Future<void> _loadExpenseCategoriesForQuickEntry() async {
@@ -483,12 +514,20 @@ class ExpenseFormController extends TransactionFormController {
       if (isCurrentGeneration()) isParsingQuickEntry.value = false;
     }
 
-    final picked = await CcReceiptScanHelper.pickReceiptImage(
+    final pickResult = await CcReceiptScanHelper.pickReceiptImage(
       fromCamera: fromCamera,
     );
     if (!isCurrentGeneration()) return;
+    final picked = pickResult.image;
     if (picked == null) {
       resetParsingIfCurrent();
+      // A denied permission gets explicit feedback (with a path to fix it
+      // via Settings); a plain cancel/unreadable-file stays silent, same as
+      // every other quick-entry failure mode.
+      if (pickResult.permissionDenied) {
+        quickEntryErrorKey.value =
+            CcLocaleKeys.quick_entry_photo_permission_denied;
+      }
       return;
     }
 
