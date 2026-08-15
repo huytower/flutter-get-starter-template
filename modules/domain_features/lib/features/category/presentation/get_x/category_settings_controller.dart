@@ -48,6 +48,8 @@ class CategorySettingsController extends CcGetController {
   static final Rx<bool> onCategoryDefaultsApplied = false.obs;
   static final RxInt onCategoriesChanged = 0.obs;
 
+  final Set<String> _inFlightToggleIds = {};
+
   /// Get recommended categories for the current age group
   List<String> getRecommendedCategoryKeys() {
     if (profileSettings.value.hasCustomizedCategories) return [];
@@ -118,6 +120,15 @@ class CategorySettingsController extends CcGetController {
 
   Future<void> load() async {
     layoutStatus.value = CcLayoutStatus.loading;
+    // Drop any optimistic-toggle overrides from a prior visit — this
+    // controller is a permanent singleton, so without this a stale `pending`
+    // entry would mask fresh isEnabled values fetched below forever (e.g.
+    // categories toggled elsewhere, like ProfileController's age-based
+    // defaults, would never show as changed on this page). Entries with a
+    // toggle still in flight are kept so a concurrent load() (e.g. from
+    // revisiting this page mid-write) can't visually revert an optimistic
+    // update before its write actually lands.
+    pending.removeWhere((id, _) => !_inFlightToggleIds.contains(id));
     final groupsResult = await _getGroups();
     final categoriesResult = await _getCategories();
 
@@ -233,8 +244,10 @@ class CategorySettingsController extends CcGetController {
 
     pending[cat.id] = next;
     pending.refresh();
+    _inFlightToggleIds.add(cat.id);
 
     final result = await _toggleEnabled(cat.id, next);
+    _inFlightToggleIds.remove(cat.id);
     if (result.isError()) {
       // Revert UI on error
       pending[cat.id] = current;

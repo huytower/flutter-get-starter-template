@@ -686,6 +686,21 @@ class CategorySeed {
   static bool isYoungAdult(int? birthYear) =>
       ageGroup(birthYear) == AgeGroup.youngAdult;
 
+  /// Whether [birthYear] indicates the user is 30+ years old. Per product
+  /// requirement, Family/Children defaults apply by age alone regardless of
+  /// whether the user actually has children.
+  static bool qualifiesForFamilyDefaults(int? birthYear) {
+    if (birthYear == null) return false;
+    return DateTime.now().year - birthYear >= 30;
+  }
+
+  /// Group 14 (Gia đình & Con cái) `nameKey`s, default-on for 30+ users.
+  static const List<String> familyCategoryKeys = [
+    CcLocaleKeys.category_milk_formula,
+    CcLocaleKeys.category_diapers,
+    CcLocaleKeys.category_baby_toys,
+  ];
+
   /// Default-on expense category `nameKey`s per life stage. Categories outside
   /// these sets are left untouched.
   static const Map<AgeGroup, List<String>> defaultExpenseCategoryKeys = {
