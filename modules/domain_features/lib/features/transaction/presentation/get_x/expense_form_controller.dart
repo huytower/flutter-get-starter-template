@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../guideline/guideline_controller.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/budget_over_limit_helper.dart';
@@ -19,6 +18,7 @@ import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../../core/helper/time_based_suggestion_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
@@ -53,8 +53,9 @@ class ExpenseFormController extends TransactionFormController {
   /// Phase 3.3 "AI Autofill" — the best fuzzy match (see
   /// [findBestMerchantMatch]) against the note text typed so far, offered as
   /// a one-tap suggestion. Null hides the suggestion affordance.
-  final Rx<TransactionEntity?> merchantMatchSuggestion =
-      Rx<TransactionEntity?>(null);
+  final Rx<TransactionEntity?> merchantMatchSuggestion = Rx<TransactionEntity?>(
+    null,
+  );
 
   /// Phase 3.5 location-based suggestion — the nearest past expense to the
   /// GPS fix taken when this form opened (see [findNearbyExpenseMatch]).
@@ -62,8 +63,9 @@ class ExpenseFormController extends TransactionFormController {
   /// specific signal than "you're near a place you've spent before") — only
   /// shown in the UI when the merchant match is empty. Set once per
   /// screen-open, not recomputed on every keystroke like the merchant match.
-  final Rx<TransactionEntity?> locationMatchSuggestion =
-      Rx<TransactionEntity?>(null);
+  final Rx<TransactionEntity?> locationMatchSuggestion = Rx<TransactionEntity?>(
+    null,
+  );
 
   /// GPS fix captured for this screen-open, so [submitForm] can persist it on
   /// the new transaction for future location matching. Null when location
@@ -341,7 +343,8 @@ class ExpenseFormController extends TransactionFormController {
   Future<void> _loadExpenseCategoriesForQuickEntry() async {
     final result = await getIt<GetCategoriesUseCase>().call();
     _expenseCategoriesForQuickEntry =
-        result.tryGetSuccess()
+        result
+            .tryGetSuccess()
             ?.where((c) => c.isEnabled && c.type == CategoryType.expense)
             .toList() ??
         [];
@@ -389,7 +392,7 @@ class ExpenseFormController extends TransactionFormController {
   /// the sole path that may escalate to the consent-gated, daily-capped
   /// cloud fallback, so a network call only ever fires on a deliberate user
   /// action, never silently while someone is still mid-typing.
-  Future<void> submitQuickEntry() async {
+  Future<void> submitQuickEntry(BuildContext context) async {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
     // Reentrancy guard: without this, a fast double-submit (double-tap
     // Enter while the first call is still awaiting the cloud round trip, or
@@ -426,7 +429,7 @@ class ExpenseFormController extends TransactionFormController {
 
     final prefs = getIt<AiFallbackPreferenceDataSource>();
     if (!await prefs.isConsentGiven()) {
-      final agreed = await _promptCloudConsent();
+      final agreed = await _promptCloudConsent(context);
       if (!isCurrentGeneration()) return;
       if (!agreed) {
         resetParsingIfCurrent();
@@ -506,7 +509,10 @@ class ExpenseFormController extends TransactionFormController {
   ///
   /// Assumes the caller already holds the [isParsingQuickEntry] lock via a
   /// successful [beginQuickEntryImage] call.
-  Future<void> submitQuickEntryFromImage({required bool fromCamera}) async {
+  Future<void> submitQuickEntryFromImage(
+    BuildContext context, {
+    required bool fromCamera,
+  }) async {
     final generation = _quickEntryGeneration;
     bool isCurrentGeneration() =>
         !_isDisposed && generation == _quickEntryGeneration;
@@ -546,7 +552,7 @@ class ExpenseFormController extends TransactionFormController {
 
     final prefs = getIt<AiFallbackPreferenceDataSource>();
     if (!await prefs.isConsentGiven()) {
-      final agreed = await _promptCloudConsent();
+      final agreed = await _promptCloudConsent(context);
       if (!isCurrentGeneration()) return;
       if (!agreed) {
         resetParsingIfCurrent();
@@ -579,24 +585,24 @@ class ExpenseFormController extends TransactionFormController {
     quickEntrySuggestion.value = cloudResult;
   }
 
-  Future<bool> _promptCloudConsent() async {
+  Future<bool> _promptCloudConsent(BuildContext context) async {
     var agreed = false;
-    await CcDialogHelper.showConfirmationDialog(
-      desc: el.tr(CcLocaleKeys.quick_entry_cloud_consent_message),
-      agreeText: el.tr(CcLocaleKeys.quick_entry_cloud_consent_accept),
+    await CcDialogHelper.showMessageBottomSheet(
+      context: context,
+      title: el.tr(CcLocaleKeys.quick_entry_cloud_consent_accept),
+      content: el.tr(CcLocaleKeys.quick_entry_cloud_consent_message),
+      okText: el.tr(CcLocaleKeys.quick_entry_cloud_consent_accept),
       cancelText: el.tr(CcLocaleKeys.quick_entry_cloud_consent_decline),
-      isCancelBtnShown: true,
-      status: CcDialogStatus.INFO,
-      onTapConfirm: () {
+      isExistOK: false,
+      onTapOK: () {
         agreed = true;
         Get.back();
       },
-      onTapCancel: () => Get.back(),
     );
     return agreed;
   }
 
-  Future<void> toggleVoiceQuickEntry() async {
+  Future<void> toggleVoiceQuickEntry(BuildContext context) async {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
     if (isListeningQuickEntry.value) {
       await CcSpeechHelper.stopListening();
@@ -615,7 +621,7 @@ class ExpenseFormController extends TransactionFormController {
         );
         if (isFinal) {
           isListeningQuickEntry.value = false;
-          submitQuickEntry();
+          submitQuickEntry(context);
         }
       },
       // The recognizer can stop itself (e.g. a silence timeout) without
@@ -698,8 +704,9 @@ class ExpenseFormController extends TransactionFormController {
 
         BudgetOverLimitEntity? overLimit;
         if (categoryId.isNotEmpty) {
-          final overResult = await getIt<GetBudgetOverLimitCountUseCase>()
-              .call(categoryId);
+          final overResult = await getIt<GetBudgetOverLimitCountUseCase>().call(
+            categoryId,
+          );
           overLimit = overResult.tryGetSuccess();
         }
         // Phase 3.4 threshold notifications — new expenses only; an edit's

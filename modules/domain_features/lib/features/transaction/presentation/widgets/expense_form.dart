@@ -10,8 +10,8 @@ import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
-import '../../domain/entities/transaction_entity.dart';
 import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
+import '../../domain/entities/transaction_entity.dart';
 import '../get_x/expense_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
@@ -212,8 +212,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
           : null,
       errorText: errorKey != null ? el.tr(errorKey) : null,
       activeColor: accentColor,
-      onSubmitted: (_) => controller.submitQuickEntry(),
-      onMicTap: controller.toggleVoiceQuickEntry,
+      onSubmitted: (_) => controller.submitQuickEntry(context),
+      onMicTap: () => controller.toggleVoiceQuickEntry(context),
       onScanTap: () => _pickReceiptSource(context, controller),
       onApplySuggestion: () {
         if (suggestion != null) controller.applyQuickEntryParse(suggestion);
@@ -235,7 +235,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
       controller.cancelQuickEntryImage();
       return;
     }
-    controller.submitQuickEntryFromImage(fromCamera: fromCamera);
+    controller.submitQuickEntryFromImage(context, fromCamera: fromCamera);
   }
 
   /// AI Smart Entry suggestion row — Phase 3.3 note-based merchant match
