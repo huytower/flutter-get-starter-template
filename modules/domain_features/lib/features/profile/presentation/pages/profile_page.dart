@@ -355,18 +355,30 @@ class ProfilePage extends CcGetView<ProfileController> {
             textAlign: TextAlign.center,
             align: Alignment.center,
           ),
+          const CcSpaceMD(),
           _buildContactBox(
             context,
             role: el.tr(CcLocaleKeys.app_role_hr),
             name: el.tr(CcLocaleKeys.app_author_hr_name),
             email: el.tr(CcLocaleKeys.app_author_hr_email),
           ),
+          const CcSpaceSM(),
           _buildContactBox(
             context,
             role: el.tr(CcLocaleKeys.app_role_tech),
             name: el.tr(CcLocaleKeys.app_author_tech_name),
             email: el.tr(CcLocaleKeys.app_author_tech_email),
           ),
+          const CcSpaceSM(),
+          CcText(
+            el.tr(CcLocaleKeys.app_address),
+            textStyle: textTheme.labelSmall?.copyWith(
+              color: scheme.onSurfaceVariant.withOpacity(0.5),
+            ),
+            textAlign: TextAlign.center,
+            align: Alignment.center,
+          ),
+          const CcSpaceMD(),
           Obx(
             () => CcText(
               'v${controller.appVersion.value}',

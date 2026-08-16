@@ -30,6 +30,7 @@ class CodegenLoader extends AssetLoader {
       "author_hr_email": "kien.1000doanhnhan@gmail.com",
       "author_tech_name": "Huy Tran",
       "author_tech_email": "huytd46.fpt@gmail.com",
+      "address": "Vinhome Grand Park, District 9",
       "loading": "Loading...",
       "error": {
         "general": "An error occurred",
@@ -739,6 +740,7 @@ class CodegenLoader extends AssetLoader {
       "author_hr_email": "kien.1000doanhnhan@gmail.com",
       "author_tech_name": "Huy Tran",
       "author_tech_email": "huytd46.fpt@gmail.com",
+      "address": "Vinhome Grand Park, Quận 9",
       "loading": "Đang tải...",
       "error": {
         "general": "Đã xảy ra lỗi",
@@ -1452,6 +1454,7 @@ abstract class CcLocaleKeys {
   static const app_author_hr_email = 'app.author_hr_email';
   static const app_author_tech_name = 'app.author_tech_name';
   static const app_author_tech_email = 'app.author_tech_email';
+  static const app_address = 'app.address';
   static const app_loading = 'app.loading';
   static const app_error_general = 'app.error.general';
   static const app_error_retry = 'app.error.retry';
