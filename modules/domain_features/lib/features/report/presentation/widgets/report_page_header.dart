@@ -24,6 +24,7 @@ class ReportPageHeader extends StatelessWidget {
     // base height — the header keeps a correct responsive ratio across screen
     // sizes via flex-based sections instead of a width-scaled respDim() magic
     // number. The Column children resolve against this bounded height.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -118,6 +119,7 @@ class ReportPageHeader extends StatelessWidget {
       final isActive = name != null;
       final label = name ?? el.tr(CcLocaleKeys.report_filter_all_wallets);
       final scheme = context.ccColorScheme;
+      final isDark = Theme.of(context).brightness == Brightness.dark;
 
       return Tooltip(
         message: el.tr(CcLocaleKeys.report_filter_by_wallet),
@@ -129,34 +131,51 @@ class ReportPageHeader extends StatelessWidget {
               horizontal: context.respPadding(CcPaddingParams.SPACE_XS),
               vertical: context.respPadding(CcPaddingParams.SPACE_XS),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: context.respDim(72)),
-                  // Right-aligned so any unused width from the cap opens up
-                  // on the left (toward the flexible title) instead of
-                  // leaving a gap between the label and the filter icon.
-                  child: CcText(
-                    label,
-                    align: Alignment.centerRight,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      color: scheme.onPrimary.withValues(alpha: 0.85),
-                      fontWeight: isActive
-                          ? CcTypographyParams.bold
-                          : CcTypographyParams.regular,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                boxShadow: isDark
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: Theme.of(
+                            context,
+                          ).shadowColor.withValues(alpha: 0.10),
+                          blurRadius: 20,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: context.respDim(72)),
+                    // Right-aligned so any unused width from the cap opens up
+                    // on the left (toward the flexible title) instead of
+                    // leaving a gap between the label and the filter icon.
+                    child: CcText(
+                      label,
+                      align: Alignment.centerRight,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                        color: scheme.onPrimary.withValues(alpha: 0.85),
+                        fontWeight: isActive
+                            ? CcTypographyParams.bold
+                            : CcTypographyParams.regular,
+                      ),
                     ),
                   ),
-                ),
-                const CcSpaceXS(),
-                Icon(
-                  isActive ? Icons.filter_alt_rounded : Icons.filter_alt_outlined,
-                  color: scheme.onPrimary,
-                  size: context.respIconSize(baseSize: 22),
-                ),
-              ],
+                  const CcSpaceXS(),
+                  Icon(
+                    isActive
+                        ? Icons.filter_alt_rounded
+                        : Icons.filter_alt_outlined,
+                    color: scheme.onPrimary,
+                    size: context.respIconSize(baseSize: 22),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

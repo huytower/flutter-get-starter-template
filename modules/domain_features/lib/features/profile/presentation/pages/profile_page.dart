@@ -337,18 +337,9 @@ class ProfilePage extends CcGetView<ProfileController> {
       onLongPress: () => controller.openCrashLogViewer(context),
       child: Column(
         children: [
-          CcText(
-            'Sổ Sách Xịn',
-            textStyle: textTheme.titleLarge?.copyWith(
-              color: scheme.onBackground,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-            align: Alignment.center,
-          ),
           const CcSpaceSM(),
           CcText(
-            'Quản lý thu chi, đầu tư, vay nợ theo nguyên lý kế toán đơn, hướng đến tự do tài chính',
+            el.tr(CcLocaleKeys.app_slogan),
             textStyle: textTheme.bodyMedium?.copyWith(
               color: scheme.onSurfaceVariant.withOpacity(0.8),
             ),
@@ -357,26 +348,25 @@ class ProfilePage extends CcGetView<ProfileController> {
           ),
           const CcSpaceMD(),
           CcText(
-            '© 2026 Sổ Sách Xịn · Made by',
+            el.tr(CcLocaleKeys.app_copyright),
             textStyle: textTheme.bodySmall?.copyWith(
               color: scheme.onSurfaceVariant.withOpacity(0.6),
             ),
             textAlign: TextAlign.center,
             align: Alignment.center,
           ),
-          const CcSpaceMD(),
           _buildContactBox(
             context,
-            name: 'Huy Tran',
-            email: 'huytd46.fpt@gmail.com',
+            role: el.tr(CcLocaleKeys.app_role_hr),
+            name: el.tr(CcLocaleKeys.app_author_hr_name),
+            email: el.tr(CcLocaleKeys.app_author_hr_email),
           ),
-          const CcSpaceSM(),
           _buildContactBox(
             context,
-            name: 'Kien Nguyen',
-            email: 'kien.1000doanhnhan@gmail.com',
+            role: el.tr(CcLocaleKeys.app_role_tech),
+            name: el.tr(CcLocaleKeys.app_author_tech_name),
+            email: el.tr(CcLocaleKeys.app_author_tech_email),
           ),
-          const CcSpaceMD(),
           Obx(
             () => CcText(
               'v${controller.appVersion.value}',
@@ -395,49 +385,54 @@ class ProfilePage extends CcGetView<ProfileController> {
 
   Widget _buildContactBox(
     BuildContext context, {
+    required String role,
     required String name,
     required String email,
   }) {
     final scheme = context.ccColorScheme;
     final textTheme = context.ccTextTheme;
+    final baseStyle = textTheme.labelSmall ?? const TextStyle();
 
     return InkWell(
       onTap: () {
         Clipboard.setData(ClipboardData(text: email));
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
-          message: 'Copied email: $email',
+          message: el.tr(
+            CcLocaleKeys.app_copied_email,
+            namedArgs: {'email': email},
+          ),
         );
       },
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          border: Border.all(color: scheme.onSurfaceVariant.withOpacity(0.2)),
-          borderRadius: BorderRadius.circular(12),
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 4),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: RichText(
-                text: TextSpan(
-                  text: '$name · ',
-                  style: textTheme.bodyMedium?.copyWith(
+            Flexible(
+              child: Text.rich(
+                TextSpan(
+                  text: '$role: $name · ',
+                  style: baseStyle.copyWith(
                     color: scheme.onSurface,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w100,
                   ),
                   children: [
                     TextSpan(
                       text: email,
-                      style: textTheme.bodyMedium?.copyWith(
+                      style: baseStyle.copyWith(
                         color: scheme.primary,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w300,
                       ),
                     ),
                   ],
                 ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            const CcSpaceXS(),
             Icon(
               Icons.copy_rounded,
               size: 16,

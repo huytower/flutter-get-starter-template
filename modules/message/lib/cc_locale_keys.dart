@@ -19,7 +19,17 @@ class CodegenLoader extends AssetLoader {
       "name": "Starter App",
       "version": "Version {version}",
       "description": "Lean and efficient personal finance management",
+      "slogan":
+          "Manage income, expenses, investment, debt according to single-entry accounting principle, towards financial freedom",
+      "copyright": "© 2026 So Sach Xin · Made by",
+      "copied_email": "Copied email: {email}",
       "author": "by Huy Tower",
+      "role_tech": "Tech",
+      "role_hr": "HR",
+      "author_hr_name": "Kien Nguyen",
+      "author_hr_email": "kien.1000doanhnhan@gmail.com",
+      "author_tech_name": "Huy Tran",
+      "author_tech_email": "huytd46.fpt@gmail.com",
       "loading": "Loading...",
       "error": {
         "general": "An error occurred",
@@ -305,13 +315,18 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_label": "Quick entry (AI)",
       "quick_entry_hint": "e.g. \"50k coffee\" — type or tap the mic",
       "quick_entry_parsed_result": "Got it: {label}",
-      "quick_entry_could_not_parse": "Couldn't understand that — please fill in manually",
-      "quick_entry_cloud_consent_message": "To understand this, we'd send it to an AI service (Gemini). Continue?",
+      "quick_entry_could_not_parse":
+          "Couldn't understand that — please fill in manually",
+      "quick_entry_cloud_consent_message":
+          "To understand this, we'd send it to an AI service (Gemini). Continue?",
       "quick_entry_cloud_consent_accept": "Allow",
       "quick_entry_cloud_consent_decline": "Not now",
-      "quick_entry_daily_limit_reached": "Daily AI quick-entry limit reached — please fill in manually",
-      "quick_entry_mic_permission_denied": "Microphone access is needed for voice entry",
-      "quick_entry_photo_permission_denied": "Camera/photo access is needed to scan a receipt",
+      "quick_entry_daily_limit_reached":
+          "Daily AI quick-entry limit reached — please fill in manually",
+      "quick_entry_mic_permission_denied":
+          "Microphone access is needed for voice entry",
+      "quick_entry_photo_permission_denied":
+          "Camera/photo access is needed to scan a receipt",
       "quick_entry_scan_receipt": "Scan a receipt",
       "quick_entry_take_photo": "Take photo",
       "quick_entry_choose_gallery": "Choose from gallery",
@@ -409,7 +424,8 @@ class CodegenLoader extends AssetLoader {
       "penalty_warning": "{name} exceeded {percent}%!",
       "deficit_warning":
           "Spending more than income this month (deficit {amount})",
-      "anomaly_hint": "{count} unusual expense(s) vs. the last 3 months' average",
+      "anomaly_hint":
+          "{count} unusual expense(s) vs. the last 3 months' average",
       "insights_title": "Insights & warnings",
       "insights_action_review": "View report",
       "estimate_hint": "Suggested: {amount} (last 3-month avg)",
@@ -712,7 +728,17 @@ class CodegenLoader extends AssetLoader {
       "name": "Ứng dụng mẫu",
       "version": "Phiên bản {version}",
       "description": "Quản lý tài chính cá nhân tinh gọn và hiệu quả",
+      "slogan":
+          "Quản lý thu chi, đầu tư, vay nợ theo nguyên lý kế toán đơn, hướng đến tự do tài chính",
+      "copyright": "© 2026 Sổ Sách Xịn · Made by",
+      "copied_email": "Đã sao chép email: {email}",
       "author": "bởi Huy Tower",
+      "role_tech": "Kỹ thuật",
+      "role_hr": "HR",
+      "author_hr_name": "Kien Nguyen",
+      "author_hr_email": "kien.1000doanhnhan@gmail.com",
+      "author_tech_name": "Huy Tran",
+      "author_tech_email": "huytd46.fpt@gmail.com",
       "loading": "Đang tải...",
       "error": {
         "general": "Đã xảy ra lỗi",
@@ -1003,13 +1029,18 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_label": "Nhập nhanh (AI)",
       "quick_entry_hint": "vd: \"50k cà phê\" — gõ hoặc nhấn mic",
       "quick_entry_parsed_result": "Đã nhận diện: {label}",
-      "quick_entry_could_not_parse": "Không hiểu được nội dung này — vui lòng nhập thủ công",
-      "quick_entry_cloud_consent_message": "Để hiểu nội dung này, ứng dụng cần gửi tới dịch vụ AI (Gemini). Tiếp tục?",
+      "quick_entry_could_not_parse":
+          "Không hiểu được nội dung này — vui lòng nhập thủ công",
+      "quick_entry_cloud_consent_message":
+          "Để hiểu nội dung này, ứng dụng cần gửi tới dịch vụ AI (Gemini). Tiếp tục?",
       "quick_entry_cloud_consent_accept": "Đồng ý",
       "quick_entry_cloud_consent_decline": "Để sau",
-      "quick_entry_daily_limit_reached": "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
-      "quick_entry_mic_permission_denied": "Cần quyền truy cập micro để nhập bằng giọng nói",
-      "quick_entry_photo_permission_denied": "Cần quyền truy cập máy ảnh/thư viện ảnh để quét hóa đơn",
+      "quick_entry_daily_limit_reached":
+          "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
+      "quick_entry_mic_permission_denied":
+          "Cần quyền truy cập micro để nhập bằng giọng nói",
+      "quick_entry_photo_permission_denied":
+          "Cần quyền truy cập máy ảnh/thư viện ảnh để quét hóa đơn",
       "quick_entry_scan_receipt": "Quét hóa đơn",
       "quick_entry_take_photo": "Chụp ảnh",
       "quick_entry_choose_gallery": "Chọn từ thư viện",
@@ -1411,7 +1442,16 @@ abstract class CcLocaleKeys {
   static const app_name = 'app.name';
   static const app_version = 'app.version';
   static const app_description = 'app.description';
+  static const app_slogan = 'app.slogan';
+  static const app_copyright = 'app.copyright';
+  static const app_copied_email = 'app.copied_email';
   static const app_author = 'app.author';
+  static const app_role_tech = 'app.role_tech';
+  static const app_role_hr = 'app.role_hr';
+  static const app_author_hr_name = 'app.author_hr_name';
+  static const app_author_hr_email = 'app.author_hr_email';
+  static const app_author_tech_name = 'app.author_tech_name';
+  static const app_author_tech_email = 'app.author_tech_email';
   static const app_loading = 'app.loading';
   static const app_error_general = 'app.error.general';
   static const app_error_retry = 'app.error.retry';
@@ -1713,7 +1753,8 @@ abstract class CcLocaleKeys {
       'transaction.quick_entry_mic_permission_denied';
   static const quick_entry_photo_permission_denied =
       'transaction.quick_entry_photo_permission_denied';
-  static const quick_entry_scan_receipt = 'transaction.quick_entry_scan_receipt';
+  static const quick_entry_scan_receipt =
+      'transaction.quick_entry_scan_receipt';
   static const quick_entry_take_photo = 'transaction.quick_entry_take_photo';
   static const quick_entry_choose_gallery =
       'transaction.quick_entry_choose_gallery';
@@ -1768,8 +1809,7 @@ abstract class CcLocaleKeys {
   static const notification_loan_due_body = 'notification.loan_due_body';
   static const notification_budget_near_limit_body =
       'notification.budget_near_limit_body';
-  static const notification_budget_over_body =
-      'notification.budget_over_body';
+  static const notification_budget_over_body = 'notification.budget_over_body';
   static const tutorial_nav_title = 'tutorial.nav_title';
   static const tutorial_nav_desc = 'tutorial.nav_desc';
   static const tutorial_transaction_title = 'tutorial.transaction_title';
