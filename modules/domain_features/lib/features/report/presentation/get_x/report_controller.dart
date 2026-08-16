@@ -10,6 +10,7 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/ai_advice_cache_datasource.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
+import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/entities/ai_advice_entity.dart';
@@ -23,7 +24,7 @@ import '../../domain/usecases/get_financial_runway_usecase.dart';
 import '../../domain/usecases/get_investment_trend_usecase.dart';
 import '../../domain/usecases/get_loan_trend_usecase.dart';
 import '../../domain/usecases/get_trend_data_usecase.dart';
-import '../../../user_level/presentation/get_x/user_level_controller.dart';
+import '../../../transaction/presentation/widgets/cloud_consent_sheet.dart';
 import '../widgets/wallet_filter_picker_sheet.dart';
 
 @injectable
@@ -189,7 +190,7 @@ class ReportController extends CcGetController {
   /// `ExpenseFormController`'s is needed here regardless, since nothing
   /// re-`Get.put`s a second live instance over this one the way a tagged
   /// `EditTransactionSheet` controller can.
-  Future<void> generateAiAdvice() async {
+  Future<void> generateAiAdvice(BuildContext context) async {
     if (!userLevel.status.value.canUseAiSmartEntry) return;
     // Reentrancy guard: checked-then-set with no `await` in between, so a
     // fast double-tap can't fire two concurrent cloud calls / consume two
@@ -200,7 +201,7 @@ class ReportController extends CcGetController {
 
     final prefs = getIt<AiFallbackPreferenceDataSource>();
     if (!await prefs.isConsentGiven()) {
-      final agreed = await _promptCloudConsent();
+      final agreed = await _promptCloudConsent(context);
       if (isClosed) return;
       if (!agreed) {
         isGeneratingAdvice.value = false;
@@ -212,7 +213,8 @@ class ReportController extends CcGetController {
     if (!await prefs.tryConsumeDailyCall()) {
       if (isClosed) return;
       isGeneratingAdvice.value = false;
-      aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_daily_limit_reached;
+      aiAdviceErrorKey.value =
+          CcLocaleKeys.report_ai_advice_daily_limit_reached;
       return;
     }
 
@@ -227,21 +229,9 @@ class ReportController extends CcGetController {
     aiAdvice.value = result;
   }
 
-  Future<bool> _promptCloudConsent() async {
-    var agreed = false;
-    await CcDialogHelper.showConfirmationDialog(
-      desc: el.tr(CcLocaleKeys.quick_entry_cloud_consent_message),
-      agreeText: el.tr(CcLocaleKeys.quick_entry_cloud_consent_accept),
-      cancelText: el.tr(CcLocaleKeys.quick_entry_cloud_consent_decline),
-      isCancelBtnShown: true,
-      status: CcDialogStatus.INFO,
-      onTapConfirm: () {
-        agreed = true;
-        Get.back();
-      },
-      onTapCancel: () => Get.back(),
-    );
-    return agreed;
+  Future<bool> _promptCloudConsent(BuildContext context) async {
+    final result = await CloudConsentSheet.show(context);
+    return result ?? false;
   }
 
   @override

@@ -26,6 +26,7 @@ import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import '../../domain/usecases/update_transaction_usecase.dart';
+import '../widgets/cloud_consent_sheet.dart';
 import 'transaction_form_controller.dart';
 
 @injectable
@@ -586,20 +587,8 @@ class ExpenseFormController extends TransactionFormController {
   }
 
   Future<bool> _promptCloudConsent(BuildContext context) async {
-    var agreed = false;
-    await CcDialogHelper.showMessageBottomSheet(
-      context: context,
-      title: el.tr(CcLocaleKeys.quick_entry_cloud_consent_accept),
-      content: el.tr(CcLocaleKeys.quick_entry_cloud_consent_message),
-      okText: el.tr(CcLocaleKeys.quick_entry_cloud_consent_accept),
-      cancelText: el.tr(CcLocaleKeys.quick_entry_cloud_consent_decline),
-      isExistOK: false,
-      onTapOK: () {
-        agreed = true;
-        Get.back();
-      },
-    );
-    return agreed;
+    final result = await CloudConsentSheet.show(context);
+    return result ?? false;
   }
 
   Future<void> toggleVoiceQuickEntry(BuildContext context) async {
@@ -610,6 +599,7 @@ class ExpenseFormController extends TransactionFormController {
       return;
     }
 
+    hideKeypad();
     quickEntryErrorKey.value = null;
     isListeningQuickEntry.value = true;
     final started = await CcSpeechHelper.startListening(

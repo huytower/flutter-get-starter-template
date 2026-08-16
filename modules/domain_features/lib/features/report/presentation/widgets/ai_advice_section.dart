@@ -93,7 +93,7 @@ class AiAdviceSection extends StatelessWidget {
               size: context.respIconSize(baseSize: 20),
               color: context.ccColorScheme.onSurfaceVariant,
             ),
-            onPressed: controller.generateAiAdvice,
+            onPressed: () => controller.generateAiAdvice(context),
           ),
       ],
     );
@@ -111,7 +111,7 @@ class AiAdviceSection extends StatelessWidget {
         ),
         const CcSpaceSM(),
         ElevatedButton.icon(
-          onPressed: controller.generateAiAdvice,
+          onPressed: () => controller.generateAiAdvice(context),
           style: ElevatedButton.styleFrom(
             backgroundColor: context.ccColorScheme.primary,
             shape: RoundedRectangleBorder(

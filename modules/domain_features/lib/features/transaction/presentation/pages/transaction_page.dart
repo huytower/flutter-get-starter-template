@@ -21,31 +21,18 @@ class TransactionPage extends CcGetView<TransactionController> {
 
   @override
   Widget? buildContent(BuildContext context) {
-    final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
-
-    // Responsive height factor based on screen height to prevent content overlap
-    // on small phones while maintaining aesthetic proportions on tablets.
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
-      mobile: 0.22, // Increased for mobile to accommodate all header info
-      tablet: 0.2, // Tablets
+      mobile: 0.22,
+      tablet: 0.2,
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
-    // Read once at construction time: this TabController is fresh on every
-    // mount (the page is popped on tab-bar navigation), so a level unlocked
-    // elsewhere is always reflected by the time the user revisits this page.
     final visibleTabCount = controller.visibleTabs.length;
 
     return DefaultTabController(
       length: visibleTabCount,
-      // Reads the GetX tab index at construction time so a tab selected
-      // programmatically before this page mounts (e.g. LoanListController
-      // jumping into the Loan tab's Settle sub-mode) actually lands on that
-      // tab — this TabController is fresh on every mount (the page is popped
-      // on tab-bar navigation), so without this it would always reset to 0
-      // regardless of TransactionController.selectedTabIndex.
       initialIndex: controller.selectedTabIndex.value.clamp(
         0,
         visibleTabCount - 1,
@@ -54,6 +41,7 @@ class TransactionPage extends CcGetView<TransactionController> {
         child: Stack(
           children: [
             Obx(() {
+              final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
               final hidden = keyboardUp || controller.isKeypadOpen.value;
               return AnimatedOpacity(
                 opacity: hidden ? 0 : 1,
@@ -88,9 +76,8 @@ class TransactionPage extends CcGetView<TransactionController> {
     final tabBarHeight = context.respDim(140);
     final overlap = tabBarHeight / 2;
 
-    final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
-
     return Obx(() {
+      final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
       final hidden = keyboardUp || controller.isKeypadOpen.value;
 
       return Column(
