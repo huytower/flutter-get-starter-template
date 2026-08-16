@@ -172,8 +172,8 @@ class _WalletItem extends StatelessWidget {
           if (isSelected)
             Positioned.fill(
               child: CcGlassyGradientBackground(
-                centerColor: activeColor.withAlpha(5),
-                endColor: activeColor.withAlpha(10),
+                centerColor: activeColor.withAlpha(10),
+                endColor: activeColor.withAlpha(20),
               ),
             ),
           _buildMainCard(context),
@@ -207,12 +207,10 @@ class _WalletItem extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: scheme.primaryContainer.withValues(alpha: 0.1),
+        color: activeColor.withAlpha(10),
         borderRadius: context.brLg,
         border: Border.all(
-          color: isSelected
-              ? activeColor.withAlpha(30)
-              : scheme.onSurface.withOpacity(0.08),
+          color: activeColor.withAlpha(isSelected ? 50 : 10),
           width: context.respDim(1),
         ),
       ),
@@ -241,14 +239,23 @@ class _WalletItem extends StatelessWidget {
       width: context.respDim(32),
       height: context.respDim(32),
       decoration: BoxDecoration(
-        color: (isSelected ? activeColor : scheme.primary).withOpacity(0.12),
+        color: activeColor.withOpacity(0.12),
         borderRadius: context.brLg,
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
-          const Positioned.fill(child: CcGlassyGradientIcon()),
-          CcIconToken(iconDataFromCode(wallet.iconCode), size: 18),
+          Positioned.fill(
+            child: CcGlassyGradientIcon(
+              centerColor: activeColor.withAlpha(30),
+              endColor: activeColor.withAlpha(50),
+            ),
+          ),
+          CcIconToken(
+            color: activeColor,
+            iconDataFromCode(wallet.iconCode),
+            size: 18,
+          ),
         ],
       ),
     );

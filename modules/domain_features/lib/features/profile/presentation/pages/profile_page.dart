@@ -338,27 +338,48 @@ class ProfilePage extends CcGetView<ProfileController> {
       child: Column(
         children: [
           CcText(
-            el.tr(CcLocaleKeys.app_description),
+            'Sổ Sách Xịn',
+            textStyle: textTheme.titleLarge?.copyWith(
+              color: scheme.onBackground,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+            align: Alignment.center,
+          ),
+          const CcSpaceSM(),
+          CcText(
+            'Quản lý thu chi, đầu tư, vay nợ theo nguyên lý kế toán đơn, hướng đến tự do tài chính',
+            textStyle: textTheme.bodyMedium?.copyWith(
+              color: scheme.onSurfaceVariant.withOpacity(0.8),
+            ),
+            textAlign: TextAlign.center,
+            align: Alignment.center,
+          ),
+          const CcSpaceMD(),
+          CcText(
+            '© 2026 Sổ Sách Xịn · Made by',
             textStyle: textTheme.bodySmall?.copyWith(
               color: scheme.onSurfaceVariant.withOpacity(0.6),
             ),
             textAlign: TextAlign.center,
             align: Alignment.center,
           ),
-          const SizedBox(height: 2),
-          CcText(
-            el.tr(CcLocaleKeys.app_author),
-            textStyle: textTheme.labelSmall?.copyWith(
-              color: scheme.onSurfaceVariant.withOpacity(0.5),
-              fontWeight: CcTypographyParams.medium,
-            ),
-            textAlign: TextAlign.center,
-            align: Alignment.center,
+          const CcSpaceMD(),
+          _buildContactBox(
+            context,
+            name: 'Huy Tran',
+            email: 'huytd46.fpt@gmail.com',
           ),
-          const SizedBox(height: 4),
+          const CcSpaceSM(),
+          _buildContactBox(
+            context,
+            name: 'Kien Nguyen',
+            email: 'kien.1000doanhnhan@gmail.com',
+          ),
+          const CcSpaceMD(),
           Obx(
             () => CcText(
-              '${el.tr(CcLocaleKeys.app_name)} - v${controller.appVersion.value}',
+              'v${controller.appVersion.value}',
               textStyle: textTheme.labelSmall?.copyWith(
                 color: scheme.onSurfaceVariant.withOpacity(0.4),
                 letterSpacing: 0.5,
@@ -368,6 +389,62 @@ class ProfilePage extends CcGetView<ProfileController> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildContactBox(
+    BuildContext context, {
+    required String name,
+    required String email,
+  }) {
+    final scheme = context.ccColorScheme;
+    final textTheme = context.ccTextTheme;
+
+    return InkWell(
+      onTap: () {
+        Clipboard.setData(ClipboardData(text: email));
+        CcSnackBarHelper.showSuccessSnackBar(
+          context: context,
+          message: 'Copied email: $email',
+        );
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          border: Border.all(color: scheme.onSurfaceVariant.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: RichText(
+                text: TextSpan(
+                  text: '$name · ',
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: scheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: email,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: scheme.primary,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Icon(
+              Icons.copy_rounded,
+              size: 16,
+              color: scheme.onSurfaceVariant.withOpacity(0.6),
+            ),
+          ],
+        ),
       ),
     );
   }
