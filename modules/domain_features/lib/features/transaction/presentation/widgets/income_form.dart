@@ -161,6 +161,8 @@ class IncomeForm extends StatelessWidget {
       onTap: () => controller.showKeypadAndScroll(context),
       onQuickAmountSelected: (amount) =>
           controller.amountStr.value = amount.toString(),
+      onClear: () => controller.amountStr.value = '0',
+      onCopy: () => CcStringHelper.copyToClipboard(controller.amountStr.value),
     );
   }
 

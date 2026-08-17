@@ -168,6 +168,8 @@ class LoanForm extends StatelessWidget {
       onTap: () => controller.showKeypadAndScroll(context),
       onQuickAmountSelected: (amount) =>
           controller.amountStr.value = amount.toString(),
+      onClear: controller.handleClear,
+      onCopy: () => CcStringHelper.copyToClipboard(controller.amountStr.value),
     );
   }
 

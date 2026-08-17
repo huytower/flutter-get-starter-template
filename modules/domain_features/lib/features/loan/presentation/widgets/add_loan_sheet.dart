@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
@@ -38,23 +39,31 @@ class _AddLoanSheetState extends State<AddLoanSheet> {
       () => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: EdgeInsets.only(
-              left: context.respPadding(CcPaddingParams.SPACE_LG),
-              right: context.respPadding(CcPaddingParams.SPACE_LG),
-              top: context.respPadding(CcPaddingParams.SPACE_LG),
-              bottom:
-                  MediaQuery.of(context).viewInsets.bottom +
-                  context.respPadding(CcPaddingParams.SPACE_LG),
-            ),
-            decoration: BoxDecoration(
-              color: context.ccColorScheme.surface,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              if (_controller.showKeypad.value) _controller.hideKeypad();
+            },
+            child: Container(
+              padding: EdgeInsets.only(
+                left: context.respPadding(CcPaddingParams.SPACE_LG),
+                right: context.respPadding(CcPaddingParams.SPACE_LG),
+                top: context.respPadding(CcPaddingParams.SPACE_LG),
+                bottom:
+                    (_controller.showKeypad.value
+                        ? 0
+                        : MediaQuery.of(context).viewInsets.bottom) +
+                    context.respPadding(CcPaddingParams.SPACE_LG),
               ),
-            ),
-            child: SingleChildScrollView(
-              child: _buildSheetContent(context, _controller),
+              decoration: BoxDecoration(
+                color: context.ccColorScheme.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: _buildSheetContent(context, _controller),
+              ),
             ),
           ),
         ],
@@ -80,9 +89,7 @@ class _AddLoanSheetState extends State<AddLoanSheet> {
         const CcSpaceMD(),
         _buildLoanCategoryPicker(context, controller),
         const CcSpaceMD(),
-        _buildCounterpartyField(controller),
-        const CcSpaceMD(),
-        _buildAmountField(context, controller),
+        _buildCounterpartyField(context, controller),
         const CcSpaceMD(),
         _buildSaveButton(context, controller),
       ],
@@ -200,7 +207,7 @@ class _AddLoanSheetState extends State<AddLoanSheet> {
               size: context.respIconSize(baseSize: 18),
               color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
             ),
-            const SizedBox(width: 8),
+            const CcSpaceSM(),
             CcText(
               label,
               textStyle: context.ccTextTheme.labelMedium?.copyWith(
@@ -220,39 +227,44 @@ class _AddLoanSheetState extends State<AddLoanSheet> {
     BuildContext context,
     AddLoanSheetController controller,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcText(
-          el.tr(CcLocaleKeys.transaction_category),
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold,
+    return Obx(() {
+      final categories = controller.loanCategories.toList();
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CcText(
+            el.tr(CcLocaleKeys.transaction_category),
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
+              color: context.ccColorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const CcSpaceSM(),
-        HorizontalFadeScrollView(
-          height: context.respDim(80),
-          builder: (scrollController) => ListView.separated(
-            scrollDirection: Axis.horizontal,
-            controller: scrollController,
-            itemCount: controller.loanCategories.length,
-            separatorBuilder: (_, _) => const CcSpaceSM(),
-            itemBuilder: (context, index) {
-              final category = controller.loanCategories[index];
-              final isSelected =
-                  controller.selectedLoanCategory.value?.id == category.id;
-              return _buildCategoryItem(
-                context,
-                controller,
-                category,
-                isSelected,
-              );
-            },
+          const CcSpaceSM(),
+          HorizontalFadeScrollView(
+            height: context.respDim(80),
+            builder: (scrollController) => ListView.separated(
+              scrollDirection: Axis.horizontal,
+              controller: scrollController,
+              itemCount: categories.length,
+              separatorBuilder: (_, _) => const CcSpaceSM(),
+              itemBuilder: (context, index) {
+                final category = categories[index];
+                return Obx(() {
+                  final isSelected =
+                      controller.selectedLoanCategory.value?.id == category.id;
+                  return _buildCategoryItem(
+                    context,
+                    controller,
+                    category,
+                    isSelected,
+                  );
+                });
+              },
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Widget _buildCategoryItem(
@@ -343,7 +355,10 @@ class _AddLoanSheetState extends State<AddLoanSheet> {
     );
   }
 
-  Widget _buildCounterpartyField(AddLoanSheetController controller) {
+  Widget _buildCounterpartyField(
+    BuildContext context,
+    AddLoanSheetController controller,
+  ) {
     return TextField(
       controller: controller.counterpartyController,
       maxLength: 30,
@@ -351,160 +366,30 @@ class _AddLoanSheetState extends State<AddLoanSheet> {
         labelText: el.tr(CcLocaleKeys.transaction_loan_borrower_label),
         hintText: el.tr(CcLocaleKeys.transaction_loan_borrower_hint),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-  }
-
-  Widget _buildAmountField(
-    BuildContext context,
-    AddLoanSheetController controller,
-  ) {
-    return Obx(
-      () => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CcText(
-            el.tr(CcLocaleKeys.transaction_amount),
-            textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.bold,
-            ),
+        suffixIcon: CcIconButton.bouncing(
+          width: context.respDim(20),
+          height: context.respDim(20),
+          icon: Icon(
+            Icons.close_rounded,
+            color: context.ccColorScheme.onSurfaceVariant.withAlpha(120),
+            size: context.respIconSize(baseSize: 14),
           ),
-          const CcSpaceSM(),
-          Container(
-            key: controller.amountFieldKey,
-            padding: EdgeInsets.all(
-              context.respPadding(CcPaddingParams.SPACE_MD),
-            ),
-            decoration: BoxDecoration(
-              color: context.ccColorScheme.onSurface.withOpacity(0.04),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: context.ccColorScheme.onSurface.withOpacity(0.08),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CcText(
-                  controller.amountStr.value,
-                  key: ValueKey(controller.amountStr.value),
-                  textStyle: context.ccTextTheme.headlineMedium?.copyWith(
-                    fontWeight: CcTypographyParams.bold,
-                    color: context.ccColorScheme.onSurface,
-                  ),
-                ),
-                Row(
-                  children: [
-                    _buildKeypadButton(
-                      context,
-                      controller,
-                      Icons.backspace_outlined,
-                      () => controller.handleDelete(),
-                    ),
-                    const SizedBox(width: 8),
-                    _buildKeypadButton(
-                      context,
-                      controller,
-                      Icons.keyboard_outlined,
-                      () => controller.showKeypadAndScroll(context),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          if (controller.showKeypad.value) ...[
-            const CcSpaceMD(),
-            _buildNumberKeypad(context, controller),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildKeypadButton(
-    BuildContext context,
-    AddLoanSheetController controller,
-    IconData icon,
-    VoidCallback onTap,
-  ) {
-    return Container(
-      padding: EdgeInsets.all(context.respDim(8)),
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.onSurface.withOpacity(0.04),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Icon(
-        icon,
-        size: context.respIconSize(baseSize: 20),
-        color: context.ccColorScheme.onSurfaceVariant,
-      ),
-    );
-  }
-
-  Widget _buildNumberKeypad(
-    BuildContext context,
-    AddLoanSheetController controller,
-  ) {
-    final keys = [
-      ['1', '2', '3'],
-      ['4', '5', '6'],
-      ['7', '8', '9'],
-      ['000', '0', 'C'],
-    ];
-
-    return Column(
-      children: keys.map((row) {
-        return Padding(
-          padding: EdgeInsets.only(bottom: context.respDim(8)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: row.map((key) {
-              return Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: context.respDim(4)),
-                  child: _buildKeypadKey(context, controller, key),
-                ),
-              );
-            }).toList(),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildKeypadKey(
-    BuildContext context,
-    AddLoanSheetController controller,
-    String key,
-  ) {
-    return CcInkWell(
-      onTap: () {
-        if (key == 'C') {
-          controller.amountStr.value = '0';
-        } else {
-          controller.handleKeyPress(key);
-        }
-      },
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        height: context.respDim(50),
-        decoration: BoxDecoration(
-          color: context.ccColorScheme.onSurface.withOpacity(0.04),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Center(
-          child: CcText(
-            key,
-            textStyle: context.ccTextTheme.titleLarge?.copyWith(
-              fontWeight: CcTypographyParams.bold,
-              color: context.ccColorScheme.onSurface,
-            ),
-          ),
+          onTap: () {
+            controller.counterpartyController.clear();
+            controller.isCounterpartyValid.value = false;
+            controller.selectedLoanCategory.value = null;
+          },
+          tooltip: el.tr(CcLocaleKeys.common_clear),
         ),
       ),
     );
+  }
+
+  Color _accentColor(AddLoanSheetController controller) {
+    final isBorrowSide = controller.direction.value == LoanDirection.borrow;
+    return isBorrowSide
+        ? PrjColors.debtLoan
+        : PrjColors.debtLoan.withValues(alpha: 0.5);
   }
 
   Widget _buildSaveButton(

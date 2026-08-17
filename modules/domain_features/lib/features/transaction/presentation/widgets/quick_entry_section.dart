@@ -26,6 +26,7 @@ class QuickEntrySection extends StatelessWidget {
     required this.onScanTap,
     required this.onApplySuggestion,
     required this.onDismissSuggestion,
+    this.onClear,
   });
 
   final TextEditingController controller;
@@ -35,10 +36,11 @@ class QuickEntrySection extends StatelessWidget {
   final String? errorText;
   final Color activeColor;
   final ValueChanged<String> onSubmitted;
-  final VoidCallback onMicTap;
+   final VoidCallback onMicTap;
   final VoidCallback onScanTap;
   final VoidCallback onApplySuggestion;
   final VoidCallback onDismissSuggestion;
+  final VoidCallback? onClear;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +64,7 @@ class QuickEntrySection extends StatelessWidget {
           enabled: !isParsing,
           maxLines: 1,
           margin: EdgeInsets.zero,
+          textAlign: TextAlign.center,
         ),
         const CcSpaceXS(),
         if (suggestionLabel != null) ...[
@@ -111,7 +114,9 @@ class QuickEntrySection extends StatelessWidget {
   Widget _buildTrailingIcon(BuildContext context) {
     if (isParsing) {
       return Padding(
-        padding: EdgeInsets.all(context.respPadding(8.0)),
+        padding: EdgeInsets.all(
+          context.respPadding(CcPaddingParams.SPACE_SM),
+        ),
         child: SizedBox(
           width: context.respDim(8),
           height: context.respDim(8),
@@ -122,7 +127,10 @@ class QuickEntrySection extends StatelessWidget {
         ),
       );
     }
-    return IconButton(
+
+    final hasText = controller.text.isNotEmpty;
+
+    Widget micIcon = IconButton(
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(),
       icon: Icon(
@@ -134,5 +142,31 @@ class QuickEntrySection extends StatelessWidget {
       ),
       onPressed: isParsing ? null : onMicTap,
     );
+
+    if (hasText) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CcIconButton.bouncing(
+            width: context.respDim(20),
+            height: context.respDim(20),
+            icon: Icon(
+              Icons.close_rounded,
+              color: context.ccColorScheme.onSurfaceVariant.withAlpha(120),
+              size: context.respIconSize(baseSize: 14),
+            ),
+            onTap: () {
+              controller.clear();
+              onClear?.call();
+            },
+            tooltip: el.tr(CcLocaleKeys.common_clear),
+          ),
+          const CcSpaceXS(),
+          micIcon,
+        ],
+      );
+    }
+
+    return micIcon;
   }
 }

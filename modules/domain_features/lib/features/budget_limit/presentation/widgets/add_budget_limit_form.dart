@@ -439,6 +439,8 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
                     },
                     onQuickAmountSelected: (amount) =>
                         setState(() => _limitStr = amount.toString()),
+                    onClear: () => setState(() => _limitStr = '0'),
+                    onCopy: () => CcStringHelper.copyToClipboard(_limitStr),
                   ),
                 const CcSpaceSM(),
                 BudgetLimitSaveButton(onPressed: _isValid ? _onSave : null),

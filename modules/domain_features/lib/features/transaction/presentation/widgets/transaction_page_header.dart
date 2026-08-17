@@ -181,7 +181,11 @@ class TransactionPageHeader extends StatelessWidget {
       onApplySuggestion: () {
         if (suggestion != null) controller.applyQuickEntryParse(suggestion);
       },
-      onDismissSuggestion: controller.dismissQuickEntrySuggestion,
+       onDismissSuggestion: controller.dismissQuickEntrySuggestion,
+      onClear: () {
+        controller.dismissQuickEntrySuggestion();
+        controller.isParsingQuickEntry.value = false;
+      },
     );
   }
 

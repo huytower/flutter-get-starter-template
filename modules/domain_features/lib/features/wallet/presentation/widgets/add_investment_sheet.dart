@@ -80,7 +80,7 @@ class _AddInvestmentSheetState extends State<AddInvestmentSheet> {
         ],
         _buildInvestmentCategoryPicker(context, controller),
         const CcSpaceMD(),
-        _buildNameField(controller),
+        _buildNameField(context, controller),
         const CcSpaceMD(),
         _buildSaveButton(context, controller),
       ],
@@ -137,40 +137,45 @@ class _AddInvestmentSheetState extends State<AddInvestmentSheet> {
     BuildContext context,
     AddInvestmentSheetController controller,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcText(
-          el.tr(CcLocaleKeys.transaction_category),
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold,
+    return Obx(() {
+      final categories = controller.investmentCategories.toList();
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CcText(
+            el.tr(CcLocaleKeys.transaction_category),
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
+              color: context.ccColorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const CcSpaceSM(),
-        HorizontalFadeScrollView(
-          height: context.respDim(80),
-          builder: (scrollController) => ListView.separated(
-            scrollDirection: Axis.horizontal,
-            controller: scrollController,
-            itemCount: controller.investmentCategories.length,
-            separatorBuilder: (_, _) => const CcSpaceSM(),
-            itemBuilder: (context, index) {
-              final category = controller.investmentCategories[index];
-              final isSelected =
-                  controller.selectedInvestmentCategory.value?.id ==
-                  category.id;
-              return _buildCategoryItem(
-                context,
-                controller,
-                category,
-                isSelected,
-              );
-            },
+          const CcSpaceSM(),
+          HorizontalFadeScrollView(
+            height: context.respDim(80),
+            builder: (scrollController) => ListView.separated(
+              scrollDirection: Axis.horizontal,
+              controller: scrollController,
+              itemCount: categories.length,
+              separatorBuilder: (_, _) => const CcSpaceSM(),
+              itemBuilder: (context, index) {
+                final category = categories[index];
+                return Obx(() {
+                  final isSelected =
+                      controller.selectedInvestmentCategory.value?.id ==
+                      category.id;
+                  return _buildCategoryItem(
+                    context,
+                    controller,
+                    category,
+                    isSelected,
+                  );
+                });
+              },
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Widget _buildCategoryItem(
@@ -261,7 +266,10 @@ class _AddInvestmentSheetState extends State<AddInvestmentSheet> {
     );
   }
 
-  Widget _buildNameField(AddInvestmentSheetController controller) {
+  Widget _buildNameField(
+    BuildContext context,
+    AddInvestmentSheetController controller,
+  ) {
     return TextField(
       controller: controller.nameController,
       maxLength: 20,
@@ -269,6 +277,21 @@ class _AddInvestmentSheetState extends State<AddInvestmentSheet> {
         labelText: el.tr(CcLocaleKeys.wallet_investment_name),
         hintText: el.tr(CcLocaleKeys.wallet_investment_name_hint),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        suffixIcon: CcIconButton.bouncing(
+          width: context.respDim(20),
+          height: context.respDim(20),
+          icon: Icon(
+            Icons.close_rounded,
+            color: context.ccColorScheme.onSurfaceVariant.withAlpha(120),
+            size: context.respIconSize(baseSize: 14),
+          ),
+          onTap: () {
+            controller.nameController.clear();
+            controller.isNameValid.value = false;
+            controller.selectedInvestmentCategory.value = null;
+          },
+          tooltip: el.tr(CcLocaleKeys.common_clear),
+        ),
       ),
     );
   }

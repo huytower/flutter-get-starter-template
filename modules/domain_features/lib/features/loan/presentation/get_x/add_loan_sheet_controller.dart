@@ -66,6 +66,10 @@ class AddLoanSheetController extends CcGetController {
       }
 
       enabledLoan.sort((a, b) {
+        final isOtherA = a.nameKey.contains('other');
+        final isOtherB = b.nameKey.contains('other');
+        if (isOtherA && !isOtherB) return 1;
+        if (!isOtherA && isOtherB) return -1;
         final indexA = seedIndexMap[a.id] ?? 999;
         final indexB = seedIndexMap[b.id] ?? 999;
         return indexA.compareTo(indexB);
@@ -87,11 +91,6 @@ class AddLoanSheetController extends CcGetController {
 
   void selectLoanCategory(CategoryEntity category) {
     selectedLoanCategory.value = category;
-    // Free tier: the loan name is fixed to the category's own label
-    if (!isVip.value) {
-      counterpartyController.text = el.tr(category.nameKey);
-      _onCounterpartyChanged();
-    }
   }
 
   void handleKeyPress(String key) {
@@ -111,6 +110,14 @@ class AddLoanSheetController extends CcGetController {
     } else {
       amountStr.value = '0';
     }
+  }
+
+  void handleClear() {
+    amountStr.value = '0';
+  }
+
+  void handleSuggestion(int value) {
+    amountStr.value = value.toString();
   }
 
   void showKeypadAndScroll(BuildContext context) {
@@ -162,7 +169,7 @@ class AddLoanSheetController extends CcGetController {
       categoryLabel: el.tr(category.nameKey),
       categoryIconCode: category.iconCode,
       categoryIconFamily: category.iconFamily,
-      walletId: '', // TODO: Get default wallet ID
+      walletId: '', // TODO(user): Get default wallet ID
       repaymentMethod: LoanRepaymentMethod.lumpSum,
       installments: null,
       finalDueDate: DateTime.now().add(const Duration(days: 30)),

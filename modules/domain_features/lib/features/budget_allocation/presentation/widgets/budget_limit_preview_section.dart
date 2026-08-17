@@ -123,8 +123,14 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                 mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
               ),
               itemCount: budgets.length,
-              itemBuilder: (context, i) =>
-                  BudgetLimitGridCard(stats: budgets[i], showDragHandle: false),
+              itemBuilder: (context, i) => CcInkWell(
+                onTap: () => context.router.push(const BudgetLimitRoute()),
+                borderRadius: BorderRadius.circular(12),
+                child: BudgetLimitGridCard(
+                  stats: budgets[i],
+                  showDragHandle: false,
+                ),
+              ),
             ),
           );
         }),

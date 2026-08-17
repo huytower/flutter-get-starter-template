@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
@@ -12,6 +13,8 @@ class CcAmountInputSection extends StatelessWidget {
   final Color? activeColor;
   final VoidCallback onTap;
   final Function(int) onQuickAmountSelected;
+  final VoidCallback? onClear;
+  final VoidCallback? onCopy;
   final GlobalKey? fieldKey;
 
   const CcAmountInputSection({
@@ -23,6 +26,8 @@ class CcAmountInputSection extends StatelessWidget {
     required this.onTap,
     required this.onQuickAmountSelected,
     this.activeColor,
+    this.onClear,
+    this.onCopy,
     this.fieldKey,
   });
 
@@ -64,15 +69,56 @@ class CcAmountInputSection extends StatelessWidget {
                 width: isKeypadVisible ? 1 : 0.4,
               ),
             ),
-            alignment: Alignment.center,
-            child: CcText(
-              '${TransactionFormHelpers.formatAmount(amountStr)} đ',
-              align: Alignment.center,
-              textAlign: TextAlign.center,
-              textStyle: context.ccTextTheme.headlineMedium?.copyWith(
-                fontWeight: CcTypographyParams.bold,
-                color: accent,
-              ),
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: CcText(
+                    '${TransactionFormHelpers.formatAmount(amountStr)} đ',
+                    align: Alignment.center,
+                    textAlign: TextAlign.center,
+                    textStyle: context.ccTextTheme.headlineMedium?.copyWith(
+                      fontWeight: CcTypographyParams.bold,
+                      color: accent,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (onCopy != null)
+                        CcIconButton.bouncing(
+                          width: context.respDim(20),
+                          height: context.respDim(20),
+                          icon: Icon(
+                            Icons.copy_rounded,
+                            color: context.ccColorScheme.onSurfaceVariant
+                                .withAlpha(80),
+                            size: context.respIconSize(baseSize: 14),
+                          ),
+                          onTap: onCopy!,
+                          tooltip: el.tr(CcLocaleKeys.common_copy),
+                        ),
+                      if (onClear != null)
+                        CcIconButton.bouncing(
+                          width: context.respDim(20),
+                          height: context.respDim(20),
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: context.ccColorScheme.onSurfaceVariant
+                                .withAlpha(80),
+                            size: context.respIconSize(baseSize: 14),
+                          ),
+                          onTap: onClear!,
+                          tooltip: el.tr(CcLocaleKeys.common_clear),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),
