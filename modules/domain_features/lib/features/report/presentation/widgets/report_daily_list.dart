@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/money_format_helper.dart';
-import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/presentation/widgets/edit_transaction_sheet.dart';
 

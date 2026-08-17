@@ -11,6 +11,7 @@ import '../repositories/loan_repository.dart';
 
 /// Input for [CreateLoanUseCase].
 class CreateLoanParams {
+  final String? loanId;
   final String direction;
   final int principalAmount;
   final String categoryId;
@@ -26,6 +27,7 @@ class CreateLoanParams {
   final bool reminderBeforeDueDate;
 
   const CreateLoanParams({
+    this.loanId,
     required this.direction,
     required this.principalAmount,
     required this.categoryId,
@@ -102,7 +104,7 @@ class CreateLoanUseCase {
     }
 
     final loan = LoanEntity(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      id: params.loanId ?? DateTime.now().microsecondsSinceEpoch.toString(),
       direction: params.direction,
       principalAmount: params.principalAmount,
       categoryId: params.categoryId,
@@ -119,7 +121,9 @@ class CreateLoanUseCase {
       reminderBeforeDueDate: params.reminderBeforeDueDate,
     );
 
-    final createResult = await _loanRepository.createLoan(loan);
+    final createResult = params.loanId != null
+        ? await _loanRepository.updateLoan(loan)
+        : await _loanRepository.createLoan(loan);
     if (createResult.isError()) {
       return Error(createResult.tryGetError()!);
     }

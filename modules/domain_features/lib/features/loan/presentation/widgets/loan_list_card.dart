@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../domain/entities/loan_balance_entity.dart';
 import '../../domain/entities/loan_entity.dart';
 

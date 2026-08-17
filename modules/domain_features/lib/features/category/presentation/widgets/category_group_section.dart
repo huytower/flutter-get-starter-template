@@ -1,7 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../domain/entities/category_entity.dart';
 import '../../domain/entities/category_group_entity.dart';
 import 'category_chip.dart';

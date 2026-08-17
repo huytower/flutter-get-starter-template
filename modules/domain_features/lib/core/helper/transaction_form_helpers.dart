@@ -49,9 +49,23 @@ class TransactionFormHelpers {
   }
 
   /// Format amount to short representation (e.g., 1000000 -> "1tr", 50000 -> "50k")
-  static String formatShort(int amount) {
-    if (amount >= 1000000) return '${amount ~/ 1000000}tr';
-    if (amount >= 1000) return '${amount ~/ 1000}k';
+  static String formatShort(num amount) {
+    if (amount >= 1000000) {
+      final value = amount / 1000000;
+      final truncated = value.truncateToDouble();
+      if (value == truncated) {
+        return '${truncated.toInt()}tr';
+      }
+      return '${value.toStringAsFixed(1).replaceFirst('.', ',')}tr';
+    }
+    if (amount >= 1000) {
+      final value = amount / 1000;
+      final truncated = value.truncateToDouble();
+      if (value == truncated) {
+        return '${truncated.toInt()}k';
+      }
+      return '${value.toStringAsFixed(1).replaceFirst('.', ',')}k';
+    }
     return amount.toString();
   }
 }

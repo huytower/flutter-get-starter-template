@@ -144,29 +144,14 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
     BuildContext context,
     AddWalletSheetController controller,
   ) {
-    return TextField(
+    return CcNameInputField(
       controller: controller.nameController,
-      maxLength: 20,
-      decoration: InputDecoration(
-        labelText: el.tr(CcLocaleKeys.wallet_name),
-        hintText: el.tr(CcLocaleKeys.wallet_name_hint),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        suffixIcon: CcIconButton.bouncing(
-          width: context.respDim(20),
-          height: context.respDim(20),
-          icon: Icon(
-            Icons.close_rounded,
-            color: context.ccColorScheme.onSurfaceVariant.withAlpha(120),
-            size: context.respIconSize(baseSize: 14),
-          ),
-          onTap: () {
-            controller.nameController.clear();
-            controller.isNameValid.value = false;
-            controller.selectedInvestmentCategory.value = null;
-          },
-          tooltip: el.tr(CcLocaleKeys.common_clear),
-        ),
-      ),
+      labelText: el.tr(CcLocaleKeys.wallet_name),
+      hintText: el.tr(CcLocaleKeys.wallet_name_hint),
+      onClear: () {
+        controller.isNameValid.value = false;
+        controller.selectedInvestmentCategory.value = null;
+      },
     );
   }
 
@@ -221,31 +206,9 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         (controller.newType.value != WalletType.investment ||
             controller.selectedInvestmentCategory.value != null);
 
-    return Center(
-      child: FractionallySizedBox(
-        widthFactor: 0.6,
-        child: SizedBox(
-          height: context.respDim(40),
-          child: ElevatedButton(
-            onPressed: canSave ? () => controller.save(context) : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.ccColorScheme.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: CcText(
-              el.tr(CcLocaleKeys.wallet_save_info),
-              align: Alignment.center,
-              textAlign: TextAlign.center,
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                color: context.ccColorScheme.onPrimary,
-                fontWeight: CcTypographyParams.bold,
-              ),
-            ),
-          ),
-        ),
-      ),
+    return CcSaveButton(
+      onPressed: canSave ? () => controller.save(context) : null,
+      label: el.tr(CcLocaleKeys.wallet_save_info),
     );
   }
 

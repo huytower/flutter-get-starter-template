@@ -2,7 +2,6 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 
 /// Lets the user pick a wallet to filter the Report page by.

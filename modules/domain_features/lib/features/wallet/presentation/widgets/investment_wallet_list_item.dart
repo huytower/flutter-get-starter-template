@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:theme/data/data_source/color/prj_color.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../domain/entities/wallet_entity.dart';
 import 'edit_badge.dart';
 

@@ -7,7 +7,6 @@ import 'package:theme/data/data_source/color/prj_color.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../domain/entities/wallet_entity.dart';

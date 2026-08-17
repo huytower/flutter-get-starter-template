@@ -3,8 +3,6 @@ import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../../core/helper/wallet_icon_helper.dart';
-
 class BudgetLimitCategorySelector extends StatelessWidget {
   final List<CategoryEntity> categories;
   final String? selectedCategoryId;
@@ -54,97 +52,17 @@ class BudgetLimitCategorySelector extends StatelessWidget {
           itemBuilder: (context, index) {
             final cat = categories[index];
             final isSelected = selectedCategoryId == cat.id;
-            return _buildCategoryItem(context, cat, isSelected);
+            return CcCategoryItem(
+              iconCode: cat.iconCode,
+              iconFamily: cat.iconFamily,
+              nameKey: cat.nameKey,
+              isSelected: isSelected,
+              onTap: () => onCategorySelected(cat),
+            );
           },
         );
       },
     );
   }
 
-  Widget _buildCategoryItem(
-    BuildContext context,
-    CategoryEntity cat,
-    bool isSelected,
-  ) {
-    final scheme = context.ccColorScheme;
-
-    return CcInkWell(
-      onTap: () => onCategorySelected(cat),
-      borderRadius: context.brLg,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          if (isSelected)
-            const Positioned.fill(child: CcGlassyGradientBackground()),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: context.respDim(50),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? scheme.primaryContainer.withValues(alpha: 0.1)
-                  : scheme.onSurface.withOpacity(0.04),
-              borderRadius: context.brLg,
-              border: Border.all(
-                color: isSelected
-                    ? scheme.primary.withOpacity(0.2)
-                    : scheme.onSurface.withOpacity(0.08),
-                width: context.respDim(1),
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildCategoryIcon(context, cat, isSelected),
-                const CcSpaceXS(),
-                Text(
-                  el.tr(cat.nameKey),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.ccTextTheme.labelSmall?.copyWith(
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    color: isSelected
-                        ? scheme.primary
-                        : scheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryIcon(
-    BuildContext context,
-    CategoryEntity cat,
-    bool isSelected,
-  ) {
-    final scheme = context.ccColorScheme;
-
-    return Container(
-      width: context.respDim(32),
-      height: context.respDim(32),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? scheme.primary.withOpacity(0.12)
-            : scheme.onSurface.withOpacity(0.08),
-        borderRadius: context.brMd,
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (isSelected) const Positioned.fill(child: CcGlassyGradientIcon()),
-          CcIcon(
-            icon: iconDataFromCode(cat.iconCode, fontFamily: cat.iconFamily),
-            size: context.respIconSize(baseSize: 18),
-            color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
-          ),
-        ],
-      ),
-    );
-  }
 }

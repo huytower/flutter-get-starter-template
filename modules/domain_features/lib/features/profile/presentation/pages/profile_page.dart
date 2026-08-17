@@ -428,7 +428,7 @@ class ProfilePage extends CcGetView<ProfileController> {
                   text: '$role: $name · ',
                   style: baseStyle.copyWith(
                     color: scheme.onSurface,
-                    fontWeight: FontWeight.w100,
+                    fontWeight: FontWeight.w300,
                   ),
                   children: [
                     TextSpan(

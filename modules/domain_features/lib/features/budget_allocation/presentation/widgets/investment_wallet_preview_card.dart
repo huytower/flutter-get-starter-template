@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 

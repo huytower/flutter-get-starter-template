@@ -6,9 +6,6 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../category/data/datasources/local/category_seed.dart';
-import '../../../category/domain/entities/category_entity.dart';
-import '../../../transaction/presentation/widgets/category_selection_section.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/cc_form_label.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
@@ -18,6 +15,7 @@ import '../../../transaction/presentation/widgets/transaction_submit_button.dart
 import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
 import '../../domain/entities/loan_entity.dart';
 import '../get_x/loan_form_controller.dart';
+import 'loan_asset_selector.dart';
 import 'loan_pill_toggle.dart';
 import 'loan_repayment_method_section.dart';
 
@@ -65,7 +63,7 @@ class LoanForm extends StatelessWidget {
       child: SingleChildScrollView(
         controller: controller.scrollController,
         padding: EdgeInsets.symmetric(
-          vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+          vertical: context.respPadding(CcPaddingParams.SPACE_LG),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,22 +93,7 @@ class LoanForm extends StatelessWidget {
           ),
         ),
         const CcSpaceLG(),
-        CategorySelectionSection(
-          key: ValueKey(controller.categoryKey.value),
-          type: CategoryType.debtLoan,
-          groupIds: [
-            controller.direction.value == LoanDirection.borrow
-                ? CategorySeed.debtLoanBorrowGroupId
-                : CategorySeed.debtLoanLendGroupId,
-          ],
-          activeColor: accentColor,
-          autoSelectFirst: true,
-          initialSelectedCategoryId: controller.selectedCategory.value?.id,
-          title: controller.direction.value == LoanDirection.borrow
-              ? el.tr(CcLocaleKeys.transaction_loan_category_borrow_label)
-              : el.tr(CcLocaleKeys.transaction_loan_category_lend_label),
-          onCategorySelected: controller.setCategory,
-        ),
+        LoanAssetSelector(controller: controller, activeColor: accentColor),
         const CcSpaceLG(),
         TransactionFormContainer(
           child: Column(
@@ -120,11 +103,27 @@ class LoanForm extends StatelessWidget {
               const CcSpaceLG(),
               _buildWalletSection(context, controller, accentColor),
               const CcSpaceLG(),
-              LoanRepaymentMethodSection(
-                controller: controller,
-                accentColor: accentColor,
-              ),
-              const CcSpaceLG(),
+              Obx(() {
+                final loan = controller.mergedItems
+                    .firstWhereOrNull(
+                      (b) => b.loan.id == controller.selectedLoanId.value,
+                    )
+                    ?.loan;
+
+                // Only show schedule editor if it's a new loan (0 principal)
+                if (loan != null && loan.principalAmount == 0) {
+                  return Column(
+                    children: [
+                      LoanRepaymentMethodSection(
+                        controller: controller,
+                        accentColor: accentColor,
+                      ),
+                      const CcSpaceLG(),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              }),
               TransactionAdditionalDetailsSection(
                 isExpanded: controller.showMoreDetails.value,
                 onToggle: controller.toggleMoreDetails,
@@ -156,21 +155,33 @@ class LoanForm extends StatelessWidget {
     LoanFormController controller,
     Color accentColor,
   ) {
-    return CcAmountInputSection(
-      label: controller.direction.value == LoanDirection.borrow
-          ? el.tr(CcLocaleKeys.transaction_loan_amount_borrow_label)
-          : el.tr(CcLocaleKeys.transaction_loan_amount_lend_label),
-      amountStr: controller.amountStr.value,
-      quickAmounts: MoneyConstants.quickAmounts,
-      isKeypadVisible: controller.showKeypad.value,
-      activeColor: accentColor,
-      fieldKey: controller.amountFieldKey,
-      onTap: () => controller.showKeypadAndScroll(context),
-      onQuickAmountSelected: (amount) =>
-          controller.amountStr.value = amount.toString(),
-      onClear: controller.handleClear,
-      onCopy: () => CcStringHelper.copyToClipboard(controller.amountStr.value),
-    );
+    return Obx(() {
+      final loan = controller.mergedItems
+          .firstWhereOrNull((b) => b.loan.id == controller.selectedLoanId.value)
+          ?.loan;
+      final isExisting = loan != null && loan.principalAmount > 0;
+
+      final label = isExisting
+          ? el.tr(CcLocaleKeys.transaction_amount)
+          : (controller.direction.value == LoanDirection.borrow
+                ? el.tr(CcLocaleKeys.transaction_loan_amount_borrow_label)
+                : el.tr(CcLocaleKeys.transaction_loan_amount_lend_label));
+
+      return CcAmountInputSection(
+        label: label,
+        amountStr: controller.amountStr.value,
+        quickAmounts: MoneyConstants.quickAmounts,
+        isKeypadVisible: controller.showKeypad.value,
+        activeColor: accentColor,
+        fieldKey: controller.amountFieldKey,
+        onTap: () => controller.showKeypadAndScroll(context),
+        onQuickAmountSelected: (amount) =>
+            controller.amountStr.value = amount.toString(),
+        onClear: controller.handleClear,
+        onCopy: () =>
+            CcStringHelper.copyToClipboard(controller.amountStr.value),
+      );
+    });
   }
 
   Widget _buildWalletSection(
@@ -178,23 +189,32 @@ class LoanForm extends StatelessWidget {
     LoanFormController controller,
     Color accentColor,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcFormLabel(
-          text: controller.direction.value == LoanDirection.borrow
-              ? el.tr(CcLocaleKeys.transaction_loan_wallet_borrow_label)
-              : el.tr(CcLocaleKeys.transaction_loan_wallet_lend_label),
-        ),
-        const CcSpaceXS(),
-        CcWalletStripCard(
-          wallets: controller.wallets,
-          selectedWalletId: controller.selectedWalletId.value,
-          activeColor: accentColor,
-          onWalletSelected: controller.setWalletId,
-        ),
-      ],
-    );
+    return Obx(() {
+      final loan = controller.mergedItems
+          .firstWhereOrNull((b) => b.loan.id == controller.selectedLoanId.value)
+          ?.loan;
+      final isExisting = loan != null && loan.principalAmount > 0;
+
+      final label = isExisting
+          ? el.tr(CcLocaleKeys.transaction_source_debt)
+          : (controller.direction.value == LoanDirection.borrow
+                ? el.tr(CcLocaleKeys.transaction_loan_wallet_borrow_label)
+                : el.tr(CcLocaleKeys.transaction_loan_wallet_lend_label));
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CcFormLabel(text: label),
+          const CcSpaceSM(),
+          CcWalletStripCard(
+            wallets: controller.wallets,
+            selectedWalletId: controller.selectedWalletId.value,
+            activeColor: accentColor,
+            onWalletSelected: controller.setWalletId,
+          ),
+        ],
+      );
+    });
   }
 
   Widget _buildMoneyKeypadPanel(

@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/wallet_icon_helper.dart';
 import '../get_x/category_selection_controller.dart';
 
 class CategorySelectionSection extends StatelessWidget {

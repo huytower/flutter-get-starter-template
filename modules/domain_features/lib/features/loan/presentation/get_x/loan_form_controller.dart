@@ -9,8 +9,12 @@ import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
+import '../../domain/entities/loan_balance_entity.dart';
 import '../../domain/entities/loan_entity.dart';
 import '../../domain/usecases/create_loan_usecase.dart';
+import '../../domain/usecases/get_loan_balances_usecase.dart';
+import '../../domain/usecases/record_loan_payment_usecase.dart';
 import '../../domain/usecases/schedule_loan_reminders_usecase.dart';
 
 /// One editable row of an installment schedule being built in the loan
@@ -32,8 +36,9 @@ class LoanInstallmentDraft {
   }
 }
 
-/// Creates a new loan (Đi vay/Cho vay). Repaying/collecting an existing loan
-/// is handled on the Loan Detail screen (see `LoanDetailController`), not here.
+/// Consolidated Loan/Debt form: handles recording transactions against
+/// existing loans (Repay/Collect) or completing a new loan's details.
+/// Consolidated with the Dashboard's Liability section quantity.
 @injectable
 class LoanFormController extends TransactionFormController {
   final RxString direction = LoanDirection.borrow.obs;
@@ -44,6 +49,13 @@ class LoanFormController extends TransactionFormController {
   final RxList<LoanInstallmentDraft> installmentDrafts =
       <LoanInstallmentDraft>[].obs;
   final RxBool reminderBeforeDueDate = false.obs;
+
+  /// Existing loans loaded from the repository, matching the Dashboard's
+  /// Liability section.
+  final RxList<LoanBalanceEntity> loanBalances = <LoanBalanceEntity>[].obs;
+  final RxList<LoanBalanceEntity> mergedItems = <LoanBalanceEntity>[].obs;
+  final RxBool isLoadingMerged = true.obs;
+  final RxnString selectedLoanId = RxnString();
 
   /// Index of the installment currently being edited via the money keypad.
   /// Null when editing the main loan amount.
@@ -64,29 +76,89 @@ class LoanFormController extends TransactionFormController {
       principalAmount > 0 && installmentsTotal < principalAmount;
 
   @override
+  bool get canSubmit {
+    if (selectedLoanId.value == null) return false;
+    if (amountStr.value == '0' || amountStr.value.isEmpty) return false;
+    if (selectedWalletId.value == null) return false;
+
+    final loan = mergedItems
+        .firstWhereOrNull((b) => b.loan.id == selectedLoanId.value)
+        ?.loan;
+    if (loan == null) return false;
+
+    // If it's a new loan (0 principal), we need more details
+    if (loan.principalAmount == 0) {
+      if (repaymentMethod.value == LoanRepaymentMethod.installment) {
+        if (installmentDrafts.isEmpty) return false;
+        if (installmentsTotal != principalAmount) return false;
+        return installmentDrafts.every((d) => d.amount.value > 0);
+      }
+      return finalDueDate.value != null;
+    }
+
+    return true;
+  }
+
+  @override
   void onInit() {
     super.onInit();
-    _loadVipStatus();
+    _loadAll();
+  }
+
+  Future<void> _loadAll() async {
+    isLoadingMerged.value = true;
+    await _loadVipStatus();
+    await _recomputeMergedItems();
+    isLoadingMerged.value = false;
+  }
+
+  Future<void> _recomputeMergedItems() async {
+    final result = await getIt<GetLoanBalancesUseCase>().call();
+    result.when((balances) {
+      loanBalances.assignAll(balances);
+      final filtered = balances.where((b) {
+        return direction.value == LoanDirection.borrow
+            ? b.loan.isBorrow
+            : b.loan.isLend;
+      }).toList();
+
+      // Sort by recency to match Dashboard logic
+      filtered.sort((a, b) => b.loan.updatedAt.compareTo(a.loan.updatedAt));
+
+      mergedItems.assignAll(filtered);
+
+      // Auto-select first if nothing selected
+      if (selectedLoanId.value == null && mergedItems.isNotEmpty) {
+        selectLoan(mergedItems.first);
+      }
+    }, (_) {});
+  }
+
+  void selectLoan(LoanBalanceEntity balance) {
+    selectedLoanId.value = balance.loan.id;
+    // Pre-fill category from loan for consistent submit logic
+    _loadCategoryForLoan(balance.loan.categoryId);
+
+    // If it's an existing loan with actual principal, we are in "Repay/Collect" mode
+    if (balance.loan.principalAmount > 0) {
+      // Clear creation-specific fields
+      installmentDrafts.clear();
+      finalDueDate.value = null;
+    }
+  }
+
+  Future<void> _loadCategoryForLoan(String categoryId) async {
+    final result = await getIt<GetCategoriesUseCase>().call();
+    result.when((categories) {
+      selectedCategory.value = categories.firstWhereOrNull(
+        (c) => c.id == categoryId,
+      );
+    }, (_) {});
   }
 
   Future<void> _loadVipStatus() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
-    if (!settings.isVip) return;
-    isVip.value = true;
-  }
-
-  @override
-  bool get canSubmit {
-    if (amountStr.value == '0' || amountStr.value.isEmpty) return false;
-    if (selectedWalletId.value == null) return false;
-    if (selectedCategory.value == null) return false;
-    if (repaymentMethod.value == LoanRepaymentMethod.installment) {
-      if (installmentDrafts.isEmpty) return false;
-      // Total installments must equal principal amount
-      if (installmentsTotal != principalAmount) return false;
-      return installmentDrafts.every((d) => d.amount.value > 0);
-    }
-    return finalDueDate.value != null;
+    isVip.value = settings.isVip || CcFeatureFlags.isForceFullAccessEnabled;
   }
 
   @override
@@ -102,6 +174,8 @@ class LoanFormController extends TransactionFormController {
     direction.value = value;
     selectedCategory.value = null;
     categoryKey.value++;
+    selectedLoanId.value = null;
+    _recomputeMergedItems();
   }
 
   void setCategory(CategoryEntity category) {
@@ -261,6 +335,8 @@ class LoanFormController extends TransactionFormController {
       draft.dispose();
     }
     installmentDrafts.clear();
+    selectedLoanId.value = null;
+    _recomputeMergedItems();
   }
 
   @override
@@ -268,12 +344,63 @@ class LoanFormController extends TransactionFormController {
     if (isSubmitting.value || !canSubmit) return;
     isSubmitting.value = true;
 
+    final loan = mergedItems
+        .firstWhereOrNull((b) => b.loan.id == selectedLoanId.value)
+        ?.loan;
+    if (loan == null) {
+      isSubmitting.value = false;
+      return;
+    }
+
+    // Existing loan with principal: Record payment
+    if (loan.principalAmount > 0) {
+      final params = RecordLoanPaymentParams(
+        loanId: loan.id,
+        walletId: selectedWalletId.value ?? '',
+        amount: int.tryParse(amountStr.value) ?? 0,
+        note: composeNote(),
+        date: date.value,
+      );
+
+      final result = await getIt<RecordLoanPaymentUseCase>().call(params);
+      isSubmitting.value = false;
+
+      result.when(
+        (updatedLoan) {
+          final savedAmount = TransactionFormHelpers.formatAmount(
+            amountStr.value,
+          );
+          CcSnackBarHelper.showSuccessSnackBar(
+            context: context,
+            message: el.tr(
+              CcLocaleKeys.transaction_loan_payment_saved,
+              namedArgs: {'amount': savedAmount},
+            ),
+          );
+          resetForm();
+          refreshParent();
+
+          // Update Dashboard
+          if (Get.isRegistered<WalletController>()) {
+            Get.find<WalletController>().loadWallets();
+          }
+        },
+        (error) => CcSnackBarHelper.showErrorSnackBar(
+          context: context,
+          message: el.tr(error.message),
+        ),
+      );
+      return;
+    }
+
+    // New loan (0 principal placeholder): Complete details
     final category = selectedCategory.value!;
     final categoryLabel = el.tr(category.nameKey);
     final isInstallment =
         repaymentMethod.value == LoanRepaymentMethod.installment;
 
     final params = CreateLoanParams(
+      loanId: loan.id,
       direction: direction.value,
       principalAmount: int.tryParse(amountStr.value) ?? 0,
       categoryId: category.id,
@@ -302,7 +429,7 @@ class LoanFormController extends TransactionFormController {
     isSubmitting.value = false;
 
     result.when(
-      (loan) {
+      (updatedLoan) {
         final savedAmount = TransactionFormHelpers.formatAmount(
           amountStr.value,
         );
@@ -313,7 +440,7 @@ class LoanFormController extends TransactionFormController {
             namedArgs: {'amount': savedAmount},
           ),
         );
-        getIt<ScheduleLoanRemindersUseCase>().call(loan);
+        getIt<ScheduleLoanRemindersUseCase>().call(updatedLoan);
         resetForm();
         refreshParent();
       },

@@ -25,16 +25,24 @@ class AddLoanSheetController extends CcGetController {
   final CreateLoanUseCase _createLoan;
   final WalletController _walletController;
 
+  late final TextEditingController nameController;
   final RxString direction = LoanDirection.borrow.obs;
 
   final RxList<CategoryEntity> loanCategories = <CategoryEntity>[].obs;
   final Rxn<CategoryEntity> selectedLoanCategory = Rxn<CategoryEntity>();
+  final RxBool isNameValid = false.obs;
   final RxBool isVip = false.obs;
   final RxBool isSubmitting = false.obs;
 
   void init() {
+    nameController = TextEditingController();
+    nameController.addListener(_onNameChanged);
     _loadLoanCategories();
     _loadVipStatus();
+  }
+
+  void _onNameChanged() {
+    isNameValid.value = nameController.text.trim().isNotEmpty;
   }
 
   Future<void> _loadVipStatus() async {
@@ -77,12 +85,14 @@ class AddLoanSheetController extends CcGetController {
 
   void selectLoanCategory(CategoryEntity category) {
     selectedLoanCategory.value = category;
+    nameController.text = el.tr(category.nameKey);
   }
 
   Future<void> save(BuildContext context) async {
     if (isSubmitting.value) return;
     isSubmitting.value = true;
 
+    final name = nameController.text.trim();
     final category = selectedLoanCategory.value;
     if (category == null) {
       isSubmitting.value = false;
@@ -103,7 +113,7 @@ class AddLoanSheetController extends CcGetController {
       direction: direction.value,
       principalAmount: amount,
       categoryId: category.id,
-      categoryLabel: el.tr(category.nameKey),
+      categoryLabel: name,
       categoryIconCode: category.iconCode,
       categoryIconFamily: category.iconFamily,
       walletId: wallet.id,
@@ -141,6 +151,7 @@ class AddLoanSheetController extends CcGetController {
 
   @override
   void onClose() {
+    nameController.dispose();
     super.onClose();
   }
 }

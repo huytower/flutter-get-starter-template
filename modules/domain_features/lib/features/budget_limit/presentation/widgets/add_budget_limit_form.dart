@@ -18,7 +18,6 @@ import '../get_x/budget_limit_controller.dart';
 import 'budget_limit_category_selector.dart';
 import 'budget_limit_lock_notice.dart';
 import 'budget_limit_name_input.dart';
-import 'budget_limit_save_button.dart';
 
 /// Bottom sheet to create a budget, or edit an existing one when
 /// [editTarget] is provided. The category is fixed after creation; the name
@@ -443,7 +442,10 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
                     onCopy: () => CcStringHelper.copyToClipboard(_limitStr),
                   ),
                 const CcSpaceSM(),
-                BudgetLimitSaveButton(onPressed: _isValid ? _onSave : null),
+                CcSaveButton(
+                  onPressed: _isValid ? _onSave : null,
+                  label: el.tr(CcLocaleKeys.common_save),
+                ),
               ],
             ),
           ),

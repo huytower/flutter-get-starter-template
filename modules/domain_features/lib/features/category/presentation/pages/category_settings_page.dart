@@ -44,15 +44,21 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
   const _CategorySettingsView();
 
   @override
-  bool get enableAppBar => false;
+  bool get enableAppBar => true;
+
+  @override
+  PreferredSizeWidget? buildAppBar(BuildContext context) {
+    return _buildAppBar(context);
+  }
 
   @override
   Widget buildContent(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.ccColorScheme.surface,
-      appBar: _buildAppBar(context),
-      body: _buildBody(context),
-    );
+    return _buildBody(context);
+  }
+
+  @override
+  Widget onPageBodyWrapper(BuildContext context, Widget body) {
+    return Container(color: context.ccColorScheme.surface, child: body);
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
@@ -66,11 +72,13 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
         ),
         onTap: () => Navigator.of(context).pop(),
       ),
-      title: CcText(
-        el.tr(CcLocaleKeys.category_settings_title),
-        textStyle: context.ccTextTheme.titleMedium?.copyWith(
-          fontWeight: CcTypographyParams.bold,
-          color: context.ccColorScheme.onPrimary,
+      title: Center(
+        child: CcText(
+          el.tr(CcLocaleKeys.category_settings_title),
+          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            fontWeight: CcTypographyParams.bold,
+            color: context.ccColorScheme.onPrimary,
+          ),
         ),
       ),
     );

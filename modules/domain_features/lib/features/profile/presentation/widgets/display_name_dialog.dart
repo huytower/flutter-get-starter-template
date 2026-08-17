@@ -94,31 +94,9 @@ class _DisplayNameDialogState extends State<DisplayNameDialog> {
             ),
           ),
           const CcSpaceMD(),
-          Center(
-            child: FractionallySizedBox(
-              widthFactor: 0.6,
-              child: SizedBox(
-                height: context.respDim(40),
-                child: ElevatedButton(
-                  onPressed: _isValid ? _onSave : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.ccColorScheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: CcText(
-                    el.tr(CcLocaleKeys.profile_display_name_save),
-                    align: Alignment.center,
-                    textAlign: TextAlign.center,
-                    textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                      color: context.ccColorScheme.onPrimary,
-                      fontWeight: CcTypographyParams.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          CcSaveButton(
+            onPressed: _isValid ? _onSave : null,
+            label: el.tr(CcLocaleKeys.profile_display_name_save),
           ),
         ],
       ),

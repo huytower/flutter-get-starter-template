@@ -1,17 +1,15 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../wallet/domain/entities/wallet_entity.dart';
-import '../get_x/investment_form_controller.dart';
+import '../get_x/loan_form_controller.dart';
 
-class InvestmentAssetSelector extends StatelessWidget {
-  final InvestmentFormController controller;
+class LoanAssetSelector extends StatelessWidget {
+  final LoanFormController controller;
   final Color activeColor;
 
-  const InvestmentAssetSelector({
+  const LoanAssetSelector({
     super.key,
     required this.controller,
     required this.activeColor,
@@ -25,7 +23,7 @@ class InvestmentAssetSelector extends StatelessWidget {
         CcSymmetricPadding(
           horizontal: CcPaddingParams.PAGE_SM,
           child: CcText(
-            el.tr(CcLocaleKeys.transaction_category),
+            el.tr(CcLocaleKeys.loan_list_title),
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
               color: context.ccColorScheme.onSurfaceVariant,
               fontWeight: FontWeight.bold,
@@ -38,7 +36,6 @@ class InvestmentAssetSelector extends StatelessWidget {
             return _buildShimmerList(context);
           }
 
-          // Capture items list to track its changes in this scope.
           final items = controller.mergedItems;
 
           if (items.isEmpty) {
@@ -49,7 +46,7 @@ class InvestmentAssetSelector extends StatelessWidget {
                 horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
               ),
               child: CcText(
-                el.tr(CcLocaleKeys.transaction_no_investment_items_hint),
+                el.tr(CcLocaleKeys.loan_empty_state),
                 textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                   color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
                   fontStyle: FontStyle.italic,
@@ -72,35 +69,68 @@ class InvestmentAssetSelector extends StatelessWidget {
               itemCount: items.length,
               separatorBuilder: (context, index) => const CcSpaceMD(),
               itemBuilder: (context, index) {
-                final item = items[index];
-                return Obx(() {
-                  if (item is WalletEntity) {
-                    final isSelected =
-                        controller.selectedInvestmentWalletId.value == item.id;
-                    return _buildItem(
-                      context,
-                      label: item.name,
-                      icon: iconDataFromCode(item.iconCode),
-                      isSelected: isSelected,
-                      onTap: () => controller.selectAsset(item),
-                    );
-                  } else if (item is CategoryEntity) {
-                    final isSelected =
-                        controller.selectedCategory.value?.id == item.id &&
-                        controller.isAddingNewItem.value;
-                    return _buildItem(
-                      context,
-                      label: el.tr(item.nameKey),
-                      icon: iconDataFromCode(
-                        item.iconCode,
-                        fontFamily: item.iconFamily,
+                final balance = items[index];
+                final loan = balance.loan;
+                final isSelected = controller.selectedLoanId.value == loan.id;
+
+                return CcInkWell(
+                  onTap: () => controller.selectLoan(balance),
+                  borderRadius: context.brLg,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      if (isSelected)
+                        Positioned.fill(
+                          child: CcGlassyGradientBackground(
+                            centerColor: activeColor.withAlpha(30),
+                            endColor: activeColor.withAlpha(50),
+                          ),
+                        ),
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        width: context.respDim(160),
+                        padding: EdgeInsets.all(context.respDim(10)),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? activeColor.withAlpha(10)
+                              : context.ccColorScheme.onSurface.withAlpha(10),
+                          borderRadius: context.brLg,
+                          border: Border.all(
+                            color: isSelected
+                                ? activeColor.withAlpha(20)
+                                : context.ccColorScheme.onSurface.withAlpha(10),
+                            width: context.respDim(1),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildIcon(context, loan, isSelected),
+                            const CcSpaceXS(),
+                            CcText(
+                              loan.categoryLabel,
+                              textAlign: TextAlign.center,
+                              align: Alignment.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textStyle: context.ccTextTheme.labelSmall
+                                  ?.copyWith(
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                    color: isSelected
+                                        ? activeColor
+                                        : context
+                                              .ccColorScheme
+                                              .onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
-                      isSelected: isSelected,
-                      onTap: () => controller.selectCategory(item),
-                    );
-                  }
-                  return const SizedBox.shrink();
-                });
+                    ],
+                  ),
+                );
               },
             ),
           );
@@ -109,71 +139,7 @@ class InvestmentAssetSelector extends StatelessWidget {
     );
   }
 
-  Widget _buildItem(
-    BuildContext context, {
-    required String label,
-    required IconData icon,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    final scheme = context.ccColorScheme;
-
-    return CcInkWell(
-      onTap: onTap,
-      borderRadius: context.brLg,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          if (isSelected)
-            Positioned.fill(
-              child: CcGlassyGradientBackground(
-                centerColor: activeColor.withAlpha(30),
-                endColor: activeColor.withAlpha(50),
-              ),
-            ),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: context.respDim(68),
-            padding: EdgeInsets.all(context.respDim(10)),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? activeColor.withAlpha(10)
-                  : scheme.onSurface.withAlpha(10),
-              borderRadius: context.brLg,
-              border: Border.all(
-                color: isSelected
-                    ? activeColor.withAlpha(20)
-                    : scheme.onSurface.withAlpha(10),
-                width: context.respDim(1),
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildIcon(context, icon, isSelected),
-                const CcSpaceXS(),
-                CcText(
-                  label,
-                  textAlign: TextAlign.center,
-                  align: Alignment.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    color: isSelected ? activeColor : scheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildIcon(BuildContext context, IconData icon, bool isSelected) {
+  Widget _buildIcon(BuildContext context, dynamic loan, bool isSelected) {
     final scheme = context.ccColorScheme;
 
     return Container(
@@ -196,7 +162,10 @@ class InvestmentAssetSelector extends StatelessWidget {
               ),
             ),
           CcIcon(
-            icon: icon,
+            icon: iconDataFromCode(
+              loan.categoryIconCode ?? 0,
+              fontFamily: loan.categoryIconFamily,
+            ),
             size: context.respIconSize(baseSize: 18),
             color: isSelected ? activeColor : scheme.onSurfaceVariant,
           ),
@@ -217,7 +186,7 @@ class InvestmentAssetSelector extends StatelessWidget {
         itemCount: 5,
         separatorBuilder: (context, index) => const CcSpaceMD(),
         itemBuilder: (context, index) => Container(
-          width: context.respDim(68),
+          width: context.respDim(160),
           padding: EdgeInsets.all(context.respDim(10)),
           decoration: BoxDecoration(
             color: context.ccColorScheme.onSurface.withAlpha(10),
@@ -233,7 +202,7 @@ class InvestmentAssetSelector extends StatelessWidget {
               ),
               const CcSpaceXS(),
               CcShimmer(
-                width: context.respDim(40),
+                width: context.respDim(80),
                 height: context.respDim(10),
                 borderRadius: context.brXs,
               ),

@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/wallet_icon_helper.dart';
-import '../../../category/domain/entities/category_entity.dart';
 import '../../domain/entities/loan_entity.dart';
 import '../get_x/add_loan_sheet_controller.dart';
 
@@ -57,46 +55,17 @@ class AddLoanSheet extends GetView<AddLoanSheetController> {
         _buildTitle(context, controller),
         const CcSpaceMD(),
         if (!controller.isVip.value) ...[
-          _buildVipLockBanner(context),
+          const CcVipLockBanner(),
           const CcSpaceMD(),
         ],
         _buildDirectionPicker(context, controller),
         const CcSpaceMD(),
         _buildLoanCategoryPicker(context, controller),
         const CcSpaceMD(),
+        _buildNameField(context, controller),
+        const CcSpaceMD(),
         _buildSaveButton(context, controller),
       ],
-    );
-  }
-
-  Widget _buildVipLockBanner(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.primary.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: context.ccColorScheme.primary.withOpacity(0.2),
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.workspace_premium_rounded,
-            color: context.ccColorScheme.primary,
-            size: context.respIconSize(baseSize: 24),
-          ),
-          const CcSpaceSM(),
-          Expanded(
-            child: CcText(
-              el.tr(CcLocaleKeys.profile_vip_subtitle),
-              textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                color: context.ccColorScheme.onSurface,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -225,11 +194,12 @@ class AddLoanSheet extends GetView<AddLoanSheetController> {
                 return Obx(() {
                   final isSelected =
                       controller.selectedLoanCategory.value?.id == category.id;
-                  return _buildCategoryItem(
-                    context,
-                    controller,
-                    category,
-                    isSelected,
+                  return CcCategoryItem(
+                    iconCode: category.iconCode,
+                    iconFamily: category.iconFamily,
+                    nameKey: category.nameKey,
+                    isSelected: isSelected,
+                    onTap: () => controller.selectLoanCategory(category),
                   );
                 });
               },
@@ -240,91 +210,18 @@ class AddLoanSheet extends GetView<AddLoanSheetController> {
     });
   }
 
-  Widget _buildCategoryItem(
+  Widget _buildNameField(
     BuildContext context,
     AddLoanSheetController controller,
-    CategoryEntity category,
-    bool isSelected,
   ) {
-    final scheme = context.ccColorScheme;
-
-    return CcInkWell(
-      onTap: () => controller.selectLoanCategory(category),
-      borderRadius: context.brLg,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          if (isSelected)
-            const Positioned.fill(child: CcGlassyGradientBackground()),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: context.respDim(50),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? scheme.primaryContainer.withValues(alpha: 0.1)
-                  : scheme.onSurface.withOpacity(0.04),
-              borderRadius: context.brLg,
-              border: Border.all(
-                color: isSelected
-                    ? scheme.primary.withOpacity(0.2)
-                    : scheme.onSurface.withOpacity(0.08),
-                width: context.respDim(1),
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildCategoryIcon(context, category, isSelected),
-                const CcSpaceXS(),
-                Text(
-                  el.tr(category.nameKey),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.ccTextTheme.labelSmall?.copyWith(
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    color: isSelected
-                        ? scheme.primary
-                        : scheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryIcon(
-    BuildContext context,
-    CategoryEntity cat,
-    bool isSelected,
-  ) {
-    final scheme = context.ccColorScheme;
-
-    return Container(
-      width: context.respDim(32),
-      height: context.respDim(32),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? scheme.primary.withOpacity(0.12)
-            : scheme.onSurface.withOpacity(0.08),
-        borderRadius: context.brMd,
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (isSelected) const Positioned.fill(child: CcGlassyGradientIcon()),
-          CcIcon(
-            icon: iconDataFromCode(cat.iconCode, fontFamily: cat.iconFamily),
-            size: context.respIconSize(baseSize: 18),
-            color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
-          ),
-        ],
-      ),
+    return CcNameInputField(
+      controller: controller.nameController,
+      labelText: el.tr(CcLocaleKeys.transaction_loan_name_label),
+      hintText: el.tr(CcLocaleKeys.transaction_loan_name_hint),
+      onClear: () {
+        controller.isNameValid.value = false;
+        controller.selectedLoanCategory.value = null;
+      },
     );
   }
 
@@ -337,40 +234,10 @@ class AddLoanSheet extends GetView<AddLoanSheetController> {
           controller.selectedLoanCategory.value != null &&
           !controller.isSubmitting.value;
 
-      return Center(
-        child: FractionallySizedBox(
-          widthFactor: 0.6,
-          child: SizedBox(
-            height: context.respDim(40),
-            child: ElevatedButton(
-              onPressed: canSave ? () => controller.save(context) : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.ccColorScheme.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: controller.isSubmitting.value
-                  ? SizedBox(
-                      width: context.respDim(20),
-                      height: context.respDim(20),
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: context.ccColorScheme.onPrimary,
-                      ),
-                    )
-                  : CcText(
-                      el.tr(CcLocaleKeys.common_save),
-                      align: Alignment.center,
-                      textAlign: TextAlign.center,
-                      textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                        color: context.ccColorScheme.onPrimary,
-                        fontWeight: CcTypographyParams.bold,
-                      ),
-                    ),
-            ),
-          ),
-        ),
+      return CcSaveButton(
+        onPressed: canSave ? () => controller.save(context) : null,
+        label: el.tr(CcLocaleKeys.common_save),
+        isLoading: controller.isSubmitting.value,
       );
     });
   }
