@@ -2,7 +2,6 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
@@ -39,31 +38,23 @@ class _AddLoanSheetState extends State<AddLoanSheet> {
       () => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              if (_controller.showKeypad.value) _controller.hideKeypad();
-            },
-            child: Container(
-              padding: EdgeInsets.only(
-                left: context.respPadding(CcPaddingParams.SPACE_LG),
-                right: context.respPadding(CcPaddingParams.SPACE_LG),
-                top: context.respPadding(CcPaddingParams.SPACE_LG),
-                bottom:
-                    (_controller.showKeypad.value
-                        ? 0
-                        : MediaQuery.of(context).viewInsets.bottom) +
-                    context.respPadding(CcPaddingParams.SPACE_LG),
+          Container(
+            padding: EdgeInsets.only(
+              left: context.respPadding(CcPaddingParams.SPACE_LG),
+              right: context.respPadding(CcPaddingParams.SPACE_LG),
+              top: context.respPadding(CcPaddingParams.SPACE_LG),
+              bottom:
+                  MediaQuery.of(context).viewInsets.bottom +
+                  context.respPadding(CcPaddingParams.SPACE_LG),
+            ),
+            decoration: BoxDecoration(
+              color: context.ccColorScheme.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
               ),
-              decoration: BoxDecoration(
-                color: context.ccColorScheme.surface,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
-                ),
-              ),
-              child: SingleChildScrollView(
-                child: _buildSheetContent(context, _controller),
-              ),
+            ),
+            child: SingleChildScrollView(
+              child: _buildSheetContent(context, _controller),
             ),
           ),
         ],
@@ -385,13 +376,6 @@ class _AddLoanSheetState extends State<AddLoanSheet> {
     );
   }
 
-  Color _accentColor(AddLoanSheetController controller) {
-    final isBorrowSide = controller.direction.value == LoanDirection.borrow;
-    return isBorrowSide
-        ? PrjColors.debtLoan
-        : PrjColors.debtLoan.withValues(alpha: 0.5);
-  }
-
   Widget _buildSaveButton(
     BuildContext context,
     AddLoanSheetController controller,
@@ -399,7 +383,6 @@ class _AddLoanSheetState extends State<AddLoanSheet> {
     final bool canSave =
         controller.isCounterpartyValid.value &&
         controller.selectedLoanCategory.value != null &&
-        (int.tryParse(controller.amountStr.value) ?? 0) > 0 &&
         !controller.isSubmitting.value;
 
     return Center(

@@ -28,9 +28,6 @@ class AddLoanSheetController extends CcGetController {
 
   late final TextEditingController counterpartyController;
   final RxString direction = LoanDirection.borrow.obs;
-  final RxString amountStr = '0'.obs;
-  final RxBool showKeypad = false.obs;
-  final GlobalKey amountFieldKey = GlobalKey();
 
   final RxList<CategoryEntity> loanCategories = <CategoryEntity>[].obs;
   final Rxn<CategoryEntity> selectedLoanCategory = Rxn<CategoryEntity>();
@@ -91,51 +88,9 @@ class AddLoanSheetController extends CcGetController {
 
   void selectLoanCategory(CategoryEntity category) {
     selectedLoanCategory.value = category;
+    counterpartyController.text = el.tr(category.nameKey);
+    _onCounterpartyChanged();
   }
-
-  void handleKeyPress(String key) {
-    if (amountStr.value == '0') {
-      if (key != '0' && key != '000') amountStr.value = key;
-    } else {
-      amountStr.value += key;
-    }
-  }
-
-  void handleDelete() {
-    if (amountStr.value.length > 1) {
-      amountStr.value = amountStr.value.substring(
-        0,
-        amountStr.value.length - 1,
-      );
-    } else {
-      amountStr.value = '0';
-    }
-  }
-
-  void handleClear() {
-    amountStr.value = '0';
-  }
-
-  void handleSuggestion(int value) {
-    amountStr.value = value.toString();
-  }
-
-  void showKeypadAndScroll(BuildContext context) {
-    FocusScope.of(context).unfocus();
-    showKeypad.value = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ctx = amountFieldKey.currentContext;
-      if (ctx != null) {
-        Scrollable.ensureVisible(
-          ctx,
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeOut,
-        );
-      }
-    });
-  }
-
-  void hideKeypad() => showKeypad.value = false;
 
   Future<void> save(BuildContext context) async {
     if (isSubmitting.value) return;
@@ -143,12 +98,6 @@ class AddLoanSheetController extends CcGetController {
 
     final category = selectedLoanCategory.value;
     if (category == null) {
-      isSubmitting.value = false;
-      return;
-    }
-
-    final amount = int.tryParse(amountStr.value) ?? 0;
-    if (amount <= 0) {
       isSubmitting.value = false;
       return;
     }
@@ -164,7 +113,7 @@ class AddLoanSheetController extends CcGetController {
     final params = CreateLoanParams(
       direction: direction.value,
       counterpartyName: counterpartyName,
-      principalAmount: amount,
+      principalAmount: 0,
       categoryId: category.id,
       categoryLabel: el.tr(category.nameKey),
       categoryIconCode: category.iconCode,

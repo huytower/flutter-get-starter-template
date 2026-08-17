@@ -26,6 +26,8 @@ class LiabilityHeroBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
+    void _toggleVisibility() => walletController.isBalanceVisible.toggle();
+
     return CcPadding(
       Container(
         width: double.infinity,

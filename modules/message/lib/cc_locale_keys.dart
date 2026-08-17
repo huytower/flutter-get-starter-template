@@ -1333,7 +1333,7 @@ class CodegenLoader extends AssetLoader {
       "debt_group_borrow": "Đi vay",
       "debt_group_lend": "Cho vay",
       "debt_personal_borrow": "Vay cá nhân",
-      "debt_bank_borrow": "Vay ngân hàng/tổ chức tài chính",
+      "debt_bank_borrow": "Vay ngân hàng",
       "debt_mortgage": "Vay thế chấp",
       "debt_credit_card": "Nợ thẻ tín dụng",
       "debt_installment": "Vay trả góp",
