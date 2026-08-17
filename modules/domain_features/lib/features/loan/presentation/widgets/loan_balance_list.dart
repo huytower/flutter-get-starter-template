@@ -33,16 +33,15 @@ class LoanBalanceList extends StatelessWidget {
         emptyMessage,
         align: Alignment.center,
         textAlign: TextAlign.center,
-        textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant,
+        textStyle: context.ccTextTheme.bodySmall?.copyWith(
+          color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
         ),
       );
     }
     return ListView.separated(
       shrinkWrap: shrinkWrap,
       physics:
-          physics ??
-          (shrinkWrap ? const NeverScrollableScrollPhysics() : null),
+          physics ?? (shrinkWrap ? const NeverScrollableScrollPhysics() : null),
       itemCount: balances.length,
       separatorBuilder: (context, index) => Divider(
         height: 1,

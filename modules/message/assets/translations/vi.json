@@ -323,7 +323,7 @@
     "status_settled": "Đã tất toán",
     "remaining_balance": "Còn lại",
     "principal_amount": "Gốc vay",
-    "empty_state": "Chưa có khoản vay nào",
+    "empty_state": "Chưa có khoản vay nào\nNhấn + để thêm ",
     "history_title": "Lịch sử giao dịch",
     "no_history": "Chưa có giao dịch trả/thu nợ nào",
     "borrow": "Đi vay",

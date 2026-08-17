@@ -196,7 +196,7 @@ class _StatItem extends StatelessWidget {
         CcText(
           label,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.6),
+            color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
           ),
         ),
         const Spacer(),

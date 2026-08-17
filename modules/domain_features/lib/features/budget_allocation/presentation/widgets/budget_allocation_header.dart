@@ -12,14 +12,8 @@ class BudgetAllocationHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<WalletController>();
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        context.respPadding(CcPaddingParams.SPACE_LG),
-        context.respPadding(CcPaddingParams.SPACE_MD),
-        context.respPadding(CcPaddingParams.SPACE_LG),
-        context.respPadding(CcPaddingParams.SPACE_SM),
-      ),
-      child: Container(
+    return CcPadding(
+      Container(
         width: double.infinity,
         padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_LG)),
         decoration: BoxDecoration(
@@ -83,9 +77,13 @@ class BudgetAllocationHeader extends StatelessWidget {
                 ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
+    ),
+    CcPaddingParams.SPACE_SM, // bottom
+    CcPaddingParams.SPACE_LG, // left
+    CcPaddingParams.SPACE_LG, // right
+    CcPaddingParams.SPACE_MD, // top
     );
   }
 }

@@ -36,14 +36,8 @@ class BudgetWalletsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-            context.respPadding(CcPaddingParams.SPACE_LG),
-            context.respPadding(CcPaddingParams.SPACE_LG),
-            context.respPadding(CcPaddingParams.SPACE_MD),
-            context.respPadding(CcPaddingParams.SPACE_SM),
-          ),
-          child: Row(
+        CcPadding(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CcText(
@@ -97,6 +91,10 @@ class BudgetWalletsSection extends StatelessWidget {
               ),
             ],
           ),
+          CcPaddingParams.SPACE_SM, // bottom
+          CcPaddingParams.SPACE_LG, // left
+          CcPaddingParams.SPACE_MD, // right
+          CcPaddingParams.SPACE_LG, // top
         ),
         CcWalletStripCard(
           wallets: wallets,

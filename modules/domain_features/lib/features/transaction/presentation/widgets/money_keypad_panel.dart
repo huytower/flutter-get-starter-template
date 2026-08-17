@@ -9,6 +9,7 @@ class MoneyKeypadPanel extends StatelessWidget {
   final void Function(String) onKeyPress;
   final VoidCallback onDelete;
   final VoidCallback onClear;
+  final VoidCallback? onCopy;
 
   /// Quick-amount suggestions (Momo style) shown as a chip strip above the
   /// keypad; tapping one fires [onSuggestion].
@@ -23,6 +24,7 @@ class MoneyKeypadPanel extends StatelessWidget {
     required this.onKeyPress,
     required this.onDelete,
     required this.onClear,
+    this.onCopy,
     this.suggestions = const [],
     this.onSuggestion,
     required this.onDone,
@@ -66,6 +68,25 @@ class MoneyKeypadPanel extends StatelessWidget {
                     ),
                   ),
                 ),
+                CcIconButton.bouncing(
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: activeColor,
+                    size: context.respIconSize(baseSize: 20),
+                  ),
+                  onTap: onClear,
+                  tooltip: el.tr(CcLocaleKeys.common_clear),
+                ),
+                if (onCopy != null)
+                  CcIconButton.bouncing(
+                    icon: Icon(
+                      Icons.copy_rounded,
+                      color: activeColor,
+                      size: context.respIconSize(baseSize: 20),
+                    ),
+                    onTap: onCopy!,
+                    tooltip: el.tr(CcLocaleKeys.common_copy),
+                  ),
                 CcInkWell(
                   onTap: onDone,
                   child: CcSymmetricPadding(

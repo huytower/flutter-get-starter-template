@@ -323,7 +323,7 @@
     "status_settled": "Settled",
     "remaining_balance": "Remaining",
     "principal_amount": "Principal",
-    "empty_state": "No loans yet",
+    "empty_state": "No loans yet\nTap + to add ",
     "history_title": "Transaction history",
     "no_history": "No repayment/collection yet",
     "borrow": "Borrow",

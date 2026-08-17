@@ -50,8 +50,8 @@ class CcWalletStripCard extends StatelessWidget {
         child: CcText(
           el.tr(emptyMessageKey ?? CcLocaleKeys.wallet_empty),
           textAlign: TextAlign.center,
-          textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant,
+          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+            color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
           ),
         ),
       );

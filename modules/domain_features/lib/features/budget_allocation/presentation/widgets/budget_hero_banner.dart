@@ -50,14 +50,8 @@ class BudgetHeroBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        context.respPadding(CcPaddingParams.SPACE_LG),
-        context.respPadding(topPadding),
-        context.respPadding(CcPaddingParams.SPACE_LG),
-        context.respPadding(bottomPadding),
-      ),
-      child: CcInkWell(
+    return CcPadding(
+      CcInkWell(
         onTap: onTap,
         borderRadius: context.brXl,
         child: Container(
@@ -147,6 +141,10 @@ class BudgetHeroBanner extends StatelessWidget {
           ),
         ),
       ),
+      bottomPadding, // bottom
+      CcPaddingParams.SPACE_LG, // left
+      CcPaddingParams.SPACE_LG, // right
+      topPadding, // top
     );
   }
 }

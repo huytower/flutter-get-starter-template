@@ -106,8 +106,8 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
             el.tr(CcLocaleKeys.wallet_empty),
             align: Alignment.center,
             textAlign: TextAlign.center,
-            textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant,
+            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+              color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
             ),
           );
         }

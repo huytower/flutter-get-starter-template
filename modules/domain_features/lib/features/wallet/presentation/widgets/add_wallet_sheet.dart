@@ -274,7 +274,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
         CcText(
           el.tr(CcLocaleKeys.wallet_balance_locked_hint),
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.6),
+            color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
           ),
         ),
       ],

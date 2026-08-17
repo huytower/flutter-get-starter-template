@@ -28,14 +28,8 @@ class InvestmentWalletsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-            context.respPadding(CcPaddingParams.SPACE_LG),
-            context.respPadding(CcPaddingParams.SPACE_LG),
-            context.respPadding(CcPaddingParams.SPACE_MD),
-            context.respPadding(CcPaddingParams.SPACE_SM),
-          ),
-          child: Row(
+        CcPadding(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CcText(
@@ -71,6 +65,10 @@ class InvestmentWalletsSection extends StatelessWidget {
               ),
             ],
           ),
+          CcPaddingParams.SPACE_SM, // bottom
+          CcPaddingParams.SPACE_LG, // left
+          CcPaddingParams.SPACE_MD, // right
+          CcPaddingParams.SPACE_LG, // top
         ),
         if (wallets.isEmpty)
           _buildEmptyState(context)
@@ -87,8 +85,8 @@ class InvestmentWalletsSection extends StatelessWidget {
       child: CcText(
         el.tr(CcLocaleKeys.wallet_investment_empty),
         textAlign: TextAlign.center,
-        textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant,
+        textStyle: context.ccTextTheme.bodySmall?.copyWith(
+          color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
         ),
       ),
     );

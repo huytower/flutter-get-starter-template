@@ -52,9 +52,7 @@ class InvestmentAssetSelector extends StatelessWidget {
               child: CcText(
                 el.tr(CcLocaleKeys.transaction_no_investment_items_hint),
                 textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  color: context.ccColorScheme.onSurfaceVariant.withOpacity(
-                    0.6,
-                  ),
+                  color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
                   fontStyle: FontStyle.italic,
                 ),
                 align: Alignment.center,

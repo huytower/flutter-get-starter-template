@@ -28,7 +28,7 @@ class WalletSectionHeader extends StatelessWidget {
           ),
           Icon(
             isAction ? Icons.chevron_right : Icons.expand_more,
-            color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.5),
+            color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
             size: context.respIconSize(baseSize: 24),
           ),
         ],

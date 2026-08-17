@@ -26,14 +26,8 @@ class LiabilityHeroBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        context.respPadding(CcPaddingParams.SPACE_LG),
-        context.respPadding(CcPaddingParams.SPACE_SM),
-        context.respPadding(CcPaddingParams.SPACE_LG),
-        context.respPadding(CcPaddingParams.SPACE_XS),
-      ),
-      child: Container(
+    return CcPadding(
+      Container(
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
@@ -74,7 +68,7 @@ class LiabilityHeroBanner extends StatelessWidget {
                         size: context.respIconSize(baseSize: 18),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const CcSpaceMD(),
                     CcText(
                       el.tr(CcLocaleKeys.wallet_liabilities),
                       textStyle: context.ccTextTheme.titleSmall?.copyWith(
@@ -91,7 +85,7 @@ class LiabilityHeroBanner extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const CcSpaceLG(),
             Obx(
               () => Row(
                 children: [
@@ -103,11 +97,6 @@ class LiabilityHeroBanner extends StatelessWidget {
                       color: scheme.onPrimary,
                       isNegative: true,
                     ),
-                  ),
-                  Container(
-                    width: 1,
-                    height: context.respDim(40),
-                    color: scheme.onPrimary.withOpacity(0.2),
                   ),
                   Expanded(
                     child: _buildBalanceItem(
@@ -121,7 +110,7 @@ class LiabilityHeroBanner extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 12),
+            const CcSpaceMD(),
             Obx(
               () => Container(
                 padding: EdgeInsets.symmetric(
@@ -159,6 +148,10 @@ class LiabilityHeroBanner extends StatelessWidget {
           ],
         ),
       ),
+      CcPaddingParams.SPACE_XS, // bottom
+      CcPaddingParams.SPACE_LG, // left
+      CcPaddingParams.SPACE_LG, // right
+      CcPaddingParams.SPACE_SM, // top
     );
   }
 
@@ -178,7 +171,7 @@ class LiabilityHeroBanner extends StatelessWidget {
             color: color.withOpacity(0.7),
           ),
         ),
-        const SizedBox(height: 4),
+        const CcSpaceXS(),
         Obx(
           () => CcText(
             '${isNegative ? '-' : ''}${walletController.isBalanceVisible.value ? TransactionFormHelpers.formatShort(balance) : '***'}',
