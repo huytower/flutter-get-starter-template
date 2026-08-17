@@ -12,11 +12,13 @@ import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
+import 'quick_entry_mixin.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
 
 @injectable
-class InvestmentFormController extends TransactionFormController {
+class InvestmentFormController extends TransactionFormController
+    with QuickEntryMixin {
   InvestmentFormController(
     this._getCategories,
     this._getProfileSettings,
@@ -27,8 +29,30 @@ class InvestmentFormController extends TransactionFormController {
   final GetProfileSettingsUseCase _getProfileSettings;
   final CreateInvestmentTransactionUseCase _createInvestmentTransaction;
 
+  @override
+  String get quickEntryCategoryType => CategoryType.investment;
+
+  /// Investment has no category-picker UI of its own (category is derived
+  /// from the chosen investment asset, which stays a manual pick) — so
+  /// there's nothing for a quick-entry categoryId to prefill. Overridden as
+  /// a no-op rather than wiring up an inert `pendingPrefillCategoryId`.
+  @override
+  void applyQuickEntryCategory(String categoryId) {}
+
+  /// Since [applyQuickEntryCategory] is a no-op, showing a resolved
+  /// category in the suggestion chip would be misleading — it'd look like
+  /// tapping "Apply" selects that category when it silently won't.
+  @override
+  bool get quickEntryShowsCategoryInLabel => false;
+
+  /// Unused by [applyQuickEntryCategory] (a no-op here), but still required
+  /// to satisfy [QuickEntryMixin]'s contract.
+  @override
+  final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
+
   final Rx<InvestmentDirection> direction = InvestmentDirection.contribute.obs;
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
+  @override
   final RxInt categoryKey = 0.obs;
 
   /// Merged list of existing investment assets (`WalletEntity`) and
@@ -70,6 +94,7 @@ class InvestmentFormController extends TransactionFormController {
       CategorySettingsController.onCategoriesChanged,
       (_) => _recomputeMergedItems(),
     );
+    initQuickEntry();
   }
 
   Future<void> _loadAll() async {
@@ -156,6 +181,7 @@ class InvestmentFormController extends TransactionFormController {
   @override
   void onClose() {
     newItemNameController.dispose();
+    disposeQuickEntry();
     super.onClose();
   }
 
@@ -200,6 +226,7 @@ class InvestmentFormController extends TransactionFormController {
     newItemName.value = '';
     newItemNameController.clear();
     _recomputeMergedItems();
+    resetQuickEntry();
   }
 
   @override

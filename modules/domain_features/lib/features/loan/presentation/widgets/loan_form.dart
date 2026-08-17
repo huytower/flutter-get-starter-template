@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/money_constants.dart';
-import '../../../../core/di/di.dart';
 import '../../../category/data/datasources/local/category_seed.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';
@@ -26,7 +25,11 @@ class LoanForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(getIt<LoanFormController>());
+    // Pre-registered by TransactionController.onInit() — see that call
+    // site's comment for why this must be Get.find, not Get.put (this form
+    // has no tagged/edit-mode variant, so there's never a second instance
+    // to create here).
+    final controller = Get.find<LoanFormController>();
 
     return Obx(() {
       final accentColor = _accentColor(controller);
@@ -105,7 +108,13 @@ class LoanForm extends StatelessWidget {
           ],
           activeColor: accentColor,
           autoSelectFirst: true,
-          initialSelectedCategoryId: controller.selectedCategory.value?.id,
+          // pendingPrefillCategoryId must win: a quick-entry suggestion
+          // applied right after switching direction should still be
+          // resolvable even though selectedCategory was just cleared by
+          // setDirection.
+          initialSelectedCategoryId:
+              controller.pendingPrefillCategoryId.value ??
+              controller.selectedCategory.value?.id,
           title: controller.direction.value == LoanDirection.borrow
               ? el.tr(CcLocaleKeys.transaction_loan_category_borrow_label)
               : el.tr(CcLocaleKeys.transaction_loan_category_lend_label),

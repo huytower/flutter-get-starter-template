@@ -12,18 +12,39 @@ import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/update_transaction_usecase.dart';
+import 'quick_entry_mixin.dart';
 import 'transaction_form_controller.dart';
 
 @injectable
-class IncomeFormController extends TransactionFormController {
+class IncomeFormController extends TransactionFormController
+    with QuickEntryMixin {
+  @override
+  String get quickEntryCategoryType => CategoryType.income;
+
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
+  @override
   final RxInt categoryKey = 0.obs;
+
+  /// Set right before [categoryKey] is bumped by
+  /// [QuickEntryMixin.applyQuickEntryCategory], so the remounted
+  /// `CategorySelectionSection` resolves and reports back the real
+  /// [CategoryEntity] for this id.
+  @override
+  final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
+
   final RxList<int> quickAmounts = RxList<int>(MoneyConstants.quickAmounts);
 
   @override
   void onInit() {
     super.onInit();
     _loadSuggestions();
+    initQuickEntry();
+  }
+
+  @override
+  void onClose() {
+    disposeQuickEntry();
+    super.onClose();
   }
 
   Future<void> _loadSuggestions() async {
@@ -44,10 +65,14 @@ class IncomeFormController extends TransactionFormController {
   void onReset() {
     selectedCategory.value = null;
     categoryKey.value++;
+    resetQuickEntry();
   }
 
   void setCategory(CategoryEntity category) {
     selectedCategory.value = category;
+    // Manual selection clears any pending prefill from AI suggestions so it
+    // doesn't clobber the user's choice on the next rebuild.
+    pendingPrefillCategoryId.value = null;
   }
 
   @override

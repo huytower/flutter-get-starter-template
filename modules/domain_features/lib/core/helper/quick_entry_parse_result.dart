@@ -11,18 +11,46 @@
 /// would throw at runtime the moment anything called
 /// `getIt<QuickEntryParseResult>()`.
 class QuickEntryParseResult {
-  const QuickEntryParseResult({this.amount, this.categoryId});
+  const QuickEntryParseResult({
+    this.amount,
+    this.categoryId,
+    this.date,
+    this.note,
+  });
 
   final int? amount;
   final String? categoryId;
 
-  bool get isComplete => amount != null && categoryId != null;
-  bool get isEmpty => amount == null && categoryId == null;
+  /// Transaction date, if the source (receipt/text) actually stated one —
+  /// never produced by the local parser, only by the cloud fallback.
+  final DateTime? date;
 
-  QuickEntryParseResult copyWith({int? amount, String? categoryId}) {
+  /// Short free-text note (merchant/item), same cloud-only caveat as [date].
+  final String? note;
+
+  /// True once the two fields required to actually save a transaction —
+  /// amount and category — are both resolved. [date]/[note] are optional
+  /// enrichment and don't factor in: the local parser never produces them,
+  /// so requiring them here would force every local-only quick entry to
+  /// escalate to the cloud just to check.
+  bool get isComplete => amount != null && categoryId != null;
+
+  /// True when nothing at all was determined — no point surfacing an empty
+  /// suggestion or merging it into anything.
+  bool get isEmpty =>
+      amount == null && categoryId == null && date == null && note == null;
+
+  QuickEntryParseResult copyWith({
+    int? amount,
+    String? categoryId,
+    DateTime? date,
+    String? note,
+  }) {
     return QuickEntryParseResult(
       amount: amount ?? this.amount,
       categoryId: categoryId ?? this.categoryId,
+      date: date ?? this.date,
+      note: note ?? this.note,
     );
   }
 }
