@@ -2,8 +2,6 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import 'cc_form_label.dart';
-
 /// Phase 3.6 "NLP Simple" quick entry — a free-text field ("50k cafe") with
 /// a mic button for voice dictation, offering a one-tap prefill suggestion
 /// once both amount and category are confidently resolved (locally, or via
@@ -47,10 +45,12 @@ class QuickEntrySection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CcFormLabel(text: el.tr(CcLocaleKeys.quick_entry_label)),
-        const CcSpaceXS(),
+        const CcSpaceSM(),
         CcTextField(
           controller: controller,
+          height: context.respDim(38),
+          borderRadius: 8,
+          borderWidth: 0.5,
           hintText: el.tr(CcLocaleKeys.quick_entry_hint),
           textInputAction: TextInputAction.done,
           onSubmitted: onSubmitted,
@@ -60,7 +60,10 @@ class QuickEntrySection extends StatelessWidget {
           // alongside the controller's own reentrancy guard, so a fast
           // double-submit isn't even possible from the UI, not just a no-op.
           enabled: !isParsing,
+          maxLines: 1,
+          margin: EdgeInsets.zero,
         ),
+        const CcSpaceXS(),
         if (suggestionLabel != null) ...[
           CcSuggestionChip(
             label: el.tr(
@@ -72,16 +75,18 @@ class QuickEntrySection extends StatelessWidget {
             onTap: onApplySuggestion,
             onDismiss: onDismissSuggestion,
           ),
-          const CcSpaceSM(),
+          const CcSpaceXS(),
         ],
         if (errorText != null) ...[
           CcText(
             errorText!,
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+            fontSize: CcTypographyParams.labelSmall,
+            textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: context.ccColorScheme.error,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const CcSpaceSM(),
+          const CcSpaceXS(),
         ],
       ],
     );
@@ -92,10 +97,12 @@ class QuickEntrySection extends StatelessWidget {
   /// owns a `BuildContext` for `showModalBottomSheet`).
   Widget _buildScanIcon(BuildContext context) {
     return IconButton(
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
       icon: Icon(
         Icons.camera_alt_outlined,
         color: context.ccColorScheme.onSurfaceVariant,
-        size: context.respIconSize(baseSize: 20),
+        size: context.respIconSize(baseSize: 16),
       ),
       onPressed: isParsing ? null : onScanTap,
     );
@@ -104,22 +111,26 @@ class QuickEntrySection extends StatelessWidget {
   Widget _buildTrailingIcon(BuildContext context) {
     if (isParsing) {
       return Padding(
-        padding: EdgeInsets.all(context.respPadding(12.0)),
+        padding: EdgeInsets.all(context.respPadding(8.0)),
         child: SizedBox(
-          width: context.respDim(18),
-          height: context.respDim(18),
+          width: context.respDim(8),
+          height: context.respDim(8),
           child: CircularProgressIndicator(
-            strokeWidth: 2,
+            strokeWidth: 1.5,
             valueColor: AlwaysStoppedAnimation<Color>(activeColor),
           ),
         ),
       );
     }
     return IconButton(
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
       icon: Icon(
         isListening ? Icons.mic : Icons.mic_none,
-        color: isListening ? activeColor : context.ccColorScheme.onSurfaceVariant,
-        size: context.respIconSize(baseSize: 20),
+        color: isListening
+            ? activeColor
+            : context.ccColorScheme.onSurfaceVariant,
+        size: context.respIconSize(baseSize: 16),
       ),
       onPressed: isParsing ? null : onMicTap,
     );

@@ -17,6 +17,7 @@ import '../../../reconciliation/presentation/get_x/reconciliation_controller.dar
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
+import '../../../loan/presentation/widgets/add_loan_sheet.dart';
 import '../../../wallet/presentation/widgets/add_investment_sheet.dart';
 import '../../../wallet/presentation/widgets/add_wallet_sheet.dart';
 import '../widgets/edit_wallet_sheet.dart';
@@ -39,6 +40,8 @@ class BudgetAllocationController extends CcGetController {
   final GetBudgetInsightsUseCase _getBudgetInsights;
 
   final RxInt liabilityBalance = 0.obs;
+  final RxInt borrowBalance = 0.obs;
+  final RxInt lendBalance = 0.obs;
   final RxList<LoanBalanceEntity> loanBalances = <LoanBalanceEntity>[].obs;
 
   /// Phase 3.4 "AI Actions" — null while loading/on error, in which case the
@@ -79,6 +82,24 @@ class BudgetAllocationController extends CcGetController {
       ),
       builder: (_) => const AddInvestmentSheet(),
     );
+  }
+
+  void openAddLoan(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.ccColorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => const AddLoanSheet(),
+    );
+  }
+
+  void openLoanActions(BuildContext context, LoanBalanceEntity balance) {
+    // TODO: Implement loan edit/delete actions similar to wallet actions
+    // For now, navigate to loan list for details
+    navigateToLoanList(context);
   }
 
   void openWalletActions(BuildContext context, WalletEntity wallet) {
@@ -231,9 +252,17 @@ class BudgetAllocationController extends CcGetController {
       final sorted = List<LoanBalanceEntity>.from(balances)
         ..sort((a, b) => b.loan.updatedAt.compareTo(a.loan.updatedAt));
       loanBalances.assignAll(sorted);
-      liabilityBalance.value = balances
+      
+      // Calculate separate balances for borrow and lend
+      borrowBalance.value = balances
           .where((b) => b.loan.isBorrow && b.status == LoanStatus.outstanding)
           .fold(0, (sum, b) => sum + b.outstandingBalance);
+      lendBalance.value = balances
+          .where((b) => !b.loan.isBorrow && b.status == LoanStatus.outstanding)
+          .fold(0, (sum, b) => sum + b.outstandingBalance);
+      
+      // Net liability (borrow - lend)
+      liabilityBalance.value = borrowBalance.value - lendBalance.value;
     }, (_) {});
   }
 }

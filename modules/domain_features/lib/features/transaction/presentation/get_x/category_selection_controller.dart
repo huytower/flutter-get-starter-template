@@ -33,6 +33,10 @@ class CategorySelectionController extends CcGetController {
       CategorySettingsController.onCategoryDefaultsApplied,
       (_) => loadCategories(),
     );
+    ever(
+      CategorySettingsController.onCategoriesChanged,
+      (_) => loadCategories(),
+    );
 
     // Ensure auto-selection/pre-selection happens even if categories load async
     ever(isLoading, (loading) {

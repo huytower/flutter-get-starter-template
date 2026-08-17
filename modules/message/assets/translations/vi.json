@@ -50,6 +50,7 @@
     "or": "HOẶC",
     "press_back_again_to_exit": "Nhấn lại để thoát",
     "add_source": "Thêm nguồn",
+    "add": "Thêm",
     "copy": "Sao chép",
     "clear": "Xóa",
     "unit_billion": "tỷ",
@@ -194,7 +195,8 @@
     "investments": "Đầu tư / Tích lũy",
     "investments_desc": "Cổ phiếu, quỹ, bất động sản... · ROI trung bình {roi}%",
     "liabilities": "Nợ phải trả",
-    "liabilities_desc": "Vay + Thẻ tín dụng · dư nợ còn lại, theo dõi áp lực tài chính"
+    "liabilities_desc": "Vay + Thẻ tín dụng · dư nợ còn lại, theo dõi áp lực tài chính",
+    "liabilities_net": "Nợ ròng"
   },
   "comment": {
     "detail": {
@@ -238,6 +240,8 @@
     "debt_saved": "Đã lưu khoản vay nợ {amount} đ thành công!",
     "loan_direction_borrow": "Đi vay",
     "loan_direction_lend": "Cho vay",
+    "borrow": "Đi vay",
+    "lend": "Cho vay",
     "loan_category_borrow_label": "Hình thức vay",
     "loan_amount_borrow_label": "Số tiền vay",
     "loan_wallet_borrow_label": "Ví nhận tiền",
@@ -286,7 +290,7 @@
     "merchant_match_hint": "Giống lần trước: {label}",
     "location_match_hint": "Bạn đang ở gần đây: {label}",
     "quick_entry_label": "Nhập nhanh (AI)",
-    "quick_entry_hint": "vd: \"50k cà phê\" — gõ hoặc nhấn mic",
+    "quick_entry_hint": "chi điện thoại năm mươi nghìn đồng tiền mặt",
     "quick_entry_parsed_result": "Đã nhận diện: {label}",
     "quick_entry_could_not_parse": "Không hiểu được nội dung này — vui lòng nhập thủ công",
     "quick_entry_cloud_consent_message": "Để hiểu nội dung này, ứng dụng cần gửi tới dịch vụ AI (Gemini). Tiếp tục?",
@@ -321,7 +325,9 @@
     "principal_amount": "Gốc vay",
     "empty_state": "Chưa có khoản vay nào",
     "history_title": "Lịch sử giao dịch",
-    "no_history": "Chưa có giao dịch trả/thu nợ nào"
+    "no_history": "Chưa có giao dịch trả/thu nợ nào",
+    "borrow": "Đi vay",
+    "lend": "Cho vay"
   },
   "notification": {
     "channel_name": "Nhắc nhở",

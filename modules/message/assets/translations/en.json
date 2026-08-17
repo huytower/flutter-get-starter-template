@@ -50,6 +50,7 @@
     "common_weekday_names": "Mon|Tue|Wed|Thu|Fri|Sat|Sun",
     "press_back_again_to_exit": "Press back again to exit",
     "add_source": "Add Source",
+    "add": "Add",
     "copy": "Copy",
     "clear": "Clear",
     "unit_billion": "B",
@@ -194,7 +195,8 @@
     "investments": "Investments / Accumulation",
     "investments_desc": "Stocks, funds, real estate... · Avg ROI {roi}%",
     "liabilities": "Liabilities",
-    "liabilities_desc": "Loans + Credit cards · balance tracking, stress monitor"
+    "liabilities_desc": "Loans + Credit cards · balance tracking, stress monitor",
+    "liabilities_net": "Net Liability"
   },
   "comment": {
     "detail": {
@@ -238,6 +240,8 @@
     "debt_saved": "Debt of {amount} đ saved successfully!",
     "loan_direction_borrow": "Borrow",
     "loan_direction_lend": "Lend",
+    "borrow": "Borrow",
+    "lend": "Lend",
     "loan_category_borrow_label": "Loan type",
     "loan_amount_borrow_label": "Loan amount",
     "loan_wallet_borrow_label": "Receiving wallet",
@@ -286,7 +290,7 @@
     "merchant_match_hint": "Like last time: {label}",
     "location_match_hint": "You're nearby: {label}",
     "quick_entry_label": "Quick entry (AI)",
-    "quick_entry_hint": "e.g. \"50k coffee\" — type or tap the mic",
+    "quick_entry_hint": "spend phone fifty thousand dong cash",
     "quick_entry_parsed_result": "Got it: {label}",
     "quick_entry_could_not_parse": "Couldn't understand that — please fill in manually",
     "quick_entry_cloud_consent_message": "To understand this, we'd send it to an AI service (Gemini). Continue?",
@@ -321,7 +325,9 @@
     "principal_amount": "Principal",
     "empty_state": "No loans yet",
     "history_title": "Transaction history",
-    "no_history": "No repayment/collection yet"
+    "no_history": "No repayment/collection yet",
+    "borrow": "Borrow",
+    "lend": "Lend"
   },
   "notification": {
     "channel_name": "Reminders",

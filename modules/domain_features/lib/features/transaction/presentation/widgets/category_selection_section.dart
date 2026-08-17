@@ -142,19 +142,27 @@ class CategorySelectionSection extends StatelessWidget {
   ) {
     return HorizontalFadeScrollView(
       height: context.respDim(80),
-      builder: (scrollController) => ListView.separated(
-        scrollDirection: Axis.horizontal,
-        controller: scrollController,
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+      builder: (scrollController) => Obx(
+        () => ListView.separated(
+          scrollDirection: Axis.horizontal,
+          controller: scrollController,
+          padding: EdgeInsets.symmetric(
+            horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+          ),
+          itemCount: controller.categories.length,
+          separatorBuilder: (context, index) => const CcSpaceSM(),
+          itemBuilder: (context, index) {
+            final category = controller.categories[index];
+            final isSelected =
+                controller.selectedCategoryId.value == category.id;
+            return _buildCategoryItem(
+              context,
+              category,
+              isSelected,
+              controller,
+            );
+          },
         ),
-        itemCount: controller.categories.length,
-        separatorBuilder: (context, index) => const CcSpaceSM(),
-        itemBuilder: (context, index) {
-          final category = controller.categories[index];
-          final isSelected = controller.selectedCategoryId.value == category.id;
-          return _buildCategoryItem(context, category, isSelected, controller);
-        },
       ),
     );
   }

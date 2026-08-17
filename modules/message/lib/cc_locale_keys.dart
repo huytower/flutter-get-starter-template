@@ -70,6 +70,7 @@ class CodegenLoader extends AssetLoader {
       "common_weekday_names": "Mon|Tue|Wed|Thu|Fri|Sat|Sun",
       "press_back_again_to_exit": "Press back again to exit",
       "add_source": "Add Source",
+      "add": "Add",
       "copy": "Copy",
       "clear": "Clear",
       "unit_billion": "B",
@@ -211,6 +212,9 @@ class CodegenLoader extends AssetLoader {
       "delete_title": "Delete Wallet",
       "delete_confirm_msg":
           "A wallet can only be deleted when its balance is 0. All transactions of the wallet will be soft-deleted. Continue?",
+      "investment_delete_title": "Delete Investment",
+      "investment_delete_confirm":
+          "Deleting an investment item is only possible when its total performance value is 0. All related transactions will be soft-deleted. Continue?",
       "delete_error_not_empty": "Cannot delete: wallet balance must be 0",
       "delete_error_protected": "This wallet is required and cannot be deleted",
       "liquid_assets": "Liquid Assets",
@@ -220,6 +224,7 @@ class CodegenLoader extends AssetLoader {
       "liabilities": "Liabilities",
       "liabilities_desc":
           "Loans + Credit cards · balance tracking, stress monitor",
+      "liabilities_net": "Net Liability",
     },
     "comment": {
       "detail": {
@@ -314,7 +319,7 @@ class CodegenLoader extends AssetLoader {
       "merchant_match_hint": "Like last time: {label}",
       "location_match_hint": "You're nearby: {label}",
       "quick_entry_label": "Quick entry (AI)",
-      "quick_entry_hint": "e.g. \"50k coffee\" — type or tap the mic",
+      "quick_entry_hint": "spend phone fifty thousand dong cash",
       "quick_entry_parsed_result": "Got it: {label}",
       "quick_entry_could_not_parse":
           "Couldn't understand that — please fill in manually",
@@ -355,6 +360,8 @@ class CodegenLoader extends AssetLoader {
       "empty_state": "No loans yet",
       "history_title": "Transaction history",
       "no_history": "No repayment/collection yet",
+      "borrow": "Borrow",
+      "lend": "Lend",
     },
     "notification": {
       "channel_name": "Reminders",
@@ -781,6 +788,7 @@ class CodegenLoader extends AssetLoader {
       "or": "HOẶC",
       "press_back_again_to_exit": "Nhấn lại để thoát",
       "add_source": "Thêm nguồn",
+      "add": "Thêm",
       "copy": "Sao chép",
       "clear": "Xóa",
       "unit_billion": "tỷ",
@@ -924,6 +932,9 @@ class CodegenLoader extends AssetLoader {
       "delete_title": "Xóa ví",
       "delete_confirm_msg":
           "Chỉ có thể xóa ví khi số dư bằng 0. Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?",
+      "investment_delete_title": "Xoá khoản đầu tư",
+      "investment_delete_confirm":
+          "Chỉ có thể xoá khoản đầu tư khi tổng giá trị hiệu suất bằng 0. Mọi giao dịch liên quan sẽ bị xoá (soft-delete). Tiếp tục?",
       "delete_error_not_empty": "Không thể xóa: số dư của ví phải bằng 0",
       "delete_error_protected": "Ví này là bắt buộc và không thể xóa",
       "liquid_assets": "Tổng tiền thanh khoản",
@@ -935,6 +946,7 @@ class CodegenLoader extends AssetLoader {
       "liabilities": "Nợ phải trả",
       "liabilities_desc":
           "Vay + Thẻ tín dụng · dư nợ còn lại, theo dõi áp lực tài chính",
+      "liabilities_net": "Nợ ròng",
     },
     "comment": {
       "detail": {
@@ -1029,7 +1041,7 @@ class CodegenLoader extends AssetLoader {
       "merchant_match_hint": "Giống lần trước: {label}",
       "location_match_hint": "Bạn đang ở gần đây: {label}",
       "quick_entry_label": "Nhập nhanh (AI)",
-      "quick_entry_hint": "vd: \"50k cà phê\" — gõ hoặc nhấn mic",
+      "quick_entry_hint": "chi điện thoại năm mươi nghìn đồng tiền mặt",
       "quick_entry_parsed_result": "Đã nhận diện: {label}",
       "quick_entry_could_not_parse":
           "Không hiểu được nội dung này — vui lòng nhập thủ công",
@@ -1070,6 +1082,8 @@ class CodegenLoader extends AssetLoader {
       "empty_state": "Chưa có khoản vay nào",
       "history_title": "Lịch sử giao dịch",
       "no_history": "Chưa có giao dịch trả/thu nợ nào",
+      "borrow": "Đi vay",
+      "lend": "Cho vay",
     },
     "notification": {
       "channel_name": "Nhắc nhở",
@@ -1487,6 +1501,7 @@ abstract class CcLocaleKeys {
   static const common_press_back_again_to_exit =
       'common.press_back_again_to_exit';
   static const common_add_source = 'common.add_source';
+  static const common_add = 'common.add';
   static const common_copy = 'common.copy';
   static const common_clear = 'common.clear';
   static const common_unit_billion = 'common.unit_billion';
@@ -1625,6 +1640,9 @@ abstract class CcLocaleKeys {
   static const wallet_investments_desc = 'wallet.investments_desc';
   static const wallet_liabilities = 'wallet.liabilities';
   static const wallet_liabilities_desc = 'wallet.liabilities_desc';
+  static const wallet_liabilities_net = 'wallet.liabilities_net';
+  static const loan_borrow = 'loan.borrow';
+  static const loan_lend = 'loan.lend';
 
   static const transaction_title = 'transaction.title';
   static const transaction_wallet = 'transaction.wallet';

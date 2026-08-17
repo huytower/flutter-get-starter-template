@@ -7,18 +7,13 @@ import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/money_format_helper.dart';
 import '../../../guideline/guideline_controller.dart';
-import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
-import '../../domain/entities/transaction_entity.dart';
 import '../get_x/expense_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
 import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
-import 'quick_entry_section.dart';
-import 'receipt_source_sheet.dart';
 import 'transaction_form_container.dart';
 
 class ExpenseForm extends StatefulWidget {
@@ -56,8 +51,11 @@ class _ExpenseFormState extends State<ExpenseForm> {
     // deliberately does not also call it; see ExpenseFormController.onInit).
     // Same reasoning applies to the Phase 3.2 time-based suggestion, which
     // also needs "now" re-evaluated on every revisit, not just once.
-    controller.refreshTimeBasedSuggestion();
-    controller.refreshLocationSuggestion();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      controller.refreshTimeBasedSuggestion();
+      controller.refreshLocationSuggestion();
+    });
   }
 
   @override
@@ -127,6 +125,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
       // merchant/location/quick-entry suggestion's category.
       initialSelectedCategoryId:
           controller.pendingPrefillCategoryId.value ??
+          controller.selectedCategory.value?.id ??
           controller.editingTransaction?.categoryId ??
           controller.timeBasedSuggestedCategoryId,
       onCategorySelected: controller.setCategory,
@@ -139,28 +138,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
     GuidelineController guideline,
     Color accentColor,
   ) {
-    final suggestionLabel = _suggestionLabel(controller);
-    final canUseAiSmartEntry =
-        getIt<UserLevelController>().status.value.canUseAiSmartEntry;
-
     return TransactionFormContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (canUseAiSmartEntry)
-            _buildQuickEntrySection(context, controller, accentColor),
-          if (suggestionLabel != null) ...[
-            CcSuggestionChip(
-              label: suggestionLabel,
-              accentColor: accentColor,
-              icon: controller.merchantMatchSuggestion.value != null
-                  ? Icons.auto_awesome
-                  : Icons.place,
-              onTap: () => _applySuggestion(controller),
-              onDismiss: () => _dismissSuggestion(controller),
-            ),
-            const CcSpaceLG(),
-          ],
           _buildAmountSection(context, controller, accentColor),
           const CcSpaceLG(),
           _buildWalletSection(context, controller, accentColor),
@@ -194,91 +175,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
         ],
       ),
     );
-  }
-
-  Widget _buildQuickEntrySection(
-    BuildContext context,
-    ExpenseFormController controller,
-    Color accentColor,
-  ) {
-    final suggestion = controller.quickEntrySuggestion.value;
-    final errorKey = controller.quickEntryErrorKey.value;
-    return QuickEntrySection(
-      controller: controller.quickEntryController,
-      isParsing: controller.isParsingQuickEntry.value,
-      isListening: controller.isListeningQuickEntry.value,
-      suggestionLabel: suggestion != null
-          ? controller.quickEntryResultLabel(suggestion)
-          : null,
-      errorText: errorKey != null ? el.tr(errorKey) : null,
-      activeColor: accentColor,
-      onSubmitted: (_) => controller.submitQuickEntry(context),
-      onMicTap: () => controller.toggleVoiceQuickEntry(context),
-      onScanTap: () => _pickReceiptSource(context, controller),
-      onApplySuggestion: () {
-        if (suggestion != null) controller.applyQuickEntryParse(suggestion);
-      },
-      onDismissSuggestion: controller.dismissQuickEntrySuggestion,
-    );
-  }
-
-  Future<void> _pickReceiptSource(
-    BuildContext context,
-    ExpenseFormController controller,
-  ) async {
-    // Takes the quick-entry lock before the sheet even opens (not after it
-    // resolves) so the text/voice path can't run concurrently with this one
-    // during the sheet interaction — see beginQuickEntryImage's doc.
-    if (!controller.beginQuickEntryImage()) return;
-    final fromCamera = await ReceiptSourceSheet.show(context);
-    if (fromCamera == null) {
-      controller.cancelQuickEntryImage();
-      return;
-    }
-    controller.submitQuickEntryFromImage(context, fromCamera: fromCamera);
-  }
-
-  /// AI Smart Entry suggestion row — Phase 3.3 note-based merchant match
-  /// takes priority over Phase 3.5 location match (a note is a more specific
-  /// signal than "you're near a place you've spent before"); only one is
-  /// ever shown at a time.
-  String? _suggestionLabel(ExpenseFormController controller) {
-    final merchantMatch = controller.merchantMatchSuggestion.value;
-    if (merchantMatch != null) {
-      return el.tr(
-        CcLocaleKeys.transaction_merchant_match_hint,
-        namedArgs: {'label': _formatSuggestionLabel(merchantMatch)},
-      );
-    }
-    final locationMatch = controller.locationMatchSuggestion.value;
-    if (locationMatch != null) {
-      return el.tr(
-        CcLocaleKeys.transaction_location_match_hint,
-        namedArgs: {'label': _formatSuggestionLabel(locationMatch)},
-      );
-    }
-    return null;
-  }
-
-  String _formatSuggestionLabel(TransactionEntity match) =>
-      '${match.category} · ${formatVndShort(match.amount)}đ';
-
-  void _applySuggestion(ExpenseFormController controller) {
-    final merchantMatch = controller.merchantMatchSuggestion.value;
-    if (merchantMatch != null) {
-      controller.applyMerchantMatch(merchantMatch);
-      return;
-    }
-    final locationMatch = controller.locationMatchSuggestion.value;
-    if (locationMatch != null) controller.applyLocationMatch(locationMatch);
-  }
-
-  void _dismissSuggestion(ExpenseFormController controller) {
-    if (controller.merchantMatchSuggestion.value != null) {
-      controller.dismissMerchantMatch();
-    } else {
-      controller.dismissLocationMatch();
-    }
   }
 
   Widget _buildAmountSection(

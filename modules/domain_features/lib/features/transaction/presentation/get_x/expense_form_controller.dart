@@ -178,6 +178,9 @@ class ExpenseFormController extends TransactionFormController {
 
   void setCategory(CategoryEntity category) {
     selectedCategory.value = category;
+    // Manual selection clears any pending prefill from AI suggestions
+    // so it doesn't clobber the user's choice on the next rebuild.
+    pendingPrefillCategoryId.value = null;
   }
 
   /// Recomputes [timeBasedSuggestedCategoryId] for "now" — call whenever the

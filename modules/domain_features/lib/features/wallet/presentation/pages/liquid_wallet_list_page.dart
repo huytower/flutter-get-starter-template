@@ -102,13 +102,12 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
       builder: (context) => Obx(() {
         final liquidWallets = controller.liquidWallets;
         if (liquidWallets.isEmpty) {
-          return Center(
-            child: CcText(
-              el.tr(CcLocaleKeys.wallet_empty),
-              textAlign: TextAlign.center,
-              textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-                color: context.ccColorScheme.onSurfaceVariant,
-              ),
+          return CcText(
+            el.tr(CcLocaleKeys.wallet_empty),
+            align: Alignment.center,
+            textAlign: TextAlign.center,
+            textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+              color: context.ccColorScheme.onSurfaceVariant,
             ),
           );
         }

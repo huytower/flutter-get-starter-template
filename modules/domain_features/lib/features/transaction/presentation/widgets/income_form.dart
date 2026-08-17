@@ -94,7 +94,9 @@ class IncomeForm extends StatelessWidget {
       type: CategoryType.income,
       activeColor: accentColor,
       autoSelectFirst: !controller.isEditing,
-      initialSelectedCategoryId: controller.editingTransaction?.categoryId,
+      initialSelectedCategoryId:
+          controller.selectedCategory.value?.id ??
+          controller.editingTransaction?.categoryId,
       onCategorySelected: controller.setCategory,
     );
   }

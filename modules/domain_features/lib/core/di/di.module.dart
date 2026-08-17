@@ -119,6 +119,8 @@ import 'package:domain_features/features/loan/domain/usecases/record_loan_paymen
     as _i187;
 import 'package:domain_features/features/loan/domain/usecases/schedule_loan_reminders_usecase.dart'
     as _i437;
+import 'package:domain_features/features/loan/presentation/get_x/add_loan_sheet_controller.dart'
+    as _i57;
 import 'package:domain_features/features/loan/presentation/get_x/loan_detail_controller.dart'
     as _i430;
 import 'package:domain_features/features/loan/presentation/get_x/loan_form_controller.dart'
@@ -537,6 +539,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1059.CategoryRepository>(),
               gh<_i544.BudgetLimitRepository>(),
             ));
+    gh.factory<_i57.AddLoanSheetController>(() => _i57.AddLoanSheetController(
+          gh<_i1041.GetCategoriesUseCase>(),
+          gh<_i569.GetProfileSettingsUseCase>(),
+          gh<_i742.CreateLoanUseCase>(),
+        ));
     gh.lazySingleton<_i585.GetUserLevelStatusUseCase>(
         () => _i585.GetUserLevelStatusUseCase(
               gh<_i446.GetReconciliationHistoryUseCase>(),

@@ -14,6 +14,7 @@ import '../widgets/budget_insights_section.dart';
 import '../widgets/budget_limit_preview_section.dart';
 import '../widgets/budget_wallets_section.dart';
 import '../widgets/investment_wallets_section.dart';
+import '../widgets/liability_hero_banner.dart';
 import '../widgets/liability_wallets_section.dart';
 
 @RoutePage()
@@ -87,6 +88,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
               _buildInvestmentHeroBanner(context),
               _buildInvestmentWalletsSection(context),
               _buildLiabilityHeroBanner(context),
+              _buildLiabilityWalletsSection(context),
               BudgetInsightsSection(controller: controller),
               const BudgetLimitPreviewSection(),
             ],
@@ -193,14 +195,11 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       if (!canShow) {
         return const SizedBox.shrink();
       }
-      return BudgetHeroBanner(
+      return LiabilityHeroBanner(
         walletController: controller.walletController,
-        titleKey: CcLocaleKeys.wallet_liabilities,
-        balance: controller.liabilityBalance,
-        subtitleKey: CcLocaleKeys.wallet_liabilities_desc,
-        icon: Icons.report_problem_outlined,
-        color: CcBaseColors.violet600,
-        topPadding: CcPaddingParams.SPACE_SM,
+        borrowBalance: controller.borrowBalance,
+        lendBalance: controller.lendBalance,
+        totalBalance: controller.liabilityBalance,
       );
     });
   }
@@ -248,6 +247,8 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
       return LiabilityWalletsSection(
         balances: balances,
+        onAddLoan: () => controller.openAddLoan(context),
+        onMore: (balance) => controller.openLoanActions(context, balance),
         onSeeAll: () => controller.navigateToLoanList(context),
       );
     });

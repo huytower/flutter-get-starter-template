@@ -512,23 +512,34 @@ class WalletController extends CcGetController {
     );
   }
 
-  /// Rule 2: a wallet can be deleted only when its book balance is 0. On
-  /// deletion every income/expense record of the wallet is soft-deleted.
+  /// Investment wallets can always be deleted (in edit mode) — their
+  /// transactions are soft-deleted alongside the wallet. Other wallet types
+  /// can be deleted only when their book balance is 0.
+  /// On deletion every income/expense record of the wallet is soft-deleted.
   Future<WalletDeleteOutcome> deleteWallet(String id) async {
     // Guard: cash and the last remaining bank account are mandatory.
     final index = wallets.indexWhere((w) => w.id == id);
-    if (index != -1 && !canDeleteWallet(wallets[index])) {
+    if (index == -1) return WalletDeleteOutcome.error;
+    final wallet = wallets[index];
+
+    if (!canDeleteWallet(wallet)) {
       return WalletDeleteOutcome.protected;
     }
 
-    final balanceResult = await _getWalletBookBalance(id);
-    if (balanceResult.isError()) {
-      errorMessage.value = balanceResult.tryGetError()!.message;
-      return WalletDeleteOutcome.error;
-    }
+    if (wallet.type == WalletType.investment) {
+      // Investment wallets can always be deleted in edit mode, regardless of
+      // contributed/returned activity — their transactions are soft-deleted
+      // alongside the wallet below.
+    } else {
+      final balanceResult = await _getWalletBookBalance(id);
+      if (balanceResult.isError()) {
+        errorMessage.value = balanceResult.tryGetError()!.message;
+        return WalletDeleteOutcome.error;
+      }
 
-    if (balanceResult.tryGetSuccess()!.abs() > 0) {
-      return WalletDeleteOutcome.notEmpty;
+      if (balanceResult.tryGetSuccess()!.abs() > 0) {
+        return WalletDeleteOutcome.notEmpty;
+      }
     }
 
     final softDelete = await _transactionRepository.softDeleteByWallet(id);

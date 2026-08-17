@@ -1,11 +1,18 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/guideline/guideline_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../core/di/di.dart';
+import '../../../../core/helper/money_format_helper.dart';
+import '../../../user_level/presentation/get_x/user_level_controller.dart';
+import '../../domain/entities/transaction_entity.dart';
+import '../get_x/expense_form_controller.dart';
 import '../get_x/transaction_controller.dart';
+import 'quick_entry_section.dart';
+import 'receipt_source_sheet.dart';
 import 'transaction_wallet_summary.dart';
 
 class TransactionPageHeader extends StatelessWidget {
@@ -15,12 +22,14 @@ class TransactionPageHeader extends StatelessWidget {
     this.onOpenNotification,
     this.onOpenReport,
     this.onSubmit,
+    this.expenseFormController,
   });
 
   final TransactionController controller;
   final VoidCallback? onOpenNotification;
   final VoidCallback? onOpenReport;
   final VoidCallback? onSubmit;
+  final ExpenseFormController? expenseFormController;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +39,7 @@ class TransactionPageHeader extends StatelessWidget {
         : 'assets/bg/bg_header_light.webp';
 
     // We calculate the overlap locally to match TransactionPage's logic.
-    final overlap = context.respDim(60) / 2;
+    final overlap = context.respDim(48) / 2;
 
     // Optimized approach: Instead of using a Stack to layer background and
     // foreground, we move the background image into the Container's decoration.
@@ -58,15 +67,13 @@ class TransactionPageHeader extends StatelessWidget {
     // Inject GuidelineController
     final guideline = Get.find<GuidelineController>();
 
-    // Content is now a direct child of the Container (with bottom overlap padding).
-    // We use a flex Column to distribute space proportionally.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (MediaQuery.of(context).padding.top > 0)
           SizedBox(height: MediaQuery.of(context).padding.top),
 
-        const Spacer(flex: 1),
+        const CcSpaceMD(),
         CcSymmetricPadding(
           horizontal: CcPaddingParams.PAGE_MD,
           child: Row(
@@ -77,26 +84,32 @@ class TransactionPageHeader extends StatelessWidget {
             ],
           ),
         ),
-        const Spacer(flex: 1),
+        const CcSpaceSM(),
 
         // Use Flexible to allow the banner to take its needed space
         // without overflowing the Column's fixed height.
-        Flexible(
-          flex: 12,
+        Expanded(
           child: CcSymmetricPadding(
             horizontal: CcPaddingParams.PAGE_MD,
             child: Obx(() => buildBanner(context, guideline)),
           ),
         ),
-        const Spacer(flex: 1),
+        const CcSpaceSM(),
       ],
     );
   }
 
   Widget buildBanner(BuildContext context, GuidelineController guideline) {
     final activeId = guideline.currentTaskId;
+    final isGuidelineComplete = activeId == null;
     final accentColor = guideline.currentColor;
 
+    // When guideline is complete (0 remaining steps), show AI components instead of banner
+    if (isGuidelineComplete && expenseFormController != null) {
+      return _buildAiComponents(context, expenseFormController!);
+    }
+
+    // Otherwise show the guideline banner
     return CcListBannerSmall(
       title: guideline.bannerTitle,
       description: guideline.bannerDescription,
@@ -112,6 +125,116 @@ class TransactionPageHeader extends StatelessWidget {
         markColor: accentColor,
       ),
     );
+  }
+
+  Widget _buildAiComponents(
+    BuildContext context,
+    ExpenseFormController controller,
+  ) {
+    final suggestionLabel = _suggestionLabel(controller);
+    final canUseAiSmartEntry =
+        getIt<UserLevelController>().status.value.canUseAiSmartEntry;
+    final accentColor = context.ccColorScheme.error;
+
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (canUseAiSmartEntry)
+            _buildQuickEntrySection(context, controller, accentColor),
+          if (suggestionLabel != null) ...[
+            CcSuggestionChip(
+              label: suggestionLabel,
+              accentColor: accentColor,
+              icon: controller.merchantMatchSuggestion.value != null
+                  ? Icons.auto_awesome
+                  : Icons.place,
+              onTap: () => _applySuggestion(controller),
+              onDismiss: () => _dismissSuggestion(controller),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickEntrySection(
+    BuildContext context,
+    ExpenseFormController controller,
+    Color accentColor,
+  ) {
+    final suggestion = controller.quickEntrySuggestion.value;
+    final errorKey = controller.quickEntryErrorKey.value;
+    return QuickEntrySection(
+      controller: controller.quickEntryController,
+      isParsing: controller.isParsingQuickEntry.value,
+      isListening: controller.isListeningQuickEntry.value,
+      suggestionLabel: suggestion != null
+          ? controller.quickEntryResultLabel(suggestion)
+          : null,
+      errorText: errorKey != null ? el.tr(errorKey) : null,
+      activeColor: accentColor,
+      onSubmitted: (_) => controller.submitQuickEntry(context),
+      onMicTap: () => controller.toggleVoiceQuickEntry(context),
+      onScanTap: () => _pickReceiptSource(context, controller),
+      onApplySuggestion: () {
+        if (suggestion != null) controller.applyQuickEntryParse(suggestion);
+      },
+      onDismissSuggestion: controller.dismissQuickEntrySuggestion,
+    );
+  }
+
+  Future<void> _pickReceiptSource(
+    BuildContext context,
+    ExpenseFormController controller,
+  ) async {
+    if (!controller.beginQuickEntryImage()) return;
+    final fromCamera = await ReceiptSourceSheet.show(context);
+    if (fromCamera == null) {
+      controller.cancelQuickEntryImage();
+      return;
+    }
+    controller.submitQuickEntryFromImage(context, fromCamera: fromCamera);
+  }
+
+  String? _suggestionLabel(ExpenseFormController controller) {
+    final merchantMatch = controller.merchantMatchSuggestion.value;
+    if (merchantMatch != null) {
+      return el.tr(
+        CcLocaleKeys.transaction_merchant_match_hint,
+        namedArgs: {'label': _formatSuggestionLabel(merchantMatch)},
+      );
+    }
+    final locationMatch = controller.locationMatchSuggestion.value;
+    if (locationMatch != null) {
+      return el.tr(
+        CcLocaleKeys.transaction_location_match_hint,
+        namedArgs: {'label': _formatSuggestionLabel(locationMatch)},
+      );
+    }
+    return null;
+  }
+
+  String _formatSuggestionLabel(TransactionEntity match) =>
+      '${match.category} · ${formatVndShort(match.amount)}đ';
+
+  void _applySuggestion(ExpenseFormController controller) {
+    final merchantMatch = controller.merchantMatchSuggestion.value;
+    if (merchantMatch != null) {
+      controller.applyMerchantMatch(merchantMatch);
+      return;
+    }
+    final locationMatch = controller.locationMatchSuggestion.value;
+    if (locationMatch != null) controller.applyLocationMatch(locationMatch);
+  }
+
+  void _dismissSuggestion(ExpenseFormController controller) {
+    if (controller.merchantMatchSuggestion.value != null) {
+      controller.dismissMerchantMatch();
+    } else {
+      controller.dismissLocationMatch();
+    }
   }
 
   Widget _buildHeaderTitleSection(BuildContext context) {

@@ -79,14 +79,12 @@ class InvestmentListPage extends CcGetView<WalletController> {
       final isEdit = controller.isEditMode.value;
 
       if (wallets.isEmpty) {
-        return Center(
-          child: Expanded(
-            child: CcText(
-              el.tr(CcLocaleKeys.wallet_investment_empty),
-              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                color: context.ccColorScheme.onSurfaceVariant,
-              ),
-            ),
+        return CcText(
+          el.tr(CcLocaleKeys.wallet_investment_empty),
+          align: Alignment.center,
+          textAlign: TextAlign.center,
+          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+            color: context.ccColorScheme.onSurfaceVariant,
           ),
         );
       }

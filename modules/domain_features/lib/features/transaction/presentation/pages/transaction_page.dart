@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../get_x/expense_form_controller.dart';
 import '../get_x/transaction_controller.dart';
 import '../widgets/transaction_page_header.dart';
 import '../widgets/transaction_tab_bar.dart';
@@ -24,8 +25,8 @@ class TransactionPage extends CcGetView<TransactionController> {
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
-      mobile: 0.22,
-      tablet: 0.2,
+      mobile: 0.24,
+      tablet: 0.32,
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
@@ -53,6 +54,7 @@ class TransactionPage extends CcGetView<TransactionController> {
                     controller: controller,
                     onOpenReport: () => controller.openReport(context),
                     onSubmit: () => controller.submitCurrentForm(context),
+                    expenseFormController: Get.find<ExpenseFormController>(),
                   ),
                 ),
               );
@@ -68,12 +70,12 @@ class TransactionPage extends CcGetView<TransactionController> {
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
-      mobile: 0.25,
-      tablet: 0.28,
+      mobile: 0.24,
+      tablet: 0.32,
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
-    final tabBarHeight = context.respDim(140);
+    final tabBarHeight = context.respDim(48);
     final overlap = tabBarHeight / 2;
 
     return Obx(() {

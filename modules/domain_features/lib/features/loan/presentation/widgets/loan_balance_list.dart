@@ -29,7 +29,14 @@ class LoanBalanceList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (balances.isEmpty) {
-      return NoDataResponseWidget(message: emptyMessage);
+      return CcText(
+        emptyMessage,
+        align: Alignment.center,
+        textAlign: TextAlign.center,
+        textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+          color: context.ccColorScheme.onSurfaceVariant,
+        ),
+      );
     }
     return ListView.separated(
       shrinkWrap: shrinkWrap,
