@@ -33,7 +33,7 @@ class InvestmentAssetSelector extends StatelessWidget {
             ),
           ),
         ),
-        const CcSpaceXS(),
+        const CcSpaceSM(),
         Obx(() {
           if (controller.isLoadingMerged.value) {
             return _buildShimmerList(context);
@@ -62,15 +62,16 @@ class InvestmentAssetSelector extends StatelessWidget {
           }
 
           return HorizontalFadeScrollView(
-            height: context.respDim(90),
+            height: context.respDim(95),
             builder: (scrollController) => ListView.separated(
               scrollDirection: Axis.horizontal,
               controller: scrollController,
               padding: EdgeInsets.symmetric(
                 horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+                vertical: context.respDim(4),
               ),
               itemCount: items.length,
-              separatorBuilder: (context, index) => const CcSpaceSM(),
+              separatorBuilder: (context, index) => const CcSpaceMD(),
               itemBuilder: (context, index) {
                 final item = items[index];
                 return Obx(() {
@@ -207,14 +208,15 @@ class InvestmentAssetSelector extends StatelessWidget {
 
   Widget _buildShimmerList(BuildContext context) {
     return SizedBox(
-      height: context.respDim(70),
+      height: context.respDim(95),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(
           horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+          vertical: context.respDim(4),
         ),
         itemCount: 5,
-        separatorBuilder: (context, index) => const CcSpaceSM(),
+        separatorBuilder: (context, index) => const CcSpaceMD(),
         itemBuilder: (context, index) => Container(
           width: context.respDim(68),
           padding: EdgeInsets.all(context.respDim(10)),

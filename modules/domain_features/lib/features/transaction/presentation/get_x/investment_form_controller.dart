@@ -96,17 +96,8 @@ class InvestmentFormController extends TransactionFormController {
 
     final List<dynamic> items = [...assets];
 
-    // If contributing, also show investment categories to allow new items
-    if (direction.value == InvestmentDirection.contribute) {
-      final catResult = await _getCategories();
-      catResult.when((categories) {
-        final investCats = categories
-            .where((c) => c.isEnabled && c.type == CategoryType.investment)
-            .toList();
-        items.addAll(investCats);
-      }, (_) {});
-    }
-
+    // Note: We no longer merge categories here to ensure "same quantity" (Rule: Match Dashboard Assets)
+    // and avoid cluttering the selector with base categories. Users add new assets via Dashboard (+).
     mergedItems.assignAll(items);
 
     // Auto-select first if nothing selected

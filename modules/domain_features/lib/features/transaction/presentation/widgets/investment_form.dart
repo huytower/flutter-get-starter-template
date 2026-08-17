@@ -58,7 +58,7 @@ class InvestmentForm extends StatelessWidget {
       child: SingleChildScrollView(
         controller: controller.scrollController,
         padding: EdgeInsets.symmetric(
-          vertical: context.respPadding(CcPaddingParams.PAGE_XS),
+          vertical: context.respPadding(CcPaddingParams.SPACE_LG),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,7 +143,7 @@ class InvestmentForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcFormLabel(text: el.tr(CcLocaleKeys.transaction_investment_item)),
-        const CcSpaceXS(),
+        const CcSpaceSM(),
         TextField(
           controller: controller.newItemNameController,
           enabled: controller.isVip.value,
@@ -212,7 +212,7 @@ class InvestmentForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcFormLabel(text: el.tr(labelKey)),
-        const CcSpaceXS(),
+        const CcSpaceSM(),
         CcWalletStripCard(
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
