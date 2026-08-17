@@ -6,11 +6,8 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
-
-/// budget allocation page. For full loan creation with installments, use
-/// [LoanFormController] via the transaction flow.
-
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/loan_entity.dart';
 import '../../domain/usecases/create_loan_usecase.dart';
 
@@ -20,26 +17,22 @@ class AddLoanSheetController extends CcGetController {
     this._getCategories,
     this._getProfileSettings,
     this._createLoan,
+    this._walletController,
   );
 
   final GetCategoriesUseCase _getCategories;
   final GetProfileSettingsUseCase _getProfileSettings;
   final CreateLoanUseCase _createLoan;
+  final WalletController _walletController;
 
-  late final TextEditingController counterpartyController;
   final RxString direction = LoanDirection.borrow.obs;
 
   final RxList<CategoryEntity> loanCategories = <CategoryEntity>[].obs;
   final Rxn<CategoryEntity> selectedLoanCategory = Rxn<CategoryEntity>();
-  final RxBool isCounterpartyValid = false.obs;
   final RxBool isVip = false.obs;
   final RxBool isSubmitting = false.obs;
 
   void init() {
-    counterpartyController = TextEditingController();
-    counterpartyController.addListener(_onCounterpartyChanged);
-    _onCounterpartyChanged();
-
     _loadLoanCategories();
     _loadVipStatus();
   }
@@ -76,10 +69,6 @@ class AddLoanSheetController extends CcGetController {
     }, (_) {});
   }
 
-  void _onCounterpartyChanged() {
-    isCounterpartyValid.value = counterpartyController.text.trim().isNotEmpty;
-  }
-
   void setDirection(String value) {
     if (direction.value == value) return;
     direction.value = value;
@@ -88,8 +77,6 @@ class AddLoanSheetController extends CcGetController {
 
   void selectLoanCategory(CategoryEntity category) {
     selectedLoanCategory.value = category;
-    counterpartyController.text = el.tr(category.nameKey);
-    _onCounterpartyChanged();
   }
 
   Future<void> save(BuildContext context) async {
@@ -102,23 +89,24 @@ class AddLoanSheetController extends CcGetController {
       return;
     }
 
-    final counterpartyName = counterpartyController.text.trim();
-    if (counterpartyName.isEmpty) {
+    // Default to 0 amount
+    final amount = 0;
+
+    // Use default wallet (first liquid wallet) for simplified flow
+    final wallet = _walletController.liquidWallets.firstOrNull;
+    if (wallet == null) {
       isSubmitting.value = false;
       return;
     }
 
-    // Use default wallet (first liquid wallet) for simplified flow
-    // In a real app, you'd want wallet selection
     final params = CreateLoanParams(
       direction: direction.value,
-      counterpartyName: counterpartyName,
-      principalAmount: 0,
+      principalAmount: amount,
       categoryId: category.id,
       categoryLabel: el.tr(category.nameKey),
       categoryIconCode: category.iconCode,
       categoryIconFamily: category.iconFamily,
-      walletId: '', // TODO(user): Get default wallet ID
+      walletId: wallet.id,
       repaymentMethod: LoanRepaymentMethod.lumpSum,
       installments: null,
       finalDueDate: DateTime.now().add(const Duration(days: 30)),
@@ -153,7 +141,6 @@ class AddLoanSheetController extends CcGetController {
 
   @override
   void onClose() {
-    counterpartyController.dispose();
     super.onClose();
   }
 }

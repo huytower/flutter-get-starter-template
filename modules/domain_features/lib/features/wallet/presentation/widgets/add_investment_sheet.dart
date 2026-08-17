@@ -9,58 +9,44 @@ import '../../../category/domain/entities/category_entity.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/add_investment_sheet_controller.dart';
 
-class AddInvestmentSheet extends StatefulWidget {
-  const AddInvestmentSheet({super.key, this.wallet});
+class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
+  const AddInvestmentSheet({super.key, this.wallet, this.category});
 
   final WalletEntity? wallet;
-
-  @override
-  State<AddInvestmentSheet> createState() => _AddInvestmentSheetState();
-}
-
-class _AddInvestmentSheetState extends State<AddInvestmentSheet> {
-  late final AddInvestmentSheetController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = Get.put(getIt<AddInvestmentSheetController>());
-    _controller.init(widget.wallet);
-  }
-
-  @override
-  void dispose() {
-    Get.delete<AddInvestmentSheetController>();
-    super.dispose();
-  }
+  final CategoryEntity? category;
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: EdgeInsets.only(
-              left: context.respPadding(CcPaddingParams.SPACE_LG),
-              right: context.respPadding(CcPaddingParams.SPACE_LG),
-              top: context.respPadding(CcPaddingParams.SPACE_LG),
-              bottom:
-                  MediaQuery.of(context).viewInsets.bottom +
-                  context.respPadding(CcPaddingParams.SPACE_LG),
-            ),
-            decoration: BoxDecoration(
-              color: context.ccColorScheme.surface,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
+    return GetX<AddInvestmentSheetController>(
+      init: getIt<AddInvestmentSheetController>()
+        ..init(wallet, category: category),
+      dispose: (_) => Get.delete<AddInvestmentSheetController>(),
+      builder: (controller) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.only(
+                left: context.respPadding(CcPaddingParams.SPACE_LG),
+                right: context.respPadding(CcPaddingParams.SPACE_LG),
+                top: context.respPadding(CcPaddingParams.SPACE_LG),
+                bottom:
+                    MediaQuery.of(context).viewInsets.bottom +
+                    context.respPadding(CcPaddingParams.SPACE_LG),
+              ),
+              decoration: BoxDecoration(
+                color: context.ccColorScheme.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: _buildSheetContent(context, controller),
               ),
             ),
-            child: SingleChildScrollView(
-              child: _buildSheetContent(context, _controller),
-            ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 

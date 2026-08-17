@@ -12,7 +12,6 @@ import '../repositories/loan_repository.dart';
 /// Input for [CreateLoanUseCase].
 class CreateLoanParams {
   final String direction;
-  final String counterpartyName;
   final int principalAmount;
   final String categoryId;
   final String categoryLabel;
@@ -28,7 +27,6 @@ class CreateLoanParams {
 
   const CreateLoanParams({
     required this.direction,
-    required this.counterpartyName,
     required this.principalAmount,
     required this.categoryId,
     required this.categoryLabel,
@@ -65,27 +63,10 @@ class CreateLoanUseCase {
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
 
   Future<Result<LoanEntity, CcFailure>> call(CreateLoanParams params) async {
-    if (params.principalAmount <= 0) {
-      return const Error(
-        ValidationFailure(CcLocaleKeys.transaction_validation_amount_required),
-      );
-    }
-    if (params.walletId.isEmpty) {
-      return const Error(
-        ValidationFailure(CcLocaleKeys.transaction_validation_wallet_required),
-      );
-    }
     if (params.categoryId.isEmpty) {
       return const Error(
         ValidationFailure(
           CcLocaleKeys.transaction_validation_category_required,
-        ),
-      );
-    }
-    if (params.counterpartyName.trim().isEmpty) {
-      return const Error(
-        ValidationFailure(
-          CcLocaleKeys.transaction_validation_counterparty_required,
         ),
       );
     }
@@ -123,7 +104,6 @@ class CreateLoanUseCase {
     final loan = LoanEntity(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       direction: params.direction,
-      counterpartyName: params.counterpartyName.trim(),
       principalAmount: params.principalAmount,
       categoryId: params.categoryId,
       categoryLabel: params.categoryLabel,

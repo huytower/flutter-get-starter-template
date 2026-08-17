@@ -134,7 +134,6 @@ class RecordLoanPaymentUseCase {
     final updatedLoan = LoanEntity(
       id: loan.id,
       direction: loan.direction,
-      counterpartyName: loan.counterpartyName,
       principalAmount: loan.principalAmount,
       categoryId: loan.categoryId,
       categoryLabel: loan.categoryLabel,

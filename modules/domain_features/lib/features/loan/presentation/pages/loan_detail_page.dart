@@ -37,7 +37,7 @@ class LoanDetailPage extends StatelessWidget with CcViewConfigMixin {
         onTap: () => Navigator.of(context).pop(),
       ),
       title: CcText(
-        loan.loan.counterpartyName,
+        "",
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           color: context.ccColorScheme.onPrimary,
           fontWeight: CcTypographyParams.bold,

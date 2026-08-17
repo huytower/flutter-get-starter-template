@@ -39,8 +39,6 @@ class LoanFormController extends TransactionFormController {
   final RxString direction = LoanDirection.borrow.obs;
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   final RxInt categoryKey = 0.obs;
-  final TextEditingController counterpartyController = TextEditingController();
-  final RxString counterpartyName = ''.obs;
   final RxString repaymentMethod = LoanRepaymentMethod.lumpSum.obs;
   final Rx<DateTime?> finalDueDate = Rx<DateTime?>(null);
   final RxList<LoanInstallmentDraft> installmentDrafts =
@@ -75,8 +73,6 @@ class LoanFormController extends TransactionFormController {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
     if (!settings.isVip) return;
     isVip.value = true;
-    counterpartyName.value = '';
-    counterpartyController.clear();
   }
 
   @override
@@ -84,7 +80,6 @@ class LoanFormController extends TransactionFormController {
     if (amountStr.value == '0' || amountStr.value.isEmpty) return false;
     if (selectedWalletId.value == null) return false;
     if (selectedCategory.value == null) return false;
-    if (counterpartyName.value.trim().isEmpty) return false;
     if (repaymentMethod.value == LoanRepaymentMethod.installment) {
       if (installmentDrafts.isEmpty) return false;
       // Total installments must equal principal amount
@@ -96,7 +91,6 @@ class LoanFormController extends TransactionFormController {
 
   @override
   void onClose() {
-    counterpartyController.dispose();
     for (final draft in installmentDrafts) {
       draft.dispose();
     }
@@ -112,16 +106,6 @@ class LoanFormController extends TransactionFormController {
 
   void setCategory(CategoryEntity category) {
     selectedCategory.value = category;
-    // Free tier: the loan/lend name is fixed to the category's own label —
-    // no custom counterparty name until VIP.
-    if (!isVip.value) {
-      counterpartyName.value = el.tr(category.nameKey);
-      counterpartyController.text = counterpartyName.value;
-    }
-  }
-
-  void setCounterparty(String value) {
-    counterpartyName.value = value;
   }
 
   void setRepaymentMethod(String value) {
@@ -270,8 +254,6 @@ class LoanFormController extends TransactionFormController {
   void onReset() {
     selectedCategory.value = null;
     categoryKey.value++;
-    counterpartyController.clear();
-    counterpartyName.value = '';
     repaymentMethod.value = LoanRepaymentMethod.lumpSum;
     finalDueDate.value = null;
     reminderBeforeDueDate.value = false;
@@ -293,7 +275,6 @@ class LoanFormController extends TransactionFormController {
 
     final params = CreateLoanParams(
       direction: direction.value,
-      counterpartyName: counterpartyName.value.trim(),
       principalAmount: int.tryParse(amountStr.value) ?? 0,
       categoryId: category.id,
       categoryLabel: categoryLabel,

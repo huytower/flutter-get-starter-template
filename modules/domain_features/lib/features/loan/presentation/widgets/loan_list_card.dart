@@ -49,25 +49,6 @@ class LoanListCard extends StatelessWidget {
               ),
             ),
             const CcSpaceMD(),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CcText(
-                    loan.counterpartyName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: context.ccColorScheme.onSurface,
-                    ),
-                  ),
-                  const CcSpaceXS(),
-                  _buildBadges(context, loan, isSettled, directionColor),
-                ],
-              ),
-            ),
-            const CcSpaceSM(),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [

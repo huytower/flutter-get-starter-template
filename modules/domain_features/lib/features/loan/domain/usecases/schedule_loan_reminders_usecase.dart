@@ -53,7 +53,7 @@ class ScheduleLoanRemindersUseCase {
         body: el.tr(
           CcLocaleKeys.notification_loan_due_body,
           namedArgs: {
-            'name': loan.counterpartyName,
+            // 'name': loan.counterpartyName,
             'date': '${dueDate.day}/${dueDate.month}/${dueDate.year}',
           },
         ),

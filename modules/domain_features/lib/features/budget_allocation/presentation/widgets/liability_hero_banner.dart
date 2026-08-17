@@ -13,6 +13,7 @@ class LiabilityHeroBanner extends StatelessWidget {
     required this.borrowBalance,
     required this.lendBalance,
     required this.totalBalance,
+    this.onTap,
     super.key,
   });
 
@@ -20,6 +21,7 @@ class LiabilityHeroBanner extends StatelessWidget {
   final RxInt borrowBalance;
   final RxInt lendBalance;
   final RxInt totalBalance;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +30,15 @@ class LiabilityHeroBanner extends StatelessWidget {
     return BudgetHeroBanner(
       walletController: walletController,
       titleKey: CcLocaleKeys.wallet_liabilities,
-      balance: totalBalance,
+      balance: borrowBalance,
       subtitleKey: CcLocaleKeys.wallet_liabilities_desc,
       icon: Icons.warning_amber_rounded,
       color: CcBaseColors.violet500,
       topPadding: CcPaddingParams.SPACE_SM,
       bottomPadding: CcPaddingParams.SPACE_XS,
+      onTap: onTap,
       leadingBalanceWidget: Icon(
-        Icons.calculate_outlined,
+        Icons.remove_circle_outline,
         color: scheme.onPrimary.withOpacity(0.8),
         size: context.respIconSize(baseSize: 18),
       ),
@@ -45,52 +48,24 @@ class LiabilityHeroBanner extends StatelessWidget {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildMiniStat(
-              context,
-              icon: Icons.call_made_rounded,
-              value: borrowBalance.value,
-              visible: visible,
-              color: scheme.onPrimary.withOpacity(0.7),
-              isNegative: true,
+            Icon(
+              Icons.add_circle_outline,
+              size: context.respIconSize(baseSize: 14),
+              color: scheme.onPrimary.withOpacity(0.9),
             ),
-            const SizedBox(width: 8),
-            _buildMiniStat(
-              context,
-              icon: Icons.call_received_rounded,
-              value: lendBalance.value,
-              visible: visible,
-              color: scheme.onPrimary.withOpacity(0.7),
-              isNegative: false,
+            const SizedBox(width: 4),
+            CcText(
+              visible
+                  ? TransactionFormHelpers.formatShort(lendBalance.value)
+                  : '***',
+              textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                color: scheme.onPrimary,
+                fontWeight: CcTypographyParams.bold,
+              ),
             ),
           ],
         );
       }),
-    );
-  }
-
-  Widget _buildMiniStat(
-    BuildContext context, {
-    required IconData icon,
-    required int value,
-    required bool visible,
-    required Color color,
-    required bool isNegative,
-  }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: context.respIconSize(baseSize: 12), color: color),
-        const SizedBox(width: 2),
-        CcText(
-          visible
-              ? '${isNegative ? '-' : ''}${TransactionFormHelpers.formatShort(value)}'
-              : '***',
-          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            color: color,
-            fontWeight: CcTypographyParams.semiBold,
-          ),
-        ),
-      ],
     );
   }
 }

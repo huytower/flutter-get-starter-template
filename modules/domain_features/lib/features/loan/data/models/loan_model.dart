@@ -16,9 +16,6 @@ class LoanModel {
   @HiveField(1)
   final String direction;
 
-  @HiveField(2)
-  final String counterpartyName;
-
   @HiveField(3)
   final int principalAmount;
 
@@ -72,7 +69,6 @@ class LoanModel {
   LoanModel({
     required this.id,
     required this.direction,
-    required this.counterpartyName,
     required this.principalAmount,
     required this.categoryId,
     required this.categoryLabel,
@@ -94,7 +90,6 @@ class LoanModel {
   factory LoanModel.fromEntity(LoanEntity entity) => LoanModel(
     id: entity.id,
     direction: entity.direction,
-    counterpartyName: entity.counterpartyName,
     principalAmount: entity.principalAmount,
     categoryId: entity.categoryId,
     categoryLabel: entity.categoryLabel,
@@ -115,7 +110,6 @@ class LoanModel {
   LoanEntity toEntity() => LoanEntity(
     id: id,
     direction: direction,
-    counterpartyName: counterpartyName,
     principalAmount: principalAmount,
     categoryId: categoryId,
     categoryLabel: categoryLabel,
@@ -148,7 +142,6 @@ class LoanModel {
     return LoanModel(
       id: id,
       direction: direction,
-      counterpartyName: counterpartyName,
       principalAmount: principalAmount,
       categoryId: categoryId,
       categoryLabel: categoryLabel,
@@ -171,7 +164,6 @@ class LoanModel {
   Map<String, dynamic> toFirestoreData() {
     return {
       'direction': direction,
-      'counterpartyName': counterpartyName,
       'principalAmount': principalAmount,
       'categoryId': categoryId,
       'categoryLabel': categoryLabel,
@@ -199,7 +191,6 @@ class LoanModel {
     return LoanModel(
       id: localId,
       direction: data['direction'] as String,
-      counterpartyName: data['counterpartyName'] as String,
       principalAmount: data['principalAmount'] as int,
       categoryId: data['categoryId'] as String,
       categoryLabel: data['categoryLabel'] as String,

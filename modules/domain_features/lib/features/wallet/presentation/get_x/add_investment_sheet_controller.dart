@@ -44,7 +44,7 @@ class AddInvestmentSheetController extends CcGetController {
   bool get balanceLocked =>
       isEditing && _walletController.walletHasTransactions(_wallet!.id);
 
-  void init(WalletEntity? wallet) {
+  void init(WalletEntity? wallet, {CategoryEntity? category}) {
     _wallet = wallet;
     nameController = TextEditingController(text: wallet?.name ?? '');
     nameController.addListener(_onNameChanged);
@@ -54,7 +54,7 @@ class AddInvestmentSheetController extends CcGetController {
       amountStr.value = _walletController.bookBalanceOf(wallet!.id).toString();
     }
 
-    _loadInvestmentCategories();
+    _loadInvestmentCategories(preSelected: category);
     _loadVipStatus();
   }
 
@@ -63,7 +63,7 @@ class AddInvestmentSheetController extends CcGetController {
     isVip.value = settings.isVip || CcFeatureFlags.isForceFullAccessEnabled;
   }
 
-  Future<void> _loadInvestmentCategories() async {
+  Future<void> _loadInvestmentCategories({CategoryEntity? preSelected}) async {
     final result = await _getCategories.call();
     result.when((categories) {
       final enabledInvestment = categories
@@ -84,7 +84,9 @@ class AddInvestmentSheetController extends CcGetController {
 
       investmentCategories.assignAll(enabledInvestment);
 
-      if (_wallet?.categoryId != null) {
+      if (preSelected != null) {
+        selectInvestmentCategory(preSelected);
+      } else if (_wallet?.categoryId != null) {
         selectedInvestmentCategory.value = enabledInvestment.firstWhereOrNull(
           (c) => c.id == _wallet!.categoryId,
         );

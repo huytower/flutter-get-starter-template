@@ -39,12 +39,6 @@ class LoanEntity extends Equatable {
   /// [LoanDirection.borrow] or [LoanDirection.lend].
   final String direction;
 
-  /// Free-text label: the counterparty for [LoanDirection.lend] (e.g. "Bạn
-  /// A", "Đồng nghiệp B"), or the loan's own name for [LoanDirection.borrow]
-  /// (e.g. "Mua laptop", "Vay ngân hàng") since there's no counterparty to
-  /// name in that direction.
-  final String counterpartyName;
-
   final int principalAmount;
 
   /// FK to a [CategoryEntity] of type `debt_loan` (classifies the loan type,
@@ -80,7 +74,6 @@ class LoanEntity extends Equatable {
   const LoanEntity({
     required this.id,
     required this.direction,
-    required this.counterpartyName,
     required this.principalAmount,
     required this.categoryId,
     required this.categoryLabel,
@@ -104,7 +97,6 @@ class LoanEntity extends Equatable {
   List<Object?> get props => [
     id,
     direction,
-    counterpartyName,
     principalAmount,
     categoryId,
     walletId,
