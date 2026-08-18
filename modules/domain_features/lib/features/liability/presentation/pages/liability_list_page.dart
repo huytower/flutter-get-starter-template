@@ -126,8 +126,8 @@ class LiabilityListPage extends CcGetView<LiabilityListController> {
     });
   }
 
-  void _openAddLiability(BuildContext context) {
-    showModalBottomSheet<void>(
+  Future<void> _openAddLiability(BuildContext context) async {
+    final created = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
@@ -136,6 +136,9 @@ class LiabilityListPage extends CcGetView<LiabilityListController> {
       ),
       builder: (_) => const AddLiabilitySheet(),
     );
+    if (created == true) {
+      controller.load();
+    }
   }
 
   void _confirmDelete(BuildContext context, String id) {

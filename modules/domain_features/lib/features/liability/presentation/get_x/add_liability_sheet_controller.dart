@@ -6,14 +6,11 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
-import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../../domain/usecases/create_liability_usecase.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
-import 'liability_form_controller.dart';
-import 'liability_list_controller.dart';
 
 @injectable
 class AddLiabilitySheetController extends CcGetController {
@@ -169,17 +166,8 @@ class AddLiabilitySheetController extends CcGetController {
       (loan) {
         if (context.mounted) {
           nameError.value = null;
-          if (Get.isRegistered<BudgetAllocationController>()) {
-            Get.find<BudgetAllocationController>().loadLiabilities();
-          }
-          if (Get.isRegistered<LiabilityListController>()) {
-            Get.find<LiabilityListController>().load();
-          }
-          if (Get.isRegistered<LiabilityFormController>()) {
-            Get.find<LiabilityFormController>().loadLiabilities();
-          }
 
-          Navigator.pop(context);
+          Navigator.pop(context, true);
           CcSnackBarHelper.showSuccessSnackBar(
             context: context,
             message: el.tr(CcLocaleKeys.common_done),
