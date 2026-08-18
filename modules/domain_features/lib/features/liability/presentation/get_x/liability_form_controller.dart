@@ -17,6 +17,7 @@ import '../../domain/usecases/create_liability_usecase.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
 import '../../domain/usecases/record_liability_payment_usecase.dart';
 import '../../domain/usecases/schedule_liability_reminders_usecase.dart';
+import '../get_x/liability_list_controller.dart';
 
 /// One editable row of an installment schedule being built in the liability
 /// creation form. Presentation-only — converted to [LiabilityInstallmentEntity]
@@ -106,6 +107,15 @@ class LiabilityFormController extends TransactionFormController
     super.onInit();
 
     _loadAll();
+
+    // Listen to liability list changes to sync with deletions from list page
+    if (Get.isRegistered<LiabilityListController>()) {
+      final listController = Get.find<LiabilityListController>();
+      ever(listController.loans, (_) {
+        debugPrint('[LIABILITY_FORM] Liability list changed, reloading merged items');
+        _recomputeMergedItems();
+      });
+    }
   }
 
   @override
@@ -157,6 +167,18 @@ class LiabilityFormController extends TransactionFormController
       );
 
       mergedItems.assignAll(filtered);
+
+      // Clear selected loan if it no longer exists (was deleted)
+      if (selectedLoanId.value != null) {
+        final stillExists = mergedItems.any(
+          (b) => b.liability.id == selectedLoanId.value,
+        );
+        if (!stillExists) {
+          debugPrint('[LIABILITY_FORM] Selected loan was deleted, clearing selection');
+          selectedLoanId.value = null;
+          selectedCategory.value = null;
+        }
+      }
 
       // Auto-select first if nothing selected
       if (selectedLoanId.value == null && mergedItems.isNotEmpty) {

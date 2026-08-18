@@ -244,7 +244,11 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         return const SizedBox.shrink();
       }
 
+      // Observe loanBalances to trigger rebuild when list changes
+      final balances = controller.loanBalances;
+
       return LiabilityWalletsSection(
+        balances: balances,
         onAddLoan: () => controller.openAddLoan(context),
         onMore: (balance) => controller.openLoanActions(context, balance),
         onSeeAll: () => controller.navigateToLoanList(context),

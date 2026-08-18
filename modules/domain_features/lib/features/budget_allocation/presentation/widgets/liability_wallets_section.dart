@@ -9,65 +9,62 @@ import 'liability_wallet_preview_card.dart';
 
 class LiabilityWalletsSection extends StatelessWidget {
   const LiabilityWalletsSection({
+    required this.balances,
     required this.onAddLoan,
     required this.onMore,
     required this.onSeeAll,
     super.key,
   });
 
+  final List<LiabilityBalanceEntity> balances;
   final VoidCallback onAddLoan;
   final ValueChanged<LiabilityBalanceEntity> onMore;
   final VoidCallback onSeeAll;
 
   @override
   Widget build(BuildContext context) {
-    return GetX<BudgetAllocationController>(
-      builder: (controller) {
-        final balances = controller.loanBalances;
-        final scheme = context.ccColorScheme;
+    final scheme = context.ccColorScheme;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CcPadding(
-              CcSectionHeader(
-                title: el.tr(CcLocaleKeys.liability_list_title),
-                icon: Icons.trending_up_outlined,
-                actions: [
-                  CcInkWell(
-                    onTap: onAddLoan,
-                    child: const CcIconToken(
-                      Icons.add_circle_outline_rounded,
-                      size: 20,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcPadding(
+          CcSectionHeader(
+            title: el.tr(CcLocaleKeys.liability_list_title),
+            icon: Icons.trending_up_outlined,
+            actions: [
+              CcInkWell(
+                onTap: onAddLoan,
+                child: const CcIconToken(
+                  Icons.add_circle_outline_rounded,
+                  size: 20,
+                ),
+              ),
+              if (balances.isNotEmpty) ...[
+                const CcSpaceSM(),
+                CcInkWell(
+                  onTap: onSeeAll,
+                  child: CcText(
+                    el.tr(CcLocaleKeys.wallet_see_all),
+                    textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                      color: scheme.primary,
+                      fontWeight: CcTypographyParams.semiBold,
                     ),
                   ),
-                  if (balances.isNotEmpty) ...[
-                    const CcSpaceSM(),
-                    CcInkWell(
-                      onTap: onSeeAll,
-                      child: CcText(
-                        el.tr(CcLocaleKeys.wallet_see_all),
-                        textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                          color: scheme.primary,
-                          fontWeight: CcTypographyParams.semiBold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-              CcPaddingParams.SPACE_SM,
-              CcPaddingParams.SPACE_LG,
-              CcPaddingParams.SPACE_MD,
-              CcPaddingParams.SPACE_LG,
-            ),
-            if (balances.isEmpty)
-              _buildEmptyState(context)
-            else
-              _buildHorizontalList(context, balances),
-          ],
-        );
-      },
+                ),
+              ],
+            ],
+          ),
+          CcPaddingParams.SPACE_SM,
+          CcPaddingParams.SPACE_LG,
+          CcPaddingParams.SPACE_MD,
+          CcPaddingParams.SPACE_LG,
+        ),
+        if (balances.isEmpty)
+          _buildEmptyState(context)
+        else
+          _buildHorizontalList(context, balances),
+      ],
     );
   }
 

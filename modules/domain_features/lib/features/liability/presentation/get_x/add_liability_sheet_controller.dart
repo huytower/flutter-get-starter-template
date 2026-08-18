@@ -143,13 +143,13 @@ class AddLiabilitySheetController extends CcGetController {
     result.when(
       (loan) {
         if (context.mounted) {
-          GetIt.instance<LiabilityListController>().load();
+          // Trigger budget allocation refresh to show new liability
           GetIt.instance<BudgetAllocationController>().loadLiabilities();
-
+          
           Navigator.pop(context);
           CcSnackBarHelper.showSuccessSnackBar(
             context: context,
-            message: el.tr(CcLocaleKeys.transaction_debt_saved),
+            message: el.tr(CcLocaleKeys.common_done),
           );
         }
       },
