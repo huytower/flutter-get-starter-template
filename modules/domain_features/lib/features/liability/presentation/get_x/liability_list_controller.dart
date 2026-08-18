@@ -37,10 +37,10 @@ class LiabilityListController extends CcGetController {
     final result = await _getLiabilityBalances();
     result.when(
       (balances) {
+        // Deduplicate by liability ID, not category label
         final unique = <String, LiabilityBalanceEntity>{};
         for (final b in balances) {
-          final name = b.liability.categoryLabel.trim().toLowerCase();
-          unique[name] = b;
+          unique[b.liability.id] = b;
         }
         final sorted = unique.values.toList()
           ..sort(
