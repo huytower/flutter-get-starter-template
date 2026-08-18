@@ -1,44 +1,39 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../liability/domain/entities/liability_balance_entity.dart';
+import '../get_x/budget_allocation_controller.dart';
 import 'liability_wallet_preview_card.dart';
 
 class LiabilityWalletsSection extends StatelessWidget {
   const LiabilityWalletsSection({
-    required this.balances,
     required this.onAddLoan,
     required this.onMore,
     required this.onSeeAll,
     super.key,
   });
 
-  final List<LiabilityBalanceEntity> balances;
   final VoidCallback onAddLoan;
   final ValueChanged<LiabilityBalanceEntity> onMore;
   final VoidCallback onSeeAll;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
+    return GetX<BudgetAllocationController>(
+      builder: (controller) {
+        final balances = controller.loanBalances;
+        final scheme = context.ccColorScheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcPadding(
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CcText(
-                el.tr(CcLocaleKeys.liability_list_title),
-                textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                  fontWeight: CcTypographyParams.bold,
-                  color: scheme.onBackground,
-                ),
-              ),
-              Row(
-                children: [
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CcPadding(
+              CcSectionHeader(
+                title: el.tr(CcLocaleKeys.liability_list_title),
+                icon: Icons.trending_up_outlined,
+                actions: [
                   CcInkWell(
                     onTap: onAddLoan,
                     child: const CcIconToken(
@@ -61,18 +56,18 @@ class LiabilityWalletsSection extends StatelessWidget {
                   ],
                 ],
               ),
-            ],
-          ),
-          CcPaddingParams.SPACE_SM, // bottom
-          CcPaddingParams.SPACE_LG, // left
-          CcPaddingParams.SPACE_MD, // right
-          CcPaddingParams.SPACE_LG, // top
-        ),
-        if (balances.isEmpty)
-          _buildEmptyState(context)
-        else
-          _buildHorizontalList(context),
-      ],
+              CcPaddingParams.SPACE_SM,
+              CcPaddingParams.SPACE_LG,
+              CcPaddingParams.SPACE_MD,
+              CcPaddingParams.SPACE_LG,
+            ),
+            if (balances.isEmpty)
+              _buildEmptyState(context)
+            else
+              _buildHorizontalList(context, balances),
+          ],
+        );
+      },
     );
   }
 
@@ -90,7 +85,10 @@ class LiabilityWalletsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildHorizontalList(BuildContext context) {
+  Widget _buildHorizontalList(
+    BuildContext context,
+    List<LiabilityBalanceEntity> balances,
+  ) {
     return HorizontalFadeScrollView(
       height: context.respDim(95),
       builder: (scrollController) => ListView.builder(

@@ -29,40 +29,30 @@ class InvestmentWalletsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcPadding(
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CcText(
-                el.tr(CcLocaleKeys.wallet_investments),
-                textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                  fontWeight: CcTypographyParams.bold,
-                  color: scheme.onBackground,
+          CcSectionHeader(
+            title: el.tr(CcLocaleKeys.wallet_investments),
+            icon: Icons.trending_up_outlined,
+            actions: [
+              CcInkWell(
+                onTap: onAddInvestment,
+                child: const CcIconToken(
+                  Icons.add_circle_outline_rounded,
+                  size: 20,
                 ),
               ),
-              Row(
-                children: [
-                  CcInkWell(
-                    onTap: onAddInvestment,
-                    child: const CcIconToken(
-                      Icons.add_circle_outline_rounded,
-                      size: 20,
+              if (wallets.isNotEmpty) ...[
+                const CcSpaceSM(),
+                CcInkWell(
+                  onTap: onSeeAll,
+                  child: CcText(
+                    el.tr(CcLocaleKeys.wallet_see_all),
+                    textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                      color: scheme.primary,
+                      fontWeight: CcTypographyParams.semiBold,
                     ),
                   ),
-                  if (wallets.isNotEmpty) ...[
-                    const CcSpaceSM(),
-                    CcInkWell(
-                      onTap: onSeeAll,
-                      child: CcText(
-                        el.tr(CcLocaleKeys.wallet_see_all),
-                        textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                          color: scheme.primary,
-                          fontWeight: CcTypographyParams.semiBold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
+                ),
+              ],
             ],
           ),
           CcPaddingParams.SPACE_SM, // bottom

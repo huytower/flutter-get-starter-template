@@ -18,7 +18,7 @@ import '../../domain/usecases/get_liability_balances_usecase.dart';
 import '../../domain/usecases/record_liability_payment_usecase.dart';
 import '../../domain/usecases/schedule_liability_reminders_usecase.dart';
 
-/// One editable row of an installment schedule being built in the loan
+/// One editable row of an installment schedule being built in the liability
 /// creation form. Presentation-only — converted to [LiabilityInstallmentEntity]
 /// at submit time.
 class LoanInstallmentDraft {

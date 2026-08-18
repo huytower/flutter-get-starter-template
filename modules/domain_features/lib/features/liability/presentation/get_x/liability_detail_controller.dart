@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
@@ -131,9 +132,7 @@ class LiabilityDetailController extends TransactionFormController {
         resetForm();
         refreshParent();
         await _refreshDetail();
-        if (Get.isRegistered<BudgetAllocationController>()) {
-          Get.find<BudgetAllocationController>().loadLiabilities();
-        }
+        GetIt.instance<BudgetAllocationController>().loadLiabilities();
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
         context: context,

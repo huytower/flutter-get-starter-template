@@ -3,13 +3,16 @@ import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../../domain/usecases/create_liability_usecase.dart';
+import 'liability_list_controller.dart';
 
 @injectable
 class AddLiabilitySheetController extends CcGetController {
@@ -58,7 +61,12 @@ class AddLiabilitySheetController extends CcGetController {
           : CategorySeed.debtLoanLendGroupId;
 
       final filtered = categories
-          .where((c) => c.type == CategoryType.debtLoan && c.isEnabled && c.groupId == groupId)
+          .where(
+            (c) =>
+                c.type == CategoryType.debtLoan &&
+                c.isEnabled &&
+                c.groupId == groupId,
+          )
           .toList();
 
       final seedIndexMap = <String, int>{};
@@ -135,6 +143,9 @@ class AddLiabilitySheetController extends CcGetController {
     result.when(
       (loan) {
         if (context.mounted) {
+          GetIt.instance<LiabilityListController>().load();
+          GetIt.instance<BudgetAllocationController>().loadLiabilities();
+
           Navigator.pop(context);
           CcSnackBarHelper.showSuccessSnackBar(
             context: context,
@@ -159,5 +170,3 @@ class AddLiabilitySheetController extends CcGetController {
     super.onClose();
   }
 }
-
-

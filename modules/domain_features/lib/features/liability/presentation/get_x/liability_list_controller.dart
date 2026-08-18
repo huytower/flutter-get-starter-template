@@ -2,9 +2,11 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/repositories/liability_repository.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
@@ -41,7 +43,9 @@ class LiabilityListController extends CcGetController {
           unique[name] = b;
         }
         final sorted = unique.values.toList()
-          ..sort((a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt));
+          ..sort(
+            (a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt),
+          );
         loans.assignAll(sorted);
         layoutStatus.value = CcLayoutStatus.success;
       },
@@ -77,6 +81,9 @@ class LiabilityListController extends CcGetController {
     result.when(
       (_) {
         loans.removeAt(index);
+
+        GetIt.instance<BudgetAllocationController>().loadLiabilities();
+
         CcSnackBarHelper.showSuccessSnackBar(
           context: Get.context!,
           message: el.tr(CcLocaleKeys.common_done),

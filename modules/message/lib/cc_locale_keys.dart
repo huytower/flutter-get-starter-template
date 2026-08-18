@@ -367,7 +367,7 @@ class CodegenLoader extends AssetLoader {
       "status_settled": "Settled",
       "remaining_balance": "Remaining",
       "principal_amount": "Principal",
-      "empty_state": "No loans yet",
+      "empty_state": "No loans yet\nPress + to add",
       "history_title": "Transaction history",
       "no_history": "No repayment/collection yet",
       "borrow": "Borrow",
@@ -380,11 +380,12 @@ class CodegenLoader extends AssetLoader {
       "status_settled": "Settled",
       "remaining_balance": "Remaining",
       "principal_amount": "Principal",
-      "empty_state": "No liabilities yet",
+      "empty_state": "No liabilities yet\nPress + to add",
       "history_title": "Transaction history",
       "no_history": "No repayment/collection yet",
       "delete_title": "Delete Liability",
-      "delete_confirm_msg": "Are you sure you want to delete this liability? This action cannot be undone.",
+      "delete_confirm_msg":
+          "Are you sure you want to delete this liability? This action cannot be undone.",
     },
     "notification": {
       "channel_name": "Reminders",
@@ -1124,11 +1125,12 @@ class CodegenLoader extends AssetLoader {
       "status_settled": "Đã tất toán",
       "remaining_balance": "Còn lại",
       "principal_amount": "Gốc",
-      "empty_state": "Chưa có khoản nợ/vay nào",
+      "empty_state": "Chưa có khoản vay nào\nNhấn + để thêm ",
       "history_title": "Lịch sử giao dịch",
       "no_history": "Chưa có giao dịch trả/thu nợ nào",
       "delete_title": "Xóa khoản nợ/vay",
-      "delete_confirm_msg": "Bạn có chắc chắn muốn xóa khoản nợ/vay này? Hành động này không thể hoàn tác.",
+      "delete_confirm_msg":
+          "Bạn có chắc chắn muốn xóa khoản nợ/vay này? Hành động này không thể hoàn tác.",
     },
     "notification": {
       "channel_name": "Nhắc nhở",

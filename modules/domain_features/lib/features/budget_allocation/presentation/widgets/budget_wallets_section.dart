@@ -37,58 +37,48 @@ class BudgetWalletsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcPadding(
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CcText(
-                el.tr(titleKey),
-                textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                  fontWeight: CcTypographyParams.bold,
-                  color: scheme.onBackground,
-                ),
-              ),
-              Row(
-                children: [
-                  if (showAddButton)
-                    Obx(
-                      () => Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          CcInkWell(
-                            onTap: onAddWallet,
-                            child: const CcIconToken(
-                              Icons.add_circle_outline_rounded,
-                              size: 20,
-                            ),
-                          ),
-                          if (guideline.isTaskActive('wallet_balance'))
-                            Positioned(
-                              top: -10,
-                              right: -10,
-                              child: CcGuidelineBadge(
-                                size: 6,
-                                color: guideline.currentColor,
-                                bounceTrigger: guideline.bounceTrigger,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  if (showAddButton) const CcSpaceSM(),
-                  if (wallets.isNotEmpty)
-                    CcInkWell(
-                      onTap: () =>
-                          context.router.push(const LiquidWalletListRoute()),
-                      child: CcText(
-                        el.tr(CcLocaleKeys.wallet_see_all),
-                        textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                          color: scheme.primary,
-                          fontWeight: CcTypographyParams.semiBold,
+          CcSectionHeader(
+            title: el.tr(titleKey),
+            icon: Icons.account_balance_wallet_outlined,
+            actions: [
+              if (showAddButton)
+                Obx(
+                  () => Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      CcInkWell(
+                        onTap: onAddWallet,
+                        child: const CcIconToken(
+                          Icons.add_circle_outline_rounded,
+                          size: 20,
                         ),
                       ),
+                      if (guideline.isTaskActive('wallet_balance'))
+                        Positioned(
+                          top: -10,
+                          right: -10,
+                          child: CcGuidelineBadge(
+                            size: 6,
+                            color: guideline.currentColor,
+                            bounceTrigger: guideline.bounceTrigger,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              if (showAddButton) const CcSpaceSM(),
+              if (wallets.isNotEmpty)
+                CcInkWell(
+                  onTap: () =>
+                      context.router.push(const LiquidWalletListRoute()),
+                  child: CcText(
+                    el.tr(CcLocaleKeys.wallet_see_all),
+                    textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                      color: scheme.primary,
+                      fontWeight: CcTypographyParams.semiBold,
                     ),
-                ],
-              ),
+                  ),
+                ),
             ],
           ),
           CcPaddingParams.SPACE_SM, // bottom

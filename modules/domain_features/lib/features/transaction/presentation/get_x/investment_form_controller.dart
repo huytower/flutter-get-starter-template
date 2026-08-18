@@ -54,6 +54,7 @@ class InvestmentFormController extends TransactionFormController
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   @override
   final RxInt categoryKey = 0.obs;
+  final RxList<CategoryEntity> _cachedCategories = <CategoryEntity>[].obs;
 
   /// Merged list of existing investment assets (`WalletEntity`) and
   /// base investment categories (`CategoryEntity`).
@@ -73,13 +74,22 @@ class InvestmentFormController extends TransactionFormController
 
   @override
   bool get canSubmit {
-    if (selectedCategory.value == null) return false;
     if (amountStr.value == '0' || amountStr.value.isEmpty) return false;
     if (selectedWalletId.value == null) return false;
     if (isAddingNewItem.value) {
-      return newItemName.value.trim().isNotEmpty;
+      return selectedCategory.value != null &&
+          newItemName.value.trim().isNotEmpty;
     }
-    return selectedInvestmentWalletId.value != null;
+    if (selectedInvestmentWalletId.value == null) return false;
+    if (selectedCategory.value != null) return true;
+    final wallet = mergedItems.whereType<WalletEntity>().firstWhereOrNull(
+      (w) => w.id == selectedInvestmentWalletId.value,
+    );
+    if (wallet?.categoryId != null) return true;
+    final investmentCats = _cachedCategories
+        .where((c) => c.type == CategoryType.investment)
+        .toList();
+    return investmentCats.length == 1;
   }
 
   @override
@@ -92,7 +102,10 @@ class InvestmentFormController extends TransactionFormController
     // Listen to global category changes (e.g. from Settings)
     ever(
       CategorySettingsController.onCategoriesChanged,
-      (_) => _recomputeMergedItems(),
+      (_) {
+        _loadCategories();
+        _recomputeMergedItems();
+      },
     );
     initQuickEntry();
   }
@@ -100,8 +113,17 @@ class InvestmentFormController extends TransactionFormController
   Future<void> _loadAll() async {
     isLoadingMerged.value = true;
     await _loadVipStatus();
+    await _loadCategories();
     await _recomputeMergedItems();
     isLoadingMerged.value = false;
+  }
+
+  Future<void> _loadCategories() async {
+    final result = await _getCategories();
+    result.when(
+      (categories) => _cachedCategories.assignAll(categories),
+      (_) {},
+    );
   }
 
   /// Refreshes the list of investment assets and categories.
@@ -111,7 +133,6 @@ class InvestmentFormController extends TransactionFormController
         .where((w) => w.type == WalletType.investment)
         .toList();
 
-    // High Priority Sorting: Match Dashboard (DisplayOrder) + Recency (UpdatedAt)
     assets.sort((a, b) {
       if (a.displayOrder != b.displayOrder) {
         return a.displayOrder.compareTo(b.displayOrder);
@@ -120,12 +141,8 @@ class InvestmentFormController extends TransactionFormController
     });
 
     final List<dynamic> items = [...assets];
-
-    // Note: We no longer merge categories here to ensure "same quantity" (Rule: Match Dashboard Assets)
-    // and avoid cluttering the selector with base categories. Users add new assets via Dashboard (+).
     mergedItems.assignAll(items);
 
-    // Auto-select first if nothing selected
     if (selectedInvestmentWalletId.value == null &&
         selectedCategory.value == null &&
         mergedItems.isNotEmpty) {
@@ -135,28 +152,44 @@ class InvestmentFormController extends TransactionFormController
       } else if (first is CategoryEntity) {
         selectCategory(first);
       }
+    } else if (selectedInvestmentWalletId.value != null &&
+        selectedCategory.value == null) {
+      final wallet = mergedItems.whereType<WalletEntity>().firstWhereOrNull(
+        (w) => w.id == selectedInvestmentWalletId.value,
+      );
+      if (wallet != null) {
+        selectAsset(wallet);
+      }
     }
   }
 
-  void selectAsset(WalletEntity wallet) async {
+  void selectAsset(WalletEntity wallet) {
     selectedInvestmentWalletId.value = wallet.id;
     isAddingNewItem.value = false;
 
-    // Resolve parent category to ensure correct icon/type in transaction
+    final categories = _cachedCategories.toList();
+    CategoryEntity? matched;
     if (wallet.categoryId != null) {
-      final catResult = await _getCategories();
-      catResult.when((categories) {
-        final cat = categories.firstWhereOrNull(
-          (c) => c.id == wallet.categoryId,
-        );
-        if (cat != null) {
-          selectedCategory.value = cat;
-        }
-      }, (_) {});
+      matched = categories.firstWhereOrNull(
+        (c) => c.id == wallet.categoryId,
+      );
+    }
+
+    if (matched == null) {
+      final investmentCats = categories
+          .where((c) => c.type == CategoryType.investment)
+          .toList();
+      if (investmentCats.length == 1) {
+        matched = investmentCats.first;
+      }
+    }
+
+    if (matched != null) {
+      selectedCategory.value = matched;
     }
   }
 
-   @override
+  @override
   void selectCategory(CategoryEntity category) {
     selectedCategory.value = category;
     selectedInvestmentWalletId.value = null;
@@ -233,7 +266,30 @@ class InvestmentFormController extends TransactionFormController
     if (isSubmitting.value || !canSubmit) return;
     isSubmitting.value = true;
 
-    final category = selectedCategory.value!;
+    CategoryEntity? category = selectedCategory.value;
+    if (category == null && selectedInvestmentWalletId.value != null) {
+      final wallet = mergedItems.whereType<WalletEntity>().firstWhereOrNull(
+        (w) => w.id == selectedInvestmentWalletId.value,
+      );
+      if (wallet != null && wallet.categoryId != null) {
+        final catResult = await _getCategories();
+        category = catResult.tryGetSuccess()?.firstWhereOrNull(
+          (c) => c.id == wallet.categoryId,
+        );
+      }
+    }
+
+    if (category == null) {
+      isSubmitting.value = false;
+      if (context.mounted) {
+        CcSnackBarHelper.showErrorSnackBar(
+          context: context,
+          message: el.tr(CcLocaleKeys.transaction_validation_category_required),
+        );
+      }
+      return;
+    }
+
     final params = CreateInvestmentTransactionParams(
       direction: direction.value,
       liquidWalletId: selectedWalletId.value,

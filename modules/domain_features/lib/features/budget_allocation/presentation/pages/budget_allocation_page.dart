@@ -243,10 +243,8 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       if (!canShow) {
         return const SizedBox.shrink();
       }
-      final balances = controller.loanBalances;
 
       return LiabilityWalletsSection(
-        balances: balances,
         onAddLoan: () => controller.openAddLoan(context),
         onMore: (balance) => controller.openLoanActions(context, balance),
         onSeeAll: () => controller.navigateToLoanList(context),
