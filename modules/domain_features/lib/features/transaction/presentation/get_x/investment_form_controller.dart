@@ -131,17 +131,16 @@ class InvestmentFormController extends TransactionFormController {
     }
   }
 
-  @override
+   @override
   void selectCategory(CategoryEntity category) {
     selectedCategory.value = category;
     selectedInvestmentWalletId.value = null;
 
     if (isVip.value) {
       isAddingNewItem.value = true;
-      newItemName.value = '';
-      newItemNameController.clear();
+      newItemName.value = el.tr(category.nameKey);
+      newItemNameController.text = newItemName.value;
     } else {
-      // Free tier: attach to category name
       isAddingNewItem.value = true;
       newItemName.value = el.tr(category.nameKey);
       newItemNameController.text = newItemName.value;

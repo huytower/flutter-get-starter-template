@@ -2,8 +2,8 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../loan/domain/entities/loan_balance_entity.dart';
-import '../../../loan/presentation/widgets/loan_list_card.dart';
+import '../../../liability/domain/entities/liability_balance_entity.dart';
+import 'liability_wallet_preview_card.dart';
 
 class LiabilityWalletsSection extends StatelessWidget {
   const LiabilityWalletsSection({
@@ -14,9 +14,9 @@ class LiabilityWalletsSection extends StatelessWidget {
     super.key,
   });
 
-  final List<LoanBalanceEntity> balances;
+  final List<LiabilityBalanceEntity> balances;
   final VoidCallback onAddLoan;
-  final ValueChanged<LoanBalanceEntity> onMore;
+  final ValueChanged<LiabilityBalanceEntity> onMore;
   final VoidCallback onSeeAll;
 
   @override
@@ -31,7 +31,7 @@ class LiabilityWalletsSection extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CcText(
-                el.tr(CcLocaleKeys.loan_list_title),
+                el.tr(CcLocaleKeys.liability_list_title),
                 textStyle: context.ccTextTheme.titleSmall?.copyWith(
                   fontWeight: CcTypographyParams.bold,
                   color: scheme.onBackground,
@@ -81,7 +81,7 @@ class LiabilityWalletsSection extends StatelessWidget {
       horizontal: CcPaddingParams.SPACE_LG,
       vertical: 12,
       child: CcText(
-        el.tr(CcLocaleKeys.loan_empty_state),
+        el.tr(CcLocaleKeys.liability_empty_state),
         textAlign: TextAlign.center,
         textStyle: context.ccTextTheme.bodySmall?.copyWith(
           color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
@@ -105,7 +105,11 @@ class LiabilityWalletsSection extends StatelessWidget {
           final balance = balances[index];
           return Padding(
             padding: EdgeInsets.only(right: context.respDim(12)),
-            child: LoanListCard(balance: balance, onTap: () => onMore(balance)),
+            child: LiabilityWalletPreviewCard(
+              balance: balance,
+              onMore: () => onMore(balance),
+              onTap: onSeeAll,
+            ),
           );
         },
       ),

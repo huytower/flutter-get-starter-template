@@ -266,6 +266,16 @@ class CodegenLoader extends AssetLoader {
       "source_debt": "Source of Debt",
       "record_debt": "Record Debt",
       "debt_saved": "Debt of {amount} đ saved successfully!",
+      "liability_direction_borrow": "Borrow",
+      "liability_direction_lend": "Lend",
+      "liability_name_label": "Liability name",
+      "liability_name_hint": "e.g. Laptop purchase, Bank loan...",
+      "record_liability": "Record Liability",
+      "liability_amount_borrow_label": "Liability amount",
+      "liability_amount_lend_label": "Lending amount",
+      "liability_wallet_borrow_label": "Receiving wallet",
+      "liability_wallet_lend_label": "Lending wallet",
+      "liability_saved": "Liability of {amount} đ recorded!",
       "loan_direction_borrow": "Borrow",
       "loan_direction_lend": "Lend",
       "loan_category_borrow_label": "Loan type",
@@ -362,6 +372,19 @@ class CodegenLoader extends AssetLoader {
       "no_history": "No repayment/collection yet",
       "borrow": "Borrow",
       "lend": "Lend",
+    },
+    "liability": {
+      "title": "Liabilities",
+      "list_title": "Liabilities",
+      "status_outstanding": "Outstanding",
+      "status_settled": "Settled",
+      "remaining_balance": "Remaining",
+      "principal_amount": "Principal",
+      "empty_state": "No liabilities yet",
+      "history_title": "Transaction history",
+      "no_history": "No repayment/collection yet",
+      "delete_title": "Delete Liability",
+      "delete_confirm_msg": "Are you sure you want to delete this liability? This action cannot be undone.",
     },
     "notification": {
       "channel_name": "Reminders",
@@ -988,6 +1011,16 @@ class CodegenLoader extends AssetLoader {
       "source_debt": "Nguồn vay nợ",
       "record_debt": "Ghi chép vay nợ",
       "debt_saved": "Đã lưu khoản vay nợ {amount} đ thành công!",
+      "liability_direction_borrow": "Đi vay",
+      "liability_direction_lend": "Cho vay",
+      "liability_name_label": "Tên khoản nợ/vay",
+      "liability_name_hint": "VD: Mua laptop, Vay ngân hàng...",
+      "record_liability": "Ghi nhận khoản nợ/vay",
+      "liability_amount_borrow_label": "Số tiền vay",
+      "liability_amount_lend_label": "Số tiền cho vay",
+      "liability_wallet_borrow_label": "Ví nhận tiền",
+      "liability_wallet_lend_label": "Ví nguồn tiền",
+      "liability_saved": "Đã ghi nhận khoản nợ/vay {amount} đ!",
       "loan_direction_borrow": "Đi vay",
       "loan_direction_lend": "Cho vay",
       "loan_category_borrow_label": "Hình thức vay",
@@ -1083,6 +1116,19 @@ class CodegenLoader extends AssetLoader {
       "no_history": "Chưa có giao dịch trả/thu nợ nào",
       "borrow": "Đi vay",
       "lend": "Cho vay",
+    },
+    "liability": {
+      "title": "Nợ/Vay",
+      "list_title": "Nợ/Vay",
+      "status_outstanding": "Còn nợ",
+      "status_settled": "Đã tất toán",
+      "remaining_balance": "Còn lại",
+      "principal_amount": "Gốc",
+      "empty_state": "Chưa có khoản nợ/vay nào",
+      "history_title": "Lịch sử giao dịch",
+      "no_history": "Chưa có giao dịch trả/thu nợ nào",
+      "delete_title": "Xóa khoản nợ/vay",
+      "delete_confirm_msg": "Bạn có chắc chắn muốn xóa khoản nợ/vay này? Hành động này không thể hoàn tác.",
     },
     "notification": {
       "channel_name": "Nhắc nhở",
@@ -1726,6 +1772,27 @@ abstract class CcLocaleKeys {
   static const transaction_loan_payment_saved =
       'transaction.loan_payment_saved';
   static const transaction_record_loan = 'transaction.record_loan';
+
+  static const transaction_liability_direction_borrow =
+      'transaction.liability_direction_borrow';
+  static const transaction_liability_direction_lend =
+      'transaction.liability_direction_lend';
+  static const transaction_liability_name_label =
+      'transaction.liability_name_label';
+  static const transaction_liability_name_hint =
+      'transaction.liability_name_hint';
+  static const transaction_record_liability = 'transaction.record_liability';
+  static const transaction_liability_payment_saved =
+      'transaction.liability_payment_saved';
+  static const transaction_liability_amount_borrow_label =
+      'transaction.liability_amount_borrow_label';
+  static const transaction_liability_amount_lend_label =
+      'transaction.liability_amount_lend_label';
+  static const transaction_liability_wallet_borrow_label =
+      'transaction.liability_wallet_borrow_label';
+  static const transaction_liability_wallet_lend_label =
+      'transaction.liability_wallet_lend_label';
+  static const transaction_liability_saved = 'transaction.liability_saved';
   static const transaction_record_repay = 'transaction.record_repay';
   static const transaction_record_collect = 'transaction.record_collect';
   static const transaction_investment_contribution =
@@ -1811,6 +1878,18 @@ abstract class CcLocaleKeys {
   static const loan_empty_state = 'loan.empty_state';
   static const loan_history_title = 'loan.history_title';
   static const loan_no_history = 'loan.no_history';
+
+  static const liability_title = 'liability.title';
+  static const liability_list_title = 'liability.list_title';
+  static const liability_status_outstanding = 'liability.status_outstanding';
+  static const liability_status_settled = 'liability.status_settled';
+  static const liability_remaining_balance = 'liability.remaining_balance';
+  static const liability_principal_amount = 'liability.principal_amount';
+  static const liability_empty_state = 'liability.empty_state';
+  static const liability_history_title = 'liability.history_title';
+  static const liability_no_history = 'liability.no_history';
+  static const liability_delete_title = 'liability.delete_title';
+  static const liability_delete_confirm_msg = 'liability.delete_confirm_msg';
 
   static const notification_channel_name = 'notification.channel_name';
   static const notification_channel_description =

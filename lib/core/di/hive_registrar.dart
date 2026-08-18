@@ -1,4 +1,5 @@
-import 'package:app_config/data/datasource/local/box/register_hive_adapter.dart' as app_config;
+import 'package:app_config/data/datasource/local/box/register_hive_adapter.dart'
+    as app_config;
 import 'package:domain_features/export_domain_features.dart';
 import 'package:hive_ce/hive_ce.dart';
 
@@ -31,8 +32,8 @@ class HiveRegistrar {
     Hive.registerAdapter(ReconciliationModelAdapter());
 
     // Register Loan adapters (record + nested installment)
-    Hive.registerAdapter(LoanInstallmentModelAdapter());
-    Hive.registerAdapter(LoanModelAdapter());
+    Hive.registerAdapter(LiabilityInstallmentModelAdapter());
+    Hive.registerAdapter(LiabilityModelAdapter());
 
     // Add other feature adapters here as needed
   }

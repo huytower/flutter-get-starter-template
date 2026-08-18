@@ -90,9 +90,9 @@ class InvestmentForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildAmountSection(context, controller, accentColor),
+          Obx(() => _buildAmountSection(context, controller, accentColor)),
           const CcSpaceLG(),
-          _buildWalletSection(context, controller, accentColor),
+          Obx(() => _buildWalletSection(context, controller, accentColor)),
           const CcSpaceLG(),
           Obx(() {
             if (controller.isAddingNewItem.value) {
@@ -117,16 +117,18 @@ class InvestmentForm extends StatelessWidget {
             activeColor: accentColor,
           ),
           const CcSpaceXL(),
-          TransactionSubmitButton(
-            text: el.tr(
-              controller.direction.value == InvestmentDirection.contribute
-                  ? CcLocaleKeys.transaction_record_investment
-                  : CcLocaleKeys.transaction_record_investment_return,
+          Obx(
+            () => TransactionSubmitButton(
+              text: el.tr(
+                controller.direction.value == InvestmentDirection.contribute
+                    ? CcLocaleKeys.transaction_record_investment
+                    : CcLocaleKeys.transaction_record_investment_return,
+              ),
+              isSubmitting: controller.isSubmitting.value,
+              isEnabled: controller.canSubmit,
+              onTap: () => controller.submitForm(context),
+              activeColor: accentColor,
             ),
-            isSubmitting: controller.isSubmitting.value,
-            isEnabled: controller.canSubmit,
-            onTap: () => controller.submitForm(context),
-            activeColor: accentColor,
           ),
           const CcSpaceLG(),
         ],

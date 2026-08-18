@@ -8,7 +8,7 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
-import '../../../loan/presentation/get_x/loan_form_controller.dart';
+import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
@@ -165,8 +165,8 @@ class TransactionController extends CcGetController {
         }
         break;
       case TransactionTabKind.debtLoan:
-        if (Get.isRegistered<LoanFormController>()) {
-          Get.find<LoanFormController>().submitForm(context);
+        if (Get.isRegistered<LiabilityFormController>()) {
+          Get.find<LiabilityFormController>().submitForm(context);
         }
         break;
     }

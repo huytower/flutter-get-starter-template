@@ -11,13 +11,13 @@ import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
 import '../../../budget_limit/domain/usecases/get_budget_insights_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
-import '../../../loan/domain/entities/loan_balance_entity.dart';
-import '../../../loan/domain/usecases/get_loan_balances_usecase.dart';
+import '../../../liability/domain/entities/liability_balance_entity.dart';
+import '../../../liability/domain/usecases/get_liability_balances_usecase.dart';
+import '../../../liability/presentation/widgets/add_liability_sheet.dart';
 import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
-import '../../../loan/presentation/widgets/add_loan_sheet.dart';
 import '../../../wallet/presentation/widgets/add_investment_sheet.dart';
 import '../../../wallet/presentation/widgets/add_wallet_sheet.dart';
 import '../widgets/edit_wallet_sheet.dart';
@@ -35,14 +35,15 @@ class BudgetAllocationController extends CcGetController {
 
   final WalletController walletController;
   final BudgetLimitController budgetLimitController;
-  final GetLoanBalancesUseCase _getLoanBalances;
+  final GetLiabilityBalancesUseCase _getLoanBalances;
   final UserLevelController userLevel;
   final GetBudgetInsightsUseCase _getBudgetInsights;
 
   final RxInt liabilityBalance = 0.obs;
   final RxInt borrowBalance = 0.obs;
   final RxInt lendBalance = 0.obs;
-  final RxList<LoanBalanceEntity> loanBalances = <LoanBalanceEntity>[].obs;
+  final RxList<LiabilityBalanceEntity> loanBalances =
+      <LiabilityBalanceEntity>[].obs;
 
   /// Phase 3.4 "AI Actions" — null while loading/on error, in which case the
   /// insights panel simply doesn't render (see [BudgetInsightsEntity.hasAnything]).
@@ -57,7 +58,7 @@ class BudgetAllocationController extends CcGetController {
   }
 
   void navigateToLoanList(BuildContext context) {
-    context.router.push(const LoanListRoute());
+    context.router.push(const LiabilityListRoute());
   }
 
   void openAddWallet(BuildContext context) {
@@ -92,11 +93,11 @@ class BudgetAllocationController extends CcGetController {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => const AddLoanSheet(),
+      builder: (_) => const AddLiabilitySheet(),
     );
   }
 
-  void openLoanActions(BuildContext context, LoanBalanceEntity balance) {
+  void openLoanActions(BuildContext context, LiabilityBalanceEntity balance) {
     // TODO: Implement loan edit/delete actions similar to wallet actions
     // For now, navigate to loan list for details
     navigateToLoanList(context);
@@ -249,18 +250,31 @@ class BudgetAllocationController extends CcGetController {
   Future<void> loadLiabilities() async {
     final result = await _getLoanBalances();
     result.when((balances) {
-      final sorted = List<LoanBalanceEntity>.from(balances)
-        ..sort((a, b) => b.loan.updatedAt.compareTo(a.loan.updatedAt));
+      final unique = <String, LiabilityBalanceEntity>{};
+      for (final b in balances) {
+        unique[b.liability.id] = b;
+      }
+      final sorted = unique.values.toList()
+        ..sort(
+          (a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt),
+        );
       loanBalances.assignAll(sorted);
-      
+
       // Calculate separate balances for borrow and lend
-      borrowBalance.value = balances
-          .where((b) => b.loan.isBorrow && b.status == LoanStatus.outstanding)
+      borrowBalance.value = sorted
+          .where(
+            (b) =>
+                b.liability.isBorrow && b.status == LiabilityStatus.outstanding,
+          )
           .fold(0, (sum, b) => sum + b.outstandingBalance);
-      lendBalance.value = balances
-          .where((b) => !b.loan.isBorrow && b.status == LoanStatus.outstanding)
+      lendBalance.value = sorted
+          .where(
+            (b) =>
+                !b.liability.isBorrow &&
+                b.status == LiabilityStatus.outstanding,
+          )
           .fold(0, (sum, b) => sum + b.outstandingBalance);
-      
+
       // Net liability (borrow - lend)
       liabilityBalance.value = borrowBalance.value - lendBalance.value;
     }, (_) {});

@@ -12,8 +12,8 @@ import '../../../features/budget_limit/data/datasources/budget_limit_sync_dataso
 import '../../../features/budget_limit/data/models/budget_limit_model.dart';
 import '../../../features/category/data/datasources/category_sync_datasource.dart';
 import '../../../features/category/data/models/category_model.dart';
-import '../../../features/loan/data/datasources/loan_sync_datasource.dart';
-import '../../../features/loan/data/models/loan_model.dart';
+import '../../../features/liability/data/datasources/liability_sync_datasource.dart';
+import '../../../features/liability/data/models/liability_model.dart';
 import '../../../features/reconciliation/data/datasources/reconciliation_sync_datasource.dart';
 import '../../../features/reconciliation/data/models/reconciliation_model.dart';
 import '../../../features/transaction/data/datasources/transaction_sync_datasource.dart';
@@ -32,7 +32,7 @@ class FinancialDataSyncService {
   final BudgetLimitSyncDataSource _budgetSync;
   final ReconciliationSyncDataSource _reconciliationSync;
   final CategorySyncDataSource _categorySync;
-  final LoanSyncDataSource _loanSync;
+  final LiabilitySyncDatasource _liabilitySync;
 
   FinancialDataSyncService(
     this._syncService,
@@ -43,7 +43,7 @@ class FinancialDataSyncService {
     this._budgetSync,
     this._reconciliationSync,
     this._categorySync,
-    this._loanSync,
+    this._liabilitySync,
   );
 
   bool get _isAuthenticated => _session.currentUser != null;
@@ -111,16 +111,13 @@ class FinancialDataSyncService {
           CcHiveBox.CATEGORY_BOX_NAME,
           (m) => m.syncMetadata.status,
         ) +
-        _countPendingInBox<LoanModel>(
+        _countPendingInBox<LiabilityModel>(
           CcHiveBox.LOAN_BOX_NAME,
           (m) => m.syncMetadata.status,
         );
   }
 
-  int _countPendingInBox<T>(
-    String boxName,
-    SyncStatus Function(T) statusOf,
-  ) {
+  int _countPendingInBox<T>(String boxName, SyncStatus Function(T) statusOf) {
     try {
       if (!Hive.isBoxOpen(boxName)) return 0;
       final box = Hive.box<T>(boxName);
@@ -292,9 +289,9 @@ class FinancialDataSyncService {
 
   Future<void> _syncPendingLoans(String userId) async {
     if (!Hive.isBoxOpen(CcHiveBox.LOAN_BOX_NAME)) return;
-    Box<LoanModel> box;
+    Box<LiabilityModel> box;
     try {
-      box = Hive.box<LoanModel>(CcHiveBox.LOAN_BOX_NAME);
+      box = Hive.box<LiabilityModel>(CcHiveBox.LOAN_BOX_NAME);
     } on HiveError catch (e) {
       if (e.message.contains('already open')) return;
       rethrow;
@@ -302,9 +299,9 @@ class FinancialDataSyncService {
     for (final model in box.values) {
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
-        await _syncEntity<LoanModel>(
+        await _syncEntity<LiabilityModel>(
           model: model,
-          syncFn: _loanSync.syncLoan,
+          syncFn: _liabilitySync.syncLoan,
           box: box,
           updateFn: (m, remoteId) => m.copyWithSyncMetadata(
             m.syncMetadata.copyWith(
@@ -378,13 +375,13 @@ class FinancialDataSyncService {
   }
 
   Future<void> _pullLoans(String userId) async {
-    final box = await _openBox<LoanModel>(CcHiveBox.LOAN_BOX_NAME);
+    final box = await _openBox<LiabilityModel>(CcHiveBox.LOAN_BOX_NAME);
     if (box == null) return;
-    await _pullAndMerge<LoanModel>(
+    await _pullAndMerge<LiabilityModel>(
       userId: userId,
       collectionName: 'loans',
       box: box,
-      fromFirestore: LoanModel.fromFirestoreData,
+      fromFirestore: LiabilityModel.fromFirestoreData,
     );
   }
 
@@ -463,7 +460,7 @@ class FinancialDataSyncService {
     if (model is BudgetLimitModel) return model.id;
     if (model is ReconciliationModel) return model.id;
     if (model is CategoryModel) return model.id;
-    if (model is LoanModel) return model.id;
+    if (model is LiabilityModel) return model.id;
     return null;
   }
 
@@ -473,7 +470,8 @@ class FinancialDataSyncService {
     if (model is BudgetLimitModel) return model.lastModifiedAt;
     if (model is ReconciliationModel) return model.lastModifiedAt;
     if (model is CategoryModel) return model.lastModifiedAt;
-    if (model is LoanModel) return model.lastModifiedAt;
+    if (model is LiabilityModel) return model.lastModifiedAt;
     return null;
   }
 }
+

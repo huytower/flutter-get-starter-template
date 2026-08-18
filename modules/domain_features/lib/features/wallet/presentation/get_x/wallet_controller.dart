@@ -219,23 +219,31 @@ class WalletController extends CcGetController {
     final investment = wallets
         .where((w) => w.type == WalletType.investment)
         .toList();
-    investment.sort((a, b) {
+    final unique = <String, WalletEntity>{};
+    for (final w in investment) {
+      unique[w.id] = w;
+    }
+    final result = unique.values.toList();
+    result.sort((a, b) {
       if (a.displayOrder != b.displayOrder) {
         return a.displayOrder.compareTo(b.displayOrder);
       }
       return a.name.toLowerCase().compareTo(b.name.toLowerCase());
     });
-    return investment;
+    return result;
   }
 
-  /// Investment wallets sorted by most recent changes (amount value change, reorder, etc).
-  /// Used for the dashboard (Budget Allocation page).
   List<WalletEntity> get recentInvestmentWallets {
     final investment = wallets
         .where((w) => w.type == WalletType.investment)
         .toList();
-    investment.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-    return investment;
+    final unique = <String, WalletEntity>{};
+    for (final w in investment) {
+      unique[w.id] = w;
+    }
+    final result = unique.values.toList();
+    result.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    return result;
   }
 
   /// Manually reorders investment assets (drag-and-drop).
