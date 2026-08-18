@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/money_constants.dart';
-import '../../../../core/di/di.dart';
 import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
@@ -23,7 +22,11 @@ class InvestmentForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(getIt<InvestmentFormController>());
+    // Pre-registered by TransactionController.onInit() — see that call
+    // site's comment for why this must be Get.find, not Get.put (this form
+    // has no tagged/edit-mode variant, so there's never a second instance
+    // to create here).
+    final controller = Get.find<InvestmentFormController>();
 
     return Obx(() {
       final accentColor = _accentColor(controller.direction.value);

@@ -8,6 +8,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
+import '../../../transaction/presentation/get_x/quick_entry_mixin.dart';
 import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';
@@ -40,9 +41,32 @@ class LoanInstallmentDraft {
 /// existing loans (Repay/Collect) or completing a new loan's details.
 /// Consolidated with the Dashboard's Liability section quantity.
 @injectable
-class LiabilityFormController extends TransactionFormController {
+class LiabilityFormController extends TransactionFormController
+    with QuickEntryMixin {
+  @override
+  String get quickEntryCategoryType => CategoryType.debtLoan;
+
+  /// Restricts quick-entry's category match to whichever direction group is
+  /// currently selected — same filter the category picker itself applies
+  /// (see `loan_form.dart`), so a suggestion never resolves to a category
+  /// the picker wouldn't even show right now.
+  @override
+  List<String> get quickEntryCategoryGroupIds => [
+    direction.value == LiabilityDirection.borrow
+        ? CategorySeed.debtLoanBorrowGroupId
+        : CategorySeed.debtLoanLendGroupId,
+  ];
+
+  /// Set right before [categoryKey] is bumped by
+  /// [QuickEntryMixin.applyQuickEntryCategory], so the remounted
+  /// `CategorySelectionSection` resolves and reports back the real
+  /// [CategoryEntity] for this id.
+  @override
+  final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
+
   final RxString direction = LiabilityDirection.borrow.obs;
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
+  @override
   final RxInt categoryKey = 0.obs;
   final RxString repaymentMethod = LiabilityRepaymentMethod.lumpSum.obs;
   final Rx<DateTime?> finalDueDate = Rx<DateTime?>(null);
@@ -78,6 +102,13 @@ class LiabilityFormController extends TransactionFormController {
       principalAmount > 0 && installmentsTotal < principalAmount;
 
   @override
+  void onInit() {
+    super.onInit();
+
+    _loadAll();
+  }
+
+  @override
   bool get canSubmit {
     if (selectedLoanId.value == null) return false;
     if (amountStr.value == '0' || amountStr.value.isEmpty) return false;
@@ -101,17 +132,13 @@ class LiabilityFormController extends TransactionFormController {
     return true;
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    _loadAll();
-  }
-
   Future<void> _loadAll() async {
     isLoadingMerged.value = true;
     await _loadVipStatus();
     await _recomputeMergedItems();
     isLoadingMerged.value = false;
+
+    initQuickEntry();
   }
 
   Future<void> _recomputeMergedItems() async {
@@ -170,6 +197,7 @@ class LiabilityFormController extends TransactionFormController {
     for (final draft in installmentDrafts) {
       draft.dispose();
     }
+    disposeQuickEntry();
     super.onClose();
   }
 
@@ -177,13 +205,23 @@ class LiabilityFormController extends TransactionFormController {
     if (direction.value == value) return;
     direction.value = value;
     selectedCategory.value = null;
+    // The other direction's category group no longer applies — a stale
+    // quick-entry prefill from it must not linger into the new group.
+    pendingPrefillCategoryId.value = null;
     categoryKey.value++;
     selectedLoanId.value = null;
     _recomputeMergedItems();
+    // quickEntryCategoryGroupIds now points at the new direction's group —
+    // reload the label-lookup cache so quickEntryResultLabel doesn't keep
+    // searching the old (now-stale) group for a category it can't find.
+    refreshQuickEntryCategories();
   }
 
   void setCategory(CategoryEntity category) {
     selectedCategory.value = category;
+    // Manual selection clears any pending prefill from AI suggestions so it
+    // doesn't clobber the user's choice on the next rebuild.
+    pendingPrefillCategoryId.value = null;
   }
 
   void setRepaymentMethod(String value) {
@@ -341,6 +379,7 @@ class LiabilityFormController extends TransactionFormController {
     installmentDrafts.clear();
     selectedLoanId.value = null;
     _recomputeMergedItems();
+    resetQuickEntry();
   }
 
   @override

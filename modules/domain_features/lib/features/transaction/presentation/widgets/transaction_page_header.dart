@@ -7,9 +7,13 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
+import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../get_x/expense_form_controller.dart';
+import '../get_x/income_form_controller.dart';
+import '../get_x/investment_form_controller.dart';
+import '../get_x/quick_entry_mixin.dart';
 import '../get_x/transaction_controller.dart';
 import 'quick_entry_section.dart';
 import 'receipt_source_sheet.dart';
@@ -86,12 +90,18 @@ class TransactionPageHeader extends StatelessWidget {
         ),
         const CcSpaceSM(),
 
-        // Use Flexible to allow the banner to take its needed space
-        // without overflowing the Column's fixed height.
+        // The header height is a fixed fraction of screen height (see
+        // TransactionPage), so the banner's Expanded slot is a hard budget.
+        // AI components (quick-entry field + suggestion chip once Gemini
+        // returns a parse) can exceed that budget on smaller screens — wrap
+        // in a SingleChildScrollView so it scrolls that sliver instead of
+        // throwing a RenderFlex overflow.
         Expanded(
           child: CcSymmetricPadding(
             horizontal: CcPaddingParams.PAGE_MD,
-            child: Obx(() => buildBanner(context, guideline)),
+            child: SingleChildScrollView(
+              child: Obx(() => buildBanner(context, guideline)),
+            ),
           ),
         ),
         const CcSpaceSM(),
@@ -104,9 +114,16 @@ class TransactionPageHeader extends StatelessWidget {
     final isGuidelineComplete = activeId == null;
     final accentColor = guideline.currentColor;
 
-    // When guideline is complete (0 remaining steps), show AI components instead of banner
-    if (isGuidelineComplete && expenseFormController != null) {
-      return _buildAiComponents(context, expenseFormController!);
+    final tabs = controller.visibleTabs;
+    final activeTab =
+        tabs[controller.selectedTabIndex.value.clamp(0, tabs.length - 1)];
+
+    // When guideline is complete (0 remaining steps), show AI components
+    // instead of banner — whichever form controller backs the currently
+    // selected tab (Expense/Income/Investment/Loan all mix in
+    // QuickEntryMixin), not just Expense.
+    if (isGuidelineComplete) {
+      return _buildAiComponents(context, activeTab);
     }
 
     // Otherwise show the guideline banner
@@ -127,14 +144,50 @@ class TransactionPageHeader extends StatelessWidget {
     );
   }
 
+  /// The quick-entry-capable controller backing [tab]'s form, if it's
+  /// already registered. All 4 form controllers are pre-registered eagerly
+  /// by `TransactionController.onInit()` — required because `TabBarView`'s
+  /// `PageView` only builds pages within its scroll cache extent, so
+  /// Investment/Loan's own widget `build()` (which used to be the only
+  /// place registering them) wasn't guaranteed to have run yet the first
+  /// time a user tapped straight into one of those tabs. The
+  /// `Get.isRegistered` checks below are defensive belt-and-braces, not
+  /// load-bearing.
+  QuickEntryMixin? _quickEntryControllerFor(TransactionTabKind tab) {
+    switch (tab) {
+      case TransactionTabKind.expense:
+        return expenseFormController;
+      case TransactionTabKind.income:
+        return Get.isRegistered<IncomeFormController>()
+            ? Get.find<IncomeFormController>()
+            : null;
+      case TransactionTabKind.investment:
+        return Get.isRegistered<InvestmentFormController>()
+            ? Get.find<InvestmentFormController>()
+            : null;
+      case TransactionTabKind.debtLoan:
+        return Get.isRegistered<LiabilityFormController>()
+            ? Get.find<LiabilityFormController>()
+            : null;
+    }
+  }
+
   Widget _buildAiComponents(
     BuildContext context,
-    ExpenseFormController controller,
+    TransactionTabKind activeTab,
   ) {
-    final suggestionLabel = _suggestionLabel(controller);
+    final quickEntry = _quickEntryControllerFor(activeTab);
+    if (quickEntry == null) return const SizedBox.shrink();
+
+    // The merchant/location match suggestion chip is Expense-only (built on
+    // top of that form's note-typing history) — only relevant on that tab.
+    final suggestionLabel =
+        activeTab == TransactionTabKind.expense && expenseFormController != null
+        ? _suggestionLabel(expenseFormController!)
+        : null;
     final canUseAiSmartEntry =
         getIt<UserLevelController>().status.value.canUseAiSmartEntry;
-    final accentColor = context.ccColorScheme.error;
+    final accentColor = _getTabColor(context, activeTab);
 
     return SizedBox(
       width: double.infinity,
@@ -142,16 +195,16 @@ class TransactionPageHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (canUseAiSmartEntry)
-            _buildQuickEntrySection(context, controller, accentColor),
+            _buildQuickEntrySection(context, quickEntry, accentColor),
           if (suggestionLabel != null) ...[
             CcSuggestionChip(
               label: suggestionLabel,
               accentColor: accentColor,
-              icon: controller.merchantMatchSuggestion.value != null
+              icon: expenseFormController?.merchantMatchSuggestion.value != null
                   ? Icons.auto_awesome
                   : Icons.place,
-              onTap: () => _applySuggestion(controller),
-              onDismiss: () => _dismissSuggestion(controller),
+              onTap: () => _applySuggestion(expenseFormController!),
+              onDismiss: () => _dismissSuggestion(expenseFormController!),
             ),
           ],
         ],
@@ -161,7 +214,7 @@ class TransactionPageHeader extends StatelessWidget {
 
   Widget _buildQuickEntrySection(
     BuildContext context,
-    ExpenseFormController controller,
+    QuickEntryMixin controller,
     Color accentColor,
   ) {
     final suggestion = controller.quickEntrySuggestion.value;
@@ -181,7 +234,7 @@ class TransactionPageHeader extends StatelessWidget {
       onApplySuggestion: () {
         if (suggestion != null) controller.applyQuickEntryParse(suggestion);
       },
-       onDismissSuggestion: controller.dismissQuickEntrySuggestion,
+      onDismissSuggestion: controller.dismissQuickEntrySuggestion,
       onClear: () {
         controller.dismissQuickEntrySuggestion();
         controller.isParsingQuickEntry.value = false;
@@ -191,7 +244,7 @@ class TransactionPageHeader extends StatelessWidget {
 
   Future<void> _pickReceiptSource(
     BuildContext context,
-    ExpenseFormController controller,
+    QuickEntryMixin controller,
   ) async {
     if (!controller.beginQuickEntryImage()) return;
     final fromCamera = await ReceiptSourceSheet.show(context);

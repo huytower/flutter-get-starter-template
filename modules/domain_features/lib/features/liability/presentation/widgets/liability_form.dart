@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/money_constants.dart';
-import '../../../../core/di/di.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/cc_form_label.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
@@ -24,7 +23,11 @@ class LiabilityForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(getIt<LiabilityFormController>());
+    // Pre-registered by TransactionController.onInit() — see that call
+    // site's comment for why this must be Get.find, not Get.put (this form
+    // has no tagged/edit-mode variant, so there's never a second instance
+    // to create here).
+    final controller = Get.find<LiabilityFormController>();
 
     return Obx(() {
       final accentColor = _accentColor(controller);

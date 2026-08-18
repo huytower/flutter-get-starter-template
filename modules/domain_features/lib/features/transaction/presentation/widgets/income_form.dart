@@ -94,7 +94,12 @@ class IncomeForm extends StatelessWidget {
       type: CategoryType.income,
       activeColor: accentColor,
       autoSelectFirst: !controller.isEditing,
+      // pendingPrefillCategoryId must win over editingTransaction?.categoryId:
+      // categoryId is a non-nullable String, so while editing it would always
+      // short-circuit the `??` chain and silently discard a just-applied
+      // quick-entry suggestion's category.
       initialSelectedCategoryId:
+          controller.pendingPrefillCategoryId.value ??
           controller.selectedCategory.value?.id ??
           controller.editingTransaction?.categoryId,
       onCategorySelected: controller.setCategory,

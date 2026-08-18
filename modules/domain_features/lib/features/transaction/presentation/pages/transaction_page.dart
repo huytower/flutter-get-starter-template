@@ -1,10 +1,13 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../get_x/expense_form_controller.dart';
+import '../get_x/investment_form_controller.dart';
 import '../get_x/transaction_controller.dart';
 import '../widgets/transaction_page_header.dart';
 import '../widgets/transaction_tab_bar.dart';
@@ -22,6 +25,24 @@ class TransactionPage extends CcGetView<TransactionController> {
 
   @override
   Widget? buildContent(BuildContext context) {
+    // Investment/Loan are pre-registered here rather than in
+    // TransactionController.onInit() (see that method's comment) — this
+    // runs strictly after CcGetView.build() has already fully completed
+    // TransactionController's own Get.put()/onInit(), so
+    // InvestmentFormController.onInit()'s Get.find<TransactionController>()
+    // call is safe here. TabBarView's PageView only builds pages within its
+    // scroll cache extent, so without this, Investment/Loan's own `Get.put`
+    // (inside their widgets' build()) isn't guaranteed to have run yet the
+    // very first time a user taps straight into one of those tabs — which
+    // would leave TransactionPageHeader unable to resolve that tab's
+    // quick-entry controller.
+    if (!Get.isRegistered<InvestmentFormController>()) {
+      Get.put(getIt<InvestmentFormController>());
+    }
+    if (!Get.isRegistered<LiabilityFormController>()) {
+      Get.put(getIt<LiabilityFormController>());
+    }
+
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
