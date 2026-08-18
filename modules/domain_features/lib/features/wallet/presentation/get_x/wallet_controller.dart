@@ -412,6 +412,7 @@ class WalletController extends CcGetController {
     required int initialBalance,
     required int iconCode,
     required String type,
+    String? categoryId,
   }) async {
     if (type == WalletType.emergencyFund) {
       final level = getIt<UserLevelController>().status.value.level;
@@ -430,6 +431,7 @@ class WalletController extends CcGetController {
       balance: initialBalance,
       iconCode: iconCode,
       type: type,
+      categoryId: categoryId,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       displayOrder: wallets.length,

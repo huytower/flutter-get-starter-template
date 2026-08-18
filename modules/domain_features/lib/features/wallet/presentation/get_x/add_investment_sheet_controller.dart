@@ -165,6 +165,7 @@ class AddInvestmentSheetController extends CcGetController {
             selectedInvestmentCategory.value?.iconCode ??
             walletIconFor(WalletType.investment).codePoint,
         type: WalletType.investment,
+        categoryId: selectedInvestmentCategory.value?.id,
       );
     }
 

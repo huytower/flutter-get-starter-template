@@ -23,7 +23,7 @@ class InvestmentAssetSelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcSymmetricPadding(
-          horizontal: CcPaddingParams.PAGE_SM,
+          horizontal: CcPaddingParams.PAGE_XS,
           child: CcText(
             el.tr(CcLocaleKeys.transaction_category),
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
@@ -32,7 +32,7 @@ class InvestmentAssetSelector extends StatelessWidget {
             ),
           ),
         ),
-        const CcSpaceSM(),
+        const CcSpaceXS(),
         Obx(() {
           if (controller.isLoadingMerged.value) {
             return _buildShimmerList(context);
@@ -61,12 +61,12 @@ class InvestmentAssetSelector extends StatelessWidget {
           }
 
           return HorizontalFadeScrollView(
-            height: context.respDim(95),
+            height: context.respDim(100),
             builder: (scrollController) => ListView.separated(
               scrollDirection: Axis.horizontal,
               controller: scrollController,
               padding: EdgeInsets.symmetric(
-                horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+                horizontal: context.respPadding(CcPaddingParams.PAGE_XS),
                 vertical: context.respDim(4),
               ),
               itemCount: items.length,
@@ -82,7 +82,7 @@ class InvestmentAssetSelector extends StatelessWidget {
                       label: item.name,
                       icon: iconDataFromCode(item.iconCode),
                       isSelected: isSelected,
-                      onTap: () => controller.selectAsset(item),
+                      onTap: () => controller.selectInvestmentWallet(item),
                     );
                   } else if (item is CategoryEntity) {
                     final isSelected =
@@ -96,7 +96,7 @@ class InvestmentAssetSelector extends StatelessWidget {
                         fontFamily: item.iconFamily,
                       ),
                       isSelected: isSelected,
-                      onTap: () => controller.selectCategory(item),
+                      onTap: () => controller.selectInvestmentCategory(item),
                     );
                   }
                   return const SizedBox.shrink();
