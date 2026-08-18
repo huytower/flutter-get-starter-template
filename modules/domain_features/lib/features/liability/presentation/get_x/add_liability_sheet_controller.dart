@@ -3,7 +3,6 @@ import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
@@ -143,8 +142,12 @@ class AddLiabilitySheetController extends CcGetController {
     result.when(
       (loan) {
         if (context.mounted) {
-          // Trigger budget allocation refresh to show new liability
-          GetIt.instance<BudgetAllocationController>().loadLiabilities();
+          if (Get.isRegistered<BudgetAllocationController>()) {
+            Get.find<BudgetAllocationController>().loadLiabilities();
+          }
+          if (Get.isRegistered<LiabilityListController>()) {
+            Get.find<LiabilityListController>().load();
+          }
           
           Navigator.pop(context);
           CcSnackBarHelper.showSuccessSnackBar(
