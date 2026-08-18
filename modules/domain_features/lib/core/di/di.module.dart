@@ -542,13 +542,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
             ));
-    gh.factory<_i1007.AddLiabilitySheetController>(
-        () => _i1007.AddLiabilitySheetController(
-              gh<_i1041.GetCategoriesUseCase>(),
-              gh<_i569.GetProfileSettingsUseCase>(),
-              gh<_i805.CreateLiabilityUseCase>(),
-              gh<_i229.WalletController>(),
-            ));
     gh.lazySingleton<_i585.GetUserLevelStatusUseCase>(
         () => _i585.GetUserLevelStatusUseCase(
               gh<_i446.GetReconciliationHistoryUseCase>(),
@@ -570,6 +563,14 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i390.CheckBudgetThresholdUseCase(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
               gh<_i483.NotificationService>(),
+            ));
+    gh.factory<_i1007.AddLiabilitySheetController>(
+        () => _i1007.AddLiabilitySheetController(
+              gh<_i1041.GetCategoriesUseCase>(),
+              gh<_i569.GetProfileSettingsUseCase>(),
+              gh<_i805.CreateLiabilityUseCase>(),
+              gh<_i229.WalletController>(),
+              gh<_i663.GetLiabilityBalancesUseCase>(),
             ));
     gh.factory<_i849.LiabilityDetailController>(
         () => _i849.LiabilityDetailController(

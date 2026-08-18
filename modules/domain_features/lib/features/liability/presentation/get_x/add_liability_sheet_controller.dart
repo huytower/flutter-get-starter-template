@@ -11,6 +11,8 @@ import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../../domain/usecases/create_liability_usecase.dart';
+import '../../domain/usecases/get_liability_balances_usecase.dart';
+import 'liability_form_controller.dart';
 import 'liability_list_controller.dart';
 
 @injectable
@@ -20,12 +22,14 @@ class AddLiabilitySheetController extends CcGetController {
     this._getProfileSettings,
     this._createLoan,
     this._walletController,
+    this._getLiabilityBalances,
   );
 
   final GetCategoriesUseCase _getCategories;
   final GetProfileSettingsUseCase _getProfileSettings;
   final CreateLiabilityUseCase _createLoan;
   final WalletController _walletController;
+  final GetLiabilityBalancesUseCase _getLiabilityBalances;
 
   late final TextEditingController nameController;
   final RxString direction = LiabilityDirection.borrow.obs;
@@ -34,11 +38,17 @@ class AddLiabilitySheetController extends CcGetController {
   final Rxn<CategoryEntity> selectedLoanCategory = Rxn<CategoryEntity>();
   final RxBool isNameValid = false.obs;
   final RxBool isVip = false.obs;
+  final Rxn<String> nameError = Rxn<String>();
   final RxBool isSubmitting = false.obs;
 
   void init() {
     nameController = TextEditingController();
     nameController.addListener(_onNameChanged);
+    nameController.addListener(() {
+      if (nameError.value != null) {
+        nameError.value = null;
+      }
+    });
     _loadLoanCategories();
     _loadVipStatus();
   }
@@ -120,6 +130,22 @@ class AddLiabilitySheetController extends CcGetController {
       return;
     }
 
+    final existingResult = await _getLiabilityBalances();
+    if (existingResult.isSuccess()) {
+      final isDuplicate = existingResult.tryGetSuccess()!.any(
+        (b) =>
+            b.liability.categoryLabel.trim().toLowerCase() ==
+            name.toLowerCase(),
+      );
+      if (isDuplicate) {
+        nameError.value = el.tr(
+          CcLocaleKeys.transaction_liability_name_duplicate_error,
+        );
+        isSubmitting.value = false;
+        return;
+      }
+    }
+
     final params = CreateLoanParams(
       direction: direction.value,
       principalAmount: amount,
@@ -142,13 +168,17 @@ class AddLiabilitySheetController extends CcGetController {
     result.when(
       (loan) {
         if (context.mounted) {
+          nameError.value = null;
           if (Get.isRegistered<BudgetAllocationController>()) {
             Get.find<BudgetAllocationController>().loadLiabilities();
           }
           if (Get.isRegistered<LiabilityListController>()) {
             Get.find<LiabilityListController>().load();
           }
-          
+          if (Get.isRegistered<LiabilityFormController>()) {
+            Get.find<LiabilityFormController>().loadLiabilities();
+          }
+
           Navigator.pop(context);
           CcSnackBarHelper.showSuccessSnackBar(
             context: context,

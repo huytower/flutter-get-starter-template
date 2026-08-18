@@ -83,58 +83,44 @@ class InvestmentFormController extends TransactionFormController
       (w) => w.id == invWalletId,
     );
 
-    debugPrint('[INV_FORM] canSubmit: amount=$amount, walletId=$walletId, adding=$adding, '
-        'invWalletId=$invWalletId, category=${category?.id}, walletCategoryId=${wallet?.categoryId}, '
-        'cachedCats=${_cachedCategories.length}');
-
     if (amount == '0' || amount.isEmpty) {
-      debugPrint('[INV_FORM] canSubmit: BLOCKED amount');
       return false;
     }
     if (walletId == null) {
-      debugPrint('[INV_FORM] canSubmit: BLOCKED walletId');
       return false;
     }
     if (adding) {
       final ok = category != null && newItemName.value.trim().isNotEmpty;
-      debugPrint('[INV_FORM] canSubmit: adding ok=$ok');
       return ok;
     }
     if (invWalletId == null) {
-      debugPrint('[INV_FORM] canSubmit: BLOCKED invWalletId');
       return false;
     }
     if (category != null) {
-      debugPrint('[INV_FORM] canSubmit: PASS category already set');
       return true;
     }
     if (wallet?.categoryId != null) {
-      debugPrint('[INV_FORM] canSubmit: PASS wallet.categoryId');
       return true;
     }
     final investmentCats = _cachedCategories
         .where((c) => c.type == CategoryType.investment)
         .toList();
     final singleCat = investmentCats.length == 1;
-    debugPrint('[INV_FORM] canSubmit: BLOCKED no category. investmentCats=${investmentCats.length}, singleCat=$singleCat');
     return singleCat;
   }
 
   @override
   void onInit() {
     super.onInit();
-    debugPrint('[INV_FORM] onInit');
     _loadAll();
     final parentController = Get.find<TransactionController>();
     ever(parentController.wallets, (_) {
-      debugPrint('[INV_FORM] parent wallets changed, recomputing');
       _recomputeMergedItems();
     });
 
     ever(
       CategorySettingsController.onCategoriesChanged,
       (_) {
-        debugPrint('[INV_FORM] categories changed, reloading');
         _loadCategories();
         _recomputeMergedItems();
       },
@@ -143,26 +129,20 @@ class InvestmentFormController extends TransactionFormController
   }
 
   Future<void> _loadAll() async {
-    debugPrint('[INV_FORM] _loadAll start');
     isLoadingMerged.value = true;
     await _loadVipStatus();
     await _loadCategories();
-    debugPrint('[INV_FORM] _loadAll categories loaded: ${_cachedCategories.length}');
     await _recomputeMergedItems();
-    debugPrint('[INV_FORM] _loadAll mergedItems=${mergedItems.length}, selectedCategory=${selectedCategory.value?.id}, selectedInvWallet=${selectedInvestmentWalletId.value}');
     isLoadingMerged.value = false;
   }
 
   Future<void> _loadCategories() async {
-    debugPrint('[INV_FORM] _loadCategories start');
     final result = await _getCategories();
     result.when(
       (categories) {
-        debugPrint('[INV_FORM] _loadCategories success: ${categories.length} cats, ids=${categories.map((c) => c.id).toList()}');
         _cachedCategories.assignAll(categories);
       },
       (error) {
-        debugPrint('[INV_FORM] _loadCategories FAILED: ${error.message}');
       },
     );
   }
@@ -175,7 +155,6 @@ class InvestmentFormController extends TransactionFormController
     final assets = parentWallets
         .where((w) => w.type == WalletType.investment)
         .toList();
-    debugPrint('[INV_FORM] _recomputeMergedItems: parentWallets=${parentWallets.length}, investmentAssets=${assets.length}');
 
     assets.sort((a, b) {
       if (a.displayOrder != b.displayOrder) {
@@ -188,32 +167,27 @@ class InvestmentFormController extends TransactionFormController
     // This ensures consistency with investment_list_page
     final List<dynamic> items = [...assets];
     mergedItems.assignAll(items);
-    debugPrint('[INV_FORM] _recomputeMergedItems: mergedItems count=${mergedItems.length} (wallets only)');
 
     if (selectedInvestmentWalletId.value == null &&
         selectedCategory.value == null &&
         mergedItems.isNotEmpty) {
       final first = mergedItems.first;
       if (first is WalletEntity) {
-        debugPrint('[INV_FORM] _recomputeMergedItems: auto-selecting first wallet ${first.id}, categoryId=${first.categoryId}');
         selectInvestmentWallet(first);
       }
     } else if (selectedInvestmentWalletId.value != null &&
         selectedCategory.value == null) {
-      debugPrint('[INV_FORM] _recomputeMergedItems: re-resolving selected wallet');
       final wallet = mergedItems.whereType<WalletEntity>().firstWhereOrNull(
         (w) => w.id == selectedInvestmentWalletId.value,
       );
       if (wallet != null) {
         selectInvestmentWallet(wallet);
       } else {
-        debugPrint('[INV_FORM] _recomputeMergedItems: selected wallet NOT FOUND in mergedItems');
       }
     }
   }
 
   void selectInvestmentWallet(WalletEntity wallet) {
-    debugPrint('[INV_FORM] selectInvestmentWallet: wallet=${wallet.id}, categoryId=${wallet.categoryId}');
     selectedInvestmentWalletId.value = wallet.id;
     isAddingNewItem.value = false;
 
@@ -223,31 +197,25 @@ class InvestmentFormController extends TransactionFormController
       matched = categories.firstWhereOrNull(
         (c) => c.id == wallet.categoryId,
       );
-      debugPrint('[INV_FORM] selectInvestmentWallet: matched by wallet.categoryId=${matched?.id}');
     }
 
     if (matched == null) {
       final investmentCats = categories
           .where((c) => c.type == CategoryType.investment)
           .toList();
-      debugPrint('[INV_FORM] selectInvestmentWallet: no direct match. investmentCats=${investmentCats.length}');
       if (investmentCats.length == 1) {
         matched = investmentCats.first;
-        debugPrint('[INV_FORM] selectInvestmentWallet: auto-selected single investment cat=${matched.id}');
       }
     }
 
     if (matched != null) {
       selectedCategory.value = matched;
-      debugPrint('[INV_FORM] selectInvestmentWallet: selectedCategory SET to ${matched.id}');
     } else {
-      debugPrint('[INV_FORM] selectInvestmentWallet: selectedCategory REMAINS null');
     }
   }
 
   @override
   void selectInvestmentCategory(CategoryEntity category) {
-    debugPrint('[INV_FORM] selectInvestmentCategory: id=${category.id}, name=${category.nameKey}');
     selectedCategory.value = category;
     selectedInvestmentWalletId.value = null;
 
@@ -275,7 +243,6 @@ class InvestmentFormController extends TransactionFormController
   }
 
   void setDirection(InvestmentDirection value) {
-    debugPrint('[INV_FORM] setDirection: $value (current=${direction.value})');
     if (direction.value == value) return;
     direction.value = value;
     _recomputeMergedItems();
@@ -286,10 +253,8 @@ class InvestmentFormController extends TransactionFormController
             .whereType<WalletEntity>()
             .firstWhereOrNull((_) => true);
         if (firstAsset != null) {
-          debugPrint('[INV_FORM] setDirection: auto-selecting first asset for returnProfit');
           selectInvestmentWallet(firstAsset);
         } else {
-          debugPrint('[INV_FORM] setDirection: no asset to auto-select for returnProfit');
         }
       }
     }
@@ -312,7 +277,6 @@ class InvestmentFormController extends TransactionFormController
 
   @override
   void onReset() {
-    debugPrint('[INV_FORM] onReset');
     selectedCategory.value = null;
     categoryKey.value++;
     selectedInvestmentWalletId.value = null;
@@ -325,9 +289,7 @@ class InvestmentFormController extends TransactionFormController
 
   @override
   Future<void> submitForm(BuildContext context) async {
-    debugPrint('[INV_FORM] submitForm called, canSubmit=$canSubmit, isSubmitting=$isSubmitting');
     if (isSubmitting.value || !canSubmit) {
-      debugPrint('[INV_FORM] submitForm BLOCKED by guard');
       return;
     }
     isSubmitting.value = true;
@@ -346,7 +308,6 @@ class InvestmentFormController extends TransactionFormController
     }
 
     if (category == null) {
-      debugPrint('[INV_FORM] submitForm: category is NULL after fallback resolution');
       isSubmitting.value = false;
       if (context.mounted) {
         CcSnackBarHelper.showErrorSnackBar(
@@ -356,7 +317,6 @@ class InvestmentFormController extends TransactionFormController
       }
       return;
     }
-    debugPrint('[INV_FORM] submitForm: category resolved to ${category.id}, proceeding');
 
     final params = CreateInvestmentTransactionParams(
       direction: direction.value,

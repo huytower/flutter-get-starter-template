@@ -31,16 +31,20 @@ class GetLiabilityBalancesUseCase {
     }
 
     final transactions = txnResult.tryGetSuccess()!;
-    final balances = loansResult.tryGetSuccess()!.map((loan) {
+    final unique = <String, LiabilityBalanceEntity>{};
+    for (final loan in loansResult.tryGetSuccess()!) {
       final loanTxns = transactions.where((t) => t.loanId == loan.id).toList();
-      return LiabilityBalanceEntity(
+      final balance = LiabilityBalanceEntity(
         liability: loan,
         outstandingBalance: loanOutstandingBalance(
           loan.principalAmount,
           loanTxns,
         ),
       );
-    }).toList();
+      unique[loan.id] = balance;
+    }
+    final balances = unique.values.toList()
+      ..sort((a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt));
 
     return Success(balances);
   }

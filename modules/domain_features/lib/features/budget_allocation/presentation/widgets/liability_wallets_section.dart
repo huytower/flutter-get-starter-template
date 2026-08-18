@@ -29,7 +29,7 @@ class LiabilityWalletsSection extends StatelessWidget {
         CcPadding(
           CcSectionHeader(
             title: el.tr(CcLocaleKeys.liability_list_title),
-            icon: Icons.trending_up_outlined,
+            icon: Icons.warning_amber_outlined,
             actions: [
               CcInkWell(
                 onTap: onAddLoan,

@@ -26,8 +26,14 @@ class LiabilityRepositoryImpl with CcBaseRepository implements LiabilityReposito
   Future<Result<List<LiabilityEntity>, CcFailure>> getLoans() {
     return safeRequest(() async {
       final models = await _local.getAll();
-      return models.map((m) => m.toEntity()).toList()
+      final unique = <String, LiabilityEntity>{};
+      for (final m in models) {
+        final entity = m.toEntity();
+        unique[entity.id] = entity;
+      }
+      final list = unique.values.toList()
         ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return list;
     });
   }
 

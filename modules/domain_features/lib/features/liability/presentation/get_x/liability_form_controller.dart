@@ -112,8 +112,10 @@ class LiabilityFormController extends TransactionFormController
     if (Get.isRegistered<LiabilityListController>()) {
       final listController = Get.find<LiabilityListController>();
       ever(listController.loans, (_) {
-        debugPrint('[LIABILITY_FORM] Liability list changed, reloading merged items');
-        _recomputeMergedItems();
+        debugPrint(
+          '[LIABILITY_FORM] Liability list changed, reloading merged items',
+        );
+        loadLiabilities();
       });
     }
   }
@@ -145,13 +147,13 @@ class LiabilityFormController extends TransactionFormController
   Future<void> _loadAll() async {
     isLoadingMerged.value = true;
     await _loadVipStatus();
-    await _recomputeMergedItems();
+    await loadLiabilities();
     isLoadingMerged.value = false;
 
     initQuickEntry();
   }
 
-  Future<void> _recomputeMergedItems() async {
+  Future<void> loadLiabilities() async {
     final result = await getIt<GetLiabilityBalancesUseCase>().call();
     result.when((balances) {
       loanBalances.assignAll(balances);
@@ -174,7 +176,9 @@ class LiabilityFormController extends TransactionFormController
           (b) => b.liability.id == selectedLoanId.value,
         );
         if (!stillExists) {
-          debugPrint('[LIABILITY_FORM] Selected loan was deleted, clearing selection');
+          debugPrint(
+            '[LIABILITY_FORM] Selected loan was deleted, clearing selection',
+          );
           selectedLoanId.value = null;
           selectedCategory.value = null;
         }
@@ -232,7 +236,7 @@ class LiabilityFormController extends TransactionFormController
     pendingPrefillCategoryId.value = null;
     categoryKey.value++;
     selectedLoanId.value = null;
-    _recomputeMergedItems();
+    loadLiabilities();
     // quickEntryCategoryGroupIds now points at the new direction's group —
     // reload the label-lookup cache so quickEntryResultLabel doesn't keep
     // searching the old (now-stale) group for a category it can't find.
@@ -400,7 +404,7 @@ class LiabilityFormController extends TransactionFormController
     }
     installmentDrafts.clear();
     selectedLoanId.value = null;
-    _recomputeMergedItems();
+    loadLiabilities();
     resetQuickEntry();
   }
 

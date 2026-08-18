@@ -12,10 +12,10 @@ import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_hero_banner.dart';
 import '../widgets/budget_insights_section.dart';
 import '../widgets/budget_limit_preview_section.dart';
-import '../widgets/budget_wallets_section.dart';
 import '../widgets/investment_wallets_section.dart';
 import '../widgets/liability_hero_banner.dart';
 import '../widgets/liability_wallets_section.dart';
+import '../widgets/liquid_wallets_section.dart';
 
 @RoutePage()
 class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
@@ -84,7 +84,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           child: ListView(
             children: [
               _buildLiquidHeroBanner(context),
-              _buildBudgetWalletsSection(context),
+              _buildLiquidWalletsSection(context),
               _buildInvestmentHeroBanner(context),
               _buildInvestmentWalletsSection(context),
               _buildLiabilityHeroBanner(context),
@@ -204,9 +204,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
     });
   }
 
-  Widget _buildBudgetWalletsSection(BuildContext context) {
+  Widget _buildLiquidWalletsSection(BuildContext context) {
     return Obx(
-      () => BudgetWalletsSection(
+      () => LiquidWalletsSection(
         wallets: controller.walletController.recentLiquidWallets,
         onAddWallet: () => controller.openAddWallet(context),
         onMore: (wallet) => controller.openWalletActions(context, wallet),
@@ -236,7 +236,6 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   Widget _buildLiabilityWalletsSection(BuildContext context) {
     return Obx(() {
-      debugPrint('[BUDGET_ALLOC_PAGE] _buildLiabilityWalletsSection Obx rebuild, loanBalances=${controller.loanBalances.length}, userLevel=${controller.userLevel.status.value.level}');
       final canShow =
           controller.userLevel.status.value.level >= 3 ||
           CcFeatureFlags.isForceFullAccessEnabled;

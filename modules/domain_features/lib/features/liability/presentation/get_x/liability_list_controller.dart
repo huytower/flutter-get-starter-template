@@ -9,6 +9,7 @@ import '../../../budget_allocation/presentation/get_x/budget_allocation_controll
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/repositories/liability_repository.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
+import 'liability_form_controller.dart';
 
 @injectable
 class LiabilityListController extends CcGetController {
@@ -83,6 +84,11 @@ class LiabilityListController extends CcGetController {
 
         if (Get.isRegistered<BudgetAllocationController>()) {
           Get.find<BudgetAllocationController>().loadLiabilities();
+        }
+
+        // Refresh LiabilityForm if it's open
+        if (Get.isRegistered<LiabilityFormController>()) {
+          Get.find<LiabilityFormController>().loadLiabilities();
         }
 
         CcSnackBarHelper.showSuccessSnackBar(

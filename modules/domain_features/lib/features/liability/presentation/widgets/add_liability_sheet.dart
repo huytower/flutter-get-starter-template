@@ -69,7 +69,10 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     );
   }
 
-  Widget _buildTitle(BuildContext context, AddLiabilitySheetController controller) {
+  Widget _buildTitle(
+    BuildContext context,
+    AddLiabilitySheetController controller,
+  ) {
     return CcText(
       el.tr(CcLocaleKeys.transaction_record_debt),
       textStyle: context.ccTextTheme.headlineSmall?.copyWith(
@@ -92,7 +95,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
               controller,
               LiabilityDirection.borrow,
               el.tr(CcLocaleKeys.transaction_liability_direction_borrow),
-              Icons.call_made_rounded,
+              Icons.waving_hand,
             ),
           ),
         ),
@@ -104,7 +107,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
               controller,
               LiabilityDirection.lend,
               el.tr(CcLocaleKeys.transaction_liability_direction_lend),
-              Icons.call_received_rounded,
+              Icons.handshake_outlined,
             ),
           ),
         ),
@@ -214,14 +217,36 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     BuildContext context,
     AddLiabilitySheetController controller,
   ) {
-    return CcNameInputField(
-      controller: controller.nameController,
-      labelText: el.tr(CcLocaleKeys.transaction_liability_name_label),
-      hintText: el.tr(CcLocaleKeys.transaction_liability_name_hint),
-      onClear: () {
-        controller.isNameValid.value = false;
-        controller.selectedLoanCategory.value = null;
-      },
+    return Column(
+      children: [
+        CcNameInputField(
+          controller: controller.nameController,
+          labelText: el.tr(CcLocaleKeys.transaction_liability_name_label),
+          hintText: el.tr(CcLocaleKeys.transaction_liability_name_hint),
+          onClear: () {
+            controller.isNameValid.value = false;
+            controller.selectedLoanCategory.value = null;
+            controller.nameError.value = null;
+          },
+        ),
+        Obx(() {
+          if (controller.nameError.value == null) {
+            return const SizedBox.shrink();
+          }
+          return Padding(
+            padding: EdgeInsets.only(
+              left: context.respPadding(CcPaddingParams.DESC_XS),
+              top: context.respPadding(CcPaddingParams.DESC_XS),
+            ),
+            child: CcText(
+              controller.nameError.value!,
+              textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                color: context.ccColorScheme.error,
+              ),
+            ),
+          );
+        }),
+      ],
     );
   }
 
@@ -242,5 +267,3 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     });
   }
 }
-
-

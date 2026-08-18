@@ -276,6 +276,7 @@ class CodegenLoader extends AssetLoader {
       "liability_wallet_borrow_label": "Receiving wallet",
       "liability_wallet_lend_label": "Lending wallet",
       "liability_saved": "Liability of {amount} đ recorded!",
+      "liability_name_duplicate_error": "This liability name already exists",
       "loan_direction_borrow": "Borrow",
       "loan_direction_lend": "Lend",
       "loan_category_borrow_label": "Loan type",
@@ -1022,6 +1023,7 @@ class CodegenLoader extends AssetLoader {
       "liability_wallet_borrow_label": "Ví nhận tiền",
       "liability_wallet_lend_label": "Ví nguồn tiền",
       "liability_saved": "Đã ghi nhận khoản nợ/vay {amount} đ!",
+      "liability_name_duplicate_error": "Tên khoản vay/cho vay này đã tồn tại",
       "loan_direction_borrow": "Đi vay",
       "loan_direction_lend": "Cho vay",
       "loan_category_borrow_label": "Hình thức vay",
@@ -1795,6 +1797,8 @@ abstract class CcLocaleKeys {
   static const transaction_liability_wallet_lend_label =
       'transaction.liability_wallet_lend_label';
   static const transaction_liability_saved = 'transaction.liability_saved';
+  static const transaction_liability_name_duplicate_error =
+      'transaction.liability_name_duplicate_error';
   static const transaction_record_repay = 'transaction.record_repay';
   static const transaction_record_collect = 'transaction.record_collect';
   static const transaction_investment_contribution =

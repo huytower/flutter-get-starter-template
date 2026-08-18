@@ -9,9 +9,9 @@ import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
 
-/// Section displaying wallet list with add and see all actions.
-class BudgetWalletsSection extends StatelessWidget {
-  const BudgetWalletsSection({
+/// Section displaying liquid wallet list with add and see all actions.
+class LiquidWalletsSection extends StatelessWidget {
+  const LiquidWalletsSection({
     required this.wallets,
     required this.onAddWallet,
     required this.onMore,

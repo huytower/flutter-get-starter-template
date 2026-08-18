@@ -248,6 +248,7 @@
                         "liability_wallet_borrow_label": "Receiving wallet",
                         "liability_wallet_lend_label": "Lending wallet",
                         "liability_saved": "Liability of {amount} đ recorded!",
+                        "liability_name_duplicate_error": "This liability name already exists",
                         "loan_direction_borrow":  "Borrow",
                         "loan_direction_lend":  "Lend",
                         "borrow":  "Borrow",

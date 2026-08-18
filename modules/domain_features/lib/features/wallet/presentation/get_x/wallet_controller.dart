@@ -205,12 +205,17 @@ class WalletController extends CcGetController {
     return liquid;
   }
 
-  /// Liquid wallets sorted by most recent changes. Used for the dashboard.
+  /// Liquid wallets for the dashboard. Pins "Cash" to index 0 and keeps the
+  /// rest in their original order (no strict sorting by name or date).
   List<WalletEntity> get recentLiquidWallets {
     final liquid = wallets
         .where((w) => _liquidTypeOrder.contains(w.type))
         .toList();
-    liquid.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    liquid.sort((a, b) {
+      if (a.type == WalletType.cash) return -1;
+      if (b.type == WalletType.cash) return 1;
+      return 0; // Stable sort: preserves relative order of other items
+    });
     return liquid;
   }
 

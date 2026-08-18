@@ -38,7 +38,7 @@ class LiabilityHeroBanner extends StatelessWidget {
       bottomPadding: CcPaddingParams.SPACE_XS,
       onTap: onTap,
       leadingBalanceWidget: Icon(
-        Icons.remove_circle_outline,
+        Icons.waving_hand,
         color: scheme.onPrimary.withOpacity(0.8),
         size: context.respIconSize(baseSize: 18),
       ),
@@ -49,7 +49,7 @@ class LiabilityHeroBanner extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.add_circle_outline,
+              Icons.handshake_outlined,
               size: context.respIconSize(baseSize: 14),
               color: scheme.onPrimary.withOpacity(0.9),
             ),
@@ -69,4 +69,3 @@ class LiabilityHeroBanner extends StatelessWidget {
     );
   }
 }
-
