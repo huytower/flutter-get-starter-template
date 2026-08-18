@@ -73,7 +73,7 @@ class LiabilityListController extends CcGetController {
     loans.insert(newIndex, item);
   }
 
-  Future<void> deleteLiability(String id) async {
+  Future<void> deleteLiability(BuildContext context, String id) async {
     final index = loans.indexWhere((b) => b.liability.id == id);
     if (index == -1) return;
 
@@ -85,12 +85,12 @@ class LiabilityListController extends CcGetController {
         GetIt.instance<BudgetAllocationController>().loadLiabilities();
 
         CcSnackBarHelper.showSuccessSnackBar(
-          context: Get.context!,
+          context: context,
           message: el.tr(CcLocaleKeys.common_done),
         );
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
-        context: Get.context!,
+        context: context,
         message: el.tr(error.message),
       ),
     );

@@ -148,7 +148,7 @@ class LiabilityListPage extends CcGetView<LiabilityListController> {
       ),
       builder: (_) => LiabilityDeleteConfirmSheet(
         liability: controller.loans.firstWhere((b) => b.liability.id == id).liability,
-        onDelete: () => controller.deleteLiability(id),
+        onDelete: () => controller.deleteLiability(context, id),
       ),
     );
   }
