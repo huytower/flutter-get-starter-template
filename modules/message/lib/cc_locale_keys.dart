@@ -529,9 +529,9 @@ class CodegenLoader extends AssetLoader {
       "investment_title": "Investments",
       "investment_contributed": "Contributed",
       "investment_returned": "Returns",
-      "loan_title": "Loans",
-      "loan_in": "Borrowed / Collected",
-      "loan_out": "Lent / Repaid",
+      "liability_title": "Liabilities",
+      "liability_in": "Borrow",
+      "liability_out": "Lend",
       "daily_detail": "Daily Detail",
       "income_short": "Inc",
       "expense_short": "Exp",
@@ -747,7 +747,8 @@ class CodegenLoader extends AssetLoader {
       "banner_desc_budget_limit": "Set spending limits for each category",
       "banner_desc_min_living": "Define your minimum monthly living expenses",
       "banner_desc_first_transaction": "Record your first expense transaction",
-      "banner_desc_investment": "Create your first investment to grow your wealth",
+      "banner_desc_investment":
+          "Create your first investment to grow your wealth",
       "banner_desc_default": "You are ready to manage your finances!",
       "success_dialog_message":
           "Congratulations!\nYou have completed the initial setup.",
@@ -1273,9 +1274,9 @@ class CodegenLoader extends AssetLoader {
       "investment_title": "Đầu tư",
       "investment_contributed": "Đã đầu tư",
       "investment_returned": "Lợi nhuận thu về",
-      "loan_title": "Vay nợ",
-      "loan_in": "Vay vào / Thu nợ",
-      "loan_out": "Cho vay / Trả nợ",
+      "liability_title": "Vay nợ",
+      "liability_in": "Đi vay",
+      "liability_out": "Cho vay",
       "daily_detail": "Chi tiết theo ngày",
       "income_short": "Thu",
       "expense_short": "Chi",
@@ -2028,9 +2029,9 @@ abstract class CcLocaleKeys {
   static const report_investment_title = 'report.investment_title';
   static const report_investment_contributed = 'report.investment_contributed';
   static const report_investment_returned = 'report.investment_returned';
-  static const report_loan_title = 'report.loan_title';
-  static const report_loan_in = 'report.loan_in';
-  static const report_loan_out = 'report.loan_out';
+  static const report_liability_title = 'report.liability_title';
+  static const report_liability_in = 'report.liability_in';
+  static const report_liability_out = 'report.liability_out';
   static const report_daily_detail = 'report.daily_detail';
   static const report_income_short = 'report.income_short';
   static const report_expense_short = 'report.expense_short';

@@ -14,7 +14,7 @@ import '../widgets/report_page_header.dart';
 import '../widgets/report_tab_bar.dart';
 import '../widgets/trend_card.dart';
 
-/// Shared shade alpha for the Investment/Debt-Loan trend card fills — mirrors
+/// Shared shade alpha for the Investment/Debt-Liability trend card fills — mirrors
 /// [report_daily_list]'s constant of the same name/value for the same rows.
 const double _inflowShadeAlpha = 0.5;
 
@@ -139,7 +139,7 @@ class ReportPage extends CcGetView<ReportController> {
                       AiAdviceSection(controller: controller),
                       const CcSpaceXL(),
                       _buildInvestmentSection(context),
-                      _buildLoanSection(context),
+                      _buildLiabilitySection(context),
                       _buildDailyDetailHeader(context),
                       const CcSpaceLG(),
                       ReportDailyList(
@@ -229,7 +229,7 @@ class ReportPage extends CcGetView<ReportController> {
     });
   }
 
-  Widget _buildLoanSection(BuildContext context) {
+  Widget _buildLiabilitySection(BuildContext context) {
     return Obx(() {
       final data = controller.loanTrend.value;
       if (!controller.userLevel.status.value.canUseDebtLoan ||
@@ -242,14 +242,14 @@ class ReportPage extends CcGetView<ReportController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CcText(
-            el.tr(CcLocaleKeys.report_loan_title),
+            el.tr(CcLocaleKeys.report_liability_title),
             textStyle: context.ccTextTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           const CcSpaceMD(),
           TrendCard(
-            title: el.tr(CcLocaleKeys.report_loan_out),
+            title: el.tr(CcLocaleKeys.report_liability_out),
             amount: data.totalExpense,
             points: data.points,
             color: PrjColors.debtLoan.withValues(alpha: _inflowShadeAlpha),
@@ -258,7 +258,7 @@ class ReportPage extends CcGetView<ReportController> {
           ),
           const CcSpaceLG(),
           TrendCard(
-            title: el.tr(CcLocaleKeys.report_loan_in),
+            title: el.tr(CcLocaleKeys.report_liability_in),
             amount: data.totalIncome,
             points: data.points,
             // Same hero color as "ra", lighter to mark the inflow leg.
