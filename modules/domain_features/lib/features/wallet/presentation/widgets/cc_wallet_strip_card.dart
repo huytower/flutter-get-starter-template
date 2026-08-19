@@ -187,8 +187,8 @@ class _WalletItem extends StatelessWidget {
     final guideline = Get.find<GuidelineController>();
 
     final isCashWallet = wallet.type == WalletType.cash;
-    final isReconcileActive = guideline.isTaskActive('reconcile_wallet');
-    final showing = isCashWallet && isReconcileActive;
+    final isWalletBalanceActive = guideline.isTaskActive('wallet_balance');
+    final showing = isCashWallet && isWalletBalanceActive;
 
     return Positioned(
       top: -6,

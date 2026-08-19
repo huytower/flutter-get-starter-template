@@ -3,16 +3,14 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
 import '../get_x/budget_allocation_controller.dart';
 
 /// Phase 3.4 "AI Actions" panel — pacing/penalty/deficit/anomaly warnings.
-/// Renders nothing when there's nothing to flag (see
-/// [BudgetInsightsEntity.hasAnything]), matching the spec's "praise smart
-/// spending, don't nag" Smart Budgeting philosophy.
+/// Applied design pattern: Toast-style banners with grid background.
 class BudgetInsightsSection extends StatelessWidget {
   final BudgetAllocationController controller;
 
@@ -24,125 +22,198 @@ class BudgetInsightsSection extends StatelessWidget {
       final insights = controller.insights.value;
       if (insights == null || !insights.hasAnything) return const SizedBox();
 
-      final scheme = context.ccColorScheme;
-
       return CcSymmetricPadding(
-        horizontal: CcPaddingParams.SPACE_LG,
-        vertical: CcPaddingParams.SPACE_SM,
-        child: Container(
-          padding: EdgeInsets.all(context.respDim(12)),
-          decoration: BoxDecoration(
-            color: scheme.errorContainer.withOpacity(0.15),
-            borderRadius: context.brLg,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitle(context),
-              const CcSpaceSM(),
-              if (insights.isDeficit) _buildDeficitLine(context, insights),
-              for (final warning in insights.pacingWarnings)
-                _buildPacingLine(context, warning),
-              for (final warning in insights.penaltyWarnings)
-                _buildPenaltyLine(context, warning),
-              if (insights.anomalyCount > 0)
-                _buildAnomalyLine(context, insights.anomalyCount),
-            ],
-          ),
+        horizontal: CcPaddingParams.PAGE_SM,
+        vertical: CcPaddingParams.SPACE_XS,
+        child: Column(
+          children: [
+            if (insights.isDeficit)
+              _InsightCard(
+                title: el.tr(CcLocaleKeys.budget_insights_title),
+                description: el.tr(
+                  CcLocaleKeys.budget_deficit_warning,
+                  namedArgs: {
+                    'amount': formatVndWithSymbol(insights.deficitAmount),
+                  },
+                ),
+                icon: Icons.error_outline_rounded,
+                color: context.ccColorScheme.error,
+                onTap: () => context.router.push(const ReportRoute()),
+              ),
+            for (final warning in insights.penaltyWarnings)
+              _InsightCard(
+                title: warning.budgetName,
+                description: el.tr(
+                  CcLocaleKeys.budget_penalty_warning,
+                  namedArgs: {
+                    'name': warning.budgetName,
+                    'percent': '${warning.percentUsed}',
+                  },
+                ),
+                icon: Icons.warning_amber_rounded,
+                color: context.ccColorScheme.error,
+                onTap: () => context.router.push(const ReportRoute()),
+              ),
+            for (final warning in insights.pacingWarnings)
+              _InsightCard(
+                title: warning.budgetName,
+                description: el.tr(
+                  CcLocaleKeys.budget_pacing_hint,
+                  namedArgs: {
+                    'name': warning.budgetName,
+                    'days': '${warning.daysRemaining}',
+                    'amount': formatVndWithSymbol(warning.suggestedDailySpend),
+                  },
+                ),
+                icon: Icons.info_outline_rounded,
+                color: PrjColors.info,
+                onTap: () => context.router.push(const ReportRoute()),
+              ),
+            if (insights.anomalyCount > 0)
+              _InsightCard(
+                title: el.tr(CcLocaleKeys.budget_insights_title),
+                description: el.tr(
+                  CcLocaleKeys.budget_anomaly_hint,
+                  namedArgs: {'count': '${insights.anomalyCount}'},
+                ),
+                icon: Icons.auto_awesome_outlined,
+                color: PrjColors.info,
+                onTap: () => context.router.push(const ReportRoute()),
+              ),
+          ],
         ),
       );
     });
   }
+}
 
-  Widget _buildTitle(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.auto_awesome,
-              size: context.respIconSize(baseSize: 16),
-              color: context.ccColorScheme.error,
-            ),
-            const CcSpaceXS(),
-            CcText(
-              el.tr(CcLocaleKeys.budget_insights_title),
-              textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                fontWeight: CcTypographyParams.bold,
-                color: context.ccColorScheme.error,
+class _InsightCard extends StatelessWidget {
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color color;
+  final VoidCallback? onTap;
+
+  const _InsightCard({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.color,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: context.respDim(12)),
+      child: CcInkWell(
+        onTap: onTap,
+        borderRadius: context.brLg,
+        child: Container(
+          width: double.infinity,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.05),
+            borderRadius: context.brLg,
+            border: Border.all(color: color.withOpacity(0.1)),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: context.respDim(80),
+                child: CustomPaint(painter: _GridPatternPainter(color: color)),
               ),
-            ),
-          ],
-        ),
-        CcInkWell(
-          onTap: () => context.router.push(const ReportRoute()),
-          child: CcText(
-            el.tr(CcLocaleKeys.budget_insights_action_review),
-            textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.primary,
-              fontWeight: CcTypographyParams.semiBold,
-            ),
+              Padding(
+                padding: EdgeInsets.all(context.respDim(16)),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(context.respDim(8)),
+                      decoration: BoxDecoration(
+                        color: color.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        icon,
+                        color: color,
+                        size: context.respIconSize(baseSize: 20),
+                      ),
+                    ),
+                    const CcSpaceMD(),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CcText(
+                            title,
+                            textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                              fontWeight: CcTypographyParams.bold,
+                              color: scheme.onSurface,
+                            ),
+                          ),
+                          const CcSpaceXS(),
+                          CcText(
+                            description,
+                            maxLines: 2,
+                            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                              color: scheme.onSurfaceVariant.withOpacity(0.7),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildLine(BuildContext context, String text) {
-    return Padding(
-      padding: EdgeInsets.only(top: context.respDim(4)),
-      child: CcText(
-        text,
-        maxLines: 2,
-        textStyle: context.ccTextTheme.bodySmall?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant,
-        ),
       ),
     );
   }
+}
 
-  Widget _buildDeficitLine(BuildContext context, BudgetInsightsEntity i) {
-    return _buildLine(
-      context,
-      el.tr(
-        CcLocaleKeys.budget_deficit_warning,
-        namedArgs: {'amount': formatVndWithSymbol(i.deficitAmount)},
-      ),
-    );
+class _GridPatternPainter extends CustomPainter {
+  final Color color;
+
+  _GridPatternPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..style = PaintingStyle.fill;
+
+    final double squareSize = size.height / 6;
+    final int rows = 6;
+    final int cols = 5;
+
+    for (int r = 0; r < rows; r++) {
+      for (int c = 0; c < cols; c++) {
+        // Create a pattern similar to the one in the image:
+        // A grid where squares have very low, varying opacities
+        final bool shouldPaint = (r + c) % 2 == 0;
+        if (!shouldPaint) continue;
+
+        final double opacity = ((r * c) % 3 == 0) ? 0.04 : 0.015;
+
+        paint.color = color.withOpacity(opacity);
+        canvas.drawRect(
+          Rect.fromLTWH(
+            size.width - (c + 1) * squareSize,
+            r * squareSize,
+            squareSize - 2, // 2px gap between squares
+            squareSize - 2,
+          ),
+          paint,
+        );
+      }
+    }
   }
 
-  Widget _buildPacingLine(BuildContext context, BudgetPacingWarning w) {
-    return _buildLine(
-      context,
-      el.tr(
-        CcLocaleKeys.budget_pacing_hint,
-        namedArgs: {
-          'name': w.budgetName,
-          'days': '${w.daysRemaining}',
-          'amount': formatVndWithSymbol(w.suggestedDailySpend),
-        },
-      ),
-    );
-  }
-
-  Widget _buildPenaltyLine(BuildContext context, BudgetPenaltyWarning w) {
-    return _buildLine(
-      context,
-      el.tr(
-        CcLocaleKeys.budget_penalty_warning,
-        namedArgs: {'name': w.budgetName, 'percent': '${w.percentUsed}'},
-      ),
-    );
-  }
-
-  Widget _buildAnomalyLine(BuildContext context, int count) {
-    return _buildLine(
-      context,
-      el.tr(
-        CcLocaleKeys.budget_anomaly_hint,
-        namedArgs: {'count': '$count'},
-      ),
-    );
-  }
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

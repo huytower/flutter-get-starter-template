@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/presentation/widgets/edit_badge.dart';
 import '../get_x/liability_list_controller.dart';
 import '../widgets/add_liability_sheet.dart';
-import '../widgets/edit_badge.dart';
 import '../widgets/liability_delete_confirm_sheet.dart';
 import '../widgets/liability_wallet_list_item.dart';
 
@@ -150,7 +150,9 @@ class LiabilityListPage extends CcGetView<LiabilityListController> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => LiabilityDeleteConfirmSheet(
-        liability: controller.loans.firstWhere((b) => b.liability.id == id).liability,
+        liability: controller.loans
+            .firstWhere((b) => b.liability.id == id)
+            .liability,
         onDelete: () => controller.deleteLiability(context, id),
       ),
     );

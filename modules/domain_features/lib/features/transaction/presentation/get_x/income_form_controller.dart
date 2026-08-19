@@ -116,7 +116,7 @@ class IncomeFormController extends TransactionFormController
     isSubmitting.value = false;
 
     result.when(
-      (_) {
+      (_) async {
         final savedAmount = TransactionFormHelpers.formatAmount(
           amountStr.value,
         );
@@ -134,7 +134,7 @@ class IncomeFormController extends TransactionFormController
         } else {
           resetForm();
         }
-        refreshParent();
+        await refreshParent();
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
         context: context,

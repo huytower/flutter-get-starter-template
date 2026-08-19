@@ -435,7 +435,7 @@ class LiabilityFormController extends TransactionFormController
       isSubmitting.value = false;
 
       result.when(
-        (updatedLoan) {
+        (updatedLoan) async {
           final savedAmount = TransactionFormHelpers.formatAmount(
             amountStr.value,
           );
@@ -447,7 +447,7 @@ class LiabilityFormController extends TransactionFormController
             ),
           );
           resetForm();
-          refreshParent();
+          await refreshParent();
 
           // Update Dashboard
           if (Get.isRegistered<WalletController>()) {
@@ -498,7 +498,7 @@ class LiabilityFormController extends TransactionFormController
     isSubmitting.value = false;
 
     result.when(
-      (updatedLoan) {
+      (updatedLoan) async {
         final savedAmount = TransactionFormHelpers.formatAmount(
           amountStr.value,
         );
@@ -511,7 +511,7 @@ class LiabilityFormController extends TransactionFormController
         );
         getIt<ScheduleLiabilityRemindersUseCase>().call(updatedLoan);
         resetForm();
-        refreshParent();
+        await refreshParent();
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
         context: context,

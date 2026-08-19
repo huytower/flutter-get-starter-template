@@ -338,7 +338,7 @@ class InvestmentFormController extends TransactionFormController
     isSubmitting.value = false;
 
     result.when(
-      (investmentWallet) {
+      (investmentWallet) async {
         final parentController = Get.find<TransactionController>();
         if (!parentController.wallets.any((w) => w.id == investmentWallet.id)) {
           parentController.wallets.add(investmentWallet);
@@ -355,7 +355,7 @@ class InvestmentFormController extends TransactionFormController
           ),
         );
         resetForm();
-        refreshParent();
+        await refreshParent();
 
         // Update real-time amount values in the Investment section of Budget Allocation
         if (Get.isRegistered<WalletController>()) {

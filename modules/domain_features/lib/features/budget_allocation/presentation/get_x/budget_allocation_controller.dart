@@ -20,7 +20,7 @@ import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../../wallet/presentation/widgets/add_investment_sheet.dart';
-import '../../../wallet/presentation/widgets/add_wallet_sheet.dart';
+import '../../../wallet/presentation/widgets/add_liquid_sheet.dart';
 import '../widgets/edit_wallet_sheet.dart';
 import '../widgets/wallet_delete_confirmation_dialog.dart';
 
@@ -70,7 +70,7 @@ class BudgetAllocationController extends CcGetController {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => const AddWalletSheet(),
+      builder: (_) => const AddLiquidSheet(),
     );
   }
 
@@ -126,7 +126,7 @@ class BudgetAllocationController extends CcGetController {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => AddWalletSheet(wallet: wallet),
+      builder: (_) => AddLiquidSheet(wallet: wallet),
     );
   }
 

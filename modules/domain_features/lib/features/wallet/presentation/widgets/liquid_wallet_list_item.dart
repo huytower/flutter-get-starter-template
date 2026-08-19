@@ -6,7 +6,7 @@ import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
-import 'edit_badge.dart';
+import '../../../../core/presentation/widgets/edit_badge.dart';
 
 /// Horizontal list card for liquid wallets shown on the Wallet list page.
 class LiquidWalletListItem extends StatelessWidget {
@@ -142,7 +142,7 @@ class LiquidWalletListItem extends StatelessWidget {
               Obx(() {
                 final guideline = Get.find<GuidelineController>();
                 final showing =
-                    guideline.isTaskActive('reconcile_wallet') &&
+                    guideline.isTaskActive('wallet_balance') &&
                     wallet.type == WalletType.cash;
                 return Positioned(
                   top: -4,

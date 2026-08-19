@@ -17,12 +17,12 @@ import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import 'wallet_controller.dart';
 
-/// Backs [AddWalletSheet] — create/edit form state for a single wallet.
+/// Backs [AddLiquidSheet] — create/edit form state for a single liquid wallet.
 /// Instantiated fresh per sheet open via [init]; see the sheet's
-/// `initState`/`dispose` for the `Get.put`/`Get.delete` lifecycle.
+/// `GetX` wrapper for the lifecycle.
 @injectable
-class AddWalletSheetController extends CcGetController {
-  AddWalletSheetController(
+class AddLiquidSheetController extends CcGetController {
+  AddLiquidSheetController(
     this._walletController,
     this._getCategories,
     this.userLevel,
@@ -35,14 +35,10 @@ class AddWalletSheetController extends CcGetController {
   WalletEntity? _wallet;
   late final TextEditingController nameController;
 
-  /// Opening balance as a raw digit string (e.g. "1000000"), mirroring the
-  /// transaction amount input pattern.
   final RxString amountStr = '0'.obs;
   final RxBool showKeypad = false.obs;
   final GlobalKey amountFieldKey = GlobalKey();
 
-  /// Type of a newly created wallet — the cash wallet is a fixed singleton,
-  /// so only bank/credit can be added.
   final RxString newType = WalletType.bank.obs;
 
   final RxList<CategoryEntity> investmentCategories = <CategoryEntity>[].obs;
@@ -51,13 +47,12 @@ class AddWalletSheetController extends CcGetController {
   final RxBool emergencyFundUnlocked = false.obs;
   final RxBool showEmergencyFundLockedHint = false.obs;
   final RxBool isNameValid = false.obs;
+  final RxBool isSubmitting = false.obs;
 
   bool get isEditing => _wallet != null;
 
-  /// The cash wallet keeps its fixed default name and icon.
   bool get isCash => _wallet?.type == WalletType.cash;
 
-  /// Opening balance is locked once the wallet has any transaction (rule 1).
   bool get balanceLocked =>
       isEditing && _walletController.walletHasTransactions(_wallet!.id);
 
@@ -67,8 +62,6 @@ class AddWalletSheetController extends CcGetController {
     nameController.addListener(_onNameChanged);
     _onNameChanged();
     if (isEditing) {
-      // Use the current book balance for display consistency (the "real"
-      // balance the user sees in the list).
       amountStr.value = _walletController.bookBalanceOf(wallet!.id).toString();
       newType.value = wallet.type;
     }
@@ -145,8 +138,6 @@ class AddWalletSheetController extends CcGetController {
   }
 
   void showKeypadAndScroll(BuildContext context) {
-    // Dismiss the OS keyboard (if the name field is focused) and show the
-    // custom money keypad instead — consistent with the transaction pages.
     FocusScope.of(context).unfocus();
     showKeypad.value = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -171,7 +162,6 @@ class AddWalletSheetController extends CcGetController {
     newType.value = type;
     showEmergencyFundLockedHint.value = false;
 
-    // Reset name and category if switching away from investment
     if (type != WalletType.investment) {
       selectedInvestmentCategory.value = null;
     }
@@ -185,53 +175,67 @@ class AddWalletSheetController extends CcGetController {
   }
 
   Future<void> save(BuildContext context) async {
+    if (isSubmitting.value) return;
+    isSubmitting.value = true;
+
     final name = nameController.text.trim();
     final balance = int.tryParse(amountStr.value) ?? 0;
     final wallet = _wallet;
 
-    if (wallet != null) {
-      await _walletController.updateWallet(
-        WalletEntity(
-          id: wallet.id,
+    try {
+      if (wallet != null) {
+        await _walletController.updateWallet(
+          WalletEntity(
+            id: wallet.id,
+            name: name,
+            balance: balance,
+            iconCode:
+                newType.value == WalletType.investment &&
+                    selectedInvestmentCategory.value != null
+                ? selectedInvestmentCategory.value!.iconCode
+                : wallet.iconCode,
+            type: wallet.type,
+            createdAt: wallet.createdAt,
+            updatedAt: DateTime.now(),
+            categoryId: newType.value == WalletType.investment
+                ? selectedInvestmentCategory.value?.id
+                : wallet.categoryId,
+          ),
+        );
+      } else {
+        await _walletController.addWallet(
           name: name,
-          balance: balance,
+          initialBalance: balance,
           iconCode:
               newType.value == WalletType.investment &&
                   selectedInvestmentCategory.value != null
               ? selectedInvestmentCategory.value!.iconCode
-              : wallet.iconCode,
-          type: wallet.type,
-          createdAt: wallet.createdAt,
-          updatedAt: DateTime.now(),
+              : walletIconFor(newType.value).codePoint,
+          type: newType.value,
           categoryId: newType.value == WalletType.investment
               ? selectedInvestmentCategory.value?.id
-              : wallet.categoryId,
-        ),
-      );
-    } else {
-      await _walletController.addWallet(
-        name: name,
-        initialBalance: balance,
-        iconCode:
-            newType.value == WalletType.investment &&
-                selectedInvestmentCategory.value != null
-            ? selectedInvestmentCategory.value!.iconCode
-            : walletIconFor(newType.value).codePoint,
-        type: newType.value,
-        categoryId: newType.value == WalletType.investment
-            ? selectedInvestmentCategory.value?.id
-            : null,
-      );
-    }
+              : null,
+        );
+      }
 
-    if (context.mounted) {
-      Navigator.pop(context);
-      CcSnackBarHelper.showSuccessSnackBar(
-        context: context,
-        message: isEditing
-            ? el.tr(CcLocaleKeys.wallet_updated_success)
-            : el.tr(CcLocaleKeys.wallet_added_success),
-      );
+      if (context.mounted) {
+        Navigator.pop(context, true);
+        CcSnackBarHelper.showSuccessSnackBar(
+          context: context,
+          message: isEditing
+              ? el.tr(CcLocaleKeys.wallet_updated_success)
+              : el.tr(CcLocaleKeys.wallet_added_success),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        CcSnackBarHelper.showErrorSnackBar(
+          context: context,
+          message: el.tr(CcLocaleKeys.app_error_general),
+        );
+      }
+    } finally {
+      isSubmitting.value = false;
     }
   }
 

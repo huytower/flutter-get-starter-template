@@ -5,9 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../get_x/reconciliation_controller.dart';
 
 class WalletReconcileTile extends StatelessWidget {
@@ -109,24 +107,7 @@ class WalletReconcileTile extends StatelessWidget {
   }
 
   Widget _buildGuidelineBadge(BuildContext context) {
-    if (!Get.isRegistered<GuidelineController>()) return const SizedBox();
-    final guideline = Get.find<GuidelineController>();
-
-    return Obx(() {
-      final isCashWallet = balance.wallet.type == WalletType.cash;
-      final isReconcileActive = guideline.isTaskActive('reconcile_wallet');
-      final showing = isCashWallet && isReconcileActive;
-
-      return Positioned(
-        top: -8,
-        left: -8,
-        child: CcGuidelineBadge(
-          showing: showing,
-          color: guideline.currentColor,
-          bounceTrigger: guideline.bounceTrigger,
-        ),
-      );
-    });
+    return const SizedBox();
   }
 }
 

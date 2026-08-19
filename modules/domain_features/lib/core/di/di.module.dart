@@ -227,8 +227,8 @@ import 'package:domain_features/features/wallet/domain/usecases/get_wallet_book_
     as _i105;
 import 'package:domain_features/features/wallet/presentation/get_x/add_investment_sheet_controller.dart'
     as _i797;
-import 'package:domain_features/features/wallet/presentation/get_x/add_wallet_sheet_controller.dart'
-    as _i933;
+import 'package:domain_features/features/wallet/presentation/get_x/add_liquid_sheet_controller.dart'
+    as _i95;
 import 'package:domain_features/features/wallet/presentation/get_x/wallet_controller.dart'
     as _i229;
 import 'package:injectable/injectable.dart' as _i526;
@@ -646,8 +646,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i446.GetReconciliationHistoryUseCase>(),
               gh<_i356.UserLevelController>(),
             ));
-    gh.factory<_i933.AddWalletSheetController>(
-        () => _i933.AddWalletSheetController(
+    gh.factory<_i95.AddLiquidSheetController>(
+        () => _i95.AddLiquidSheetController(
               gh<_i229.WalletController>(),
               gh<_i224.GetCategoriesUseCase>(),
               gh<_i356.UserLevelController>(),

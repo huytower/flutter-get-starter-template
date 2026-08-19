@@ -148,6 +148,7 @@ class TransactionController extends CcGetController {
 
   Future<void> refreshData() async {
     await refreshWalletTotal();
+    await loadWallets();
     if (Get.isRegistered<BudgetAllocationController>()) {
       Get.find<BudgetAllocationController>().loadAll();
     }

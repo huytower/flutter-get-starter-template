@@ -18,7 +18,7 @@ import '../../domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/get_investment_roi_usecase.dart';
 import '../../domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../../domain/usecases/wallet_balance_calculator.dart';
-import '../widgets/add_wallet_sheet.dart';
+import '../widgets/add_liquid_sheet.dart';
 import '../widgets/investment_delete_confirm_sheet.dart';
 import '../widgets/wallet_delete_confirm_sheet.dart';
 
@@ -74,7 +74,7 @@ class WalletController extends CcGetController {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => AddWalletSheet(wallet: wallet),
+      builder: (_) => AddLiquidSheet(wallet: wallet),
     );
   }
 
@@ -444,22 +444,17 @@ class WalletController extends CcGetController {
 
     final result = await _repository.addWallet(newWallet);
 
-    result.when(
-      (success) {
-        _bookBalances[newWallet.id] = newWallet.balance;
-        wallets.add(newWallet);
-        _calculateTotalBalance();
-        layoutStatus.value = CcLayoutStatus.success;
+      result.when(
+        (success) {
+          wallets.add(newWallet);
+          _bookBalances[newWallet.id] = newWallet.balance;
+          _calculateTotalBalance();
+          layoutStatus.value = CcLayoutStatus.success;
 
-        if (Get.isRegistered<TransactionController>()) {
-          Get.find<TransactionController>().wallets.add(newWallet);
-        }
-
-        // Guideline: wallet_balance completed if initial balance > 0
-        if (initialBalance > 0) {
-          Get.find<GuidelineController>().completeTask('wallet_balance');
-        }
-      },
+          if (Get.isRegistered<TransactionController>()) {
+            Get.find<TransactionController>().wallets.add(newWallet);
+          }
+        },
       (error) {
         errorMessage.value = error.message;
       },
@@ -509,15 +504,13 @@ class WalletController extends CcGetController {
           wallets[index] = toSave;
           _calculateTotalBalance();
 
-          // Guideline: wallet_balance completed if new balance > 0
           if (toSave.balance > 0) {
             Get.find<GuidelineController>().completeTask('wallet_balance');
           }
 
-          // Complete the modify_cash task if the balance of the cash wallet is updated
           if (wallet.type == WalletType.cash &&
               toSave.balance != original.balance) {
-            Get.find<GuidelineController>().completeTask('reconcile_wallet');
+            Get.find<GuidelineController>().completeTask('wallet_balance');
           }
         }
       },

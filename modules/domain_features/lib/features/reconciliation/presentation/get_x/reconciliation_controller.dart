@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
@@ -190,9 +189,6 @@ class ReconciliationController extends CcGetController {
       return result.when((_) {
         loadBalances();
         loadHistory();
-        if (Get.isRegistered<GuidelineController>()) {
-          Get.find<GuidelineController>().completeTask('reconcile_wallet');
-        }
         _userLevel.refresh();
         return null;
       }, (error) => error.message);
@@ -209,9 +205,7 @@ class ReconciliationController extends CcGetController {
       return result.when((_) {
         loadBalances();
         loadHistory();
-        if (Get.isRegistered<GuidelineController>()) {
-          Get.find<GuidelineController>().completeTask('reconcile_wallet');
-        }
+        _userLevel.refresh();
         _userLevel.refresh();
         return null;
       }, (error) => error.message);

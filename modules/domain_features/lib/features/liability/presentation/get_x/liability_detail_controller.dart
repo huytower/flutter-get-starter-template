@@ -129,7 +129,7 @@ class LiabilityDetailController extends TransactionFormController {
           ),
         );
         resetForm();
-        refreshParent();
+        await refreshParent();
         await _refreshDetail();
         if (Get.isRegistered<BudgetAllocationController>()) {
           Get.find<BudgetAllocationController>().loadLiabilities();

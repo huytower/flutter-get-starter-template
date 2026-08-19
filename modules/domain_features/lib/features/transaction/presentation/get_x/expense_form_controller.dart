@@ -391,7 +391,7 @@ class ExpenseFormController extends TransactionFormController
         } else {
           resetForm();
         }
-        refreshParent();
+        await refreshParent();
         // Guideline: first_transaction completed
         Get.find<GuidelineController>().completeTask('first_transaction');
       },

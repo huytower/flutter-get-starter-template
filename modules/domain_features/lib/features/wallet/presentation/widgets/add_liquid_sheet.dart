@@ -11,93 +11,77 @@ import '../../../guideline/guideline_controller.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../domain/entities/wallet_entity.dart';
-import '../get_x/add_wallet_sheet_controller.dart';
+import '../get_x/add_liquid_sheet_controller.dart';
 
-/// Bottom sheet for creating a new wallet, or editing an existing one when
-/// [wallet] is provided. Shared by the Wallets tab and Budget Allocation's
-/// "add wallet" entry point.
-class AddWalletSheet extends StatefulWidget {
-  const AddWalletSheet({super.key, this.wallet});
+class AddLiquidSheet extends GetView<AddLiquidSheetController> {
+  const AddLiquidSheet({super.key, this.wallet});
 
   final WalletEntity? wallet;
 
   @override
-  State<AddWalletSheet> createState() => _AddWalletSheetState();
-}
-
-class _AddWalletSheetState extends State<AddWalletSheet> {
-  late final AddWalletSheetController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = Get.put(getIt<AddWalletSheetController>());
-    _controller.init(widget.wallet);
-  }
-
-  @override
-  void dispose() {
-    Get.delete<AddWalletSheetController>();
-    super.dispose();
-  }
-
-  Color get _accent => context.ccColorScheme.primary;
-
-  @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              if (_controller.showKeypad.value) _controller.hideKeypad();
-            },
-            child: Container(
-              padding: EdgeInsets.only(
-                left: context.respPadding(CcPaddingParams.SPACE_LG),
-                right: context.respPadding(CcPaddingParams.SPACE_LG),
-                top: context.respPadding(CcPaddingParams.SPACE_LG),
-                bottom:
-                    (_controller.showKeypad.value
-                        ? 0
-                        : MediaQuery.of(context).viewInsets.bottom) +
-                    context.respPadding(CcPaddingParams.SPACE_LG),
-              ),
-              decoration: BoxDecoration(
-                color: context.ccColorScheme.surface,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+    return GetX<AddLiquidSheetController>(
+      init: getIt<AddLiquidSheetController>()..init(wallet),
+      dispose: (_) => Get.delete<AddLiquidSheetController>(),
+      builder: (controller) {
+        return PopScope(
+          canPop: !controller.isSubmitting.value,
+          child: Obx(
+            () => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    if (controller.showKeypad.value) controller.hideKeypad();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      left: context.respPadding(CcPaddingParams.SPACE_LG),
+                      right: context.respPadding(CcPaddingParams.SPACE_LG),
+                      top: context.respPadding(CcPaddingParams.SPACE_LG),
+                      bottom:
+                          (controller.showKeypad.value
+                                  ? 0
+                                  : MediaQuery.of(context).viewInsets.bottom) +
+                              context.respPadding(CcPaddingParams.SPACE_LG),
+                    ),
+                    decoration: BoxDecoration(
+                      color: context.ccColorScheme.surface,
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      child: _buildSheetContent(context, controller),
+                    ),
+                  ),
                 ),
-              ),
-              child: SingleChildScrollView(
-                child: _buildSheetContent(context, _controller),
-              ),
+                if (controller.showKeypad.value)
+                  SafeArea(
+                    top: false,
+                    child: MoneyKeypadPanel(
+                      onKeyPress: controller.handleKeyPress,
+                      onDelete: controller.handleDelete,
+                      onClear: () => controller.amountStr.value = '0',
+                      suggestions: MoneyConstants.walletQuickAmounts,
+                      onSuggestion: (value) =>
+                          controller.amountStr.value = value.toString(),
+                      onDone: controller.hideKeypad,
+                      activeColor: context.ccColorScheme.primary,
+                    ),
+                  ),
+              ],
             ),
           ),
-          if (_controller.showKeypad.value)
-            SafeArea(
-              top: false,
-              child: MoneyKeypadPanel(
-                onKeyPress: _controller.handleKeyPress,
-                onDelete: _controller.handleDelete,
-                onClear: () => _controller.amountStr.value = '0',
-                suggestions: MoneyConstants.walletQuickAmounts,
-                onSuggestion: (value) =>
-                    _controller.amountStr.value = value.toString(),
-                onDone: _controller.hideKeypad,
-                activeColor: _accent,
-              ),
-            ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildSheetContent(
     BuildContext context,
-    AddWalletSheetController controller,
+    AddLiquidSheetController controller,
   ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -127,7 +111,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
 
   Widget _buildTitle(
     BuildContext context,
-    AddWalletSheetController controller,
+    AddLiquidSheetController controller,
   ) {
     return CcText(
       controller.isEditing
@@ -142,7 +126,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
 
   Widget _buildNameField(
     BuildContext context,
-    AddWalletSheetController controller,
+    AddLiquidSheetController controller,
   ) {
     return CcNameInputField(
       controller: controller.nameController,
@@ -157,7 +141,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
 
   Widget _buildAmountSection(
     BuildContext context,
-    AddWalletSheetController controller,
+    AddLiquidSheetController controller,
   ) {
     return Stack(
       clipBehavior: Clip.none,
@@ -168,7 +152,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           amountStr: controller.amountStr.value,
           quickAmounts: MoneyConstants.walletQuickAmounts,
           isKeypadVisible: controller.showKeypad.value,
-          activeColor: _accent,
+          activeColor: context.ccColorScheme.primary,
           fieldKey: controller.amountFieldKey,
           onTap: () => controller.showKeypadAndScroll(context),
           onQuickAmountSelected: (amount) =>
@@ -181,7 +165,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           Obx(() {
             final guideline = Get.find<GuidelineController>();
             final showing =
-                guideline.isTaskActive('reconcile_wallet') && controller.isCash;
+                guideline.isTaskActive('wallet_balance') && controller.isCash;
             return Positioned(
               top: 0,
               right: 0,
@@ -199,7 +183,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
 
   Widget _buildSaveButton(
     BuildContext context,
-    AddWalletSheetController controller,
+    AddLiquidSheetController controller,
   ) {
     final bool canSave =
         controller.isNameValid.value &&
@@ -212,11 +196,9 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
     );
   }
 
-  /// Read-only display for a balance that can no longer be edited (a wallet
-  /// that already has transactions).
   Widget _buildLockedBalance(
     BuildContext context,
-    AddWalletSheetController controller,
+    AddLiquidSheetController controller,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,7 +245,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
 
   Widget _buildEmergencyFundLockedHint(
     BuildContext context,
-    AddWalletSheetController controller,
+    AddLiquidSheetController controller,
   ) {
     return Container(
       padding: EdgeInsets.symmetric(
@@ -280,7 +262,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
           Icon(
             Icons.lock_outline_rounded,
             size: context.respIconSize(baseSize: 18),
-            color: _accent,
+            color: context.ccColorScheme.primary,
           ),
           const CcSpaceXS(),
           Expanded(
@@ -297,7 +279,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
                   child: CcText(
                     el.tr(CcLocaleKeys.wallet_emergency_fund_view_ebook),
                     textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                      color: _accent,
+                      color: context.ccColorScheme.primary,
                       fontWeight: CcTypographyParams.bold,
                       decoration: TextDecoration.underline,
                     ),
@@ -313,7 +295,7 @@ class _AddWalletSheetState extends State<AddWalletSheet> {
 
   Widget _buildTypeSelector(
     BuildContext context,
-    AddWalletSheetController controller,
+    AddLiquidSheetController controller,
   ) {
     final canUseInvestment =
         controller.userLevel.status.value.level >= 2 ||

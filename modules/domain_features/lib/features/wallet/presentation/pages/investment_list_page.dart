@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/add_investment_sheet.dart';
-import '../widgets/edit_badge.dart';
+import '../../../../core/presentation/widgets/edit_badge.dart';
 import '../widgets/investment_wallet_list_item.dart';
 
 @RoutePage()

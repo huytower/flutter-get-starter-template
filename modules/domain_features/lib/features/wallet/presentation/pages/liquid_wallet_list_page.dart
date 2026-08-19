@@ -76,7 +76,7 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
                 Obx(() {
                   final guideline = Get.find<GuidelineController>();
                   final showing =
-                      guideline.isTaskActive('reconcile_wallet') &&
+                      guideline.isTaskActive('wallet_balance') &&
                       !controller.isEditMode.value;
                   return Positioned(
                     top: 0,
@@ -98,37 +98,33 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
 
   @override
   Widget? buildContent(BuildContext context) {
-    return Builder(
-      builder: (context) => Obx(() {
-        final liquidWallets = controller.liquidWallets;
-        if (liquidWallets.isEmpty) {
-          return CcText(
-            el.tr(CcLocaleKeys.wallet_empty),
-            align: Alignment.center,
-            textAlign: TextAlign.center,
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
+    final liquidWallets = controller.liquidWallets;
+    if (liquidWallets.isEmpty) {
+      return CcText(
+        el.tr(CcLocaleKeys.wallet_empty),
+        align: Alignment.center,
+        textAlign: TextAlign.center,
+        textStyle: context.ccTextTheme.bodySmall?.copyWith(
+          color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
+        ),
+      );
+    }
+    final isEdit = controller.isEditMode.value;
+    return ListView(
+      padding: EdgeInsets.all(
+        context.respPadding(CcPaddingParams.SPACE_MD),
+      ),
+      children: liquidWallets
+          .map(
+            (wallet) => LiquidWalletListItem(
+              wallet: wallet,
+              isEditMode: isEdit,
+              canDelete: controller.canDeleteWallet(wallet),
+              onEdit: () => controller.openForm(context, wallet: wallet),
+              onDelete: () => controller.confirmDelete(context, wallet),
             ),
-          );
-        }
-        final isEdit = controller.isEditMode.value;
-        return ListView(
-          padding: EdgeInsets.all(
-            context.respPadding(CcPaddingParams.SPACE_MD),
-          ),
-          children: liquidWallets
-              .map(
-                (wallet) => LiquidWalletListItem(
-                  wallet: wallet,
-                  isEditMode: isEdit,
-                  canDelete: controller.canDeleteWallet(wallet),
-                  onEdit: () => controller.openForm(context, wallet: wallet),
-                  onDelete: () => controller.confirmDelete(context, wallet),
-                ),
-              )
-              .toList(),
-        );
-      }),
+          )
+          .toList(),
     );
   }
 }

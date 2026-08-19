@@ -3,7 +3,6 @@ import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
@@ -37,23 +36,11 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         ),
       ),
       actions: [
-        Obx(
-          () => CcInkWell(
-            onTap: controller.walletController.toggleBalanceVisibility,
-            child: Container(
-              padding: EdgeInsets.all(context.respDim(4)),
-              decoration: BoxDecoration(
-                color: context.ccColorScheme.onPrimary,
-                shape: BoxShape.circle,
-              ),
-              child: CcIconToken(
-                controller.walletController.isBalanceVisible.value
-                    ? Icons.visibility_outlined
-                    : Icons.visibility_off_outlined,
-                size: 16,
-              ),
-            ),
-          ),
+        CcIconToken(
+          controller.walletController.isBalanceVisible.value
+              ? Icons.visibility_outlined
+              : Icons.visibility_off_outlined,
+          size: 16,
         ),
         const CcSpaceMD(),
         CcIconButton.bouncing(
@@ -111,34 +98,33 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   Widget _buildInvestmentHeroBanner(BuildContext context) {
-    return Obx(() {
-      final canShow =
-          controller.userLevel.status.value.level >= 2 ||
-          CcFeatureFlags.isForceFullAccessEnabled;
+    final status = controller.userLevel.status.value;
+    final canShow = status.canUseInvestment;
 
-      if (!canShow) {
-        return const SizedBox.shrink();
-      }
-      final roi = controller.walletController.investmentRoiPercent.value;
+    if (!canShow) {
+      return const SizedBox.shrink();
+    }
+    final roi = controller.walletController.investmentRoiPercent.value;
 
-      return BudgetHeroBanner(
-        walletController: controller.walletController,
-        titleKey: CcLocaleKeys.wallet_investments,
-        balance: controller.walletController.investmentBalance,
-        subtitleKey: CcLocaleKeys.wallet_investments_desc,
-        subtitleArgs: {'roi': roi.toStringAsFixed(1)},
-        icon: Icons.trending_up_outlined,
-        color: CcBaseColors.yellow600,
-        topPadding: CcPaddingParams.SPACE_SM,
-        bottomPadding: CcPaddingParams.SPACE_XS,
-        leadingBalanceWidget: Icon(
-          Icons.eco,
-          color: context.ccColorScheme.onPrimary.withOpacity(0.8),
-          size: context.respIconSize(baseSize: 18),
-        ),
-        trailingBalanceWidget: Obx(() {
-          final visible = controller.walletController.isBalanceVisible.value;
-
+    return BudgetHeroBanner(
+      walletController: controller.walletController,
+      titleKey: CcLocaleKeys.wallet_investments,
+      balance: controller.walletController.investmentBalance,
+      subtitleKey: CcLocaleKeys.wallet_investments_desc,
+      subtitleArgs: {'roi': roi.toStringAsFixed(1)},
+      icon: Icons.trending_up_outlined,
+      color: CcBaseColors.yellow600,
+      topPadding: CcPaddingParams.SPACE_SM,
+      bottomPadding: CcPaddingParams.SPACE_XS,
+      leadingBalanceWidget: Icon(
+        Icons.eco,
+        color: context.ccColorScheme.onPrimary.withOpacity(0.8),
+        size: context.respIconSize(baseSize: 18),
+      ),
+      trailingBalanceWidget: _buildHeroStat(
+        context,
+        icon: Icons.auto_graph_rounded,
+        value: () {
           int totalReturned = 0;
           for (final wallet in controller.walletController.investmentWallets) {
             final stats = controller.walletController.investmentStatsOf(
@@ -146,17 +132,12 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
             );
             totalReturned += stats.returned;
           }
-
-          return _buildHeroStat(
-            context,
-            icon: Icons.auto_graph_rounded,
-            value: totalReturned,
-            visible: visible,
-            color: PrjColors.success,
-          );
-        }),
-      );
-    });
+          return totalReturned;
+        }(),
+        visible: controller.walletController.isBalanceVisible.value,
+        color: PrjColors.success,
+      ),
+    );
   }
 
   Widget _buildHeroStat(
@@ -187,72 +168,60 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   Widget _buildLiabilityHeroBanner(BuildContext context) {
-    return Obx(() {
-      final canShow =
-          controller.userLevel.status.value.level >= 3 ||
-          CcFeatureFlags.isForceFullAccessEnabled;
+    final status = controller.userLevel.status.value;
+    final canShow = status.canUseDebtLoan;
 
-      if (!canShow) {
-        return const SizedBox.shrink();
-      }
-      return LiabilityHeroBanner(
-        walletController: controller.walletController,
-        borrowBalance: controller.borrowBalance,
-        lendBalance: controller.lendBalance,
-        totalBalance: controller.liabilityBalance,
-      );
-    });
+    if (!canShow) {
+      return const SizedBox.shrink();
+    }
+    return LiabilityHeroBanner(
+      walletController: controller.walletController,
+      borrowBalance: controller.borrowBalance,
+      lendBalance: controller.lendBalance,
+      totalBalance: controller.liabilityBalance,
+    );
   }
 
   Widget _buildLiquidWalletsSection(BuildContext context) {
-    return Obx(
-      () => LiquidWalletsSection(
-        wallets: controller.walletController.recentLiquidWallets,
-        onAddWallet: () => controller.openAddWallet(context),
-        onMore: (wallet) => controller.openWalletActions(context, wallet),
-      ),
+    return LiquidWalletsSection(
+      wallets: controller.walletController.recentLiquidWallets,
+      onAddWallet: () => controller.openAddWallet(context),
+      onMore: (wallet) => controller.openWalletActions(context, wallet),
     );
   }
 
   Widget _buildInvestmentWalletsSection(BuildContext context) {
-    return Obx(() {
-      final canShow =
-          controller.userLevel.status.value.level >= 2 ||
-          CcFeatureFlags.isForceFullAccessEnabled;
+    final status = controller.userLevel.status.value;
+    final canShow = status.canUseInvestment;
 
-      if (!canShow) {
-        return const SizedBox.shrink();
-      }
-      final wallets = controller.walletController.recentInvestmentWallets;
+    if (!canShow) {
+      return const SizedBox.shrink();
+    }
+    final wallets = controller.walletController.recentInvestmentWallets;
 
-      return InvestmentWalletsSection(
-        wallets: wallets,
-        onAddInvestment: () => controller.openAddInvestment(context),
-        onMore: (wallet) => controller.openWalletActions(context, wallet),
-        onSeeAll: () => controller.navigateToInvestmentList(context),
-      );
-    });
+    return InvestmentWalletsSection(
+      wallets: wallets,
+      onAddInvestment: () => controller.openAddInvestment(context),
+      onMore: (wallet) => controller.openWalletActions(context, wallet),
+      onSeeAll: () => controller.navigateToInvestmentList(context),
+    );
   }
 
   Widget _buildLiabilityWalletsSection(BuildContext context) {
-    return Obx(() {
-      final canShow =
-          controller.userLevel.status.value.level >= 3 ||
-          CcFeatureFlags.isForceFullAccessEnabled;
+    final status = controller.userLevel.status.value;
+    final canShow = status.canUseDebtLoan;
 
-      if (!canShow) {
-        return const SizedBox.shrink();
-      }
+    if (!canShow) {
+      return const SizedBox.shrink();
+    }
 
-      // Observe loanBalances to trigger rebuild when list changes
-      final balances = controller.loanBalances;
+    final balances = controller.loanBalances;
 
-      return LiabilityWalletsSection(
-        balances: balances,
-        onAddLoan: () => controller.openAddLoan(context),
-        onMore: (balance) => controller.openLoanActions(context, balance),
-        onSeeAll: () => controller.navigateToLoanList(context),
-      );
-    });
+    return LiabilityWalletsSection(
+      balances: balances,
+      onAddLoan: () => controller.openAddLoan(context),
+      onMore: (balance) => controller.openLoanActions(context, balance),
+      onSeeAll: () => controller.navigateToLoanList(context),
+    );
   }
 }

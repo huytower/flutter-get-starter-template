@@ -76,7 +76,7 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
                     Expanded(
                       child: CcText(
                         wallet.name,
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         textStyle: context.ccTextTheme.labelMedium?.copyWith(
                           fontWeight: CcTypographyParams.bold,

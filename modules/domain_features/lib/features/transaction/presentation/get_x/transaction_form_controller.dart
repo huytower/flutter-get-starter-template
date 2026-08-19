@@ -177,11 +177,12 @@ abstract class TransactionFormController extends CcGetController {
   }
 
   /// Refreshes the parent [TransactionController] data after a successful transaction.
-  void refreshParent() {
+  Future<void> refreshParent() async {
     if (Get.isRegistered<TransactionController>()) {
       final parent = Get.find<TransactionController>();
-      parent.refreshData();
+      await parent.refreshData();
       parent.flashWalletSummary();
+      _loadWallets();
     }
   }
 
