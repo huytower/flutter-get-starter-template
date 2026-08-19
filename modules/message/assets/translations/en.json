@@ -174,6 +174,7 @@
                    "edit_title":  "Edit Wallet",
                    "name":  "Wallet Name",
                    "name_hint":  "e.g. Cash, Techcombank...",
+                   "name_duplicate_error": "This wallet name already exists",
                    "initial_balance":  "Opening Balance",
                    "initial_balance_hint":  "e.g. 1000000",
                    "balance_locked_hint":  "Cannot change opening balance once the wallet has transactions",

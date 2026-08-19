@@ -1666,6 +1666,7 @@ abstract class CcLocaleKeys {
   static const wallet_edit_title = 'wallet.edit_title';
   static const wallet_name = 'wallet.name';
   static const wallet_name_hint = 'wallet.name_hint';
+  static const wallet_name_duplicate_error = 'wallet.name_duplicate_error';
   static const wallet_initial_balance = 'wallet.initial_balance';
   static const wallet_balance_locked_hint = 'wallet.balance_locked_hint';
   static const wallet_save_info = 'wallet.save_info';

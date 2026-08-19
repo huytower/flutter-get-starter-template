@@ -137,14 +137,37 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
     BuildContext context,
     AddInvestmentSheetController controller,
   ) {
-    return CcNameInputField(
-      controller: controller.nameController,
-      labelText: el.tr(CcLocaleKeys.wallet_investment_name),
-      hintText: el.tr(CcLocaleKeys.wallet_investment_name_hint),
-      onClear: () {
-        controller.isNameValid.value = false;
-        controller.selectedInvestmentCategory.value = null;
-      },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcNameInputField(
+          controller: controller.nameController,
+          labelText: el.tr(CcLocaleKeys.wallet_investment_name),
+          hintText: el.tr(CcLocaleKeys.wallet_investment_name_hint),
+          onClear: () {
+            controller.isNameValid.value = false;
+            controller.selectedInvestmentCategory.value = null;
+            controller.nameError.value = null;
+          },
+        ),
+        Obx(() {
+          if (controller.nameError.value == null) {
+            return const SizedBox.shrink();
+          }
+          return Padding(
+            padding: EdgeInsets.only(
+              left: context.respPadding(CcPaddingParams.DESC_XS),
+              top: context.respPadding(CcPaddingParams.DESC_XS),
+            ),
+            child: CcText(
+              controller.nameError.value!,
+              textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                color: context.ccColorScheme.error,
+              ),
+            ),
+          );
+        }),
+      ],
     );
   }
 

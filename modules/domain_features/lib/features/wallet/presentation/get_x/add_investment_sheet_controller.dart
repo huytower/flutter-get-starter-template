@@ -37,6 +37,7 @@ class AddInvestmentSheetController extends CcGetController {
   final RxList<CategoryEntity> investmentCategories = <CategoryEntity>[].obs;
   final Rxn<CategoryEntity> selectedInvestmentCategory = Rxn<CategoryEntity>();
   final RxBool isNameValid = false.obs;
+  final RxnString nameError = RxnString();
   final RxBool isVip = false.obs;
 
   bool get isEditing => _wallet != null;
@@ -97,6 +98,9 @@ class AddInvestmentSheetController extends CcGetController {
 
   void _onNameChanged() {
     isNameValid.value = nameController.text.trim().isNotEmpty;
+    if (nameError.value != null) {
+      nameError.value = null;
+    }
   }
 
   void handleKeyPress(String key) {
@@ -143,6 +147,18 @@ class AddInvestmentSheetController extends CcGetController {
   Future<void> save(BuildContext context) async {
     final name = nameController.text.trim();
     final wallet = _wallet;
+
+    // Check for duplicate names (excluding current wallet if editing)
+    final isDuplicate = _walletController.wallets.any(
+      (w) =>
+          w.name.trim().toLowerCase() == name.toLowerCase() &&
+          w.id != wallet?.id,
+    );
+
+    if (isDuplicate) {
+      nameError.value = el.tr(CcLocaleKeys.wallet_name_duplicate_error);
+      return;
+    }
 
     if (wallet != null) {
       await _walletController.updateWallet(

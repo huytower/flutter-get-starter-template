@@ -48,6 +48,7 @@ class AddLiquidSheetController extends CcGetController {
   final RxBool emergencyFundUnlocked = false.obs;
   final RxBool showEmergencyFundLockedHint = false.obs;
   final RxBool isNameValid = false.obs;
+  final RxnString nameError = RxnString();
   final RxBool isSubmitting = false.obs;
 
   bool get isEditing => _wallet != null;
@@ -88,6 +89,9 @@ class AddLiquidSheetController extends CcGetController {
 
   void _onNameChanged() {
     isNameValid.value = nameController.text.trim().isNotEmpty;
+    if (nameError.value != null) {
+      nameError.value = null;
+    }
   }
 
   Future<void> _loadEmergencyFundGate() async {
@@ -182,6 +186,19 @@ class AddLiquidSheetController extends CcGetController {
     final name = nameController.text.trim();
     final balance = int.tryParse(amountStr.value) ?? 0;
     final wallet = _wallet;
+
+    // Check for duplicate names (excluding current wallet if editing)
+    final isDuplicate = _walletController.wallets.any(
+      (w) =>
+          w.name.trim().toLowerCase() == name.toLowerCase() &&
+          w.id != wallet?.id,
+    );
+
+    if (isDuplicate) {
+      nameError.value = el.tr(CcLocaleKeys.wallet_name_duplicate_error);
+      isSubmitting.value = false;
+      return;
+    }
 
     try {
       if (wallet != null) {

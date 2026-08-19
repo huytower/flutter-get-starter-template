@@ -55,6 +55,9 @@ class AddLiabilitySheetController extends CcGetController {
 
   void _onNameChanged() {
     isNameValid.value = nameController.text.trim().isNotEmpty;
+    if (nameError.value != null) {
+      nameError.value = null;
+    }
   }
 
   Future<void> _loadVipStatus() async {
