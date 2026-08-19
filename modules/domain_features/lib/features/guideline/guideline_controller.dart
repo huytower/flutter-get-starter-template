@@ -8,10 +8,10 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
+import '../user_level/presentation/get_x/user_level_controller.dart';
 import '../wallet/domain/entities/wallet_entity.dart';
 import '../wallet/presentation/get_x/wallet_controller.dart';
-import '../user_level/presentation/get_x/user_level_controller.dart';
-import 'guideline_success_dialog.dart';
 
 @lazySingleton
 class GuidelineController extends GetxController {
@@ -27,6 +27,7 @@ class GuidelineController extends GetxController {
     'min_living', // Budget Allocation -> AddBudgetLimitForm (storm icon)
     'first_transaction', // Transaction -> ExpenseForm
     'investment', // Budget Allocation -> Add Investment + Transaction -> Investment tab
+    'liability', // Budget Allocation -> Add Liability + Transaction -> Debt/Loan tab
   ];
 
   final Map<String, Color> taskColors = {
@@ -37,6 +38,7 @@ class GuidelineController extends GetxController {
     'min_living': Colors.amber,
     'first_transaction': Colors.pink,
     'investment': Colors.green,
+    'liability': Colors.deepPurple,
   };
 
   final RxList<String> completedTasks = <String>[].obs;
@@ -50,6 +52,12 @@ class GuidelineController extends GetxController {
   /// - true  -> Transaction tab + Investment record
   final RxBool hasCreatedFirstInvestment = false.obs;
 
+  /// True once the user has created their first liability (debt/loan).
+  /// Controls where the liability guideline badge points:
+  /// - false -> Budget Allocation tab + Add Liability button
+  /// - true  -> Transaction tab + Liability record
+  final RxBool hasCreatedFirstLiability = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -57,11 +65,15 @@ class GuidelineController extends GetxController {
     if (saved != null) {
       completedTasks.assignAll(saved);
     }
+    _restoreTaskStatus();
+  }
+
+  Future<void> _restoreTaskStatus() async {
     _restoreInvestmentStatus();
+    _restoreLiabilityStatus();
   }
 
   Future<void> _restoreInvestmentStatus() async {
-    if (currentTaskId != 'investment') return;
     if (hasCreatedFirstInvestment.value) return;
 
     final prefs = await SharedPreferences.getInstance();
@@ -72,7 +84,9 @@ class GuidelineController extends GetxController {
 
     try {
       final walletController = getIt<WalletController>();
-      if (walletController.wallets.any((w) => w.type == WalletType.investment)) {
+      if (walletController.wallets.any(
+        (w) => w.type == WalletType.investment,
+      )) {
         hasCreatedFirstInvestment.value = true;
         await prefs.setBool('has_created_first_investment', true);
       }
@@ -81,12 +95,33 @@ class GuidelineController extends GetxController {
     }
   }
 
+  Future<void> _restoreLiabilityStatus() async {
+    if (hasCreatedFirstLiability.value) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('has_created_first_liability') ?? false) {
+      hasCreatedFirstLiability.value = true;
+      return;
+    }
+
+    try {
+      final budgetController = getIt<BudgetAllocationController>();
+      if (budgetController.loanBalances.isNotEmpty) {
+        hasCreatedFirstLiability.value = true;
+        await prefs.setBool('has_created_first_liability', true);
+      }
+    } catch (_) {
+      // Controller not ready yet
+    }
+  }
+
   bool isTaskCompleted(String taskId) => completedTasks.contains(taskId);
 
   String? get currentTaskId {
-    final level = _userLevelController.status.value.level;
+    final status = _userLevelController.status.value;
     for (final taskId in taskSequence) {
-      if (taskId == 'investment' && level < 2) continue;
+      if (taskId == 'investment' && !status.canUseInvestment) continue;
+      if (taskId == 'liability' && !status.canUseDebtLoan) continue;
       if (!completedTasks.contains(taskId)) {
         return taskId;
       }
@@ -125,6 +160,9 @@ class GuidelineController extends GetxController {
     if (activeId == 'investment') {
       return hasCreatedFirstInvestment.value ? 1 : 0;
     }
+    if (activeId == 'liability') {
+      return hasCreatedFirstLiability.value ? 1 : 0;
+    }
     return -1;
   }
 
@@ -154,14 +192,26 @@ class GuidelineController extends GetxController {
     triggerBounce();
   }
 
+  /// Call after the user successfully creates their first liability record.
+  /// Moves the guideline badge from Budget Allocation to the Transaction tab.
+  Future<void> setLiabilityCreated() async {
+    if (hasCreatedFirstLiability.value) return;
+    hasCreatedFirstLiability.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('has_created_first_liability', true);
+    triggerBounce();
+  }
+
   /// Resets all completed guideline tasks, showing the guide banner again.
   Future<void> resetGuideline() async {
     completedTasks.clear();
     CcAppStorage.instance.completedGuidelineTaskIds = [];
     await CcAppStorage.instance.save();
     hasCreatedFirstInvestment.value = false;
+    hasCreatedFirstLiability.value = false;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('has_created_first_investment');
+    await prefs.remove('has_created_first_liability');
     triggerBounce();
   }
 
@@ -192,6 +242,8 @@ class GuidelineController extends GetxController {
         return el.tr(CcLocaleKeys.guideline_banner_desc_first_transaction);
       case 'investment':
         return el.tr(CcLocaleKeys.guideline_banner_desc_investment);
+      case 'liability':
+        return el.tr(CcLocaleKeys.guideline_banner_desc_liability);
       default:
         return el.tr(CcLocaleKeys.guideline_banner_desc_default);
     }

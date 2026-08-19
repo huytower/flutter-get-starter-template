@@ -2269,6 +2269,8 @@ abstract class CcLocaleKeys {
       'guideline.banner_desc_first_transaction';
   static const guideline_banner_desc_investment =
       'guideline.banner_desc_investment';
+  static const guideline_banner_desc_liability =
+      'guideline.banner_desc_liability';
   static const guideline_banner_desc_default = 'guideline.banner_desc_default';
   static const guideline_success_dialog_message =
       'guideline.success_dialog_message';

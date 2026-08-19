@@ -252,6 +252,15 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         onAddLoan: () => controller.openAddLoan(context),
         onMore: (balance) => controller.openLoanActions(context, balance),
         onSeeAll: () => controller.navigateToLoanList(context),
+        showGuidelineBadge: Get.isRegistered<GuidelineController>()
+            ? Get.find<GuidelineController>().isTaskActive('liability') &&
+                  !Get.find<GuidelineController>()
+                      .hasCreatedFirstLiability
+                      .value
+            : false,
+        badgeColor: Get.isRegistered<GuidelineController>()
+            ? Get.find<GuidelineController>().currentColor
+            : null,
       );
     });
   }

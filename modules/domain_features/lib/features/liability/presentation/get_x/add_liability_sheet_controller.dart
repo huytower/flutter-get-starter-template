@@ -9,6 +9,7 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../../domain/usecases/create_liability_usecase.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
@@ -192,6 +193,11 @@ class AddLiabilitySheetController extends CcGetController {
             context: context,
             message: el.tr(CcLocaleKeys.common_done),
           );
+
+          // Guideline: update status so the badge moves to the Transaction tab
+          if (Get.isRegistered<GuidelineController>()) {
+            Get.find<GuidelineController>().setLiabilityCreated();
+          }
         }
       },
       (error) {

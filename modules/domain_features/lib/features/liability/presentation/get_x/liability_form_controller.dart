@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../transaction/presentation/get_x/quick_entry_mixin.dart';
 import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
@@ -453,6 +454,11 @@ class LiabilityFormController extends TransactionFormController
           if (Get.isRegistered<WalletController>()) {
             Get.find<WalletController>().loadWallets();
           }
+
+          // Guideline: complete liability task
+          if (Get.isRegistered<GuidelineController>()) {
+            Get.find<GuidelineController>().completeTask('liability');
+          }
         },
         (error) => CcSnackBarHelper.showErrorSnackBar(
           context: context,
@@ -512,6 +518,11 @@ class LiabilityFormController extends TransactionFormController
         getIt<ScheduleLiabilityRemindersUseCase>().call(updatedLoan);
         resetForm();
         await refreshParent();
+
+        // Guideline: complete liability task
+        if (Get.isRegistered<GuidelineController>()) {
+          Get.find<GuidelineController>().completeTask('liability');
+        }
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
         context: context,

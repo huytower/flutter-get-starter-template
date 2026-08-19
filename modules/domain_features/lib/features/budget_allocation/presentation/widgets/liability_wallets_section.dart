@@ -11,6 +11,8 @@ class LiabilityWalletsSection extends StatelessWidget {
     required this.onAddLoan,
     required this.onMore,
     required this.onSeeAll,
+    this.showGuidelineBadge = false,
+    this.badgeColor,
     super.key,
   });
 
@@ -18,10 +20,13 @@ class LiabilityWalletsSection extends StatelessWidget {
   final VoidCallback onAddLoan;
   final ValueChanged<LiabilityBalanceEntity> onMore;
   final VoidCallback onSeeAll;
+  final bool showGuidelineBadge;
+  final Color? badgeColor;
 
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
+    final dotColor = badgeColor ?? scheme.primary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,9 +38,20 @@ class LiabilityWalletsSection extends StatelessWidget {
             actions: [
               CcInkWell(
                 onTap: onAddLoan,
-                child: const CcIconToken(
-                  Icons.add_circle_outline_rounded,
-                  size: 20,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    const CcIconToken(
+                      Icons.add_circle_outline_rounded,
+                      size: 20,
+                    ),
+                    if (showGuidelineBadge)
+                      Positioned(
+                        right: -2,
+                        top: -2,
+                        child: CcGuidelineBadge(size: 6, color: dotColor),
+                      ),
+                  ],
                 ),
               ),
               if (balances.isNotEmpty) ...[

@@ -113,6 +113,7 @@ class TransactionPage extends CcGetView<TransactionController> {
           TransactionTabBar(
             controller: controller,
             showInvestmentBadge: showInvestmentBadge,
+            showLiabilityBadge: controller.showLiabilityBadge,
           ),
           const CcSpaceSM(),
           Expanded(child: TransactionTabBarView(controller: controller)),

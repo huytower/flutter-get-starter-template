@@ -28,10 +28,12 @@ class TransactionTabBar extends StatelessWidget {
     super.key,
     required this.controller,
     this.showInvestmentBadge = false,
+    this.showLiabilityBadge = false,
   });
 
   final TransactionController controller;
   final bool showInvestmentBadge;
+  final bool showLiabilityBadge;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +86,22 @@ class TransactionTabBar extends StatelessWidget {
       tabs: [
         for (final tab in tabs)
           if (tab == TransactionTabKind.investment && showInvestmentBadge)
+            Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(tab.label(context)),
+                  const SizedBox(width: 4),
+                  CcGuidelineBadge(
+                    size: 6,
+                    color: Get.isRegistered<GuidelineController>()
+                        ? Get.find<GuidelineController>().currentColor
+                        : context.ccColorScheme.primary,
+                  ),
+                ],
+              ),
+            )
+          else if (tab == TransactionTabKind.debtLoan && showLiabilityBadge)
             Tab(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
