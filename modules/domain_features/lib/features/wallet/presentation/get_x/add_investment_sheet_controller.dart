@@ -170,7 +170,7 @@ class AddInvestmentSheetController extends CcGetController {
     }
 
     if (context.mounted) {
-      Navigator.pop(context);
+      Navigator.pop(context, true);
       CcSnackBarHelper.showSuccessSnackBar(
         context: context,
         message: isEditing
