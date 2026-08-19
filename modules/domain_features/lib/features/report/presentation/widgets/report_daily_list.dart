@@ -34,31 +34,27 @@ bool _isInflow(TransactionEntity transaction) {
   }
 }
 
-/// Alpha applied to the "money arrives" leg of Investment/Loan activity, so
-/// both directions read as the same hero color family (matching Budget
-/// Allocation's [BudgetHeroBanner] accents) while staying visually distinct.
-const double _inflowShadeAlpha = 0.5;
-
 /// Per-type accent color: income/expense keep the P&L green/red. Investment
-/// and Loan each reuse their own Budget Allocation hero color
-/// ([PrjColors.investment]/[PrjColors.debtLoan]) — full strength for the
-/// "money leaves" leg, [_inflowShadeAlpha] for the "money arrives" leg — so
-/// they read as one consistent "capital movement" family per category
-/// rather than real P&L when mixed into this list.
-Color _amountColor(TransactionEntity transaction) {
+/// and Liability each reuse their own Budget Allocation hero color
+/// ([ColorScheme.investment]/[ColorScheme.debtLoan]) — full strength for the
+/// "money leaves" (contribute/borrow) leg, 0.8 alpha for the "money arrives"
+/// (return/lend) leg — so they read as one consistent "capital movement"
+/// family per category rather than real P&L when mixed into this list.
+Color _amountColor(BuildContext context, TransactionEntity transaction) {
+  final scheme = context.ccColorScheme;
   switch (transaction.type) {
     case TransactionType.income:
       return PrjColors.success;
     case TransactionType.investmentOut:
-      return PrjColors.investment.withValues(alpha: _inflowShadeAlpha);
+      return scheme.investment;
     case TransactionType.investmentReturn:
-      return PrjColors.investment;
+      return scheme.investmentSecondary;
     case TransactionType.debtLend:
     case TransactionType.debtRepay:
-      return PrjColors.debtLoan.withValues(alpha: _inflowShadeAlpha);
+      return scheme.debtLoanSecondary;
     case TransactionType.debtBorrow:
     case TransactionType.debtCollect:
-      return PrjColors.debtLoan;
+      return scheme.debtLoan;
     case TransactionType.expense:
     default:
       return PrjColors.error;
@@ -200,7 +196,7 @@ class _TransactionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isInflow = _isInflow(transaction);
-    final amountColor = _amountColor(transaction);
+    final amountColor = _amountColor(context, transaction);
     final amountText =
         "${isInflow ? '+' : '-'}${formatVnd(transaction.amount)} đ";
 

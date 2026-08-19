@@ -221,8 +221,14 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         onMore: (wallet) => controller.openWalletActions(context, wallet),
         onSeeAll: () => controller.navigateToInvestmentList(context),
         showGuidelineBadge: Get.isRegistered<GuidelineController>()
-            ? Get.find<GuidelineController>().isTaskActive('investment')
+            ? Get.find<GuidelineController>().isTaskActive('investment') &&
+                  !Get.find<GuidelineController>()
+                      .hasCreatedFirstInvestment
+                      .value
             : false,
+        badgeColor: Get.isRegistered<GuidelineController>()
+            ? Get.find<GuidelineController>().currentColor
+            : null,
       );
     });
   }

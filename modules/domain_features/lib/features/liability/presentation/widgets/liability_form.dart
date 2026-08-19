@@ -2,7 +2,6 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
@@ -30,7 +29,7 @@ class LiabilityForm extends StatelessWidget {
     final controller = Get.find<LiabilityFormController>();
 
     return Obx(() {
-      final accentColor = _accentColor(controller);
+      final accentColor = _accentColor(context, controller);
 
       return Column(
         children: [
@@ -44,14 +43,12 @@ class LiabilityForm extends StatelessWidget {
     });
   }
 
-  // Mirrors report_page.dart: borrow is inflow (full color), lend is
-  // outflow (shaded half-alpha).
-  Color _accentColor(LiabilityFormController controller) {
+  Color _accentColor(BuildContext context, LiabilityFormController controller) {
     final isBorrowSide =
         controller.direction.value == LiabilityDirection.borrow;
     return isBorrowSide
-        ? PrjColors.debtLoan
-        : PrjColors.debtLoan.withValues(alpha: 0.8);
+        ? context.ccColorScheme.debtLoan
+        : context.ccColorScheme.debtLoanSecondary;
   }
 
   Widget _buildScrollableContent(

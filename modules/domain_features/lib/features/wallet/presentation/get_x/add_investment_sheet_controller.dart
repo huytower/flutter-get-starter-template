@@ -10,6 +10,7 @@ import '../../../budget_allocation/presentation/get_x/budget_allocation_controll
 import '../../../category/data/datasources/local/category_seed.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/wallet_entity.dart';
 import 'wallet_controller.dart';
@@ -184,6 +185,11 @@ class AddInvestmentSheetController extends CcGetController {
         type: WalletType.investment,
         categoryId: selectedInvestmentCategory.value?.id,
       );
+
+      // Guideline: update status so the badge moves to the Transaction tab
+      if (Get.isRegistered<GuidelineController>()) {
+        Get.find<GuidelineController>().setInvestmentCreated();
+      }
     }
 
     if (context.mounted) {

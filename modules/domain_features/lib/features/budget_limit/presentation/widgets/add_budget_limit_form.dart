@@ -409,8 +409,8 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
                         _categoryScrollController = controller,
                   ),
                 ],
+                const CcSpaceXS(),
                 if (!_isEdit && _estimatedLimit != null) ...[
-                  const CcSpaceSM(),
                   _buildEstimateSuggestion(context),
                 ],
                 if (_limitLocked)

@@ -372,8 +372,8 @@ class TransactionPageHeader extends StatelessWidget {
     return switch (tab) {
       TransactionTabKind.expense => context.ccColorScheme.error,
       TransactionTabKind.income => PrjColors.success,
-      TransactionTabKind.investment => PrjColors.investment,
-      TransactionTabKind.debtLoan => PrjColors.debtLoan,
+      TransactionTabKind.investment => context.ccColorScheme.investment,
+      TransactionTabKind.debtLoan => context.ccColorScheme.debtLoan,
     };
   }
 }

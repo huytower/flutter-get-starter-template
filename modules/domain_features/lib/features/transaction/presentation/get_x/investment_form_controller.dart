@@ -119,13 +119,10 @@ class InvestmentFormController extends TransactionFormController
       _recomputeMergedItems();
     });
 
-    ever(
-      CategorySettingsController.onCategoriesChanged,
-      (_) {
-        _loadCategories();
-        _recomputeMergedItems();
-      },
-    );
+    ever(CategorySettingsController.onCategoriesChanged, (_) {
+      _loadCategories();
+      _recomputeMergedItems();
+    });
     initQuickEntry();
   }
 
@@ -139,13 +136,9 @@ class InvestmentFormController extends TransactionFormController
 
   Future<void> _loadCategories() async {
     final result = await _getCategories();
-    result.when(
-      (categories) {
-        _cachedCategories.assignAll(categories);
-      },
-      (error) {
-      },
-    );
+    result.when((categories) {
+      _cachedCategories.assignAll(categories);
+    }, (error) {});
   }
 
   /// Refreshes the list of investment assets.
@@ -183,8 +176,7 @@ class InvestmentFormController extends TransactionFormController
       );
       if (wallet != null) {
         selectInvestmentWallet(wallet);
-      } else {
-      }
+      } else {}
     }
   }
 
@@ -195,9 +187,7 @@ class InvestmentFormController extends TransactionFormController
     final categories = _cachedCategories.toList();
     CategoryEntity? matched;
     if (wallet.categoryId != null) {
-      matched = categories.firstWhereOrNull(
-        (c) => c.id == wallet.categoryId,
-      );
+      matched = categories.firstWhereOrNull((c) => c.id == wallet.categoryId);
     }
 
     if (matched == null) {
@@ -211,8 +201,7 @@ class InvestmentFormController extends TransactionFormController
 
     if (matched != null) {
       selectedCategory.value = matched;
-    } else {
-    }
+    } else {}
   }
 
   @override
@@ -255,8 +244,7 @@ class InvestmentFormController extends TransactionFormController
             .firstWhereOrNull((_) => true);
         if (firstAsset != null) {
           selectInvestmentWallet(firstAsset);
-        } else {
-        }
+        } else {}
       }
     }
   }
@@ -363,10 +351,9 @@ class InvestmentFormController extends TransactionFormController
           Get.find<WalletController>().loadWallets();
         }
 
-        // Move the investment guideline badge from Budget Allocation to the
-        // Transaction tab so the user can review their new investment record.
+        // Complete the investment guideline task
         if (Get.isRegistered<GuidelineController>()) {
-          Get.find<GuidelineController>().setInvestmentCreated();
+          Get.find<GuidelineController>().completeTask('investment');
         }
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(

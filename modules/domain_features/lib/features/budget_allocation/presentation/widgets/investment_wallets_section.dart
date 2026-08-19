@@ -14,6 +14,7 @@ class InvestmentWalletsSection extends StatelessWidget {
     required this.onMore,
     required this.onSeeAll,
     this.showGuidelineBadge = false,
+    this.badgeColor,
     super.key,
   });
 
@@ -22,10 +23,12 @@ class InvestmentWalletsSection extends StatelessWidget {
   final ValueChanged<WalletEntity> onMore;
   final VoidCallback onSeeAll;
   final bool showGuidelineBadge;
+  final Color? badgeColor;
 
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
+    final dotColor = badgeColor ?? scheme.primary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +53,7 @@ class InvestmentWalletsSection extends StatelessWidget {
                         top: -2,
                         child: CcGuidelineBadge(
                           size: 6,
-                          color: scheme.primary,
+                          color: dotColor,
                         ),
                       ),
                   ],

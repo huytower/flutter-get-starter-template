@@ -74,14 +74,6 @@ class TransactionController extends CcGetController {
 
   void setTabIndex(int index) {
     selectedTabIndex.value = index;
-    final selectedTab = visibleTabs[index.clamp(0, visibleTabs.length - 1)];
-    if (selectedTab == TransactionTabKind.investment &&
-        Get.isRegistered<GuidelineController>()) {
-      final guideline = Get.find<GuidelineController>();
-      if (guideline.isTaskActive('investment')) {
-        guideline.completeTask('investment');
-      }
-    }
     isHeaderHidden.value = false;
   }
 

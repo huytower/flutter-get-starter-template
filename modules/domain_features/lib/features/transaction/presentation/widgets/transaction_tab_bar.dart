@@ -4,23 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../guideline/guideline_controller.dart';
 import '../get_x/transaction_controller.dart';
 
 extension TransactionTabKindStyle on TransactionTabKind {
   String label(BuildContext context) => switch (this) {
     TransactionTabKind.expense => el.tr(CcLocaleKeys.transaction_expense_slip),
     TransactionTabKind.income => el.tr(CcLocaleKeys.transaction_income_slip),
-    TransactionTabKind.investment => el.tr(
-      CcLocaleKeys.transaction_investment,
-    ),
+    TransactionTabKind.investment => el.tr(CcLocaleKeys.transaction_investment),
     TransactionTabKind.debtLoan => el.tr(CcLocaleKeys.transaction_debt),
   };
 
   Color color(BuildContext context) => switch (this) {
     TransactionTabKind.expense => context.ccColorScheme.error,
     TransactionTabKind.income => PrjColors.success,
-    TransactionTabKind.investment => PrjColors.investment,
-    TransactionTabKind.debtLoan => PrjColors.debtLoan,
+    TransactionTabKind.investment => context.ccColorScheme.investment,
+    TransactionTabKind.debtLoan => context.ccColorScheme.debtLoan,
   };
 }
 
@@ -93,7 +92,9 @@ class TransactionTabBar extends StatelessWidget {
                   const SizedBox(width: 4),
                   CcGuidelineBadge(
                     size: 6,
-                    color: PrjColors.investment,
+                    color: Get.isRegistered<GuidelineController>()
+                        ? Get.find<GuidelineController>().currentColor
+                        : context.ccColorScheme.primary,
                   ),
                 ],
               ),

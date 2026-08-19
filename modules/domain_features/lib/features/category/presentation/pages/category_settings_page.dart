@@ -239,7 +239,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
     return _buildGroupSection(
       group: group,
       categories: cats,
-      accentColor: PrjColors.debtLoan,
+      accentColor: context.ccColorScheme.debtLoan,
     );
   }
 
@@ -252,7 +252,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
     return _buildGroupSection(
       group: group,
       categories: cats,
-      accentColor: PrjColors.investment,
+      accentColor: context.ccColorScheme.investment,
     );
   }
 

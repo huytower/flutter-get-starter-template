@@ -239,8 +239,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
-    gh.factory<_i279.LiabilityFormController>(
-        () => _i279.LiabilityFormController());
     gh.factory<_i594.IncomeFormController>(() => _i594.IncomeFormController());
     gh.lazySingleton<_i994.AiAdviceCacheDataSource>(
         () => _i994.AiAdviceCacheDataSource());
@@ -260,6 +258,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     );
     gh.lazySingleton<_i783.LiabilityLocalDatasource>(
         () => _i783.LiabilityLocalDatasource());
+    gh.lazySingleton<_i279.LiabilityFormController>(
+        () => _i279.LiabilityFormController());
     gh.lazySingleton<_i483.NotificationService>(
         () => _i483.NotificationService());
     gh.lazySingleton<_i755.ProfileLocalDataSource>(
@@ -464,8 +464,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.lazySingleton<_i121.ParseQuickEntryUseCase>(
         () => _i121.ParseQuickEntryUseCase(gh<_i224.GetCategoriesUseCase>()));
-    gh.factory<_i615.CategorySelectionController>(() =>
-        _i615.CategorySelectionController(gh<_i224.GetCategoriesUseCase>()));
     gh.lazySingleton<_i663.GetLiabilityBalancesUseCase>(
         () => _i663.GetLiabilityBalancesUseCase(
               gh<_i813.LiabilityRepository>(),
@@ -487,6 +485,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i1059.CategoryRepository>(),
             ));
+    gh.factory<_i615.CategorySelectionController>(() =>
+        _i615.CategorySelectionController(gh<_i224.GetCategoriesUseCase>()));
     gh.lazySingleton<_i756.UpdateTransactionUseCase>(
         () => _i756.UpdateTransactionUseCase(
               gh<_i1027.TransactionRepository>(),
@@ -549,7 +549,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i270.ProfileRepository>(),
             ));
-    gh.factory<_i971.LiabilityListController>(
+    gh.lazySingleton<_i971.LiabilityListController>(
         () => _i971.LiabilityListController(
               gh<_i663.GetLiabilityBalancesUseCase>(),
               gh<_i813.LiabilityRepository>(),
@@ -630,7 +630,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i483.NotificationService>(),
           gh<_i308.DeleteAccountUseCase>(),
         ));
-    gh.factory<_i451.BudgetAllocationController>(
+    gh.lazySingleton<_i451.BudgetAllocationController>(
         () => _i451.BudgetAllocationController(
               gh<_i229.WalletController>(),
               gh<_i1003.BudgetLimitController>(),

@@ -59,7 +59,18 @@ abstract final class PrjColors {
   static const Color onInfo = CcBaseColors.white100;
 
   static const Color investment = CcBaseColors.yellow600;
+
+  /// Shaded variant for the "money arrives" leg of Investment activity (e.g. Return).
+  static final Color investmentSecondary = CcBaseColors.yellow600.withValues(
+    alpha: 0.8,
+  );
+
   static const Color debtLoan = CcBaseColors.violet600;
+
+  /// Shaded variant for the "money leaves" leg of Liability activity (e.g. Lend/Repay).
+  static final Color debtLoanSecondary = CcBaseColors.violet600.withValues(
+    alpha: 0.8,
+  );
 
   // ===========================================================================
   // SURFACES & BACKGROUNDS
