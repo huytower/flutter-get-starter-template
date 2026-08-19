@@ -330,7 +330,7 @@ class CodegenLoader extends AssetLoader {
       "merchant_match_hint": "Like last time: {label}",
       "location_match_hint": "You're nearby: {label}",
       "quick_entry_label": "Quick entry (AI)",
-      "quick_entry_hint": "spend phone fifty thousand dong cash",
+      "quick_entry_hint": "spend phone 50.000 by cash",
       "quick_entry_parsed_result": "Got it: {label}",
       "quick_entry_could_not_parse":
           "Couldn't understand that — please fill in manually",
@@ -1078,7 +1078,7 @@ class CodegenLoader extends AssetLoader {
       "merchant_match_hint": "Giống lần trước: {label}",
       "location_match_hint": "Bạn đang ở gần đây: {label}",
       "quick_entry_label": "Nhập nhanh (AI)",
-      "quick_entry_hint": "chi điện thoại năm mươi nghìn đồng tiền mặt",
+      "quick_entry_hint": "chi điện thoại 50.000 từ tiền mặt",
       "quick_entry_parsed_result": "Đã nhận diện: {label}",
       "quick_entry_could_not_parse":
           "Không hiểu được nội dung này — vui lòng nhập thủ công",

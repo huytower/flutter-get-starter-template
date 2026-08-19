@@ -300,7 +300,7 @@
                         "merchant_match_hint":  "Gi?ng l?n tru?c: {label}",
                         "location_match_hint":  "B?n dang ? g?n d�y: {label}",
                         "quick_entry_label":  "Nh?p nhanh (AI)",
-                        "quick_entry_hint":  "chi di?n tho?i nam muoi ngh�n d?ng ti?n m?t",
+                        "quick_entry_hint":  "chi di?n tho?i 50.000 từ ti?n m?t",
                         "quick_entry_parsed_result":  "�� nh?n di?n: {label}",
                         "quick_entry_could_not_parse":  "Kh�ng hi?u du?c n?i dung n�y � vui l�ng nh?p th? c�ng",
                         "quick_entry_cloud_consent_message":  "�? hi?u n?i dung n�y, ?ng d?ng c?n g?i t?i d?ch v? AI (Gemini). Ti?p t?c?",
