@@ -37,11 +37,17 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         ),
       ),
       actions: [
-        CcIconToken(
-          controller.walletController.isBalanceVisible.value
-              ? Icons.visibility_outlined
-              : Icons.visibility_off_outlined,
-          size: 16,
+        Obx(
+          () => CcIconButton.bouncing(
+            onTap: controller.walletController.toggleBalanceVisibility,
+            icon: CcIconToken(
+              controller.walletController.isBalanceVisible.value
+                  ? Icons.visibility_outlined
+                  : Icons.visibility_off_outlined,
+              size: 18,
+              color: context.ccColorScheme.onPrimary,
+            ),
+          ),
         ),
         const CcSpaceMD(),
         CcIconButton.bouncing(
