@@ -124,7 +124,7 @@ class ProfileExperienceCard extends StatelessWidget {
                   CcLocaleKeys.profile_level_title,
                   namedArgs: {'level': '$level', 'title': _getLevelTitle()},
                 ),
-                textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+                textStyle: context.ccTextTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: context.ccColorScheme.primary,
                 ),

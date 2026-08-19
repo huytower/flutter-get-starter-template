@@ -316,7 +316,7 @@ class TransactionPageHeader extends StatelessWidget {
     return CcText(
       el.tr(CcLocaleKeys.transaction_title),
       key: const ValueKey('transaction_title'),
-      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+      textStyle: context.ccTextTheme.titleLarge?.copyWith(
         color: context.ccColorScheme.onPrimary,
         fontWeight: CcTypographyParams.bold,
       ),

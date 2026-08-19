@@ -11,7 +11,7 @@ import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
-import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
+import '../../../wallet/export_wallet.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../get_x/liability_form_controller.dart';
 import 'liability_asset_selector.dart';
@@ -51,7 +51,7 @@ class LiabilityForm extends StatelessWidget {
         controller.direction.value == LiabilityDirection.borrow;
     return isBorrowSide
         ? PrjColors.debtLoan
-        : PrjColors.debtLoan.withValues(alpha: 0.5);
+        : PrjColors.debtLoan.withValues(alpha: 0.8);
   }
 
   Widget _buildScrollableContent(

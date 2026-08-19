@@ -66,7 +66,7 @@ class _DisplayNameDialogState extends State<DisplayNameDialog> {
         children: [
           CcText(
             el.tr(CcLocaleKeys.profile_display_name_title),
-            textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+            textStyle: context.ccTextTheme.titleLarge?.copyWith(
               fontWeight: CcTypographyParams.bold,
               color: context.ccColorScheme.primary,
             ),

@@ -186,7 +186,7 @@ class ReportPageHeader extends StatelessWidget {
   Widget _buildPageTitle(BuildContext context) {
     return CcText(
       title,
-      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+      textStyle: context.ccTextTheme.titleLarge?.copyWith(
         color: context.ccColorScheme.onPrimary,
         fontWeight: CcTypographyParams.bold,
       ),

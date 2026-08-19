@@ -59,7 +59,7 @@ class CommentDetailPage extends StatelessWidget with CcViewConfigMixin {
       children: [
         CcText(
           comment.name,
-          textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+          textStyle: context.ccTextTheme.titleLarge?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: context.ccColorScheme.primary,
           ),

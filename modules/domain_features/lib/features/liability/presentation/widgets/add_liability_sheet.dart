@@ -78,7 +78,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
   ) {
     return CcText(
       el.tr(CcLocaleKeys.transaction_record_debt),
-      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+      textStyle: context.ccTextTheme.titleLarge?.copyWith(
         fontWeight: CcTypographyParams.bold,
         color: context.ccColorScheme.primary,
       ),

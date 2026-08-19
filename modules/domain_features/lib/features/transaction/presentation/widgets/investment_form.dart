@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/money_constants.dart';
-import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
+import '../../../wallet/export_wallet.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
 import 'cc_amount_input_section.dart';
@@ -45,8 +45,8 @@ class InvestmentForm extends StatelessWidget {
 
   Color _accentColor(InvestmentDirection direction) =>
       direction == InvestmentDirection.contribute
-      ? PrjColors.investment.withValues(alpha: 0.5)
-      : PrjColors.investment;
+      ? PrjColors.investment
+      : PrjColors.investment.withValues(alpha: 0.8);
 
   Widget _buildScrollableContent(
     BuildContext context,

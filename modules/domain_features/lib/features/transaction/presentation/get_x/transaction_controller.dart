@@ -8,6 +8,7 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
@@ -73,9 +74,14 @@ class TransactionController extends CcGetController {
 
   void setTabIndex(int index) {
     selectedTabIndex.value = index;
-    // The newly selected form starts at scroll offset 0, so ensure the header
-    // is shown (scroll-driven hiding is handled per-form by each form's
-    // TransactionFormController).
+    final selectedTab = visibleTabs[index.clamp(0, visibleTabs.length - 1)];
+    if (selectedTab == TransactionTabKind.investment &&
+        Get.isRegistered<GuidelineController>()) {
+      final guideline = Get.find<GuidelineController>();
+      if (guideline.isTaskActive('investment')) {
+        guideline.completeTask('investment');
+      }
+    }
     isHeaderHidden.value = false;
   }
 
@@ -152,6 +158,13 @@ class TransactionController extends CcGetController {
     if (Get.isRegistered<BudgetAllocationController>()) {
       Get.find<BudgetAllocationController>().loadAll();
     }
+  }
+
+  bool get showInvestmentBadge {
+    if (!Get.isRegistered<GuidelineController>()) return false;
+    final guideline = Get.find<GuidelineController>();
+    return guideline.isTaskActive('investment') &&
+        guideline.hasCreatedFirstInvestment.value;
   }
 
   void openReport(BuildContext context) {

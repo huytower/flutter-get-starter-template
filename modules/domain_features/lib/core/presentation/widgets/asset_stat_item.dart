@@ -30,7 +30,7 @@ class AssetStatItem extends StatelessWidget {
         CcText(
           label,
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
+            color: context.ccColorScheme.onSurfaceVariant.withAlpha(90),
           ),
         ),
         const Spacer(),

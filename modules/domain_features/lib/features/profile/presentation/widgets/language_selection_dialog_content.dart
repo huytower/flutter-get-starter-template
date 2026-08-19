@@ -67,7 +67,7 @@ class _LanguageSelectionDialogContentState
       child: CcText(
         tr(CcLocaleKeys.settings_language),
         maxLines: 1,
-        textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+        textStyle: context.ccTextTheme.titleLarge?.copyWith(
           color: scheme.onPrimary,
           fontWeight: CcTypographyParams.semiBold,
         ),

@@ -373,7 +373,7 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
                       _isEdit
                           ? el.tr(CcLocaleKeys.budget_edit_title)
                           : el.tr(CcLocaleKeys.budget_add_title),
-                      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+                      textStyle: context.ccTextTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: context.ccColorScheme.primary,
                       ),

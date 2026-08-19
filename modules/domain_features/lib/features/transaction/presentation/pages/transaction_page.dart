@@ -102,6 +102,7 @@ class TransactionPage extends CcGetView<TransactionController> {
     return Obx(() {
       final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
       final hidden = keyboardUp || controller.isKeypadOpen.value;
+      final showInvestmentBadge = controller.showInvestmentBadge;
 
       return Column(
         children: [
@@ -109,7 +110,10 @@ class TransactionPage extends CcGetView<TransactionController> {
             duration: const Duration(milliseconds: 200),
             height: hidden ? 0 : headerHeight - overlap,
           ),
-          TransactionTabBar(controller: controller),
+          TransactionTabBar(
+            controller: controller,
+            showInvestmentBadge: showInvestmentBadge,
+          ),
           const CcSpaceSM(),
           Expanded(child: TransactionTabBarView(controller: controller)),
         ],

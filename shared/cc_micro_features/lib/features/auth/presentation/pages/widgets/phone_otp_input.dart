@@ -93,7 +93,7 @@ class _PhoneOtpInputState extends State<PhoneOtpInput> {
                       char,
                       align: Alignment.center,
                       textAlign: TextAlign.center,
-                      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+                      textStyle: context.ccTextTheme.titleLarge?.copyWith(
                         fontWeight: CcTypographyParams.bold,
                         color: context.ccColorScheme.onSurface,
                       ),

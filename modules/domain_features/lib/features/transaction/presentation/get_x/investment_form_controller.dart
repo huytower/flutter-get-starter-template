@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
@@ -360,6 +361,12 @@ class InvestmentFormController extends TransactionFormController
         // Update real-time amount values in the Investment section of Budget Allocation
         if (Get.isRegistered<WalletController>()) {
           Get.find<WalletController>().loadWallets();
+        }
+
+        // Move the investment guideline badge from Budget Allocation to the
+        // Transaction tab so the user can review their new investment record.
+        if (Get.isRegistered<GuidelineController>()) {
+          Get.find<GuidelineController>().setInvestmentCreated();
         }
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(

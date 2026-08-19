@@ -747,6 +747,7 @@ class CodegenLoader extends AssetLoader {
       "banner_desc_budget_limit": "Set spending limits for each category",
       "banner_desc_min_living": "Define your minimum monthly living expenses",
       "banner_desc_first_transaction": "Record your first expense transaction",
+      "banner_desc_investment": "Create your first investment to grow your wealth",
       "banner_desc_default": "You are ready to manage your finances!",
       "success_dialog_message":
           "Congratulations!\nYou have completed the initial setup.",
@@ -1488,6 +1489,7 @@ class CodegenLoader extends AssetLoader {
       "banner_desc_budget_limit": "Đặt ngân sách chi tiêu cho từng danh mục",
       "banner_desc_min_living": "Xác định mức sống tối thiểu hàng tháng",
       "banner_desc_first_transaction": "Ghi chép giao dịch chi tiêu đầu tiên",
+      "banner_desc_investment": "Tạo khoản đầu tư đầu tiên để gia tăng tài sản",
       "banner_desc_default": "Bạn đã sặn sàng quản lý tài chính!",
       "success_dialog_message":
           "Chúc mừng!\nBạn đã hoàn thành thiết lập ban đầu.",
@@ -2264,6 +2266,8 @@ abstract class CcLocaleKeys {
       'guideline.banner_desc_min_living';
   static const guideline_banner_desc_first_transaction =
       'guideline.banner_desc_first_transaction';
+  static const guideline_banner_desc_investment =
+      'guideline.banner_desc_investment';
   static const guideline_banner_desc_default = 'guideline.banner_desc_default';
   static const guideline_success_dialog_message =
       'guideline.success_dialog_message';

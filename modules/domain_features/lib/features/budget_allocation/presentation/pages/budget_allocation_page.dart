@@ -3,11 +3,12 @@ import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_hero_banner.dart';
 import '../widgets/budget_insights_section.dart';
@@ -219,6 +220,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         onAddInvestment: () => controller.openAddInvestment(context),
         onMore: (wallet) => controller.openWalletActions(context, wallet),
         onSeeAll: () => controller.navigateToInvestmentList(context),
+        showGuidelineBadge: Get.isRegistered<GuidelineController>()
+            ? Get.find<GuidelineController>().isTaskActive('investment')
+            : false,
       );
     });
   }

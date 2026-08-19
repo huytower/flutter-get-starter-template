@@ -13,6 +13,7 @@ class InvestmentWalletsSection extends StatelessWidget {
     required this.onAddInvestment,
     required this.onMore,
     required this.onSeeAll,
+    this.showGuidelineBadge = false,
     super.key,
   });
 
@@ -20,6 +21,7 @@ class InvestmentWalletsSection extends StatelessWidget {
   final VoidCallback onAddInvestment;
   final ValueChanged<WalletEntity> onMore;
   final VoidCallback onSeeAll;
+  final bool showGuidelineBadge;
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +37,23 @@ class InvestmentWalletsSection extends StatelessWidget {
             actions: [
               CcInkWell(
                 onTap: onAddInvestment,
-                child: const CcIconToken(
-                  Icons.add_circle_outline_rounded,
-                  size: 20,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    const CcIconToken(
+                      Icons.add_circle_outline_rounded,
+                      size: 20,
+                    ),
+                    if (showGuidelineBadge)
+                      Positioned(
+                        right: -2,
+                        top: -2,
+                        child: CcGuidelineBadge(
+                          size: 6,
+                          color: scheme.primary,
+                        ),
+                      ),
+                  ],
                 ),
               ),
               if (wallets.isNotEmpty) ...[

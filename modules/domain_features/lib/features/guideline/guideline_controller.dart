@@ -6,7 +6,10 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../wallet/domain/entities/wallet_entity.dart';
+import '../wallet/presentation/get_x/wallet_controller.dart';
 import '../user_level/presentation/get_x/user_level_controller.dart';
 import 'guideline_success_dialog.dart';
 
@@ -23,6 +26,7 @@ class GuidelineController extends GetxController {
     'budget_limit', // Budget Allocation -> BudgetLimitPage
     'min_living', // Budget Allocation -> AddBudgetLimitForm (storm icon)
     'first_transaction', // Transaction -> ExpenseForm
+    'investment', // Budget Allocation -> Add Investment + Transaction -> Investment tab
   ];
 
   final Map<String, Color> taskColors = {
@@ -32,12 +36,19 @@ class GuidelineController extends GetxController {
     'budget_limit': Colors.cyan,
     'min_living': Colors.amber,
     'first_transaction': Colors.pink,
+    'investment': Colors.green,
   };
 
   final RxList<String> completedTasks = <String>[].obs;
 
   /// Trigger for the bounce animation on the tab bar.
   final RxInt bounceTrigger = 0.obs;
+
+  /// True once the user has created their first investment position.
+  /// Controls where the investment guideline badge points:
+  /// - false -> Budget Allocation tab + Add Investment button
+  /// - true  -> Transaction tab + Investment record
+  final RxBool hasCreatedFirstInvestment = false.obs;
 
   @override
   void onInit() {
@@ -46,12 +57,36 @@ class GuidelineController extends GetxController {
     if (saved != null) {
       completedTasks.assignAll(saved);
     }
+    _restoreInvestmentStatus();
+  }
+
+  Future<void> _restoreInvestmentStatus() async {
+    if (currentTaskId != 'investment') return;
+    if (hasCreatedFirstInvestment.value) return;
+
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('has_created_first_investment') ?? false) {
+      hasCreatedFirstInvestment.value = true;
+      return;
+    }
+
+    try {
+      final walletController = getIt<WalletController>();
+      if (walletController.wallets.any((w) => w.type == WalletType.investment)) {
+        hasCreatedFirstInvestment.value = true;
+        await prefs.setBool('has_created_first_investment', true);
+      }
+    } catch (_) {
+      // WalletController not ready yet; will be checked on next signal.
+    }
   }
 
   bool isTaskCompleted(String taskId) => completedTasks.contains(taskId);
 
   String? get currentTaskId {
+    final level = _userLevelController.status.value.level;
     for (final taskId in taskSequence) {
+      if (taskId == 'investment' && level < 2) continue;
       if (!completedTasks.contains(taskId)) {
         return taskId;
       }
@@ -87,6 +122,9 @@ class GuidelineController extends GetxController {
     if (activeId == 'first_transaction') {
       return 1; // Transaction tab
     }
+    if (activeId == 'investment') {
+      return hasCreatedFirstInvestment.value ? 1 : 0;
+    }
     return -1;
   }
 
@@ -102,13 +140,18 @@ class GuidelineController extends GetxController {
     CcAppStorage.instance.completedGuidelineTaskIds = completedTasks.toList();
     await CcAppStorage.instance.save();
 
-    // Trigger level refresh so the progress bar in ProfileExperienceCard updates
     unawaited(_userLevelController.refresh());
+  }
 
-    if (currentTaskId == null) {
-      // All tasks completed! Show the congrats dialog.
-      Get.dialog(const GuidelineSuccessDialog(), barrierDismissible: true);
-    }
+  /// Call after the user successfully creates their first investment
+  /// position. Moves the guideline badge from Budget Allocation to the
+  /// Transaction tab so they can review their new investment record.
+  Future<void> setInvestmentCreated() async {
+    if (hasCreatedFirstInvestment.value) return;
+    hasCreatedFirstInvestment.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('has_created_first_investment', true);
+    triggerBounce();
   }
 
   /// Resets all completed guideline tasks, showing the guide banner again.
@@ -116,6 +159,9 @@ class GuidelineController extends GetxController {
     completedTasks.clear();
     CcAppStorage.instance.completedGuidelineTaskIds = [];
     await CcAppStorage.instance.save();
+    hasCreatedFirstInvestment.value = false;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('has_created_first_investment');
     triggerBounce();
   }
 
@@ -144,6 +190,8 @@ class GuidelineController extends GetxController {
         return el.tr(CcLocaleKeys.guideline_banner_desc_min_living);
       case 'first_transaction':
         return el.tr(CcLocaleKeys.guideline_banner_desc_first_transaction);
+      case 'investment':
+        return el.tr(CcLocaleKeys.guideline_banner_desc_investment);
       default:
         return el.tr(CcLocaleKeys.guideline_banner_desc_default);
     }

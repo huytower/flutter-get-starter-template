@@ -77,6 +77,7 @@ class FinancialRunwayWidget extends StatelessWidget {
         maxLines: 5,
         textStyle: context.ccTextTheme.labelSmall?.copyWith(
           color: context.ccColorScheme.onPrimary.withOpacity(0.8),
+          fontSize: context.respFontSize(9),
           shadows: [
             Shadow(
               color: Colors.black.withValues(alpha: 0.3),

@@ -117,7 +117,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
       controller.isEditing
           ? el.tr(CcLocaleKeys.wallet_edit_title)
           : el.tr(CcLocaleKeys.wallet_add_title),
-      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+      textStyle: context.ccTextTheme.titleLarge?.copyWith(
         fontWeight: CcTypographyParams.bold,
         color: context.ccColorScheme.primary,
       ),

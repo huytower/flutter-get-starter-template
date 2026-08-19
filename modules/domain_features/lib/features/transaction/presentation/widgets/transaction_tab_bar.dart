@@ -25,9 +25,14 @@ extension TransactionTabKindStyle on TransactionTabKind {
 }
 
 class TransactionTabBar extends StatelessWidget {
-  const TransactionTabBar({super.key, required this.controller});
+  const TransactionTabBar({
+    super.key,
+    required this.controller,
+    this.showInvestmentBadge = false,
+  });
 
   final TransactionController controller;
+  final bool showInvestmentBadge;
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +82,25 @@ class TransactionTabBar extends StatelessWidget {
         fontWeight: CcTypographyParams.bold,
       ),
       labelPadding: EdgeInsets.zero,
-      tabs: [for (final tab in tabs) Tab(text: tab.label(context))],
+      tabs: [
+        for (final tab in tabs)
+          if (tab == TransactionTabKind.investment && showInvestmentBadge)
+            Tab(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(tab.label(context)),
+                  const SizedBox(width: 4),
+                  CcGuidelineBadge(
+                    size: 6,
+                    color: PrjColors.investment,
+                  ),
+                ],
+              ),
+            )
+          else
+            Tab(text: tab.label(context)),
+      ],
     );
   }
 }

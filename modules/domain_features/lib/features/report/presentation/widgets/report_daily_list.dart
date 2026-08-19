@@ -128,7 +128,7 @@ class _DailyGroup extends StatelessWidget {
               children: [
                 CcText(
                   el.DateFormat('dd').format(date),
-                  textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+                  textStyle: context.ccTextTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),

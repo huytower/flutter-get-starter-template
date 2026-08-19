@@ -80,7 +80,7 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
       controller.isEditing
           ? el.tr(CcLocaleKeys.wallet_investment_edit_title)
           : el.tr(CcLocaleKeys.transaction_record_investment),
-      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
+      textStyle: context.ccTextTheme.titleLarge?.copyWith(
         fontWeight: CcTypographyParams.bold,
         color: context.ccColorScheme.primary,
       ),
