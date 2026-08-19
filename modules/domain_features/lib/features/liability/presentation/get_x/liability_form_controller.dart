@@ -41,7 +41,7 @@ class LoanInstallmentDraft {
 /// Consolidated Loan/Debt form: handles recording transactions against
 /// existing loans (Repay/Collect) or completing a new loan's details.
 /// Consolidated with the Dashboard's Liability section quantity.
-@injectable
+@lazySingleton
 class LiabilityFormController extends TransactionFormController
     with QuickEntryMixin {
   @override

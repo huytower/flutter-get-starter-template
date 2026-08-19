@@ -680,6 +680,7 @@
                       "banner_desc_budget_limit":  "Set spending limits for each category",
                       "banner_desc_min_living":  "Define your minimum monthly living expenses",
                       "banner_desc_first_transaction":  "Record your first expense transaction",
+                      "banner_desc_investment":  "Create your first investment to grow your wealth",
                       "banner_desc_default":  "You are ready to manage your finances!",
                       "success_dialog_message":  "Congratulations!\nYou have completed the initial setup.",
                       "reset_confirm_desc":  "You have {count} completed tasks. Resetting will undo all progress.",

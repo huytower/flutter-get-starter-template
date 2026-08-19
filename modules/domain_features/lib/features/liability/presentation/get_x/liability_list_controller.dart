@@ -11,7 +11,7 @@ import '../../domain/repositories/liability_repository.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
 import 'liability_form_controller.dart';
 
-@injectable
+@lazySingleton
 class LiabilityListController extends CcGetController {
   LiabilityListController(
     this._getLiabilityBalances,

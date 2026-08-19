@@ -24,7 +24,7 @@ import '../../../wallet/presentation/widgets/add_liquid_sheet.dart';
 import '../widgets/edit_wallet_sheet.dart';
 import '../widgets/wallet_delete_confirmation_dialog.dart';
 
-@injectable
+@lazySingleton
 class BudgetAllocationController extends CcGetController {
   BudgetAllocationController(
     this.walletController,
@@ -251,6 +251,9 @@ class BudgetAllocationController extends CcGetController {
   Future<void> loadLiabilities() async {
     final result = await _getLoanBalances();
     result.when((balances) {
+      debugPrint(
+        '[BUDGET_ALLOC_CTRL] loadLiabilities: fetched ${balances.length} items',
+      );
       final unique = <String, LiabilityBalanceEntity>{};
       for (final b in balances) {
         unique[b.liability.id] = b;

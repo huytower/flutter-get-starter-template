@@ -225,6 +225,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   Widget _buildLiabilityWalletsSection(BuildContext context) {
     return Obx(() {
+      debugPrint(
+        '[BUDGET_ALLOC_PAGE] _buildLiabilityWalletsSection Obx rebuild, loanBalances=${controller.loanBalances.length}, userLevel=${controller.userLevel.status.value.level}',
+      );
       final status = controller.userLevel.status.value;
       final canShow = status.canUseDebtLoan;
 
