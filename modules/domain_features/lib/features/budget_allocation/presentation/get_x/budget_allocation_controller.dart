@@ -62,8 +62,8 @@ class BudgetAllocationController extends CcGetController {
     context.router.push(const LiabilityListRoute());
   }
 
-  Future<void> openAddWallet(BuildContext context) async {
-    final created = await showModalBottomSheet<bool>(
+  void openAddWallet(BuildContext context) {
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
@@ -72,13 +72,10 @@ class BudgetAllocationController extends CcGetController {
       ),
       builder: (_) => const AddLiquidSheet(),
     );
-    if (created == true) {
-      await loadAll();
-    }
   }
 
-  Future<void> openAddInvestment(BuildContext context) async {
-    final created = await showModalBottomSheet<bool>(
+  void openAddInvestment(BuildContext context) {
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
@@ -87,13 +84,10 @@ class BudgetAllocationController extends CcGetController {
       ),
       builder: (_) => const AddInvestmentSheet(),
     );
-    if (created == true) {
-      await loadAll();
-    }
   }
 
-  Future<void> openAddLoan(BuildContext context) async {
-    final created = await showModalBottomSheet<bool>(
+  void openAddLoan(BuildContext context) {
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
@@ -102,9 +96,6 @@ class BudgetAllocationController extends CcGetController {
       ),
       builder: (_) => const AddLiabilitySheet(),
     );
-    if (created == true) {
-      await loadLiabilities();
-    }
   }
 
   void openLoanActions(BuildContext context, LiabilityBalanceEntity balance) {
@@ -124,8 +115,8 @@ class BudgetAllocationController extends CcGetController {
     );
   }
 
-  Future<void> _editWallet(BuildContext context, WalletEntity wallet) async {
-    final updated = await showModalBottomSheet<bool>(
+  void _editWallet(BuildContext context, WalletEntity wallet) {
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
@@ -134,16 +125,10 @@ class BudgetAllocationController extends CcGetController {
       ),
       builder: (_) => AddLiquidSheet(wallet: wallet),
     );
-    if (updated == true) {
-      await loadAll();
-    }
   }
 
-  Future<void> _editInvestment(
-    BuildContext context,
-    WalletEntity wallet,
-  ) async {
-    final updated = await showModalBottomSheet<bool>(
+  void _editInvestment(BuildContext context, WalletEntity wallet) {
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
@@ -152,9 +137,6 @@ class BudgetAllocationController extends CcGetController {
       ),
       builder: (_) => AddInvestmentSheet(wallet: wallet),
     );
-    if (updated == true) {
-      await loadAll();
-    }
   }
 
   void _confirmDelete(BuildContext context, WalletEntity wallet) {

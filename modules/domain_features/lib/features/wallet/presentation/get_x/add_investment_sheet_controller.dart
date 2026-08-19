@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
+import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../category/data/datasources/local/category_seed.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
@@ -170,7 +171,13 @@ class AddInvestmentSheetController extends CcGetController {
     }
 
     if (context.mounted) {
-      Navigator.pop(context, true);
+      // Refresh related controllers immediately to reflect memory changes
+      _walletController.loadWallets();
+      if (Get.isRegistered<BudgetAllocationController>()) {
+        Get.find<BudgetAllocationController>().loadAll();
+      }
+
+      Navigator.pop(context);
       CcSnackBarHelper.showSuccessSnackBar(
         context: context,
         message: isEditing

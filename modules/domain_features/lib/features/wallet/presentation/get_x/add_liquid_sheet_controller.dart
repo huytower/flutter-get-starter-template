@@ -9,6 +9,7 @@ import '../../../../core/constant/emergency_fund_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
+import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
@@ -219,7 +220,13 @@ class AddLiquidSheetController extends CcGetController {
       }
 
       if (context.mounted) {
-        Navigator.pop(context, true);
+        // Refresh related controllers immediately to reflect memory changes
+        _walletController.loadWallets();
+        if (Get.isRegistered<BudgetAllocationController>()) {
+          Get.find<BudgetAllocationController>().loadAll();
+        }
+
+        Navigator.pop(context);
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: isEditing
