@@ -35,7 +35,11 @@ class InvestmentAssetSelector extends StatelessWidget {
         const CcSpaceXS(),
         Obx(() {
           if (controller.isLoadingMerged.value) {
-            return _buildShimmerList(context);
+            return CcCategoryShimmerList(
+              height: context.respDim(95),
+              verticalPadding: context.respDim(4),
+              separator: const CcSpaceMD(),
+            );
           }
 
           // Capture items list to track its changes in this scope.
@@ -201,45 +205,6 @@ class InvestmentAssetSelector extends StatelessWidget {
             color: isSelected ? activeColor : scheme.onSurfaceVariant,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildShimmerList(BuildContext context) {
-    return SizedBox(
-      height: context.respDim(95),
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-          vertical: context.respDim(4),
-        ),
-        itemCount: 5,
-        separatorBuilder: (context, index) => const CcSpaceMD(),
-        itemBuilder: (context, index) => Container(
-          width: context.respDim(68),
-          padding: EdgeInsets.all(context.respDim(10)),
-          decoration: BoxDecoration(
-            color: context.ccColorScheme.onSurface.withAlpha(10),
-            borderRadius: context.brLg,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CcShimmer(
-                width: context.respDim(35),
-                height: context.respDim(35),
-                borderRadius: context.brMd,
-              ),
-              const CcSpaceXS(),
-              CcShimmer(
-                width: context.respDim(40),
-                height: context.respDim(10),
-                borderRadius: context.brXs,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

@@ -62,64 +62,17 @@ class CategorySelectionSection extends StatelessWidget {
     controller.refreshSelection();
 
     return Obx(() {
-      if (controller.isLoading.value) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTitle(context),
-            const CcSpaceXS(),
-            _buildShimmerList(context),
-          ],
-        );
-      }
-
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildTitle(context),
           const CcSpaceXS(),
-          _buildCategoryList(context, controller),
+          controller.isLoading.value
+              ? const CcCategoryShimmerList()
+              : _buildCategoryList(context, controller),
         ],
       );
     });
-  }
-
-  Widget _buildShimmerList(BuildContext context) {
-    return SizedBox(
-      height: context.respDim(75),
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-        ),
-        itemCount: 5,
-        separatorBuilder: (context, index) => const CcSpaceSM(),
-        itemBuilder: (context, index) => Container(
-          width: context.respDim(68),
-          padding: EdgeInsets.all(context.respDim(10)),
-          decoration: BoxDecoration(
-            color: context.ccColorScheme.onSurface.withAlpha(10),
-            borderRadius: context.brLg,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CcShimmer(
-                width: context.respDim(35),
-                height: context.respDim(35),
-                borderRadius: context.brMd,
-              ),
-              const CcSpaceXS(),
-              CcShimmer(
-                width: context.respDim(40),
-                height: context.respDim(10),
-                borderRadius: context.brXs,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   Widget _buildTitle(BuildContext context) {
@@ -186,8 +139,8 @@ class CategorySelectionSection extends StatelessWidget {
           if (isSelected)
             Positioned.fill(
               child: CcGlassyGradientBackground(
-                centerColor: activeColor.withAlpha(30),
-                endColor: activeColor.withAlpha(50),
+                centerColor: activeColor.withAlpha(20),
+                endColor: activeColor.withAlpha(40),
               ),
             ),
           AnimatedContainer(
@@ -195,13 +148,13 @@ class CategorySelectionSection extends StatelessWidget {
             width: context.respDim(75),
             decoration: BoxDecoration(
               color: isSelected
-                  ? activeColor.withAlpha(10)
-                  : scheme.onSurface.withAlpha(10),
+                  ? activeColor.withAlpha(5)
+                  : scheme.onSurface.withAlpha(5),
               borderRadius: context.brLg,
               border: Border.all(
                 color: isSelected
-                    ? activeColor.withAlpha(20)
-                    : scheme.onSurface.withAlpha(10),
+                    ? activeColor.withAlpha(10)
+                    : scheme.onSurface.withAlpha(5),
                 width: context.respDim(1),
               ),
             ),
@@ -249,8 +202,8 @@ class CategorySelectionSection extends StatelessWidget {
       height: context.respDim(35),
       decoration: BoxDecoration(
         color: isSelected
-            ? activeColor.withAlpha(20)
-            : scheme.onSurface.withAlpha(10),
+            ? activeColor.withAlpha(10)
+            : scheme.onSurface.withAlpha(5),
         borderRadius: context.brMd,
       ),
       child: Stack(
@@ -259,8 +212,8 @@ class CategorySelectionSection extends StatelessWidget {
           if (isSelected)
             Positioned.fill(
               child: CcGlassyGradientIcon(
-                centerColor: activeColor.withAlpha(30),
-                endColor: activeColor.withAlpha(50),
+                centerColor: activeColor.withAlpha(20),
+                endColor: activeColor.withAlpha(40),
               ),
             ),
           CcIcon(
