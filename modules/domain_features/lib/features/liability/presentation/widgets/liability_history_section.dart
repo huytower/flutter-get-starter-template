@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
-import '../../../transaction/presentation/widgets/cc_form_label.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import '../get_x/liability_detail_controller.dart';
 import 'liability_date_row.dart';
 

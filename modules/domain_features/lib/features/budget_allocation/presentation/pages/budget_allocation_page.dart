@@ -9,7 +9,6 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
-import '../../../transaction/presentation/widgets/cc_form_label.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_hero_banner.dart';
 import '../widgets/budget_insights_section.dart';
@@ -236,9 +235,6 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   Widget _buildLiabilityWalletsSection(BuildContext context) {
     return Obx(() {
-      debugPrint(
-        '[BUDGET_ALLOC_PAGE] _buildLiabilityWalletsSection Obx rebuild, loanBalances=${controller.loanBalances.length}, userLevel=${controller.userLevel.status.value.level}',
-      );
       final status = controller.userLevel.status.value;
       final canShow = status.canUseDebtLoan;
 

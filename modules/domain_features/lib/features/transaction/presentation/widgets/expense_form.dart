@@ -12,7 +12,6 @@ import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
 import '../get_x/expense_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
-import 'cc_form_label.dart';
 import 'money_keypad_panel.dart';
 import 'transaction_form_container.dart';
 

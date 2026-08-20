@@ -56,15 +56,9 @@ class LiabilityWalletsSection extends StatelessWidget {
               ),
               if (balances.isNotEmpty) ...[
                 const CcSpaceSM(),
-                CcInkWell(
+                CcTextButton(
+                  text: el.tr(CcLocaleKeys.wallet_see_all),
                   onTap: onSeeAll,
-                  child: CcText(
-                    el.tr(CcLocaleKeys.wallet_see_all),
-                    textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                      color: scheme.primary,
-                      fontWeight: CcTypographyParams.semiBold,
-                    ),
-                  ),
                 ),
               ],
             ],

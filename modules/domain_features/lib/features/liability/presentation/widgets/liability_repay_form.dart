@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
-import '../../../transaction/presentation/widgets/cc_form_label.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';

@@ -8,7 +8,7 @@ import '../../../wallet/export_wallet.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
 import 'cc_amount_input_section.dart';
-import 'cc_form_label.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'investment_asset_selector.dart';
 import 'investment_direction_toggle.dart';
 import 'money_keypad_panel.dart';

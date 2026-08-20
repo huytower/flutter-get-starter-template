@@ -27,12 +27,9 @@ class BudgetLimitPreviewSection extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CcText(
-                el.tr(CcLocaleKeys.budget_this_month),
-                textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                  fontWeight: CcTypographyParams.bold,
-                  color: scheme.onBackground,
-                ),
+              CcFormLabel(
+                text: el.tr(CcLocaleKeys.budget_this_month),
+                color: scheme.onBackground,
               ),
               Row(
                 children: [
@@ -70,16 +67,10 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const CcSpaceSM(),
-                        CcInkWell(
+                        CcTextButton(
+                          text: el.tr(CcLocaleKeys.budget_see_all),
                           onTap: () =>
                               context.router.push(const BudgetLimitRoute()),
-                          child: CcText(
-                            el.tr(CcLocaleKeys.budget_see_all),
-                            textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                              color: scheme.primary,
-                              fontWeight: CcTypographyParams.semiBold,
-                            ),
-                          ),
                         ),
                       ],
                     );

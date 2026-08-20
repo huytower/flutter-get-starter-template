@@ -53,16 +53,10 @@ class LiquidWalletsSection extends StatelessWidget {
                 ),
               if (showAddButton) const CcSpaceSM(),
               if (wallets.isNotEmpty)
-                CcInkWell(
+                CcTextButton(
+                  text: el.tr(CcLocaleKeys.wallet_see_all),
                   onTap: () =>
                       context.router.push(const LiquidWalletListRoute()),
-                  child: CcText(
-                    el.tr(CcLocaleKeys.wallet_see_all),
-                    textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                      color: scheme.primary,
-                      fontWeight: CcTypographyParams.semiBold,
-                    ),
-                  ),
                 ),
             ],
           ),

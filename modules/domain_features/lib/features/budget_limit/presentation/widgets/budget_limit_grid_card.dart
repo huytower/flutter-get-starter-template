@@ -117,7 +117,12 @@ class BudgetLimitGridCard extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              const Positioned.fill(child: CcGlassyGradientIcon()),
+              Positioned.fill(
+                child: CcGlassyGradientIcon(
+                  centerColor: iconColor.withAlpha(10),
+                  endColor: iconColor.withAlpha(20),
+                ),
+              ),
               Icon(
                 iconData,
                 size: context.respIconSize(baseSize: 20),
@@ -126,7 +131,7 @@ class BudgetLimitGridCard extends StatelessWidget {
             ],
           ),
         ),
-        const CcSpaceXS(),
+        const CcSpaceSM(),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
