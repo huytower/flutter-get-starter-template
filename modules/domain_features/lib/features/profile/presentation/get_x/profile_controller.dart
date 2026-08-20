@@ -190,15 +190,6 @@ class ProfileController extends CcGetController {
     await _updateSettings(updated);
   }
 
-  /// Debug/QA override — unlocks Investment + Debt/Loan (LV3) instantly,
-  /// regardless of actual reconciliation/budget/cash-flow progress.
-  Future<void> setForceFullAccess(bool value) async {
-    final updated = settings.value.copyWith(forceFullAccess: value);
-    settings.value = updated;
-    await _updateSettings(updated);
-    await userLevel.refresh();
-  }
-
   Future<void> setThemeMode(bool isDarkMode) async {
     final updated = settings.value.copyWith(isDarkMode: isDarkMode);
     settings.value = updated;

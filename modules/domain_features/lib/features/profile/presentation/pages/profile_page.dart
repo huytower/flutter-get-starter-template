@@ -83,9 +83,8 @@ class ProfilePage extends CcGetView<ProfileController> {
                                 )
                               : const SizedBox.shrink(),
                         ),
-                        const CcSpaceXL(),
                         _buildFooter(context),
-                        const CcSpaceXL(),
+                        const CcSpaceXS(),
                       ],
                     ),
                   ),
@@ -146,27 +145,6 @@ class ProfilePage extends CcGetView<ProfileController> {
           onTap: () => controller.pickWeeklyAuditDay(context),
         ),
       ),
-      if (CcFeatureFlags.isVipModeEnabled)
-        Obx(
-          () => ProfileSettingsTile(
-            icon: Icons.lock_open_rounded,
-            label: el.tr(CcLocaleKeys.profile_force_full_access),
-            subtitle: el.tr(CcLocaleKeys.profile_force_full_access_subtitle),
-            showChevron: false,
-            trailingWidget: SizedBox(
-              height: context.respIconSize(baseSize: 20),
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: Switch(
-                  value: controller.settings.value.forceFullAccess,
-                  onChanged: controller.setForceFullAccess,
-                  activeColor: context.ccColorScheme.primary,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-              ),
-            ),
-          ),
-        ),
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.notifications_rounded,
@@ -314,36 +292,34 @@ class ProfilePage extends CcGetView<ProfileController> {
           const CcSpaceSM(),
           CcText(
             el.tr(CcLocaleKeys.app_slogan),
-            textStyle: textTheme.bodyMedium?.copyWith(
+            maxLines: 2,
+            textStyle: textTheme.bodySmall?.copyWith(
               color: scheme.onSurfaceVariant.withOpacity(0.8),
             ),
             textAlign: TextAlign.center,
             align: Alignment.center,
           ),
-          const CcSpaceMD(),
+          const CcSpaceXS(),
           CcText(
-            el.tr(CcLocaleKeys.app_copyright),
-            textStyle: textTheme.bodySmall?.copyWith(
-              color: scheme.onSurfaceVariant.withOpacity(0.6),
-            ),
-            textAlign: TextAlign.center,
+            '· ${el.tr(CcLocaleKeys.app_copyright)}',
             align: Alignment.center,
+            textStyle: textTheme.labelSmall?.copyWith(
+              color: scheme.onSurfaceVariant.withOpacity(0.6),
+              fontWeight: FontWeight.w400,
+            ),
           ),
-          const CcSpaceMD(),
           _buildContactBox(
             context,
             role: el.tr(CcLocaleKeys.app_role_hr),
             name: el.tr(CcLocaleKeys.app_author_hr_name),
             email: el.tr(CcLocaleKeys.app_author_hr_email),
           ),
-          const CcSpaceSM(),
           _buildContactBox(
             context,
             role: el.tr(CcLocaleKeys.app_role_tech),
             name: el.tr(CcLocaleKeys.app_author_tech_name),
             email: el.tr(CcLocaleKeys.app_author_tech_email),
           ),
-          const CcSpaceSM(),
           CcText(
             el.tr(CcLocaleKeys.app_address),
             textStyle: textTheme.labelSmall?.copyWith(
@@ -351,18 +327,6 @@ class ProfilePage extends CcGetView<ProfileController> {
             ),
             textAlign: TextAlign.center,
             align: Alignment.center,
-          ),
-          const CcSpaceMD(),
-          Obx(
-            () => CcText(
-              'v${controller.appVersion.value}',
-              textStyle: textTheme.labelSmall?.copyWith(
-                color: scheme.onSurfaceVariant.withOpacity(0.4),
-                letterSpacing: 0.5,
-              ),
-              textAlign: TextAlign.center,
-              align: Alignment.center,
-            ),
           ),
         ],
       ),
@@ -390,42 +354,35 @@ class ProfilePage extends CcGetView<ProfileController> {
           ),
         );
       },
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Flexible(
-              child: Text.rich(
-                TextSpan(
-                  text: '$role: $name · ',
-                  style: baseStyle.copyWith(
-                    color: scheme.onSurface,
-                    fontWeight: FontWeight.w300,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: email,
-                      style: baseStyle.copyWith(
-                        color: scheme.primary,
-                        fontWeight: FontWeight.w300,
-                      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Flexible(
+            child: Text.rich(
+              TextSpan(
+                text: '$role · ',
+                style: baseStyle.copyWith(color: scheme.onSurface),
+                children: [
+                  TextSpan(
+                    text: email,
+                    style: baseStyle.copyWith(
+                      color: scheme.primary,
+                      fontWeight: FontWeight.w400,
                     ),
-                  ],
-                ),
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
             ),
-            const CcSpaceXS(),
-            Icon(
-              Icons.copy_rounded,
-              size: 16,
-              color: scheme.onSurfaceVariant.withOpacity(0.6),
-            ),
-          ],
-        ),
+          ),
+          const CcSpaceXS(),
+          Icon(
+            Icons.copy_rounded,
+            size: 16,
+            color: scheme.onSurfaceVariant.withOpacity(0.6),
+          ),
+        ],
       ),
     );
   }

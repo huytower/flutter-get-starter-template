@@ -32,7 +32,6 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       weeklyAuditDayChangedAt: fields[12] as DateTime?,
       levelFeatureAnchorAt: fields[13] as DateTime?,
       isVip: fields[14] as bool?,
-      forceFullAccess: fields[15] as bool?,
       highestUserLevelReached: (fields[16] as num?)?.toInt(),
       firstLaunchAt: fields[17] as DateTime?,
       cloudBackupReminderSentAt: fields[18] as DateTime?,
@@ -46,7 +45,7 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
   @override
   void write(BinaryWriter writer, CcAppStorage obj) {
     writer
-      ..writeByte(23)
+      ..writeByte(22)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)
@@ -77,8 +76,6 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..write(obj.levelFeatureAnchorAt)
       ..writeByte(14)
       ..write(obj.isVip)
-      ..writeByte(15)
-      ..write(obj.forceFullAccess)
       ..writeByte(16)
       ..write(obj.highestUserLevelReached)
       ..writeByte(17)
@@ -135,7 +132,6 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
       ? null
       : DateTime.parse(json['levelFeatureAnchorAt'] as String),
   isVip: json['isVip'] as bool?,
-  forceFullAccess: json['forceFullAccess'] as bool?,
   highestUserLevelReached: (json['highestUserLevelReached'] as num?)?.toInt(),
   firstLaunchAt: json['firstLaunchAt'] == null
       ? null
@@ -167,7 +163,6 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
           ?.toIso8601String(),
       'levelFeatureAnchorAt': instance.levelFeatureAnchorAt?.toIso8601String(),
       'isVip': instance.isVip,
-      'forceFullAccess': instance.forceFullAccess,
       'highestUserLevelReached': instance.highestUserLevelReached,
       'firstLaunchAt': instance.firstLaunchAt?.toIso8601String(),
       'cloudBackupReminderSentAt': instance.cloudBackupReminderSentAt

@@ -8,7 +8,6 @@ class ProfileSettingsEntity {
     this.weeklyAuditDayChangedAt,
     this.levelFeatureAnchorAt,
     this.isVip = false,
-    this.forceFullAccess = false,
     this.highestUserLevelReached = 1,
     this.firstLaunchAt,
     this.cloudBackupReminderSentAt,
@@ -42,10 +41,6 @@ class ProfileSettingsEntity {
   /// Manual VIP flag (no real IAP/store billing infra exists yet). Lifts the
   /// free-tier cap on the number of Investment items / Loan records.
   final bool isVip;
-
-  /// Debug/QA override — when true, the user-level feature reports LV3 (all
-  /// features unlocked) regardless of actual progress. Independent of [isVip].
-  final bool forceFullAccess;
 
   /// Highest LV1-3 user level ever computed. Level is monotonic — never
   /// decreases once reached — so the user-level usecase re-applies this
@@ -87,7 +82,6 @@ class ProfileSettingsEntity {
     DateTime? weeklyAuditDayChangedAt,
     DateTime? levelFeatureAnchorAt,
     bool? isVip,
-    bool? forceFullAccess,
     int? highestUserLevelReached,
     DateTime? firstLaunchAt,
     DateTime? cloudBackupReminderSentAt,
@@ -106,7 +100,6 @@ class ProfileSettingsEntity {
         weeklyAuditDayChangedAt ?? this.weeklyAuditDayChangedAt,
     levelFeatureAnchorAt: levelFeatureAnchorAt ?? this.levelFeatureAnchorAt,
     isVip: isVip ?? this.isVip,
-    forceFullAccess: forceFullAccess ?? this.forceFullAccess,
     highestUserLevelReached:
         highestUserLevelReached ?? this.highestUserLevelReached,
     firstLaunchAt: firstLaunchAt ?? this.firstLaunchAt,

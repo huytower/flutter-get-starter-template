@@ -108,13 +108,6 @@ class GetUserLevelStatusUseCase {
       level = settings.highestUserLevelReached;
     }
 
-    // Debug/QA override — unlocks everything regardless of actual progress.
-    // The underlying progress fields below stay real (still useful for the
-    // Profile screen), only the reported level is forced.
-    if (settings.forceFullAccess) {
-      level = 3;
-    }
-
     return Success(
       UserLevelStatusEntity(
         level: level,

@@ -97,12 +97,6 @@ class CcAppStorage extends HiveObject {
   @HiveField(14)
   bool? isVip;
 
-  /// Debug/QA override — when true, the user-level feature reports LV3
-  /// (all features unlocked) regardless of actual reconciliation/budget/
-  /// cash-flow progress. Independent of [isVip], which only lifts item caps.
-  @HiveField(15)
-  bool? forceFullAccess;
-
   /// Highest LV1-3 user level ever computed. Level is monotonic — never
   /// decreases once reached — so this floor is re-applied on every
   /// recomputation even if the live signals (streak/budgets/cash-flow)
@@ -156,7 +150,6 @@ class CcAppStorage extends HiveObject {
     this.weeklyAuditDayChangedAt,
     this.levelFeatureAnchorAt,
     this.isVip,
-    this.forceFullAccess,
     this.highestUserLevelReached,
     this.firstLaunchAt,
     this.cloudBackupReminderSentAt,

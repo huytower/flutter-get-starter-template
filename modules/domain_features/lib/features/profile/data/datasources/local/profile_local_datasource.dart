@@ -36,7 +36,6 @@ class ProfileLocalDataSource {
       weeklyAuditDayChangedAt: s.weeklyAuditDayChangedAt,
       levelFeatureAnchorAt: s.levelFeatureAnchorAt,
       isVip: s.isVip ?? false,
-      forceFullAccess: s.forceFullAccess ?? false,
       highestUserLevelReached: s.highestUserLevelReached ?? 1,
       firstLaunchAt: s.firstLaunchAt,
       cloudBackupReminderSentAt: s.cloudBackupReminderSentAt,
@@ -58,7 +57,6 @@ class ProfileLocalDataSource {
     s.weeklyAuditDayChangedAt = entity.weeklyAuditDayChangedAt;
     s.levelFeatureAnchorAt = entity.levelFeatureAnchorAt;
     s.isVip = entity.isVip;
-    s.forceFullAccess = entity.forceFullAccess;
     s.highestUserLevelReached = entity.highestUserLevelReached;
     s.firstLaunchAt = entity.firstLaunchAt;
     s.cloudBackupReminderSentAt = entity.cloudBackupReminderSentAt;
