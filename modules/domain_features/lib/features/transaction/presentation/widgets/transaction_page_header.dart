@@ -88,7 +88,6 @@ class TransactionPageHeader extends StatelessWidget {
             ],
           ),
         ),
-        const CcSpaceSM(),
 
         // The header height is a fixed fraction of screen height (see
         // TransactionPage), so the banner's Expanded slot is a hard budget.
@@ -96,15 +95,10 @@ class TransactionPageHeader extends StatelessWidget {
         // returns a parse) can exceed that budget on smaller screens — wrap
         // in a SingleChildScrollView so it scrolls that sliver instead of
         // throwing a RenderFlex overflow.
-        Expanded(
-          child: CcSymmetricPadding(
-            horizontal: CcPaddingParams.PAGE_MD,
-            child: SingleChildScrollView(
-              child: Obx(() => buildBanner(context, guideline)),
-            ),
-          ),
+        CcSymmetricPadding(
+          horizontal: CcPaddingParams.PAGE_MD,
+          child: Obx(() => buildBanner(context, guideline)),
         ),
-        const CcSpaceSM(),
       ],
     );
   }
