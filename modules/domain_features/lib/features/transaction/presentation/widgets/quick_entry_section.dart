@@ -56,18 +56,10 @@ class QuickEntrySection extends StatelessWidget {
   }
 
   Widget _buildInputContent(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: context.respPadding(16)),
-      child: Row(
-        children: [
-          _buildTrailingIcons(context),
-          const CcSpaceSM(),
-          // Input field
-          Expanded(child: _buildTextField(context)),
-          const CcSpaceSM(),
-          _buildVoiceIcon(context),
-        ],
-      ),
+    return CcInputBarLayout(
+      leading: _buildTrailingIcons(context),
+      middle: _buildTextField(context),
+      trailing: _buildVoiceIcon(context),
     );
   }
 
@@ -82,19 +74,18 @@ class QuickEntrySection extends StatelessWidget {
           controller: controller,
           enabled: !isParsing,
           maxLines: 1,
+          textAlign: TextAlign.start,
           textInputAction: TextInputAction.done,
           onSubmitted: onSubmitted,
-          style: textTheme.bodyLarge?.copyWith(
-            fontSize: context.respFontSize(16),
-            color: scheme.onSurface.withOpacity(0.75),
+          style: textTheme.labelSmall?.copyWith(
+            color: scheme.onSurface.withValues(alpha: 0.75),
           ),
           decoration: InputDecoration(
             isCollapsed: true,
             border: InputBorder.none,
             hintText: el.tr(CcLocaleKeys.quick_entry_hint),
-            hintStyle: textTheme.bodyLarge?.copyWith(
-              fontSize: context.respFontSize(16),
-              color: scheme.onSurface.withOpacity(0.4),
+            hintStyle: textTheme.labelSmall?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.4),
             ),
           ),
         );
