@@ -26,7 +26,8 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final isBorrowSide = controller.direction.value == LiabilityDirection.borrow;
+      final isBorrowSide =
+          controller.direction.value == LiabilityDirection.borrow;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -55,7 +56,7 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
                   : LiabilityRepaymentMethod.lumpSum,
             ),
           ),
-          const CcSpaceLG(),
+          const CcSpaceSM(),
           if (controller.repaymentMethod.value ==
               LiabilityRepaymentMethod.installment)
             _InstallmentSchedule(
@@ -81,7 +82,8 @@ class _InstallmentSchedule extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isBorrowSide = controller.direction.value == LiabilityDirection.borrow;
+    final isBorrowSide =
+        controller.direction.value == LiabilityDirection.borrow;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -198,5 +200,3 @@ class _ReminderToggle extends StatelessWidget {
     });
   }
 }
-
-

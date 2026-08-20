@@ -70,14 +70,11 @@ class IncomeForm extends StatelessWidget {
       },
       child: SingleChildScrollView(
         controller: controller.scrollController,
-        padding: EdgeInsets.symmetric(
-          vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildCategorySection(controller, accentColor),
-            const CcSpaceLG(),
+            const CcSpaceSM(),
             _buildFormFields(context, controller, guideline, accentColor),
           ],
         ),
@@ -117,9 +114,9 @@ class IncomeForm extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAmountSection(context, controller, accentColor),
-          const CcSpaceLG(),
+          const CcSpaceSM(),
           _buildWalletSection(context, controller, accentColor),
-          const CcSpaceLG(),
+          const CcSpaceSM(),
           TransactionAdditionalDetailsSection(
             isExpanded: controller.showMoreDetails.value,
             onToggle: controller.toggleMoreDetails,
@@ -130,7 +127,7 @@ class IncomeForm extends StatelessWidget {
             hasNoteText: controller.noteController.text.isNotEmpty,
             activeColor: accentColor,
           ),
-          const CcSpaceXL(),
+          const CcSpaceSM(),
           TransactionSubmitButton(
             text: el.tr(CcLocaleKeys.transaction_record_income),
             isSubmitting: controller.isSubmitting.value,
@@ -145,7 +142,7 @@ class IncomeForm extends StatelessWidget {
                   )
                 : null,
           ),
-          const CcSpaceLG(),
+          const CcSpaceXS(),
         ],
       ),
     );
@@ -196,17 +193,14 @@ class IncomeForm extends StatelessWidget {
     IncomeFormController controller,
     Color accentColor,
   ) {
-    return SafeArea(
-      top: false,
-      child: MoneyKeypadPanel(
-        onKeyPress: controller.handleKeyPress,
-        onDelete: controller.handleDelete,
-        onClear: () => controller.amountStr.value = '0',
-        suggestions: controller.quickAmounts,
-        onSuggestion: (value) => controller.amountStr.value = value.toString(),
-        onDone: controller.hideKeypad,
-        activeColor: accentColor,
-      ),
+    return MoneyKeypadPanel(
+      onKeyPress: controller.handleKeyPress,
+      onDelete: controller.handleDelete,
+      onClear: () => controller.amountStr.value = '0',
+      suggestions: controller.quickAmounts,
+      onSuggestion: (value) => controller.amountStr.value = value.toString(),
+      onDone: controller.hideKeypad,
+      activeColor: accentColor,
     );
   }
 }

@@ -64,9 +64,6 @@ class CcWalletStripCard extends StatelessWidget {
       builder: (scrollController) => ListView.separated(
         scrollDirection: Axis.horizontal,
         controller: scrollController,
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-        ),
         itemCount: itemCount,
         separatorBuilder: (_, _) => const CcSpaceSM(),
         itemBuilder: (context, index) {

@@ -96,14 +96,11 @@ class _ExpenseFormState extends State<ExpenseForm> {
       },
       child: SingleChildScrollView(
         controller: controller.scrollController,
-        padding: EdgeInsets.symmetric(
-          vertical: context.respPadding(CcPaddingParams.PAGE_XS),
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildCategorySection(controller, accentColor),
-            const CcSpaceLG(),
+            const CcSpaceSM(),
             _buildFormFields(context, controller, guideline, accentColor),
           ],
         ),
@@ -143,9 +140,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAmountSection(context, controller, accentColor),
-          const CcSpaceLG(),
+          const CcSpaceSM(),
           _buildWalletSection(context, controller, accentColor),
-          const CcSpaceLG(),
+          const CcSpaceSM(),
           TransactionAdditionalDetailsSection(
             isExpanded: controller.showMoreDetails.value,
             onToggle: controller.toggleMoreDetails,
@@ -156,7 +153,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
             hasNoteText: controller.noteController.text.isNotEmpty,
             activeColor: accentColor,
           ),
-          const CcSpaceXL(),
+          const CcSpaceSM(),
           TransactionSubmitButton(
             text: el.tr(CcLocaleKeys.transaction_record_expense),
             isSubmitting: controller.isSubmitting.value,
@@ -171,7 +168,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                   )
                 : null,
           ),
-          const CcSpaceLG(),
+          const CcSpaceXS(),
         ],
       ),
     );

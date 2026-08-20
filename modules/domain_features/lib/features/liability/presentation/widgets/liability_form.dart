@@ -63,9 +63,6 @@ class LiabilityForm extends StatelessWidget {
       },
       child: SingleChildScrollView(
         controller: controller.scrollController,
-        padding: EdgeInsets.symmetric(
-          vertical: context.respPadding(CcPaddingParams.SPACE_LG),
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [_buildInitiateSection(context, controller, accentColor)],
@@ -95,20 +92,20 @@ class LiabilityForm extends StatelessWidget {
             index == 0 ? LiabilityDirection.borrow : LiabilityDirection.lend,
           ),
         ),
-        const CcSpaceLG(),
+        const CcSpaceSM(),
         LiabilityAssetSelector(
           controller: controller,
           activeColor: accentColor,
         ),
-        const CcSpaceLG(),
+        const CcSpaceSM(),
         TransactionFormContainer(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildAmountSection(context, controller, accentColor),
-              const CcSpaceLG(),
+              const CcSpaceSM(),
               _buildWalletSection(context, controller, accentColor),
-              const CcSpaceLG(),
+              const CcSpaceSM(),
               Obx(() {
                 final loan = controller.mergedItems
                     .firstWhereOrNull(
@@ -124,7 +121,7 @@ class LiabilityForm extends StatelessWidget {
                         controller: controller,
                         accentColor: accentColor,
                       ),
-                      const CcSpaceLG(),
+                      const CcSpaceSM(),
                     ],
                   );
                 }
@@ -140,7 +137,7 @@ class LiabilityForm extends StatelessWidget {
                 hasNoteText: controller.noteController.text.isNotEmpty,
                 activeColor: accentColor,
               ),
-              const CcSpaceXL(),
+              const CcSpaceSM(),
               TransactionSubmitButton(
                 text: el.tr(CcLocaleKeys.transaction_record_liability),
                 isSubmitting: controller.isSubmitting.value,
@@ -148,7 +145,7 @@ class LiabilityForm extends StatelessWidget {
                 onTap: () => controller.submitForm(context),
                 activeColor: accentColor,
               ),
-              const CcSpaceLG(),
+              const CcSpaceXS(),
             ],
           ),
         ),
@@ -215,7 +212,7 @@ class LiabilityForm extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CcFormLabel(text: label),
-          const CcSpaceSM(),
+          const CcSpaceXS(),
           CcWalletStripCard(
             wallets: controller.wallets,
             selectedWalletId: controller.selectedWalletId.value,
