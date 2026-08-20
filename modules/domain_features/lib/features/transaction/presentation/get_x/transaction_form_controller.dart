@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,6 +7,7 @@ import 'package:get/get.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
 import 'transaction_controller.dart';
 
@@ -183,6 +186,10 @@ abstract class TransactionFormController extends CcGetController {
       await parent.refreshData();
       parent.flashWalletSummary();
       _loadWallets();
+    }
+
+    if (Get.isRegistered<WalletController>()) {
+      unawaited(Get.find<WalletController>().loadWallets());
     }
   }
 

@@ -450,11 +450,6 @@ class LiabilityFormController extends TransactionFormController
           resetForm();
           await refreshParent();
 
-          // Update Dashboard
-          if (Get.isRegistered<WalletController>()) {
-            Get.find<WalletController>().loadWallets();
-          }
-
           // Guideline: complete liability task
           if (Get.isRegistered<GuidelineController>()) {
             Get.find<GuidelineController>().completeTask('liability');

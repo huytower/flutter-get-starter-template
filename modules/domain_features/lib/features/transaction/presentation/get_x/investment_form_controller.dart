@@ -346,11 +346,6 @@ class InvestmentFormController extends TransactionFormController
         resetForm();
         await refreshParent();
 
-        // Update real-time amount values in the Investment section of Budget Allocation
-        if (Get.isRegistered<WalletController>()) {
-          Get.find<WalletController>().loadWallets();
-        }
-
         // Complete the investment guideline task
         if (Get.isRegistered<GuidelineController>()) {
           Get.find<GuidelineController>().completeTask('investment');
