@@ -68,6 +68,7 @@ class QuickEntrySection extends StatelessWidget {
         ],
       ),
       child: Stack(
+        alignment: Alignment.center,
         children: [
           // Widget A: Border outline
           _buildBorderOutline(context, isDark),
@@ -82,28 +83,30 @@ class QuickEntrySection extends StatelessWidget {
   Widget _buildBorderOutline(BuildContext context, bool isDark) {
     final scheme = context.ccColorScheme;
 
-    return Container(
-      height: context.respDim(45),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [
-                  scheme.onPrimary.withOpacity(0.15),
-                  scheme.onPrimary.withOpacity(0.08),
-                ]
-              : [
-                  scheme.onPrimary.withOpacity(0.55),
-                  scheme.onPrimary.withOpacity(0.35),
-                ],
-        ),
-        borderRadius: BorderRadius.circular(context.respDim(16)),
-        border: Border.all(
-          color: scheme.onPrimary.withOpacity(0.85),
-          width: context.respDim(1.5),
+    return CcPadding(
+      Container(
+        height: context.respDim(45),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [
+                    scheme.onPrimary.withOpacity(0.15),
+                    scheme.onPrimary.withOpacity(0.08),
+                  ]
+                : [
+                    scheme.onPrimary.withOpacity(0.55),
+                    scheme.onPrimary.withOpacity(0.35),
+                  ],
+          ),
+          borderRadius: BorderRadius.circular(context.respDim(16)),
         ),
       ),
+      0,
+      16,
+      16,
+      0,
     );
   }
 
