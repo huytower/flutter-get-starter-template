@@ -222,7 +222,7 @@ class InvestmentFormController extends TransactionFormController
 
   Future<void> _loadVipStatus() async {
     final settings = await _getProfileSettings();
-    isVip.value = settings.isVip || CcFeatureFlags.isVipModeEnabled;
+    isVip.value = settings.isVip;
   }
 
   @override

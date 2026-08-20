@@ -7,9 +7,9 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../../domain/usecases/create_liability_usecase.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
@@ -63,7 +63,7 @@ class AddLiabilitySheetController extends CcGetController {
 
   Future<void> _loadVipStatus() async {
     final settings = await _getProfileSettings();
-    isVip.value = settings.isVip || CcFeatureFlags.isVipModeEnabled;
+    isVip.value = settings.isVip;
   }
 
   Future<void> _loadLoanCategories() async {

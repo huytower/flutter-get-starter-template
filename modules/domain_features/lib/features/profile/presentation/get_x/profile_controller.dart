@@ -15,6 +15,7 @@ import 'package:theme/presentation/provider/theme_provider.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../category/export_category.dart';
+import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/notification_service.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
@@ -77,8 +78,7 @@ class ProfileController extends CcGetController {
 
     ever(user, (u) {
       if (u != null) {
-      } else {
-      }
+      } else {}
     });
     _load();
   }
@@ -188,6 +188,30 @@ class ProfileController extends CcGetController {
     final updated = settings.value.copyWith(isVip: value);
     settings.value = updated;
     await _updateSettings(updated);
+
+    // Unlocking full access also enables investment and liability categories
+    // by default so they appear in the UI immediately.
+    if (value) {
+      final keys = CategorySeed.categories
+          .where(
+            (c) =>
+                c.type == CategoryType.investment ||
+                c.type == CategoryType.debtLoan,
+          )
+          .map((c) => c.nameKey)
+          .toList();
+      await enableCategories(keys);
+    }
+
+    // Refresh user level status so gated sections (Investment/Liability)
+    // appear immediately across the app.
+    await userLevel.refresh();
+
+    // If CategorySettingsController is active, reload it to pick up the
+    // newly-enabled categories and updated user level.
+    if (Get.isRegistered<CategorySettingsController>()) {
+      unawaited(Get.find<CategorySettingsController>().load());
+    }
   }
 
   Future<void> setThemeMode(bool isDarkMode) async {

@@ -320,10 +320,6 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     BuildContext context,
     AddLiquidSheetController controller,
   ) {
-    final canUseInvestment =
-        controller.userLevel.status.value.level >= 2 ||
-        CcFeatureFlags.isVipModeEnabled;
-
     final options = [
       (WalletType.bank, el.tr(CcLocaleKeys.wallet_bank)),
       (WalletType.ewallet, el.tr(CcLocaleKeys.wallet_ewallet)),

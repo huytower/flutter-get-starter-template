@@ -147,6 +147,26 @@ class ProfilePage extends CcGetView<ProfileController> {
       ),
       Obx(
         () => ProfileSettingsTile(
+          icon: Icons.lock_open_rounded,
+          label: el.tr(CcLocaleKeys.profile_force_full_access),
+          subtitle: el.tr(CcLocaleKeys.profile_force_full_access_subtitle),
+          showChevron: false,
+          trailingWidget: SizedBox(
+            height: context.respIconSize(baseSize: 20),
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: Switch(
+                value: controller.settings.value.isVip,
+                onChanged: controller.setVip,
+                activeColor: context.ccColorScheme.primary,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          ),
+        ),
+      ),
+      Obx(
+        () => ProfileSettingsTile(
           icon: Icons.notifications_rounded,
           label: el.tr(CcLocaleKeys.profile_reminder),
           subtitle: el.tr(CcLocaleKeys.profile_reminder_subtitle),
@@ -300,14 +320,6 @@ class ProfilePage extends CcGetView<ProfileController> {
             align: Alignment.center,
           ),
           const CcSpaceXS(),
-          CcText(
-            '· ${el.tr(CcLocaleKeys.app_copyright)}',
-            align: Alignment.center,
-            textStyle: textTheme.labelSmall?.copyWith(
-              color: scheme.onSurfaceVariant.withOpacity(0.6),
-              fontWeight: FontWeight.w400,
-            ),
-          ),
           _buildContactBox(
             context,
             role: el.tr(CcLocaleKeys.app_role_hr),

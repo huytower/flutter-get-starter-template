@@ -303,7 +303,7 @@ class WalletController extends CcGetController {
     layoutStatus.value = CcLayoutStatus.loading;
 
     final settings = await _getProfileSettings();
-    isVip.value = settings.isVip || CcFeatureFlags.isVipModeEnabled;
+    isVip.value = settings.isVip;
 
     final result = await _repository.getWallets();
 
@@ -444,17 +444,17 @@ class WalletController extends CcGetController {
 
     final result = await _repository.addWallet(newWallet);
 
-      result.when(
-        (success) {
-          wallets.add(newWallet);
-          _bookBalances[newWallet.id] = newWallet.balance;
-          _calculateTotalBalance();
-          layoutStatus.value = CcLayoutStatus.success;
+    result.when(
+      (success) {
+        wallets.add(newWallet);
+        _bookBalances[newWallet.id] = newWallet.balance;
+        _calculateTotalBalance();
+        layoutStatus.value = CcLayoutStatus.success;
 
-          if (Get.isRegistered<TransactionController>()) {
-            Get.find<TransactionController>().wallets.add(newWallet);
-          }
-        },
+        if (Get.isRegistered<TransactionController>()) {
+          Get.find<TransactionController>().wallets.add(newWallet);
+        }
+      },
       (error) {
         errorMessage.value = error.message;
       },

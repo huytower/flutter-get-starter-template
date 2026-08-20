@@ -1,5 +1,4 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
-import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -87,7 +86,9 @@ class GetUserLevelStatusUseCase {
         completedGuidelineCount >= UserLevelStatusEntity.lv1RequiredGuidelines;
 
     int level = 1;
-    if (streak >= UserLevelStatusEntity.lv3RequiredStreak &&
+    if (settings.isVip) {
+      level = 3;
+    } else if (streak >= UserLevelStatusEntity.lv3RequiredStreak &&
         hasMinBudgets &&
         hasPositiveCashFlow) {
       level = 3;

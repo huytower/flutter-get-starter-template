@@ -9,7 +9,6 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../get_x/category_settings_controller.dart';
-import '../widgets/category_group_section.dart';
 
 class CategorySettingsPage extends StatefulWidget {
   const CategorySettingsPage({super.key});
@@ -93,6 +92,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       return FadePageWrapper(
         child: Column(
           children: [
+            const CcSpaceSM(),
             _buildSubtitle(context),
             Expanded(
               child: ShaderMask(
@@ -121,11 +121,10 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
   Widget _buildSubtitle(BuildContext context) {
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_SM,
-      vertical: CcPaddingParams.SPACE_SM,
       child: CcText(
         el.tr(CcLocaleKeys.category_settings_subtitle),
-        textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant,
+        textStyle: context.ccTextTheme.bodySmall?.copyWith(
+          color: context.ccColorScheme.onSurfaceVariant.withAlpha(80),
         ),
       ),
     );
@@ -139,11 +138,8 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       const investmentGroups = CategorySeed.investmentGroups;
       const debtLoanGroups = CategorySeed.debtLoanGroups;
 
-      // Get user level status for unlock checks - observe status to trigger rebuild
-      final userLevelController = Get.isRegistered<UserLevelController>()
-          ? Get.find<UserLevelController>()
-          : null;
-      final status = userLevelController?.status.value;
+      // Get user level status for unlock checks
+      final status = getIt<UserLevelController>().status.value;
 
       final sections = <Widget>[];
 
@@ -177,7 +173,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       }
 
       // 3. Investment Section - Use status.canUseInvestment (level 2)
-      if (status?.canUseInvestment == true) {
+      if (status.canUseInvestment) {
         sections.add(
           _buildHeader(
             context,
@@ -194,7 +190,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       }
 
       // 4. Debt & Loan Section - Use status.canUseDebtLoan (level 3)
-      if (status?.canUseDebtLoan == true) {
+      if (status.canUseDebtLoan) {
         sections.add(
           _buildHeader(
             context,
@@ -272,14 +268,21 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
     required List<CategoryEntity> categories,
     required Color accentColor,
   }) {
-    return CategoryGroupSection(
-      group: group,
-      categories: categories,
-      isEnabled: (cat) {
-        controller.pending.length;
-        return controller.isEnabled(cat);
-      },
-      onToggle: controller.toggle,
+    return CcCategoryGroupSection(
+      items: categories
+          .map(
+            (c) => CcCategoryGroupItem(
+              labelKey: c.nameKey,
+              iconCode: c.iconCode,
+              iconFamily: c.iconFamily,
+              originalData: c,
+            ),
+          )
+          .toList(),
+      isEnabled: (item) =>
+          controller.isEnabled(item.originalData as CategoryEntity),
+      onToggle: (item) =>
+          controller.toggle(item.originalData as CategoryEntity),
       accentColor: accentColor,
     );
   }
@@ -289,20 +292,18 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
     String title, {
     double topPadding = 8,
   }) {
-    return Padding(
-      padding: EdgeInsets.only(
-        top: context.respPadding(topPadding),
-        left: context.respPadding(CcPaddingParams.PAGE_SM),
-        right: context.respPadding(CcPaddingParams.PAGE_SM),
-        bottom: context.respPadding(CcPaddingParams.SPACE_XS),
-      ),
-      child: CcText(
+    return CcPadding(
+      CcText(
         title,
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           fontWeight: CcTypographyParams.bold,
           color: context.ccColorScheme.primary,
         ),
       ),
+      CcPaddingParams.TITLE_XS,
+      CcPaddingParams.PAGE_SM,
+      CcPaddingParams.PAGE_SM,
+      CcPaddingParams.TITLE_MD,
     );
   }
 }

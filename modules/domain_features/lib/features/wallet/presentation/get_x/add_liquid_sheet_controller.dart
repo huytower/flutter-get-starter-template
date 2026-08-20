@@ -98,8 +98,7 @@ class AddLiquidSheetController extends CcGetController {
     final level = getIt<UserLevelController>().status.value.level;
     final settings = await getIt<GetProfileSettingsUseCase>().call();
     emergencyFundUnlocked.value =
-        CcFeatureFlags.isVipModeEnabled ||
-        (level >= 2 && settings.hasViewedEmergencyFundEbook);
+        settings.isVip || (level >= 2 && settings.hasViewedEmergencyFundEbook);
   }
 
   Future<void> openEmergencyFundEbook(BuildContext context) async {
