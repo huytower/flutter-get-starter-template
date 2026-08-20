@@ -57,7 +57,6 @@ class QuickEntrySection extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(context.respDim(28)),
         boxShadow: [
           BoxShadow(
             color: scheme.shadow.withOpacity(0.06),
@@ -100,12 +99,19 @@ class QuickEntrySection extends StatelessWidget {
                     scheme.onPrimary.withOpacity(0.35),
                   ],
           ),
-          borderRadius: BorderRadius.circular(context.respDim(16)),
+          borderRadius: context.brMd,
+          boxShadow: [
+            BoxShadow(
+              color: scheme.primary.withOpacity(0.1),
+              blurRadius: context.respDim(12),
+              offset: Offset(context.respDim(4), context.respDim(4)),
+            ),
+          ],
         ),
       ),
       0,
-      16,
-      16,
+      8,
+      8,
       0,
     );
   }
@@ -114,14 +120,14 @@ class QuickEntrySection extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     return Container(
-      height: context.respDim(75),
+      height: context.respDim(65),
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(context.respDim(16)),
+        borderRadius: context.brLg,
         border: Border.all(
-          color: scheme.onPrimary.withOpacity(0.85),
-          width: context.respDim(1.5),
+          color: scheme.onPrimary.withOpacity(0.3),
+          width: context.respDim(1),
         ),
       ),
     );
@@ -129,20 +135,15 @@ class QuickEntrySection extends StatelessWidget {
 
   Widget _buildInputContent(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(6),
-        vertical: context.respPadding(4),
-      ),
+      padding: EdgeInsets.symmetric(horizontal: context.respPadding(16)),
       child: Row(
         children: [
-          // Prefix: Voice / Audio icon
-          _buildVoiceIcon(context),
+          _buildTrailingIcons(context),
           const CcSpaceSM(),
           // Input field
           Expanded(child: _buildTextField(context)),
           const CcSpaceSM(),
-          // Suffix: Camera icon + Clear button
-          _buildTrailingIcons(context),
+          _buildVoiceIcon(context),
         ],
       ),
     );
