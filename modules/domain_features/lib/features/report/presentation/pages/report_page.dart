@@ -195,13 +195,7 @@ class ReportPage extends CcGetView<ReportController> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CcText(
-            el.tr(CcLocaleKeys.report_investment_title),
-            textStyle: context.ccTextTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const CcSpaceMD(),
+          const CcSpaceLG(),
           TrendCard(
             title: el.tr(CcLocaleKeys.report_investment_contributed),
             amount: data.totalExpense,
@@ -221,7 +215,6 @@ class ReportPage extends CcGetView<ReportController> {
             isIncome: true,
             icon: Icons.auto_graph_rounded,
           ),
-          const CcSpaceXL(),
         ],
       );
     });
@@ -239,13 +232,7 @@ class ReportPage extends CcGetView<ReportController> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CcText(
-            el.tr(CcLocaleKeys.report_liability_title),
-            textStyle: context.ccTextTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const CcSpaceMD(),
+          const CcSpaceLG(),
           TrendCard(
             title: el.tr(CcLocaleKeys.report_liability_out),
             amount: data.totalExpense,

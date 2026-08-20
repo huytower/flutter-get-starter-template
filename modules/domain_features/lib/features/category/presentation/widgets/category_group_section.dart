@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../../domain/entities/category_entity.dart';
 import '../../domain/entities/category_group_entity.dart';
-import 'category_chip.dart';
 
+/// Presentation-layer wrapper for [CcCategoryGroupSection], binding it to
+/// [CategoryGroupEntity] and [CategoryEntity].
 class CategoryGroupSection extends StatelessWidget {
   final CategoryGroupEntity group;
   final List<CategoryEntity> categories;
@@ -23,62 +24,20 @@ class CategoryGroupSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = accentColor ?? context.ccColorScheme.primary;
-    final bgIcon = categories.isNotEmpty
-        ? iconDataFromCode(
-            categories.first.iconCode,
-            fontFamily: categories.first.iconFamily,
+    return CcCategoryGroupSection(
+      items: categories
+          .map(
+            (c) => CcCategoryGroupItem(
+              labelKey: c.nameKey,
+              iconCode: c.iconCode,
+              iconFamily: c.iconFamily,
+              originalData: c,
+            ),
           )
-        : Icons.category_rounded;
-
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.PAGE_SM,
-      vertical: CcPaddingParams.SPACE_XS,
-      child: ClipRRect(
-        borderRadius: context.brXl,
-        child: Stack(
-          children: [
-            // Tinted Background
-            Positioned.fill(child: Container(color: primary.withOpacity(0.08))),
-            // Watermark Icon
-            Positioned(
-              right: -context.respDim(20),
-              bottom: -context.respDim(20),
-              child: Icon(
-                bgIcon,
-                size: context.respDim(120),
-                color: primary.withOpacity(0.1),
-              ),
-            ),
-            // Horizontal Content
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: context.respDim(18)),
-              child: HorizontalFadeScrollView(
-                height: context.respDim(45),
-                builder: (controller) => ListView.separated(
-                  controller: controller,
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-                  ),
-                  itemCount: categories.length,
-                  separatorBuilder: (_, _) => const CcSpaceSM(),
-                  itemBuilder: (context, index) {
-                    final cat = categories[index];
-                    final enabled = isEnabled(cat);
-                    return CategoryChip(
-                      category: cat,
-                      enabled: enabled,
-                      onTap: () => onToggle(cat),
-                      accentColor: accentColor,
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+          .toList(),
+      isEnabled: (item) => isEnabled(item.originalData as CategoryEntity),
+      onToggle: (item) => onToggle(item.originalData as CategoryEntity),
+      accentColor: accentColor,
     );
   }
 }

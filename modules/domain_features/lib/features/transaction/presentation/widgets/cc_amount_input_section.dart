@@ -60,12 +60,12 @@ class CcAmountInputSection extends StatelessWidget {
       borderRadius: context.brMd,
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
+          horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
           vertical: context.respPadding(CcPaddingParams.SPACE_XS),
         ),
         height: context.respDim(45),
         decoration: BoxDecoration(
-          color: context.ccColorScheme.surfaceVariant,
+          color: context.ccColorScheme.surfaceVariant.withAlpha(80),
           borderRadius: context.brMd,
           border: Border.all(
             color: isKeypadVisible

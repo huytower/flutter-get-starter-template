@@ -73,22 +73,27 @@ class CcWalletStripCard extends StatelessWidget {
           final wallet = wallets[index];
           final isSelected = wallet.id == selectedWalletId;
           return Obx(
-            () => _WalletItem(
-              wallet: wallet,
-              isSelected: isSelected,
-              activeColor: activeColor,
-              onTap: () {
-                if (onWalletSelected != null) {
-                  onWalletSelected!(wallet.id);
-                } else {
-                  context.router.push(const LiquidWalletListRoute());
-                }
-              },
-              onLongPress: onMore != null ? () => onMore!(wallet) : null,
-              balance: controller.isBalanceVisible.value
+            () {
+              // Observe totalBalance to trigger rebuild when balances change
+              controller.totalBalance.value;
+              final balance = controller.isBalanceVisible.value
                   ? controller.bookBalanceOf(wallet.id)
-                  : null,
-            ),
+                  : null;
+              return _WalletItem(
+                wallet: wallet,
+                isSelected: isSelected,
+                activeColor: activeColor,
+                onTap: () {
+                  if (onWalletSelected != null) {
+                    onWalletSelected!(wallet.id);
+                  } else {
+                    context.router.push(const LiquidWalletListRoute());
+                  }
+                },
+                onLongPress: onMore != null ? () => onMore!(wallet) : null,
+                balance: balance,
+              );
+            },
           );
         },
       ),
