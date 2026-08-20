@@ -109,8 +109,8 @@ class CcWalletItem extends StatelessWidget {
         children: [
           Positioned.fill(
             child: CcGlassyGradientIcon(
-              centerColor: activeColor.withValues(alpha: 0.3),
-              endColor: activeColor.withValues(alpha: 0.5),
+              centerColor: activeColor.withValues(alpha: 0.1),
+              endColor: activeColor.withValues(alpha: 0.2),
             ),
           ),
           CcIconToken(

@@ -30,10 +30,10 @@ class LiquidWalletsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcPadding(
+    return CcPadding(
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           CcSectionHeader(
             title: el.tr(titleKey),
             icon: Icons.account_balance_wallet_outlined,
@@ -66,17 +66,18 @@ class LiquidWalletsSection extends StatelessWidget {
                 ),
             ],
           ),
-          CcPaddingParams.SPACE_SM, // bottom
-          CcPaddingParams.SPACE_LG, // left
-          CcPaddingParams.SPACE_MD, // right
-          CcPaddingParams.SPACE_LG, // top
-        ),
-        CcWalletStripCard(
-          wallets: wallets,
-          onMore: onMore,
-          emptyMessageKey: emptyMessageKey,
-        ),
-      ],
+          const CcSpaceXS(),
+          CcWalletStripCard(
+            wallets: wallets,
+            onMore: onMore,
+            emptyMessageKey: emptyMessageKey,
+          ),
+        ],
+      ),
+      CcPaddingParams.SPACE_SM, // bottom
+      CcPaddingParams.SPACE_LG, // left
+      CcPaddingParams.SPACE_MD, // right
+      CcPaddingParams.SPACE_LG, // top
     );
   }
 }
