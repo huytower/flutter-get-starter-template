@@ -200,7 +200,7 @@ class LiabilityFormController extends TransactionFormController
   void selectLoan(LiabilityBalanceEntity balance) {
     selectedLoanId.value = balance.liability.id;
     selectedWalletId.value = balance.liability.walletId;
-    debugPrint('[LIABILITY_FORM] selectLoan: id=${balance.liability.id}, walletId=${balance.liability.walletId}, principal=${balance.liability.principalAmount}, outstanding=${balance.outstandingBalance}');
+    debugPrint('[LIABILITY_FORM] selectLoan: id=${balance.liability.id}, direction=${balance.liability.direction}, walletId=${balance.liability.walletId}, principal=${balance.liability.principalAmount}, outstanding=${balance.outstandingBalance}');
     // Pre-fill category from loan for consistent submit logic
     _loadCategoryForLoan(balance.liability.categoryId);
 
@@ -241,16 +241,19 @@ class LiabilityFormController extends TransactionFormController
     direction.value = value;
     debugPrint('[LIABILITY_FORM] setDirection: $oldDirection -> $value, clearing category/loan selection');
     selectedCategory.value = null;
-    // The other direction's category group no longer applies — a stale
-    // quick-entry prefill from it must not linger into the new group.
     pendingPrefillCategoryId.value = null;
     categoryKey.value++;
     selectedLoanId.value = null;
     loadLiabilities();
-    // quickEntryCategoryGroupIds now points at the new direction's group —
-    // reload the label-lookup cache so quickEntryResultLabel doesn't keep
-    // searching the old (now-stale) group for a category it can't find.
     refreshQuickEntryCategories();
+  }
+
+  @override
+  void setWalletId(String id) {
+    final wallet = wallets.firstWhereOrNull((w) => w.id == id);
+    final balance = wallet?.balance;
+    debugPrint('[LIABILITY_FORM] setWalletId: id=$id, name=${wallet?.name ?? 'unknown'}, balance=$balance');
+    super.setWalletId(id);
   }
 
   void setCategory(CategoryEntity category) {
@@ -422,17 +425,20 @@ class LiabilityFormController extends TransactionFormController
   Future<void> submitForm(BuildContext context) async {
     if (isSubmitting.value || !canSubmit) return;
     isSubmitting.value = true;
+    debugPrint('[LIABILITY_FORM] submitForm: direction=${direction.value}, selectedLoanId=$selectedLoanId, amount=$amountStr, walletId=$selectedWalletId');
 
     final loan = mergedItems
         .firstWhereOrNull((b) => b.liability.id == selectedLoanId.value)
         ?.liability;
     if (loan == null) {
+      debugPrint('[LIABILITY_FORM] submitForm: loan not found, aborting');
       isSubmitting.value = false;
       return;
     }
 
     // Existing loan with principal: Record payment
     if (loan.principalAmount > 0) {
+      debugPrint('[LIABILITY_FORM] submitForm: existing loan repayment, loanId=${loan.id}, isBorrow=${loan.isBorrow}, amount=$amountStr, wallet=$selectedWalletId');
       final params = RecordLoanPaymentParams(
         loanId: loan.id,
         walletId: selectedWalletId.value ?? '',
@@ -443,6 +449,12 @@ class LiabilityFormController extends TransactionFormController
 
       final result = await getIt<RecordLiabilityPaymentUseCase>().call(params);
       isSubmitting.value = false;
+      if (result.isError()) {
+        final error = result.tryGetError()!;
+        debugPrint('[LIABILITY_FORM] submitForm: repayment error type=${error.runtimeType}, messageKey=${error.message}, translated=${el.tr(error.message)}');
+      } else {
+        debugPrint('[LIABILITY_FORM] submitForm: repayment result=success');
+      }
 
       result.when(
         (updatedLoan) async {
@@ -477,6 +489,7 @@ class LiabilityFormController extends TransactionFormController
     final categoryLabel = el.tr(category.nameKey);
     final isInstallment =
         repaymentMethod.value == LiabilityRepaymentMethod.installment;
+    debugPrint('[LIABILITY_FORM] submitForm: new loan, direction=$direction, principal=$principalAmount, category=$categoryLabel, wallet=$selectedWalletId, installment=$isInstallment');
 
     final params = CreateLoanParams(
       loanId: loan.id,
@@ -506,6 +519,12 @@ class LiabilityFormController extends TransactionFormController
 
     final result = await getIt<CreateLiabilityUseCase>().call(params);
     isSubmitting.value = false;
+    if (result.isError()) {
+      final error = result.tryGetError()!;
+      debugPrint('[LIABILITY_FORM] submitForm: create loan error type=${error.runtimeType}, message=${error.message}');
+    } else {
+      debugPrint('[LIABILITY_FORM] submitForm: create loan result=success');
+    }
 
     result.when(
       (updatedLoan) async {

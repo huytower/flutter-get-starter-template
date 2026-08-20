@@ -75,7 +75,7 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
           onCalendarTap: onCalendarTap,
           activeColor: activeColor,
         ),
-        const CcSpaceMD(),
+        const CcSpaceXS(),
         _buildNoteField(context),
       ],
     );
@@ -85,7 +85,8 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
     return CcTextField(
       controller: noteController,
       hintText: el.tr(CcLocaleKeys.transaction_note_hint),
-      maxLines: 1,
+      maxLines: 2,
+      textAlign: TextAlign.start,
       onTap: onNoteTap,
       suffixIcon: Row(
         mainAxisSize: MainAxisSize.min,

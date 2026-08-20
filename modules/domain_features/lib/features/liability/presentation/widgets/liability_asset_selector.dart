@@ -86,7 +86,10 @@ class LiabilityAssetSelector extends StatelessWidget {
                     fontFamily: loan.categoryIconFamily,
                   ),
                   isSelected: isSelected,
-                  onTap: () => controller.selectLoan(balance),
+                  onTap: () {
+                    debugPrint('[LIABILITY_ASSET_SELECTOR] Tapped loan: id=${loan.id}, label=${loan.categoryLabel}, selected=$isSelected');
+                    controller.selectLoan(balance);
+                  },
                 );
               },
             ),

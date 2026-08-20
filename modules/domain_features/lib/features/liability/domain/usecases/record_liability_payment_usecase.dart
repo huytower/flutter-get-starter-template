@@ -100,7 +100,6 @@ class RecordLiabilityPaymentUseCase {
       }
     }
 
-    // Outflow check (Chi ra): Repaying a borrow loan, or lending more on a lend loan.
     final isOutflow =
         (loan.isBorrow && params.isSettlement) ||
         (!loan.isBorrow && !params.isSettlement);

@@ -51,8 +51,10 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
           tooltip: el.tr(CcLocaleKeys.wallet_add_title),
           onTap: () => controller.openForm(context),
         ),
-        Obx(
-          () => Stack(
+        Obx(() {
+          if (!controller.isVip.value) return const SizedBox.shrink();
+
+          return Stack(
             clipBehavior: Clip.none,
             children: [
               CcIconButton.bouncing(
@@ -90,8 +92,8 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
                   );
                 }),
             ],
-          ),
-        ),
+          );
+        }),
       ],
     );
   }
