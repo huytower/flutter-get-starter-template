@@ -137,6 +137,7 @@ class ReportPage extends CcGetView<ReportController> {
                       _buildTrendCards(context, data),
                       _buildInvestmentSection(context),
                       _buildLiabilitySection(context),
+                      const CcSpaceLG(),
                       _buildDailyDetailHeader(context),
                       const CcSpaceLG(),
                       ReportDailyList(

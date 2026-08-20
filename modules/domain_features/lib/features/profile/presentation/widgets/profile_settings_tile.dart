@@ -61,7 +61,7 @@ class ProfileSettingsTile extends StatelessWidget {
                   CcText(
                     label,
                     textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: scheme.onSurface,
                     ),
                   ),
@@ -70,8 +70,7 @@ class ProfileSettingsTile extends StatelessWidget {
                     CcText(
                       subtitle!,
                       textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                        height: 1.4,
+                        color: scheme.onSurfaceVariant.withAlpha(70),
                       ),
                       maxLines: 2,
                     ),
@@ -83,19 +82,20 @@ class ProfileSettingsTile extends StatelessWidget {
               trailingWidget!
             else ...[
               if (trailingLabel != null) ...[
+                const CcSpaceXS(),
                 CcText(
                   trailingLabel!,
-                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                  textStyle: context.ccTextTheme.bodySmall?.copyWith(
                     color: scheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                const CcSpaceXS(),
               ],
               if (showChevron)
                 Icon(
                   Icons.chevron_right_rounded,
                   size: context.respIconSize(baseSize: 20),
-                  color: scheme.outline,
+                  color: scheme.outline.withAlpha(50),
                 ),
             ],
           ],

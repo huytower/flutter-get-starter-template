@@ -216,7 +216,7 @@ class LiabilityFormController extends TransactionFormController
 
   Future<void> _loadVipStatus() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
-    isVip.value = settings.isVip || CcFeatureFlags.isForceFullAccessEnabled;
+    isVip.value = settings.isVip || CcFeatureFlags.isVipModeEnabled;
   }
 
   @override

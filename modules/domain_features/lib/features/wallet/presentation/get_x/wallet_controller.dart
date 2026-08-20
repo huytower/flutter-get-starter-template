@@ -303,7 +303,7 @@ class WalletController extends CcGetController {
     layoutStatus.value = CcLayoutStatus.loading;
 
     final settings = await _getProfileSettings();
-    isVip.value = settings.isVip || CcFeatureFlags.isForceFullAccessEnabled;
+    isVip.value = settings.isVip || CcFeatureFlags.isVipModeEnabled;
 
     final result = await _repository.getWallets();
 

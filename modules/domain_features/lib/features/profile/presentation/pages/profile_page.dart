@@ -172,7 +172,7 @@ class ProfilePage extends CcGetView<ProfileController> {
             ),
           ),
         ),
-      if (CcFeatureFlags.isForceFullAccessEnabled)
+      if (CcFeatureFlags.isVipModeEnabled)
         Obx(
           () => ProfileSettingsTile(
             icon: Icons.lock_open_rounded,

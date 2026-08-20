@@ -98,7 +98,7 @@ class AddLiquidSheetController extends CcGetController {
     final level = getIt<UserLevelController>().status.value.level;
     final settings = await getIt<GetProfileSettingsUseCase>().call();
     emergencyFundUnlocked.value =
-        CcFeatureFlags.isForceFullAccessEnabled ||
+        CcFeatureFlags.isVipModeEnabled ||
         (level >= 2 && settings.hasViewedEmergencyFundEbook);
   }
 

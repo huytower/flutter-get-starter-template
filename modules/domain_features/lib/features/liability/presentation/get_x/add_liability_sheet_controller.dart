@@ -63,7 +63,7 @@ class AddLiabilitySheetController extends CcGetController {
 
   Future<void> _loadVipStatus() async {
     final settings = await _getProfileSettings();
-    isVip.value = settings.isVip || CcFeatureFlags.isForceFullAccessEnabled;
+    isVip.value = settings.isVip || CcFeatureFlags.isVipModeEnabled;
   }
 
   Future<void> _loadLoanCategories() async {

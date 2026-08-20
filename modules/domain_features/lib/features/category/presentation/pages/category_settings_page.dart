@@ -7,6 +7,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../get_x/category_settings_controller.dart';
 import '../widgets/category_group_section.dart';
 
@@ -138,6 +139,12 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       const investmentGroups = CategorySeed.investmentGroups;
       const debtLoanGroups = CategorySeed.debtLoanGroups;
 
+      // Get user level status for unlock checks - observe status to trigger rebuild
+      final userLevelController = Get.isRegistered<UserLevelController>()
+          ? Get.find<UserLevelController>()
+          : null;
+      final status = userLevelController?.status.value;
+
       final sections = <Widget>[];
 
       // 1. Expense Section
@@ -169,33 +176,37 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
         }
       }
 
-      // 3. Investment Section
-      sections.add(
-        _buildHeader(
-          context,
-          el.tr(CcLocaleKeys.category_investment_settings_title),
-          topPadding: 24,
-        ),
-      );
-      for (final group in investmentGroups) {
-        final groupWidget = _buildInvestmentGroup(context, group);
-        if (groupWidget is! SizedBox) {
-          sections.add(groupWidget);
+      // 3. Investment Section - Use status.canUseInvestment (level 2)
+      if (status?.canUseInvestment == true) {
+        sections.add(
+          _buildHeader(
+            context,
+            el.tr(CcLocaleKeys.category_investment_settings_title),
+            topPadding: 24,
+          ),
+        );
+        for (final group in investmentGroups) {
+          final groupWidget = _buildInvestmentGroup(context, group);
+          if (groupWidget is! SizedBox) {
+            sections.add(groupWidget);
+          }
         }
       }
 
-      // 4. Debt & Loan Section
-      sections.add(
-        _buildHeader(
-          context,
-          el.tr(CcLocaleKeys.category_debt_loan_settings_title),
-          topPadding: 24,
-        ),
-      );
-      for (final group in debtLoanGroups) {
-        final groupWidget = _buildDebtLoanGroup(context, group);
-        if (groupWidget is! SizedBox) {
-          sections.add(groupWidget);
+      // 4. Debt & Loan Section - Use status.canUseDebtLoan (level 3)
+      if (status?.canUseDebtLoan == true) {
+        sections.add(
+          _buildHeader(
+            context,
+            el.tr(CcLocaleKeys.category_debt_loan_settings_title),
+            topPadding: 24,
+          ),
+        );
+        for (final group in debtLoanGroups) {
+          final groupWidget = _buildDebtLoanGroup(context, group);
+          if (groupWidget is! SizedBox) {
+            sections.add(groupWidget);
+          }
         }
       }
 
