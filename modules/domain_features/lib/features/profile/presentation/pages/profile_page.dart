@@ -146,32 +146,6 @@ class ProfilePage extends CcGetView<ProfileController> {
           onTap: () => controller.pickWeeklyAuditDay(context),
         ),
       ),
-      // QA-only escape hatches to bypass VIP/LV1-3 gating without real
-      // IAP/billing infra. Gated by ENABLE_QA_DEBUG_TOOLS (.env) rather than
-      // kDebugMode so QA can flip it on in a UAT build; must resolve to
-      // false in .env.prod so it never reaches real users.
-      // TEMPORARILY DISABLED VIP LINE
-      if (CcFeatureFlags.isQaDebugToolsEnabled)
-        Obx(
-          () => ProfileSettingsTile(
-            icon: Icons.workspace_premium_rounded,
-            label: el.tr(CcLocaleKeys.profile_vip),
-            subtitle: el.tr(CcLocaleKeys.profile_vip_subtitle),
-            showChevron: false,
-            trailingWidget: SizedBox(
-              height: context.respIconSize(baseSize: 20),
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: Switch(
-                  value: controller.settings.value.isVip,
-                  onChanged: controller.setVip,
-                  activeColor: context.ccColorScheme.primary,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-              ),
-            ),
-          ),
-        ),
       if (CcFeatureFlags.isVipModeEnabled)
         Obx(
           () => ProfileSettingsTile(
