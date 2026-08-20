@@ -107,124 +107,19 @@ class CategorySelectionSection extends StatelessWidget {
             final category = controller.categories[index];
             final isSelected =
                 controller.selectedCategoryId.value == category.id;
-            return _buildCategoryItem(
-              context,
-              category,
-              isSelected,
-              controller,
+            return CcCategoryItem(
+              iconCode: category.iconCode,
+              iconFamily: category.iconFamily,
+              nameKey: category.nameKey,
+              isSelected: isSelected,
+              activeColor: activeColor,
+              onTap: () {
+                controller.selectCategory(category);
+                onCategorySelected?.call(category);
+              },
             );
           },
         ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryItem(
-    BuildContext context,
-    CategoryEntity category,
-    bool isSelected,
-    CategorySelectionController controller,
-  ) {
-    final scheme = context.ccColorScheme;
-
-    return CcInkWell(
-      onTap: () {
-        controller.selectCategory(category);
-        onCategorySelected?.call(category);
-      },
-      borderRadius: context.brLg,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          if (isSelected)
-            Positioned.fill(
-              child: CcGlassyGradientBackground(
-                centerColor: activeColor.withAlpha(20),
-                endColor: activeColor.withAlpha(40),
-              ),
-            ),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: context.respDim(75),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? activeColor.withAlpha(5)
-                  : scheme.onSurface.withAlpha(5),
-              borderRadius: context.brLg,
-              border: Border.all(
-                color: isSelected
-                    ? activeColor.withAlpha(10)
-                    : scheme.onSurface.withAlpha(5),
-                width: context.respDim(1),
-              ),
-            ),
-            child: CcPadding(
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildCategoryIcon(context, category, isSelected),
-                  const CcSpaceXS(),
-                  CcText(
-                    el.tr(category.nameKey),
-                    textAlign: TextAlign.center,
-                    align: Alignment.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                      color: isSelected ? activeColor : scheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-              4,
-              6,
-              6,
-              4,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryIcon(
-    BuildContext context,
-    CategoryEntity category,
-    bool isSelected,
-  ) {
-    final scheme = context.ccColorScheme;
-
-    return Container(
-      width: context.respDim(35),
-      height: context.respDim(35),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? activeColor.withAlpha(10)
-            : scheme.onSurface.withAlpha(5),
-        borderRadius: context.brMd,
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (isSelected)
-            Positioned.fill(
-              child: CcGlassyGradientIcon(
-                centerColor: activeColor.withAlpha(20),
-                endColor: activeColor.withAlpha(40),
-              ),
-            ),
-          CcIcon(
-            icon: iconDataFromCode(
-              category.iconCode,
-              fontFamily: category.iconFamily,
-            ),
-            size: context.respIconSize(baseSize: 18),
-            color: isSelected ? activeColor : scheme.onSurfaceVariant,
-          ),
-        ],
       ),
     );
   }

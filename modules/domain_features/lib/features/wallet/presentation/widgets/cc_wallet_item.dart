@@ -28,23 +28,27 @@ class CcWalletItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CcInkWell(
+    return CcInteractBtnWrapper(
       onTap: onTap,
-      onLongPress: onLongPress,
-      borderRadius: context.brLg,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          if (isSelected)
-            Positioned.fill(
-              child: CcGlassyGradientBackground(
-                centerColor: activeColor.withValues(alpha: 0.1),
-                endColor: activeColor.withValues(alpha: 0.2),
+      useDebounce: true,
+      isBouncing: true,
+      isEnable: true,
+      child: GestureDetector(
+        onLongPress: onLongPress,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            if (isSelected)
+              Positioned.fill(
+                child: CcGlassyGradientBackground(
+                  centerColor: activeColor.withAlpha(10),
+                  endColor: activeColor.withAlpha(20),
+                ),
               ),
-            ),
-          _buildMainCard(context),
-          _buildGuidelineBadge(context),
-        ],
+            _buildMainCard(context),
+            _buildGuidelineBadge(context),
+          ],
+        ),
       ),
     );
   }
@@ -69,12 +73,19 @@ class CcWalletItem extends StatelessWidget {
   }
 
   Widget _buildMainCard(BuildContext context) {
-    return DecoratedBox(
+    final scheme = context.ccColorScheme;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
-        color: activeColor.withValues(alpha: 0.1),
+        color: isSelected
+            ? activeColor.withAlpha(5)
+            : scheme.onSurface.withAlpha(5),
         borderRadius: context.brLg,
         border: Border.all(
-          color: activeColor.withValues(alpha: isSelected ? 0.5 : 0.1),
+          color: isSelected
+              ? activeColor.withAlpha(10)
+              : scheme.onSurface.withAlpha(5),
           width: context.respDim(1),
         ),
       ),
@@ -88,33 +99,38 @@ class CcWalletItem extends StatelessWidget {
             _buildDesc(context),
           ],
         ),
+        4,
         6,
-        12,
-        12,
-        6,
+        16,
+        4,
       ),
     );
   }
 
   Widget _buildCategoryIcon(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
     return Container(
-      width: context.respDim(32),
-      height: context.respDim(32),
+      width: context.respDim(35),
+      height: context.respDim(35),
       decoration: BoxDecoration(
-        color: activeColor.withValues(alpha: 0.12),
-        borderRadius: context.brLg,
+        color: isSelected
+            ? activeColor.withAlpha(10)
+            : scheme.onSurface.withAlpha(5),
+        borderRadius: context.brMd,
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Positioned.fill(
-            child: CcGlassyGradientIcon(
-              centerColor: activeColor.withValues(alpha: 0.1),
-              endColor: activeColor.withValues(alpha: 0.2),
+          if (isSelected)
+            Positioned.fill(
+              child: CcGlassyGradientIcon(
+                centerColor: activeColor.withAlpha(20),
+                endColor: activeColor.withAlpha(40),
+              ),
             ),
-          ),
           CcIconToken(
-            color: activeColor,
+            color: isSelected ? activeColor : scheme.onSurfaceVariant,
             iconDataFromCode(wallet.iconCode),
             size: 18,
           ),
@@ -134,8 +150,8 @@ class CcWalletItem extends StatelessWidget {
           wallet.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: scheme.onSurfaceVariant.withValues(alpha: 0.6),
+          textStyle: context.ccTextTheme.labelSmall?.copyWith(
+            color: scheme.onSurfaceVariant,
           ),
         ),
         CcText(
@@ -144,7 +160,7 @@ class CcWalletItem extends StatelessWidget {
               : '*****',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+          textStyle: context.ccTextTheme.labelSmall?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: isSelected ? activeColor : scheme.onSurface,
           ),
