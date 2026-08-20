@@ -11,7 +11,14 @@ int loanOutstandingBalance(
 ) {
   var balance = principalAmount;
   for (final txn in loanTransactions) {
+    // The initial leg (creation) is already reflected in [principalAmount].
+    if (txn.id == '${txn.loanId}_init') continue;
+
     switch (txn.type) {
+      case TransactionType.debtBorrow:
+      case TransactionType.debtLend:
+        balance += txn.amount;
+        break;
       case TransactionType.debtRepay:
       case TransactionType.debtCollect:
         balance -= txn.amount;
@@ -20,4 +27,3 @@ int loanOutstandingBalance(
   }
   return balance;
 }
-

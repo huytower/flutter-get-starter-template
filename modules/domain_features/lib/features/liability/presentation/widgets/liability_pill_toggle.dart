@@ -70,7 +70,10 @@ class _LiabilityPillToggleState extends State<LiabilityPillToggle>
       padding: EdgeInsets.all(context.respDim(4)),
       child: TabBar(
         controller: _tabController,
-        onTap: widget.onChanged,
+        onTap: (index) {
+          debugPrint('[LIABILITY_TAB] Direction changed to index=$index, label=${index == 0 ? widget.firstLabel : widget.secondLabel}');
+          widget.onChanged(index);
+        },
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
         splashFactory: NoSplash.splashFactory,

@@ -11,7 +11,6 @@ import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../transaction/presentation/get_x/quick_entry_mixin.dart';
 import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
-import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../../domain/usecases/create_liability_usecase.dart';
@@ -38,6 +37,8 @@ class LoanInstallmentDraft {
     amountController.dispose();
   }
 }
+
+enum LiabilityAction { initiate, settle }
 
 /// Consolidated Loan/Debt form: handles recording transactions against
 /// existing loans (Repay/Collect) or completing a new loan's details.
@@ -67,6 +68,8 @@ class LiabilityFormController extends TransactionFormController
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 
   final RxString direction = LiabilityDirection.borrow.obs;
+  final Rx<LiabilityAction> action = LiabilityAction.initiate.obs;
+
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   @override
   final RxInt categoryKey = 0.obs;
@@ -106,6 +109,7 @@ class LiabilityFormController extends TransactionFormController
   @override
   void onInit() {
     super.onInit();
+    debugPrint('[LIABILITY_FORM] onInit: direction=${direction.value}, loading merged items...');
 
     _loadAll();
 
@@ -150,6 +154,7 @@ class LiabilityFormController extends TransactionFormController
     await _loadVipStatus();
     await loadLiabilities();
     isLoadingMerged.value = false;
+    debugPrint('[LIABILITY_FORM] _loadAll done: mergedItems=${mergedItems.length}, isLoadingMerged=false');
 
     initQuickEntry();
   }
@@ -194,6 +199,8 @@ class LiabilityFormController extends TransactionFormController
 
   void selectLoan(LiabilityBalanceEntity balance) {
     selectedLoanId.value = balance.liability.id;
+    selectedWalletId.value = balance.liability.walletId;
+    debugPrint('[LIABILITY_FORM] selectLoan: id=${balance.liability.id}, walletId=${balance.liability.walletId}, principal=${balance.liability.principalAmount}, outstanding=${balance.outstandingBalance}');
     // Pre-fill category from loan for consistent submit logic
     _loadCategoryForLoan(balance.liability.categoryId);
 
@@ -230,7 +237,9 @@ class LiabilityFormController extends TransactionFormController
 
   void setDirection(String value) {
     if (direction.value == value) return;
+    final oldDirection = direction.value;
     direction.value = value;
+    debugPrint('[LIABILITY_FORM] setDirection: $oldDirection -> $value, clearing category/loan selection');
     selectedCategory.value = null;
     // The other direction's category group no longer applies — a stale
     // quick-entry prefill from it must not linger into the new group.

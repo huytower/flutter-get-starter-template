@@ -14,7 +14,11 @@ import 'get_liability_outstanding_balance_usecase.dart';
 class RecordLoanPaymentParams {
   final String loanId;
 
-  /// Debited (repay) or credited (collect).
+  /// Whether this leg increases (Borrow/Lend) or decreases (Repay/Collect)
+  /// the outstanding balance. Defaults to `true` (decrease).
+  final bool isSettlement;
+
+  /// Debited (repay/lend) or credited (collect/borrow).
   final String walletId;
   final int amount;
   final String? note;
@@ -22,6 +26,7 @@ class RecordLoanPaymentParams {
 
   const RecordLoanPaymentParams({
     required this.loanId,
+    this.isSettlement = true,
     required this.walletId,
     required this.amount,
     this.note,
@@ -29,14 +34,12 @@ class RecordLoanPaymentParams {
   });
 }
 
-/// Records a Trả nợ (on a borrow loan) / Thu nợ (on a lend loan) settlement
-/// leg against an existing loan.
+/// Records a settlement leg (Trả nợ / Thu nợ) or an incremental leg
+/// (Vay thêm / Cho vay thêm) against an existing loan.
 ///
-/// Trả nợ mirrors expense: debits the paying wallet, blocked if it exceeds
-/// the wallet's book balance. Thu nợ mirrors income/`_recordReturn`: credits
-/// the collecting wallet, no balance check. Both are rejected if the amount
-/// exceeds the loan's current outstanding balance, or if the loan is already
-/// settled.
+/// Settlements decrease the outstanding balance and are blocked if the amount
+/// exceeds it. Incremental legs increase the balance and have no loan-side
+/// limit. Both respect standard wallet balance guards for outflows (Chi ra).
 @lazySingleton
 class RecordLiabilityPaymentUseCase {
   RecordLiabilityPaymentUseCase(
@@ -81,20 +84,28 @@ class RecordLiabilityPaymentUseCase {
       return Error(outstandingResult.tryGetError()!);
     }
     final outstanding = outstandingResult.tryGetSuccess()!;
-    if (outstanding <= 0) {
-      return const Error(
-        ValidationFailure(CcLocaleKeys.transaction_validation_loan_settled),
-      );
-    }
-    if (params.amount > outstanding) {
-      return const Error(
-        ValidationFailure(
-          CcLocaleKeys.transaction_validation_amount_exceeds_outstanding,
-        ),
-      );
+
+    if (params.isSettlement) {
+      if (outstanding <= 0) {
+        return const Error(
+          ValidationFailure(CcLocaleKeys.transaction_validation_loan_settled),
+        );
+      }
+      if (params.amount > outstanding) {
+        return const Error(
+          ValidationFailure(
+            CcLocaleKeys.transaction_validation_amount_exceeds_outstanding,
+          ),
+        );
+      }
     }
 
-    if (loan.isBorrow) {
+    // Outflow check (Chi ra): Repaying a borrow loan, or lending more on a lend loan.
+    final isOutflow =
+        (loan.isBorrow && params.isSettlement) ||
+        (!loan.isBorrow && !params.isSettlement);
+
+    if (isOutflow) {
       final balanceResult = await _getWalletBookBalance(params.walletId);
       if (balanceResult.isError()) {
         return Error(balanceResult.tryGetError()!);
@@ -108,11 +119,20 @@ class RecordLiabilityPaymentUseCase {
       }
     }
 
+    final String txnType;
+    if (loan.isBorrow) {
+      txnType = params.isSettlement
+          ? TransactionType.debtRepay
+          : TransactionType.debtBorrow;
+    } else {
+      txnType = params.isSettlement
+          ? TransactionType.debtCollect
+          : TransactionType.debtLend;
+    }
+
     final txn = TransactionEntity(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
-      type: loan.isBorrow
-          ? TransactionType.debtRepay
-          : TransactionType.debtCollect,
+      type: txnType,
       amount: params.amount,
       category: loan.categoryLabel,
       categoryId: loan.categoryId,
@@ -153,5 +173,3 @@ class RecordLiabilityPaymentUseCase {
     return Success(updatedLoan);
   }
 }
-
-
