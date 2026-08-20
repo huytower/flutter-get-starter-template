@@ -142,6 +142,9 @@ class ReportPage extends CcGetView<ReportController> {
                       const CcSpaceSM(),
                       ReportDailyList(
                         transactions: controller.dailyListTransactions,
+                        includeInvestmentAndLiability:
+                            controller.userLevel.status.value.canUseInvestment ||
+                            controller.userLevel.status.value.canUseDebtLoan,
                       ),
                       const CcSpaceSM(),
                       AiAdviceSection(controller: controller),
