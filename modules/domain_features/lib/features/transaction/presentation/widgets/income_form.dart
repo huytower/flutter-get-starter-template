@@ -181,6 +181,7 @@ class IncomeForm extends StatelessWidget {
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
           activeColor: accentColor,
+          defaultBgColor: context.verticalGradient(accentColor),
           onWalletSelected: controller.setWalletId,
         ),
       ],

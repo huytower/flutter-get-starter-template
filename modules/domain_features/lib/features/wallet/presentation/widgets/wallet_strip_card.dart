@@ -16,8 +16,8 @@ import '../get_x/wallet_controller.dart';
 class WalletStripCard extends StatelessWidget {
   final List<WalletEntity> wallets;
   final String? selectedWalletId;
-  final bool showGradient;
   final Color activeColor;
+  final LinearGradient? defaultBgColor;
   final ValueChanged<String>? onWalletSelected;
   final VoidCallback? onAddNew;
   final String? addNewLabel;
@@ -27,8 +27,8 @@ class WalletStripCard extends StatelessWidget {
     super.key,
     required this.wallets,
     this.selectedWalletId,
-    this.showGradient = false,
     this.activeColor = PrjColors.primary,
+    this.defaultBgColor,
     this.onWalletSelected,
     this.onAddNew,
     this.addNewLabel,
@@ -100,8 +100,8 @@ class WalletStripCard extends StatelessWidget {
         name: wallet.name,
         iconCode: wallet.iconCode,
         isSelected: isSelected,
-        showGradient: showGradient,
         activeColor: activeColor,
+        defaultBgColor: defaultBgColor,
         onTap: () => _handleWalletTap(context, wallet.id),
         balanceText: balance != null
             ? TransactionFormHelpers.formatShort(balance)

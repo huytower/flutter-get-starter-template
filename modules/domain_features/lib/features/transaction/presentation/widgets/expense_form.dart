@@ -207,6 +207,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
           activeColor: accentColor,
+          defaultBgColor: context.verticalGradient(accentColor),
           onWalletSelected: controller.setWalletId,
         ),
       ],
