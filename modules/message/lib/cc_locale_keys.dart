@@ -319,8 +319,6 @@ class CodegenLoader extends AssetLoader {
           "No investment items in this category yet — contribute first.",
       "investment_item_vip_locked":
           "Free plan uses the category's default name '{name}'. Upgrade to VIP to set a custom item name.",
-      "hint_reveal_more": "Tap right to reveal Investment/Debt tabs",
-      "hint_back_to_main": "Tap left to return to main tabs",
       "expense_slip": "Expense",
       "income_slip": "Income",
       "category_sub": "Sub-category",
@@ -759,6 +757,22 @@ class CodegenLoader extends AssetLoader {
       "reset_confirm_agree": "View Tutorial",
       "reset_confirm_cancel": "Cancel",
     },
+    "level_lock": {
+      "unlock_at_lv": "UNLOCK AT LV{level}",
+      "remaining_percent": "{percent}% REMAINING",
+      "investment_title": "Track Investment & Accumulation",
+      "investment_desc":
+          "Record stocks, funds, real estate and track ROI directly in the app — unlock by completing spending discipline challenges.",
+      "liability_title": "Debt & Loan Management",
+      "liability_desc":
+          "Track debts, interest rates, and professional repayment schedules — unlock when higher financial discipline is achieved.",
+      "task_setup_budget": "Setup first budget",
+      "task_record_transactions": "Record first 5 transactions",
+      "task_setup_birth_year": "Setup birth year",
+      "task_reconciliation_streak": "Audit discipline {current}/{total} weeks",
+      "task_fixed_budgets": "Setup {current}/{total} fixed budgets",
+      "task_positive_cash_flow": "Positive cash flow this month",
+    },
   };
   static const Map<String, dynamic> _vi = {
     "app": {
@@ -1069,8 +1083,6 @@ class CodegenLoader extends AssetLoader {
       "no_investment_items_hint": "Chưa có khoản đầu tư nào\nNhấn + để thêm ",
       "investment_item_vip_locked":
           "Gói miễn phí dùng tên mặc định theo danh mục '{name}'. Nâng cấp VIP để đặt tên riêng cho khoản đầu tư.",
-      "hint_reveal_more": "Chạm mép phải để mở tab Đầu tư/Vay nợ",
-      "hint_back_to_main": "Chạm mép trái để quay lại tab chính",
       "expense_slip": "Chi tiêu",
       "income_slip": "Thu nhập",
       "category_sub": "Danh mục con",
@@ -1503,6 +1515,22 @@ class CodegenLoader extends AssetLoader {
       "reset_confirm_agree": "Xem hướng dẫn",
       "reset_confirm_cancel": "Hủy",
     },
+    "level_lock": {
+      "unlock_at_lv": "MỞ Ở LV{level}",
+      "remaining_percent": "CÒN {percent}%",
+      "investment_title": "Theo dõi Đầu tư & Tích lũy",
+      "investment_desc":
+          "Ghi nhận cổ phiếu, quỹ, bất động sản và theo dõi ROI ngay trong app — mở khóa khi hoàn thành thử thách kỷ luật chi tiêu.",
+      "liability_title": "Quản lý Nợ & Cho vay",
+      "liability_desc":
+          "Theo dõi các khoản nợ, lãi suất và lịch trả nợ chuyên nghiệp — mở khóa khi đạt được kỷ luật tài chính cao hơn.",
+      "task_setup_budget": "Thiết lập ngân sách đầu tiên",
+      "task_record_transactions": "Ghi chép 5 giao dịch đầu tiên",
+      "task_setup_birth_year": "Thiết lập năm sinh",
+      "task_reconciliation_streak": "Kỷ luật kiểm toán {current}/{total} tuần",
+      "task_fixed_budgets": "Thiết lập {current}/{total} ngân sách mức sống",
+      "task_positive_cash_flow": "Dòng tiền dương trong tháng",
+    },
   };
   static const Map<String, Map<String, dynamic>> mapLocales = {
     "en": _en,
@@ -1825,8 +1853,6 @@ abstract class CcLocaleKeys {
       'transaction.no_investment_items_hint';
   static const transaction_investment_item_vip_locked =
       'transaction.investment_item_vip_locked';
-  static const transaction_hint_back_to_main = 'transaction.hint_back_to_main';
-  static const transaction_hint_reveal_more = 'transaction.hint_reveal_more';
   static const transaction_expense_slip = 'transaction.expense_slip';
   static const transaction_income_slip = 'transaction.income_slip';
   static const transaction_category_sub = 'transaction.category_sub';
@@ -2285,4 +2311,21 @@ abstract class CcLocaleKeys {
   static const guideline_reset_confirm_agree = 'guideline.reset_confirm_agree';
   static const guideline_reset_confirm_cancel =
       'guideline.reset_confirm_cancel';
+
+  static const level_lock_unlock_at_lv = 'level_lock.unlock_at_lv';
+  static const level_lock_remaining_percent = 'level_lock.remaining_percent';
+  static const level_lock_investment_title = 'level_lock.investment_title';
+  static const level_lock_investment_desc = 'level_lock.investment_desc';
+  static const level_lock_liability_title = 'level_lock.liability_title';
+  static const level_lock_liability_desc = 'level_lock.liability_desc';
+  static const level_lock_task_setup_budget = 'level_lock.task_setup_budget';
+  static const level_lock_task_record_transactions =
+      'level_lock.task_record_transactions';
+  static const level_lock_task_setup_birth_year =
+      'level_lock.task_setup_birth_year';
+  static const level_lock_task_reconciliation_streak =
+      'level_lock.task_reconciliation_streak';
+  static const level_lock_task_fixed_budgets = 'level_lock.task_fixed_budgets';
+  static const level_lock_task_positive_cash_flow =
+      'level_lock.task_positive_cash_flow';
 }

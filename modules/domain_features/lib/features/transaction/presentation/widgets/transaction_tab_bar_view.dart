@@ -3,12 +3,13 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../liability/presentation/widgets/liability_form.dart';
 import '../../../liability/presentation/widgets/lend_form.dart';
+import '../../../liability/presentation/widgets/liability_form.dart';
 import '../get_x/transaction_controller.dart';
 import 'expense_form.dart';
 import 'income_form.dart';
 import 'investment_form.dart';
+import 'cc_level_lock_placeholder.dart';
 import 'transaction_tab_bar.dart';
 
 class TransactionTabBarView extends StatelessWidget {
@@ -69,38 +70,6 @@ class TransactionTabBarView extends StatelessWidget {
   }
 
   Widget _buildLockedPlaceholder(BuildContext context, TransactionTabKind tab) {
-    final level = (tab == TransactionTabKind.investment) ? 2 : 3;
-    final message = el.tr(
-      CcLocaleKeys.profile_unlock_at_lv,
-      namedArgs: {'level': level.toString()},
-    );
-
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.lock_person_rounded,
-            size: context.respIconSize(baseSize: 64),
-            color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.2),
-          ),
-          const CcSpaceMD(),
-          CcText(
-            message,
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.4),
-              fontWeight: CcTypographyParams.bold,
-            ),
-          ),
-          const CcSpaceSM(),
-          CcText(
-            tab.label(context),
-            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.3),
-            ),
-          ),
-        ],
-      ),
-    );
+    return CcLevelLockPlaceholder(tab: tab);
   }
 }

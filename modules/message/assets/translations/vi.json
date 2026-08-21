@@ -290,8 +290,6 @@
                         "new_investment_item_hint":  "T�n kho?n d?u tu (vd: Ti?m l?u b�)",
                         "no_investment_items_hint":  "Chua c� kho?n d?u tu n�o\nNh?n + d? th�m ",
                         "investment_item_vip_locked":  "G�i mi?n ph� d�ng t�n m?c d?nh theo danh m?c \u0027{name}\u0027. N�ng c?p VIP d? d?t t�n ri�ng cho kho?n d?u tu.",
-                        "hint_reveal_more": "Chạm mép phải để mở tab Đầu tư/Vay nợ",
-                        "hint_back_to_main": "Chạm mép trái để quay lại tab chính",
                         "expense_slip":  "Chi ti�u",
                         "income_slip":  "Thu nh?p",
                         "category_sub":  "Danh m?c con",
@@ -688,6 +686,20 @@
                       "reset_confirm_desc":  "B?n c� {count} t�c v? d� ho�n th�nh. �?t l?i s? ho�n t�c to�n b? ti?n tr�nh.",
                       "reset_confirm_agree":  "Xem hu?ng d?n",
                       "reset_confirm_cancel":  "H?y"
-                  }
+                  },
+    "level_lock": {
+        "unlock_at_lv": "MỞ Ở LV{level}",
+        "remaining_percent": "CÒN {percent}%",
+        "investment_title": "Theo dõi Đầu tư & Tích lũy",
+        "investment_desc": "Ghi nhận cổ phiếu, quỹ, bất động sản và theo dõi ROI ngay trong app — mở khóa khi hoàn thành thử thách kỷ luật chi tiêu.",
+        "liability_title": "Quản lý Nợ & Cho vay",
+        "liability_desc": "Theo dõi các khoản nợ, lãi suất và lịch trả nợ chuyên nghiệp — mở khóa khi đạt được kỷ luật tài chính cao hơn.",
+        "task_setup_budget": "Thiết lập ngân sách đầu tiên",
+        "task_record_transactions": "Ghi chép 5 giao dịch đầu tiên",
+        "task_setup_birth_year": "Thiết lập năm sinh",
+        "task_reconciliation_streak": "Kỷ luật kiểm toán {current}/{total} tuần",
+        "task_fixed_budgets": "Thiết lập {current}/{total} ngân sách mức sống",
+        "task_positive_cash_flow": "Dòng tiền dương trong tháng"
+    }
 }
 

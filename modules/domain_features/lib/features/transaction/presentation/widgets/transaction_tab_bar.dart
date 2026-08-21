@@ -51,7 +51,6 @@ class TransactionTabBar extends StatelessWidget {
 
     return Obx(() {
       final isSecondaryFront = controller.isSecondaryCardFront.value;
-      final showHint = !controller.hasInteractedWithCardStack.value;
 
       return Container(
         margin: EdgeInsets.symmetric(
@@ -60,7 +59,6 @@ class TransactionTabBar extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (showHint) _buildHintText(context, isSecondaryFront),
             SizedBox(
               height: context.respDim(64),
               child: Stack(
@@ -88,25 +86,6 @@ class TransactionTabBar extends StatelessWidget {
         ),
       );
     });
-  }
-
-  Widget _buildHintText(BuildContext context, bool isSecondaryFront) {
-    final text = isSecondaryFront
-        ? el.tr(CcLocaleKeys.transaction_hint_back_to_main)
-        : el.tr(CcLocaleKeys.transaction_hint_reveal_more);
-
-    return FadeWidget(
-      child: Padding(
-        padding: EdgeInsets.only(bottom: context.respDim(8)),
-        child: CcText(
-          text,
-          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.7),
-            fontStyle: FontStyle.italic,
-          ),
-        ),
-      ),
-    );
   }
 
   Widget _buildCard({

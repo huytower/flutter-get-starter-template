@@ -292,8 +292,6 @@
                         "new_investment_item_hint":  "Item name (e.g. Coffee shop)",
                         "no_investment_items_hint":  "No investment items in this category yet — contribute first.",
                         "investment_item_vip_locked":  "Free plan uses the category\u0027s default name \u0027{name}\u0027. Upgrade to VIP to set a custom item name.",
-                        "hint_reveal_more": "Tap right to reveal Investment/Debt tabs",
-                        "hint_back_to_main": "Tap left to return to main tabs",
                         "expense_slip":  "Expense",
                         "income_slip":  "Income",
                         "category_sub":  "Sub-category",
@@ -690,5 +688,19 @@
                       "reset_confirm_desc":  "You have {count} completed tasks. Resetting will undo all progress.",
                       "reset_confirm_agree":  "View Tutorial",
                       "reset_confirm_cancel":  "Cancel"
-                  }
+                  },
+    "level_lock": {
+        "unlock_at_lv": "UNLOCK AT LV{level}",
+        "remaining_percent": "{percent}% REMAINING",
+        "investment_title": "Track Investment \u0026 Accumulation",
+        "investment_desc": "Record stocks, funds, real estate and track ROI directly in the app — unlock by completing spending discipline challenges.",
+        "liability_title": "Debt \u0026 Loan Management",
+        "liability_desc": "Track debts, interest rates, and professional repayment schedules — unlock when higher financial discipline is achieved.",
+        "task_setup_budget": "Setup first budget",
+        "task_record_transactions": "Record first 5 transactions",
+        "task_setup_birth_year": "Setup birth year",
+        "task_reconciliation_streak": "Audit discipline {current}/{total} weeks",
+        "task_fixed_budgets": "Setup {current}/{total} fixed budgets",
+        "task_positive_cash_flow": "Positive cash flow this month"
+    }
 }
