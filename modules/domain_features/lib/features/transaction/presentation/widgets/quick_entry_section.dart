@@ -138,11 +138,11 @@ class QuickEntrySection extends StatelessWidget {
       icon: Icon(
         isListening ? Icons.mic_rounded : Icons.mic_none_rounded,
         color: isListening ? activeColor : scheme.onSurface.withOpacity(0.45),
-        size: context.respDim(22),
+        size: context.respDim(20),
       ),
       onTap: onMicTap,
-      width: context.respDim(40),
-      height: context.respDim(40),
+      width: context.respDim(30),
+      height: context.respDim(30),
     );
   }
 
@@ -150,10 +150,9 @@ class QuickEntrySection extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     if (isParsing) {
-      return Container(
-        width: context.respDim(36),
-        height: context.respDim(36),
-        padding: EdgeInsets.all(context.respPadding(8)),
+      return SizedBox(
+        width: context.respDim(30),
+        height: context.respDim(30),
         child: Center(
           child: SizedBox(
             width: context.respDim(16),
@@ -183,18 +182,18 @@ class QuickEntrySection extends StatelessWidget {
               controller.clear();
               onClear?.call();
             },
-            width: context.respDim(36),
-            height: context.respDim(36),
+            width: context.respDim(30),
+            height: context.respDim(30),
           ),
         CcIconButton.bouncing(
           icon: Icon(
-            Icons.camera_alt_outlined,
+            Icons.camera_alt,
             color: scheme.onSurface.withOpacity(0.45),
-            size: context.respDim(22),
+            size: context.respDim(20),
           ),
           onTap: onScanTap,
-          width: context.respDim(40),
-          height: context.respDim(40),
+          width: context.respDim(30),
+          height: context.respDim(30),
         ),
       ],
     );

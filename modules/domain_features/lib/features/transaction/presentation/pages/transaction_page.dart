@@ -147,7 +147,6 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
             showInvestmentBadge: showInvestmentBadge,
             showLiabilityBadge: controller.showLiabilityBadge,
           ),
-          const CcSpaceSM(),
           Expanded(
             child: TransactionTabBarView(
               controller: controller,
