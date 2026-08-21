@@ -162,20 +162,18 @@ class LiabilityFormController extends LiabilityBaseFormController {
     if (selectedLoanId.value == balance.liability.id) return;
 
     selectedLoanId.value = balance.liability.id;
-    selectedWalletId.value = balance.liability.walletId;
 
-    // Auto-switch action based on loan state
-    if (balance.liability.principalAmount == 0) {
-      action.value = LiabilityAction.initiate;
-    } else {
-      action.value = LiabilityAction.settle;
+    // Only auto-default the wallet if the user hasn't selected one yet.
+    // This allows flexible cross-wallet borrowing/repayment.
+    if (selectedWalletId.value == null) {
+      selectedWalletId.value = balance.liability.walletId;
     }
 
     // Reset amount to avoid carry-over from previous selection
     amountStr.value = '0';
 
     debugPrint(
-      '[LIABILITY_FORM] selectLoan: id=${balance.liability.id}, action=${action.value}, walletId=${balance.liability.walletId}',
+      '[LIABILITY_FORM] selectLoan: id=${balance.liability.id}, walletId=${balance.liability.walletId}',
     );
 
     _loadCategoryForLoan(balance.liability.categoryId);
