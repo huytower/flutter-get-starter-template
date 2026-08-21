@@ -319,6 +319,8 @@ class CodegenLoader extends AssetLoader {
           "No investment items in this category yet — contribute first.",
       "investment_item_vip_locked":
           "Free plan uses the category's default name '{name}'. Upgrade to VIP to set a custom item name.",
+      "hint_reveal_more": "Tap right to reveal Investment/Debt tabs",
+      "hint_back_to_main": "Tap left to return to main tabs",
       "expense_slip": "Expense",
       "income_slip": "Income",
       "category_sub": "Sub-category",
@@ -1067,6 +1069,8 @@ class CodegenLoader extends AssetLoader {
       "no_investment_items_hint": "Chưa có khoản đầu tư nào\nNhấn + để thêm ",
       "investment_item_vip_locked":
           "Gói miễn phí dùng tên mặc định theo danh mục '{name}'. Nâng cấp VIP để đặt tên riêng cho khoản đầu tư.",
+      "hint_reveal_more": "Chạm mép phải để mở tab Đầu tư/Vay nợ",
+      "hint_back_to_main": "Chạm mép trái để quay lại tab chính",
       "expense_slip": "Chi tiêu",
       "income_slip": "Thu nhập",
       "category_sub": "Danh mục con",
@@ -1821,6 +1825,8 @@ abstract class CcLocaleKeys {
       'transaction.no_investment_items_hint';
   static const transaction_investment_item_vip_locked =
       'transaction.investment_item_vip_locked';
+  static const transaction_hint_back_to_main = 'transaction.hint_back_to_main';
+  static const transaction_hint_reveal_more = 'transaction.hint_reveal_more';
   static const transaction_expense_slip = 'transaction.expense_slip';
   static const transaction_income_slip = 'transaction.income_slip';
   static const transaction_category_sub = 'transaction.category_sub';

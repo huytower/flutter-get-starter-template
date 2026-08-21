@@ -43,7 +43,7 @@ class TransactionPageHeader extends StatelessWidget {
         : 'assets/bg/bg_header_light.webp';
 
     // We calculate the overlap locally to match TransactionPage's logic.
-    final overlap = context.respDim(48) / 2;
+    final overlap = context.respDim(64) / 2;
 
     // Optimized approach: Instead of using a Stack to layer background and
     // foreground, we move the background image into the Container's decoration.

@@ -290,6 +290,8 @@
                         "new_investment_item_hint":  "T�n kho?n d?u tu (vd: Ti?m l?u b�)",
                         "no_investment_items_hint":  "Chua c� kho?n d?u tu n�o\nNh?n + d? th�m ",
                         "investment_item_vip_locked":  "G�i mi?n ph� d�ng t�n m?c d?nh theo danh m?c \u0027{name}\u0027. N�ng c?p VIP d? d?t t�n ri�ng cho kho?n d?u tu.",
+                        "hint_reveal_more": "Chạm mép phải để mở tab Đầu tư/Vay nợ",
+                        "hint_back_to_main": "Chạm mép trái để quay lại tab chính",
                         "expense_slip":  "Chi ti�u",
                         "income_slip":  "Thu nh?p",
                         "category_sub":  "Danh m?c con",

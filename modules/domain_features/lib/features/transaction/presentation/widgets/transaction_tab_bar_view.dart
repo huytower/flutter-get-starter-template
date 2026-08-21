@@ -1,3 +1,5 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -38,18 +40,59 @@ class TransactionTabBarView extends StatelessWidget {
               ),
             ),
           ),
-          TabBarView(children: [for (final tab in tabs) _formFor(tab)]),
+          TabBarView(
+            children: [for (final tab in tabs) _buildPage(context, tab)],
+          ),
         ],
       );
     });
   }
 
-  Widget _formFor(TransactionTabKind tab) {
+  Widget _buildPage(BuildContext context, TransactionTabKind tab) {
+    final isUnlocked = controller.isTabUnlocked(tab);
+    if (!isUnlocked) return _buildLockedPlaceholder(context, tab);
+
     return switch (tab) {
       TransactionTabKind.expense => const ExpenseForm(),
       TransactionTabKind.income => const IncomeForm(),
       TransactionTabKind.investment => const InvestmentForm(),
       TransactionTabKind.debtLoan => const LiabilityForm(),
     };
+  }
+
+  Widget _buildLockedPlaceholder(BuildContext context, TransactionTabKind tab) {
+    final level = (tab == TransactionTabKind.investment) ? 2 : 3;
+    final message = el.tr(
+      CcLocaleKeys.profile_unlock_at_lv,
+      namedArgs: {'level': level.toString()},
+    );
+
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.lock_person_rounded,
+            size: context.respIconSize(baseSize: 64),
+            color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.2),
+          ),
+          const CcSpaceMD(),
+          CcText(
+            message,
+            textStyle: context.ccTextTheme.titleMedium?.copyWith(
+              color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.4),
+              fontWeight: CcTypographyParams.bold,
+            ),
+          ),
+          const CcSpaceSM(),
+          CcText(
+            tab.label(context),
+            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+              color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.3),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

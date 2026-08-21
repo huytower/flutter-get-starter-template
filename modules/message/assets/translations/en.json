@@ -292,6 +292,8 @@
                         "new_investment_item_hint":  "Item name (e.g. Coffee shop)",
                         "no_investment_items_hint":  "No investment items in this category yet — contribute first.",
                         "investment_item_vip_locked":  "Free plan uses the category\u0027s default name \u0027{name}\u0027. Upgrade to VIP to set a custom item name.",
+                        "hint_reveal_more": "Tap right to reveal Investment/Debt tabs",
+                        "hint_back_to_main": "Tap left to return to main tabs",
                         "expense_slip":  "Expense",
                         "income_slip":  "Income",
                         "category_sub":  "Sub-category",

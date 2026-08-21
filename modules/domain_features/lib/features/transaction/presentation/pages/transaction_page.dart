@@ -96,7 +96,7 @@ class TransactionPage extends CcGetView<TransactionController> {
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
-    final tabBarHeight = context.respDim(48);
+    final tabBarHeight = context.respDim(64);
     final overlap = tabBarHeight / 2;
 
     return Obx(() {

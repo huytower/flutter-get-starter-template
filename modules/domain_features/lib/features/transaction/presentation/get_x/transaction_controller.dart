@@ -1,3 +1,4 @@
+import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
@@ -21,9 +22,7 @@ import 'expense_form_controller.dart';
 import 'income_form_controller.dart';
 import 'investment_form_controller.dart';
 
-/// Which real tab a `TabBar`/`TabBarView` slot represents. The Investment
-/// and Debt/Loan slots only appear in [TransactionController.visibleTabs]
-/// once unlocked — see [UserLevelStatusEntity].
+/// Which real tab a `TabBar`/`TabBarView` slot represents.
 enum TransactionTabKind { expense, income, investment, debtLoan }
 
 @injectable
@@ -42,18 +41,43 @@ class TransactionController extends CcGetController {
 
   final RxInt selectedTabIndex = 0.obs;
 
-  /// Tabs currently visible, in display order. Investment/Debt-Loan only
-  /// appear once unlocked (LV2/LV3) — see [UserLevelStatusEntity]. Read once
-  /// at page-mount time by `transaction_page.dart`'s `DefaultTabController`
-  /// (the page fully remounts on every visit, so a level unlocked elsewhere
-  /// is always reflected on the next visit without needing a mid-session
-  /// resize of that fixed-length TabController).
+  /// Whether the secondary card (Investment | Debt/Loan) is currently in front.
+  final RxBool isSecondaryCardFront = false.obs;
+
+  /// Whether the user has interacted with the card stack at least once.
+  /// Persisted in [CcAppStorage] to hide the interaction hint.
+  final RxBool hasInteractedWithCardStack = false.obs;
+
+  /// Tabs currently visible, in display order.
+  ///
+  /// To support the "Card-stack Reveal" design where the secondary card
+  /// serves as a "pedagogic affordance" even when locked, we now always
+  /// return all 4 tabs here. This ensures [DefaultTabController] has a
+  /// fixed length and [TabBarView] is always ready.
+  ///
+  /// Note: The UI ([TransactionCardStack]) still checks [_userLevel.status]
+  /// to show lock icons on the secondary tabs if needed.
   List<TransactionTabKind> get visibleTabs => [
     TransactionTabKind.expense,
     TransactionTabKind.income,
-    if (_userLevel.status.value.canUseInvestment) TransactionTabKind.investment,
-    if (_userLevel.status.value.canUseDebtLoan) TransactionTabKind.debtLoan,
+    TransactionTabKind.investment,
+    TransactionTabKind.debtLoan,
   ];
+
+  /// Returns whether a specific tab is currently unlocked based on user level.
+  bool isTabUnlocked(TransactionTabKind kind) {
+    if (kind == TransactionTabKind.expense ||
+        kind == TransactionTabKind.income) {
+      return true;
+    }
+    if (kind == TransactionTabKind.investment) {
+      return _userLevel.status.value.canUseInvestment;
+    }
+    if (kind == TransactionTabKind.debtLoan) {
+      return _userLevel.status.value.canUseDebtLoan;
+    }
+    return false;
+  }
 
   /// True when the page header should be auto-hidden (scrolled down, or a
   /// keypad / soft keyboard is visible).
@@ -85,9 +109,37 @@ class TransactionController extends CcGetController {
     });
   }
 
+  /// Swaps the front/back cards in the transaction tab stack.
+  void toggleCardStack() {
+    isSecondaryCardFront.value = !isSecondaryCardFront.value;
+    markStackInteracted();
+
+    // When swapping to a card, automatically select its first tab if the
+    // current selection is on the other card.
+    final currentIndex = selectedTabIndex.value;
+    if (isSecondaryCardFront.value) {
+      if (currentIndex < 2) setTabIndex(2);
+    } else {
+      if (currentIndex >= 2) setTabIndex(0);
+    }
+  }
+
+  /// Marks that the user has interacted with the card stack.
+  void markStackInteracted() {
+    if (!hasInteractedWithCardStack.value) {
+      hasInteractedWithCardStack.value = true;
+      CcAppStorage.instance.hasInteractedWithTransactionCardStack = true;
+      CcAppStorage.instance.save();
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
+
+    // Load persisted interaction state
+    hasInteractedWithCardStack.value =
+        CcAppStorage.instance.hasInteractedWithTransactionCardStack ?? false;
 
     // Ensure WalletController is available for book balance lookups in selectors
     if (!Get.isRegistered<WalletController>()) {

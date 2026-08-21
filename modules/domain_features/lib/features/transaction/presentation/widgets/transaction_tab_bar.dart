@@ -23,6 +23,12 @@ extension TransactionTabKindStyle on TransactionTabKind {
   };
 }
 
+/// A "Card-stack Reveal" tab bar implementing Progressive Disclosure.
+///
+/// High-frequency tabs (Expense, Income) are on the primary card, while
+/// low-frequency/locked tabs (Investment, Debt/Loan) are on a secondary card
+/// stacked behind. Tapping the card edges swaps their depth with a slide
+/// animation.
 class TransactionTabBar extends StatelessWidget {
   const TransactionTabBar({
     super.key,
@@ -39,87 +45,238 @@ class TransactionTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-      ),
-      height: context.respDim(40),
-      decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: context.brLg,
-        boxShadow: [
-          BoxShadow(
-            color: scheme.onSurface.withOpacity(0.12),
-            blurRadius: context.respDim(12),
-            offset: Offset(0, context.respDim(6)),
+    return Obx(() {
+      final isSecondaryFront = controller.isSecondaryCardFront.value;
+      final showHint = !controller.hasInteractedWithCardStack.value;
+
+      return Container(
+        margin: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (showHint) _buildHintText(context, isSecondaryFront),
+            SizedBox(
+              height: context.respDim(64),
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  // Back Card (Affordance)
+                  _buildCard(
+                    context: context,
+                    isFront: false,
+                    isSecondary: !isSecondaryFront,
+                    scheme: scheme,
+                  ),
+                  // Front Card (Interaction)
+                  _buildCard(
+                    context: context,
+                    isFront: true,
+                    isSecondary: isSecondaryFront,
+                    scheme: scheme,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildHintText(BuildContext context, bool isSecondaryFront) {
+    final text = isSecondaryFront
+        ? el.tr(CcLocaleKeys.transaction_hint_back_to_main)
+        : el.tr(CcLocaleKeys.transaction_hint_reveal_more);
+
+    return FadeWidget(
+      child: Padding(
+        padding: EdgeInsets.only(bottom: context.respDim(8)),
+        child: CcText(
+          text,
+          textStyle: context.ccTextTheme.labelSmall?.copyWith(
+            color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.7),
+            fontStyle: FontStyle.italic,
           ),
-        ],
+        ),
       ),
-      padding: EdgeInsets.all(context.respDim(4)),
-      child: Obx(() => _buildActualTabBar(context, scheme)),
     );
   }
 
-  Widget _buildActualTabBar(BuildContext context, ColorScheme scheme) {
-    final tabs = controller.visibleTabs;
-    final selectedIndex = controller.selectedTabIndex.value;
-    final activeColor = tabs[selectedIndex.clamp(0, tabs.length - 1)].color(
-      context,
-    );
+  Widget _buildCard({
+    required BuildContext context,
+    required bool isFront,
+    required bool isSecondary,
+    required ColorScheme scheme,
+  }) {
+    final cardHeight = context.respDim(44);
+    final cardWidth =
+        MediaQuery.of(context).size.width -
+        (context.respPadding(CcPaddingParams.PAGE_MD) * 2);
 
-    return TabBar(
-      onTap: controller.setTabIndex,
-      indicatorSize: TabBarIndicatorSize.tab,
-      dividerColor: Colors.transparent,
-      splashFactory: NoSplash.splashFactory,
-      overlayColor: WidgetStateProperty.all(Colors.transparent),
-      indicator: BoxDecoration(
-        color: activeColor.withOpacity(0.08),
-        borderRadius: context.brLg,
+    final tabs = isSecondary
+        ? [TransactionTabKind.investment, TransactionTabKind.debtLoan]
+        : [TransactionTabKind.expense, TransactionTabKind.income];
+
+    // Animation values
+    final double scale = isFront ? 1.0 : 0.94;
+    final double opacity = isFront ? 1.0 : 0.45;
+    final double yOffset = isFront ? 0 : -context.respDim(8);
+    final int zIndex = isFront ? 2 : 1;
+
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 400),
+      curve: const Cubic(0.2, 0.8, 0.2, 1.0),
+      top: yOffset,
+      child: AnimatedScale(
+        duration: const Duration(milliseconds: 400),
+        curve: const Cubic(0.2, 0.8, 0.2, 1.0),
+        scale: scale,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 400),
+          curve: const Cubic(0.2, 0.8, 0.2, 1.0),
+          opacity: opacity,
+          child: IgnorePointer(
+            ignoring: !isFront,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: isFront ? null : controller.toggleCardStack,
+                child: Container(
+                  width: cardWidth,
+                  height: cardHeight,
+                  decoration: BoxDecoration(
+                    color: scheme.surface,
+                    borderRadius: context.brLg,
+                    boxShadow: [
+                      BoxShadow(
+                        color: scheme.onSurface.withOpacity(
+                          isFront ? 0.12 : 0.05,
+                        ),
+                        blurRadius: context.respDim(12),
+                        offset: Offset(0, context.respDim(isFront ? 6 : 2)),
+                      ),
+                    ],
+                  ),
+                  padding: EdgeInsets.all(context.respDim(4)),
+                  child: _buildActualTabBar(context, tabs, scheme),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
-      labelColor: activeColor,
-      unselectedLabelColor: scheme.onSurfaceVariant,
-      labelStyle: context.ccTextTheme.labelMedium?.copyWith(
-        fontWeight: CcTypographyParams.bold,
-      ),
-      labelPadding: EdgeInsets.zero,
-      tabs: [
+    );
+  }
+
+  Widget _buildActualTabBar(
+    BuildContext context,
+    List<TransactionTabKind> tabs,
+    ColorScheme scheme,
+  ) {
+    final selectedIndex = controller.selectedTabIndex.value;
+    final currentKind = controller
+        .visibleTabs[selectedIndex.clamp(0, controller.visibleTabs.length - 1)];
+
+    final bool hasSelectionOnThisCard = tabs.contains(currentKind);
+
+    // If this card is in front but doesn't have the current selection,
+    // we should highlight nothing or the first tab?
+    // TransactionController.toggleCardStack already ensures selection
+    // moves when swapping, so this should be fine.
+
+    return Row(
+      children: [
         for (final tab in tabs)
-          if (tab == TransactionTabKind.investment && showInvestmentBadge)
-            Tab(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(tab.label(context)),
-                  const SizedBox(width: 4),
-                  CcGuidelineBadge(
-                    size: 6,
-                    color: Get.isRegistered<GuidelineController>()
-                        ? Get.find<GuidelineController>().currentColor
-                        : context.ccColorScheme.primary,
-                  ),
-                ],
-              ),
-            )
-          else if (tab == TransactionTabKind.debtLoan && showLiabilityBadge)
-            Tab(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(tab.label(context)),
-                  const SizedBox(width: 4),
-                  CcGuidelineBadge(
-                    size: 6,
-                    color: Get.isRegistered<GuidelineController>()
-                        ? Get.find<GuidelineController>().currentColor
-                        : context.ccColorScheme.primary,
-                  ),
-                ],
-              ),
-            )
-          else
-            Tab(text: tab.label(context)),
+          Expanded(
+            child: _buildTabItem(context, tab, currentKind == tab, scheme),
+          ),
+        // Reveal/Back toggle chip at the end of the front card
+        _buildToggleAction(context, scheme),
       ],
+    );
+  }
+
+  Widget _buildTabItem(
+    BuildContext context,
+    TransactionTabKind kind,
+    bool isSelected,
+    ColorScheme scheme,
+  ) {
+    final isUnlocked = controller.isTabUnlocked(kind);
+    final activeColor = kind.color(context);
+
+    return CcInteractBtnWrapper(
+      isEnable: isUnlocked,
+      isBouncing: true,
+      useDebounce: true,
+      onTap: () => controller.setTabIndex(controller.visibleTabs.indexOf(kind)),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? activeColor.withOpacity(0.08)
+              : Colors.transparent,
+          borderRadius: context.brLg,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (!isUnlocked)
+              Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: Icon(
+                  Icons.lock_outline_rounded,
+                  size: context.respIconSize(baseSize: 12),
+                  color: scheme.onSurfaceVariant.withOpacity(0.5),
+                ),
+              ),
+            CcText(
+              kind.label(context),
+              textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                fontWeight: isSelected ? CcTypographyParams.bold : null,
+                color: isSelected
+                    ? activeColor
+                    : scheme.onSurfaceVariant.withOpacity(
+                        isUnlocked ? 1.0 : 0.5,
+                      ),
+              ),
+            ),
+            if (kind == TransactionTabKind.investment && showInvestmentBadge)
+              _buildBadge(context),
+            if (kind == TransactionTabKind.debtLoan && showLiabilityBadge)
+              _buildBadge(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBadge(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: CcGuidelineBadge(
+        size: 6,
+        color: Get.isRegistered<GuidelineController>()
+            ? Get.find<GuidelineController>().currentColor
+            : context.ccColorScheme.primary,
+      ),
+    );
+  }
+
+  Widget _buildToggleAction(BuildContext context, ColorScheme scheme) {
+    return CcIconButton.bouncing(
+      onTap: controller.toggleCardStack,
+      icon: Icon(
+        controller.isSecondaryCardFront.value
+            ? Icons.keyboard_double_arrow_left_rounded
+            : Icons.keyboard_double_arrow_right_rounded,
+        size: context.respIconSize(baseSize: 16),
+        color: scheme.onSurfaceVariant.withOpacity(0.4),
+      ),
     );
   }
 }

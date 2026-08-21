@@ -39,13 +39,14 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       hasSeenTutorial: fields[20] as bool?,
       isProfileHeaderFlipped: fields[21] as bool?,
       hasCustomizedCategories: fields[22] as bool?,
+      hasInteractedWithTransactionCardStack: fields[23] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CcAppStorage obj) {
     writer
-      ..writeByte(22)
+      ..writeByte(23)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)
@@ -89,7 +90,9 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..writeByte(21)
       ..write(obj.isProfileHeaderFlipped)
       ..writeByte(22)
-      ..write(obj.hasCustomizedCategories);
+      ..write(obj.hasCustomizedCategories)
+      ..writeByte(23)
+      ..write(obj.hasInteractedWithTransactionCardStack);
   }
 
   @override
@@ -143,6 +146,8 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
   hasSeenTutorial: json['hasSeenTutorial'] as bool?,
   isProfileHeaderFlipped: json['isProfileHeaderFlipped'] as bool?,
   hasCustomizedCategories: json['hasCustomizedCategories'] as bool?,
+  hasInteractedWithTransactionCardStack:
+      json['hasInteractedWithTransactionCardStack'] as bool?,
 );
 
 Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
@@ -171,4 +176,6 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
       'hasSeenTutorial': instance.hasSeenTutorial,
       'isProfileHeaderFlipped': instance.isProfileHeaderFlipped,
       'hasCustomizedCategories': instance.hasCustomizedCategories,
+      'hasInteractedWithTransactionCardStack':
+          instance.hasInteractedWithTransactionCardStack,
     };

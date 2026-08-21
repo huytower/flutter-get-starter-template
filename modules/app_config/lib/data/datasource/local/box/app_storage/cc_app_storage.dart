@@ -134,6 +134,11 @@ class CcAppStorage extends HiveObject {
   @HiveField(22)
   bool? hasCustomizedCategories;
 
+  /// Whether the user has interacted with the card-stack tab bar in the
+  /// Transaction page. Used to hide the initial "swipe/tap" hint.
+  @HiveField(23)
+  bool? hasInteractedWithTransactionCardStack;
+
   CcAppStorage({
     this.accessToken,
     this.fcmToken,
@@ -157,5 +162,6 @@ class CcAppStorage extends HiveObject {
     this.hasSeenTutorial,
     this.isProfileHeaderFlipped,
     this.hasCustomizedCategories,
+    this.hasInteractedWithTransactionCardStack,
   });
 }
