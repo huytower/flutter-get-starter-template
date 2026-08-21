@@ -10,22 +10,21 @@ import '../../../transaction/presentation/widgets/transaction_additional_details
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../../../wallet/export_wallet.dart';
-import '../../domain/entities/liability_entity.dart';
+import '../get_x/lend_form_controller.dart';
 import '../get_x/liability_form_controller.dart';
 import 'liability_asset_selector.dart';
 import 'liability_pill_toggle.dart';
 import 'liability_repayment_method_section.dart';
 
-class LiabilityForm extends StatelessWidget {
-  const LiabilityForm({super.key});
+class LendForm extends StatelessWidget {
+  const LendForm({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Pre-registered by TransactionController.onInit()
-    final controller = Get.find<LiabilityFormController>();
+    final controller = Get.find<LendFormController>();
 
     return Obx(() {
-      final accentColor = _accentColor(context, controller);
+      final accentColor = context.ccColorScheme.debtLoanSecondary;
 
       return Column(
         children: [
@@ -39,16 +38,9 @@ class LiabilityForm extends StatelessWidget {
     });
   }
 
-  Color _accentColor(BuildContext context, LiabilityFormController controller) {
-    final isBorrowSide = controller.direction == LiabilityDirection.borrow;
-    return isBorrowSide
-        ? context.ccColorScheme.debtLoan
-        : context.ccColorScheme.debtLoanSecondary;
-  }
-
   Widget _buildScrollableContent(
     BuildContext context,
-    LiabilityFormController controller,
+    LendFormController controller,
     Color accentColor,
   ) {
     return GestureDetector(
@@ -68,11 +60,9 @@ class LiabilityForm extends StatelessWidget {
 
   Widget _buildInitiateSection(
     BuildContext context,
-    LiabilityFormController controller,
+    LendFormController controller,
     Color accentColor,
   ) {
-    final bool isBorrowSide = controller.direction == LiabilityDirection.borrow;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -80,12 +70,8 @@ class LiabilityForm extends StatelessWidget {
           selectedIndex: controller.action.value == LiabilityAction.initiate
               ? 0
               : 1,
-          firstLabel: isBorrowSide
-              ? el.tr(CcLocaleKeys.transaction_liability_direction_borrow)
-              : el.tr(CcLocaleKeys.transaction_loan_direction_lend),
-          secondLabel: isBorrowSide
-              ? el.tr(CcLocaleKeys.transaction_record_repay)
-              : el.tr(CcLocaleKeys.transaction_record_collect),
+          firstLabel: el.tr(CcLocaleKeys.transaction_loan_direction_lend),
+          secondLabel: el.tr(CcLocaleKeys.transaction_record_collect),
           activeColor: accentColor,
           onChanged: (index) => controller.setAction(
             index == 0 ? LiabilityAction.initiate : LiabilityAction.settle,
@@ -93,7 +79,10 @@ class LiabilityForm extends StatelessWidget {
         ),
         const CcSpaceSM(),
         LiabilityAssetSelector(
-          controller: controller,
+          // LiabilityAssetSelector currently expects LiabilityFormController.
+          // I might need to make it generic or update it to take dynamic controller.
+          // Let's check it.
+          controller: controller as dynamic,
           activeColor: accentColor,
         ),
         const CcSpaceSM(),
@@ -112,12 +101,11 @@ class LiabilityForm extends StatelessWidget {
                     )
                     ?.liability;
 
-                // Only show schedule editor if it's a new loan (0 principal)
                 if (loan != null && loan.principalAmount == 0) {
                   return Column(
                     children: [
                       LiabilityRepaymentMethodSection(
-                        controller: controller,
+                        controller: controller as dynamic,
                         accentColor: accentColor,
                       ),
                       const CcSpaceSM(),
@@ -154,20 +142,16 @@ class LiabilityForm extends StatelessWidget {
 
   Widget _buildAmountSection(
     BuildContext context,
-    LiabilityFormController controller,
+    LendFormController controller,
     Color accentColor,
   ) {
     return Obx(() {
       final bool isInitiate =
           controller.action.value == LiabilityAction.initiate;
-      final bool isBorrowSide =
-          controller.direction == LiabilityDirection.borrow;
 
       final label = !isInitiate
           ? el.tr(CcLocaleKeys.transaction_amount)
-          : (isBorrowSide
-                ? el.tr(CcLocaleKeys.transaction_liability_amount_borrow_label)
-                : el.tr(CcLocaleKeys.transaction_liability_amount_lend_label));
+          : el.tr(CcLocaleKeys.transaction_liability_amount_lend_label);
 
       return CcAmountInputSection(
         label: label,
@@ -188,20 +172,16 @@ class LiabilityForm extends StatelessWidget {
 
   Widget _buildWalletSection(
     BuildContext context,
-    LiabilityFormController controller,
+    LendFormController controller,
     Color accentColor,
   ) {
     return Obx(() {
       final bool isInitiate =
           controller.action.value == LiabilityAction.initiate;
-      final bool isBorrowSide =
-          controller.direction == LiabilityDirection.borrow;
 
       final label = !isInitiate
           ? el.tr(CcLocaleKeys.transaction_source_debt)
-          : (isBorrowSide
-                ? el.tr(CcLocaleKeys.transaction_liability_wallet_borrow_label)
-                : el.tr(CcLocaleKeys.transaction_liability_wallet_lend_label));
+          : el.tr(CcLocaleKeys.transaction_liability_wallet_lend_label);
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,7 +202,7 @@ class LiabilityForm extends StatelessWidget {
 
   Widget _buildMoneyKeypadPanel(
     BuildContext context,
-    LiabilityFormController controller,
+    LendFormController controller,
     Color accentColor,
   ) {
     return MoneyKeypadPanel(

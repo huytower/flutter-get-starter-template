@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../get_x/liability_base_form_controller.dart';
 import '../get_x/liability_form_controller.dart';
 import 'liability_date_row.dart';
 
 /// Repeatable due-date + amount row editor for a Trả góp (installment) loan's
-/// repayment schedule, driven by [LiabilityFormController.installmentDrafts].
+/// repayment schedule, driven by [LiabilityBaseFormController.installmentDrafts].
 class LiabilityInstallmentScheduleEditor extends StatelessWidget {
-  final LiabilityFormController controller;
+  final LiabilityBaseFormController controller;
   final Color activeColor;
 
   const LiabilityInstallmentScheduleEditor({
@@ -151,5 +152,3 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
     });
   }
 }
-
-

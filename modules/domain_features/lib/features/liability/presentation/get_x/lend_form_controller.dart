@@ -9,7 +9,6 @@ import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import '../../../transaction/presentation/get_x/quick_entry_mixin.dart';
 import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
@@ -18,71 +17,64 @@ import '../../domain/usecases/get_liability_balances_usecase.dart';
 import '../../domain/usecases/record_liability_payment_usecase.dart';
 import '../../domain/usecases/schedule_liability_reminders_usecase.dart';
 import '../get_x/liability_base_form_controller.dart';
+import '../get_x/liability_form_controller.dart';
 import '../get_x/liability_list_controller.dart';
 
-/// One editable row of an installment schedule being built in the liability
-/// creation form. Presentation-only — converted to [LiabilityInstallmentEntity]
-/// at submit time.
-class LoanInstallmentDraft {
-  final Rx<DateTime> dueDate;
-  final TextEditingController amountController = TextEditingController();
-  final RxInt amount = 0.obs;
-
-  LoanInstallmentDraft(DateTime initialDueDate) : dueDate = initialDueDate.obs;
-
-  void setAmount(String value) {
-    amount.value = int.tryParse(value) ?? 0;
-  }
-
-  void dispose() {
-    amountController.dispose();
-  }
-}
-
-enum LiabilityAction { initiate, settle }
-
-/// Consolidated Liability form: handles recording transactions against
-/// existing loans (Repay) or completing a new loan's details (Borrow).
+/// Consolidated Lend form: handles recording transactions against
+/// existing loans (Collect) or completing a new loan's details (Lend).
 @lazySingleton
-class LiabilityFormController extends LiabilityBaseFormController {
+class LendFormController extends LiabilityBaseFormController {
   @override
   String get quickEntryCategoryType => CategoryType.debtLoan;
 
   @override
   List<String> get quickEntryCategoryGroupIds => [
-    CategorySeed.debtLoanBorrowGroupId,
+    CategorySeed.debtLoanLendGroupId,
   ];
 
   @override
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 
-  final String direction = LiabilityDirection.borrow;
+  @override
+  final String direction = LiabilityDirection.lend;
+  @override
   final Rx<LiabilityAction> action = LiabilityAction.initiate.obs;
 
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   @override
   final RxInt categoryKey = 0.obs;
+  @override
   final RxString repaymentMethod = LiabilityRepaymentMethod.lumpSum.obs;
+  @override
   final Rx<DateTime?> finalDueDate = Rx<DateTime?>(null);
+  @override
   final RxList<LoanInstallmentDraft> installmentDrafts =
       <LoanInstallmentDraft>[].obs;
+  @override
   final RxBool reminderBeforeDueDate = false.obs;
 
   final RxList<LiabilityBalanceEntity> loanBalances =
       <LiabilityBalanceEntity>[].obs;
+  @override
   final RxList<LiabilityBalanceEntity> mergedItems =
       <LiabilityBalanceEntity>[].obs;
+  @override
   final RxBool isLoadingMerged = true.obs;
+  @override
   final RxnString selectedLoanId = RxnString();
 
+  @override
   final RxnInt editingInstallmentIndex = RxnInt();
   final RxBool isVip = false.obs;
 
+  @override
   int get principalAmount => int.tryParse(amountStr.value) ?? 0;
 
+  @override
   int get installmentsTotal =>
       installmentDrafts.fold(0, (sum, d) => sum + d.amount.value);
 
+  @override
   bool get canAddInstallment =>
       principalAmount > 0 && installmentsTotal < principalAmount;
 
@@ -136,8 +128,8 @@ class LiabilityFormController extends LiabilityBaseFormController {
     result.when((balances) {
       loanBalances.assignAll(balances);
       final filtered = balances.where((b) {
-        final isBorrow = b.liability.isBorrow;
-        if (!isBorrow) return false;
+        final isLend = b.liability.isLend;
+        if (!isLend) return false;
 
         if (action.value == LiabilityAction.initiate) {
           return b.liability.principalAmount == 0;
@@ -168,6 +160,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     }, (_) {});
   }
 
+  @override
   void selectLoan(LiabilityBalanceEntity balance) {
     selectedLoanId.value = balance.liability.id;
     selectedWalletId.value = balance.liability.walletId;
@@ -202,6 +195,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     super.onClose();
   }
 
+  @override
   void setAction(LiabilityAction value) {
     if (action.value == value) return;
     action.value = value;
@@ -214,14 +208,17 @@ class LiabilityFormController extends LiabilityBaseFormController {
     pendingPrefillCategoryId.value = null;
   }
 
+  @override
   void setRepaymentMethod(String value) {
     repaymentMethod.value = value;
   }
 
+  @override
   void setReminderBeforeDueDate(bool value) {
     reminderBeforeDueDate.value = value;
   }
 
+  @override
   Future<void> pickFinalDueDate(BuildContext context) async {
     final picked = await _pickFutureDate(
       context,
@@ -230,6 +227,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     if (picked != null) finalDueDate.value = picked;
   }
 
+  @override
   Future<void> pickInstallmentDueDate(BuildContext context, int index) async {
     final draft = installmentDrafts[index];
     final picked = await _pickFutureDate(context, draft.dueDate.value);
@@ -251,6 +249,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     );
   }
 
+  @override
   void addInstallmentPeriod() {
     if (!canAddInstallment) return;
 
@@ -275,6 +274,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     installmentDrafts.add(newDraft);
   }
 
+  @override
   void removeInstallmentPeriod(int index) {
     installmentDrafts.removeAt(index).dispose();
     if (editingInstallmentIndex.value == index) {
@@ -341,6 +341,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     }
   }
 
+  @override
   void showKeypadForInstallment(BuildContext context, int index) {
     editingInstallmentIndex.value = index;
     showKeypadAndScroll(context);

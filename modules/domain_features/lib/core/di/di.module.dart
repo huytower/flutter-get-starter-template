@@ -121,6 +121,8 @@ import 'package:domain_features/features/liability/domain/usecases/schedule_liab
     as _i934;
 import 'package:domain_features/features/liability/presentation/get_x/add_liability_sheet_controller.dart'
     as _i1007;
+import 'package:domain_features/features/liability/presentation/get_x/lend_form_controller.dart'
+    as _i198;
 import 'package:domain_features/features/liability/presentation/get_x/liability_detail_controller.dart'
     as _i849;
 import 'package:domain_features/features/liability/presentation/get_x/liability_form_controller.dart'
@@ -258,6 +260,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     );
     gh.lazySingleton<_i783.LiabilityLocalDatasource>(
         () => _i783.LiabilityLocalDatasource());
+    gh.lazySingleton<_i198.LendFormController>(
+        () => _i198.LendFormController());
     gh.lazySingleton<_i279.LiabilityFormController>(
         () => _i279.LiabilityFormController());
     gh.lazySingleton<_i483.NotificationService>(

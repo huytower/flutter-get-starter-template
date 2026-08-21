@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../liability/presentation/widgets/liability_form.dart';
+import '../../../liability/presentation/widgets/lend_form.dart';
 import '../get_x/transaction_controller.dart';
 import 'expense_form.dart';
 import 'income_form.dart';
@@ -63,7 +64,7 @@ class TransactionTabBarView extends StatelessWidget {
       TransactionTabKind.income => const IncomeForm(),
       TransactionTabKind.investment => const InvestmentForm(),
       TransactionTabKind.liability => const LiabilityForm(),
-      TransactionTabKind.lend => const LiabilityForm(),
+      TransactionTabKind.lend => const LendForm(),
     };
   }
 

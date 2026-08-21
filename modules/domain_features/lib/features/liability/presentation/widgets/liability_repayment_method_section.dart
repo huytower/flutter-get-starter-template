@@ -3,9 +3,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import '../../domain/entities/liability_entity.dart';
-import '../get_x/liability_form_controller.dart';
+import '../get_x/liability_base_form_controller.dart';
 import 'liability_date_row.dart';
 import 'liability_installment_schedule_editor.dart';
 import 'liability_pill_toggle.dart';
@@ -14,7 +13,7 @@ import 'liability_pill_toggle.dart';
 /// lump-sum toggle, the matching schedule editor (per-installment dates or a
 /// single final due date), and the due-date reminder checkbox.
 class LiabilityRepaymentMethodSection extends StatelessWidget {
-  final LiabilityFormController controller;
+  final LiabilityBaseFormController controller;
   final Color accentColor;
 
   const LiabilityRepaymentMethodSection({
@@ -26,8 +25,7 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final isBorrowSide =
-          controller.direction.value == LiabilityDirection.borrow;
+      final isBorrowSide = controller.direction == LiabilityDirection.borrow;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -72,7 +70,7 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
 }
 
 class _InstallmentSchedule extends StatelessWidget {
-  final LiabilityFormController controller;
+  final LiabilityBaseFormController controller;
   final Color accentColor;
 
   const _InstallmentSchedule({
@@ -82,8 +80,7 @@ class _InstallmentSchedule extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isBorrowSide =
-        controller.direction.value == LiabilityDirection.borrow;
+    final isBorrowSide = controller.direction == LiabilityDirection.borrow;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -109,7 +106,7 @@ class _InstallmentSchedule extends StatelessWidget {
 }
 
 class _FinalDueDate extends StatelessWidget {
-  final LiabilityFormController controller;
+  final LiabilityBaseFormController controller;
   final Color accentColor;
 
   const _FinalDueDate({required this.controller, required this.accentColor});
@@ -154,7 +151,7 @@ class _FinalDueDate extends StatelessWidget {
 }
 
 class _ReminderToggle extends StatelessWidget {
-  final LiabilityFormController controller;
+  final LiabilityBaseFormController controller;
   final Color accentColor;
   final String label;
 

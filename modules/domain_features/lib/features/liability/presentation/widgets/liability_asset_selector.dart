@@ -3,10 +3,10 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../get_x/liability_form_controller.dart';
+import '../get_x/liability_base_form_controller.dart';
 
 class LiabilityAssetSelector extends StatelessWidget {
-  final LiabilityFormController controller;
+  final LiabilityBaseFormController controller;
   final Color activeColor;
 
   const LiabilityAssetSelector({
@@ -75,8 +75,7 @@ class LiabilityAssetSelector extends StatelessWidget {
               itemBuilder: (context, index) {
                 final balance = items[index];
                 final loan = balance.liability;
-                final isSelected =
-                    controller.selectedLoanId.value == loan.id;
+                final isSelected = controller.selectedLoanId.value == loan.id;
 
                 return _buildItem(
                   context,
@@ -87,7 +86,9 @@ class LiabilityAssetSelector extends StatelessWidget {
                   ),
                   isSelected: isSelected,
                   onTap: () {
-                    debugPrint('[LIABILITY_ASSET_SELECTOR] Tapped loan: id=${loan.id}, label=${loan.categoryLabel}, selected=$isSelected');
+                    debugPrint(
+                      '[LIABILITY_ASSET_SELECTOR] Tapped loan: id=${loan.id}, label=${loan.categoryLabel}, selected=$isSelected',
+                    );
                     controller.selectLoan(balance);
                   },
                 );
