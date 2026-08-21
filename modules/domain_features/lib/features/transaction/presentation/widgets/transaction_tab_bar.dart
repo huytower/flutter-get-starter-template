@@ -33,11 +33,13 @@ class TransactionTabBar extends StatelessWidget {
   const TransactionTabBar({
     super.key,
     required this.controller,
+    required this.tabController,
     this.showInvestmentBadge = false,
     this.showLiabilityBadge = false,
   });
 
   final TransactionController controller;
+  final TabController tabController;
   final bool showInvestmentBadge;
   final bool showLiabilityBadge;
 
@@ -143,7 +145,14 @@ class TransactionTabBar extends StatelessWidget {
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
-                onTap: isFront ? null : controller.toggleCardStack,
+                onTap: isFront
+                    ? null
+                    : () {
+                        controller.toggleCardStack();
+                        tabController.animateTo(
+                          controller.selectedTabIndex.value,
+                        );
+                      },
                 child: Container(
                   width: cardWidth,
                   height: cardHeight,
@@ -212,7 +221,11 @@ class TransactionTabBar extends StatelessWidget {
       isEnable: isUnlocked,
       isBouncing: true,
       useDebounce: true,
-      onTap: () => controller.setTabIndex(controller.visibleTabs.indexOf(kind)),
+      onTap: () {
+        final index = controller.visibleTabs.indexOf(kind);
+        controller.setTabIndex(index);
+        tabController.animateTo(index);
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         alignment: Alignment.center,
@@ -269,7 +282,10 @@ class TransactionTabBar extends StatelessWidget {
 
   Widget _buildToggleAction(BuildContext context, ColorScheme scheme) {
     return CcIconButton.bouncing(
-      onTap: controller.toggleCardStack,
+      onTap: () {
+        controller.toggleCardStack();
+        tabController.animateTo(controller.selectedTabIndex.value);
+      },
       icon: Icon(
         controller.isSecondaryCardFront.value
             ? Icons.keyboard_double_arrow_left_rounded

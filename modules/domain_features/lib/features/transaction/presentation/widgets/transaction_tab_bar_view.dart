@@ -11,9 +11,14 @@ import 'investment_form.dart';
 import 'transaction_tab_bar.dart';
 
 class TransactionTabBarView extends StatelessWidget {
-  const TransactionTabBarView({super.key, required this.controller});
+  const TransactionTabBarView({
+    super.key,
+    required this.controller,
+    required this.tabController,
+  });
 
   final TransactionController controller;
+  final TabController tabController;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +46,7 @@ class TransactionTabBarView extends StatelessWidget {
             ),
           ),
           TabBarView(
+            controller: tabController,
             children: [for (final tab in tabs) _buildPage(context, tab)],
           ),
         ],

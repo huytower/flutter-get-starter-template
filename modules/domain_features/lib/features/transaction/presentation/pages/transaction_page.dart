@@ -25,17 +25,6 @@ class TransactionPage extends CcGetView<TransactionController> {
 
   @override
   Widget? buildContent(BuildContext context) {
-    // Investment/Loan are pre-registered here rather than in
-    // TransactionController.onInit() (see that method's comment) — this
-    // runs strictly after CcGetView.build() has already fully completed
-    // TransactionController's own Get.put()/onInit(), so
-    // InvestmentFormController.onInit()'s Get.find<TransactionController>()
-    // call is safe here. TabBarView's PageView only builds pages within its
-    // scroll cache extent, so without this, Investment/Loan's own `Get.put`
-    // (inside their widgets' build()) isn't guaranteed to have run yet the
-    // very first time a user taps straight into one of those tabs — which
-    // would leave TransactionPageHeader unable to resolve that tab's
-    // quick-entry controller.
     if (!Get.isRegistered<InvestmentFormController>()) {
       Get.put(getIt<InvestmentFormController>());
     }
@@ -43,6 +32,52 @@ class TransactionPage extends CcGetView<TransactionController> {
       Get.put(getIt<LiabilityFormController>());
     }
 
+    return const _TransactionPageContent();
+  }
+}
+
+class _TransactionPageContent extends StatefulWidget {
+  const _TransactionPageContent();
+
+  @override
+  State<_TransactionPageContent> createState() =>
+      _TransactionPageContentState();
+}
+
+class _TransactionPageContentState extends State<_TransactionPageContent>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+  final TransactionController controller = Get.find<TransactionController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      length: controller.visibleTabs.length,
+      vsync: this,
+      initialIndex: controller.selectedTabIndex.value,
+    );
+
+    _tabController.addListener(_handleTabChange);
+  }
+
+  void _handleTabChange() {
+    if (!_tabController.indexIsChanging) {
+      controller.selectedTabIndex.value = _tabController.index;
+      controller.isSecondaryCardFront.value = _tabController.index >= 2;
+      controller.markStackInteracted();
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_handleTabChange);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
@@ -51,14 +86,10 @@ class TransactionPage extends CcGetView<TransactionController> {
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
-    final visibleTabCount = controller.visibleTabs.length;
-
-    return DefaultTabController(
-      length: visibleTabCount,
-      initialIndex: controller.selectedTabIndex.value.clamp(
-        0,
-        visibleTabCount - 1,
-      ),
+    // Use a custom inherited widget or provide the controller to TransactionTabBar
+    // but here we can just wrap our content with a TabController provider.
+    return _TabControllerProvider(
+      controller: _tabController,
       child: FadePageWrapper(
         child: Stack(
           children: [
@@ -112,13 +143,39 @@ class TransactionPage extends CcGetView<TransactionController> {
           ),
           TransactionTabBar(
             controller: controller,
+            tabController: _tabController,
             showInvestmentBadge: showInvestmentBadge,
             showLiabilityBadge: controller.showLiabilityBadge,
           ),
           const CcSpaceSM(),
-          Expanded(child: TransactionTabBarView(controller: controller)),
+          Expanded(
+            child: TransactionTabBarView(
+              controller: controller,
+              tabController: _tabController,
+            ),
+          ),
         ],
       );
     });
   }
+}
+
+/// Simple inherited widget to provide the TabController if children need it via context
+class _TabControllerProvider extends InheritedWidget {
+  const _TabControllerProvider({
+    required this.controller,
+    required super.child,
+  });
+
+  final TabController controller;
+
+  static TabController? of(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<_TabControllerProvider>()
+        ?.controller;
+  }
+
+  @override
+  bool updateShouldNotify(_TabControllerProvider oldWidget) =>
+      controller != oldWidget.controller;
 }
