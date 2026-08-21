@@ -75,23 +75,26 @@ class LiabilityAssetSelector extends StatelessWidget {
               itemBuilder: (context, index) {
                 final balance = items[index];
                 final loan = balance.liability;
-                final isSelected = controller.selectedLoanId.value == loan.id;
 
-                return _buildItem(
-                  context,
-                  label: loan.categoryLabel,
-                  icon: iconDataFromCode(
-                    loan.categoryIconCode ?? 0,
-                    fontFamily: loan.categoryIconFamily,
-                  ),
-                  isSelected: isSelected,
-                  onTap: () {
-                    debugPrint(
-                      '[LIABILITY_ASSET_SELECTOR] Tapped loan: id=${loan.id}, label=${loan.categoryLabel}, selected=$isSelected',
-                    );
-                    controller.selectLoan(balance);
-                  },
-                );
+                return Obx(() {
+                  final isSelected = controller.selectedLoanId.value == loan.id;
+
+                  return _buildItem(
+                    context,
+                    label: loan.categoryLabel,
+                    icon: iconDataFromCode(
+                      loan.categoryIconCode ?? 0,
+                      fontFamily: loan.categoryIconFamily,
+                    ),
+                    isSelected: isSelected,
+                    onTap: () {
+                      debugPrint(
+                        '[LIABILITY_ASSET_SELECTOR] Tapped loan: id=${loan.id}, label=${loan.categoryLabel}, selected=$isSelected',
+                      );
+                      controller.selectLoan(balance);
+                    },
+                  );
+                });
               },
             ),
           );

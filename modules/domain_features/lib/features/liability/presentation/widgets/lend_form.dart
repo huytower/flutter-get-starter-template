@@ -63,13 +63,13 @@ class LendForm extends StatelessWidget {
     LendFormController controller,
     Color accentColor,
   ) {
+    final bool isInitiate = controller.action.value == LiabilityAction.initiate;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         LiabilityPillToggle(
-          selectedIndex: controller.action.value == LiabilityAction.initiate
-              ? 0
-              : 1,
+          selectedIndex: isInitiate ? 0 : 1,
           firstLabel: el.tr(CcLocaleKeys.transaction_loan_direction_lend),
           secondLabel: el.tr(CcLocaleKeys.transaction_record_collect),
           activeColor: accentColor,
@@ -79,10 +79,7 @@ class LendForm extends StatelessWidget {
         ),
         const CcSpaceSM(),
         LiabilityAssetSelector(
-          // LiabilityAssetSelector currently expects LiabilityFormController.
-          // I might need to make it generic or update it to take dynamic controller.
-          // Let's check it.
-          controller: controller as dynamic,
+          controller: controller,
           activeColor: accentColor,
         ),
         const CcSpaceSM(),
@@ -95,17 +92,12 @@ class LendForm extends StatelessWidget {
               _buildWalletSection(context, controller, accentColor),
               const CcSpaceSM(),
               Obx(() {
-                final loan = controller.mergedItems
-                    .firstWhereOrNull(
-                      (b) => b.liability.id == controller.selectedLoanId.value,
-                    )
-                    ?.liability;
-
-                if (loan != null && loan.principalAmount == 0) {
+                // Show schedule editor for BOTH new and existing loans if in "Lend" action
+                if (isInitiate) {
                   return Column(
                     children: [
                       LiabilityRepaymentMethodSection(
-                        controller: controller as dynamic,
+                        controller: controller,
                         accentColor: accentColor,
                       ),
                       const CcSpaceSM(),
@@ -125,13 +117,7 @@ class LendForm extends StatelessWidget {
                 activeColor: accentColor,
               ),
               const CcSpaceSM(),
-              TransactionSubmitButton(
-                text: el.tr(CcLocaleKeys.transaction_record_liability),
-                isSubmitting: controller.isSubmitting.value,
-                isEnabled: controller.canSubmit,
-                onTap: () => controller.submitForm(context),
-                activeColor: accentColor,
-              ),
+              _buildSubmitButton(context, controller, accentColor),
               const CcSpaceXS(),
             ],
           ),
@@ -179,9 +165,13 @@ class LendForm extends StatelessWidget {
       final bool isInitiate =
           controller.action.value == LiabilityAction.initiate;
 
-      final label = !isInitiate
-          ? el.tr(CcLocaleKeys.transaction_source_debt)
-          : el.tr(CcLocaleKeys.transaction_liability_wallet_lend_label);
+      final label = isInitiate
+          ? el.tr(
+              CcLocaleKeys.transaction_liability_wallet_lend_label,
+            ) // Lending wallet (Source)
+          : el.tr(
+              CcLocaleKeys.transaction_liability_wallet_borrow_label,
+            ); // Receiving wallet (Dest)
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,6 +186,28 @@ class LendForm extends StatelessWidget {
             onWalletSelected: controller.setWalletId,
           ),
         ],
+      );
+    });
+  }
+
+  Widget _buildSubmitButton(
+    BuildContext context,
+    LendFormController controller,
+    Color accentColor,
+  ) {
+    return Obx(() {
+      final bool isInitiate =
+          controller.action.value == LiabilityAction.initiate;
+      final text = isInitiate
+          ? el.tr(CcLocaleKeys.transaction_loan_direction_lend)
+          : el.tr(CcLocaleKeys.transaction_record_collect);
+
+      return TransactionSubmitButton(
+        text: text,
+        isSubmitting: controller.isSubmitting.value,
+        isEnabled: controller.canSubmit,
+        onTap: () => controller.submitForm(context),
+        activeColor: accentColor,
       );
     });
   }

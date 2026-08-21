@@ -9,8 +9,6 @@ import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import '../../../transaction/presentation/get_x/quick_entry_mixin.dart';
-import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../../domain/usecases/create_liability_usecase.dart';
@@ -135,16 +133,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     final result = await getIt<GetLiabilityBalancesUseCase>().call();
     result.when((balances) {
       loanBalances.assignAll(balances);
-      final filtered = balances.where((b) {
-        final isBorrow = b.liability.isBorrow;
-        if (!isBorrow) return false;
-
-        if (action.value == LiabilityAction.initiate) {
-          return b.liability.principalAmount == 0;
-        } else {
-          return b.liability.principalAmount > 0;
-        }
-      }).toList();
+      final filtered = balances.where((b) => b.liability.isBorrow).toList();
 
       filtered.sort(
         (a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt),
@@ -168,9 +157,27 @@ class LiabilityFormController extends LiabilityBaseFormController {
     }, (_) {});
   }
 
+  @override
   void selectLoan(LiabilityBalanceEntity balance) {
+    if (selectedLoanId.value == balance.liability.id) return;
+
     selectedLoanId.value = balance.liability.id;
     selectedWalletId.value = balance.liability.walletId;
+
+    // Auto-switch action based on loan state
+    if (balance.liability.principalAmount == 0) {
+      action.value = LiabilityAction.initiate;
+    } else {
+      action.value = LiabilityAction.settle;
+    }
+
+    // Reset amount to avoid carry-over from previous selection
+    amountStr.value = '0';
+
+    debugPrint(
+      '[LIABILITY_FORM] selectLoan: id=${balance.liability.id}, action=${action.value}, walletId=${balance.liability.walletId}',
+    );
+
     _loadCategoryForLoan(balance.liability.categoryId);
 
     if (balance.liability.principalAmount > 0) {
@@ -202,11 +209,12 @@ class LiabilityFormController extends LiabilityBaseFormController {
     super.onClose();
   }
 
+  @override
   void setAction(LiabilityAction value) {
     if (action.value == value) return;
     action.value = value;
-    selectedLoanId.value = null;
-    loadLiabilities();
+    // We no longer clear selection or reload because both sub-segments
+    // share the exact same list of categories/loans.
   }
 
   void setCategory(CategoryEntity category) {
