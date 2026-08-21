@@ -23,7 +23,7 @@ import 'income_form_controller.dart';
 import 'investment_form_controller.dart';
 
 /// Which real tab a `TabBar`/`TabBarView` slot represents.
-enum TransactionTabKind { expense, income, investment, debtLoan }
+enum TransactionTabKind { expense, income, investment, liability, lend }
 
 @injectable
 class TransactionController extends CcGetController {
@@ -41,7 +41,7 @@ class TransactionController extends CcGetController {
 
   final RxInt selectedTabIndex = 0.obs;
 
-  /// Whether the secondary card (Investment | Debt/Loan) is currently in front.
+  /// Whether the secondary card (Investment | Liability | Lend) is currently in front.
   final RxBool isSecondaryCardFront = false.obs;
 
   /// Whether the user has interacted with the card stack at least once.
@@ -50,18 +50,14 @@ class TransactionController extends CcGetController {
 
   /// Tabs currently visible, in display order.
   ///
-  /// To support the "Card-stack Reveal" design where the secondary card
-  /// serves as a "pedagogic affordance" even when locked, we now always
-  /// return all 4 tabs here. This ensures [DefaultTabController] has a
-  /// fixed length and [TabBarView] is always ready.
-  ///
-  /// Note: The UI ([TransactionCardStack]) still checks [_userLevel.status]
-  /// to show lock icons on the secondary tabs if needed.
+  /// Front card: [expense, income]
+  /// Back card: [investment, liability, lend]
   List<TransactionTabKind> get visibleTabs => [
     TransactionTabKind.expense,
     TransactionTabKind.income,
     TransactionTabKind.investment,
-    TransactionTabKind.debtLoan,
+    TransactionTabKind.liability,
+    TransactionTabKind.lend,
   ];
 
   /// Returns whether a specific tab is currently unlocked based on user level.
@@ -73,7 +69,8 @@ class TransactionController extends CcGetController {
     if (kind == TransactionTabKind.investment) {
       return _userLevel.status.value.canUseInvestment;
     }
-    if (kind == TransactionTabKind.debtLoan) {
+    if (kind == TransactionTabKind.liability ||
+        kind == TransactionTabKind.lend) {
       return _userLevel.status.value.canUseDebtLoan;
     }
     return false;
@@ -249,7 +246,8 @@ class TransactionController extends CcGetController {
           Get.find<InvestmentFormController>().submitForm(context);
         }
         break;
-      case TransactionTabKind.debtLoan:
+      case TransactionTabKind.liability:
+      case TransactionTabKind.lend:
         if (Get.isRegistered<LiabilityFormController>()) {
           Get.find<LiabilityFormController>().submitForm(context);
         }

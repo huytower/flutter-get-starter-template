@@ -12,14 +12,16 @@ extension TransactionTabKindStyle on TransactionTabKind {
     TransactionTabKind.expense => el.tr(CcLocaleKeys.transaction_expense_slip),
     TransactionTabKind.income => el.tr(CcLocaleKeys.transaction_income_slip),
     TransactionTabKind.investment => el.tr(CcLocaleKeys.transaction_investment),
-    TransactionTabKind.debtLoan => el.tr(CcLocaleKeys.transaction_debt),
+    TransactionTabKind.liability => el.tr(CcLocaleKeys.liability_title),
+    TransactionTabKind.lend => el.tr(CcLocaleKeys.loan_lend),
   };
 
   Color color(BuildContext context) => switch (this) {
     TransactionTabKind.expense => context.ccColorScheme.error,
     TransactionTabKind.income => PrjColors.success,
     TransactionTabKind.investment => context.ccColorScheme.investment,
-    TransactionTabKind.debtLoan => context.ccColorScheme.debtLoan,
+    TransactionTabKind.liability => context.ccColorScheme.debtLoan,
+    TransactionTabKind.lend => context.ccColorScheme.debtLoanSecondary,
   };
 }
 
@@ -119,7 +121,11 @@ class TransactionTabBar extends StatelessWidget {
         (context.respPadding(CcPaddingParams.PAGE_MD) * 2);
 
     final tabs = isSecondary
-        ? [TransactionTabKind.investment, TransactionTabKind.debtLoan]
+        ? [
+            TransactionTabKind.investment,
+            TransactionTabKind.liability,
+            TransactionTabKind.lend,
+          ]
         : [TransactionTabKind.expense, TransactionTabKind.income];
 
     // Animation values
@@ -260,7 +266,9 @@ class TransactionTabBar extends StatelessWidget {
             ),
             if (kind == TransactionTabKind.investment && showInvestmentBadge)
               _buildBadge(context),
-            if (kind == TransactionTabKind.debtLoan && showLiabilityBadge)
+            if ((kind == TransactionTabKind.liability ||
+                    kind == TransactionTabKind.lend) &&
+                showLiabilityBadge)
               _buildBadge(context),
           ],
         ),

@@ -10,6 +10,7 @@ import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../transaction/presentation/get_x/quick_entry_mixin.dart';
+import '../../../transaction/presentation/get_x/transaction_controller.dart';
 import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
@@ -109,9 +110,23 @@ class LiabilityFormController extends TransactionFormController
   @override
   void onInit() {
     super.onInit();
-    debugPrint('[LIABILITY_FORM] onInit: direction=${direction.value}, loading merged items...');
+    debugPrint(
+      '[LIABILITY_FORM] onInit: direction=${direction.value}, loading merged items...',
+    );
 
     _loadAll();
+
+    // Listen to parent tab changes to sync direction
+    final txController = Get.find<TransactionController>();
+    ever(txController.selectedTabIndex, (index) {
+      if (index >= txController.visibleTabs.length) return;
+      final tab = txController.visibleTabs[index];
+      if (tab == TransactionTabKind.liability) {
+        setDirection(LiabilityDirection.borrow);
+      } else if (tab == TransactionTabKind.lend) {
+        setDirection(LiabilityDirection.lend);
+      }
+    });
 
     // Listen to liability list changes to sync with deletions from list page
     if (Get.isRegistered<LiabilityListController>()) {
@@ -154,7 +169,9 @@ class LiabilityFormController extends TransactionFormController
     await _loadVipStatus();
     await loadLiabilities();
     isLoadingMerged.value = false;
-    debugPrint('[LIABILITY_FORM] _loadAll done: mergedItems=${mergedItems.length}, isLoadingMerged=false');
+    debugPrint(
+      '[LIABILITY_FORM] _loadAll done: mergedItems=${mergedItems.length}, isLoadingMerged=false',
+    );
 
     initQuickEntry();
   }
@@ -164,9 +181,18 @@ class LiabilityFormController extends TransactionFormController
     result.when((balances) {
       loanBalances.assignAll(balances);
       final filtered = balances.where((b) {
-        return direction.value == LiabilityDirection.borrow
+        final directionMatch = direction.value == LiabilityDirection.borrow
             ? b.liability.isBorrow
             : b.liability.isLend;
+
+        if (!directionMatch) return false;
+
+        // Filter by action: initiate (new loan placeholders) vs settle (existing loans)
+        if (action.value == LiabilityAction.initiate) {
+          return b.liability.principalAmount == 0;
+        } else {
+          return b.liability.principalAmount > 0;
+        }
       }).toList();
 
       // Sort by recency to match Dashboard logic
@@ -200,7 +226,9 @@ class LiabilityFormController extends TransactionFormController
   void selectLoan(LiabilityBalanceEntity balance) {
     selectedLoanId.value = balance.liability.id;
     selectedWalletId.value = balance.liability.walletId;
-    debugPrint('[LIABILITY_FORM] selectLoan: id=${balance.liability.id}, direction=${balance.liability.direction}, walletId=${balance.liability.walletId}, principal=${balance.liability.principalAmount}, outstanding=${balance.outstandingBalance}');
+    debugPrint(
+      '[LIABILITY_FORM] selectLoan: id=${balance.liability.id}, direction=${balance.liability.direction}, walletId=${balance.liability.walletId}, principal=${balance.liability.principalAmount}, outstanding=${balance.outstandingBalance}',
+    );
     // Pre-fill category from loan for consistent submit logic
     _loadCategoryForLoan(balance.liability.categoryId);
 
@@ -239,20 +267,35 @@ class LiabilityFormController extends TransactionFormController
     if (direction.value == value) return;
     final oldDirection = direction.value;
     direction.value = value;
-    debugPrint('[LIABILITY_FORM] setDirection: $oldDirection -> $value, clearing category/loan selection');
+    debugPrint(
+      '[LIABILITY_FORM] setDirection: $oldDirection -> $value, clearing category/loan selection',
+    );
     selectedCategory.value = null;
     pendingPrefillCategoryId.value = null;
     categoryKey.value++;
     selectedLoanId.value = null;
+
+    // Reset action to initiate when changing direction (tab)
+    action.value = LiabilityAction.initiate;
+
     loadLiabilities();
     refreshQuickEntryCategories();
+  }
+
+  void setAction(LiabilityAction value) {
+    if (action.value == value) return;
+    action.value = value;
+    selectedLoanId.value = null;
+    loadLiabilities();
   }
 
   @override
   void setWalletId(String id) {
     final wallet = wallets.firstWhereOrNull((w) => w.id == id);
     final balance = wallet?.balance;
-    debugPrint('[LIABILITY_FORM] setWalletId: id=$id, name=${wallet?.name ?? 'unknown'}, balance=$balance');
+    debugPrint(
+      '[LIABILITY_FORM] setWalletId: id=$id, name=${wallet?.name ?? 'unknown'}, balance=$balance',
+    );
     super.setWalletId(id);
   }
 
@@ -425,7 +468,9 @@ class LiabilityFormController extends TransactionFormController
   Future<void> submitForm(BuildContext context) async {
     if (isSubmitting.value || !canSubmit) return;
     isSubmitting.value = true;
-    debugPrint('[LIABILITY_FORM] submitForm: direction=${direction.value}, selectedLoanId=$selectedLoanId, amount=$amountStr, walletId=$selectedWalletId');
+    debugPrint(
+      '[LIABILITY_FORM] submitForm: direction=${direction.value}, selectedLoanId=$selectedLoanId, amount=$amountStr, walletId=$selectedWalletId',
+    );
 
     final loan = mergedItems
         .firstWhereOrNull((b) => b.liability.id == selectedLoanId.value)
@@ -438,7 +483,9 @@ class LiabilityFormController extends TransactionFormController
 
     // Existing loan with principal: Record payment
     if (loan.principalAmount > 0) {
-      debugPrint('[LIABILITY_FORM] submitForm: existing loan repayment, loanId=${loan.id}, isBorrow=${loan.isBorrow}, amount=$amountStr, wallet=$selectedWalletId');
+      debugPrint(
+        '[LIABILITY_FORM] submitForm: existing loan repayment, loanId=${loan.id}, isBorrow=${loan.isBorrow}, amount=$amountStr, wallet=$selectedWalletId',
+      );
       final params = RecordLoanPaymentParams(
         loanId: loan.id,
         walletId: selectedWalletId.value ?? '',
@@ -451,7 +498,9 @@ class LiabilityFormController extends TransactionFormController
       isSubmitting.value = false;
       if (result.isError()) {
         final error = result.tryGetError()!;
-        debugPrint('[LIABILITY_FORM] submitForm: repayment error type=${error.runtimeType}, messageKey=${error.message}, translated=${el.tr(error.message)}');
+        debugPrint(
+          '[LIABILITY_FORM] submitForm: repayment error type=${error.runtimeType}, messageKey=${error.message}, translated=${el.tr(error.message)}',
+        );
       } else {
         debugPrint('[LIABILITY_FORM] submitForm: repayment result=success');
       }
@@ -489,7 +538,9 @@ class LiabilityFormController extends TransactionFormController
     final categoryLabel = el.tr(category.nameKey);
     final isInstallment =
         repaymentMethod.value == LiabilityRepaymentMethod.installment;
-    debugPrint('[LIABILITY_FORM] submitForm: new loan, direction=$direction, principal=$principalAmount, category=$categoryLabel, wallet=$selectedWalletId, installment=$isInstallment');
+    debugPrint(
+      '[LIABILITY_FORM] submitForm: new loan, direction=$direction, principal=$principalAmount, category=$categoryLabel, wallet=$selectedWalletId, installment=$isInstallment',
+    );
 
     final params = CreateLoanParams(
       loanId: loan.id,
@@ -521,7 +572,9 @@ class LiabilityFormController extends TransactionFormController
     isSubmitting.value = false;
     if (result.isError()) {
       final error = result.tryGetError()!;
-      debugPrint('[LIABILITY_FORM] submitForm: create loan error type=${error.runtimeType}, message=${error.message}');
+      debugPrint(
+        '[LIABILITY_FORM] submitForm: create loan error type=${error.runtimeType}, message=${error.message}',
+      );
     } else {
       debugPrint('[LIABILITY_FORM] submitForm: create loan result=success');
     }

@@ -159,7 +159,8 @@ class TransactionPageHeader extends StatelessWidget {
         return Get.isRegistered<InvestmentFormController>()
             ? Get.find<InvestmentFormController>()
             : null;
-      case TransactionTabKind.debtLoan:
+      case TransactionTabKind.liability:
+      case TransactionTabKind.lend:
         return Get.isRegistered<LiabilityFormController>()
             ? Get.find<LiabilityFormController>()
             : null;
@@ -367,7 +368,8 @@ class TransactionPageHeader extends StatelessWidget {
       TransactionTabKind.expense => context.ccColorScheme.error,
       TransactionTabKind.income => PrjColors.success,
       TransactionTabKind.investment => context.ccColorScheme.investment,
-      TransactionTabKind.debtLoan => context.ccColorScheme.debtLoan,
+      TransactionTabKind.liability => context.ccColorScheme.debtLoan,
+      TransactionTabKind.lend => context.ccColorScheme.debtLoanSecondary,
     };
   }
 }

@@ -76,20 +76,25 @@ class LiabilityForm extends StatelessWidget {
     LiabilityFormController controller,
     Color accentColor,
   ) {
+    final bool isBorrowSide =
+        controller.direction.value == LiabilityDirection.borrow;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         LiabilityPillToggle(
-          selectedIndex: controller.direction.value == LiabilityDirection.borrow
+          selectedIndex: controller.action.value == LiabilityAction.initiate
               ? 0
               : 1,
-          firstLabel: el.tr(
-            CcLocaleKeys.transaction_liability_direction_borrow,
-          ),
-          secondLabel: el.tr(CcLocaleKeys.transaction_liability_direction_lend),
+          firstLabel: isBorrowSide
+              ? el.tr(CcLocaleKeys.transaction_liability_direction_borrow)
+              : el.tr(CcLocaleKeys.transaction_loan_direction_lend),
+          secondLabel: isBorrowSide
+              ? el.tr(CcLocaleKeys.transaction_record_repay)
+              : el.tr(CcLocaleKeys.transaction_record_collect),
           activeColor: accentColor,
-          onChanged: (index) => controller.setDirection(
-            index == 0 ? LiabilityDirection.borrow : LiabilityDirection.lend,
+          onChanged: (index) => controller.setAction(
+            index == 0 ? LiabilityAction.initiate : LiabilityAction.settle,
           ),
         ),
         const CcSpaceSM(),
@@ -159,16 +164,14 @@ class LiabilityForm extends StatelessWidget {
     Color accentColor,
   ) {
     return Obx(() {
-      final loan = controller.mergedItems
-          .firstWhereOrNull(
-            (b) => b.liability.id == controller.selectedLoanId.value,
-          )
-          ?.liability;
-      final isExisting = loan != null && loan.principalAmount > 0;
+      final bool isInitiate =
+          controller.action.value == LiabilityAction.initiate;
+      final bool isBorrowSide =
+          controller.direction.value == LiabilityDirection.borrow;
 
-      final label = isExisting
+      final label = !isInitiate
           ? el.tr(CcLocaleKeys.transaction_amount)
-          : (controller.direction.value == LiabilityDirection.borrow
+          : (isBorrowSide
                 ? el.tr(CcLocaleKeys.transaction_liability_amount_borrow_label)
                 : el.tr(CcLocaleKeys.transaction_liability_amount_lend_label));
 
@@ -195,16 +198,14 @@ class LiabilityForm extends StatelessWidget {
     Color accentColor,
   ) {
     return Obx(() {
-      final loan = controller.mergedItems
-          .firstWhereOrNull(
-            (b) => b.liability.id == controller.selectedLoanId.value,
-          )
-          ?.liability;
-      final isExisting = loan != null && loan.principalAmount > 0;
+      final bool isInitiate =
+          controller.action.value == LiabilityAction.initiate;
+      final bool isBorrowSide =
+          controller.direction.value == LiabilityDirection.borrow;
 
-      final label = isExisting
+      final label = !isInitiate
           ? el.tr(CcLocaleKeys.transaction_source_debt)
-          : (controller.direction.value == LiabilityDirection.borrow
+          : (isBorrowSide
                 ? el.tr(CcLocaleKeys.transaction_liability_wallet_borrow_label)
                 : el.tr(CcLocaleKeys.transaction_liability_wallet_lend_label));
 

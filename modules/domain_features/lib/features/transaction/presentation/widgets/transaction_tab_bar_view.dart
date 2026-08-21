@@ -62,7 +62,8 @@ class TransactionTabBarView extends StatelessWidget {
       TransactionTabKind.expense => const ExpenseForm(),
       TransactionTabKind.income => const IncomeForm(),
       TransactionTabKind.investment => const InvestmentForm(),
-      TransactionTabKind.debtLoan => const LiabilityForm(),
+      TransactionTabKind.liability => const LiabilityForm(),
+      TransactionTabKind.lend => const LiabilityForm(),
     };
   }
 
