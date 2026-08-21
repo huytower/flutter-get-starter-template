@@ -101,21 +101,16 @@ class LiabilityForm extends StatelessWidget {
               const CcSpaceSM(),
               _buildWalletSection(context, controller, accentColor),
               const CcSpaceSM(),
-              Obx(() {
-                // Show schedule editor for BOTH new and existing loans if in "Borrow" action
-                if (controller.action.value == LiabilityAction.initiate) {
-                  return Column(
-                    children: [
-                      LiabilityRepaymentMethodSection(
-                        controller: controller,
-                        accentColor: accentColor,
-                      ),
-                      const CcSpaceSM(),
-                    ],
-                  );
-                }
-                return const SizedBox.shrink();
-              }),
+              if (isInitiate)
+                Column(
+                  children: [
+                    LiabilityRepaymentMethodSection(
+                      controller: controller,
+                      accentColor: accentColor,
+                    ),
+                    const CcSpaceSM(),
+                  ],
+                ),
               TransactionAdditionalDetailsSection(
                 isExpanded: controller.showMoreDetails.value,
                 onToggle: controller.toggleMoreDetails,
