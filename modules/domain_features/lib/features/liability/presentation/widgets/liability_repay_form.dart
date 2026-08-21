@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
-import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
+import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../get_x/liability_detail_controller.dart';
 
@@ -41,12 +40,13 @@ class LiabilityRepayForm extends StatelessWidget {
           onQuickAmountSelected: (amount) =>
               controller.amountStr.value = amount.toString(),
           onClear: () => controller.amountStr.value = '0',
-          onCopy: () => CcStringHelper.copyToClipboard(controller.amountStr.value),
+          onCopy: () =>
+              CcStringHelper.copyToClipboard(controller.amountStr.value),
         ),
         const CcSpaceLG(),
         CcFormLabel(text: el.tr(CcLocaleKeys.transaction_source_debt)),
         const CcSpaceXS(),
-        CcWalletStripCard(
+        WalletStripCard(
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
           activeColor: accentColor,
@@ -79,5 +79,3 @@ class LiabilityRepayForm extends StatelessWidget {
     );
   }
 }
-
-

@@ -109,18 +109,12 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     );
   }
 
-  Widget _buildTitle(
-    BuildContext context,
-    AddLiquidSheetController controller,
-  ) {
-    return CcText(
-      controller.isEditing
+  Widget _buildTitle(BuildContext context, AddLiquidSheetController controller) {
+    return CcFormLabel(
+      text: controller.isEditing
           ? el.tr(CcLocaleKeys.wallet_edit_title)
           : el.tr(CcLocaleKeys.wallet_add_title),
-      textStyle: context.ccTextTheme.titleLarge?.copyWith(
-        fontWeight: CcTypographyParams.bold,
-        color: context.ccColorScheme.primary,
-      ),
+      color: context.ccColorScheme.primary,
     );
   }
 

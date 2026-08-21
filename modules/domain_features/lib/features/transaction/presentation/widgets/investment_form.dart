@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +9,6 @@ import '../../../wallet/export_wallet.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
 import 'cc_amount_input_section.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'investment_asset_selector.dart';
 import 'investment_direction_toggle.dart';
 import 'money_keypad_panel.dart';
@@ -214,7 +214,7 @@ class InvestmentForm extends StatelessWidget {
       children: [
         CcFormLabel(text: el.tr(labelKey)),
         const CcSpaceXS(),
-        CcWalletStripCard(
+        WalletStripCard(
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
           activeColor: accentColor,

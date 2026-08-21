@@ -6,30 +6,30 @@ import 'package:get/get.dart';
 import 'package:theme/data/data_source/color/prj_color.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
-import 'cc_wallet_item.dart';
 
 /// Unified horizontal strip of wallet cards for both Dashboard and Forms.
 /// Supports selection, long-press actions, navigation, and "Add New" button.
-class CcWalletStripCard extends StatelessWidget {
+class WalletStripCard extends StatelessWidget {
   final List<WalletEntity> wallets;
   final String? selectedWalletId;
+  final bool showGradient;
   final Color activeColor;
   final ValueChanged<String>? onWalletSelected;
-  final void Function(WalletEntity)? onMore;
   final VoidCallback? onAddNew;
   final String? addNewLabel;
   final String? emptyMessageKey;
 
-  const CcWalletStripCard({
+  const WalletStripCard({
     super.key,
     required this.wallets,
     this.selectedWalletId,
+    this.showGradient = false,
     this.activeColor = PrjColors.primary,
     this.onWalletSelected,
-    this.onMore,
     this.onAddNew,
     this.addNewLabel,
     this.emptyMessageKey,
@@ -97,12 +97,15 @@ class CcWalletStripCard extends StatelessWidget {
           : null;
 
       return CcWalletItem(
-        wallet: wallet,
+        name: wallet.name,
+        iconCode: wallet.iconCode,
         isSelected: isSelected,
+        showGradient: showGradient,
         activeColor: activeColor,
         onTap: () => _handleWalletTap(context, wallet.id),
-        onLongPress: onMore != null ? () => onMore!(wallet) : null,
-        balance: balance,
+        balanceText: balance != null
+            ? TransactionFormHelpers.formatShort(balance)
+            : el.tr(CcLocaleKeys.wallet_balance_hidden),
       );
     });
   }

@@ -7,7 +7,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../guideline/guideline_controller.dart';
-import '../../../wallet/presentation/widgets/cc_wallet_strip_card.dart';
+import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/income_form_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
@@ -177,7 +177,7 @@ class IncomeForm extends StatelessWidget {
       children: [
         CcFormLabel(text: el.tr(CcLocaleKeys.transaction_source_income)),
         const CcSpaceXS(),
-        CcWalletStripCard(
+        WalletStripCard(
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
           activeColor: accentColor,

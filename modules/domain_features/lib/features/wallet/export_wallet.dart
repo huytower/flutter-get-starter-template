@@ -14,6 +14,6 @@ export 'presentation/pages/investment_list_page.dart';
 export 'presentation/pages/liquid_wallet_list_page.dart';
 export 'presentation/pages/wallet_detail_page.dart';
 export 'presentation/widgets/add_liquid_sheet.dart';
-export 'presentation/widgets/cc_wallet_strip_card.dart';
 export 'presentation/widgets/liquid_wallet_list_item.dart';
 export 'presentation/widgets/wallet_section_header.dart';
+export 'presentation/widgets/wallet_strip_card.dart';

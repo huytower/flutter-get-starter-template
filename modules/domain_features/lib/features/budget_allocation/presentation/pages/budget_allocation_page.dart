@@ -200,7 +200,12 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       () => LiquidWalletsSection(
         wallets: controller.walletController.recentLiquidWallets,
         onAddWallet: () => controller.openAddWallet(context),
-        onMore: (wallet) => controller.openWalletActions(context, wallet),
+        showGuidelineBadge: Get.isRegistered<GuidelineController>()
+            ? Get.find<GuidelineController>().isTaskActive('wallet_balance')
+            : false,
+        badgeColor: Get.isRegistered<GuidelineController>()
+            ? Get.find<GuidelineController>().currentColor
+            : null,
       ),
     );
   }

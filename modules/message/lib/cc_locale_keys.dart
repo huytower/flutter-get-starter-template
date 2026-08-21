@@ -1672,6 +1672,7 @@ abstract class CcLocaleKeys {
   static const wallet_name_duplicate_error = 'wallet.name_duplicate_error';
   static const wallet_initial_balance = 'wallet.initial_balance';
   static const wallet_balance_locked_hint = 'wallet.balance_locked_hint';
+  static const wallet_balance_hidden = 'wallet.balance_hidden';
   static const wallet_save_info = 'wallet.save_info';
   static const wallet_bank = 'wallet.bank';
   static const wallet_ewallet = 'wallet.ewallet';
