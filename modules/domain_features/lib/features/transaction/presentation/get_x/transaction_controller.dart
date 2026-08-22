@@ -73,6 +73,9 @@ class TransactionController extends CcGetController {
     if (kind == TransactionTabKind.liability) {
       return _userLevel.status.value.canUseDebtLoan;
     }
+    if (kind == TransactionTabKind.lend) {
+      return _userLevel.status.value.canUseDebtLoan;
+    }
     return false;
   }
 
@@ -168,6 +171,9 @@ class TransactionController extends CcGetController {
     }
     if (!Get.isRegistered<LiabilityFormController>()) {
       Get.put(getIt<LiabilityFormController>());
+    }
+    if (!Get.isRegistered<LendFormController>()) {
+      Get.lazyPut(() => getIt<LendFormController>());
     }
 
     // The transaction tab hosts an always-visible entry form, not a data-gated
