@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -22,12 +24,10 @@ class CcLevelLockPlaceholder extends StatelessWidget {
       final status = userLevel.status.value;
       final targetLevel = (tab == TransactionTabKind.investment) ? 2 : 3;
 
-      // Calculate progress percentage
       double progress = 0;
       List<Widget> tasks = [];
 
       if (targetLevel == 2) {
-        // LV2 requirements: 6 guidelines + 2 streak
         final completedG = status.completedGuidelineCount;
         final streak = status.reconciliationStreak;
         progress = ((completedG.clamp(0, 6) + streak.clamp(0, 2)) / 8) * 100;
@@ -52,36 +52,32 @@ class CcLevelLockPlaceholder extends StatelessWidget {
             context,
             label: el.tr(
               CcLocaleKeys.level_lock_task_reconciliation_streak,
-              namedArgs: {'current': streak.toString(), 'total': '2'},
+              namedArgs: {
+                'current': streak.clamp(0, 2).toString(),
+                'total': '2',
+              },
             ),
             isCompleted: streak >= 2,
           ),
         ];
       } else {
-        // LV3 requirements: 4 streak + 3 fixed budgets + positive cash flow
         final streak = status.reconciliationStreak;
         final budgets = status.fixedBudgetCount;
         final cashFlow = status.hasPositiveCashFlow;
 
-        int score = 0;
-        if (streak >= 4)
-          score += 2;
-        else if (streak > 0)
-          score += 1;
-        if (budgets >= 3)
-          score += 2;
-        else if (budgets > 0)
-          score += 1;
-        if (cashFlow) score += 1;
-
-        progress = (score / 5) * 100;
+        int points =
+            streak.clamp(0, 4) + budgets.clamp(0, 3) + (cashFlow ? 1 : 0);
+        progress = (points / 8) * 100;
 
         tasks = [
           _buildTaskItem(
             context,
             label: el.tr(
               CcLocaleKeys.level_lock_task_reconciliation_streak,
-              namedArgs: {'current': streak.toString(), 'total': '4'},
+              namedArgs: {
+                'current': streak.clamp(0, 4).toString(),
+                'total': '4',
+              },
             ),
             isCompleted: streak >= 4,
           ),
@@ -89,7 +85,10 @@ class CcLevelLockPlaceholder extends StatelessWidget {
             context,
             label: el.tr(
               CcLocaleKeys.level_lock_task_fixed_budgets,
-              namedArgs: {'current': budgets.toString(), 'total': '3'},
+              namedArgs: {
+                'current': budgets.clamp(0, 3).toString(),
+                'total': '3',
+              },
             ),
             isCompleted: budgets >= 3,
           ),
@@ -109,37 +108,78 @@ class CcLevelLockPlaceholder extends StatelessWidget {
           ? el.tr(CcLocaleKeys.level_lock_investment_desc)
           : el.tr(CcLocaleKeys.level_lock_liability_desc);
 
-      return SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(
-            context.respPadding(CcPaddingParams.SPACE_XL),
-          ),
-          child: Column(
-            children: [
-              const CcSpaceXL(),
-              _buildLockIcon(context),
-              const CcSpaceXL(),
-              _buildProgressHeader(context, targetLevel, progress.toInt()),
-              const CcSpaceSM(),
-              CcText(
-                title,
-                textStyle: context.ccTextTheme.titleLarge?.copyWith(
-                  fontWeight: CcTypographyParams.bold,
-                  color: context.ccColorScheme.onSurface,
+      return Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(
+              context.respPadding(CcPaddingParams.PAGE_MD),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: context.brLg,
+                color: context.ccColorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.3,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const CcSpaceMD(),
-              CcText(
-                desc,
-                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  color: context.ccColorScheme.onSurfaceVariant,
+                border: Border.all(
+                  color: context.ccColorScheme.onSurfaceVariant.withValues(
+                    alpha: 0.1,
+                  ),
+                  width: context.respDim(1),
                 ),
-                textAlign: TextAlign.center,
               ),
-              const CcSpaceXL(),
-              ...tasks,
-            ],
+              constraints: BoxConstraints(maxWidth: context.respDim(360)),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Positioned(
+                    top: context.respDim(-28),
+                    left: 0,
+                    right: 0,
+                    child: Center(child: _buildLockIcon(context)),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top:
+                          context.respDim(28) +
+                          context.respPadding(CcPaddingParams.SPACE_MD),
+                      bottom: context.respPadding(CcPaddingParams.PAGE_MD),
+                      left: context.respPadding(CcPaddingParams.PAGE_MD),
+                      right: context.respPadding(CcPaddingParams.PAGE_MD),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildExpProgressArchive(
+                          context,
+                          progress.toInt(),
+                          context.ccColorScheme.primary,
+                        ),
+                        const CcSpaceXS(),
+                        CcText(
+                          desc,
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                            color: context.ccColorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const CcSpaceXS(),
+                        CcText(
+                          desc,
+                          textAlign: TextAlign.center,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                            color: context.ccColorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const CcSpaceXS(),
+                        ...tasks,
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       );
@@ -148,31 +188,20 @@ class CcLevelLockPlaceholder extends StatelessWidget {
 
   Widget _buildLockIcon(BuildContext context) {
     return Container(
-      width: context.respDim(80),
-      height: context.respDim(80),
+      width: context.respDim(56),
+      height: context.respDim(56),
       decoration: BoxDecoration(
-        color: context.ccColorScheme.onSurface.withOpacity(0.05),
+        color: context.ccColorScheme.surface,
         shape: BoxShape.circle,
+        border: Border.all(
+          color: context.ccColorScheme.onSurfaceVariant.withValues(alpha: 0.15),
+          width: context.respDim(2),
+        ),
       ),
       child: Icon(
         Icons.lock_outline_rounded,
-        size: context.respIconSize(baseSize: 32),
+        size: context.respIconSize(baseSize: 24),
         color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.6),
-      ),
-    );
-  }
-
-  Widget _buildProgressHeader(BuildContext context, int level, int progress) {
-    final remaining = 100 - progress;
-    final text =
-        "${el.tr(CcLocaleKeys.level_lock_unlock_at_lv, namedArgs: {'level': level.toString()})} • ${el.tr(CcLocaleKeys.level_lock_remaining_percent, namedArgs: {'percent': remaining.toString()})}";
-
-    return CcText(
-      text.toUpperCase(),
-      textStyle: context.ccTextTheme.labelMedium?.copyWith(
-        fontWeight: CcTypographyParams.bold,
-        color: context.ccColorScheme.onSurfaceVariant,
-        letterSpacing: 1.2,
       ),
     );
   }
@@ -182,34 +211,103 @@ class CcLevelLockPlaceholder extends StatelessWidget {
     required String label,
     required bool isCompleted,
   }) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: context.respPadding(CcPaddingParams.SPACE_SM),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            isCompleted
-                ? Icons.check_rounded
-                : Icons.radio_button_unchecked_rounded,
-            size: context.respIconSize(baseSize: 20),
-            color: isCompleted
-                ? context.ccColorScheme.primary
-                : context.ccColorScheme.onSurfaceVariant.withOpacity(0.3),
-          ),
-          const CcSpaceMD(),
-          Expanded(
-            child: CcText(
-              label,
-              textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-                color: isCompleted
-                    ? context.ccColorScheme.onSurface
-                    : context.ccColorScheme.onSurfaceVariant.withOpacity(0.6),
-              ),
+    return Row(
+      children: [
+        Icon(
+          isCompleted
+              ? Icons.check_rounded
+              : Icons.radio_button_unchecked_rounded,
+          size: context.respIconSize(baseSize: 14),
+          color: isCompleted
+              ? context.ccColorScheme.primary
+              : context.ccColorScheme.onSurfaceVariant.withOpacity(0.4),
+        ),
+        const CcSpaceXS(),
+        Expanded(
+          child: CcText(
+            label,
+            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+              color: isCompleted
+                  ? context.ccColorScheme.onSurface.withOpacity(0.8)
+                  : context.ccColorScheme.onSurfaceVariant.withOpacity(0.3),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
+  }
+
+  Widget _buildExpProgressArchive(
+    BuildContext context,
+    int progress,
+    Color accent,
+  ) {
+    final scheme = context.ccColorScheme;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CcText(
+          el.tr(
+            CcLocaleKeys.level_lock_progress_archived,
+            namedArgs: {'percent': '$progress'},
+          ),
+          textStyle: context.ccTextTheme.labelSmall?.copyWith(
+            color: scheme.onSurfaceVariant.withOpacity(0.6),
+          ),
+        ),
+        const CcSpaceSM(),
+        SizedBox(
+          width: context.respDim(20),
+          height: context.respDim(20),
+          child: CustomPaint(
+            painter: _MiniPiePainter(
+              progress: progress / 100,
+              color: accent,
+              backgroundColor: scheme.onSurfaceVariant.withOpacity(0.1),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MiniPiePainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  final Color backgroundColor;
+
+  _MiniPiePainter({
+    required this.progress,
+    required this.color,
+    required this.backgroundColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    final bgPaint = Paint()..color = backgroundColor;
+    canvas.drawCircle(center, radius, bgPaint);
+
+    if (progress <= 0) return;
+
+    final rect = Rect.fromCircle(center: center, radius: radius);
+    final sweepAngle = 2 * math.pi * progress.clamp(0.0, 1.0);
+
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    canvas.drawArc(rect, -math.pi / 2, sweepAngle, true, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _MiniPiePainter oldDelegate) {
+    return oldDelegate.progress != progress ||
+        oldDelegate.color != color ||
+        oldDelegate.backgroundColor != backgroundColor;
   }
 }

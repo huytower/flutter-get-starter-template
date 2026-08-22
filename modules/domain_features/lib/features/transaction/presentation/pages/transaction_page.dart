@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
-import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../get_x/expense_form_controller.dart';
 import '../get_x/investment_form_controller.dart';
 import '../get_x/transaction_controller.dart';
@@ -31,9 +30,6 @@ class TransactionPage extends CcGetView<TransactionController> {
     }
     if (!Get.isRegistered<LiabilityFormController>()) {
       Get.put(getIt<LiabilityFormController>());
-    }
-    if (!Get.isRegistered<LendFormController>()) {
-      Get.put(getIt<LendFormController>());
     }
 
     return const _TransactionPageContent();

@@ -772,6 +772,7 @@ class CodegenLoader extends AssetLoader {
       "task_reconciliation_streak": "Audit discipline {current}/{total} weeks",
       "task_fixed_budgets": "Setup {current}/{total} fixed budgets",
       "task_positive_cash_flow": "Positive cash flow this month",
+      "progress_archived": "{percent}% exp archived",
     },
   };
   static const Map<String, dynamic> _vi = {
@@ -1530,6 +1531,7 @@ class CodegenLoader extends AssetLoader {
       "task_reconciliation_streak": "Kỷ luật kiểm toán {current}/{total} tuần",
       "task_fixed_budgets": "Thiết lập {current}/{total} ngân sách mức sống",
       "task_positive_cash_flow": "Dòng tiền dương trong tháng",
+      "progress_archived": "{percent}% chi tiêu đã lưu",
     },
   };
   static const Map<String, Map<String, dynamic>> mapLocales = {
@@ -2328,4 +2330,6 @@ abstract class CcLocaleKeys {
   static const level_lock_task_fixed_budgets = 'level_lock.task_fixed_budgets';
   static const level_lock_task_positive_cash_flow =
       'level_lock.task_positive_cash_flow';
+  static const level_lock_progress_archived =
+      'level_lock.progress_archived';
 }

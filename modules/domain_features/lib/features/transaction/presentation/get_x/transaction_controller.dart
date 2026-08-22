@@ -10,8 +10,8 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../guideline/guideline_controller.dart';
-import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
+import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
@@ -70,8 +70,7 @@ class TransactionController extends CcGetController {
     if (kind == TransactionTabKind.investment) {
       return _userLevel.status.value.canUseInvestment;
     }
-    if (kind == TransactionTabKind.liability ||
-        kind == TransactionTabKind.lend) {
+    if (kind == TransactionTabKind.liability) {
       return _userLevel.status.value.canUseDebtLoan;
     }
     return false;
@@ -169,9 +168,6 @@ class TransactionController extends CcGetController {
     }
     if (!Get.isRegistered<LiabilityFormController>()) {
       Get.put(getIt<LiabilityFormController>());
-    }
-    if (!Get.isRegistered<LendFormController>()) {
-      Get.put(getIt<LendFormController>());
     }
 
     // The transaction tab hosts an always-visible entry form, not a data-gated

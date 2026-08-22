@@ -111,7 +111,6 @@ class TransactionTabBar extends StatelessWidget {
     final double scale = isFront ? 1.0 : 0.94;
     final double opacity = isFront ? 1.0 : 0.45;
     final double yOffset = isFront ? 0 : -context.respDim(8);
-    final int zIndex = isFront ? 2 : 1;
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 400),
@@ -174,13 +173,6 @@ class TransactionTabBar extends StatelessWidget {
     final currentKind = controller
         .visibleTabs[selectedIndex.clamp(0, controller.visibleTabs.length - 1)];
 
-    final bool hasSelectionOnThisCard = tabs.contains(currentKind);
-
-    // If this card is in front but doesn't have the current selection,
-    // we should highlight nothing or the first tab?
-    // TransactionController.toggleCardStack already ensures selection
-    // moves when swapping, so this should be fine.
-
     return Row(
       children: [
         for (final tab in tabs)
@@ -203,7 +195,7 @@ class TransactionTabBar extends StatelessWidget {
     final activeColor = kind.color(context);
 
     return CcInteractBtnWrapper(
-      isEnable: isUnlocked,
+      isEnable: true,
       isBouncing: true,
       useDebounce: true,
       onTap: () {
@@ -229,7 +221,9 @@ class TransactionTabBar extends StatelessWidget {
                 child: Icon(
                   Icons.lock_outline_rounded,
                   size: context.respIconSize(baseSize: 12),
-                  color: scheme.onSurfaceVariant.withOpacity(0.5),
+                  color: isSelected
+                      ? activeColor.withOpacity(0.6)
+                      : scheme.onSurfaceVariant.withOpacity(0.5),
                 ),
               ),
             CcText(

@@ -699,7 +699,8 @@
         "task_setup_birth_year": "Thiết lập năm sinh",
         "task_reconciliation_streak": "Kỷ luật kiểm toán {current}/{total} tuần",
         "task_fixed_budgets": "Thiết lập {current}/{total} ngân sách mức sống",
-        "task_positive_cash_flow": "Dòng tiền dương trong tháng"
+        "task_positive_cash_flow": "Dòng tiền dương trong tháng",
+        "progress_archived": "Đã đạt được {percent}% exp"
     }
 }
 

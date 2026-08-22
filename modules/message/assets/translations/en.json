@@ -701,6 +701,7 @@
         "task_setup_birth_year": "Setup birth year",
         "task_reconciliation_streak": "Audit discipline {current}/{total} weeks",
         "task_fixed_budgets": "Setup {current}/{total} fixed budgets",
-        "task_positive_cash_flow": "Positive cash flow this month"
+        "task_positive_cash_flow": "Positive cash flow this month",
+        "progress_archived": "{percent}% exp archived"
     }
 }

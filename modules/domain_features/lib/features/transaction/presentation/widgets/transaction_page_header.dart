@@ -7,6 +7,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
+import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
@@ -160,9 +161,12 @@ class TransactionPageHeader extends StatelessWidget {
             ? Get.find<InvestmentFormController>()
             : null;
       case TransactionTabKind.liability:
-      case TransactionTabKind.lend:
         return Get.isRegistered<LiabilityFormController>()
             ? Get.find<LiabilityFormController>()
+            : null;
+      case TransactionTabKind.lend:
+        return Get.isRegistered<LendFormController>()
+            ? Get.find<LendFormController>()
             : null;
     }
   }
@@ -334,7 +338,11 @@ class TransactionPageHeader extends StatelessWidget {
   Widget _buildSubmitButton(BuildContext context) {
     return Obx(() {
       final selectedIndex = controller.selectedTabIndex.value;
-      final tabKind = controller.visibleTabs[selectedIndex];
+      final tabs = controller.visibleTabs;
+      if (selectedIndex < 0 || selectedIndex >= tabs.length) {
+        return const SizedBox.shrink();
+      }
+      final tabKind = tabs[selectedIndex];
       final activeColor = _getTabColor(context, tabKind);
 
       return CcIconButton.bouncing(
@@ -369,7 +377,7 @@ class TransactionPageHeader extends StatelessWidget {
       TransactionTabKind.income => PrjColors.success,
       TransactionTabKind.investment => context.ccColorScheme.investment,
       TransactionTabKind.liability => context.ccColorScheme.debtLoan,
-      TransactionTabKind.lend => context.ccColorScheme.debtLoanSecondary,
+      TransactionTabKind.lend => context.ccColorScheme.debtLoan,
     };
   }
 }
