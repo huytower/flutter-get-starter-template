@@ -50,11 +50,6 @@ class WalletController extends CcGetController {
   final RxBool isVip = false.obs;
 
   void toggleEditMode() {
-    if (!isEditMode.value && !isVip.value) {
-      // If trying to enter edit mode but not VIP, do nothing or show toast
-      // (The UI should handle the visibility of the edit button anyway)
-      return;
-    }
     isEditMode.toggle();
   }
 

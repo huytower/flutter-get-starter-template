@@ -1,11 +1,10 @@
-import 'dart:math' as math;
-
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../budget_limit/presentation/widgets/budget_limit_pie_chart.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../get_x/transaction_controller.dart';
@@ -28,6 +27,7 @@ class CcLevelLockPlaceholder extends StatelessWidget {
       List<Widget> tasks = [];
 
       if (targetLevel == 2) {
+        // LV2 requirements: 6 guidelines + 2 streak = 8 points total
         final completedG = status.completedGuidelineCount;
         final streak = status.reconciliationStreak;
         progress = ((completedG.clamp(0, 6) + streak.clamp(0, 2)) / 8) * 100;
@@ -52,15 +52,13 @@ class CcLevelLockPlaceholder extends StatelessWidget {
             context,
             label: el.tr(
               CcLocaleKeys.level_lock_task_reconciliation_streak,
-              namedArgs: {
-                'current': streak.clamp(0, 2).toString(),
-                'total': '2',
-              },
+              namedArgs: {'current': streak.toString(), 'total': '2'},
             ),
             isCompleted: streak >= 2,
           ),
         ];
       } else {
+        // LV3 requirements: 4 streak + 3 fixed budgets + positive cash flow = 8 points total
         final streak = status.reconciliationStreak;
         final budgets = status.fixedBudgetCount;
         final cashFlow = status.hasPositiveCashFlow;
@@ -74,10 +72,7 @@ class CcLevelLockPlaceholder extends StatelessWidget {
             context,
             label: el.tr(
               CcLocaleKeys.level_lock_task_reconciliation_streak,
-              namedArgs: {
-                'current': streak.clamp(0, 4).toString(),
-                'total': '4',
-              },
+              namedArgs: {'current': streak.toString(), 'total': '4'},
             ),
             isCompleted: streak >= 4,
           ),
@@ -85,10 +80,7 @@ class CcLevelLockPlaceholder extends StatelessWidget {
             context,
             label: el.tr(
               CcLocaleKeys.level_lock_task_fixed_budgets,
-              namedArgs: {
-                'current': budgets.clamp(0, 3).toString(),
-                'total': '3',
-              },
+              namedArgs: {'current': budgets.toString(), 'total': '3'},
             ),
             isCompleted: budgets >= 3,
           ),
@@ -117,12 +109,11 @@ class CcLevelLockPlaceholder extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: context.brLg,
-                color: context.ccColorScheme.surfaceContainerHighest.withValues(
-                  alpha: 0.3,
-                ),
+                color: context.ccColorScheme.surfaceContainerHighest
+                    .withOpacity(0.3),
                 border: Border.all(
-                  color: context.ccColorScheme.onSurfaceVariant.withValues(
-                    alpha: 0.1,
+                  color: context.ccColorScheme.onSurfaceVariant.withOpacity(
+                    0.1,
                   ),
                   width: context.respDim(1),
                 ),
@@ -147,6 +138,7 @@ class CcLevelLockPlaceholder extends StatelessWidget {
                       right: context.respPadding(CcPaddingParams.PAGE_MD),
                     ),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         _buildExpProgressArchive(
                           context,
@@ -154,13 +146,10 @@ class CcLevelLockPlaceholder extends StatelessWidget {
                           context.ccColorScheme.primary,
                         ),
                         const CcSpaceXS(),
-                        CcText(
-                          desc,
+                        CcFormLabel(
+                          text: title,
                           textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
-                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                            color: context.ccColorScheme.onSurfaceVariant,
-                          ),
+                          align: Alignment.center,
                         ),
                         const CcSpaceXS(),
                         CcText(
@@ -194,7 +183,7 @@ class CcLevelLockPlaceholder extends StatelessWidget {
         color: context.ccColorScheme.surface,
         shape: BoxShape.circle,
         border: Border.all(
-          color: context.ccColorScheme.onSurfaceVariant.withValues(alpha: 0.15),
+          color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.15),
           width: context.respDim(2),
         ),
       ),
@@ -211,29 +200,32 @@ class CcLevelLockPlaceholder extends StatelessWidget {
     required String label,
     required bool isCompleted,
   }) {
-    return Row(
-      children: [
-        Icon(
-          isCompleted
-              ? Icons.check_rounded
-              : Icons.radio_button_unchecked_rounded,
-          size: context.respIconSize(baseSize: 14),
-          color: isCompleted
-              ? context.ccColorScheme.primary
-              : context.ccColorScheme.onSurfaceVariant.withOpacity(0.4),
-        ),
-        const CcSpaceXS(),
-        Expanded(
-          child: CcText(
-            label,
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              color: isCompleted
-                  ? context.ccColorScheme.onSurface.withOpacity(0.8)
-                  : context.ccColorScheme.onSurfaceVariant.withOpacity(0.3),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: context.respPadding(2)),
+      child: Row(
+        children: [
+          Icon(
+            isCompleted
+                ? Icons.check_rounded
+                : Icons.radio_button_unchecked_rounded,
+            size: context.respIconSize(baseSize: 14),
+            color: isCompleted
+                ? context.ccColorScheme.primary
+                : context.ccColorScheme.onSurfaceVariant.withOpacity(0.4),
+          ),
+          const CcSpaceXS(),
+          Expanded(
+            child: CcText(
+              label,
+              textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                color: isCompleted
+                    ? context.ccColorScheme.onSurface.withOpacity(0.8)
+                    : context.ccColorScheme.onSurfaceVariant.withOpacity(0.3),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -257,57 +249,12 @@ class CcLevelLockPlaceholder extends StatelessWidget {
           ),
         ),
         const CcSpaceSM(),
-        SizedBox(
-          width: context.respDim(20),
-          height: context.respDim(20),
-          child: CustomPaint(
-            painter: _MiniPiePainter(
-              progress: progress / 100,
-              color: accent,
-              backgroundColor: scheme.onSurfaceVariant.withOpacity(0.1),
-            ),
-          ),
+        BudgetLimitPieChart(
+          progress: progress.toDouble(),
+          color: accent,
+          size: context.respDim(20),
         ),
       ],
     );
-  }
-}
-
-class _MiniPiePainter extends CustomPainter {
-  final double progress;
-  final Color color;
-  final Color backgroundColor;
-
-  _MiniPiePainter({
-    required this.progress,
-    required this.color,
-    required this.backgroundColor,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2;
-
-    final bgPaint = Paint()..color = backgroundColor;
-    canvas.drawCircle(center, radius, bgPaint);
-
-    if (progress <= 0) return;
-
-    final rect = Rect.fromCircle(center: center, radius: radius);
-    final sweepAngle = 2 * math.pi * progress.clamp(0.0, 1.0);
-
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-
-    canvas.drawArc(rect, -math.pi / 2, sweepAngle, true, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _MiniPiePainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.color != color ||
-        oldDelegate.backgroundColor != backgroundColor;
   }
 }

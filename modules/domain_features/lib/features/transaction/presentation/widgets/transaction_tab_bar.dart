@@ -214,6 +214,7 @@ class TransactionTabBar extends StatelessWidget {
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (!isUnlocked)
               Padding(
@@ -228,6 +229,7 @@ class TransactionTabBar extends StatelessWidget {
               ),
             CcText(
               kind.label(context),
+              textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.labelMedium?.copyWith(
                 fontWeight: isSelected ? CcTypographyParams.bold : null,
                 color: isSelected

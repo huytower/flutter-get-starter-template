@@ -69,7 +69,7 @@ class LiquidWalletsSection extends StatelessWidget {
                 ),
             ],
           ),
-          const CcSpaceXS(),
+          const CcSpaceSM(),
           WalletStripCard(wallets: wallets, emptyMessageKey: emptyMessageKey),
         ],
       ),

@@ -52,8 +52,6 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
           onTap: () => controller.openForm(context),
         ),
         Obx(() {
-          if (!controller.isVip.value) return const SizedBox.shrink();
-
           return Stack(
             clipBehavior: Clip.none,
             children: [
