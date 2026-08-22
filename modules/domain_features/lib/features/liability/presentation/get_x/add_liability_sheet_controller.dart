@@ -13,6 +13,7 @@ import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../../domain/usecases/create_liability_usecase.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
+import 'lend_form_controller.dart';
 import 'liability_form_controller.dart';
 import 'liability_list_controller.dart';
 
@@ -186,6 +187,9 @@ class AddLiabilitySheetController extends CcGetController {
           }
           if (Get.isRegistered<LiabilityFormController>()) {
             Get.find<LiabilityFormController>().loadLiabilities();
+          }
+          if (Get.isRegistered<LendFormController>()) {
+            Get.find<LendFormController>().loadLiabilities();
           }
 
           Navigator.pop(context);

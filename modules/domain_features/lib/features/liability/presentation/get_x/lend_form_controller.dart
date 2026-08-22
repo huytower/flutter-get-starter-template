@@ -427,7 +427,7 @@ class LendFormController extends LiabilityBaseFormController {
     }
 
     final category = selectedCategory.value!;
-    final categoryLabel = el.tr(category.nameKey);
+    final categoryLabel = loan.categoryLabel;
     final isInstallment =
         repaymentMethod.value == LiabilityRepaymentMethod.installment;
 
