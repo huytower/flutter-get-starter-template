@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
@@ -190,6 +191,10 @@ abstract class TransactionFormController extends CcGetController {
 
     if (Get.isRegistered<WalletController>()) {
       unawaited(Get.find<WalletController>().loadWallets());
+    }
+
+    if (Get.isRegistered<ReportController>()) {
+      await Get.find<ReportController>().load(showLoading: false);
     }
   }
 

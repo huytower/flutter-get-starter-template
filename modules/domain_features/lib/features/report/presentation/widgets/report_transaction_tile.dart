@@ -1,10 +1,12 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/presentation/widgets/edit_transaction_sheet.dart';
+import '../get_x/report_controller.dart';
 import 'report_daily_list_helpers.dart';
 
 class TransactionTile extends StatelessWidget {
@@ -45,7 +47,12 @@ class TransactionTile extends StatelessWidget {
 
     return CcInkWell(
       onTap: editable
-          ? () => EditTransactionSheet.show(context, transaction)
+          ? () async {
+              await EditTransactionSheet.show(context, transaction);
+              if (Get.isRegistered<ReportController>()) {
+                await Get.find<ReportController>().load(showLoading: false);
+              }
+            }
           : null,
       child: CcSymmetricPadding(
         horizontal: CcPaddingParams.SPACE_MD,
@@ -89,7 +96,12 @@ class TransactionTile extends StatelessWidget {
                   size: context.respIconSize(baseSize: 18),
                   color: context.ccColorScheme.primary,
                 ),
-                onTap: () => EditTransactionSheet.show(context, transaction),
+                onTap: () async {
+                  await EditTransactionSheet.show(context, transaction);
+                  if (Get.isRegistered<ReportController>()) {
+                    await Get.find<ReportController>().load(showLoading: false);
+                  }
+                },
               ),
             ],
             Column(
