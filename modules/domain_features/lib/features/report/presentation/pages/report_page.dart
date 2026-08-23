@@ -123,7 +123,13 @@ class ReportPage extends CcGetView<ReportController> {
                   },
                   child: ListView(
                     controller: controller.scrollController,
-                    padding: EdgeInsets.symmetric(horizontal: padding),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.fromLTRB(
+                      padding,
+                      0,
+                      padding,
+                      headerHeight,
+                    ),
                     // The report body is a bounded, finite set of sections
                     // (not an infinite feed) — a generous cacheExtent forces
                     // every section to mount eagerly instead of staying

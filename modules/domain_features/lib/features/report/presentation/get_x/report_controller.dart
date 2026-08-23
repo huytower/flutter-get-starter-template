@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
@@ -10,6 +9,7 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/ai_advice_cache_datasource.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
+import '../../../transaction/presentation/widgets/cloud_consent_sheet.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
@@ -24,7 +24,6 @@ import '../../domain/usecases/get_financial_runway_usecase.dart';
 import '../../domain/usecases/get_investment_trend_usecase.dart';
 import '../../domain/usecases/get_loan_trend_usecase.dart';
 import '../../domain/usecases/get_trend_data_usecase.dart';
-import '../../../transaction/presentation/widgets/cloud_consent_sheet.dart';
 import '../widgets/wallet_filter_picker_sheet.dart';
 
 @injectable
@@ -98,6 +97,13 @@ class ReportController extends CcGetController {
   /// True when the page header should be auto-hidden (scrolled down, or a
   /// soft keyboard is visible).
   final RxBool isHeaderHidden = false.obs;
+
+  /// True when the report body list shows edit/delete affordances on each item.
+  final RxBool isEditMode = false.obs;
+
+  void toggleEditMode() {
+    isEditMode.toggle();
+  }
 
   /// Scroll controller for the report body list, used to drive header hide.
   final ScrollController scrollController = ScrollController();

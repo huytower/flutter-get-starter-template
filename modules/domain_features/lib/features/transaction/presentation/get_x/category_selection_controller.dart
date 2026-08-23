@@ -52,6 +52,10 @@ class CategorySelectionController extends CcGetController {
       if (cat != null) {
         selectedCategoryId.value = cat.id;
         initialId = null;
+        // Ensure parent is in sync with this pre-selection, especially
+        // when parent has null (e.g. after form reset) but we already
+        // have a matching selection from a previous use of this singleton.
+        _reportToParent(cat);
       }
     } else if (autoSelectFirstEnabled && categories.isNotEmpty) {
       // If parent has no selection (initialId was null), we must enforce
