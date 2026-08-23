@@ -3,6 +3,8 @@
 .packages
 .pub/
 .android/
+.refact/
+**/.refact/
 
 .idea/
 .vagrant/

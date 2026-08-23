@@ -65,8 +65,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
     return Obx(
       () => Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
+          Flexible(
+            fit: controller.isEditing ? FlexFit.loose : FlexFit.tight,
             child: _buildScrollableContent(
               context,
               controller,
@@ -139,22 +141,26 @@ class _ExpenseFormState extends State<ExpenseForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAmountSection(context, controller, accentColor),
-          const CcSpaceSM(),
-          _buildWalletSection(context, controller, accentColor),
-          const CcSpaceSM(),
-          TransactionAdditionalDetailsSection(
-            isExpanded: controller.showMoreDetails.value,
-            onToggle: controller.toggleMoreDetails,
-            selectedDate: controller.date.value,
-            onDateSelected: controller.setDate,
-            onCalendarTap: () => controller.pickDate(context),
-            noteController: controller.noteController,
-            hasNoteText: controller.noteController.text.isNotEmpty,
-            activeColor: accentColor,
-          ),
+          if (!controller.isEditing) ...[
+            const CcSpaceSM(),
+            _buildWalletSection(context, controller, accentColor),
+            const CcSpaceSM(),
+            TransactionAdditionalDetailsSection(
+              isExpanded: controller.showMoreDetails.value,
+              onToggle: controller.toggleMoreDetails,
+              selectedDate: controller.date.value,
+              onDateSelected: controller.setDate,
+              onCalendarTap: () => controller.pickDate(context),
+              noteController: controller.noteController,
+              hasNoteText: controller.noteController.text.isNotEmpty,
+              activeColor: accentColor,
+            ),
+          ],
           const CcSpaceSM(),
           TransactionSubmitButton(
-            text: el.tr(CcLocaleKeys.transaction_record_expense),
+            text: controller.isEditing
+                ? el.tr(CcLocaleKeys.common_save)
+                : el.tr(CcLocaleKeys.transaction_record_expense),
             isSubmitting: controller.isSubmitting.value,
             isEnabled: controller.canSubmit,
             onTap: () => controller.submitForm(context),

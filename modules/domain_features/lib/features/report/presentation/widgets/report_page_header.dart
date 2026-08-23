@@ -24,7 +24,6 @@ class ReportPageHeader extends StatelessWidget {
     // base height — the header keeps a correct responsive ratio across screen
     // sizes via flex-based sections instead of a width-scaled respDim() magic
     // number. The Column children resolve against this bounded height.
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -205,12 +204,16 @@ class ReportPageHeader extends StatelessWidget {
   }
 
   Widget _buildBackButton(BuildContext context) {
-    return CcIconButton.bouncing(
-      onTap: onBackPressed,
-      icon: Icon(
-        Icons.arrow_back_ios_new_rounded,
-        color: context.ccColorScheme.onPrimary,
-        size: context.respIconSize(baseSize: 24),
+    return Obx(
+      () => CcIconButton.bouncing(
+        onTap: onBackPressed,
+        icon: Icon(
+          controller.isEditMode.value
+              ? Icons.close_rounded
+              : Icons.arrow_back_ios_new_rounded,
+          color: context.ccColorScheme.onPrimary,
+          size: context.respIconSize(baseSize: 24),
+        ),
       ),
     );
   }

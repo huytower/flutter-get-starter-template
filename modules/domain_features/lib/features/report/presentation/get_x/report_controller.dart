@@ -115,7 +115,11 @@ class ReportController extends CcGetController {
   }
 
   void onBack(BuildContext context) {
-    Navigator.of(context).pop();
+    if (isEditMode.value) {
+      isEditMode.value = false;
+    } else {
+      Navigator.of(context).pop();
+    }
   }
 
   final RxList<CategorySpendingEntity> spending =
@@ -162,9 +166,17 @@ class ReportController extends CcGetController {
   @override
   void onReady() {
     super.onReady();
+    isEditMode.value = false;
     load();
     loadWallets();
     loadCachedAiAdvice();
+  }
+
+  @override
+  void onClose() {
+    isEditMode.value = false;
+    scrollController.dispose();
+    super.onClose();
   }
 
   /// Free, local-only read of the last cached AI advice — deliberately
@@ -207,6 +219,7 @@ class ReportController extends CcGetController {
 
     final prefs = getIt<AiFallbackPreferenceDataSource>();
     if (!await prefs.isConsentGiven()) {
+      if (!context.mounted) return;
       final agreed = await _promptCloudConsent(context);
       if (isClosed) return;
       if (!agreed) {
@@ -238,12 +251,6 @@ class ReportController extends CcGetController {
   Future<bool> _promptCloudConsent(BuildContext context) async {
     final result = await CloudConsentSheet.show(context);
     return result ?? false;
-  }
-
-  @override
-  void onClose() {
-    scrollController.dispose();
-    super.onClose();
   }
 
   void setWalletFilter(String walletId, String walletName) {

@@ -37,44 +37,58 @@ class ReportPage extends CcGetView<ReportController> {
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
-    return DefaultTabController(
-      length: 3,
-      child: FadePageWrapper(
-        child: Stack(
-          children: [
-            Obx(() {
-              final hidden = controller.isHeaderHidden.value || keyboardUp;
-              return AnimatedOpacity(
-                opacity: hidden ? 0 : 1,
-                duration: const Duration(milliseconds: 200),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: hidden ? 0 : headerHeight,
-                  // ReportPageHeader's internal Spacer/Flexible layout is
-                  // only correct at the full headerHeight — feeding it the
-                  // shrinking height directly (as this AnimatedContainer
-                  // animates toward 0) squeezes that layout mid-animation
-                  // and throws a transient RenderFlex overflow. Pin the
-                  // header's own constraints to headerHeight via OverflowBox
-                  // and let ClipRect clip the paint instead, so the content
-                  // never sees a too-small height.
-                  child: ClipRect(
-                    child: OverflowBox(
-                      alignment: Alignment.topCenter,
-                      minHeight: headerHeight,
-                      maxHeight: headerHeight,
-                      child: ReportPageHeader(
-                        controller: controller,
-                        title: el.tr(CcLocaleKeys.report_title),
-                        onBackPressed: () => controller.onBack(context),
+    return Obx(
+      () => PopScope(
+        canPop: !controller.isEditMode.value,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) {
+            controller.isEditMode.value = false;
+            return;
+          }
+          if (controller.isEditMode.value) {
+            controller.isEditMode.value = false;
+          }
+        },
+        child: DefaultTabController(
+          length: 3,
+          child: FadePageWrapper(
+            child: Stack(
+              children: [
+                Obx(() {
+                  final hidden = controller.isHeaderHidden.value || keyboardUp;
+                  return AnimatedOpacity(
+                    opacity: hidden ? 0 : 1,
+                    duration: const Duration(milliseconds: 200),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      height: hidden ? 0 : headerHeight,
+                      // ReportPageHeader's internal Spacer/Flexible layout is
+                      // only correct at the full headerHeight — feeding it the
+                      // shrinking height directly (as this AnimatedContainer
+                      // animates toward 0) squeezes that layout mid-animation
+                      // and throws a transient RenderFlex overflow. Pin the
+                      // header's own constraints to headerHeight via OverflowBox
+                      // and let ClipRect clip the paint instead, so the content
+                      // never sees a too-small height.
+                      child: ClipRect(
+                        child: OverflowBox(
+                          alignment: Alignment.topCenter,
+                          minHeight: headerHeight,
+                          maxHeight: headerHeight,
+                          child: ReportPageHeader(
+                            controller: controller,
+                            title: el.tr(CcLocaleKeys.report_title),
+                            onBackPressed: () => controller.onBack(context),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              );
-            }),
-            _buildReportContent(context),
-          ],
+                  );
+                }),
+                _buildReportContent(context),
+              ],
+            ),
+          ),
         ),
       ),
     );

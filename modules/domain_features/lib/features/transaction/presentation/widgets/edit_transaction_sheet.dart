@@ -81,16 +81,18 @@ class _EditTransactionSheetState extends State<EditTransactionSheet> {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.85,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom +
+              context.respPadding(CcPaddingParams.PAGE_MD),
+        ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             _buildHeader(context),
-            Expanded(
-              child: _isExpense
-                  ? const ExpenseForm(tag: EditTransactionSheet._tag)
-                  : const IncomeForm(tag: EditTransactionSheet._tag),
-            ),
+            _isExpense
+                ? const ExpenseForm(tag: EditTransactionSheet._tag)
+                : const IncomeForm(tag: EditTransactionSheet._tag),
           ],
         ),
       ),

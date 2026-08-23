@@ -231,7 +231,9 @@ class TransactionController extends CcGetController {
 
   void openReport(BuildContext context) {
     if (Get.isRegistered<ReportController>()) {
-      Get.find<ReportController>().load(showLoading: false);
+      final report = Get.find<ReportController>();
+      report.isEditMode.value = false;
+      report.load(showLoading: false);
     }
     context.router.push(const ReportRoute());
   }
