@@ -114,6 +114,7 @@ class InvestmentForm extends StatelessWidget {
             noteController: controller.noteController,
             hasNoteText: controller.noteController.text.isNotEmpty,
             activeColor: accentColor,
+            hideDate: true,
           ),
           const CcSpaceSM(),
           Obx(

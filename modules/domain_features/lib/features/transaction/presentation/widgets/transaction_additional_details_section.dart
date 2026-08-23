@@ -93,7 +93,11 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
       maxLines: 2,
       textAlign: TextAlign.start,
       onTap: onNoteTap,
-      color: context.ccColorScheme.surface,
+      color: context.ccColorScheme.surfaceVariant.withAlpha(80),
+      height: context.respDim(45),
+      borderWidth: 0.4,
+      margin: EdgeInsets.zero,
+      borderRadius: 12.0,
       suffixIcon: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

@@ -120,6 +120,7 @@ class LiabilityForm extends StatelessWidget {
                 noteController: controller.noteController,
                 hasNoteText: controller.noteController.text.isNotEmpty,
                 activeColor: accentColor,
+                hideDate: true,
               ),
               const CcSpaceSM(),
               _buildSubmitButton(context, controller, accentColor),

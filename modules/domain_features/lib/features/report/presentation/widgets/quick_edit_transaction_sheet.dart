@@ -4,12 +4,10 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/usecases/update_transaction_usecase.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';
-import '../../../transaction/presentation/widgets/quick_date_row.dart';
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 
@@ -232,27 +230,6 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CcFormLabel(
-          text: el.tr(CcLocaleKeys.transaction_time),
-        ),
-        const CcSpaceXS(),
-        QuickDateRow(
-          selectedDate: _selectedDate,
-          onDateSelected: (date) {
-            if (mounted) setState(() => _selectedDate = date);
-          },
-          onCalendarTap: () async {
-            final picked = await TransactionFormHelpers.pickDate(
-              context,
-              _selectedDate,
-            );
-            if (picked != null && mounted) {
-              setState(() => _selectedDate = picked);
-            }
-          },
-          activeColor: context.ccColorScheme.primary,
-        ),
-        const CcSpaceMD(),
         CcFormLabel(
           text: el.tr(CcLocaleKeys.transaction_note),
         ),
