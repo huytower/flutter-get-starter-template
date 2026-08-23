@@ -13,11 +13,13 @@ class DailyGroup extends StatelessWidget {
     required this.date,
     required this.transactions,
     required this.includeInvestmentAndLiability,
+    required this.isEditMode,
   });
 
   final DateTime date;
   final List<TransactionEntity> transactions;
   final bool includeInvestmentAndLiability;
+  final bool isEditMode;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +106,10 @@ class DailyGroup extends StatelessWidget {
             height: context.respDim(1),
             color: context.ccColorScheme.outlineVariant.withValues(alpha: 0.1),
           ),
-          for (final tx in transactions) TransactionTile(transaction: tx),
+          for (final tx in transactions) TransactionTile(
+            transaction: tx,
+            isEditMode: isEditMode,
+          ),
         ],
       ),
     );

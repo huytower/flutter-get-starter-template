@@ -8,9 +8,13 @@ import '../../../transaction/presentation/widgets/edit_transaction_sheet.dart';
 import 'report_daily_list_helpers.dart';
 
 class TransactionTile extends StatelessWidget {
-  const TransactionTile({required this.transaction});
+  const TransactionTile({
+    required this.transaction,
+    required this.isEditMode,
+  });
 
   final TransactionEntity transaction;
+  final bool isEditMode;
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +81,17 @@ class TransactionTile extends StatelessWidget {
                 ],
               ),
             ),
+            if (isEditMode && isEditableTransaction(transaction)) ...[
+              const CcSpaceMD(),
+              CcIconButton.bouncing(
+                icon: Icon(
+                  Icons.edit_rounded,
+                  size: context.respIconSize(baseSize: 18),
+                  color: context.ccColorScheme.primary,
+                ),
+                onTap: () => EditTransactionSheet.show(context, transaction),
+              ),
+            ],
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [

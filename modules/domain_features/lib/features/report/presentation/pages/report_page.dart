@@ -150,7 +150,8 @@ class ReportPage extends CcGetView<ReportController> {
                         transactions: controller.dailyListTransactions,
                         includeInvestmentAndLiability:
                             controller.userLevel.status.value.canUseInvestment ||
-                            controller.userLevel.status.value.canUseDebtLoan,
+                                controller.userLevel.status.value.canUseDebtLoan,
+                        isEditMode: controller.isEditMode.value,
                       ),
                       const CcSpaceSM(),
                       AiAdviceSection(controller: controller),
@@ -267,14 +268,34 @@ class ReportPage extends CcGetView<ReportController> {
   }
 
   Widget _buildDailyDetailHeader(BuildContext context) {
-    return KeyedSubtree(
-      key: controller.dailyDetailKey,
-      child: CcText(
-        el.tr(CcLocaleKeys.report_daily_detail),
-        textStyle: context.ccTextTheme.titleSmall?.copyWith(
-          fontWeight: FontWeight.bold,
+    return Row(
+      children: [
+        KeyedSubtree(
+          key: controller.dailyDetailKey,
+          child: CcText(
+            el.tr(CcLocaleKeys.report_daily_detail),
+            textStyle: context.ccTextTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
-      ),
+        const Spacer(),
+        Obx(
+          () => CcIconButton.bouncing(
+            icon: Icon(
+              controller.isEditMode.value
+                  ? Icons.close_rounded
+                  : Icons.edit_rounded,
+              size: context.respIconSize(baseSize: 20),
+              color: context.ccColorScheme.primary,
+            ),
+            tooltip: controller.isEditMode.value
+                ? el.tr(CcLocaleKeys.common_done)
+                : el.tr(CcLocaleKeys.common_edit),
+            onTap: controller.toggleEditMode,
+          ),
+        ),
+      ],
     );
   }
 

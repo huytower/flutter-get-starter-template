@@ -8,10 +8,12 @@ class ReportDailyList extends StatelessWidget {
     super.key,
     required this.transactions,
     required this.includeInvestmentAndLiability,
+    required this.isEditMode,
   });
 
   final List<TransactionEntity> transactions;
   final bool includeInvestmentAndLiability;
+  final bool isEditMode;
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +28,17 @@ class ReportDailyList extends StatelessWidget {
 
     final sortedDates = groups.keys.toList()..sort((a, b) => b.compareTo(a));
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        for (final date in sortedDates)
-          DailyGroup(
-            date: date,
-            transactions: groups[date]!,
-            includeInvestmentAndLiability: includeInvestmentAndLiability,
-          ),
-      ],
-    );
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final date in sortedDates)
+            DailyGroup(
+              date: date,
+              transactions: groups[date]!,
+              includeInvestmentAndLiability: includeInvestmentAndLiability,
+              isEditMode: isEditMode,
+            ),
+        ],
+      );
   }
 }
