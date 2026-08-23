@@ -68,17 +68,15 @@ class TransactionTile extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
+                  if (transaction.note != null)
+                    CcText(
+                      transaction.note!,
+                      textStyle: context.ccTextTheme.labelSmall,
+                      color: context.ccColorScheme.onSurfaceVariant,
+                    ),
                 ],
               ),
             ),
-            if (transaction.note != null) ...[
-              CcText(
-                transaction.note!,
-                textStyle: context.ccTextTheme.labelSmall,
-                color: context.ccColorScheme.onSurfaceVariant,
-              ),
-              const CcSpaceMD(),
-            ],
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
