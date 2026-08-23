@@ -29,30 +29,36 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CcFormLabel(
-            text: isBorrowSide
-                ? el.tr(CcLocaleKeys.transaction_loan_repayment_method_label)
-                : el.tr(CcLocaleKeys.transaction_loan_collection_method_label),
-          ),
-          const CcSpaceXS(),
-          LiabilityPillToggle(
-            selectedIndex:
-                controller.repaymentMethod.value ==
-                    LiabilityRepaymentMethod.installment
-                ? 0
-                : 1,
-            firstLabel: isBorrowSide
-                ? el.tr(CcLocaleKeys.transaction_loan_method_installment)
-                : el.tr(CcLocaleKeys.transaction_loan_method_installment_lend),
-            secondLabel: isBorrowSide
-                ? el.tr(CcLocaleKeys.transaction_loan_method_lump_sum)
-                : el.tr(CcLocaleKeys.transaction_loan_method_lump_sum_lend),
-            activeColor: accentColor,
-            onChanged: (index) => controller.setRepaymentMethod(
-              index == 0
-                  ? LiabilityRepaymentMethod.installment
-                  : LiabilityRepaymentMethod.lumpSum,
-            ),
+          Row(
+            children: [
+              CcFormLabel(
+                text: isBorrowSide
+                    ? el.tr(CcLocaleKeys.transaction_loan_repayment_method_label)
+                    : el.tr(CcLocaleKeys.transaction_loan_collection_method_label),
+              ),
+              const CcSpaceXS(),
+              Expanded(
+                child: LiabilityPillToggle(
+                  selectedIndex:
+                      controller.repaymentMethod.value ==
+                          LiabilityRepaymentMethod.installment
+                      ? 0
+                      : 1,
+                  firstLabel: isBorrowSide
+                      ? el.tr(CcLocaleKeys.transaction_loan_method_installment)
+                      : el.tr(CcLocaleKeys.transaction_loan_method_installment_lend),
+                  secondLabel: isBorrowSide
+                      ? el.tr(CcLocaleKeys.transaction_loan_method_lump_sum)
+                      : el.tr(CcLocaleKeys.transaction_loan_method_lump_sum_lend),
+                  activeColor: accentColor,
+                  onChanged: (index) => controller.setRepaymentMethod(
+                    index == 0
+                        ? LiabilityRepaymentMethod.installment
+                        : LiabilityRepaymentMethod.lumpSum,
+                  ),
+                ),
+              ),
+            ],
           ),
           const CcSpaceSM(),
           if (controller.repaymentMethod.value ==
@@ -113,37 +119,67 @@ class _FinalDueDate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
         CcFormLabel(
           text: el.tr(CcLocaleKeys.transaction_loan_final_due_date_label),
         ),
         const CcSpaceXS(),
-        CcInkWell(
-          onTap: () => controller.pickFinalDueDate(context),
-          borderRadius: context.brMd,
-          child: Container(
-            width: double.infinity,
-            height: context.respDim(48),
-            padding: EdgeInsets.symmetric(horizontal: context.respPadding(12)),
-            decoration: BoxDecoration(
-              color: context.ccColorScheme.onSurface.withAlpha(10),
-              borderRadius: context.brMd,
-            ),
-            child: LiabilityDateRow(
-              date: controller.finalDueDate.value,
-              icon: Icons.event_outlined,
-              iconSize: 18,
-              iconColor: accentColor,
+        Expanded(
+          child: CcInkWell(
+            onTap: () => controller.pickFinalDueDate(context),
+            borderRadius: context.brMd,
+            child: Container(
+              height: context.respDim(48),
+              padding: EdgeInsets.symmetric(horizontal: context.respPadding(12)),
+              decoration: BoxDecoration(
+                color: context.ccColorScheme.onSurface.withAlpha(10),
+                borderRadius: context.brMd,
+              ),
+              child: Obx(
+                () => LiabilityDateRow(
+                  date: controller.finalDueDate.value,
+                  icon: Icons.event_outlined,
+                  iconSize: 18,
+                  iconColor: accentColor,
+                ),
+              ),
             ),
           ),
         ),
-        const CcSpaceSM(),
-        _ReminderToggle(
-          controller: controller,
-          accentColor: accentColor,
-          label: el.tr(CcLocaleKeys.transaction_loan_reminder_once_label),
+        const CcSpaceXS(),
+        Icon(
+          Icons.notifications_active_outlined,
+          size: context.respIconSize(baseSize: 18),
+          color: accentColor,
+        ),
+        const CcSpaceXS(),
+        Expanded(
+          child: Obx(
+            () => CcInkWell(
+              onTap: () => controller.setReminderBeforeDueDate(
+                !controller.reminderBeforeDueDate.value,
+              ),
+              child: CcText(
+                el.tr(CcLocaleKeys.transaction_loan_reminder_once_label),
+                textStyle: context.ccTextTheme.bodyMedium,
+              ),
+            ),
+          ),
+        ),
+        Obx(
+          () => SizedBox(
+            width: context.respDim(20),
+            height: context.respDim(20),
+            child: Checkbox(
+              value: controller.reminderBeforeDueDate.value,
+              onChanged: (value) =>
+                  controller.setReminderBeforeDueDate(value ?? false),
+              activeColor: accentColor,
+              side: BorderSide(color: context.ccColorScheme.outline),
+              shape: RoundedRectangleBorder(borderRadius: context.brXs),
+            ),
+          ),
         ),
       ],
     );

@@ -229,6 +229,8 @@
                         "expense_updated":  "Expense of {amount} đ updated!",
                         "income_updated":  "Income of {amount} đ updated!",
                         "edit_title":  "Edit transaction",
+                        "delete_title":  "Delete transaction",
+                        "delete_confirm_desc":  "This action cannot be undone.",
                         "source_income":  "Source of Income",
                         "reason_income":  "Reason for Income",
                         "recipient":  "Recipient",

@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import 'report_daily_list_helpers.dart';
 import 'report_transaction_tile.dart';
@@ -31,7 +31,8 @@ class DailyGroup extends StatelessWidget {
     final isPositive = totalDaily > 0;
     final isNegative = totalDaily < 0;
     final amountPrefix = isPositive ? '+' : (isNegative ? '-' : '');
-    final amountText = "$amountPrefix${formatVnd(totalDaily.abs().toInt())} đ";
+    final amountText =
+        "$amountPrefix${TransactionFormHelpers.formatShort(totalDaily.abs())}";
 
     return Container(
       margin: EdgeInsets.only(bottom: context.respDim(16)),

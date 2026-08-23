@@ -1,9 +1,10 @@
 import 'package:equatable/equatable.dart';
 
-/// Only [TransactionType.income]/[TransactionType.expense] entries dated
-/// within this many days of "now" can be corrected — the single source of
-/// truth shared by `UpdateTransactionUseCase`'s validation and the report
-/// list's edit-affordance visibility, so the two can't drift apart.
+/// Only [TransactionType.income], [TransactionType.expense], debt/loan, and
+/// investment entries dated within this many days of "now" can be corrected
+/// — the single source of truth shared by `UpdateTransactionUseCase`'s
+/// validation and the report list's edit-affordance visibility, so the two
+/// can't drift apart.
 const int transactionEditWindowDays = 30;
 
 /// Discriminators stored in [TransactionEntity.type].

@@ -130,6 +130,19 @@ class IncomeForm extends StatelessWidget {
               activeColor: accentColor,
             ),
           ],
+          if (controller.isEditing) ...[
+            const CcSpaceSM(),
+            TransactionAdditionalDetailsSection(
+              isExpanded: true,
+              selectedDate: controller.date.value,
+              onDateSelected: controller.setDate,
+              onCalendarTap: () => controller.pickDate(context),
+              noteController: controller.noteController,
+              hasNoteText: controller.noteController.text.isNotEmpty,
+              activeColor: accentColor,
+              hideDate: true,
+            ),
+          ],
           const CcSpaceSM(),
           TransactionSubmitButton(
             text: controller.isEditing

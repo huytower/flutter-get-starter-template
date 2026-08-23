@@ -7,26 +7,28 @@ import 'quick_date_row.dart';
 
 class TransactionAdditionalDetailsSection extends StatelessWidget {
   final bool isExpanded;
-  final VoidCallback onToggle;
+  final VoidCallback? onToggle;
   final DateTime selectedDate;
-  final Function(DateTime) onDateSelected;
-  final Future<void> Function() onCalendarTap;
+  final ValueChanged<DateTime> onDateSelected;
+  final Future<void> Function()? onCalendarTap;
   final TextEditingController noteController;
   final bool hasNoteText;
   final VoidCallback? onNoteTap;
   final Color activeColor;
+  final bool hideDate;
 
   const TransactionAdditionalDetailsSection({
     super.key,
     required this.isExpanded,
-    required this.onToggle,
+    this.onToggle,
     required this.selectedDate,
     required this.onDateSelected,
-    required this.onCalendarTap,
+    this.onCalendarTap,
     required this.noteController,
     required this.hasNoteText,
     this.onNoteTap,
     required this.activeColor,
+    this.hideDate = false,
   });
 
   @override
@@ -34,13 +36,14 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildMoreDetailsToggle(context),
+        if (onToggle != null) _buildMoreDetailsToggle(context),
         if (isExpanded) _buildExpandedContent(context),
       ],
     );
   }
 
   Widget _buildMoreDetailsToggle(BuildContext context) {
+    if (onToggle == null) return const SizedBox.shrink();
     return SizedBox(
       width: context.respDim(120),
       child: CcInkWell(
@@ -68,14 +71,16 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
   Widget _buildExpandedContent(BuildContext context) {
     return Column(
       children: [
-        const CcSpaceMD(),
-        QuickDateRow(
-          selectedDate: selectedDate,
-          onDateSelected: onDateSelected,
-          onCalendarTap: onCalendarTap,
-          activeColor: activeColor,
-        ),
-        const CcSpaceXS(),
+        if (!hideDate) ...[
+          const CcSpaceMD(),
+          QuickDateRow(
+            selectedDate: selectedDate,
+            onDateSelected: onDateSelected,
+            onCalendarTap: onCalendarTap,
+            activeColor: activeColor,
+          ),
+          const CcSpaceXS(),
+        ],
         _buildNoteField(context),
       ],
     );
@@ -88,6 +93,7 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
       maxLines: 2,
       textAlign: TextAlign.start,
       onTap: onNoteTap,
+      color: context.ccColorScheme.surface,
       suffixIcon: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

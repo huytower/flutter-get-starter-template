@@ -1,4 +1,4 @@
-{
+﻿{
     "app":  {
                 "name":  "S? S�ch X?n",
                 "version":  "Phi�n b?n {version}",
@@ -172,6 +172,8 @@
                    "investment_edit_title":  "S?a kho?n d?u tu",
                    "add_title":  "Th�m v� m?i",
                    "edit_title":  "S?a v�",
+                        "delete_title":  "Xóa giao dịch",
+                        "delete_confirm_desc":  "Hành động này không thể hoàn tác.",
                    "name":  "T�n v�",
                    "name_hint":  "V� d?: Ti?n m?t, Techcombank...",
                    "initial_balance":  "S? du d?u k?",
@@ -228,6 +230,8 @@
                         "expense_updated":  "�� c?p nh?t chi ti�u {amount} d!",
                         "income_updated":  "�� c?p nh?t thu nh?p {amount} d!",
                         "edit_title":  "S?a giao d?ch",
+                        "delete_title":  "Xóa giao dịch",
+                        "delete_confirm_desc":  "Hành động này không thể hoàn tác.",
                         "source_income":  "Ngu?n thu nh?p",
                         "reason_income":  "L� do thu nh?p",
                         "recipient":  "Ngu?i nh?n",
@@ -703,4 +707,5 @@
         "progress_archived": "Đã đạt được {percent}% exp"
     }
 }
+
 

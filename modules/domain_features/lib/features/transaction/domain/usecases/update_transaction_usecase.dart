@@ -41,11 +41,11 @@ class UpdateTransactionParams {
   });
 }
 
-/// Corrects a previously recorded income/expense transaction.
+/// Corrects a previously recorded transaction (income, expense, debt/loan,
+/// or investment legs).
 ///
-/// Restricted to plain income/expense — transfer, investment and loan legs
-/// are two-legged/derived records and are never editable here — and to the
-/// last [transactionEditWindowDays] days, matching the product rule that only
+/// Restricted to non-transfer, non-deleted entries dated within the last
+/// [transactionEditWindowDays] days, matching the product rule that only
 /// recent entries can be fixed. Validation otherwise mirrors
 /// [CreateTransactionUseCase].
 @lazySingleton
@@ -58,13 +58,24 @@ class UpdateTransactionUseCase {
   final TransactionRepository _transactionRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
 
+  static const _editableTypes = <String>{
+    TransactionType.income,
+    TransactionType.expense,
+    TransactionType.debtBorrow,
+    TransactionType.debtLend,
+    TransactionType.debtRepay,
+    TransactionType.debtCollect,
+    TransactionType.investmentOut,
+    TransactionType.investmentIn,
+    TransactionType.investmentReturn,
+  };
+
   Future<Result<TransactionEntity, CcFailure>> call(
     UpdateTransactionParams params,
   ) async {
     final original = params.original;
 
-    if (original.type != TransactionType.income &&
-        original.type != TransactionType.expense) {
+    if (!_editableTypes.contains(original.type)) {
       return const Error(
         ValidationFailure(CcLocaleKeys.transaction_validation_not_editable),
       );
@@ -85,7 +96,7 @@ class UpdateTransactionUseCase {
         ValidationFailure(CcLocaleKeys.transaction_validation_wallet_required),
       );
     }
-    if (original.type == TransactionType.expense && params.categoryId.isEmpty) {
+    if (params.categoryId.isEmpty) {
       return const Error(
         ValidationFailure(
           CcLocaleKeys.transaction_validation_category_required,
@@ -98,9 +109,6 @@ class UpdateTransactionUseCase {
       );
     }
 
-    // Block overspending: exclude this transaction's own prior effect on its
-    // wallet before checking the new amount fits, so editing a 100k expense
-    // down to 90k (or onto the same wallet) never falsely reports a shortfall.
     if (original.type == TransactionType.expense) {
       final balanceResult = await _getWalletBookBalance(params.walletId);
       if (balanceResult.isError()) {

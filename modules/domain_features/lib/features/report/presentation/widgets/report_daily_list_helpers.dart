@@ -17,10 +17,8 @@ bool computeIsInflow(TransactionEntity transaction) {
 }
 
 bool isEditableTransaction(TransactionEntity transaction) {
-  final isPlainEntry =
-      transaction.type == TransactionType.income ||
-      transaction.type == TransactionType.expense;
-  if (!isPlainEntry) return false;
+  if (transaction.isDeleted) return false;
+  if (transaction.isTransfer) return false;
   return DateTime.now().difference(transaction.date).inDays <=
       transactionEditWindowDays;
 }

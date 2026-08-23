@@ -185,6 +185,8 @@ class ReportPage extends CcGetView<ReportController> {
   }
 
   Widget _buildTrendCards(BuildContext context, TrendDataEntity data) {
+    if (data.points.isEmpty) return const SizedBox.shrink();
+
     return Column(
       children: [
         TrendCard(
@@ -254,10 +256,9 @@ class ReportPage extends CcGetView<ReportController> {
         return const SizedBox.shrink();
       }
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const CcSpaceLG(),
+      final children = <Widget>[];
+      if (data.totalExpense > 0) {
+        children.add(
           TrendCard(
             title: el.tr(CcLocaleKeys.report_liability_out),
             amount: data.totalExpense,
@@ -266,7 +267,11 @@ class ReportPage extends CcGetView<ReportController> {
             range: controller.range.value,
             isIncome: false,
           ),
-          const CcSpaceLG(),
+        );
+      }
+      if (data.totalIncome > 0) {
+        final index = children.length;
+        children.add(
           TrendCard(
             title: el.tr(CcLocaleKeys.report_liability_in),
             amount: data.totalIncome,
@@ -275,6 +280,19 @@ class ReportPage extends CcGetView<ReportController> {
             range: controller.range.value,
             isIncome: true,
           ),
+        );
+        if (index > 0) {
+          children.insert(index, const CcSpaceLG());
+        }
+      }
+
+      if (children.isEmpty) return const SizedBox.shrink();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const CcSpaceLG(),
+          ...children,
           const CcSpaceXL(),
         ],
       );

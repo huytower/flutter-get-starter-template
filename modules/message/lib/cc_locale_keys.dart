@@ -1752,6 +1752,9 @@ abstract class CcLocaleKeys {
   static const transaction_expense_updated = 'transaction.expense_updated';
   static const transaction_income_updated = 'transaction.income_updated';
   static const transaction_edit_title = 'transaction.edit_title';
+  static const transaction_delete_title = 'transaction.delete_title';
+  static const transaction_delete_confirm_desc =
+      'transaction.delete_confirm_desc';
   static const transaction_source_income = 'transaction.source_income';
   static const transaction_reason_income = 'transaction.reason_income';
   static const transaction_recipient = 'transaction.recipient';

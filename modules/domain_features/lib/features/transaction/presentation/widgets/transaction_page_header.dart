@@ -89,7 +89,7 @@ class TransactionPageHeader extends StatelessWidget {
             ],
           ),
         ),
-
+        const CcSpaceXS(),
         // The header height is a fixed fraction of screen height (see
         // TransactionPage), so the banner's Expanded slot is a hard budget.
         // AI components (quick-entry field + suggestion chip once Gemini
