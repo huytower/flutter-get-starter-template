@@ -74,6 +74,8 @@ class LiabilityRepayForm extends StatelessWidget {
           isEnabled: controller.canSubmit,
           onTap: () => controller.submitForm(context),
           activeColor: accentColor,
+          leadingIcon: current.isBorrow ? Icons.account_balance : Icons.call_received,
+          leadingIconSize: 18,
         ),
       ],
     );

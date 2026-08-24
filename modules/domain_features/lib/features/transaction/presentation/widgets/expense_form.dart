@@ -152,7 +152,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               onDateSelected: controller.setDate,
               onCalendarTap: () => controller.pickDate(context),
               noteController: controller.noteController,
-              hasNoteText: controller.noteController.text.isNotEmpty,
+              hasNoteText: controller.hasNoteText.value,
               activeColor: accentColor,
             ),
           ],
@@ -164,7 +164,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
               onDateSelected: controller.setDate,
               onCalendarTap: () => controller.pickDate(context),
               noteController: controller.noteController,
-              hasNoteText: controller.noteController.text.isNotEmpty,
+              hasNoteText: controller.hasNoteText.value,
               activeColor: accentColor,
               hideDate: true,
             ),
@@ -178,6 +178,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
             isEnabled: controller.canSubmit,
             onTap: () => controller.submitForm(context),
             activeColor: accentColor,
+            leadingIcon: Icons.arrow_upward,
+            leadingIconSize: 18,
             badge: guideline.isTaskActive('first_transaction')
                 ? CcGuidelineBadge(
                     size: 8,

@@ -23,14 +23,17 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (int i = 0; i < controller.installmentDrafts.length; i++)
-            _buildRow(context, i, controller.installmentDrafts[i]),
-          _buildAddButton(context),
-        ],
-      ),
+      () {
+        final drafts = controller.installmentDrafts.value;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (int i = 0; i < drafts.length; i++)
+              _buildRow(context, i, drafts[i]),
+            _buildAddButton(context),
+          ],
+        );
+      },
     );
   }
 

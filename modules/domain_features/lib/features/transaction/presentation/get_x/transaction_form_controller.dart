@@ -23,6 +23,7 @@ abstract class TransactionFormController extends CcGetController {
   final RxBool isSubmitting = false.obs;
   final RxBool showKeypad = false.obs;
   final RxBool showMoreDetails = false.obs;
+  final RxBool hasNoteText = false.obs;
 
   final Rx<String?> selectedWalletId = Rx<String?>(null);
 
@@ -42,12 +43,18 @@ abstract class TransactionFormController extends CcGetController {
   void onInit() {
     super.onInit();
     _loadWallets();
+    noteController.addListener(_updateNoteState);
     layoutStatus.value = CcLayoutStatus.success;
+  }
+
+  void _updateNoteState() {
+    hasNoteText.value = noteController.text.trim().isNotEmpty;
   }
 
   @override
   void onClose() {
     _walletsWorker?.dispose();
+    noteController.removeListener(_updateNoteState);
     noteController.dispose();
     scrollController.dispose();
     super.onClose();

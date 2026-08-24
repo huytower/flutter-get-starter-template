@@ -23,69 +23,68 @@ class LendForm extends StatelessWidget {
   Widget build(BuildContext context) {
     // Pre-registered by TransactionController.onInit()
     final controller = Get.find<LendFormController>();
+    final accentColor = context.ccColorScheme.debtLoanSecondary;
 
-    return Obx(() {
-      final accentColor = context.ccColorScheme.debtLoanSecondary;
-      final bool isInitiate =
-          controller.action.value == LiabilityAction.initiate;
-
-      return Column(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                FocusScope.of(context).unfocus();
-                controller.hideKeypad();
-              },
-              child: SingleChildScrollView(
-                controller: controller.scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildInitiateSection(
-                      context,
-                      controller,
-                      accentColor,
-                      isInitiate,
-                    ),
-                  ],
-                ),
+    return Column(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+              controller.hideKeypad();
+            },
+            child: SingleChildScrollView(
+              controller: controller.scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildInitiateSection(
+                    context,
+                    controller,
+                    accentColor,
+                  ),
+                ],
               ),
             ),
           ),
-          if (controller.showKeypad.value)
-            MoneyKeypadPanel(
-              onKeyPress: controller.handleKeyPress,
-              onDelete: controller.handleDelete,
-              onClear: controller.handleClear,
-              suggestions: MoneyConstants.quickAmounts,
-              onSuggestion: (value) => controller.handleSuggestion(value),
-              onDone: controller.hideKeypad,
-              activeColor: accentColor,
-            ),
-        ],
-      );
-    });
+        ),
+        Obx(() {
+          if (!controller.showKeypad.value) return const SizedBox.shrink();
+          return MoneyKeypadPanel(
+            onKeyPress: controller.handleKeyPress,
+            onDelete: controller.handleDelete,
+            onClear: controller.handleClear,
+            suggestions: MoneyConstants.quickAmounts,
+            onSuggestion: (value) => controller.handleSuggestion(value),
+            onDone: controller.hideKeypad,
+            activeColor: accentColor,
+          );
+        }),
+      ],
+    );
   }
 
   Widget _buildInitiateSection(
     BuildContext context,
     LendFormController controller,
     Color accentColor,
-    bool isInitiate,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        LiabilityPillToggle(
-          selectedIndex: isInitiate ? 0 : 1,
-          firstLabel: el.tr(CcLocaleKeys.transaction_loan_direction_lend),
-          secondLabel: el.tr(CcLocaleKeys.transaction_record_collect),
-          activeColor: accentColor,
-          onChanged: (index) => controller.setAction(
-            index == 0 ? LiabilityAction.initiate : LiabilityAction.settle,
-          ),
-        ),
+        Obx(() {
+          final bool isInitiate =
+              controller.action.value == LiabilityAction.initiate;
+          return LiabilityPillToggle(
+            selectedIndex: isInitiate ? 0 : 1,
+            firstLabel: el.tr(CcLocaleKeys.transaction_loan_direction_lend),
+            secondLabel: el.tr(CcLocaleKeys.transaction_record_collect),
+            activeColor: accentColor,
+            onChanged: (index) => controller.setAction(
+              index == 0 ? LiabilityAction.initiate : LiabilityAction.settle,
+            ),
+          );
+        }),
         const CcSpaceSM(),
         LiabilityAssetSelector(
           controller: controller,
@@ -96,12 +95,15 @@ class LendForm extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildAmountSection(context, controller, accentColor, isInitiate),
+              _buildAmountSection(context, controller, accentColor),
               const CcSpaceSM(),
-              _buildWalletSection(context, controller, accentColor, isInitiate),
+              _buildWalletSection(context, controller, accentColor),
               const CcSpaceSM(),
-              if (isInitiate)
-                Column(
+              Obx(() {
+                if (controller.action.value != LiabilityAction.initiate) {
+                  return const SizedBox.shrink();
+                }
+                return Column(
                   children: [
                     LiabilityRepaymentMethodSection(
                       controller: controller,
@@ -109,28 +111,21 @@ class LendForm extends StatelessWidget {
                     ),
                     const CcSpaceSM(),
                   ],
-                ),
-              TransactionAdditionalDetailsSection(
-                isExpanded: controller.showMoreDetails.value,
-                onToggle: controller.toggleMoreDetails,
-                selectedDate: controller.date.value,
-                onDateSelected: controller.setDate,
-                onCalendarTap: () => controller.pickDate(context),
-                noteController: controller.noteController,
-                hasNoteText: controller.noteController.text.isNotEmpty,
-                activeColor: accentColor,
-                hideDate: true,
-              ),
+                );
+              }),
+              Obx(() => TransactionAdditionalDetailsSection(
+                    isExpanded: controller.showMoreDetails.value,
+                    onToggle: controller.toggleMoreDetails,
+                    selectedDate: controller.date.value,
+                    onDateSelected: controller.setDate,
+                    onCalendarTap: () => controller.pickDate(context),
+                    noteController: controller.noteController,
+                    hasNoteText: controller.hasNoteText.value,
+                    activeColor: accentColor,
+                    hideDate: true,
+                  )),
               const CcSpaceSM(),
-              TransactionSubmitButton(
-                text: isInitiate
-                    ? el.tr(CcLocaleKeys.transaction_loan_direction_lend)
-                    : el.tr(CcLocaleKeys.transaction_record_collect),
-                isSubmitting: controller.isSubmitting.value,
-                isEnabled: controller.canSubmit,
-                onTap: () => controller.submitForm(context),
-                activeColor: accentColor,
-              ),
+              _buildSubmitButton(context, controller, accentColor),
               const CcSpaceXS(),
             ],
           ),
@@ -143,50 +138,78 @@ class LendForm extends StatelessWidget {
     BuildContext context,
     LendFormController controller,
     Color accentColor,
-    bool isInitiate,
   ) {
-    final label = !isInitiate
-        ? el.tr(CcLocaleKeys.transaction_amount)
-        : el.tr(CcLocaleKeys.transaction_liability_amount_lend_label);
+    return Obx(() {
+      final bool isInitiate =
+          controller.action.value == LiabilityAction.initiate;
+      final label = !isInitiate
+          ? el.tr(CcLocaleKeys.transaction_amount)
+          : el.tr(CcLocaleKeys.transaction_liability_amount_lend_label);
 
-    return CcAmountInputSection(
-      label: label,
-      amountStr: controller.amountStr.value,
-      quickAmounts: MoneyConstants.quickAmounts,
-      isKeypadVisible: controller.showKeypad.value,
-      activeColor: accentColor,
-      fieldKey: controller.amountFieldKey,
-      onTap: () => controller.showKeypadAndScroll(context),
-      onQuickAmountSelected: (amount) =>
-          controller.amountStr.value = amount.toString(),
-      onClear: controller.handleClear,
-      onCopy: () => CcStringHelper.copyToClipboard(controller.amountStr.value),
-    );
+      return CcAmountInputSection(
+        label: label,
+        amountStr: controller.amountStr.value,
+        quickAmounts: MoneyConstants.quickAmounts,
+        isKeypadVisible: controller.showKeypad.value,
+        activeColor: accentColor,
+        fieldKey: controller.amountFieldKey,
+        onTap: () => controller.showKeypadAndScroll(context),
+        onQuickAmountSelected: (amount) =>
+            controller.amountStr.value = amount.toString(),
+        onClear: controller.handleClear,
+        onCopy: () => CcStringHelper.copyToClipboard(controller.amountStr.value),
+      );
+    });
   }
 
   Widget _buildWalletSection(
     BuildContext context,
     LendFormController controller,
     Color accentColor,
-    bool isInitiate,
   ) {
-    final label = isInitiate
-        ? el.tr(CcLocaleKeys.transaction_liability_wallet_lend_label)
-        : el.tr(CcLocaleKeys.transaction_liability_wallet_borrow_label);
+    return Obx(() {
+      final bool isInitiate =
+          controller.action.value == LiabilityAction.initiate;
+      final label = isInitiate
+          ? el.tr(CcLocaleKeys.transaction_liability_wallet_lend_label)
+          : el.tr(CcLocaleKeys.transaction_liability_wallet_borrow_label);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcFormLabel(text: label),
-        const CcSpaceXS(),
-        WalletStripCard(
-          wallets: controller.wallets,
-          selectedWalletId: controller.selectedWalletId.value,
-          activeColor: accentColor,
-          defaultBgColor: context.verticalGradient(accentColor),
-          onWalletSelected: controller.setWalletId,
-        ),
-      ],
-    );
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CcFormLabel(text: label),
+          const CcSpaceXS(),
+          WalletStripCard(
+            wallets: controller.wallets,
+            selectedWalletId: controller.selectedWalletId.value,
+            activeColor: accentColor,
+            defaultBgColor: context.verticalGradient(accentColor),
+            onWalletSelected: controller.setWalletId,
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget _buildSubmitButton(
+    BuildContext context,
+    LendFormController controller,
+    Color accentColor,
+  ) {
+    return Obx(() {
+      final bool isInitiate =
+          controller.action.value == LiabilityAction.initiate;
+      return TransactionSubmitButton(
+        text: isInitiate
+            ? el.tr(CcLocaleKeys.transaction_loan_direction_lend)
+            : el.tr(CcLocaleKeys.transaction_record_collect),
+        isSubmitting: controller.isSubmitting.value,
+        isEnabled: controller.canSubmit,
+        onTap: () => controller.submitForm(context),
+        activeColor: accentColor,
+        leadingIcon: isInitiate ? Icons.call_made : Icons.call_received,
+        leadingIconSize: 18,
+      );
+    });
   }
 }

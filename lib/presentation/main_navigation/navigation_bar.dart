@@ -129,8 +129,13 @@ class _NavigationBarState extends State<NavigationBar>
 
   PreferredSizeWidget? buildAppBar(BuildContext context) => null;
 
-  Widget? buildBottomNavigationBar(BuildContext context) =>
-      Obx(() => buildCurvedNavigationBar());
+  Widget? buildBottomNavigationBar(BuildContext context) {
+    final guideline = Get.find<GuidelineController>();
+    return Obx(() {
+      final _ = guideline.bounceTrigger.value;
+      return buildCurvedNavigationBar();
+    });
+  }
 
   Widget onBodyWrapper(BuildContext context, Widget body) => body;
 

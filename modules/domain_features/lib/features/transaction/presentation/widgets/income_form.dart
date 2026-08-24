@@ -126,7 +126,7 @@ class IncomeForm extends StatelessWidget {
               onDateSelected: controller.setDate,
               onCalendarTap: () => controller.pickDate(context),
               noteController: controller.noteController,
-              hasNoteText: controller.noteController.text.isNotEmpty,
+              hasNoteText: controller.hasNoteText.value,
               activeColor: accentColor,
             ),
           ],
@@ -138,7 +138,7 @@ class IncomeForm extends StatelessWidget {
               onDateSelected: controller.setDate,
               onCalendarTap: () => controller.pickDate(context),
               noteController: controller.noteController,
-              hasNoteText: controller.noteController.text.isNotEmpty,
+              hasNoteText: controller.hasNoteText.value,
               activeColor: accentColor,
               hideDate: true,
             ),
@@ -152,6 +152,8 @@ class IncomeForm extends StatelessWidget {
             isEnabled: controller.canSubmit,
             onTap: () => controller.submitForm(context),
             activeColor: accentColor,
+            leadingIcon: Icons.arrow_downward,
+            leadingIconSize: 18,
             badge: guideline.isTaskActive('first_transaction')
                 ? CcGuidelineBadge(
                     size: 8,

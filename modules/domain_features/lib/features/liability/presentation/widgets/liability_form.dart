@@ -23,23 +23,23 @@ class LiabilityForm extends StatelessWidget {
   Widget build(BuildContext context) {
     // Pre-registered by TransactionController.onInit()
     final controller = Get.find<LiabilityFormController>();
+    final accentColor = _accentColor(context, controller);
 
-    return Obx(() {
-      final accentColor = _accentColor(context, controller);
-
-      return Column(
-        children: [
-          Expanded(
-            child: _buildScrollableContent(context, controller, accentColor),
-          ),
-          if (controller.showKeypad.value)
-            _buildMoneyKeypadPanel(context, controller, accentColor),
-        ],
-      );
-    });
+    return Column(
+      children: [
+        Expanded(
+          child: _buildScrollableContent(context, controller, accentColor),
+        ),
+        Obx(() {
+          if (!controller.showKeypad.value) return const SizedBox.shrink();
+          return _buildMoneyKeypadPanel(context, controller, accentColor);
+        }),
+      ],
+    );
   }
 
   Color _accentColor(BuildContext context, LiabilityFormController controller) {
+    // Use controller.direction directly if it's constant for this controller
     final isBorrowSide = controller.direction == LiabilityDirection.borrow;
     return isBorrowSide
         ? context.ccColorScheme.debtLoan
@@ -71,22 +71,24 @@ class LiabilityForm extends StatelessWidget {
     LiabilityFormController controller,
     Color accentColor,
   ) {
-    final bool isInitiate = controller.action.value == LiabilityAction.initiate;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        LiabilityPillToggle(
-          selectedIndex: isInitiate ? 0 : 1,
-          firstLabel: el.tr(
-            CcLocaleKeys.transaction_liability_direction_borrow,
-          ),
-          secondLabel: el.tr(CcLocaleKeys.transaction_record_repay),
-          activeColor: accentColor,
-          onChanged: (index) => controller.setAction(
-            index == 0 ? LiabilityAction.initiate : LiabilityAction.settle,
-          ),
-        ),
+        Obx(() {
+          final bool isInitiate =
+              controller.action.value == LiabilityAction.initiate;
+          return LiabilityPillToggle(
+            selectedIndex: isInitiate ? 0 : 1,
+            firstLabel: el.tr(
+              CcLocaleKeys.transaction_liability_direction_borrow,
+            ),
+            secondLabel: el.tr(CcLocaleKeys.transaction_record_repay),
+            activeColor: accentColor,
+            onChanged: (index) => controller.setAction(
+              index == 0 ? LiabilityAction.initiate : LiabilityAction.settle,
+            ),
+          );
+        }),
         const CcSpaceSM(),
         LiabilityAssetSelector(
           controller: controller,
@@ -101,8 +103,11 @@ class LiabilityForm extends StatelessWidget {
               const CcSpaceSM(),
               _buildWalletSection(context, controller, accentColor),
               const CcSpaceSM(),
-              if (isInitiate)
-                Column(
+              Obx(() {
+                if (controller.action.value != LiabilityAction.initiate) {
+                  return const SizedBox.shrink();
+                }
+                return Column(
                   children: [
                     LiabilityRepaymentMethodSection(
                       controller: controller,
@@ -110,17 +115,20 @@ class LiabilityForm extends StatelessWidget {
                     ),
                     const CcSpaceSM(),
                   ],
+                );
+              }),
+              Obx(
+                () => TransactionAdditionalDetailsSection(
+                  isExpanded: controller.showMoreDetails.value,
+                  onToggle: controller.toggleMoreDetails,
+                  selectedDate: controller.date.value,
+                  onDateSelected: controller.setDate,
+                  onCalendarTap: () => controller.pickDate(context),
+                  noteController: controller.noteController,
+                  hasNoteText: controller.hasNoteText.value,
+                  activeColor: accentColor,
+                  hideDate: true,
                 ),
-              TransactionAdditionalDetailsSection(
-                isExpanded: controller.showMoreDetails.value,
-                onToggle: controller.toggleMoreDetails,
-                selectedDate: controller.date.value,
-                onDateSelected: controller.setDate,
-                onCalendarTap: () => controller.pickDate(context),
-                noteController: controller.noteController,
-                hasNoteText: controller.noteController.text.isNotEmpty,
-                activeColor: accentColor,
-                hideDate: true,
               ),
               const CcSpaceSM(),
               _buildSubmitButton(context, controller, accentColor),
@@ -212,6 +220,8 @@ class LiabilityForm extends StatelessWidget {
         isEnabled: controller.canSubmit,
         onTap: () => controller.submitForm(context),
         activeColor: accentColor,
+        leadingIcon: isInitiate ? Icons.call_received : Icons.call_made,
+        leadingIconSize: 18,
       );
     });
   }

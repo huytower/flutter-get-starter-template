@@ -33,8 +33,12 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
             children: [
               CcFormLabel(
                 text: isBorrowSide
-                    ? el.tr(CcLocaleKeys.transaction_loan_repayment_method_label)
-                    : el.tr(CcLocaleKeys.transaction_loan_collection_method_label),
+                    ? el.tr(
+                        CcLocaleKeys.transaction_loan_repayment_method_label,
+                      )
+                    : el.tr(
+                        CcLocaleKeys.transaction_loan_collection_method_label,
+                      ),
               ),
               const CcSpaceXS(),
               Expanded(
@@ -46,10 +50,14 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
                       : 1,
                   firstLabel: isBorrowSide
                       ? el.tr(CcLocaleKeys.transaction_loan_method_installment)
-                      : el.tr(CcLocaleKeys.transaction_loan_method_installment_lend),
+                      : el.tr(
+                          CcLocaleKeys.transaction_loan_method_installment_lend,
+                        ),
                   secondLabel: isBorrowSide
                       ? el.tr(CcLocaleKeys.transaction_loan_method_lump_sum)
-                      : el.tr(CcLocaleKeys.transaction_loan_method_lump_sum_lend),
+                      : el.tr(
+                          CcLocaleKeys.transaction_loan_method_lump_sum_lend,
+                        ),
                   activeColor: accentColor,
                   onChanged: (index) => controller.setRepaymentMethod(
                     index == 0
@@ -131,7 +139,9 @@ class _FinalDueDate extends StatelessWidget {
             borderRadius: context.brMd,
             child: Container(
               height: context.respDim(48),
-              padding: EdgeInsets.symmetric(horizontal: context.respPadding(12)),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.respPadding(12),
+              ),
               decoration: BoxDecoration(
                 color: context.ccColorScheme.onSurface.withAlpha(10),
                 borderRadius: context.brMd,
@@ -155,15 +165,13 @@ class _FinalDueDate extends StatelessWidget {
         ),
         const CcSpaceXS(),
         Expanded(
-          child: Obx(
-            () => CcInkWell(
-              onTap: () => controller.setReminderBeforeDueDate(
-                !controller.reminderBeforeDueDate.value,
-              ),
-              child: CcText(
-                el.tr(CcLocaleKeys.transaction_loan_reminder_once_label),
-                textStyle: context.ccTextTheme.bodyMedium,
-              ),
+          child: CcInkWell(
+            onTap: () => controller.setReminderBeforeDueDate(
+              !controller.reminderBeforeDueDate.value,
+            ),
+            child: CcText(
+              el.tr(CcLocaleKeys.transaction_loan_reminder_once_label),
+              textStyle: context.ccTextTheme.bodyMedium,
             ),
           ),
         ),

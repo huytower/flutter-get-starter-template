@@ -117,18 +117,20 @@ class InvestmentForm extends StatelessWidget {
             hideDate: true,
           ),
           const CcSpaceSM(),
-          Obx(
-            () => TransactionSubmitButton(
-              text: el.tr(
-                controller.direction.value == InvestmentDirection.contribute
-                    ? CcLocaleKeys.transaction_record_investment
-                    : CcLocaleKeys.transaction_record_investment_return,
-              ),
-              isSubmitting: controller.isSubmitting.value,
-              isEnabled: controller.canSubmit,
-              onTap: () => controller.submitForm(context),
-              activeColor: accentColor,
+          TransactionSubmitButton(
+            text: el.tr(
+              controller.direction.value == InvestmentDirection.contribute
+                  ? CcLocaleKeys.transaction_record_investment
+                  : CcLocaleKeys.transaction_record_investment_return,
             ),
+            isSubmitting: controller.isSubmitting.value,
+            isEnabled: controller.canSubmit,
+            onTap: () => controller.submitForm(context),
+            activeColor: accentColor,
+            leadingIcon: controller.direction.value == InvestmentDirection.contribute
+                ? Icons.arrow_circle_up
+                : Icons.arrow_circle_down,
+            leadingIconSize: 18,
           ),
           const CcSpaceXS(),
         ],
