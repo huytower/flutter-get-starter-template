@@ -27,7 +27,7 @@ The Sổ Sách Xịn (Quản Lý Tài Chính) application is a modular personal 
 - Financial Freedom Index
 
 **Phase 3 (LV3)**
-- Debt & Loan Management (4th tab)
+- Debt & Loan Management (separated into distinct Lend and Liability tabs in the Transaction secondary card)
 - Advanced AI features (image processing, voice input)
 - Budget estimation and smart suggestions
 - AI-powered warnings and actions
@@ -204,11 +204,16 @@ Users set monthly spending limits per category (e.g., "Only 1M for shopping this
 - Goal: Eliminate deficit, achieve positive cash flow, financial safety index
 
 ### Debt & Loan Management (LV3)
-- Track money owed to others (Debts) and money others owe to the user (Loans).
-- Link payments to specific wallets and expense slips.
-- **Tab Position**: 4th tab in the application (after Dashboard, Transactions, Reports)
-- **Debt Tracking**: Monitor outstanding debts with payment schedules
-- **Loan Tracking**: Track money lent to others with repayment tracking
+- **Separation Policy**: Debt (Liability) and Loan (Lend) tracking are strictly divided into separate tabs to prevent data mixing and ensure clear financial accountability.
+- **Linkage**: All payments are linked to specific wallets and generate corresponding income/expense slips for audit trail purposes.
+- **UI Position**: Integrated into the **Secondary Card** of the Transaction Entry page, accessible via the Card Stack Reveal.
+- **Lend Sub-segment**:
+    - **Lend (Cho vay)**: Record outgoing money given to others with repayment terms.
+    - **Collect (Thu nợ)**: Record incoming repayments from active loans.
+- **Liability Sub-segment**:
+    - **Borrow (Đi vay)**: Record incoming money received from others with repayment obligations.
+    - **Repay (Trả nợ)**: Record outgoing payments made towards active liabilities.
+- **Installment Tracking**: Support for both lump-sum and installment-based repayment schedules with automated reminders.
 
 ### Emergency Fund & Financial Runway (LV3)
 **Emergency Fund ("Quỹ dự phòng khẩn cấp" or "Chỉ số an toàn tài chính")**
@@ -329,8 +334,12 @@ In those 6 months, user has time to find new work or start a business without fi
   - Family with children: check "Milk" only
 
 ### Transaction Entry UI
-- **4 Tabs**: "Chi tiêu" (Expense), "Thu nhập" (Income), "Đầu Tư" (Investment), "Vay Nợ" (Debt/Loan)
-- **Tab Position**: Top of screen (TabHost)
+- **Tab Navigation (Stacked Card Reveal)**:
+    - **Primary Card (Daily)**: Expense (Chi tiêu), Income (Thu nhập).
+    - **Secondary Card (Advanced/Locked)**: Investment (Đầu tư), Debt/Loan (Vay nợ - split into Liability and Lend).
+    - **UX Pattern**: Uses **Progressive Disclosure**. Advanced tabs are stacked behind the primary ones to reduce cognitive load for new users. Swapping depth occurs via a slide animation triggered by tapping the card edge or toggle icon.
+- **Dynamic Header Behavior**: The page header (Wallet balance, Report shortcut, Submit action) automatically collapses or hides when the numeric keypad or soft keyboard is opened to maximize focus on the transaction form.
+- **Tab Position**: Top of screen, overlapping the header area to create a unified layered aesthetic.
 - **Category Frame**: Horizontal listview with snap scroll to center
 - **Amount Frame**: Select from suggestion list with dedicated currency keypad
 - **Wallet Frame**: Horizontal listview with snap scroll to center

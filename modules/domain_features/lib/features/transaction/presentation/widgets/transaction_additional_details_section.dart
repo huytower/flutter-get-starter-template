@@ -87,40 +87,68 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
   }
 
   Widget _buildNoteField(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
     return CcTextField(
       controller: noteController,
       hintText: el.tr(CcLocaleKeys.transaction_note_hint),
       maxLines: 2,
       textAlign: TextAlign.start,
       onTap: onNoteTap,
-      color: context.ccColorScheme.surfaceVariant.withAlpha(80),
+      color: scheme.surfaceVariant.withAlpha(80),
+      borderColor: scheme.outlineVariant.withAlpha(10),
       height: context.respDim(45),
       borderWidth: 0.4,
       margin: EdgeInsets.zero,
       borderRadius: 12.0,
+      prefixIcon: Padding(
+        padding: EdgeInsets.only(
+          left: context.respPadding(CcPaddingParams.SPACE_SM),
+          right: context.respPadding(CcPaddingParams.SPACE_XS),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CcText(
+              el.tr(CcLocaleKeys.transaction_note),
+              textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                color: scheme.onSurfaceVariant.withAlpha(70),
+              ),
+            ),
+          ],
+        ),
+      ),
       suffixIcon: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (hasNoteText)
-            IconButton(
-              icon: Icon(Icons.copy, size: context.respIconSize(baseSize: 18)),
-              color: context.ccColorScheme.onSurfaceVariant,
-              onPressed: () {
+            CcIconButton.bouncing(
+              width: context.respDim(20),
+              height: context.respDim(20),
+              icon: Icon(
+                Icons.copy_rounded,
+                color: scheme.onSurfaceVariant.withAlpha(80),
+                size: context.respIconSize(baseSize: 14),
+              ),
+              onTap: () {
                 Clipboard.setData(ClipboardData(text: noteController.text));
               },
               tooltip: el.tr(CcLocaleKeys.common_copy),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
             ),
           if (hasNoteText)
-            IconButton(
-              icon: Icon(Icons.clear, size: context.respIconSize(baseSize: 18)),
-              color: context.ccColorScheme.onSurfaceVariant,
-              onPressed: () => noteController.clear(),
+            CcIconButton.bouncing(
+              width: context.respDim(20),
+              height: context.respDim(20),
+              icon: Icon(
+                Icons.close_rounded,
+                color: scheme.onSurfaceVariant.withAlpha(80),
+                size: context.respIconSize(baseSize: 14),
+              ),
+              onTap: () => noteController.clear(),
               tooltip: el.tr(CcLocaleKeys.common_clear),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
             ),
+          const CcSpaceXS(),
         ],
       ),
     );
