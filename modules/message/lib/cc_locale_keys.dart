@@ -749,6 +749,10 @@ class CodegenLoader extends AssetLoader {
       "banner_desc_first_transaction": "Record your first expense transaction",
       "banner_desc_investment":
           "Create your first investment to grow your wealth",
+      "banner_desc_liability":
+          "Record your first liability (Borrow/Repay) to manage your debts",
+      "banner_desc_lend":
+          "Record your first lend (Lend/Collect) to manage your loans",
       "banner_desc_default": "You are ready to manage your finances!",
       "success_dialog_message":
           "Congratulations!\nYou have completed the initial setup.",
@@ -1508,6 +1512,10 @@ class CodegenLoader extends AssetLoader {
       "banner_desc_min_living": "Xác định mức sống tối thiểu hàng tháng",
       "banner_desc_first_transaction": "Ghi chép giao dịch chi tiêu đầu tiên",
       "banner_desc_investment": "Tạo khoản đầu tư đầu tiên để gia tăng tài sản",
+      "banner_desc_liability":
+          "Ghi nhận khoản nợ đầu tiên (Đi vay/Trả nợ) để quản lý nợ",
+      "banner_desc_lend":
+          "Ghi nhận khoản cho vay đầu tiên (Cho vay/Thu nợ) để quản lý cho vay",
       "banner_desc_default": "Bạn đã sặn sàng quản lý tài chính!",
       "success_dialog_message":
           "Chúc mừng!\nBạn đã hoàn thành thiết lập ban đầu.",
@@ -1767,58 +1775,6 @@ abstract class CcLocaleKeys {
   static const transaction_source_debt = 'transaction.source_debt';
   static const transaction_record_debt = 'transaction.record_debt';
   static const transaction_debt_saved = 'transaction.debt_saved';
-  static const transaction_loan_direction_borrow =
-      'transaction.loan_direction_borrow';
-  static const transaction_loan_direction_lend =
-      'transaction.loan_direction_lend';
-  static const transaction_loan_category_borrow_label =
-      'transaction.loan_category_borrow_label';
-  static const transaction_loan_amount_borrow_label =
-      'transaction.loan_amount_borrow_label';
-  static const transaction_loan_wallet_borrow_label =
-      'transaction.loan_wallet_borrow_label';
-  static const transaction_loan_category_lend_label =
-      'transaction.loan_category_lend_label';
-  static const transaction_loan_amount_lend_label =
-      'transaction.loan_amount_lend_label';
-  static const transaction_loan_wallet_lend_label =
-      'transaction.loan_wallet_lend_label';
-  static const transaction_loan_borrower_label =
-      'transaction.loan_borrower_label';
-  static const transaction_loan_borrower_hint =
-      'transaction.loan_borrower_hint';
-  static const transaction_loan_collection_method_label =
-      'transaction.loan_collection_method_label';
-  static const transaction_loan_method_installment_lend =
-      'transaction.loan_method_installment_lend';
-  static const transaction_loan_method_lump_sum_lend =
-      'transaction.loan_method_lump_sum_lend';
-  static const transaction_loan_schedule_lend_label =
-      'transaction.loan_schedule_lend_label';
-  static const transaction_loan_reminder_once_label =
-      'transaction.loan_reminder_once_label';
-  static const transaction_loan_reminder_recurring_label =
-      'transaction.loan_reminder_recurring_label';
-  static const transaction_loan_name_label = 'transaction.loan_name_label';
-  static const transaction_loan_name_hint = 'transaction.loan_name_hint';
-  static const transaction_loan_counterparty_vip_locked =
-      'transaction.loan_counterparty_vip_locked';
-  static const transaction_loan_repayment_method_label =
-      'transaction.loan_repayment_method_label';
-  static const transaction_loan_method_installment =
-      'transaction.loan_method_installment';
-  static const transaction_loan_method_lump_sum =
-      'transaction.loan_method_lump_sum';
-  static const transaction_loan_final_due_date_label =
-      'transaction.loan_final_due_date_label';
-  static const transaction_loan_schedule_label =
-      'transaction.loan_schedule_label';
-  static const transaction_loan_add_period = 'transaction.loan_add_period';
-  static const transaction_loan_saved = 'transaction.loan_saved';
-  static const transaction_loan_payment_saved =
-      'transaction.loan_payment_saved';
-  static const transaction_record_loan = 'transaction.record_loan';
-
   static const transaction_liability_direction_borrow =
       'transaction.liability_direction_borrow';
   static const transaction_liability_direction_lend =
@@ -1841,6 +1797,57 @@ abstract class CcLocaleKeys {
   static const transaction_liability_saved = 'transaction.liability_saved';
   static const transaction_liability_name_duplicate_error =
       'transaction.liability_name_duplicate_error';
+  static const transaction_liability_category_borrow_label =
+      'transaction.liability_category_borrow_label';
+  static const transaction_liability_category_lend_label =
+      'transaction.liability_category_lend_label';
+  static const transaction_liability_borrower_label =
+      'transaction.liability_borrower_label';
+  static const transaction_liability_borrower_hint =
+      'transaction.liability_borrower_hint';
+  static const transaction_liability_collection_method_label =
+      'transaction.liability_collection_method_label';
+  static const transaction_liability_method_installment_lend =
+      'transaction.liability_method_installment_lend';
+  static const transaction_liability_method_lump_sum_lend =
+      'transaction.liability_method_lump_sum_lend';
+  static const transaction_liability_schedule_lend_label =
+      'transaction.liability_schedule_lend_label';
+  static const transaction_liability_reminder_once_label =
+      'transaction.liability_reminder_once_label';
+  static const transaction_liability_reminder_recurring_label =
+      'transaction.liability_reminder_recurring_label';
+  static const transaction_liability_counterparty_vip_locked =
+      'transaction.liability_counterparty_vip_locked';
+  static const transaction_liability_repayment_method_label =
+      'transaction.liability_repayment_method_label';
+  static const transaction_liability_method_installment =
+      'transaction.liability_method_installment';
+  static const transaction_liability_method_lump_sum =
+      'transaction.liability_method_lump_sum';
+  static const transaction_liability_final_due_date_label =
+      'transaction.liability_final_due_date_label';
+  static const transaction_liability_schedule_label =
+      'transaction.liability_schedule_label';
+  static const transaction_liability_add_period =
+      'transaction.liability_add_period';
+  static const transaction_record_repay = 'transaction.record_repay';
+  static const transaction_record_collect = 'transaction.record_collect';
+      'transaction.liability_reminder_recurring_label';
+  static const transaction_liability_counterparty_vip_locked =
+      'transaction.liability_counterparty_vip_locked';
+  static const transaction_liability_repayment_method_label =
+      'transaction.liability_repayment_method_label';
+  static const transaction_liability_method_installment =
+      'transaction.liability_method_installment';
+  static const transaction_liability_method_lump_sum =
+      'transaction.liability_method_lump_sum';
+  static const transaction_liability_final_due_date_label =
+      'transaction.liability_final_due_date_label';
+  static const transaction_liability_schedule_label =
+      'transaction.liability_schedule_label';
+  static const transaction_liability_add_period =
+      'transaction.liability_add_period';
   static const transaction_record_repay = 'transaction.record_repay';
   static const transaction_record_collect = 'transaction.record_collect';
   static const transaction_investment_contribution =
@@ -1918,15 +1925,6 @@ abstract class CcLocaleKeys {
   static const transaction_validation_edit_window =
       'transaction.validation.edit_window';
 
-  static const loan_list_title = 'loan.list_title';
-  static const loan_status_outstanding = 'loan.status_outstanding';
-  static const loan_status_settled = 'loan.status_settled';
-  static const loan_remaining_balance = 'loan.remaining_balance';
-  static const loan_principal_amount = 'loan.principal_amount';
-  static const loan_empty_state = 'loan.empty_state';
-  static const loan_history_title = 'loan.history_title';
-  static const loan_no_history = 'loan.no_history';
-
   static const liability_title = 'liability.title';
   static const liability_list_title = 'liability.list_title';
   static const liability_status_outstanding = 'liability.status_outstanding';
@@ -1938,6 +1936,8 @@ abstract class CcLocaleKeys {
   static const liability_no_history = 'liability.no_history';
   static const liability_delete_title = 'liability.delete_title';
   static const liability_delete_confirm_msg = 'liability.delete_confirm_msg';
+  static const liability_borrow = 'liability.borrow';
+  static const liability_lend = 'liability.lend';
 
   static const notification_channel_name = 'notification.channel_name';
   static const notification_channel_description =
@@ -2309,6 +2309,7 @@ abstract class CcLocaleKeys {
       'guideline.banner_desc_investment';
   static const guideline_banner_desc_liability =
       'guideline.banner_desc_liability';
+  static const guideline_banner_desc_lend = 'guideline.banner_desc_lend';
   static const guideline_banner_desc_default = 'guideline.banner_desc_default';
   static const guideline_success_dialog_message =
       'guideline.success_dialog_message';
@@ -2333,6 +2334,5 @@ abstract class CcLocaleKeys {
   static const level_lock_task_fixed_budgets = 'level_lock.task_fixed_budgets';
   static const level_lock_task_positive_cash_flow =
       'level_lock.task_positive_cash_flow';
-  static const level_lock_progress_archived =
-      'level_lock.progress_archived';
+  static const level_lock_progress_archived = 'level_lock.progress_archived';
 }

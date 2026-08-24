@@ -305,34 +305,34 @@ class ProfilePage extends CcGetView<ProfileController> {
     final scheme = context.ccColorScheme;
     final textTheme = context.ccTextTheme;
 
-    return GestureDetector(
-      onLongPress: () => controller.openCrashLogViewer(context),
-      child: Column(
-        children: [
-          const CcSpaceSM(),
-          CcText(
-            el.tr(CcLocaleKeys.app_slogan),
-            maxLines: 2,
-            textStyle: textTheme.bodySmall?.copyWith(
-              color: scheme.onSurfaceVariant.withOpacity(0.8),
-            ),
-            textAlign: TextAlign.center,
-            align: Alignment.center,
+    return Column(
+      children: [
+        const CcSpaceSM(),
+        CcText(
+          el.tr(CcLocaleKeys.app_slogan),
+          maxLines: 2,
+          textStyle: textTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant.withOpacity(0.8),
           ),
-          const CcSpaceXS(),
-          _buildContactBox(
-            context,
-            role: el.tr(CcLocaleKeys.app_role_hr),
-            name: el.tr(CcLocaleKeys.app_author_hr_name),
-            email: el.tr(CcLocaleKeys.app_author_hr_email),
-          ),
-          _buildContactBox(
-            context,
-            role: el.tr(CcLocaleKeys.app_role_tech),
-            name: el.tr(CcLocaleKeys.app_author_tech_name),
-            email: el.tr(CcLocaleKeys.app_author_tech_email),
-          ),
-          CcText(
+          textAlign: TextAlign.center,
+          align: Alignment.center,
+        ),
+        const CcSpaceXS(),
+        _buildContactBox(
+          context,
+          role: el.tr(CcLocaleKeys.app_role_hr),
+          name: el.tr(CcLocaleKeys.app_author_hr_name),
+          email: el.tr(CcLocaleKeys.app_author_hr_email),
+        ),
+        _buildContactBox(
+          context,
+          role: el.tr(CcLocaleKeys.app_role_tech),
+          name: el.tr(CcLocaleKeys.app_author_tech_name),
+          email: el.tr(CcLocaleKeys.app_author_tech_email),
+        ),
+        GestureDetector(
+          onLongPress: () => controller.openCrashLogViewer(context),
+          child: CcText(
             el.tr(CcLocaleKeys.app_address),
             textStyle: textTheme.labelSmall?.copyWith(
               color: scheme.onSurfaceVariant.withOpacity(0.5),
@@ -340,8 +340,8 @@ class ProfilePage extends CcGetView<ProfileController> {
             textAlign: TextAlign.center,
             align: Alignment.center,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

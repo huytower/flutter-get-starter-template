@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_micro_features/features/splash/core/splash_manager.dart';
 import 'package:domain_features/export_domain_features.dart';
+import 'package:domain_features/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import 'package:firebase_performance/firebase_performance.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 
@@ -23,30 +24,29 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
     showQuickTestAsSecondTab = _isQuickTestRoute(startRoute);
     checkSplash();
 
-    // Cold app boot lands on a tab (usually the Transaction entry tab)
-    // without ever going through handleTabRefresh, so UserLevelController
-    // would otherwise stay at its LV1 `.initial()` value — e.g. showing only
-    // 2 Transaction tabs instead of 4 under "force full access" — until the
-    // user manually switches tabs. Kick off a refresh here so the reactive
-    // Obx wrapping each page's content picks up the real status as soon as
-    // it resolves, with no remount required.
+    // 1. Critical but non-blocking (User level drives UI availability)
     unawaited(getIt<UserLevelController>().refresh());
 
-    _initAppTelemetry();
-    _initCloudSync();
-    _initReminders();
+    // 2. Deferred background systems (Non-critical for first frame)
+    _initBackgroundServices();
   }
 
-  void _initAppTelemetry() {
-    Future.microtask(() {
+  void _initBackgroundServices() {
+    // Delay non-critical background services to avoid competing with UI/Boot
+    Future.delayed(const Duration(seconds: 3), () async {
+      if (!mounted) return;
+
+      // Native security & analytics
+      CcAppCheckHelper.initialize();
       FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
       logEnv();
       logVersionInfo();
-    });
-  }
 
-  void _initCloudSync() {
-    Future.delayed(const Duration(seconds: 3), () async {
+      // Local notifications & sync
+      await getIt<NotificationService>().init();
+      getIt<FinancialDataSyncService>().startWatching();
+
+      // Conditional sync & reminders
       final session = getIt<SessionContract>();
       if (session.isAuthenticated) {
         try {
@@ -55,11 +55,7 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
           'Initial cloud sync failed: $e'.Log('NavigationLogicMixin');
         }
       }
-    });
-  }
 
-  void _initReminders() {
-    Future.delayed(const Duration(seconds: 3), () async {
       try {
         await getIt<CheckAuditReminderUseCase>().call();
         await getIt<CheckCloudBackupReminderUseCase>().call();
@@ -70,23 +66,22 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
   }
 
   void handleTabRefresh(int index) {
-    // The LV1/LV2/LV3 unlock state can change from an action taken on a
-    // different page (e.g. completing a reconciliation), so re-fetch it on
-    // every tab entry — UserLevelController is always resolvable via getIt
-    // (a true app-wide singleton, unlike the page-scoped GetX controllers
-    // below which only exist once their page has been visited).
+    // Re-fetch user level on every tab entry as it can change via actions
+    // on other tabs (e.g. completing a task).
     getIt<UserLevelController>().refresh();
 
-    // These tabs derive their figures from transactions that may have been
-    // added on the entry tab, so re-fetch each time the tab is (re)opened — the
-    // GetX controllers are kept alive, so onReady() won't fire again on its own.
+    // Refresh tab-specific data
     if (index == 0) {
       // _indexWalletAllocation
-      if (Get.isRegistered<WalletController>()) {
-        Get.find<WalletController>().loadWallets();
-      }
-      if (Get.isRegistered<BudgetLimitController>()) {
-        Get.find<BudgetLimitController>().loadBudgets();
+      if (Get.isRegistered<BudgetAllocationController>()) {
+        Get.find<BudgetAllocationController>().loadAll();
+      } else {
+        if (Get.isRegistered<WalletController>()) {
+          Get.find<WalletController>().loadWallets();
+        }
+        if (Get.isRegistered<BudgetLimitController>()) {
+          Get.find<BudgetLimitController>().loadBudgets();
+        }
       }
     }
     if (index == 1 && Get.isRegistered<TransactionController>()) {

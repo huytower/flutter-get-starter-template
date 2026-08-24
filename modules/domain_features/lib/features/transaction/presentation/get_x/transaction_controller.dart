@@ -141,36 +141,21 @@ class TransactionController extends CcGetController {
     hasInteractedWithCardStack.value =
         CcAppStorage.instance.hasInteractedWithTransactionCardStack ?? false;
 
-    // Ensure WalletController is available for book balance lookups in selectors
+    // Register controllers lazily to avoid heavy waterfall initialization
+    // during app startup. They will be created only when their respective
+    // form widgets are first built.
     if (!Get.isRegistered<WalletController>()) {
-      Get.put(getIt<WalletController>());
+      Get.lazyPut(() => getIt<WalletController>());
     }
 
-    // Register form controllers early to avoid "setState() called during build"
-    // errors when they are initialized during the view's build phase.
-    //
-    // Investment/Loan are deliberately NOT eagerly registered here too
-    // (unlike Expense/Income) — InvestmentFormController.onInit() calls
-    // Get.find<TransactionController>(), and calling that synchronously
-    // from inside THIS method (TransactionController's own onInit(), still
-    // mid-execution) would re-enter this exact onInit() body recursively:
-    // GetInstance only marks a controller's `isInit` flag true *after*
-    // onStart()/onInit() fully returns, so a nested Get.find() that lands
-    // here before this call finishes sees `isInit == false` and restarts
-    // onStart()/onInit() a second time (verified against the `get` 4.7.3
-    // package source — GetLifeCycleBase._onStart()'s own `_initialized`
-    // guard doesn't help either, since it's likewise only flipped after
-    // onInit() returns). See TransactionPage.buildContent(), which runs
-    // strictly after this onInit() has fully completed, for where
-    // Investment/Loan actually get pre-registered instead.
     if (!Get.isRegistered<ExpenseFormController>()) {
-      Get.put(getIt<ExpenseFormController>());
+      Get.lazyPut(() => getIt<ExpenseFormController>());
     }
     if (!Get.isRegistered<IncomeFormController>()) {
-      Get.put(getIt<IncomeFormController>());
+      Get.lazyPut(() => getIt<IncomeFormController>());
     }
     if (!Get.isRegistered<LiabilityFormController>()) {
-      Get.put(getIt<LiabilityFormController>());
+      Get.lazyPut(() => getIt<LiabilityFormController>());
     }
     if (!Get.isRegistered<LendFormController>()) {
       Get.lazyPut(() => getIt<LendFormController>());
@@ -179,8 +164,12 @@ class TransactionController extends CcGetController {
     // The transaction tab hosts an always-visible entry form, not a data-gated
     // list, so keep the layout in the success state.
     layoutStatus.value = CcLayoutStatus.success;
-    refreshWalletTotal();
-    loadWallets();
+
+    // Defer data fetching slightly to avoid competing with UI transition/boot
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      refreshWalletTotal();
+      loadWallets();
+    });
   }
 
   Future<void> loadWallets() async {
@@ -203,15 +192,14 @@ class TransactionController extends CcGetController {
   }
 
   Future<void> refreshData() async {
-    await refreshWalletTotal();
-    await loadWallets();
+    await Future.wait([refreshWalletTotal(), loadWallets()]);
 
     if (Get.isRegistered<WalletController>()) {
-      Get.find<WalletController>().loadWallets();
+      await Get.find<WalletController>().loadWallets();
     }
 
     if (Get.isRegistered<BudgetAllocationController>()) {
-      Get.find<BudgetAllocationController>().loadAll();
+      await Get.find<BudgetAllocationController>().loadAll();
     }
   }
 

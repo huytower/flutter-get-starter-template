@@ -37,7 +37,7 @@ abstract class CcGetView<T extends CcGetController> extends GetView<T>
   @override
   Widget build(BuildContext context) {
     if (!Get.isRegistered<T>()) {
-      Get.put(getIt<T>());
+      Get.put(getIt<T>(), permanent: true);
     }
     return Obx(() => super.build(context));
   }
