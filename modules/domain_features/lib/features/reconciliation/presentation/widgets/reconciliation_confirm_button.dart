@@ -24,6 +24,15 @@ class ReconciliationConfirmButton extends StatelessWidget {
         isEnabled: !hasWarning && !isEmpty,
         onTap: () => _showConfirmDialog(context),
         activeColor: context.ccColorScheme.primary,
+        // Compact inline variant: this button sits directly under the summary
+        // rows instead of being a pinned bottom call-to-action.
+        widthFactor: 0.3,
+        height: context.respDim(32),
+        textStyle: context.ccTextTheme.bodyMedium,
+        // Mirrors the app bar confirm action's icon so the two entry points
+        // read as the same action.
+        leadingIcon: Icons.handshake_outlined,
+        leadingIconSize: 18,
       );
     });
   }
