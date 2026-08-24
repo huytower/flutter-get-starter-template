@@ -42,7 +42,7 @@ class LiquidWalletsSection extends StatelessWidget {
             icon: Icons.account_balance_wallet_outlined,
             actions: [
               if (showAddButton)
-                CcInkWell(
+                CcBouncing(
                   onTap: onAddWallet,
                   child: const CcIconToken(
                     Icons.add_circle_outline_rounded,

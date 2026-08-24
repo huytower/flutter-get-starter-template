@@ -87,7 +87,7 @@ class MoneyKeypadPanel extends StatelessWidget {
                     onTap: onCopy!,
                     tooltip: el.tr(CcLocaleKeys.common_copy),
                   ),
-                CcInkWell(
+                CcBouncing(
                   onTap: onDone,
                   child: CcSymmetricPadding(
                     horizontal: CcPaddingParams.SPACE_XL,

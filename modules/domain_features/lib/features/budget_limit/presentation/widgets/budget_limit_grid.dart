@@ -192,7 +192,7 @@ class _BudgetLimitGridState extends State<BudgetLimitGrid> {
 
   Widget _buildAddCell(BuildContext context, bool isEdit) {
     final scheme = context.ccColorScheme;
-    return CcInkWell(
+    return CcBouncing(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),
       ),

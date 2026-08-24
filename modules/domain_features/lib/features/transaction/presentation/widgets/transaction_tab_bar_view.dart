@@ -60,7 +60,7 @@ class TransactionTabBarView extends StatelessWidget {
   Widget _buildPage(BuildContext context, TransactionTabKind tab) {
     final isUnlocked = controller.isTabUnlocked(tab);
     if (!isUnlocked) {
-      return CcInkWell(
+      return CcBouncing(
         onTap: () => _showUnlockConditions(context, tab),
         child: CcLevelLockPlaceholder(tab: tab),
       );

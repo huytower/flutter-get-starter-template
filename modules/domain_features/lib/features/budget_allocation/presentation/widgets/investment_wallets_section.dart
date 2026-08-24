@@ -11,7 +11,6 @@ class InvestmentWalletsSection extends StatelessWidget {
   const InvestmentWalletsSection({
     required this.wallets,
     required this.onAddInvestment,
-    required this.onMore,
     required this.onSeeAll,
     this.showGuidelineBadge = false,
     this.badgeColor,
@@ -20,7 +19,6 @@ class InvestmentWalletsSection extends StatelessWidget {
 
   final List<WalletEntity> wallets;
   final VoidCallback onAddInvestment;
-  final ValueChanged<WalletEntity> onMore;
   final VoidCallback onSeeAll;
   final bool showGuidelineBadge;
   final Color? badgeColor;
@@ -38,7 +36,7 @@ class InvestmentWalletsSection extends StatelessWidget {
             title: el.tr(CcLocaleKeys.wallet_investments),
             icon: Icons.trending_up_outlined,
             actions: [
-              CcInkWell(
+              CcBouncing(
                 onTap: onAddInvestment,
                 child: Stack(
                   clipBehavior: Clip.none,
@@ -112,7 +110,6 @@ class InvestmentWalletsSection extends StatelessWidget {
             padding: EdgeInsets.only(right: context.respDim(12)),
             child: InvestmentWalletPreviewCard(
               wallet: wallet,
-              onMore: () => onMore(wallet),
               onTap: onSeeAll,
             ),
           );

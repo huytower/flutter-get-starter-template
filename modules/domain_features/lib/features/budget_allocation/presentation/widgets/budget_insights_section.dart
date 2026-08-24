@@ -108,7 +108,7 @@ class _InsightCard extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(bottom: context.respDim(12)),
-      child: CcInkWell(
+      child: CcBouncing(
         onTap: onTap,
         borderRadius: context.brLg,
         child: Container(

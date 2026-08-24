@@ -18,7 +18,7 @@ class EditBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    return CcInkWell(
+    return CcBouncing(
       onTap: onTap,
       borderRadius: BorderRadius.circular(context.respDim(12)),
       child: Container(

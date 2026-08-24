@@ -51,7 +51,7 @@ class BudgetHeroBanner extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     return CcPadding(
-      CcInkWell(
+      CcBouncing(
         onTap: onTap,
         borderRadius: context.brXl,
         child: Container(

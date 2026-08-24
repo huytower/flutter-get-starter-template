@@ -9,7 +9,6 @@ class LiabilityWalletsSection extends StatelessWidget {
   const LiabilityWalletsSection({
     required this.balances,
     required this.onAddLoan,
-    required this.onMore,
     required this.onSeeAll,
     this.showGuidelineBadge = false,
     this.badgeColor,
@@ -18,7 +17,6 @@ class LiabilityWalletsSection extends StatelessWidget {
 
   final List<LiabilityBalanceEntity> balances;
   final VoidCallback onAddLoan;
-  final ValueChanged<LiabilityBalanceEntity> onMore;
   final VoidCallback onSeeAll;
   final bool showGuidelineBadge;
   final Color? badgeColor;
@@ -36,7 +34,7 @@ class LiabilityWalletsSection extends StatelessWidget {
             title: el.tr(CcLocaleKeys.liability_list_title),
             icon: Icons.warning_amber_outlined,
             actions: [
-              CcInkWell(
+              CcBouncing(
                 onTap: onAddLoan,
                 child: Stack(
                   clipBehavior: Clip.none,
@@ -110,7 +108,6 @@ class LiabilityWalletsSection extends StatelessWidget {
             padding: EdgeInsets.only(right: context.respDim(12)),
             child: LiabilityWalletPreviewCard(
               balance: balance,
-              onMore: () => onMore(balance),
               onTap: onSeeAll,
             ),
           );

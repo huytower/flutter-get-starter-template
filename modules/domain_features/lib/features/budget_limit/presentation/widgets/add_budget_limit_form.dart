@@ -233,7 +233,7 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
     final scheme = context.ccColorScheme;
     final guideline = Get.find<GuidelineController>();
 
-    return CcInkWell(
+    return CcBouncing(
       onTap: () => setState(() => _isFixedPrice = !_isFixedPrice),
       borderRadius: context.brSm,
       child: Tooltip(
@@ -291,7 +291,7 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
 
     return Padding(
       padding: EdgeInsets.only(bottom: context.respDim(8)),
-      child: CcInkWell(
+      child: CcBouncing(
         onTap: _applyEstimate,
         borderRadius: context.brMd,
         child: Container(
@@ -327,7 +327,7 @@ class _AddBudgetLimitFormState extends State<AddBudgetLimitForm> {
                   ),
                 ),
               ),
-              CcInkWell(
+              CcBouncing(
                 onTap: () => setState(() => _estimatedLimit = null),
                 borderRadius: context.brSm,
                 child: Icon(

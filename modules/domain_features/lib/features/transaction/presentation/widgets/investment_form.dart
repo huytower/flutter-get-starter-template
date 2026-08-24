@@ -112,7 +112,6 @@ class InvestmentForm extends StatelessWidget {
             onDateSelected: controller.setDate,
             onCalendarTap: () => controller.pickDate(context),
             noteController: controller.noteController,
-            hasNoteText: controller.noteController.text.isNotEmpty,
             activeColor: accentColor,
             hideDate: true,
           ),

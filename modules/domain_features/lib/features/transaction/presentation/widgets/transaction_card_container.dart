@@ -9,7 +9,7 @@ class TransactionCardContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CcInkWell(
+    return CcBouncing(
       onTap: onTap ?? () {},
       borderRadius: CcWidgetHelper.getBorderRoundedLG(),
       child: Container(

@@ -54,7 +54,7 @@ class CcAmountInputSection extends StatelessWidget {
   }
 
   Widget _buildInputBox(BuildContext context, Color accent) {
-    return CcInkWell(
+    return CcBouncing(
       key: fieldKey,
       onTap: onTap,
       borderRadius: context.brMd,

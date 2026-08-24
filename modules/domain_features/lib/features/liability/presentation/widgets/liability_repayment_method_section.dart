@@ -134,7 +134,7 @@ class _FinalDueDate extends StatelessWidget {
         ),
         const CcSpaceXS(),
         Expanded(
-          child: CcInkWell(
+          child: CcBouncing(
             onTap: () => controller.pickFinalDueDate(context),
             borderRadius: context.brMd,
             child: Container(
@@ -165,7 +165,7 @@ class _FinalDueDate extends StatelessWidget {
         ),
         const CcSpaceXS(),
         Expanded(
-          child: CcInkWell(
+          child: CcBouncing(
             onTap: () => controller.setReminderBeforeDueDate(
               !controller.reminderBeforeDueDate.value,
             ),
@@ -208,7 +208,7 @@ class _ReminderToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return CcInkWell(
+      return CcBouncing(
         onTap: () => controller.setReminderBeforeDueDate(
           !controller.reminderBeforeDueDate.value,
         ),

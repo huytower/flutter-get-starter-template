@@ -238,17 +238,15 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
   Widget _buildDateAndNoteSection(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return CcTextField(
+    return CcNoteInputField(
       controller: _noteController,
       hintText: el.tr(CcLocaleKeys.transaction_note_hint),
       maxLines: 2,
-      textAlign: TextAlign.start,
       color: scheme.surfaceVariant.withAlpha(80),
       borderColor: scheme.outlineVariant.withAlpha(10),
       height: context.respDim(45),
-      borderWidth: 0.4,
       margin: EdgeInsets.zero,
-      borderRadius: 12.0,
+      showCopy: false,
       prefixIcon: Padding(
         padding: EdgeInsets.only(
           left: context.respPadding(CcPaddingParams.SPACE_SM),
@@ -266,23 +264,6 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
             ),
           ],
         ),
-      ),
-      suffixIcon: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CcIconButton.bouncing(
-            width: context.respDim(20),
-            height: context.respDim(20),
-            icon: Icon(
-              Icons.close_rounded,
-              color: scheme.onSurfaceVariant.withAlpha(80),
-              size: context.respIconSize(baseSize: 14),
-            ),
-            onTap: () => _noteController.clear(),
-            tooltip: el.tr(CcLocaleKeys.common_clear),
-          ),
-          const CcSpaceXS(),
-        ],
       ),
     );
   }

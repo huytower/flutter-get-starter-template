@@ -128,7 +128,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     final isSelected = controller.direction.value == direction;
     final scheme = context.ccColorScheme;
 
-    return CcInkWell(
+    return CcBouncing(
       onTap: () => controller.setDirection(direction),
       borderRadius: BorderRadius.circular(12),
       child: Container(

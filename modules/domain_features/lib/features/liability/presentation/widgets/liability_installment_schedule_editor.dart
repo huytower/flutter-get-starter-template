@@ -50,7 +50,7 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-            child: CcInkWell(
+            child: CcBouncing(
               onTap: () => controller.pickInstallmentDueDate(context, index),
               borderRadius: context.brMd,
               child: Container(
@@ -74,7 +74,7 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
           ),
           const CcSpaceXS(),
           Expanded(
-            child: CcInkWell(
+            child: CcBouncing(
               onTap: () => controller.showKeypadForInstallment(context, index),
               borderRadius: context.brMd,
               child: Obx(() {

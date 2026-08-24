@@ -93,7 +93,7 @@ class ReceiptSourceSheet extends StatelessWidget {
   }) {
     final scheme = context.ccColorScheme;
 
-    return CcInkWell(
+    return CcBouncing(
       onTap: onTap,
       child: Padding(
         padding: EdgeInsets.symmetric(

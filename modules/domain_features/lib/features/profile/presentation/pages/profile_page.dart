@@ -246,7 +246,7 @@ class ProfilePage extends CcGetView<ProfileController> {
   }
 
   Widget _buildLogoutButton(BuildContext context) {
-    return CcInkWell(
+    return CcBouncing(
       onTap: () => controller.logout(context),
       child: CcText(
         el.tr(CcLocaleKeys.auth_logout),
@@ -261,7 +261,7 @@ class ProfilePage extends CcGetView<ProfileController> {
   }
 
   Widget _buildDeleteAccountText(BuildContext context) {
-    return CcInkWell(
+    return CcBouncing(
       onTap: () async {
         final result = await showModalBottomSheet<Result<Unit, CcFailure>>(
           context: context,

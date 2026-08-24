@@ -263,7 +263,7 @@ class _TransactionDatePickerDialogContentState
     final isSelected = _isSameDay(date, _selectedDate);
     final isToday = _isSameDay(date, today);
 
-    return CcInkWell(
+    return CcBouncing(
       onTap: () {
         if (date.isBefore(widget.firstDate) || date.isAfter(widget.lastDate)) {
           return;

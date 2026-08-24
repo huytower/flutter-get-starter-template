@@ -55,7 +55,7 @@ class BudgetAllocationHeader extends StatelessWidget {
               ],
             ),
             Obx(
-              () => CcInkWell(
+              () => CcBouncing(
                 onTap: controller.toggleBalanceVisibility,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),

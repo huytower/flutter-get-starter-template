@@ -47,7 +47,7 @@ class TransactionTile extends StatelessWidget {
 
     final editable = isEditableTransaction(transaction);
 
-    return CcInkWell(
+    return CcBouncing(
       onTap: editable
           ? () async {
               await EditTransactionSheet.show(context, transaction);

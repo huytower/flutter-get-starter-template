@@ -118,7 +118,7 @@ class _WeeklyAuditDayDialogContentState
     final bool isSelected = day == _selectedDay;
 
     return Center(
-      child: CcInkWell(
+      child: CcBouncing(
         onTap: () => _onDayTap(day),
         borderRadius: context.brLg,
         child: AnimatedContainer(

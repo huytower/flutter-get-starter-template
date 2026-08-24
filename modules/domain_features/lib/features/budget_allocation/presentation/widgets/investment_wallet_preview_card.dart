@@ -11,13 +11,11 @@ import '../../../wallet/presentation/get_x/wallet_controller.dart';
 class InvestmentWalletPreviewCard extends StatelessWidget {
   const InvestmentWalletPreviewCard({
     required this.wallet,
-    required this.onMore,
     required this.onTap,
     super.key,
   });
 
   final WalletEntity wallet;
-  final VoidCallback onMore;
   final VoidCallback onTap;
 
   @override
@@ -26,9 +24,8 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
     final controller = Get.find<WalletController>();
     final stats = controller.investmentStatsOf(wallet.id);
 
-    return CcInkWell(
+    return CcBouncing(
       onTap: onTap,
-      onLongPress: onMore,
       borderRadius: context.brLg,
       child: Stack(
         clipBehavior: Clip.none,

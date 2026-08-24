@@ -19,7 +19,7 @@ class ProfileExperienceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CcInkWell(
+    return CcBouncing(
       onTap: onTap,
       borderRadius: context.brLg,
       child: Container(

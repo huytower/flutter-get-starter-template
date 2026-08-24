@@ -37,7 +37,7 @@ class ProfileInfoCard extends StatelessWidget {
     final email = user?.email ?? '';
     final phoneNumber = user?.phoneNumber ?? '';
 
-    return CcInkWell(
+    return CcBouncing(
       onTap: onTap,
       borderRadius: context.brLg,
       child: Container(
@@ -98,8 +98,8 @@ class ProfileInfoCard extends StatelessWidget {
     );
   }
 
-  CcInkWell buildUserAvatar(BuildContext context) {
-    return CcInkWell(
+  CcBouncing buildUserAvatar(BuildContext context) {
+    return CcBouncing(
       onTap: onAvatarTap,
       borderRadius: BorderRadius.circular(context.respDim(12)),
       child: Stack(
@@ -352,7 +352,7 @@ class ProfileInfoCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         const CcSpaceXS(),
-        CcInkWell(
+        CcBouncing(
           onTap: onEdit,
           child: Icon(
             Icons.edit_rounded,
@@ -384,7 +384,7 @@ class ProfileInfoCard extends StatelessWidget {
         ),
         if (onLink != null && email.isEmpty) ...[
           const CcSpaceXS(),
-          CcInkWell(
+          CcBouncing(
             onTap: onLink,
             child: Icon(
               Icons.link_rounded,
@@ -419,7 +419,7 @@ class ProfileInfoCard extends StatelessWidget {
         ),
         if (onLink != null && phoneNumber.isEmpty) ...[
           const CcSpaceXS(),
-          CcInkWell(
+          CcBouncing(
             onTap: onLink,
             child: Icon(
               Icons.link_rounded,

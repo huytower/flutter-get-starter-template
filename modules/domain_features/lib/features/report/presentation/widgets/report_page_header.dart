@@ -122,7 +122,7 @@ class ReportPageHeader extends StatelessWidget {
 
       return Tooltip(
         message: el.tr(CcLocaleKeys.report_filter_by_wallet),
-        child: CcInkWell(
+        child: CcBouncing(
           borderRadius: BorderRadius.circular(context.respDim(8)),
           onTap: () => controller.openWalletFilterPicker(context),
           child: Padding(

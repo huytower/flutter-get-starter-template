@@ -10,7 +10,7 @@ class CommentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CcInkWell(
+    return CcBouncing(
       onTap: () =>
           getIt<CommentCoordinator>().navigateToCommentDetail(context, comment),
       borderRadius: CcWidgetHelper.getBorderRoundedLG(),

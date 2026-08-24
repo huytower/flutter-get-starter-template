@@ -23,7 +23,7 @@ class LiabilityListCard extends StatelessWidget {
         ? PrjColors.warning
         : context.ccColorScheme.secondary;
 
-    return CcInkWell(
+    return CcBouncing(
       onTap: onTap ?? () {},
       child: CcSymmetricPadding(
         horizontal: CcPaddingParams.SPACE_LG,

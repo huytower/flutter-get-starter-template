@@ -28,7 +28,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "mobile.template"
-    compileSdk = 36
+    compileSdk = 37
     ndkVersion = "28.2.13676358"
 
     compileOptions {
@@ -53,11 +53,15 @@ android {
     defaultConfig {
         applicationId = "mobile.template"
         minSdk = 28
-        targetSdk = 36
+        targetSdk = 37
         versionCode = flutterVersionCode.toInt()
         versionName = flutterVersionName
         // Enabling multidex support.
         multiDexEnabled = true
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     signingConfigs {

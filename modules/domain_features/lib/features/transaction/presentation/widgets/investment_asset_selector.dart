@@ -122,7 +122,7 @@ class InvestmentAssetSelector extends StatelessWidget {
   }) {
     final scheme = context.ccColorScheme;
 
-    return CcInkWell(
+    return CcBouncing(
       onTap: onTap,
       borderRadius: context.brLg,
       child: Stack(

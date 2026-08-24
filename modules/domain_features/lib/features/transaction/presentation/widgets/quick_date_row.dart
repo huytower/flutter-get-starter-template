@@ -42,7 +42,7 @@ class QuickDateRow extends StatelessWidget {
           DateTime.now().subtract(const Duration(days: 1)),
         ),
         const CcSpaceSM(),
-        CcInkWell(
+        CcBouncing(
           onTap: onCalendarTap,
           child: Icon(
             Icons.calendar_month,
@@ -60,7 +60,7 @@ class QuickDateRow extends StatelessWidget {
     DateTime date,
   ) {
     final isSelected = _isSameDay(selectedDate, date);
-    return CcInkWell(
+    return CcBouncing(
       onTap: () => onDateSelected(date),
       borderRadius: context.brLg,
       child: AnimatedContainer(

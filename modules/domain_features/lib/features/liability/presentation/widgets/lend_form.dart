@@ -120,7 +120,6 @@ class LendForm extends StatelessWidget {
                     onDateSelected: controller.setDate,
                     onCalendarTap: () => controller.pickDate(context),
                     noteController: controller.noteController,
-                    hasNoteText: controller.hasNoteText.value,
                     activeColor: accentColor,
                     hideDate: true,
                   )),

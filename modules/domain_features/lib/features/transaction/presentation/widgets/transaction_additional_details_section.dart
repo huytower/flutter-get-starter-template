@@ -1,7 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'quick_date_row.dart';
 
@@ -12,7 +11,6 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
   final ValueChanged<DateTime> onDateSelected;
   final Future<void> Function()? onCalendarTap;
   final TextEditingController noteController;
-  final bool hasNoteText;
   final VoidCallback? onNoteTap;
   final Color activeColor;
   final bool hideDate;
@@ -25,7 +23,6 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
     required this.onDateSelected,
     this.onCalendarTap,
     required this.noteController,
-    required this.hasNoteText,
     this.onNoteTap,
     required this.activeColor,
     this.hideDate = false,
@@ -46,7 +43,7 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
     if (onToggle == null) return const SizedBox.shrink();
     return SizedBox(
       width: context.respDim(120),
-      child: CcInkWell(
+      child: CcBouncing(
         onTap: onToggle,
         child: Row(
           children: [
@@ -89,67 +86,28 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
   Widget _buildNoteField(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return CcTextField(
+    return CcNoteInputField(
       controller: noteController,
       hintText: el.tr(CcLocaleKeys.transaction_note_hint),
-      maxLines: 2,
-      textAlign: TextAlign.start,
+      maxLines: 3,
       onTap: onNoteTap,
       color: scheme.surfaceVariant.withAlpha(80),
       borderColor: scheme.outlineVariant.withAlpha(10),
       height: context.respDim(45),
-      borderWidth: 0.4,
       margin: EdgeInsets.zero,
-      borderRadius: 12.0,
       prefixIcon: Padding(
         padding: EdgeInsets.only(
           left: context.respPadding(CcPaddingParams.SPACE_SM),
           right: context.respPadding(CcPaddingParams.SPACE_XS),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CcText(
-              el.tr(CcLocaleKeys.transaction_note),
-              textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                color: scheme.onSurfaceVariant.withAlpha(70),
-              ),
-            ),
-          ],
+        child: CcText(
+          el.tr(CcLocaleKeys.transaction_note),
+          textAlign: TextAlign.start,
+          align: Alignment.center,
+          textStyle: context.ccTextTheme.labelSmall?.copyWith(
+            color: scheme.onSurfaceVariant.withAlpha(70),
+          ),
         ),
-      ),
-      suffixIcon: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (hasNoteText)
-            CcIconButton.bouncing(
-              width: context.respDim(20),
-              height: context.respDim(20),
-              icon: Icon(
-                Icons.copy_rounded,
-                color: scheme.onSurfaceVariant.withAlpha(80),
-                size: context.respIconSize(baseSize: 14),
-              ),
-              onTap: () {
-                Clipboard.setData(ClipboardData(text: noteController.text));
-              },
-              tooltip: el.tr(CcLocaleKeys.common_copy),
-            ),
-          if (hasNoteText)
-            CcIconButton.bouncing(
-              width: context.respDim(20),
-              height: context.respDim(20),
-              icon: Icon(
-                Icons.close_rounded,
-                color: scheme.onSurfaceVariant.withAlpha(80),
-                size: context.respIconSize(baseSize: 14),
-              ),
-              onTap: () => noteController.clear(),
-              tooltip: el.tr(CcLocaleKeys.common_clear),
-            ),
-          const CcSpaceXS(),
-        ],
       ),
     );
   }

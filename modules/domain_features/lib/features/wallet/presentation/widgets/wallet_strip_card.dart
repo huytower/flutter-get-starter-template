@@ -121,7 +121,7 @@ class WalletStripCard extends StatelessWidget {
   Widget _buildAddNewItem(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return CcInkWell(
+    return CcBouncing(
       onTap: onAddNew,
       borderRadius: context.brLg,
       child: Container(

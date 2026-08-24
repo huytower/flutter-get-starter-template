@@ -8,7 +8,6 @@ class ProfileSettingsTile extends StatelessWidget {
     required this.label,
     this.subtitle,
     this.onTap,
-    this.onLongPress,
     this.trailingLabel,
     this.trailingWidget,
     this.showChevron = true,
@@ -19,7 +18,6 @@ class ProfileSettingsTile extends StatelessWidget {
   final String label;
   final String? subtitle;
   final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
   final String? trailingLabel;
   final Widget? trailingWidget;
   final bool showChevron;
@@ -29,9 +27,8 @@ class ProfileSettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return CcInkWell(
+    return CcBouncing(
       onTap: onTap,
-      onLongPress: onLongPress,
       child: CcSymmetricPadding(
         horizontal: CcPaddingParams.SPACE_LG,
         vertical: CcPaddingParams.SPACE_LG,

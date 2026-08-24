@@ -11,12 +11,10 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
   const LiabilityWalletPreviewCard({
     super.key,
     required this.balance,
-    required this.onMore,
     required this.onTap,
   });
 
   final LiabilityBalanceEntity balance;
-  final VoidCallback onMore;
   final VoidCallback onTap;
 
   @override
@@ -26,9 +24,8 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
     final isSettled = balance.status == LiabilityStatus.settled;
     final directionColor = context.ccColorScheme.primary;
 
-    return CcInkWell(
+    return CcBouncing(
       onTap: onTap,
-      onLongPress: onMore,
       borderRadius: context.brLg,
       child: Stack(
         clipBehavior: Clip.none,

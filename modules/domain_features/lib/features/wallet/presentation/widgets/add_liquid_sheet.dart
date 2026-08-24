@@ -291,7 +291,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                   textStyle: context.ccTextTheme.bodySmall,
                 ),
                 const CcSpaceXS(),
-                CcInkWell(
+                CcBouncing(
                   onTap: () => controller.openEmergencyFundEbook(context),
                   child: CcText(
                     el.tr(CcLocaleKeys.wallet_emergency_fund_view_ebook),
@@ -327,7 +327,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
           final isSelected = controller.newType.value == type;
           return Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: CcInkWell(
+            child: CcBouncing(
               onTap: () => controller.selectType(type),
               borderRadius: BorderRadius.circular(20),
               child: AnimatedContainer(

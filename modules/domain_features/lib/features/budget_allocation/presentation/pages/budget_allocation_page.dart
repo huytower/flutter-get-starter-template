@@ -223,7 +223,6 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       return InvestmentWalletsSection(
         wallets: wallets,
         onAddInvestment: () => controller.openAddInvestment(context),
-        onMore: (wallet) => controller.openWalletActions(context, wallet),
         onSeeAll: () => controller.navigateToInvestmentList(context),
         showGuidelineBadge: Get.isRegistered<GuidelineController>()
             ? Get.find<GuidelineController>().isTaskActive('investment') &&
@@ -252,7 +251,6 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       return LiabilityWalletsSection(
         balances: balances,
         onAddLoan: () => controller.openAddLoan(context),
-        onMore: (balance) => controller.openLoanActions(context, balance),
         onSeeAll: () => controller.navigateToLoanList(context),
         showGuidelineBadge: Get.isRegistered<GuidelineController>()
             ? Get.find<GuidelineController>().isTaskActive('liability') &&

@@ -37,7 +37,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                     () => Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        CcInkWell(
+                        CcBouncing(
                           onTap: () => _openAddBudget(context),
                           child: const CcIconToken(
                             Icons.add_circle_outline_rounded,
@@ -114,7 +114,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                 mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
               ),
               itemCount: budgets.length,
-              itemBuilder: (context, i) => CcInkWell(
+              itemBuilder: (context, i) => CcBouncing(
                 onTap: () => context.router.push(const BudgetLimitRoute()),
                 borderRadius: BorderRadius.circular(12),
                 child: BudgetLimitGridCard(

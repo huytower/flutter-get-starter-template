@@ -139,7 +139,7 @@ class WalletActualBalanceInput extends StatelessWidget {
         ),
         const Spacer(),
         const CcSpaceMD(),
-        CcInkWell(
+        CcBouncing(
           onTap: onTap,
           borderRadius: BorderRadius.circular(8),
           child: Container(
@@ -165,7 +165,7 @@ class WalletActualBalanceInput extends StatelessWidget {
                 ),
                 if (actual != 0) ...[
                   const CcSpaceSM(),
-                  CcInkWell(
+                  CcBouncing(
                     onTap: onClear,
                     child: Icon(
                       Icons.cancel,
@@ -251,7 +251,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (!isAcknowledged)
-              CcInkWell(
+              CcBouncing(
                 onTap: onAcknowledge,
                 child: CcText(
                   el.tr(CcLocaleKeys.reconciliation_create_adjustment),

@@ -60,7 +60,6 @@ class LiabilityRepayForm extends StatelessWidget {
           onDateSelected: controller.setDate,
           onCalendarTap: () => controller.pickDate(context),
           noteController: controller.noteController,
-          hasNoteText: controller.noteController.text.isNotEmpty,
           activeColor: accentColor,
         ),
         const CcSpaceXL(),
