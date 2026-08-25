@@ -35,14 +35,10 @@ String _runwayStatusLabel(FinancialRunwayStatus? status) {
   }
 }
 
-/// Phase 3.8 — builds the Gemini prompt for the combined "AI Actions for
-/// Budget Issues" + "Spending Optimization" narrative. Grounds every claim
-/// in real numbers already computed locally by Phase 3.4/3.5's use cases
-/// (no invented figures), and explicitly forbids markdown since no UI layer
-/// in this app renders it. Extracted to a pure function (unlike the
-/// simpler inline prompt strings in `quick_entry_parser_helper.dart`)
-/// because this prompt is materially larger and branches on 4 independent
-/// data sources.
+/// Builds the Gemini prompt for the combined budget-issues + spending-
+/// optimization advice. Grounds every claim in numbers already computed
+/// locally (no invented figures) and forbids markdown, since no UI layer
+/// here renders it.
 String buildAiFinancialAdvicePrompt({
   required CashFlowEntity? cashFlow,
   required BudgetInsightsEntity? insights,

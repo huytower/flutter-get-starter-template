@@ -12,22 +12,15 @@ import '../entities/ai_advice_entity.dart';
 import '../entities/financial_runway_entity.dart';
 import 'get_financial_runway_usecase.dart';
 
-/// Phase 3.8 — the one genuinely LLM-shaped Phase 3 action:
-/// [GetBudgetAnomaliesUseCase]'s own doc comment flags "suggest income
-/// increase strategies" as deliberately deferred, and this use case is that
-/// deferred work, folded together with the spec's separate "Spending
-/// Optimization" section into one combined narrative.
+/// Generates the AI financial-advice narrative for the Report page.
 ///
-/// Deliberately reads [GetMonthToDateCashFlowUseCase] and
-/// [GetBudgetAnomaliesUseCase] directly rather than only through
-/// [GetBudgetInsightsUseCase] — that entity only exposes a deficit
-/// amount/anomaly *count*, but the prompt needs real income/expense figures
-/// even in the no-deficit case, and per-category anomaly detail to write
-/// something specific.
+/// Reads [GetMonthToDateCashFlowUseCase] and [GetBudgetAnomaliesUseCase]
+/// directly rather than only through [GetBudgetInsightsUseCase] — that
+/// entity only exposes a deficit amount/anomaly count, but the prompt needs
+/// real income/expense figures and per-category anomaly detail.
 ///
-/// No consent/cap gating here — the caller (`ReportController`) is
-/// responsible for that, mirroring how `ParseQuickEntryUseCase.parseWithCloud`
-/// also assumes gating already passed before it's invoked.
+/// No consent/cap gating here — the caller (`ReportController`) already
+/// did that, same assumption `ParseQuickEntryUseCase.parseWithCloud` makes.
 @lazySingleton
 class GenerateAiFinancialAdviceUseCase {
   GenerateAiFinancialAdviceUseCase(
@@ -44,10 +37,8 @@ class GenerateAiFinancialAdviceUseCase {
   final GetMonthToDateCashFlowUseCase _getCashFlow;
   final AiAdviceCacheDataSource _cache;
 
-  /// Returns null when the cloud call itself fails/returns empty — never
-  /// throws, matching [CcGeminiHelper.generateText]'s own fail-silent
-  /// contract. A missing/failed local data source (insights/anomalies/
-  /// runway/cash flow) degrades to `null`/empty for that one input rather
+  /// Never throws; returns null on a failed/empty cloud call. A failed
+  /// local data source degrades to null/empty for that one input rather
   /// than blocking advice generation entirely.
   Future<AiAdviceEntity?> call() async {
     final results = await Future.wait([

@@ -1,14 +1,8 @@
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Persists the last Phase 3.8 AI-advice generation locally so revisiting
-/// the Report page can show it for free (no cloud call, no daily-cap
-/// consumption). Mirrors [AiFallbackPreferenceDataSource]'s
-/// SharedPreferences-backed, single-purpose datasource shape and its
-/// precedent of using SharedPreferences directly for local-only ephemeral
-/// AI state rather than fanning through `CcAppStorage`/
-/// `ProfileSettingsEntity`. Kept strictly primitive-in/primitive-out —
-/// entity construction happens at the call sites.
+/// Persists the last generated AI advice locally so revisiting the Report
+/// page can show it for free (no cloud call, no daily-cap consumption).
 @lazySingleton
 class AiAdviceCacheDataSource {
   static const String _keyText = 'ai_advice_cached_text';

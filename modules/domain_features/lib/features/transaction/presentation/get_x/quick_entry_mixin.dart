@@ -15,45 +15,31 @@ import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import '../widgets/cloud_consent_sheet.dart';
 import 'transaction_form_controller.dart';
 
-/// Shared "AI Smart Entry" quick-entry capability — a free-text field
-/// ("50k cafe") with mic dictation and a receipt-photo scan, parsed locally
-/// first (see [ParseQuickEntryUseCase]) with a consent-gated, daily-capped
-/// cloud fallback for whatever the local parse couldn't determine. Applied
-/// via [applyQuickEntryParse] using the same "prefill, user still confirms"
-/// contract as Expense's merchant/location match. Originally
-/// Expense-only (Phase 3.6/3.7); factored out here so Income/Investment/
-/// Loan can offer the same entry point without duplicating ~200 lines each.
+/// Shared "AI Smart Entry" quick-entry capability: a free-text field with
+/// mic dictation and receipt-photo scan, parsed locally then always
+/// escalated to Gemini (see [ParseQuickEntryUseCase]) behind a consent +
+/// daily-cap gate.
 ///
-/// Hosts must `extend TransactionFormController` (for `amountStr`,
-/// `noteController`, `date`/`setDate`, `hideKeypad`), provide
+/// Hosts must `extend TransactionFormController`, provide
 /// [quickEntryCategoryType], and expose their own `categoryKey`/
-/// `pendingPrefillCategoryId` — every form already declares `categoryKey`
-/// for its own category picker; `pendingPrefillCategoryId` is new (see
-/// [applyQuickEntryCategory]'s doc for why Investment needs neither).
-/// Hosts must call [initQuickEntry]/[disposeQuickEntry]/[resetQuickEntry]
-/// from their own `onInit`/`onClose`/`onReset` — not done automatically, to
-/// avoid relying on mixin `super.onInit()` linearization order when the
-/// host also overrides those hooks.
+/// [pendingPrefillCategoryId]. Call [initQuickEntry]/[disposeQuickEntry]/
+/// [resetQuickEntry] from the host's own `onInit`/`onClose`/`onReset` — not
+/// automatic, to avoid relying on mixin `super` linearization order.
 mixin QuickEntryMixin on TransactionFormController {
-  /// Which category type quick-entry should search/prefill within (e.g.
-  /// [CategoryType.income] for the income form).
+  /// Category type quick-entry searches/prefills within.
   String get quickEntryCategoryType;
 
-  /// Further restricts [quickEntryCategoryType]'s categories to these
-  /// `groupId`s, same contract as `CategorySelectionSection.groupIds` — e.g.
-  /// the Loan form only offers the currently-selected direction's group.
-  /// Null (the default) leaves every enabled category of that type
-  /// unfiltered.
+  /// Further restricts [quickEntryCategoryType] to these `groupId`s (e.g.
+  /// Loan only offers the currently-selected direction's group). Null means
+  /// every enabled category of that type.
   List<String>? get quickEntryCategoryGroupIds => null;
 
-  /// Bumped to force a `CategorySelectionSection`-driven category picker to
-  /// remount and resolve [pendingPrefillCategoryId] as its initial
-  /// selection — every host already declares this for its own category UI.
+  /// Bumped to force the category picker to remount and resolve
+  /// [pendingPrefillCategoryId] as its initial selection.
   RxInt get categoryKey;
 
-  /// Set right before [categoryKey] is bumped, so the remounted category
-  /// picker resolves and reports back the real `CategoryEntity` for this id
-  /// (same mechanism edit-mode uses via `editingTransaction?.categoryId`).
+  /// Set right before [categoryKey] is bumped so the remounted category
+  /// picker resolves this id (same mechanism edit-mode uses).
   Rx<String?> get pendingPrefillCategoryId;
 
   final TextEditingController quickEntryController = TextEditingController();
@@ -62,20 +48,15 @@ mixin QuickEntryMixin on TransactionFormController {
   final RxBool isParsingQuickEntry = false.obs;
   final RxBool isListeningQuickEntry = false.obs;
 
-  /// Locale key for an inline status message (e.g. "couldn't understand" /
-  /// "daily AI limit reached") — null means no message to show.
+  /// Locale key for an inline status message; null means nothing to show.
   final Rx<String?> quickEntryErrorKey = Rx<String?>(null);
 
   List<CategoryEntity> _quickEntryCategories = [];
   Timer? _quickEntryDebounce;
   bool _quickEntryDisposed = false;
 
-  /// Bumped by [resetQuickEntry] to invalidate any quick-entry submission
-  /// still in flight (e.g. an abandoned cloud call from a transaction the
-  /// user already saved and moved on from) — a stale submission recognizes
-  /// it's no longer the current generation and skips touching
-  /// [isParsingQuickEntry] itself, letting reset reclaim that flag
-  /// immediately for the next entry.
+  /// Bumped by [resetQuickEntry] to invalidate any submission still in
+  /// flight, so a stale cloud response can't overwrite a newer entry.
   int _quickEntryGeneration = 0;
 
   /// Call from the host's `onInit`.
@@ -91,8 +72,7 @@ mixin QuickEntryMixin on TransactionFormController {
     quickEntryController
       ..removeListener(_onQuickEntryTextChanged)
       ..dispose();
-    // Only stop the (global, singleton) recognizer if this instance is the
-    // one actually holding it.
+    // Only stop it if this instance holds it — the recognizer is a global singleton.
     if (isListeningQuickEntry.value) {
       CcSpeechHelper.stopListening();
     }
@@ -108,12 +88,9 @@ mixin QuickEntryMixin on TransactionFormController {
     isParsingQuickEntry.value = false;
   }
 
-  /// Reloads the category cache [quickEntryResultLabel] uses to look up a
-  /// display label for a resolved `categoryId`. Called once from
-  /// [initQuickEntry] — hosts whose [quickEntryCategoryGroupIds] can change
-  /// at runtime (e.g. Loan switching Đi vay/Cho vay direction) must call
-  /// this again whenever that happens, or the label lookup keeps searching
-  /// the now-stale group and silently drops the category from the label.
+  /// Reloads the category cache used to label a resolved `categoryId`. Must
+  /// be re-called whenever [quickEntryCategoryGroupIds] changes at runtime
+  /// (e.g. Loan switching direction), or the label lookup goes stale.
   Future<void> refreshQuickEntryCategories() async {
     final result = await getIt<GetCategoriesUseCase>().call();
     final groupIds = quickEntryCategoryGroupIds;
@@ -137,17 +114,12 @@ mixin QuickEntryMixin on TransactionFormController {
     return null;
   }
 
-  /// Whether a resolved `categoryId` should be shown in
-  /// [quickEntryResultLabel] at all. True by default; Investment overrides
-  /// this to false since [applyQuickEntryCategory] is a no-op there — a
-  /// category resolved by Gemini would otherwise appear in the suggestion
-  /// chip text as if tapping "Apply" will select it, when it silently won't.
+  /// False for Investment, where [applyQuickEntryCategory] is a no-op — a
+  /// resolved category would otherwise look tappable when it silently isn't.
   bool get quickEntryShowsCategoryInLabel => true;
 
-  /// Display label for a quick-entry suggestion, e.g. "50.00k · Cà phê ·
-  /// 12/08". Not every field is guaranteed to be resolved (a failed field
-  /// is just null), so this only lists whatever actually came back instead
-  /// of assuming amount/category are always present.
+  /// Display label for a suggestion, e.g. "50.00k · Cà phê · 12/08" — lists
+  /// only whatever actually resolved.
   String quickEntryResultLabel(QuickEntryParseResult result) {
     final parts = <String>[];
     if (result.amount != null) {
@@ -193,17 +165,57 @@ mixin QuickEntryMixin on TransactionFormController {
     quickEntrySuggestion.value = local.isComplete ? local : null;
   }
 
-  /// Explicit "done" trigger (text field submit, or a finished voice
-  /// dictation) — unlike the as-you-type local-only debounce above, this is
-  /// the sole path that may escalate to the consent-gated, daily-capped
-  /// cloud fallback, so a network call only ever fires on a deliberate user
-  /// action, never silently while someone is still mid-typing.
+  /// One submission's generation token: `isCurrent` reports whether
+  /// [resetQuickEntry] has since invalidated it; `resetIfCurrent` clears
+  /// [isParsingQuickEntry] only if it's still the active one.
+  (bool Function(), VoidCallback) _trackGeneration() {
+    final generation = _quickEntryGeneration;
+    bool isCurrent() =>
+        !_quickEntryDisposed && generation == _quickEntryGeneration;
+    void resetIfCurrent() {
+      if (isCurrent()) isParsingQuickEntry.value = false;
+    }
+    return (isCurrent, resetIfCurrent);
+  }
+
+  /// Consent-then-daily-cap gate shared by every cloud escalation path.
+  /// Returns false — with [quickEntryErrorKey] already set — on declined
+  /// consent, an exhausted cap, or a stale generation; callers must return
+  /// immediately without touching [quickEntryErrorKey] themselves in that
+  /// case, or they'll clobber the specific message just set here.
+  Future<bool> _passCloudGate({
+    required BuildContext context,
+    required bool Function() isCurrentGeneration,
+    required VoidCallback resetParsingIfCurrent,
+  }) async {
+    final prefs = getIt<AiFallbackPreferenceDataSource>();
+    if (!await prefs.isConsentGiven()) {
+      final agreed = await _promptCloudConsent(context);
+      if (!isCurrentGeneration()) return false;
+      if (!agreed) {
+        resetParsingIfCurrent();
+        quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
+        return false;
+      }
+      await prefs.setConsentGiven(true);
+    }
+
+    if (!await prefs.tryConsumeDailyCall()) {
+      if (!isCurrentGeneration()) return false;
+      resetParsingIfCurrent();
+      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_daily_limit_reached;
+      return false;
+    }
+
+    return true;
+  }
+
+  /// Explicit "done" trigger (submit / finished voice dictation) — the only
+  /// path that calls Gemini, so a network call never fires while someone
+  /// is still mid-typing.
   Future<void> submitQuickEntry(BuildContext context) async {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
-    // Reentrancy guard: without this, a fast double-submit (double-tap
-    // Enter while the first call is still awaiting the cloud round trip, or
-    // voice auto-submit racing a manual submit) would fire two concurrent
-    // cloud calls and desync `quickEntrySuggestion` between them.
+    // Guards a fast double-submit from firing two concurrent cloud calls.
     if (isParsingQuickEntry.value) return;
     final text = quickEntryController.text.trim();
     if (text.isEmpty) return;
@@ -211,14 +223,7 @@ mixin QuickEntryMixin on TransactionFormController {
     _quickEntryDebounce?.cancel();
     quickEntryErrorKey.value = null;
     isParsingQuickEntry.value = true;
-    // Captured once at the start of this specific submission — see
-    // _quickEntryGeneration's doc.
-    final generation = _quickEntryGeneration;
-    bool isCurrentGeneration() =>
-        !_quickEntryDisposed && generation == _quickEntryGeneration;
-    void resetParsingIfCurrent() {
-      if (isCurrentGeneration()) isParsingQuickEntry.value = false;
-    }
+    final (isCurrentGeneration, resetParsingIfCurrent) = _trackGeneration();
 
     final parseUseCase = getIt<ParseQuickEntryUseCase>();
     final local = await parseUseCase.parseLocally(
@@ -228,32 +233,11 @@ mixin QuickEntryMixin on TransactionFormController {
     );
     if (!isCurrentGeneration()) return;
 
-    if (local.isComplete) {
-      resetParsingIfCurrent();
-      quickEntrySuggestion.value = local;
-      return;
-    }
-
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
-    if (!await prefs.isConsentGiven()) {
-      final agreed = await _promptCloudConsent(context);
-      if (!isCurrentGeneration()) return;
-      if (!agreed) {
-        resetParsingIfCurrent();
-        quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
-        return;
-      }
-      await prefs.setConsentGiven(true);
-    }
-
-    // Atomically checks-and-reserves a slot under the daily cap — see
-    // AiFallbackPreferenceDataSource.tryConsumeDailyCall's doc for why a
-    // separate isUnderDailyLimit()+incrementTodayFallbackCount() pair would
-    // be a check-then-act race across concurrent callers.
-    if (!await prefs.tryConsumeDailyCall()) {
-      if (!isCurrentGeneration()) return;
-      resetParsingIfCurrent();
-      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_daily_limit_reached;
+    if (!await _passCloudGate(
+      context: context,
+      isCurrentGeneration: isCurrentGeneration,
+      resetParsingIfCurrent: resetParsingIfCurrent,
+    )) {
       return;
     }
 
@@ -264,34 +248,29 @@ mixin QuickEntryMixin on TransactionFormController {
       groupIds: quickEntryCategoryGroupIds,
     );
     resetParsingIfCurrent();
-    // The text field stays editable throughout this round trip — re-check
-    // the text still matches what was actually sent before applying
-    // anything, same as the local-parse leg already does.
+    // The field stays editable during the round trip — re-check the text
+    // still matches what was sent before applying/erroring on anything.
     if (!isCurrentGeneration() || text != quickEntryController.text.trim()) {
       return;
     }
 
-    // A partial result (e.g. only the category resolved, or only a date)
-    // still gets surfaced — whichever fields failed just stay null and are
-    // left for the user to fill in by hand; only a totally empty result
-    // counts as "couldn't understand".
-    if (cloudResult == null || cloudResult.isEmpty) {
+    // Cloud failing outright (offline, API disabled) shouldn't throw away a
+    // local result that was already good enough to be worth escalating.
+    final suggestion = (cloudResult != null && !cloudResult.isEmpty)
+        ? cloudResult
+        : local;
+    if (suggestion.isEmpty) {
       quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
       return;
     }
 
-    quickEntrySuggestion.value = cloudResult;
+    quickEntrySuggestion.value = suggestion;
   }
 
-  /// Reentrancy gate for receipt-photo entry. Must be called (and, on
-  /// success, followed by either [submitQuickEntryFromImage] or
-  /// [cancelQuickEntryImage]) *before* showing the take-photo/choose-gallery
-  /// sheet — not after it resolves — so the lock covers that whole UI round
-  /// trip, not just the OCR/cloud portion. [submitQuickEntry] closes the
-  /// equivalent window for free by checking-then-setting [isParsingQuickEntry]
-  /// with no `await` in between; the photo path needs an explicit method to
-  /// get the same property since a whole sheet interaction sits between "user
-  /// tapped scan" and "we know which image to process."
+  /// Reentrancy gate for receipt-photo entry — call before showing the
+  /// source-picker sheet (not after) so the lock covers that whole round
+  /// trip, then follow with [submitQuickEntryFromImage] or
+  /// [cancelQuickEntryImage].
   bool beginQuickEntryImage() {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) {
       return false;
@@ -302,33 +281,22 @@ mixin QuickEntryMixin on TransactionFormController {
     return true;
   }
 
-  /// Releases the lock [beginQuickEntryImage] took, for when the user
-  /// dismissed the source-selection sheet without picking anything.
+  /// Releases the lock [beginQuickEntryImage] took when the user dismissed
+  /// the sheet without picking anything.
   void cancelQuickEntryImage() {
     isParsingQuickEntry.value = false;
   }
 
-  /// Picks an image (camera or gallery), runs on-device OCR, then feeds the
-  /// recognized text through the exact same local-parse/cloud-fallback
-  /// pipeline [submitQuickEntry] uses, landing in the same
-  /// [quickEntrySuggestion] so the UI needs no separate suggestion state or
-  /// chip. The cloud leg sends the image itself (see
-  /// [ParseQuickEntryUseCase.parseImageWithCloud]), not the OCR text, since
-  /// receipt print is small/faded enough that OCR often can't be trusted as
-  /// the sole cloud input.
-  ///
-  /// Assumes the caller already holds the [isParsingQuickEntry] lock via a
-  /// successful [beginQuickEntryImage] call.
+  /// Picks an image, runs on-device OCR, then feeds the result through the
+  /// same local-parse/cloud-fallback pipeline as [submitQuickEntry] — the
+  /// cloud leg sends the image itself, not the OCR text, since receipt
+  /// print is often too small/faded for OCR to be a trustworthy sole input.
+  /// Assumes the caller already holds the lock via [beginQuickEntryImage].
   Future<void> submitQuickEntryFromImage(
     BuildContext context, {
     required bool fromCamera,
   }) async {
-    final generation = _quickEntryGeneration;
-    bool isCurrentGeneration() =>
-        !_quickEntryDisposed && generation == _quickEntryGeneration;
-    void resetParsingIfCurrent() {
-      if (isCurrentGeneration()) isParsingQuickEntry.value = false;
-    }
+    final (isCurrentGeneration, resetParsingIfCurrent) = _trackGeneration();
 
     final pickResult = await CcReceiptScanHelper.pickReceiptImage(
       fromCamera: fromCamera,
@@ -337,9 +305,7 @@ mixin QuickEntryMixin on TransactionFormController {
     final picked = pickResult.image;
     if (picked == null) {
       resetParsingIfCurrent();
-      // A denied permission gets explicit feedback (with a path to fix it
-      // via Settings); a plain cancel/unreadable-file stays silent, same as
-      // every other quick-entry failure mode.
+      // A denied permission gets explicit feedback; a plain cancel stays silent.
       if (pickResult.permissionDenied) {
         quickEntryErrorKey.value =
             CcLocaleKeys.quick_entry_photo_permission_denied;
@@ -358,28 +324,11 @@ mixin QuickEntryMixin on TransactionFormController {
     );
     if (!isCurrentGeneration()) return;
 
-    if (local.isComplete) {
-      resetParsingIfCurrent();
-      quickEntrySuggestion.value = local;
-      return;
-    }
-
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
-    if (!await prefs.isConsentGiven()) {
-      final agreed = await _promptCloudConsent(context);
-      if (!isCurrentGeneration()) return;
-      if (!agreed) {
-        resetParsingIfCurrent();
-        quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
-        return;
-      }
-      await prefs.setConsentGiven(true);
-    }
-
-    if (!await prefs.tryConsumeDailyCall()) {
-      if (!isCurrentGeneration()) return;
-      resetParsingIfCurrent();
-      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_daily_limit_reached;
+    if (!await _passCloudGate(
+      context: context,
+      isCurrentGeneration: isCurrentGeneration,
+      resetParsingIfCurrent: resetParsingIfCurrent,
+    )) {
       return;
     }
 
@@ -393,15 +342,17 @@ mixin QuickEntryMixin on TransactionFormController {
     resetParsingIfCurrent();
     if (!isCurrentGeneration()) return;
 
-    // Same partial-result tolerance as submitQuickEntry — e.g. amount+
-    // category readable but the date printed too faint to OCR still counts
-    // as a usable suggestion.
-    if (cloudResult == null || cloudResult.isEmpty) {
+    // Cloud failing outright shouldn't throw away a local (OCR-text) result
+    // that was already good enough to be worth escalating.
+    final suggestion = (cloudResult != null && !cloudResult.isEmpty)
+        ? cloudResult
+        : local;
+    if (suggestion.isEmpty) {
       quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
       return;
     }
 
-    quickEntrySuggestion.value = cloudResult;
+    quickEntrySuggestion.value = suggestion;
   }
 
   Future<bool> _promptCloudConsent(BuildContext context) async {
@@ -432,10 +383,8 @@ mixin QuickEntryMixin on TransactionFormController {
           submitQuickEntry(context);
         }
       },
-      // The recognizer can stop itself (e.g. a silence timeout) without
-      // ever delivering a final result — without this, isListeningQuickEntry
-      // would never reset in that case and the mic icon would stay showing
-      // "actively listening" until the user taps it again.
+      // The recognizer can stop itself (e.g. a silence timeout) without a
+      // final result — reset here too, or the mic icon stays stuck "listening".
       onListeningStopped: () {
         if (_quickEntryDisposed) return;
         isListeningQuickEntry.value = false;
@@ -448,23 +397,16 @@ mixin QuickEntryMixin on TransactionFormController {
     }
   }
 
-  /// Applies a resolved `categoryId` to this form's category-selection UI —
-  /// the default `pendingPrefillCategoryId`/[categoryKey] remount pattern
-  /// used by every `CategorySelectionSection`-based form (Expense/Income/
-  /// Loan). Investment overrides this as a no-op: it has no category-picker
-  /// UI of its own — category is derived from the chosen investment asset,
-  /// which stays a manual pick by design (see the Investment section of the
-  /// AI Smart Entry rollout discussion).
+  /// Applies a resolved `categoryId` to the category-picker UI. Investment
+  /// overrides this as a no-op — its category always comes from the chosen
+  /// asset, a manual pick by design.
   void applyQuickEntryCategory(String categoryId) {
     pendingPrefillCategoryId.value = categoryId;
     categoryKey.value++;
   }
 
-  /// Pre-fills whichever fields [result] actually resolved — same "prefill,
-  /// user still confirms" contract as Expense's merchant/location match. A
-  /// field that failed to parse (null) is simply left untouched, i.e. at
-  /// whatever default the form already had (today's date, empty note), for
-  /// the user to fill in manually rather than blocking the rest.
+  /// Pre-fills whichever fields [result] resolved; a null field is left at
+  /// the form's existing default for the user to fill in by hand.
   void applyQuickEntryParse(QuickEntryParseResult result) {
     if (result.amount != null) amountStr.value = result.amount!.toString();
     if (result.categoryId != null) {

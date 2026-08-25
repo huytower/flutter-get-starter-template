@@ -9,18 +9,15 @@ import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 
-/// Phase 3.6 "NLP Simple" quick entry: local-first parsing of free text like
-/// "50k cafe" (typed or dictated) into an amount + category, with a cloud
-/// Gemini fallback for whatever the local parse couldn't determine. Kept
-/// UI-agnostic on purpose — the LV3 gate, consent prompt, and daily-cap
-/// check all need a `BuildContext`/user-facing dialog, so those live in
-/// `ExpenseFormController`, which calls [parseLocally] first (always safe)
-/// and only calls [parseWithCloud] after that gating passes.
-///
-/// Phase 3.7 receipt-photo entry reuses [parseLocally] as-is (on-device OCR
-/// text is just another free-text string) and adds [parseImageWithCloud] as
-/// a second cloud escalation path that sends the image itself instead of
-/// text.
+/// Parses quick-entry text/voice/photo into an amount + category (+ date/
+/// note when available). [parseLocally] (free, offline) always runs first
+/// and drives the as-you-type suggestion; [parseWithCloud]/
+/// [parseImageWithCloud] are always additionally called on explicit submit
+/// — local fields still win in the merge, but Gemini often resolves
+/// category/date/note better than the local regex/fuzzy-match even when
+/// local already got amount+category. Kept UI-agnostic: the LV3 gate,
+/// consent prompt, and daily-cap check need a `BuildContext` and live in
+/// `QuickEntryMixin` instead.
 @lazySingleton
 class ParseQuickEntryUseCase {
   ParseQuickEntryUseCase(this._getCategories);
@@ -57,20 +54,15 @@ class ParseQuickEntryUseCase {
     );
   }
 
-  /// Sends [text] to Gemini to fill in whatever [localResult] is missing.
-  /// Local fields always win over the cloud response when both are present
-  /// — the local parse is deterministic and free, so there's no reason to
-  /// let a cloud answer override it. Returns null on any failure (Gemini
-  /// not enabled for this Firebase project yet, network error, unparsable
-  /// response) so the caller can surface "couldn't understand" gracefully.
+  /// Sends [text] to Gemini unconditionally; [localResult] fields still win
+  /// in the merge. Returns null on any failure so the caller can surface a
+  /// generic "couldn't understand" message.
   Future<QuickEntryParseResult?> parseWithCloud({
     required String text,
     required QuickEntryParseResult localResult,
     String categoryType = CategoryType.expense,
     List<String>? groupIds,
   }) async {
-    if (localResult.isComplete) return localResult;
-
     final categories = await _loadCategories(categoryType, groupIds);
     if (categories.isEmpty) return null;
 
@@ -97,11 +89,9 @@ class ParseQuickEntryUseCase {
     );
   }
 
-  /// Same contract as [parseWithCloud], but for a Phase 3.7 receipt photo —
-  /// sends the image itself to Gemini (multimodal) rather than pre-extracted
-  /// OCR text, since small/faded receipt print often garbles the on-device
-  /// OCR pass badly enough that the amount/category are unrecoverable from
-  /// text alone.
+  /// Same contract as [parseWithCloud], but sends the receipt image itself
+  /// (multimodal) rather than pre-extracted OCR text — small/faded print
+  /// often garbles OCR badly enough to lose the amount/category.
   Future<QuickEntryParseResult?> parseImageWithCloud({
     required Uint8List imageBytes,
     required String mimeType,
@@ -109,8 +99,6 @@ class ParseQuickEntryUseCase {
     String categoryType = CategoryType.expense,
     List<String>? groupIds,
   }) async {
-    if (localResult.isComplete) return localResult;
-
     final categories = await _loadCategories(categoryType, groupIds);
     if (categories.isEmpty) return null;
 
@@ -176,16 +164,11 @@ class ParseQuickEntryUseCase {
     return "Today's date is $iso.";
   }
 
-  /// Structured-output schema forcing Gemini to reply with strict JSON
-  /// shaped exactly like [QuickEntryParseResult] — every field is required
-  /// to be *present* but individually `nullable`, so a field Gemini can't
-  /// determine comes back as an explicit JSON `null` rather than being
-  /// omitted or the whole reply degrading into prose/markdown. `categoryId`
-  /// is constrained to an enum of just the ids offered in the prompt, so
-  /// the model is structurally unable to hallucinate an id that doesn't
-  /// exist — the client-side `validIds.contains` check in
-  /// [_parseJsonResponse] becomes a defense-in-depth backstop rather than
-  /// the only line of defense.
+  /// Forces strict JSON matching [QuickEntryParseResult], every field
+  /// nullable so an unresolved field comes back as explicit `null` instead
+  /// of prose. `categoryId` is enum-constrained to the offered ids, so
+  /// [_parseJsonResponse]'s `validIds.contains` check is defense-in-depth,
+  /// not the only guard against a hallucinated id.
   Schema _buildResponseSchema(List<CategoryEntity> categories) {
     return Schema.object(
       properties: {
@@ -219,9 +202,8 @@ class ParseQuickEntryUseCase {
     );
   }
 
-  /// Validates and merges a raw Gemini JSON response against [localResult] —
-  /// local fields always win over the cloud response when both are present,
-  /// since the local parse is deterministic and free.
+  /// Merges a raw Gemini JSON response with [localResult] — local fields
+  /// always win when both are present.
   QuickEntryParseResult? _mergeCloudResponse(
     String response, {
     required List<CategoryEntity> categories,
@@ -240,13 +222,9 @@ class ParseQuickEntryUseCase {
     return merged.isEmpty ? null : merged;
   }
 
-  /// Parses Gemini's JSON reply, validating each field independently — a
-  /// bad/missing value in one field (wrong type, an unknown categoryId, an
-  /// unparsable or nonsensical date) just drops that field to null rather
-  /// than discarding the whole response, so the caller can still surface
-  /// whatever *did* come back cleanly and let the user fill the rest in by
-  /// hand. Only a fully malformed (non-JSON, non-object) reply returns null
-  /// outright, since there's nothing usable to salvage from that.
+  /// Validates each field independently — a bad value in one field just
+  /// drops that field to null rather than discarding the whole response.
+  /// Only a non-JSON/non-object reply returns null outright.
   QuickEntryParseResult? _parseJsonResponse(
     String raw, {
     required Set<String> validIds,
