@@ -35,7 +35,9 @@ class _NavigationBarState extends State<NavigationBar>
   @override
   void initState() {
     super.initState();
+    '🔍 NavigationBar.initState() start'.Log('NavigationBar');
     initNavigationLogic();
+    '✅ NavigationBar.initState() end'.Log('NavigationBar');
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/datasource/route_strategy.dart';
@@ -20,8 +21,11 @@ class _AppRunnerState extends State<AppRunner> {
   @override
   void initState() {
     super.initState();
-    // Retrieve the routing strategy (AutoRoute, etc.) from DI
+    '🔍 AppRunner.initState() start | resolving RoutingStrategy'.Log(
+      'AppRunner',
+    );
     _routingStrategy = getIt<RoutingStrategy>();
+    '✅ AppRunner.initState() end | RoutingStrategy resolved'.Log('AppRunner');
   }
 
   @override

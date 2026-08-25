@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:app_config/core/config/http/http_client/http_client_config.dart';
@@ -10,6 +11,7 @@ import '../../main.dart' as runner;
 class EnvironmentRunner {
   /// Runs the application with the specified environment configuration.
   static void run(Environment environment, {bool disableSsl = false}) {
+    developer.log('🚀 EnvironmentRunner.run() start | env=$environment | disableSsl=$disableSsl | time=${DateTime.now().toIso8601String()}', name: 'EnvironmentRunner');
     HttpClientConfig.environment = environment;
 
     if (disableSsl) {
@@ -17,6 +19,7 @@ class EnvironmentRunner {
     }
 
     runner.main();
+    developer.log('✅ EnvironmentRunner.run() end | runner.main() returned', name: 'EnvironmentRunner');
   }
 
   /// Disables SSL certificate validation.

@@ -58,7 +58,9 @@ class AutoRouteStrategy extends RoutingStrategy {
 
   @override
   Widget buildApp() {
-    return buildThemedApp((context, themeProvider) {
+    '🔍 AutoRouteStrategy.buildApp() start'.Log('AutoRouteStrategy');
+    final result = buildThemedApp((context, themeProvider) {
+      '🔍 AutoRouteStrategy buildThemedApp builder start'.Log('AutoRouteStrategy');
       return MaterialApp.router(
         debugShowCheckedModeBanner: false,
         theme: createLightTheme(),
@@ -76,5 +78,7 @@ class AutoRouteStrategy extends RoutingStrategy {
         },
       );
     });
+    '✅ AutoRouteStrategy.buildApp() end'.Log('AutoRouteStrategy');
+    return result;
   }
 }
