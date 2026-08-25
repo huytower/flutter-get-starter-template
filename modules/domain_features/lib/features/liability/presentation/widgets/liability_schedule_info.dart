@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import '../../domain/entities/liability_entity.dart';
 import 'liability_date_row.dart';
 
@@ -26,7 +25,9 @@ class LiabilityScheduleInfo extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CcFormLabel(text: el.tr(CcLocaleKeys.transaction_loan_schedule_label)),
+          CcFormLabel(
+            text: el.tr(CcLocaleKeys.transaction_liability_schedule_label),
+          ),
           const CcSpaceXS(),
           for (final period in installments)
             Padding(
@@ -60,7 +61,7 @@ class LiabilityScheduleInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcFormLabel(
-          text: el.tr(CcLocaleKeys.transaction_loan_final_due_date_label),
+          text: el.tr(CcLocaleKeys.transaction_liability_final_due_date_label),
         ),
         const CcSpaceXS(),
         LiabilityDateRow(
@@ -73,5 +74,3 @@ class LiabilityScheduleInfo extends StatelessWidget {
     );
   }
 }
-
-

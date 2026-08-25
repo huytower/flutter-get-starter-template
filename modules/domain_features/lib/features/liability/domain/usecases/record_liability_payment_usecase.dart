@@ -88,7 +88,7 @@ class RecordLiabilityPaymentUseCase {
     if (params.isSettlement) {
       if (outstanding <= 0) {
         return const Error(
-          ValidationFailure(CcLocaleKeys.transaction_validation_loan_settled),
+          ValidationFailure(CcLocaleKeys.transaction_validation_liability_settled),
         );
       }
       if (params.amount > outstanding) {

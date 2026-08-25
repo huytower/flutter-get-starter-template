@@ -13,7 +13,7 @@ extension TransactionTabKindStyle on TransactionTabKind {
     TransactionTabKind.income => el.tr(CcLocaleKeys.transaction_income_slip),
     TransactionTabKind.investment => el.tr(CcLocaleKeys.transaction_investment),
     TransactionTabKind.liability => el.tr(CcLocaleKeys.liability_title),
-    TransactionTabKind.lend => el.tr(CcLocaleKeys.loan_lend),
+    TransactionTabKind.lend => el.tr(CcLocaleKeys.liability_lend),
   };
 
   Color color(BuildContext context) => switch (this) {

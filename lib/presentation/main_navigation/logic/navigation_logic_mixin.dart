@@ -1,13 +1,10 @@
 import 'dart:async';
 
-import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:cc_micro_features/features/splash/core/splash_manager.dart';
-import 'package:domain_features/export_domain_features.dart';
-import 'package:domain_features/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get/get.dart';
 
 import '../../../core/logging/init_logger.dart';
 import '../tabs/quick_test_tab_content.dart';
@@ -24,41 +21,35 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
     showQuickTestAsSecondTab = _isQuickTestRoute(startRoute);
     checkSplash();
 
-    // 1. Critical but non-blocking (User level drives UI availability)
-    unawaited(getIt<UserLevelController>().refresh());
+    unawaited(getIt<AppServicesContract>().refreshUserLevel());
 
-    // 2. Deferred background systems (Non-critical for first frame)
     _initBackgroundServices();
   }
 
   void _initBackgroundServices() {
-    // Delay non-critical background services to avoid competing with UI/Boot
     Future.delayed(const Duration(seconds: 3), () async {
       if (!mounted) return;
 
-      // Native security & analytics
       CcAppCheckHelper.initialize();
       FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
       logEnv();
       logVersionInfo();
 
-      // Local notifications & sync
-      await getIt<NotificationService>().init();
-      getIt<FinancialDataSyncService>().startWatching();
+      await getIt<AppServicesContract>().initNotifications();
+      getIt<AppServicesContract>().startFinancialDataSync();
 
-      // Conditional sync & reminders
       final session = getIt<SessionContract>();
       if (session.isAuthenticated) {
         try {
-          await getIt<FinancialDataSyncService>().pullFromFirestore();
+          await getIt<AppServicesContract>().pullFromFirestore();
         } catch (e) {
           'Initial cloud sync failed: $e'.Log('NavigationLogicMixin');
         }
       }
 
       try {
-        await getIt<CheckAuditReminderUseCase>().call();
-        await getIt<CheckCloudBackupReminderUseCase>().call();
+        await getIt<AppServicesContract>().checkAuditReminders();
+        await getIt<AppServicesContract>().checkCloudBackupReminders();
       } catch (e) {
         'Reminder check failed: $e'.Log('NavigationLogicMixin');
       }
@@ -66,27 +57,13 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
   }
 
   void handleTabRefresh(int index) {
-    // Re-fetch user level on every tab entry as it can change via actions
-    // on other tabs (e.g. completing a task).
-    getIt<UserLevelController>().refresh();
+    getIt<AppServicesContract>().refreshUserLevel();
 
-    // Refresh tab-specific data
     if (index == 0) {
-      // _indexWalletAllocation
-      if (Get.isRegistered<BudgetAllocationController>()) {
-        Get.find<BudgetAllocationController>().loadAll();
-      } else {
-        if (Get.isRegistered<WalletController>()) {
-          Get.find<WalletController>().loadWallets();
-        }
-        if (Get.isRegistered<BudgetLimitController>()) {
-          Get.find<BudgetLimitController>().loadBudgets();
-        }
-      }
+      getIt<AppServicesContract>().refreshBudgetAllocation();
     }
-    if (index == 1 && Get.isRegistered<TransactionController>()) {
-      // _indexEntry
-      Get.find<TransactionController>().refreshWalletTotal();
+    if (index == 1) {
+      getIt<AppServicesContract>().refreshTransactionWalletTotal();
     }
   }
 

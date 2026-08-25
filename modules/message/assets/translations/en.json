@@ -315,7 +315,7 @@
                                            "counterparty_required":  "Please enter who the loan is with",
                                            "schedule_required":  "Please enter the repayment schedule",
                                            "amount_exceeds_outstanding":  "Amount exceeds remaining balance",
-                                           "loan_settled":  "This loan is already settled",
+                                           "liability_settled":  "This liability is already settled",
                                            "not_editable":  "This transaction can\u0027t be edited",
                                            "edit_window":  "You can only edit transactions from the last 30 days"
                                        }

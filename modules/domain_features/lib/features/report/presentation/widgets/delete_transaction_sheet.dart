@@ -7,7 +7,7 @@ import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../get_x/report_controller.dart';
 
-class DeleteTransactionSheet extends StatelessWidget {
+class DeleteTransactionSheet extends StatefulWidget {
   const DeleteTransactionSheet({
     super.key,
     required this.transaction,
@@ -27,68 +27,110 @@ class DeleteTransactionSheet extends StatelessWidget {
   }
 
   @override
+  State<DeleteTransactionSheet> createState() =>
+      _DeleteTransactionSheetState();
+}
+
+class _DeleteTransactionSheetState extends State<DeleteTransactionSheet> {
+  bool _isLoading = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CcText(
-            el.tr(CcLocaleKeys.transaction_delete_title),
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+    final scheme = context.ccColorScheme;
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_LG)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                padding: EdgeInsets.all(context.respDim(14)),
+                decoration: BoxDecoration(
+                  color: scheme.error.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.delete_outline_rounded,
+                  color: scheme.error,
+                  size: context.respIconSize(baseSize: 28),
+                ),
+              ),
             ),
-          ),
-          const CcSpaceMD(),
-          CcText(
-            el.tr(CcLocaleKeys.transaction_delete_confirm_desc),
-            textStyle: context.ccTextTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-          const CcSpaceLG(),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                      vertical: context.respPadding(CcPaddingParams.SPACE_MD),
-                    ),
-                  ),
-                  child: CcText(el.tr(CcLocaleKeys.common_cancel)),
-                ),
+            const CcSpaceMD(),
+            CcText(
+              el.tr(CcLocaleKeys.transaction_delete_title),
+              align: Alignment.center,
+              textAlign: TextAlign.center,
+              textStyle: context.ccTextTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: scheme.onSurface,
               ),
+            ),
+            const CcSpaceSM(),
+            CcText(
+              el.tr(CcLocaleKeys.transaction_delete_confirm_desc),
+              align: Alignment.center,
+              maxLines: 5,
+              textAlign: TextAlign.center,
+              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+            const CcSpaceLG(),
+            Row(
+              children: [
+                Expanded(
+                  child: CcBaseBtn(
+                    title: el.tr(CcLocaleKeys.common_cancel),
+                    isEnable: !_isLoading,
+                    bgColor: [
+                      scheme.surfaceContainerHighest,
+                      scheme.surfaceContainerHighest,
+                    ],
+                    textColor: scheme.onSurface,
+                    onTap: () => Navigator.of(context).pop(),
+                  ),
+                ),
+                const CcSpaceMD(),
+                Expanded(
+                  child: CcBaseBtn(
+                    title: _isLoading
+                        ? null
+                        : el.tr(CcLocaleKeys.common_delete),
+                    isEnable: !_isLoading,
+                    bgColor: [scheme.error, scheme.error],
+                    textColor: scheme.onError,
+                    onTap: () async {
+                      setState(() => _isLoading = true);
+                      try {
+                        await _delete(context);
+                      } finally {
+                        if (mounted) setState(() => _isLoading = false);
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+            if (_isLoading) ...[
               const CcSpaceMD(),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    await _delete(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.ccColorScheme.error,
-                    foregroundColor: context.ccColorScheme.onError,
-                    padding: EdgeInsets.symmetric(
-                      vertical: context.respPadding(CcPaddingParams.SPACE_MD),
-                    ),
-                  ),
-                  child: CcText(el.tr(CcLocaleKeys.common_delete)),
-                ),
-              ),
+              const Center(child: CcLoadingIconWidget()),
             ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Future<void> _delete(BuildContext context) async {
     final repo = getIt<TransactionRepository>();
-    final result = await repo.deleteTransaction(transaction.id);
+    final result = await repo.deleteTransaction(widget.transaction.id);
 
     if (context.mounted) {
       if (result.isSuccess()) {
+        Navigator.of(context).pop();
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(CcLocaleKeys.common_delete),

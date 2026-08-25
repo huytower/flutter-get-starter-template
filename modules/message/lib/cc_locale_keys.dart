@@ -277,35 +277,26 @@ class CodegenLoader extends AssetLoader {
       "liability_wallet_lend_label": "Lending wallet",
       "liability_saved": "Liability of {amount} đ recorded!",
       "liability_name_duplicate_error": "This liability name already exists",
-      "loan_direction_borrow": "Borrow",
-      "loan_direction_lend": "Lend",
-      "loan_category_borrow_label": "Loan type",
-      "loan_amount_borrow_label": "Loan amount",
-      "loan_wallet_borrow_label": "Receiving wallet",
-      "loan_category_lend_label": "Lending type",
-      "loan_amount_lend_label": "Lending amount",
-      "loan_wallet_lend_label": "Lending wallet",
-      "loan_borrower_label": "Loan name",
-      "loan_borrower_hint": "e.g. House purchase loan, Loan to a friend...",
-      "loan_collection_method_label": "Collection method",
-      "loan_method_installment_lend": "Installments",
-      "loan_method_lump_sum_lend": "Due date / Collect once",
-      "loan_schedule_lend_label": "Collection schedule",
-      "loan_reminder_once_label": "Remind 1 day before",
-      "loan_reminder_recurring_label": "Remind 1 day before each due date",
-      "loan_name_label": "Loan name",
-      "loan_name_hint": "e.g. Laptop purchase, Bank loan...",
-      "loan_counterparty_vip_locked":
+      "liability_payment_saved": "Payment of {amount} đ recorded!",
+      "liability_category_borrow_label": "Loan type",
+      "liability_category_lend_label": "Lending type",
+      "liability_borrower_label": "Loan name",
+      "liability_borrower_hint":
+          "e.g. House purchase loan, Loan to a friend...",
+      "liability_collection_method_label": "Collection method",
+      "liability_method_installment_lend": "Installments",
+      "liability_method_lump_sum_lend": "Due date / Collect once",
+      "liability_schedule_lend_label": "Collection schedule",
+      "liability_reminder_once_label": "Remind 1 day before",
+      "liability_reminder_recurring_label": "Remind 1 day before each due date",
+      "liability_counterparty_vip_locked":
           "Free plan uses the category's default name '{name}'. Upgrade to VIP to set a custom name.",
-      "loan_repayment_method_label": "Repayment method",
-      "loan_method_installment": "Installment",
-      "loan_method_lump_sum": "Lump sum at maturity",
-      "loan_final_due_date_label": "Due date",
-      "loan_schedule_label": "Installment schedule",
-      "loan_add_period": "Add period",
-      "loan_saved": "Loan of {amount} đ recorded!",
-      "loan_payment_saved": "Payment of {amount} đ recorded!",
-      "record_loan": "Record Loan",
+      "liability_repayment_method_label": "Repayment method",
+      "liability_method_installment": "Installment",
+      "liability_method_lump_sum": "Lump sum at maturity",
+      "liability_final_due_date_label": "Due date",
+      "liability_schedule_label": "Installment schedule",
+      "liability_add_period": "Add period",
       "record_repay": "Repay",
       "record_collect": "Collect",
       "investment_contribution": "Contribute",
@@ -362,18 +353,6 @@ class CodegenLoader extends AssetLoader {
         "edit_window": "You can only edit transactions from the last 30 days",
       },
     },
-    "loan": {
-      "list_title": "Loans",
-      "status_outstanding": "Outstanding",
-      "status_settled": "Settled",
-      "remaining_balance": "Remaining",
-      "principal_amount": "Principal",
-      "empty_state": "No loans yet\nPress + to add",
-      "history_title": "Transaction history",
-      "no_history": "No repayment/collection yet",
-      "borrow": "Borrow",
-      "lend": "Lend",
-    },
     "liability": {
       "title": "Liabilities",
       "list_title": "Liabilities",
@@ -381,12 +360,14 @@ class CodegenLoader extends AssetLoader {
       "status_settled": "Settled",
       "remaining_balance": "Remaining",
       "principal_amount": "Principal",
-      "empty_state": "No liabilities yet\nPress + to add",
+      "empty_state": "No liabilities yet",
       "history_title": "Transaction history",
       "no_history": "No repayment/collection yet",
       "delete_title": "Delete Liability",
       "delete_confirm_msg":
           "Are you sure you want to delete this liability? This action cannot be undone.",
+      "borrow": "Borrow",
+      "lend": "Lend",
     },
     "notification": {
       "channel_name": "Reminders",
@@ -1047,35 +1028,25 @@ class CodegenLoader extends AssetLoader {
       "liability_wallet_lend_label": "Ví nguồn tiền",
       "liability_saved": "Đã ghi nhận khoản nợ/vay {amount} đ!",
       "liability_name_duplicate_error": "Tên khoản vay/cho vay này đã tồn tại",
-      "loan_direction_borrow": "Đi vay",
-      "loan_direction_lend": "Cho vay",
-      "loan_category_borrow_label": "Hình thức vay",
-      "loan_amount_borrow_label": "Số tiền vay",
-      "loan_wallet_borrow_label": "Ví nhận tiền",
-      "loan_category_lend_label": "Hình thức cho vay",
-      "loan_amount_lend_label": "Số tiền cho vay",
-      "loan_wallet_lend_label": "Nguồn tiền cho vay",
-      "loan_borrower_label": "Tên khoản cho vay",
-      "loan_borrower_hint": "VD: Cho vay mua nhà, Cho bạn vay...",
-      "loan_collection_method_label": "Hình thức thu nợ",
-      "loan_method_installment_lend": "Thu góp",
-      "loan_method_lump_sum_lend": "Đáo hạn / Thu 1 lần",
-      "loan_schedule_lend_label": "Lịch thu góp",
-      "loan_reminder_once_label": "Nhắc trước 1 ngày",
-      "loan_reminder_recurring_label": "Nhắc trước 1 ngày mỗi kỳ",
-      "loan_name_label": "Tên khoản vay",
-      "loan_name_hint": "VD: Mua laptop, Vay ngân hàng...",
-      "loan_counterparty_vip_locked":
+      "liability_payment_saved": "Đã ghi nhận thanh toán {amount} đ!",
+      "liability_category_borrow_label": "Hình thức vay",
+      "liability_category_lend_label": "Hình thức cho vay",
+      "liability_borrower_label": "Tên khoản cho vay",
+      "liability_borrower_hint": "VD: Cho vay mua nhà, Cho bạn vay...",
+      "liability_collection_method_label": "Hình thức thu nợ",
+      "liability_method_installment_lend": "Thu góp",
+      "liability_method_lump_sum_lend": "Đáo hạn / Thu 1 lần",
+      "liability_schedule_lend_label": "Lịch thu góp",
+      "liability_reminder_once_label": "Nhắc trước 1 ngày",
+      "liability_reminder_recurring_label": "Nhắc trước 1 ngày mỗi kỳ",
+      "liability_counterparty_vip_locked":
           "Gói miễn phí dùng tên mặc định theo danh mục '{name}'. Nâng cấp VIP để đặt tên riêng.",
-      "loan_repayment_method_label": "Hình thức trả nợ",
-      "loan_method_installment": "Trả góp",
-      "loan_method_lump_sum": "Đáo hạn / Trả 1 lần",
-      "loan_final_due_date_label": "Ngày đáo hạn",
-      "loan_schedule_label": "Lịch trả góp",
-      "loan_add_period": "Thêm kỳ",
-      "loan_saved": "Đã ghi nhận khoản vay {amount} đ!",
-      "loan_payment_saved": "Đã ghi nhận thanh toán {amount} đ!",
-      "record_loan": "Ghi nhận khoản vay",
+      "liability_repayment_method_label": "Hình thức trả nợ",
+      "liability_method_installment": "Trả góp",
+      "liability_method_lump_sum": "Đáo hạn / Trả 1 lần",
+      "liability_final_due_date_label": "Ngày đáo hạn",
+      "liability_schedule_label": "Lịch trả góp",
+      "liability_add_period": "Thêm kỳ",
       "record_repay": "Trả nợ",
       "record_collect": "Thu nợ",
       "investment_contribution": "Chi ra",
@@ -1131,18 +1102,6 @@ class CodegenLoader extends AssetLoader {
         "edit_window": "Chỉ có thể sửa giao dịch trong 30 ngày gần nhất!",
       },
     },
-    "loan": {
-      "list_title": "Vay & Cho vay",
-      "status_outstanding": "Còn nợ",
-      "status_settled": "Đã tất toán",
-      "remaining_balance": "Còn lại",
-      "principal_amount": "Gốc vay",
-      "empty_state": "Chưa có khoản vay nào\nNhấn + để thêm ",
-      "history_title": "Lịch sử giao dịch",
-      "no_history": "Chưa có giao dịch trả/thu nợ nào",
-      "borrow": "Đi vay",
-      "lend": "Cho vay",
-    },
     "liability": {
       "title": "Nợ/Vay",
       "list_title": "Nợ/Vay",
@@ -1150,12 +1109,14 @@ class CodegenLoader extends AssetLoader {
       "status_settled": "Đã tất toán",
       "remaining_balance": "Còn lại",
       "principal_amount": "Gốc",
-      "empty_state": "Chưa có khoản vay nào\nNhấn + để thêm ",
+      "empty_state": "Chưa có khoản nợ/vay nào",
       "history_title": "Lịch sử giao dịch",
       "no_history": "Chưa có giao dịch trả/thu nợ nào",
       "delete_title": "Xóa khoản nợ/vay",
       "delete_confirm_msg":
           "Bạn có chắc chắn muốn xóa khoản nợ/vay này? Hành động này không thể hoàn tác.",
+      "borrow": "Đi vay",
+      "lend": "Cho vay",
     },
     "notification": {
       "channel_name": "Nhắc nhở",
@@ -1737,8 +1698,6 @@ abstract class CcLocaleKeys {
   static const wallet_liabilities = 'wallet.liabilities';
   static const wallet_liabilities_desc = 'wallet.liabilities_desc';
   static const wallet_liabilities_net = 'wallet.liabilities_net';
-  static const loan_borrow = 'loan.borrow';
-  static const loan_lend = 'loan.lend';
 
   static const transaction_title = 'transaction.title';
   static const transaction_wallet = 'transaction.wallet';
@@ -1832,24 +1791,9 @@ abstract class CcLocaleKeys {
   static const transaction_liability_add_period =
       'transaction.liability_add_period';
   static const transaction_record_repay = 'transaction.record_repay';
-  static const transaction_record_collect = 'transaction.record_collect';
-      'transaction.liability_reminder_recurring_label';
-  static const transaction_liability_counterparty_vip_locked =
-      'transaction.liability_counterparty_vip_locked';
-  static const transaction_liability_repayment_method_label =
-      'transaction.liability_repayment_method_label';
-  static const transaction_liability_method_installment =
-      'transaction.liability_method_installment';
-  static const transaction_liability_method_lump_sum =
-      'transaction.liability_method_lump_sum';
-  static const transaction_liability_final_due_date_label =
-      'transaction.liability_final_due_date_label';
-  static const transaction_liability_schedule_label =
-      'transaction.liability_schedule_label';
-  static const transaction_liability_add_period =
-      'transaction.liability_add_period';
-  static const transaction_record_repay = 'transaction.record_repay';
-  static const transaction_record_collect = 'transaction.record_collect';
+  static const transaction_record_collect =
+      'transaction.record_collect'
+      'transaction.record_collect';
   static const transaction_investment_contribution =
       'transaction.investment_contribution';
   static const transaction_investment_return = 'transaction.investment_return';
@@ -1918,6 +1862,8 @@ abstract class CcLocaleKeys {
       'transaction.validation.schedule_required';
   static const transaction_validation_amount_exceeds_outstanding =
       'transaction.validation.amount_exceeds_outstanding';
+  static const transaction_validation_liability_settled =
+      'transaction.validation.liability_settled';
   static const transaction_validation_loan_settled =
       'transaction.validation.loan_settled';
   static const transaction_validation_not_editable =

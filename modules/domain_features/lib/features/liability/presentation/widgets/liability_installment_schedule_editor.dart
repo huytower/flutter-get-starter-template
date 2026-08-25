@@ -22,19 +22,17 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () {
-        final drafts = controller.installmentDrafts.value;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            for (int i = 0; i < drafts.length; i++)
-              _buildRow(context, i, drafts[i]),
-            _buildAddButton(context),
-          ],
-        );
-      },
-    );
+    return Obx(() {
+      final drafts = controller.installmentDrafts.value;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (int i = 0; i < drafts.length; i++)
+            _buildRow(context, i, drafts[i]),
+          _buildAddButton(context),
+        ],
+      );
+    });
   }
 
   Widget _buildRow(
@@ -145,7 +143,7 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
           color: color,
         ),
         label: CcText(
-          el.tr(CcLocaleKeys.transaction_loan_add_period),
+          el.tr(CcLocaleKeys.transaction_liability_add_period),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: color,
             fontWeight: FontWeight.bold,

@@ -38,11 +38,7 @@ class LendForm extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildInitiateSection(
-                    context,
-                    controller,
-                    accentColor,
-                  ),
+                  _buildInitiateSection(context, controller, accentColor),
                 ],
               ),
             ),
@@ -77,7 +73,9 @@ class LendForm extends StatelessWidget {
               controller.action.value == LiabilityAction.initiate;
           return LiabilityPillToggle(
             selectedIndex: isInitiate ? 0 : 1,
-            firstLabel: el.tr(CcLocaleKeys.transaction_loan_direction_lend),
+            firstLabel: el.tr(
+              CcLocaleKeys.transaction_liability_direction_lend,
+            ),
             secondLabel: el.tr(CcLocaleKeys.transaction_record_collect),
             activeColor: accentColor,
             onChanged: (index) => controller.setAction(
@@ -113,16 +111,18 @@ class LendForm extends StatelessWidget {
                   ],
                 );
               }),
-              Obx(() => TransactionAdditionalDetailsSection(
-                    isExpanded: controller.showMoreDetails.value,
-                    onToggle: controller.toggleMoreDetails,
-                    selectedDate: controller.date.value,
-                    onDateSelected: controller.setDate,
-                    onCalendarTap: () => controller.pickDate(context),
-                    noteController: controller.noteController,
-                    activeColor: accentColor,
-                    hideDate: true,
-                  )),
+              Obx(
+                () => TransactionAdditionalDetailsSection(
+                  isExpanded: controller.showMoreDetails.value,
+                  onToggle: controller.toggleMoreDetails,
+                  selectedDate: controller.date.value,
+                  onDateSelected: controller.setDate,
+                  onCalendarTap: () => controller.pickDate(context),
+                  noteController: controller.noteController,
+                  activeColor: accentColor,
+                  hideDate: true,
+                ),
+              ),
               const CcSpaceSM(),
               _buildSubmitButton(context, controller, accentColor),
               const CcSpaceXS(),
@@ -156,7 +156,8 @@ class LendForm extends StatelessWidget {
         onQuickAmountSelected: (amount) =>
             controller.amountStr.value = amount.toString(),
         onClear: controller.handleClear,
-        onCopy: () => CcStringHelper.copyToClipboard(controller.amountStr.value),
+        onCopy: () =>
+            CcStringHelper.copyToClipboard(controller.amountStr.value),
       );
     });
   }
@@ -200,7 +201,7 @@ class LendForm extends StatelessWidget {
           controller.action.value == LiabilityAction.initiate;
       return TransactionSubmitButton(
         text: isInitiate
-            ? el.tr(CcLocaleKeys.transaction_loan_direction_lend)
+            ? el.tr(CcLocaleKeys.transaction_liability_direction_lend)
             : el.tr(CcLocaleKeys.transaction_record_collect),
         isSubmitting: controller.isSubmitting.value,
         isEnabled: controller.canSubmit,
