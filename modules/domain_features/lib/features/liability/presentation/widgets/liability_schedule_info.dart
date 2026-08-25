@@ -26,7 +26,7 @@ class LiabilityScheduleInfo extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CcFormLabel(text: el.tr(CcLocaleKeys.transaction_loan_schedule_label)),
+          CcFormLabel(text: el.tr(CcLocaleKeys.transaction_liability_schedule_label)),
           const CcSpaceXS(),
           for (final period in installments)
             Padding(
@@ -60,7 +60,7 @@ class LiabilityScheduleInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcFormLabel(
-          text: el.tr(CcLocaleKeys.transaction_loan_final_due_date_label),
+          text: el.tr(CcLocaleKeys.transaction_liability_final_due_date_label),
         ),
         const CcSpaceXS(),
         LiabilityDateRow(

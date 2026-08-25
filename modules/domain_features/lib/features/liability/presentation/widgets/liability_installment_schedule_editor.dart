@@ -145,7 +145,7 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
           color: color,
         ),
         label: CcText(
-          el.tr(CcLocaleKeys.transaction_loan_add_period),
+          el.tr(CcLocaleKeys.transaction_liability_add_period),
           textStyle: context.ccTextTheme.labelMedium?.copyWith(
             color: color,
             fontWeight: FontWeight.bold,

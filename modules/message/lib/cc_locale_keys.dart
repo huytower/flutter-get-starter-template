@@ -277,6 +277,27 @@ class CodegenLoader extends AssetLoader {
       "liability_wallet_lend_label": "Lending wallet",
       "liability_saved": "Liability of {amount} đ recorded!",
       "liability_name_duplicate_error": "This liability name already exists",
+      "liability_payment_saved": "Payment of {amount} đ recorded!",
+      "liability_category_borrow_label": "Loan type",
+      "liability_category_lend_label": "Lending type",
+      "liability_borrower_label": "Loan name",
+      "liability_borrower_hint":
+          "e.g. House purchase loan, Loan to a friend...",
+      "liability_collection_method_label": "Collection method",
+      "liability_method_installment_lend": "Installments",
+      "liability_method_lump_sum_lend": "Due date / Collect once",
+      "liability_schedule_lend_label": "Collection schedule",
+      "liability_reminder_once_label": "Remind 1 day before",
+      "liability_reminder_recurring_label":
+          "Remind 1 day before each due date",
+      "liability_counterparty_vip_locked":
+          "Free plan uses the category's default name '{name}'. Upgrade to VIP to set a custom name.",
+      "liability_repayment_method_label": "Repayment method",
+      "liability_method_installment": "Installment",
+      "liability_method_lump_sum": "Lump sum at maturity",
+      "liability_final_due_date_label": "Due date",
+      "liability_schedule_label": "Installment schedule",
+      "liability_add_period": "Add period",
       "loan_direction_borrow": "Borrow",
       "loan_direction_lend": "Lend",
       "loan_category_borrow_label": "Loan type",
@@ -1047,6 +1068,25 @@ class CodegenLoader extends AssetLoader {
       "liability_wallet_lend_label": "Ví nguồn tiền",
       "liability_saved": "Đã ghi nhận khoản nợ/vay {amount} đ!",
       "liability_name_duplicate_error": "Tên khoản vay/cho vay này đã tồn tại",
+      "liability_payment_saved": "Đã ghi nhận thanh toán {amount} đ!",
+      "liability_category_borrow_label": "Hình thức vay",
+      "liability_category_lend_label": "Hình thức cho vay",
+      "liability_borrower_label": "Tên khoản cho vay",
+      "liability_borrower_hint": "VD: Cho vay mua nhà, Cho bạn vay...",
+      "liability_collection_method_label": "Hình thức thu nợ",
+      "liability_method_installment_lend": "Thu góp",
+      "liability_method_lump_sum_lend": "Đáo hạn / Thu 1 lần",
+      "liability_schedule_lend_label": "Lịch thu góp",
+      "liability_reminder_once_label": "Nhắc trước 1 ngày",
+      "liability_reminder_recurring_label": "Nhắc trước 1 ngày mỗi kỳ",
+      "liability_counterparty_vip_locked":
+          "Gói miễn phí dùng tên mặc định theo danh mục '{name}'. Nâng cấp VIP để đặt tên riêng.",
+      "liability_repayment_method_label": "Hình thức trả nợ",
+      "liability_method_installment": "Trả góp",
+      "liability_method_lump_sum": "Đáo hạn / Trả 1 lần",
+      "liability_final_due_date_label": "Ngày đáo hạn",
+      "liability_schedule_label": "Lịch trả góp",
+      "liability_add_period": "Thêm kỳ",
       "loan_direction_borrow": "Đi vay",
       "loan_direction_lend": "Cho vay",
       "loan_category_borrow_label": "Hình thức vay",
@@ -1816,23 +1856,6 @@ abstract class CcLocaleKeys {
   static const transaction_liability_reminder_once_label =
       'transaction.liability_reminder_once_label';
   static const transaction_liability_reminder_recurring_label =
-      'transaction.liability_reminder_recurring_label';
-  static const transaction_liability_counterparty_vip_locked =
-      'transaction.liability_counterparty_vip_locked';
-  static const transaction_liability_repayment_method_label =
-      'transaction.liability_repayment_method_label';
-  static const transaction_liability_method_installment =
-      'transaction.liability_method_installment';
-  static const transaction_liability_method_lump_sum =
-      'transaction.liability_method_lump_sum';
-  static const transaction_liability_final_due_date_label =
-      'transaction.liability_final_due_date_label';
-  static const transaction_liability_schedule_label =
-      'transaction.liability_schedule_label';
-  static const transaction_liability_add_period =
-      'transaction.liability_add_period';
-  static const transaction_record_repay = 'transaction.record_repay';
-  static const transaction_record_collect = 'transaction.record_collect';
       'transaction.liability_reminder_recurring_label';
   static const transaction_liability_counterparty_vip_locked =
       'transaction.liability_counterparty_vip_locked';

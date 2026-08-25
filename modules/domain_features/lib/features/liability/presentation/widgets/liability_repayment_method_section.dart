@@ -34,10 +34,10 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
               CcFormLabel(
                 text: isBorrowSide
                     ? el.tr(
-                        CcLocaleKeys.transaction_loan_repayment_method_label,
+                        CcLocaleKeys.transaction_liability_repayment_method_label,
                       )
                     : el.tr(
-                        CcLocaleKeys.transaction_loan_collection_method_label,
+                        CcLocaleKeys.transaction_liability_collection_method_label,
                       ),
               ),
               const CcSpaceXS(),
@@ -49,14 +49,14 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
                       ? 0
                       : 1,
                   firstLabel: isBorrowSide
-                      ? el.tr(CcLocaleKeys.transaction_loan_method_installment)
+                      ? el.tr(CcLocaleKeys.transaction_liability_method_installment)
                       : el.tr(
-                          CcLocaleKeys.transaction_loan_method_installment_lend,
+                          CcLocaleKeys.transaction_liability_method_installment_lend,
                         ),
                   secondLabel: isBorrowSide
-                      ? el.tr(CcLocaleKeys.transaction_loan_method_lump_sum)
+                      ? el.tr(CcLocaleKeys.transaction_liability_method_lump_sum)
                       : el.tr(
-                          CcLocaleKeys.transaction_loan_method_lump_sum_lend,
+                          CcLocaleKeys.transaction_liability_method_lump_sum_lend,
                         ),
                   activeColor: accentColor,
                   onChanged: (index) => controller.setRepaymentMethod(
@@ -100,8 +100,8 @@ class _InstallmentSchedule extends StatelessWidget {
       children: [
         CcFormLabel(
           text: isBorrowSide
-              ? el.tr(CcLocaleKeys.transaction_loan_schedule_label)
-              : el.tr(CcLocaleKeys.transaction_loan_schedule_lend_label),
+              ? el.tr(CcLocaleKeys.transaction_liability_schedule_label)
+              : el.tr(CcLocaleKeys.transaction_liability_schedule_lend_label),
         ),
         const CcSpaceXS(),
         LiabilityInstallmentScheduleEditor(
@@ -112,7 +112,7 @@ class _InstallmentSchedule extends StatelessWidget {
         _ReminderToggle(
           controller: controller,
           accentColor: accentColor,
-          label: el.tr(CcLocaleKeys.transaction_loan_reminder_recurring_label),
+          label: el.tr(CcLocaleKeys.transaction_liability_reminder_recurring_label),
         ),
       ],
     );
@@ -130,7 +130,7 @@ class _FinalDueDate extends StatelessWidget {
     return Row(
       children: [
         CcFormLabel(
-          text: el.tr(CcLocaleKeys.transaction_loan_final_due_date_label),
+          text: el.tr(CcLocaleKeys.transaction_liability_final_due_date_label),
         ),
         const CcSpaceXS(),
         Expanded(
@@ -170,7 +170,7 @@ class _FinalDueDate extends StatelessWidget {
               !controller.reminderBeforeDueDate.value,
             ),
             child: CcText(
-              el.tr(CcLocaleKeys.transaction_loan_reminder_once_label),
+              el.tr(CcLocaleKeys.transaction_liability_reminder_once_label),
               textStyle: context.ccTextTheme.bodyMedium,
             ),
           ),

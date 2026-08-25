@@ -77,7 +77,7 @@ class LendForm extends StatelessWidget {
               controller.action.value == LiabilityAction.initiate;
           return LiabilityPillToggle(
             selectedIndex: isInitiate ? 0 : 1,
-            firstLabel: el.tr(CcLocaleKeys.transaction_loan_direction_lend),
+            firstLabel: el.tr(CcLocaleKeys.transaction_liability_direction_lend),
             secondLabel: el.tr(CcLocaleKeys.transaction_record_collect),
             activeColor: accentColor,
             onChanged: (index) => controller.setAction(
@@ -200,7 +200,7 @@ class LendForm extends StatelessWidget {
           controller.action.value == LiabilityAction.initiate;
       return TransactionSubmitButton(
         text: isInitiate
-            ? el.tr(CcLocaleKeys.transaction_loan_direction_lend)
+            ? el.tr(CcLocaleKeys.transaction_liability_direction_lend)
             : el.tr(CcLocaleKeys.transaction_record_collect),
         isSubmitting: controller.isSubmitting.value,
         isEnabled: controller.canSubmit,
