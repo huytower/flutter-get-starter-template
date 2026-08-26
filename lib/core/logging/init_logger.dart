@@ -14,10 +14,10 @@ Future<void> logVersionInfo() async {
     final isPreRelease = await versionService.isPreRelease();
 
     '📱 App Version Info\n'
-        '   • Version: $version\n'
-        '   • Build: $buildNumber\n'
-        '   • Package: $packageName\n'
-        '   • Pre-release: $isPreRelease'
+            '   • Version: $version\n'
+            '   • Build: $buildNumber\n'
+            '   • Package: $packageName\n'
+            '   • Pre-release: $isPreRelease'
         .Log('AppVersion');
   } catch (e, stackTrace) {
     '❌ Failed to get version info: $e'.Log('AppVersion');
@@ -50,9 +50,6 @@ Future<void> logEnv() async {
     }
 
     // Log env info
-    '✅ Running in ${env.name} environment'.Log('EnvConfig');
-    '🌐 API URL: ${dotenv.get('API_URL', fallback: 'Not set')}'.Log('EnvConfig');
-
     // Log all loaded variables in debug mode
     assert(() {
       final buffer = StringBuffer('📋 Loaded env variables:\n');
