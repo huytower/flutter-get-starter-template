@@ -145,6 +145,32 @@ mixin QuickEntryMixin on TransactionFormController {
     return parts.join(' · ');
   }
 
+  /// Reports whether the current suggestion's category is considered
+  /// "missing" (was either never resolved, or resolved to an ID that
+  /// doesn't exist in the current form's enabled categories).
+  bool get isQuickEntryCategoryMissing {
+    final suggestion = quickEntrySuggestion.value;
+    if (suggestion == null) return false;
+    final id = suggestion.categoryId;
+
+    // If we have no category ID at all, it's definitely missing (Case 2).
+    if (id == null) return true;
+
+    // Check if the category exists in the form's allowed list
+    final availableIds = quickEntryAvailableCategoryIds;
+    final isAvailable = availableIds.contains(id);
+
+    '[AI_PARSING] 🔍 Checking category missing | id=$id | isAvailable=$isAvailable | availableCount=${availableIds.length}'
+        .Log('QuickEntryMixin');
+
+    return !isAvailable;
+  }
+
+  /// List of category IDs that are currently valid/selectable in this form.
+  /// Used to determine if a parsed category is "Missing" (Case 2).
+  List<String> get quickEntryAvailableCategoryIds =>
+      _quickEntryCategories.map((category) => category.id).toList();
+
   void _onQuickEntryTextChanged() {
     quickEntryErrorKey.value = null;
     _quickEntryDebounce?.cancel();
@@ -302,10 +328,13 @@ mixin QuickEntryMixin on TransactionFormController {
 
     // SHORT-CIRCUIT: If local parsing already resolved the mandatory fields,
     // skip cloud escalation to save cost, latency, and avoid the consent popup.
-    if (local.isComplete) {
-      '[AI_PARSING] ✅ Local parse was complete | skipping cloud escalation'.Log(
-        'QuickEntryMixin',
-      );
+    // NOTE: If an amount is found, we show the suggestion chip immediately
+    // even if category is missing (local logic will handle the UI label).
+    // This prioritizes the locally recognized data (Case 1 or Case 2) over
+    // escalating to Gemini.
+    if (local.amount != null) {
+      '[AI_PARSING] ✅ Local parse found amount | short-circuiting to suggestion chip'
+          .Log('QuickEntryMixin');
       resetParsingIfCurrent();
       quickEntrySuggestion.value = local;
       return;

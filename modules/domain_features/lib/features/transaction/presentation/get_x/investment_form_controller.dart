@@ -11,7 +11,6 @@ import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
-import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import 'quick_entry_mixin.dart';
 import 'transaction_controller.dart';
@@ -72,6 +71,19 @@ class InvestmentFormController extends TransactionFormController
   /// category itself (a single auto-named item) — only VIP unlocks typing a
   /// custom item name.
   final RxBool isVip = false.obs;
+
+  @override
+  List<String> get quickEntryAvailableCategoryIds {
+    // In Investment, a category is only "available" for quick selection
+    // if the user has already created an investment item (Wallet) for it.
+    final List<String> ids = mergedItems
+        .whereType<WalletEntity>()
+        .map((wallet) => wallet.categoryId)
+        .whereType<String>()
+        .toList();
+
+    return ids;
+  }
 
   @override
   bool get canSubmit {

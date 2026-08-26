@@ -128,7 +128,7 @@ class QuickEntryAliasDataset {
     // ===== EXPENSE — Gia đình/Con cái (c44, c45, c46) =====
     'bim': 'c45',
     'sua bot': 'c44',
-    'do choi': 'c46',
+    'do toys': 'c46',
 
     // ===== EXPENSE — Thể thao (c20) =====
     'gym': 'c20',
@@ -165,9 +165,7 @@ class QuickEntryAliasDataset {
     'vang mieng': 'inv5',
     'vang nhan': 'inv5',
     'dat': 'inv6',
-    'bat dong san': 'inv6',
     'can ho': 'inv6',
-    'bds': 'inv6',
     'bitcoin': 'inv7',
     'btc': 'inv7',
     'eth': 'inv7',

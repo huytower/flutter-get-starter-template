@@ -25,21 +25,20 @@ class TransactionTabBarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tabs = controller.visibleTabs;
+    return Obx(() {
+      final tabs = controller.visibleTabs;
+      final selectedIndex = controller.selectedTabIndex.value.clamp(
+        0,
+        tabs.length - 1,
+      );
+      final activeColor = tabs[selectedIndex].color(context);
+      final topColor = activeColor.withAlpha(5);
+      final bottomColor = activeColor.withAlpha(10);
 
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: Obx(() {
-            final selectedIndex = controller.selectedTabIndex.value.clamp(
-              0,
-              tabs.length - 1,
-            );
-            final activeColor = tabs[selectedIndex].color(context);
-            final topColor = activeColor.withAlpha(5);
-            final bottomColor = activeColor.withAlpha(10);
-
-            return Container(
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -47,15 +46,15 @@ class TransactionTabBarView extends StatelessWidget {
                   colors: [topColor, bottomColor],
                 ),
               ),
-            );
-          }),
-        ),
-        TabBarView(
-          controller: tabController,
-          children: [for (final tab in tabs) _buildPage(context, tab)],
-        ),
-      ],
-    );
+            ),
+          ),
+          TabBarView(
+            controller: tabController,
+            children: [for (final tab in tabs) _buildPage(context, tab)],
+          ),
+        ],
+      );
+    });
   }
 
   Widget _buildPage(BuildContext context, TransactionTabKind tab) {

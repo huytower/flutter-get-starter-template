@@ -205,7 +205,7 @@ class TransactionPageHeader extends StatelessWidget {
       suggestionLabel: suggestion != null
           ? controller.quickEntryResultLabel(suggestion)
           : null,
-      isCategoryMissing: suggestion != null && suggestion.categoryId == null,
+      isCategoryMissing: controller.isQuickEntryCategoryMissing,
       errorText: errorKey != null ? el.tr(errorKey) : null,
       activeColor: accentColor,
       onSubmitted: (_) => controller.submitQuickEntry(context),
