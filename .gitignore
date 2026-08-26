@@ -29,6 +29,7 @@ android/app/src/uat/google-services.json
 android/app/src/prod/google-services.json
 ios/Firebase/prod/GoogleService-Info.plist
 ios/Firebase/uat/GoogleService-Info.plist
+ios/Runner/GoogleService-Info.plist
 
 .generated/
 

@@ -2,10 +2,6 @@
 #include "Generated.xcconfig"
 
 // bundle_suffix used in the bundle id of the app
-bundle_suffix =
-.
-uat
+bundle_suffix = .uat
 // the name displayed below the app icon on the home presentation
-app_display_name =
-[UAT]
-CCI REL
+app_display_name = [UAT] CCI REL

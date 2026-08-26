@@ -16,35 +16,26 @@ final Map<String, int> _amountUnitMultipliers = {
   'trieu': _million,
 };
 
-// Two alternatives in one capturing group: a properly-grouped thousands
-// number (one-to-three leading digits, then one or more `.NNN`/`,NNN`
-// groups of exactly 3 digits — e.g. "1.500.000", "50.000") is tried first,
-// falling back to a single digit run with at most one trailing separator
-// group of any length (covers plain "500000" and a decimal fraction before
-// a unit like "1,5tr"). Without the first alternative, "1.500.000" was
-// silently mis-parsed as 1500 — allMatches only ever consumes one `[.,]`
-// group per match, splitting the rest off as a second, separate match.
+// Grouped-thousands form (e.g. "1.500.000") is tried before the plain
+// digit-run fallback — without it, "1.500.000" mis-parsed as 1500, since
+// allMatches only consumes one `[.,]` group per match.
 final RegExp _amountPattern = RegExp(
   r'(\d{1,3}(?:[.,]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|tr|trieu|d|vnd)?',
 );
 
 /// Parses a Vietnamese money shorthand out of [text] — `50k`, `50.000`,
-/// `1tr`, `1,5tr`, `500 nghin`, plain `500000`, with an optional `đ`/`vnd`
-/// suffix. Returns null when nothing plausible is found. A bare number under
-/// 1000 with no unit/currency suffix is treated as ambiguous (more likely a
-/// stray digit than a real amount in this app's context) and returned as
-/// null rather than guessed at.
+/// `1tr`, `1,5tr`, `500 nghin`, plain `500000`, optional `đ`/`vnd` suffix.
+/// Null if nothing plausible (a bare number under 1000 with no unit is
+/// treated as ambiguous, not guessed at).
 ///
-/// Scans every number in [text], not just the first — natural "quantity +
-/// item + price" phrasing (e.g. "2 ly cafe 50k") states an unmarked
-/// quantity before the actual (unit-suffixed) price, so preferring the
-/// *last* number that carries an explicit unit/currency suffix over the
-/// first digit run avoids misreading the quantity as the amount.
+/// Prefers the *last* number carrying an explicit unit/currency suffix over
+/// the first digit run — "2 ly cafe 50k" states an unmarked quantity before
+/// the real price, so taking the first number would misread the quantity as
+/// the amount.
 ///
-/// Deliberately uses [stripVietnameseDiacritics] (lowercase + diacritics
-/// only), not the full [normalizeMerchantText] — the latter also strips all
-/// punctuation, which would delete the `.`/`,` decimal/thousands separators
-/// this function's own regex depends on before the regex ever runs.
+/// Uses [stripVietnameseDiacritics], not the full [normalizeMerchantText] —
+/// the latter strips punctuation too, deleting the `.`/`,` separators this
+/// function's regex depends on.
 int? parseVietnameseAmount(String text) {
   final normalized = stripVietnameseDiacritics(text);
   final matches = _amountPattern.allMatches(normalized).toList();
@@ -78,13 +69,9 @@ int? parseVietnameseAmount(String text) {
   return (asDouble * multiplier).round();
 }
 
-/// Common informal/English shorthand mapped straight to a seed category id
-/// (see `CategorySeed`) — checked before the fuzzy label match below since
-/// these words don't reliably fuzzy-match their formal Vietnamese label
-/// (e.g. "cafe" vs. "cà phê" normalizes to "ca phe", a weak Dice's-
-/// coefficient match). Deliberately small and hand-picked, same style as
-/// [suggestExpenseCategoryIdForHour]'s hardcoded ids — not meant to be
-/// exhaustive, the fuzzy fallback below covers everything else.
+/// Informal/English shorthand mapped to a seed category id, checked before
+/// the fuzzy label match — these words don't reliably fuzzy-match their
+/// formal Vietnamese label (e.g. "cafe" vs. "cà phê").
 const Map<String, String> _categoryKeywordAliases = {
   'cafe': 'c2',
   'coffee': 'c2',
@@ -115,22 +102,17 @@ const Map<String, String> _categoryKeywordAliases = {
 /// Shortest normalized text worth attempting a category match on.
 const int _minCategoryQueryLength = 2;
 
-/// [_categoryKeywordAliases] sorted longest-key-first, computed once — a
-/// shorter alias that's also a substring of a longer one (e.g. "dien" vs.
-/// "dien thoai") must never win the match just because it's declared
-/// earlier in the map; checking longest-first guarantees the more specific
-/// alias is always tried before the substring it contains.
+/// [_categoryKeywordAliases] sorted longest-key-first, so a shorter alias
+/// that's also a substring of a longer one (e.g. "dien" vs. "dien thoai")
+/// never wins just because it's declared earlier.
 final List<MapEntry<String, String>> _sortedCategoryKeywordAliases =
     _categoryKeywordAliases.entries.toList()
       ..sort((a, b) => b.key.length.compareTo(a.key.length));
 
-/// Best-effort local category match for [text] among [categories] — checks
-/// the hand-picked alias table first, then substring containment against
-/// each category's live label (`el.tr(category.nameKey)`, passed in via
-/// [categoryLabels] since this helper is pure/untestable-with-locale
-/// otherwise), then falls back to fuzzy matching (same `string_similarity`
-/// dependency as [findBestMerchantMatch]). Returns null when nothing is
-/// confident enough.
+/// Best-effort local category match: alias table, then label-containment,
+/// then fuzzy match. [categoryLabels] is passed in (rather than reading
+/// `el.tr` directly) so this stays pure and testable without a locale.
+/// Returns null when nothing is confident enough.
 String? matchCategoryIdFromText({
   required String text,
   required List<CategoryEntity> categories,
