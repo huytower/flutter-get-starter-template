@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
@@ -42,6 +43,15 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
   late final TextEditingController _amountController;
   late DateTime _selectedDate;
   CategoryEntity? _selectedCategory;
+
+  bool get _isInvestment => widget.transaction.isInvestmentActivity;
+  bool get _isDebt => widget.transaction.isDebtActivity;
+
+  Color get _accentColor {
+    if (_isInvestment) return PrjColors.investment;
+    if (_isDebt) return PrjColors.debtLoan;
+    return context.ccColorScheme.primary;
+  }
 
   @override
   void initState() {
@@ -151,7 +161,7 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
                   children: [
                     CategorySelectionSection(
                       type: _categoryType!,
-                      activeColor: context.ccColorScheme.primary,
+                      activeColor: _accentColor,
                       autoSelectFirst: false,
                       initialSelectedCategoryId: widget.transaction.categoryId,
                       onCategorySelected: (category) {
@@ -175,7 +185,7 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
                       isSubmitting: _isSubmitting,
                       isEnabled: true,
                       onTap: _save,
-                      activeColor: context.ccColorScheme.primary,
+                      activeColor: _accentColor,
                     ),
                     const CcSpaceXS(),
                   ],
@@ -226,7 +236,7 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
         1000000,
       ],
       isKeypadVisible: false,
-      activeColor: context.ccColorScheme.primary,
+      activeColor: _accentColor,
       onTap: () {},
       onQuickAmountSelected: (amount) {
         _amountController.text = amount.toString();
