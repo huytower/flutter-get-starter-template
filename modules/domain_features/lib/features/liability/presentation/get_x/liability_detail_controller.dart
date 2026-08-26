@@ -132,7 +132,7 @@ class LiabilityDetailController extends TransactionFormController {
         await refreshParent();
         await _refreshDetail();
         if (Get.isRegistered<BudgetAllocationController>()) {
-          Get.find<BudgetAllocationController>().loadLiabilities();
+          Get.find<BudgetAllocationController>().loadAll();
         }
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
