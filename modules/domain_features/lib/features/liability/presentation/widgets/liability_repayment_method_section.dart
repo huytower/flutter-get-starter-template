@@ -5,13 +5,10 @@ import 'package:get/get.dart';
 
 import '../../domain/entities/liability_entity.dart';
 import '../get_x/liability_base_form_controller.dart';
-import 'liability_date_row.dart';
-import 'liability_installment_schedule_editor.dart';
+import 'liability_final_due_date_section.dart';
+import 'liability_installment_schedule_section.dart';
 import 'liability_pill_toggle.dart';
 
-/// Repayment/collection method picker on [LiabilityForm]: installment vs.
-/// lump-sum toggle, the matching schedule editor (per-installment dates or a
-/// single final due date), and the due-date reminder checkbox.
 class LiabilityRepaymentMethodSection extends StatelessWidget {
   final LiabilityBaseFormController controller;
   final Color accentColor;
@@ -79,174 +76,16 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
           const CcSpaceSM(),
           if (controller.repaymentMethod.value ==
               LiabilityRepaymentMethod.installment)
-            _InstallmentSchedule(
+            LiabilityInstallmentScheduleSection(
               controller: controller,
               accentColor: accentColor,
             )
           else
-            _FinalDueDate(controller: controller, accentColor: accentColor),
+            LiabilityFinalDueDateSection(
+              controller: controller,
+              accentColor: accentColor,
+            ),
         ],
-      );
-    });
-  }
-}
-
-class _InstallmentSchedule extends StatelessWidget {
-  final LiabilityBaseFormController controller;
-  final Color accentColor;
-
-  const _InstallmentSchedule({
-    required this.controller,
-    required this.accentColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isBorrowSide = controller.direction == LiabilityDirection.borrow;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcFormLabel(
-          text: isBorrowSide
-              ? el.tr(CcLocaleKeys.transaction_liability_schedule_label)
-              : el.tr(CcLocaleKeys.transaction_liability_schedule_lend_label),
-        ),
-        const CcSpaceXS(),
-        LiabilityInstallmentScheduleEditor(
-          controller: controller,
-          activeColor: accentColor,
-        ),
-        const CcSpaceSM(),
-        _ReminderToggle(
-          controller: controller,
-          accentColor: accentColor,
-          label: el.tr(
-            CcLocaleKeys.transaction_liability_reminder_recurring_label,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _FinalDueDate extends StatelessWidget {
-  final LiabilityBaseFormController controller;
-  final Color accentColor;
-
-  const _FinalDueDate({required this.controller, required this.accentColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        CcFormLabel(
-          text: el.tr(CcLocaleKeys.transaction_liability_final_due_date_label),
-        ),
-        const CcSpaceXS(),
-        Expanded(
-          child: CcBouncing(
-            onTap: () => controller.pickFinalDueDate(context),
-            borderRadius: context.brMd,
-            child: Container(
-              height: context.respDim(48),
-              padding: EdgeInsets.symmetric(
-                horizontal: context.respPadding(12),
-              ),
-              decoration: BoxDecoration(
-                color: context.ccColorScheme.onSurface.withAlpha(10),
-                borderRadius: context.brMd,
-              ),
-              child: Obx(
-                () => LiabilityDateRow(
-                  date: controller.finalDueDate.value,
-                  icon: Icons.event_outlined,
-                  iconSize: 18,
-                  iconColor: accentColor,
-                ),
-              ),
-            ),
-          ),
-        ),
-        const CcSpaceXS(),
-        Icon(
-          Icons.notifications_active_outlined,
-          size: context.respIconSize(baseSize: 18),
-          color: accentColor,
-        ),
-        const CcSpaceXS(),
-        Expanded(
-          child: CcBouncing(
-            onTap: () => controller.setReminderBeforeDueDate(
-              !controller.reminderBeforeDueDate.value,
-            ),
-            child: CcText(
-              el.tr(CcLocaleKeys.transaction_liability_reminder_once_label),
-              textStyle: context.ccTextTheme.bodyMedium,
-            ),
-          ),
-        ),
-        Obx(
-          () => SizedBox(
-            width: context.respDim(20),
-            height: context.respDim(20),
-            child: Checkbox(
-              value: controller.reminderBeforeDueDate.value,
-              onChanged: (value) =>
-                  controller.setReminderBeforeDueDate(value ?? false),
-              activeColor: accentColor,
-              side: BorderSide(color: context.ccColorScheme.outline),
-              shape: RoundedRectangleBorder(borderRadius: context.brXs),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ReminderToggle extends StatelessWidget {
-  final LiabilityBaseFormController controller;
-  final Color accentColor;
-  final String label;
-
-  const _ReminderToggle({
-    required this.controller,
-    required this.accentColor,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      return CcBouncing(
-        onTap: () => controller.setReminderBeforeDueDate(
-          !controller.reminderBeforeDueDate.value,
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.notifications_active_outlined,
-              size: context.respIconSize(baseSize: 18),
-              color: accentColor,
-            ),
-            const CcSpaceXS(),
-            Expanded(
-              child: CcText(label, textStyle: context.ccTextTheme.bodyMedium),
-            ),
-            SizedBox(
-              width: context.respDim(20),
-              height: context.respDim(20),
-              child: Checkbox(
-                value: controller.reminderBeforeDueDate.value,
-                onChanged: (value) =>
-                    controller.setReminderBeforeDueDate(value ?? false),
-                activeColor: accentColor,
-                side: BorderSide(color: context.ccColorScheme.outline),
-                shape: RoundedRectangleBorder(borderRadius: context.brXs),
-              ),
-            ),
-          ],
-        ),
       );
     });
   }

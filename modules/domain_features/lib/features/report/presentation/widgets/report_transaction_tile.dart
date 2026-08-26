@@ -1,7 +1,9 @@
+import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
@@ -117,7 +119,24 @@ class TransactionTile extends StatelessWidget {
                   size: context.respIconSize(baseSize: 16),
                   color: context.ccColorScheme.error,
                 ),
-                onTap: () => DeleteTransactionSheet.show(context, transaction),
+                onTap: () async {
+                  final result = await DeleteTransactionSheet.show(context, transaction);
+                  if (result == null) return;
+
+                  result.when(
+                    (success) {
+                      // Success handled in bottom sheet
+                    },
+                    (failure) {
+                      if (context.mounted) {
+                        CcSnackBarHelper.showErrorSnackBar(
+                          context: context,
+                          message: failure.message,
+                        );
+                      }
+                    },
+                  );
+                },
               ),
               CcIconButton.bouncing(
                 icon: Icon(

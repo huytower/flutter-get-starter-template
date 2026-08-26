@@ -18,7 +18,7 @@ class LiabilityDateRow extends StatelessWidget {
     required this.date,
     this.emptyText = '—',
     this.icon,
-    this.iconSize = 16,
+    this.iconSize = 14,
     this.iconColor,
     this.textStyle,
   });
@@ -48,4 +48,3 @@ class LiabilityDateRow extends StatelessWidget {
     );
   }
 }
-
