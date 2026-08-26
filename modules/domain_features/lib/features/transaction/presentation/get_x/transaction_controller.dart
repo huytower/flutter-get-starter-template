@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../guideline/guideline_controller.dart';
@@ -101,6 +102,84 @@ class TransactionController extends CcGetController {
     isHeaderHidden.value = false;
   }
 
+  /// Switches to the appropriate tab based on the detected [intent].
+  void switchToTabForIntent(QuickEntryIntent intent) {
+    switch (intent) {
+      case QuickEntryIntent.expense:
+        if (isSecondaryCardFront.value) toggleCardStack();
+        setTabIndex(0);
+        break;
+      case QuickEntryIntent.income:
+        if (isSecondaryCardFront.value) toggleCardStack();
+        setTabIndex(1);
+        break;
+      case QuickEntryIntent.investment:
+        if (!isSecondaryCardFront.value) toggleCardStack();
+        setTabIndex(2);
+        break;
+      case QuickEntryIntent.debt:
+        if (!isSecondaryCardFront.value) toggleCardStack();
+        setTabIndex(3);
+        break;
+      case QuickEntryIntent.lend:
+        if (!isSecondaryCardFront.value) toggleCardStack();
+        setTabIndex(4);
+        break;
+    }
+  }
+
+  /// Returns the controller backing the tab relevant to [intent].
+  dynamic getQuickEntryControllerForIntent(QuickEntryIntent intent) {
+    switch (intent) {
+      case QuickEntryIntent.expense:
+        return Get.isRegistered<ExpenseFormController>()
+            ? Get.find<ExpenseFormController>()
+            : null;
+      case QuickEntryIntent.income:
+        return Get.isRegistered<IncomeFormController>()
+            ? Get.find<IncomeFormController>()
+            : null;
+      case QuickEntryIntent.investment:
+        return Get.isRegistered<InvestmentFormController>()
+            ? Get.find<InvestmentFormController>()
+            : null;
+      case QuickEntryIntent.debt:
+        return Get.isRegistered<LiabilityFormController>()
+            ? Get.find<LiabilityFormController>()
+            : null;
+      case QuickEntryIntent.lend:
+        return Get.isRegistered<LendFormController>()
+            ? Get.find<LendFormController>()
+            : null;
+    }
+  }
+
+  /// Returns the controller backing a specific [tab].
+  dynamic getQuickEntryControllerForTab(TransactionTabKind tab) {
+    switch (tab) {
+      case TransactionTabKind.expense:
+        return Get.isRegistered<ExpenseFormController>()
+            ? Get.find<ExpenseFormController>()
+            : null;
+      case TransactionTabKind.income:
+        return Get.isRegistered<IncomeFormController>()
+            ? Get.find<IncomeFormController>()
+            : null;
+      case TransactionTabKind.investment:
+        return Get.isRegistered<InvestmentFormController>()
+            ? Get.find<InvestmentFormController>()
+            : null;
+      case TransactionTabKind.liability:
+        return Get.isRegistered<LiabilityFormController>()
+            ? Get.find<LiabilityFormController>()
+            : null;
+      case TransactionTabKind.lend:
+        return Get.isRegistered<LendFormController>()
+            ? Get.find<LendFormController>()
+            : null;
+    }
+  }
+
   /// Temporarily shows the wallet summary in place of the title for 2 seconds.
   void flashWalletSummary() {
     showWalletSummaryTemporarily.value = true;
@@ -186,8 +265,8 @@ class TransactionController extends CcGetController {
       // the "Ví" total shown in the header — matches [_liquidOnly] in
       // TransactionFormController.
       walletTotal.value = balances
-          .where((b) => b.wallet.type != WalletType.investment)
-          .fold<int>(0, (sum, b) => sum + b.bookBalance);
+          .where((balance) => balance.wallet.type != WalletType.investment)
+          .fold<int>(0, (sum, balance) => sum + balance.bookBalance);
     }, (_) {});
   }
 

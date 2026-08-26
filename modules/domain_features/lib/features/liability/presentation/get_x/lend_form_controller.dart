@@ -36,6 +36,8 @@ class LendFormController extends LiabilityBaseFormController {
 
   @override
   final String direction = LiabilityDirection.lend;
+  @override
+  String get quickEntryDirection => direction;
 
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   @override

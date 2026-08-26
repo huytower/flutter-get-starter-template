@@ -10,9 +10,11 @@ import '../../../../core/di/di.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
+import '../../../liability/domain/entities/liability_entity.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import '../widgets/cloud_consent_sheet.dart';
+import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
 
 /// Shared "AI Smart Entry" quick-entry capability: a free-text field with
@@ -78,7 +80,7 @@ mixin QuickEntryMixin on TransactionFormController {
     }
   }
 
-  /// Call from the host's `onReset`.
+  /// Bumps the generation to invalidate any in-flight cloud call.
   void resetQuickEntry() {
     pendingPrefillCategoryId.value = null;
     quickEntrySuggestion.value = null;
@@ -87,6 +89,11 @@ mixin QuickEntryMixin on TransactionFormController {
     _quickEntryGeneration++;
     isParsingQuickEntry.value = false;
   }
+
+  /// Direction string (e.g. 'borrow'/'lend') for dual-direction forms like
+  /// Liability. Used by the cross-tab intent switcher to decide if a
+  /// switch is needed even within the same tab kind.
+  String get quickEntryDirection => '';
 
   /// Reloads the category cache used to label a resolved `categoryId`. Must
   /// be re-called whenever [quickEntryCategoryGroupIds] changes at runtime
@@ -98,18 +105,18 @@ mixin QuickEntryMixin on TransactionFormController {
         result
             .tryGetSuccess()
             ?.where(
-              (c) =>
-                  c.isEnabled &&
-                  c.type == quickEntryCategoryType &&
-                  (groupIds == null || groupIds.contains(c.groupId)),
+              (category) =>
+                  category.isEnabled &&
+                  category.type == quickEntryCategoryType &&
+                  (groupIds == null || groupIds.contains(category.groupId)),
             )
             .toList() ??
         [];
   }
 
   CategoryEntity? _findQuickEntryCategory(String id) {
-    for (final c in _quickEntryCategories) {
-      if (c.id == id) return c;
+    for (final category in _quickEntryCategories) {
+      if (category.id == id) return category;
     }
     return null;
   }
@@ -154,7 +161,6 @@ mixin QuickEntryMixin on TransactionFormController {
       quickEntrySuggestion.value = null;
       return;
     }
-    '[AI_PARSING] 🔍 Running local parse | text="$text"'.Log('QuickEntryMixin');
     final local = await getIt<ParseQuickEntryUseCase>().parseLocally(
       text,
       categoryType: quickEntryCategoryType,
@@ -163,7 +169,7 @@ mixin QuickEntryMixin on TransactionFormController {
     if (_quickEntryDisposed || text != quickEntryController.text.trim()) {
       return;
     }
-    '[AI_PARSING] ✅ Local parse completed | isComplete=${local.isComplete} | result=$local'
+    '[AI_PARSING] ✅ Local parse completed | isComplete=${local.isComplete} | result=${local.toJson()}'
         .Log('QuickEntryMixin');
     quickEntrySuggestion.value = local.isComplete ? local : null;
   }
@@ -227,6 +233,57 @@ mixin QuickEntryMixin on TransactionFormController {
     '[AI_PARSING] 🚀 Submitting quick entry | text="$text"'.Log(
       'QuickEntryMixin',
     );
+
+    // Intent detection for cross-tab switching
+    final intent = detectQuickEntryIntent(text);
+    if (intent != null) {
+      final dynamic txController = Get.find<TransactionController>();
+      bool isMismatch = false;
+      switch (intent) {
+        case QuickEntryIntent.expense:
+          if (quickEntryCategoryType != CategoryType.expense) isMismatch = true;
+          break;
+        case QuickEntryIntent.income:
+          if (quickEntryCategoryType != CategoryType.income) isMismatch = true;
+          break;
+        case QuickEntryIntent.investment:
+          if (quickEntryCategoryType != CategoryType.investment) {
+            isMismatch = true;
+          }
+          break;
+        case QuickEntryIntent.debt:
+          if (quickEntryCategoryType != CategoryType.debtLoan ||
+              quickEntryDirection != LiabilityDirection.borrow) {
+            isMismatch = true;
+          }
+          break;
+        case QuickEntryIntent.lend:
+          if (quickEntryCategoryType != CategoryType.debtLoan ||
+              quickEntryDirection != LiabilityDirection.lend) {
+            isMismatch = true;
+          }
+          break;
+      }
+
+      if (isMismatch) {
+        '[AI_PARSING] 🔄 Intent mismatch | switching to $intent'.Log(
+          'QuickEntryMixin',
+        );
+        txController.switchToTabForIntent(intent);
+
+        // Handoff to the target tab's controller
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          final dynamic targetController = txController
+              .getQuickEntryControllerForIntent(intent);
+          if (targetController != null && targetController != this) {
+            targetController.quickEntryController.text = text;
+            unawaited(targetController.submitQuickEntry(context));
+          }
+        });
+        return;
+      }
+    }
+
     _quickEntryDebounce?.cancel();
     quickEntryErrorKey.value = null;
     isParsingQuickEntry.value = true;
@@ -239,9 +296,20 @@ mixin QuickEntryMixin on TransactionFormController {
       groupIds: quickEntryCategoryGroupIds,
     );
     if (!isCurrentGeneration()) return;
-    '[AI_PARSING] 📍 Local fallback ready | result=$local'.Log(
+    '[AI_PARSING] 📍 Local fallback ready | result=${local.toJson()}'.Log(
       'QuickEntryMixin',
     );
+
+    // SHORT-CIRCUIT: If local parsing already resolved the mandatory fields,
+    // skip cloud escalation to save cost, latency, and avoid the consent popup.
+    if (local.isComplete) {
+      '[AI_PARSING] ✅ Local parse was complete | skipping cloud escalation'.Log(
+        'QuickEntryMixin',
+      );
+      resetParsingIfCurrent();
+      quickEntrySuggestion.value = local;
+      return;
+    }
 
     if (!await _passCloudGate(
       context: context,
@@ -275,7 +343,7 @@ mixin QuickEntryMixin on TransactionFormController {
         ? cloudResult
         : local;
 
-    '[AI_PARSING] ✨ Final suggestion resolved | cloudSuccess=${cloudResult != null} | result=$suggestion'
+    '[AI_PARSING] ✨ Final suggestion resolved | cloudSuccess=${cloudResult != null} | result=${suggestion.toJson()}'
         .Log('QuickEntryMixin');
 
     if (suggestion.isEmpty) {
@@ -350,9 +418,18 @@ mixin QuickEntryMixin on TransactionFormController {
       groupIds: quickEntryCategoryGroupIds,
     );
     if (!isCurrentGeneration()) return;
-    '[AI_PARSING] 📍 OCR-based local fallback ready | result=$local'.Log(
-      'QuickEntryMixin',
-    );
+    '[AI_PARSING] 📍 OCR-based local fallback ready | result=${local.toJson()}'
+        .Log('QuickEntryMixin');
+
+    // SHORT-CIRCUIT: If OCR + Local parsing resolved the image perfectly, skip cloud.
+    if (local.isComplete) {
+      '[AI_PARSING] ✅ OCR parse was complete | skipping cloud escalation'.Log(
+        'QuickEntryMixin',
+      );
+      resetParsingIfCurrent();
+      quickEntrySuggestion.value = local;
+      return;
+    }
 
     if (!await _passCloudGate(
       context: context,
@@ -382,7 +459,7 @@ mixin QuickEntryMixin on TransactionFormController {
         ? cloudResult
         : local;
 
-    '[AI_PARSING] ✨ Final image suggestion resolved | cloudSuccess=${cloudResult != null} | result=$suggestion'
+    '[AI_PARSING] ✨ Final image suggestion resolved | cloudSuccess=${cloudResult != null} | result=${suggestion.toJson()}'
         .Log('QuickEntryMixin');
 
     if (suggestion.isEmpty) {
@@ -446,10 +523,15 @@ mixin QuickEntryMixin on TransactionFormController {
   /// Pre-fills whichever fields [result] resolved; a null field is left at
   /// the form's existing default for the user to fill in by hand.
   void applyQuickEntryParse(QuickEntryParseResult result) {
-    '[AI_PARSING] 📥 Applying parse result | result=$result'.Log(
+    '[AI_PARSING] 📥 Applying parse result | result=${result.toJson()}'.Log(
       'QuickEntryMixin',
     );
-    if (result.amount != null) amountStr.value = result.amount!.toString();
+    if (result.amount != null) {
+      amountStr.value = result.amount!.toString();
+    } else {
+      amountStr.value = '0';
+    }
+
     if (result.categoryId != null) {
       applyQuickEntryCategory(result.categoryId!);
     }

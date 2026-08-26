@@ -53,6 +53,8 @@ class LiabilityFormController extends LiabilityBaseFormController {
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 
   final String direction = LiabilityDirection.borrow;
+  @override
+  String get quickEntryDirection => direction;
 
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   @override

@@ -2,6 +2,7 @@ import 'package:string_similarity/string_similarity.dart';
 
 import '../../features/category/domain/entities/category_entity.dart';
 import 'merchant_match_helper.dart';
+import 'quick_entry_alias_dataset.dart';
 import 'quick_entry_parse_result.dart';
 
 export 'quick_entry_parse_result.dart';
@@ -14,13 +15,16 @@ final Map<String, int> _amountUnitMultipliers = {
   'nghin': _thousand,
   'tr': _million,
   'trieu': _million,
+  'd': 1,
+  'vnd': 1,
+  'dong': 1,
 };
 
 // Grouped-thousands form (e.g. "1.500.000") is tried before the plain
 // digit-run fallback — without it, "1.500.000" mis-parsed as 1500, since
 // allMatches only consumes one `[.,]` group per match.
 final RegExp _amountPattern = RegExp(
-  r'(\d{1,3}(?:[.,]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|tr|trieu|d|vnd)?',
+  r'(\d{1,3}(?:[.,]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|tr|trieu|d|vnd|dong)?',
 );
 
 /// Parses a Vietnamese money shorthand out of [text] — `50k`, `50.000`,
@@ -42,8 +46,8 @@ int? parseVietnameseAmount(String text) {
   if (matches.isEmpty) return null;
 
   RegExpMatch? lastWithUnit;
-  for (final m in matches) {
-    if (m.group(2) != null) lastWithUnit = m;
+  for (final match in matches) {
+    if (match.group(2) != null) lastWithUnit = match;
   }
   final match = lastWithUnit ?? matches.first;
 
@@ -57,7 +61,7 @@ int? parseVietnameseAmount(String text) {
     return value;
   }
 
-  if (unit == 'd' || unit == 'vnd') {
+  if (unit == 'd' || unit == 'vnd' || unit == 'dong') {
     final digitsOnly = numeric.replaceAll(RegExp('[.,]'), '');
     return int.tryParse(digitsOnly);
   }
@@ -72,32 +76,54 @@ int? parseVietnameseAmount(String text) {
 /// Informal/English shorthand mapped to a seed category id, checked before
 /// the fuzzy label match — these words don't reliably fuzzy-match their
 /// formal Vietnamese label (e.g. "cafe" vs. "cà phê").
-const Map<String, String> _categoryKeywordAliases = {
-  'cafe': 'c2',
-  'coffee': 'c2',
-  'ca phe': 'c2',
-  'xang': 'c6',
-  'do xang': 'c6',
-  'taxi': 'c5',
-  'grab': 'c5',
-  'com trua': 'c4',
-  'an trua': 'c4',
-  'an toi': 'c4',
-  'dien': 'c9',
-  'tien dien': 'c9',
-  'wifi': 'c10',
-  'dien thoai': 'c11',
-  'nap the': 'c11',
-  'thue nha': 'c12',
-  'thuoc': 'c18',
-  'bac si': 'c17',
-  'kham benh': 'c17',
-  'gym': 'c20',
-  'xem phim': 'c24',
-  'du lich': 'c25',
-  'quan ao': 'c30',
-  'cat toc': 'c39',
-};
+const Map<String, String> _categoryKeywordAliases =
+    QuickEntryAliasDataset.categoryKeywords;
+
+/// High-level intent categories based on Vietnamese keywords.
+enum QuickEntryIntent { expense, income, investment, debt, lend }
+
+/// Detects the user's intent based on common Vietnamese and English action
+/// verbs and prefixes — e.g. "nhận tiền", "income" implies Income,
+/// regardless of the specific category keyword.
+QuickEntryIntent? detectQuickEntryIntent(String text) {
+  final normalized = stripVietnameseDiacritics(text.toLowerCase());
+
+  // 1. Check for high-priority root intents (e.g., "đầu tư", "income")
+  for (final entry in QuickEntryAliasDataset.intentRoots.entries) {
+    if (entry.value.any((keyword) => normalized.contains(keyword))) {
+      return entry.key;
+    }
+  }
+
+  // 2. Identify the primary direction of the action (Inflow vs. Outflow)
+  QuickEntryIntent? detectedDirection;
+  for (final verbEntry in QuickEntryAliasDataset.directionalVerbs.entries) {
+    if (normalized.contains(verbEntry.key)) {
+      detectedDirection = verbEntry.value;
+      // Continue to find the longest matching verb (e.g., "cho vay" vs. "vay")
+    }
+  }
+
+  // 3. Resolve ambiguous contexts (like "lì xì" or "vay")
+  for (final contextEntry in QuickEntryAliasDataset.ambiguousContexts.entries) {
+    if (normalized.contains(contextEntry.key)) {
+      if (detectedDirection == null) {
+        return contextEntry.value['default'];
+      }
+
+      final isInflow =
+          detectedDirection == QuickEntryIntent.income ||
+          detectedDirection == QuickEntryIntent.debt;
+
+      return isInflow
+          ? contextEntry.value['inflow']
+          : contextEntry.value['outflow'];
+    }
+  }
+
+  // 4. Final fallback to the detected direction
+  return detectedDirection;
+}
 
 /// Shortest normalized text worth attempting a category match on.
 const int _minCategoryQueryLength = 2;
@@ -123,39 +149,44 @@ String? matchCategoryIdFromText({
   if (normalizedText.length < _minCategoryQueryLength) return null;
   if (categories.isEmpty) return null;
 
-  for (final entry in _sortedCategoryKeywordAliases) {
-    if (normalizedText.contains(entry.key) &&
-        categories.any((c) => c.id == entry.value)) {
-      return entry.value;
+  for (final aliasEntry in _sortedCategoryKeywordAliases) {
+    if (normalizedText.contains(aliasEntry.key) &&
+        categories.any((category) => category.id == aliasEntry.value)) {
+      return aliasEntry.value;
     }
   }
 
   final normalizedLabels = {
-    for (final c in categories) c.id: normalizeMerchantText(categoryLabels(c)),
+    for (final category in categories)
+      category.id: normalizeMerchantText(categoryLabels(category)),
   };
 
   String? bestContainmentMatch;
   int bestContainmentLength = 0;
-  for (final c in categories) {
-    final label = normalizedLabels[c.id]!;
+  for (final category in categories) {
+    final label = normalizedLabels[category.id]!;
     if (label.isEmpty) continue;
-    if (normalizedText.contains(label) && label.length > bestContainmentLength) {
-      bestContainmentMatch = c.id;
+    if (normalizedText.contains(label) &&
+        label.length > bestContainmentLength) {
+      bestContainmentMatch = category.id;
       bestContainmentLength = label.length;
     }
   }
   if (bestContainmentMatch != null) return bestContainmentMatch;
 
-  final candidateIds = categories.map((c) => c.id).toList();
+  final candidateIds = categories.map((category) => category.id).toList();
   final candidateLabels = candidateIds
-      .map((id) => normalizedLabels[id]!)
+      .map((categoryId) => normalizedLabels[categoryId]!)
       .toList();
-  final result = StringSimilarity.findBestMatch(normalizedText, candidateLabels);
-  if (result.bestMatch.rating == null ||
-      result.bestMatch.rating! < fuzzyThreshold) {
+  final matchResult = StringSimilarity.findBestMatch(
+    normalizedText,
+    candidateLabels,
+  );
+  if (matchResult.bestMatch.rating == null ||
+      matchResult.bestMatch.rating! < fuzzyThreshold) {
     return null;
   }
-  return candidateIds[result.bestMatchIndex];
+  return candidateIds[matchResult.bestMatchIndex];
 }
 
 /// Runs the full local (offline) parse — see [ParseQuickEntryUseCase] for
@@ -165,6 +196,17 @@ QuickEntryParseResult parseQuickEntryTextLocally({
   required List<CategoryEntity> categories,
   required String Function(CategoryEntity) categoryLabels,
 }) {
+  final normalized = stripVietnameseDiacritics(text.toLowerCase());
+  DateTime date = DateTime.now();
+
+  final dateOffsets = QuickEntryAliasDataset.dateRelativeOffsets;
+  for (final offsetEntry in dateOffsets.entries) {
+    if (normalized.contains(offsetEntry.key)) {
+      date = date.subtract(Duration(days: offsetEntry.value));
+      break;
+    }
+  }
+
   return QuickEntryParseResult(
     amount: parseVietnameseAmount(text),
     categoryId: matchCategoryIdFromText(
@@ -172,5 +214,6 @@ QuickEntryParseResult parseQuickEntryTextLocally({
       categories: categories,
       categoryLabels: categoryLabels,
     ),
+    date: date,
   );
 }

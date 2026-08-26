@@ -68,12 +68,14 @@ class ParseQuickEntryUseCase {
 
     final prompt =
         'You extract a Vietnamese ${_amountKindPhrase(categoryType)} '
-        'amount in VND, a category id, a transaction date (only if one is '
-        'actually stated, e.g. "hôm qua"/"yesterday"), and a short note '
+        'amount in VND, a category id, a transaction date, and a short note '
         '(merchant/item) from a short free-text or dictated quick-entry '
         'string. '
         'Text: "$text". '
         '${_todayReferenceSentence()} '
+        'IMPORTANT: If the text contains relative dates like "hôm qua" (yesterday), '
+        '"hôm kia" (the day before yesterday), or specific dates, resolve them '
+        'relative to the provided today\'s date. '
         '${_buildCategoryOptionsPrompt(categories)}';
 
     '[AI_PARSING] ☁️ Gemini Text Prompt: \n$prompt'.Log(
@@ -242,7 +244,7 @@ class ParseQuickEntryUseCase {
     final merged = QuickEntryParseResult(
       amount: localResult.amount ?? cloudResult.amount,
       categoryId: localResult.categoryId ?? cloudResult.categoryId,
-      date: localResult.date ?? cloudResult.date,
+      date: cloudResult.date ?? localResult.date,
       note: localResult.note ?? cloudResult.note,
     );
     return merged.isEmpty ? null : merged;

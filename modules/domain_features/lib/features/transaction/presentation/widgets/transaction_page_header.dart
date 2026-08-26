@@ -149,26 +149,10 @@ class TransactionPageHeader extends StatelessWidget {
   /// `Get.isRegistered` checks below are defensive belt-and-braces, not
   /// load-bearing.
   QuickEntryMixin? _quickEntryControllerFor(TransactionTabKind tab) {
-    switch (tab) {
-      case TransactionTabKind.expense:
-        return expenseFormController;
-      case TransactionTabKind.income:
-        return Get.isRegistered<IncomeFormController>()
-            ? Get.find<IncomeFormController>()
-            : null;
-      case TransactionTabKind.investment:
-        return Get.isRegistered<InvestmentFormController>()
-            ? Get.find<InvestmentFormController>()
-            : null;
-      case TransactionTabKind.liability:
-        return Get.isRegistered<LiabilityFormController>()
-            ? Get.find<LiabilityFormController>()
-            : null;
-      case TransactionTabKind.lend:
-        return Get.isRegistered<LendFormController>()
-            ? Get.find<LendFormController>()
-            : null;
+    if (tab == TransactionTabKind.expense && expenseFormController != null) {
+      return expenseFormController;
     }
+    return controller.getQuickEntryControllerForTab(tab);
   }
 
   Widget _buildAiComponents(
