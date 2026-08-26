@@ -83,7 +83,7 @@ class LiabilityListController extends CcGetController {
         loans.removeAt(index);
 
         if (Get.isRegistered<BudgetAllocationController>()) {
-          Get.find<BudgetAllocationController>().loadLiabilities();
+          Get.find<BudgetAllocationController>().loadAll();
         }
 
         // Refresh LiabilityForm if it's open

@@ -19,8 +19,8 @@ import '../get_x/liability_base_form_controller.dart';
 import '../get_x/liability_form_controller.dart';
 import '../get_x/liability_list_controller.dart';
 
-/// Consolidated Lend form: handles recording transactions against
-/// existing loans (Collect) or completing a new loan's details (Lend).
+/// Consolidated Lend form: handles completing a new loan's details (Lend)
+/// or recording additional lending against existing loan records.
 @lazySingleton
 class LendFormController extends LiabilityBaseFormController {
   @override
@@ -36,8 +36,6 @@ class LendFormController extends LiabilityBaseFormController {
 
   @override
   final String direction = LiabilityDirection.lend;
-  @override
-  final Rx<LiabilityAction> action = LiabilityAction.initiate.obs;
 
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   @override
@@ -198,14 +196,6 @@ class LendFormController extends LiabilityBaseFormController {
     }
     disposeQuickEntry();
     super.onClose();
-  }
-
-  @override
-  void setAction(LiabilityAction value) {
-    if (action.value == value) return;
-    action.value = value;
-    // We no longer clear selection or reload because both sub-segments
-    // share the exact same list of categories/loans.
   }
 
   void setCategory(CategoryEntity category) {
@@ -390,6 +380,7 @@ class LendFormController extends LiabilityBaseFormController {
     if (loan.principalAmount > 0) {
       final params = RecordLoanPaymentParams(
         loanId: loan.id,
+        isSettlement: false,
         walletId: selectedWalletId.value ?? '',
         amount: int.tryParse(amountStr.value) ?? 0,
         note: composeNote(),

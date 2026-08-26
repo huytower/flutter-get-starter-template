@@ -178,10 +178,10 @@ class AddLiabilitySheetController extends CcGetController {
           );
           nameError.value = null;
 
-          // Refresh related lists immediately
-          if (Get.isRegistered<BudgetAllocationController>()) {
-            Get.find<BudgetAllocationController>().loadLiabilities();
-          }
+      // Refresh related lists immediately
+      if (Get.isRegistered<BudgetAllocationController>()) {
+        Get.find<BudgetAllocationController>().loadAll();
+      }
           if (Get.isRegistered<LiabilityListController>()) {
             Get.find<LiabilityListController>().load();
           }

@@ -1,4 +1,3 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,7 +8,6 @@ import 'liability_form_controller.dart';
 
 abstract class LiabilityBaseFormController extends TransactionFormController
     with QuickEntryMixin {
-  Rx<LiabilityAction> get action;
   RxList<LiabilityBalanceEntity> get mergedItems;
   RxBool get isLoadingMerged;
   RxnString get selectedLoanId;
@@ -24,7 +22,6 @@ abstract class LiabilityBaseFormController extends TransactionFormController
   String get direction;
 
   void selectLoan(LiabilityBalanceEntity balance);
-  void setAction(LiabilityAction value);
   void setRepaymentMethod(String value);
   void setReminderBeforeDueDate(bool value);
   Future<void> pickFinalDueDate(BuildContext context);

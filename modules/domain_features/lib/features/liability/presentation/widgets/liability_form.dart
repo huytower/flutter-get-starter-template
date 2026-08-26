@@ -74,22 +74,6 @@ class LiabilityForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Obx(() {
-          final bool isInitiate =
-              controller.action.value == LiabilityAction.initiate;
-          return LiabilityPillToggle(
-            selectedIndex: isInitiate ? 0 : 1,
-            firstLabel: el.tr(
-              CcLocaleKeys.transaction_liability_direction_borrow,
-            ),
-            secondLabel: el.tr(CcLocaleKeys.transaction_record_repay),
-            activeColor: accentColor,
-            onChanged: (index) => controller.setAction(
-              index == 0 ? LiabilityAction.initiate : LiabilityAction.settle,
-            ),
-          );
-        }),
-        const CcSpaceSM(),
         LiabilityAssetSelector(
           controller: controller,
           activeColor: accentColor,
@@ -104,9 +88,18 @@ class LiabilityForm extends StatelessWidget {
               _buildWalletSection(context, controller, accentColor),
               const CcSpaceSM(),
               Obx(() {
-                if (controller.action.value != LiabilityAction.initiate) {
+                final loan = controller.mergedItems
+                    .firstWhereOrNull(
+                      (b) => b.liability.id == controller.selectedLoanId.value,
+                    )
+                    ?.liability;
+
+                // Only show repayment plan for new/uninitialized loans.
+                // For existing loans, we are just borrowing more.
+                if (loan == null || loan.principalAmount > 0) {
                   return const SizedBox.shrink();
                 }
+
                 return Column(
                   children: [
                     LiabilityRepaymentMethodSection(
@@ -145,10 +138,13 @@ class LiabilityForm extends StatelessWidget {
     Color accentColor,
   ) {
     return Obx(() {
-      final bool isInitiate =
-          controller.action.value == LiabilityAction.initiate;
+      final loan = controller.mergedItems
+          .firstWhereOrNull(
+            (b) => b.liability.id == controller.selectedLoanId.value,
+          )
+          ?.liability;
 
-      final label = !isInitiate
+      final label = (loan != null && loan.principalAmount > 0)
           ? el.tr(CcLocaleKeys.transaction_amount)
           : el.tr(CcLocaleKeys.transaction_liability_amount_borrow_label);
 
@@ -174,31 +170,22 @@ class LiabilityForm extends StatelessWidget {
     LiabilityFormController controller,
     Color accentColor,
   ) {
-    return Obx(() {
-      final bool isInitiate =
-          controller.action.value == LiabilityAction.initiate;
-
-      final label = isInitiate
-          ? el.tr(
-              CcLocaleKeys.transaction_liability_wallet_borrow_label,
-            ) // Receiving wallet
-          : el.tr(CcLocaleKeys.transaction_source_debt); // Repayment source
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CcFormLabel(text: label),
-          const CcSpaceXS(),
-          WalletStripCard(
-            wallets: controller.wallets,
-            selectedWalletId: controller.selectedWalletId.value,
-            activeColor: accentColor,
-            defaultBgColor: context.verticalGradient(accentColor),
-            onWalletSelected: controller.setWalletId,
-          ),
-        ],
-      );
-    });
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcFormLabel(
+          text: el.tr(CcLocaleKeys.transaction_liability_wallet_borrow_label),
+        ),
+        const CcSpaceXS(),
+        WalletStripCard(
+          wallets: controller.wallets,
+          selectedWalletId: controller.selectedWalletId.value,
+          activeColor: accentColor,
+          defaultBgColor: context.verticalGradient(accentColor),
+          onWalletSelected: controller.setWalletId,
+        ),
+      ],
+    );
   }
 
   Widget _buildSubmitButton(
@@ -207,11 +194,15 @@ class LiabilityForm extends StatelessWidget {
     Color accentColor,
   ) {
     return Obx(() {
-      final bool isInitiate =
-          controller.action.value == LiabilityAction.initiate;
-      final text = isInitiate
-          ? el.tr(CcLocaleKeys.transaction_record_liability)
-          : el.tr(CcLocaleKeys.transaction_record_repay);
+      final loan = controller.mergedItems
+          .firstWhereOrNull(
+            (b) => b.liability.id == controller.selectedLoanId.value,
+          )
+          ?.liability;
+
+      final text = (loan != null && loan.principalAmount > 0)
+          ? el.tr(CcLocaleKeys.transaction_record_liability) // Borrow more
+          : el.tr(CcLocaleKeys.transaction_record_liability); // Initiate
 
       return TransactionSubmitButton(
         text: text,
@@ -219,7 +210,7 @@ class LiabilityForm extends StatelessWidget {
         isEnabled: controller.canSubmit,
         onTap: () => controller.submitForm(context),
         activeColor: accentColor,
-        leadingIcon: isInitiate ? Icons.call_received : Icons.call_made,
+        leadingIcon: Icons.call_received,
         leadingIconSize: 18,
       );
     });

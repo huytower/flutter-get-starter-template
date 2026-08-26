@@ -37,10 +37,8 @@ class LoanInstallmentDraft {
   }
 }
 
-enum LiabilityAction { initiate, settle }
-
-/// Consolidated Liability form: handles recording transactions against
-/// existing loans (Repay) or completing a new loan's details (Borrow).
+/// Consolidated Liability form: handles completing a new loan's details (Borrow)
+/// or recording additional borrowings against existing loans.
 @lazySingleton
 class LiabilityFormController extends LiabilityBaseFormController {
   @override
@@ -55,7 +53,6 @@ class LiabilityFormController extends LiabilityBaseFormController {
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 
   final String direction = LiabilityDirection.borrow;
-  final Rx<LiabilityAction> action = LiabilityAction.initiate.obs;
 
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   @override
@@ -205,14 +202,6 @@ class LiabilityFormController extends LiabilityBaseFormController {
     }
     disposeQuickEntry();
     super.onClose();
-  }
-
-  @override
-  void setAction(LiabilityAction value) {
-    if (action.value == value) return;
-    action.value = value;
-    // We no longer clear selection or reload because both sub-segments
-    // share the exact same list of categories/loans.
   }
 
   void setCategory(CategoryEntity category) {
@@ -390,6 +379,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     if (loan.principalAmount > 0) {
       final params = RecordLoanPaymentParams(
         loanId: loan.id,
+        isSettlement: false,
         walletId: selectedWalletId.value ?? '',
         amount: int.tryParse(amountStr.value) ?? 0,
         note: composeNote(),
