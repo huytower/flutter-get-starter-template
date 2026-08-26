@@ -9,7 +9,6 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/ai_advice_cache_datasource.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
-import '../../../transaction/presentation/widgets/cloud_consent_sheet.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
@@ -219,13 +218,6 @@ class ReportController extends CcGetController {
 
     final prefs = getIt<AiFallbackPreferenceDataSource>();
     if (!await prefs.isConsentGiven()) {
-      if (!context.mounted) return;
-      final agreed = await _promptCloudConsent(context);
-      if (isClosed) return;
-      if (!agreed) {
-        isGeneratingAdvice.value = false;
-        return;
-      }
       await prefs.setConsentGiven(true);
     }
 
@@ -246,11 +238,6 @@ class ReportController extends CcGetController {
       return;
     }
     aiAdvice.value = result;
-  }
-
-  Future<bool> _promptCloudConsent(BuildContext context) async {
-    final result = await CloudConsentSheet.show(context);
-    return result ?? false;
   }
 
   void setWalletFilter(String walletId, String walletName) {

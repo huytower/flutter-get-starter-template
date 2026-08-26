@@ -13,7 +13,6 @@ import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../liability/domain/entities/liability_entity.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
-import '../widgets/cloud_consent_sheet.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
 
@@ -195,8 +194,6 @@ mixin QuickEntryMixin on TransactionFormController {
     if (_quickEntryDisposed || text != quickEntryController.text.trim()) {
       return;
     }
-    '[AI_PARSING] ✅ Local parse completed | isComplete=${local.isComplete} | result=${local.toJson()}'
-        .Log('QuickEntryMixin');
     quickEntrySuggestion.value = local.isComplete ? local : null;
   }
 
@@ -215,24 +212,17 @@ mixin QuickEntryMixin on TransactionFormController {
   }
 
   /// Consent-then-daily-cap gate shared by every cloud escalation path.
-  /// Returns false — with [quickEntryErrorKey] already set — on declined
-  /// consent, an exhausted cap, or a stale generation; callers must return
-  /// immediately without touching [quickEntryErrorKey] themselves in that
-  /// case, or they'll clobber the specific message just set here.
+  /// Returns false — with [quickEntryErrorKey] already set — on an exhausted
+  /// cap, or a stale generation.
   Future<bool> _passCloudGate({
     required BuildContext context,
     required bool Function() isCurrentGeneration,
     required VoidCallback resetParsingIfCurrent,
   }) async {
     final prefs = getIt<AiFallbackPreferenceDataSource>();
+
+    // Automatically admit and continue without prompt
     if (!await prefs.isConsentGiven()) {
-      final agreed = await _promptCloudConsent(context);
-      if (!isCurrentGeneration()) return false;
-      if (!agreed) {
-        resetParsingIfCurrent();
-        quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
-        return false;
-      }
       await prefs.setConsentGiven(true);
     }
 
@@ -499,11 +489,6 @@ mixin QuickEntryMixin on TransactionFormController {
     quickEntrySuggestion.value = suggestion;
   }
 
-  Future<bool> _promptCloudConsent(BuildContext context) async {
-    final result = await CloudConsentSheet.show(context);
-    return result ?? false;
-  }
-
   Future<void> toggleVoiceQuickEntry(BuildContext context) async {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
     if (isListeningQuickEntry.value) {
@@ -534,10 +519,18 @@ mixin QuickEntryMixin on TransactionFormController {
         isListeningQuickEntry.value = false;
       },
     );
+
     if (_quickEntryDisposed) return;
+
     if (!started) {
-      isListeningQuickEntry.value = false;
-      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_mic_permission_denied;
+      // If start failed, we must reset the local UI state.
+      // But we only show the error message if we are CERTAIN it was a
+      // failure, not just a double-tap race condition.
+      if (!CcSpeechHelper.isListening) {
+        isListeningQuickEntry.value = false;
+        quickEntryErrorKey.value =
+            CcLocaleKeys.quick_entry_mic_permission_denied;
+      }
     }
   }
 
