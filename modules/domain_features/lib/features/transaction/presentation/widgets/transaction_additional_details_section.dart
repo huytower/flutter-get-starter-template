@@ -86,29 +86,25 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
   Widget _buildNoteField(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return CcNoteInputField(
-      controller: noteController,
-      hintText: el.tr(CcLocaleKeys.transaction_note_hint),
-      maxLines: 3,
-      onTap: onNoteTap,
-      color: scheme.surfaceVariant.withAlpha(80),
-      borderColor: scheme.outlineVariant.withAlpha(10),
-      height: context.respDim(45),
-      margin: EdgeInsets.zero,
-      prefixIcon: Padding(
-        padding: EdgeInsets.only(
-          left: context.respPadding(CcPaddingParams.SPACE_SM),
-          right: context.respPadding(CcPaddingParams.SPACE_XS),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcFormLabel(
+          text: el.tr(CcLocaleKeys.transaction_note),
+          color: scheme.onSurfaceVariant.withAlpha(70),
         ),
-        child: CcText(
-          el.tr(CcLocaleKeys.transaction_note),
-          textAlign: TextAlign.start,
-          align: Alignment.center,
-          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            color: scheme.onSurfaceVariant.withAlpha(70),
-          ),
+        const CcSpaceXS(),
+        CcNoteInputField(
+          controller: noteController,
+          hintText: el.tr(CcLocaleKeys.transaction_note_hint),
+          maxLines: 3,
+          onTap: onNoteTap,
+          color: scheme.surfaceVariant.withAlpha(80),
+          borderColor: scheme.outlineVariant.withAlpha(10),
+          height: context.respDim(45),
+          margin: EdgeInsets.zero,
         ),
-      ),
+      ],
     );
   }
 }

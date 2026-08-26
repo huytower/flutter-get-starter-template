@@ -56,7 +56,9 @@ class AddLiquidSheetController extends CcGetController {
   bool get isCash => _wallet?.type == WalletType.cash;
 
   bool get balanceLocked =>
-      isEditing && _walletController.walletHasTransactions(_wallet!.id);
+      isEditing &&
+      _walletController.walletHasTransactions(_wallet!.id) &&
+      _wallet!.balance != 0;
 
   void init(WalletEntity? wallet) {
     _wallet = wallet;

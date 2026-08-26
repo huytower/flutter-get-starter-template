@@ -45,7 +45,9 @@ class AddInvestmentSheetController extends CcGetController {
 
   /// Opening balance is locked once the asset has any transaction.
   bool get balanceLocked =>
-      isEditing && _walletController.walletHasTransactions(_wallet!.id);
+      isEditing &&
+      _walletController.walletHasTransactions(_wallet!.id) &&
+      _wallet!.balance != 0;
 
   void init(WalletEntity? wallet, {CategoryEntity? category}) {
     _wallet = wallet;

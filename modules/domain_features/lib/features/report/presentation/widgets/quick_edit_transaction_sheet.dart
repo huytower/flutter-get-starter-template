@@ -257,24 +257,6 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
       height: context.respDim(45),
       margin: EdgeInsets.zero,
       showCopy: false,
-      prefixIcon: Padding(
-        padding: EdgeInsets.only(
-          left: context.respPadding(CcPaddingParams.SPACE_SM),
-          right: context.respPadding(CcPaddingParams.SPACE_XS),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CcText(
-              el.tr(CcLocaleKeys.transaction_note),
-              textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                color: scheme.onSurfaceVariant.withAlpha(70),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
