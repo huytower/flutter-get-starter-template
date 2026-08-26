@@ -5,6 +5,7 @@ import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
@@ -129,7 +130,7 @@ mixin QuickEntryMixin on TransactionFormController {
   String quickEntryResultLabel(QuickEntryParseResult result) {
     final parts = <String>[];
     if (result.amount != null) {
-      parts.add('${formatVndShort(result.amount!)}đ');
+      parts.add(formatVndShort(result.amount!));
     }
     if (result.categoryId != null && quickEntryShowsCategoryInLabel) {
       final category = _findQuickEntryCategory(result.categoryId!);
@@ -497,6 +498,14 @@ mixin QuickEntryMixin on TransactionFormController {
       return;
     }
 
+    // Explicitly check and request microphone permission before showing the
+    // "listening" state or starting the speech engine.
+    final status = await Permission.microphone.request();
+    if (!status.isGranted) {
+      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_mic_permission_denied;
+      return;
+    }
+
     hideKeypad();
     quickEntryErrorKey.value = null;
     isListeningQuickEntry.value = true;
@@ -539,7 +548,11 @@ mixin QuickEntryMixin on TransactionFormController {
   /// asset, a manual pick by design.
   void applyQuickEntryCategory(String categoryId) {
     pendingPrefillCategoryId.value = categoryId;
-    categoryKey.value++;
+    // NOTE: We don't bump categoryKey here anymore. Bumping the key causes
+    // the CategorySelectionSection to dispose and recreate, which can
+    // trigger rebuild loops and destroys the scroll position.
+    // The parent's Obx will already trigger a rebuild of the section with
+    // the new pendingPrefillCategoryId.
   }
 
   /// Pre-fills whichever fields [result] resolved; a null field is left at

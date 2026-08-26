@@ -1,21 +1,29 @@
 import 'package:intl/intl.dart';
 
-/// Formats a VND amount into a short, human-readable form with a magnitude
-/// suffix and two decimal places:
-///   - `>= 1 tỷ` (1e9)  → `1.36tỷ`
-///   - `>= 1 triệu` (1e6) → `1.36tr`
-///   - `>= 1 nghìn` (1e3) → `500.00k`
-///   - otherwise          → the whole number (e.g. `887`)
+/// Formats a VND amount into a short, human-readable form:
+///   - Clean whole numbers: `1tỷ`, `1tr`, `50k`
+///   - Decimal numbers: `1,36tỷ`, `1,2tr`
 ///
-/// Negative amounts keep their sign (e.g. `-1.20tr`).
+/// Negative amounts keep their sign (e.g. `-1,2tr`).
 String formatVndShort(num value) {
   final amount = value.toDouble();
   final sign = amount < 0 ? '-' : '';
   final abs = amount.abs();
 
-  if (abs >= 1e9) return '$sign${(abs / 1e9).toStringAsFixed(2)}tỷ';
-  if (abs >= 1e6) return '$sign${(abs / 1e6).toStringAsFixed(2)}tr';
-  if (abs >= 1e3) return '$sign${(abs / 1e3).toStringAsFixed(2)}k';
+  String format(double val, String unit) {
+    if (val == val.toInt().toDouble()) {
+      return '${val.toInt()}$unit';
+    }
+    // Remove trailing zeros and handle comma separator
+    String s = val.toStringAsFixed(2);
+    if (s.endsWith('.00')) s = s.substring(0, s.length - 3);
+    if (s.contains('.') && s.endsWith('0')) s = s.substring(0, s.length - 1);
+    return '${s.replaceFirst('.', ',')}$unit';
+  }
+
+  if (abs >= 1e9) return '$sign${format(abs / 1e9, 'tỷ')}';
+  if (abs >= 1e6) return '$sign${format(abs / 1e6, 'tr')}';
+  if (abs >= 1e3) return '$sign${format(abs / 1e3, 'k')}';
   return '$sign${abs.toStringAsFixed(0)}';
 }
 

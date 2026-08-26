@@ -48,42 +48,38 @@ class CategorySelectionController extends CcGetController {
 
   void _applyInitialSelection() {
     if (initialId != null) {
-      final cat = getCategoryById(initialId!);
-      if (cat != null) {
-        selectedCategoryId.value = cat.id;
+      final category = getCategoryById(initialId!);
+      if (category != null) {
+        final changed = selectedCategoryId.value != category.id;
+        selectedCategoryId.value = category.id;
         initialId = null;
-        // Ensure parent is in sync with this pre-selection, especially
-        // when parent has null (e.g. after form reset) but we already
-        // have a matching selection from a previous use of this singleton.
-        _reportToParent(cat);
-      }
-    } else if (autoSelectFirstEnabled && categories.isNotEmpty) {
-      // If parent has no selection (initialId was null), we must enforce
-      // the auto-selection or re-report our current selection to sync.
-      if (selectedCategoryId.value == null) {
-        final cat = categories.first;
-        selectedCategoryId.value = cat.id;
-        _reportToParent(cat);
-      } else {
-        // Controller was reused and has a selection, but parent has null.
-        // Sync parent to our current selection.
-        final current = getSelectedCategory();
-        if (current != null) {
-          _reportToParent(current);
+        // Only report to parent if it's a new selection to avoid rebuild loops
+        if (changed) {
+          _reportToParent(category);
         }
       }
+    } else if (autoSelectFirstEnabled &&
+        categories.isNotEmpty &&
+        selectedCategoryId.value == null) {
+      // Only auto-select if we don't have a selection yet
+      final category = categories.first;
+      selectedCategoryId.value = category.id;
+      _reportToParent(category);
     }
   }
 
-  void _reportToParent(CategoryEntity cat) {
-    // Use post-frame callback if currently in a build phase to avoid
-    // "setState() or markNeedsBuild() called during build" errors.
+  void _reportToParent(CategoryEntity category) {
+    // Check if parent is already in sync before reporting to prevent loops
+    // In many forms, the parent passes us the selection via initialId,
+    // so reporting it back can trigger a redundant parent rebuild.
+    // However, we don't have a direct reference to parent's observable here.
+
     if (WidgetsBinding.instance.schedulerPhase != SchedulerPhase.idle) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        onSelected?.call(cat);
+        onSelected?.call(category);
       });
     } else {
-      onSelected?.call(cat);
+      onSelected?.call(category);
     }
   }
 

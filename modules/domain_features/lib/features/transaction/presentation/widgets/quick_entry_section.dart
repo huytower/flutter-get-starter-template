@@ -61,7 +61,7 @@ class QuickEntrySection extends StatelessWidget {
     return CcInputBarLayout(
       leading: _buildTrailingIcons(context),
       middle: _buildTextField(context),
-      trailing: _buildVoiceIcon(context),
+      trailing: _buildActionGroup(context),
     );
   }
 
@@ -135,6 +135,32 @@ class QuickEntrySection extends StatelessWidget {
     );
   }
 
+  Widget _buildActionGroup(BuildContext context) {
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        final hasText = controller.text.isNotEmpty;
+
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (hasText)
+              CcClearBtn(
+                onTap: () {
+                  controller.clear();
+                  onClear?.call();
+                },
+                baseIconSize: 20,
+                width: context.respDim(30),
+                height: context.respDim(30),
+              ),
+            _buildVoiceIcon(context),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildVoiceIcon(BuildContext context) {
     final scheme = context.ccColorScheme;
 
@@ -170,36 +196,15 @@ class QuickEntrySection extends StatelessWidget {
       );
     }
 
-    final hasText = controller.text.isNotEmpty;
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (hasText)
-          CcIconButton.bouncing(
-            icon: Icon(
-              Icons.close_rounded,
-              color: scheme.onSurface.withOpacity(0.45),
-              size: context.respDim(20),
-            ),
-            onTap: () {
-              controller.clear();
-              onClear?.call();
-            },
-            width: context.respDim(30),
-            height: context.respDim(30),
-          ),
-        CcIconButton.bouncing(
-          icon: Icon(
-            Icons.camera_alt,
-            color: scheme.onSurface.withOpacity(0.45),
-            size: context.respDim(20),
-          ),
-          onTap: onScanTap,
-          width: context.respDim(30),
-          height: context.respDim(30),
-        ),
-      ],
+    return CcIconButton.bouncing(
+      icon: Icon(
+        Icons.camera_alt,
+        color: scheme.onSurface.withOpacity(0.45),
+        size: context.respDim(20),
+      ),
+      onTap: onScanTap,
+      width: context.respDim(30),
+      height: context.respDim(30),
     );
   }
 }

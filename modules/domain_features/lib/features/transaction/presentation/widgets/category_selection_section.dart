@@ -57,23 +57,26 @@ class CategorySelectionSection extends StatelessWidget {
             tag: tag,
           );
 
-    // Sync controller properties only if they changed or on first build
-    // (Optimization: avoid redundant refreshes if possible, but for simplicity
-    // here we just ensure properties are set before the build returns the widget)
-    controller.type = type;
-    controller.groupIds = groupIds;
-    controller.autoSelectFirstEnabled = autoSelectFirst;
-    controller.initialId = initialSelectedCategoryId;
-    controller.onSelected = onCategorySelected;
+    // Sync controller properties only if they changed
+    final bool propertiesChanged =
+        controller.type != type ||
+        controller.autoSelectFirstEnabled != autoSelectFirst ||
+        controller.initialId != initialSelectedCategoryId;
 
-    // We use a post-frame callback for the initial selection sync to the parent
-    // to avoid "setState() called during build" errors if the parent reacts
-    // to the auto-selection immediately.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (Get.isRegistered<CategorySelectionController>(tag: tag)) {
-        controller.refreshSelection();
-      }
-    });
+    if (propertiesChanged) {
+      controller.type = type;
+      controller.groupIds = groupIds;
+      controller.autoSelectFirstEnabled = autoSelectFirst;
+      controller.initialId = initialSelectedCategoryId;
+      controller.onSelected = onCategorySelected;
+
+      // Only schedule refresh if properties actually changed to avoid loops
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (Get.isRegistered<CategorySelectionController>(tag: tag)) {
+          controller.refreshSelection();
+        }
+      });
+    }
 
     return Obx(() {
       return Column(

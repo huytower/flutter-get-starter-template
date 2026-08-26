@@ -325,6 +325,8 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_label": "Quick entry (AI)",
       "quick_entry_hint": "spend phone 50.000 by cash",
       "quick_entry_parsed_result": "Got it: {label}",
+      "quick_entry_category_missing":
+          "Category not found (please add in settings): {label}",
       "quick_entry_could_not_parse":
           "Couldn't understand that — please fill in manually",
       "quick_entry_cloud_consent_message":
@@ -1076,6 +1078,8 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_label": "Nhập nhanh (AI)",
       "quick_entry_hint": "chi điện thoại 50.000 từ tiền mặt",
       "quick_entry_parsed_result": "Đã nhận diện: {label}",
+      "quick_entry_category_missing":
+          "Danh mục chưa có (vui lòng thêm trong thiết lập): {label}",
       "quick_entry_could_not_parse":
           "Không hiểu được nội dung này — vui lòng nhập thủ công",
       "quick_entry_cloud_consent_message":

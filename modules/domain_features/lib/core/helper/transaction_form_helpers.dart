@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../features/transaction/presentation/widgets/transaction_date_picker_dialog.dart';
+import 'money_format_helper.dart';
 
 /// Common helper functions for transaction forms.
 /// State-management agnostic - pure functions only.
@@ -50,22 +51,6 @@ class TransactionFormHelpers {
 
   /// Format amount to short representation (e.g., 1000000 -> "1tr", 50000 -> "50k")
   static String formatShort(num amount) {
-    if (amount >= 1000000) {
-      final value = amount / 1000000;
-      final truncated = value.truncateToDouble();
-      if (value == truncated) {
-        return '${truncated.toInt()}tr';
-      }
-      return '${value.toStringAsFixed(1).replaceFirst('.', ',')}tr';
-    }
-    if (amount >= 1000) {
-      final value = amount / 1000;
-      final truncated = value.truncateToDouble();
-      if (value == truncated) {
-        return '${truncated.toInt()}k';
-      }
-      return '${value.toStringAsFixed(1).replaceFirst('.', ',')}k';
-    }
-    return amount.toString();
+    return formatVndShort(amount);
   }
 }
