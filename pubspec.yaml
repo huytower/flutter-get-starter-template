@@ -9,6 +9,7 @@ environment:
 
 workspace:
   - modules/app_config
+  - modules/bridge
   - modules/data_config
   - modules/message
   - modules/theme
@@ -26,6 +27,8 @@ dependencies:
   auto_route: ^11.1.0
 
   bloc: ^9.2.1
+  bridge:
+    path: modules/bridge
   catcher_2: ^2.1.12
   cc_mixin:
     path: shared/cc_core_sdk/cc_mixin

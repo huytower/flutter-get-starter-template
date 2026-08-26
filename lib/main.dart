@@ -17,7 +17,9 @@ import 'core/runner/app_runner.dart';
 /// The entry point of the application.
 void main() async {
   developer.log('🚀 main() entry point | time=${DateTime.now().toIso8601String()}', name: 'Main');
+  '🚀 main() entry point | time=${DateTime.now().toIso8601String()}'.Log('Main');
   try {
+    developer.log('✅ main() try block entered', name: 'Main');
     WidgetsFlutterBinding.ensureInitialized();
     developer.log('✅ WidgetsFlutterBinding.ensureInitialized() done', name: 'Main');
 

@@ -1,0 +1,29 @@
+name: bridge
+description: Bridge services for cross-module communication.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: '^3.12.0'
+  flutter: '^3.44.3'
+
+resolution: workspace
+
+dependencies:
+  cc_sdk:
+    path: ../../shared/cc_core_sdk/cc_sdk
+  cc_bridge:
+    path: ../../cc_bridge
+  domain_features:
+    path: ../domain_features
+  flutter:
+    sdk: flutter
+  get: ^4.7.3
+  get_it: ^9.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  injectable_generator: ^3.1.3
+  build_runner: ^2.15.1

@@ -5,6 +5,8 @@ import 'package:injectable/injectable.dart';
 
 import 'di.config.dart';
 import 'module/di_module_config.dart';
+import 'package:bridge/navigation_bridge_service.dart';
+import 'package:bridge/navigation_bridge_service_impl.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -17,6 +19,10 @@ final GetIt getIt = GetIt.instance;
 )
 Future<void> initializeDependencies() async {
   await getIt.init();
+
+  getIt.registerLazySingleton<NavigationBridgeService>(
+    () => NavigationBridgeServiceImpl(),
+  );
 
   Get.lazyPut(() => getIt<GuidelineController>());
 }
