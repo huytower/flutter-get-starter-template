@@ -52,6 +52,7 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   final TransactionController controller = Get.find<TransactionController>();
+  late final Worker _tabWorker;
 
   @override
   void initState() {
@@ -63,6 +64,14 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
     );
 
     _tabController.addListener(_handleTabChange);
+
+    // Sync controller state back to the UI TabController (e.g. for AI-detected
+    // intent switching).
+    _tabWorker = ever(controller.selectedTabIndex, (int index) {
+      if (_tabController.index != index) {
+        _tabController.animateTo(index);
+      }
+    });
   }
 
   void _handleTabChange() {
@@ -75,6 +84,7 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
 
   @override
   void dispose() {
+    _tabWorker.dispose();
     _tabController.removeListener(_handleTabChange);
     _tabController.dispose();
     super.dispose();

@@ -7,13 +7,9 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
-import '../../../liability/presentation/get_x/lend_form_controller.dart';
-import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../get_x/expense_form_controller.dart';
-import '../get_x/income_form_controller.dart';
-import '../get_x/investment_form_controller.dart';
 import '../get_x/quick_entry_mixin.dart';
 import '../get_x/transaction_controller.dart';
 import 'quick_entry_section.dart';
@@ -209,6 +205,7 @@ class TransactionPageHeader extends StatelessWidget {
       suggestionLabel: suggestion != null
           ? controller.quickEntryResultLabel(suggestion)
           : null,
+      isCategoryMissing: suggestion != null && suggestion.categoryId == null,
       errorText: errorKey != null ? el.tr(errorKey) : null,
       activeColor: accentColor,
       onSubmitted: (_) => controller.submitQuickEntry(context),

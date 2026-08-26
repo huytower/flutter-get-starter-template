@@ -165,6 +165,7 @@ class QuickEntryAliasDataset {
     'vang mieng': 'inv5',
     'vang nhan': 'inv5',
     'dat': 'inv6',
+    'bat dong san': 'inv6',
     'can ho': 'inv6',
     'bds': 'inv6',
     'bitcoin': 'inv7',

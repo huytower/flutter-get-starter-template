@@ -1827,6 +1827,8 @@ abstract class CcLocaleKeys {
   static const quick_entry_hint = 'transaction.quick_entry_hint';
   static const quick_entry_parsed_result =
       'transaction.quick_entry_parsed_result';
+  static const quick_entry_category_missing =
+      'transaction.quick_entry_category_missing';
   static const quick_entry_could_not_parse =
       'transaction.quick_entry_could_not_parse';
   static const quick_entry_cloud_consent_message =

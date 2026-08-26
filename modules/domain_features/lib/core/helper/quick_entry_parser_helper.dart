@@ -9,12 +9,15 @@ export 'quick_entry_parse_result.dart';
 
 const int _thousand = 1000;
 const int _million = 1000000;
+const int _billion = 1000000000;
 
 final Map<String, int> _amountUnitMultipliers = {
   'k': _thousand,
   'nghin': _thousand,
   'tr': _million,
   'trieu': _million,
+  'ty': _billion,
+  'b': _billion,
   'd': 1,
   'vnd': 1,
   'dong': 1,
@@ -24,7 +27,7 @@ final Map<String, int> _amountUnitMultipliers = {
 // digit-run fallback — without it, "1.500.000" mis-parsed as 1500, since
 // allMatches only consumes one `[.,]` group per match.
 final RegExp _amountPattern = RegExp(
-  r'(\d{1,3}(?:[.,]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|tr|trieu|d|vnd|dong)?',
+  r'(\d{1,3}(?:[.,]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|tr|trieu|ty|b|d|vnd|dong)?',
 );
 
 /// Parses a Vietnamese money shorthand out of [text] — `50k`, `50.000`,

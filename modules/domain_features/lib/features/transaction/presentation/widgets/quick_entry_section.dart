@@ -15,6 +15,7 @@ class QuickEntrySection extends StatelessWidget {
     required this.isParsing,
     required this.isListening,
     required this.suggestionLabel,
+    required this.isCategoryMissing,
     required this.errorText,
     required this.activeColor,
     required this.onSubmitted,
@@ -29,6 +30,7 @@ class QuickEntrySection extends StatelessWidget {
   final bool isParsing;
   final bool isListening;
   final String? suggestionLabel;
+  final bool isCategoryMissing;
   final String? errorText;
   final Color activeColor;
   final ValueChanged<String> onSubmitted;
@@ -100,7 +102,9 @@ class QuickEntrySection extends StatelessWidget {
       children: [
         CcSuggestionChip(
           label: el.tr(
-            CcLocaleKeys.quick_entry_parsed_result,
+            isCategoryMissing
+                ? CcLocaleKeys.quick_entry_category_missing
+                : CcLocaleKeys.quick_entry_parsed_result,
             namedArgs: {'label': suggestionLabel!},
           ),
           accentColor: activeColor,
