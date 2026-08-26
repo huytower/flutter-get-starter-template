@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:bridge/navigation_bridge_service.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
@@ -32,12 +31,8 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
     showQuickTestAsSecondTab = _isQuickTestRoute(startRoute);
     checkSplash();
 
-    '🚀 NavigationLogicMixin initialized | startRoute=$startRoute | time=${DateTime.now().toIso8601String()} | cwd=${Directory.current.path}'.Log('NavigationLogicMixin');
-
     // 1. Critical but non-blocking (User level drives UI availability)
-    '🔍 NavigationBridgeService.initializeUserLevel() | async=true'.Log('NavigationLogicMixin');
     unawaited(_navigationBridge.initializeUserLevel());
-    '✅ NavigationBridgeService.initializeUserLevel() fired'.Log('NavigationLogicMixin');
 
     // 2. Deferred background systems (Non-critical for first frame)
     _initBackgroundServices();
@@ -48,8 +43,6 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
     Future.delayed(const Duration(seconds: 3), () async {
       if (!mounted) return;
 
-      '🔧 _initBackgroundServices started'.Log('NavigationLogicMixin');
-
       // Native security & analytics
       CcAppCheckHelper.initialize();
       FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
@@ -57,38 +50,34 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
       logVersionInfo();
 
       // Local notifications & sync
-      '🔍 NavigationBridgeService.initializeDataServices()'.Log('NavigationLogicMixin');
       try {
         await _navigationBridge.initializeDataServices();
-        '✅ NavigationBridgeService.initializeDataServices() completed'.Log('NavigationLogicMixin');
       } catch (e) {
-        '❌ NavigationBridgeService.initializeDataServices() failed | error=$e'.Log('NavigationLogicMixin');
+        '❌ NavigationBridgeService.initializeDataServices() failed | error=$e'
+            .Log('NavigationLogicMixin');
         rethrow;
       }
 
       // Conditional sync & reminders
-      '🔍 NavigationBridgeService.syncAuthenticatedData()'.Log('NavigationLogicMixin');
       try {
         await _navigationBridge.syncAuthenticatedData();
-        '✅ NavigationBridgeService.syncAuthenticatedData() completed'.Log('NavigationLogicMixin');
       } catch (e) {
-        '❌ NavigationBridgeService.syncAuthenticatedData() failed | error=$e'.Log('NavigationLogicMixin');
+        '❌ NavigationBridgeService.syncAuthenticatedData() failed | error=$e'
+            .Log('NavigationLogicMixin');
       }
 
       try {
-        '🔍 NavigationBridgeService.checkReminders()'.Log('NavigationLogicMixin');
         await _navigationBridge.checkReminders();
-        '✅ NavigationBridgeService.checkReminders() completed'.Log('NavigationLogicMixin');
       } catch (e) {
-        '❌ NavigationBridgeService.checkReminders() failed | error=$e'.Log('NavigationLogicMixin');
+        '❌ NavigationBridgeService.checkReminders() failed | error=$e'.Log(
+          'NavigationLogicMixin',
+        );
       }
     });
   }
 
   void handleTabRefresh(int index) {
-    '🔍 NavigationBridgeService.refreshTab($index)'.Log('NavigationLogicMixin');
     unawaited(_navigationBridge.refreshTab(index));
-    '✅ NavigationBridgeService.refreshTab($index) fired'.Log('NavigationLogicMixin');
   }
 
   Future<void> checkSplash() async {

@@ -1,5 +1,3 @@
-import 'package:cc_bridge/src/session/session_contract.dart';
-
 abstract class NavigationBridgeService {
   Future<void> initializeUserLevel();
   Future<void> initializeDataServices();

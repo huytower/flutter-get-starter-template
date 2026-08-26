@@ -154,6 +154,7 @@ mixin QuickEntryMixin on TransactionFormController {
       quickEntrySuggestion.value = null;
       return;
     }
+    '[AI_PARSING] 🔍 Running local parse | text="$text"'.Log('QuickEntryMixin');
     final local = await getIt<ParseQuickEntryUseCase>().parseLocally(
       text,
       categoryType: quickEntryCategoryType,
@@ -162,6 +163,8 @@ mixin QuickEntryMixin on TransactionFormController {
     if (_quickEntryDisposed || text != quickEntryController.text.trim()) {
       return;
     }
+    '[AI_PARSING] ✅ Local parse completed | isComplete=${local.isComplete} | result=$local'
+        .Log('QuickEntryMixin');
     quickEntrySuggestion.value = local.isComplete ? local : null;
   }
 
@@ -175,6 +178,7 @@ mixin QuickEntryMixin on TransactionFormController {
     void resetIfCurrent() {
       if (isCurrent()) isParsingQuickEntry.value = false;
     }
+
     return (isCurrent, resetIfCurrent);
   }
 
@@ -220,6 +224,9 @@ mixin QuickEntryMixin on TransactionFormController {
     final text = quickEntryController.text.trim();
     if (text.isEmpty) return;
 
+    '[AI_PARSING] 🚀 Submitting quick entry | text="$text"'.Log(
+      'QuickEntryMixin',
+    );
     _quickEntryDebounce?.cancel();
     quickEntryErrorKey.value = null;
     isParsingQuickEntry.value = true;
@@ -232,15 +239,20 @@ mixin QuickEntryMixin on TransactionFormController {
       groupIds: quickEntryCategoryGroupIds,
     );
     if (!isCurrentGeneration()) return;
+    '[AI_PARSING] 📍 Local fallback ready | result=$local'.Log(
+      'QuickEntryMixin',
+    );
 
     if (!await _passCloudGate(
       context: context,
       isCurrentGeneration: isCurrentGeneration,
       resetParsingIfCurrent: resetParsingIfCurrent,
     )) {
+      '[AI_PARSING] ⛔ Cloud gate blocked escalation'.Log('QuickEntryMixin');
       return;
     }
 
+    '[AI_PARSING] ☁️ Escalating to Gemini...'.Log('QuickEntryMixin');
     final cloudResult = await parseUseCase.parseWithCloud(
       text: text,
       localResult: local,
@@ -251,6 +263,9 @@ mixin QuickEntryMixin on TransactionFormController {
     // The field stays editable during the round trip — re-check the text
     // still matches what was sent before applying/erroring on anything.
     if (!isCurrentGeneration() || text != quickEntryController.text.trim()) {
+      '[AI_PARSING] ⚠️ Generation stale after cloud call | aborting'.Log(
+        'QuickEntryMixin',
+      );
       return;
     }
 
@@ -259,6 +274,10 @@ mixin QuickEntryMixin on TransactionFormController {
     final suggestion = (cloudResult != null && !cloudResult.isEmpty)
         ? cloudResult
         : local;
+
+    '[AI_PARSING] ✨ Final suggestion resolved | cloudSuccess=${cloudResult != null} | result=$suggestion'
+        .Log('QuickEntryMixin');
+
     if (suggestion.isEmpty) {
       quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
       return;
@@ -298,12 +317,16 @@ mixin QuickEntryMixin on TransactionFormController {
   }) async {
     final (isCurrentGeneration, resetParsingIfCurrent) = _trackGeneration();
 
+    '[AI_PARSING] 📸 Image picker started | fromCamera=$fromCamera'.Log(
+      'QuickEntryMixin',
+    );
     final pickResult = await CcReceiptScanHelper.pickReceiptImage(
       fromCamera: fromCamera,
     );
     if (!isCurrentGeneration()) return;
     final picked = pickResult.image;
     if (picked == null) {
+      '[AI_PARSING] ❌ No image picked'.Log('QuickEntryMixin');
       resetParsingIfCurrent();
       // A denied permission gets explicit feedback; a plain cancel stays silent.
       if (pickResult.permissionDenied) {
@@ -313,8 +336,12 @@ mixin QuickEntryMixin on TransactionFormController {
       return;
     }
 
+    '[AI_PARSING] 🔍 Running OCR...'.Log('QuickEntryMixin');
     final ocrText = await CcReceiptScanHelper.recognizeText(picked.path);
     if (!isCurrentGeneration()) return;
+    '[AI_PARSING] 📝 OCR completed | textLength=${ocrText.length}'.Log(
+      'QuickEntryMixin',
+    );
 
     final parseUseCase = getIt<ParseQuickEntryUseCase>();
     final local = await parseUseCase.parseLocally(
@@ -323,15 +350,22 @@ mixin QuickEntryMixin on TransactionFormController {
       groupIds: quickEntryCategoryGroupIds,
     );
     if (!isCurrentGeneration()) return;
+    '[AI_PARSING] 📍 OCR-based local fallback ready | result=$local'.Log(
+      'QuickEntryMixin',
+    );
 
     if (!await _passCloudGate(
       context: context,
       isCurrentGeneration: isCurrentGeneration,
       resetParsingIfCurrent: resetParsingIfCurrent,
     )) {
+      '[AI_PARSING] ⛔ Cloud gate blocked image escalation'.Log(
+        'QuickEntryMixin',
+      );
       return;
     }
 
+    '[AI_PARSING] ☁️ Escalating image to Gemini...'.Log('QuickEntryMixin');
     final cloudResult = await parseUseCase.parseImageWithCloud(
       imageBytes: picked.bytes,
       mimeType: picked.mimeType,
@@ -347,6 +381,10 @@ mixin QuickEntryMixin on TransactionFormController {
     final suggestion = (cloudResult != null && !cloudResult.isEmpty)
         ? cloudResult
         : local;
+
+    '[AI_PARSING] ✨ Final image suggestion resolved | cloudSuccess=${cloudResult != null} | result=$suggestion'
+        .Log('QuickEntryMixin');
+
     if (suggestion.isEmpty) {
       quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
       return;
@@ -408,6 +446,9 @@ mixin QuickEntryMixin on TransactionFormController {
   /// Pre-fills whichever fields [result] resolved; a null field is left at
   /// the form's existing default for the user to fill in by hand.
   void applyQuickEntryParse(QuickEntryParseResult result) {
+    '[AI_PARSING] 📥 Applying parse result | result=$result'.Log(
+      'QuickEntryMixin',
+    );
     if (result.amount != null) amountStr.value = result.amount!.toString();
     if (result.categoryId != null) {
       applyQuickEntryCategory(result.categoryId!);

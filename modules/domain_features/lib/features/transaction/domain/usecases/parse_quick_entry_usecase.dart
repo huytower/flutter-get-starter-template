@@ -5,9 +5,9 @@ import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
-import '../../../../core/helper/quick_entry_parser_helper.dart';
 
 /// Parses quick-entry text/voice/photo into an amount + category (+ date/
 /// note when available). [parseLocally] (free, offline) always runs first
@@ -76,11 +76,24 @@ class ParseQuickEntryUseCase {
         '${_todayReferenceSentence()} '
         '${_buildCategoryOptionsPrompt(categories)}';
 
+    '[AI_PARSING] ☁️ Gemini Text Prompt: \n$prompt'.Log(
+      'ParseQuickEntryUseCase',
+    );
+
     final response = await CcGeminiHelper.generateText(
       prompt: prompt,
       responseSchema: _buildResponseSchema(categories),
     );
-    if (response == null) return null;
+
+    if (response == null) {
+      '[AI_PARSING] ❌ Gemini returned null response'.Log(
+        'ParseQuickEntryUseCase',
+      );
+      return null;
+    }
+    '[AI_PARSING] 📥 Gemini Text Response: $response'.Log(
+      'ParseQuickEntryUseCase',
+    );
 
     return _mergeCloudResponse(
       response,
@@ -110,13 +123,26 @@ class ParseQuickEntryUseCase {
         '${_todayReferenceSentence()} '
         '${_buildCategoryOptionsPrompt(categories)}';
 
+    '[AI_PARSING] 🖼️ Gemini Image Prompt: \n$prompt'.Log(
+      'ParseQuickEntryUseCase',
+    );
+
     final response = await CcGeminiHelper.generateFromImage(
       imageBytes: imageBytes,
       mimeType: mimeType,
       prompt: prompt,
       responseSchema: _buildResponseSchema(categories),
     );
-    if (response == null) return null;
+
+    if (response == null) {
+      '[AI_PARSING] ❌ Gemini image response is null'.Log(
+        'ParseQuickEntryUseCase',
+      );
+      return null;
+    }
+    '[AI_PARSING] 📥 Gemini Image Response: $response'.Log(
+      'ParseQuickEntryUseCase',
+    );
 
     return _mergeCloudResponse(
       response,
