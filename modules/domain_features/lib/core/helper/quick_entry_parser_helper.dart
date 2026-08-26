@@ -201,22 +201,67 @@ QuickEntryParseResult parseQuickEntryTextLocally({
 }) {
   final normalized = stripVietnameseDiacritics(text.toLowerCase());
   DateTime date = DateTime.now();
+  String residual = normalized;
 
+  // 1. Extract Amount and remove from residual
+  final amountMatch = _amountPattern.firstMatch(normalized);
+  if (amountMatch != null) {
+    residual = residual.replaceFirst(amountMatch.group(0)!, '');
+  }
+
+  // 2. Extract Date and remove from residual
   final dateOffsets = QuickEntryAliasDataset.dateRelativeOffsets;
   for (final offsetEntry in dateOffsets.entries) {
     if (normalized.contains(offsetEntry.key)) {
       date = date.subtract(Duration(days: offsetEntry.value));
+      residual = residual.replaceFirst(offsetEntry.key, '');
       break;
     }
   }
 
-  return QuickEntryParseResult(
-    amount: parseVietnameseAmount(text),
-    categoryId: matchCategoryIdFromText(
+  // 3. Match Category and remove matched alias from residual
+  String? matchedCategoryId;
+  for (final aliasEntry in _sortedCategoryKeywordAliases) {
+    if (normalized.contains(aliasEntry.key) &&
+        categories.any((category) => category.id == aliasEntry.value)) {
+      matchedCategoryId = aliasEntry.value;
+      residual = residual.replaceFirst(aliasEntry.key, '');
+      break;
+    }
+  }
+
+  // 4. Fallback category matching if not found by alias
+  if (matchedCategoryId == null) {
+    matchedCategoryId = matchCategoryIdFromText(
       text: text,
       categories: categories,
       categoryLabels: categoryLabels,
-    ),
+    );
+  }
+
+  // 5. Remove Intent roots and directional verbs from residual
+  for (final rootKeywords in QuickEntryAliasDataset.intentRoots.values) {
+    for (final keyword in rootKeywords) {
+      residual = residual.replaceFirst(keyword, '');
+    }
+  }
+  for (final verb in QuickEntryAliasDataset.directionalVerbs.keys) {
+    residual = residual.replaceFirst(verb, '');
+  }
+
+  // 6. Clean up residual text to get the final note
+  // Remove common filler words and extra spaces/punctuation
+  final note = residual
+      .replaceAll(RegExp(r'[.,\-–()]'), ' ')
+      .split(' ')
+      .where((s) => s.isNotEmpty && s.length > 1)
+      .join(' ')
+      .trim();
+
+  return QuickEntryParseResult(
+    amount: parseVietnameseAmount(text),
+    categoryId: matchedCategoryId,
     date: date,
+    note: note.isEmpty ? null : note,
   );
 }

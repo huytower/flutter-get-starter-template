@@ -128,7 +128,7 @@ class QuickEntryAliasDataset {
     // ===== EXPENSE — Gia đình/Con cái (c44, c45, c46) =====
     'bim': 'c45',
     'sua bot': 'c44',
-    'do toys': 'c46',
+    'do choi': 'c46',
 
     // ===== EXPENSE — Thể thao (c20) =====
     'gym': 'c20',
@@ -165,6 +165,7 @@ class QuickEntryAliasDataset {
     'vang mieng': 'inv5',
     'vang nhan': 'inv5',
     'dat': 'inv6',
+    'nha dat': 'inv6',
     'can ho': 'inv6',
     'bitcoin': 'inv7',
     'btc': 'inv7',
@@ -225,7 +226,7 @@ class QuickEntryAliasDataset {
     'spent': QuickEntryIntent.expense,
     'bought': QuickEntryIntent.expense,
     'mua': QuickEntryIntent.expense,
-
+    'cho': QuickEntryIntent.expense, // Indicator for giving/lending
     // Loan-related Outflow (Giving to others) -> Lend
     'cho vay': QuickEntryIntent.lend,
     'cho muon': QuickEntryIntent.lend,
