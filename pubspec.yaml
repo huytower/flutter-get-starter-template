@@ -173,3 +173,10 @@ melos:
     setup:firebase:
       run: bash scripts/setup_firebase_configs.sh
       description: Generate local config files from templates.
+
+    run:uat:
+      run: bash scripts/run_uat.sh
+      description: >-
+        Clean, pub get, codegen, then flutter run --flavor uat on a device.
+        Pass a device id as an extra arg, else uses $DEVICE_ID or the
+        script's default UDID.
