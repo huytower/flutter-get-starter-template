@@ -94,7 +94,6 @@ class QuickEntryAliasDataset {
     'lotte': 'c24',
     'du lich': 'c25',
     'khach san': 'c25',
-    've may bay': 'c25',
     'homestay': 'c25',
     'vui choi': 'c49',
     'khu vui choi': 'c49',

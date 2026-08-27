@@ -138,6 +138,20 @@ class WalletController extends CcGetController {
   final RxInt emergencyFundBalance = 0.obs;
   final RxInt liabilityBalance = 0.obs;
 
+  /// Monthly investment totals (current month).
+  final RxInt monthlyInvested = 0.obs;
+  final RxInt monthlyReturned = 0.obs;
+
+  /// Monthly ROI: (Monthly Return - Monthly Contributed) / Monthly Contributed.
+  final RxDouble monthlyRoiPercent = 0.0.obs;
+
+  /// Monthly Breakeven: Monthly Return / Monthly Contributed.
+  final RxDouble monthlyBreakevenPercent = 0.0.obs;
+
+  /// All-time investment totals.
+  final RxInt allTimeInvested = 0.obs;
+  final RxInt allTimeReturned = 0.obs;
+
   /// Σ (Thu vào - Chi ra) ÷ Σ Chi ra across every investment position.
   final RxDouble investmentRoiPercent = 0.0.obs;
 
@@ -170,8 +184,14 @@ class WalletController extends CcGetController {
   final RxMap<String, ({int contributed, int returned})> _investmentStats =
       <String, ({int contributed, int returned})>{}.obs;
 
+  final RxMap<String, ({int contributed, int returned})>
+  _monthlyInvestmentStats = <String, ({int contributed, int returned})>{}.obs;
+
   ({int contributed, int returned}) investmentStatsOf(String id) =>
       _investmentStats[id] ?? (contributed: 0, returned: 0);
+
+  ({int contributed, int returned}) monthlyInvestmentStatsOf(String id) =>
+      _monthlyInvestmentStats[id] ?? (contributed: 0, returned: 0);
 
   /// Type order for the Budget Allocation screen's "Ví của bạn" strip: cash
   /// → bank → e-wallet → emergency fund. (Credit-card wallets aren't a
@@ -330,6 +350,10 @@ class WalletController extends CcGetController {
 
     final newBalances = <String, int>{};
     final newStats = <String, ({int contributed, int returned})>{};
+    final monthlyStatsMap = <String, ({int contributed, int returned})>{};
+
+    final now = DateTime.now();
+    final monthStart = DateTime(now.year, now.month, 1);
 
     for (final wallet in list) {
       final walletTxns = txns.where((t) => t.walletId == wallet.id).toList();
@@ -339,7 +363,7 @@ class WalletController extends CcGetController {
       );
 
       if (wallet.type == WalletType.investment) {
-        final contributed =
+        final allTimeContributed =
             txns
                 .where(
                   (t) =>
@@ -349,7 +373,7 @@ class WalletController extends CcGetController {
                 .fold(0, (sum, t) => sum + t.amount) +
             wallet.balance;
 
-        final returned = txns
+        final allTimeReturned = txns
             .where(
               (t) =>
                   t.investmentWalletId == wallet.id &&
@@ -357,11 +381,38 @@ class WalletController extends CcGetController {
             )
             .fold(0, (sum, t) => sum + t.amount);
 
-        newStats[wallet.id] = (contributed: contributed, returned: returned);
+        newStats[wallet.id] = (
+          contributed: allTimeContributed,
+          returned: allTimeReturned,
+        );
+
+        final monthlyContributed = txns
+            .where(
+              (t) =>
+                  t.investmentWalletId == wallet.id &&
+                  t.type == TransactionType.investmentIn &&
+                  t.date.isAfter(monthStart),
+            )
+            .fold(0, (sum, t) => sum + t.amount);
+
+        final monthlyReturned = txns
+            .where(
+              (t) =>
+                  t.investmentWalletId == wallet.id &&
+                  t.type == TransactionType.investmentReturn &&
+                  t.date.isAfter(monthStart),
+            )
+            .fold(0, (sum, t) => sum + t.amount);
+
+        monthlyStatsMap[wallet.id] = (
+          contributed: monthlyContributed,
+          returned: monthlyReturned,
+        );
       }
     }
     _bookBalances.assignAll(newBalances);
     _investmentStats.assignAll(newStats);
+    _monthlyInvestmentStats.assignAll(monthlyStatsMap);
 
     _investmentReturnsTotal = txns
         .where(

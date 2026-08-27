@@ -342,7 +342,11 @@ String? matchCategoryIdFromText({
   if (categories.isEmpty) return null;
 
   for (final aliasEntry in _sortedCategoryKeywordAliases) {
-    if (normalizedText.contains(aliasEntry.key) &&
+    final pattern = aliasEntry.key.length <= 3
+        ? RegExp('\\b${RegExp.escape(aliasEntry.key)}\\b')
+        : RegExp(RegExp.escape(aliasEntry.key));
+
+    if (pattern.hasMatch(normalizedText) &&
         categories.any((category) => category.id == aliasEntry.value)) {
       return aliasEntry.value;
     }
@@ -401,19 +405,83 @@ QuickEntryParseResult parseQuickEntryTextLocally({
   }
 
   // 2. Extract Date and remove from residual
-  final dateOffsets = QuickEntryAliasDataset.dateRelativeOffsets;
-  for (final offsetEntry in dateOffsets.entries) {
-    if (normalized.contains(offsetEntry.key)) {
-      date = date.subtract(Duration(days: offsetEntry.value));
-      residual = residual.replaceFirst(offsetEntry.key, '');
-      break;
+  // 2a. Slash/Dash date patterns: "20/08", "20-08-2026"
+  final slashDateRegex = RegExp(r'(\d{1,2})[/-](\d{1,2})(?:[/-](\d{2,4}))?');
+  final slashDateMatch = slashDateRegex.firstMatch(normalized);
+  if (slashDateMatch != null) {
+    final day = int.tryParse(slashDateMatch.group(1) ?? '');
+    final month = int.tryParse(slashDateMatch.group(2) ?? '');
+    final yearStr = slashDateMatch.group(3);
+
+    if (day != null && month != null) {
+      int year = date.year;
+      if (yearStr != null) {
+        final y = int.tryParse(yearStr);
+        if (y != null) {
+          year = y < 100 ? 2000 + y : y;
+        }
+      }
+
+      try {
+        date = DateTime(year, month, day);
+      } catch (_) {}
+    }
+    residual = residual.replaceFirst(slashDateMatch.group(0)!, '');
+  } else {
+    // 2b. Specific Vietnamese date patterns: "ngay 20", "ngay 20 thang 8", "ngay 20 thang nay"
+    final vnDateRegex = RegExp(
+      r'ngay\s+(\d{1,2})(?:\s+thang\s+(\d{1,2}|nay))?',
+      caseSensitive: false,
+    );
+    final vnDateMatch = vnDateRegex.firstMatch(normalized);
+    if (vnDateMatch != null) {
+      final day = int.tryParse(vnDateMatch.group(1) ?? '');
+      final monthStr = vnDateMatch.group(2);
+
+      if (day != null && day >= 1 && day <= 31) {
+        int month = date.month;
+        int year = date.year;
+
+        if (monthStr != null && monthStr != 'nay') {
+          final m = int.tryParse(monthStr);
+          if (m != null && m >= 1 && m <= 12) {
+            month = m;
+          }
+        }
+
+        try {
+          final potentialDate = DateTime(year, month, day);
+          // If the date is in the future, it's likely previous month/year
+          if (potentialDate.isAfter(DateTime.now())) {
+            date = DateTime(year, month - 1, day);
+          } else {
+            date = potentialDate;
+          }
+        } catch (_) {}
+      }
+      residual = residual.replaceFirst(vnDateMatch.group(0)!, '');
+    } else {
+      // 2c. Relative date offsets: "hom qua", "today", etc.
+      final dateOffsets = QuickEntryAliasDataset.dateRelativeOffsets;
+      for (final offsetEntry in dateOffsets.entries) {
+        if (normalized.contains(offsetEntry.key)) {
+          date = date.subtract(Duration(days: offsetEntry.value));
+          residual = residual.replaceFirst(offsetEntry.key, '');
+          break;
+        }
+      }
     }
   }
 
   // 3. Match Category and remove matched alias from residual
   String? matchedCategoryId;
+  // Use word boundaries for short aliases to avoid partial matches
   for (final aliasEntry in _sortedCategoryKeywordAliases) {
-    if (normalized.contains(aliasEntry.key) &&
+    final pattern = aliasEntry.key.length <= 3
+        ? RegExp('\\b${RegExp.escape(aliasEntry.key)}\\b')
+        : RegExp(RegExp.escape(aliasEntry.key));
+
+    if (pattern.hasMatch(normalized) &&
         categories.any((category) => category.id == aliasEntry.value)) {
       matchedCategoryId = aliasEntry.value;
       residual = residual.replaceFirst(aliasEntry.key, '');
@@ -445,7 +513,14 @@ QuickEntryParseResult parseQuickEntryTextLocally({
   final residualNote = residual
       .replaceAll(RegExp(r'[.,\-–()]'), ' ')
       .split(' ')
-      .where((s) => s.isNotEmpty && s.length > 1)
+      .where(
+        (s) =>
+            s.isNotEmpty &&
+            s.length > 1 &&
+            s != 'ngay' &&
+            s != 'thang' &&
+            s != 'nay',
+      )
       .join(' ')
       .trim();
 
