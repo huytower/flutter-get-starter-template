@@ -209,18 +209,6 @@ class CategorySettingsController extends CcGetController {
         });
       }
 
-      'Loaded categories: ${categories.length}'.Log(
-        'CategorySettingsController',
-      );
-      'Debt/Loan groups: ${dlbg.keys.join(', ')}'.Log(
-        'CategorySettingsController',
-      );
-      for (final entry in dlbg.entries) {
-        'Group ${entry.key}: ${entry.value.length} items'.Log(
-          'CategorySettingsController',
-        );
-      }
-
       byGroup.assignAll(bg);
       incomeByGroup.assignAll(ibg);
       debtLoanByGroup.assignAll(dlbg);

@@ -1,3 +1,4 @@
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:string_similarity/string_similarity.dart';
 
 import '../../features/category/domain/entities/category_entity.dart';
@@ -23,12 +24,51 @@ final Map<String, int> _amountUnitMultipliers = {
   'dong': 1,
 };
 
-// Grouped-thousands form (e.g. "1.500.000") is tried before the plain
-// digit-run fallback — without it, "1.500.000" mis-parsed as 1500, since
-// allMatches only consumes one `[.,]` group per match.
+// Grouped-thousands form (e.g. "1.500.000" or "35 000") is tried before
+// the plain digit-run fallback — without it, "1.500.000" mis-parsed as 1500,
+// since allMatches only consumes one `[., ]` group per match.
 final RegExp _amountPattern = RegExp(
-  r'(\d{1,3}(?:[.,]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|tr|trieu|ty|b|d|vnd|dong)?',
+  r'(\d{1,3}(?:[., ]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|tr|trieu|ty|b|d|vnd|dong)?',
 );
+
+final RegExp _phoneCandidatePattern = RegExp(r'\+?\d{9,15}');
+
+final RegExp _vnMobilePattern = RegExp(
+  r'^(?:0(?:9\d|3\d|7\d|8\d|5\d)\d{7}|\+84\d{9})$',
+);
+
+/// Strips valid phone numbers from [text] so the amount parser below never
+/// mistakes them for prices. Uses [CcPhoneNumberHelper] (which wraps
+/// `phone_numbers_parser`) for country-aware validation, with a Vietnam
+/// local-format fallback because the library often requires an explicit
+/// country code to accept bare national numbers like "0911586768".
+String stripPhoneNumbers(String text) {
+  return text.replaceAllMapped(_phoneCandidatePattern, (match) {
+    final candidate = match.group(0)!;
+    if (CcPhoneNumberHelper.isValidPhoneNumber(candidate)) {
+      return ' ';
+    }
+    if (_vnMobilePattern.hasMatch(candidate)) {
+      return ' ';
+    }
+    return candidate;
+  });
+}
+
+final RegExp invoiceNumberPattern = RegExp(
+  r'(?:s[oô]|so)\s*:?\s*[0-9]{4,20}',
+  caseSensitive: false,
+);
+
+/// Strips invoice/serial number patterns from [text] so downstream parsers
+/// never mistake them for prices. Vietnamese diacritics are stripped first
+/// so variants like "Số:", "Số " are matched reliably.
+String stripInvoiceNumbers(String text) {
+  final normalized = stripVietnameseDiacritics(text);
+  return normalized.replaceAllMapped(invoiceNumberPattern, (match) {
+    return ' ';
+  });
+}
 
 /// Parses a Vietnamese money shorthand out of [text] — `50k`, `50.000`,
 /// `1tr`, `1,5tr`, `500 nghin`, plain `500000`, optional `đ`/`vnd` suffix.
@@ -45,27 +85,49 @@ final RegExp _amountPattern = RegExp(
 /// function's regex depends on.
 int? parseVietnameseAmount(String text) {
   final normalized = stripVietnameseDiacritics(text);
-  final matches = _amountPattern.allMatches(normalized).toList();
+  final cleaned = stripPhoneNumbers(normalized);
+  if (cleaned != normalized) {
+    '[AI_PARSING] 🚫 Phone number stripped from parse input'.Log(
+      'QuickEntryParserHelper',
+    );
+  }
+  final matches = _amountPattern.allMatches(cleaned).toList();
   if (matches.isEmpty) return null;
 
+  // Prefer the last match with an explicit unit (e.g. "50k"), then fall
+  // back to the first bare-number match that passes the phone/ID guard —
+  // scanning all matches in document order so a leading phone number like
+  // "0911586768" doesn't steal the parse.
   RegExpMatch? lastWithUnit;
   for (final match in matches) {
     if (match.group(2) != null) lastWithUnit = match;
   }
-  final match = lastWithUnit ?? matches.first;
 
+  if (lastWithUnit != null) {
+    return _parseAmountMatch(lastWithUnit);
+  }
+
+  for (final match in matches) {
+    final result = _parseAmountMatch(match);
+    if (result != null) return result;
+  }
+
+  return null;
+}
+
+int? _parseAmountMatch(RegExpMatch match) {
   final numeric = match.group(1)!;
   final unit = match.group(2);
 
   if (unit == null) {
-    final digitsOnly = numeric.replaceAll(RegExp('[.,]'), '');
+    final digitsOnly = numeric.replaceAll(RegExp('[., ]'), '');
     final value = int.tryParse(digitsOnly);
     if (value == null || value < _thousand) return null;
     return value;
   }
 
   if (unit == 'd' || unit == 'vnd' || unit == 'dong') {
-    final digitsOnly = numeric.replaceAll(RegExp('[.,]'), '');
+    final digitsOnly = numeric.replaceAll(RegExp('[., ]'), '');
     return int.tryParse(digitsOnly);
   }
 

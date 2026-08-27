@@ -195,6 +195,8 @@ import 'package:domain_features/features/transaction/domain/usecases/create_tran
     as _i28;
 import 'package:domain_features/features/transaction/domain/usecases/get_month_to_date_cash_flow_usecase.dart'
     as _i774;
+import 'package:domain_features/features/transaction/domain/usecases/parse_bill_image_usecase.dart'
+    as _i1039;
 import 'package:domain_features/features/transaction/domain/usecases/parse_quick_entry_usecase.dart'
     as _i121;
 import 'package:domain_features/features/transaction/domain/usecases/update_transaction_usecase.dart'
@@ -466,6 +468,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i944.ReconciliationRepository>(),
             ));
+    gh.lazySingleton<_i1039.ParseBillImageUseCase>(
+        () => _i1039.ParseBillImageUseCase(gh<_i224.GetCategoriesUseCase>()));
     gh.lazySingleton<_i121.ParseQuickEntryUseCase>(
         () => _i121.ParseQuickEntryUseCase(gh<_i224.GetCategoriesUseCase>()));
     gh.lazySingleton<_i663.GetLiabilityBalancesUseCase>(
