@@ -8,10 +8,10 @@ import 'package:injectable/injectable.dart';
 import 'package:path/path.dart' as p;
 import 'package:string_similarity/string_similarity.dart';
 
-import '../../../category/domain/entities/category_entity.dart';
-import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../../../../core/helper/merchant_match_helper.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
+import '../../../category/domain/entities/category_entity.dart';
+import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../entities/bill_parse_result.dart';
 
 @lazySingleton
@@ -65,16 +65,13 @@ class ParseBillImageUseCase {
 
   static String _stripInvoiceNumbers(String text) {
     final normalized = stripVietnameseDiacritics(text);
-    return normalized.replaceAllMapped(
-      invoiceNumberPattern,
-      (match) {
-        final stripped = match.group(0)!;
-        '[AI_PARSING] 🚫 Serial/invoice number stripped | "$stripped"'.Log(
-          'ParseBillImageUseCase',
-        );
-        return ' ';
-      },
-    );
+    return normalized.replaceAllMapped(invoiceNumberPattern, (match) {
+      final stripped = match.group(0)!;
+      '[AI_PARSING] 🚫 Serial/invoice number stripped | "$stripped"'.Log(
+        'ParseBillImageUseCase',
+      );
+      return ' ';
+    });
   }
 
   Future<BillParseResult?> parse({
@@ -84,7 +81,10 @@ class ParseBillImageUseCase {
     List<String>? groupIds,
   }) async {
     final tempDir = await Directory.systemTemp.createTemp('bill_parse_');
-    final tempPath = p.join(tempDir.path, 'bill_input${p.extension(mimeType.split('/').last)}');
+    final tempPath = p.join(
+      tempDir.path,
+      'bill_input${p.extension(mimeType.split('/').last)}',
+    );
     final tempFile = File(tempPath);
     await tempFile.writeAsBytes(imageBytes);
 
@@ -94,9 +94,8 @@ class ParseBillImageUseCase {
 
       final invoiceNumber = _extractInvoiceNumber(ocrText);
       if (invoiceNumber != null) {
-        '[AI_PARSING] 🧾 Invoice/serial number found | invoiceNumber=$invoiceNumber'.Log(
-          'ParseBillImageUseCase',
-        );
+        '[AI_PARSING] 🧾 Invoice/serial number found | invoiceNumber=$invoiceNumber'
+            .Log('ParseBillImageUseCase');
       }
 
       final cleanedOcrText = _stripInvoiceNumbers(ocrText);
@@ -131,20 +130,23 @@ class ParseBillImageUseCase {
         '[AI_PARSING] ❌ Gemini bill image response is null'.Log(
           'ParseBillImageUseCase',
         );
-        return null;
+      } else {
+        '[AI_PARSING] 📥 Gemini Bill Response: $response'.Log(
+          'ParseBillImageUseCase',
+        );
       }
 
-      '[AI_PARSING] 📥 Gemini Bill Response: $response'.Log(
+      BillParseResult? geminiResult;
+      if (response != null) {
+        geminiResult = _parseJsonResponse(response, categories, invoiceNumber);
+        if (geminiResult != null && geminiResult.items.isNotEmpty) {
+          return geminiResult;
+        }
+      }
+
+      '[AI_PARSING] 🔄 Falling back to phrase-based extraction'.Log(
         'ParseBillImageUseCase',
       );
-
-      final geminiResult = _parseJsonResponse(response, categories, invoiceNumber);
-      if (geminiResult != null && geminiResult.items.isNotEmpty) {
-        return geminiResult;
-      }
-
-      '[AI_PARSING] 🔄 Gemini returned no items, falling back to phrase-based extraction'
-          .Log('ParseBillImageUseCase');
       final phraseItems = _extractItemsFromPhrases(cleanedOcrText);
       if (phraseItems.isNotEmpty) {
         return BillParseResult(
@@ -268,7 +270,8 @@ class ParseBillImageUseCase {
       }
 
       String? categoryHint;
-      if (decoded['categoryHint'] is String && validIds.contains(decoded['categoryHint'])) {
+      if (decoded['categoryHint'] is String &&
+          validIds.contains(decoded['categoryHint'])) {
         categoryHint = decoded['categoryHint'];
       }
 
@@ -283,7 +286,8 @@ class ParseBillImageUseCase {
           final unitPrice = item['unitPrice'] is num && item['unitPrice'] >= 0
               ? (item['unitPrice'] as num).round()
               : null;
-          final totalPrice = item['totalPrice'] is num && item['totalPrice'] >= 0
+          final totalPrice =
+              item['totalPrice'] is num && item['totalPrice'] >= 0
               ? (item['totalPrice'] as num).round()
               : null;
           items.add(
@@ -316,25 +320,9 @@ class ParseBillImageUseCase {
     r'(\d{1,3}(?:[., ]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|tr|trieu|ty|b|d|vnd|dong)?',
   );
 
-  static const _stopWords = {
-    'tien hang',
-    'giam',
-    'tong',
-    't tien',
-    'thanh tien',
-    'ban',
-    'gio ra',
-    'gio vao',
-    'thu ngan',
-    'mat hang',
-    'sl',
-    'gia',
-    'cam on',
-    'in luc',
-    'so:',
-    'so ',
-    'so',
-  };
+  static final RegExp _stopWordLinePattern = RegExp(
+    r'^(tien\s*hang|giam|tong|t\s*tien|thanh\s*tien|gio\s*ra|thu\s*ngan|in\s*luc|cam\s*on|mat\s*hang\s*sl\s*gia|mota\s*cafe|hoa\s*don\s*ban\s*hang)$',
+  );
 
   List<BillItem> _extractItemsFromPhrases(String ocrText) {
     final cleaned = stripInvoiceNumbers(stripPhoneNumbers(ocrText));
@@ -372,10 +360,14 @@ class ParseBillImageUseCase {
     for (final entry in uniqueAmounts) {
       // Look backwards up to 5 lines for the item name.
       final nameParts = <String>[];
-      for (int i = entry.lineIndex - 1; i >= 0 && i >= entry.lineIndex - 5; i--) {
+      for (
+        int i = entry.lineIndex - 1;
+        i >= 0 && i >= entry.lineIndex - 5;
+        i--
+      ) {
         final line = lines[i];
         final lower = line.toLowerCase();
-        if (_stopWords.any(lower.contains)) break;
+        if (_stopWordLinePattern.hasMatch(lower)) break;
         if (_phraseAmountPattern.hasMatch(line)) break;
         if (line.length < 2 || line.length > 60) continue;
         nameParts.insert(0, line);
@@ -404,7 +396,8 @@ class ParseBillImageUseCase {
     final normalizedA = a.toLowerCase().replaceAll(RegExp(r'\s+'), ' ').trim();
     final normalizedB = b.toLowerCase().replaceAll(RegExp(r'\s+'), ' ').trim();
     if (normalizedA == normalizedB) return true;
-    if (normalizedA.contains(normalizedB) || normalizedB.contains(normalizedA)) {
+    if (normalizedA.contains(normalizedB) ||
+        normalizedB.contains(normalizedA)) {
       return true;
     }
     final similarity = normalizedA.similarityTo(normalizedB);

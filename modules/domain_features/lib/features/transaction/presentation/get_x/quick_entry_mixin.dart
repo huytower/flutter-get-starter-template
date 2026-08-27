@@ -430,8 +430,8 @@ mixin QuickEntryMixin on TransactionFormController {
       return;
     }
 
-    // Try structured bill parsing first — if the image is a multi-item bill,
-    // auto-record each line item directly and skip the suggestion chip.
+    // IMAGE PATH: bill parser is the ONLY path.
+    // Auto-save items directly. No suggestion chip, no single-item fallback.
     '[AI_PARSING] 🧾 Trying bill parser...'.Log('QuickEntryMixin');
     '[BILL_PARSER_V2] Active — auto-save enabled'.Log('QuickEntryMixin');
     BillParseResult? billResult;
@@ -456,93 +456,11 @@ mixin QuickEntryMixin on TransactionFormController {
       return;
     }
 
-    '[AI_PARSING] 📝 Falling back to single-item OCR flow'.Log(
-      'QuickEntryMixin',
-    );
-    '[BILL_PARSER_V2] Fallback path active'.Log('QuickEntryMixin');
-    final ocrText = await CcReceiptScanHelper.recognizeText(picked.path);
-    if (!isCurrentGeneration()) {
-      cancelQuickEntryImage();
-      return;
-    }
-    '[AI_PARSING] 📝 OCR completed | textLength=${ocrText.length}'.Log(
-      'QuickEntryMixin',
-    );
-
-    final cleanedOcrText = stripInvoiceNumbers(ocrText);
-    final strippedCount = ocrText.length - cleanedOcrText.length;
-    if (strippedCount > 0) {
-      '[AI_PARSING] 🚫 Serial/invoice number stripped from fallback | removed=$strippedCount chars'
-          .Log('QuickEntryMixin');
-    }
-
-    final parseUseCase = getIt<ParseQuickEntryUseCase>();
-    final local = await parseUseCase.parseLocally(
-      cleanedOcrText,
-      categoryType: quickEntryCategoryType,
-      groupIds: quickEntryCategoryGroupIds,
-    );
-    if (!isCurrentGeneration()) {
-      cancelQuickEntryImage();
-      return;
-    }
-    '[AI_PARSING] 📍 OCR-based local fallback ready | result=${local.toJson()}'
+    '[AI_PARSING] ⚠️ Bill parser returned no items | showing error instead of suggestion chip'
         .Log('QuickEntryMixin');
-
-    // SHORT-CIRCUIT: If OCR + Local parsing resolved the image perfectly, skip cloud.
-    if (local.isComplete) {
-      '[AI_PARSING] ✅ OCR parse was complete | skipping cloud escalation'.Log(
-        'QuickEntryMixin',
-      );
-      resetParsingIfCurrent();
-      cancelQuickEntryImage();
-      quickEntrySuggestion.value = local;
-      return;
-    }
-
-    if (!await _passCloudGate(
-      context: context,
-      isCurrentGeneration: isCurrentGeneration,
-      resetParsingIfCurrent: resetParsingIfCurrent,
-    )) {
-      '[AI_PARSING] ⛔ Cloud gate blocked image escalation'.Log(
-        'QuickEntryMixin',
-      );
-      cancelQuickEntryImage();
-      return;
-    }
-
-    '[AI_PARSING] ☁️ Escalating image to Gemini...'.Log('QuickEntryMixin');
-    final cloudResult = await parseUseCase.parseImageWithCloud(
-      imageBytes: picked.bytes,
-      mimeType: picked.mimeType,
-      localResult: local,
-      categoryType: quickEntryCategoryType,
-      groupIds: quickEntryCategoryGroupIds,
-    );
     resetParsingIfCurrent();
-    if (!isCurrentGeneration()) {
-      cancelQuickEntryImage();
-      return;
-    }
-
-    // Cloud failing outright shouldn't throw away a local (OCR-text) result
-    // that was already good enough to be worth escalating.
-    final suggestion = (cloudResult != null && !cloudResult.isEmpty)
-        ? cloudResult
-        : local;
-
-    '[AI_PARSING] ✨ Final image suggestion resolved | cloudSuccess=${cloudResult != null} | result=${suggestion.toJson()}'
-        .Log('QuickEntryMixin');
-
-    if (suggestion.isEmpty) {
-      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
-      cancelQuickEntryImage();
-      return;
-    }
-
-    quickEntrySuggestion.value = suggestion;
     cancelQuickEntryImage();
+    quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
   }
 
   Future<void> _recordBillItemsToStorage(
