@@ -1,3 +1,5 @@
+import 'package:cc_sdk/export_cc_sdk.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:string_similarity/string_similarity.dart';
 
 import '../../features/category/domain/entities/category_entity.dart';
@@ -23,57 +25,207 @@ final Map<String, int> _amountUnitMultipliers = {
   'dong': 1,
 };
 
-// Grouped-thousands form (e.g. "1.500.000") is tried before the plain
-// digit-run fallback — without it, "1.500.000" mis-parsed as 1500, since
-// allMatches only consumes one `[.,]` group per match.
+// Grouped-thousands form (e.g. "1.500.000" or "85 000") is tried before
+// the plain digit-run fallback.
+// Units like 'tr' (million) use negative lookahead to avoid matching
+// prefixes in words like 'tra' (tea).
 final RegExp _amountPattern = RegExp(
-  r'(\d{1,3}(?:[.,]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|tr|trieu|ty|b|d|vnd|dong)?',
+  r'(\d{1,3}(?:[., ]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|tr|trieu|ty|b|d|vnd|dong)?(?!\w)',
 );
+
+/// Matches common Vietnamese invoice/serial number prefixes followed by digits.
+final RegExp invoiceNumberPattern = RegExp(
+  r'(?:s[oô]|so|invoice|no|ma\s*hd|hd)\s*:?\s*[a-z0-9-]{4,20}',
+  caseSensitive: false,
+);
+
+/// Strips Vietnamese phone numbers from [text].
+/// Optimized for "0..." and "+84..." patterns.
+String stripPhoneNumbers(String text) {
+  var result = text;
+  final phoneRegex = RegExp(r'(?:\+84|0)\d{9,10}');
+  final matches = phoneRegex.allMatches(text);
+
+  for (final match in matches) {
+    final potential = match.group(0)!;
+    try {
+      final parsed = PhoneNumber.parse(potential, callerCountry: IsoCode.VN);
+      if (parsed.isValid(type: PhoneNumberType.mobile)) {
+        '[AI_PARSING] 🚫 Phone number stripped | "$potential"'.Log(
+          'QuickEntryParserHelper',
+        );
+        result = result.replaceFirst(potential, ' ');
+      }
+    } catch (_) {
+      // Not a valid phone number, keep it.
+    }
+  }
+  return result;
+}
+
+/// Strips invoice/serial numbers from [text].
+String stripInvoiceNumbers(String text) {
+  return text.replaceAllMapped(invoiceNumberPattern, (match) {
+    final stripped = match.group(0)!;
+    '[AI_PARSING] 🚫 Serial/invoice number stripped | "$stripped"'.Log(
+      'QuickEntryParserHelper',
+    );
+    return ' ';
+  });
+}
 
 /// Parses a Vietnamese money shorthand out of [text] — `50k`, `50.000`,
 /// `1tr`, `1,5tr`, `500 nghin`, plain `500000`, optional `đ`/`vnd` suffix.
 /// Null if nothing plausible (a bare number under 1000 with no unit is
 /// treated as ambiguous, not guessed at).
 ///
-/// Prefers the *last* number carrying an explicit unit/currency suffix over
-/// the first digit run — "2 ly cafe 50k" states an unmarked quantity before
-/// the real price, so taking the first number would misread the quantity as
-/// the amount.
-///
-/// Uses [stripVietnameseDiacritics], not the full [normalizeMerchantText] —
-/// the latter strips punctuation too, deleting the `.`/`,` separators this
-/// function's regex depends on.
+/// Prefers "Tổng" (Total) amount if multiple amounts are found.
+/// Otherwise, prefers the *last* number carrying an explicit unit/currency
+/// suffix over the first digit run.
 int? parseVietnameseAmount(String text) {
-  final normalized = stripVietnameseDiacritics(text);
+  final normalized = stripVietnameseDiacritics(text.toLowerCase());
+
+  // 1. Collect all valid amounts from the text
   final matches = _amountPattern.allMatches(normalized).toList();
   if (matches.isEmpty) return null;
 
+  final amounts = <int>[];
+  for (final match in matches) {
+    final numeric = match.group(1)!;
+    final unit = match.group(2);
+    final digitsOnly = numeric.replaceAll(RegExp('[., ]'), '');
+    var value = int.tryParse(digitsOnly);
+
+    if (value != null) {
+      if (unit != null) {
+        final multiplier = _amountUnitMultipliers[unit.toLowerCase()];
+        if (multiplier != null && multiplier > 1) {
+          value *= multiplier;
+        }
+      }
+      if (value >= 1000 && value < _billion) {
+        amounts.add(value);
+      }
+    }
+  }
+
+  if (amounts.isEmpty) return null;
+
+  // 2. Check for explicit "Total" keywords in the text
+  final hasTotalKeyword = RegExp(
+    r'tong|thanh\s*toan|total|t\s*tien',
+  ).hasMatch(normalized);
+
+  if (hasTotalKeyword) {
+    // On a receipt, the Grand Total is almost always the LAST large amount,
+    // even if the OCR is shuffled.
+    // We filter out suspiciously small amounts (like tips or quantities)
+    // and take the last one.
+    return amounts.last;
+  }
+
+  // 3. Fallback: prefer the last amount with an explicit unit (like 'k' or 'tr')
   RegExpMatch? lastWithUnit;
   for (final match in matches) {
     if (match.group(2) != null) lastWithUnit = match;
   }
-  final match = lastWithUnit ?? matches.first;
 
-  final numeric = match.group(1)!;
-  final unit = match.group(2);
-
-  if (unit == null) {
-    final digitsOnly = numeric.replaceAll(RegExp('[.,]'), '');
+  if (lastWithUnit != null) {
+    final numeric = lastWithUnit.group(1)!;
+    final unit = lastWithUnit.group(2)!;
+    final digitsOnly = numeric.replaceAll(RegExp('[., ]'), '');
     final value = int.tryParse(digitsOnly);
-    if (value == null || value < _thousand) return null;
-    return value;
+    if (value != null) {
+      final multiplier = _amountUnitMultipliers[unit.toLowerCase()] ?? 1;
+      return value * multiplier;
+    }
   }
 
-  if (unit == 'd' || unit == 'vnd' || unit == 'dong') {
-    final digitsOnly = numeric.replaceAll(RegExp('[.,]'), '');
-    return int.tryParse(digitsOnly);
+  return amounts.last;
+}
+
+/// Identifies likely line items (name + price) in a bill OCR string.
+List<({String name, int price})> extractItemsFromText(String text) {
+  final cleaned = stripInvoiceNumbers(stripPhoneNumbers(text));
+  final lines = cleaned
+      .split('\n')
+      .map((l) => l.trim())
+      .where((l) => l.isNotEmpty)
+      .toList();
+
+  final items = <({String name, int price})>[];
+  final amountPattern = RegExp(
+    r'([\d. ,]+)\s*(k|nghin|tr|trieu|vnd|d|dong)?(?!\w)',
+  );
+
+  for (int i = 0; i < lines.length; i++) {
+    final line = lines[i];
+    final match = amountPattern.allMatches(line).lastOrNull;
+    if (match == null) continue;
+
+    final numeric = match.group(1)!;
+    final unit = match.group(2);
+    final digitsOnly = numeric.replaceAll(RegExp('[., ]'), '');
+    var value = int.tryParse(digitsOnly);
+
+    if (value == null || value < 1000 || value > 10000000) continue;
+
+    if (unit != null) {
+      final multiplier = _amountUnitMultipliers[unit.toLowerCase()];
+      if (multiplier != null && multiplier > 1) {
+        value *= multiplier;
+      }
+    }
+
+    // Item name is usually on the same line or previous line
+    var name = line.substring(0, match.start).trim();
+    if (name.length < 3 && i > 0) {
+      name = lines[i - 1];
+    }
+
+    // Clean name from quantities or separators
+    name = name
+        .replaceAll(RegExp(r'^\d+\s*'), '') // Remove leading quantity
+        .replaceAll(RegExp(r'[|:;]'), '')
+        .trim();
+
+    if (name.length >= 3 && !_isStopWord(name)) {
+      items.add((name: name, price: value));
+    }
   }
 
-  final multiplier = _amountUnitMultipliers[unit];
-  if (multiplier == null) return null;
-  final asDouble = double.tryParse(numeric.replaceAll(',', '.'));
-  if (asDouble == null) return null;
-  return (asDouble * multiplier).round();
+  return items;
+}
+
+bool _isStopWord(String text) {
+  final lower = stripVietnameseDiacritics(text.toLowerCase());
+  const stopWords = {
+    'tong',
+    't tien',
+    'thanh tien',
+    'tien hang',
+    'giam',
+    'chiet khau',
+    'thue',
+    'vat',
+    'phi',
+    'phu phi',
+    'thanh toan',
+    'khach tra',
+    'tra lai',
+  };
+  return stopWords.any((s) => lower.startsWith(s) || lower.endsWith(s));
+}
+
+/// Summarizes extracted items into a single string for the note field.
+String summarizeBillItems(List<({String name, int price})> items) {
+  if (items.isEmpty) return '';
+  return items
+      .map((it) {
+        final priceK = (it.price / 1000).toStringAsFixed(0);
+        return '${it.name} (${priceK}k)';
+      })
+      .join(', ');
 }
 
 /// Informal/English shorthand mapped to a seed category id, checked before
@@ -199,7 +351,9 @@ QuickEntryParseResult parseQuickEntryTextLocally({
   required List<CategoryEntity> categories,
   required String Function(CategoryEntity) categoryLabels,
 }) {
-  final normalized = stripVietnameseDiacritics(text.toLowerCase());
+  // Clean noise first
+  final cleaned = stripInvoiceNumbers(stripPhoneNumbers(text));
+  final normalized = stripVietnameseDiacritics(cleaned.toLowerCase());
   DateTime date = DateTime.now();
   String residual = normalized;
 
@@ -251,17 +405,26 @@ QuickEntryParseResult parseQuickEntryTextLocally({
 
   // 6. Clean up residual text to get the final note
   // Remove common filler words and extra spaces/punctuation
-  final note = residual
+  final residualNote = residual
       .replaceAll(RegExp(r'[.,\-–()]'), ' ')
       .split(' ')
       .where((s) => s.isNotEmpty && s.length > 1)
       .join(' ')
       .trim();
 
+  // 7. If this is an OCR string (contains newlines) and has items, build a better note
+  String? finalNote = residualNote.isEmpty ? null : residualNote;
+  if (text.contains('\n')) {
+    final items = extractItemsFromText(text);
+    if (items.isNotEmpty) {
+      finalNote = summarizeBillItems(items);
+    }
+  }
+
   return QuickEntryParseResult(
-    amount: parseVietnameseAmount(text),
+    amount: parseVietnameseAmount(cleaned),
     categoryId: matchedCategoryId,
     date: date,
-    note: note.isEmpty ? null : note,
+    note: finalNote,
   );
 }

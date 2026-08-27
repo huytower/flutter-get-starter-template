@@ -442,10 +442,10 @@ mixin QuickEntryMixin on TransactionFormController {
         .Log('QuickEntryMixin');
 
     // SHORT-CIRCUIT: If OCR + Local parsing resolved the image perfectly, skip cloud.
-    if (local.isComplete) {
-      '[AI_PARSING] ✅ OCR parse was complete | skipping cloud escalation'.Log(
-        'QuickEntryMixin',
-      );
+    // A "perfect" resolve must have a plausible amount (avoiding phone numbers).
+    if (local.isComplete && _isAmountPlausible(local.amount)) {
+      '[AI_PARSING] ✅ OCR parse was complete and plausible | skipping cloud escalation'
+          .Log('QuickEntryMixin');
       resetParsingIfCurrent();
       quickEntrySuggestion.value = local;
       return;
@@ -578,5 +578,16 @@ mixin QuickEntryMixin on TransactionFormController {
 
   void dismissQuickEntrySuggestion() {
     quickEntrySuggestion.value = null;
+  }
+
+  /// Sanity check for parsed amounts to avoid misidentifying phone numbers
+  /// or serial numbers as transaction values.
+  /// Anything over 500 million VND for a single OCR entry is escalated to Gemini.
+  bool _isAmountPlausible(int? amount) {
+    if (amount == null) return false;
+    // 500,000,000 VND (~$20k) is a safe threshold for "Automatic" local parsing.
+    // Larger amounts are legally/financially significant and worth the AI check.
+    const int threshold = 500000000;
+    return amount > 0 && amount <= threshold;
   }
 }
