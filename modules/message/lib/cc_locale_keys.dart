@@ -643,6 +643,9 @@ class CodegenLoader extends AssetLoader {
       "investment_business": "Business",
       "investment_linked_insurance": "Investment-linked Insurance",
       "investment_other": "Other",
+      "market_supermarket": "Market & Supermarket",
+      "religious": "Religious/Spirituality",
+      "leisure": "Leisure & Travel",
       "expense_settings_title": "Expense Categories",
     },
     "sync": {
@@ -1306,7 +1309,7 @@ class CodegenLoader extends AssetLoader {
       "transport": "Di chuyển",
       "shopping": "Mua sắm",
       "health": "Sức khỏe",
-      "food_drink": "Ăn uống",
+      "food_drink": "Ăn uống & Cà phê",
       "coffee": "Cà phê",
       "water": "Nước",
       "eat_out": "Ăn ngoài",
@@ -1391,6 +1394,9 @@ class CodegenLoader extends AssetLoader {
       "investment_business": "Kinh doanh",
       "investment_linked_insurance": "Bảo hiểm nhân thọ",
       "investment_other": "Khác",
+      "market_supermarket": "Chợ & Siêu thị",
+      "religious": "Lễ chùa & Nhà thờ",
+      "leisure": "Vui chơi/Khu du lịch",
       "expense_settings_title": "Hạng mục chi tiêu",
     },
     "sync": {
@@ -2160,6 +2166,9 @@ abstract class CcLocaleKeys {
   static const category_investment_linked_insurance =
       'category.investment_linked_insurance';
   static const category_investment_other = 'category.investment_other';
+  static const category_market_supermarket = 'category.market_supermarket';
+  static const category_religious = 'category.religious';
+  static const category_leisure = 'category.leisure';
 
   static const comment_detail_title = 'comment.detail.title';
   static const comment_detail_content = 'comment.detail.content';

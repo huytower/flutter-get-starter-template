@@ -483,7 +483,7 @@
     "category":  {
                      "group_daily":  "Daily",
                      "group_personal":  "Personal",
-                     "group_food_drink":  "Dining \u0026 Coffee",
+                     "group_food_drink":  "Dining & Coffee",
                      "group_transport":  "Transportation",
                      "group_utilities":  "Utilities",
                      "group_housing":  "Housing",
@@ -500,7 +500,7 @@
                      "transport":  "Transport",
                      "shopping":  "Shopping",
                      "health":  "Health",
-                     "food_drink":  "Food \u0026 Drink",
+                     "food_drink":  "Dining & Coffee",
                      "coffee":  "Coffee",
                      "water":  "Water",
                      "eat_out":  "Eat Out",
@@ -585,6 +585,9 @@
                      "investment_settings_title":  "Investment Categories",
                      "investment_stock":  "Stock",
                      "investment_term_deposit":  "Term Deposit",
+                     "market_supermarket": "Market & Supermarket",
+                     "religious": "Religious/Spirituality",
+                     "leisure": "Leisure & Travel",
                      "expense_settings_title":  "Expense Categories"
                  },
     "sync":  {
