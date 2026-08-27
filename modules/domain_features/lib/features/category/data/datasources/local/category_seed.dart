@@ -100,34 +100,13 @@ class CategorySeed {
   ];
 
   static final List<CategoryModel> categories = [
-    // Group 1: Ăn uống & Cà phê (reordered by usage frequency)
+    // Group 1: Ăn uống & Cà phê (consolidated)
     CategoryModel(
       id: 'c1',
       nameKey: CcLocaleKeys.category_food_drink,
       iconCode: Icons.restaurant.codePoint,
       groupId: '1',
       colorValue: PrjColors.categoryFoodDrink.value,
-    ),
-    CategoryModel(
-      id: 'c4',
-      nameKey: CcLocaleKeys.category_eat_out,
-      iconCode: Icons.dinner_dining.codePoint,
-      groupId: '1',
-      colorValue: PrjColors.categoryEatOut.value,
-    ),
-    CategoryModel(
-      id: 'c2',
-      nameKey: CcLocaleKeys.category_coffee,
-      iconCode: Icons.local_cafe.codePoint,
-      groupId: '1',
-      colorValue: PrjColors.categoryCoffee.value,
-    ),
-    CategoryModel(
-      id: 'c3',
-      nameKey: CcLocaleKeys.category_water,
-      iconCode: Icons.local_drink.codePoint,
-      groupId: '1',
-      colorValue: PrjColors.categoryWater.value,
     ),
 
     // Group 2: Di chuyển (reordered by usage frequency)
@@ -296,8 +275,22 @@ class CategorySeed {
       groupId: '7',
       colorValue: PrjColors.categoryTravel.value,
     ),
+    CategoryModel(
+      id: 'c49',
+      nameKey: CcLocaleKeys.category_leisure,
+      iconCode: Icons.fort_rounded.codePoint,
+      groupId: '7',
+      colorValue: PrjColors.categoryTravel.value,
+    ),
 
     // Group 8: Mua sắm (reordered by usage frequency)
+    CategoryModel(
+      id: 'c47',
+      nameKey: CcLocaleKeys.category_market_supermarket,
+      iconCode: Icons.storefront.codePoint,
+      groupId: '8',
+      colorValue: PrjColors.categoryShopping.value,
+    ),
     CategoryModel(
       id: 'c30',
       nameKey: CcLocaleKeys.category_clothing,
@@ -364,6 +357,13 @@ class CategorySeed {
       id: 'c38',
       nameKey: CcLocaleKeys.category_charity,
       iconCode: Icons.volunteer_activism.codePoint,
+      groupId: '11',
+      colorValue: PrjColors.categoryCharity.value,
+    ),
+    CategoryModel(
+      id: 'c48',
+      nameKey: CcLocaleKeys.category_religious,
+      iconCode: Icons.church.codePoint,
       groupId: '11',
       colorValue: PrjColors.categoryCharity.value,
     ),
@@ -706,8 +706,7 @@ class CategorySeed {
   static const Map<AgeGroup, List<String>> defaultExpenseCategoryKeys = {
     AgeGroup.youngAdult: [
       CcLocaleKeys.category_food_drink,
-      CcLocaleKeys.category_water,
-      CcLocaleKeys.category_eat_out,
+      CcLocaleKeys.category_market_supermarket,
       CcLocaleKeys.category_taxi,
       CcLocaleKeys.category_electricity,
       CcLocaleKeys.category_internet,
@@ -724,9 +723,7 @@ class CategorySeed {
     ],
     AgeGroup.adult: [
       CcLocaleKeys.category_food_drink,
-      CcLocaleKeys.category_coffee,
-      CcLocaleKeys.category_water,
-      CcLocaleKeys.category_eat_out,
+      CcLocaleKeys.category_market_supermarket,
       CcLocaleKeys.category_taxi,
       CcLocaleKeys.category_gas,
       CcLocaleKeys.category_parking,
@@ -745,11 +742,13 @@ class CategorySeed {
       CcLocaleKeys.category_courses,
       CcLocaleKeys.category_cinema,
       CcLocaleKeys.category_travel,
+      CcLocaleKeys.category_leisure,
       CcLocaleKeys.category_events,
       CcLocaleKeys.category_electronics,
       CcLocaleKeys.category_clothing,
       CcLocaleKeys.category_cosmetics,
       CcLocaleKeys.category_gifts,
+      CcLocaleKeys.category_religious,
       CcLocaleKeys.category_haircut,
       CcLocaleKeys.category_spa,
       CcLocaleKeys.category_personal_care_product,
@@ -758,9 +757,7 @@ class CategorySeed {
     ],
     AgeGroup.midLife: [
       CcLocaleKeys.category_food_drink,
-      CcLocaleKeys.category_coffee,
-      CcLocaleKeys.category_water,
-      CcLocaleKeys.category_eat_out,
+      CcLocaleKeys.category_market_supermarket,
       CcLocaleKeys.category_taxi,
       CcLocaleKeys.category_gas,
       CcLocaleKeys.category_parking,
@@ -779,6 +776,7 @@ class CategorySeed {
       CcLocaleKeys.category_courses,
       CcLocaleKeys.category_cinema,
       CcLocaleKeys.category_travel,
+      CcLocaleKeys.category_leisure,
       CcLocaleKeys.category_events,
       CcLocaleKeys.category_appliances,
       CcLocaleKeys.category_electronics,
@@ -786,6 +784,7 @@ class CategorySeed {
       CcLocaleKeys.category_cosmetics,
       CcLocaleKeys.category_gifts,
       CcLocaleKeys.category_charity,
+      CcLocaleKeys.category_religious,
       CcLocaleKeys.category_haircut,
       CcLocaleKeys.category_spa,
       CcLocaleKeys.category_personal_care_product,
@@ -794,8 +793,7 @@ class CategorySeed {
     ],
     AgeGroup.mature: [
       CcLocaleKeys.category_food_drink,
-      CcLocaleKeys.category_water,
-      CcLocaleKeys.category_eat_out,
+      CcLocaleKeys.category_market_supermarket,
       CcLocaleKeys.category_gas,
       CcLocaleKeys.category_maintenance,
       CcLocaleKeys.category_parking,
@@ -813,11 +811,13 @@ class CategorySeed {
       CcLocaleKeys.category_books,
       CcLocaleKeys.category_courses,
       CcLocaleKeys.category_travel,
+      CcLocaleKeys.category_leisure,
       CcLocaleKeys.category_appliances,
       CcLocaleKeys.category_electronics,
       CcLocaleKeys.category_clothing,
       CcLocaleKeys.category_gifts,
       CcLocaleKeys.category_charity,
+      CcLocaleKeys.category_religious,
       CcLocaleKeys.category_haircut,
       CcLocaleKeys.category_spa,
       CcLocaleKeys.category_personal_care_product,

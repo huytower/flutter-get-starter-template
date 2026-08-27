@@ -120,8 +120,9 @@ class ParseQuickEntryUseCase {
     final prompt =
         'This image is a Vietnamese ${_receiptKindPhrase(categoryType)}. '
         'Extract the total amount in VND, the best-matching category id, '
-        'the transaction date if one is shown, and a short note '
-        '(payee/merchant name or item). '
+        'the transaction date if one is shown, and a short note. '
+        'If this is a receipt, the note should be the merchant name. '
+        'If there are line items, list them concisely in the note like: "Item1, Item2...". '
         '${_todayReferenceSentence()} '
         '${_buildCategoryOptionsPrompt(categories)}';
 

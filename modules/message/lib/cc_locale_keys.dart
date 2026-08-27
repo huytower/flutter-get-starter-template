@@ -23,7 +23,6 @@ class CodegenLoader extends AssetLoader {
           "Manage income, expenses, investment, debt according to single-entry accounting principle, towards financial freedom",
       "copyright": "© 2026 So Sach Xin · Made by",
       "copied_email": "Copied email: {email}",
-      "author": "by Huy Tower",
       "role_tech": "Tech",
       "role_hr": "HR",
       "author_hr_name": "Kien Nguyen",
@@ -644,6 +643,9 @@ class CodegenLoader extends AssetLoader {
       "investment_business": "Business",
       "investment_linked_insurance": "Investment-linked Insurance",
       "investment_other": "Other",
+      "market_supermarket": "Market & Supermarket",
+      "religious": "Religious/Spirituality",
+      "leisure": "Leisure & Travel",
       "expense_settings_title": "Expense Categories",
     },
     "sync": {
@@ -773,7 +775,6 @@ class CodegenLoader extends AssetLoader {
           "Quản lý thu chi, đầu tư, vay nợ theo nguyên lý kế toán đơn, hướng đến tự do tài chính",
       "copyright": "© 2026 Sổ Sách Xịn · Made by",
       "copied_email": "Đã sao chép email: {email}",
-      "author": "bởi Huy Tower",
       "role_tech": "Kỹ thuật",
       "role_hr": "HR",
       "author_hr_name": "Kien Nguyen",
@@ -1308,7 +1309,7 @@ class CodegenLoader extends AssetLoader {
       "transport": "Di chuyển",
       "shopping": "Mua sắm",
       "health": "Sức khỏe",
-      "food_drink": "Ăn uống",
+      "food_drink": "Ăn uống & Cà phê",
       "coffee": "Cà phê",
       "water": "Nước",
       "eat_out": "Ăn ngoài",
@@ -1393,6 +1394,9 @@ class CodegenLoader extends AssetLoader {
       "investment_business": "Kinh doanh",
       "investment_linked_insurance": "Bảo hiểm nhân thọ",
       "investment_other": "Khác",
+      "market_supermarket": "Chợ & Siêu thị",
+      "religious": "Lễ chùa & Nhà thờ",
+      "leisure": "Vui chơi/Khu du lịch",
       "expense_settings_title": "Hạng mục chi tiêu",
     },
     "sync": {
@@ -2162,6 +2166,9 @@ abstract class CcLocaleKeys {
   static const category_investment_linked_insurance =
       'category.investment_linked_insurance';
   static const category_investment_other = 'category.investment_other';
+  static const category_market_supermarket = 'category.market_supermarket';
+  static const category_religious = 'category.religious';
+  static const category_leisure = 'category.leisure';
 
   static const comment_detail_title = 'comment.detail.title';
   static const comment_detail_content = 'comment.detail.content';

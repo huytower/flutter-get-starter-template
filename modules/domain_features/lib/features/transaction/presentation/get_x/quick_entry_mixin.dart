@@ -13,10 +13,6 @@ import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../liability/domain/entities/liability_entity.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
-import '../../domain/entities/bill_parse_result.dart';
-import '../../domain/entities/transaction_entity.dart';
-import '../../domain/usecases/create_transaction_usecase.dart';
-import '../../domain/usecases/parse_bill_image_usecase.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
@@ -415,14 +411,12 @@ mixin QuickEntryMixin on TransactionFormController {
     final pickResult = await CcReceiptScanHelper.pickReceiptImage(
       fromCamera: fromCamera,
     );
-    if (!isCurrentGeneration()) {
-      cancelQuickEntryImage();
-      return;
-    }
+    if (!isCurrentGeneration()) return;
     final picked = pickResult.image;
     if (picked == null) {
       '[AI_PARSING] ❌ No image picked'.Log('QuickEntryMixin');
-      cancelQuickEntryImage();
+      resetParsingIfCurrent();
+      // A denied permission gets explicit feedback; a plain cancel stays silent.
       if (pickResult.permissionDenied) {
         quickEntryErrorKey.value =
             CcLocaleKeys.quick_entry_photo_permission_denied;
@@ -430,122 +424,70 @@ mixin QuickEntryMixin on TransactionFormController {
       return;
     }
 
-    // IMAGE PATH: bill parser is the ONLY path.
-    // Auto-save items directly. No suggestion chip, no single-item fallback.
-    '[AI_PARSING] 🧾 Trying bill parser...'.Log('QuickEntryMixin');
-    '[BILL_PARSER_V2] Active — auto-save enabled'.Log('QuickEntryMixin');
-    BillParseResult? billResult;
-    try {
-      final billUseCase = getIt<ParseBillImageUseCase>();
-      billResult = await billUseCase.parse(
-        imageBytes: picked.bytes,
-        mimeType: picked.mimeType,
-        categoryType: quickEntryCategoryType,
-        groupIds: quickEntryCategoryGroupIds,
-      );
-    } catch (e) {
-      '[AI_PARSING] ❌ Bill parser threw | error=$e'.Log('QuickEntryMixin');
-    }
+    '[AI_PARSING] 🔍 Running OCR...'.Log('QuickEntryMixin');
+    final ocrText = await CcReceiptScanHelper.recognizeText(picked.path);
+    if (!isCurrentGeneration()) return;
+    '[AI_PARSING] 📝 OCR completed | textLength=${ocrText.length}'.Log(
+      'QuickEntryMixin',
+    );
 
-    if (billResult != null && billResult.items.isNotEmpty) {
-      '[AI_PARSING] ✅ Bill parser found ${billResult.items.length} items | auto-recording'
+    final parseUseCase = getIt<ParseQuickEntryUseCase>();
+    final local = await parseUseCase.parseLocally(
+      ocrText,
+      categoryType: quickEntryCategoryType,
+      groupIds: quickEntryCategoryGroupIds,
+    );
+    if (!isCurrentGeneration()) return;
+    '[AI_PARSING] 📍 OCR-based local fallback ready | result=${local.toJson()}'
+        .Log('QuickEntryMixin');
+
+    // SHORT-CIRCUIT: If OCR + Local parsing resolved the image perfectly, skip cloud.
+    // A "perfect" resolve must have a plausible amount (avoiding phone numbers).
+    if (local.isComplete && _isAmountPlausible(local.amount)) {
+      '[AI_PARSING] ✅ OCR parse was complete and plausible | skipping cloud escalation'
           .Log('QuickEntryMixin');
       resetParsingIfCurrent();
-      cancelQuickEntryImage();
-      await _recordBillItemsToStorage(context, billResult);
+      quickEntrySuggestion.value = local;
       return;
     }
 
-    '[AI_PARSING] ⚠️ Bill parser returned no items | showing error instead of suggestion chip'
-        .Log('QuickEntryMixin');
-    resetParsingIfCurrent();
-    cancelQuickEntryImage();
-    quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
-  }
-
-  Future<void> _recordBillItemsToStorage(
-    BuildContext context,
-    BillParseResult billResult,
-  ) async {
-    final walletId = selectedWalletId.value;
-    if (walletId == null || walletId.isEmpty) {
-      '[AI_PARSING] ⚠️ No wallet selected for bill auto-record'.Log(
+    if (!await _passCloudGate(
+      context: context,
+      isCurrentGeneration: isCurrentGeneration,
+      resetParsingIfCurrent: resetParsingIfCurrent,
+    )) {
+      '[AI_PARSING] ⛔ Cloud gate blocked image escalation'.Log(
         'QuickEntryMixin',
       );
       return;
     }
 
-    final createUseCase = getIt<CreateTransactionUseCase>();
-    int savedCount = 0;
-    int failedCount = 0;
+    '[AI_PARSING] ☁️ Escalating image to Gemini...'.Log('QuickEntryMixin');
+    final cloudResult = await parseUseCase.parseImageWithCloud(
+      imageBytes: picked.bytes,
+      mimeType: picked.mimeType,
+      localResult: local,
+      categoryType: quickEntryCategoryType,
+      groupIds: quickEntryCategoryGroupIds,
+    );
+    resetParsingIfCurrent();
+    if (!isCurrentGeneration()) return;
 
-    for (final item in billResult.items) {
-      final amount = item.totalPrice ?? (item.unitPrice ?? 0);
-      if (amount <= 0) continue;
+    // Cloud failing outright shouldn't throw away a local (OCR-text) result
+    // that was already good enough to be worth escalating.
+    final suggestion = (cloudResult != null && !cloudResult.isEmpty)
+        ? cloudResult
+        : local;
 
-      String? categoryId = billResult.categoryHint;
-      if (categoryId == null) {
-        categoryId = matchCategoryIdFromText(
-          text: item.name ?? '',
-          categories: _quickEntryCategories,
-          categoryLabels: (c) => el.tr(c.nameKey),
-        );
-      }
-
-      final category = categoryId != null
-          ? _findQuickEntryCategory(categoryId)
-          : null;
-      String note = item.name != null && item.name!.trim().isNotEmpty
-          ? item.name!.trim()
-          : (billResult.vendor != null && billResult.vendor!.trim().isNotEmpty
-                ? billResult.vendor!.trim()
-                : 'Hóa đơn');
-      if (billResult.invoiceNumber != null &&
-          billResult.invoiceNumber!.trim().isNotEmpty) {
-        note = '$note (Số: ${billResult.invoiceNumber!.trim()})';
-      }
-
-      final params = CreateTransactionParams(
-        type: quickEntryCategoryType == CategoryType.income
-            ? TransactionType.income
-            : TransactionType.expense,
-        amount: amount,
-        categoryId: categoryId ?? '',
-        categoryLabel: category != null ? el.tr(category.nameKey) : '',
-        categoryIconCode: category?.iconCode,
-        categoryIconFamily: category?.iconFamily,
-        walletId: walletId,
-        note: note,
-        date: billResult.date ?? DateTime.now(),
-      );
-
-      final result = await createUseCase.call(params);
-      if (result.isSuccess()) {
-        savedCount++;
-      } else {
-        failedCount++;
-        final error = result.tryGetError();
-        '[AI_PARSING] ❌ Failed to save bill item | note="$note" | amount=$amount | error=$error'
-            .Log('QuickEntryMixin');
-      }
-    }
-
-    '[AI_PARSING] ✅ Bill auto-record complete | saved=$savedCount | failed=$failedCount'
+    '[AI_PARSING] ✨ Final image suggestion resolved | cloudSuccess=${cloudResult != null} | result=${suggestion.toJson()}'
         .Log('QuickEntryMixin');
 
-    if (savedCount > 0 && context.mounted) {
-      CcSnackBarHelper.showSuccessSnackBar(
-        context: context,
-        message: failedCount > 0
-            ? 'Đã lưu $savedCount khoản, $failedCount khoản thất bại'
-            : 'Đã lưu $savedCount khoản chi từ hóa đơn',
-      );
-      await refreshParent();
-    } else if (savedCount == 0) {
+    if (suggestion.isEmpty) {
       quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
+      return;
     }
 
-    resetForm();
+    quickEntrySuggestion.value = suggestion;
   }
 
   Future<void> toggleVoiceQuickEntry(BuildContext context) async {
@@ -636,5 +578,16 @@ mixin QuickEntryMixin on TransactionFormController {
 
   void dismissQuickEntrySuggestion() {
     quickEntrySuggestion.value = null;
+  }
+
+  /// Sanity check for parsed amounts to avoid misidentifying phone numbers
+  /// or serial numbers as transaction values.
+  /// Anything over 500 million VND for a single OCR entry is escalated to Gemini.
+  bool _isAmountPlausible(int? amount) {
+    if (amount == null) return false;
+    // 500,000,000 VND (~$20k) is a safe threshold for "Automatic" local parsing.
+    // Larger amounts are legally/financially significant and worth the AI check.
+    const int threshold = 500000000;
+    return amount > 0 && amount <= threshold;
   }
 }
