@@ -138,9 +138,11 @@ class WalletController extends CcGetController {
   final RxInt emergencyFundBalance = 0.obs;
   final RxInt liabilityBalance = 0.obs;
 
-  /// Σ Thu vào ÷ Σ Chi ra across every investment position (see
-  /// [GetInvestmentRoiUseCase]).
+  /// Σ (Thu vào - Chi ra) ÷ Σ Chi ra across every investment position.
   final RxDouble investmentRoiPercent = 0.0.obs;
+
+  /// Σ Thu vào ÷ Σ Chi ra across every investment position (Recovery rate).
+  final RxDouble investmentBreakevenPercent = 0.0.obs;
 
   /// Σ realized Thu vào not already reflected in any wallet's own book
   /// balance — added on top of [investmentBalance] so that card still reads
@@ -396,9 +398,14 @@ class WalletController extends CcGetController {
     }
 
     investmentBalance.value = totalInvested;
-    investmentRoiPercent.value = totalInvested == 0
-        ? 0
-        : (totalReturned / totalInvested) * 100;
+    if (totalInvested == 0) {
+      investmentRoiPercent.value = 0;
+      investmentBreakevenPercent.value = 0;
+    } else {
+      investmentRoiPercent.value =
+          ((totalReturned - totalInvested) / totalInvested) * 100;
+      investmentBreakevenPercent.value = (totalReturned / totalInvested) * 100;
+    }
 
     emergencyFundBalance.value = wallets
         .where((w) => w.type == WalletType.emergencyFund)

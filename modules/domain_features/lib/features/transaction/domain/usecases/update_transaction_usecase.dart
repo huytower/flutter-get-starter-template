@@ -24,6 +24,8 @@ class UpdateTransactionParams {
   final int? categoryIconCode;
   final String? categoryIconFamily;
 
+  final String? budgetId;
+
   final String walletId;
   final String? note;
   final DateTime date;
@@ -35,6 +37,7 @@ class UpdateTransactionParams {
     this.categoryLabel = '',
     this.categoryIconCode,
     this.categoryIconFamily,
+    this.budgetId,
     required this.walletId,
     this.note,
     required this.date,
@@ -135,7 +138,7 @@ class UpdateTransactionUseCase {
       amount: params.amount,
       category: params.categoryLabel,
       categoryId: params.categoryId,
-      budgetId: original.budgetId,
+      budgetId: params.budgetId,
       categoryIconCode: params.categoryIconCode,
       categoryIconFamily: params.categoryIconFamily,
       note: params.note,

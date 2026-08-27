@@ -6,6 +6,8 @@ import '../../../transaction/presentation/get_x/transaction_form_controller.dart
 import '../../domain/entities/liability_balance_entity.dart';
 import 'liability_form_controller.dart';
 
+enum LiabilityFormAction { increase, decrease }
+
 abstract class LiabilityBaseFormController extends TransactionFormController
     with QuickEntryMixin {
   RxList<LiabilityBalanceEntity> get mergedItems;
@@ -20,6 +22,9 @@ abstract class LiabilityBaseFormController extends TransactionFormController
   int get installmentsTotal;
   bool get canAddInstallment;
   String get direction;
+
+  Rx<LiabilityFormAction> get action;
+  void setAction(LiabilityFormAction value);
 
   void selectLoan(LiabilityBalanceEntity balance);
   void setRepaymentMethod(String value);

@@ -224,6 +224,8 @@ class CodegenLoader extends AssetLoader {
       "liabilities_desc":
           "Loans + Credit cards · balance tracking, stress monitor",
       "liabilities_net": "Net Liability",
+      "investment_roi": "ROI",
+      "investment_breakeven": "Breakeven Rate",
     },
     "comment": {
       "detail": {
@@ -981,6 +983,8 @@ class CodegenLoader extends AssetLoader {
       "liabilities_desc":
           "Vay + Thẻ tín dụng · dư nợ còn lại, theo dõi áp lực tài chính",
       "liabilities_net": "Nợ ròng",
+      "investment_roi": "ROI",
+      "investment_breakeven": "Tỷ lệ hòa vốn",
     },
     "comment": {
       "detail": {
@@ -1710,6 +1714,8 @@ abstract class CcLocaleKeys {
   static const wallet_liabilities = 'wallet.liabilities';
   static const wallet_liabilities_desc = 'wallet.liabilities_desc';
   static const wallet_liabilities_net = 'wallet.liabilities_net';
+  static const wallet_investment_roi = 'wallet.investment_roi';
+  static const wallet_investment_breakeven = 'wallet.investment_breakeven';
 
   static const transaction_title = 'transaction.title';
   static const transaction_wallet = 'transaction.wallet';

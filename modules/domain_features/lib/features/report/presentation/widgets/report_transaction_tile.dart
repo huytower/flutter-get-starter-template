@@ -1,9 +1,7 @@
-import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
@@ -14,10 +12,7 @@ import 'quick_edit_transaction_sheet.dart';
 import 'report_daily_list_helpers.dart';
 
 class TransactionTile extends StatelessWidget {
-  const TransactionTile({
-    required this.transaction,
-    required this.isEditMode,
-  });
+  const TransactionTile({required this.transaction, required this.isEditMode});
 
   final TransactionEntity transaction;
   final bool isEditMode;
@@ -120,7 +115,10 @@ class TransactionTile extends StatelessWidget {
                   color: context.ccColorScheme.error,
                 ),
                 onTap: () async {
-                  final result = await DeleteTransactionSheet.show(context, transaction);
+                  final result = await DeleteTransactionSheet.show(
+                    context,
+                    transaction,
+                  );
                   if (result == null) return;
 
                   result.when(

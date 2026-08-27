@@ -132,7 +132,7 @@ class _NavigationBarState extends State<NavigationBar>
     final guideline = Get.find<GuidelineController>();
     return Obx(() {
       final _ = guideline.bounceTrigger.value;
-      return buildCurvedNavigationBar();
+      return SafeArea(top: false, child: buildCurvedNavigationBar());
     });
   }
 

@@ -112,15 +112,37 @@ int? parseVietnameseAmount(String text) {
   if (amounts.isEmpty) return null;
 
   // 2. Check for explicit "Total" keywords in the text
-  final hasTotalKeyword = RegExp(
-    r'tong|thanh\s*toan|total|t\s*tien',
-  ).hasMatch(normalized);
+  final totalKeywords = RegExp(
+    r'tong|thanh\s*toan|total|t\s*tien|grand\s*total|sum',
+    caseSensitive: false,
+  );
+
+  final hasTotalKeyword = totalKeywords.hasMatch(normalized);
 
   if (hasTotalKeyword) {
-    // On a receipt, the Grand Total is almost always the LAST large amount,
-    // even if the OCR is shuffled.
-    // We filter out suspiciously small amounts (like tips or quantities)
-    // and take the last one.
+    // If multiple amounts exist on a line with a total keyword, take the last one on that line.
+    final lines = normalized.split('\n');
+    for (int i = lines.length - 1; i >= 0; i--) {
+      if (totalKeywords.hasMatch(lines[i])) {
+        final lineMatches = _amountPattern.allMatches(lines[i]).toList();
+        if (lineMatches.isNotEmpty) {
+          final numeric = lineMatches.last.group(1)!;
+          final unit = lineMatches.last.group(2);
+          final digitsOnly = numeric.replaceAll(RegExp('[., ]'), '');
+          var value = int.tryParse(digitsOnly);
+          if (value != null) {
+            if (unit != null) {
+              final multiplier = _amountUnitMultipliers[unit.toLowerCase()];
+              if (multiplier != null && multiplier > 1) {
+                value *= multiplier;
+              }
+            }
+            if (value >= 1000) return value;
+          }
+        }
+      }
+    }
+    // Fallback: take the last large amount in the entire text
     return amounts.last;
   }
 
@@ -189,7 +211,11 @@ List<({String name, int price})> extractItemsFromText(String text) {
         .replaceAll(RegExp(r'[|:;]'), '')
         .trim();
 
-    if (name.length >= 3 && !_isStopWord(name)) {
+    // Ignore items that are just punctuation or repeated zeros (OCR artifacts)
+    final isNoise =
+        name.isEmpty || RegExp(r'^[.0O\s]+$').hasMatch(name) || name.length < 2;
+
+    if (!isNoise && !_isStopWord(name)) {
       items.add((name: name, price: value));
     }
   }
@@ -259,7 +285,18 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
     }
   }
 
-  // 3. Resolve ambiguous contexts (like "lì xì" or "vay")
+  // 3. Smart Intent Override: If "mua" (buy) is followed by an investment category,
+  // it's likely an investment contribution, not a personal expense.
+  if (detectedDirection == QuickEntryIntent.expense &&
+      normalized.contains('mua')) {
+    for (final keyword in QuickEntryAliasDataset.categoryKeywords.entries) {
+      if (normalized.contains(keyword.key) && keyword.value.startsWith('inv')) {
+        return QuickEntryIntent.investment;
+      }
+    }
+  }
+
+  // 4. Resolve ambiguous contexts (like "lì xì" or "vay")
   for (final contextEntry in QuickEntryAliasDataset.ambiguousContexts.entries) {
     if (normalized.contains(contextEntry.key)) {
       if (detectedDirection == null) {

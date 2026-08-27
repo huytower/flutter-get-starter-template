@@ -78,7 +78,6 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
                         textStyle: context.ccTextTheme.labelMedium?.copyWith(
                           fontWeight: CcTypographyParams.bold,
                           color: scheme.onSurface,
-                          fontSize: context.respFontSize(11),
                         ),
                       ),
                     ),

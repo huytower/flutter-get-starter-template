@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:domain_features/features/budget_limit/export_budget_limit.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/transaction_additional_details_section.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/transaction_submit_button.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
@@ -113,20 +114,92 @@ class _ExpenseFormState extends State<ExpenseForm> {
     ExpenseFormController controller,
     Color accentColor,
   ) {
-    return CategorySelectionSection(
-      key: ValueKey(controller.categoryKey.value),
-      activeColor: accentColor,
-      autoSelectFirst: !controller.isEditing,
-      // pendingPrefillCategoryId must win over editingTransaction?.categoryId:
-      // categoryId is a non-nullable String, so while editing it would always
-      // short-circuit the `??` chain and silently discard a just-applied
-      // merchant/location/quick-entry suggestion's category.
-      initialSelectedCategoryId:
-          controller.pendingPrefillCategoryId.value ??
-          controller.selectedCategory.value?.id ??
-          controller.editingTransaction?.categoryId ??
-          controller.timeBasedSuggestedCategoryId,
-      onCategorySelected: controller.setCategory,
+    if (!Get.isRegistered<BudgetLimitController>()) {
+      Get.put(getIt<BudgetLimitController>());
+    }
+    final budgetController = Get.find<BudgetLimitController>();
+
+    return Obx(() {
+      final budgets = budgetController.budgets;
+      // Reading these observables here ensures the Obx rebuilds when they change
+      controller.selectedBudget.value;
+      final categoryKey = controller.categoryKey.value;
+      final pendingPrefill = controller.pendingPrefillCategoryId.value;
+
+      if (budgets.isNotEmpty) {
+        return _buildBudgetSelectionSection(
+          context,
+          controller,
+          budgets,
+          accentColor,
+        );
+      }
+
+      return CategorySelectionSection(
+        key: ValueKey(categoryKey),
+        activeColor: accentColor,
+        autoSelectFirst: !controller.isEditing,
+        initialSelectedCategoryId:
+            pendingPrefill ??
+            controller.selectedCategory.value?.id ??
+            controller.editingTransaction?.categoryId ??
+            controller.timeBasedSuggestedCategoryId,
+        onCategorySelected: controller.setCategory,
+      );
+    });
+  }
+
+  Widget _buildBudgetSelectionSection(
+    BuildContext context,
+    ExpenseFormController controller,
+    List<BudgetLimitStatsEntity> budgets,
+    Color activeColor,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcSymmetricPadding(
+          horizontal: CcPaddingParams.PAGE_SM,
+          child: CcText(
+            el.tr(CcLocaleKeys.transaction_category),
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
+              color: context.ccColorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const CcSpaceXS(),
+        HorizontalFadeScrollView(
+          height: context.respDim(80),
+          builder: (scrollController) => ListView.separated(
+            scrollDirection: Axis.horizontal,
+            controller: scrollController,
+            padding: EdgeInsets.symmetric(
+              horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+            ),
+            itemCount: budgets.length,
+            separatorBuilder: (context, index) => const CcSpaceSM(),
+            itemBuilder: (context, index) {
+              final budget = budgets[index].budget;
+              final category = controller.getCachedCategoryById(
+                budget.categoryId,
+              );
+
+              final isSelected =
+                  controller.selectedBudget.value?.id == budget.id;
+
+              return CcCategoryItem(
+                iconCode: category?.iconCode ?? 0,
+                iconFamily: category?.iconFamily,
+                nameKey: budget.name,
+                isSelected: isSelected,
+                activeColor: activeColor,
+                onTap: () => controller.setBudget(budget),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 

@@ -7,12 +7,12 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_hero_banner.dart';
 import '../widgets/budget_insights_section.dart';
 import '../widgets/budget_limit_preview_section.dart';
+import '../widgets/invest_hero_banner.dart';
 import '../widgets/investment_wallets_section.dart';
 import '../widgets/liability_hero_banner.dart';
 import '../widgets/liability_wallets_section.dart';
@@ -108,74 +108,12 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   Widget _buildInvestmentHeroBanner(BuildContext context) {
     return Obx(() {
       final status = controller.userLevel.status.value;
-      final canShow = status.canUseInvestment;
-
-      if (!canShow) {
+      if (!status.canUseInvestment) {
         return const SizedBox.shrink();
       }
-      final roi = controller.walletController.investmentRoiPercent.value;
 
-      return BudgetHeroBanner(
-        walletController: controller.walletController,
-        titleKey: CcLocaleKeys.wallet_investments,
-        balance: controller.walletController.investmentBalance,
-        subtitleKey: CcLocaleKeys.wallet_investments_desc,
-        subtitleArgs: {'roi': roi.toStringAsFixed(1)},
-        icon: Icons.trending_up_outlined,
-        color: CcBaseColors.yellow600,
-        topPadding: CcPaddingParams.SPACE_SM,
-        bottomPadding: CcPaddingParams.SPACE_XS,
-        leadingBalanceWidget: Icon(
-          Icons.eco,
-          color: context.ccColorScheme.onPrimary.withOpacity(0.8),
-          size: context.respIconSize(baseSize: 18),
-        ),
-        trailingBalanceWidget: _buildHeroStat(
-          context,
-          icon: Icons.auto_graph_rounded,
-          value: () {
-            int totalReturned = 0;
-            for (final wallet
-                in controller.walletController.investmentWallets) {
-              final stats = controller.walletController.investmentStatsOf(
-                wallet.id,
-              );
-              totalReturned += stats.returned;
-            }
-            return totalReturned;
-          }(),
-          visible: controller.walletController.isBalanceVisible.value,
-          color: PrjColors.success,
-        ),
-      );
+      return InvestHeroBanner(walletController: controller.walletController);
     });
-  }
-
-  Widget _buildHeroStat(
-    BuildContext context, {
-    required IconData icon,
-    required int value,
-    required bool visible,
-    required Color color,
-  }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          size: context.respIconSize(baseSize: 14),
-          color: color.withOpacity(0.9),
-        ),
-        const SizedBox(width: 4),
-        CcText(
-          visible ? TransactionFormHelpers.formatShort(value) : '***',
-          textStyle: context.ccTextTheme.titleSmall?.copyWith(
-            color: color,
-            fontWeight: CcTypographyParams.bold,
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildLiabilityHeroBanner(BuildContext context) {

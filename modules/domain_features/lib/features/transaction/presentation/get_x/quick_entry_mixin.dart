@@ -95,6 +95,11 @@ mixin QuickEntryMixin on TransactionFormController {
   /// switch is needed even within the same tab kind.
   String get quickEntryDirection => '';
 
+  /// Optional hook for controllers to apply custom state based on the
+  /// detected intent and raw text (e.g. setting direction to 'contribute'
+  /// in Investment).
+  void applyQuickEntryIntent(QuickEntryIntent intent, String text) {}
+
   /// Reloads the category cache used to label a resolved `categoryId`. Must
   /// be re-called whenever [quickEntryCategoryGroupIds] changes at runtime
   /// (e.g. Loan switching direction), or the label lookup goes stale.
@@ -293,11 +298,17 @@ mixin QuickEntryMixin on TransactionFormController {
           final dynamic targetController = txController
               .getQuickEntryControllerForIntent(intent);
           if (targetController != null && targetController != this) {
+            if (targetController is QuickEntryMixin) {
+              targetController.applyQuickEntryIntent(intent, text);
+            }
             targetController.quickEntryController.text = text;
             unawaited(targetController.submitQuickEntry(context));
           }
         });
         return;
+      } else {
+        // Even if the tab is correct, we might need to apply a direction/mode switch
+        applyQuickEntryIntent(intent, text);
       }
     }
 
@@ -442,8 +453,14 @@ mixin QuickEntryMixin on TransactionFormController {
         .Log('QuickEntryMixin');
 
     // SHORT-CIRCUIT: If OCR + Local parsing resolved the image perfectly, skip cloud.
-    // A "perfect" resolve must have a plausible amount (avoiding phone numbers).
-    if (local.isComplete && _isAmountPlausible(local.amount)) {
+    // A "perfect" resolve must have a plausible amount (avoiding phone numbers)
+    // AND a valid category.
+    final bool isPerfect =
+        local.amount != null &&
+        local.categoryId != null &&
+        _isAmountPlausible(local.amount);
+
+    if (isPerfect) {
       '[AI_PARSING] ✅ OCR parse was complete and plausible | skipping cloud escalation'
           .Log('QuickEntryMixin');
       resetParsingIfCurrent();

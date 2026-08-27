@@ -20,6 +20,7 @@ class CategorySelectionController extends CcGetController {
   final RxBool isLoading = true.obs;
 
   List<String>? groupIds;
+  List<String>? categoryIds;
   String type = CategoryType.expense;
   bool autoSelectFirstEnabled = false;
   String? initialId;
@@ -83,8 +84,10 @@ class CategorySelectionController extends CcGetController {
     }
   }
 
-  void refreshSelection() {
-    if (!isLoading.value) {
+  void refreshSelection({bool reload = false}) {
+    if (reload) {
+      loadCategories();
+    } else if (!isLoading.value) {
       _applyInitialSelection();
     }
   }
@@ -107,7 +110,8 @@ class CategorySelectionController extends CcGetController {
                   (c) =>
                       c.isEnabled &&
                       c.type == type &&
-                      (groupIds == null || groupIds!.contains(c.groupId)),
+                      (groupIds == null || groupIds!.contains(c.groupId)) &&
+                      (categoryIds == null || categoryIds!.contains(c.id)),
                 )
                 .toList()
               ..sort((a, b) {

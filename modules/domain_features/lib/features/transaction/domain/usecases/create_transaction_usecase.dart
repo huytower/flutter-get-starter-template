@@ -23,6 +23,8 @@ class CreateTransactionParams {
   final int? categoryIconCode;
   final String? categoryIconFamily;
 
+  final String? budgetId;
+
   final String walletId;
   final String? note;
   final DateTime date;
@@ -39,6 +41,7 @@ class CreateTransactionParams {
     this.categoryLabel = '',
     this.categoryIconCode,
     this.categoryIconFamily,
+    this.budgetId,
     required this.walletId,
     this.note,
     required this.date,
@@ -115,6 +118,7 @@ class CreateTransactionUseCase {
       categoryId: params.categoryId,
       categoryIconCode: params.categoryIconCode,
       categoryIconFamily: params.categoryIconFamily,
+      budgetId: params.budgetId,
       note: params.note,
       date: params.date,
       walletId: params.walletId,

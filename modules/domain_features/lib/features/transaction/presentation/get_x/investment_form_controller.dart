@@ -32,21 +32,74 @@ class InvestmentFormController extends TransactionFormController
   @override
   String get quickEntryCategoryType => CategoryType.investment;
 
-  /// Investment has no category-picker UI of its own (category is derived
-  /// from the chosen investment asset, which stays a manual pick) — so
-  /// there's nothing for a quick-entry categoryId to prefill. Overridden as
-  /// a no-op rather than wiring up an inert `pendingPrefillCategoryId`.
+  /// Pre-fills the investment asset selection from a resolved category id.
+  /// If an existing investment wallet matches the category, it selects it.
+  /// Otherwise, it selects the base category to prepare for adding a new asset.
   @override
-  void applyQuickEntryCategory(String categoryId) {}
+  void applyQuickEntryCategory(String categoryId) {
+    final text = quickEntryController.text.toLowerCase();
 
-  /// Since [applyQuickEntryCategory] is a no-op, showing a resolved
-  /// category in the suggestion chip would be misleading — it'd look like
-  /// tapping "Apply" selects that category when it silently won't.
+    // 1. Try to find an existing investment wallet for this category
+    final matchingWallets = mergedItems
+        .whereType<WalletEntity>()
+        .where((w) => w.categoryId == categoryId)
+        .toList();
+
+    if (matchingWallets.isNotEmpty) {
+      WalletEntity selected = matchingWallets.first;
+
+      // If multiple wallets for this category, try to match by name in the text
+      if (matchingWallets.length > 1) {
+        for (final w in matchingWallets) {
+          if (text.contains(w.name.toLowerCase())) {
+            selected = w;
+            break;
+          }
+        }
+      }
+
+      '[AI_PARSING] 🎯 Matching existing investment wallet found: ${selected.name}'
+          .Log('InvestmentFormController');
+      selectInvestmentWallet(selected);
+      pendingPrefillCategoryId.value = null;
+      return;
+    }
+
+    // 2. Fallback to selecting the base category
+    final category = _cachedCategories.firstWhereOrNull(
+      (c) => c.id == categoryId,
+    );
+    if (category != null) {
+      '[AI_PARSING] 🎯 Matching investment category found: ${category.id}'.Log(
+        'InvestmentFormController',
+      );
+      selectInvestmentCategory(category);
+      pendingPrefillCategoryId.value = null;
+    }
+  }
+
+  /// Investment now supports category pre-filling via [applyQuickEntryCategory].
   @override
-  bool get quickEntryShowsCategoryInLabel => false;
+  bool get quickEntryShowsCategoryInLabel => true;
 
-  /// Unused by [applyQuickEntryCategory] (a no-op here), but still required
-  /// to satisfy [QuickEntryMixin]'s contract.
+  @override
+  void applyQuickEntryIntent(QuickEntryIntent intent, String text) {
+    if (intent != QuickEntryIntent.investment) return;
+
+    final normalized = stripVietnameseDiacritics(text.toLowerCase());
+    final isReturn =
+        normalized.contains('ban') ||
+        normalized.contains('rut') ||
+        normalized.contains('profit') ||
+        normalized.contains('return');
+
+    setDirection(
+      isReturn
+          ? InvestmentDirection.returnProfit
+          : InvestmentDirection.contribute,
+    );
+  }
+
   @override
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 

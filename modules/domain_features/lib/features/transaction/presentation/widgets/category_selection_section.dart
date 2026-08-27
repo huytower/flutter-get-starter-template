@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:collection/collection.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -22,6 +23,9 @@ class CategorySelectionSection extends StatelessWidget {
   /// default) leaves every enabled category of [type] unfiltered.
   final List<String>? groupIds;
 
+  /// When non-null, restricts selection to these specific category IDs.
+  final List<String>? categoryIds;
+
   /// Pre-select (and report) the first category once loaded.
   final bool autoSelectFirst;
 
@@ -40,6 +44,7 @@ class CategorySelectionSection extends StatelessWidget {
     this.activeColor = PrjColors.primary,
     this.type = CategoryType.expense,
     this.groupIds,
+    this.categoryIds,
     this.autoSelectFirst = false,
     this.title,
     this.initialSelectedCategoryId,
@@ -47,7 +52,9 @@ class CategorySelectionSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tag = 'category_selection_${type}_${groupIds?.join('_') ?? 'all'}';
+    final tagSuffix = categoryIds != null ? '_filtered' : '';
+    final tag =
+        'category_selection_${type}_${groupIds?.join('_') ?? 'all'}$tagSuffix';
 
     // Create or find controller
     final controller = Get.isRegistered<CategorySelectionController>(tag: tag)
@@ -60,12 +67,15 @@ class CategorySelectionSection extends StatelessWidget {
     // Sync controller properties only if they changed
     final bool propertiesChanged =
         controller.type != type ||
+        !const ListEquality().equals(controller.groupIds, groupIds) ||
+        !const ListEquality().equals(controller.categoryIds, categoryIds) ||
         controller.autoSelectFirstEnabled != autoSelectFirst ||
         controller.initialId != initialSelectedCategoryId;
 
     if (propertiesChanged) {
       controller.type = type;
       controller.groupIds = groupIds;
+      controller.categoryIds = categoryIds;
       controller.autoSelectFirstEnabled = autoSelectFirst;
       controller.initialId = initialSelectedCategoryId;
       controller.onSelected = onCategorySelected;
@@ -73,7 +83,7 @@ class CategorySelectionSection extends StatelessWidget {
       // Only schedule refresh if properties actually changed to avoid loops
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (Get.isRegistered<CategorySelectionController>(tag: tag)) {
-          controller.refreshSelection();
+          controller.refreshSelection(reload: true);
         }
       });
     }

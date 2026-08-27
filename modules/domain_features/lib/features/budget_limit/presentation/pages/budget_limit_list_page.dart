@@ -8,11 +8,12 @@ import '../../../../core/getx/cc_get_view.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../get_x/budget_limit_controller.dart';
 import '../widgets/add_budget_limit_form.dart';
+import '../widgets/budget_limit_delete_confirm_sheet.dart';
 import '../widgets/budget_limit_grid.dart';
 
 @RoutePage()
-class BudgetLimitPage extends CcGetView<BudgetLimitController> {
-  const BudgetLimitPage({super.key});
+class BudgetLimitListPage extends CcGetView<BudgetLimitController> {
+  const BudgetLimitListPage({super.key});
 
   @override
   bool get enableAppBar => true;
@@ -188,29 +189,16 @@ class BudgetLimitPage extends CcGetView<BudgetLimitController> {
     BuildContext context,
     BudgetLimitEntity budget,
   ) {
-    showDialog<void>(
+    showModalBottomSheet<void>(
       context: context,
-      builder: (dialogCtx) => AlertDialog(
-        title: Text(el.tr(CcLocaleKeys.budget_delete_title)),
-        content: Text(
-          el.tr(
-            CcLocaleKeys.budget_delete_confirm,
-            namedArgs: {'name': budget.name},
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogCtx),
-            child: Text(el.tr(CcLocaleKeys.common_cancel)),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(dialogCtx);
-              controller.deleteBudget(budget.id);
-            },
-            child: Text(el.tr(CcLocaleKeys.common_delete)),
-          ),
-        ],
+      isScrollControlled: true,
+      backgroundColor: context.ccColorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => BudgetLimitDeleteConfirmSheet(
+        budget: budget,
+        onDelete: () => controller.deleteBudget(budget.id),
       ),
     );
   }

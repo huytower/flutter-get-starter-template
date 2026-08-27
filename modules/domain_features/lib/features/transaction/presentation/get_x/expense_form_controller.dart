@@ -28,16 +28,22 @@ import 'transaction_form_controller.dart';
 @injectable
 class ExpenseFormController extends TransactionFormController
     with QuickEntryMixin {
-  ExpenseFormController(this._transactionRepository);
+  ExpenseFormController(this._transactionRepository, this._getCategories);
 
   final TransactionRepository _transactionRepository;
+  final GetCategoriesUseCase _getCategories;
 
   @override
   String get quickEntryCategoryType => CategoryType.expense;
 
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
+  final Rx<BudgetLimitEntity?> selectedBudget = Rx<BudgetLimitEntity?>(null);
+
   @override
   final RxInt categoryKey = 0.obs;
+
+  final RxList<CategoryEntity> _cachedCategories = <CategoryEntity>[].obs;
+  final RxBool isLoadingCategories = false.obs;
 
   /// Set right before [categoryKey] is bumped by [applyMerchantMatch] or
   /// [applyLocationMatch] (or by [QuickEntryMixin.applyQuickEntryCategory]),
@@ -96,14 +102,61 @@ class ExpenseFormController extends TransactionFormController
   @override
   void onInit() {
     super.onInit();
-    refreshTimeBasedSuggestion();
+    _loadAll();
+
     noteController.addListener(_onNoteChanged);
     initQuickEntry();
-    // Not calling refreshLocationSuggestion() here: ExpenseForm's initState
-    // always calls it right after this controller is put/found (covers both
-    // the fresh-instance case this onInit handles and the remount-without-
-    // reinit case onInit can't see), so calling it here too would just fire
-    // the GPS fix + recent-expenses fetch twice concurrently on every open.
+
+    // Handle AI category suggestions by resolving to a budget if possible
+    ever(pendingPrefillCategoryId, (String? categoryId) {
+      if (categoryId != null && Get.isRegistered<BudgetLimitController>()) {
+        final budgets = Get.find<BudgetLimitController>().budgets;
+        final matches = budgets.where((b) => b.budget.categoryId == categoryId);
+        if (matches.length == 1) {
+          selectedBudget.value = matches.first.budget;
+        }
+      }
+    });
+  }
+
+  Future<void> _loadAll() async {
+    isLoadingCategories.value = true;
+    await _loadCategories();
+    isLoadingCategories.value = false;
+
+    refreshTimeBasedSuggestion();
+
+    // Auto-select first budget if available and nothing is selected yet
+    if (Get.isRegistered<BudgetLimitController>()) {
+      final budgetController = Get.find<BudgetLimitController>();
+      if (budgetController.budgets.isNotEmpty &&
+          selectedBudget.value == null &&
+          selectedCategory.value == null &&
+          !isEditing) {
+        setBudget(budgetController.budgets.first.budget);
+      }
+
+      // Also listen for changes (e.g. first budget created)
+      once(budgetController.budgets, (budgets) {
+        if (budgets.isNotEmpty &&
+            selectedBudget.value == null &&
+            selectedCategory.value == null &&
+            !isEditing) {
+          setBudget(budgets.first.budget);
+        }
+      });
+    }
+  }
+
+  Future<void> _loadCategories() async {
+    final result = await _getCategories();
+    result.when((categories) {
+      _cachedCategories.assignAll(categories);
+    }, (error) {});
+  }
+
+  CategoryEntity? getCachedCategoryById(String id) {
+    return _cachedCategories.firstWhereOrNull((c) => c.id == id);
   }
 
   @override
@@ -117,6 +170,7 @@ class ExpenseFormController extends TransactionFormController
   @override
   void onReset() {
     selectedCategory.value = null;
+    selectedBudget.value = null;
     merchantMatchSuggestion.value = null;
     resetQuickEntry();
     refreshTimeBasedSuggestion();
@@ -128,8 +182,29 @@ class ExpenseFormController extends TransactionFormController
 
   void setCategory(CategoryEntity category) {
     selectedCategory.value = category;
+    selectedBudget.value = null;
+
+    // If we're in budget-picker mode, try to auto-resolve to a budget
+    if (Get.isRegistered<BudgetLimitController>()) {
+      final budgets = Get.find<BudgetLimitController>().budgets;
+      final matches = budgets.where((b) => b.budget.categoryId == category.id);
+      if (matches.length == 1) {
+        selectedBudget.value = matches.first.budget;
+      }
+    }
+
     // Manual selection clears any pending prefill from AI suggestions
     // so it doesn't clobber the user's choice on the next rebuild.
+    pendingPrefillCategoryId.value = null;
+  }
+
+  void setBudget(BudgetLimitEntity budget) {
+    selectedBudget.value = budget;
+    // When a budget is picked, its category is automatically selected
+    final category = getCachedCategoryById(budget.categoryId);
+    if (category != null) {
+      selectedCategory.value = category;
+    }
     pendingPrefillCategoryId.value = null;
   }
 
@@ -300,7 +375,9 @@ class ExpenseFormController extends TransactionFormController
     isSubmitting.value = true;
 
     final categoryId = selectedCategory.value?.id ?? '';
-    final categoryLabel = selectedCategory.value != null
+    final categoryLabel = selectedBudget.value != null
+        ? selectedBudget.value!.name
+        : selectedCategory.value != null
         ? el.tr(selectedCategory.value!.nameKey)
         : '';
     final amount = int.tryParse(amountStr.value) ?? 0;
@@ -314,6 +391,7 @@ class ExpenseFormController extends TransactionFormController
               categoryLabel: categoryLabel,
               categoryIconCode: selectedCategory.value?.iconCode,
               categoryIconFamily: selectedCategory.value?.iconFamily,
+              budgetId: selectedBudget.value?.id,
               walletId: selectedWalletId.value ?? '',
               note: composeNote(),
               date: date.value,
@@ -327,6 +405,7 @@ class ExpenseFormController extends TransactionFormController
               categoryLabel: categoryLabel,
               categoryIconCode: selectedCategory.value?.iconCode,
               categoryIconFamily: selectedCategory.value?.iconFamily,
+              budgetId: selectedBudget.value?.id,
               walletId: selectedWalletId.value ?? '',
               note: composeNote(),
               date: date.value,

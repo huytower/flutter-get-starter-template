@@ -350,6 +350,18 @@ class LiabilityFormController extends LiabilityBaseFormController {
   }
 
   @override
+  final Rx<LiabilityFormAction> action = LiabilityFormAction.increase.obs;
+
+  @override
+  void setAction(LiabilityFormAction value) {
+    if (action.value == value) return;
+    action.value = value;
+    // Clearing current selection when switching actions ensures the item picker
+    // re-filters correctly and the form doesn't carry over irrelevant state.
+    onReset();
+  }
+
+  @override
   void onReset() {
     selectedCategory.value = null;
     categoryKey.value++;

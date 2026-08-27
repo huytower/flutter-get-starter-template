@@ -198,7 +198,9 @@
                    "investments_desc":  "Stocks, funds, real estate... · Avg ROI {roi}%",
                    "liabilities":  "Liabilities",
                    "liabilities_desc":  "Loans + Credit cards · balance tracking, stress monitor",
-                   "liabilities_net":  "Net Liability"
+                   "liabilities_net":  "Net Liability",
+                   "investment_roi": "ROI",
+                   "investment_breakeven": "Breakeven Rate"
                },
     "comment":  {
                     "detail":  {

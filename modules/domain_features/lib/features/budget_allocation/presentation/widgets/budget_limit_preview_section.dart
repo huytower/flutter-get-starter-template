@@ -70,7 +70,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                         CcTextButton(
                           text: el.tr(CcLocaleKeys.budget_see_all),
                           onTap: () =>
-                              context.router.push(const BudgetLimitRoute()),
+                              context.router.push(const BudgetLimitListRoute()),
                         ),
                       ],
                     );
@@ -115,7 +115,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
               ),
               itemCount: budgets.length,
               itemBuilder: (context, i) => CcBouncing(
-                onTap: () => context.router.push(const BudgetLimitRoute()),
+                onTap: () => context.router.push(const BudgetLimitListRoute()),
                 borderRadius: BorderRadius.circular(12),
                 child: BudgetLimitGridCard(
                   stats: budgets[i],

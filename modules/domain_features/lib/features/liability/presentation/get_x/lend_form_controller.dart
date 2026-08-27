@@ -351,6 +351,16 @@ class LendFormController extends LiabilityBaseFormController {
   }
 
   @override
+  final Rx<LiabilityFormAction> action = LiabilityFormAction.increase.obs;
+
+  @override
+  void setAction(LiabilityFormAction value) {
+    if (action.value == value) return;
+    action.value = value;
+    onReset();
+  }
+
+  @override
   void onReset() {
     selectedCategory.value = null;
     categoryKey.value++;

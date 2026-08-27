@@ -289,7 +289,7 @@ class CategorySeed {
       nameKey: CcLocaleKeys.category_market_supermarket,
       iconCode: Icons.storefront.codePoint,
       groupId: '8',
-      colorValue: PrjColors.categoryShopping.value,
+      colorValue: PrjColors.categoryAppliances.value,
     ),
     CategoryModel(
       id: 'c30',

@@ -199,7 +199,9 @@
                    "investments_desc":  "C? phi?u, qu?, b?t d?ng s?n... ? ROI trung b?nh {roi}%",
                    "liabilities":  "N? ph?i tr?",
                    "liabilities_desc":  "Vay + Th? t?n d?ng ? du n? c?n l?i, theo d?i ?p l?c t?i ch?nh",
-                   "liabilities_net":  "N? r?ng"
+                   "liabilities_net":  "N? r?ng",
+                   "investment_roi": "ROI",
+                   "investment_breakeven": "T? l? h?a v?n"
                },
     "comment":  {
                     "detail":  {

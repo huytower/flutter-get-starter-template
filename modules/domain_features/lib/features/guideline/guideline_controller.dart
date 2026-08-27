@@ -23,7 +23,7 @@ class GuidelineController extends GetxController {
     'birth_year', // Profile -> _pickBirthYear
     'categories', // Profile -> CategorySettingsPage
     'wallet_balance', // Liquid Wallet List -> Edit Cash Wallet
-    'budget_limit', // Budget Allocation -> BudgetLimitPage
+    'budget_limit', // Budget Allocation -> BudgetLimitListPage
     'min_living', // Budget Allocation -> AddBudgetLimitForm (storm icon)
     'first_transaction', // Transaction -> ExpenseForm
     'investment', // Budget Allocation -> Add Investment + Transaction -> Investment tab

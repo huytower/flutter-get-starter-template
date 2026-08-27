@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../get_x/expense_form_controller.dart';
@@ -26,6 +27,9 @@ class TransactionPage extends CcGetView<TransactionController> {
 
   @override
   Widget? buildContent(BuildContext context) {
+    if (!Get.isRegistered<BudgetLimitController>()) {
+      Get.put(getIt<BudgetLimitController>());
+    }
     if (!Get.isRegistered<InvestmentFormController>()) {
       Get.put(getIt<InvestmentFormController>());
     }
