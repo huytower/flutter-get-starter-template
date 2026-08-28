@@ -49,6 +49,8 @@ import 'package:domain_features/features/budget_limit/domain/usecases/update_bud
     as _i256;
 import 'package:domain_features/features/budget_limit/domain/usecases/update_budget_limit_usecase.dart'
     as _i829;
+import 'package:domain_features/features/budget_limit/presentation/get_x/add_budget_limit_sheet_controller.dart'
+    as _i752;
 import 'package:domain_features/features/budget_limit/presentation/get_x/budget_limit_controller.dart'
     as _i1003;
 import 'package:domain_features/features/category/data/datasources/category_sync_datasource.dart'
@@ -568,6 +570,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i463.GetBudgetAnomaliesUseCase(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
               gh<_i1027.TransactionRepository>(),
+            ));
+    gh.factory<_i752.AddBudgetLimitSheetController>(
+        () => _i752.AddBudgetLimitSheetController(
+              gh<_i1041.GetCategoriesUseCase>(),
+              gh<_i393.GetCategoryAverageMonthlySpendUseCase>(),
+              gh<_i1003.BudgetLimitController>(),
             ));
     gh.lazySingleton<_i390.CheckBudgetThresholdUseCase>(
         () => _i390.CheckBudgetThresholdUseCase(

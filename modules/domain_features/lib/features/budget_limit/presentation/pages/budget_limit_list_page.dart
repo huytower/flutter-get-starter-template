@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../get_x/budget_limit_controller.dart';
-import '../widgets/add_budget_limit_form.dart';
+import '../widgets/add_budget_limit_sheet.dart';
 import '../widgets/budget_limit_delete_confirm_sheet.dart';
 import '../widgets/budget_limit_grid.dart';
 
@@ -45,7 +45,7 @@ class BudgetLimitListPage extends CcGetView<BudgetLimitController> {
       ),
       actions: [
         CcIconButton.bouncing(
-          onTap: () => _openAddBudgetLimitForm(context),
+          onTap: () => _openAddBudgetLimitSheet(context),
           tooltip: el.tr(CcLocaleKeys.budget_add_title),
           icon: Icon(
             Icons.add_rounded,
@@ -160,7 +160,7 @@ class BudgetLimitListPage extends CcGetView<BudgetLimitController> {
               child: BudgetLimitGrid(
                 key: const ValueKey('budget-limit-grid'),
                 controller: controller,
-                onOpenForm: _openAddBudgetLimitForm,
+                onOpenForm: _openAddBudgetLimitSheet,
                 onDelete: _confirmDeleteBudgetLimit,
               ),
             ),
@@ -170,7 +170,7 @@ class BudgetLimitListPage extends CcGetView<BudgetLimitController> {
     });
   }
 
-  void _openAddBudgetLimitForm(
+  void _openAddBudgetLimitSheet(
     BuildContext context, {
     BudgetLimitEntity? editTarget,
   }) {
@@ -181,7 +181,7 @@ class BudgetLimitListPage extends CcGetView<BudgetLimitController> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => AddBudgetLimitForm(editTarget: editTarget),
+      builder: (_) => AddBudgetLimitSheet(editTarget: editTarget),
     );
   }
 

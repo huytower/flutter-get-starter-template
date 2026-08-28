@@ -24,7 +24,7 @@ class GuidelineController extends GetxController {
     'categories', // Profile -> CategorySettingsPage
     'wallet_balance', // Liquid Wallet List -> Edit Cash Wallet
     'budget_limit', // Budget Allocation -> BudgetLimitListPage
-    'min_living', // Budget Allocation -> AddBudgetLimitForm (storm icon)
+    'min_living', // Budget Allocation -> AddBudgetLimitSheet (storm icon)
     'first_transaction', // Transaction -> ExpenseForm
     'investment', // Budget Allocation -> Add Investment + Transaction -> Investment tab
     'liability', // Budget Allocation -> Add Liability + Transaction -> Debt/Loan tab

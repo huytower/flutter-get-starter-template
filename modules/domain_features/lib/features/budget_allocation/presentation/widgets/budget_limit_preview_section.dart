@@ -8,7 +8,7 @@ import '../../../../core/di/di.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_limit/domain/usecases/sort_budget_limits_by_progress_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
-import '../../../budget_limit/presentation/widgets/add_budget_limit_form.dart';
+import '../../../budget_limit/presentation/widgets/add_budget_limit_sheet.dart';
 import '../../../budget_limit/presentation/widgets/budget_limit_grid_card.dart';
 import '../../../guideline/guideline_controller.dart';
 
@@ -138,7 +138,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => const AddBudgetLimitForm(),
+      builder: (_) => const AddBudgetLimitSheet(),
     );
   }
 }

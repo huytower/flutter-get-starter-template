@@ -438,24 +438,53 @@ class WalletController extends CcGetController {
         )
         .fold(0, (sum, item) => sum + bookBalanceOf(item.id));
 
-    int totalInvested = 0;
-    int totalReturned = 0;
+    int totalInvestedValue = 0;
+    int totalReturnedValue = 0;
+    int monthlyInvestedValue = 0;
+    int monthlyReturnedValue = 0;
+
     for (final wallet in wallets) {
       if (wallet.type == WalletType.investment) {
         final stats = investmentStatsOf(wallet.id);
-        totalInvested += stats.contributed;
-        totalReturned += stats.returned;
+        totalInvestedValue += stats.contributed;
+        totalReturnedValue += stats.returned;
+
+        final mStats = monthlyInvestmentStatsOf(wallet.id);
+        monthlyInvestedValue += mStats.contributed;
+        monthlyReturnedValue += mStats.returned;
       }
     }
 
-    investmentBalance.value = totalInvested;
-    if (totalInvested == 0) {
+    investmentBalance.value = totalInvestedValue;
+    allTimeInvested.value = totalInvestedValue;
+    allTimeReturned.value = totalReturnedValue;
+
+    monthlyInvested.value = monthlyInvestedValue;
+    monthlyReturned.value = monthlyReturnedValue;
+
+    // All-time ROI & Breakeven
+    if (totalInvestedValue == 0) {
       investmentRoiPercent.value = 0;
       investmentBreakevenPercent.value = 0;
     } else {
       investmentRoiPercent.value =
-          ((totalReturned - totalInvested) / totalInvested) * 100;
-      investmentBreakevenPercent.value = (totalReturned / totalInvested) * 100;
+          ((totalReturnedValue - totalInvestedValue) / totalInvestedValue) *
+          100;
+      investmentBreakevenPercent.value =
+          (totalReturnedValue / totalInvestedValue) * 100;
+    }
+
+    // Monthly ROI & Breakeven
+    if (monthlyInvestedValue == 0) {
+      monthlyRoiPercent.value = 0;
+      monthlyBreakevenPercent.value = 0;
+    } else {
+      monthlyRoiPercent.value =
+          ((monthlyReturnedValue - monthlyInvestedValue) /
+              monthlyInvestedValue) *
+          100;
+      monthlyBreakevenPercent.value =
+          (monthlyReturnedValue / monthlyInvestedValue) * 100;
     }
 
     emergencyFundBalance.value = wallets

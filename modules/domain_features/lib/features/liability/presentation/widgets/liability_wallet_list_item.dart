@@ -1,7 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:theme/export_theme.dart';
 
 import '../../../../core/presentation/widgets/asset_stat_item.dart';
 import '../../../../core/presentation/widgets/base_asset_list_item.dart';
@@ -27,11 +26,6 @@ class LiabilityWalletListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final liability = balance.liability;
-    final isSettled = balance.status == LiabilityStatus.settled;
-    final directionColor = liability.isBorrow
-        ? PrjColors.warning
-        : context.ccColorScheme.secondary;
-
     return BaseAssetListItem(
       isEditMode: isEditMode,
       onEdit: onEdit,
@@ -42,9 +36,7 @@ class LiabilityWalletListItem extends StatelessWidget {
         AssetStatItem(
           label: el.tr(CcLocaleKeys.liability_remaining_balance),
           value: balance.outstandingBalance,
-          color: isSettled
-              ? context.ccColorScheme.onSurfaceVariant
-              : directionColor,
+          color: context.ccColorScheme.onSurfaceVariant,
           icon: liability.isBorrow
               ? Icons.arrow_downward_rounded
               : Icons.arrow_upward_rounded,
@@ -97,7 +89,7 @@ class LiabilityWalletListItem extends StatelessWidget {
             liability.categoryLabel,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            textStyle: context.ccTextTheme.titleSmall?.copyWith(
               fontWeight: CcTypographyParams.bold,
               color: scheme.onSurface,
             ),

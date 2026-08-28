@@ -87,19 +87,19 @@ class InvestHeroBanner extends StatelessWidget {
                       ),
                     ),
                     const CcSpaceXS(),
-                    CcText(
-                      el.tr(
-                        CcLocaleKeys.wallet_investments_desc,
-                        namedArgs: {
-                          'roi': walletController.investmentRoiPercent.value
-                              .toStringAsFixed(1),
-                        },
-                      ),
-                      maxLines: 2,
-                      textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                        color: scheme.onPrimary.withOpacity(0.7),
-                      ),
-                    ),
+                    Obx(() {
+                      final roi = walletController.investmentRoiPercent.value;
+                      return CcText(
+                        el.tr(
+                          CcLocaleKeys.wallet_investments_desc,
+                          namedArgs: {'roi': roi.toStringAsFixed(1)},
+                        ),
+                        maxLines: 2,
+                        textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                          color: scheme.onPrimary.withOpacity(0.7),
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -133,15 +133,18 @@ class InvestHeroBanner extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     return Obx(() {
-      final roi = walletController.investmentRoiPercent.value;
-      final breakeven = walletController.investmentBreakevenPercent.value;
+      final roi = walletController.monthlyRoiPercent.value;
+      final breakeven = walletController.monthlyBreakevenPercent.value;
+      final invested = walletController.monthlyInvested.value;
+      final returned = walletController.monthlyReturned.value;
+      final visible = walletController.isBalanceVisible.value;
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
           _StatRow(
-            label: el.tr(CcLocaleKeys.wallet_investment_roi),
+            label: 'ROI (tháng)',
             value: '${roi >= 0 ? '+' : ''}${roi.toStringAsFixed(1)}%',
             color: scheme.onPrimary,
           ),
@@ -150,6 +153,22 @@ class InvestHeroBanner extends StatelessWidget {
             label: el.tr(CcLocaleKeys.wallet_investment_breakeven),
             value: '${breakeven.toStringAsFixed(1)}%',
             color: scheme.onPrimary.withOpacity(0.9),
+          ),
+          const SizedBox(height: 4),
+          _StatRow(
+            label: el.tr(CcLocaleKeys.transaction_investment_contribution),
+            value: visible
+                ? TransactionFormHelpers.formatShort(invested)
+                : '***',
+            color: scheme.onPrimary.withOpacity(0.8),
+          ),
+          const SizedBox(height: 2),
+          _StatRow(
+            label: el.tr(CcLocaleKeys.transaction_investment_return),
+            value: visible
+                ? TransactionFormHelpers.formatShort(returned)
+                : '***',
+            color: scheme.onPrimary.withOpacity(0.8),
           ),
         ],
       );
