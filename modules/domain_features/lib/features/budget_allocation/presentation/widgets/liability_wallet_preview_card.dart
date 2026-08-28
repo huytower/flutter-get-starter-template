@@ -105,7 +105,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                     ),
                     _buildCompactStat(
                       context,
-                      icon: Icons.account_balance_wallet_rounded,
+                      icon: Icons.eco_outlined,
                       color: scheme.onSurfaceVariant,
                       value: loan.principalAmount,
                     ),

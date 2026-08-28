@@ -550,7 +550,7 @@ class WalletController extends CcGetController {
     var toSave = wallet;
     final index = wallets.indexWhere((e) => e.id == wallet.id);
     final original = index != -1 ? wallets[index] : null;
-    if (original != null && walletHasTransactions(wallet.id)) {
+    if (original != null && walletHasTransactions(wallet.id) && bookBalanceOf(wallet.id) != 0) {
       toSave = WalletEntity(
         id: wallet.id,
         name: wallet.name,

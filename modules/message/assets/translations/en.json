@@ -177,7 +177,7 @@
                    "name_duplicate_error": "This wallet name already exists",
                    "initial_balance":  "Opening Balance",
                    "initial_balance_hint":  "e.g. 1000000",
-                    "balance_locked_hint":  "Cannot change opening balance once the wallet has transactions",
+                     "balance_locked_hint":  "Cannot change opening balance once the wallet has transactions\nConsider creating a new wallet to track the adjustment",
                     "balance_hidden":  "*****",
                    "save_info":  "Save",
                    "bank":  "Bank",

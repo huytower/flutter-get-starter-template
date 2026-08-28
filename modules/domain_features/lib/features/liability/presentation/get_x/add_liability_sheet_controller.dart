@@ -126,7 +126,7 @@ class AddLiabilitySheetController extends CcGetController {
     }
 
     // Default to 0 amount
-    final amount = 0;
+    const amount = 0;
 
     // Use default wallet (first liquid wallet) for simplified flow
     final wallet = _walletController.liquidWallets.firstOrNull;
@@ -178,10 +178,10 @@ class AddLiabilitySheetController extends CcGetController {
           );
           nameError.value = null;
 
-      // Refresh related lists immediately
-      if (Get.isRegistered<BudgetAllocationController>()) {
-        Get.find<BudgetAllocationController>().loadAll();
-      }
+          // Refresh related lists immediately
+          if (Get.isRegistered<BudgetAllocationController>()) {
+            Get.find<BudgetAllocationController>().loadAll();
+          }
           if (Get.isRegistered<LiabilityListController>()) {
             Get.find<LiabilityListController>().load();
           }

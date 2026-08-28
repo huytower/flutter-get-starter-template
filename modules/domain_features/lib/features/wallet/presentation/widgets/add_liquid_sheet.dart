@@ -24,56 +24,41 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
       init: getIt<AddLiquidSheetController>()..init(wallet),
       dispose: (_) => Get.delete<AddLiquidSheetController>(),
       builder: (controller) {
-        return PopScope(
-          canPop: !controller.isSubmitting.value,
-          child: Obx(
-            () => Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    if (controller.showKeypad.value) controller.hideKeypad();
-                  },
-                  child: Container(
-                    padding: EdgeInsets.only(
-                      left: context.respPadding(CcPaddingParams.SPACE_LG),
-                      right: context.respPadding(CcPaddingParams.SPACE_LG),
-                      top: context.respPadding(CcPaddingParams.SPACE_LG),
-                      bottom:
-                          (controller.showKeypad.value
-                              ? 0
-                              : MediaQuery.of(context).viewInsets.bottom) +
-                          context.respPadding(CcPaddingParams.SPACE_LG),
-                    ),
-                    decoration: BoxDecoration(
-                      color: context.ccColorScheme.surface,
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(20),
-                      ),
-                    ),
-                    child: SingleChildScrollView(
-                      child: _buildSheetContent(context, controller),
-                    ),
-                  ),
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.only(
+                left: context.respPadding(CcPaddingParams.SPACE_LG),
+                right: context.respPadding(CcPaddingParams.SPACE_LG),
+                top: context.respPadding(CcPaddingParams.SPACE_LG),
+                bottom: context.respPadding(CcPaddingParams.SPACE_LG),
+              ),
+              decoration: BoxDecoration(
+                color: context.ccColorScheme.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
                 ),
-                if (controller.showKeypad.value)
-                  SafeArea(
-                    top: false,
-                    child: MoneyKeypadPanel(
-                      onKeyPress: controller.handleKeyPress,
-                      onDelete: controller.handleDelete,
-                      onClear: () => controller.amountStr.value = '0',
-                      suggestions: MoneyConstants.walletQuickAmounts,
-                      onSuggestion: (value) =>
-                          controller.amountStr.value = value.toString(),
-                      onDone: controller.hideKeypad,
-                      activeColor: context.ccColorScheme.primary,
-                    ),
-                  ),
-              ],
+              ),
+              child: SingleChildScrollView(
+                child: _buildSheetContent(context, controller),
+              ),
             ),
-          ),
+            if (controller.showKeypad.value)
+              SafeArea(
+                top: false,
+                child: MoneyKeypadPanel(
+                  onKeyPress: controller.handleKeyPress,
+                  onDelete: controller.handleDelete,
+                  onClear: () => controller.amountStr.value = '0',
+                  suggestions: MoneyConstants.walletQuickAmounts,
+                  onSuggestion: (value) =>
+                      controller.amountStr.value = value.toString(),
+                  onDone: controller.hideKeypad,
+                  activeColor: context.ccColorScheme.primary,
+                ),
+              ),
+          ],
         );
       },
     );
@@ -109,7 +94,10 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     );
   }
 
-  Widget _buildTitle(BuildContext context, AddLiquidSheetController controller) {
+  Widget _buildTitle(
+    BuildContext context,
+    AddLiquidSheetController controller,
+  ) {
     return CcFormLabel(
       text: controller.isEditing
           ? el.tr(CcLocaleKeys.wallet_edit_title)
@@ -319,22 +307,29 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
       (WalletType.ewallet, el.tr(CcLocaleKeys.wallet_ewallet)),
       (WalletType.emergencyFund, el.tr(CcLocaleKeys.wallet_emergency_fund)),
     ];
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: options.map((option) {
-          final (type, label) = option;
+    return HorizontalFadeScrollView(
+      height: context.respDim(44),
+      builder: (scrollController) => ListView.builder(
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
+          vertical: context.respDim(4),
+        ),
+        itemCount: options.length,
+        itemBuilder: (context, index) {
+          final (type, label) = options[index];
           final isSelected = controller.newType.value == type;
           return Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: EdgeInsets.only(right: context.respDim(8)),
             child: CcBouncing(
               onTap: () => controller.selectType(type),
               borderRadius: BorderRadius.circular(20),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.respDim(14),
+                  vertical: context.respDim(10),
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
@@ -347,12 +342,12 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                   children: [
                     Icon(
                       walletIconFor(type),
-                      size: 16,
+                      size: context.respIconSize(baseSize: 16),
                       color: isSelected
                           ? context.ccColorScheme.onPrimary
                           : context.ccColorScheme.onSurfaceVariant,
                     ),
-                    const SizedBox(width: 6),
+                    SizedBox(width: context.respDim(6)),
                     CcText(
                       label,
                       textStyle: context.ccTextTheme.labelMedium?.copyWith(
@@ -369,7 +364,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
               ),
             ),
           );
-        }).toList(),
+        },
       ),
     );
   }
