@@ -103,8 +103,7 @@ class DailyGroup extends StatelessWidget {
               ],
             ),
           ),
-          Divider(
-            height: context.respDim(1),
+          CcDividerLine(
             color: context.ccColorScheme.outlineVariant.withValues(alpha: 0.1),
           ),
           for (final tx in transactions) TransactionTile(

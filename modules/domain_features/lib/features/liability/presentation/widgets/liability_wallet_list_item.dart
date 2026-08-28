@@ -47,12 +47,9 @@ class LiabilityWalletListItem extends StatelessWidget {
             height: context.respIconSize(baseSize: 18),
           ),
         ),
-        const CcSpaceXS(),
-        Divider(
+        CcDividerLine(
           color: context.ccColorScheme.onSurface.withOpacity(0.06),
-          height: 1,
         ),
-        const CcSpaceXS(),
         AssetStatItem(
           label: el.tr(CcLocaleKeys.liability_remaining_balance),
           value: balance.outstandingBalance,
@@ -63,12 +60,9 @@ class LiabilityWalletListItem extends StatelessWidget {
             height: context.respIconSize(baseSize: 18),
           ),
         ),
-        const CcSpaceXS(),
-        Divider(
+        CcDividerLine(
           color: context.ccColorScheme.onSurface.withOpacity(0.06),
-          height: 1,
         ),
-        const CcSpaceXS(),
         AssetStatItem(
           label: liability.isBorrow
               ? el.tr(CcLocaleKeys.liability_borrow)

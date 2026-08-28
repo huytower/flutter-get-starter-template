@@ -61,10 +61,8 @@ class LiabilityWalletGridCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildHeader(context, liability),
-          const CcSpaceXS(),
-          Divider(
+          CcDividerLine(
             color: scheme.onSurface.withOpacity(0.06),
-            height: context.respDim(1),
           ),
           const CcSpaceXS(),
           _buildRepaid(context, repaid),
@@ -121,8 +119,8 @@ class LiabilityWalletGridCard extends StatelessWidget {
       children: [
         Image.asset(
           'assets/icon/${balance.liability.isBorrow ? 'ic_repay.webp' : 'ic_collect.webp'}',
-          width: context.respIconSize(baseSize: 14),
-          height: context.respIconSize(baseSize: 14),
+          width: context.respIconSize(baseSize: 24),
+          height: context.respIconSize(baseSize: 24),
         ),
         const CcSpaceXS(),
         Expanded(
@@ -150,8 +148,8 @@ class LiabilityWalletGridCard extends StatelessWidget {
       children: [
         Image.asset(
           'assets/icon/ic_remain.webp',
-          width: context.respIconSize(baseSize: 14),
-          height: context.respIconSize(baseSize: 14),
+          width: context.respIconSize(baseSize: 24),
+          height: context.respIconSize(baseSize: 24),
         ),
         const CcSpaceXS(),
         Expanded(
@@ -179,8 +177,8 @@ class LiabilityWalletGridCard extends StatelessWidget {
       children: [
         Image.asset(
           'assets/icon/${liability.isBorrow ? 'ic_borrow.webp' : 'ic_lend.webp'}',
-          width: context.respIconSize(baseSize: 14),
-          height: context.respIconSize(baseSize: 14),
+          width: context.respIconSize(baseSize: 24),
+          height: context.respIconSize(baseSize: 24),
         ),
         const CcSpaceXS(),
         Expanded(

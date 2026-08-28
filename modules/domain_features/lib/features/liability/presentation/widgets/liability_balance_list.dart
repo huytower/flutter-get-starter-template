@@ -43,8 +43,7 @@ class LiabilityBalanceList extends StatelessWidget {
       physics:
           physics ?? (shrinkWrap ? const NeverScrollableScrollPhysics() : null),
       itemCount: balances.length,
-      separatorBuilder: (context, index) => Divider(
-        height: 1,
+      separatorBuilder: (context, index) => CcDividerLine(
         color: context.ccColorScheme.outlineVariant.withOpacity(0.2),
       ),
       itemBuilder: (context, index) {

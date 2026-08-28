@@ -87,9 +87,9 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const CcSpaceXS(),
-                Divider(color: scheme.onSurface.withOpacity(0.06), height: 1),
-                const CcSpaceXS(),
+                CcDividerLine(
+                  color: scheme.onSurface.withOpacity(0.06),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

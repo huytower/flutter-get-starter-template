@@ -86,12 +86,9 @@ class BudgetLimitGridCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildHeader(context, iconColor, iconData),
-          const CcSpaceXS(),
-          Divider(
+          CcDividerLine(
             color: scheme.onSurface.withOpacity(0.06),
-            height: context.respDim(1),
           ),
-          const CcSpaceXS(),
           _buildFooter(context, pct, accent),
         ],
       ),
