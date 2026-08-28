@@ -49,21 +49,16 @@ class LiabilityWalletGridCard extends StatelessWidget {
       padding: EdgeInsets.all(context.respDim(10)),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: context.brMd,
-        border: Border.all(
-          color: scheme.onSurface.withOpacity(0.08),
-          width: context.respDim(1),
-        ),
+        borderRadius: context.brLg,
+        border: context.borderSubtle,
+        gradient: context.gradientSubtle,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildHeader(context, liability),
-          CcDividerLine(
-            color: scheme.onSurface.withOpacity(0.06),
-          ),
+          CcDividerLine(color: scheme.onSurface.withOpacity(0.06)),
           const CcSpaceXS(),
           _buildRepaid(context, repaid),
           const CcSpaceXS(),

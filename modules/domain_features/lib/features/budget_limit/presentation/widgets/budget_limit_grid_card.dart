@@ -77,10 +77,7 @@ class BudgetLimitGridCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: _cardBackgroundColor(context, stats.color),
         borderRadius: context.brLg,
-        border: Border.all(
-          color: scheme.onSurface.withOpacity(0.08),
-          width: context.respDim(1),
-        ),
+        border: context.borderSubtle,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

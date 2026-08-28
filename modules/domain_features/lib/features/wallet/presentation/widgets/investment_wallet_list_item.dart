@@ -31,6 +31,15 @@ class InvestmentWalletListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(
+        bottom: context.respDim(CcPaddingParams.SPACE_MD),
+      ),
+      child: _buildMainCard(context),
+    );
+  }
+
+  BaseAssetListItem _buildMainCard(BuildContext context) {
     return BaseAssetListItem(
       isEditMode: isEditMode,
       canDelete: canDelete,

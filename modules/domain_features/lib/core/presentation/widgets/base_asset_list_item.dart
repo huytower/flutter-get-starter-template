@@ -27,43 +27,34 @@ class BaseAssetListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: context.respPadding(CcPaddingParams.SPACE_MD),
-      ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          const Positioned.fill(child: CcGlassyGradientBackground()),
-          Container(
-            padding: EdgeInsets.all(context.respDim(12)),
-            decoration: BoxDecoration(
-              color: scheme.surface,
-              borderRadius: context.brLg,
-              border: Border.all(
-                color: scheme.onSurface.withOpacity(0.08),
-                width: context.respDim(1),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        const Positioned.fill(child: CcGlassyGradientBackground()),
+        Container(
+          padding: EdgeInsets.all(context.respDim(12)),
+          decoration: BoxDecoration(
+            borderRadius: context.brLg,
+              border: context.borderSubtle,
+            boxShadow: [
+              BoxShadow(
+                color: scheme.onSurface.withOpacity(0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: scheme.onSurface.withOpacity(0.04),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                header,
-                const CcSpaceMD(),
-                Column(children: stats),
-              ],
-            ),
+            ],
           ),
-          if (isEditMode) ..._buildEditBadges(context),
-        ],
-      ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              header,
+              const CcSpaceMD(),
+              Column(children: stats),
+            ],
+          ),
+        ),
+        if (isEditMode) ..._buildEditBadges(context),
+      ],
     );
   }
 

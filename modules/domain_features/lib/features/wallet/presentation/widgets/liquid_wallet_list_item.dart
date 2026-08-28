@@ -50,10 +50,7 @@ class LiquidWalletListItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: scheme.primaryContainer.withValues(alpha: 0.1),
         borderRadius: context.brLg,
-        border: Border.all(
-          color: scheme.onSurface.withOpacity(0.08),
-          width: context.respDim(1),
-        ),
+        border: context.borderSubtle,
       ),
       child: Row(
         children: [
