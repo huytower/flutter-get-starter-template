@@ -43,19 +43,19 @@ class InvestmentWalletListItem extends StatelessWidget {
           label: el.tr(CcLocaleKeys.report_investment_returned),
           value: returned,
           color: PrjColors.success,
-          icon: Icons.auto_graph_rounded,
+          icon: const Icon(Icons.auto_graph_rounded),
         ),
-        const CcSpaceSM(),
+        const CcSpaceXS(),
         Divider(
           color: context.ccColorScheme.onSurface.withOpacity(0.06),
           height: 1,
         ),
-        const CcSpaceSM(),
+        const CcSpaceXS(),
         AssetStatItem(
           label: el.tr(CcLocaleKeys.report_investment_contributed),
           value: contributed,
           color: context.ccColorScheme.onSurfaceVariant,
-          icon: Icons.eco,
+          icon: const Icon(Icons.eco),
         ),
       ],
     );
@@ -67,25 +67,27 @@ class InvestmentWalletListItem extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: context.respDim(40),
-          height: context.respDim(40),
+          width: context.respDim(30),
+          height: context.respDim(30),
           decoration: BoxDecoration(
-            color: scheme.primary.withOpacity(0.12),
-            borderRadius: context.brLg,
+            color: PrjColors.success.withOpacity(0.12),
+            borderRadius: context.brMd,
           ),
           child: Stack(
             alignment: Alignment.center,
             children: [
               const Positioned.fill(child: CcGlassyGradientIcon()),
-              CcIconToken(iconDataFromCode(wallet.iconCode), size: 20),
+              CcIconToken(iconDataFromCode(wallet.iconCode), size: 14),
             ],
           ),
         ),
-        const CcSpaceMD(),
+        const CcSpaceXS(),
         Expanded(
           child: CcText(
             wallet.name,
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textStyle: context.ccTextTheme.labelLarge?.copyWith(
               fontWeight: CcTypographyParams.bold,
               color: scheme.onSurface,
             ),

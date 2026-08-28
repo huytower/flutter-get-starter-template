@@ -7,7 +7,7 @@ class AssetStatItem extends StatelessWidget {
   final String label;
   final int value;
   final Color color;
-  final IconData icon;
+  final Widget icon;
 
   const AssetStatItem({
     super.key,
@@ -21,21 +21,24 @@ class AssetStatItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: context.respIconSize(baseSize: 18),
-          color: color.withOpacity(0.8),
-        ),
         const CcSpaceXS(),
+        SizedBox(
+          width: context.respIconSize(baseSize: 24),
+          height: context.respIconSize(baseSize: 24),
+          child: icon,
+        ),
+        const CcSpaceMD(),
         CcText(
           label,
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+          textStyle: context.ccTextTheme.labelSmall?.copyWith(
             color: context.ccColorScheme.onSurfaceVariant.withAlpha(90),
           ),
         ),
         const Spacer(),
         CcText(
           TransactionFormHelpers.formatShort(value),
+          align: Alignment.center,
+          textAlign: TextAlign.center,
           textStyle: context.ccTextTheme.labelLarge?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: color,

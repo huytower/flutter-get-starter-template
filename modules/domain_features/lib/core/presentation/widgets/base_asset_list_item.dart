@@ -36,7 +36,7 @@ class BaseAssetListItem extends StatelessWidget {
         children: [
           const Positioned.fill(child: CcGlassyGradientBackground()),
           Container(
-            padding: EdgeInsets.all(context.respDim(16)),
+            padding: EdgeInsets.all(context.respDim(12)),
             decoration: BoxDecoration(
               color: scheme.surface,
               borderRadius: context.brLg,

@@ -38,35 +38,34 @@ class LiabilityListCard extends StatelessWidget {
                 color: directionColor.withAlpha(20),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                iconDataFromCode(
-                  loan.categoryIconCode ?? 0,
-                  fontFamily: loan.categoryIconFamily,
-                ),
-                size: context.respIconSize(baseSize: 22),
-                color: directionColor,
+              child: Image.asset(
+                'assets/icon/ic_remain.webp',
+                width: context.respIconSize(baseSize: 22),
+                height: context.respIconSize(baseSize: 22),
               ),
             ),
             const CcSpaceMD(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                CcText(
-                  '${TransactionFormHelpers.formatAmount(balance.outstandingBalance.toString())} đ',
-                  textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isSettled
-                        ? context.ccColorScheme.onSurfaceVariant
-                        : context.ccColorScheme.onSurface,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  CcText(
+                    '${TransactionFormHelpers.formatAmount(balance.outstandingBalance.toString())} đ',
+                    textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: isSettled
+                          ? context.ccColorScheme.onSurfaceVariant
+                          : context.ccColorScheme.onSurface,
+                    ),
                   ),
-                ),
-                CcText(
-                  el.tr(CcLocaleKeys.liability_remaining_balance),
-                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                    color: context.ccColorScheme.onSurfaceVariant,
+                  CcText(
+                    el.tr(CcLocaleKeys.liability_remaining_balance),
+                    textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                      color: context.ccColorScheme.onSurfaceVariant,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

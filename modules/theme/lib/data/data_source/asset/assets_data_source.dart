@@ -60,6 +60,18 @@ class IconAsset extends AssetType {
 
   /// Logout action icon
   static const logout = IconAsset('ic_logout.png');
+
+  /// Borrow liability icon
+  static const borrow = IconAsset('ic_borrow.webp');
+
+  /// Lend liability icon
+  static const lend = IconAsset('ic_lend.webp');
+
+  /// Repay liability icon
+  static const repay = IconAsset('ic_repay.webp');
+
+  /// Collect liability icon
+  static const collect = IconAsset('ic_collect.webp');
 }
 
 /// Lottie animation assets

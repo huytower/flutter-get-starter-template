@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/presentation/widgets/asset_stat_item.dart';
 import '../../../../core/presentation/widgets/base_asset_list_item.dart';
@@ -26,6 +27,7 @@ class LiabilityWalletListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final liability = balance.liability;
+    final repaid = liability.principalAmount - balance.outstandingBalance;
     return BaseAssetListItem(
       isEditMode: isEditMode,
       onEdit: onEdit,
@@ -34,24 +36,50 @@ class LiabilityWalletListItem extends StatelessWidget {
       header: _buildHeader(context, liability),
       stats: [
         AssetStatItem(
-          label: el.tr(CcLocaleKeys.liability_remaining_balance),
-          value: balance.outstandingBalance,
+          label: liability.isBorrow
+              ? el.tr(CcLocaleKeys.transaction_record_repay)
+              : el.tr(CcLocaleKeys.transaction_record_collect),
+          value: repaid,
           color: context.ccColorScheme.onSurfaceVariant,
-          icon: liability.isBorrow
-              ? Icons.arrow_downward_rounded
-              : Icons.arrow_upward_rounded,
+          icon: Image.asset(
+            'assets/icon/${liability.isBorrow ? 'ic_repay.webp' : 'ic_collect.webp'}',
+            width: context.respIconSize(baseSize: 18),
+            height: context.respIconSize(baseSize: 18),
+          ),
         ),
-        const CcSpaceSM(),
+        const CcSpaceXS(),
         Divider(
           color: context.ccColorScheme.onSurface.withOpacity(0.06),
           height: 1,
         ),
-        const CcSpaceSM(),
+        const CcSpaceXS(),
         AssetStatItem(
-          label: el.tr(CcLocaleKeys.liability_principal_amount),
+          label: el.tr(CcLocaleKeys.liability_remaining_balance),
+          value: balance.outstandingBalance,
+          color: PrjColors.debtLoan,
+          icon: Image.asset(
+            'assets/icon/ic_remain.webp',
+            width: context.respIconSize(baseSize: 18),
+            height: context.respIconSize(baseSize: 18),
+          ),
+        ),
+        const CcSpaceXS(),
+        Divider(
+          color: context.ccColorScheme.onSurface.withOpacity(0.06),
+          height: 1,
+        ),
+        const CcSpaceXS(),
+        AssetStatItem(
+          label: liability.isBorrow
+              ? el.tr(CcLocaleKeys.liability_borrow)
+              : el.tr(CcLocaleKeys.liability_lend),
           value: liability.principalAmount,
-          color: context.ccColorScheme.onSurfaceVariant,
-          icon: Icons.account_balance_wallet_rounded,
+          color: PrjColors.debtLoan,
+          icon: Image.asset(
+            'assets/icon/${liability.isBorrow ? 'ic_borrow.webp' : 'ic_lend.webp'}',
+            width: context.respIconSize(baseSize: 18),
+            height: context.respIconSize(baseSize: 18),
+          ),
         ),
       ],
     );
@@ -63,12 +91,9 @@ class LiabilityWalletListItem extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: context.respDim(40),
-          height: context.respDim(40),
-          decoration: BoxDecoration(
-            color: scheme.primary.withOpacity(0.12),
-            borderRadius: context.brLg,
-          ),
+          width: context.respDim(30),
+          height: context.respDim(30),
+          decoration: BoxDecoration(borderRadius: context.brMd),
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -78,18 +103,18 @@ class LiabilityWalletListItem extends StatelessWidget {
                   liability.categoryIconCode ?? 0,
                   fontFamily: liability.categoryIconFamily,
                 ),
-                size: 20,
+                size: 14,
               ),
             ],
           ),
         ),
-        const CcSpaceMD(),
+        const CcSpaceXS(),
         Expanded(
           child: CcText(
             liability.categoryLabel,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            textStyle: context.ccTextTheme.titleSmall?.copyWith(
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
               fontWeight: CcTypographyParams.bold,
               color: scheme.onSurface,
             ),
