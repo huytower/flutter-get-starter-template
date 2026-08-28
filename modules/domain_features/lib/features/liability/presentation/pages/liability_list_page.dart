@@ -5,11 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../../core/presentation/widgets/edit_badge.dart';
 import '../get_x/liability_list_controller.dart';
 import '../widgets/add_liability_sheet.dart';
 import '../widgets/liability_delete_confirm_sheet.dart';
-import '../widgets/liability_wallet_list_item.dart';
+import '../widgets/liability_wallet_grid_card.dart';
 
 @RoutePage()
 class LiabilityListPage extends CcGetView<LiabilityListController> {
@@ -88,38 +87,23 @@ class LiabilityListPage extends CcGetView<LiabilityListController> {
         );
       }
 
-      return ReorderableListView.builder(
-        onReorder: controller.reorderLiabilities,
-        buildDefaultDragHandles: false,
-        proxyDecorator: (child, index, animation) => ScaleTransition(
-          scale: animation.drive(Tween(begin: 1.0, end: 0.9)),
-          child: Material(color: Colors.transparent, child: child),
-        ),
-        padding: EdgeInsets.only(
-          left: context.respPadding(CcPaddingParams.PAGE_SM),
-          right: context.respPadding(CcPaddingParams.PAGE_SM),
-          top: context.respPadding(CcPaddingParams.SPACE_MD),
-          bottom: context.respDim(100),
+      return GridView.builder(
+        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_XS)),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
+          mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
         ),
         itemCount: balances.length,
         itemBuilder: (context, index) {
           final balance = balances[index];
-          return LiabilityWalletListItem(
+          return LiabilityWalletGridCard(
             key: ValueKey(balance.liability.id),
             balance: balance,
             isEditMode: isEdit,
+            canDelete: true,
             onEdit: () => _openAddLiability(context),
             onDelete: () => _confirmDelete(context, balance.liability.id),
-            dragHandle: isEdit
-                ? ReorderableDragStartListener(
-                    index: index,
-                    child: EditBadge(
-                      icon: Icons.drag_indicator,
-                      color: context.ccColorScheme.surfaceContainerHighest,
-                      foregroundColor: context.ccColorScheme.onSurfaceVariant,
-                    ),
-                  )
-                : null,
           );
         },
       );
