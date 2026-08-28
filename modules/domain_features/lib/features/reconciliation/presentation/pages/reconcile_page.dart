@@ -49,7 +49,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
             return CcIconButton.bouncing(
               icon: Icon(
                 Icons.handshake_outlined,
-                size: context.respIconSize(baseSize: 24),
+                size: context.respIconSize(baseSize: 20),
                 color: context.ccColorScheme.onPrimary,
               ),
               tooltip: el.tr(CcLocaleKeys.reconciliation_confirm),
@@ -69,8 +69,6 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
   @override
   Widget? buildContent(BuildContext context) {
     return Obx(() {
-      if (controller.balances.isEmpty) return _buildEmptyState(context);
-
       return Column(
         children: [
           Expanded(child: _buildScrollBody(context)),
@@ -78,17 +76,6 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         ],
       );
     });
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: CcText(
-        el.tr(CcLocaleKeys.reconciliation_empty),
-        textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant,
-        ),
-      ),
-    );
   }
 
   Widget _buildScrollBody(BuildContext context) {
@@ -99,14 +86,13 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
         children: [
           ..._buildIntro(context),
-          const CcSpaceMD(),
+          const CcSpaceXS(),
           _buildWalletTiles(context),
           const ReconciliationMismatchWarning(),
-          const CcSpaceMD(),
+          const CcSpaceXS(),
           const ReconciliationSummary(),
-          const CcSpaceMD(),
+          const CcSpaceXS(),
           const ReconciliationConfirmButton(),
-          const CcSpaceMD(),
           const ReconciliationHistorySection(),
         ],
       ),

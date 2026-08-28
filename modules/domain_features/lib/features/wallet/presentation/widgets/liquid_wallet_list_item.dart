@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/presentation/widgets/edit_badge.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
-import '../../../../core/presentation/widgets/edit_badge.dart';
 
 /// Horizontal list card for liquid wallets shown on the Wallet list page.
 class LiquidWalletListItem extends StatelessWidget {
@@ -88,7 +88,7 @@ class LiquidWalletListItem extends StatelessWidget {
     return Expanded(
       child: CcText(
         wallet.name,
-        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+        textStyle: context.ccTextTheme.titleSmall?.copyWith(
           fontWeight: CcTypographyParams.bold,
         ),
       ),

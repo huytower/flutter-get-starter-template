@@ -22,22 +22,22 @@ class ReconciliationConfirmButton extends StatelessWidget {
         text: el.tr(CcLocaleKeys.reconciliation_confirm),
         isSubmitting: busy,
         isEnabled: !hasWarning && !isEmpty,
-        onTap: () => _showConfirmDialog(context),
+        onTap: () => _showCongratsDialog(context),
         activeColor: context.ccColorScheme.primary,
         // Compact inline variant: this button sits directly under the summary
         // rows instead of being a pinned bottom call-to-action.
-        widthFactor: 0.3,
-        height: context.respDim(32),
+        widthFactor: 0.4,
+        height: context.respDim(40),
         textStyle: context.ccTextTheme.bodyMedium,
         // Mirrors the app bar confirm action's icon so the two entry points
         // read as the same action.
         leadingIcon: Icons.handshake_outlined,
-        leadingIconSize: 18,
+        leadingIconSize: 16,
       );
     });
   }
 
-  void _showConfirmDialog(BuildContext context) async {
+  void _showCongratsDialog(BuildContext context) async {
     final controller = Get.find<ReconciliationController>();
     final error = await controller.performReconciliation();
 
