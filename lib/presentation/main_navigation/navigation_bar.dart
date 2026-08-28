@@ -47,7 +47,7 @@ class _NavigationBarState extends State<NavigationBar>
   }
 
   @override
-  double? get navigationBarHeight => context.respDim(100);
+  double? get navigationBarHeight => context.respDim(70);
 
   @override
   bool get shouldEnableDoubleBackToExit => currentIndex == _indexEntry;
