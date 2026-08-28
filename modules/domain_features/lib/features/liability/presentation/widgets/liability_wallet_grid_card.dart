@@ -51,7 +51,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: context.brLg,
         border: context.borderSubtle,
-        gradient: context.gradientSubtle,
+        gradient: context.surfaceGradient,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
