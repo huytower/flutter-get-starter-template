@@ -10,7 +10,7 @@ import 'quick_entry_regex_dataset.dart';
 
 export 'quick_entry_parse_result.dart';
 
-final Map<String, int> _amountUnitMultipliers =
+const Map<String, int> _amountUnitMultipliers =
     QuickEntryAliasDataset.amountUnitMultipliers;
 
 final RegExp _amountPattern = QuickEntryRegexDataset.amountPattern;
@@ -53,14 +53,6 @@ String stripInvoiceNumbers(String text) {
   });
 }
 
-/// Parses a Vietnamese money shorthand out of [text] — `50k`, `50.000`,
-/// `1tr`, `1,5tr`, `500 nghin`, plain `500000`, optional `đ`/`vnd` suffix.
-/// Null if nothing plausible (a bare number under 1000 with no unit is
-/// treated as ambiguous, not guessed at).
-///
-/// Prefers "Tổng" (Total) amount if multiple amounts are found.
-/// Otherwise, prefers the *last* number carrying an explicit unit/currency
-/// suffix over the first digit run.
 int? parseVietnameseAmount(String text) {
   final normalized = stripVietnameseDiacritics(text.toLowerCase());
 
@@ -234,18 +226,12 @@ String summarizeBillItems(List<({String name, int price})> items) {
       .join(', ');
 }
 
-/// Informal/English shorthand mapped to a seed category id, checked before
-/// the fuzzy label match — these words don't reliably fuzzy-match their
-/// formal Vietnamese label (e.g. "cafe" vs. "cà phê").
 const Map<String, String> _categoryKeywordAliases =
     QuickEntryAliasDataset.categoryKeywords;
 
 /// High-level intent categories based on Vietnamese keywords.
 enum QuickEntryIntent { expense, income, investment, debt, lend }
 
-/// Detects the user's intent based on common Vietnamese and English action
-/// verbs and prefixes — e.g. "nhận tiền", "income" implies Income,
-/// regardless of the specific category keyword.
 QuickEntryIntent? detectQuickEntryIntent(String text) {
   final normalized = stripVietnameseDiacritics(text.toLowerCase());
 
@@ -297,20 +283,12 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
   return detectedDirection;
 }
 
-/// Shortest normalized text worth attempting a category match on.
 const int _minCategoryQueryLength = 2;
 
-/// [_categoryKeywordAliases] sorted longest-key-first, so a shorter alias
-/// that's also a substring of a longer one (e.g. "dien" vs. "dien thoai")
-/// never wins just because it's declared earlier.
 final List<MapEntry<String, String>> _sortedCategoryKeywordAliases =
     _categoryKeywordAliases.entries.toList()
       ..sort((a, b) => b.key.length.compareTo(a.key.length));
 
-/// Best-effort local category match: alias table, then label-containment,
-/// then fuzzy match. [categoryLabels] is passed in (rather than reading
-/// `el.tr` directly) so this stays pure and testable without a locale.
-/// Returns null when nothing is confident enough.
 String? matchCategoryIdFromText({
   required String text,
   required List<CategoryEntity> categories,
@@ -365,8 +343,39 @@ String? matchCategoryIdFromText({
   return candidateIds[matchResult.bestMatchIndex];
 }
 
-/// Runs the full local (offline) parse — see [ParseQuickEntryUseCase] for
-/// the orchestration that adds the cloud-LLM fallback on top of this.
+String? _extractLabeledFieldValue(String text, List<String> labels) {
+  final originalLines = text
+      .split('\n')
+      .map((l) => l.trim())
+      .where((l) => l.isNotEmpty)
+      .toList();
+  if (originalLines.isEmpty) return null;
+  final normalizedLines = originalLines.map(stripVietnameseDiacritics).toList();
+
+  for (final label in labels) {
+    for (int i = 0; i < normalizedLines.length; i++) {
+      final idx = normalizedLines[i].indexOf(label);
+      if (idx == -1) continue;
+
+      final afterLabel = idx + label.length;
+      final inline = afterLabel < originalLines[i].length
+          ? originalLines[i]
+                .substring(afterLabel)
+                .replaceFirst(RegExp(r'^\s*[:\-]\s*'), '')
+                .trim()
+          : '';
+      if (inline.length >= 2) return inline;
+
+      // Label and value are on separate lines on some screenshot layouts.
+      if (i + 1 < originalLines.length) {
+        final next = originalLines[i + 1].trim();
+        if (next.length >= 2) return next;
+      }
+    }
+  }
+  return null;
+}
+
 QuickEntryParseResult parseQuickEntryTextLocally({
   required String text,
   required List<CategoryEntity> categories,
@@ -441,7 +450,7 @@ QuickEntryParseResult parseQuickEntryTextLocally({
       residual = residual.replaceFirst(vnDateMatch.group(0)!, '');
     } else {
       // 2c. Relative date offsets: "hom qua", "today", etc.
-      final dateOffsets = QuickEntryAliasDataset.dateRelativeOffsets;
+      const dateOffsets = QuickEntryAliasDataset.dateRelativeOffsets;
       for (final offsetEntry in dateOffsets.entries) {
         if (normalized.contains(offsetEntry.key)) {
           date = date.subtract(Duration(days: offsetEntry.value));
@@ -452,25 +461,26 @@ QuickEntryParseResult parseQuickEntryTextLocally({
     }
   }
 
-  // 3. Match Category and remove matched alias from residual
+  final isOcrText = text.contains('\n');
+
   String? matchedCategoryId;
-  // Use word boundaries for short aliases to avoid partial matches
-  for (final aliasEntry in _sortedCategoryKeywordAliases) {
-    final pattern = aliasEntry.key.length <= 3
-        ? RegExp('\\b${RegExp.escape(aliasEntry.key)}\\b')
-        : RegExp(RegExp.escape(aliasEntry.key));
+  if (!isOcrText) {
+    // Use word boundaries for short aliases to avoid partial matches
+    for (final aliasEntry in _sortedCategoryKeywordAliases) {
+      final pattern = aliasEntry.key.length <= 3
+          ? RegExp('\\b${RegExp.escape(aliasEntry.key)}\\b')
+          : RegExp(RegExp.escape(aliasEntry.key));
 
-    if (pattern.hasMatch(normalized) &&
-        categories.any((category) => category.id == aliasEntry.value)) {
-      matchedCategoryId = aliasEntry.value;
-      residual = residual.replaceFirst(aliasEntry.key, '');
-      break;
+      if (pattern.hasMatch(normalized) &&
+          categories.any((category) => category.id == aliasEntry.value)) {
+        matchedCategoryId = aliasEntry.value;
+        residual = residual.replaceFirst(aliasEntry.key, '');
+        break;
+      }
     }
-  }
 
-  // 4. Fallback category matching if not found by alias
-  if (matchedCategoryId == null) {
-    matchedCategoryId = matchCategoryIdFromText(
+    // 4. Fallback category matching if not found by alias
+    matchedCategoryId ??= matchCategoryIdFromText(
       text: text,
       categories: categories,
       categoryLabels: categoryLabels,
@@ -501,12 +511,20 @@ QuickEntryParseResult parseQuickEntryTextLocally({
       .join(' ')
       .trim();
 
-  // 7. If this is an OCR string (contains newlines) and has items, build a better note
-  String? finalNote = residualNote.isEmpty ? null : residualNote;
-  if (text.contains('\n')) {
-    final items = extractItemsFromText(text);
-    if (items.isNotEmpty) {
-      finalNote = summarizeBillItems(items);
+  String? finalNote = isOcrText
+      ? _extractLabeledFieldValue(text, QuickEntryAliasDataset.noteFieldLabels)
+      : (residualNote.isEmpty ? null : residualNote);
+  if (isOcrText) {
+    final labeledCategoryText = _extractLabeledFieldValue(
+      text,
+      QuickEntryAliasDataset.categoryFieldLabels,
+    );
+    if (labeledCategoryText != null) {
+      matchedCategoryId = matchCategoryIdFromText(
+        text: labeledCategoryText,
+        categories: categories,
+        categoryLabels: categoryLabels,
+      );
     }
   }
 
