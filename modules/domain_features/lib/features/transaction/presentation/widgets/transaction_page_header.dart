@@ -42,10 +42,6 @@ class TransactionPageHeader extends StatelessWidget {
     // We calculate the overlap locally to match TransactionPage's logic.
     final overlap = context.respDim(64) / 2;
 
-    // Optimized approach: Instead of using a Stack to layer background and
-    // foreground, we move the background image into the Container's decoration.
-    // This reduces the depth of the widget tree and simplifies the layout
-    // phase by using a single flat child.
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -86,12 +82,6 @@ class TransactionPageHeader extends StatelessWidget {
           ),
         ),
         const CcSpaceXS(),
-        // The header height is a fixed fraction of screen height (see
-        // TransactionPage), so the banner's Expanded slot is a hard budget.
-        // AI components (quick-entry field + suggestion chip once Gemini
-        // returns a parse) can exceed that budget on smaller screens — wrap
-        // in a SingleChildScrollView so it scrolls that sliver instead of
-        // throwing a RenderFlex overflow.
         CcSymmetricPadding(
           horizontal: CcPaddingParams.PAGE_MD,
           child: Obx(() => buildBanner(context, guideline)),
@@ -109,10 +99,6 @@ class TransactionPageHeader extends StatelessWidget {
     final activeTab =
         tabs[controller.selectedTabIndex.value.clamp(0, tabs.length - 1)];
 
-    // When guideline is complete (0 remaining steps), show AI components
-    // instead of banner — whichever form controller backs the currently
-    // selected tab (Expense/Income/Investment/Liability all mix in
-    // QuickEntryMixin), not just Expense.
     if (isGuidelineComplete) {
       return _buildAiComponents(context, activeTab);
     }
@@ -135,15 +121,6 @@ class TransactionPageHeader extends StatelessWidget {
     );
   }
 
-  /// The quick-entry-capable controller backing [tab]'s form, if it's
-  /// already registered. All 4 form controllers are pre-registered eagerly
-  /// by `TransactionController.onInit()` — required because `TabBarView`'s
-  /// `PageView` only builds pages within its scroll cache extent, so
-  /// Investment/Liability's own widget `build()` (which used to be the only
-  /// place registering them) wasn't guaranteed to have run yet the first
-  /// time a user tapped straight into one of those tabs. The
-  /// `Get.isRegistered` checks below are defensive belt-and-braces, not
-  /// load-bearing.
   QuickEntryMixin? _quickEntryControllerFor(TransactionTabKind tab) {
     if (tab == TransactionTabKind.expense && expenseFormController != null) {
       return expenseFormController;
@@ -158,8 +135,6 @@ class TransactionPageHeader extends StatelessWidget {
     final quickEntry = _quickEntryControllerFor(activeTab);
     if (quickEntry == null) return const SizedBox.shrink();
 
-    // The merchant/location match suggestion chip is Expense-only (built on
-    // top of that form's note-typing history) — only relevant on that tab.
     final suggestionLabel =
         activeTab == TransactionTabKind.expense && expenseFormController != null
         ? _suggestionLabel(expenseFormController!)
@@ -205,7 +180,7 @@ class TransactionPageHeader extends StatelessWidget {
       suggestionLabel: suggestion != null
           ? controller.quickEntryResultLabel(suggestion)
           : null,
-      isCategoryMissing: controller.isQuickEntryCategoryMissing,
+      isCategoryMissing: controller.isQuickEntryCategoryInvalid,
       errorText: errorKey != null ? el.tr(errorKey) : null,
       activeColor: accentColor,
       onSubmitted: (_) => controller.submitQuickEntry(context),

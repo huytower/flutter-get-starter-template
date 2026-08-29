@@ -9,15 +9,6 @@ import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 
-/// Parses quick-entry text/voice/photo into an amount + category (+ date/
-/// note when available). [parseLocally] (free, offline) always runs first
-/// and drives the as-you-type suggestion; [parseWithCloud]/
-/// [parseImageWithCloud] are always additionally called on explicit submit
-/// — local fields still win in the merge, but Gemini often resolves
-/// category/date/note better than the local regex/fuzzy-match even when
-/// local already got amount+category. Kept UI-agnostic: the LV3 gate,
-/// consent prompt, and daily-cap check need a `BuildContext` and live in
-/// `QuickEntryMixin` instead.
 @lazySingleton
 class ParseQuickEntryUseCase {
   ParseQuickEntryUseCase(this._getCategories);
@@ -54,9 +45,6 @@ class ParseQuickEntryUseCase {
     );
   }
 
-  /// Sends [text] to Gemini unconditionally; [localResult] fields still win
-  /// in the merge. Returns null on any failure so the caller can surface a
-  /// generic "couldn't understand" message.
   Future<QuickEntryParseResult?> parseWithCloud({
     required String text,
     required QuickEntryParseResult localResult,
@@ -154,8 +142,6 @@ class ParseQuickEntryUseCase {
     );
   }
 
-  /// Describes what kind of amount is being extracted, for the free-text
-  /// quick-entry prompt — e.g. "personal expense" vs. "personal income".
   String _amountKindPhrase(String categoryType) => switch (categoryType) {
     CategoryType.income => 'personal income',
     CategoryType.investment => 'investment contribution or return',
@@ -163,8 +149,6 @@ class ParseQuickEntryUseCase {
     _ => 'personal expense',
   };
 
-  /// Describes what kind of image is being scanned, for the receipt-photo
-  /// prompt.
   String _receiptKindPhrase(String categoryType) => switch (categoryType) {
     CategoryType.income =>
       'income receipt, salary slip, or money-received screenshot',
@@ -181,9 +165,6 @@ class ParseQuickEntryUseCase {
     return 'Available categories (id: label): $categoryOptions.';
   }
 
-  /// Gives the model a "now" reference so it can resolve relative dates
-  /// (e.g. "hôm qua") — without this it has no way to know the actual
-  /// current date.
   String _todayReferenceSentence() {
     final now = DateTime.now();
     final iso =
@@ -193,11 +174,6 @@ class ParseQuickEntryUseCase {
     return "Today's date is $iso.";
   }
 
-  /// Forces strict JSON matching [QuickEntryParseResult], every field
-  /// nullable so an unresolved field comes back as explicit `null` instead
-  /// of prose. `categoryId` is enum-constrained to the offered ids, so
-  /// [_parseJsonResponse]'s `validIds.contains` check is defense-in-depth,
-  /// not the only guard against a hallucinated id.
   Schema _buildResponseSchema(List<CategoryEntity> categories) {
     return Schema.object(
       properties: {
@@ -231,8 +207,6 @@ class ParseQuickEntryUseCase {
     );
   }
 
-  /// Merges a raw Gemini JSON response with [localResult] — local fields
-  /// always win when both are present.
   QuickEntryParseResult? _mergeCloudResponse(
     String response, {
     required List<CategoryEntity> categories,
@@ -251,9 +225,6 @@ class ParseQuickEntryUseCase {
     return merged.isEmpty ? null : merged;
   }
 
-  /// Validates each field independently — a bad value in one field just
-  /// drops that field to null rather than discarding the whole response.
-  /// Only a non-JSON/non-object reply returns null outright.
   QuickEntryParseResult? _parseJsonResponse(
     String raw, {
     required Set<String> validIds,
