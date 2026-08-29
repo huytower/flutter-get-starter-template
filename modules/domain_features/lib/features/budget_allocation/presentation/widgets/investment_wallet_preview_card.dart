@@ -80,9 +80,7 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                CcDividerLine(
-                  color: scheme.onSurface.withOpacity(0.06),
-                ),
+                CcDividerLine(color: scheme.onSurface.withOpacity(0.06)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -94,7 +92,7 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
                     ),
                     _buildCompactStat(
                       context,
-                      icon: Icons.eco,
+                      icon: Icons.eco_outlined,
                       color: scheme.onSurfaceVariant,
                       value: stats.contributed,
                     ),

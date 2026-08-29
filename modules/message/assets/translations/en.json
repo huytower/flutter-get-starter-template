@@ -195,7 +195,7 @@
                    "liquid_assets":  "Liquid Assets",
                    "liquid_assets_desc":  "Cash + Bank + E-wallet · ready to spend",
                    "investments":  "Investments / Accumulation",
-                   "investments_desc":  "Stocks, funds, real estate... · Avg ROI {roi}%",
+                   "investments_desc":  "Stocks, funds, real estate...",
                    "liabilities":  "Liabilities",
                    "liabilities_desc":  "Loans + Credit cards · balance tracking, stress monitor",
                    "liabilities_net":  "Net Liability",

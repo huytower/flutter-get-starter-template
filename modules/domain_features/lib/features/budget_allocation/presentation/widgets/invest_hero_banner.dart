@@ -87,19 +87,13 @@ class InvestHeroBanner extends StatelessWidget {
                       ),
                     ),
                     const CcSpaceXS(),
-                    Obx(() {
-                      final roi = walletController.investmentRoiPercent.value;
-                      return CcText(
-                        el.tr(
-                          CcLocaleKeys.wallet_investments_desc,
-                          namedArgs: {'roi': roi.toStringAsFixed(1)},
-                        ),
-                        maxLines: 2,
-                        textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                          color: scheme.onPrimary.withOpacity(0.7),
-                        ),
-                      );
-                    }),
+                    CcText(
+                      el.tr(CcLocaleKeys.wallet_investments_desc),
+                      maxLines: 2,
+                      textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                        color: scheme.onPrimary.withOpacity(0.7),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -143,8 +137,25 @@ class InvestHeroBanner extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Period Indicator (Trending UX)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: scheme.onPrimary.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: CcText(
+              'Tháng ${DateTime.now().month}',
+              textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                color: scheme.onPrimary,
+                fontSize: context.respFontSize(8),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
           _StatRow(
-            label: 'ROI (tháng)',
+            label: 'ROI',
             value: '${roi >= 0 ? '+' : ''}${roi.toStringAsFixed(1)}%',
             color: scheme.onPrimary,
           ),
@@ -154,21 +165,24 @@ class InvestHeroBanner extends StatelessWidget {
             value: '${breakeven.toStringAsFixed(1)}%',
             color: scheme.onPrimary.withOpacity(0.9),
           ),
-          const SizedBox(height: 4),
-          _StatRow(
-            label: el.tr(CcLocaleKeys.transaction_investment_contribution),
-            value: visible
-                ? TransactionFormHelpers.formatShort(invested)
-                : '***',
-            color: scheme.onPrimary.withOpacity(0.8),
-          ),
-          const SizedBox(height: 2),
-          _StatRow(
-            label: el.tr(CcLocaleKeys.transaction_investment_return),
-            value: visible
-                ? TransactionFormHelpers.formatShort(returned)
-                : '***',
-            color: scheme.onPrimary.withOpacity(0.8),
+          const SizedBox(height: 6),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _CompactIconStat(
+                icon: Icons.eco,
+                value: invested,
+                visible: visible,
+                color: scheme.onPrimary.withOpacity(0.8),
+              ),
+              const SizedBox(width: 8),
+              _CompactIconStat(
+                icon: Icons.auto_graph_rounded,
+                value: returned,
+                visible: visible,
+                color: scheme.onPrimary,
+              ),
+            ],
           ),
         ],
       );
@@ -205,6 +219,43 @@ class _StatRow extends StatelessWidget {
             color: color,
             fontWeight: CcTypographyParams.bold,
             fontSize: context.respFontSize(10),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CompactIconStat extends StatelessWidget {
+  final IconData icon;
+  final int value;
+  final bool visible;
+  final Color color;
+
+  const _CompactIconStat({
+    required this.icon,
+    required this.value,
+    required this.visible,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          size: context.respIconSize(baseSize: 10),
+          color: color.withOpacity(0.7),
+        ),
+        const SizedBox(width: 2),
+        CcText(
+          visible ? TransactionFormHelpers.formatShort(value) : '***',
+          textStyle: context.ccTextTheme.labelSmall?.copyWith(
+            color: color,
+            fontWeight: CcTypographyParams.bold,
+            fontSize: context.respFontSize(9),
           ),
         ),
       ],

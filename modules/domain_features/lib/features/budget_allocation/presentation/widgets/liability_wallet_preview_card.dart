@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:theme/data/data_source/color/prj_color.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../liability/domain/entities/liability_balance_entity.dart';
@@ -84,27 +85,25 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                CcDividerLine(
-                  color: scheme.onSurface.withOpacity(0.06),
-                ),
+                CcDividerLine(color: scheme.onSurface.withOpacity(0.06)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildCompactStat(
                       context,
                       icon: loan.isBorrow
-                          ? Icons.arrow_downward_rounded
-                          : Icons.arrow_upward_rounded,
-                      color: isSettled
-                          ? scheme.onSurfaceVariant
-                          : directionColor,
-                      value: balance.outstandingBalance,
+                          ? Icons.call_received
+                          : Icons.call_made,
+                      color: directionColor,
+                      value: loan.principalAmount,
                     ),
                     _buildCompactStat(
                       context,
-                      icon: Icons.eco_outlined,
-                      color: scheme.onSurfaceVariant,
-                      value: loan.principalAmount,
+                      icon: Icons.account_balance_wallet_outlined,
+                      color: isSettled
+                          ? PrjColors.success
+                          : scheme.onSurfaceVariant,
+                      value: loan.principalAmount - balance.outstandingBalance,
                     ),
                   ],
                 ),
