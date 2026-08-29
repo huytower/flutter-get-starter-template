@@ -105,8 +105,8 @@ class LiabilityDetailController extends TransactionFormController {
     if (isSubmitting.value || !canSubmit || loanId == null) return;
     isSubmitting.value = true;
 
-    final params = RecordLoanPaymentParams(
-      loanId: loanId,
+    final params = RecordLiabilityPaymentParams(
+      liabilityId: loanId,
       walletId: selectedWalletId.value ?? '',
       amount: int.tryParse(amountStr.value) ?? 0,
       note: composeNote(),

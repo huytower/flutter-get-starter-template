@@ -111,7 +111,7 @@ class TransactionPageHeader extends StatelessWidget {
 
     // When guideline is complete (0 remaining steps), show AI components
     // instead of banner — whichever form controller backs the currently
-    // selected tab (Expense/Income/Investment/Loan all mix in
+    // selected tab (Expense/Income/Investment/Liability all mix in
     // QuickEntryMixin), not just Expense.
     if (isGuidelineComplete) {
       return _buildAiComponents(context, activeTab);
@@ -139,7 +139,7 @@ class TransactionPageHeader extends StatelessWidget {
   /// already registered. All 4 form controllers are pre-registered eagerly
   /// by `TransactionController.onInit()` — required because `TabBarView`'s
   /// `PageView` only builds pages within its scroll cache extent, so
-  /// Investment/Loan's own widget `build()` (which used to be the only
+  /// Investment/Liability's own widget `build()` (which used to be the only
   /// place registering them) wasn't guaranteed to have run yet the first
   /// time a user tapped straight into one of those tabs. The
   /// `Get.isRegistered` checks below are defensive belt-and-braces, not
@@ -274,19 +274,63 @@ class TransactionPageHeader extends StatelessWidget {
     }
   }
 
+  Widget _buildAutoSaveMessage(
+    BuildContext context,
+    int countdown,
+    QuickEntryMixin quickEntry,
+  ) {
+    return Row(
+      key: const ValueKey('auto_save_message'),
+      children: [
+        Icon(
+          Icons.auto_awesome,
+          size: context.respIconSize(baseSize: 18),
+          color: context.ccColorScheme.primary,
+        ),
+        const CcSpaceXS(),
+        Expanded(
+          child: CcText(
+            'Tự động lưu trong ${countdown}s...',
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
+              color: context.ccColorScheme.onPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        CcIconButton.bouncing(
+          icon: Icon(
+            Icons.close_rounded,
+            size: context.respIconSize(baseSize: 16),
+            color: context.ccColorScheme.onPrimary.withOpacity(0.8),
+          ),
+          onTap: quickEntry.cancelAutoSaveManually,
+          width: context.respDim(24),
+          height: context.respDim(24),
+        ),
+      ],
+    );
+  }
+
   Widget _buildHeaderTitleSection(BuildContext context) {
     return Expanded(
       child: Obx(() {
         final bool showSummary = controller.showWalletSummaryTemporarily.value;
 
+        final tabs = controller.visibleTabs;
+        final activeTab =
+            tabs[controller.selectedTabIndex.value.clamp(0, tabs.length - 1)];
+        final quickEntry = _quickEntryControllerFor(activeTab);
+        final countdown = quickEntry?.autoSaveCountdown.value ?? 0;
+
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 400),
-          // Use the default layout builder. A custom Stack here conflicts with
-          // the Expanded (which lives under the header's outer Stack), causing
-          // a "Competing ParentDataWidgets" assertion during transitions.
           child: showSummary
               ? const TransactionWalletSummary(key: ValueKey('wallet_summary'))
-              : _buildPageTitle(context),
+              : (countdown > 0 && quickEntry != null
+                    ? _buildAutoSaveMessage(context, countdown, quickEntry)
+                    : _buildPageTitle(context)),
         );
       }),
     );

@@ -249,7 +249,7 @@ class ReportPage extends CcGetView<ReportController> {
 
   Widget _buildLiabilitySection(BuildContext context) {
     return Obx(() {
-      final data = controller.loanTrend.value;
+      final data = controller.liabilityTrend.value;
       if (!controller.userLevel.status.value.canUseDebtLoan ||
           data == null ||
           (data.totalIncome == 0 && data.totalExpense == 0)) {

@@ -151,7 +151,7 @@ class AddLiabilitySheetController extends CcGetController {
       }
     }
 
-    final params = CreateLoanParams(
+    final params = CreateLiabilityParams(
       direction: direction.value,
       principalAmount: amount,
       categoryId: category.id,

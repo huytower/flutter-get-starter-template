@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
-import 'budget_hero_banner.dart';
+import 'liquid_hero_banner.dart';
 
-/// Hero banner for liabilities (loans/debts) matching the design of BudgetHeroBanner.
+/// Hero banner for liabilities (loans/debts) matching the design of LiquidHeroBanner.
 class LiabilityHeroBanner extends StatelessWidget {
   const LiabilityHeroBanner({
     required this.walletController,
@@ -27,7 +27,7 @@ class LiabilityHeroBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return BudgetHeroBanner(
+    return LiquidHeroBanner(
       walletController: walletController,
       titleKey: CcLocaleKeys.wallet_liabilities,
       balance: borrowBalance,

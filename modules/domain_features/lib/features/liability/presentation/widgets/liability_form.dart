@@ -94,16 +94,16 @@ class LiabilityForm extends StatelessWidget {
               _buildWalletSection(context, controller, accentColor),
               const CcSpaceSM(),
               Obx(() {
-                final loan = controller.mergedItems
+                final liability = controller.mergedItems
                     .firstWhereOrNull(
                       (b) => b.liability.id == controller.selectedLoanId.value,
                     )
                     ?.liability;
 
-                // Only show repayment plan for new/uninitialized loans.
-                // For existing loans, we are just borrowing more.
-                if (loan == null ||
-                    loan.principalAmount > 0 ||
+                // Only show repayment plan for new/uninitialized liabilities.
+                // For existing liabilities, we are just borrowing more.
+                if (liability == null ||
+                    liability.principalAmount > 0 ||
                     controller.action.value == LiabilityFormAction.decrease) {
                   return const SizedBox.shrink();
                 }
@@ -143,7 +143,7 @@ class LiabilityForm extends StatelessWidget {
     LiabilityFormController controller,
     Color accentColor,
   ) {
-    final loan = controller.mergedItems
+    final liability = controller.mergedItems
         .firstWhereOrNull(
           (b) => b.liability.id == controller.selectedLoanId.value,
         )
@@ -151,7 +151,7 @@ class LiabilityForm extends StatelessWidget {
 
     final isRepay = controller.action.value == LiabilityFormAction.decrease;
 
-    final label = (isRepay || (loan != null && loan.principalAmount > 0))
+    final label = (isRepay || (liability != null && liability.principalAmount > 0))
         ? el.tr(CcLocaleKeys.transaction_amount)
         : el.tr(CcLocaleKeys.transaction_liability_amount_borrow_label);
 
@@ -204,7 +204,7 @@ class LiabilityForm extends StatelessWidget {
     Color accentColor,
   ) {
     final isRepay = controller.action.value == LiabilityFormAction.decrease;
-    final loan = controller.mergedItems
+    final liability = controller.mergedItems
         .firstWhereOrNull(
           (b) => b.liability.id == controller.selectedLoanId.value,
         )
@@ -217,7 +217,7 @@ class LiabilityForm extends StatelessWidget {
       text = el.tr(CcLocaleKeys.transaction_record_repay);
       icon = Icons.account_balance;
     } else {
-      text = (loan != null && loan.principalAmount > 0)
+      text = (liability != null && liability.principalAmount > 0)
           ? el.tr(CcLocaleKeys.transaction_record_liability) // Borrow more
           : el.tr(CcLocaleKeys.transaction_record_liability); // Initiate
       icon = Icons.call_received;

@@ -64,7 +64,6 @@ class LendFormController extends LiabilityBaseFormController {
 
   @override
   final RxnInt editingInstallmentIndex = RxnInt();
-  final RxBool isVip = false.obs;
 
   @override
   int get principalAmount => int.tryParse(amountStr.value) ?? 0;
@@ -97,12 +96,12 @@ class LendFormController extends LiabilityBaseFormController {
     if (amountStr.value == '0' || amountStr.value.isEmpty) return false;
     if (selectedWalletId.value == null) return false;
 
-    final loan = mergedItems
+    final liability = mergedItems
         .firstWhereOrNull((b) => b.liability.id == selectedLoanId.value)
         ?.liability;
-    if (loan == null) return false;
+    if (liability == null) return false;
 
-    if (loan.principalAmount == 0) {
+    if (liability.principalAmount == 0) {
       if (repaymentMethod.value == LiabilityRepaymentMethod.installment) {
         if (installmentDrafts.isEmpty) return false;
         if (installmentsTotal != principalAmount) return false;
@@ -116,7 +115,8 @@ class LendFormController extends LiabilityBaseFormController {
 
   Future<void> _loadAll() async {
     isLoadingMerged.value = true;
-    await _loadVipStatus();
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    isVip.value = settings.isVip;
     await loadLiabilities();
     isLoadingMerged.value = false;
     initQuickEntry();
@@ -184,11 +184,6 @@ class LendFormController extends LiabilityBaseFormController {
         (c) => c.id == categoryId,
       );
     }, (_) {});
-  }
-
-  Future<void> _loadVipStatus() async {
-    final settings = await getIt<GetProfileSettingsUseCase>().call();
-    isVip.value = settings.isVip;
   }
 
   @override
@@ -361,6 +356,11 @@ class LendFormController extends LiabilityBaseFormController {
   }
 
   @override
+  void applyResolvedCategory(CategoryEntity category) {
+    selectedCategory.value = category;
+  }
+
+  @override
   void onReset() {
     selectedCategory.value = null;
     categoryKey.value++;
@@ -381,17 +381,17 @@ class LendFormController extends LiabilityBaseFormController {
     if (isSubmitting.value || !canSubmit) return;
     isSubmitting.value = true;
 
-    final loan = mergedItems
+    final liability = mergedItems
         .firstWhereOrNull((b) => b.liability.id == selectedLoanId.value)
         ?.liability;
-    if (loan == null) {
+    if (liability == null) {
       isSubmitting.value = false;
       return;
     }
 
-    if (loan.principalAmount > 0) {
-      final params = RecordLoanPaymentParams(
-        loanId: loan.id,
+    if (liability.principalAmount > 0) {
+      final params = RecordLiabilityPaymentParams(
+        liabilityId: liability.id,
         isSettlement: false,
         walletId: selectedWalletId.value ?? '',
         amount: int.tryParse(amountStr.value) ?? 0,
@@ -430,12 +430,12 @@ class LendFormController extends LiabilityBaseFormController {
     }
 
     final category = selectedCategory.value!;
-    final categoryLabel = loan.categoryLabel;
+    final categoryLabel = liability.categoryLabel;
     final isInstallment =
         repaymentMethod.value == LiabilityRepaymentMethod.installment;
 
-    final params = CreateLoanParams(
-      loanId: loan.id,
+    final params = CreateLiabilityParams(
+      liabilityId: liability.id,
       direction: direction,
       principalAmount: int.tryParse(amountStr.value) ?? 0,
       categoryId: category.id,

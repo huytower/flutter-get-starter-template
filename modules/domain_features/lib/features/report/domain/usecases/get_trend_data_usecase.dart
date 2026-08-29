@@ -73,12 +73,19 @@ class GetTrendDataUseCase {
         .where((t) => t.type == TransactionType.expense)
         .fold<double>(0, (sum, t) => sum + t.amount);
 
+    final sortedTransactions = allTransactions.toList();
+    sortedTransactions.sort((a, b) {
+      final dateCompare = b.date.compareTo(a.date);
+      if (dateCompare != 0) return dateCompare;
+      return b.id.compareTo(a.id);
+    });
+
     return Success(
       TrendDataEntity(
         points: points,
         totalIncome: totalIncome,
         totalExpense: totalExpense,
-        transactions: allTransactions..sort((a, b) => b.date.compareTo(a.date)),
+        transactions: sortedTransactions,
       ),
     );
   }

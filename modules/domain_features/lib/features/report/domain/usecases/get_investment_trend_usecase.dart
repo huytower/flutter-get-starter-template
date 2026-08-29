@@ -70,12 +70,19 @@ class GetInvestmentTrendUseCase {
         .where((t) => t.type == TransactionType.investmentOut)
         .fold<double>(0, (sum, t) => sum + t.amount);
 
+    final sortedTransactions = transactions.toList();
+    sortedTransactions.sort((a, b) {
+      final dateCompare = b.date.compareTo(a.date);
+      if (dateCompare != 0) return dateCompare;
+      return b.id.compareTo(a.id);
+    });
+
     return Success(
       TrendDataEntity(
         points: points,
         totalIncome: totalReturned,
         totalExpense: totalContributed,
-        transactions: transactions..sort((a, b) => b.date.compareTo(a.date)),
+        transactions: sortedTransactions,
       ),
     );
   }

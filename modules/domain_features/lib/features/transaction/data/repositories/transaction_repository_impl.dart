@@ -26,9 +26,19 @@ class TransactionRepositoryImpl
 
   Future<List<TransactionEntity>> _allSortedDesc() async {
     final models = await _local.getAll();
-    final entities =
-        models.map((m) => m.toEntity()).where((e) => !e.isDeleted).toList()
-          ..sort((a, b) => b.date.compareTo(a.date));
+    final entities = models
+        .map((m) => m.toEntity())
+        .where((e) => !e.isDeleted)
+        .toList();
+
+    // Sort by date descending (latest first). Use ID as tie-breaker for
+    // same-timestamp entries to ensure "recent records firstly".
+    entities.sort((a, b) {
+      final dateCompare = b.date.compareTo(a.date);
+      if (dateCompare != 0) return dateCompare;
+      return b.id.compareTo(a.id);
+    });
+
     return entities;
   }
 

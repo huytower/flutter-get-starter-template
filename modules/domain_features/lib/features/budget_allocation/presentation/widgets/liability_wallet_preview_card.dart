@@ -1,7 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:theme/data/data_source/color/prj_color.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../liability/domain/entities/liability_balance_entity.dart';
@@ -21,8 +20,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final loan = balance.liability;
-    final isSettled = balance.status == LiabilityStatus.settled;
+    final liability = balance.liability;
     final directionColor = context.ccColorScheme.primary;
 
     return CcBouncing(
@@ -62,8 +60,8 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                           const Positioned.fill(child: CcGlassyGradientIcon()),
                           CcIconToken(
                             iconDataFromCode(
-                              loan.categoryIconCode ?? 0,
-                              fontFamily: loan.categoryIconFamily,
+                              liability.categoryIconCode ?? 0,
+                              fontFamily: liability.categoryIconFamily,
                             ),
                             size: 16,
                             color: directionColor,
@@ -74,7 +72,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                     const CcSpaceSM(),
                     Expanded(
                       child: CcText(
-                        loan.categoryLabel,
+                        liability.categoryLabel,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textStyle: context.ccTextTheme.labelMedium?.copyWith(
@@ -91,19 +89,21 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                   children: [
                     _buildCompactStat(
                       context,
-                      icon: loan.isBorrow
-                          ? Icons.call_received
-                          : Icons.call_made,
                       color: directionColor,
-                      value: loan.principalAmount,
+                      iconAsset: liability.isBorrow
+                          ? 'assets/icon/ic_borrow.webp'
+                          : 'assets/icon/ic_lend.webp',
+                      value: liability.principalAmount,
                     ),
                     _buildCompactStat(
                       context,
-                      icon: Icons.account_balance_wallet_outlined,
-                      color: isSettled
-                          ? PrjColors.success
-                          : scheme.onSurfaceVariant,
-                      value: loan.principalAmount - balance.outstandingBalance,
+                      iconAsset: liability.isBorrow
+                          ? 'assets/icon/ic_repay.webp'
+                          : 'assets/icon/ic_collect.webp',
+                      color: directionColor,
+                      value:
+                          liability.principalAmount -
+                          balance.outstandingBalance,
                     ),
                   ],
                 ),
@@ -117,7 +117,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
 
   Widget _buildCompactStat(
     BuildContext context, {
-    required IconData icon,
+    required String iconAsset,
     required Color color,
     required int value,
   }) {
@@ -126,12 +126,13 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: context.respIconSize(baseSize: 12),
+        Image.asset(
+          iconAsset,
           color: color.withOpacity(0.8),
+          width: context.respIconSize(baseSize: 24),
+          height: context.respIconSize(baseSize: 24),
         ),
-        const SizedBox(width: 4),
+        const CcSpaceXS(),
         Obx(
           () => CcText(
             controller.isBalanceVisible.value

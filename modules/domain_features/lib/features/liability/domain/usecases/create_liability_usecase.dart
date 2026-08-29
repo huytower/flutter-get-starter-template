@@ -10,8 +10,8 @@ import '../entities/liability_entity.dart';
 import '../repositories/liability_repository.dart';
 
 /// Input for [CreateLiabilityUseCase].
-class CreateLoanParams {
-  final String? loanId;
+class CreateLiabilityParams {
+  final String? liabilityId;
   final String direction;
   final int principalAmount;
   final String categoryId;
@@ -26,8 +26,8 @@ class CreateLoanParams {
   final DateTime date;
   final bool reminderBeforeDueDate;
 
-  const CreateLoanParams({
-    this.loanId,
+  const CreateLiabilityParams({
+    this.liabilityId,
     required this.direction,
     required this.principalAmount,
     required this.categoryId,
@@ -44,13 +44,13 @@ class CreateLoanParams {
   });
 }
 
-/// Initiates a loan (Đi vay/Cho vay): creates the [LiabilityEntity] plus a single
+/// Initiates a liability (Đi vay/Cho vay): creates the [LiabilityEntity] plus a single
 /// [TransactionEntity] leg tagged with its id.
 ///
 /// Cho vay (lend) mirrors expense/`_contribute`: money leaves the wallet, so
 /// it's blocked if it exceeds the wallet's book balance. Đi vay (borrow)
 /// mirrors income/`_recordReturn`: money is arriving from outside, no
-/// balance check. Rolls back the loan record if the transaction write fails,
+/// balance check. Rolls back the liability record if the transaction write fails,
 /// mirroring the two-leg rollback in `CreateInvestmentTransactionUseCase`.
 @lazySingleton
 class CreateLiabilityUseCase {
@@ -64,7 +64,9 @@ class CreateLiabilityUseCase {
   final TransactionRepository _transactionRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
 
-  Future<Result<LiabilityEntity, CcFailure>> call(CreateLoanParams params) async {
+  Future<Result<LiabilityEntity, CcFailure>> call(
+    CreateLiabilityParams params,
+  ) async {
     if (params.categoryId.isEmpty) {
       return const Error(
         ValidationFailure(
@@ -103,8 +105,10 @@ class CreateLiabilityUseCase {
       }
     }
 
-    final loan = LiabilityEntity(
-      id: params.loanId ?? DateTime.now().microsecondsSinceEpoch.toString(),
+    final liability = LiabilityEntity(
+      id:
+          params.liabilityId ??
+          DateTime.now().microsecondsSinceEpoch.toString(),
       direction: params.direction,
       principalAmount: params.principalAmount,
       categoryId: params.categoryId,
@@ -121,15 +125,15 @@ class CreateLiabilityUseCase {
       reminderBeforeDueDate: params.reminderBeforeDueDate,
     );
 
-    final createResult = params.loanId != null
-        ? await _LiabilityRepository.updateLoan(loan)
-        : await _LiabilityRepository.createLoan(loan);
+    final createResult = params.liabilityId != null
+        ? await _LiabilityRepository.updateLoan(liability)
+        : await _LiabilityRepository.createLoan(liability);
     if (createResult.isError()) {
       return Error(createResult.tryGetError()!);
     }
 
     final txn = TransactionEntity(
-      id: '${loan.id}_init',
+      id: '${liability.id}_init',
       type: params.direction == LiabilityDirection.borrow
           ? TransactionType.debtBorrow
           : TransactionType.debtLend,
@@ -141,17 +145,15 @@ class CreateLiabilityUseCase {
       note: params.note,
       date: params.date,
       walletId: params.walletId,
-      loanId: loan.id,
+      loanId: liability.id,
     );
 
     final txnResult = await _transactionRepository.createTransaction(txn);
     if (txnResult.isError()) {
-      await _LiabilityRepository.deleteLoan(loan.id);
+      await _LiabilityRepository.deleteLoan(liability.id);
       return Error(txnResult.tryGetError()!);
     }
 
-    return Success(loan);
+    return Success(liability);
   }
 }
-
-

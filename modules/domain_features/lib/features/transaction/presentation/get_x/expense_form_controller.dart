@@ -168,6 +168,20 @@ class ExpenseFormController extends TransactionFormController
   }
 
   @override
+  void applyResolvedCategory(CategoryEntity category) {
+    selectedCategory.value = category;
+
+    // Also try to auto-resolve to a budget if possible
+    if (Get.isRegistered<BudgetLimitController>()) {
+      final budgets = Get.find<BudgetLimitController>().budgets;
+      final matches = budgets.where((b) => b.budget.categoryId == category.id);
+      if (matches.length == 1) {
+        selectedBudget.value = matches.first.budget;
+      }
+    }
+  }
+
+  @override
   void onReset() {
     selectedCategory.value = null;
     selectedBudget.value = null;

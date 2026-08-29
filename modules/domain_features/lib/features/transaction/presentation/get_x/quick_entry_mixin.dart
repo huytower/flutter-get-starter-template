@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -12,6 +15,7 @@ import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../liability/domain/entities/liability_entity.dart';
+import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import 'transaction_controller.dart';
@@ -27,7 +31,8 @@ import 'transaction_form_controller.dart';
 /// [pendingPrefillCategoryId]. Call [initQuickEntry]/[disposeQuickEntry]/
 /// [resetQuickEntry] from the host's own `onInit`/`onClose`/`onReset` — not
 /// automatic, to avoid relying on mixin `super` linearization order.
-mixin QuickEntryMixin on TransactionFormController {
+mixin QuickEntryMixin on TransactionFormController
+    implements WidgetsBindingObserver {
   /// Category type quick-entry searches/prefills within.
   String get quickEntryCategoryType;
 
@@ -50,6 +55,11 @@ mixin QuickEntryMixin on TransactionFormController {
   final RxBool isParsingQuickEntry = false.obs;
   final RxBool isListeningQuickEntry = false.obs;
 
+  /// Remaining seconds until auto-save triggers. VIP only.
+  final RxInt autoSaveCountdown = 0.obs;
+  final RxBool isVip = false.obs;
+  Timer? _autoSaveTimer;
+
   /// Locale key for an inline status message; null means nothing to show.
   final Rx<String?> quickEntryErrorKey = Rx<String?>(null);
 
@@ -63,12 +73,14 @@ mixin QuickEntryMixin on TransactionFormController {
 
   /// Call from the host's `onInit`.
   void initQuickEntry() {
+    WidgetsBinding.instance.addObserver(this);
     quickEntryController.addListener(_onQuickEntryTextChanged);
     refreshQuickEntryCategories();
   }
 
   /// Call from the host's `onClose`.
   void disposeQuickEntry() {
+    WidgetsBinding.instance.removeObserver(this);
     _quickEntryDisposed = true;
     _quickEntryDebounce?.cancel();
     quickEntryController
@@ -80,14 +92,108 @@ mixin QuickEntryMixin on TransactionFormController {
     }
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
+      _cancelAutoSave();
+    }
+  }
+
+  @override
+  void didChangeAccessibilityFeatures() {}
+
+  @override
+  void didChangeLocales(List<Locale>? locales) {}
+
+  @override
+  void didChangeMetrics() {}
+
+  @override
+  void didChangePlatformBrightness() {}
+
+  @override
+  void didChangeTextScaleFactor() {}
+
+  @override
+  void didChangeViewFocus(ViewFocusEvent event) {}
+
+  @override
+  void didHaveMemoryPressure() {}
+
+  @override
+  Future<AppExitResponse> didRequestAppExit() async => AppExitResponse.exit;
+
+  @override
+  void handleCancelBackGesture() {}
+
+  @override
+  void handleCommitBackGesture() {}
+
+  @override
+  bool handleStartBackGesture(PredictiveBackEvent backEvent) => false;
+
+  @override
+  void handleStatusBarTap() {}
+
+  @override
+  void handleUpdateBackGestureProgress(PredictiveBackEvent backEvent) {}
+
+  @override
+  Future<bool> didPopRoute() => Future.value(false);
+
+  @override
+  Future<bool> didPushRoute(String route) => Future.value(false);
+
+  @override
+  Future<bool> didPushRouteInformation(RouteInformation routeInformation) =>
+      Future.value(false);
+
   /// Bumps the generation to invalidate any in-flight cloud call.
   void resetQuickEntry() {
+    _cancelAutoSave();
     pendingPrefillCategoryId.value = null;
     quickEntrySuggestion.value = null;
     quickEntryErrorKey.value = null;
     quickEntryController.clear();
     _quickEntryGeneration++;
     isParsingQuickEntry.value = false;
+  }
+
+  void _cancelAutoSave() {
+    _autoSaveTimer?.cancel();
+    _autoSaveTimer = null;
+    autoSaveCountdown.value = 0;
+  }
+
+  void cancelAutoSaveManually() {
+    _cancelAutoSave();
+    // Also clear the suggestion so it doesn't linger after a manual cancel
+    quickEntrySuggestion.value = null;
+  }
+
+  Future<void> startAutoSaveTimer(BuildContext context) async {
+    _cancelAutoSave();
+
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    isVip.value = settings.isVip;
+
+    if (!isVip.value) return;
+
+    autoSaveCountdown.value = 2;
+    _autoSaveTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (autoSaveCountdown.value > 1) {
+        autoSaveCountdown.value--;
+      } else {
+        _cancelAutoSave();
+        final suggestion = quickEntrySuggestion.value;
+        if (suggestion != null) {
+          applyQuickEntryParse(suggestion);
+          submitForm(context);
+        }
+      }
+    });
   }
 
   /// Direction string (e.g. 'borrow'/'lend') for dual-direction forms like
@@ -177,6 +283,7 @@ mixin QuickEntryMixin on TransactionFormController {
       _quickEntryCategories.map((category) => category.id).toList();
 
   void _onQuickEntryTextChanged() {
+    _cancelAutoSave();
     quickEntryErrorKey.value = null;
     _quickEntryDebounce?.cancel();
     _quickEntryDebounce = Timer(
@@ -200,7 +307,13 @@ mixin QuickEntryMixin on TransactionFormController {
     if (_quickEntryDisposed || text != quickEntryController.text.trim()) {
       return;
     }
-    quickEntrySuggestion.value = local.isComplete ? local : null;
+
+    final isComplete = local.isComplete && !isQuickEntryCategoryMissing;
+    quickEntrySuggestion.value = isComplete ? local : null;
+
+    if (isComplete && Get.context != null) {
+      startAutoSaveTimer(Get.context!);
+    }
   }
 
   /// One submission's generation token: `isCurrent` reports whether
@@ -339,6 +452,9 @@ mixin QuickEntryMixin on TransactionFormController {
           .Log('QuickEntryMixin');
       resetParsingIfCurrent();
       quickEntrySuggestion.value = local;
+      if (!isQuickEntryCategoryMissing) {
+        startAutoSaveTimer(context);
+      }
       return;
     }
 
@@ -383,6 +499,9 @@ mixin QuickEntryMixin on TransactionFormController {
     }
 
     quickEntrySuggestion.value = suggestion;
+    if (!isQuickEntryCategoryMissing) {
+      startAutoSaveTimer(context);
+    }
   }
 
   /// Reentrancy gate for receipt-photo entry — call before showing the
@@ -505,6 +624,9 @@ mixin QuickEntryMixin on TransactionFormController {
     }
 
     quickEntrySuggestion.value = suggestion;
+    if (!isQuickEntryCategoryMissing) {
+      startAutoSaveTimer(context);
+    }
   }
 
   Future<void> toggleVoiceQuickEntry(BuildContext context) async {
@@ -565,16 +687,25 @@ mixin QuickEntryMixin on TransactionFormController {
   /// asset, a manual pick by design.
   void applyQuickEntryCategory(String categoryId) {
     pendingPrefillCategoryId.value = categoryId;
-    // NOTE: We don't bump categoryKey here anymore. Bumping the key causes
-    // the CategorySelectionSection to dispose and recreate, which can
-    // trigger rebuild loops and destroys the scroll position.
-    // The parent's Obx will already trigger a rebuild of the section with
-    // the new pendingPrefillCategoryId.
+
+    // Proactive resolution: if we can find the real CategoryEntity in our
+    // local cache, tell the host controller to select it immediately.
+    // This ensures the form is valid (canSubmit = true) for auto-save
+    // without waiting for the UI selection-grid to remount.
+    final category = _findQuickEntryCategory(categoryId);
+    if (category != null) {
+      applyResolvedCategory(category);
+    }
   }
+
+  /// Optional hook for controllers to apply a synchronously resolved
+  /// [CategoryEntity] to their internal state.
+  void applyResolvedCategory(CategoryEntity category) {}
 
   /// Pre-fills whichever fields [result] resolved; a null field is left at
   /// the form's existing default for the user to fill in by hand.
   void applyQuickEntryParse(QuickEntryParseResult result) {
+    _cancelAutoSave();
     '[AI_PARSING] 📥 Applying parse result | result=${result.toJson()}'.Log(
       'QuickEntryMixin',
     );

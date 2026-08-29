@@ -106,7 +106,7 @@ class GuidelineController extends GetxController {
 
     try {
       final budgetController = getIt<BudgetAllocationController>();
-      if (budgetController.loanBalances.isNotEmpty) {
+      if (budgetController.liabilityBalances.isNotEmpty) {
         hasCreatedFirstLiability.value = true;
         await prefs.setBool('has_created_first_liability', true);
       }

@@ -74,22 +74,22 @@ class LiabilityAssetSelector extends StatelessWidget {
               separatorBuilder: (context, index) => const CcSpaceMD(),
               itemBuilder: (context, index) {
                 final balance = items[index];
-                final loan = balance.liability;
+                final liability = balance.liability;
 
                 return Obx(() {
-                  final isSelected = controller.selectedLoanId.value == loan.id;
+                  final isSelected = controller.selectedLoanId.value == liability.id;
 
                   return _buildItem(
                     context,
-                    label: loan.categoryLabel,
+                    label: liability.categoryLabel,
                     icon: iconDataFromCode(
-                      loan.categoryIconCode ?? 0,
-                      fontFamily: loan.categoryIconFamily,
+                      liability.categoryIconCode ?? 0,
+                      fontFamily: liability.categoryIconFamily,
                     ),
                     isSelected: isSelected,
                     onTap: () {
                       debugPrint(
-                        '[LIABILITY_ASSET_SELECTOR] Tapped loan: id=${loan.id}, label=${loan.categoryLabel}, selected=$isSelected',
+                        '[LIABILITY_ASSET_SELECTOR] Tapped liability: id=${liability.id}, label=${liability.categoryLabel}, selected=$isSelected',
                       );
                       controller.selectLoan(balance);
                     },

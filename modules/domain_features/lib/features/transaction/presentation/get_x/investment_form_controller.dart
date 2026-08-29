@@ -122,11 +122,6 @@ class InvestmentFormController extends TransactionFormController
   final TextEditingController newItemNameController = TextEditingController();
   final RxString newItemName = ''.obs;
 
-  /// Free-tier gate: non-VIP users can only attach Chi ra to the selected
-  /// category itself (a single auto-named item) — only VIP unlocks typing a
-  /// custom item name.
-  final RxBool isVip = false.obs;
-
   @override
   List<String> get quickEntryAvailableCategoryIds {
     // In Investment, a category is only "available" for quick selection
@@ -195,7 +190,8 @@ class InvestmentFormController extends TransactionFormController
 
   Future<void> _loadAll() async {
     isLoadingMerged.value = true;
-    await _loadVipStatus();
+    final settings = await _getProfileSettings();
+    isVip.value = settings.isVip;
     await _loadCategories();
     await _recomputeMergedItems();
     isLoadingMerged.value = false;
@@ -285,11 +281,6 @@ class InvestmentFormController extends TransactionFormController
       newItemName.value = el.tr(category.nameKey);
       newItemNameController.text = newItemName.value;
     }
-  }
-
-  Future<void> _loadVipStatus() async {
-    final settings = await _getProfileSettings();
-    isVip.value = settings.isVip;
   }
 
   @override

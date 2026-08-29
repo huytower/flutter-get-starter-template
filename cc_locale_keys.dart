@@ -493,6 +493,7 @@ class CodegenLoader extends AssetLoader {
       "this_week": "This Week",
       "four_weeks_near": "Last 4 weeks",
       "this_month": "This Month",
+      "month_indicator": "Month {month}",
       "no_expense": "No expenses in this period.",
       "weekly": "Weekly",
       "monthly": "Monthly",
@@ -1190,6 +1191,7 @@ class CodegenLoader extends AssetLoader {
       "over_by": "Vượt {amount}",
       "remaining": "Còn {amount}",
       "this_month": "Ngân sách tháng này",
+      "month_indicator": "Month {month}",
       "see_all": "Xem tất cả",
       "drag_reorder_hint": "Giữ và kéo để đổi thứ tự",
       "customize_category": "Tuỳ chỉnh danh mục",
@@ -1247,6 +1249,7 @@ class CodegenLoader extends AssetLoader {
       "this_week": "Tuần này",
       "four_weeks_near": "4 tuần gần nhất",
       "this_month": "Tháng này",
+      "month_indicator": "Month {month}",
       "no_expense": "Chưa có khoản chi nào trong kỳ này.",
       "weekly": "Tuần",
       "monthly": "Tháng",
@@ -1956,7 +1959,6 @@ abstract class CcLocaleKeys {
   static const budget_over_by = 'budget.over_by';
   static const budget_remaining = 'budget.remaining';
   static const budget_this_month = 'budget.this_month';
-  static const budget_month_indicator = 'budget.month_indicator';
   static const budget_see_all = 'budget.see_all';
   static const budget_drag_reorder_hint = 'budget.drag_reorder_hint';
   static const budget_customize_category = 'budget.customize_category';

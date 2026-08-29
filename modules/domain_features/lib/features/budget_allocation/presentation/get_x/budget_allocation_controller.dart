@@ -29,21 +29,21 @@ class BudgetAllocationController extends CcGetController {
   BudgetAllocationController(
     this.walletController,
     this.budgetLimitController,
-    this._getLoanBalances,
+    this._getLiabilityBalances,
     this.userLevel,
     this._getBudgetInsights,
   );
 
   final WalletController walletController;
   final BudgetLimitController budgetLimitController;
-  final GetLiabilityBalancesUseCase _getLoanBalances;
+  final GetLiabilityBalancesUseCase _getLiabilityBalances;
   final UserLevelController userLevel;
   final GetBudgetInsightsUseCase _getBudgetInsights;
 
   final RxInt liabilityBalance = 0.obs;
   final RxInt borrowBalance = 0.obs;
   final RxInt lendBalance = 0.obs;
-  final RxList<LiabilityBalanceEntity> loanBalances =
+  final RxList<LiabilityBalanceEntity> liabilityBalances =
       <LiabilityBalanceEntity>[].obs;
 
   /// Phase 3.4 "AI Actions" — null while loading/on error, in which case the
@@ -58,7 +58,7 @@ class BudgetAllocationController extends CcGetController {
     context.router.push(const InvestmentListRoute());
   }
 
-  void navigateToLoanList(BuildContext context) {
+  void navigateToLiabilityList(BuildContext context) {
     context.router.push(const LiabilityListRoute());
   }
 
@@ -86,7 +86,7 @@ class BudgetAllocationController extends CcGetController {
     );
   }
 
-  void openAddLoan(BuildContext context) {
+  void openAddLiability(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -98,10 +98,10 @@ class BudgetAllocationController extends CcGetController {
     );
   }
 
-  void openLoanActions(BuildContext context, LiabilityBalanceEntity balance) {
-    // TODO: Implement loan edit/delete actions similar to wallet actions
-    // For now, navigate to loan list for details
-    navigateToLoanList(context);
+  void openLiabilityActions(BuildContext context, LiabilityBalanceEntity balance) {
+    // TODO: Implement liability edit/delete actions similar to wallet actions
+    // For now, navigate to liability list for details
+    navigateToLiabilityList(context);
   }
 
   void openWalletActions(BuildContext context, WalletEntity wallet) {
@@ -245,11 +245,11 @@ class BudgetAllocationController extends CcGetController {
     result.when((success) => insights.value = success, (_) {});
   }
 
-  /// Sums outstanding borrow-direction loans for the "Nợ phải trả" banner.
-  /// Failures are swallowed rather than folded into [layoutStatus] — a loan
+  /// Sums outstanding borrow-direction liabilities for the "Nợ phải trả" banner.
+  /// Failures are swallowed rather than folded into [layoutStatus] — a liability
   /// fetch error shouldn't blank out the wallets/budgets sections too.
   Future<void> loadLiabilities() async {
-    final result = await _getLoanBalances();
+    final result = await _getLiabilityBalances();
     result.when((balances) {
       debugPrint(
         '[BUDGET_ALLOC_CTRL] loadLiabilities: fetched ${balances.length} items',
@@ -262,20 +262,20 @@ class BudgetAllocationController extends CcGetController {
         ..sort(
           (a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt),
         );
-      loanBalances.assignAll(sorted);
+      liabilityBalances.assignAll(sorted);
 
       // Calculate separate balances for borrow and lend
       borrowBalance.value = sorted
           .where(
             (b) =>
-                b.liability.isBorrow && b.status == LiabilityStatus.outstanding,
+                b.liability.isBorrow && !b.isSettled,
           )
           .fold(0, (sum, b) => sum + b.outstandingBalance);
       lendBalance.value = sorted
           .where(
             (b) =>
                 !b.liability.isBorrow &&
-                b.status == LiabilityStatus.outstanding,
+                !b.isSettled,
           )
           .fold(0, (sum, b) => sum + b.outstandingBalance);
 

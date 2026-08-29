@@ -9,7 +9,7 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../get_x/budget_allocation_controller.dart';
-import '../widgets/budget_hero_banner.dart';
+import '../widgets/liquid_hero_banner.dart';
 import '../widgets/budget_insights_section.dart';
 import '../widgets/budget_limit_preview_section.dart';
 import '../widgets/invest_hero_banner.dart';
@@ -94,7 +94,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   Widget _buildLiquidHeroBanner(BuildContext context) {
-    return BudgetHeroBanner(
+    return LiquidHeroBanner(
       walletController: controller.walletController,
       titleKey: CcLocaleKeys.wallet_liquid_assets,
       balance: controller.walletController.liquidBalance,
@@ -184,12 +184,12 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         return const SizedBox.shrink();
       }
 
-      final balances = controller.loanBalances;
+      final balances = controller.liabilityBalances;
 
       return LiabilityWalletsSection(
         balances: balances,
-        onAddLoan: () => controller.openAddLoan(context),
-        onSeeAll: () => controller.navigateToLoanList(context),
+        onAddLoan: () => controller.openAddLiability(context),
+        onSeeAll: () => controller.navigateToLiabilityList(context),
         showGuidelineBadge: Get.isRegistered<GuidelineController>()
             ? Get.find<GuidelineController>().isTaskActive('liability') &&
                   !Get.find<GuidelineController>()

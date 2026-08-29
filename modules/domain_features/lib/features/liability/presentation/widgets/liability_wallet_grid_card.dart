@@ -114,6 +114,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
       children: [
         Image.asset(
           'assets/icon/${balance.liability.isBorrow ? 'ic_repay.webp' : 'ic_collect.webp'}',
+          color: context.ccColorScheme.primary,
           width: context.respIconSize(baseSize: 24),
           height: context.respIconSize(baseSize: 24),
         ),
@@ -143,6 +144,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
       children: [
         Image.asset(
           'assets/icon/ic_remain.webp',
+          color: context.ccColorScheme.primary,
           width: context.respIconSize(baseSize: 24),
           height: context.respIconSize(baseSize: 24),
         ),
@@ -172,6 +174,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
       children: [
         Image.asset(
           'assets/icon/${liability.isBorrow ? 'ic_borrow.webp' : 'ic_lend.webp'}',
+          color: context.ccColorScheme.primary,
           width: context.respIconSize(baseSize: 24),
           height: context.respIconSize(baseSize: 24),
         ),

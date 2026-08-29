@@ -32,7 +32,7 @@ class ReportController extends CcGetController {
     this._getFinancialRunway,
     this._getTrendData,
     this._getInvestmentTrend,
-    this._getLoanTrend,
+    this._getLiabilityTrend,
     this._walletRepository,
     this.userLevel,
     this._generateAiAdvice,
@@ -43,7 +43,7 @@ class ReportController extends CcGetController {
   final GetFinancialRunwayUseCase _getFinancialRunway;
   final GetTrendDataUseCase _getTrendData;
   final GetInvestmentTrendUseCase _getInvestmentTrend;
-  final GetLoanTrendUseCase _getLoanTrend;
+  final GetLoanTrendUseCase _getLiabilityTrend;
   final WalletRepository _walletRepository;
   final GenerateAiFinancialAdviceUseCase _generateAiAdvice;
   final AiAdviceCacheDataSource _aiAdviceCache;
@@ -126,7 +126,7 @@ class ReportController extends CcGetController {
   final Rx<TrendDataEntity?> trendData = Rx<TrendDataEntity?>(null);
   final Rx<FinancialRunwayEntity?> runway = Rx<FinancialRunwayEntity?>(null);
   final Rx<TrendDataEntity?> investmentTrend = Rx<TrendDataEntity?>(null);
-  final Rx<TrendDataEntity?> loanTrend = Rx<TrendDataEntity?>(null);
+  final Rx<TrendDataEntity?> liabilityTrend = Rx<TrendDataEntity?>(null);
 
   /// Phase 3.8 — last generated (or cached) AI advice, if any. Separate
   /// from [aiAdviceErrorKey] so a failed refresh never blanks out a still-
@@ -146,9 +146,18 @@ class ReportController extends CcGetController {
     final combined = <TransactionEntity>[
       ...?trendData.value?.transactions,
       ...?investmentTrend.value?.transactions,
-      ...?loanTrend.value?.transactions,
+      ...?liabilityTrend.value?.transactions,
     ];
-    combined.sort((a, b) => b.date.compareTo(a.date));
+
+    // Sort by date descending (latest first). If dates are identical (e.g.
+    // same-day entries without precise time), fall back to ID descending
+    // (the later entry will have a higher timestamp-based ID).
+    combined.sort((a, b) {
+      final dateCompare = b.date.compareTo(a.date);
+      if (dateCompare != 0) return dateCompare;
+      return b.id.compareTo(a.id);
+    });
+
     return combined;
   }
 
@@ -301,7 +310,7 @@ class ReportController extends CcGetController {
         offset: navigationOffset.value,
         walletId: walletId,
       ),
-      _getLoanTrend.call(
+      _getLiabilityTrend.call(
         range: range.value,
         offset: navigationOffset.value,
         walletId: walletId,
@@ -314,7 +323,7 @@ class ReportController extends CcGetController {
     final runwayResult = results[2] as Result<FinancialRunwayEntity, dynamic>;
     final investmentTrendResult =
         results[3] as Result<TrendDataEntity, dynamic>;
-    final loanTrendResult = results[4] as Result<TrendDataEntity, dynamic>;
+    final liabilityTrendResult = results[4] as Result<TrendDataEntity, dynamic>;
 
     if (spendingResult.isError()) {
       errorMessage.value = spendingResult.tryGetError()!.title;
@@ -326,7 +335,7 @@ class ReportController extends CcGetController {
     trendData.value = trendResult.tryGetSuccess();
     runway.value = runwayResult.tryGetSuccess();
     investmentTrend.value = investmentTrendResult.tryGetSuccess();
-    loanTrend.value = loanTrendResult.tryGetSuccess();
+    liabilityTrend.value = liabilityTrendResult.tryGetSuccess();
 
     layoutStatus.value = CcLayoutStatus.success;
 

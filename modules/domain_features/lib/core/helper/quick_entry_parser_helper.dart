@@ -6,44 +6,23 @@ import '../../features/category/domain/entities/category_entity.dart';
 import 'merchant_match_helper.dart';
 import 'quick_entry_alias_dataset.dart';
 import 'quick_entry_parse_result.dart';
+import 'quick_entry_regex_dataset.dart';
 
 export 'quick_entry_parse_result.dart';
 
-const int _thousand = 1000;
-const int _million = 1000000;
-const int _billion = 1000000000;
+final Map<String, int> _amountUnitMultipliers =
+    QuickEntryAliasDataset.amountUnitMultipliers;
 
-final Map<String, int> _amountUnitMultipliers = {
-  'k': _thousand,
-  'nghin': _thousand,
-  'tr': _million,
-  'trieu': _million,
-  'ty': _billion,
-  'b': _billion,
-  'd': 1,
-  'vnd': 1,
-  'dong': 1,
-};
-
-// Grouped-thousands form (e.g. "1.500.000" or "85 000") is tried before
-// the plain digit-run fallback.
-// Units like 'tr' (million) use negative lookahead to avoid matching
-// prefixes in words like 'tra' (tea).
-final RegExp _amountPattern = RegExp(
-  r'(\d{1,3}(?:[., ]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|tr|trieu|ty|b|d|vnd|dong)?(?!\w)',
-);
+final RegExp _amountPattern = QuickEntryRegexDataset.amountPattern;
 
 /// Matches common Vietnamese invoice/serial number prefixes followed by digits.
-final RegExp invoiceNumberPattern = RegExp(
-  r'(?:s[oô]|so|invoice|no|ma\s*hd|hd)\s*:?\s*[a-z0-9-]{4,20}',
-  caseSensitive: false,
-);
+final RegExp invoiceNumberPattern = QuickEntryRegexDataset.invoiceNumberPattern;
 
 /// Strips Vietnamese phone numbers from [text].
 /// Optimized for "0..." and "+84..." patterns.
 String stripPhoneNumbers(String text) {
   var result = text;
-  final phoneRegex = RegExp(r'(?:\+84|0)\d{9,10}');
+  final phoneRegex = QuickEntryRegexDataset.phoneRegex;
   final matches = phoneRegex.allMatches(text);
 
   for (final match in matches) {
@@ -85,8 +64,17 @@ String stripInvoiceNumbers(String text) {
 int? parseVietnameseAmount(String text) {
   final normalized = stripVietnameseDiacritics(text.toLowerCase());
 
-  // 1. Collect all valid amounts from the text
-  final matches = _amountPattern.allMatches(normalized).toList();
+  // 1. Identify and temporarily mask potential address/non-amount numbers
+  final addressRegex = QuickEntryRegexDataset.addressRegex;
+
+  // Mask address numbers with spaces to avoid them being grouped into amounts
+  // e.g., "quan 1 100k" -> "       100k"
+  final amountCleanedText = normalized.replaceAllMapped(addressRegex, (match) {
+    return ' ' * match.group(0)!.length;
+  });
+
+  // 2. Collect all valid amounts from the masked text
+  final matches = _amountPattern.allMatches(amountCleanedText).toList();
   if (matches.isEmpty) return null;
 
   final amounts = <int>[];
@@ -103,7 +91,9 @@ int? parseVietnameseAmount(String text) {
           value *= multiplier;
         }
       }
-      if (value >= 1000 && value < _billion) {
+      // Use 1 billion constant indirectly via dataset or hardcoded threshold check
+      if (value >= QuickEntryAliasDataset.minPlausibleAmount &&
+          value < QuickEntryAliasDataset.maxLocalTotalAmount) {
         amounts.add(value);
       }
     }
@@ -111,11 +101,8 @@ int? parseVietnameseAmount(String text) {
 
   if (amounts.isEmpty) return null;
 
-  // 2. Check for explicit "Total" keywords in the text
-  final totalKeywords = RegExp(
-    r'tong|thanh\s*toan|total|t\s*tien|grand\s*total|sum',
-    caseSensitive: false,
-  );
+  // 3. Check for explicit "Total" keywords in the text
+  final totalKeywords = QuickEntryRegexDataset.totalKeywords;
 
   final hasTotalKeyword = totalKeywords.hasMatch(normalized);
 
@@ -124,7 +111,9 @@ int? parseVietnameseAmount(String text) {
     final lines = normalized.split('\n');
     for (int i = lines.length - 1; i >= 0; i--) {
       if (totalKeywords.hasMatch(lines[i])) {
-        final lineMatches = _amountPattern.allMatches(lines[i]).toList();
+        // Use masked text for matches within the line to avoid address numbers
+        final lineText = amountCleanedText.split('\n')[i];
+        final lineMatches = _amountPattern.allMatches(lineText).toList();
         if (lineMatches.isNotEmpty) {
           final numeric = lineMatches.last.group(1)!;
           final unit = lineMatches.last.group(2);
@@ -137,7 +126,8 @@ int? parseVietnameseAmount(String text) {
                 value *= multiplier;
               }
             }
-            if (value >= 1000) return value;
+            if (value >= QuickEntryAliasDataset.minPlausibleAmount)
+              return value;
           }
         }
       }
@@ -146,7 +136,7 @@ int? parseVietnameseAmount(String text) {
     return amounts.last;
   }
 
-  // 3. Fallback: prefer the last amount with an explicit unit (like 'k' or 'tr')
+  // 4. Fallback: prefer the last amount with an explicit unit (like 'k' or 'tr')
   RegExpMatch? lastWithUnit;
   for (final match in matches) {
     if (match.group(2) != null) lastWithUnit = match;
@@ -176,9 +166,7 @@ List<({String name, int price})> extractItemsFromText(String text) {
       .toList();
 
   final items = <({String name, int price})>[];
-  final amountPattern = RegExp(
-    r'([\d. ,]+)\s*(k|nghin|tr|trieu|vnd|d|dong)?(?!\w)',
-  );
+  final amountPattern = QuickEntryRegexDataset.lineItemAmountPattern;
 
   for (int i = 0; i < lines.length; i++) {
     final line = lines[i];
@@ -190,7 +178,10 @@ List<({String name, int price})> extractItemsFromText(String text) {
     final digitsOnly = numeric.replaceAll(RegExp('[., ]'), '');
     var value = int.tryParse(digitsOnly);
 
-    if (value == null || value < 1000 || value > 10000000) continue;
+    if (value == null ||
+        value < QuickEntryAliasDataset.minPlausibleAmount ||
+        value > QuickEntryAliasDataset.maxLineItemAmount)
+      continue;
 
     if (unit != null) {
       final multiplier = _amountUnitMultipliers[unit.toLowerCase()];
@@ -213,7 +204,9 @@ List<({String name, int price})> extractItemsFromText(String text) {
 
     // Ignore items that are just punctuation or repeated zeros (OCR artifacts)
     final isNoise =
-        name.isEmpty || RegExp(r'^[.0O\s]+$').hasMatch(name) || name.length < 2;
+        name.isEmpty ||
+        QuickEntryRegexDataset.ocrNoisePattern.hasMatch(name) ||
+        name.length < 2;
 
     if (!isNoise && !_isStopWord(name)) {
       items.add((name: name, price: value));
@@ -225,22 +218,9 @@ List<({String name, int price})> extractItemsFromText(String text) {
 
 bool _isStopWord(String text) {
   final lower = stripVietnameseDiacritics(text.toLowerCase());
-  const stopWords = {
-    'tong',
-    't tien',
-    'thanh tien',
-    'tien hang',
-    'giam',
-    'chiet khau',
-    'thue',
-    'vat',
-    'phi',
-    'phu phi',
-    'thanh toan',
-    'khach tra',
-    'tra lai',
-  };
-  return stopWords.any((s) => lower.startsWith(s) || lower.endsWith(s));
+  return QuickEntryAliasDataset.billStopWords.any(
+    (s) => lower.startsWith(s) || lower.endsWith(s),
+  );
 }
 
 /// Summarizes extracted items into a single string for the note field.
@@ -406,8 +386,9 @@ QuickEntryParseResult parseQuickEntryTextLocally({
 
   // 2. Extract Date and remove from residual
   // 2a. Slash/Dash date patterns: "20/08", "20-08-2026"
-  final slashDateRegex = RegExp(r'(\d{1,2})[/-](\d{1,2})(?:[/-](\d{2,4}))?');
-  final slashDateMatch = slashDateRegex.firstMatch(normalized);
+  final slashDateMatch = QuickEntryRegexDataset.slashDateRegex.firstMatch(
+    normalized,
+  );
   if (slashDateMatch != null) {
     final day = int.tryParse(slashDateMatch.group(1) ?? '');
     final month = int.tryParse(slashDateMatch.group(2) ?? '');
@@ -429,11 +410,9 @@ QuickEntryParseResult parseQuickEntryTextLocally({
     residual = residual.replaceFirst(slashDateMatch.group(0)!, '');
   } else {
     // 2b. Specific Vietnamese date patterns: "ngay 20", "ngay 20 thang 8", "ngay 20 thang nay"
-    final vnDateRegex = RegExp(
-      r'ngay\s+(\d{1,2})(?:\s+thang\s+(\d{1,2}|nay))?',
-      caseSensitive: false,
+    final vnDateMatch = QuickEntryRegexDataset.vnDateRegex.firstMatch(
+      normalized,
     );
-    final vnDateMatch = vnDateRegex.firstMatch(normalized);
     if (vnDateMatch != null) {
       final day = int.tryParse(vnDateMatch.group(1) ?? '');
       final monthStr = vnDateMatch.group(2);
@@ -516,10 +495,8 @@ QuickEntryParseResult parseQuickEntryTextLocally({
       .where(
         (s) =>
             s.isNotEmpty &&
-            s.length > 1 &&
-            s != 'ngay' &&
-            s != 'thang' &&
-            s != 'nay',
+            (s.length > 1 || RegExp(r'\d').hasMatch(s)) &&
+            !QuickEntryAliasDataset.noteFillerWords.contains(s),
       )
       .join(' ')
       .trim();

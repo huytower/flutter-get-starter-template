@@ -8,7 +8,7 @@ import '../entities/trend_data_entity.dart';
 import '../report_range.dart';
 import 'trend_bucketer.dart';
 
-/// Loan/debt "chart" for the report page — cash in (Đi vay
+/// Liability/debt "chart" for the report page — cash in (Đi vay
 /// [TransactionType.debtBorrow] + Thu nợ [TransactionType.debtCollect]) vs
 /// cash out (Cho vay [TransactionType.debtLend] + Trả nợ
 /// [TransactionType.debtRepay]), reusing [TrendCard]'s income/expense-shaped
@@ -62,14 +62,20 @@ class GetLoanTrendUseCase {
         .where((t) => !isCashIn(t))
         .fold<double>(0, (sum, t) => sum + t.amount);
 
+    final sortedTransactions = transactions.toList();
+    sortedTransactions.sort((a, b) {
+      final dateCompare = b.date.compareTo(a.date);
+      if (dateCompare != 0) return dateCompare;
+      return b.id.compareTo(a.id);
+    });
+
     return Success(
       TrendDataEntity(
         points: points,
         totalIncome: totalIn,
         totalExpense: totalOut,
-        transactions: transactions..sort((a, b) => b.date.compareTo(a.date)),
+        transactions: sortedTransactions,
       ),
     );
   }
 }
-

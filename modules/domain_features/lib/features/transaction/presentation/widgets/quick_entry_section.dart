@@ -109,7 +109,10 @@ class QuickEntrySection extends StatelessWidget {
           ),
           accentColor: activeColor,
           icon: Icons.auto_awesome,
-          onTap: onApplySuggestion,
+          onTap: () {
+            // Tapping accepts it immediately, cancelling any auto-save timer
+            onApplySuggestion();
+          },
           onDismiss: onDismissSuggestion,
         ),
         const CcSpaceXS(),

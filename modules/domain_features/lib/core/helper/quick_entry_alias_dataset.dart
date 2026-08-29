@@ -5,6 +5,54 @@ import 'quick_entry_parser_helper.dart';
 class QuickEntryAliasDataset {
   QuickEntryAliasDataset._();
 
+  /// Multipliers for Vietnamese and English money units.
+  static const Map<String, int> amountUnitMultipliers = {
+    'k': 1000,
+    'nghin': 1000,
+    'tr': 1000000,
+    'trieu': 1000000,
+    'ty': 1000000000,
+    'b': 1000000000,
+    'd': 1,
+    'vnd': 1,
+    'dong': 1,
+  };
+
+  /// Common Vietnamese bill filler/stop words to ignore during line-item extraction.
+  static const Set<String> billStopWords = {
+    'tong',
+    't tien',
+    'thanh tien',
+    'tien hang',
+    'giam',
+    'chiet khau',
+    'thue',
+    'vat',
+    'phi',
+    'phu phi',
+    'thanh toan',
+    'khach tra',
+    'tra lai',
+  };
+
+  /// Filler words that should be stripped from the final transaction note.
+  static const Set<String> noteFillerWords = {
+    'ngay',
+    'thang',
+    'nay',
+    'mua',
+    'chi',
+  };
+
+  /// Minimum plausible amount in VND (ignore anything smaller).
+  static const int minPlausibleAmount = 1000;
+
+  /// Maximum plausible amount for a single item on a receipt.
+  static const int maxLineItemAmount = 10000000;
+
+  /// Maximum plausible total amount for local parsing (escalate to cloud if higher).
+  static const int maxLocalTotalAmount = 1000000000;
+
   /// Map of informal keywords to their seed category IDs.
   static const Map<String, String> categoryKeywords = {
     // ===== EXPENSE — Ăn uống & Cà phê (c1) =====

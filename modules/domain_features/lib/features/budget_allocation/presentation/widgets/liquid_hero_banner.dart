@@ -7,7 +7,7 @@ import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
 /// Hero banner displaying a specific asset category with its balance.
-class BudgetHeroBanner extends StatelessWidget {
+class LiquidHeroBanner extends StatelessWidget {
   /// Optional widget to display additional information in the balance area
   /// (e.g. detailed investment metrics).
   final Widget? trailingBalanceWidget;
@@ -16,7 +16,7 @@ class BudgetHeroBanner extends StatelessWidget {
   /// (e.g. specialized asset icons).
   final Widget? leadingBalanceWidget;
 
-  const BudgetHeroBanner({
+  const LiquidHeroBanner({
     required this.walletController,
     required this.titleKey,
     required this.balance,

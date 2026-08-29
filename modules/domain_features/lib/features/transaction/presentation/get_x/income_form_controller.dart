@@ -62,6 +62,11 @@ class IncomeFormController extends TransactionFormController
       amountStr.value.isNotEmpty;
 
   @override
+  void applyResolvedCategory(CategoryEntity category) {
+    selectedCategory.value = category;
+  }
+
+  @override
   void onReset() {
     selectedCategory.value = null;
     categoryKey.value++;

@@ -17,9 +17,8 @@ class LiabilityListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loan = balance.liability;
-    final isSettled = balance.status == LiabilityStatus.settled;
-    final directionColor = loan.isBorrow
+    final liability = balance.liability;
+    final directionColor = liability.isBorrow
         ? PrjColors.warning
         : context.ccColorScheme.secondary;
 
@@ -53,7 +52,7 @@ class LiabilityListCard extends StatelessWidget {
                     '${TransactionFormHelpers.formatAmount(balance.outstandingBalance.toString())} đ',
                     textStyle: context.ccTextTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: isSettled
+                      color: balance.isSettled
                           ? context.ccColorScheme.onSurfaceVariant
                           : context.ccColorScheme.onSurface,
                     ),
@@ -68,61 +67,6 @@ class LiabilityListCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBadges(
-    BuildContext context,
-    LiabilityEntity loan,
-    bool isSettled,
-    Color directionColor,
-  ) {
-    return Wrap(
-      spacing: context.respDim(6),
-      children: [
-        _buildBadge(
-          context,
-          text: el.tr(
-            loan.isBorrow
-                ? CcLocaleKeys.transaction_liability_direction_borrow
-                : CcLocaleKeys.transaction_liability_direction_lend,
-          ),
-          color: directionColor,
-        ),
-        _buildBadge(
-          context,
-          text: el.tr(
-            isSettled
-                ? CcLocaleKeys.liability_status_settled
-                : CcLocaleKeys.liability_status_outstanding,
-          ),
-          color: isSettled ? PrjColors.success : context.ccColorScheme.error,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBadge(
-    BuildContext context, {
-    required String text,
-    required Color color,
-  }) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(8),
-        vertical: context.respPadding(2),
-      ),
-      decoration: BoxDecoration(
-        color: color.withAlpha(20),
-        borderRadius: context.brSm,
-      ),
-      child: CcText(
-        text,
-        textStyle: context.ccTextTheme.labelSmall?.copyWith(
-          color: color,
-          fontWeight: FontWeight.w600,
         ),
       ),
     );
