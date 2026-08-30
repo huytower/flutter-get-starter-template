@@ -135,12 +135,14 @@ class _NavigationBarState extends State<NavigationBar>
 
     return Obx(() {
       final _ = guideline.bounceTrigger.value;
-      final fineTunedPadding = systemBottomPadding > 0 ? 18.0 : 0.0;
 
+      // To support both gesture navigation and 3-button navigation without
+      // overlap, we use the actual system bottom padding.
+      // The background container ensures the color extends behind the system bar.
       return Container(
         color: isDark ? Colors.transparent : CcBaseColors.white100,
         child: Padding(
-          padding: EdgeInsets.only(bottom: fineTunedPadding),
+          padding: EdgeInsets.only(bottom: systemBottomPadding),
           child: buildCurvedNavigationBar(),
         ),
       );

@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'cc_locale_keys.dart';
 
-export 'localization_extension.dart';
-
-/// A centralized localization service for the application.
 ///
 /// This class provides static methods to handle all localization needs,
 /// including string translation, locale management, and supported locales.
