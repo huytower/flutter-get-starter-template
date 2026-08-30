@@ -195,6 +195,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
             badge: guideline.isTaskActive('first_transaction')
                 ? CcGuidelineBadge(
                     size: 8,
+                    label: guideline.bannerDescription,
                     color: guideline.currentColor,
                     bounceTrigger: guideline.bounceTrigger,
                   )

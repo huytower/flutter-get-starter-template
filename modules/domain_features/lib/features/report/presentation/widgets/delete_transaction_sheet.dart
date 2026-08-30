@@ -10,10 +10,7 @@ import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../get_x/report_controller.dart';
 
 class DeleteTransactionSheet extends StatefulWidget {
-  const DeleteTransactionSheet({
-    super.key,
-    required this.transaction,
-  });
+  const DeleteTransactionSheet({super.key, required this.transaction});
 
   final TransactionEntity transaction;
 
@@ -30,8 +27,7 @@ class DeleteTransactionSheet extends StatefulWidget {
   }
 
   @override
-  State<DeleteTransactionSheet> createState() =>
-      _DeleteTransactionSheetState();
+  State<DeleteTransactionSheet> createState() => _DeleteTransactionSheetState();
 }
 
 class _DeleteTransactionSheetState extends State<DeleteTransactionSheet> {
@@ -40,12 +36,12 @@ class _DeleteTransactionSheetState extends State<DeleteTransactionSheet> {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildHeader(context, scheme),
-        _buildBody(context, scheme),
-      ],
+    return SafeArea(
+      top: false,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [_buildHeader(context, scheme), _buildBody(context, scheme)],
+      ),
     );
   }
 
@@ -161,9 +157,7 @@ class _DeleteTransactionSheetState extends State<DeleteTransactionSheet> {
                     }
                   },
             child: CcText(
-              _isLoading
-                  ? ''
-                  : el.tr(CcLocaleKeys.common_delete),
+              _isLoading ? '' : el.tr(CcLocaleKeys.common_delete),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.error,
                 fontWeight: CcTypographyParams.semiBold,
@@ -191,13 +185,12 @@ class _DeleteTransactionSheetState extends State<DeleteTransactionSheet> {
     } else if (context.mounted) {
       CcSnackBarHelper.showErrorSnackBar(
         context: context,
-        message: result.tryGetError()?.message ?? el.tr(CcLocaleKeys.app_error_general),
+        message:
+            result.tryGetError()?.message ??
+            el.tr(CcLocaleKeys.app_error_general),
       );
     }
 
-    return result.map(
-      successMapper: (_) => unit,
-      errorMapper: (e) => e,
-    );
+    return result.map(successMapper: (_) => unit, errorMapper: (e) => e);
   }
 }

@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../guideline/guideline_controller.dart';
 import '../../../liability/domain/entities/liability_balance_entity.dart';
 import '../get_x/budget_allocation_controller.dart';
 import 'borrow_wallets_card.dart';
@@ -101,7 +102,11 @@ class LiabilityWalletsSection extends StatelessWidget {
                   Positioned(
                     right: -2,
                     top: -2,
-                    child: CcGuidelineBadge(size: 6, color: dotColor),
+                    child: CcGuidelineBadge(
+                      size: 6,
+                      color: dotColor,
+                      label: Get.find<GuidelineController>().bannerDescription,
+                    ),
                   ),
               ],
             ),

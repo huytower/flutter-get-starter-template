@@ -114,6 +114,7 @@ class ProfilePage extends CcGetView<ProfileController> {
                   size: 8,
                   color: color,
                   bounceTrigger: guideline.bounceTrigger,
+                  label: guideline.bannerDescription,
                 )
               : null,
         ),
@@ -132,6 +133,7 @@ class ProfilePage extends CcGetView<ProfileController> {
                   size: 8,
                   color: color,
                   bounceTrigger: guideline.bounceTrigger,
+                  label: guideline.bannerDescription,
                 )
               : null,
         ),

@@ -26,40 +26,41 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
       init: getIt<AddBudgetLimitSheetController>()..init(editTarget),
       dispose: (_) => Get.delete<AddBudgetLimitSheetController>(),
       builder: (controller) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: EdgeInsets.only(
-                left: context.respPadding(CcPaddingParams.SPACE_LG),
-                right: context.respPadding(CcPaddingParams.SPACE_LG),
-                top: context.respPadding(CcPaddingParams.SPACE_LG),
-                bottom:
-                    MediaQuery.of(context).viewInsets.bottom +
-                        context.respPadding(CcPaddingParams.SPACE_LG),
-              ),
-              decoration: BoxDecoration(
-                color: context.ccColorScheme.surface,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+        return SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.only(
+                  left: context.respPadding(CcPaddingParams.SPACE_LG),
+                  right: context.respPadding(CcPaddingParams.SPACE_LG),
+                  top: context.respPadding(CcPaddingParams.SPACE_LG),
+                  bottom: context.respPadding(CcPaddingParams.SPACE_LG),
+                ),
+                decoration: BoxDecoration(
+                  color: context.ccColorScheme.surface,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: _buildSheetContent(context, controller),
                 ),
               ),
-              child: SingleChildScrollView(
-                child: _buildSheetContent(context, controller),
-              ),
-            ),
-            if (controller.showKeypad.value)
-              MoneyKeypadPanel(
-                onKeyPress: controller.onKeyPress,
-                onDelete: controller.onDeleteKey,
-                onClear: () => controller.limitStr.value = '0',
-                suggestions: MoneyConstants.budgetQuickAmounts,
-                onSuggestion: (value) =>
-                    controller.limitStr.value = value.toString(),
-                onDone: controller.hideKeypad,
-                activeColor: context.ccColorScheme.primary,
-              ),
-          ],
+              if (controller.showKeypad.value)
+                MoneyKeypadPanel(
+                  onKeyPress: controller.onKeyPress,
+                  onDelete: controller.onDeleteKey,
+                  onClear: () => controller.limitStr.value = '0',
+                  suggestions: MoneyConstants.budgetQuickAmounts,
+                  onSuggestion: (value) =>
+                      controller.limitStr.value = value.toString(),
+                  onDone: controller.hideKeypad,
+                  activeColor: context.ccColorScheme.primary,
+                ),
+            ],
+          ),
         );
       },
     );
@@ -76,9 +77,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: _buildTitle(context, controller),
-            ),
+            Expanded(child: _buildTitle(context, controller)),
             if (!controller.limitLocked)
               _buildFixedPriceHeaderToggle(context, controller),
           ],
@@ -153,7 +152,10 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
     );
   }
 
-  Widget _buildTitle(BuildContext context, AddBudgetLimitSheetController controller) {
+  Widget _buildTitle(
+    BuildContext context,
+    AddBudgetLimitSheetController controller,
+  ) {
     return CcFormLabel(
       text: controller.isEdit
           ? el.tr(CcLocaleKeys.budget_edit_title)
@@ -255,7 +257,9 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
                   el.tr(
                     CcLocaleKeys.budget_estimate_hint,
                     namedArgs: {
-                      'amount': formatVndWithSymbol(controller.estimatedLimit.value ?? 0),
+                      'amount': formatVndWithSymbol(
+                        controller.estimatedLimit.value ?? 0,
+                      ),
                     },
                   ),
                   maxLines: 1,

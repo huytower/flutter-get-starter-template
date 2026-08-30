@@ -36,9 +36,12 @@ class GuidelineResetBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [_buildHeader(context, scheme), _buildBody(context, scheme)],
+    return SafeArea(
+      top: false,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [_buildHeader(context, scheme), _buildBody(context, scheme)],
+      ),
     );
   }
 

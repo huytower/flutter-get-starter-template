@@ -2,7 +2,10 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/features/budget_allocation/presentation/widgets/investment_wallet_preview_card.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 
+import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 
 /// Section displaying investment wallets in a grid layout, following the
@@ -49,7 +52,12 @@ class InvestmentWalletsSection extends StatelessWidget {
                       Positioned(
                         right: -2,
                         top: -2,
-                        child: CcGuidelineBadge(size: 6, color: dotColor),
+                        child: CcGuidelineBadge(
+                          size: 6,
+                          color: dotColor,
+                          label:
+                              Get.find<GuidelineController>().bannerDescription,
+                        ),
                       ),
                   ],
                 ),

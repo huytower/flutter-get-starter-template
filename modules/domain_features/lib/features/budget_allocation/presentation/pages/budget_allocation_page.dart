@@ -173,10 +173,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   Widget _buildBudgetLimitGroup(BuildContext context) {
-    return const Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [BudgetLimitPreviewSection(), CcSpaceLG()],
-    );
+    return const BudgetLimitPreviewSection();
   }
 
   Widget _buildInsightsGroup(BuildContext context) {

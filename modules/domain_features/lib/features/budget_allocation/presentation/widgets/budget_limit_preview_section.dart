@@ -53,6 +53,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                               size: 6,
                               color: guideline.currentColor,
                               bounceTrigger: guideline.bounceTrigger,
+                              label: guideline.bannerDescription,
                             ),
                           ),
                       ],

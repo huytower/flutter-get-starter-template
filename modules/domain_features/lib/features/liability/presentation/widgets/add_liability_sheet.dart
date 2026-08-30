@@ -16,29 +16,32 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
       init: getIt<AddLiabilitySheetController>()..init(),
       dispose: (_) => Get.delete<AddLiabilitySheetController>(),
       builder: (controller) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: EdgeInsets.only(
-                left: context.respPadding(CcPaddingParams.SPACE_LG),
-                right: context.respPadding(CcPaddingParams.SPACE_LG),
-                top: context.respPadding(CcPaddingParams.SPACE_LG),
-                bottom:
-                    MediaQuery.of(context).viewInsets.bottom +
-                        context.respPadding(CcPaddingParams.SPACE_LG),
-              ),
-              decoration: BoxDecoration(
-                color: context.ccColorScheme.surface,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+        return SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.only(
+                  left: context.respPadding(CcPaddingParams.SPACE_LG),
+                  right: context.respPadding(CcPaddingParams.SPACE_LG),
+                  top: context.respPadding(CcPaddingParams.SPACE_LG),
+                  bottom:
+                      MediaQuery.of(context).viewInsets.bottom +
+                      context.respPadding(CcPaddingParams.SPACE_MD),
+                ),
+                decoration: BoxDecoration(
+                  color: context.ccColorScheme.surface,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: _buildSheetContent(context, controller),
                 ),
               ),
-              child: SingleChildScrollView(
-                child: _buildSheetContent(context, controller),
-              ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

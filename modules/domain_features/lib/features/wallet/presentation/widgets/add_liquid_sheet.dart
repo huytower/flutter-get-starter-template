@@ -24,30 +24,27 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
       init: getIt<AddLiquidSheetController>()..init(wallet),
       dispose: (_) => Get.delete<AddLiquidSheetController>(),
       builder: (controller) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: EdgeInsets.only(
-                left: context.respPadding(CcPaddingParams.SPACE_LG),
-                right: context.respPadding(CcPaddingParams.SPACE_LG),
-                top: context.respPadding(CcPaddingParams.SPACE_LG),
-                bottom: context.respPadding(CcPaddingParams.SPACE_LG),
-              ),
-              decoration: BoxDecoration(
-                color: context.ccColorScheme.surface,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+        return SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.all(
+                  context.respPadding(CcPaddingParams.SPACE_LG),
+                ),
+                decoration: BoxDecoration(
+                  color: context.ccColorScheme.surface,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: _buildSheetContent(context, controller),
                 ),
               ),
-              child: SingleChildScrollView(
-                child: _buildSheetContent(context, controller),
-              ),
-            ),
-            if (controller.showKeypad.value)
-              SafeArea(
-                top: false,
-                child: MoneyKeypadPanel(
+              if (controller.showKeypad.value)
+                MoneyKeypadPanel(
                   onKeyPress: controller.handleKeyPress,
                   onDelete: controller.handleDelete,
                   onClear: () => controller.amountStr.value = '0',
@@ -57,8 +54,8 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                   onDone: controller.hideKeypad,
                   activeColor: context.ccColorScheme.primary,
                 ),
-              ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -172,10 +169,11 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
             final showing =
                 guideline.isTaskActive('wallet_balance') && controller.isCash;
             return Positioned(
-              top: 0,
+              top: -10,
               right: 0,
               child: CcGuidelineBadge(
                 showing: showing,
+                label: guideline.bannerDescription,
                 color: guideline.currentColor,
                 bounceTrigger: guideline.bounceTrigger,
                 size: 10,
