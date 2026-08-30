@@ -260,6 +260,8 @@
                          "liability_payment_saved": "Đã ghi nhận thanh toán {amount} đ!",
                          "liability_category_borrow_label": "Hình thức vay",
                          "liability_category_lend_label": "Hình thức cho vay",
+                         "liability_borrow_type_personal": "Cá nhân",
+                         "liability_lend_type_personal": "Cá nhân",
                          "liability_borrower_label": "Tên khoản cho vay",
                          "liability_borrower_hint": "VD: Cho vay mua nhà, Cho bạn vay...",
                          "liability_collection_method_label": "Hình thức thu nợ",

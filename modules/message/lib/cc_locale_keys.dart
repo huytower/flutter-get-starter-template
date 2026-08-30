@@ -1774,6 +1774,10 @@ abstract class CcLocaleKeys {
       'transaction.liability_category_borrow_label';
   static const transaction_liability_category_lend_label =
       'transaction.liability_category_lend_label';
+  static const liability_borrow_type_personal =
+      'transaction.liability_borrow_type_personal';
+  static const liability_lend_type_personal =
+      'transaction.liability_lend_type_personal';
   static const transaction_liability_borrower_label =
       'transaction.liability_borrower_label';
   static const transaction_liability_borrower_hint =

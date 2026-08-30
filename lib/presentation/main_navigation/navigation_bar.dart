@@ -131,19 +131,18 @@ class _NavigationBarState extends State<NavigationBar>
   Widget? buildBottomNavigationBar(BuildContext context) {
     final guideline = Get.find<GuidelineController>();
     final systemBottomPadding = MediaQuery.of(context).padding.bottom;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Obx(() {
       final _ = guideline.bounceTrigger.value;
-
-      // Fine-tuned approach: instead of a full SafeArea which pushes the bar
-      // too high, we use a more generous padding on gesture-based devices
-      // (padding > 0) to prevent the labels from being cut by the screen edge
-      // or obscured by the navigation pill.
       final fineTunedPadding = systemBottomPadding > 0 ? 18.0 : 0.0;
 
-      return Padding(
-        padding: EdgeInsets.only(bottom: fineTunedPadding),
-        child: buildCurvedNavigationBar(),
+      return Container(
+        color: isDark ? Colors.transparent : CcBaseColors.white100,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: fineTunedPadding),
+          child: buildCurvedNavigationBar(),
+        ),
       );
     });
   }
