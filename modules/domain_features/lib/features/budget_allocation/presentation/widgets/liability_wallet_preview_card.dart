@@ -100,7 +100,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                       iconAsset: liability.isBorrow
                           ? 'assets/icon/ic_repay.webp'
                           : 'assets/icon/ic_collect.webp',
-                      color: directionColor,
+                      color: context.ccColorScheme.onSurface,
                       value:
                           liability.principalAmount -
                           balance.outstandingBalance,
