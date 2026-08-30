@@ -207,12 +207,12 @@ class LendForm extends StatelessWidget {
 
     if (isCollect) {
       text = el.tr(CcLocaleKeys.transaction_record_collect);
-      icon = Icons.call_received;
+      icon = Icons.arrow_circle_up;
     } else {
       text = (liability != null && liability.principalAmount > 0)
           ? el.tr(CcLocaleKeys.transaction_record_liability) // Lend more
           : el.tr(CcLocaleKeys.transaction_liability_direction_lend);
-      icon = Icons.call_made;
+      icon = Icons.arrow_circle_down;
     }
 
     return TransactionSubmitButton(

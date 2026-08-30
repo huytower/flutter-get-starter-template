@@ -126,9 +126,10 @@ class InvestmentForm extends StatelessWidget {
             isEnabled: controller.canSubmit,
             onTap: () => controller.submitForm(context),
             activeColor: accentColor,
-            leadingIcon: controller.direction.value == InvestmentDirection.contribute
-                ? Icons.arrow_circle_up
-                : Icons.arrow_circle_down,
+            leadingIcon:
+                controller.direction.value == InvestmentDirection.contribute
+                ? Icons.arrow_circle_down
+                : Icons.arrow_circle_up,
             leadingIconSize: 18,
           ),
           const CcSpaceXS(),

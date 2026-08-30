@@ -190,7 +190,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
             isEnabled: controller.canSubmit,
             onTap: () => controller.submitForm(context),
             activeColor: accentColor,
-            leadingIcon: Icons.arrow_upward,
+            leadingIcon: Icons.arrow_circle_down,
             leadingIconSize: 18,
             badge: guideline.isTaskActive('first_transaction')
                 ? CcGuidelineBadge(

@@ -150,7 +150,7 @@ class IncomeForm extends StatelessWidget {
             isEnabled: controller.canSubmit,
             onTap: () => controller.submitForm(context),
             activeColor: accentColor,
-            leadingIcon: Icons.arrow_downward,
+            leadingIcon: Icons.arrow_circle_up,
             leadingIconSize: 18,
             badge: guideline.isTaskActive('first_transaction')
                 ? CcGuidelineBadge(

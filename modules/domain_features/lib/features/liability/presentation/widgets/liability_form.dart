@@ -215,12 +215,12 @@ class LiabilityForm extends StatelessWidget {
 
     if (isRepay) {
       text = el.tr(CcLocaleKeys.transaction_record_repay);
-      icon = Icons.account_balance;
+      icon = Icons.arrow_circle_down;
     } else {
       text = (liability != null && liability.principalAmount > 0)
           ? el.tr(CcLocaleKeys.transaction_record_liability) // Borrow more
           : el.tr(CcLocaleKeys.transaction_record_liability); // Initiate
-      icon = Icons.call_received;
+      icon = Icons.arrow_circle_up;
     }
 
     return TransactionSubmitButton(

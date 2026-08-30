@@ -155,8 +155,16 @@ flutter_native_splash:
 melos:
   scripts:
     gen:
-      run: melos exec -- "dart run build_runner build --delete-conflicting-outputs"
-      description: Generate code for all packages.
+      run: >
+        melos exec -- "dart run build_runner build --delete-conflicting-outputs" &&
+        melos run gen:translations
+      description: Generate all code, including translation keys and loaders.
+
+    gen:translations:
+      run: >
+        melos exec --scope="message" -- "flutter pub run easy_localization:generate -S assets/translations -f keys -o cc_locale_keys.dart" &&
+        melos exec --scope="message" -- "flutter pub run easy_localization:generate -S assets/translations -o cc_codegen_loader.dart"
+      description: Generate translation keys and the asset loader for the message module.
 
     rebuild:
       run: melos exec -- "flutter clean && flutter pub get && dart run build_runner build --delete-conflicting-outputs"
