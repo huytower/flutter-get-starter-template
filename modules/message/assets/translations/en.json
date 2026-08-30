@@ -259,8 +259,6 @@
                         "liability_payment_saved":  "Payment of {amount} đ recorded!",
                         "liability_category_borrow_label":  "Loan type",
                         "liability_category_lend_label":  "Lending type",
-                        "liability_borrow_type_personal":  "Personal",
-                        "liability_lend_type_personal":  "Personal",
                         "liability_borrower_label":  "Loan name",
                         "liability_borrower_hint":  "e.g. House purchase loan, Loan to a friend...",
                         "liability_collection_method_label":  "Collection method",
@@ -338,7 +336,9 @@
                    "delete_title":  "Delete Liability",
                    "delete_confirm_msg":  "Are you sure you want to delete this liability? This action cannot be undone.",
                    "borrow":  "Borrow",
-                   "lend":  "Lend"
+                   "lend":  "Lend",
+                   "borrow_type_personal":  "Personal",
+                   "lend_type_personal":  "Personal"
                },
      "notification":  {
                          "channel_name":  "Reminders",
