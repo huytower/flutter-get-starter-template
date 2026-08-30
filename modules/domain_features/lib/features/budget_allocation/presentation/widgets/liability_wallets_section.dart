@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,8 +8,8 @@ import '../get_x/budget_allocation_controller.dart';
 import 'borrow_wallets_card.dart';
 import 'lend_wallets_card.dart';
 
-/// A "Card-stack Reveal" section for liabilities and lending.
-/// Decoupled into BorrowWalletsCard and LendWalletsCard for cleaner logic.
+/// A section for liabilities and lending that follows the InvestmentWalletsSection
+/// design pattern but uses a Card-stack mechanism for its content.
 class LiabilityWalletsSection extends StatelessWidget {
   const LiabilityWalletsSection({
     required this.borrowBalances,
@@ -30,64 +31,102 @@ class LiabilityWalletsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BudgetAllocationController>();
+    final scheme = context.ccColorScheme;
+    final dotColor = badgeColor ?? scheme.primary;
 
-    return Obx(() {
-      final isLendFront = controller.isLendSectionFront.value;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcPadding(
+          CcSectionHeader(
+            title: el.tr(CcLocaleKeys.liability_list_title),
+            icon: Icons.warning_amber_outlined,
+            actions: [
+              CcBouncing(
+                onTap: onAddLoan,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    const CcIconToken(
+                      Icons.add_circle_outline_rounded,
+                      size: 20,
+                    ),
+                    if (showGuidelineBadge)
+                      Positioned(
+                        right: -2,
+                        top: -2,
+                        child: CcGuidelineBadge(size: 6, color: dotColor),
+                      ),
+                  ],
+                ),
+              ),
+              const CcSpaceSM(),
+              CcIconButton.bouncing(
+                onTap: controller.toggleLiabilityCardStack,
+                icon: Icon(
+                  Icons.swap_vert_rounded,
+                  size: context.respIconSize(baseSize: 20),
+                  color: scheme.primary,
+                ),
+              ),
+              const CcSpaceSM(),
+              CcTextButton(
+                text: el.tr(CcLocaleKeys.wallet_see_all),
+                onTap: onSeeAll,
+              ),
+            ],
+          ),
+          CcPaddingParams.SPACE_SM, // bottom
+          CcPaddingParams.SPACE_LG, // left
+          CcPaddingParams.SPACE_MD, // right
+          CcPaddingParams.SPACE_LG, // top
+        ),
+        Obx(() {
+          final isLendFront = controller.isLendSectionFront.value;
 
-      return Container(
-        margin: EdgeInsets.symmetric(
-          vertical: context.respPadding(CcPaddingParams.SPACE_SM),
-        ),
-        // Height needs to fit the card content + the stack offset
-        height: context.respDim(160),
-        child: Stack(
-          alignment: Alignment.topCenter,
-          clipBehavior: Clip.none,
-          children: [
-            // Back Card (Handles tap to swap)
-            _buildAnimatedCard(
-              context: context,
-              isFront: false,
-              onToggle: controller.toggleLiabilityCardStack,
-              child: isLendFront
-                  ? BorrowWalletsCard(
-                      balances: borrowBalances,
-                      onAdd: onAddLoan,
-                      onSeeAll: onSeeAll,
-                      isFront: false,
-                    )
-                  : LendWalletsCard(
-                      balances: lendBalances,
-                      onAdd: onAddLoan,
-                      onSeeAll: onSeeAll,
-                      isFront: false,
-                    ),
+          return Container(
+            height: context.respDim(105), // Room for 85 height card + 12 offset
+            padding: EdgeInsets.only(top: context.respDim(12)),
+            child: Stack(
+              alignment: Alignment.topCenter,
+              clipBehavior: Clip.none,
+              children: [
+                // Back Card
+                _buildAnimatedCard(
+                  context: context,
+                  isFront: false,
+                  onToggle: controller.toggleLiabilityCardStack,
+                  child: isLendFront
+                      ? BorrowWalletsCard(
+                          balances: borrowBalances,
+                          onSeeAll: onSeeAll,
+                        )
+                      : LendWalletsCard(
+                          balances: lendBalances,
+                          onSeeAll: onSeeAll,
+                        ),
+                ),
+                // Front Card
+                _buildAnimatedCard(
+                  context: context,
+                  isFront: true,
+                  onToggle: controller.toggleLiabilityCardStack,
+                  child: isLendFront
+                      ? LendWalletsCard(
+                          balances: lendBalances,
+                          onSeeAll: onSeeAll,
+                        )
+                      : BorrowWalletsCard(
+                          balances: borrowBalances,
+                          onSeeAll: onSeeAll,
+                        ),
+                ),
+              ],
             ),
-            // Front Card
-            _buildAnimatedCard(
-              context: context,
-              isFront: true,
-              onToggle: controller.toggleLiabilityCardStack,
-              child: isLendFront
-                  ? LendWalletsCard(
-                      balances: lendBalances,
-                      onAdd: onAddLoan,
-                      onSeeAll: onSeeAll,
-                      isFront: true,
-                    )
-                  : BorrowWalletsCard(
-                      balances: borrowBalances,
-                      onAdd: onAddLoan,
-                      onSeeAll: onSeeAll,
-                      isFront: true,
-                      showGuidelineBadge: showGuidelineBadge,
-                      badgeColor: badgeColor,
-                    ),
-            ),
-          ],
-        ),
-      );
-    });
+          );
+        }),
+      ],
+    );
   }
 
   Widget _buildAnimatedCard({
@@ -105,8 +144,8 @@ class LiabilityWalletsSection extends StatelessWidget {
       duration: const Duration(milliseconds: 400),
       curve: const Cubic(0.2, 0.8, 0.2, 1.0),
       top: yOffset,
-      left: 0,
-      right: 0,
+      left: context.respPadding(CcPaddingParams.PAGE_MD),
+      right: context.respPadding(CcPaddingParams.PAGE_MD),
       child: AnimatedScale(
         duration: const Duration(milliseconds: 400),
         curve: const Cubic(0.2, 0.8, 0.2, 1.0),

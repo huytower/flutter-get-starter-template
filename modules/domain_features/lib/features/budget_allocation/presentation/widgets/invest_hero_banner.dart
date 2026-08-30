@@ -64,46 +64,52 @@ class InvestHeroBanner extends StatelessWidget {
                     ),
                     const CcSpaceXS(),
                     Obx(
-                      () => Row(
-                        children: [
-                          CcIcon(
-                            icon: Icons.eco,
-                            size: context.respIconSize(baseSize: 18),
-                            color: scheme.onPrimary.withOpacity(0.8),
-                          ),
-                          CcText(
-                            walletController.isBalanceVisible.value
-                                ? TransactionFormHelpers.formatShort(
-                                    walletController.investmentBalance.value,
-                                  )
-                                : '*********',
-                            textStyle: context.ccTextTheme.headlineSmall
-                                ?.copyWith(
-                                  color: scheme.onPrimary,
-                                  fontWeight: CcTypographyParams.bold,
-                                  letterSpacing: 0.2,
-                                ),
-                          ),
-                          const CcSpaceSM(),
-                          Icon(
-                            Icons.auto_graph_rounded,
-                            color: scheme.onPrimary.withOpacity(0.8),
-                            size: context.respIconSize(baseSize: 16),
-                          ),
-                          CcText(
-                            walletController.isBalanceVisible.value
-                                ? TransactionFormHelpers.formatShort(
-                                    walletController.investmentBalance.value,
-                                  )
-                                : '*********',
-                            textStyle: context.ccTextTheme.headlineSmall
-                                ?.copyWith(
-                                  color: scheme.onPrimary,
-                                  fontWeight: CcTypographyParams.bold,
-                                  letterSpacing: 0.2,
-                                ),
-                          ),
-                        ],
+                      () => FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            CcIcon(
+                              icon: Icons.eco,
+                              size: context.respIconSize(baseSize: 18),
+                              color: scheme.onPrimary.withOpacity(0.8),
+                            ),
+                            const SizedBox(width: 4),
+                            CcText(
+                              walletController.isBalanceVisible.value
+                                  ? TransactionFormHelpers.formatShort(
+                                      walletController.allTimeInvested.value,
+                                    )
+                                  : '*********',
+                              textStyle: context.ccTextTheme.headlineSmall
+                                  ?.copyWith(
+                                    color: scheme.onPrimary,
+                                    fontWeight: CcTypographyParams.bold,
+                                    letterSpacing: 0.2,
+                                  ),
+                            ),
+                            const CcSpaceSM(),
+                            Icon(
+                              Icons.auto_graph_rounded,
+                              color: scheme.onPrimary.withOpacity(0.8),
+                              size: context.respIconSize(baseSize: 16),
+                            ),
+                            const SizedBox(width: 4),
+                            CcText(
+                              walletController.isBalanceVisible.value
+                                  ? TransactionFormHelpers.formatShort(
+                                      walletController.allTimeReturned.value,
+                                    )
+                                  : '*********',
+                              textStyle: context.ccTextTheme.headlineSmall
+                                  ?.copyWith(
+                                    color: scheme.onPrimary,
+                                    fontWeight: CcTypographyParams.bold,
+                                    letterSpacing: 0.2,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const CcSpaceXS(),

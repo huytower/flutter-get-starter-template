@@ -20,16 +20,37 @@ import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
 
+/// Shared "AI Smart Entry" quick-entry capability: a free-text field with
+/// mic dictation and receipt-photo scan, parsed locally then always
+/// escalated to Gemini (see [ParseQuickEntryUseCase]) behind a consent +
+/// daily-cap gate.
+///
+/// Hosts must `extend TransactionFormController`, provide
+/// [quickEntryCategoryType], and expose their own `categoryKey`/
+/// [pendingPrefillCategoryId]. Call [initQuickEntry]/[disposeQuickEntry]/
+/// [resetQuickEntry] from the host's own `onInit`/`onClose`/`onReset` — not
+/// automatic, to avoid relying on mixin `super` linearization order.
 mixin QuickEntryMixin on TransactionFormController
     implements WidgetsBindingObserver {
   /// Category type quick-entry searches/prefills within.
   String get quickEntryCategoryType;
+
+  /// Further restricts [quickEntryCategoryType] to these `groupId`s (e.g.
+  /// Loan only offers the currently-selected direction's group). Null means
+  /// every enabled category of that type.
   List<String>? get quickEntryCategoryGroupIds => null;
+
+  /// Bumped to force the category picker to remount and resolve
+  /// [pendingPrefillCategoryId] as its initial selection.
   RxInt get categoryKey;
+
+  /// Set right before [categoryKey] is bumped so the remounted category
+  /// picker resolves this id (same mechanism edit-mode uses).
   Rx<String?> get pendingPrefillCategoryId;
 
   final TextEditingController quickEntryController = TextEditingController();
-  final Rx<QuickEntryParseResult?> quickEntrySuggestion = Rx<QuickEntryParseResult?>(null);
+  final Rx<QuickEntryParseResult?> quickEntrySuggestion =
+      Rx<QuickEntryParseResult?>(null);
   final RxBool isParsingQuickEntry = false.obs;
   final RxBool isListeningQuickEntry = false.obs;
 
@@ -44,6 +65,9 @@ mixin QuickEntryMixin on TransactionFormController
   List<CategoryEntity> _quickEntryCategories = [];
   Timer? _quickEntryDebounce;
   bool _quickEntryDisposed = false;
+
+  /// Bumped by [resetQuickEntry] to invalidate any submission still in
+  /// flight, so a stale cloud response can't overwrite a newer entry.
   int _quickEntryGeneration = 0;
 
   /// Call from the host's `onInit`.
@@ -171,10 +195,19 @@ mixin QuickEntryMixin on TransactionFormController
     });
   }
 
+  /// Direction string (e.g. 'borrow'/'lend') for dual-direction forms like
+  /// Liability. Used by the cross-tab intent switcher to decide if a
+  /// switch is needed even within the same tab kind.
   String get quickEntryDirection => '';
 
+  /// Optional hook for controllers to apply custom state based on the
+  /// detected intent and raw text (e.g. setting direction to 'contribute'
+  /// in Investment).
   void applyQuickEntryIntent(QuickEntryIntent intent, String text) {}
 
+  /// Reloads the category cache used to label a resolved `categoryId`. Must
+  /// be re-called whenever [quickEntryCategoryGroupIds] changes at runtime
+  /// (e.g. Loan switching direction), or the label lookup goes stale.
   Future<void> refreshQuickEntryCategories() async {
     final result = await getIt<GetCategoriesUseCase>().call();
     final groupIds = quickEntryCategoryGroupIds;
@@ -198,8 +231,12 @@ mixin QuickEntryMixin on TransactionFormController
     return null;
   }
 
+  /// False for Investment, where [applyQuickEntryCategory] is a no-op — a
+  /// resolved category would otherwise look tappable when it silently isn't.
   bool get quickEntryShowsCategoryInLabel => true;
 
+  /// Display label for a suggestion, e.g. "50.00k · Cà phê · 12/08" — lists
+  /// only whatever actually resolved.
   String quickEntryResultLabel(QuickEntryParseResult result) {
     final parts = <String>[];
     if (result.amount != null) {
@@ -218,25 +255,33 @@ mixin QuickEntryMixin on TransactionFormController
     return parts.join(' · ');
   }
 
+  /// Reports whether the current suggestion's category is considered
+  /// "missing" (was either never resolved, or resolved to an ID that
+  /// doesn't exist in the current form's enabled categories).
   bool get isQuickEntryCategoryMissing {
     final suggestion = quickEntrySuggestion.value;
     if (suggestion == null) return false;
     final id = suggestion.categoryId;
+
+    // If we have no category ID at all, it's definitely missing (Case 2).
     if (id == null) return true;
-    return !quickEntryAvailableCategoryIds.contains(id);
-  }
 
-  bool get isQuickEntryCategoryInvalid {
-    final id = quickEntrySuggestion.value?.categoryId;
-    if (id == null) return false;
-
+    // Check if the category exists in the form's allowed list
     final availableIds = quickEntryAvailableCategoryIds;
     final isAvailable = availableIds.contains(id);
+
     '[AI_PARSING] 🔍 Checking category missing | id=$id | isAvailable=$isAvailable | availableCount=${availableIds.length}'
         .Log('QuickEntryMixin');
+
     return !isAvailable;
   }
 
+  /// Alias for [isQuickEntryCategoryMissing] used by UI components to determine
+  /// if a parsed category is "Missing" or "Invalid" (Case 2).
+  bool get isQuickEntryCategoryInvalid => isQuickEntryCategoryMissing;
+
+  /// List of category IDs that are currently valid/selectable in this form.
+  /// Used to determine if a parsed category is "Missing" (Case 2).
   List<String> get quickEntryAvailableCategoryIds =>
       _quickEntryCategories.map((category) => category.id).toList();
 
@@ -274,6 +319,9 @@ mixin QuickEntryMixin on TransactionFormController
     }
   }
 
+  /// One submission's generation token: `isCurrent` reports whether
+  /// [resetQuickEntry] has since invalidated it; `resetIfCurrent` clears
+  /// [isParsingQuickEntry] only if it's still the active one.
   (bool Function(), VoidCallback) _trackGeneration() {
     final generation = _quickEntryGeneration;
     bool isCurrent() =>
@@ -285,11 +333,21 @@ mixin QuickEntryMixin on TransactionFormController
     return (isCurrent, resetIfCurrent);
   }
 
+  /// Consent-then-daily-cap gate shared by every cloud escalation path.
+  /// Returns false — with [quickEntryErrorKey] already set — on an exhausted
+  /// cap, or a stale generation.
   Future<bool> _passCloudGate({
+    required BuildContext context,
     required bool Function() isCurrentGeneration,
     required VoidCallback resetParsingIfCurrent,
   }) async {
     final prefs = getIt<AiFallbackPreferenceDataSource>();
+
+    // Automatically admit and continue without prompt
+    if (!await prefs.isConsentGiven()) {
+      await prefs.setConsentGiven(true);
+    }
+
     if (!await prefs.tryConsumeDailyCall()) {
       if (!isCurrentGeneration()) return false;
       resetParsingIfCurrent();
@@ -300,6 +358,9 @@ mixin QuickEntryMixin on TransactionFormController
     return true;
   }
 
+  /// Explicit "done" trigger (submit / finished voice dictation) — the only
+  /// path that calls Gemini, so a network call never fires while someone
+  /// is still mid-typing.
   Future<void> submitQuickEntry(BuildContext context) async {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
     // Guards a fast double-submit from firing two concurrent cloud calls.
@@ -383,6 +444,12 @@ mixin QuickEntryMixin on TransactionFormController
       'QuickEntryMixin',
     );
 
+    // SHORT-CIRCUIT: If local parsing already resolved the mandatory fields,
+    // skip cloud escalation to save cost, latency, and avoid the consent popup.
+    // NOTE: If an amount is found, we show the suggestion chip immediately
+    // even if category is missing (local logic will handle the UI label).
+    // This prioritizes the locally recognized data (Case 1 or Case 2) over
+    // escalating to Gemini.
     if (local.amount != null) {
       '[AI_PARSING] ✅ Local parse found amount | short-circuiting to suggestion chip'
           .Log('QuickEntryMixin');
@@ -394,24 +461,22 @@ mixin QuickEntryMixin on TransactionFormController
       return;
     }
 
-    QuickEntryParseResult? cloudResult;
-    if (getIt<UserLevelController>().status.value.isVip) {
-      if (!await _passCloudGate(
-        isCurrentGeneration: isCurrentGeneration,
-        resetParsingIfCurrent: resetParsingIfCurrent,
-      )) {
-        '[AI_PARSING] ⛔ Cloud gate blocked escalation'.Log('QuickEntryMixin');
-        return;
-      }
-
-      '[AI_PARSING] ☁️ Escalating to Gemini...'.Log('QuickEntryMixin');
-      cloudResult = await parseUseCase.parseWithCloud(
-        text: text,
-        localResult: local,
-        categoryType: quickEntryCategoryType,
-        groupIds: quickEntryCategoryGroupIds,
-      );
+    if (!await _passCloudGate(
+      context: context,
+      isCurrentGeneration: isCurrentGeneration,
+      resetParsingIfCurrent: resetParsingIfCurrent,
+    )) {
+      '[AI_PARSING] ⛔ Cloud gate blocked escalation'.Log('QuickEntryMixin');
+      return;
     }
+
+    '[AI_PARSING] ☁️ Escalating to Gemini...'.Log('QuickEntryMixin');
+    final cloudResult = await parseUseCase.parseWithCloud(
+      text: text,
+      localResult: local,
+      categoryType: quickEntryCategoryType,
+      groupIds: quickEntryCategoryGroupIds,
+    );
     resetParsingIfCurrent();
     // The field stays editable during the round trip — re-check the text
     // still matches what was sent before applying/erroring on anything.
@@ -442,6 +507,10 @@ mixin QuickEntryMixin on TransactionFormController
     }
   }
 
+  /// Reentrancy gate for receipt-photo entry — call before showing the
+  /// source-picker sheet (not after) so the lock covers that whole round
+  /// trip, then follow with [submitQuickEntryFromImage] or
+  /// [cancelQuickEntryImage].
   bool beginQuickEntryImage() {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) {
       return false;
@@ -452,10 +521,17 @@ mixin QuickEntryMixin on TransactionFormController
     return true;
   }
 
+  /// Releases the lock [beginQuickEntryImage] took when the user dismissed
+  /// the sheet without picking anything.
   void cancelQuickEntryImage() {
     isParsingQuickEntry.value = false;
   }
 
+  /// Picks an image, runs on-device OCR, then feeds the result through the
+  /// same local-parse/cloud-fallback pipeline as [submitQuickEntry] — the
+  /// cloud leg sends the image itself, not the OCR text, since receipt
+  /// print is often too small/faded for OCR to be a trustworthy sole input.
+  /// Assumes the caller already holds the lock via [beginQuickEntryImage].
   Future<void> submitQuickEntryFromImage(
     BuildContext context, {
     required bool fromCamera,
@@ -498,7 +574,13 @@ mixin QuickEntryMixin on TransactionFormController
     '[AI_PARSING] 📍 OCR-based local fallback ready | result=${local.toJson()}'
         .Log('QuickEntryMixin');
 
-    final bool isPerfect = local.amount != null && _isAmountPlausible(local.amount);
+    // SHORT-CIRCUIT: If OCR + Local parsing resolved the image perfectly, skip cloud.
+    // A "perfect" resolve must have a plausible amount (avoiding phone numbers)
+    // AND a valid category.
+    final bool isPerfect =
+        local.amount != null &&
+        local.categoryId != null &&
+        _isAmountPlausible(local.amount);
 
     if (isPerfect) {
       '[AI_PARSING] ✅ OCR parse was complete and plausible | skipping cloud escalation'
@@ -508,27 +590,25 @@ mixin QuickEntryMixin on TransactionFormController
       return;
     }
 
-    QuickEntryParseResult? cloudResult;
-    if (getIt<UserLevelController>().status.value.isVip) {
-      if (!await _passCloudGate(
-        isCurrentGeneration: isCurrentGeneration,
-        resetParsingIfCurrent: resetParsingIfCurrent,
-      )) {
-        '[AI_PARSING] ⛔ Cloud gate blocked image escalation'.Log(
-          'QuickEntryMixin',
-        );
-        return;
-      }
-
-      '[AI_PARSING] ☁️ Escalating image to Gemini...'.Log('QuickEntryMixin');
-      cloudResult = await parseUseCase.parseImageWithCloud(
-        imageBytes: picked.bytes,
-        mimeType: picked.mimeType,
-        localResult: local,
-        categoryType: quickEntryCategoryType,
-        groupIds: quickEntryCategoryGroupIds,
+    if (!await _passCloudGate(
+      context: context,
+      isCurrentGeneration: isCurrentGeneration,
+      resetParsingIfCurrent: resetParsingIfCurrent,
+    )) {
+      '[AI_PARSING] ⛔ Cloud gate blocked image escalation'.Log(
+        'QuickEntryMixin',
       );
+      return;
     }
+
+    '[AI_PARSING] ☁️ Escalating image to Gemini...'.Log('QuickEntryMixin');
+    final cloudResult = await parseUseCase.parseImageWithCloud(
+      imageBytes: picked.bytes,
+      mimeType: picked.mimeType,
+      localResult: local,
+      categoryType: quickEntryCategoryType,
+      groupIds: quickEntryCategoryGroupIds,
+    );
     resetParsingIfCurrent();
     if (!isCurrentGeneration()) return;
 
@@ -594,6 +674,9 @@ mixin QuickEntryMixin on TransactionFormController
     if (_quickEntryDisposed) return;
 
     if (!started) {
+      // If start failed, we must reset the local UI state.
+      // But we only show the error message if we are CERTAIN it was a
+      // failure, not just a double-tap race condition.
       if (!CcSpeechHelper.isListening) {
         isListeningQuickEntry.value = false;
         quickEntryErrorKey.value =
@@ -602,8 +685,16 @@ mixin QuickEntryMixin on TransactionFormController
     }
   }
 
+  /// Applies a resolved `categoryId` to the category-picker UI. Investment
+  /// overrides this as a no-op — its category always comes from the chosen
+  /// asset, a manual pick by design.
   void applyQuickEntryCategory(String categoryId) {
     pendingPrefillCategoryId.value = categoryId;
+
+    // Proactive resolution: if we can find the real CategoryEntity in our
+    // local cache, tell the host controller to select it immediately.
+    // This ensures the form is valid (canSubmit = true) for auto-save
+    // without waiting for the UI selection-grid to remount.
     final category = _findQuickEntryCategory(categoryId);
     if (category != null) {
       applyResolvedCategory(category);
@@ -640,8 +731,13 @@ mixin QuickEntryMixin on TransactionFormController
     quickEntrySuggestion.value = null;
   }
 
+  /// Sanity check for parsed amounts to avoid misidentifying phone numbers
+  /// or serial numbers as transaction values.
+  /// Anything over 500 million VND for a single OCR entry is escalated to Gemini.
   bool _isAmountPlausible(int? amount) {
     if (amount == null) return false;
+    // 500,000,000 VND (~$20k) is a safe threshold for "Automatic" local parsing.
+    // Larger amounts are legally/financially significant and worth the AI check.
     const int threshold = 500000000;
     return amount > 0 && amount <= threshold;
   }

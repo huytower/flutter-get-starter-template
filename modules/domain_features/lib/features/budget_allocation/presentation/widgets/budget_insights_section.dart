@@ -188,14 +188,14 @@ class _GridPatternPainter extends CustomPainter {
     final paint = Paint()..style = PaintingStyle.fill;
 
     final double squareSize = size.height / 6;
-    final int rows = 6;
-    final int cols = 5;
+    const int rows = 6;
+    const int cols = 5;
 
     for (int r = 0; r < rows; r++) {
       for (int c = 0; c < cols; c++) {
         // Create a pattern similar to the one in the image:
         // A grid where squares have very low, varying opacities
-        final bool shouldPaint = (r + c) % 2 == 0;
+        final bool shouldPaint = (r + c).isEven;
         if (!shouldPaint) continue;
 
         final double opacity = ((r * c) % 3 == 0) ? 0.04 : 0.015;

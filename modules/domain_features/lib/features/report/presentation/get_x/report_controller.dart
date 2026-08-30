@@ -87,7 +87,6 @@ class ReportController extends CcGetController {
     isEditMode.toggle();
   }
 
-  /// Scroll controller for the report body list, used to drive header hide.
   final ScrollController scrollController = ScrollController();
 
   void onScroll(ScrollNotification notification) {
@@ -124,9 +123,6 @@ class ReportController extends CcGetController {
       ...?liabilityTrend.value?.transactions,
     ];
 
-    // Sort by date descending (latest first). If dates are identical (e.g.
-    // same-day entries without precise time), fall back to ID descending
-    // (the later entry will have a higher timestamp-based ID).
     combined.sort((a, b) {
       final dateCompare = b.date.compareTo(a.date);
       if (dateCompare != 0) return dateCompare;
@@ -139,10 +135,8 @@ class ReportController extends CcGetController {
   bool get canNext => navigationOffset.value > 0;
 
   bool get canPrevious {
-    if (range.value == ReportRange.monthly)
-      return navigationOffset.value < 4; // Max 12 months (4 * 3)
-    if (range.value == ReportRange.yearly)
-      return navigationOffset.value < 1; // Max 1 year back
+    if (range.value == ReportRange.monthly) return navigationOffset.value < 4;
+    if (range.value == ReportRange.yearly) return navigationOffset.value < 1;
     return false;
   }
 

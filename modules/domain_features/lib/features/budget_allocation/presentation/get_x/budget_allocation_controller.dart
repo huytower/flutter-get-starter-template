@@ -115,7 +115,7 @@ class BudgetAllocationController extends CcGetController {
     BuildContext context,
     LiabilityBalanceEntity balance,
   ) {
-    // TODO: Implement liability edit/delete actions similar to wallet actions
+    // TODO(Huy): Implement liability edit/delete actions similar to wallet actions
     // For now, navigate to liability list for details
     navigateToLiabilityList(context);
   }

@@ -5,10 +5,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/entities/liability_balance_entity.dart';
-import '../../domain/entities/liability_entity.dart';
 
-/// One row in [LiabilityBalanceList] — a loan's counterparty/category, direction
-/// and status badges, and remaining-vs-principal balance.
 class LiabilityListCard extends StatelessWidget {
   final LiabilityBalanceEntity balance;
   final VoidCallback? onTap;
@@ -18,9 +15,10 @@ class LiabilityListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final liability = balance.liability;
-    final directionColor = liability.isBorrow
-        ? PrjColors.warning
-        : context.ccColorScheme.secondary;
+    final directionColor =
+        liability.isBorrow
+            ? PrjColors.warning
+            : context.ccColorScheme.secondary;
 
     return CcBouncing(
       onTap: onTap ?? () {},
@@ -52,9 +50,10 @@ class LiabilityListCard extends StatelessWidget {
                     '${TransactionFormHelpers.formatAmount(balance.outstandingBalance.toString())} đ',
                     textStyle: context.ccTextTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: balance.isSettled
-                          ? context.ccColorScheme.onSurfaceVariant
-                          : context.ccColorScheme.onSurface,
+                      color:
+                          balance.isSettled
+                              ? context.ccColorScheme.onSurfaceVariant
+                              : context.ccColorScheme.onSurface,
                     ),
                   ),
                   CcText(
