@@ -77,23 +77,116 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           context: context,
           onRefresh: controller.loadAll,
           child: ListView(
+            padding: EdgeInsets.symmetric(
+              vertical: context.respPadding(CcPaddingParams.SPACE_MD),
+            ),
             children: [
-              _buildLiquidHeroBanner(context),
-              const CcSpaceXS(),
-              _buildLiquidWalletsSection(context),
-              _buildInvestmentHeroBanner(context),
-              _buildInvestmentWalletsSection(context),
-              const CcSpaceLG(),
-              _buildLiabilityHeroBanner(context),
-              const CcSpaceXS(),
-              _buildLiabilityWalletsSection(context),
-              const BudgetLimitPreviewSection(),
-              BudgetInsightsSection(controller: controller),
+              _buildLiquidGroup(context),
+              _buildInvestmentGroup(context),
+              _buildLiabilityGroup(context),
+              _buildBudgetLimitGroup(context),
+              _buildInsightsGroup(context),
+              const CcSpaceXL(), // Bottom safety margin
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildLiquidGroup(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildLiquidHeroBanner(context),
+        const CcSpaceSM(),
+        _buildLiquidWalletsSection(context),
+        const CcSpaceLG(),
+      ],
+    );
+  }
+
+  Widget _buildInvestmentGroup(BuildContext context) {
+    return Obx(() {
+      final status = controller.userLevel.status.value;
+      if (!status.canUseInvestment) return const SizedBox.shrink();
+
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InvestHeroBanner(walletController: controller.walletController),
+          const CcSpaceSM(),
+          InvestmentWalletsSection(
+            wallets: controller.walletController.recentInvestmentWallets,
+            onAddInvestment: () => controller.openAddInvestment(context),
+            onSeeAll: () => controller.navigateToInvestmentList(context),
+            showGuidelineBadge: Get.isRegistered<GuidelineController>()
+                ? Get.find<GuidelineController>().isTaskActive('investment') &&
+                      !Get.find<GuidelineController>()
+                          .hasCreatedFirstInvestment
+                          .value
+                : false,
+            badgeColor: Get.isRegistered<GuidelineController>()
+                ? Get.find<GuidelineController>().currentColor
+                : null,
+          ),
+          const CcSpaceLG(),
+        ],
+      );
+    });
+  }
+
+  Widget _buildLiabilityGroup(BuildContext context) {
+    return Obx(() {
+      final status = controller.userLevel.status.value;
+      if (!status.canUseDebtLoan) return const SizedBox.shrink();
+
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          LiabilityHeroBanner(
+            walletController: controller.walletController,
+            borrowBalance: controller.borrowBalance,
+            lendBalance: controller.lendBalance,
+            totalBalance: controller.liabilityBalance,
+          ),
+          const CcSpaceSM(),
+          LiabilityWalletsSection(
+            borrowBalances: controller.borrowBalances,
+            lendBalances: controller.lendBalances,
+            onAddLoan: () => controller.openAddLiability(context),
+            onSeeAll: () => controller.navigateToLiabilityList(context),
+            showGuidelineBadge: Get.isRegistered<GuidelineController>()
+                ? Get.find<GuidelineController>().isTaskActive('liability') &&
+                      !Get.find<GuidelineController>()
+                          .hasCreatedFirstLiability
+                          .value
+                : false,
+            badgeColor: Get.isRegistered<GuidelineController>()
+                ? Get.find<GuidelineController>().currentColor
+                : null,
+          ),
+          const CcSpaceLG(),
+        ],
+      );
+    });
+  }
+
+  Widget _buildBudgetLimitGroup(BuildContext context) {
+    return const Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [BudgetLimitPreviewSection(), CcSpaceLG()],
+    );
+  }
+
+  Widget _buildInsightsGroup(BuildContext context) {
+    return Obx(() {
+      final insights = controller.insights.value;
+      if (insights == null || !insights.hasAnything)
+        return const SizedBox.shrink();
+
+      return BudgetInsightsSection(controller: controller);
+    });
   }
 
   Widget _buildLiquidHeroBanner(BuildContext context) {
@@ -104,36 +197,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       subtitleKey: CcLocaleKeys.wallet_liquid_assets_desc,
       icon: Icons.account_balance_wallet_outlined,
       color: PrjColors.primary,
-      bottomPadding: CcPaddingParams.SPACE_XS,
     );
-  }
-
-  Widget _buildInvestmentHeroBanner(BuildContext context) {
-    return Obx(() {
-      final status = controller.userLevel.status.value;
-      if (!status.canUseInvestment) {
-        return const SizedBox.shrink();
-      }
-
-      return InvestHeroBanner(walletController: controller.walletController);
-    });
-  }
-
-  Widget _buildLiabilityHeroBanner(BuildContext context) {
-    return Obx(() {
-      final status = controller.userLevel.status.value;
-      final canShow = status.canUseDebtLoan;
-
-      if (!canShow) {
-        return const SizedBox.shrink();
-      }
-      return LiabilityHeroBanner(
-        walletController: controller.walletController,
-        borrowBalance: controller.borrowBalance,
-        lendBalance: controller.lendBalance,
-        totalBalance: controller.liabilityBalance,
-      );
-    });
   }
 
   Widget _buildLiquidWalletsSection(BuildContext context) {
@@ -149,59 +213,5 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
             : null,
       ),
     );
-  }
-
-  Widget _buildInvestmentWalletsSection(BuildContext context) {
-    return Obx(() {
-      final status = controller.userLevel.status.value;
-      final canShow = status.canUseInvestment;
-
-      if (!canShow) {
-        return const SizedBox.shrink();
-      }
-      final wallets = controller.walletController.recentInvestmentWallets;
-
-      return InvestmentWalletsSection(
-        wallets: wallets,
-        onAddInvestment: () => controller.openAddInvestment(context),
-        onSeeAll: () => controller.navigateToInvestmentList(context),
-        showGuidelineBadge: Get.isRegistered<GuidelineController>()
-            ? Get.find<GuidelineController>().isTaskActive('investment') &&
-                  !Get.find<GuidelineController>()
-                      .hasCreatedFirstInvestment
-                      .value
-            : false,
-        badgeColor: Get.isRegistered<GuidelineController>()
-            ? Get.find<GuidelineController>().currentColor
-            : null,
-      );
-    });
-  }
-
-  Widget _buildLiabilityWalletsSection(BuildContext context) {
-    return Obx(() {
-      final status = controller.userLevel.status.value;
-      final canShow = status.canUseDebtLoan;
-
-      if (!canShow) {
-        return const SizedBox.shrink();
-      }
-
-      return LiabilityWalletsSection(
-        borrowBalances: controller.borrowBalances,
-        lendBalances: controller.lendBalances,
-        onAddLoan: () => controller.openAddLiability(context),
-        onSeeAll: () => controller.navigateToLiabilityList(context),
-        showGuidelineBadge: Get.isRegistered<GuidelineController>()
-            ? Get.find<GuidelineController>().isTaskActive('liability') &&
-                  !Get.find<GuidelineController>()
-                      .hasCreatedFirstLiability
-                      .value
-            : false,
-        badgeColor: Get.isRegistered<GuidelineController>()
-            ? Get.find<GuidelineController>().currentColor
-            : null,
-      );
-    });
   }
 }

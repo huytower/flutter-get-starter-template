@@ -73,7 +73,7 @@ class LiquidWalletsSection extends StatelessWidget {
           WalletStripCard(wallets: wallets, emptyMessageKey: emptyMessageKey),
         ],
       ),
-      CcPaddingParams.SPACE_SM, // bottom
+      0, // bottom
       CcPaddingParams.SPACE_LG, // left
       CcPaddingParams.SPACE_MD, // right
       0, // top

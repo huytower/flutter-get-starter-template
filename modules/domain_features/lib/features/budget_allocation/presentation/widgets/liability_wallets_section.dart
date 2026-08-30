@@ -76,10 +76,10 @@ class LiabilityWalletsSection extends StatelessWidget {
               ),
             ],
           ),
-          CcPaddingParams.SPACE_SM,
-          CcPaddingParams.SPACE_LG,
-          CcPaddingParams.SPACE_MD,
-          CcPaddingParams.SPACE_LG,
+          0, // bottom
+          CcPaddingParams.SPACE_LG, // left
+          CcPaddingParams.SPACE_MD, // right
+          0, // top
         ),
         Obx(() {
           final isLendFront = controller.isLendSectionFront.value;

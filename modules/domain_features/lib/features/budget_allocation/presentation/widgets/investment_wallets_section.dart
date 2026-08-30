@@ -49,10 +49,7 @@ class InvestmentWalletsSection extends StatelessWidget {
                       Positioned(
                         right: -2,
                         top: -2,
-                        child: CcGuidelineBadge(
-                          size: 6,
-                          color: dotColor,
-                        ),
+                        child: CcGuidelineBadge(size: 6, color: dotColor),
                       ),
                   ],
                 ),
@@ -66,10 +63,10 @@ class InvestmentWalletsSection extends StatelessWidget {
               ],
             ],
           ),
-          CcPaddingParams.SPACE_SM, // bottom
+          0, // bottom
           CcPaddingParams.SPACE_LG, // left
           CcPaddingParams.SPACE_MD, // right
-          CcPaddingParams.SPACE_LG, // top
+          0, // top
         ),
         if (wallets.isEmpty)
           _buildEmptyState(context)
@@ -108,10 +105,7 @@ class InvestmentWalletsSection extends StatelessWidget {
           final wallet = wallets[index];
           return Padding(
             padding: EdgeInsets.only(right: context.respDim(12)),
-            child: InvestmentWalletPreviewCard(
-              wallet: wallet,
-              onTap: onSeeAll,
-            ),
+            child: InvestmentWalletPreviewCard(wallet: wallet, onTap: onSeeAll),
           );
         },
       ),

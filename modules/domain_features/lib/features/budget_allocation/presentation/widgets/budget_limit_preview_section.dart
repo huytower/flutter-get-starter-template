@@ -79,10 +79,10 @@ class BudgetLimitPreviewSection extends StatelessWidget {
               ),
             ],
           ),
-          CcPaddingParams.SPACE_SM, // bottom
+          0, // bottom
           CcPaddingParams.SPACE_LG, // left
           CcPaddingParams.SPACE_MD, // right
-          CcPaddingParams.SPACE_LG, // top
+          0, // top
         ),
         Obx(() {
           final budgets = getIt<SortBudgetLimitsByProgressUseCase>().call(
@@ -125,7 +125,6 @@ class BudgetLimitPreviewSection extends StatelessWidget {
             ),
           );
         }),
-        const CcSpaceXL(),
       ],
     );
   }

@@ -17,8 +17,8 @@ class InvestHeroBanner extends StatelessWidget {
   const InvestHeroBanner({
     super.key,
     required this.walletController,
-    this.topPadding = CcPaddingParams.SPACE_SM,
-    this.bottomPadding = CcPaddingParams.SPACE_XS,
+    this.topPadding = 0,
+    this.bottomPadding = 0,
     this.onTap,
   });
 

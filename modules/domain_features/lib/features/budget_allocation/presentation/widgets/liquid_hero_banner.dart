@@ -26,8 +26,8 @@ class LiquidHeroBanner extends StatelessWidget {
     this.subtitleArgs,
     this.trailingBalanceWidget,
     this.leadingBalanceWidget,
-    this.topPadding = CcPaddingParams.SPACE_LG,
-    this.bottomPadding = CcPaddingParams.SPACE_SM,
+    this.topPadding = 0,
+    this.bottomPadding = 0,
     this.onTap,
     super.key,
   });
