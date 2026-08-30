@@ -8,7 +8,7 @@ import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../get_x/budget_allocation_controller.dart';
 
 /// Base reusable widget for Hero Banner cards (Liability, Investment, etc.).
-/// Enforces glassmorphic design and standard interaction patterns.
+/// Enforces glassmorphic design for back cards and solid priority for front cards.
 class BaseHeroBannerCard extends StatelessWidget {
   const BaseHeroBannerCard({
     required this.titleKey,
@@ -42,7 +42,9 @@ class BaseHeroBannerCard extends StatelessWidget {
       borderRadius: context.brXl,
       child: Stack(
         children: [
-          const Positioned.fill(child: CcGlassyGradientBackground()),
+          // Only show glassy background for the card behind to keep front card crisp
+          if (!isFront)
+            const Positioned.fill(child: CcGlassyGradientBackground()),
           Container(
             width: double.infinity,
             padding: EdgeInsets.symmetric(
@@ -50,9 +52,19 @@ class BaseHeroBannerCard extends StatelessWidget {
               vertical: context.respPadding(CcPaddingParams.SPACE_LG),
             ),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
+              // Front card is solid "normal debtloan color", back card is transparent
+              color: isFront ? color : color.withValues(alpha: 0.1),
               borderRadius: context.brXl,
-              border: context.borderSubtle,
+              border: isFront ? null : context.borderSubtle,
+              boxShadow: isFront
+                  ? [
+                      BoxShadow(
+                        color: color.withValues(alpha: 0.25),
+                        blurRadius: context.respDim(20),
+                        offset: Offset(0, context.respDim(10)),
+                      ),
+                    ]
+                  : null,
             ),
             child: Row(
               children: [

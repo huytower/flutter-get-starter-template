@@ -79,10 +79,13 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           child: ListView(
             children: [
               _buildLiquidHeroBanner(context),
+              const CcSpaceXS(),
               _buildLiquidWalletsSection(context),
               _buildInvestmentHeroBanner(context),
               _buildInvestmentWalletsSection(context),
+              const CcSpaceLG(),
               _buildLiabilityHeroBanner(context),
+              const CcSpaceXS(),
               _buildLiabilityWalletsSection(context),
               const BudgetLimitPreviewSection(),
               BudgetInsightsSection(controller: controller),

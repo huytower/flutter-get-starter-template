@@ -76,7 +76,7 @@ class LiquidWalletsSection extends StatelessWidget {
       CcPaddingParams.SPACE_SM, // bottom
       CcPaddingParams.SPACE_LG, // left
       CcPaddingParams.SPACE_MD, // right
-      CcPaddingParams.SPACE_LG, // top
+      0, // top
     );
   }
 }

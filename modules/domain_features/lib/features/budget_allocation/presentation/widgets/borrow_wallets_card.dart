@@ -10,11 +10,13 @@ class BorrowWalletsCard extends StatelessWidget {
   const BorrowWalletsCard({
     required this.balances,
     required this.onSeeAll,
+    required this.isFront,
     super.key,
   });
 
   final List<LiabilityBalanceEntity> balances;
   final VoidCallback onSeeAll;
+  final bool isFront;
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +24,14 @@ class BorrowWalletsCard extends StatelessWidget {
 
     return Stack(
       children: [
-        const Positioned.fill(child: CcGlassyGradientBackground()),
+        if (!isFront)
+          const Positioned.fill(child: CcGlassyGradientBackground()),
         Container(
           decoration: BoxDecoration(
-            color: scheme.surface.withValues(alpha: 0.1),
+            // Front card is opaque surface to hide what's behind
+            color: isFront
+                ? scheme.surface
+                : scheme.surface.withValues(alpha: 0.1),
             borderRadius: context.brXl,
             border: context.borderSubtle,
           ),

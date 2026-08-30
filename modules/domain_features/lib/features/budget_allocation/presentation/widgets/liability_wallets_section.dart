@@ -87,11 +87,13 @@ class LiabilityWalletsSection extends StatelessWidget {
           final borrowCard = BorrowWalletsCard(
             balances: borrowBalances,
             onSeeAll: onSeeAll,
+            isFront: !isLendFront,
           );
 
           final lendCard = LendWalletsCard(
             balances: lendBalances,
             onSeeAll: onSeeAll,
+            isFront: isLendFront,
           );
 
           return Container(
