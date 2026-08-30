@@ -369,5 +369,20 @@
                    "insights_title":  "Thông tin & cảnh báo",
                    "insights_action_review":  "Xem báo cáo",
                    "estimate_hint":  "Đề xuất: {amount} (trung bình 3 tháng gần nhất)"
+               },
+    "liability":  {
+                   "title":  "Vay nợ",
+                   "list_title":  "Vay nợ",
+                   "status_outstanding":  "Chưa thanh toán",
+                   "status_settled":  "Đã thanh toán",
+                   "remaining_balance":  "Còn lại",
+                   "principal_amount":  "Số tiền gốc",
+                   "empty_state":  "Chưa có khoản nợ nào",
+                   "history_title":  "Lịch sử giao dịch",
+                   "no_history":  "Chưa có thanh toán/thu nợ nào",
+                   "delete_title":  "Xóa khoản nợ",
+                   "delete_confirm_msg":  "Bạn có chắc muốn xóa khoản nợ này? Hành động này không thể hoàn tác.",
+                   "borrow":  "Đi vay",
+                   "lend":  "Cho vay"
                }
 }
