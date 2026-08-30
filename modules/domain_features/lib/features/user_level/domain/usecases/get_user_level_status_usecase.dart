@@ -27,10 +27,6 @@ class GetUserLevelStatusUseCase {
   Future<Result<UserLevelStatusEntity, CcFailure>> call() async {
     final settings = await _profileRepository.getSettings();
 
-    // User-level progress only counts data from the anchor forward — either
-    // the last time the audit day was changed, or (if never changed) the
-    // moment this feature first initialized. Pre-existing dev/test data
-    // never counts.
     final since =
         settings.weeklyAuditDayChangedAt ??
         settings.levelFeatureAnchorAt ??
@@ -97,10 +93,6 @@ class GetUserLevelStatusUseCase {
       level = 2;
     }
 
-    // Level is monotonic — never decreases once reached (see
-    // UserLevelStatusEntity.level doc). The signals above are recomputed
-    // from live data every call, so a bad-cash-flow month or a dropped
-    // budget must not revoke a level the user already unlocked.
     if (level > settings.highestUserLevelReached) {
       await _profileRepository.saveSettings(
         settings.copyWith(highestUserLevelReached: level),
@@ -117,6 +109,7 @@ class GetUserLevelStatusUseCase {
         hasPositiveCashFlow: hasPositiveCashFlow,
         fixedBudgetCount: fixedBudgetCount,
         completedGuidelineCount: completedGuidelineCount,
+        isVip: settings.isVip,
       ),
     );
   }

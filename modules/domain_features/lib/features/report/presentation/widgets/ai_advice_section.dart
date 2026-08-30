@@ -8,11 +8,6 @@ import '../../../../core/helper/ai_advice_helper.dart';
 import '../../domain/entities/ai_advice_entity.dart';
 import '../get_x/report_controller.dart';
 
-/// Phase 3.8 — combined "AI Actions for Budget Issues" + "Spending
-/// Optimization" narrative. Unlike [BudgetInsightsSection] (which auto-hides
-/// when there's nothing to flag), this panel always renders once LV3-gated:
-/// the empty state *is* the call-to-action inviting the user to generate
-/// advice, so there's no "nothing to say" state to hide behind.
 class AiAdviceSection extends StatelessWidget {
   final ReportController controller;
 
@@ -21,7 +16,7 @@ class AiAdviceSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (!controller.userLevel.status.value.canUseAiSmartEntry) {
+      if (!controller.userLevel.status.value.isVip) {
         return const SizedBox.shrink();
       }
 

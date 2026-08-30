@@ -47,13 +47,8 @@ class ReportController extends CcGetController {
   final WalletRepository _walletRepository;
   final GenerateAiFinancialAdviceUseCase _generateAiAdvice;
   final AiAdviceCacheDataSource _aiAdviceCache;
-
-  /// Gates the Investment/Loan trend sections (see `report_page.dart`) —
-  /// same LV2/LV3 unlock rule as every other Investment/Loan surface.
   final UserLevelController userLevel;
 
-  /// Wallets offered by [WalletFilterPickerSheet]. Loaded once on ready,
-  /// same shape as `TransactionController.wallets`/`loadWallets`.
   final RxList<WalletEntity> wallets = <WalletEntity>[].obs;
 
   Future<void> loadWallets() async {
@@ -61,9 +56,6 @@ class ReportController extends CcGetController {
     result.when((walletList) => wallets.assignAll(walletList), (_) {});
   }
 
-  /// Opens [WalletFilterPickerSheet] and applies the result: `null` (sheet
-  /// dismissed) is a no-op, `''` clears the filter, otherwise sets it to the
-  /// chosen wallet.
   Future<void> openWalletFilterPicker(BuildContext context) async {
     final result = await WalletFilterPickerSheet.show(
       context,
@@ -82,22 +74,13 @@ class ReportController extends CcGetController {
 
   final Rx<ReportRange> range = ReportRange.weekly.obs;
   final RxInt navigationOffset = 0.obs;
-
-  /// Non-null when the report is scoped to a single wallet (entered via the
-  /// Reconciliation page's per-wallet review shortcut).
   final RxnString filterWalletId = RxnString();
   final RxnString filterWalletName = RxnString();
 
-  /// Anchor for [Scrollable.ensureVisible] once [requestScrollToDaily] has
-  /// been requested and [load] finishes.
   final GlobalKey dailyDetailKey = GlobalKey();
   bool _pendingScrollToDaily = false;
 
-  /// True when the page header should be auto-hidden (scrolled down, or a
-  /// soft keyboard is visible).
   final RxBool isHeaderHidden = false.obs;
-
-  /// True when the report body list shows edit/delete affordances on each item.
   final RxBool isEditMode = false.obs;
 
   void toggleEditMode() {
@@ -128,20 +111,12 @@ class ReportController extends CcGetController {
   final Rx<TrendDataEntity?> investmentTrend = Rx<TrendDataEntity?>(null);
   final Rx<TrendDataEntity?> liabilityTrend = Rx<TrendDataEntity?>(null);
 
-  /// Phase 3.8 — last generated (or cached) AI advice, if any. Separate
-  /// from [aiAdviceErrorKey] so a failed refresh never blanks out a still-
-  /// valid previously cached result.
   final Rx<AiAdviceEntity?> aiAdvice = Rx<AiAdviceEntity?>(null);
   final RxBool isGeneratingAdvice = false.obs;
   final RxnString aiAdviceErrorKey = RxnString();
 
   int get rangeExpense => spending.fold<int>(0, (sum, s) => sum + s.amount);
 
-  /// Merges the already period/wallet-filtered Income/Expense, Investment,
-  /// and Loan transaction lists into one date-sorted feed for
-  /// [ReportDailyList]. The three source lists are mutually exclusive by
-  /// [TransactionEntity.type] (each usecase filters on a disjoint set of
-  /// types), so a plain concat + sort is safe — no dedup needed.
   List<TransactionEntity> get dailyListTransactions {
     final combined = <TransactionEntity>[
       ...?trendData.value?.transactions,
@@ -187,10 +162,6 @@ class ReportController extends CcGetController {
     super.onClose();
   }
 
-  /// Free, local-only read of the last cached AI advice — deliberately
-  /// separate from [load]'s `Future.wait` block so it's structurally
-  /// impossible for a future refactor of that auto-refreshing block to
-  /// accidentally wire in a cloud call on every Report page visit.
   Future<void> loadCachedAiAdvice() async {
     final text = await _aiAdviceCache.getCachedText();
     final generatedAt = await _aiAdviceCache.getCachedGeneratedAt();
@@ -199,37 +170,14 @@ class ReportController extends CcGetController {
     }
   }
 
-  /// Phase 3.8 — the sole path that may escalate to the consent-gated,
-  /// daily-capped cloud call, so it only ever fires on an explicit
-  /// "Tạo gợi ý"/refresh tap, mirroring
-  /// `ExpenseFormController.submitQuickEntry`'s exact consent→cap→call
-  /// sequence. The [isClosed] guards after each `await` are a cheap
-  /// belt-and-braces against a disposed controller, but in practice
-  /// `ReportController` is `Get.put` by `CcGetView` with no matching
-  /// `Get.delete` anywhere and this app's `MaterialApp.router`/auto_route
-  /// setup never drives GetX's own route-based auto-dispose, so the same
-  /// instance is realistically reused for the whole session — if
-  /// [isGeneratingAdvice] ever got stuck at `true` (e.g. an unhandled
-  /// exception from one of the composed use cases), it would stay stuck
-  /// for the rest of the session on the Report tab, not reset on next
-  /// visit. No generation-counter machinery like
-  /// `ExpenseFormController`'s is needed here regardless, since nothing
-  /// re-`Get.put`s a second live instance over this one the way a tagged
-  /// `EditTransactionSheet` controller can.
   Future<void> generateAiAdvice(BuildContext context) async {
-    if (!userLevel.status.value.canUseAiSmartEntry) return;
-    // Reentrancy guard: checked-then-set with no `await` in between, so a
-    // fast double-tap can't fire two concurrent cloud calls / consume two
-    // daily-cap slots.
+    if (!userLevel.status.value.isVip) return;
+
     if (isGeneratingAdvice.value) return;
     isGeneratingAdvice.value = true;
     aiAdviceErrorKey.value = null;
 
     final prefs = getIt<AiFallbackPreferenceDataSource>();
-    if (!await prefs.isConsentGiven()) {
-      await prefs.setConsentGiven(true);
-    }
-
     if (!await prefs.tryConsumeDailyCall()) {
       if (isClosed) return;
       isGeneratingAdvice.value = false;
@@ -345,14 +293,6 @@ class ReportController extends CcGetController {
     }
   }
 
-  /// The daily-detail section is built for the first time in the same
-  /// [load] call that requested the scroll, so its [dailyDetailKey] context
-  /// may not exist yet on the very next frame (loading→success and the
-  /// trendData-null→non-null Obx rebuilds can each take a frame). Retries
-  /// across a few frames instead of a single post-frame callback. Requires
-  /// the report ListView to eagerly mount off-screen children (see its
-  /// `cacheExtent`) — otherwise a lazily-unmounted target never gets a
-  /// BuildContext no matter how many frames are retried.
   void _scrollToDailyDetail([int attemptsLeft = 20]) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final ctx = dailyDetailKey.currentContext;

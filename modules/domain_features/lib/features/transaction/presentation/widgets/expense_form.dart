@@ -19,10 +19,6 @@ import 'transaction_form_container.dart';
 class ExpenseForm extends StatefulWidget {
   const ExpenseForm({super.key, this.tag});
 
-  /// GetX tag for the underlying [ExpenseFormController] instance. Leave
-  /// null for the persistent entry-tab form; pass a distinct tag (e.g. from
-  /// [EditTransactionSheet]) to get an isolated instance so editing an old
-  /// transaction never touches the entry tab's in-progress draft.
   final String? tag;
 
   @override
@@ -35,22 +31,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
   @override
   void initState() {
     super.initState();
-    // The untagged (entry-tab) instance is registered early by
-    // TransactionController.onInit(), so it's always already findable here.
-    // Edit-mode's tagged instance is never pre-registered (only
-    // TransactionController's own default tag is), so it still needs an
-    // on-demand Get.put here.
     controller = widget.tag == null
         ? Get.find<ExpenseFormController>()
         : Get.put(getIt<ExpenseFormController>(), tag: widget.tag);
-    // Phase 3.5: this widget is rebuilt fresh every time the user returns to
-    // the Transaction page (it's popped on bottom-nav navigation — see
-    // TransactionPage), but the untagged controller is a persistent singleton
-    // whose onInit only fires once ever — so this is the sole place that
-    // refreshes the location suggestion on every screen-open (onInit
-    // deliberately does not also call it; see ExpenseFormController.onInit).
-    // Same reasoning applies to the Phase 3.2 time-based suggestion, which
-    // also needs "now" re-evaluated on every revisit, not just once.
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       controller.refreshTimeBasedSuggestion();
@@ -117,23 +101,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
     if (!Get.isRegistered<BudgetLimitController>()) {
       Get.put(getIt<BudgetLimitController>());
     }
-    final budgetController = Get.find<BudgetLimitController>();
 
     return Obx(() {
-      final budgets = budgetController.budgets;
-      // Reading these observables here ensures the Obx rebuilds when they change
-      controller.selectedBudget.value;
       final categoryKey = controller.categoryKey.value;
       final pendingPrefill = controller.pendingPrefillCategoryId.value;
-
-      if (budgets.isNotEmpty) {
-        return _buildBudgetSelectionSection(
-          context,
-          controller,
-          budgets,
-          accentColor,
-        );
-      }
 
       return CategorySelectionSection(
         key: ValueKey(categoryKey),
@@ -147,60 +118,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
         onCategorySelected: controller.setCategory,
       );
     });
-  }
-
-  Widget _buildBudgetSelectionSection(
-    BuildContext context,
-    ExpenseFormController controller,
-    List<BudgetLimitStatsEntity> budgets,
-    Color activeColor,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcSymmetricPadding(
-          horizontal: CcPaddingParams.PAGE_SM,
-          child: CcText(
-            el.tr(CcLocaleKeys.transaction_category),
-            textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const CcSpaceXS(),
-        HorizontalFadeScrollView(
-          height: context.respDim(80),
-          builder: (scrollController) => ListView.separated(
-            scrollDirection: Axis.horizontal,
-            controller: scrollController,
-            padding: EdgeInsets.symmetric(
-              horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-            ),
-            itemCount: budgets.length,
-            separatorBuilder: (context, index) => const CcSpaceSM(),
-            itemBuilder: (context, index) {
-              final budget = budgets[index].budget;
-              final category = controller.getCachedCategoryById(
-                budget.categoryId,
-              );
-
-              final isSelected =
-                  controller.selectedBudget.value?.id == budget.id;
-
-              return CcCategoryItem(
-                iconCode: category?.iconCode ?? 0,
-                iconFamily: category?.iconFamily,
-                nameKey: budget.name,
-                isSelected: isSelected,
-                activeColor: activeColor,
-                onTap: () => controller.setBudget(budget),
-              );
-            },
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildFormFields(

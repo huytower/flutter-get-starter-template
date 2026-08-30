@@ -53,6 +53,30 @@ class QuickEntryAliasDataset {
   /// Maximum plausible total amount for local parsing (escalate to cloud if higher).
   static const int maxLocalTotalAmount = 1000000000;
 
+  /// Field-label prefixes marking the transfer message.
+  static const List<String> noteFieldLabels = [
+    'noi dung chuyen khoan',
+    'noi dung ck',
+    'noi dung',
+    'loi nhan',
+    'tin nhan',
+    'dien giai',
+    'ghi chu',
+    'description',
+    'message',
+    'memo',
+    'note',
+  ];
+
+  /// Field-label prefixes marking an e-wallet's own suggested category.
+  static const List<String> categoryFieldLabels = [
+    'danh muc giao dich',
+    'danh muc',
+    'phan loai',
+    'loai giao dich',
+    'category',
+  ];
+
   /// Map of informal keywords to their seed category IDs.
   static const Map<String, String> categoryKeywords = {
     // ===== EXPENSE — Ăn uống & Cà phê (c1) =====

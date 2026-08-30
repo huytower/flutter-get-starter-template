@@ -1,7 +1,18 @@
 import 'package:domain_features/core/helper/quick_entry_parser_helper.dart';
+import 'package:domain_features/features/category/domain/entities/category_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  final testCategories = [
+    const CategoryEntity(
+      id: 'c1',
+      nameKey: 'An uong',
+      iconCode: 0,
+      groupId: 'g1',
+    ),
+  ];
+  String label(CategoryEntity c) => c.nameKey;
+
   const ocrText = """
 hå huy tap tp ha tinh
 hoa don ban hang
@@ -54,8 +65,6 @@ cam on quy khach hen gap lai
 
     test('should extract line items correctly', () {
       final items = extractItemsFromText(ocrText);
-      // Items might be hard to extract perfectly locally due to OCR shuffle,
-      // but we should at least get some valid-looking pairs.
       expect(items.isNotEmpty, isTrue);
       expect(items.any((it) => it.price >= 30000), isTrue);
     });
@@ -65,6 +74,59 @@ cam on quy khach hen gap lai
       final note = summarizeBillItems(items);
       expect(note, isNotEmpty);
       expect(note, contains("k)")); // Expecting format like "Item (30k)"
+    });
+
+    test('local parse of OCR text without a labeled note field leaves the '
+        'note null rather than guessing noise from mis-parsed line items', () {
+      final result = parseQuickEntryTextLocally(
+        text: ocrText,
+        categories: testCategories,
+        categoryLabels: label,
+      );
+      expect(result.note, isNull);
+      expect(result.categoryId, isNull);
+    });
+
+    test('local parse reads the transfer message from a labeled bank-transfer '
+        'screenshot instead of the raw OCR blob', () {
+      const bankTransferText = '''
+Chuyen tien thanh cong
+So tien
+500.000d
+Noi dung chuyen khoan
+An trua nhom du an
+Thoi gian
+17/11/2026 12:30
+''';
+      final result = parseQuickEntryTextLocally(
+        text: bankTransferText,
+        categories: testCategories,
+        categoryLabels: label,
+      );
+      expect(result.note, 'An trua nhom du an');
+      expect(result.categoryId, isNull);
+    });
+
+    test('local parse reads the e-wallet suggested category from a labeled '
+        '"Danh mục" field', () {
+      const momoText = '''
+Giao dich thanh cong
+So tien
+100.000d
+Danh muc
+An uong & Nha hang
+Loi nhan
+Tra tien com trua
+Thoi gian
+17/11/2026 12:00
+''';
+      final result = parseQuickEntryTextLocally(
+        text: momoText,
+        categories: testCategories,
+        categoryLabels: label,
+      );
+      expect(result.categoryId, 'c1');
+      expect(result.note, 'Tra tien com trua');
     });
   });
 }

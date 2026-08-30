@@ -331,10 +331,6 @@ class CodegenLoader extends AssetLoader {
           "Category not found (please add in settings): {label}",
       "quick_entry_could_not_parse":
           "Couldn't understand that — please fill in manually",
-      "quick_entry_cloud_consent_message":
-          "To understand this, we'd send it to an AI service (Gemini). Continue?",
-      "quick_entry_cloud_consent_accept": "Allow",
-      "quick_entry_cloud_consent_decline": "Not now",
       "quick_entry_daily_limit_reached":
           "Daily AI quick-entry limit reached — please fill in manually",
       "quick_entry_mic_permission_denied":
@@ -1089,10 +1085,6 @@ class CodegenLoader extends AssetLoader {
           "Danh mục chưa có (vui lòng thêm trong thiết lập): {label}",
       "quick_entry_could_not_parse":
           "Không hiểu được nội dung này — vui lòng nhập thủ công",
-      "quick_entry_cloud_consent_message":
-          "Để hiểu nội dung này, ứng dụng cần gửi tới dịch vụ AI (Gemini). Tiếp tục?",
-      "quick_entry_cloud_consent_accept": "Đồng ý",
-      "quick_entry_cloud_consent_decline": "Để sau",
       "quick_entry_daily_limit_reached":
           "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
       "quick_entry_mic_permission_denied":
@@ -1847,12 +1839,8 @@ abstract class CcLocaleKeys {
       'transaction.quick_entry_category_missing';
   static const quick_entry_could_not_parse =
       'transaction.quick_entry_could_not_parse';
-  static const quick_entry_cloud_consent_message =
-      'transaction.quick_entry_cloud_consent_message';
-  static const quick_entry_cloud_consent_accept =
-      'transaction.quick_entry_cloud_consent_accept';
-  static const quick_entry_cloud_consent_decline =
-      'transaction.quick_entry_cloud_consent_decline';
+  static const quick_entry_vip_required =
+      'transaction.quick_entry_vip_required';
   static const quick_entry_daily_limit_reached =
       'transaction.quick_entry_daily_limit_reached';
   static const quick_entry_mic_permission_denied =
