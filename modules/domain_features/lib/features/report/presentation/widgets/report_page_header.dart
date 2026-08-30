@@ -28,6 +28,7 @@ class ReportPageHeader extends StatelessWidget {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
         statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent,
       ),
       child: Container(
         width: double.infinity,
