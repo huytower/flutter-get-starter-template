@@ -11,6 +11,7 @@ import '../../../../core/di/di.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/expense_form_controller.dart';
+import '../get_x/transaction_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
 import 'money_keypad_panel.dart';
@@ -27,6 +28,7 @@ class ExpenseForm extends StatefulWidget {
 
 class _ExpenseFormState extends State<ExpenseForm> {
   late final ExpenseFormController controller;
+  Worker? _tabRevisitWorker;
 
   @override
   void initState() {
@@ -40,6 +42,28 @@ class _ExpenseFormState extends State<ExpenseForm> {
       controller.refreshTimeBasedSuggestion();
       controller.refreshLocationSuggestion();
     });
+
+    if (Get.isRegistered<TransactionController>()) {
+      final transactionController = Get.find<TransactionController>();
+      _tabRevisitWorker = ever(transactionController.selectedTabIndex, (
+        int index,
+      ) {
+        if (!mounted) return;
+        final tabs = transactionController.visibleTabs;
+        if (index >= 0 &&
+            index < tabs.length &&
+            tabs[index] == TransactionTabKind.expense) {
+          controller.refreshTimeBasedSuggestion();
+          controller.refreshLocationSuggestion();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabRevisitWorker?.dispose();
+    super.dispose();
   }
 
   @override

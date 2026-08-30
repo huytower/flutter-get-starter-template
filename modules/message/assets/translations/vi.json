@@ -298,6 +298,7 @@
                         "note_hint":  "Ghi ch? (kh?ng b?t bu?c)",
                         "more_details":  "Th?m chi ti?t",
                         "merchant_match_hint":  "Gi?ng l?n tru?c: {label}",
+                        "bill_match_hint":  "Hóa đơn hàng tháng: {label}",
                         "location_match_hint":  "B?n dang ? g?n d?y: {label}",
                         "quick_entry_label":  "Nhập nhanh (AI)",
                         "quick_entry_hint":  "chi điện thoại 50.000 từ tiền mặt",

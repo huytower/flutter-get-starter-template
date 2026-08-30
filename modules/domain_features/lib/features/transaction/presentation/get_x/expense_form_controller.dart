@@ -13,6 +13,7 @@ import '../../../../core/di/di.dart';
 import '../../../../core/helper/budget_over_limit_helper.dart';
 import '../../../../core/helper/location_suggestion_helper.dart';
 import '../../../../core/helper/merchant_match_helper.dart';
+import '../../../../core/helper/monthly_bill_suggestion_helper.dart';
 import '../../../../core/helper/time_based_suggestion_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
@@ -45,49 +46,28 @@ class ExpenseFormController extends TransactionFormController
   final RxList<CategoryEntity> _cachedCategories = <CategoryEntity>[].obs;
   final RxBool isLoadingCategories = false.obs;
 
-  /// Set right before [categoryKey] is bumped by [applyMerchantMatch] or
-  /// [applyLocationMatch] (or by [QuickEntryMixin.applyQuickEntryCategory]),
-  /// so the remounted `CategorySelectionSection` resolves and reports back
-  /// the real [CategoryEntity] for this id — same mechanism edit-mode
-  /// already uses via `editingTransaction?.categoryId`.
   @override
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 
-  /// Phase 3.2 time-based suggestion (see [suggestExpenseCategoryIdForHour])
-  /// — recomputed by [refreshTimeBasedSuggestion] so it always reflects
-  /// "now", not just whenever this singleton was created or last reset.
-  /// Lowest priority in `_buildCategorySection`'s fallback chain — a merchant
-  /// match, a location match, or an in-progress edit always wins.
   String? timeBasedSuggestedCategoryId;
 
-  /// Phase 3.3 "AI Autofill" — the best fuzzy match (see
-  /// [findBestMerchantMatch]) against the note text typed so far, offered as
-  /// a one-tap suggestion. Null hides the suggestion affordance.
   final Rx<TransactionEntity?> merchantMatchSuggestion = Rx<TransactionEntity?>(
     null,
   );
 
-  /// Phase 3.5 location-based suggestion — the nearest past expense to the
-  /// GPS fix taken when this form opened (see [findNearbyExpenseMatch]).
-  /// Lower priority than [merchantMatchSuggestion] (a note match is a more
-  /// specific signal than "you're near a place you've spent before") — only
-  /// shown in the UI when the merchant match is empty. Set once per
-  /// screen-open, not recomputed on every keystroke like the merchant match.
   final Rx<TransactionEntity?> locationMatchSuggestion = Rx<TransactionEntity?>(
     null,
   );
 
-  /// GPS fix captured for this screen-open, so [submitForm] can persist it on
-  /// the new transaction for future location matching. Null when location
-  /// was unavailable/denied or the gate/lookup hasn't resolved yet.
+  final Rx<TransactionEntity?> billMatchSuggestion = Rx<TransactionEntity?>(
+    null,
+  );
+
   double? _currentLat;
   double? _currentLng;
 
-  /// The last GPS-derived nearby-expense match computed this screen-open,
-  /// kept regardless of whether it's currently suppressed by a merchant
-  /// match — so it can be re-surfaced once that merchant match clears
-  /// instead of being permanently lost (see [_publishLocationMatch]).
   TransactionEntity? _lastLocationMatch;
+  TransactionEntity? _lastBillMatch;
 
   List<TransactionEntity> _recentExpenses = [];
   Timer? _merchantMatchDebounce;
@@ -189,8 +169,6 @@ class ExpenseFormController extends TransactionFormController
     resetQuickEntry();
     refreshTimeBasedSuggestion();
     categoryKey.value++;
-    // The just-submitted transaction should be matchable for the very next
-    // entry in this same session.
     refreshLocationSuggestion();
   }
 
@@ -222,13 +200,6 @@ class ExpenseFormController extends TransactionFormController
     pendingPrefillCategoryId.value = null;
   }
 
-  /// Recomputes [timeBasedSuggestedCategoryId] for "now" — call whenever the
-  /// Expense form becomes visible again (e.g. the user switches to another
-  /// bottom-nav tab and comes back), same "persistent singleton, onInit only
-  /// fires once" reason as [refreshLocationSuggestion]. Unlike that method
-  /// this is synchronous and cheap, so it's safe to call directly from
-  /// `initState` before the first build rather than needing an awaited
-  /// refresh.
   void refreshTimeBasedSuggestion() {
     timeBasedSuggestedCategoryId = suggestExpenseCategoryIdForHour(
       DateTime.now().hour,
@@ -266,15 +237,12 @@ class ExpenseFormController extends TransactionFormController
       candidates: candidates,
     );
     merchantMatchSuggestion.value = match;
-    // A merchant match here supersedes any cached location match; typing
-    // past one (e.g. clearing the note) should let it reappear rather than
-    // stay lost for the rest of the screen-open.
-    _publishLocationMatch();
+    _publishFallbackSuggestions();
   }
 
   void dismissMerchantMatch() {
     merchantMatchSuggestion.value = null;
-    _publishLocationMatch();
+    _publishFallbackSuggestions();
   }
 
   /// Pre-fills category/amount/wallet from the fuzzy-matched past expense —
@@ -288,39 +256,21 @@ class ExpenseFormController extends TransactionFormController
     categoryKey.value++;
     merchantMatchSuggestion.value = null;
     locationMatchSuggestion.value = null;
+    billMatchSuggestion.value = null;
   }
 
-  /// Re-runs the location lookup — call whenever the Expense form becomes
-  /// visible again (e.g. the user switches to another bottom-nav tab and
-  /// comes back). This controller is a persistent singleton kept alive for
-  /// the whole session, so `onInit` only ever fires once; without an
-  /// explicit re-check on each screen-open, a GPS fix taken at app-launch
-  /// (or wherever the last submit happened) would silently keep being used
-  /// forever, never reflecting the user's actual current location. Also
-  /// reloads [_recentExpenses] first so a same-session just-submitted
-  /// expense is immediately matchable — the previous version relied on a
-  /// separately-chained reload that could race behind this call on the very
-  /// first app-session open, silently matching against an empty list.
   Future<void> refreshLocationSuggestion() async {
     locationMatchSuggestion.value = null;
     _lastLocationMatch = null;
     _currentLat = null;
     _currentLng = null;
+    billMatchSuggestion.value = null;
+    _lastBillMatch = null;
     await _loadRecentExpenses();
     await _loadLocationSuggestion();
+    _loadMonthlyBillSuggestion();
   }
 
-  /// Foreground-only GPS fix + nearest-past-expense lookup (see
-  /// [findNearbyExpenseMatch]). Gated the same way as merchant match — skips
-  /// entirely for LV1/2 users. A denied/unavailable fix silently leaves both
-  /// [_currentLat]/[_currentLng] and the suggestion null; never blocks the
-  /// form or prompts more than once per screen-open.
-  ///
-  /// Checks the OS's cached last-known position first — it resolves near
-  /// instantly, so the suggestion can appear right as the form opens instead
-  /// of waiting the several seconds a fresh GPS lock can take — then refines
-  /// with a real fix afterward, since that's also what gets persisted on
-  /// submit and should be as accurate as possible.
   Future<void> _loadLocationSuggestion() async {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) {
       return;
@@ -344,24 +294,31 @@ class ExpenseFormController extends TransactionFormController
     final candidates = _recentExpenses
         .where((t) => t.lat != null && t.lng != null)
         .toList();
-    // Always cache the computed match, even when a merchant match is
-    // currently suppressing it — otherwise the location match is discarded
-    // outright (this runs at most twice per screen-open) instead of being
-    // re-offered once the merchant match clears (see _publishLocationMatch).
+
     _lastLocationMatch = findNearbyExpenseMatch(
       lat: lat,
       lng: lng,
       candidates: candidates,
     );
-    _publishLocationMatch();
+    _publishFallbackSuggestions();
   }
 
-  /// A merchant match is a more specific signal than "you're near a place
-  /// you've spent before" — shows the cached location match only when no
-  /// merchant match is currently active.
-  void _publishLocationMatch() {
+  void _loadMonthlyBillSuggestion() {
+    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) {
+      return;
+    }
+
+    _lastBillMatch = findMonthlyBillMatch(
+      now: DateTime.now(),
+      candidates: _recentExpenses,
+    );
+    _publishFallbackSuggestions();
+  }
+
+  void _publishFallbackSuggestions() {
     if (merchantMatchSuggestion.value == null) {
       locationMatchSuggestion.value = _lastLocationMatch;
+      billMatchSuggestion.value = _lastBillMatch;
     }
   }
 
@@ -369,9 +326,10 @@ class ExpenseFormController extends TransactionFormController
     locationMatchSuggestion.value = null;
   }
 
-  /// Pre-fills category/amount/wallet from the nearest past expense at this
-  /// location — same "prefill, user still confirms" contract as
-  /// [applyMerchantMatch].
+  void dismissBillMatch() {
+    billMatchSuggestion.value = null;
+  }
+
   void applyLocationMatch(TransactionEntity match) {
     amountStr.value = match.amount.toString();
     if (wallets.any((w) => w.id == match.walletId)) {
@@ -381,6 +339,17 @@ class ExpenseFormController extends TransactionFormController
     categoryKey.value++;
     locationMatchSuggestion.value = null;
     _lastLocationMatch = null;
+  }
+
+  void applyBillMatch(TransactionEntity match) {
+    amountStr.value = match.amount.toString();
+    if (wallets.any((w) => w.id == match.walletId)) {
+      selectedWalletId.value = match.walletId;
+    }
+    pendingPrefillCategoryId.value = match.categoryId;
+    categoryKey.value++;
+    billMatchSuggestion.value = null;
+    _lastBillMatch = null;
   }
 
   @override
@@ -442,9 +411,7 @@ class ExpenseFormController extends TransactionFormController
           );
           overLimit = overResult.tryGetSuccess();
         }
-        // Phase 3.4 threshold notifications — new expenses only; an edit's
-        // before/after spend delta isn't simply the edited amount, so
-        // recomputing a correct crossing for edits is left for later.
+
         if (categoryId.isNotEmpty && !isEditing) {
           getIt<CheckBudgetThresholdUseCase>().call(
             categoryId: categoryId,
