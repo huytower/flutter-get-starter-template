@@ -76,16 +76,26 @@ class LiabilityWalletsSection extends StatelessWidget {
               ),
             ],
           ),
-          CcPaddingParams.SPACE_SM, // bottom
-          CcPaddingParams.SPACE_LG, // left
-          CcPaddingParams.SPACE_MD, // right
-          CcPaddingParams.SPACE_LG, // top
+          CcPaddingParams.SPACE_SM,
+          CcPaddingParams.SPACE_LG,
+          CcPaddingParams.SPACE_MD,
+          CcPaddingParams.SPACE_LG,
         ),
         Obx(() {
           final isLendFront = controller.isLendSectionFront.value;
 
+          final borrowCard = BorrowWalletsCard(
+            balances: borrowBalances,
+            onSeeAll: onSeeAll,
+          );
+
+          final lendCard = LendWalletsCard(
+            balances: lendBalances,
+            onSeeAll: onSeeAll,
+          );
+
           return Container(
-            height: context.respDim(105), // Room for 85 height card + 12 offset
+            height: context.respDim(105),
             padding: EdgeInsets.only(top: context.respDim(12)),
             child: Stack(
               alignment: Alignment.topCenter,
@@ -96,30 +106,14 @@ class LiabilityWalletsSection extends StatelessWidget {
                   context: context,
                   isFront: false,
                   onToggle: controller.toggleLiabilityCardStack,
-                  child: isLendFront
-                      ? BorrowWalletsCard(
-                          balances: borrowBalances,
-                          onSeeAll: onSeeAll,
-                        )
-                      : LendWalletsCard(
-                          balances: lendBalances,
-                          onSeeAll: onSeeAll,
-                        ),
+                  child: isLendFront ? borrowCard : lendCard,
                 ),
                 // Front Card
                 _buildAnimatedCard(
                   context: context,
                   isFront: true,
                   onToggle: controller.toggleLiabilityCardStack,
-                  child: isLendFront
-                      ? LendWalletsCard(
-                          balances: lendBalances,
-                          onSeeAll: onSeeAll,
-                        )
-                      : BorrowWalletsCard(
-                          balances: borrowBalances,
-                          onSeeAll: onSeeAll,
-                        ),
+                  child: isLendFront ? lendCard : borrowCard,
                 ),
               ],
             ),

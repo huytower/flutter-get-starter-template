@@ -32,13 +32,21 @@ class LiabilityHeroBanner extends StatelessWidget {
     return Obx(() {
       final isLendFront = controller.isLendSectionFront.value;
 
-      return Container(
-        padding: EdgeInsets.only(
-          top: context.respPadding(CcPaddingParams.SPACE_SM),
-          bottom: context.respPadding(CcPaddingParams.SPACE_XS),
-        ),
-        // The stack needs a height that accommodates the card height plus the
-        // offset of the back card.
+      final borrowCard = BorrowHeroCard(
+        walletController: walletController,
+        balance: borrowBalance.value,
+        isFront: !isLendFront,
+        onTap: onTap,
+      );
+
+      final lendCard = LendHeroCard(
+        walletController: walletController,
+        balance: lendBalance.value,
+        isFront: isLendFront,
+        onTap: onTap,
+      );
+
+      return SizedBox(
         height: context.respDim(125),
         child: Stack(
           alignment: Alignment.topCenter,
@@ -48,37 +56,13 @@ class LiabilityHeroBanner extends StatelessWidget {
             _buildAnimatedCard(
               context: context,
               isFront: false,
-              child: isLendFront
-                  ? BorrowHeroCard(
-                      walletController: walletController,
-                      balance: borrowBalance.value,
-                      isFront: false,
-                      onTap: onTap,
-                    )
-                  : LendHeroCard(
-                      walletController: walletController,
-                      balance: lendBalance.value,
-                      isFront: false,
-                      onTap: onTap,
-                    ),
+              child: isLendFront ? borrowCard : lendCard,
             ),
             // Front Card
             _buildAnimatedCard(
               context: context,
               isFront: true,
-              child: isLendFront
-                  ? LendHeroCard(
-                      walletController: walletController,
-                      balance: lendBalance.value,
-                      isFront: true,
-                      onTap: onTap,
-                    )
-                  : BorrowHeroCard(
-                      walletController: walletController,
-                      balance: borrowBalance.value,
-                      isFront: true,
-                      onTap: onTap,
-                    ),
+              child: isLendFront ? lendCard : borrowCard,
             ),
           ],
         ),
