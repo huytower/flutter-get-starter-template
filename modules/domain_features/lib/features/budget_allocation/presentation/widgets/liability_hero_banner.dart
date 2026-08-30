@@ -1,14 +1,14 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
+import '../get_x/budget_allocation_controller.dart';
+import 'borrow_hero_card.dart';
+import 'lend_hero_card.dart';
 
-/// Hero banner specialized for liabilities (loans/debts).
-/// Decoupled from LiquidHeroBanner to handle its own layout and logic for
-/// multiple balances (Borrow vs. Lend).
+/// Hero banner for liabilities that uses the Front/Back Card stack mechanism.
+/// prioritized by frequency: Borrow (Front) and Lend (Back).
 class LiabilityHeroBanner extends StatelessWidget {
   const LiabilityHeroBanner({
     required this.walletController,
@@ -27,130 +27,92 @@ class LiabilityHeroBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    final color = scheme.debtLoan;
+    final controller = Get.find<BudgetAllocationController>();
 
-    return CcPadding(
-      CcBouncing(
-        onTap: onTap,
-        borderRadius: context.brXl,
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: context.brXl,
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.25),
-                blurRadius: context.respDim(20),
-                offset: Offset(0, context.respDim(10)),
-              ),
-            ],
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-            vertical: context.respPadding(CcPaddingParams.SPACE_LG),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CcText(
-                      el.tr(CcLocaleKeys.wallet_liabilities),
-                      textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                        color: scheme.onPrimary.withOpacity(0.85),
-                      ),
-                    ),
-                    const CcSpaceXS(),
-                    Obx(
-                      () => Row(
-                        children: [
-                          Icon(
-                            Icons.waving_hand,
-                            color: scheme.onPrimary.withOpacity(0.8),
-                            size: context.respIconSize(baseSize: 18),
-                          ),
-                          const SizedBox(width: 4),
-                          CcText(
-                            walletController.isBalanceVisible.value
-                                ? TransactionFormHelpers.formatShort(
-                                    borrowBalance.value,
-                                  )
-                                : '*********',
-                            textStyle: context.ccTextTheme.headlineMedium
-                                ?.copyWith(
-                                  color: scheme.onPrimary,
-                                  fontWeight: CcTypographyParams.bold,
-                                  letterSpacing: 0.2,
-                                ),
-                          ),
-                          const CcSpaceMD(),
-                          _buildLendStats(context),
-                        ],
-                      ),
-                    ),
-                    const CcSpaceXS(),
-                    CcText(
-                      el.tr(CcLocaleKeys.wallet_liabilities_desc),
-                      maxLines: 2,
-                      textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                        color: scheme.onPrimary.withOpacity(0.7),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const CcSpaceLG(),
-              Container(
-                padding: EdgeInsets.all(context.respDim(6)),
-                decoration: BoxDecoration(
-                  color: scheme.onPrimary.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: CcIconToken(
-                  Icons.warning_amber_rounded,
-                  color: scheme.onPrimary,
-                  size: context.respIconSize(baseSize: 16),
-                ),
-              ),
-            ],
-          ),
+    return Obx(() {
+      final isLendFront = controller.isLendSectionFront.value;
+
+      return Container(
+        padding: EdgeInsets.only(
+          top: context.respPadding(CcPaddingParams.SPACE_SM),
+          bottom: context.respPadding(CcPaddingParams.SPACE_XS),
         ),
-      ),
-      CcPaddingParams.SPACE_XS, // bottom
-      CcPaddingParams.SPACE_LG, // left
-      CcPaddingParams.SPACE_LG, // right
-      CcPaddingParams.SPACE_SM, // top
-    );
+        // The stack needs a height that accommodates the card height plus the
+        // offset of the back card.
+        height: context.respDim(125),
+        child: Stack(
+          alignment: Alignment.topCenter,
+          clipBehavior: Clip.none,
+          children: [
+            // Back Card
+            _buildAnimatedCard(
+              context: context,
+              isFront: false,
+              child: isLendFront
+                  ? BorrowHeroCard(
+                      walletController: walletController,
+                      balance: borrowBalance.value,
+                      isFront: false,
+                      onTap: onTap,
+                    )
+                  : LendHeroCard(
+                      walletController: walletController,
+                      balance: lendBalance.value,
+                      isFront: false,
+                      onTap: onTap,
+                    ),
+            ),
+            // Front Card
+            _buildAnimatedCard(
+              context: context,
+              isFront: true,
+              child: isLendFront
+                  ? LendHeroCard(
+                      walletController: walletController,
+                      balance: lendBalance.value,
+                      isFront: true,
+                      onTap: onTap,
+                    )
+                  : BorrowHeroCard(
+                      walletController: walletController,
+                      balance: borrowBalance.value,
+                      isFront: true,
+                      onTap: onTap,
+                    ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
-  Widget _buildLendStats(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    final visible = walletController.isBalanceVisible.value;
+  Widget _buildAnimatedCard({
+    required BuildContext context,
+    required bool isFront,
+    required Widget child,
+  }) {
+    // Premium animation values matching TransactionTabBar pattern
+    final double scale = isFront ? 1.0 : 0.94;
+    final double opacity = isFront ? 1.0 : 0.45;
+    final double yOffset = isFront ? 0 : -context.respDim(10);
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          Icons.handshake_outlined,
-          size: context.respIconSize(baseSize: 14),
-          color: scheme.onPrimary.withOpacity(0.9),
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 400),
+      curve: const Cubic(0.2, 0.8, 0.2, 1.0),
+      top: yOffset,
+      left: context.respPadding(CcPaddingParams.SPACE_LG),
+      right: context.respPadding(CcPaddingParams.SPACE_LG),
+      child: AnimatedScale(
+        duration: const Duration(milliseconds: 400),
+        curve: const Cubic(0.2, 0.8, 0.2, 1.0),
+        scale: scale,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 400),
+          curve: const Cubic(0.2, 0.8, 0.2, 1.0),
+          opacity: opacity,
+          child: child,
         ),
-        const SizedBox(width: 4),
-        CcText(
-          visible
-              ? TransactionFormHelpers.formatShort(lendBalance.value)
-              : '***',
-          textStyle: context.ccTextTheme.titleSmall?.copyWith(
-            color: scheme.onPrimary,
-            fontWeight: CcTypographyParams.bold,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

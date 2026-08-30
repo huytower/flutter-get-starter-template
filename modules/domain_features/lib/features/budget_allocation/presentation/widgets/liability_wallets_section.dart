@@ -1,13 +1,18 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../liability/domain/entities/liability_balance_entity.dart';
-import 'liability_wallet_preview_card.dart';
+import '../get_x/budget_allocation_controller.dart';
+import 'borrow_wallets_card.dart';
+import 'lend_wallets_card.dart';
 
+/// A "Card-stack Reveal" section for liabilities and lending.
+/// Decoupled into BorrowWalletsCard and LendWalletsCard for cleaner logic.
 class LiabilityWalletsSection extends StatelessWidget {
   const LiabilityWalletsSection({
-    required this.balances,
+    required this.borrowBalances,
+    required this.lendBalances,
     required this.onAddLoan,
     required this.onSeeAll,
     this.showGuidelineBadge = false,
@@ -15,7 +20,8 @@ class LiabilityWalletsSection extends StatelessWidget {
     super.key,
   });
 
-  final List<LiabilityBalanceEntity> balances;
+  final List<LiabilityBalanceEntity> borrowBalances;
+  final List<LiabilityBalanceEntity> lendBalances;
   final VoidCallback onAddLoan;
   final VoidCallback onSeeAll;
   final bool showGuidelineBadge;
@@ -23,95 +29,100 @@ class LiabilityWalletsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    final dotColor = badgeColor ?? scheme.primary;
+    final controller = Get.find<BudgetAllocationController>();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcPadding(
-          CcSectionHeader(
-            title: el.tr(CcLocaleKeys.liability_list_title),
-            icon: Icons.warning_amber_outlined,
-            actions: [
-              CcBouncing(
-                onTap: onAddLoan,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    const CcIconToken(
-                      Icons.add_circle_outline_rounded,
-                      size: 20,
+    return Obx(() {
+      final isLendFront = controller.isLendSectionFront.value;
+
+      return Container(
+        margin: EdgeInsets.symmetric(
+          vertical: context.respPadding(CcPaddingParams.SPACE_SM),
+        ),
+        // Height needs to fit the card content + the stack offset
+        height: context.respDim(160),
+        child: Stack(
+          alignment: Alignment.topCenter,
+          clipBehavior: Clip.none,
+          children: [
+            // Back Card (Handles tap to swap)
+            _buildAnimatedCard(
+              context: context,
+              isFront: false,
+              onToggle: controller.toggleLiabilityCardStack,
+              child: isLendFront
+                  ? BorrowWalletsCard(
+                      balances: borrowBalances,
+                      onAdd: onAddLoan,
+                      onSeeAll: onSeeAll,
+                      isFront: false,
+                    )
+                  : LendWalletsCard(
+                      balances: lendBalances,
+                      onAdd: onAddLoan,
+                      onSeeAll: onSeeAll,
+                      isFront: false,
                     ),
-                    if (showGuidelineBadge)
-                      Positioned(
-                        right: -2,
-                        top: -2,
-                        child: CcGuidelineBadge(size: 6, color: dotColor),
-                      ),
-                  ],
-                ),
-              ),
-              if (balances.isNotEmpty) ...[
-                const CcSpaceSM(),
-                CcTextButton(
-                  text: el.tr(CcLocaleKeys.wallet_see_all),
-                  onTap: onSeeAll,
-                ),
-              ],
-            ],
-          ),
-          CcPaddingParams.SPACE_SM,
-          CcPaddingParams.SPACE_LG,
-          CcPaddingParams.SPACE_MD,
-          CcPaddingParams.SPACE_LG,
-        ),
-        if (balances.isEmpty)
-          _buildEmptyState(context)
-        else
-          _buildHorizontalList(context, balances),
-      ],
-    );
-  }
-
-  Widget _buildEmptyState(BuildContext context) {
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.SPACE_LG,
-      vertical: 12,
-      child: CcText(
-        el.tr(CcLocaleKeys.liability_empty_state),
-        textAlign: TextAlign.center,
-        textStyle: context.ccTextTheme.bodySmall?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHorizontalList(
-    BuildContext context,
-    List<LiabilityBalanceEntity> balances,
-  ) {
-    return HorizontalFadeScrollView(
-      height: context.respDim(95),
-      builder: (scrollController) => ListView.builder(
-        scrollDirection: Axis.horizontal,
-        controller: scrollController,
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-          vertical: context.respDim(4),
-        ),
-        itemCount: balances.length,
-        itemBuilder: (context, index) {
-          final balance = balances[index];
-          return Padding(
-            padding: EdgeInsets.only(right: context.respDim(12)),
-            child: LiabilityWalletPreviewCard(
-              balance: balance,
-              onTap: onSeeAll,
             ),
-          );
-        },
+            // Front Card
+            _buildAnimatedCard(
+              context: context,
+              isFront: true,
+              onToggle: controller.toggleLiabilityCardStack,
+              child: isLendFront
+                  ? LendWalletsCard(
+                      balances: lendBalances,
+                      onAdd: onAddLoan,
+                      onSeeAll: onSeeAll,
+                      isFront: true,
+                    )
+                  : BorrowWalletsCard(
+                      balances: borrowBalances,
+                      onAdd: onAddLoan,
+                      onSeeAll: onSeeAll,
+                      isFront: true,
+                      showGuidelineBadge: showGuidelineBadge,
+                      badgeColor: badgeColor,
+                    ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildAnimatedCard({
+    required BuildContext context,
+    required bool isFront,
+    required Widget child,
+    required VoidCallback onToggle,
+  }) {
+    // Premium animation values matching TransactionTabBar
+    final double scale = isFront ? 1.0 : 0.94;
+    final double opacity = isFront ? 1.0 : 0.45;
+    final double yOffset = isFront ? 0 : -context.respDim(12);
+
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 400),
+      curve: const Cubic(0.2, 0.8, 0.2, 1.0),
+      top: yOffset,
+      left: 0,
+      right: 0,
+      child: AnimatedScale(
+        duration: const Duration(milliseconds: 400),
+        curve: const Cubic(0.2, 0.8, 0.2, 1.0),
+        scale: scale,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 400),
+          curve: const Cubic(0.2, 0.8, 0.2, 1.0),
+          opacity: opacity,
+          child: IgnorePointer(
+            ignoring: !isFront,
+            child: GestureDetector(
+              onTap: isFront ? null : onToggle,
+              child: child,
+            ),
+          ),
+        ),
       ),
     );
   }

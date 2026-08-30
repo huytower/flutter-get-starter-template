@@ -46,6 +46,19 @@ class BudgetAllocationController extends CcGetController {
   final RxList<LiabilityBalanceEntity> liabilityBalances =
       <LiabilityBalanceEntity>[].obs;
 
+  /// Whether the Lend card is currently in front in the Liability section.
+  final RxBool isLendSectionFront = false.obs;
+
+  void toggleLiabilityCardStack() {
+    isLendSectionFront.toggle();
+  }
+
+  List<LiabilityBalanceEntity> get borrowBalances =>
+      liabilityBalances.where((b) => b.liability.isBorrow).toList();
+
+  List<LiabilityBalanceEntity> get lendBalances =>
+      liabilityBalances.where((b) => !b.liability.isBorrow).toList();
+
   /// Phase 3.4 "AI Actions" — null while loading/on error, in which case the
   /// insights panel simply doesn't render (see [BudgetInsightsEntity.hasAnything]).
   final Rx<BudgetInsightsEntity?> insights = Rx<BudgetInsightsEntity?>(null);
@@ -98,7 +111,10 @@ class BudgetAllocationController extends CcGetController {
     );
   }
 
-  void openLiabilityActions(BuildContext context, LiabilityBalanceEntity balance) {
+  void openLiabilityActions(
+    BuildContext context,
+    LiabilityBalanceEntity balance,
+  ) {
     // TODO: Implement liability edit/delete actions similar to wallet actions
     // For now, navigate to liability list for details
     navigateToLiabilityList(context);
@@ -266,17 +282,10 @@ class BudgetAllocationController extends CcGetController {
 
       // Calculate separate balances for borrow and lend
       borrowBalance.value = sorted
-          .where(
-            (b) =>
-                b.liability.isBorrow && !b.isSettled,
-          )
+          .where((b) => b.liability.isBorrow && !b.isSettled)
           .fold(0, (sum, b) => sum + b.outstandingBalance);
       lendBalance.value = sorted
-          .where(
-            (b) =>
-                !b.liability.isBorrow &&
-                !b.isSettled,
-          )
+          .where((b) => !b.liability.isBorrow && !b.isSettled)
           .fold(0, (sum, b) => sum + b.outstandingBalance);
 
       // Net liability (borrow - lend)

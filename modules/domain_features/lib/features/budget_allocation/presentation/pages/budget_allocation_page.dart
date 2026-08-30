@@ -9,13 +9,13 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../get_x/budget_allocation_controller.dart';
-import '../widgets/liquid_hero_banner.dart';
 import '../widgets/budget_insights_section.dart';
 import '../widgets/budget_limit_preview_section.dart';
 import '../widgets/invest_hero_banner.dart';
 import '../widgets/investment_wallets_section.dart';
 import '../widgets/liability_hero_banner.dart';
 import '../widgets/liability_wallets_section.dart';
+import '../widgets/liquid_hero_banner.dart';
 import '../widgets/liquid_wallets_section.dart';
 
 @RoutePage()
@@ -184,10 +184,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         return const SizedBox.shrink();
       }
 
-      final balances = controller.liabilityBalances;
-
       return LiabilityWalletsSection(
-        balances: balances,
+        borrowBalances: controller.borrowBalances,
+        lendBalances: controller.lendBalances,
         onAddLoan: () => controller.openAddLiability(context),
         onSeeAll: () => controller.navigateToLiabilityList(context),
         showGuidelineBadge: Get.isRegistered<GuidelineController>()
