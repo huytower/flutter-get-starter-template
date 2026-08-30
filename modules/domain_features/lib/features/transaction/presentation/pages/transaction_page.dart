@@ -23,6 +23,9 @@ class TransactionPage extends CcGetView<TransactionController> {
   bool get enableAppBar => false;
 
   @override
+  bool get useSafeArea => false;
+
+  @override
   bool get enableBottomNavigationBar => false;
 
   @override

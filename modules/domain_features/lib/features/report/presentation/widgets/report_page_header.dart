@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../get_x/report_controller.dart';
@@ -24,21 +25,26 @@ class ReportPageHeader extends StatelessWidget {
     // base height — the header keeps a correct responsive ratio across screen
     // sizes via flex-based sections instead of a width-scaled respDim() magic
     // number. The Column children resolve against this bounded height.
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(context.respDim(16)),
-          bottomRight: Radius.circular(context.respDim(16)),
-        ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
       ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          _buildHeroBackground(context),
-          _buildHeroForeground(context),
-        ],
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(context.respDim(16)),
+            bottomRight: Radius.circular(context.respDim(16)),
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            _buildHeroBackground(context),
+            _buildHeroForeground(context),
+          ],
+        ),
       ),
     );
   }

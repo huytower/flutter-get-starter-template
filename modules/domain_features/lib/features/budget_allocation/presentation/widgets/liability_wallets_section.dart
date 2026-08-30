@@ -31,56 +31,11 @@ class LiabilityWalletsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BudgetAllocationController>();
-    final scheme = context.ccColorScheme;
-    final dotColor = badgeColor ?? scheme.primary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CcPadding(
-          CcSectionHeader(
-            title: el.tr(CcLocaleKeys.liability_list_title),
-            icon: Icons.warning_amber_outlined,
-            actions: [
-              CcBouncing(
-                onTap: onAddLoan,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    const CcIconToken(
-                      Icons.add_circle_outline_rounded,
-                      size: 20,
-                    ),
-                    if (showGuidelineBadge)
-                      Positioned(
-                        right: -2,
-                        top: -2,
-                        child: CcGuidelineBadge(size: 6, color: dotColor),
-                      ),
-                  ],
-                ),
-              ),
-              const CcSpaceSM(),
-              CcIconButton.bouncing(
-                onTap: controller.toggleLiabilityCardStack,
-                icon: Icon(
-                  Icons.swap_vert_rounded,
-                  size: context.respIconSize(baseSize: 20),
-                  color: scheme.primary,
-                ),
-              ),
-              const CcSpaceSM(),
-              CcTextButton(
-                text: el.tr(CcLocaleKeys.wallet_see_all),
-                onTap: onSeeAll,
-              ),
-            ],
-          ),
-          0, // bottom
-          CcPaddingParams.SPACE_LG, // left
-          CcPaddingParams.SPACE_MD, // right
-          0, // top
-        ),
+        buildHeaderSection(controller, context),
         Obx(() {
           final isLendFront = controller.isLendSectionFront.value;
 
@@ -125,6 +80,46 @@ class LiabilityWalletsSection extends StatelessWidget {
     );
   }
 
+  CcPadding buildHeaderSection(
+    BudgetAllocationController controller,
+    BuildContext context,
+  ) {
+    final scheme = context.ccColorScheme;
+    final dotColor = badgeColor ?? scheme.primary;
+    return CcPadding(
+      CcSectionHeader(
+        title: el.tr(CcLocaleKeys.liability_list_title),
+        icon: Icons.warning_amber_outlined,
+        actions: [
+          CcBouncing(
+            onTap: onAddLoan,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                const CcIconToken(Icons.add_circle_outline_rounded, size: 20),
+                if (showGuidelineBadge)
+                  Positioned(
+                    right: -2,
+                    top: -2,
+                    child: CcGuidelineBadge(size: 6, color: dotColor),
+                  ),
+              ],
+            ),
+          ),
+          const CcSpaceSM(),
+          CcTextButton(
+            text: el.tr(CcLocaleKeys.wallet_see_all),
+            onTap: onSeeAll,
+          ),
+        ],
+      ),
+      0, // bottom
+      CcPaddingParams.SPACE_LG, // left
+      CcPaddingParams.SPACE_MD, // right
+      0, // top
+    );
+  }
+
   Widget _buildAnimatedCard({
     required BuildContext context,
     required bool isFront,
@@ -133,7 +128,8 @@ class LiabilityWalletsSection extends StatelessWidget {
   }) {
     // Premium animation values matching TransactionTabBar
     final double scale = isFront ? 1.0 : 0.94;
-    final double opacity = isFront ? 1.0 : 0.45;
+    final double opacity = isFront ? 1.0 : 0.9;
+    // final double opacity = isFront ? 1.0 : 0.45;
     final double yOffset = isFront ? 0 : -context.respDim(12);
 
     return AnimatedPositioned(

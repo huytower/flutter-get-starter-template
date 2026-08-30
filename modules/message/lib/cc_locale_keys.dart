@@ -1834,6 +1834,8 @@ abstract class CcLocaleKeys {
   static const transaction_bill_match_hint = 'transaction.bill_match_hint';
   static const transaction_location_match_hint =
       'transaction.location_match_hint';
+  static const transaction_auto_save_countdown =
+      'transaction.auto_save_countdown';
   static const quick_entry_label = 'transaction.quick_entry_label';
   static const quick_entry_hint = 'transaction.quick_entry_hint';
   static const quick_entry_parsed_result =

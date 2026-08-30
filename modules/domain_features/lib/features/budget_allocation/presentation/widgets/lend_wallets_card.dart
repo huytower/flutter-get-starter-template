@@ -26,7 +26,9 @@ class LendWalletsCard extends StatelessWidget {
       children: [
         if (!isFront)
           const Positioned.fill(child: CcGlassyGradientBackground()),
-        DecoratedBox(
+        Container(
+          width: double.infinity,
+          height: context.respDim(85),
           decoration: BoxDecoration(
             // Front card is opaque surface to hide what's behind
             color: isFront

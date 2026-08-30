@@ -26,6 +26,9 @@ class ReportPage extends CcGetView<ReportController> {
   bool get enableAppBar => false;
 
   @override
+  bool get useSafeArea => false;
+
+  @override
   Widget? buildContent(BuildContext context) {
     final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
 
@@ -163,8 +166,12 @@ class ReportPage extends CcGetView<ReportController> {
                       ReportDailyList(
                         transactions: controller.dailyListTransactions,
                         includeInvestmentAndLiability:
-                            controller.userLevel.status.value.canUseInvestment ||
-                                controller.userLevel.status.value.canUseDebtLoan,
+                            controller
+                                .userLevel
+                                .status
+                                .value
+                                .canUseInvestment ||
+                            controller.userLevel.status.value.canUseDebtLoan,
                         isEditMode: controller.isEditMode.value,
                       ),
                       const CcSpaceSM(),
@@ -290,11 +297,7 @@ class ReportPage extends CcGetView<ReportController> {
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const CcSpaceLG(),
-          ...children,
-          const CcSpaceXL(),
-        ],
+        children: [const CcSpaceLG(), ...children, const CcSpaceXL()],
       );
     });
   }

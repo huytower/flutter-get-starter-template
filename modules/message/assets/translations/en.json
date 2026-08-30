@@ -296,6 +296,7 @@
                         "merchant_match_hint":  "Like last time: {label}",
                         "bill_match_hint":  "Monthly bill: {label}",
                         "location_match_hint":  "You\u0027re nearby: {label}",
+                        "auto_save_countdown":  "Auto-save in {countdown}s...",
                         "quick_entry_label":  "Quick entry (AI)",
                         "quick_entry_hint":  "spend phone 50.000 by cash",
                         "quick_entry_parsed_result":  "Got it: {label}",

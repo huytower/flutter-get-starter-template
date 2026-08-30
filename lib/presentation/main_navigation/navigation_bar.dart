@@ -130,9 +130,21 @@ class _NavigationBarState extends State<NavigationBar>
 
   Widget? buildBottomNavigationBar(BuildContext context) {
     final guideline = Get.find<GuidelineController>();
+    final systemBottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Obx(() {
       final _ = guideline.bounceTrigger.value;
-      return SafeArea(top: false, child: buildCurvedNavigationBar());
+
+      // Fine-tuned approach: instead of a full SafeArea which pushes the bar
+      // too high, we use a more generous padding on gesture-based devices
+      // (padding > 0) to prevent the labels from being cut by the screen edge
+      // or obscured by the navigation pill.
+      final fineTunedPadding = systemBottomPadding > 0 ? 18.0 : 0.0;
+
+      return Padding(
+        padding: EdgeInsets.only(bottom: fineTunedPadding),
+        child: buildCurvedNavigationBar(),
+      );
     });
   }
 
@@ -165,7 +177,11 @@ class _NavigationBarState extends State<NavigationBar>
       onPopInvokedWithResult: (didPop, result) =>
           onPopInvokedWithResult(context, didPop, result),
       child: Scaffold(
-        body: onBodyWrapper(context, SafeArea(child: _buildBody(context))),
+        // Remove SafeArea here to allow individual pages to manage their own
+        // safe area (e.g. for immersive gradient headers that span into the
+        // status bar). Pages using CcViewConfigMixin (default) still get a
+        // SafeArea wrapper by default unless they override useSafeArea.
+        body: onBodyWrapper(context, _buildBody(context)),
         appBar: enableAppBar ? buildAppBar(context) : null,
         bottomNavigationBar: enableBottomNavigationBar
             ? buildBottomNavigationBar(context)

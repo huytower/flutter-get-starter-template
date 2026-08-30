@@ -81,12 +81,12 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
               vertical: context.respPadding(CcPaddingParams.SPACE_MD),
             ),
             children: [
-              _buildLiquidGroup(context),
-              _buildInvestmentGroup(context),
+              // _buildLiquidGroup(context),
+              // _buildInvestmentGroup(context),
               _buildLiabilityGroup(context),
-              _buildBudgetLimitGroup(context),
-              _buildInsightsGroup(context),
-              const CcSpaceXL(), // Bottom safety margin
+              // _buildBudgetLimitGroup(context),
+              // _buildInsightsGroup(context),
+              // const CcSpaceXL(), // Bottom safety margin
             ],
           ),
         ),

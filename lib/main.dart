@@ -6,6 +6,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -18,6 +19,18 @@ import 'core/runner/app_runner.dart';
 void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
+
+    // 0. Edge-to-Edge and System UI Configuration
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
     // 1. Environment Loading (Critical & Blocking for DI)
     // We load this first because initializeDependencies() depends on env variables.

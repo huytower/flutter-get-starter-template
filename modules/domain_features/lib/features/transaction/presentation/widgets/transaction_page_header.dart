@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/guideline/guideline_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
@@ -42,20 +43,28 @@ class TransactionPageHeader extends StatelessWidget {
     // We calculate the overlap locally to match TransactionPage's logic.
     final overlap = context.respDim(64) / 2;
 
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(context.respDim(16)),
-          bottomRight: Radius.circular(context.respDim(16)),
-        ),
-        image: DecorationImage(image: AssetImage(assetPath), fit: BoxFit.cover),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
       ),
-      clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: overlap),
-        child: _buildHeroForeground(context),
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(context.respDim(16)),
+            bottomRight: Radius.circular(context.respDim(16)),
+          ),
+          image: DecorationImage(
+            image: AssetImage(assetPath),
+            fit: BoxFit.cover,
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: overlap),
+          child: _buildHeroForeground(context),
+        ),
       ),
     );
   }
@@ -281,7 +290,10 @@ class TransactionPageHeader extends StatelessWidget {
         const CcSpaceXS(),
         Expanded(
           child: CcText(
-            'Tự động lưu trong ${countdown}s...',
+            el.tr(
+              CcLocaleKeys.transaction_auto_save_countdown,
+              namedArgs: {'countdown': countdown.toString()},
+            ),
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
               color: context.ccColorScheme.onPrimary,
               fontWeight: FontWeight.bold,
