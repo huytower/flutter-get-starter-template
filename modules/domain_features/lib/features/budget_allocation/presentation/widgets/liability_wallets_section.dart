@@ -140,8 +140,8 @@ class LiabilityWalletsSection extends StatelessWidget {
       duration: const Duration(milliseconds: 400),
       curve: const Cubic(0.2, 0.8, 0.2, 1.0),
       top: yOffset,
-      left: context.respPadding(CcPaddingParams.PAGE_MD),
-      right: context.respPadding(CcPaddingParams.PAGE_MD),
+      left: 0,
+      right: 0,
       child: AnimatedScale(
         duration: const Duration(milliseconds: 400),
         curve: const Cubic(0.2, 0.8, 0.2, 1.0),

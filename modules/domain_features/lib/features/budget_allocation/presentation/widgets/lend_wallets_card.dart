@@ -26,14 +26,12 @@ class LendWalletsCard extends StatelessWidget {
       children: [
         if (!isFront)
           const Positioned.fill(child: CcGlassyGradientBackground()),
-        Container(
+        DecoratedBox(
           decoration: BoxDecoration(
             // Front card is opaque surface to hide what's behind
             color: isFront
                 ? scheme.surface
                 : scheme.surface.withValues(alpha: 0.1),
-            borderRadius: context.brXl,
-            border: context.borderSubtle,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,

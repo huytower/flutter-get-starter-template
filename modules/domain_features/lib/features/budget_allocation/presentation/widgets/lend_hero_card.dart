@@ -1,5 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
+
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import 'base_hero_banner_card.dart';
 
@@ -20,7 +21,7 @@ class LendHeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final color = scheme.debtLoan.withValues(alpha: 0.7);
+    final color = scheme.debtLoan.withValues(alpha: 0.8);
 
     return BaseHeroBannerCard(
       titleKey: CcLocaleKeys.liability_lend,
