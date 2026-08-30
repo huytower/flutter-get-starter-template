@@ -156,6 +156,8 @@ class TransactionPageHeader extends StatelessWidget {
               accentColor: accentColor,
               icon: expenseFormController?.merchantMatchSuggestion.value != null
                   ? Icons.auto_awesome
+                  : expenseFormController?.billMatchSuggestion.value != null
+                  ? Icons.event_repeat
                   : Icons.place,
               onTap: () => _applySuggestion(expenseFormController!),
               onDismiss: () => _dismissSuggestion(expenseFormController!),
@@ -218,6 +220,13 @@ class TransactionPageHeader extends StatelessWidget {
         namedArgs: {'label': _formatSuggestionLabel(merchantMatch)},
       );
     }
+    final billMatch = controller.billMatchSuggestion.value;
+    if (billMatch != null) {
+      return el.tr(
+        CcLocaleKeys.transaction_bill_match_hint,
+        namedArgs: {'label': _formatSuggestionLabel(billMatch)},
+      );
+    }
     final locationMatch = controller.locationMatchSuggestion.value;
     if (locationMatch != null) {
       return el.tr(
@@ -237,6 +246,11 @@ class TransactionPageHeader extends StatelessWidget {
       controller.applyMerchantMatch(merchantMatch);
       return;
     }
+    final billMatch = controller.billMatchSuggestion.value;
+    if (billMatch != null) {
+      controller.applyBillMatch(billMatch);
+      return;
+    }
     final locationMatch = controller.locationMatchSuggestion.value;
     if (locationMatch != null) controller.applyLocationMatch(locationMatch);
   }
@@ -244,6 +258,8 @@ class TransactionPageHeader extends StatelessWidget {
   void _dismissSuggestion(ExpenseFormController controller) {
     if (controller.merchantMatchSuggestion.value != null) {
       controller.dismissMerchantMatch();
+    } else if (controller.billMatchSuggestion.value != null) {
+      controller.dismissBillMatch();
     } else {
       controller.dismissLocationMatch();
     }

@@ -245,11 +245,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
-    gh.factory<_i967.AiFallbackPreferenceDataSource>(
-        () => _i967.AiFallbackPreferenceDataSource());
     gh.factory<_i594.IncomeFormController>(() => _i594.IncomeFormController());
     gh.lazySingleton<_i994.AiAdviceCacheDataSource>(
         () => _i994.AiAdviceCacheDataSource());
+    gh.lazySingleton<_i967.AiFallbackPreferenceDataSource>(
+        () => _i967.AiFallbackPreferenceDataSource());
     gh.lazySingleton<_i585.BudgetLimitLocalDataSource>(
         () => _i585.BudgetLimitLocalDataSource());
     gh.lazySingleton<_i250.SortBudgetLimitsByLimitUseCase>(

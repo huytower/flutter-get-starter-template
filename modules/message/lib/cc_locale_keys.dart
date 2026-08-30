@@ -323,6 +323,7 @@ class CodegenLoader extends AssetLoader {
       "note_hint": "Note (optional)",
       "more_details": "More details",
       "merchant_match_hint": "Like last time: {label}",
+      "bill_match_hint": "Monthly bill: {label}",
       "location_match_hint": "You're nearby: {label}",
       "quick_entry_label": "Quick entry (AI)",
       "quick_entry_hint": "spend phone 50.000 by cash",
@@ -1077,6 +1078,7 @@ class CodegenLoader extends AssetLoader {
       "note_hint": "Ghi chú (không bắt buộc)",
       "more_details": "Thêm chi tiết",
       "merchant_match_hint": "Giống lần trước: {label}",
+      "bill_match_hint": "Hóa đơn hàng tháng: {label}",
       "location_match_hint": "Bạn đang ở gần đây: {label}",
       "quick_entry_label": "Nhập nhanh (AI)",
       "quick_entry_hint": "chi điện thoại 50.000 từ tiền mặt",
@@ -1829,6 +1831,7 @@ abstract class CcLocaleKeys {
   static const transaction_more_details = 'transaction.more_details';
   static const transaction_merchant_match_hint =
       'transaction.merchant_match_hint';
+  static const transaction_bill_match_hint = 'transaction.bill_match_hint';
   static const transaction_location_match_hint =
       'transaction.location_match_hint';
   static const quick_entry_label = 'transaction.quick_entry_label';
