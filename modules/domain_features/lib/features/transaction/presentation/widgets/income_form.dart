@@ -156,7 +156,7 @@ class IncomeForm extends StatelessWidget {
                 ? CcGuidelineBadge(
                     size: 8,
                     color: guideline.currentColor,
-                    bounceTrigger: guideline.bounceTrigger,
+                    bounceTrigger: guideline.bounceTrigger.value,
                     label: guideline.bannerDescription,
                     isDescriptionHidden: guideline.isDescriptionHidden.value,
                   )

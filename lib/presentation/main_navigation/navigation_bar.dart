@@ -88,7 +88,7 @@ class _NavigationBarState extends State<NavigationBar>
             ? CcGuidelineBadge(
                 size: 8,
                 color: guideline.currentColor,
-                bounceTrigger: guideline.bounceTrigger,
+                bounceTrigger: guideline.bounceTrigger.value,
                 forceHideLabel: true,
               )
             : null,
@@ -102,7 +102,7 @@ class _NavigationBarState extends State<NavigationBar>
             ? CcGuidelineBadge(
                 size: 8,
                 color: guideline.currentColor,
-                bounceTrigger: guideline.bounceTrigger,
+                bounceTrigger: guideline.bounceTrigger.value,
                 forceHideLabel: true,
               )
             : null,
@@ -115,7 +115,7 @@ class _NavigationBarState extends State<NavigationBar>
             ? CcGuidelineBadge(
                 size: 8,
                 color: guideline.currentColor,
-                bounceTrigger: guideline.bounceTrigger,
+                bounceTrigger: guideline.bounceTrigger.value,
                 forceHideLabel: true,
               )
             : null,

@@ -113,11 +113,12 @@ class ProfilePage extends CcGetView<ProfileController> {
               ? CcGuidelineBadge(
                   size: 8,
                   color: color,
-                  bounceTrigger: guideline.bounceTrigger,
+                  bounceTrigger: guideline.bounceTrigger.value,
                   label: guideline.bannerDescription,
                   isDescriptionHidden: guideline.isDescriptionHidden.value,
                   onLabelTap: () => guideline.isDescriptionHidden.value = true,
                   growRight: true,
+                  labelAbove: true,
                 )
               : null,
         ),
@@ -135,11 +136,12 @@ class ProfilePage extends CcGetView<ProfileController> {
               ? CcGuidelineBadge(
                   size: 8,
                   color: color,
-                  bounceTrigger: guideline.bounceTrigger,
+                  bounceTrigger: guideline.bounceTrigger.value,
                   label: guideline.bannerDescription,
                   isDescriptionHidden: guideline.isDescriptionHidden.value,
                   onLabelTap: () => guideline.isDescriptionHidden.value = true,
                   growRight: true,
+                  labelAbove: true,
                 )
               : null,
         ),

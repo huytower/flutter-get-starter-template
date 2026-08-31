@@ -106,8 +106,20 @@ class TransactionPageHeader extends StatelessWidget {
     final accentColor = guideline.currentColor;
 
     final tabs = controller.visibleTabs;
-    final activeTab =
-        tabs[controller.selectedTabIndex.value.clamp(0, tabs.length - 1)];
+    final activeTabIndex = controller.selectedTabIndex.value;
+    final activeTab = tabs[activeTabIndex.clamp(0, tabs.length - 1)];
+
+    // Only display banner description for Investment/Liability when on those tabs
+    final bool isInvestmentTask = activeId == 'investment';
+    final bool isLiabilityTask = activeId == 'liability';
+    final bool isSpecificTask = isInvestmentTask || isLiabilityTask;
+
+    // For Investment, only show when on Investment tab
+    final bool isInvestmentActive = activeTab == TransactionTabKind.investment;
+
+    final bool shouldHideDescription =
+        (isInvestmentTask && !isInvestmentActive) ||
+        (isLiabilityTask && activeTab == TransactionTabKind.expense);
 
     if (isGuidelineComplete) {
       return _buildAiComponents(context, activeTab);
@@ -115,6 +127,7 @@ class TransactionPageHeader extends StatelessWidget {
 
     // Otherwise show the guideline banner
     return GestureDetector(
+      onTap: () => guideline.triggerBounce(),
       onHorizontalDragEnd: (details) {
         // Detect left-to-right swipe (positive velocity)
         if (details.primaryVelocity != null && details.primaryVelocity! > 300) {
@@ -127,13 +140,13 @@ class TransactionPageHeader extends StatelessWidget {
         }
       },
       child: Obx(
-        () => guideline.isDescriptionHidden.value
+        () => guideline.isDescriptionHidden.value || shouldHideDescription
             ? Align(
                 alignment: Alignment.centerLeft,
                 child: CcGuidelineBadge(
                   size: 10,
                   color: accentColor,
-                  bounceTrigger: guideline.bounceTrigger,
+                  bounceTrigger: guideline.bounceTrigger.value,
                   onTap: () => guideline.isDescriptionHidden.value = false,
                 ),
               )

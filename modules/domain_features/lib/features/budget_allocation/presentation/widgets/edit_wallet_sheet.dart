@@ -61,14 +61,15 @@ class EditWalletSheet extends StatelessWidget {
                       guideline.isTaskActive('wallet_balance') &&
                       wallet.type == WalletType.cash;
                   return Positioned(
-                    bottom: 0,
-                    right: 0,
+                    top: -10,
+                    right: -10,
                     child: CcGuidelineBadge(
                       showing: showing,
                       color: guideline.currentColor,
-                      bounceTrigger: guideline.bounceTrigger,
+                      bounceTrigger: guideline.bounceTrigger.value,
                       size: 8,
                       label: guideline.bannerDescription,
+                      isDescriptionHidden: guideline.isDescriptionHidden.value,
                     ),
                   );
                 }),

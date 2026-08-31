@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/export_wallet.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
@@ -29,11 +30,25 @@ class InvestmentForm extends StatelessWidget {
 
     return Obx(() {
       final accentColor = _accentColor(context, controller.direction.value);
+      final guideline = Get.find<GuidelineController>();
+
+      final bool isInvestmentTask = guideline.isTaskActive('investment');
+      final bool onInvestmentTab =
+          controller.direction.value == InvestmentDirection.contribute ||
+          controller.direction.value == InvestmentDirection.returnProfit;
+
+      // Only display banner description when user reaches these subsegments
+      final bool hideHeaderDescription = isInvestmentTask && !onInvestmentTab;
 
       return Column(
         children: [
           Expanded(
-            child: _buildScrollableContent(context, controller, accentColor),
+            child: _buildScrollableContent(
+              context,
+              controller,
+              accentColor,
+              guideline,
+            ),
           ),
           if (controller.showKeypad.value)
             _buildMoneyKeypadPanel(context, controller, accentColor),
@@ -51,6 +66,7 @@ class InvestmentForm extends StatelessWidget {
     BuildContext context,
     InvestmentFormController controller,
     Color accentColor,
+    GuidelineController guideline,
   ) {
     return GestureDetector(
       onTap: () {

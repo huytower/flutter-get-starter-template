@@ -1,7 +1,9 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../../guideline/guideline_controller.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 
 /// Chi ra / Thu vào pill switch shown at the top of the Investment form —
@@ -93,10 +95,55 @@ class _InvestmentDirectionToggleState extends State<InvestmentDirectionToggle>
         ),
         labelPadding: EdgeInsets.zero,
         tabs: [
-          Tab(text: el.tr(CcLocaleKeys.transaction_investment_contribution)),
-          Tab(text: el.tr(CcLocaleKeys.transaction_investment_return)),
+          _buildTab(
+            context,
+            el.tr(CcLocaleKeys.transaction_investment_contribution),
+            0,
+          ),
+          _buildTab(
+            context,
+            el.tr(CcLocaleKeys.transaction_investment_return),
+            1,
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTab(BuildContext context, String text, int index) {
+    final guideline = Get.find<GuidelineController>();
+
+    return Tab(
+      child: Obx(() {
+        final bool isInvestmentTask = guideline.isTaskActive('investment');
+        // Badge 1: only show badge at bottom right as current at bottom navigation without displayed banner desc.
+        // Wait, the user said "at bottom navigation bar area, badge 1: only show badge ... without displayed banner desc."
+        // AND "at body area, banner desc & badge was displayed ... expect: align to the right side"
+
+        // For InvestmentDirectionToggle (body area):
+        final bool showBadgeWithLabel = isInvestmentTask && index == 0;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            Text(text),
+            if (showBadgeWithLabel)
+              Positioned(
+                bottom: -8,
+                right: -28,
+                child: CcGuidelineBadge(
+                  size: 6,
+                  color: guideline.currentColor,
+                  bounceTrigger: guideline.bounceTrigger.value,
+                  label: guideline.bannerDescription,
+                  isDescriptionHidden: guideline.isDescriptionHidden.value,
+                  labelAbove: false,
+                ),
+              ),
+          ],
+        );
+      }),
     );
   }
 }

@@ -70,6 +70,7 @@ class LiquidWalletsSection extends StatelessWidget {
                           () => CcGuidelineBadge(
                             size: 6,
                             color: dotColor,
+                            bounceTrigger: guideline.bounceTrigger.value,
                             label: guideline.bannerDescription,
                             isDescriptionHidden:
                                 guideline.isDescriptionHidden.value,

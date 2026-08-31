@@ -46,7 +46,7 @@ class ProfileSettingsTile extends StatelessWidget {
                   child: CcIconToken(icon, size: 22),
                 ),
                 if (badge != null)
-                  Positioned(top: -6, right: -6, child: badge!),
+                  Positioned(bottom: -6, right: -6, child: badge!),
               ],
             ),
             const CcSpaceLG(),

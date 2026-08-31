@@ -79,12 +79,12 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
                       guideline.isTaskActive('wallet_balance') &&
                       !controller.isEditMode.value;
                   return Positioned(
-                    top: -10,
+                    bottom: -10,
                     right: -10,
                     child: CcGuidelineBadge(
                       showing: showing,
                       color: guideline.currentColor,
-                      bounceTrigger: guideline.bounceTrigger,
+                      bounceTrigger: guideline.bounceTrigger.value,
                       size: 10,
                       label: guideline.bannerDescription,
                       isDescriptionHidden: guideline.isDescriptionHidden.value,

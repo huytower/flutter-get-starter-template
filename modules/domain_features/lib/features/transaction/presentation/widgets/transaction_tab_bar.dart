@@ -240,7 +240,7 @@ class TransactionTabBar extends StatelessWidget {
               ),
             ),
             if (kind == TransactionTabKind.investment && showInvestmentBadge)
-              _buildBadge(context),
+              _buildBadge(context, showLabel: false),
             if ((kind == TransactionTabKind.liability ||
                     kind == TransactionTabKind.lend) &&
                 showLiabilityBadge)
@@ -251,14 +251,17 @@ class TransactionTabBar extends StatelessWidget {
     );
   }
 
-  Widget _buildBadge(BuildContext context) {
+  Widget _buildBadge(BuildContext context, {bool showLabel = true}) {
     final guideline = Get.find<GuidelineController>();
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: CcGuidelineBadge(
         size: 6,
         color: guideline.currentColor,
-        label: guideline.bannerDescription,
+        bounceTrigger: guideline.bounceTrigger.value,
+        label: showLabel ? guideline.bannerDescription : null,
+        isDescriptionHidden: guideline.isDescriptionHidden.value,
+        growRight: true,
       ),
     );
   }
