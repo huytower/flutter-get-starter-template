@@ -2,8 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../guideline/guideline_controller.dart';
@@ -35,6 +34,7 @@ class LiquidWalletsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
     final dotColor = badgeColor ?? scheme.primary;
+    final guideline = Get.find<GuidelineController>();
 
     return CcPadding(
       Column(
@@ -64,13 +64,16 @@ class LiquidWalletsSection extends StatelessWidget {
                     ),
                     if (showGuidelineBadge)
                       Positioned(
-                        right: -2,
-                        top: -2,
-                        child: CcGuidelineBadge(
-                          size: 6,
-                          color: dotColor,
-                          label:
-                              Get.find<GuidelineController>().bannerDescription,
+                        right: -10,
+                        top: -10,
+                        child: Obx(
+                          () => CcGuidelineBadge(
+                            size: 6,
+                            color: dotColor,
+                            label: guideline.bannerDescription,
+                            isDescriptionHidden:
+                                guideline.isDescriptionHidden.value,
+                          ),
                         ),
                       ),
                   ],

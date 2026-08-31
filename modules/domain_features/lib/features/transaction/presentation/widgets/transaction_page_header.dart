@@ -114,19 +114,46 @@ class TransactionPageHeader extends StatelessWidget {
     }
 
     // Otherwise show the guideline banner
-    return CcListBannerSmall(
-      title: guideline.bannerTitle,
-      description: guideline.bannerDescription,
-      accentColor: accentColor,
-      onTap: () {
-        // Trigger bounce animation on the tab bar badge
-        guideline.triggerBounce();
+    return GestureDetector(
+      onHorizontalDragEnd: (details) {
+        // Detect left-to-right swipe (positive velocity)
+        if (details.primaryVelocity != null && details.primaryVelocity! > 300) {
+          guideline.isDescriptionHidden.value = true;
+        }
+        // Optional: Right-to-left to show it back
+        if (details.primaryVelocity != null &&
+            details.primaryVelocity! < -300) {
+          guideline.isDescriptionHidden.value = false;
+        }
       },
-      icon: CcClipboardChecklistIcon(
-        size: context.respDim(40) * 0.8,
-        bodyColor: context.ccColorScheme.onPrimary.withValues(alpha: 0.85),
-        clipColor: context.ccColorScheme.onPrimary,
-        markColor: accentColor,
+      child: Obx(
+        () => guideline.isDescriptionHidden.value
+            ? Align(
+                alignment: Alignment.centerLeft,
+                child: CcGuidelineBadge(
+                  size: 10,
+                  color: accentColor,
+                  bounceTrigger: guideline.bounceTrigger,
+                  onTap: () => guideline.isDescriptionHidden.value = false,
+                ),
+              )
+            : CcListBannerSmall(
+                title: guideline.bannerTitle,
+                description: guideline.bannerDescription,
+                accentColor: accentColor,
+                onTap: () {
+                  // Trigger bounce animation on the tab bar badge
+                  guideline.triggerBounce();
+                },
+                icon: CcClipboardChecklistIcon(
+                  size: context.respDim(40) * 0.8,
+                  bodyColor: context.ccColorScheme.onPrimary.withValues(
+                    alpha: 0.85,
+                  ),
+                  clipColor: context.ccColorScheme.onPrimary,
+                  markColor: accentColor,
+                ),
+              ),
       ),
     );
   }

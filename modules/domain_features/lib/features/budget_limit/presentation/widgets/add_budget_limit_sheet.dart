@@ -197,12 +197,17 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
                     ),
                     if (guideline.isTaskActive('min_living'))
                       Positioned(
-                        top: -6,
-                        right: -6,
-                        child: CcGuidelineBadge(
-                          size: 4,
-                          color: guideline.currentColor,
-                          bounceTrigger: guideline.bounceTrigger,
+                        bottom: -10,
+                        right: -10,
+                        child: Obx(
+                          () => CcGuidelineBadge(
+                            size: 4,
+                            color: guideline.currentColor,
+                            bounceTrigger: guideline.bounceTrigger,
+                            label: guideline.isDescriptionHidden.value
+                                ? null
+                                : guideline.bannerDescription,
+                          ),
                         ),
                       ),
                   ],

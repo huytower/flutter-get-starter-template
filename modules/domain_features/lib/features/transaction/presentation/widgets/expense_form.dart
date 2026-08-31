@@ -196,6 +196,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 ? CcGuidelineBadge(
                     size: 8,
                     label: guideline.bannerDescription,
+                    isDescriptionHidden: guideline.isDescriptionHidden.value,
                     color: guideline.currentColor,
                     bounceTrigger: guideline.bounceTrigger,
                   )

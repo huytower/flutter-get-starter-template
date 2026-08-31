@@ -142,13 +142,15 @@ class LiquidWalletListItem extends StatelessWidget {
                     guideline.isTaskActive('wallet_balance') &&
                     wallet.type == WalletType.cash;
                 return Positioned(
-                  top: -4,
-                  right: -4,
+                  top: -10,
+                  right: -10,
                   child: CcGuidelineBadge(
                     showing: showing,
                     color: guideline.currentColor,
                     bounceTrigger: guideline.bounceTrigger,
                     size: 8,
+                    label: guideline.bannerDescription,
+                    isDescriptionHidden: guideline.isDescriptionHidden.value,
                   ),
                 );
               }),

@@ -46,6 +46,10 @@ class GuidelineController extends GetxController {
   /// Trigger for the bounce animation on the tab bar.
   final RxInt bounceTrigger = 0.obs;
 
+  /// Whether the descriptive text labels on guideline badges/banners are hidden.
+  /// Users can swipe to hide them and focus on the UI.
+  final RxBool isDescriptionHidden = false.obs;
+
   /// True once the user has created their first investment position.
   /// Controls where the investment guideline badge points:
   /// - false -> Budget Allocation tab + Add Investment button

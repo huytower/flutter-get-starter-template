@@ -252,13 +252,13 @@ class TransactionTabBar extends StatelessWidget {
   }
 
   Widget _buildBadge(BuildContext context) {
+    final guideline = Get.find<GuidelineController>();
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: CcGuidelineBadge(
         size: 6,
-        color: Get.isRegistered<GuidelineController>()
-            ? Get.find<GuidelineController>().currentColor
-            : context.ccColorScheme.primary,
+        color: guideline.currentColor,
+        label: guideline.bannerDescription,
       ),
     );
   }

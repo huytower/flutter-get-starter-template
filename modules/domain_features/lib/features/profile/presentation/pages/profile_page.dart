@@ -115,6 +115,9 @@ class ProfilePage extends CcGetView<ProfileController> {
                   color: color,
                   bounceTrigger: guideline.bounceTrigger,
                   label: guideline.bannerDescription,
+                  isDescriptionHidden: guideline.isDescriptionHidden.value,
+                  onLabelTap: () => guideline.isDescriptionHidden.value = true,
+                  growRight: true,
                 )
               : null,
         ),
@@ -134,6 +137,9 @@ class ProfilePage extends CcGetView<ProfileController> {
                   color: color,
                   bounceTrigger: guideline.bounceTrigger,
                   label: guideline.bannerDescription,
+                  isDescriptionHidden: guideline.isDescriptionHidden.value,
+                  onLabelTap: () => guideline.isDescriptionHidden.value = true,
+                  growRight: true,
                 )
               : null,
         ),

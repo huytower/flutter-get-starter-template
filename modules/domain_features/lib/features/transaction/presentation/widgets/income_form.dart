@@ -157,6 +157,8 @@ class IncomeForm extends StatelessWidget {
                     size: 8,
                     color: guideline.currentColor,
                     bounceTrigger: guideline.bounceTrigger,
+                    label: guideline.bannerDescription,
+                    isDescriptionHidden: guideline.isDescriptionHidden.value,
                   )
                 : null,
           ),

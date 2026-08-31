@@ -78,19 +78,18 @@ class _NavigationBarState extends State<NavigationBar>
   @override
   List<CcCurvedNavigationItem> get navigationItems {
     final guideline = Get.find<GuidelineController>();
-    final activeTabIndex = guideline.activeTabIndex;
-    final color = guideline.currentColor;
 
     return [
       CcCurvedNavigationItem(
         inactiveIcon: Icons.pie_chart_outline,
         activeIcon: Icons.pie_chart,
         label: el.tr(CcLocaleKeys.nav_budget_allocation),
-        badgeWidget: activeTabIndex == 0
+        badgeWidget: guideline.activeTabIndex == 0
             ? CcGuidelineBadge(
                 size: 8,
-                color: color,
+                color: guideline.currentColor,
                 bounceTrigger: guideline.bounceTrigger,
+                forceHideLabel: true,
               )
             : null,
       ),
@@ -99,11 +98,12 @@ class _NavigationBarState extends State<NavigationBar>
         inactiveIcon: Icons.add,
         activeIcon: Icons.add,
         label: el.tr(CcLocaleKeys.nav_transaction),
-        badgeWidget: activeTabIndex == 1
+        badgeWidget: guideline.activeTabIndex == 1
             ? CcGuidelineBadge(
                 size: 8,
-                color: color,
+                color: guideline.currentColor,
                 bounceTrigger: guideline.bounceTrigger,
+                forceHideLabel: true,
               )
             : null,
       ),
@@ -111,11 +111,12 @@ class _NavigationBarState extends State<NavigationBar>
         inactiveIcon: Icons.person_outline_rounded,
         activeIcon: Icons.person_rounded,
         label: el.tr(CcLocaleKeys.nav_profile),
-        badgeWidget: activeTabIndex == 2
+        badgeWidget: guideline.activeTabIndex == 2
             ? CcGuidelineBadge(
                 size: 8,
-                color: color,
+                color: guideline.currentColor,
                 bounceTrigger: guideline.bounceTrigger,
+                forceHideLabel: true,
               )
             : null,
       ),

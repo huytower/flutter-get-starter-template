@@ -79,13 +79,15 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
                       guideline.isTaskActive('wallet_balance') &&
                       !controller.isEditMode.value;
                   return Positioned(
-                    top: 0,
-                    right: 0,
+                    top: -10,
+                    right: -10,
                     child: CcGuidelineBadge(
                       showing: showing,
                       color: guideline.currentColor,
                       bounceTrigger: guideline.bounceTrigger,
                       size: 10,
+                      label: guideline.bannerDescription,
+                      isDescriptionHidden: guideline.isDescriptionHidden.value,
                     ),
                   );
                 }),
@@ -111,9 +113,7 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
     }
     final isEdit = controller.isEditMode.value;
     return ListView(
-      padding: EdgeInsets.all(
-        context.respPadding(CcPaddingParams.SPACE_MD),
-      ),
+      padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
       children: liquidWallets
           .map(
             (wallet) => LiquidWalletListItem(

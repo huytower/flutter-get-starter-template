@@ -170,13 +170,16 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                 guideline.isTaskActive('wallet_balance') && controller.isCash;
             return Positioned(
               top: -10,
-              right: 0,
-              child: CcGuidelineBadge(
-                showing: showing,
-                label: guideline.bannerDescription,
-                color: guideline.currentColor,
-                bounceTrigger: guideline.bounceTrigger,
-                size: 10,
+              right: -10,
+              child: Obx(
+                () => CcGuidelineBadge(
+                  showing: showing,
+                  label: guideline.bannerDescription,
+                  isDescriptionHidden: guideline.isDescriptionHidden.value,
+                  color: guideline.currentColor,
+                  bounceTrigger: guideline.bounceTrigger,
+                  size: 10,
+                ),
               ),
             );
           }),

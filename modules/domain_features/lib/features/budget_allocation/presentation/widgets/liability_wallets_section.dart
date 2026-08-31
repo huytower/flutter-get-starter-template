@@ -87,6 +87,8 @@ class LiabilityWalletsSection extends StatelessWidget {
   ) {
     final scheme = context.ccColorScheme;
     final dotColor = badgeColor ?? scheme.primary;
+    final guideline = Get.find<GuidelineController>();
+
     return CcPadding(
       CcSectionHeader(
         title: el.tr(CcLocaleKeys.liability_list_title),
@@ -100,12 +102,16 @@ class LiabilityWalletsSection extends StatelessWidget {
                 const CcIconToken(Icons.add_circle_outline_rounded, size: 20),
                 if (showGuidelineBadge)
                   Positioned(
-                    right: -2,
-                    top: -2,
-                    child: CcGuidelineBadge(
-                      size: 6,
-                      color: dotColor,
-                      label: Get.find<GuidelineController>().bannerDescription,
+                    right: -10,
+                    top: -10,
+                    child: Obx(
+                      () => CcGuidelineBadge(
+                        size: 6,
+                        color: dotColor,
+                        label: guideline.bannerDescription,
+                        isDescriptionHidden:
+                            guideline.isDescriptionHidden.value,
+                      ),
                     ),
                   ),
               ],

@@ -80,7 +80,7 @@ class TransactionSubmitButton extends StatelessWidget {
                     : _buildLabel(context, scheme.onPrimary, baseStyle),
               ),
             ),
-            if (badge != null) Positioned(top: -6, right: -6, child: badge!),
+            if (badge != null) Positioned(top: -10, right: -10, child: badge!),
           ],
         ),
       ),
