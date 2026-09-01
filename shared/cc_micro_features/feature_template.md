@@ -19,10 +19,7 @@ features/
     └── {feature_name}/           # Lowercase with underscores
         ├── data/
         │   ├── datasources/      # Data sources (API, local storage, etc.)
-        │   └── repositories/     # Repository implementations
-        │
-        ├── di/                   # Dependency injection setup
-        │   └── {feature_name}_module.dart
+        │   └── repositories/     # Repository implementations — annotated in place, no per-feature di/ folder
         │
         ├── domain/
         │   ├── entities/         # Business objects
@@ -41,7 +38,7 @@ features/
 #### `data/datasources/{feature_name}_datasource.dart`
 
 ```dart
-import 'package:features/counter_export.dart';
+import '../../domain/entities/feature_name_entity.dart';
 
 abstract class FeatureNameDatasource {
   Future<FeatureNameEntity> getData();
@@ -51,20 +48,9 @@ abstract class FeatureNameDatasource {
 
 #### `data/repositories/{feature_name}_repository_impl.dart`
 
-```dart
-import 'package:features/counter_export.dart';
-
-class FeatureNameRepositoryImpl implements FeatureNameRepository {
-  final FeatureNameDatasource datasource;
-
-  FeatureNameRepositoryImpl(this.datasource);
-
-  @override
-  Future<FeatureNameEntity> getData() async {
-    return await datasource.getData();
-  }
-}
-```
+See [Section 4 (Dependency Injection)](#4-dependency-injection) below for the full, DI-annotated version of
+this file — the repository implementation and its `@LazySingleton` annotation are written together, not added
+as a separate step.
 
 ### 2. Domain Layer
 
@@ -154,34 +140,36 @@ class FeatureNameWidget extends StatelessWidget {
 
 ### 4. Dependency Injection
 
-**CRITICAL**: Always use `@lazySingleton` for DataSources and Repositories to ensure the App Shell's **Turbo Boot** remains under 2 seconds.
+**CRITICAL**: There is no per-feature DI module file. DI is registered **per package**, once, at
+`lib/core/di/di.dart` (e.g. `modules/domain_features/lib/core/di/di.dart`,
+`shared/cc_micro_features/lib/core/di/di.dart`), via a single `@InjectableInit.microPackage()`-annotated
+`initMicroPackage()` function. That function scans the whole package for `@injectable`/`@lazySingleton`
+annotations — you do NOT write a `@module abstract class` per feature.
 
-#### `di/feature_name_module.dart`
+Instead, annotate each class directly where it's defined:
+
+#### `data/repositories/feature_name_repository_impl.dart`
 
 ```dart
-import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../common/di/di.dart';
-import '../data/datasources/feature_name_datasource.dart';
-import '../data/repositories/feature_name_repository_impl.dart';
-import '../domain/repositories/feature_name_repository.dart';
-import '../domain/usecases/feature_name_usecase.dart';
+import '../../domain/repositories/feature_name_repository.dart';
+import '../datasources/feature_name_datasource.dart';
 
-@module
-abstract class FeatureNameModule {
-  @lazySingleton
-  FeatureNameDatasource get dataSource => FeatureNameDatasourceImpl();
+@LazySingleton(as: FeatureNameRepository) // Always @lazySingleton (never eager @singleton) — Turbo Boot < 2s
+class FeatureNameRepositoryImpl implements FeatureNameRepository {
+  FeatureNameRepositoryImpl(this._datasource);
 
-  @lazySingleton
-  FeatureNameRepository get repository =>
-      FeatureNameRepositoryImpl(getIt<FeatureNameDatasource>());
+  final FeatureNameDatasource _datasource;
 
-  @lazySingleton // Use lazySingleton for UseCases too if they hold heavy state
-  FeatureNameUseCase get useCase =>
-      FeatureNameUseCase(getIt<FeatureNameRepository>());
+  @override
+  Future<FeatureNameEntity> getData() => _datasource.getData();
 }
 ```
+
+Then run `melos run gen` (or `dart run build_runner build --delete-conflicting-outputs` from the package
+root) to regenerate `di.module.dart` — the package's existing `core/di/di.dart` file does not change per
+feature, only the generated output does.
 
 ## Integration
 
@@ -193,24 +181,21 @@ For **Micro-Features** (`cc_micro_features`): Add your feature exports to `lib/e
 library micro_features;
 
 // Feature exports
-export 'features/counter/presentation/pages/counter_page.dart';
+export 'features/auth/export_auth.dart';
 export 'features/{feature_name}/presentation/pages/{feature_name}_page.dart'; // Add this line
 ```
 
-For **Domain Features** (`modules/domain_features`): Add to `lib/export_features.dart`.
+For **Domain Features** (`modules/domain_features`): Add to `lib/export_domain_features.dart`.
 
 ### 2. Register Dependencies
 
-Micro-Features with their own DI use `@InjectableInit.microPackage()`:
+Nothing to do here per feature — the package's existing `lib/core/di/di.dart` (one file, package-wide) already
+scans all `@lazySingleton`/`@injectable`-annotated classes via `@InjectableInit.microPackage()`. Just run
+`melos run gen` after adding your annotated classes so `di.module.dart` picks them up. See [Section 4](#4-dependency-injection)
+above for the exact annotation to use.
 
-```dart
-@injectableInit.microPackage()
-Future<void> initMicroPackage() async {
-  getIt.init();
-}
-```
-
-The main App Shell consolidates all modules in `lib/core/di/di.dart`.
+The main App Shell consolidates all packages' DI in `lib/core/di/di.dart` via `@InjectableInit` with
+`externalPackageModulesBefore` — you don't need to touch this file when adding a feature.
 
 ## Best Practices
 
@@ -236,17 +221,20 @@ The main App Shell consolidates all modules in `lib/core/di/di.dart`.
 
 ## Example: Creating a New Feature
 
-1. Copy the counter feature as a template
-2. Rename files and classes to match your feature name
-3. Implement the data layer (datasources, repositories)
-4. Define domain entities and use cases
-5. Build the UI in the presentation layer
-6. Set up dependency injection
-7. Add feature exports to `export_features.dart`
-8. Register dependencies in `di.dart`
+1. Study the `wallet` feature (`modules/domain_features/lib/features/wallet/`) as the up-to-date reference —
+   it follows every convention in this document and in `AGENTS.md`. Do not copy structure from
+   `modules/domain_features/lib/features/examples/` — that folder is tutorial/demo scaffolding, not a pattern
+   to replicate.
+2. Create the new feature folder and rename files/classes to match.
+3. Implement the data layer (datasources, repositories), annotating repositories `@LazySingleton(as: ...)` in place.
+4. Define domain entities, repository interfaces, and use cases.
+5. Build the UI in the presentation layer, following the design-system and responsiveness rules in `AGENTS.md`.
+6. Run `melos run gen` to regenerate DI.
+7. Add feature exports to `export_micro_features.dart` / `export_domain_features.dart`.
+8. Run `melos run analyze`.
 
 ## See Also
 
-- [Counter Micro-Feature Example](cc_micro_features/lib/features/counter)
-- [AI Context Architecture Documentation](docs/AI_CONTEXT.md)
-- [Project Clean Architecture Guidelines](docs/CONTRIBUTING.md)
+- [Wallet Feature Example](../../modules/domain_features/lib/features/wallet)
+- [AGENTS.md — canonical AI/contributor rulebook](../../AGENTS.md)
+- [Project Clean Architecture Guidelines](../../docs/CONTRIBUTING.md)
