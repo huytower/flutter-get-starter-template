@@ -88,6 +88,9 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
                       size: 10,
                       label: guideline.bannerDescription,
                       isDescriptionHidden: guideline.isDescriptionHidden.value,
+                      onLabelTap: () =>
+                          guideline.isDescriptionHidden.value = true,
+                      growRight: false,
                     ),
                   );
                 }),

@@ -151,6 +151,8 @@ class LiquidWalletListItem extends StatelessWidget {
                     size: 8,
                     label: guideline.bannerDescription,
                     isDescriptionHidden: guideline.isDescriptionHidden.value,
+                    onLabelTap: () =>
+                        guideline.isDescriptionHidden.value = true,
                   ),
                 );
               }),

@@ -197,6 +197,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
                     size: 8,
                     label: guideline.bannerDescription,
                     isDescriptionHidden: guideline.isDescriptionHidden.value,
+                    onLabelTap: () =>
+                        guideline.isDescriptionHidden.value = true,
                     color: guideline.currentColor,
                     bounceTrigger: guideline.bounceTrigger.value,
                   )

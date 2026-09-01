@@ -28,6 +28,7 @@ class GuidelineController extends GetxController {
     'first_transaction', // Transaction -> ExpenseForm
     'investment', // Budget Allocation -> Add Investment + Transaction -> Investment tab
     'liability', // Budget Allocation -> Add Liability + Transaction -> Debt/Loan tab
+    'lend', // Transaction -> Lend tab
   ];
 
   final Map<String, Color> taskColors = {
@@ -39,6 +40,7 @@ class GuidelineController extends GetxController {
     'first_transaction': Colors.pink,
     'investment': Colors.green,
     'liability': Colors.deepPurple,
+    'lend': Colors.teal,
   };
 
   final RxList<String> completedTasks = <String>[].obs;
@@ -46,9 +48,13 @@ class GuidelineController extends GetxController {
   /// Trigger for the bounce animation on the tab bar.
   final RxInt bounceTrigger = 0.obs;
 
-  /// Whether the descriptive text labels on guideline badges/banners are hidden.
-  /// Users can swipe to hide them and focus on the UI.
+  /// Whether the descriptive text labels on guideline badges are hidden.
+  /// Users can tap a bubble to hide all of them.
   final RxBool isDescriptionHidden = false.obs;
+
+  /// Whether the large guideline banner in the page header is hidden.
+  /// Users can swipe to hide it.
+  final RxBool isBannerHidden = false.obs;
 
   /// True once the user has created their first investment position.
   /// Controls where the investment guideline badge points:
@@ -167,6 +173,9 @@ class GuidelineController extends GetxController {
     if (activeId == 'liability') {
       return hasCreatedFirstLiability.value ? 1 : 0;
     }
+    if (activeId == 'lend') {
+      return 1; // Transaction tab -> Lend subtab
+    }
     return -1;
   }
 
@@ -248,6 +257,8 @@ class GuidelineController extends GetxController {
         return el.tr(CcLocaleKeys.guideline_banner_desc_investment);
       case 'liability':
         return el.tr(CcLocaleKeys.guideline_banner_desc_liability);
+      case 'lend':
+        return el.tr(CcLocaleKeys.guideline_banner_desc_lend);
       default:
         return el.tr(CcLocaleKeys.guideline_banner_desc_default);
     }

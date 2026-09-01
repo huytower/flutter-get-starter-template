@@ -176,6 +176,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                   showing: showing,
                   label: guideline.bannerDescription,
                   isDescriptionHidden: guideline.isDescriptionHidden.value,
+                  onLabelTap: () => guideline.isDescriptionHidden.value = true,
                   color: guideline.currentColor,
                   bounceTrigger: guideline.bounceTrigger.value,
                   size: 10,

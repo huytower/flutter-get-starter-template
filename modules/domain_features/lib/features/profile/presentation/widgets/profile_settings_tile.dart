@@ -34,20 +34,13 @@ class ProfileSettingsTile extends StatelessWidget {
         vertical: CcPaddingParams.SPACE_LG,
         child: Row(
           children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(context.respDim(10)),
-                  decoration: BoxDecoration(
-                    color: scheme.primary.withOpacity(0.08),
-                    borderRadius: context.brMd,
-                  ),
-                  child: CcIconToken(icon, size: 22),
-                ),
-                if (badge != null)
-                  Positioned(bottom: -6, right: -6, child: badge!),
-              ],
+            Container(
+              padding: EdgeInsets.all(context.respDim(10)),
+              decoration: BoxDecoration(
+                color: scheme.primary.withOpacity(0.08),
+                borderRadius: context.brMd,
+              ),
+              child: CcIconToken(icon, size: 22),
             ),
             const CcSpaceLG(),
             Expanded(
@@ -75,26 +68,38 @@ class ProfileSettingsTile extends StatelessWidget {
                 ],
               ),
             ),
-            if (trailingWidget != null)
-              trailingWidget!
-            else ...[
-              if (trailingLabel != null) ...[
-                const CcSpaceXS(),
-                CcText(
-                  trailingLabel!,
-                  textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
-                  ),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (trailingWidget != null)
+                      trailingWidget!
+                    else ...[
+                      if (trailingLabel != null) ...[
+                        const CcSpaceXS(),
+                        CcText(
+                          trailingLabel!,
+                          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                      if (showChevron)
+                        Icon(
+                          Icons.chevron_right_rounded,
+                          size: context.respIconSize(baseSize: 20),
+                          color: scheme.outline.withAlpha(50),
+                        ),
+                    ],
+                  ],
                 ),
+                if (badge != null)
+                  Positioned(bottom: -10, right: -10, child: badge!),
               ],
-              if (showChevron)
-                Icon(
-                  Icons.chevron_right_rounded,
-                  size: context.respIconSize(baseSize: 20),
-                  color: scheme.outline.withAlpha(50),
-                ),
-            ],
+            ),
           ],
         ),
       ),

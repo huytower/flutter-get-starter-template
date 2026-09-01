@@ -47,7 +47,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                         if (guideline.isTaskActive('budget_limit') ||
                             guideline.isTaskActive('min_living'))
                           Positioned(
-                            top: -10,
+                            bottom: -10,
                             right: -10,
                             child: Obx(
                               () => CcGuidelineBadge(
@@ -57,6 +57,8 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                                 label: guideline.bannerDescription,
                                 isDescriptionHidden:
                                     guideline.isDescriptionHidden.value,
+                                onLabelTap: () =>
+                                    guideline.isDescriptionHidden.value = true,
                               ),
                             ),
                           ),

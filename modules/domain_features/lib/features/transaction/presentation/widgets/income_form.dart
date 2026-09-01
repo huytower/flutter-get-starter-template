@@ -159,6 +159,8 @@ class IncomeForm extends StatelessWidget {
                     bounceTrigger: guideline.bounceTrigger.value,
                     label: guideline.bannerDescription,
                     isDescriptionHidden: guideline.isDescriptionHidden.value,
+                    onLabelTap: () =>
+                        guideline.isDescriptionHidden.value = true,
                   )
                 : null,
           ),

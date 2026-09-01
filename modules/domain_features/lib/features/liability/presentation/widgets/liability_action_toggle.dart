@@ -1,7 +1,9 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../../guideline/guideline_controller.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../get_x/liability_base_form_controller.dart';
 
@@ -101,10 +103,46 @@ class _LiabilityActionToggleState extends State<LiabilityActionToggle>
         ),
         labelPadding: EdgeInsets.zero,
         tabs: [
-          Tab(text: firstLabel),
-          Tab(text: secondLabel),
+          _buildTab(context, firstLabel, 0),
+          _buildTab(context, secondLabel, 1),
         ],
       ),
+    );
+  }
+
+  Widget _buildTab(BuildContext context, String text, int index) {
+    final guideline = Get.find<GuidelineController>();
+
+    return Tab(
+      child: Obx(() {
+        final bool isLiabilityTask = guideline.isTaskActive('liability');
+        final bool isLendTask = guideline.isTaskActive('lend');
+
+        final bool showBadgeWithLabel =
+            (isLiabilityTask || isLendTask) && index == 0;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            Text(text),
+            if (showBadgeWithLabel)
+              Positioned(
+                bottom: -8,
+                right: -28,
+                child: CcGuidelineBadge(
+                  size: 6,
+                  color: guideline.currentColor,
+                  bounceTrigger: guideline.bounceTrigger.value,
+                  label: guideline.bannerDescription,
+                  isDescriptionHidden: guideline.isDescriptionHidden.value,
+                  onLabelTap: () => guideline.isDescriptionHidden.value = true,
+                  labelAbove: false,
+                ),
+              ),
+          ],
+        );
+      }),
     );
   }
 }

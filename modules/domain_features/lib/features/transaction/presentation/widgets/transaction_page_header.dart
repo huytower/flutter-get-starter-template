@@ -109,17 +109,20 @@ class TransactionPageHeader extends StatelessWidget {
     final activeTabIndex = controller.selectedTabIndex.value;
     final activeTab = tabs[activeTabIndex.clamp(0, tabs.length - 1)];
 
-    // Only display banner description for Investment/Liability when on those tabs
+    // Only display banner description for Investment/Liability/Lend when on those tabs
     final bool isInvestmentTask = activeId == 'investment';
     final bool isLiabilityTask = activeId == 'liability';
-    final bool isSpecificTask = isInvestmentTask || isLiabilityTask;
+    final bool isLendTask = activeId == 'lend';
+    final bool isSpecificTask =
+        isInvestmentTask || isLiabilityTask || isLendTask;
 
-    // For Investment, only show when on Investment tab
-    final bool isInvestmentActive = activeTab == TransactionTabKind.investment;
+    // For these specific tasks, only show when on their respective tab
+    final bool isCorrectTab =
+        (isInvestmentTask && activeTab == TransactionTabKind.investment) ||
+        (isLiabilityTask && activeTab == TransactionTabKind.liability) ||
+        (isLendTask && activeTab == TransactionTabKind.lend);
 
-    final bool shouldHideDescription =
-        (isInvestmentTask && !isInvestmentActive) ||
-        (isLiabilityTask && activeTab == TransactionTabKind.expense);
+    final bool shouldHideDescription = isSpecificTask && !isCorrectTab;
 
     if (isGuidelineComplete) {
       return _buildAiComponents(context, activeTab);
@@ -131,28 +134,22 @@ class TransactionPageHeader extends StatelessWidget {
       onHorizontalDragEnd: (details) {
         // Detect left-to-right swipe (positive velocity)
         if (details.primaryVelocity != null && details.primaryVelocity! > 300) {
-          guideline.isDescriptionHidden.value = true;
+          guideline.isBannerHidden.value = true;
         }
         // Optional: Right-to-left to show it back
         if (details.primaryVelocity != null &&
             details.primaryVelocity! < -300) {
-          guideline.isDescriptionHidden.value = false;
+          guideline.isBannerHidden.value = false;
         }
       },
       child: Obx(
-        () => guideline.isDescriptionHidden.value || shouldHideDescription
-            ? Align(
-                alignment: Alignment.centerLeft,
-                child: CcGuidelineBadge(
-                  size: 10,
-                  color: accentColor,
-                  bounceTrigger: guideline.bounceTrigger.value,
-                  onTap: () => guideline.isDescriptionHidden.value = false,
-                ),
-              )
+        () => guideline.isBannerHidden.value || shouldHideDescription
+            ? const SizedBox.shrink()
             : CcListBannerSmall(
                 title: guideline.bannerTitle,
-                description: guideline.bannerDescription,
+                description: shouldHideDescription
+                    ? null
+                    : guideline.bannerDescription,
                 accentColor: accentColor,
                 onTap: () {
                   // Trigger bounce animation on the tab bar badge

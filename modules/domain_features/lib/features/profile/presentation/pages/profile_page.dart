@@ -117,7 +117,7 @@ class ProfilePage extends CcGetView<ProfileController> {
                   label: guideline.bannerDescription,
                   isDescriptionHidden: guideline.isDescriptionHidden.value,
                   onLabelTap: () => guideline.isDescriptionHidden.value = true,
-                  growRight: true,
+                  growRight: false,
                   labelAbove: true,
                 )
               : null,
@@ -140,7 +140,7 @@ class ProfilePage extends CcGetView<ProfileController> {
                   label: guideline.bannerDescription,
                   isDescriptionHidden: guideline.isDescriptionHidden.value,
                   onLabelTap: () => guideline.isDescriptionHidden.value = true,
-                  growRight: true,
+                  growRight: false,
                   labelAbove: true,
                 )
               : null,

@@ -74,6 +74,8 @@ class LiquidWalletsSection extends StatelessWidget {
                             label: guideline.bannerDescription,
                             isDescriptionHidden:
                                 guideline.isDescriptionHidden.value,
+                            onLabelTap: () =>
+                                guideline.isDescriptionHidden.value = true,
                           ),
                         ),
                       ),

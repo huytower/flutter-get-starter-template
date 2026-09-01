@@ -130,15 +130,17 @@ class _InvestmentDirectionToggleState extends State<InvestmentDirectionToggle>
             Text(text),
             if (showBadgeWithLabel)
               Positioned(
-                bottom: -8,
-                right: -28,
+                bottom: -10,
+                right: -24,
                 child: CcGuidelineBadge(
                   size: 6,
                   color: guideline.currentColor,
                   bounceTrigger: guideline.bounceTrigger.value,
                   label: guideline.bannerDescription,
                   isDescriptionHidden: guideline.isDescriptionHidden.value,
+                  onLabelTap: () => guideline.isDescriptionHidden.value = true,
                   labelAbove: false,
+                  growRight: true,
                 ),
               ),
           ],

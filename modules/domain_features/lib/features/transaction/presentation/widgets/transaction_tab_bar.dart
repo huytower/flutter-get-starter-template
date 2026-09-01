@@ -240,7 +240,7 @@ class TransactionTabBar extends StatelessWidget {
               ),
             ),
             if (kind == TransactionTabKind.investment && showInvestmentBadge)
-              _buildBadge(context, showLabel: false),
+              _buildBadge(context),
             if ((kind == TransactionTabKind.liability ||
                     kind == TransactionTabKind.lend) &&
                 showLiabilityBadge)
@@ -251,7 +251,7 @@ class TransactionTabBar extends StatelessWidget {
     );
   }
 
-  Widget _buildBadge(BuildContext context, {bool showLabel = true}) {
+  Widget _buildBadge(BuildContext context) {
     final guideline = Get.find<GuidelineController>();
     return Padding(
       padding: const EdgeInsets.only(left: 4),
@@ -259,26 +259,58 @@ class TransactionTabBar extends StatelessWidget {
         size: 6,
         color: guideline.currentColor,
         bounceTrigger: guideline.bounceTrigger.value,
-        label: showLabel ? guideline.bannerDescription : null,
-        isDescriptionHidden: guideline.isDescriptionHidden.value,
-        growRight: true,
+        label: null,
       ),
     );
   }
 
   Widget _buildToggleAction(BuildContext context, ColorScheme scheme) {
-    return CcIconButton.bouncing(
-      onTap: () {
-        controller.toggleCardStack();
-        tabController.animateTo(controller.selectedTabIndex.value);
-      },
-      icon: Icon(
-        controller.isSecondaryCardFront.value
-            ? Icons.keyboard_double_arrow_left_rounded
-            : Icons.keyboard_double_arrow_right_rounded,
-        size: context.respIconSize(baseSize: 16),
-        color: scheme.onSurfaceVariant.withOpacity(0.4),
-      ),
+    final guideline = Get.find<GuidelineController>();
+    final bool isSecondaryFront = controller.isSecondaryCardFront.value;
+    final String? activeTaskId = guideline.currentTaskId;
+
+    // Show badge on reveal icon if there's a task on the back card
+    final bool hasBackCardTask =
+        activeTaskId == 'investment' ||
+        activeTaskId == 'liability' ||
+        activeTaskId == 'lend';
+
+    // Show label on the reveal icon ONLY when the back card is NOT in front
+    // but the dot stays if there's an active task.
+    final bool showLabelOnReveal = !isSecondaryFront && hasBackCardTask;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        CcIconButton.bouncing(
+          onTap: () {
+            controller.toggleCardStack();
+            tabController.animateTo(controller.selectedTabIndex.value);
+          },
+          icon: Icon(
+            isSecondaryFront
+                ? Icons.keyboard_double_arrow_left_rounded
+                : Icons.keyboard_double_arrow_right_rounded,
+            size: context.respIconSize(baseSize: 16),
+            color: scheme.onSurfaceVariant.withOpacity(0.4),
+          ),
+        ),
+        if (hasBackCardTask)
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: CcGuidelineBadge(
+              size: 6,
+              color: guideline.currentColor,
+              bounceTrigger: guideline.bounceTrigger.value,
+              label: showLabelOnReveal ? guideline.bannerDescription : null,
+              isDescriptionHidden: guideline.isDescriptionHidden.value,
+              onLabelTap: () => guideline.isDescriptionHidden.value = true,
+              labelAbove: false,
+              growRight: false,
+            ),
+          ),
+      ],
     );
   }
 }

@@ -103,7 +103,7 @@ class LiabilityWalletsSection extends StatelessWidget {
                 if (showGuidelineBadge)
                   Positioned(
                     right: -10,
-                    top: -10,
+                    bottom: -10,
                     child: Obx(
                       () => CcGuidelineBadge(
                         size: 6,
@@ -112,6 +112,8 @@ class LiabilityWalletsSection extends StatelessWidget {
                         label: guideline.bannerDescription,
                         isDescriptionHidden:
                             guideline.isDescriptionHidden.value,
+                        onLabelTap: () =>
+                            guideline.isDescriptionHidden.value = true,
                       ),
                     ),
                   ),
