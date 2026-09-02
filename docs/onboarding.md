@@ -1,6 +1,8 @@
 # Onboarding Guide
 
 This guide is for new developers joining the project and for anyone who needs a fast path into the repository.
+For AI agents, or for the architecture rulebook itself, start at `/AGENTS.md` instead — this doc is the human
+fast-path and doesn't restate those rules.
 
 ## What this project is
 
@@ -94,14 +96,10 @@ import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 
 ## How to add a new reusable feature
 
-1. Create a new feature folder under `shared/cc_micro_features/lib/features/`.
-2. Add `core/di/di.dart` for feature DI registration. **CRITICAL**: Use `@lazySingleton` for all heavy services to maintain < 2s startup.
-3. Add domain contracts and use cases under `domain/`.
-4. Add data sources and repository implementations under `data/`.
-5. Add UI pages/widgets under `presentation/`.
-6. Export the feature from `shared/cc_micro_features/lib/export_micro_features.dart`.
-7. Update the main app imports to use the feature package export.
-8. Run `flutter pub get` and `flutter analyze`.
+Follow `shared/cc_micro_features/feature_template.md` for the full file-by-file walkthrough (it has the current,
+code-verified DI pattern — annotate classes in place, there's no per-feature DI file). Study
+`modules/domain_features/lib/features/wallet/` as the up-to-date reference structure; don't copy from
+`modules/domain_features/lib/features/examples/`, which is tutorial scaffolding, not a real pattern.
 
 ## How to start working on a bug or task
 
