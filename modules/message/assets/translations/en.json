@@ -657,7 +657,9 @@
                     "level_master":  "Master",
                     "level_intermediate":  "Intermediate",
                     "level_novice":  "Novice",
-                    "progress_steps":  "Progress: {completed}/{total}"
+                    "progress_steps":  "Progress steps",
+                    "reconciliation_streak_title":  "{count} week streak",
+                    "reconciliation_streak_desc":  "Audit day: {day}"
                 },
     "guideline":  {
                       "banner_title_completed":  "Congrats! All setup steps completed",

@@ -2251,6 +2251,10 @@ abstract class CcLocaleKeys {
   static const profile_level_intermediate = 'profile.level_intermediate';
   static const profile_level_novice = 'profile.level_novice';
   static const profile_progress_steps = 'profile.progress_steps';
+  static const profile_reconciliation_streak_title =
+      'profile.reconciliation_streak_title';
+  static const profile_reconciliation_streak_desc =
+      'profile.reconciliation_streak_desc';
 
   static const guideline_banner_title_completed =
       'guideline.banner_title_completed';
