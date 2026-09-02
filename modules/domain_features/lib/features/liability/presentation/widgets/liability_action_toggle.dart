@@ -118,8 +118,9 @@ class _LiabilityActionToggleState extends State<LiabilityActionToggle>
         final bool isLiabilityTask = guideline.isTaskActive('liability');
         final bool isLendTask = guideline.isTaskActive('lend');
 
-        final bool showBadgeWithLabel =
-            (isLiabilityTask || isLendTask) && index == 0;
+        // Only show badge here for 'liability' task.
+        // For 'lend' task, we only show one badge at the top tab bar.
+        final bool showBadgeWithLabel = isLiabilityTask && index == 0;
 
         return Stack(
           clipBehavior: Clip.none,

@@ -297,7 +297,7 @@ class TransactionTabBar extends StatelessWidget {
             color: scheme.onSurfaceVariant.withOpacity(0.4),
           ),
         ),
-        if (hasBackCardTask)
+        if (showBadgeOnReveal)
           Positioned(
             bottom: 0,
             right: 0,

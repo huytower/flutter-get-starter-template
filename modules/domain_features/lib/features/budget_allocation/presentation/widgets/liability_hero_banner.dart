@@ -77,7 +77,7 @@ class LiabilityHeroBanner extends StatelessWidget {
   }) {
     // Premium animation values matching TransactionTabBar pattern
     final double scale = isFront ? 1.0 : 0.94;
-    final double opacity = isFront ? 1.0 : 0.45;
+    final double opacity = isFront ? 1.0 : 0.8;
     final double yOffset = isFront ? 0 : -context.respDim(10);
 
     return AnimatedPositioned(
