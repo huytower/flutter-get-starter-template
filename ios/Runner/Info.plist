@@ -1,121 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-	<dict>
-		<key>CADisableMinimumFrameDurationOnPhone</key>
-		<true/>
-		<key>CFBundleDevelopmentRegion</key>
-		<string>$(DEVELOPMENT_LANGUAGE)</string>
-		<key>CFBundleDisplayName</key>
-		<string>$(BUNDLE_DISPLAY_NAME)</string>
-		<key>CFBundleExecutable</key>
-		<string>$(EXECUTABLE_NAME)</string>
-		<key>CFBundleIdentifier</key>
-		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-		<key>CFBundleInfoDictionaryVersion</key>
-		<string>6.0</string>
-		<key>CFBundleLocalizations</key>
-		<array>
-			<string>en</string>
-			<string>vi</string>
-		</array>
-		<key>CFBundleSpokenName</key>
-		<string>Sổ Sách Xịn</string>
-		<key>CFBundleName</key>
-		<string>$(BUNDLE_NAME)</string>
-		<key>CFBundlePackageType</key>
-		<string>APPL</string>
-		<key>CFBundleGetInfoString</key>
-		<string>Sổ Sách Xịn - Quản Lý Tài Chính cá nhân: Ứng dụng quản lý thu chi, ngân sách và đầu tư thông minh với AI</string>
-		<key>LSApplicationCategoryType</key>
-		<string>public.app-category.finance</string>
-		<key>CFBundleShortVersionString</key>
-		<string>$(MARKETING_VERSION)</string>
-		<key>CFBundleSignature</key>
-		<string>????</string>
-		<key>CFBundleVersion</key>
-		<string>$(CURRENT_PROJECT_VERSION)</string>
-		<key>LSRequiresIPhoneOS</key>
-		<true/>
-		<key>NSFaceIDUsageDescription</key>
-		<string>Sổ Sách Xịn uses Face ID to securely authenticate your account and protect your financial data from unauthorized access.</string>
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Sổ Sách Xịn needs access to your photo library to attach receipt images to your transactions and import expense photos for automatic data entry.</string>
-		<key>NSPhotoLibraryAddUsageDescription</key>
-		<string>Sổ Sách Xịn needs permission to save receipt images and transaction photos to your photo library for your records.</string>
-		<key>NSCameraUsageDescription</key>
-		<string>Sổ Sách Xịn needs camera access to capture receipt images and expense photos for automatic transaction entry and record keeping.</string>
-		<key>NSDocumentsFolderUsageDescription</key>
-		<string>Sổ Sách Xịn needs access to your documents folder to save and export your financial reports and transaction data.</string>
-		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>Sổ Sách Xịn uses your location to detect your country code for phone number formatting and provide smart spending suggestions based on nearby merchants (optional feature).</string>
-		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>Sổ Sách Xịn uses your location to detect your country code for phone number formatting and provide smart spending suggestions based on nearby merchants (optional feature).</string>
-		<key>NSMicrophoneUsageDescription</key>
-		<string>Sổ Sách Xịn uses your microphone to let you speak a quick expense entry like "50k cà phê" instead of typing (optional feature).</string>
-		<key>NSSpeechRecognitionUsageDescription</key>
-		<string>Sổ Sách Xịn uses on-device speech recognition to transcribe your voice into text for quick expense entry (optional feature).</string>
-		<key>UILaunchStoryboardName</key>
-		<string>LaunchScreen</string>
-		<key>UIMainStoryboardFile</key>
-		<string>Main</string>
-		<key>UISupportedInterfaceOrientations</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>UISupportedInterfaceOrientations~ipad</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationPortraitUpsideDown</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>UIBackgroundModes</key>
-		<array>
-			<string>fetch</string>
-			<string>remote-notification</string>
-		</array>
-		<key>UIViewControllerBasedStatusBarAppearance</key>
-		<false/>
-		<key>UIStatusBarHidden</key>
-		<false/>
-		<key>NSAppTransportSecurity</key>
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>$(BUNDLE_DISPLAY_NAME)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Sổ Sách Xịn - Quản Lý Tài Chính cá nhân: Ứng dụng quản lý thu chi, ngân sách và đầu tư thông minh với AI</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>vi</string>
+	</array>
+	<key>CFBundleName</key>
+	<string>$(BUNDLE_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleSpokenName</key>
+	<string>Sổ Sách Xịn</string>
+	<key>CFBundleURLTypes</key>
+	<array>
 		<dict>
-			<key>NSAllowsArbitraryLoads</key>
-			<false/>
-			<key>NSExceptionDomains</key>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.525600752173-ih1vut9idrrn8pgo80vestpu6gifkoqu</string>
+				<string>com.googleusercontent.apps.525600752173-68tckhdq99mt25bcpn2p29igjgmcb8jq</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.finance</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>firebaseio.com</key>
 			<dict>
-				<key>firebaseio.com</key>
-				<dict>
-					<key>NSIncludesSubdomains</key>
-					<true/>
-					<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-					<false/>
-				</dict>
-				<key>googleapis.com</key>
-				<dict>
-					<key>NSIncludesSubdomains</key>
-					<true/>
-					<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
-					<false/>
-				</dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
+			<key>googleapis.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
 			</dict>
 		</dict>
-		<key>CFBundleURLTypes</key>
-		<array>
-			<dict>
-				<key>CFBundleTypeRole</key>
-				<string>Editor</string>
-				<key>CFBundleURLSchemes</key>
-				<array>
-					<string>com.googleusercontent.apps.525600752173-ih1vut9idrrn8pgo80vestpu6gifkoqu</string>
-					<string>com.googleusercontent.apps.525600752173-68tckhdq99mt25bcpn2p29igjgmcb8jq</string>
-				</array>
-			</dict>
-		</array>
-		<key>UIApplicationSupportsIndirectInputEvents</key>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Sổ Sách Xịn needs camera access to capture receipt images and expense photos for automatic transaction entry and record keeping.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Sổ Sách Xịn needs access to your documents folder to save and export your financial reports and transaction data.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Sổ Sách Xịn uses Face ID to securely authenticate your account and protect your financial data from unauthorized access.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Sổ Sách Xịn uses your location to detect your country code for phone number formatting and provide smart spending suggestions based on nearby merchants (optional feature).</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Sổ Sách Xịn uses your location to detect your country code for phone number formatting and provide smart spending suggestions based on nearby merchants (optional feature).</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Sổ Sách Xịn uses your microphone to let you speak a quick expense entry like "50k cà phê" instead of typing (optional feature).</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Sổ Sách Xịn needs permission to save receipt images and transaction photos to your photo library for your records.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Sổ Sách Xịn needs access to your photo library to attach receipt images to your transactions and import expense photos for automatic data entry.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Sổ Sách Xịn uses on-device speech recognition to transcribe your voice into text for quick expense entry (optional feature).</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIStatusBarHidden</key>
+	<false/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 </dict>
 </plist>
