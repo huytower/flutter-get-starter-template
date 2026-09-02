@@ -29,65 +29,40 @@ class ProfilePage extends CcGetView<ProfileController> {
       }
     });
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
-      child: Scaffold(
-        backgroundColor: context.ccColorScheme.background,
-        body: Stack(
+    return Scaffold(
+      backgroundColor: context.ccColorScheme.background,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const BgGradientWidget(),
-            SingleChildScrollView(
+            Obx(() {
+              return Hero(
+                tag: 'profile_hero_banner',
+                child: ProfilePageHeader(controller: controller),
+              );
+            }),
+            CcSymmetricPadding(
+              horizontal: CcPaddingParams.PAGE_SM,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const CcSpaceMD(),
-                  Obx(() {
-                    return Hero(
-                      tag: 'profile_hero_banner',
-                      child: ProfilePageHeader(
-                        user: controller.user.value,
-                        displayName: controller.displayName,
-                        level: controller.userLevel.status.value.level,
-                        daysToNextAudit: controller.daysToNextAudit,
-                        levelStatus: controller.userLevel.status.value,
-                        initialFlipped:
-                            controller.settings.value.isHeaderFlipped,
-                        onFlip: controller.setHeaderFlipped,
-                        onEditName: () => controller.pickDisplayName(context),
-                        onLinkAccount: () =>
-                            controller.handleLinkAccountTap(context),
-                        onAvatarTap: () => controller.handleAvatarTap(context),
-                        onLinkPhone: () =>
-                            controller.handlePhoneLinkTap(context),
-                      ),
-                    );
-                  }),
-                  CcSymmetricPadding(
-                    horizontal: CcPaddingParams.PAGE_SM,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const CcSpaceMD(),
-                        ProfileMenuGroup(items: _buildMenuItems(context)),
-                        const CcSpaceXL(),
-                        Obx(
-                          () => controller.isLoggedIn
-                              ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    _buildDeleteAccountText(context),
-                                    const CcSpaceSM(),
-                                    _buildLogoutButton(context),
-                                    const CcSpaceMD(),
-                                  ],
-                                )
-                              : const SizedBox.shrink(),
-                        ),
-                        _buildFooter(context),
-                        const CcSpaceXS(),
-                      ],
-                    ),
+                  ProfileMenuGroup(items: _buildMenuItems(context)),
+                  const CcSpaceXL(),
+                  Obx(
+                    () => controller.isLoggedIn
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              _buildDeleteAccountText(context),
+                              const CcSpaceSM(),
+                              _buildLogoutButton(context),
+                              const CcSpaceMD(),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
                   ),
+                  _buildFooter(context),
+                  const CcSpaceXS(),
                 ],
               ),
             ),

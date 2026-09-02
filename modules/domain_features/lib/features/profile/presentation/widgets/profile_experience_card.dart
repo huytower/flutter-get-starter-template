@@ -9,12 +9,14 @@ class ProfileExperienceCard extends StatelessWidget {
   final int level;
   final UserLevelStatusEntity levelStatus;
   final VoidCallback? onTap;
+  final bool isImmersive;
 
   const ProfileExperienceCard({
     super.key,
     required this.level,
     required this.levelStatus,
     this.onTap,
+    this.isImmersive = false,
   });
 
   @override
@@ -24,17 +26,19 @@ class ProfileExperienceCard extends StatelessWidget {
       borderRadius: context.brLg,
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
-          color: context.ccColorScheme.surface,
-          borderRadius: context.brLg,
-          boxShadow: [
-            BoxShadow(
-              color: context.ccColorScheme.onSurface.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+        decoration: isImmersive
+            ? null
+            : BoxDecoration(
+                color: context.ccColorScheme.surface,
+                borderRadius: context.brLg,
+                boxShadow: [
+                  BoxShadow(
+                    color: context.ccColorScheme.onSurface.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
         child: ClipRRect(
           borderRadius: context.brLg,
           child: Stack(

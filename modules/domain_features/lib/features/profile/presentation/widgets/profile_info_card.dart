@@ -17,6 +17,7 @@ class ProfileInfoCard extends StatelessWidget {
   final VoidCallback? onLinkAccount;
   final VoidCallback? onAvatarTap;
   final VoidCallback? onLinkPhone;
+  final bool isImmersive;
 
   const ProfileInfoCard({
     super.key,
@@ -29,6 +30,7 @@ class ProfileInfoCard extends StatelessWidget {
     this.onLinkAccount,
     this.onAvatarTap,
     this.onLinkPhone,
+    this.isImmersive = false,
   });
 
   @override
@@ -42,38 +44,33 @@ class ProfileInfoCard extends StatelessWidget {
       borderRadius: context.brLg,
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              context.ccColorScheme.primary,
-              context.ccColorScheme.primaryContainer,
-            ],
-          ),
-          borderRadius: context.brLg,
-          boxShadow: [
-            BoxShadow(
-              color: context.ccColorScheme.primary.withOpacity(0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          bottom: false,
-          child: CcSymmetricPadding(
-            horizontal: CcPaddingParams.PAGE_SM,
-            vertical: CcPaddingParams.SPACE_MD,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                buildUserInfoRow(context, fullName, email, phoneNumber),
-                const CcSpaceXS(),
-                _buildStatsRow(context),
-              ],
-            ),
+        decoration: isImmersive
+            ? null
+            : BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    context.ccColorScheme.primary,
+                    context.ccColorScheme.primaryContainer,
+                  ],
+                ),
+                borderRadius: context.brLg,
+                boxShadow: [
+                  BoxShadow(
+                    color: context.ccColorScheme.primary.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+        child: CcSymmetricPadding(
+          horizontal: CcPaddingParams.PAGE_SM,
+          vertical: CcPaddingParams.SPACE_MD,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [buildUserInfoRow(context, fullName, email, phoneNumber)],
           ),
         ),
       ),
