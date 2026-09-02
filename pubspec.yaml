@@ -188,3 +188,10 @@ melos:
         Clean, pub get, codegen, then flutter run --flavor uat on a device.
         Pass a device id as an extra arg, else uses $DEVICE_ID or the
         script's default UDID.
+
+    run:release:
+      run: bash scripts/run_uat_release.sh
+      description: >-
+        Clean, pub get, codegen, then flutter run --release on a device
+        (uat entry point). Same device resolution as run:uat (CLI arg, then
+        $DEVICE_ID, then the script's default UDID).
