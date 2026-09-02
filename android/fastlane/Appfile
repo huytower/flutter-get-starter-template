@@ -3,6 +3,6 @@
 
 # Default package names for the flavors
 # These can be overridden in the Fastfile if needed
-package_name("mobile.template")
+package_name("vn.sosachxin.finance")
 
 # json_key_file("path/to/google-play-service-key.json")

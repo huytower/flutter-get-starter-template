@@ -2,22 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CLIENT_ID</key>
-	<string>525600752173-68tckhdq99mt25bcpn2p29igjgmcb8jq.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.525600752173-68tckhdq99mt25bcpn2p29igjgmcb8jq</string>
 	<key>API_KEY</key>
-	<string>{{GOOGLE_API_KEY_IOS}}</string>
+	<string>AIzaSyALpJO7hL35M_-B3p6RZvZbvSOSmNqgOP4</string>
 	<key>GCM_SENDER_ID</key>
-	<string>525600752173</string>
+	<string>787010067332</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>vn.sosachxin.finance</string>
+	<string>vn.sosachxin.finance.uat</string>
 	<key>PROJECT_ID</key>
-	<string>{{FIREBASE_PROJECT_ID}}</string>
+	<string>sosachxin</string>
 	<key>STORAGE_BUCKET</key>
-	<string>{{FIREBASE_PROJECT_ID}}.firebasestorage.app</string>
+	<string>sosachxin.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:525600752173:ios:6075c0e1f98cd887dfeea4</string>
+	<string>1:787010067332:ios:88e99d96d3e2f607d2dbd1</string>
 </dict>
 </plist>

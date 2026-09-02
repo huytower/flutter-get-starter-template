@@ -27,7 +27,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "mobile.template"
+    namespace = "vn.sosachxin.finance"
     compileSdk = 37
     ndkVersion = "28.2.13676358"
 
@@ -51,7 +51,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "mobile.template"
+        applicationId = "vn.sosachxin.finance"
         minSdk = 28
         targetSdk = 37
         versionCode = flutterVersionCode.toInt()

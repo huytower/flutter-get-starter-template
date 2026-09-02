@@ -1,4 +1,4 @@
-app_identifier("mobile.template") # The bundle identifier of your app
+app_identifier("vn.sosachxin.finance") # The bundle identifier of your app
 apple_id("your-apple-id@example.com") # Your Apple ID
 itc_team_id("your-itc-team-id") # App Store Connect Team ID
 team_id("your-team-id") # Developer Portal Team ID

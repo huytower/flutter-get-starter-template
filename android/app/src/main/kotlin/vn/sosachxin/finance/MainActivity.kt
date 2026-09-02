@@ -1,4 +1,4 @@
-package mobile.template
+package vn.sosachxin.finance
 
 
 import android.content.Intent
