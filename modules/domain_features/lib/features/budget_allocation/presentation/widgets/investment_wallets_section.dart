@@ -50,8 +50,8 @@ class InvestmentWalletsSection extends StatelessWidget {
                     ),
                     if (showGuidelineBadge)
                       Positioned(
-                        right: -10,
-                        top: -10,
+                        right: -4,
+                        top: -4,
                         child: Obx(
                           () => CcGuidelineBadge(
                             size: 6,
@@ -62,6 +62,7 @@ class InvestmentWalletsSection extends StatelessWidget {
                                 guideline.isDescriptionHidden.value,
                             onLabelTap: () =>
                                 guideline.isDescriptionHidden.value = true,
+                            labelAbove: false,
                           ),
                         ),
                       ),
@@ -91,16 +92,10 @@ class InvestmentWalletsSection extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.SPACE_LG,
-      vertical: 12,
-      child: CcText(
-        el.tr(CcLocaleKeys.wallet_investment_empty),
-        textAlign: TextAlign.center,
-        textStyle: context.ccTextTheme.bodySmall?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
-        ),
-      ),
+    return CcSectionEmptyState(
+      message: el.tr(CcLocaleKeys.wallet_investment_empty),
+      verticalPadding: 12,
+      horizontalPadding: CcPaddingParams.SPACE_LG,
     );
   }
 

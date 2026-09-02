@@ -47,18 +47,21 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                         if (guideline.isTaskActive('budget_limit') ||
                             guideline.isTaskActive('min_living'))
                           Positioned(
-                            bottom: -10,
-                            right: -10,
+                            bottom: -8,
+                            right: 8,
                             child: Obx(
                               () => CcGuidelineBadge(
                                 size: 6,
                                 color: guideline.currentColor,
                                 bounceTrigger: guideline.bounceTrigger.value,
-                                label: guideline.bannerDescription,
+                                label: guideline.isTaskActive('min_living')
+                                    ? null
+                                    : guideline.bannerDescription,
                                 isDescriptionHidden:
                                     guideline.isDescriptionHidden.value,
                                 onLabelTap: () =>
                                     guideline.isDescriptionHidden.value = true,
+                                growRight: false,
                               ),
                             ),
                           ),
@@ -91,22 +94,17 @@ class BudgetLimitPreviewSection extends StatelessWidget {
           CcPaddingParams.SPACE_MD, // right
           0, // top
         ),
+        const CcSpaceSM(),
         Obx(() {
           final budgets = getIt<SortBudgetLimitsByProgressUseCase>().call(
             Get.find<BudgetLimitController>().budgets,
             limit: 4,
           );
           if (budgets.isEmpty) {
-            return CcSymmetricPadding(
-              horizontal: CcPaddingParams.SPACE_LG,
-              vertical: 12,
-              child: CcText(
-                el.tr(CcLocaleKeys.budget_empty),
-                textAlign: TextAlign.center,
-                textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                  color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
-                ),
-              ),
+            return CcSectionEmptyState(
+              message: el.tr(CcLocaleKeys.budget_empty),
+              verticalPadding: 12,
+              horizontalPadding: CcPaddingParams.SPACE_LG,
             );
           }
           return CcSymmetricPadding(
@@ -132,6 +130,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
             ),
           );
         }),
+        const CcSpaceMD(),
       ],
     );
   }

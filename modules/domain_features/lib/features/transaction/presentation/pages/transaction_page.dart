@@ -167,6 +167,7 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
             tabController: _tabController,
             showInvestmentBadge: showInvestmentBadge,
             showLiabilityBadge: controller.showLiabilityBadge,
+            showLendBadge: controller.showLendBadge,
           ),
           Expanded(
             child: TransactionTabBarView(

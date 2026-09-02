@@ -292,8 +292,13 @@ class TransactionController extends CcGetController {
   bool get showLiabilityBadge {
     if (!Get.isRegistered<GuidelineController>()) return false;
     final guideline = Get.find<GuidelineController>();
-    return guideline.isTaskActive('liability') &&
-        guideline.hasCreatedFirstLiability.value;
+    return guideline.isTaskActive('liability');
+  }
+
+  bool get showLendBadge {
+    if (!Get.isRegistered<GuidelineController>()) return false;
+    final guideline = Get.find<GuidelineController>();
+    return guideline.isTaskActive('lend');
   }
 
   void openReport(BuildContext context) {

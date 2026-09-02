@@ -64,8 +64,8 @@ class LiquidWalletsSection extends StatelessWidget {
                     ),
                     if (showGuidelineBadge)
                       Positioned(
-                        right: -10,
-                        top: -10,
+                        right: -4,
+                        top: -4,
                         child: Obx(
                           () => CcGuidelineBadge(
                             size: 6,
@@ -76,6 +76,7 @@ class LiquidWalletsSection extends StatelessWidget {
                                 guideline.isDescriptionHidden.value,
                             onLabelTap: () =>
                                 guideline.isDescriptionHidden.value = true,
+                            labelAbove: false,
                           ),
                         ),
                       ),

@@ -68,16 +68,10 @@ class WalletStripCard extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.SPACE_LG,
-      vertical: context.respPadding(12),
-      child: CcText(
-        el.tr(emptyMessageKey ?? CcLocaleKeys.wallet_empty),
-        textAlign: TextAlign.center,
-        textStyle: context.ccTextTheme.bodySmall?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-        ),
-      ),
+    return CcSectionEmptyState(
+      message: el.tr(emptyMessageKey ?? CcLocaleKeys.wallet_empty),
+      verticalPadding: 12,
+      horizontalPadding: CcPaddingParams.SPACE_LG,
     );
   }
 

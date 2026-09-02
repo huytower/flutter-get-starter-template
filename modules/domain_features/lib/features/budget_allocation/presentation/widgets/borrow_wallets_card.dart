@@ -51,16 +51,8 @@ class BorrowWalletsCard extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      alignment: Alignment.center,
-      child: CcText(
-        el.tr(CcLocaleKeys.liability_empty_state),
-        textStyle: context.ccTextTheme.bodySmall?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
-        ),
-      ),
+    return CcSectionEmptyState(
+      message: el.tr(CcLocaleKeys.liability_empty_state),
     );
   }
 

@@ -86,7 +86,7 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
                       color: guideline.currentColor,
                       bounceTrigger: guideline.bounceTrigger.value,
                       size: 10,
-                      label: guideline.bannerDescription,
+                      label: null,
                       isDescriptionHidden: guideline.isDescriptionHidden.value,
                       onLabelTap: () =>
                           guideline.isDescriptionHidden.value = true,

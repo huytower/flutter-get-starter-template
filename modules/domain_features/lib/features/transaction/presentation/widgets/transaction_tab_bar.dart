@@ -38,12 +38,14 @@ class TransactionTabBar extends StatelessWidget {
     required this.tabController,
     this.showInvestmentBadge = false,
     this.showLiabilityBadge = false,
+    this.showLendBadge = false,
   });
 
   final TransactionController controller;
   final TabController tabController;
   final bool showInvestmentBadge;
   final bool showLiabilityBadge;
+  final bool showLendBadge;
 
   @override
   Widget build(BuildContext context) {
@@ -241,9 +243,9 @@ class TransactionTabBar extends StatelessWidget {
             ),
             if (kind == TransactionTabKind.investment && showInvestmentBadge)
               _buildBadge(context),
-            if ((kind == TransactionTabKind.liability ||
-                    kind == TransactionTabKind.lend) &&
-                showLiabilityBadge)
+            if (kind == TransactionTabKind.liability && showLiabilityBadge)
+              _buildBadge(context),
+            if (kind == TransactionTabKind.lend && showLendBadge)
               _buildBadge(context),
           ],
         ),

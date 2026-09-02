@@ -102,8 +102,8 @@ class LiabilityWalletsSection extends StatelessWidget {
                 const CcIconToken(Icons.add_circle_outline_rounded, size: 20),
                 if (showGuidelineBadge)
                   Positioned(
-                    right: -10,
-                    bottom: -10,
+                    right: -4,
+                    top: -4,
                     child: Obx(
                       () => CcGuidelineBadge(
                         size: 6,
@@ -114,6 +114,7 @@ class LiabilityWalletsSection extends StatelessWidget {
                             guideline.isDescriptionHidden.value,
                         onLabelTap: () =>
                             guideline.isDescriptionHidden.value = true,
+                        labelAbove: false,
                       ),
                     ),
                   ),

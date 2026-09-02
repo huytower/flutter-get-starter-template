@@ -149,7 +149,7 @@ class LiquidWalletListItem extends StatelessWidget {
                     color: guideline.currentColor,
                     bounceTrigger: guideline.bounceTrigger.value,
                     size: 8,
-                    label: guideline.bannerDescription,
+                    label: null,
                     isDescriptionHidden: guideline.isDescriptionHidden.value,
                     onLabelTap: () =>
                         guideline.isDescriptionHidden.value = true,
