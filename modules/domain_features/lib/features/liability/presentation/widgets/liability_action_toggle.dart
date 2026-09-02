@@ -116,7 +116,6 @@ class _LiabilityActionToggleState extends State<LiabilityActionToggle>
     return Tab(
       child: Obx(() {
         final bool isLiabilityTask = guideline.isTaskActive('liability');
-        final bool isLendTask = guideline.isTaskActive('lend');
 
         // Only show badge here for 'liability' task.
         // For 'lend' task, we only show one badge at the top tab bar.
