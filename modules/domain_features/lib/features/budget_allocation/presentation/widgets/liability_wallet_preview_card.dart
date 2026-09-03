@@ -26,91 +26,79 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
     return CcBouncing(
       onTap: onTap,
       borderRadius: context.brLg,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          const Positioned.fill(child: CcGlassyGradientBackground()),
-          Container(
-            width: context.respDim(160),
-            padding: EdgeInsets.symmetric(
-              horizontal: context.respDim(12),
-              vertical: context.respDim(8),
-            ),
-            decoration: BoxDecoration(
-              color: scheme.primaryContainer.withValues(alpha: 0.1),
-              borderRadius: context.brLg,
-              border: context.borderSubtle,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Container(
+        width: context.respDim(160),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respDim(12),
+          vertical: context.respDim(8),
+        ),
+        decoration: BoxDecoration(
+          color: scheme.primaryContainer.withValues(alpha: 0.1),
+          borderRadius: context.brLg,
+          border: context.borderSubtle,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: context.respDim(28),
-                      height: context.respDim(28),
-                      decoration: BoxDecoration(
-                        color: directionColor.withAlpha(20),
-                        borderRadius: context.brLg,
+                Container(
+                  width: context.respDim(28),
+                  height: context.respDim(28),
+                  decoration: BoxDecoration(
+                    color: directionColor.withAlpha(20),
+                    borderRadius: context.brLg,
+                  ),
+                  child: Center(
+                    child: CcIconToken(
+                      iconDataFromCode(
+                        liability.categoryIconCode ?? 0,
+                        fontFamily: liability.categoryIconFamily,
                       ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const Positioned.fill(child: CcGlassyGradientIcon()),
-                          CcIconToken(
-                            iconDataFromCode(
-                              liability.categoryIconCode ?? 0,
-                              fontFamily: liability.categoryIconFamily,
-                            ),
-                            size: 16,
-                            color: directionColor,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const CcSpaceSM(),
-                    Expanded(
-                      child: CcText(
-                        liability.categoryLabel,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                          fontWeight: CcTypographyParams.bold,
-                          color: scheme.onSurface,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                CcDividerLine(color: scheme.onSurface.withOpacity(0.06)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildCompactStat(
-                      context,
+                      size: 16,
                       color: directionColor,
-                      iconAsset: liability.isBorrow
-                          ? 'assets/icon/ic_borrow.webp'
-                          : 'assets/icon/ic_lend.webp',
-                      value: liability.principalAmount,
                     ),
-                    _buildCompactStat(
-                      context,
-                      iconAsset: liability.isBorrow
-                          ? 'assets/icon/ic_repay.webp'
-                          : 'assets/icon/ic_collect.webp',
-                      color: context.ccColorScheme.onSurface,
-                      value:
-                          liability.principalAmount -
-                          balance.outstandingBalance,
+                  ),
+                ),
+                const CcSpaceSM(),
+                Expanded(
+                  child: CcText(
+                    liability.categoryLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                      fontWeight: CcTypographyParams.bold,
+                      color: scheme.onSurface,
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
+            CcDividerLine(color: scheme.onSurface.withOpacity(0.06)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildCompactStat(
+                  context,
+                  color: directionColor,
+                  iconAsset: liability.isBorrow
+                      ? 'assets/icon/ic_borrow.webp'
+                      : 'assets/icon/ic_lend.webp',
+                  value: liability.principalAmount,
+                ),
+                _buildCompactStat(
+                  context,
+                  iconAsset: liability.isBorrow
+                      ? 'assets/icon/ic_repay.webp'
+                      : 'assets/icon/ic_collect.webp',
+                  color: context.ccColorScheme.onSurface,
+                  value: liability.principalAmount - balance.outstandingBalance,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

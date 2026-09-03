@@ -10,44 +10,31 @@ class LendWalletsCard extends StatelessWidget {
   const LendWalletsCard({
     required this.balances,
     required this.onSeeAll,
-    required this.isFront,
     super.key,
   });
 
   final List<LiabilityBalanceEntity> balances;
   final VoidCallback onSeeAll;
-  final bool isFront;
 
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final cardHeight = balances.isEmpty ? 45.0 : 95.0;
+    final cardHeight = balances.isEmpty ? 35.0 : 95.0;
 
-    return Stack(
-      children: [
-        if (!isFront)
-          const Positioned.fill(child: CcGlassyGradientBackground()),
-        Container(
-          width: double.infinity,
-          height: context.respDim(cardHeight),
-          decoration: BoxDecoration(
-            // Front card is opaque surface to hide what's behind
-            color: isFront
-                ? scheme.surface
-                : scheme.surface.withValues(alpha: 0.1),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (balances.isEmpty)
-                _buildEmptyState(context)
-              else
-                _buildHorizontalList(context),
-            ],
-          ),
-        ),
-      ],
+    return Container(
+      width: double.infinity,
+      height: context.respDim(cardHeight),
+      decoration: BoxDecoration(color: scheme.surface),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (balances.isEmpty)
+            _buildEmptyState(context)
+          else
+            _buildHorizontalList(context),
+        ],
+      ),
     );
   }
 

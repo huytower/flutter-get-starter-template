@@ -21,9 +21,7 @@ class LendHeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final color = isFront
-        ? scheme.primary
-        : scheme.debtLoan.withValues(alpha: 0.8);
+    final color = scheme.debtLoan.withValues(alpha: 0.9);
 
     return BaseHeroBannerCard(
       titleKey: CcLocaleKeys.liability_lend,

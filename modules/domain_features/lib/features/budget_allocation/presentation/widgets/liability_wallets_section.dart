@@ -46,46 +46,19 @@ class LiabilityWalletsSection extends StatelessWidget {
               final isBothEmpty =
                   borrowBalances.isEmpty && lendBalances.isEmpty;
 
-              final borrowCard = BorrowWalletsCard(
-                balances: borrowBalances,
-                onSeeAll: onSeeAll,
-                isFront: !isLendFront,
-              );
+              final Widget activeCard = isLendFront
+                  ? LendWalletsCard(balances: lendBalances, onSeeAll: onSeeAll)
+                  : BorrowWalletsCard(
+                      balances: borrowBalances,
+                      onSeeAll: onSeeAll,
+                    );
 
-              final lendCard = LendWalletsCard(
-                balances: lendBalances,
-                onSeeAll: onSeeAll,
-                isFront: isLendFront,
-              );
+              final double sectionHeight = isBothEmpty ? 35 : 95;
 
-              final double sectionHeight = isBothEmpty ? 35 : 115;
-              final double topPadding = isBothEmpty ? 0 : 12;
-
-              return Container(
+              return SizedBox(
                 height: context.respDim(sectionHeight),
-                padding: EdgeInsets.only(top: context.respDim(topPadding)),
-                child: Stack(
-                  alignment: Alignment.topCenter,
-                  clipBehavior: Clip.none,
-                  children: [
-                    if (!isBothEmpty) ...[
-                      // Back Card
-                      _buildAnimatedCard(
-                        context: context,
-                        isFront: false,
-                        onToggle: controller.toggleLiabilityCardStack,
-                        child: isLendFront ? borrowCard : lendCard,
-                      ),
-                    ],
-                    // Front Card
-                    _buildAnimatedCard(
-                      context: context,
-                      isFront: true,
-                      onToggle: controller.toggleLiabilityCardStack,
-                      child: isLendFront ? lendCard : borrowCard,
-                    ),
-                  ],
-                ),
+                width: double.infinity,
+                child: activeCard,
               );
             }),
           ],
@@ -134,44 +107,6 @@ class LiabilityWalletsSection extends StatelessWidget {
       CcPaddingParams.SPACE_LG, // left
       CcPaddingParams.SPACE_MD, // right
       0, // top
-    );
-  }
-
-  Widget _buildAnimatedCard({
-    required BuildContext context,
-    required bool isFront,
-    required Widget child,
-    required VoidCallback onToggle,
-  }) {
-    // Premium animation values matching TransactionTabBar
-    final double scale = isFront ? 1.0 : 0.94;
-    final double opacity = isFront ? 1.0 : 0.9;
-    // final double opacity = isFront ? 1.0 : 0.45;
-    final double yOffset = isFront ? 0 : -context.respDim(12);
-
-    return AnimatedPositioned(
-      duration: const Duration(milliseconds: 400),
-      curve: const Cubic(0.2, 0.8, 0.2, 1.0),
-      top: yOffset,
-      left: 0,
-      right: 0,
-      child: AnimatedScale(
-        duration: const Duration(milliseconds: 400),
-        curve: const Cubic(0.2, 0.8, 0.2, 1.0),
-        scale: scale,
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 400),
-          curve: const Cubic(0.2, 0.8, 0.2, 1.0),
-          opacity: opacity,
-          child: IgnorePointer(
-            ignoring: !isFront,
-            child: GestureDetector(
-              onTap: isFront ? null : onToggle,
-              child: child,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
