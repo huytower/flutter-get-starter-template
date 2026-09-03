@@ -241,11 +241,15 @@ class TransactionTabBar extends StatelessWidget {
                       ),
               ),
             ),
-            if (kind == TransactionTabKind.investment && showInvestmentBadge)
+            if (kind == TransactionTabKind.investment &&
+                showInvestmentBadge &&
+                !isSelected)
               _buildBadge(context),
-            if (kind == TransactionTabKind.liability && showLiabilityBadge)
+            if (kind == TransactionTabKind.liability &&
+                showLiabilityBadge &&
+                !isSelected)
               _buildBadge(context),
-            if (kind == TransactionTabKind.lend && showLendBadge)
+            if (kind == TransactionTabKind.lend && showLendBadge && !isSelected)
               _buildBadge(context),
           ],
         ),
@@ -275,7 +279,7 @@ class TransactionTabBar extends StatelessWidget {
     // Show label on the reveal icon ONLY when the back card is NOT in front
     // but the dot stays if there's an active task.
     final bool showLabelOnReveal = !isSecondaryFront && hasBackCardTask;
-    final bool showBadgeOnReveal = hasBackCardTask;
+    final bool showBadgeOnReveal = !isSecondaryFront && hasBackCardTask;
 
     return Stack(
       clipBehavior: Clip.none,

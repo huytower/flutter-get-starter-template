@@ -53,12 +53,14 @@ class BorrowWalletsCard extends StatelessWidget {
   Widget _buildEmptyState(BuildContext context) {
     return CcSectionEmptyState(
       message: el.tr(CcLocaleKeys.liability_empty_state),
+      verticalPadding: 12,
+      horizontalPadding: CcPaddingParams.SPACE_LG,
     );
   }
 
   Widget _buildHorizontalList(BuildContext context) {
     return HorizontalFadeScrollView(
-      height: context.respDim(85),
+      height: context.respDim(95),
       builder: (scrollController) => ListView.builder(
         scrollDirection: Axis.horizontal,
         controller: scrollController,

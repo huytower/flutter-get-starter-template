@@ -53,7 +53,7 @@ class LiabilityWalletsSection extends StatelessWidget {
           );
 
           return Container(
-            height: context.respDim(105),
+            height: context.respDim(115),
             padding: EdgeInsets.only(top: context.respDim(12)),
             child: Stack(
               alignment: Alignment.topCenter,
