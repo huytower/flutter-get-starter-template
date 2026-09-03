@@ -32,54 +32,75 @@ class LiabilityWalletsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BudgetAllocationController>();
+    final guideline = Get.find<GuidelineController>();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
       children: [
-        buildHeaderSection(controller, context),
-        Obx(() {
-          final isLendFront = controller.isLendSectionFront.value;
-          final isBothEmpty = borrowBalances.isEmpty && lendBalances.isEmpty;
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildHeaderSection(controller, context),
+            const CcSpaceSM(),
+            Obx(() {
+              final isLendFront = controller.isLendSectionFront.value;
+              final isBothEmpty =
+                  borrowBalances.isEmpty && lendBalances.isEmpty;
 
-          final borrowCard = BorrowWalletsCard(
-            balances: borrowBalances,
-            onSeeAll: onSeeAll,
-            isFront: !isLendFront,
-          );
+              final borrowCard = BorrowWalletsCard(
+                balances: borrowBalances,
+                onSeeAll: onSeeAll,
+                isFront: !isLendFront,
+              );
 
-          final lendCard = LendWalletsCard(
-            balances: lendBalances,
-            onSeeAll: onSeeAll,
-            isFront: isLendFront,
-          );
+              final lendCard = LendWalletsCard(
+                balances: lendBalances,
+                onSeeAll: onSeeAll,
+                isFront: isLendFront,
+              );
 
-          final double sectionHeight = isBothEmpty ? 45 : 115;
-          final double topPadding = isBothEmpty ? 0 : 12;
+              final double sectionHeight = isBothEmpty ? 35 : 115;
+              final double topPadding = isBothEmpty ? 0 : 12;
 
-          return Container(
-            height: context.respDim(sectionHeight),
-            padding: EdgeInsets.only(top: context.respDim(topPadding)),
-            child: Stack(
-              alignment: Alignment.topCenter,
-              clipBehavior: Clip.none,
-              children: [
-                if (!isBothEmpty) ...[
-                  // Back Card
-                  _buildAnimatedCard(
-                    context: context,
-                    isFront: false,
-                    onToggle: controller.toggleLiabilityCardStack,
-                    child: isLendFront ? borrowCard : lendCard,
-                  ),
-                ],
-                // Front Card
-                _buildAnimatedCard(
-                  context: context,
-                  isFront: true,
-                  onToggle: controller.toggleLiabilityCardStack,
-                  child: isLendFront ? lendCard : borrowCard,
+              return Container(
+                height: context.respDim(sectionHeight),
+                padding: EdgeInsets.only(top: context.respDim(topPadding)),
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  clipBehavior: Clip.none,
+                  children: [
+                    if (!isBothEmpty) ...[
+                      // Back Card
+                      _buildAnimatedCard(
+                        context: context,
+                        isFront: false,
+                        onToggle: controller.toggleLiabilityCardStack,
+                        child: isLendFront ? borrowCard : lendCard,
+                      ),
+                    ],
+                    // Front Card
+                    _buildAnimatedCard(
+                      context: context,
+                      isFront: true,
+                      onToggle: controller.toggleLiabilityCardStack,
+                      child: isLendFront ? lendCard : borrowCard,
+                    ),
+                  ],
                 ),
-              ],
+              );
+            }),
+          ],
+        ),
+        Obx(() {
+          if (!showGuidelineBadge) return const SizedBox.shrink();
+          return Positioned(
+            top: 0,
+            // Align with Add button: SeeAll (~60) + SpaceSM (8) = 68
+            right: 55,
+            child: PrjGuidelineBadge(
+              size: 6,
+              label: guideline.bannerDescription,
+              labelAbove: false,
+              growRight: false,
             ),
           );
         }),
@@ -91,37 +112,17 @@ class LiabilityWalletsSection extends StatelessWidget {
     BudgetAllocationController controller,
     BuildContext context,
   ) {
-    final scheme = context.ccColorScheme;
-    final dotColor = badgeColor ?? scheme.primary;
-    final guideline = Get.find<GuidelineController>();
-
     return CcPadding(
       CcSectionHeader(
         title: el.tr(CcLocaleKeys.liability_list_title),
         icon: Icons.warning_amber_outlined,
         actions: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              CcBouncing(
-                onTap: onAddLoan,
-                child: const CcIconToken(
-                  Icons.add_circle_outline_rounded,
-                  size: 20,
-                ),
-              ),
-              if (showGuidelineBadge)
-                Positioned(
-                  right: -4,
-                  top: -8,
-                  child: PrjGuidelineBadge(
-                    size: 6,
-                    label: guideline.bannerDescription,
-                    labelAbove: true,
-                    growRight: false,
-                  ),
-                ),
-            ],
+          CcBouncing(
+            onTap: onAddLoan,
+            child: const CcIconToken(
+              Icons.add_circle_outline_rounded,
+              size: 20,
+            ),
           ),
           const CcSpaceSM(),
           CcTextButton(
