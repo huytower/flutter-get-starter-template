@@ -1,4 +1,4 @@
-{
+﻿{
     "app":  {
                 "name":  "S? S?ch X?n",
                 "version":  "Phi?n b?n {version}",
@@ -181,6 +181,7 @@
                     "balance_hidden":  "*****",
                    "save_info":  "Luu",
                    "bank":  "Ng?n h?ng",
+                   "cash":  "Tiền mặt",
                    "ewallet":  "V? di?n t?",
                    "emergency_fund":  "Qu? d? ph?ng",
                    "emergency_fund_desc":  "D? ph?ng cho t?nh hu?ng kh?n c?p ? n?n duy tr? 3-6 th?ng chi ti?u",
