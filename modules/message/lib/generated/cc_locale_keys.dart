@@ -279,7 +279,6 @@ abstract class  LocaleKeys {
   static const transaction_note_hint = 'transaction.note_hint';
   static const transaction_more_details = 'transaction.more_details';
   static const transaction_merchant_match_hint = 'transaction.merchant_match_hint';
-  static const transaction_bill_match_hint = 'transaction.bill_match_hint';
   static const transaction_location_match_hint = 'transaction.location_match_hint';
   static const transaction_auto_save_countdown = 'transaction.auto_save_countdown';
   static const transaction_quick_entry_label = 'transaction.quick_entry_label';
