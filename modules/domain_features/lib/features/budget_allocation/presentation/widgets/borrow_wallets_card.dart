@@ -21,6 +21,7 @@ class BorrowWalletsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
+    final cardHeight = balances.isEmpty ? 45.0 : 95.0;
 
     return Stack(
       children: [
@@ -28,7 +29,7 @@ class BorrowWalletsCard extends StatelessWidget {
           const Positioned.fill(child: CcGlassyGradientBackground()),
         Container(
           width: double.infinity,
-          height: context.respDim(85),
+          height: context.respDim(cardHeight),
           decoration: BoxDecoration(
             // Front card is opaque surface to hide what's behind
             color: isFront
@@ -52,8 +53,8 @@ class BorrowWalletsCard extends StatelessWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     return CcSectionEmptyState(
-      message: el.tr(CcLocaleKeys.liability_empty_state),
-      verticalPadding: 12,
+      message: el.tr(CcLocaleKeys.liability_empty_state_v2),
+      verticalPadding: 0,
       horizontalPadding: CcPaddingParams.SPACE_LG,
     );
   }

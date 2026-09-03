@@ -39,6 +39,7 @@ class LiabilityWalletsSection extends StatelessWidget {
         buildHeaderSection(controller, context),
         Obx(() {
           final isLendFront = controller.isLendSectionFront.value;
+          final isBothEmpty = borrowBalances.isEmpty && lendBalances.isEmpty;
 
           final borrowCard = BorrowWalletsCard(
             balances: borrowBalances,
@@ -52,20 +53,25 @@ class LiabilityWalletsSection extends StatelessWidget {
             isFront: isLendFront,
           );
 
+          final double sectionHeight = isBothEmpty ? 45 : 115;
+          final double topPadding = isBothEmpty ? 0 : 12;
+
           return Container(
-            height: context.respDim(115),
-            padding: EdgeInsets.only(top: context.respDim(12)),
+            height: context.respDim(sectionHeight),
+            padding: EdgeInsets.only(top: context.respDim(topPadding)),
             child: Stack(
               alignment: Alignment.topCenter,
               clipBehavior: Clip.none,
               children: [
-                // Back Card
-                _buildAnimatedCard(
-                  context: context,
-                  isFront: false,
-                  onToggle: controller.toggleLiabilityCardStack,
-                  child: isLendFront ? borrowCard : lendCard,
-                ),
+                if (!isBothEmpty) ...[
+                  // Back Card
+                  _buildAnimatedCard(
+                    context: context,
+                    isFront: false,
+                    onToggle: controller.toggleLiabilityCardStack,
+                    child: isLendFront ? borrowCard : lendCard,
+                  ),
+                ],
                 // Front Card
                 _buildAnimatedCard(
                   context: context,

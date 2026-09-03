@@ -108,21 +108,6 @@ class TransactionPageHeader extends StatelessWidget {
     final activeTabIndex = controller.selectedTabIndex.value;
     final activeTab = tabs[activeTabIndex.clamp(0, tabs.length - 1)];
 
-    // Only display banner description for Investment/Liability/Lend when on those tabs
-    final bool isInvestmentTask = activeId == 'investment';
-    final bool isLiabilityTask = activeId == 'liability';
-    final bool isLendTask = activeId == 'lend';
-    final bool isSpecificTask =
-        isInvestmentTask || isLiabilityTask || isLendTask;
-
-    // For these specific tasks, only show when on their respective tab
-    final bool isCorrectTab =
-        (isInvestmentTask && activeTab == TransactionTabKind.investment) ||
-        (isLiabilityTask && activeTab == TransactionTabKind.liability) ||
-        (isLendTask && activeTab == TransactionTabKind.lend);
-
-    final bool shouldHideDescription = isSpecificTask && !isCorrectTab;
-
     if (isGuidelineComplete) {
       return _buildAiComponents(context, activeTab);
     }
@@ -140,9 +125,7 @@ class TransactionPageHeader extends StatelessWidget {
           guideline.isBannerHidden.value = false;
         }
       },
-      child: TransactionGuidelineBanner(
-        shouldHideDescription: shouldHideDescription,
-      ),
+      child: const TransactionGuidelineBanner(shouldHideDescription: false),
     );
   }
 

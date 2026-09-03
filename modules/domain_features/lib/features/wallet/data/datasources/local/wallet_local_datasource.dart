@@ -21,7 +21,7 @@ class WalletLocalDataSource {
 
   WalletHiveModel _defaultCashWallet() => WalletHiveModel(
     id: cashWalletId,
-    name: 'Tiền mặt',
+    name: 'Cash',
     balance: 0,
     iconCode: Icons.payments.codePoint,
     type: WalletType.cash,
@@ -41,7 +41,7 @@ class WalletLocalDataSource {
         cashWalletId: _defaultCashWallet(),
         bankWalletId: WalletHiveModel(
           id: bankWalletId,
-          name: 'Ngân hàng',
+          name: 'Bank',
           balance: 0,
           iconCode: Icons.account_balance.codePoint,
           type: WalletType.bank,

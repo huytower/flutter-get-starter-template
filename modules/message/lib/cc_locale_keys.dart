@@ -1776,8 +1776,7 @@ abstract class CcLocaleKeys {
       'transaction.liability_category_lend_label';
   static const liability_borrow_type_personal =
       'liability.borrow_type_personal';
-  static const liability_lend_type_personal =
-      'liability.lend_type_personal';
+  static const liability_lend_type_personal = 'liability.lend_type_personal';
   static const transaction_liability_borrower_label =
       'transaction.liability_borrower_label';
   static const transaction_liability_borrower_hint =
@@ -1895,6 +1894,7 @@ abstract class CcLocaleKeys {
   static const liability_remaining_balance = 'liability.remaining_balance';
   static const liability_principal_amount = 'liability.principal_amount';
   static const liability_empty_state = 'liability.empty_state';
+  static const liability_empty_state_v2 = 'liability.empty_state_v2';
   static const liability_history_title = 'liability.history_title';
   static const liability_no_history = 'liability.no_history';
   static const liability_delete_title = 'liability.delete_title';

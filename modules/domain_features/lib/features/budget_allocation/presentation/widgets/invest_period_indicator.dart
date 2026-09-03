@@ -14,6 +14,9 @@ class InvestPeriodIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final monthName = el.DateFormat.MMMM(context.locale.toString()).format(now);
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: context.respPadding(6),
@@ -24,7 +27,10 @@ class InvestPeriodIndicator extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: CcText(
-        el.tr(CcLocaleKeys.budget_month_indicator, args: [month.toString()]),
+        el.tr(
+          CcLocaleKeys.budget_month_indicator,
+          namedArgs: {'month': monthName},
+        ),
         textStyle: context.ccTextTheme.labelSmall?.copyWith(
           color: color,
           fontWeight: FontWeight.bold,
