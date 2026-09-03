@@ -10,8 +10,35 @@ import '../get_x/wallet_controller.dart';
 import '../widgets/liquid_wallet_list_item.dart';
 
 @RoutePage()
-class LiquidWalletListPage extends CcGetView<WalletController> {
+class LiquidWalletListPage extends StatefulWidget {
   const LiquidWalletListPage({super.key});
+
+  @override
+  State<LiquidWalletListPage> createState() => _LiquidWalletListPageState();
+}
+
+class _LiquidWalletListPageState extends State<LiquidWalletListPage> {
+  late final WalletController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<WalletController>();
+    // Ensure edit mode is always off when entering the page.
+    controller.isEditMode.value = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _LiquidWalletListView(controller: controller);
+  }
+}
+
+class _LiquidWalletListView extends CcGetView<WalletController> {
+  const _LiquidWalletListView({required this.controller});
+
+  @override
+  final WalletController controller;
 
   @override
   bool get enableAppBar => true;
@@ -98,31 +125,52 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
 
   @override
   Widget? buildContent(BuildContext context) {
-    final liquidWallets = controller.liquidWallets;
-    if (liquidWallets.isEmpty) {
-      return CcText(
-        el.tr(CcLocaleKeys.wallet_empty),
-        align: Alignment.center,
-        textAlign: TextAlign.center,
-        textStyle: context.ccTextTheme.bodySmall?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
+    return Obx(() {
+      final liquidWallets = controller.liquidWallets;
+      final isEdit = controller.isEditMode.value;
+
+      if (liquidWallets.isEmpty) {
+        return CcText(
+          el.tr(CcLocaleKeys.wallet_empty),
+          align: Alignment.center,
+          textAlign: TextAlign.center,
+          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+            color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
+          ),
+        );
+      }
+
+      return PopScope(
+        canPop: !controller.isEditMode.value,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) {
+            // Page popped normally, ensure edit mode is reset for next entry.
+            controller.isEditMode.value = false;
+            return;
+          }
+          // If we are here, didPop is false, which means pop was blocked by canPop: false.
+          // This happens when isEditMode is true.
+          if (controller.isEditMode.value) {
+            controller.isEditMode.value = false;
+          }
+        },
+        child: ListView(
+          padding: EdgeInsets.all(
+            context.respPadding(CcPaddingParams.SPACE_MD),
+          ),
+          children: liquidWallets
+              .map(
+                (wallet) => LiquidWalletListItem(
+                  wallet: wallet,
+                  isEditMode: isEdit,
+                  canDelete: controller.canDeleteWallet(wallet),
+                  onEdit: () => controller.openForm(context, wallet: wallet),
+                  onDelete: () => controller.confirmDelete(context, wallet),
+                ),
+              )
+              .toList(),
         ),
       );
-    }
-    final isEdit = controller.isEditMode.value;
-    return ListView(
-      padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
-      children: liquidWallets
-          .map(
-            (wallet) => LiquidWalletListItem(
-              wallet: wallet,
-              isEditMode: isEdit,
-              canDelete: controller.canDeleteWallet(wallet),
-              onEdit: () => controller.openForm(context, wallet: wallet),
-              onDelete: () => controller.confirmDelete(context, wallet),
-            ),
-          )
-          .toList(),
-    );
+    });
   }
 }

@@ -140,9 +140,8 @@ class TransactionPageHeader extends StatelessWidget {
           guideline.isBannerHidden.value = false;
         }
       },
-      child: PrjGuidelineBanner(
+      child: TransactionGuidelineBanner(
         shouldHideDescription: shouldHideDescription,
-        canDismiss: false,
       ),
     );
   }

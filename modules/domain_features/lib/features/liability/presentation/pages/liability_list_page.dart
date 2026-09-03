@@ -11,8 +11,35 @@ import '../widgets/liability_delete_confirm_sheet.dart';
 import '../widgets/liability_wallet_grid_card.dart';
 
 @RoutePage()
-class LiabilityListPage extends CcGetView<LiabilityListController> {
+class LiabilityListPage extends StatefulWidget {
   const LiabilityListPage({super.key});
+
+  @override
+  State<LiabilityListPage> createState() => _LiabilityListPageState();
+}
+
+class _LiabilityListPageState extends State<LiabilityListPage> {
+  late final LiabilityListController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<LiabilityListController>();
+    // Ensure edit mode is always off when entering the page.
+    controller.isEditMode.value = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _LiabilityListView(controller: controller);
+  }
+}
+
+class _LiabilityListView extends CcGetView<LiabilityListController> {
+  const _LiabilityListView({required this.controller});
+
+  @override
+  final LiabilityListController controller;
 
   @override
   PreferredSizeWidget buildAppBar(BuildContext context) {
@@ -87,25 +114,37 @@ class LiabilityListPage extends CcGetView<LiabilityListController> {
         );
       }
 
-      return GridView.builder(
-        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_XS)),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
-          mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
-        ),
-        itemCount: balances.length,
-        itemBuilder: (context, index) {
-          final balance = balances[index];
-          return LiabilityWalletGridCard(
-            key: ValueKey(balance.liability.id),
-            balance: balance,
-            isEditMode: isEdit,
-            canDelete: true,
-            onEdit: () => _openAddLiability(context),
-            onDelete: () => _confirmDelete(context, balance.liability.id),
-          );
+      return PopScope(
+        canPop: !controller.isEditMode.value,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) {
+            controller.isEditMode.value = false;
+            return;
+          }
+          if (controller.isEditMode.value) {
+            controller.isEditMode.value = false;
+          }
         },
+        child: GridView.builder(
+          padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_XS)),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
+            mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
+          ),
+          itemCount: balances.length,
+          itemBuilder: (context, index) {
+            final balance = balances[index];
+            return LiabilityWalletGridCard(
+              key: ValueKey(balance.liability.id),
+              balance: balance,
+              isEditMode: isEdit,
+              canDelete: true,
+              onEdit: () => _openAddLiability(context),
+              onDelete: () => _confirmDelete(context, balance.liability.id),
+            );
+          },
+        ),
       );
     });
   }

@@ -12,8 +12,35 @@ import '../widgets/budget_limit_delete_confirm_sheet.dart';
 import '../widgets/budget_limit_grid.dart';
 
 @RoutePage()
-class BudgetLimitListPage extends CcGetView<BudgetLimitController> {
+class BudgetLimitListPage extends StatefulWidget {
   const BudgetLimitListPage({super.key});
+
+  @override
+  State<BudgetLimitListPage> createState() => _BudgetLimitListPageState();
+}
+
+class _BudgetLimitListPageState extends State<BudgetLimitListPage> {
+  late final BudgetLimitController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<BudgetLimitController>();
+    // Ensure edit mode is always off when entering the page.
+    controller.isEditMode.value = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _BudgetLimitListView(controller: controller);
+  }
+}
+
+class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
+  const _BudgetLimitListView({required this.controller});
+
+  @override
+  final BudgetLimitController controller;
 
   @override
   bool get enableAppBar => true;
@@ -87,85 +114,96 @@ class BudgetLimitListPage extends CcGetView<BudgetLimitController> {
   Widget? buildContent(BuildContext context) {
     return Obx(() {
       final isEdit = controller.isEditMode.value;
-      return CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                context.respPadding(16),
-                context.respPadding(12),
-                context.respPadding(16),
-                context.respPadding(6),
-              ),
-              child: Column(
-                children: [
-                  CcText(
-                    el.tr(CcLocaleKeys.budget_description),
-                    maxLines: 3,
-                    textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                      color: context.ccColorScheme.onSurfaceVariant.withOpacity(
-                        0.5,
+      return PopScope(
+        canPop: !controller.isEditMode.value,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) {
+            controller.isEditMode.value = false;
+            return;
+          }
+          if (controller.isEditMode.value) {
+            controller.isEditMode.value = false;
+          }
+        },
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  context.respPadding(16),
+                  context.respPadding(12),
+                  context.respPadding(16),
+                  context.respPadding(6),
+                ),
+                child: Column(
+                  children: [
+                    CcText(
+                      el.tr(CcLocaleKeys.budget_description),
+                      maxLines: 3,
+                      textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                        color: context.ccColorScheme.onSurfaceVariant
+                            .withOpacity(0.5),
                       ),
                     ),
-                  ),
-                  const CcSpaceXS(),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.bolt_rounded,
-                        size: context.respIconSize(baseSize: 14),
-                        color: context.ccColorScheme.primary.withOpacity(0.5),
-                      ),
-                      const CcSpaceXS(),
-                      Expanded(
-                        child: CcText(
-                          el.tr(CcLocaleKeys.budget_fixed_price_description),
-                          maxLines: 3,
-                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                            color: context.ccColorScheme.onSurfaceVariant
-                                .withOpacity(0.5),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const CcSpaceXS(),
-                  if (!isEdit)
+                    const CcSpaceXS(),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(
-                          Icons.swap_vert,
+                          Icons.bolt_rounded,
                           size: context.respIconSize(baseSize: 14),
-                          color: context.ccColorScheme.onSurfaceVariant
-                              .withOpacity(0.5),
+                          color: context.ccColorScheme.primary.withOpacity(0.5),
                         ),
                         const CcSpaceXS(),
-                        CcText(
-                          el.tr(CcLocaleKeys.budget_drag_reorder_hint),
-                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                            color: context.ccColorScheme.onSurfaceVariant
-                                .withOpacity(0.5),
+                        Expanded(
+                          child: CcText(
+                            el.tr(CcLocaleKeys.budget_fixed_price_description),
+                            maxLines: 3,
+                            textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                              color: context.ccColorScheme.onSurfaceVariant
+                                  .withOpacity(0.5),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                ],
+                    const CcSpaceXS(),
+                    if (!isEdit)
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.swap_vert,
+                            size: context.respIconSize(baseSize: 14),
+                            color: context.ccColorScheme.onSurfaceVariant
+                                .withOpacity(0.5),
+                          ),
+                          const CcSpaceXS(),
+                          CcText(
+                            el.tr(CcLocaleKeys.budget_drag_reorder_hint),
+                            textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                              color: context.ccColorScheme.onSurfaceVariant
+                                  .withOpacity(0.5),
+                            ),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: BudgetLimitGrid(
-                key: const ValueKey('budget-limit-grid'),
-                controller: controller,
-                onOpenForm: _openAddBudgetLimitSheet,
-                onDelete: _confirmDeleteBudgetLimit,
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: BudgetLimitGrid(
+                  key: const ValueKey('budget-limit-grid'),
+                  controller: controller,
+                  onOpenForm: _openAddBudgetLimitSheet,
+                  onDelete: _confirmDeleteBudgetLimit,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     });
   }

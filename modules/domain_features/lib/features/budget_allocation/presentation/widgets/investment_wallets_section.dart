@@ -37,28 +37,28 @@ class InvestmentWalletsSection extends StatelessWidget {
             title: el.tr(CcLocaleKeys.wallet_investments),
             icon: Icons.trending_up_outlined,
             actions: [
-              CcBouncing(
-                onTap: onAddInvestment,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    const CcIconToken(
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  CcBouncing(
+                    onTap: onAddInvestment,
+                    child: const CcIconToken(
                       Icons.add_circle_outline_rounded,
                       size: 20,
                     ),
-                    if (showGuidelineBadge)
-                      Positioned(
-                        right: -4,
-                        top: -8,
-                        child: PrjGuidelineBadge(
-                          size: 6,
-                          label: guideline.bannerDescription,
-                          labelAbove: true,
-                          growRight: false,
-                        ),
+                  ),
+                  if (showGuidelineBadge)
+                    Positioned(
+                      right: -4,
+                      top: -8,
+                      child: PrjGuidelineBadge(
+                        size: 6,
+                        label: guideline.bannerDescription,
+                        labelAbove: true,
+                        growRight: false,
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
               if (wallets.isNotEmpty) ...[
                 const CcSpaceSM(),

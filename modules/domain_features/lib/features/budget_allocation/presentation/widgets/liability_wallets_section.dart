@@ -94,25 +94,28 @@ class LiabilityWalletsSection extends StatelessWidget {
         title: el.tr(CcLocaleKeys.liability_list_title),
         icon: Icons.warning_amber_outlined,
         actions: [
-          CcBouncing(
-            onTap: onAddLoan,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                const CcIconToken(Icons.add_circle_outline_rounded, size: 20),
-                if (showGuidelineBadge)
-                  Positioned(
-                    right: -4,
-                    top: -8,
-                    child: PrjGuidelineBadge(
-                      size: 6,
-                      label: guideline.bannerDescription,
-                      labelAbove: true,
-                      growRight: false,
-                    ),
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              CcBouncing(
+                onTap: onAddLoan,
+                child: const CcIconToken(
+                  Icons.add_circle_outline_rounded,
+                  size: 20,
+                ),
+              ),
+              if (showGuidelineBadge)
+                Positioned(
+                  right: -4,
+                  top: -8,
+                  child: PrjGuidelineBadge(
+                    size: 6,
+                    label: guideline.bannerDescription,
+                    labelAbove: true,
+                    growRight: false,
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
           const CcSpaceSM(),
           CcTextButton(

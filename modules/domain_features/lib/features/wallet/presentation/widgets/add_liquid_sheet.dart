@@ -175,7 +175,8 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                 showing: showing,
                 label: guideline.bannerDescription,
                 size: 10,
-                growRight: false,
+                labelAbove: true,
+                growRight: true,
               ),
             );
           }),

@@ -31,32 +31,33 @@ class BudgetLimitPreviewSection extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Obx(
-                    () => Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        CcBouncing(
-                          onTap: () => _openAddBudget(context),
-                          child: const CcIconToken(
-                            Icons.add_circle_outline_rounded,
-                            size: 20,
-                          ),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      CcBouncing(
+                        onTap: () => _openAddBudget(context),
+                        child: const CcIconToken(
+                          Icons.add_circle_outline_rounded,
+                          size: 20,
                         ),
-                        if (guideline.isTaskActive('budget_limit') ||
-                            guideline.isTaskActive('min_living'))
-                          Positioned(
-                            bottom: -8,
-                            right: 8,
-                            child: PrjGuidelineBadge(
-                              size: 6,
-                              label: guideline.isTaskActive('min_living')
-                                  ? null
-                                  : guideline.bannerDescription,
-                              growRight: false,
-                            ),
+                      ),
+                      Obx(() {
+                        if (!guideline.isTaskActive('budget_limit') &&
+                            !guideline.isTaskActive('min_living')) {
+                          return const SizedBox.shrink();
+                        }
+                        return Positioned(
+                          top: -6,
+                          right: -4,
+                          child: PrjGuidelineBadge(
+                            size: 6,
+                            label: guideline.bannerDescription,
+                            labelAbove: true,
+                            growRight: false,
                           ),
-                      ],
-                    ),
+                        );
+                      }),
+                    ],
                   ),
                   Obx(() {
                     final hasBudgets =

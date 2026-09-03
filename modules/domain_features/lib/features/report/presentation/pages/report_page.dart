@@ -19,8 +19,35 @@ import '../widgets/trend_card.dart';
 const double _inflowShadeAlpha = 0.5;
 
 @RoutePage()
-class ReportPage extends CcGetView<ReportController> {
+class ReportPage extends StatefulWidget {
   const ReportPage({super.key});
+
+  @override
+  State<ReportPage> createState() => _ReportPageState();
+}
+
+class _ReportPageState extends State<ReportPage> {
+  late final ReportController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<ReportController>();
+    // Ensure edit mode is always off when entering the page.
+    controller.isEditMode.value = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _ReportView(controller: controller);
+  }
+}
+
+class _ReportView extends CcGetView<ReportController> {
+  const _ReportView({required this.controller});
+
+  @override
+  final ReportController controller;
 
   @override
   bool get enableAppBar => false;

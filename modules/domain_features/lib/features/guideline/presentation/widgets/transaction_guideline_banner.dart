@@ -4,26 +4,19 @@ import 'package:get/get.dart';
 
 import '../../guideline_controller.dart';
 
-/// A wrapper around [CcListBannerSmall] that automatically connects to
-/// [GuidelineController] to show/hide the current guideline step banner.
-///
-/// This handles the "dismiss on tap" behavior and ensures the banner only
-/// shows when a task is active and the banner hasn't been hidden by the user.
-class PrjGuidelineBanner extends StatelessWidget {
-  const PrjGuidelineBanner({
+/// A specialized banner for the Transaction page that displays the current
+/// guideline task and cannot be dismissed via tap.
+class TransactionGuidelineBanner extends StatelessWidget {
+  const TransactionGuidelineBanner({
     super.key,
     this.onTap,
     this.shouldHideDescription = false,
-    this.canDismiss = true,
   });
 
   final VoidCallback? onTap;
 
   /// Whether to hide the description even if the task is active (e.g. on wrong tab).
   final bool shouldHideDescription;
-
-  /// Whether tapping the banner should dismiss it centrally.
-  final bool canDismiss;
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +27,8 @@ class PrjGuidelineBanner extends StatelessWidget {
     final guideline = Get.find<GuidelineController>();
 
     return Obx(() {
-      if ((canDismiss && guideline.isBannerHidden.value) ||
-          guideline.currentTaskId == null) {
+      // For the Transaction page, we never hide the banner if a task is active.
+      if (guideline.currentTaskId == null) {
         return const SizedBox.shrink();
       }
 
@@ -44,12 +37,8 @@ class PrjGuidelineBanner extends StatelessWidget {
         description: shouldHideDescription ? null : guideline.bannerDescription,
         accentColor: guideline.currentColor,
         onTap: () {
-          if (canDismiss) {
-            // Dismiss banner on tap
-            guideline.isBannerHidden.value = true;
-            // Also hide all descriptions/tooltips when the main banner is dismissed
-            guideline.isDescriptionHidden.value = true;
-          }
+          // Note: We do NOT set isBannerHidden = true here because the user
+          // wants this banner to stay visible always on the Transaction page.
 
           // Trigger bounce animation on the tab bar badge
           guideline.triggerBounce();

@@ -171,57 +171,63 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
     final scheme = context.ccColorScheme;
     final guideline = Get.find<GuidelineController>();
 
-    return CcBouncing(
-      onTap: controller.toggleFixedPrice,
-      borderRadius: context.brSm,
-      child: Tooltip(
-        message: el.tr(CcLocaleKeys.budget_fixed_price),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respDim(8),
-            vertical: context.respDim(4),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Obx(
-                () => Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    CcIconToken(
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        CcBouncing(
+          onTap: controller.toggleFixedPrice,
+          borderRadius: context.brSm,
+          child: Tooltip(
+            message: el.tr(CcLocaleKeys.budget_fixed_price),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: context.respDim(8),
+                vertical: context.respDim(4),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Obx(
+                    () => CcIconToken(
                       Icons.bolt_rounded,
                       size: 18,
                       color: controller.isFixedPrice.value
                           ? scheme.primary
                           : scheme.outline,
                     ),
-                    if (guideline.isTaskActive('min_living'))
-                      Positioned(
-                        bottom: -8,
-                        right: 8,
-                        child: PrjGuidelineBadge(
-                          size: 4,
-                          label: null,
-                          labelAbove: false,
-                          growRight: false,
-                        ),
+                  ),
+                  Transform.scale(
+                    scale: 0.7,
+                    child: Obx(
+                      () => CcCheckBox(
+                        isChecked: controller.isFixedPrice.value,
+                        onChanged: (_) => controller.toggleFixedPrice(),
+                        checkedColor: scheme.primary,
+                        uncheckedBorderColor: scheme.outline,
                       ),
-                  ],
-                ),
+                    ),
+                  ),
+                ],
               ),
-              Transform.scale(
-                scale: 0.7,
-                child: CcCheckBox(
-                  isChecked: controller.isFixedPrice.value,
-                  onChanged: (_) => controller.toggleFixedPrice(),
-                  checkedColor: scheme.primary,
-                  uncheckedBorderColor: scheme.outline,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
+        Obx(() {
+          if (!guideline.isTaskActive('min_living')) {
+            return const SizedBox.shrink();
+          }
+          return Positioned(
+            top: -4,
+            left: 0,
+            child: PrjGuidelineBadge(
+              size: 4,
+              label: guideline.bannerDescription,
+              labelAbove: true,
+              growRight: true,
+            ),
+          );
+        }),
+      ],
     );
   }
 

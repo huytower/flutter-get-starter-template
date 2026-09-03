@@ -76,6 +76,14 @@ class GuidelineController extends GetxController {
       completedTasks.assignAll(saved);
     }
     _restoreTaskStatus();
+
+    // Reset visibility states when the current step changes.
+    // This ensures the description/banner is shown for the new step even if
+    // the user dismissed them for the previous step.
+    ever(completedTasks, (_) {
+      isDescriptionHidden.value = false;
+      isBannerHidden.value = false;
+    });
   }
 
   Future<void> _restoreTaskStatus() async {
