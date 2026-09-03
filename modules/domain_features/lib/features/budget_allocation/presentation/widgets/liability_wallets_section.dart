@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../guideline/guideline_controller.dart';
-import '../../../liability/domain/entities/liability_balance_entity.dart';
+import '../../../guideline/export_guideline.dart';
+import '../../../liability/export_liability.dart';
 import '../get_x/budget_allocation_controller.dart';
 import 'borrow_wallets_card.dart';
 import 'lend_wallets_card.dart';
@@ -103,19 +103,12 @@ class LiabilityWalletsSection extends StatelessWidget {
                 if (showGuidelineBadge)
                   Positioned(
                     right: -4,
-                    top: -4,
-                    child: Obx(
-                      () => CcGuidelineBadge(
-                        size: 6,
-                        color: dotColor,
-                        bounceTrigger: guideline.bounceTrigger.value,
-                        label: guideline.bannerDescription,
-                        isDescriptionHidden:
-                            guideline.isDescriptionHidden.value,
-                        onLabelTap: () =>
-                            guideline.isDescriptionHidden.value = true,
-                        labelAbove: false,
-                      ),
+                    top: -8,
+                    child: PrjGuidelineBadge(
+                      size: 6,
+                      label: guideline.bannerDescription,
+                      labelAbove: true,
+                      growRight: false,
                     ),
                   ),
               ],

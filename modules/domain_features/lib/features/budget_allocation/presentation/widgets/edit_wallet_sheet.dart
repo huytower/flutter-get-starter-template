@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../guideline/guideline_controller.dart';
+import '../../../guideline/export_guideline.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 
 /// Bottom sheet for wallet actions (edit/delete).
@@ -63,15 +63,11 @@ class EditWalletSheet extends StatelessWidget {
                   return Positioned(
                     top: -10,
                     right: -10,
-                    child: CcGuidelineBadge(
+                    child: PrjGuidelineBadge(
                       showing: showing,
-                      color: guideline.currentColor,
-                      bounceTrigger: guideline.bounceTrigger.value,
                       size: 8,
                       label: guideline.bannerDescription,
-                      isDescriptionHidden: guideline.isDescriptionHidden.value,
-                      onLabelTap: () =>
-                          guideline.isDescriptionHidden.value = true,
+                      growRight: false,
                     ),
                   );
                 }),

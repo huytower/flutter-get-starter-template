@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../guideline/guideline_controller.dart';
+import '../../../guideline/export_guideline.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/income_form_controller.dart';
 import 'category_selection_section.dart';
@@ -153,14 +153,10 @@ class IncomeForm extends StatelessWidget {
             leadingIcon: Icons.arrow_circle_up,
             leadingIconSize: 18,
             badge: guideline.isTaskActive('first_transaction')
-                ? CcGuidelineBadge(
+                ? PrjGuidelineBadge(
                     size: 8,
-                    color: guideline.currentColor,
-                    bounceTrigger: guideline.bounceTrigger.value,
                     label: guideline.bannerDescription,
-                    isDescriptionHidden: guideline.isDescriptionHidden.value,
-                    onLabelTap: () =>
-                        guideline.isDescriptionHidden.value = true,
+                    growRight: false,
                   )
                 : null,
           ),

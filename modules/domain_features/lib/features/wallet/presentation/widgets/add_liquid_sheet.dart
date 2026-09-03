@@ -7,7 +7,7 @@ import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
-import '../../../guideline/guideline_controller.dart';
+import '../../../guideline/export_guideline.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../domain/entities/wallet_entity.dart';
@@ -171,16 +171,11 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
             return Positioned(
               bottom: -10,
               right: -10,
-              child: Obx(
-                () => CcGuidelineBadge(
-                  showing: showing,
-                  label: guideline.bannerDescription,
-                  isDescriptionHidden: guideline.isDescriptionHidden.value,
-                  onLabelTap: () => guideline.isDescriptionHidden.value = true,
-                  color: guideline.currentColor,
-                  bounceTrigger: guideline.bounceTrigger.value,
-                  size: 10,
-                ),
+              child: PrjGuidelineBadge(
+                showing: showing,
+                label: guideline.bannerDescription,
+                size: 10,
+                growRight: false,
               ),
             );
           }),

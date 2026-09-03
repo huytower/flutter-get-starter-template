@@ -1,12 +1,12 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:domain_features/core/getx/cc_get_view.dart';
-import 'package:domain_features/features/guideline/guideline_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../guideline/export_guideline.dart';
 import '../get_x/profile_controller.dart';
 import '../widgets/guideline_reset_bottom_sheet.dart';
 import '../widgets/profile_delete_confirm_sheet.dart';
@@ -110,13 +110,9 @@ class ProfilePage extends CcGetView<ProfileController> {
           subtitle: el.tr(CcLocaleKeys.category_settings_subtitle),
           onTap: () => controller.navigateToCategorySettings(context),
           badge: guideline.isTaskActive('categories')
-              ? CcGuidelineBadge(
+              ? PrjGuidelineBadge(
                   size: 8,
-                  color: color,
-                  bounceTrigger: guideline.bounceTrigger.value,
                   label: guideline.bannerDescription,
-                  isDescriptionHidden: guideline.isDescriptionHidden.value,
-                  onLabelTap: () => guideline.isDescriptionHidden.value = true,
                   growRight: false,
                   labelAbove: true,
                 )
@@ -133,13 +129,9 @@ class ProfilePage extends CcGetView<ProfileController> {
               el.tr(CcLocaleKeys.common_not_set),
           onTap: () => controller.pickBirthYear(context),
           badge: guideline.isTaskActive('birth_year')
-              ? CcGuidelineBadge(
+              ? PrjGuidelineBadge(
                   size: 8,
-                  color: color,
-                  bounceTrigger: guideline.bounceTrigger.value,
                   label: guideline.bannerDescription,
-                  isDescriptionHidden: guideline.isDescriptionHidden.value,
-                  onLabelTap: () => guideline.isDescriptionHidden.value = true,
                   growRight: false,
                   labelAbove: true,
                 )

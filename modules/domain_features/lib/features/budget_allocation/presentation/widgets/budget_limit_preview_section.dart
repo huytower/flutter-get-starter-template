@@ -7,10 +7,8 @@ import 'package:get/get.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_limit/domain/usecases/sort_budget_limits_by_progress_usecase.dart';
-import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
-import '../../../budget_limit/presentation/widgets/add_budget_limit_sheet.dart';
-import '../../../budget_limit/presentation/widgets/budget_limit_grid_card.dart';
-import '../../../guideline/guideline_controller.dart';
+import '../../../budget_limit/export_budget_limit.dart';
+import '../../../guideline/export_guideline.dart';
 
 class BudgetLimitPreviewSection extends StatelessWidget {
   const BudgetLimitPreviewSection({super.key});
@@ -49,20 +47,12 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                           Positioned(
                             bottom: -8,
                             right: 8,
-                            child: Obx(
-                              () => CcGuidelineBadge(
-                                size: 6,
-                                color: guideline.currentColor,
-                                bounceTrigger: guideline.bounceTrigger.value,
-                                label: guideline.isTaskActive('min_living')
-                                    ? null
-                                    : guideline.bannerDescription,
-                                isDescriptionHidden:
-                                    guideline.isDescriptionHidden.value,
-                                onLabelTap: () =>
-                                    guideline.isDescriptionHidden.value = true,
-                                growRight: false,
-                              ),
+                            child: PrjGuidelineBadge(
+                              size: 6,
+                              label: guideline.isTaskActive('min_living')
+                                  ? null
+                                  : guideline.bannerDescription,
+                              growRight: false,
                             ),
                           ),
                       ],

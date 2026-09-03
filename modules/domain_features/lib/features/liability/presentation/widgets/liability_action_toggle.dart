@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../guideline/guideline_controller.dart';
+import '../../../guideline/export_guideline.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../get_x/liability_base_form_controller.dart';
 
@@ -130,14 +130,11 @@ class _LiabilityActionToggleState extends State<LiabilityActionToggle>
               Positioned(
                 bottom: -8,
                 right: -28,
-                child: CcGuidelineBadge(
+                child: PrjGuidelineBadge(
                   size: 6,
-                  color: guideline.currentColor,
-                  bounceTrigger: guideline.bounceTrigger.value,
                   label: guideline.bannerDescription,
-                  isDescriptionHidden: guideline.isDescriptionHidden.value,
-                  onLabelTap: () => guideline.isDescriptionHidden.value = true,
                   labelAbove: false,
+                  growRight: false,
                 ),
               ),
           ],

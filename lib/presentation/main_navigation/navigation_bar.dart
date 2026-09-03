@@ -85,12 +85,7 @@ class _NavigationBarState extends State<NavigationBar>
         activeIcon: Icons.pie_chart,
         label: el.tr(CcLocaleKeys.nav_budget_allocation),
         badgeWidget: guideline.activeTabIndex == 0
-            ? CcGuidelineBadge(
-                size: 8,
-                color: guideline.currentColor,
-                bounceTrigger: guideline.bounceTrigger.value,
-                forceHideLabel: true,
-              )
+            ? const PrjGuidelineBadge(size: 8, forceHideLabel: true)
             : null,
       ),
       // Centre "＋" — opens the Chi/Thu entry form.
@@ -99,12 +94,7 @@ class _NavigationBarState extends State<NavigationBar>
         activeIcon: Icons.add,
         label: el.tr(CcLocaleKeys.nav_transaction),
         badgeWidget: guideline.activeTabIndex == 1
-            ? CcGuidelineBadge(
-                size: 8,
-                color: guideline.currentColor,
-                bounceTrigger: guideline.bounceTrigger.value,
-                forceHideLabel: true,
-              )
+            ? const PrjGuidelineBadge(size: 8, forceHideLabel: true)
             : null,
       ),
       CcCurvedNavigationItem(
@@ -112,12 +102,7 @@ class _NavigationBarState extends State<NavigationBar>
         activeIcon: Icons.person_rounded,
         label: el.tr(CcLocaleKeys.nav_profile),
         badgeWidget: guideline.activeTabIndex == 2
-            ? CcGuidelineBadge(
-                size: 8,
-                color: guideline.currentColor,
-                bounceTrigger: guideline.bounceTrigger.value,
-                forceHideLabel: true,
-              )
+            ? const PrjGuidelineBadge(size: 8, forceHideLabel: true)
             : null,
       ),
     ];

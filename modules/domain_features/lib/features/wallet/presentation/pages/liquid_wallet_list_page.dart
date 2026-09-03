@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../guideline/guideline_controller.dart';
+import '../../../guideline/export_guideline.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/liquid_wallet_list_item.dart';
 
@@ -81,15 +81,10 @@ class LiquidWalletListPage extends CcGetView<WalletController> {
                   return Positioned(
                     bottom: -10,
                     right: -10,
-                    child: CcGuidelineBadge(
+                    child: PrjGuidelineBadge(
                       showing: showing,
-                      color: guideline.currentColor,
-                      bounceTrigger: guideline.bounceTrigger.value,
                       size: 10,
                       label: null,
-                      isDescriptionHidden: guideline.isDescriptionHidden.value,
-                      onLabelTap: () =>
-                          guideline.isDescriptionHidden.value = true,
                       growRight: false,
                     ),
                   );

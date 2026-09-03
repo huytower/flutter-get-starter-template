@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../guideline/guideline_controller.dart';
+import '../../../guideline/export_guideline.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_insights_section.dart';
 import '../widgets/budget_limit_preview_section.dart';

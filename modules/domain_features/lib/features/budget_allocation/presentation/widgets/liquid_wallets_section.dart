@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../guideline/guideline_controller.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
-import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
+import '../../../guideline/export_guideline.dart';
+import '../../../wallet/export_wallet.dart';
 
 /// Section displaying liquid wallet list with add and see all actions.
 class LiquidWalletsSection extends StatelessWidget {
@@ -65,19 +64,12 @@ class LiquidWalletsSection extends StatelessWidget {
                     if (showGuidelineBadge)
                       Positioned(
                         right: -4,
-                        top: -4,
-                        child: Obx(
-                          () => CcGuidelineBadge(
-                            size: 6,
-                            color: dotColor,
-                            bounceTrigger: guideline.bounceTrigger.value,
-                            label: guideline.bannerDescription,
-                            isDescriptionHidden:
-                                guideline.isDescriptionHidden.value,
-                            onLabelTap: () =>
-                                guideline.isDescriptionHidden.value = true,
-                            labelAbove: false,
-                          ),
+                        top: -8,
+                        child: PrjGuidelineBadge(
+                          size: 6,
+                          label: guideline.bannerDescription,
+                          labelAbove: true,
+                          growRight: false,
                         ),
                       ),
                   ],

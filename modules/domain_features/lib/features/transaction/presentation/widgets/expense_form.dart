@@ -1,21 +1,17 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:domain_features/features/budget_limit/export_budget_limit.dart';
+import 'package:domain_features/export_domain_features.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/transaction_additional_details_section.dart';
+import 'package:domain_features/features/transaction/presentation/widgets/transaction_form_container.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/transaction_submit_button.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
-import '../../../../core/di/di.dart';
-import '../../../guideline/guideline_controller.dart';
-import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/expense_form_controller.dart';
-import '../get_x/transaction_controller.dart';
 import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
 import 'money_keypad_panel.dart';
-import 'transaction_form_container.dart';
 
 class ExpenseForm extends StatefulWidget {
   const ExpenseForm({super.key, this.tag});
@@ -193,14 +189,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
             leadingIcon: Icons.arrow_circle_down,
             leadingIconSize: 18,
             badge: guideline.isTaskActive('first_transaction')
-                ? CcGuidelineBadge(
+                ? PrjGuidelineBadge(
                     size: 8,
                     label: guideline.bannerDescription,
-                    isDescriptionHidden: guideline.isDescriptionHidden.value,
-                    onLabelTap: () =>
-                        guideline.isDescriptionHidden.value = true,
-                    color: guideline.currentColor,
-                    bounceTrigger: guideline.bounceTrigger.value,
+                    growRight: false,
                   )
                 : null,
           ),

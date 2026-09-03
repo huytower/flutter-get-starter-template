@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../guideline/guideline_controller.dart';
+import '../../../guideline/export_guideline.dart';
 import '../get_x/transaction_controller.dart';
 
 extension TransactionTabKindStyle on TransactionTabKind {
@@ -257,12 +257,7 @@ class TransactionTabBar extends StatelessWidget {
     final guideline = Get.find<GuidelineController>();
     return Padding(
       padding: const EdgeInsets.only(left: 4),
-      child: CcGuidelineBadge(
-        size: 6,
-        color: guideline.currentColor,
-        bounceTrigger: guideline.bounceTrigger.value,
-        label: null,
-      ),
+      child: PrjGuidelineBadge(size: 6, label: null),
     );
   }
 
@@ -302,13 +297,9 @@ class TransactionTabBar extends StatelessWidget {
           Positioned(
             bottom: 0,
             right: 0,
-            child: CcGuidelineBadge(
+            child: PrjGuidelineBadge(
               size: 6,
-              color: guideline.currentColor,
-              bounceTrigger: guideline.bounceTrigger.value,
               label: showLabelOnReveal ? guideline.bannerDescription : null,
-              isDescriptionHidden: guideline.isDescriptionHidden.value,
-              onLabelTap: () => guideline.isDescriptionHidden.value = true,
               labelAbove: false,
               growRight: false,
             ),

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/presentation/widgets/edit_badge.dart';
-import '../../../guideline/guideline_controller.dart';
+import '../../../guideline/export_guideline.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 
@@ -135,27 +135,6 @@ class LiquidWalletListItem extends StatelessWidget {
               foregroundColor: scheme.onPrimary,
               onTap: onEdit,
             ),
-            if (Get.isRegistered<GuidelineController>())
-              Obx(() {
-                final guideline = Get.find<GuidelineController>();
-                final showing =
-                    guideline.isTaskActive('wallet_balance') &&
-                    wallet.type == WalletType.cash;
-                return Positioned(
-                  bottom: -10,
-                  right: -10,
-                  child: CcGuidelineBadge(
-                    showing: showing,
-                    color: guideline.currentColor,
-                    bounceTrigger: guideline.bounceTrigger.value,
-                    size: 8,
-                    label: null,
-                    isDescriptionHidden: guideline.isDescriptionHidden.value,
-                    onLabelTap: () =>
-                        guideline.isDescriptionHidden.value = true,
-                  ),
-                );
-              }),
           ],
         ),
       ),

@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../guideline/guideline_controller.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
+import '../../../guideline/export_guideline.dart';
+import '../../../wallet/export_wallet.dart';
 import 'investment_wallet_preview_card.dart';
 
 /// Section displaying investment wallets in a grid layout, following the
@@ -27,8 +27,6 @@ class InvestmentWalletsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    final dotColor = badgeColor ?? scheme.primary;
     final guideline = Get.find<GuidelineController>();
 
     return Column(
@@ -51,19 +49,12 @@ class InvestmentWalletsSection extends StatelessWidget {
                     if (showGuidelineBadge)
                       Positioned(
                         right: -4,
-                        top: -4,
-                        child: Obx(
-                          () => CcGuidelineBadge(
-                            size: 6,
-                            color: dotColor,
-                            bounceTrigger: guideline.bounceTrigger.value,
-                            label: guideline.bannerDescription,
-                            isDescriptionHidden:
-                                guideline.isDescriptionHidden.value,
-                            onLabelTap: () =>
-                                guideline.isDescriptionHidden.value = true,
-                            labelAbove: false,
-                          ),
+                        top: -8,
+                        child: PrjGuidelineBadge(
+                          size: 6,
+                          label: guideline.bannerDescription,
+                          labelAbove: true,
+                          growRight: false,
                         ),
                       ),
                   ],

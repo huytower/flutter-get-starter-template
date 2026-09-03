@@ -20,7 +20,7 @@ export 'features/comment/presentation/ui/comment_page.dart';
 export 'features/examples/bloc_simple_page/cubit/simple/simple_cubit_page.dart';
 export 'features/examples/bloc_simple_page/origin/advance/advance_bloc_page.dart';
 export 'features/firestore/financial_data_sync_service.dart';
-export 'features/guideline/guideline_controller.dart';
+export 'features/guideline/export_guideline.dart';
 // Loan
 export 'features/liability/export_liability.dart';
 // Notification

@@ -27,50 +27,50 @@ class ProfileSettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return CcBouncing(
-      onTap: onTap,
-      child: CcSymmetricPadding(
-        horizontal: CcPaddingParams.SPACE_LG,
-        vertical: CcPaddingParams.SPACE_LG,
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(context.respDim(10)),
-              decoration: BoxDecoration(
-                color: scheme.primary.withOpacity(0.08),
-                borderRadius: context.brMd,
-              ),
-              child: CcIconToken(icon, size: 22),
-            ),
-            const CcSpaceLG(),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CcText(
-                    label,
-                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: scheme.onSurface,
-                    ),
-                  ),
-                  if (subtitle != null) ...[
-                    const CcSpaceXS(),
-                    CcText(
-                      subtitle!,
-                      textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                        color: scheme.onSurfaceVariant.withAlpha(70),
-                      ),
-                      maxLines: 2,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            Stack(
-              clipBehavior: Clip.none,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        CcBouncing(
+          onTap: onTap,
+          child: CcSymmetricPadding(
+            horizontal: CcPaddingParams.SPACE_LG,
+            vertical: CcPaddingParams.SPACE_LG,
+            child: Row(
               children: [
+                Container(
+                  padding: EdgeInsets.all(context.respDim(10)),
+                  decoration: BoxDecoration(
+                    color: scheme.primary.withOpacity(0.08),
+                    borderRadius: context.brMd,
+                  ),
+                  child: CcIconToken(icon, size: 22),
+                ),
+                const CcSpaceLG(),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CcText(
+                        label,
+                        textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: scheme.onSurface,
+                        ),
+                      ),
+                      if (subtitle != null) ...[
+                        const CcSpaceXS(),
+                        CcText(
+                          subtitle!,
+                          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                            color: scheme.onSurfaceVariant.withAlpha(70),
+                          ),
+                          maxLines: 2,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -96,13 +96,21 @@ class ProfileSettingsTile extends StatelessWidget {
                     ],
                   ],
                 ),
-                if (badge != null)
-                  Positioned(bottom: -10, right: -10, child: badge!),
               ],
             ),
-          ],
+          ),
         ),
-      ),
+        if (badge != null)
+          Positioned(
+            right:
+                context.respPadding(CcPaddingParams.SPACE_LG) -
+                context.respDim(4),
+            bottom:
+                context.respPadding(CcPaddingParams.SPACE_LG) -
+                context.respDim(4),
+            child: badge!,
+          ),
+      ],
     );
   }
 }

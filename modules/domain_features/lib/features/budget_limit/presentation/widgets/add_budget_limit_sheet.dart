@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
-import '../../../guideline/guideline_controller.dart';
+import '../../../guideline/export_guideline.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../domain/entities/budget_limit_entity.dart';
@@ -199,19 +199,11 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
                       Positioned(
                         bottom: -8,
                         right: 8,
-                        child: Obx(
-                          () => CcGuidelineBadge(
-                            size: 4,
-                            color: guideline.currentColor,
-                            bounceTrigger: guideline.bounceTrigger.value,
-                            label: null,
-                            isDescriptionHidden:
-                                guideline.isDescriptionHidden.value,
-                            onLabelTap: () =>
-                                guideline.isDescriptionHidden.value = true,
-                            labelAbove: false,
-                            growRight: false,
-                          ),
+                        child: PrjGuidelineBadge(
+                          size: 4,
+                          label: null,
+                          labelAbove: false,
+                          growRight: false,
                         ),
                       ),
                   ],

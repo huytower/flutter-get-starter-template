@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:domain_features/features/guideline/guideline_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +7,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
+import '../../../guideline/export_guideline.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../get_x/expense_form_controller.dart';
@@ -103,7 +103,6 @@ class TransactionPageHeader extends StatelessWidget {
   Widget buildBanner(BuildContext context, GuidelineController guideline) {
     final activeId = guideline.currentTaskId;
     final isGuidelineComplete = activeId == null;
-    final accentColor = guideline.currentColor;
 
     final tabs = controller.visibleTabs;
     final activeTabIndex = controller.selectedTabIndex.value;
@@ -130,7 +129,6 @@ class TransactionPageHeader extends StatelessWidget {
 
     // Otherwise show the guideline banner
     return GestureDetector(
-      onTap: () => guideline.triggerBounce(),
       onHorizontalDragEnd: (details) {
         // Detect left-to-right swipe (positive velocity)
         if (details.primaryVelocity != null && details.primaryVelocity! > 300) {
@@ -142,28 +140,9 @@ class TransactionPageHeader extends StatelessWidget {
           guideline.isBannerHidden.value = false;
         }
       },
-      child: Obx(
-        () => guideline.isBannerHidden.value || shouldHideDescription
-            ? const SizedBox.shrink()
-            : CcListBannerSmall(
-                title: guideline.bannerTitle,
-                description: shouldHideDescription
-                    ? null
-                    : guideline.bannerDescription,
-                accentColor: accentColor,
-                onTap: () {
-                  // Trigger bounce animation on the tab bar badge
-                  guideline.triggerBounce();
-                },
-                icon: CcClipboardChecklistIcon(
-                  size: context.respDim(40) * 0.8,
-                  bodyColor: context.ccColorScheme.onPrimary.withValues(
-                    alpha: 0.85,
-                  ),
-                  clipColor: context.ccColorScheme.onPrimary,
-                  markColor: accentColor,
-                ),
-              ),
+      child: PrjGuidelineBanner(
+        shouldHideDescription: shouldHideDescription,
+        canDismiss: false,
       ),
     );
   }

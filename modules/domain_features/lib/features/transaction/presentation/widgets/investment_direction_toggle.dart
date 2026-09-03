@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../guideline/guideline_controller.dart';
+import '../../../guideline/export_guideline.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 
 /// Chi ra / Thu vào pill switch shown at the top of the Investment form —
@@ -132,15 +132,11 @@ class _InvestmentDirectionToggleState extends State<InvestmentDirectionToggle>
               Positioned(
                 bottom: -10,
                 right: -24,
-                child: CcGuidelineBadge(
+                child: PrjGuidelineBadge(
                   size: 6,
-                  color: guideline.currentColor,
-                  bounceTrigger: guideline.bounceTrigger.value,
                   label: guideline.bannerDescription,
-                  isDescriptionHidden: guideline.isDescriptionHidden.value,
-                  onLabelTap: () => guideline.isDescriptionHidden.value = true,
                   labelAbove: false,
-                  growRight: true,
+                  growRight: false,
                 ),
               ),
           ],
