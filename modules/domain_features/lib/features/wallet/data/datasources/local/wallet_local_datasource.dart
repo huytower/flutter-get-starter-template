@@ -1,7 +1,9 @@
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
+import 'package:message/export_message.dart';
 
 import '../../../domain/entities/wallet_entity.dart';
 import '../../models/wallet_hive_model.dart';
@@ -21,7 +23,7 @@ class WalletLocalDataSource {
 
   WalletHiveModel _defaultCashWallet() => WalletHiveModel(
     id: cashWalletId,
-    name: 'Cash',
+    name: el.tr(CcLocaleKeys.wallet_cash),
     balance: 0,
     iconCode: Icons.payments.codePoint,
     type: WalletType.cash,
@@ -41,7 +43,7 @@ class WalletLocalDataSource {
         cashWalletId: _defaultCashWallet(),
         bankWalletId: WalletHiveModel(
           id: bankWalletId,
-          name: 'Bank',
+          name: el.tr(CcLocaleKeys.wallet_bank),
           balance: 0,
           iconCode: Icons.account_balance.codePoint,
           type: WalletType.bank,

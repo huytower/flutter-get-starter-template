@@ -200,6 +200,7 @@ class CodegenLoader extends AssetLoader {
           "Cannot change opening balance once the wallet has transactions",
       "save_info": "Save",
       "bank": "Bank",
+      "cash": "Cash",
       "ewallet": "E-wallet",
       "emergency_fund": "Emergency Fund",
       "emergency_fund_desc":
@@ -957,6 +958,7 @@ class CodegenLoader extends AssetLoader {
           "Không thể sửa số dư đầu kỳ khi ví đã có giao dịch",
       "save_info": "Lưu",
       "bank": "Ngân hàng",
+      "cash": "Tiền mặt",
       "ewallet": "Ví điện tử",
       "emergency_fund": "Quỹ dự phòng",
       "emergency_fund_desc":
@@ -1692,6 +1694,7 @@ abstract class CcLocaleKeys {
   static const wallet_balance_hidden = 'wallet.balance_hidden';
   static const wallet_save_info = 'wallet.save_info';
   static const wallet_bank = 'wallet.bank';
+  static const wallet_cash = 'wallet.cash';
   static const wallet_ewallet = 'wallet.ewallet';
   static const wallet_emergency_fund = 'wallet.emergency_fund';
   static const wallet_emergency_fund_desc = 'wallet.emergency_fund_desc';
