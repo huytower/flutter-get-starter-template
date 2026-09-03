@@ -90,20 +90,19 @@ class LiabilityWalletsSection extends StatelessWidget {
             }),
           ],
         ),
-        Obx(() {
-          if (!showGuidelineBadge) return const SizedBox.shrink();
-          return Positioned(
-            top: 0,
-            // Align with Add button: SeeAll (~60) + SpaceSM (8) = 68
-            right: 55,
-            child: PrjGuidelineBadge(
-              size: 6,
-              label: guideline.bannerDescription,
-              labelAbove: false,
-              growRight: false,
-            ),
-          );
-        }),
+        !showGuidelineBadge
+            ? const SizedBox.shrink()
+            : Positioned(
+                top: 0,
+                // Align with Add button: SeeAll (~60) + SpaceSM (8) = 68
+                right: 55,
+                child: PrjGuidelineBadge(
+                  size: 6,
+                  label: guideline.bannerDescription,
+                  labelAbove: false,
+                  growRight: false,
+                ),
+              ),
       ],
     );
   }
