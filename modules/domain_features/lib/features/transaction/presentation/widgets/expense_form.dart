@@ -192,6 +192,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 ? PrjGuidelineBadge(
                     size: 8,
                     label: guideline.bannerDescription,
+                    labelAbove: false,
                     growRight: false,
                   )
                 : null,

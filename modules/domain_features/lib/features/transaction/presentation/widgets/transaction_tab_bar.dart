@@ -299,8 +299,8 @@ class TransactionTabBar extends StatelessWidget {
         ),
         if (showBadgeOnReveal)
           Positioned(
-            bottom: 0,
-            right: 0,
+            top: 10,
+            right: 20,
             child: PrjGuidelineBadge(
               size: 6,
               label: showLabelOnReveal ? guideline.bannerDescription : null,
