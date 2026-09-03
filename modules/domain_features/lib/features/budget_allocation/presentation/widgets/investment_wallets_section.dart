@@ -56,6 +56,10 @@ class InvestmentWalletsSection extends StatelessWidget {
                         label: guideline.bannerDescription,
                         labelAbove: false,
                         growRight: false,
+                        onTap: () =>
+                            guideline.isDescriptionHidden.value = false,
+                        onLabelTap: () =>
+                            guideline.isDescriptionHidden.value = false,
                       ),
                     ),
                 ],

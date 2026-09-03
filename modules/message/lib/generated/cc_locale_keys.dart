@@ -170,6 +170,7 @@ abstract class  LocaleKeys {
   static const wallet_balance_hidden = 'wallet.balance_hidden';
   static const wallet_save_info = 'wallet.save_info';
   static const wallet_bank = 'wallet.bank';
+  static const wallet_cash = 'wallet.cash';
   static const wallet_ewallet = 'wallet.ewallet';
   static const wallet_emergency_fund = 'wallet.emergency_fund';
   static const wallet_emergency_fund_desc = 'wallet.emergency_fund_desc';

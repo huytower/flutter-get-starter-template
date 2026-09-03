@@ -130,8 +130,8 @@ class _InvestmentDirectionToggleState extends State<InvestmentDirectionToggle>
             Text(text),
             if (showBadgeWithLabel)
               Positioned(
-                bottom: -10,
-                right: -24,
+                top: 20,
+                right: -50,
                 child: PrjGuidelineBadge(
                   size: 6,
                   label: guideline.bannerDescription,

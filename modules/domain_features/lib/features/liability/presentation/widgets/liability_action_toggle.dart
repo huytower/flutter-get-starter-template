@@ -128,8 +128,8 @@ class _LiabilityActionToggleState extends State<LiabilityActionToggle>
             Text(text),
             if (showBadgeWithLabel)
               Positioned(
-                bottom: -8,
-                right: -28,
+                top: 20,
+                right: -50,
                 child: PrjGuidelineBadge(
                   size: 6,
                   label: guideline.bannerDescription,
