@@ -118,11 +118,36 @@ class _ProfilePageHeaderState extends State<ProfilePageHeader>
                       level: widget.level,
                       daysToNextAudit: widget.daysToNextAudit,
                       levelStatus: widget.levelStatus,
-                      onTap: _toggleCard,
-                      onEditName: widget.onEditName,
-                      onLinkAccount: widget.onLinkAccount,
-                      onAvatarTap: widget.onAvatarTap,
-                      onLinkPhone: widget.onLinkPhone,
+                      onTap: () {
+                        'ProfilePageHeader card tapped (Info)'.Log(
+                          'ProfilePageHeader',
+                        );
+                        _toggleCard();
+                      },
+                      onEditName: () {
+                        'ProfilePageHeader onEditName triggered'.Log(
+                          'ProfilePageHeader',
+                        );
+                        widget.onEditName?.call();
+                      },
+                      onLinkAccount: () {
+                        'ProfilePageHeader onLinkAccount triggered'.Log(
+                          'ProfilePageHeader',
+                        );
+                        widget.onLinkAccount?.call();
+                      },
+                      onAvatarTap: () {
+                        'ProfilePageHeader onAvatarTap triggered'.Log(
+                          'ProfilePageHeader',
+                        );
+                        widget.onAvatarTap?.call();
+                      },
+                      onLinkPhone: () {
+                        'ProfilePageHeader onLinkPhone triggered'.Log(
+                          'ProfilePageHeader',
+                        );
+                        widget.onLinkPhone?.call();
+                      },
                     ),
                   ),
           );

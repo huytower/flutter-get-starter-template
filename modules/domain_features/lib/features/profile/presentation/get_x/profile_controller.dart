@@ -345,16 +345,19 @@ class ProfileController extends CcGetController {
 
   /// Handle link account tap - navigate to login page for account linking
   void handleLinkAccountTap(BuildContext context) {
+    'handleLinkAccountTap triggered'.Log('ProfileController');
     _authCoordinator.navigateToLogin(context);
   }
 
   /// Handle avatar tap - navigate to login page
   void handleAvatarTap(BuildContext context) {
+    'handleAvatarTap triggered'.Log('ProfileController');
     _authCoordinator.navigateToLogin(context);
   }
 
   /// Handle phone number link tap - navigate to login page
   void handlePhoneLinkTap(BuildContext context) {
+    'handlePhoneLinkTap triggered'.Log('ProfileController');
     _authCoordinator.navigateToLogin(context);
   }
 

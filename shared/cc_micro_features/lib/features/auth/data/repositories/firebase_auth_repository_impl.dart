@@ -81,42 +81,15 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
 
   @override
   Future<Result<CcUserEntity, CcFailure>> signInWithGoogle() async {
-    try {
-      'Initializing Google Sign In'.Log('FirebaseAuthRepository');
-      await _googleSignIn.initialize();
-      'Authenticating Google User'.Log('FirebaseAuthRepository');
-      final googleUser = await _googleSignIn.authenticate();
+    'signInWithGoogle triggered'.Log('FirebaseAuthRepository');
+    final credResult = await _getGoogleCredential();
 
-      final googleAuth = googleUser.authentication;
-      'Google authentication received'.Log('FirebaseAuthRepository');
-
-      final credential = firebase_auth.GoogleAuthProvider.credential(
-        accessToken: null, // Access token is now separate in 7.x
-        idToken: googleAuth.idToken,
-      );
-
+    return credResult.when((credential) async {
       'Signing in to Firebase with Google credentials'.Log(
         'FirebaseAuthRepository',
       );
-      final userCredential = await _firebaseAuth.signInWithCredential(
-        credential,
-      );
-      final user = userCredential.user;
-
-      if (user != null) {
-        'Firebase sign in success: ${user.uid}'.Log('FirebaseAuthRepository');
-        return Success(_mapFirebaseUserToEntity(user));
-      } else {
-        'Firebase sign in failed: user is null'.Log('FirebaseAuthRepository');
-        return const Error(UnauthorizedFailure('Login failed'));
-      }
-    } on firebase_auth.FirebaseAuthException catch (e) {
-      'Firebase Auth Exception: ${e.message}'.Log('FirebaseAuthRepository');
-      return Error(ServerFailure(e.message ?? 'Server error'));
-    } catch (e) {
-      'Google Sign In Error: $e'.Log('FirebaseAuthRepository');
-      return const Error(UnknownFailure('An error occurred'));
-    }
+      return _signInWithCredential(credential);
+    }, (failure) => Error(failure));
   }
 
   @override
@@ -241,9 +214,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   }
 
   @override
-  Future<Result<CcUserEntity, CcFailure>> updateDisplayName(
-    String name,
-  ) async {
+  Future<Result<CcUserEntity, CcFailure>> updateDisplayName(String name) async {
     try {
       final user = _firebaseAuth.currentUser;
       if (user == null) {
@@ -281,23 +252,50 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
 
   @override
   Future<Result<CcUserEntity, CcFailure>> linkWithGoogle() async {
-    try {
-      'Initializing Google Sign In for linking'.Log('FirebaseAuthRepository');
-      await _googleSignIn.initialize();
-      final googleUser = await _googleSignIn.authenticate();
-      final googleAuth = googleUser.authentication;
+    'linkWithGoogle triggered'.Log('FirebaseAuthRepository');
+    final credResult = await _getGoogleCredential();
 
-      final credential = firebase_auth.GoogleAuthProvider.credential(
-        accessToken: null,
-        idToken: googleAuth.idToken,
+    return credResult.when((credential) async {
+      'Linking Firebase account with Google credentials'.Log(
+        'FirebaseAuthRepository',
       );
-
       return _linkWithCredential(credential);
-    } on firebase_auth.FirebaseAuthException catch (e) {
-      return Error(_mapLinkException(e));
+    }, (failure) => Error(failure));
+  }
+
+  /// Shared helper to handle the Google Sign-In "dance" and return a Firebase
+  /// credential.
+  Future<Result<firebase_auth.AuthCredential, CcFailure>>
+  _getGoogleCredential() async {
+    try {
+      'Initializing Google Sign In'.Log('FirebaseAuthRepository');
+      await _googleSignIn.initialize();
+
+      'Authenticating Google User'.Log('FirebaseAuthRepository');
+      final googleUser = await _googleSignIn.authenticate();
+
+      final googleAuth = await googleUser.authentication;
+      'Google authentication received, idToken present: ${googleAuth.idToken != null}'
+          .Log('FirebaseAuthRepository');
+
+      return Success(
+        firebase_auth.GoogleAuthProvider.credential(
+          accessToken:
+              null, // Access token is separate in 7.x authorizationClient
+          idToken: googleAuth.idToken,
+        ),
+      );
+    } on GoogleSignInException catch (e) {
+      'Google Sign In Exception: ${e.code}'.Log('FirebaseAuthRepository');
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        return const Error(UnauthorizedFailure('Authentication cancelled'));
+      }
+      return Error(ServerFailure(e.toString()));
     } catch (e) {
-      'Link with Google error: $e'.Log('FirebaseAuthRepository');
-      return const Error(UnknownFailure('An error occurred'));
+      'Google Auth Error: $e'.Log('FirebaseAuthRepository');
+      return const Error(
+        UnknownFailure('An error occurred during Google authentication'),
+      );
     }
   }
 
@@ -364,9 +362,9 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         await user.delete();
       } on firebase_auth.FirebaseAuthException catch (e) {
         if (e.code == 'requires-recent-login') {
-          return const Error(ServerFailure(
-            'Please re-login before deleting your account.',
-          ));
+          return const Error(
+            ServerFailure('Please re-login before deleting your account.'),
+          );
         }
         return Error(_mapLinkException(e));
       }
@@ -394,14 +392,18 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         // The credential is already linked to another Firebase user.
         // Sign in with the credential to switch to that user.
         try {
-          final newCredential = await _firebaseAuth.signInWithCredential(credential);
+          final newCredential = await _firebaseAuth.signInWithCredential(
+            credential,
+          );
           final newUser = newCredential.user;
           if (newUser != null) {
             return Success(_mapFirebaseUserToEntity(newUser));
           }
           return const Error(UnauthorizedFailure('Login failed'));
         } catch (signInError) {
-          'Sign in after link conflict failed: $signInError'.Log('FirebaseAuthRepository');
+          'Sign in after link conflict failed: $signInError'.Log(
+            'FirebaseAuthRepository',
+          );
           return const Error(UnknownFailure('An error occurred'));
         }
       }
@@ -421,9 +423,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
           'This account is already linked to a different user.',
         );
       case 'provider-already-linked':
-        return const ServerFailure(
-          'This account is already linked.',
-        );
+        return const ServerFailure('This account is already linked.');
       default:
         return ServerFailure(e.message ?? 'Server error');
     }

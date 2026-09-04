@@ -75,9 +75,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const CcSpaceLG(),
         const CcSpeechBubbleIcon(),
-        const CcSpaceLG(),
         CcText(
           _enterPhoneNumber,
           maxLines: 2,

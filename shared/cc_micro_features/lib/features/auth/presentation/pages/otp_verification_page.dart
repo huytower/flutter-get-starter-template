@@ -102,20 +102,15 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const CcSpaceLG(),
         const CcSpeechBubbleIcon(),
-        const CcSpaceLG(),
         _buildTitle(context),
-        const CcSpaceSM(),
         _buildPhoneSubtitle(context, phoneNumber),
-        const CcSpaceXL(),
         _buildOtpInput(),
-        const CcSpaceXL(),
+        const CcSpaceLG(),
         _buildErrorSection(),
         _buildActionBtn(),
         const CcSpaceLG(),
         _buildResendSection(context),
-        const CcSpaceLG(),
       ],
     );
   }

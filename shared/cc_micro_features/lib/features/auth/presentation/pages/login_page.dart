@@ -44,11 +44,17 @@ class _LoginViewState extends State<LoginView> {
 
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
+        'LoginState received: $state'.Log('LoginPage');
         if (state is LoginSuccess) {
+          'Login success, navigating to dashboard'.Log('LoginPage');
           getIt<AuthCoordinator>().navigateToDashboard(context);
         } else if (state is LoginLoading) {
+          'Login loading, showing dialog'.Log('LoginPage');
           CcDialogHelper.showLoadingDialog(context: context);
         } else {
+          'Login state is not Success or Loading, closing dialog if open'.Log(
+            'LoginPage',
+          );
           if (Get.isDialogOpen ?? false) {
             Get.back();
           }
@@ -83,11 +89,11 @@ class _LoginViewState extends State<LoginView> {
                       : (_isLinking ? 'Link Account' : 'Login'),
                   phoneLoginTitle: isVietnamese
                       ? (_isLinking
-                          ? 'Liên kết số điện thoại'
-                          : 'Đăng nhập bằng số điện thoại')
+                            ? 'Liên kết số điện thoại'
+                            : 'Đăng nhập bằng số điện thoại')
                       : (_isLinking
-                          ? 'Link Phone Number'
-                          : 'Login with Phone Number'),
+                            ? 'Link Phone Number'
+                            : 'Login with Phone Number'),
                   agreeText: isVietnamese ? 'Tôi đồng ý với ' : 'I agree with ',
                   termsText: isVietnamese
                       ? 'Điều khoản dịch vụ'

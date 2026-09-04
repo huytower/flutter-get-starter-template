@@ -70,14 +70,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(const LoginLoading());
     'Logging in with Google'.Log('LoginBloc');
     final result = await _loginWithGoogleUseCase();
+    'LoginWithGoogleUseCase result: ${result.isSuccess() ? "Success" : "Failure"}'
+        .Log('LoginBloc');
     if (result.isSuccess()) {
       await _preferenceDataSource.setTermsAccepted(true);
     }
     result.when(
       (user) {
+        'LoginWithGoogle Success: ${user.id}'.Log('LoginBloc');
         emit(LoginSuccess(user));
       },
       (failure) {
+        'LoginWithGoogle Failure: ${failure.message}'.Log('LoginBloc');
         emit(LoginError(failure.message));
       },
     );
@@ -90,14 +94,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(const LoginLoading());
     'Linking Google account'.Log('LoginBloc');
     final result = await _linkWithGoogleUseCase();
+    'LinkWithGoogleUseCase result: ${result.isSuccess() ? "Success" : "Failure"}'
+        .Log('LoginBloc');
     if (result.isSuccess()) {
       await _preferenceDataSource.setTermsAccepted(true);
     }
     result.when(
       (user) {
+        'LinkWithGoogle Success: ${user.id}'.Log('LoginBloc');
         emit(LoginSuccess(user));
       },
       (failure) {
+        'LinkWithGoogle Failure: ${failure.message}'.Log('LoginBloc');
         emit(LoginError(failure.message));
       },
     );
