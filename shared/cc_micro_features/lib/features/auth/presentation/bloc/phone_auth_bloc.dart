@@ -24,6 +24,11 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     on<VerifyPhoneNumberStarted>(_onVerifyPhoneNumberStarted);
     on<SignInWithCodeStarted>(_onSignInWithCodeStarted);
     on<ResetPhoneAuthStarted>(_onResetPhoneAuthStarted);
+    on<ClearPhoneAuthError>((event, emit) {
+      if (state is PhoneAuthError) {
+        emit(PhoneAuthCodeSent(_verificationId ?? '', null));
+      }
+    });
   }
 
   String? get phoneNumber => _phoneNumber;
@@ -60,9 +65,9 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
         verificationStream,
         onData: (status) {
           'Phone Auth Status: $status'.Log('PhoneAuthBloc');
-          // If we already reached success (manually or automatically),
-          // don't let background statuses (like timeouts) overwrite it.
-          if (state is PhoneAuthSuccess) {
+          // If we already reached success or are currently loading a manual
+          // verification, don't let background statuses overwrite it.
+          if (state is PhoneAuthSuccess || state is PhoneAuthLoading) {
             return state;
           }
 
@@ -76,19 +81,29 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
             );
             return PhoneAuthSuccess(status.user);
           } else if (status is PhoneAuthStatusFailed) {
-            'Phone Auth failed: ${status.failure.message}'.Log('PhoneAuthBloc');
+            'Phone Auth failed in background stream: ${status.failure.message}'
+                .Log('PhoneAuthBloc');
+            // If we already have a verificationId, we are likely on the OTP screen.
+            // A failure here is often a non-fatal auto-retrieval error.
+            if (_verificationId != null) {
+              return state;
+            }
             return PhoneAuthError(status.failure.message);
           } else if (status is PhoneAuthStatusAutoRetrievalTimeout) {
             'Phone Auth auto retrieval timeout: ${status.verificationId}'.Log(
               'PhoneAuthBloc',
             );
-            // Keep the CodeSent state so the user can still enter the code manually
             return state;
           }
           return state;
         },
         onError: (error, stackTrace) {
           'Phone Auth error in stream: $error'.Log('PhoneAuthBloc');
+          if (state is PhoneAuthSuccess ||
+              state is PhoneAuthLoading ||
+              _verificationId != null) {
+            return state;
+          }
           return const PhoneAuthError('An error occurred');
         },
       );

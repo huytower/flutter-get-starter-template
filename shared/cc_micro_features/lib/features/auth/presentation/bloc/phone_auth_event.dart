@@ -1,5 +1,4 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
-
 import 'package:equatable/equatable.dart';
 
 abstract class PhoneAuthEvent extends Equatable {
@@ -29,6 +28,10 @@ class SignInWithCodeStarted extends PhoneAuthEvent {
 
 class ResetPhoneAuthStarted extends PhoneAuthEvent {
   const ResetPhoneAuthStarted();
+}
+
+class ClearPhoneAuthError extends PhoneAuthEvent {
+  const ClearPhoneAuthError();
 }
 
 /// Triggered when verification is automatically completed (e.g., auto-retrieval).

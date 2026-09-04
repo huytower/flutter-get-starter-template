@@ -39,7 +39,14 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
   void initState() {
     super.initState();
     _codeController = TextEditingController();
+    _codeController.addListener(_onCodeChanged);
     _startEditIconTimer();
+  }
+
+  void _onCodeChanged() {
+    if (context.read<PhoneAuthBloc>().state is PhoneAuthError) {
+      context.read<PhoneAuthBloc>().add(const ClearPhoneAuthError());
+    }
   }
 
   void _startEditIconTimer() {
@@ -184,19 +191,24 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     return BlocSelector<PhoneAuthBloc, PhoneAuthState, String?>(
       selector: (state) => state is PhoneAuthError ? state.message : null,
       builder: (context, errorMessage) {
-        if (errorMessage == null) return const SizedBox.shrink();
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: context.respPadding(CcPaddingParams.DESC_MD),
-          ),
-          child: CcText(
-            errorMessage,
-            maxLines: 8,
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              color: context.ccColorScheme.error,
-            ),
-            textAlign: TextAlign.center,
-          ),
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: errorMessage == null
+              ? const SizedBox.shrink()
+              : Padding(
+                  key: ValueKey(errorMessage),
+                  padding: EdgeInsets.only(
+                    bottom: context.respPadding(CcPaddingParams.DESC_MD),
+                  ),
+                  child: CcText(
+                    errorMessage,
+                    maxLines: 8,
+                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                      color: context.ccColorScheme.error,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
         );
       },
     );

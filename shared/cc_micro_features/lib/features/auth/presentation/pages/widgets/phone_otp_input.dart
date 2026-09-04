@@ -74,18 +74,17 @@ class _PhoneOtpInputState extends State<PhoneOtpInput> {
                           index == widget.length - 1);
 
                   return Container(
-                    width: context.respDim(35),
-                    height: context.respDim(35),
+                    width: context.respDim(27),
+                    height: context.respDim(32),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
                       color: context.ccColorScheme.surface,
-                      borderRadius: BorderRadius.circular(
-                        context.respDim(CcPaddingParams.DESC_SM),
-                      ),
+                      borderRadius: context.brInput,
                       border: Border.all(
                         color: isFocused
                             ? context.ccColorScheme.primary
-                            : context.ccColorScheme.outline,
-                        width: isFocused ? 2 : 1,
+                            : context.ccColorScheme.outline.withAlpha(70),
+                        width: isFocused ? 2 : 0.5,
                       ),
                     ),
                     alignment: Alignment.center,
