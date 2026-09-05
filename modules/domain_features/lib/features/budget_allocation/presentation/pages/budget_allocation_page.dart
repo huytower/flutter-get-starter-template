@@ -156,6 +156,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
             lendBalances: controller.lendBalances,
             onAddLoan: () => controller.openAddLiability(context),
             onSeeAll: () => controller.navigateToLiabilityList(context),
+            isLendFront: controller.isLendSectionFront.value,
             showGuidelineBadge: Get.isRegistered<GuidelineController>()
                 ? Get.find<GuidelineController>().isTaskActive('liability') &&
                       !Get.find<GuidelineController>()

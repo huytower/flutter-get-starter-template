@@ -39,36 +39,32 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
                             .transaction_liability_collection_method_label,
                       ),
               ),
-              const CcSpaceXS(),
-              Expanded(
-                child: LiabilityPillToggle(
-                  selectedIndex:
-                      controller.repaymentMethod.value ==
-                          LiabilityRepaymentMethod.installment
-                      ? 0
-                      : 1,
-                  firstLabel: isBorrowSide
-                      ? el.tr(
-                          CcLocaleKeys.transaction_liability_method_installment,
-                        )
-                      : el.tr(
-                          CcLocaleKeys
-                              .transaction_liability_method_installment_lend,
-                        ),
-                  secondLabel: isBorrowSide
-                      ? el.tr(
-                          CcLocaleKeys.transaction_liability_method_lump_sum,
-                        )
-                      : el.tr(
-                          CcLocaleKeys
-                              .transaction_liability_method_lump_sum_lend,
-                        ),
-                  activeColor: accentColor,
-                  onChanged: (index) => controller.setRepaymentMethod(
-                    index == 0
-                        ? LiabilityRepaymentMethod.installment
-                        : LiabilityRepaymentMethod.lumpSum,
-                  ),
+              const Spacer(),
+              LiabilityPillToggle(
+                width: context.respDim(220),
+                selectedIndex:
+                    controller.repaymentMethod.value ==
+                        LiabilityRepaymentMethod.installment
+                    ? 0
+                    : 1,
+                firstLabel: isBorrowSide
+                    ? el.tr(
+                        CcLocaleKeys.transaction_liability_method_installment,
+                      )
+                    : el.tr(
+                        CcLocaleKeys
+                            .transaction_liability_method_installment_lend,
+                      ),
+                secondLabel: isBorrowSide
+                    ? el.tr(CcLocaleKeys.transaction_liability_method_lump_sum)
+                    : el.tr(
+                        CcLocaleKeys.transaction_liability_method_lump_sum_lend,
+                      ),
+                activeColor: accentColor,
+                onChanged: (index) => controller.setRepaymentMethod(
+                  index == 0
+                      ? LiabilityRepaymentMethod.installment
+                      : LiabilityRepaymentMethod.lumpSum,
                 ),
               ),
             ],

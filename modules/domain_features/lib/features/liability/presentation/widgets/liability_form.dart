@@ -151,7 +151,8 @@ class LiabilityForm extends StatelessWidget {
 
     final isRepay = controller.action.value == LiabilityFormAction.decrease;
 
-    final label = (isRepay || (liability != null && liability.principalAmount > 0))
+    final label =
+        (isRepay || (liability != null && liability.principalAmount > 0))
         ? el.tr(CcLocaleKeys.transaction_amount)
         : el.tr(CcLocaleKeys.transaction_liability_amount_borrow_label);
 

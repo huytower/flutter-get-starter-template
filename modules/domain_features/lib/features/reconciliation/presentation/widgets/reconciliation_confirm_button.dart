@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../get_x/reconciliation_controller.dart';
-import 'reconciliation_dialogs.dart';
 
 class ReconciliationConfirmButton extends StatelessWidget {
   const ReconciliationConfirmButton({super.key});
@@ -22,37 +21,14 @@ class ReconciliationConfirmButton extends StatelessWidget {
         text: el.tr(CcLocaleKeys.reconciliation_confirm),
         isSubmitting: busy,
         isEnabled: !hasWarning && !isEmpty,
-        onTap: () => _showCongratsDialog(context),
+        onTap: () => controller.confirmReconciliation(context),
         activeColor: context.ccColorScheme.primary,
-        // Compact inline variant: this button sits directly under the summary
-        // rows instead of being a pinned bottom call-to-action.
-        widthFactor: 0.4,
+        widthFactor: 0.5,
         height: context.respDim(40),
         textStyle: context.ccTextTheme.bodyMedium,
-        // Mirrors the app bar confirm action's icon so the two entry points
-        // read as the same action.
         leadingIcon: Icons.handshake_outlined,
         leadingIconSize: 16,
       );
     });
-  }
-
-  void _showCongratsDialog(BuildContext context) async {
-    final controller = Get.find<ReconciliationController>();
-    final error = await controller.performReconciliation();
-
-    if (!context.mounted) return;
-
-    if (error != null) {
-      CcSnackBarHelper.showErrorSnackBar(context: context, message: error);
-    } else {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => ReconciliationSuccessDialog(
-          onDismiss: () => Navigator.of(context).pop(),
-        ),
-      );
-    }
   }
 }

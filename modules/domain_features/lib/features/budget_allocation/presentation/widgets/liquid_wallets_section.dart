@@ -52,28 +52,27 @@ class LiquidWalletsSection extends StatelessWidget {
                   ),
                 ),
               if (showAddButton) const CcSpaceSM(),
-              if (wallets.isNotEmpty)
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    CcTextButton(
-                      text: el.tr(CcLocaleKeys.wallet_see_all),
-                      onTap: () =>
-                          context.router.push(const LiquidWalletListRoute()),
-                    ),
-                    if (showGuidelineBadge)
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: PrjGuidelineBadge(
-                          size: 10,
-                          label: guideline.bannerDescription,
-                          labelAbove: false,
-                          growRight: false,
-                        ),
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  CcTextButton(
+                    text: el.tr(CcLocaleKeys.wallet_see_all),
+                    onTap: () =>
+                        context.router.push(const LiquidWalletListRoute()),
+                  ),
+                  if (showGuidelineBadge)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: PrjGuidelineBadge(
+                        size: 10,
+                        label: guideline.bannerDescription,
+                        labelAbove: false,
+                        growRight: false,
                       ),
-                  ],
-                ),
+                    ),
+                ],
+              ),
             ],
           ),
           const CcSpaceSM(),

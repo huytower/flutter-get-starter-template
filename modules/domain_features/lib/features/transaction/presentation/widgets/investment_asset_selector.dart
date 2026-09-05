@@ -54,6 +54,7 @@ class InvestmentAssetSelector extends StatelessWidget {
               ),
               child: CcText(
                 el.tr(CcLocaleKeys.transaction_no_investment_items_hint),
+                maxLines: 2,
                 textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                   color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
                   fontStyle: FontStyle.italic,

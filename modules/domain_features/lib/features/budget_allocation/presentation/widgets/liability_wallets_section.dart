@@ -17,6 +17,7 @@ class LiabilityWalletsSection extends StatelessWidget {
     required this.lendBalances,
     required this.onAddLoan,
     required this.onSeeAll,
+    required this.isLendFront,
     this.showGuidelineBadge = false,
     this.badgeColor,
     super.key,
@@ -26,6 +27,7 @@ class LiabilityWalletsSection extends StatelessWidget {
   final List<LiabilityBalanceEntity> lendBalances;
   final VoidCallback onAddLoan;
   final VoidCallback onSeeAll;
+  final bool isLendFront;
   final bool showGuidelineBadge;
   final Color? badgeColor;
 
@@ -34,6 +36,14 @@ class LiabilityWalletsSection extends StatelessWidget {
     final controller = Get.find<BudgetAllocationController>();
     final guideline = Get.find<GuidelineController>();
 
+    final isBothEmpty = borrowBalances.isEmpty && lendBalances.isEmpty;
+
+    final Widget activeCard = isLendFront
+        ? LendWalletsCard(balances: lendBalances, onSeeAll: onSeeAll)
+        : BorrowWalletsCard(balances: borrowBalances, onSeeAll: onSeeAll);
+
+    final double sectionHeight = isBothEmpty ? 35 : 95;
+
     return Stack(
       children: [
         Column(
@@ -41,26 +51,11 @@ class LiabilityWalletsSection extends StatelessWidget {
           children: [
             buildHeaderSection(controller, context),
             const CcSpaceSM(),
-            Obx(() {
-              final isLendFront = controller.isLendSectionFront.value;
-              final isBothEmpty =
-                  borrowBalances.isEmpty && lendBalances.isEmpty;
-
-              final Widget activeCard = isLendFront
-                  ? LendWalletsCard(balances: lendBalances, onSeeAll: onSeeAll)
-                  : BorrowWalletsCard(
-                      balances: borrowBalances,
-                      onSeeAll: onSeeAll,
-                    );
-
-              final double sectionHeight = isBothEmpty ? 35 : 95;
-
-              return SizedBox(
-                height: context.respDim(sectionHeight),
-                width: double.infinity,
-                child: activeCard,
-              );
-            }),
+            SizedBox(
+              height: context.respDim(sectionHeight),
+              width: double.infinity,
+              child: activeCard,
+            ),
           ],
         ),
         !showGuidelineBadge

@@ -11,6 +11,7 @@ class LiabilityPillToggle extends StatefulWidget {
   final String secondLabel;
   final Color activeColor;
   final ValueChanged<int> onChanged;
+  final double? width;
 
   const LiabilityPillToggle({
     super.key,
@@ -19,6 +20,7 @@ class LiabilityPillToggle extends StatefulWidget {
     required this.secondLabel,
     required this.activeColor,
     required this.onChanged,
+    this.width,
   });
 
   @override
@@ -52,10 +54,13 @@ class _LiabilityPillToggleState extends State<LiabilityPillToggle>
     final scheme = context.ccColorScheme;
 
     return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-      ),
+      margin: widget.width != null
+          ? EdgeInsets.zero
+          : EdgeInsets.symmetric(
+              horizontal: context.respPadding(CcPaddingParams.SPACE_XS),
+            ),
       height: context.respDim(40),
+      width: widget.width,
       decoration: BoxDecoration(
         color: scheme.surface,
         borderRadius: context.brLg,
@@ -71,7 +76,6 @@ class _LiabilityPillToggleState extends State<LiabilityPillToggle>
       child: TabBar(
         controller: _tabController,
         onTap: (index) {
-          debugPrint('[LIABILITY_TAB] Direction changed to index=$index, label=${index == 0 ? widget.firstLabel : widget.secondLabel}');
           widget.onChanged(index);
         },
         indicatorSize: TabBarIndicatorSize.tab,
@@ -88,9 +92,11 @@ class _LiabilityPillToggleState extends State<LiabilityPillToggle>
           fontWeight: CcTypographyParams.bold,
         ),
         labelPadding: EdgeInsets.zero,
-        tabs: [Tab(text: widget.firstLabel), Tab(text: widget.secondLabel)],
+        tabs: [
+          Tab(text: widget.firstLabel),
+          Tab(text: widget.secondLabel),
+        ],
       ),
     );
   }
 }
-
