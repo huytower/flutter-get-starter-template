@@ -10,6 +10,7 @@ import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
+import 'wallet_display_name.dart';
 
 /// Unified horizontal strip of wallet cards for both Dashboard and Forms.
 /// Supports selection, long-press actions, navigation, and "Add New" button.
@@ -91,7 +92,7 @@ class WalletStripCard extends StatelessWidget {
           : null;
 
       return CcWalletItem(
-        name: wallet.name,
+        name: wallet.displayName(context),
         iconCode: wallet.iconCode,
         isSelected: isSelected,
         activeColor: activeColor,

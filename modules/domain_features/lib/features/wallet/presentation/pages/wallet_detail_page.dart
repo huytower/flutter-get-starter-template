@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
+import '../widgets/wallet_display_name.dart';
 
 @RoutePage()
 class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
@@ -35,7 +36,7 @@ class WalletDetailPage extends StatelessWidget with CcViewConfigMixin {
       ),
       title: Center(
         child: CcText(
-          wallet.name,
+          wallet.displayName(context),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,

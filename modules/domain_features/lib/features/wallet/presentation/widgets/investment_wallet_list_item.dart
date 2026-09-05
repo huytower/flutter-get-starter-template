@@ -6,6 +6,7 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/presentation/widgets/asset_stat_item.dart';
 import '../../../../core/presentation/widgets/base_asset_list_item.dart';
 import '../../domain/entities/wallet_entity.dart';
+import 'wallet_display_name.dart';
 
 class InvestmentWalletListItem extends StatelessWidget {
   final WalletEntity wallet;
@@ -93,7 +94,7 @@ class InvestmentWalletListItem extends StatelessWidget {
         const CcSpaceXS(),
         Expanded(
           child: CcText(
-            wallet.name,
+            wallet.displayName(context),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textStyle: context.ccTextTheme.labelLarge?.copyWith(

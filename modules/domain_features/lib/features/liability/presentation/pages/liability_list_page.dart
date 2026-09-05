@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,6 +24,9 @@ class _LiabilityListPageState extends State<LiabilityListPage> {
   @override
   void initState() {
     super.initState();
+    if (!Get.isRegistered<LiabilityListController>()) {
+      Get.put(getIt<LiabilityListController>(), permanent: true);
+    }
     controller = Get.find<LiabilityListController>();
     // Ensure edit mode is always off when entering the page.
     controller.isEditMode.value = false;

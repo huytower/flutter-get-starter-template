@@ -6,6 +6,7 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
+import '../../../wallet/presentation/widgets/wallet_display_name.dart';
 
 /// Compact horizontal card for an investment asset shown on the dashboard.
 class InvestmentWalletPreviewCard extends StatelessWidget {
@@ -69,7 +70,7 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
                     const CcSpaceSM(),
                     Expanded(
                       child: CcText(
-                        wallet.name,
+                        wallet.displayName(context),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         textStyle: context.ccTextTheme.labelMedium?.copyWith(

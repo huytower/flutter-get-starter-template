@@ -432,7 +432,7 @@ class CodegenLoader extends AssetLoader {
       "over_by": "Over by {amount}",
       "remaining": "Remaining {amount}",
       "this_month": "This month's budgets",
-      "month_indicator": "Month {month}",
+      "month_indicator": "{month}",
       "see_all": "See all",
       "drag_reorder_hint": "Hold and drag to reorder",
       "customize_category": "Customize category",

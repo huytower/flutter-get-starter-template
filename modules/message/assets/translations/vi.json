@@ -354,7 +354,7 @@
                    "over_by":  "Vượt quá {amount}",
                    "remaining":  "Còn lại {amount}",
                     "this_month":  "Ngân sách tháng này",
-                    "month_indicator":  "Tháng: {month}",
+                    "month_indicator":  "Tháng {month}",
                     "see_all":  "Xem tất cả",
                    "drag_reorder_hint":  "Giữ và kéo để sắp xếp lại",
                    "customize_category":  "Tùy chỉnh danh mục",

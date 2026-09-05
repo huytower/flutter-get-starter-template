@@ -28,7 +28,6 @@ class GuidelineController extends GetxController {
     'first_transaction', // Transaction -> ExpenseForm
     'investment', // Budget Allocation -> Add Investment + Transaction -> Investment tab
     'liability', // Budget Allocation -> Add Liability + Transaction -> Debt/Loan tab
-    'lend', // Transaction -> Lend tab
   ];
 
   final Map<String, Color> taskColors = {
@@ -40,7 +39,6 @@ class GuidelineController extends GetxController {
     'first_transaction': Colors.pink,
     'investment': Colors.green,
     'liability': Colors.deepPurple,
-    'lend': Colors.teal,
   };
 
   final RxList<String> completedTasks = <String>[].obs;
@@ -140,7 +138,6 @@ class GuidelineController extends GetxController {
     for (final taskId in taskSequence) {
       if (taskId == 'investment' && !status.canUseInvestment) continue;
       if (taskId == 'liability' && !status.canUseDebtLoan) continue;
-      if (taskId == 'lend' && !status.canUseDebtLoan) continue;
       if (!completedTasks.contains(taskId)) {
         return taskId;
       }
@@ -181,9 +178,6 @@ class GuidelineController extends GetxController {
     }
     if (activeId == 'liability') {
       return hasCreatedFirstLiability.value ? 1 : 0;
-    }
-    if (activeId == 'lend') {
-      return 1; // Transaction tab -> Lend subtab
     }
     return -1;
   }
@@ -266,8 +260,6 @@ class GuidelineController extends GetxController {
         return el.tr(CcLocaleKeys.guideline_banner_desc_investment);
       case 'liability':
         return el.tr(CcLocaleKeys.guideline_banner_desc_liability);
-      case 'lend':
-        return el.tr(CcLocaleKeys.guideline_banner_desc_lend);
       default:
         return el.tr(CcLocaleKeys.guideline_banner_desc_default);
     }
