@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/category_name_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../liability/domain/entities/liability_balance_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
@@ -64,7 +65,10 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                 const CcSpaceSM(),
                 Expanded(
                   child: CcText(
-                    liability.categoryLabel,
+                    CategoryNameHelper.getLocalizedName(
+                      liability.categoryLabel,
+                      liability.categoryNameKey,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(

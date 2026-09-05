@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/cc_locale_keys.dart';
 
+import '../../../../core/helper/category_name_helper.dart';
 import '../../domain/entities/wallet_entity.dart';
 
 extension WalletDisplayName on WalletEntity {
@@ -12,6 +13,6 @@ extension WalletDisplayName on WalletEntity {
     if (type == WalletType.bank) {
       return el.tr(CcLocaleKeys.wallet_bank);
     }
-    return name;
+    return CategoryNameHelper.getLocalizedName(name, categoryNameKey);
   }
 }

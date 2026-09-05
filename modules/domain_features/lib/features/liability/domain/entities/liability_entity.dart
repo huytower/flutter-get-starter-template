@@ -23,7 +23,10 @@ class LiabilityInstallmentEntity extends Equatable {
   final DateTime dueDate;
   final int amount;
 
-  const LiabilityInstallmentEntity({required this.dueDate, required this.amount});
+  const LiabilityInstallmentEntity({
+    required this.dueDate,
+    required this.amount,
+  });
 
   @override
   List<Object?> get props => [dueDate, amount];
@@ -47,6 +50,10 @@ class LiabilityEntity extends Equatable {
 
   /// Denormalized category label (mirrors [TransactionEntity.category]).
   final String categoryLabel;
+
+  /// Localization key for the category name.
+  final String? categoryNameKey;
+
   final int? categoryIconCode;
   final String? categoryIconFamily;
 
@@ -77,6 +84,7 @@ class LiabilityEntity extends Equatable {
     required this.principalAmount,
     required this.categoryId,
     required this.categoryLabel,
+    this.categoryNameKey,
     this.categoryIconCode,
     this.categoryIconFamily,
     required this.walletId,
@@ -91,7 +99,47 @@ class LiabilityEntity extends Equatable {
 
   bool get isBorrow => direction == LiabilityDirection.borrow;
   bool get isLend => direction == LiabilityDirection.lend;
-  bool get isInstallment => repaymentMethod == LiabilityRepaymentMethod.installment;
+  bool get isInstallment =>
+      repaymentMethod == LiabilityRepaymentMethod.installment;
+
+  LiabilityEntity copyWith({
+    String? id,
+    String? direction,
+    int? principalAmount,
+    String? categoryId,
+    String? categoryLabel,
+    String? categoryNameKey,
+    int? categoryIconCode,
+    String? categoryIconFamily,
+    String? walletId,
+    String? repaymentMethod,
+    List<LiabilityInstallmentEntity>? installments,
+    DateTime? finalDueDate,
+    String? note,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool? reminderBeforeDueDate,
+  }) {
+    return LiabilityEntity(
+      id: id ?? this.id,
+      direction: direction ?? this.direction,
+      principalAmount: principalAmount ?? this.principalAmount,
+      categoryId: categoryId ?? this.categoryId,
+      categoryLabel: categoryLabel ?? this.categoryLabel,
+      categoryNameKey: categoryNameKey ?? this.categoryNameKey,
+      categoryIconCode: categoryIconCode ?? this.categoryIconCode,
+      categoryIconFamily: categoryIconFamily ?? this.categoryIconFamily,
+      walletId: walletId ?? this.walletId,
+      repaymentMethod: repaymentMethod ?? this.repaymentMethod,
+      installments: installments ?? this.installments,
+      finalDueDate: finalDueDate ?? this.finalDueDate,
+      note: note ?? this.note,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      reminderBeforeDueDate:
+          reminderBeforeDueDate ?? this.reminderBeforeDueDate,
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -99,6 +147,10 @@ class LiabilityEntity extends Equatable {
     direction,
     principalAmount,
     categoryId,
+    categoryLabel,
+    categoryNameKey,
+    categoryIconCode,
+    categoryIconFamily,
     walletId,
     repaymentMethod,
     installments,
@@ -109,4 +161,3 @@ class LiabilityEntity extends Equatable {
     reminderBeforeDueDate,
   ];
 }
-

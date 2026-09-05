@@ -47,10 +47,10 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                           return const SizedBox.shrink();
                         }
                         return Positioned(
-                          bottom: 0,
-                          right: 0,
+                          bottom: 10,
+                          right: 10,
                           child: PrjGuidelineBadge(
-                            size: 10,
+                            size: 6,
                             label: guideline.bannerDescription,
                             labelAbove: true,
                             growRight: false,

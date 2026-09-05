@@ -6,6 +6,8 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../category/domain/entities/category_entity.dart';
+import '../../../category/domain/repositories/category_repository.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
@@ -33,13 +35,14 @@ class WalletController extends CcGetController {
     this._getWalletBookBalance,
     this._getInvestmentRoi,
     this._getProfileSettings,
-  );
+  ) : _categoryRepository = getIt<CategoryRepository>();
 
   final WalletRepository _repository;
   final TransactionRepository _transactionRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
   final GetInvestmentRoiUseCase _getInvestmentRoi;
   final GetProfileSettingsUseCase _getProfileSettings;
+  final CategoryRepository _categoryRepository;
 
   final RxInt currentNavIndex = 1.obs;
   final RxBool isBalanceVisible = true.obs;
@@ -330,7 +333,23 @@ class WalletController extends CcGetController {
       return;
     }
 
-    final list = result.tryGetSuccess()!;
+    final catResult = await _categoryRepository.getCategories();
+    final categories = catResult.tryGetSuccess() ?? <CategoryEntity>[];
+
+    final list = result
+        .tryGetSuccess()!
+        .map((w) {
+          if (w.categoryId != null) {
+            final cat = categories.firstWhereOrNull(
+              (c) => c.id == w.categoryId,
+            );
+            return w.copyWith(categoryNameKey: cat?.nameKey);
+          }
+          return w;
+        })
+        .toList()
+        .cast<WalletEntity>();
+
     await _rebuildDerivedBalances(list);
     wallets.assignAll(list);
     _calculateTotalBalance();
@@ -475,7 +494,7 @@ class WalletController extends CcGetController {
     }
 
     // Monthly ROI & Breakeven
-    if (monthlyInvestedValue == 0) {
+    if (monthlyInvestedValue == 0 || monthlyReturnedValue == 0) {
       monthlyRoiPercent.value = 0;
       monthlyBreakevenPercent.value = 0;
     } else {
@@ -550,7 +569,9 @@ class WalletController extends CcGetController {
     var toSave = wallet;
     final index = wallets.indexWhere((e) => e.id == wallet.id);
     final original = index != -1 ? wallets[index] : null;
-    if (original != null && walletHasTransactions(wallet.id) && bookBalanceOf(wallet.id) != 0) {
+    if (original != null &&
+        walletHasTransactions(wallet.id) &&
+        bookBalanceOf(wallet.id) != 0) {
       toSave = WalletEntity(
         id: wallet.id,
         name: wallet.name,

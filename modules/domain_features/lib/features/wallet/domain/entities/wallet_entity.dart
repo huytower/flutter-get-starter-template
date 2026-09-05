@@ -35,6 +35,9 @@ class WalletEntity extends Equatable {
   /// represents. Null for cash/bank/ewallet wallets.
   final String? categoryId;
 
+  /// Localization key for the category name.
+  final String? categoryNameKey;
+
   const WalletEntity({
     required this.id,
     required this.name,
@@ -45,6 +48,7 @@ class WalletEntity extends Equatable {
     required this.updatedAt,
     this.displayOrder = 0,
     this.categoryId,
+    this.categoryNameKey,
   });
 
   WalletEntity copyWith({
@@ -57,6 +61,7 @@ class WalletEntity extends Equatable {
     DateTime? updatedAt,
     int? displayOrder,
     String? categoryId,
+    String? categoryNameKey,
   }) {
     return WalletEntity(
       id: id ?? this.id,
@@ -68,6 +73,7 @@ class WalletEntity extends Equatable {
       updatedAt: updatedAt ?? this.updatedAt,
       displayOrder: displayOrder ?? this.displayOrder,
       categoryId: categoryId ?? this.categoryId,
+      categoryNameKey: categoryNameKey ?? this.categoryNameKey,
     );
   }
 
@@ -82,5 +88,6 @@ class WalletEntity extends Equatable {
     updatedAt,
     displayOrder,
     categoryId,
+    categoryNameKey,
   ];
 }

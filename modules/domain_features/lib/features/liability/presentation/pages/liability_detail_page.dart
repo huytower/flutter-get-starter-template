@@ -7,6 +7,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
+import '../../../../core/helper/category_name_helper.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
@@ -36,13 +37,20 @@ class LiabilityDetailPage extends StatelessWidget with CcViewConfigMixin {
         ),
         onTap: () => Navigator.of(context).pop(),
       ),
-      title: CcText(
-        "",
-        textStyle: context.ccTextTheme.titleMedium?.copyWith(
-          color: context.ccColorScheme.onPrimary,
-          fontWeight: CcTypographyParams.bold,
-        ),
-      ),
+      title: Obx(() {
+        final controller = Get.find<LiabilityDetailController>();
+        final current = controller.loan.value ?? liability.liability;
+        return CcText(
+          CategoryNameHelper.getLocalizedName(
+            current.categoryLabel,
+            current.categoryNameKey,
+          ),
+          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            color: context.ccColorScheme.onPrimary,
+            fontWeight: CcTypographyParams.bold,
+          ),
+        );
+      }),
     );
   }
 

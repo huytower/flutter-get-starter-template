@@ -222,8 +222,9 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
             child: PrjGuidelineBadge(
               size: 4,
               label: guideline.bannerDescription,
-              labelAbove: true,
-              growRight: true,
+              forceHideLabel: true,
+              labelAbove: false,
+              growRight: false,
             ),
           );
         }),
