@@ -150,15 +150,25 @@ class ProfileInfoCard extends StatelessWidget {
         // Full Name row with Edit icon
         _buildFullNameRow(context, fullName: fullName, onEdit: onEditName),
         const CcSpaceXS(),
-        // Email row with Linking icon
-        _buildEmailRow(context, email: email, onLink: onLinkAccount),
-        const CcSpaceXS(),
-        // Phone Number row (value only)
-        _buildPhoneNumberRow(
-          context,
-          phoneNumber: phoneNumber,
-          onLink: onLinkPhone,
-        ),
+        // Only show one authentication method: prioritize Email, then Phone.
+        // If neither exists (Guest), show both as link targets.
+        if (email.isNotEmpty)
+          _buildEmailRow(context, email: email, onLink: onLinkAccount)
+        else if (phoneNumber.isNotEmpty)
+          _buildPhoneNumberRow(
+            context,
+            phoneNumber: phoneNumber,
+            onLink: onLinkPhone,
+          )
+        else ...[
+          _buildEmailRow(context, email: email, onLink: onLinkAccount),
+          const CcSpaceXS(),
+          _buildPhoneNumberRow(
+            context,
+            phoneNumber: phoneNumber,
+            onLink: onLinkPhone,
+          ),
+        ],
       ],
     );
   }
@@ -353,7 +363,7 @@ class ProfileInfoCard extends StatelessWidget {
           onTap: onEdit,
           child: Icon(
             Icons.edit_rounded,
-            size: context.respIconSize(baseSize: 14),
+            size: context.respIconSize(baseSize: 20),
             color: context.ccColorScheme.onPrimary.withOpacity(0.85),
           ),
         ),
@@ -385,7 +395,7 @@ class ProfileInfoCard extends StatelessWidget {
             onTap: onLink,
             child: Icon(
               Icons.link_rounded,
-              size: context.respIconSize(baseSize: 14),
+              size: context.respIconSize(baseSize: 20),
               color: context.ccColorScheme.onPrimary.withOpacity(0.85),
             ),
           ),
@@ -420,7 +430,7 @@ class ProfileInfoCard extends StatelessWidget {
             onTap: onLink,
             child: Icon(
               Icons.link_rounded,
-              size: context.respIconSize(baseSize: 14),
+              size: context.respIconSize(baseSize: 20),
               color: context.ccColorScheme.onPrimary.withOpacity(0.85),
             ),
           ),

@@ -57,10 +57,6 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
       children: [
         _buildTitle(context, controller),
         const CcSpaceMD(),
-        if (!controller.isVip.value) ...[
-          const CcVipLockBanner(),
-          const CcSpaceMD(),
-        ],
         _buildDirectionPicker(context, controller),
         const CcSpaceMD(),
         _buildLoanCategoryPicker(context, controller),
