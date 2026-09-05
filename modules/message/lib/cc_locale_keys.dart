@@ -1188,6 +1188,7 @@ class CodegenLoader extends AssetLoader {
       "over_by": "Vượt {amount}",
       "remaining": "Còn {amount}",
       "this_month": "Ngân sách tháng này",
+      "month_indicator": "{month}",
       "see_all": "Xem tất cả",
       "drag_reorder_hint": "Giữ và kéo để đổi thứ tự",
       "customize_category": "Tuỳ chỉnh danh mục",
