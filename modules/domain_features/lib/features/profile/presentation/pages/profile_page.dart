@@ -193,7 +193,9 @@ class ProfilePage extends CcGetView<ProfileController> {
       Obx(
         () => ProfileSettingsTile(
           icon: Icons.palette_rounded,
-          label: el.tr(CcLocaleKeys.settings_theme),
+          label: controller.settings.value.isDarkMode ?? false
+              ? el.tr(CcLocaleKeys.settings_theme_dark)
+              : el.tr(CcLocaleKeys.settings_theme_light),
           subtitle: el.tr(CcLocaleKeys.profile_theme_subtitle),
           showChevron: false,
           trailingWidget: SizedBox(

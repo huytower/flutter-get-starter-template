@@ -83,9 +83,7 @@ class BudgetLimitGridCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _buildHeader(context, iconColor, iconData),
-          CcDividerLine(
-            color: scheme.onSurface.withOpacity(0.06),
-          ),
+          CcDividerLine(color: scheme.onSurface.withOpacity(0.06)),
           _buildFooter(context, pct, accent),
         ],
       ),
@@ -131,7 +129,7 @@ class BudgetLimitGridCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CcText(
-                stats.budget.name,
+                _getDisplayName(context),
                 maxLines: 2,
                 textStyle: context.ccTextTheme.labelMedium?.copyWith(
                   fontWeight: CcTypographyParams.bold,
@@ -149,6 +147,73 @@ class BudgetLimitGridCard extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _getDisplayName(BuildContext context) {
+    if (stats.categoryNameKey != null) {
+      final localized = el.tr(stats.categoryNameKey!);
+      // Heuristic: if the stored name matches the English translation
+      // of the category, we assume it's a default name and should follow
+      // the app language.
+      if (_isDefaultName(stats.budget.name, stats.categoryNameKey!)) {
+        return localized;
+      }
+    }
+    return stats.budget.name;
+  }
+
+  /// Returns true if [name] is a known default name for the given [key].
+  /// Matches against English hardcoded defaults since those are the most
+  /// likely "stale" names when switching to Vietnamese.
+  bool _isDefaultName(String name, String key) {
+    // Exact match with current translation is always "default"
+    if (name == el.tr(key)) return true;
+
+    // Check against English values from en.json
+    final enDefaults = {
+      'category.food_drink': 'Dining & Coffee',
+      'category.gas': 'Gas',
+      'category.taxi': 'Taxi',
+      'category.parking': 'Parking',
+      'category.maintenance': 'Maintenance',
+      'category.phone': 'Phone',
+      'category.electricity': 'Electricity',
+      'category.internet': 'Internet',
+      'category.rent': 'Rent',
+      'category.condo_fee': 'Condo Fee',
+      'category.laundry': 'Laundry',
+      'category.furniture': 'Furniture',
+      'category.medicine': 'Medicine',
+      'category.doctor': 'Doctor',
+      'category.gym': 'Gym',
+      'category.health_insurance': 'Health Insurance',
+      'category.tuition': 'Tuition',
+      'category.courses': 'Courses',
+      'category.books': 'Books',
+      'category.gaming': 'Gaming',
+      'category.cinema': 'Cinema',
+      'category.events': 'Events',
+      'category.travel': 'Travel',
+      'category.market_supermarket': 'Market & Supermarket',
+      'category.clothing': 'Clothing',
+      'category.electronics': 'Electronics',
+      'category.cosmetics': 'Cosmetics',
+      'category.appliances': 'Appliances',
+      'category.gifts': 'Gifts',
+      'category.charity': 'Charity',
+      'category.religious': 'Religious/Spirituality',
+      'category.leisure': 'Leisure & Travel',
+      'category.haircut': 'Haircut',
+      'category.spa': 'Spa',
+      'category.personal_care_product': 'Personal Care',
+      'category.bank_fee': 'Bank Fee',
+      'category.card_fee': 'Card Annual Fee',
+      'category.milk_formula': 'Milk Formula',
+      'category.diapers': 'Diapers',
+      'category.baby_toys': 'Baby Toys',
+    };
+
+    return enDefaults[key] == name;
   }
 
   Widget _buildFooter(BuildContext context, int pct, Color accent) {

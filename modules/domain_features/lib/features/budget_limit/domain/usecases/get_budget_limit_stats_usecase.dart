@@ -61,6 +61,7 @@ class GetBudgetLimitStatsUseCase {
         iconCode: cat?.iconCode ?? 0,
         iconFamily: cat?.iconFamily,
         color: cat?.color,
+        categoryNameKey: cat?.nameKey,
       );
     }).toList();
 

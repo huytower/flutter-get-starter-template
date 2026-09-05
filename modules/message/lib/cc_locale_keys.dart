@@ -149,6 +149,8 @@ class CodegenLoader extends AssetLoader {
       "language_english": "English",
       "theme": "Theme",
       "theme_static": "Static",
+      "theme_light": "Light Mode",
+      "theme_dark": "Dark Mode",
       "notifications": "Notifications",
       "privacy": "Privacy",
       "help": "Help & Support",
@@ -907,6 +909,8 @@ class CodegenLoader extends AssetLoader {
       "language_english": "Tiếng Anh",
       "theme": "Giao diện",
       "theme_static": "Tĩnh",
+      "theme_light": "Chế độ sáng",
+      "theme_dark": "Chế độ tối",
       "notifications": "Thông báo",
       "privacy": "Bảo mật",
       "help": "Trợ giúp & Hỗ trợ",
@@ -1645,6 +1649,8 @@ abstract class CcLocaleKeys {
   static const settings_language_vietnamese = 'settings.language_vietnamese';
   static const settings_language_english = 'settings.language_english';
   static const settings_theme = 'settings.theme';
+  static const settings_theme_light = 'settings.theme_light';
+  static const settings_theme_dark = 'settings.theme_dark';
   static const settings_notifications = 'settings.notifications';
   static const settings_privacy = 'settings.privacy';
   static const settings_help = 'settings.help';

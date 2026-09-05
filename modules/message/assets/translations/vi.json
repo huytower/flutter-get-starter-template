@@ -127,6 +127,8 @@
                      "language_english":  "Ti?ng Anh",
                      "theme":  "Giao di?n",
                      "theme_static":  "Tinh",
+                      "theme_light":  "Chế độ sáng",
+                      "theme_dark":  "Chế độ tối",
                      "notifications":  "Th?ng b?o",
                      "privacy":  "B?o m?t",
                      "help":  "Tr? gi?p \u0026 H? tr?",
@@ -448,5 +450,40 @@
                     "progress_steps":  "Các bước tiến độ",
                     "reconciliation_streak_title":  "{count} tuần chuỗi",
                     "reconciliation_streak_desc":  "Ngày kiểm tra: {day}"
-                }
+                },
+    "guideline":  {
+                      "banner_title_completed":  "Chúc mừng! Đã hoàn thành tất cả các bước thiết lập",
+                      "banner_title_in_progress":  "Thử thách: còn {remaining} bước",
+                      "banner_desc_completed":  "Bây giờ bạn có thể bắt đầu quản lý tài chính một cách kỷ luật.",
+                      "banner_desc_birth_year":  "Thiết lập năm sinh để nhận các gợi ý phù hợp",
+                      "banner_desc_categories":  "Chọn các hạng mục thu chi của bạn",
+                      "banner_desc_wallet_balance":  "Thiết lập số dư hiện tại cho ví của bạn",
+                      "banner_desc_modify_cash":  "Điều chỉnh số dư trong ví tiền mặt",
+                      "banner_desc_budget_limit":  "Thiết lập hạn mức chi tiêu cho từng danh mục",
+                      "banner_desc_min_living":  "Xác định mức chi phí sinh hoạt tối thiểu hàng tháng",
+                      "banner_desc_first_transaction":  "Ghi chép giao dịch chi tiêu đầu tiên",
+                      "banner_desc_investment":  "Tạo khoản đầu tư đầu tiên để gia tăng tài sản",
+                      "banner_desc_liability": "Ghi chép khoản nợ đầu tiên (Vay/Trả) để quản lý nợ",
+                      "banner_desc_lend": "Ghi chép khoản cho vay đầu tiên (Cho vay/Thu nợ) để quản lý cho vay",
+                      "banner_desc_default":  "Bạn đã sẵn sàng quản lý tài chính!",
+                      "success_dialog_message":  "Chúc mừng!\nBạn đã hoàn thành thiết lập ban đầu.",
+                      "reset_confirm_desc":  "Bạn có {count} nhiệm vụ đã hoàn thành. Đặt lại sẽ hủy bỏ mọi tiến độ.",
+                      "reset_confirm_agree":  "Xem hướng dẫn",
+                      "reset_confirm_cancel":  "Hủy"
+                  },
+    "level_lock": {
+        "unlock_at_lv": "MỞ KHÓA Ở LV{level}",
+        "remaining_percent": "CÒN LẠI {percent}%",
+        "investment_title": "Theo dõi Đầu tư & Tích lũy",
+        "investment_desc": "Ghi chép cổ phiếu, quỹ, bất động sản và theo dõi ROI ngay trong ứng dụng — mở khóa bằng cách hoàn thành các thử thách kỷ luật chi tiêu.",
+        "liability_title": "Quản lý Nợ & Cho vay",
+        "liability_desc": "Theo dõi các khoản nợ, lãi suất và lịch trả nợ chuyên nghiệp — mở khóa khi đạt được kỷ luật tài chính cao hơn.",
+        "task_setup_budget": "Thiết lập ngân sách đầu tiên",
+        "task_record_transactions": "Ghi chép 5 giao dịch đầu tiên",
+        "task_setup_birth_year": "Thiết lập năm sinh",
+        "task_reconciliation_streak": "Kỷ luật đối soát {current}/{total} tuần",
+        "task_fixed_budgets": "Thiết lập {current}/{total} ngân sách cố định",
+        "task_positive_cash_flow": "Dòng tiền dương trong tháng này",
+        "progress_archived": "đã đạt {percent}% exp"
+    }
 }

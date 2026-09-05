@@ -26,12 +26,16 @@ class BudgetLimitStatsEntity extends Equatable {
   /// Category colour; null falls back to the theme primary.
   final Color? color;
 
+  /// Localization key for the category name.
+  final String? categoryNameKey;
+
   const BudgetLimitStatsEntity({
     required this.budget,
     required this.spent,
     this.iconCode = 0,
     this.iconFamily,
     this.color,
+    this.categoryNameKey,
   });
 
   /// Amount still available ("còn X"); negative when over the limit.

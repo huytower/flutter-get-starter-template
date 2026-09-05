@@ -52,9 +52,9 @@ class InvestmentWalletsSection extends StatelessWidget {
                       right: 0,
                       top: 0,
                       child: PrjGuidelineBadge(
-                        size: 6,
+                        size: 10,
                         label: guideline.bannerDescription,
-                        labelAbove: false,
+                        labelAbove: true,
                         growRight: false,
                         onTap: () =>
                             guideline.isDescriptionHidden.value = false,

@@ -50,7 +50,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                           bottom: 0,
                           right: 0,
                           child: PrjGuidelineBadge(
-                            size: 6,
+                            size: 10,
                             label: guideline.bannerDescription,
                             labelAbove: true,
                             growRight: false,
