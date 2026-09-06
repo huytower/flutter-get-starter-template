@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/export_guideline.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
@@ -36,7 +36,9 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
                   left: context.respPadding(CcPaddingParams.SPACE_LG),
                   right: context.respPadding(CcPaddingParams.SPACE_LG),
                   top: context.respPadding(CcPaddingParams.SPACE_LG),
-                  bottom: context.respPadding(CcPaddingParams.SPACE_LG),
+                  bottom:
+                      MediaQuery.of(context).viewInsets.bottom +
+                      context.respPadding(CcPaddingParams.SPACE_LG),
                 ),
                 decoration: BoxDecoration(
                   color: context.ccColorScheme.surface,
@@ -83,17 +85,6 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
           ],
         ),
         const CcSpaceXS(),
-        BudgetLimitNameInput(
-          controller: controller.nameController,
-          errorText: controller.nameError.value,
-          onClear: () => controller.nameController.clear(),
-          onTap: () {
-            if (controller.showKeypad.value) {
-              controller.hideKeypad();
-            }
-          },
-        ),
-        const CcSpaceXS(),
         if (!controller.isEdit) ...[
           BudgetLimitCategorySelector(
             categories: controller.categories,
@@ -105,7 +96,18 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
             onScrollControllerCreated: (c) =>
                 controller.categoryScrollController = c,
           ),
+          const CcSpaceXS(),
         ],
+        BudgetLimitNameInput(
+          controller: controller.nameController,
+          errorText: controller.nameError.value,
+          onClear: () => controller.nameController.clear(),
+          onTap: () {
+            if (controller.showKeypad.value) {
+              controller.hideKeypad();
+            }
+          },
+        ),
         const CcSpaceXS(),
         if (!controller.isEdit && controller.estimatedLimit.value != null)
           _buildEstimateSuggestion(context, controller),
@@ -265,9 +267,8 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
                   el.tr(
                     CcLocaleKeys.budget_estimate_hint,
                     namedArgs: {
-                      'amount': formatVndWithSymbol(
-                        controller.estimatedLimit.value ?? 0,
-                      ),
+                      'amount':
+                          '${TransactionFormHelpers.formatShort(controller.estimatedLimit.value ?? 0)} đ',
                     },
                   ),
                   maxLines: 1,

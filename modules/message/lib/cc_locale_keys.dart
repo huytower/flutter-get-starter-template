@@ -345,6 +345,7 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_take_photo": "Take photo",
       "quick_entry_choose_gallery": "Choose from gallery",
       "claims_in_progress": "You have {count} claims in progress",
+      "auto_save_countdown": "Auto-save in {countdown}s...",
       "validation": {
         "amount_required": "Amount must be greater than 0",
         "wallet_required": "Please select a wallet",
@@ -1104,6 +1105,7 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_take_photo": "Chụp ảnh",
       "quick_entry_choose_gallery": "Chọn từ thư viện",
       "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
+      "auto_save_countdown": "Tự động lưu trong {countdown}s...",
       "validation": {
         "amount_required": "Số tiền phải lớn hơn 0!",
         "wallet_required": "Vui lòng chọn ví!",
