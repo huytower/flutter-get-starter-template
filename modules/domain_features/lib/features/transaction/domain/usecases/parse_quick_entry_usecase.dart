@@ -8,12 +8,15 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
+import '../../../wallet/domain/entities/wallet_entity.dart';
+import '../../../wallet/domain/repositories/wallet_repository.dart';
 
 @lazySingleton
 class ParseQuickEntryUseCase {
   ParseQuickEntryUseCase(this._getCategories);
 
   final GetCategoriesUseCase _getCategories;
+  WalletRepository get _walletRepository => getIt<WalletRepository>();
 
   Future<List<CategoryEntity>> _loadCategories(
     String categoryType,
@@ -38,10 +41,14 @@ class ParseQuickEntryUseCase {
     List<String>? groupIds,
   }) async {
     final categories = await _loadCategories(categoryType, groupIds);
+    final walletsResult = await _walletRepository.getWallets();
+    final wallets = walletsResult.tryGetSuccess();
+
     return parseQuickEntryTextLocally(
       text: text,
       categories: categories,
       categoryLabels: (c) => el.tr(c.nameKey),
+      wallets: wallets,
     );
   }
 
@@ -54,9 +61,12 @@ class ParseQuickEntryUseCase {
     final categories = await _loadCategories(categoryType, groupIds);
     if (categories.isEmpty) return null;
 
+    final walletsResult = await _walletRepository.getWallets();
+    final wallets = walletsResult.tryGetSuccess() ?? [];
+
     final prompt =
         'You extract a Vietnamese ${_amountKindPhrase(categoryType)} '
-        'amount in VND, a category id, a transaction date, and a short note '
+        'amount in VND, a category id, a wallet id, a transaction date, and a short note '
         '(merchant/item) from a short free-text or dictated quick-entry '
         'string. '
         'Text: "$text". '
@@ -64,7 +74,8 @@ class ParseQuickEntryUseCase {
         'IMPORTANT: If the text contains relative dates like "hôm qua" (yesterday), '
         '"hôm kia" (the day before yesterday), or specific dates, resolve them '
         'relative to the provided today\'s date. '
-        '${_buildCategoryOptionsPrompt(categories)}';
+        '${_buildCategoryOptionsPrompt(categories)} '
+        '${_buildWalletOptionsPrompt(wallets)}';
 
     '[AI_PARSING] ☁️ Gemini Text Prompt: \n$prompt'.Log(
       'ParseQuickEntryUseCase',
@@ -72,7 +83,7 @@ class ParseQuickEntryUseCase {
 
     final response = await CcGeminiHelper.generateText(
       prompt: prompt,
-      responseSchema: _buildResponseSchema(categories),
+      responseSchema: _buildResponseSchema(categories, wallets),
     );
 
     if (response == null) {
@@ -88,6 +99,7 @@ class ParseQuickEntryUseCase {
     return _mergeCloudResponse(
       response,
       categories: categories,
+      wallets: wallets,
       localResult: localResult,
     );
   }
@@ -105,14 +117,19 @@ class ParseQuickEntryUseCase {
     final categories = await _loadCategories(categoryType, groupIds);
     if (categories.isEmpty) return null;
 
+    final walletsResult = await _walletRepository.getWallets();
+    final wallets = walletsResult.tryGetSuccess() ?? [];
+
     final prompt =
         'This image is a Vietnamese ${_receiptKindPhrase(categoryType)}. '
         'Extract the total amount in VND, the best-matching category id, '
+        'the wallet id, '
         'the transaction date if one is shown, and a short note. '
         'If this is a receipt, the note should be the merchant name. '
         'If there are line items, list them concisely in the note like: "Item1, Item2...". '
         '${_todayReferenceSentence()} '
-        '${_buildCategoryOptionsPrompt(categories)}';
+        '${_buildCategoryOptionsPrompt(categories)} '
+        '${_buildWalletOptionsPrompt(wallets)}';
 
     '[AI_PARSING] 🖼️ Gemini Image Prompt: \n$prompt'.Log(
       'ParseQuickEntryUseCase',
@@ -122,7 +139,7 @@ class ParseQuickEntryUseCase {
       imageBytes: imageBytes,
       mimeType: mimeType,
       prompt: prompt,
-      responseSchema: _buildResponseSchema(categories),
+      responseSchema: _buildResponseSchema(categories, wallets),
     );
 
     if (response == null) {
@@ -138,6 +155,7 @@ class ParseQuickEntryUseCase {
     return _mergeCloudResponse(
       response,
       categories: categories,
+      wallets: wallets,
       localResult: localResult,
     );
   }
@@ -165,6 +183,12 @@ class ParseQuickEntryUseCase {
     return 'Available categories (id: label): $categoryOptions.';
   }
 
+  String _buildWalletOptionsPrompt(List<WalletEntity> wallets) {
+    if (wallets.isEmpty) return '';
+    final walletOptions = wallets.map((w) => '${w.id}: ${w.name}').join(', ');
+    return 'Available wallets (id: name): $walletOptions.';
+  }
+
   String _todayReferenceSentence() {
     final now = DateTime.now();
     final iso =
@@ -174,7 +198,10 @@ class ParseQuickEntryUseCase {
     return "Today's date is $iso.";
   }
 
-  Schema _buildResponseSchema(List<CategoryEntity> categories) {
+  Schema _buildResponseSchema(
+    List<CategoryEntity> categories,
+    List<WalletEntity> wallets,
+  ) {
     return Schema.object(
       properties: {
         'amount': Schema.integer(
@@ -188,6 +215,13 @@ class ParseQuickEntryUseCase {
           enumValues: categories.map((c) => c.id).toList(),
           description:
               'Best-matching category id from the offered list, '
+              'or null if none fits.',
+          nullable: true,
+        ),
+        'walletId': Schema.enumString(
+          enumValues: wallets.map((w) => w.id).toList(),
+          description:
+              'Best-matching wallet id from the offered list, '
               'or null if none fits.',
           nullable: true,
         ),
@@ -210,15 +244,22 @@ class ParseQuickEntryUseCase {
   QuickEntryParseResult? _mergeCloudResponse(
     String response, {
     required List<CategoryEntity> categories,
+    required List<WalletEntity> wallets,
     required QuickEntryParseResult localResult,
   }) {
-    final validIds = categories.map((c) => c.id).toSet();
-    final cloudResult = _parseJsonResponse(response, validIds: validIds);
+    final validCatIds = categories.map((c) => c.id).toSet();
+    final validWalletIds = wallets.map((w) => w.id).toSet();
+    final cloudResult = _parseJsonResponse(
+      response,
+      validCatIds: validCatIds,
+      validWalletIds: validWalletIds,
+    );
     if (cloudResult == null) return null;
 
     final merged = QuickEntryParseResult(
       amount: localResult.amount ?? cloudResult.amount,
       categoryId: localResult.categoryId ?? cloudResult.categoryId,
+      walletId: localResult.walletId ?? cloudResult.walletId,
       date: cloudResult.date ?? localResult.date,
       note: localResult.note ?? cloudResult.note,
     );
@@ -227,7 +268,8 @@ class ParseQuickEntryUseCase {
 
   QuickEntryParseResult? _parseJsonResponse(
     String raw, {
-    required Set<String> validIds,
+    required Set<String> validCatIds,
+    required Set<String> validWalletIds,
   }) {
     try {
       final cleaned = raw.replaceAll(RegExp(r'```json|```'), '').trim();
@@ -241,8 +283,14 @@ class ParseQuickEntryUseCase {
 
       final categoryIdValue = decoded['categoryId'];
       final categoryId =
-          categoryIdValue is String && validIds.contains(categoryIdValue)
+          categoryIdValue is String && validCatIds.contains(categoryIdValue)
           ? categoryIdValue
+          : null;
+
+      final walletIdValue = decoded['walletId'];
+      final walletId =
+          walletIdValue is String && validWalletIds.contains(walletIdValue)
+          ? walletIdValue
           : null;
 
       final dateValue = decoded['date'];
@@ -264,6 +312,7 @@ class ParseQuickEntryUseCase {
       return QuickEntryParseResult(
         amount: amount,
         categoryId: categoryId,
+        walletId: walletId,
         date: date,
         note: note,
       );

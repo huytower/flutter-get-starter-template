@@ -31,8 +31,6 @@ class LiquidWalletsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-    final dotColor = badgeColor ?? scheme.primary;
     final guideline = Get.find<GuidelineController>();
 
     return CcPadding(

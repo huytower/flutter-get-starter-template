@@ -129,6 +129,7 @@ class QuickEntryAliasDataset {
     'wifi': 'c10',
     'internet': 'c10',
     'mang': 'c10',
+    'phone': 'c11',
     'dien thoai': 'c11',
     'nap the': 'c11',
     'sim': 'c11',
@@ -429,5 +430,12 @@ class QuickEntryAliasDataset {
       'gui tiet kiem',
     ],
     QuickEntryIntent.expense: ['chi tieu', 'spent'],
+  };
+
+  /// Map of wallet types/names to their seed keywords.
+  static const Map<String, List<String>> walletKeywords = {
+    'cash': ['tien mat', 'cash', 'vi'],
+    'bank': ['ngan hang', 'bank', 'atm', 'the', 'card', 'ck', 'chuyen khoan'],
+    'ewallet': ['momo', 'vnpay', 'zalopay', 'shopeepay'],
   };
 }

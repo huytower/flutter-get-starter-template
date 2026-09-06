@@ -721,6 +721,9 @@ mixin QuickEntryMixin on TransactionFormController
     if (result.categoryId != null) {
       applyQuickEntryCategory(result.categoryId!);
     }
+    if (result.walletId != null) {
+      setWalletId(result.walletId!);
+    }
     if (result.date != null) setDate(result.date!);
     if (result.note != null) noteController.text = result.note!;
     quickEntrySuggestion.value = null;

@@ -129,13 +129,19 @@ class _ExpenseFormState extends State<ExpenseForm> {
       return CategorySelectionSection(
         key: ValueKey(categoryKey),
         activeColor: accentColor,
-        autoSelectFirst: !controller.isEditing,
+        autoSelectFirst:
+            !controller.isEditing &&
+            controller.pendingPrefillCategoryId.value == null,
         initialSelectedCategoryId:
             pendingPrefill ??
             controller.selectedCategory.value?.id ??
             controller.editingTransaction?.categoryId ??
             controller.timeBasedSuggestedCategoryId,
-        onCategorySelected: controller.setCategory,
+        onCategorySelected: (cat) {
+          '[AI_PARSING] 🏷️ Category selected manually or via prefill | id=${cat.id}'
+              .Log('ExpenseForm');
+          controller.setCategory(cat);
+        },
       );
     });
   }

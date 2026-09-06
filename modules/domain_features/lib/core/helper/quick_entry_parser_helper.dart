@@ -3,6 +3,7 @@ import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:string_similarity/string_similarity.dart';
 
 import '../../features/category/domain/entities/category_entity.dart';
+import '../../features/wallet/domain/entities/wallet_entity.dart';
 import 'merchant_match_helper.dart';
 import 'quick_entry_alias_dataset.dart';
 import 'quick_entry_parse_result.dart';
@@ -380,6 +381,7 @@ QuickEntryParseResult parseQuickEntryTextLocally({
   required String text,
   required List<CategoryEntity> categories,
   required String Function(CategoryEntity) categoryLabels,
+  List<WalletEntity>? wallets,
 }) {
   // Clean noise first
   final cleaned = stripInvoiceNumbers(stripPhoneNumbers(text));
@@ -487,6 +489,30 @@ QuickEntryParseResult parseQuickEntryTextLocally({
     );
   }
 
+  // 4b. Match Wallet (Source/Receiving)
+  String? matchedWalletId;
+  if (wallets != null && wallets.isNotEmpty) {
+    for (final wallet in wallets) {
+      final keywords = QuickEntryAliasDataset.walletKeywords[wallet.type];
+      if (keywords != null) {
+        for (final keyword in keywords) {
+          if (normalized.contains(keyword)) {
+            matchedWalletId = wallet.id;
+            break;
+          }
+        }
+      }
+      if (matchedWalletId != null) break;
+
+      // Fallback: match by wallet name (normalized)
+      final name = stripVietnameseDiacritics(wallet.name.toLowerCase());
+      if (normalized.contains(name)) {
+        matchedWalletId = wallet.id;
+        break;
+      }
+    }
+  }
+
   // 5. Remove Intent roots and directional verbs from residual
   for (final rootKeywords in QuickEntryAliasDataset.intentRoots.values) {
     for (final keyword in rootKeywords) {
@@ -531,6 +557,7 @@ QuickEntryParseResult parseQuickEntryTextLocally({
   return QuickEntryParseResult(
     amount: parseVietnameseAmount(cleaned),
     categoryId: matchedCategoryId,
+    walletId: matchedWalletId,
     date: date,
     note: finalNote,
   );
