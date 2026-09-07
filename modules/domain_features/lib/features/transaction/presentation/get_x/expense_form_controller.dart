@@ -23,6 +23,7 @@ import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/update_transaction_usecase.dart';
+import '../models/unified_category_item.dart';
 import 'quick_entry_mixin.dart';
 import 'transaction_form_controller.dart';
 
@@ -33,12 +34,17 @@ class ExpenseFormController extends TransactionFormController
 
   final TransactionRepository _transactionRepository;
   final GetCategoriesUseCase _getCategories;
+  GetBudgetLimitStatsUseCase get _getBudgetStats =>
+      getIt<GetBudgetLimitStatsUseCase>();
 
   @override
   String get quickEntryCategoryType => CategoryType.expense;
 
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   final Rx<BudgetLimitEntity?> selectedBudget = Rx<BudgetLimitEntity?>(null);
+
+  final RxList<UnifiedCategoryItem> unifiedItems = <UnifiedCategoryItem>[].obs;
+  final RxBool isLoadingUnified = false.obs;
 
   @override
   final RxInt categoryKey = 0.obs;
@@ -89,43 +95,145 @@ class ExpenseFormController extends TransactionFormController
 
     // Handle AI category suggestions by resolving to a budget if possible
     ever(pendingPrefillCategoryId, (String? categoryId) {
-      if (categoryId != null && Get.isRegistered<BudgetLimitController>()) {
-        final budgets = Get.find<BudgetLimitController>().budgets;
-        final matches = budgets.where((b) => b.budget.categoryId == categoryId);
-        if (matches.length == 1) {
-          selectedBudget.value = matches.first.budget;
+      if (categoryId != null) {
+        // Try to find a budget for this category first (highest priority)
+        final budgetMatch = unifiedItems.firstWhereOrNull(
+          (item) => item.isBudget && item.categoryId == categoryId,
+        );
+        if (budgetMatch != null) {
+          final budget = _findBudgetById(budgetMatch.budgetId!);
+          if (budget != null) {
+            selectedBudget.value = budget;
+            return;
+          }
         }
       }
     });
+
+    if (Get.isRegistered<BudgetLimitController>()) {
+      ever(
+        Get.find<BudgetLimitController>().budgets,
+        (_) => _rebuildUnifiedItems(),
+      );
+    }
+  }
+
+  BudgetLimitEntity? _findBudgetById(String id) {
+    return budgets.firstWhereOrNull((b) => b.budget.id == id)?.budget;
+  }
+
+  List<BudgetLimitStatsEntity> get budgets {
+    if (Get.isRegistered<BudgetLimitController>()) {
+      return Get.find<BudgetLimitController>().budgets;
+    }
+    return [];
   }
 
   Future<void> _loadAll() async {
     isLoadingCategories.value = true;
+    isLoadingUnified.value = true;
     await _loadCategories();
+    await _loadRecentExpenses();
+    await _rebuildUnifiedItems();
     isLoadingCategories.value = false;
+    isLoadingUnified.value = false;
 
     refreshTimeBasedSuggestion();
 
-    // Auto-select first budget if available and nothing is selected yet
-    if (Get.isRegistered<BudgetLimitController>()) {
-      final budgetController = Get.find<BudgetLimitController>();
-      if (budgetController.budgets.isNotEmpty &&
-          selectedBudget.value == null &&
-          selectedCategory.value == null &&
-          !isEditing) {
-        setBudget(budgetController.budgets.first.budget);
+    // Auto-select first item if available and nothing is selected yet
+    if (unifiedItems.isNotEmpty &&
+        selectedBudget.value == null &&
+        selectedCategory.value == null &&
+        !isEditing) {
+      final first = unifiedItems.first;
+      if (first.isBudget) {
+        final budget = _findBudgetById(first.budgetId!);
+        if (budget != null) setBudget(budget);
+      } else {
+        final cat = getCachedCategoryById(first.categoryId);
+        if (cat != null) setCategory(cat);
       }
-
-      // Also listen for changes (e.g. first budget created)
-      once(budgetController.budgets, (budgets) {
-        if (budgets.isNotEmpty &&
-            selectedBudget.value == null &&
-            selectedCategory.value == null &&
-            !isEditing) {
-          setBudget(budgets.first.budget);
-        }
-      });
     }
+  }
+
+  Future<void> _rebuildUnifiedItems() async {
+    final result = await _getCategories();
+    final allCats = result.tryGetSuccess() ?? [];
+    final expenseCats = allCats
+        .where((c) => c.type == CategoryType.expense && c.isEnabled)
+        .toList();
+
+    List<BudgetLimitStatsEntity> budgets = [];
+    if (Get.isRegistered<BudgetLimitController>()) {
+      budgets = Get.find<BudgetLimitController>().budgets;
+    } else {
+      final statsResult = await _getBudgetStats.call();
+      budgets = statsResult.tryGetSuccess() ?? [];
+    }
+
+    // Map of CategoryID -> Last used Date
+    // Map of BudgetID -> Last used Date
+    final lastUsedCat = <String, DateTime>{};
+    final lastUsedBudget = <String, DateTime>{};
+
+    for (final tx in _recentExpenses) {
+      if (tx.categoryId.isNotEmpty) {
+        final current = lastUsedCat[tx.categoryId];
+        if (current == null || tx.date.isAfter(current)) {
+          lastUsedCat[tx.categoryId] = tx.date;
+        }
+      }
+      if (tx.budgetId != null && tx.budgetId!.isNotEmpty) {
+        final current = lastUsedBudget[tx.budgetId!];
+        if (current == null || tx.date.isAfter(current)) {
+          lastUsedBudget[tx.budgetId!] = tx.date;
+        }
+      }
+    }
+
+    final items = <UnifiedCategoryItem>[];
+    final budgetCategoryIds = <String>{};
+
+    // Add Budgets
+    for (final b in budgets) {
+      budgetCategoryIds.add(b.budget.categoryId);
+      final lastActivity = lastUsedBudget[b.budget.id] ?? DateTime(2000);
+      items.add(
+        UnifiedCategoryItem(
+          id: 'budget_${b.budget.id}',
+          budgetId: b.budget.id,
+          categoryId: b.budget.categoryId,
+          displayName: b.budget.name,
+          iconCode: b.iconCode,
+          iconFamily: b.iconFamily,
+          lastActivityAt: lastActivity,
+          isBudget: true,
+        ),
+      );
+    }
+
+    // Add Categories (only if they don't have a specific budget)
+    for (final c in expenseCats) {
+      if (budgetCategoryIds.contains(c.id)) continue;
+
+      final lastActivity = lastUsedCat[c.id] ?? DateTime(2000);
+      items.add(
+        UnifiedCategoryItem(
+          id: 'cat_${c.id}',
+          categoryId: c.id,
+          displayName: el.tr(c.nameKey),
+          iconCode: c.iconCode,
+          iconFamily: c.iconFamily,
+          lastActivityAt: lastActivity,
+          isBudget: false,
+        ),
+      );
+    }
+
+    // Sort by lastActivityAt descending
+    items.sort((a, b) => b.lastActivityAt.compareTo(a.lastActivityAt));
+
+    unifiedItems.assignAll(items);
   }
 
   Future<void> _loadCategories() async {
@@ -170,23 +278,21 @@ class ExpenseFormController extends TransactionFormController
     refreshTimeBasedSuggestion();
     categoryKey.value++;
     refreshLocationSuggestion();
+    _rebuildUnifiedItems();
   }
 
   void setCategory(CategoryEntity category) {
     selectedCategory.value = category;
     selectedBudget.value = null;
 
-    // If we're in budget-picker mode, try to auto-resolve to a budget
-    if (Get.isRegistered<BudgetLimitController>()) {
-      final budgets = Get.find<BudgetLimitController>().budgets;
-      final matches = budgets.where((b) => b.budget.categoryId == category.id);
-      if (matches.length == 1) {
-        selectedBudget.value = matches.first.budget;
-      }
+    // Prefer the most recently used budget for this category if multiple exist
+    final budgetMatch = unifiedItems.firstWhereOrNull(
+      (item) => item.isBudget && item.categoryId == category.id,
+    );
+    if (budgetMatch != null) {
+      selectedBudget.value = _findBudgetById(budgetMatch.budgetId!);
     }
 
-    // Manual selection clears any pending prefill from AI suggestions
-    // so it doesn't clobber the user's choice on the next rebuild.
     pendingPrefillCategoryId.value = null;
   }
 
@@ -198,6 +304,7 @@ class ExpenseFormController extends TransactionFormController
       selectedCategory.value = category;
     }
     pendingPrefillCategoryId.value = null;
+    categoryKey.value++;
   }
 
   void refreshTimeBasedSuggestion() {

@@ -9,9 +9,9 @@ import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../get_x/expense_form_controller.dart';
-import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
 import 'money_keypad_panel.dart';
+import 'unified_category_selection_section.dart';
 
 class ExpenseForm extends StatefulWidget {
   const ExpenseForm({super.key, this.tag});
@@ -105,45 +105,16 @@ class _ExpenseFormState extends State<ExpenseForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildCategorySection(controller, accentColor),
+            UnifiedCategorySelectionSection(
+              controller: controller,
+              activeColor: accentColor,
+            ),
             const CcSpaceSM(),
             _buildFormFields(context, controller, guideline, accentColor),
           ],
         ),
       ),
     );
-  }
-
-  Widget _buildCategorySection(
-    ExpenseFormController controller,
-    Color accentColor,
-  ) {
-    if (!Get.isRegistered<BudgetLimitController>()) {
-      Get.put(getIt<BudgetLimitController>());
-    }
-
-    return Obx(() {
-      final categoryKey = controller.categoryKey.value;
-      final pendingPrefill = controller.pendingPrefillCategoryId.value;
-
-      return CategorySelectionSection(
-        key: ValueKey(categoryKey),
-        activeColor: accentColor,
-        autoSelectFirst:
-            !controller.isEditing &&
-            controller.pendingPrefillCategoryId.value == null,
-        initialSelectedCategoryId:
-            pendingPrefill ??
-            controller.selectedCategory.value?.id ??
-            controller.editingTransaction?.categoryId ??
-            controller.timeBasedSuggestedCategoryId,
-        onCategorySelected: (cat) {
-          '[AI_PARSING] 🏷️ Category selected manually or via prefill | id=${cat.id}'
-              .Log('ExpenseForm');
-          controller.setCategory(cat);
-        },
-      );
-    });
   }
 
   Widget _buildFormFields(

@@ -32,6 +32,9 @@ class _ReportPageState extends State<ReportPage> {
   @override
   void initState() {
     super.initState();
+    if (!Get.isRegistered<ReportController>()) {
+      Get.put(getIt<ReportController>());
+    }
     controller = Get.find<ReportController>();
     // Ensure edit mode is always off when entering the page.
     controller.isEditMode.value = false;
