@@ -75,10 +75,9 @@ class GetInvestmentTrendUseCase {
       final dateCompare = b.date.compareTo(a.date);
       if (dateCompare != 0) return dateCompare;
 
-      if (b.id.length != a.id.length) {
-        return b.id.length.compareTo(a.id.length);
-      }
-      return b.id.compareTo(a.id);
+      final idA = double.tryParse(a.id) ?? 0;
+      final idB = double.tryParse(b.id) ?? 0;
+      return idB.compareTo(idA);
     });
 
     return Success(

@@ -399,7 +399,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     if (liability.principalAmount > 0) {
       final params = RecordLiabilityPaymentParams(
         liabilityId: liability.id,
-        isSettlement: false,
+        isSettlement: action.value == LiabilityFormAction.decrease,
         walletId: selectedWalletId.value ?? '',
         amount: int.tryParse(amountStr.value) ?? 0,
         note: composeNote(),

@@ -130,11 +130,11 @@ class ReportController extends CcGetController {
 
       // Secondary: ID descending (last recorded first).
       // Since IDs are microsecondsSinceEpoch strings, we compare them
-      // numerically by checking length first, then alphabetical.
-      if (b.id.length != a.id.length) {
-        return b.id.length.compareTo(a.id.length);
-      }
-      return b.id.compareTo(a.id);
+      // numerically to ensure "recent records firstly".
+      // We use double.parse for microsecond comparison to avoid string issues.
+      final idA = double.tryParse(a.id) ?? 0;
+      final idB = double.tryParse(b.id) ?? 0;
+      return idB.compareTo(idA);
     });
 
     return combined;
