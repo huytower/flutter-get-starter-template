@@ -1,97 +1,60 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-import '../get_x/expense_form_controller.dart';
-import '../models/unified_category_item.dart';
+import '../../models/unified_category_item.dart';
 
-class UnifiedCategorySelectionSection extends GetView<ExpenseFormController> {
-  const UnifiedCategorySelectionSection({super.key, required this.activeColor});
+/// Shared layout for horizontal category lists on the Transaction page.
+class CategorySelectionLayout extends StatelessWidget {
+  const CategorySelectionLayout({
+    super.key,
+    required this.items,
+    required this.scrollController,
+    required this.itemBuilder,
+  });
 
-  final Color activeColor;
+  final List<UnifiedCategoryItem> items;
+  final ScrollController scrollController;
+  final IndexedWidgetBuilder itemBuilder;
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      if (controller.isLoadingUnified.value) {
-        return const CcCategoryShimmerList();
-      }
-
-      final items = controller.unifiedItems;
-      final selectedBudget = controller.selectedBudget.value;
-      final selectedCategory = controller.selectedCategory.value;
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CcSymmetricPadding(
-            horizontal: CcPaddingParams.PAGE_SM,
-            child: CcText(
-              el.tr(CcLocaleKeys.transaction_category),
-              textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                color: context.ccColorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.bold,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcSymmetricPadding(
+          horizontal: CcPaddingParams.PAGE_SM,
+          child: CcText(
+            el.tr(CcLocaleKeys.transaction_category),
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
+              color: context.ccColorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          const CcSpaceXS(),
-          HorizontalFadeScrollView(
-            height: context.respDim(80),
-            scrollController: controller.categoryScrollController,
-            builder: (scrollController) => ListView.separated(
-              scrollDirection: Axis.horizontal,
-              controller: scrollController,
-              padding: EdgeInsets.symmetric(
-                horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-              ),
-              itemCount: items.length,
-              separatorBuilder: (context, index) => const CcSpaceSM(),
-              itemBuilder: (context, index) {
-                final item = items[index];
-
-                bool isSelected = false;
-                if (item.isBudget) {
-                  isSelected = selectedBudget?.id == item.budgetId;
-                } else {
-                  isSelected =
-                      selectedBudget == null &&
-                      selectedCategory?.id == item.categoryId;
-                }
-
-                return _UnifiedItem(
-                  item: item,
-                  isSelected: isSelected,
-                  activeColor: activeColor,
-                  onTap: () {
-                    if (item.isBudget) {
-                      final realBudget = controller.budgets
-                          .firstWhereOrNull((b) => b.budget.id == item.budgetId)
-                          ?.budget;
-                      if (realBudget != null) {
-                        controller.setBudget(realBudget);
-                      }
-                    } else {
-                      final cat = controller.getCachedCategoryById(
-                        item.categoryId,
-                      );
-                      if (cat != null) {
-                        controller.setCategory(cat);
-                      }
-                    }
-                  },
-                );
-              },
+        ),
+        const CcSpaceXS(),
+        HorizontalFadeScrollView(
+          height: context.respDim(80),
+          scrollController: scrollController,
+          builder: (listScrollController) => ListView.separated(
+            scrollDirection: Axis.horizontal,
+            controller: listScrollController,
+            padding: EdgeInsets.symmetric(
+              horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
             ),
+            itemCount: items.length,
+            separatorBuilder: (context, index) => const CcSpaceSM(),
+            itemBuilder: itemBuilder,
           ),
-        ],
-      );
-    });
+        ),
+      ],
+    );
   }
 }
 
-class _UnifiedItem extends StatelessWidget {
-  const _UnifiedItem({
+class UnifiedCategoryItemWidget extends StatelessWidget {
+  const UnifiedCategoryItemWidget({
+    super.key,
     required this.item,
     required this.isSelected,
     required this.activeColor,

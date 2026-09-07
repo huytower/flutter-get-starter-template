@@ -10,8 +10,8 @@ import 'package:get/get.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../get_x/expense_form_controller.dart';
 import 'cc_amount_input_section.dart';
+import 'expense_category_selection_section.dart';
 import 'money_keypad_panel.dart';
-import 'unified_category_selection_section.dart';
 
 class ExpenseForm extends StatefulWidget {
   const ExpenseForm({super.key, this.tag});
@@ -105,7 +105,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            UnifiedCategorySelectionSection(activeColor: accentColor),
+            ExpenseCategorySelectionSection(activeColor: accentColor),
             const CcSpaceSM(),
             _buildFormFields(context, controller, guideline, accentColor),
           ],

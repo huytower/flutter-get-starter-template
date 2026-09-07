@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,8 +8,8 @@ import '../../../../core/di/di.dart';
 import '../../../guideline/export_guideline.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/income_form_controller.dart';
-import 'category_selection_section.dart';
 import 'cc_amount_input_section.dart';
+import 'income_category_selection_section.dart';
 import 'money_keypad_panel.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_form_container.dart';
@@ -74,33 +73,12 @@ class IncomeForm extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildCategorySection(controller, accentColor),
+            IncomeCategorySelectionSection(activeColor: accentColor),
             const CcSpaceSM(),
             _buildFormFields(context, controller, guideline, accentColor),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildCategorySection(
-    IncomeFormController controller,
-    Color accentColor,
-  ) {
-    return CategorySelectionSection(
-      key: ValueKey(controller.categoryKey.value),
-      type: CategoryType.income,
-      activeColor: accentColor,
-      autoSelectFirst: !controller.isEditing,
-      // pendingPrefillCategoryId must win over editingTransaction?.categoryId:
-      // categoryId is a non-nullable String, so while editing it would always
-      // short-circuit the `??` chain and silently discard a just-applied
-      // quick-entry suggestion's category.
-      initialSelectedCategoryId:
-          controller.pendingPrefillCategoryId.value ??
-          controller.selectedCategory.value?.id ??
-          controller.editingTransaction?.categoryId,
-      onCategorySelected: controller.setCategory,
     );
   }
 
