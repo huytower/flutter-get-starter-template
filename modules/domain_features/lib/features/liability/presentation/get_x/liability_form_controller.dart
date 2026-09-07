@@ -368,6 +368,17 @@ class LiabilityFormController extends LiabilityBaseFormController {
   }
 
   @override
+  String? composeNote() {
+    final userNote = super.composeNote();
+    final subsegment = action.value == LiabilityFormAction.increase
+        ? el.tr(CcLocaleKeys.transaction_liability_direction_borrow)
+        : el.tr(CcLocaleKeys.transaction_record_repay);
+
+    if (userNote == null || userNote.isEmpty) return subsegment;
+    return '$subsegment · $userNote';
+  }
+
+  @override
   void onReset() {
     selectedCategory.value = null;
     categoryKey.value++;

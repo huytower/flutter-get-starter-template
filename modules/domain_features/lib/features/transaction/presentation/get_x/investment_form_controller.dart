@@ -330,6 +330,17 @@ class InvestmentFormController extends TransactionFormController
   }
 
   @override
+  String? composeNote() {
+    final userNote = super.composeNote();
+    final subsegment = direction.value == InvestmentDirection.contribute
+        ? el.tr(CcLocaleKeys.transaction_investment_contribution)
+        : el.tr(CcLocaleKeys.transaction_investment_return);
+
+    if (userNote == null || userNote.isEmpty) return subsegment;
+    return '$subsegment · $userNote';
+  }
+
+  @override
   void onReset() {
     selectedCategory.value = null;
     categoryKey.value++;
