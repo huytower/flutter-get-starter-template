@@ -201,6 +201,12 @@ class LiabilityFormController extends LiabilityBaseFormController {
     super.onClose();
   }
 
+  @override
+  void clearCategorySelection() {
+    selectedCategory.value = null;
+    selectedLoanId.value = null;
+  }
+
   void setCategory(CategoryEntity category) {
     selectedCategory.value = category;
     pendingPrefillCategoryId.value = null;

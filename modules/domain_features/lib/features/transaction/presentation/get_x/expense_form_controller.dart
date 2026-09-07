@@ -143,11 +143,12 @@ class ExpenseFormController extends TransactionFormController
 
     refreshTimeBasedSuggestion();
 
-    // Auto-select first item if available and nothing is selected yet
+    // Only auto-select first item if the user hasn't started typing in the AI box
     if (unifiedItems.isNotEmpty &&
         selectedBudget.value == null &&
         selectedCategory.value == null &&
-        !isEditing) {
+        !isEditing &&
+        quickEntryController.text.isEmpty) {
       final first = unifiedItems.first;
       if (first.isBudget) {
         final budget = _findBudgetById(first.budgetId!);
@@ -262,14 +263,15 @@ class ExpenseFormController extends TransactionFormController
   @override
   void applyResolvedCategory(CategoryEntity category) {
     selectedCategory.value = category;
+    selectedBudget.value = null; // Clear existing budget selection first
 
-    // Also try to auto-resolve to a budget if possible
-    if (Get.isRegistered<BudgetLimitController>()) {
-      final budgets = Get.find<BudgetLimitController>().budgets;
-      final matches = budgets.where((b) => b.budget.categoryId == category.id);
-      if (matches.length == 1) {
-        selectedBudget.value = matches.first.budget;
-      }
+    // Try to auto-resolve to a budget if possible.
+    // In the unified list, we prefer a budget if one exists for this category.
+    final budgetMatch = unifiedItems.firstWhereOrNull(
+      (item) => item.isBudget && item.categoryId == category.id,
+    );
+    if (budgetMatch != null) {
+      selectedBudget.value = _findBudgetById(budgetMatch.budgetId!);
     }
   }
 
@@ -283,6 +285,12 @@ class ExpenseFormController extends TransactionFormController
     categoryKey.value++;
     refreshLocationSuggestion();
     _rebuildUnifiedItems();
+  }
+
+  @override
+  void clearCategorySelection() {
+    selectedCategory.value = null;
+    selectedBudget.value = null;
   }
 
   void setCategory(CategoryEntity category) {

@@ -207,5 +207,7 @@ abstract class TransactionFormController extends CcGetController {
 
   bool get canSubmit;
 
+  void clearCategorySelection();
+
   void submitForm(BuildContext context);
 }

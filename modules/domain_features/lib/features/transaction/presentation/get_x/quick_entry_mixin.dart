@@ -314,6 +314,20 @@ mixin QuickEntryMixin on TransactionFormController
     final isComplete = local.isComplete && !isQuickEntryCategoryMissing;
     quickEntrySuggestion.value = isComplete ? local : null;
 
+    // Proactive Prefill: Update form fields (amount and category) immediately
+    // as the user types, so the form stays in sync with the visual recognition.
+    if (local.amount != null) {
+      amountStr.value = local.amount!.toString();
+    }
+    if (local.categoryId != null) {
+      applyQuickEntryCategory(local.categoryId!);
+    } else if (text.isNotEmpty) {
+      // If we are actively parsing text but no category was identified,
+      // clear any previous selection. This ensures the "Record" button
+      // stays disabled until a valid category is found or manually picked.
+      clearCategorySelection();
+    }
+
     if (isComplete && Get.context != null) {
       startAutoSaveTimer(Get.context!);
     }
@@ -451,13 +465,10 @@ mixin QuickEntryMixin on TransactionFormController
     // This prioritizes the locally recognized data (Case 1 or Case 2) over
     // escalating to Gemini.
     if (local.amount != null) {
-      '[AI_PARSING] ✅ Local parse found amount | short-circuiting to suggestion chip'
+      '[AI_PARSING] ✅ Local parse found amount | applying to form and short-circuiting'
           .Log('QuickEntryMixin');
       resetParsingIfCurrent();
-      quickEntrySuggestion.value = local;
-      if (!isQuickEntryCategoryMissing) {
-        startAutoSaveTimer(context);
-      }
+      applyQuickEntryParse(local);
       return;
     }
 
@@ -501,10 +512,7 @@ mixin QuickEntryMixin on TransactionFormController
       return;
     }
 
-    quickEntrySuggestion.value = suggestion;
-    if (!isQuickEntryCategoryMissing) {
-      startAutoSaveTimer(context);
-    }
+    applyQuickEntryParse(suggestion);
   }
 
   /// Reentrancy gate for receipt-photo entry — call before showing the

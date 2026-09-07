@@ -73,6 +73,11 @@ class IncomeFormController extends TransactionFormController
     resetQuickEntry();
   }
 
+  @override
+  void clearCategorySelection() {
+    selectedCategory.value = null;
+  }
+
   void setCategory(CategoryEntity category) {
     selectedCategory.value = category;
     // Manual selection clears any pending prefill from AI suggestions so it

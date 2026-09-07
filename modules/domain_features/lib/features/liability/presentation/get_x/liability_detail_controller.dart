@@ -141,4 +141,10 @@ class LiabilityDetailController extends TransactionFormController {
       ),
     );
   }
+
+  @override
+  void clearCategorySelection() {
+    // This form is locked to a single specific loan, so we don't clear
+    // the category selection here.
+  }
 }

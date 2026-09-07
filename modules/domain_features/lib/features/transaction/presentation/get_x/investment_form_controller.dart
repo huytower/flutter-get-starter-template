@@ -318,6 +318,13 @@ class InvestmentFormController extends TransactionFormController
     if (asset != null) selectInvestmentWallet(asset);
   }
 
+  @override
+  void clearCategorySelection() {
+    selectedCategory.value = null;
+    selectedInvestmentWalletId.value = null;
+    isAddingNewItem.value = false;
+  }
+
   void setNewItemName(String value) {
     newItemName.value = value;
   }
