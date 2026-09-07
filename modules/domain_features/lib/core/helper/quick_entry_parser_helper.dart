@@ -238,49 +238,107 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
 
   // 1. Check for high-priority root intents (e.g., "đầu tư", "income")
   for (final entry in QuickEntryAliasDataset.intentRoots.entries) {
-    if (entry.value.any((keyword) => normalized.contains(keyword))) {
-      return entry.key;
+    for (final keyword in entry.value) {
+      if (normalized.contains(keyword)) {
+        '[AI_PARSING] 🎯 Intent root matched: "$keyword" -> ${entry.key}'.Log(
+          'QuickEntryParserHelper',
+        );
+        return entry.key;
+      }
     }
   }
 
   // 2. Identify the primary direction of the action (Inflow vs. Outflow)
   QuickEntryIntent? detectedDirection;
+  String? matchedVerb;
   for (final verbEntry in QuickEntryAliasDataset.directionalVerbs.entries) {
     if (normalized.contains(verbEntry.key)) {
       detectedDirection = verbEntry.value;
+      matchedVerb = verbEntry.key;
       // Continue to find the longest matching verb (e.g., "cho vay" vs. "vay")
     }
   }
+  if (detectedDirection != null) {
+    '[AI_PARSING] 🎯 Direction matched: "$matchedVerb" -> $detectedDirection'
+        .Log('QuickEntryParserHelper');
+  }
 
-  // 3. Smart Intent Override: If "mua" (buy) is followed by an investment category,
+  // 3. Category Hint Detection: If no explicit direction or root is found,
+  // check if any category-specific keywords are present (e.g., "luong", "lam them").
+  if (detectedDirection == null) {
+    for (final aliasEntry in _sortedCategoryKeywordAliases) {
+      final pattern = aliasEntry.key.length <= 3
+          ? RegExp('\\b${RegExp.escape(aliasEntry.key)}\\b')
+          : RegExp(RegExp.escape(aliasEntry.key));
+
+      if (pattern.hasMatch(normalized)) {
+        final catId = aliasEntry.value;
+        final QuickEntryIntent? hint;
+        if (catId.startsWith('i')) {
+          hint = QuickEntryIntent.income;
+        } else if (catId.startsWith('inv')) {
+          hint = QuickEntryIntent.investment;
+        } else if (catId == 'd6' || catId == 'd8') {
+          hint = QuickEntryIntent.lend;
+        } else if (catId.startsWith('d')) {
+          hint = QuickEntryIntent.debt;
+        } else if (catId.startsWith('c')) {
+          hint = QuickEntryIntent.expense;
+        } else {
+          hint = null;
+        }
+
+        if (hint != null) {
+          '[AI_PARSING] 💡 Category hint detected: "${aliasEntry.key}" ($catId) -> $hint'
+              .Log('QuickEntryParserHelper');
+          return hint;
+        }
+      }
+    }
+  }
+
+  // 4. Smart Intent Override: If "mua" (buy) is followed by an investment category,
   // it's likely an investment contribution, not a personal expense.
   if (detectedDirection == QuickEntryIntent.expense &&
       normalized.contains('mua')) {
     for (final keyword in QuickEntryAliasDataset.categoryKeywords.entries) {
       if (normalized.contains(keyword.key) && keyword.value.startsWith('inv')) {
+        '[AI_PARSING] 🔄 Smart override: "mua" + investment category -> investment'
+            .Log('QuickEntryParserHelper');
         return QuickEntryIntent.investment;
       }
     }
   }
 
-  // 4. Resolve ambiguous contexts (like "lì xì" or "vay")
+  // 5. Resolve ambiguous contexts (like "lì xì" or "vay")
   for (final contextEntry in QuickEntryAliasDataset.ambiguousContexts.entries) {
-    if (normalized.contains(contextEntry.key)) {
+    final pattern = contextEntry.key.length <= 2
+        ? RegExp('\\b${RegExp.escape(contextEntry.key)}\\b')
+        : RegExp(RegExp.escape(contextEntry.key));
+
+    if (pattern.hasMatch(normalized)) {
       if (detectedDirection == null) {
-        return contextEntry.value['default'];
+        final result = contextEntry.value['default']!;
+        '[AI_PARSING] 🎯 Ambiguous context (default): "${contextEntry.key}" -> $result'
+            .Log('QuickEntryParserHelper');
+        return result;
       }
 
       final isInflow =
           detectedDirection == QuickEntryIntent.income ||
           detectedDirection == QuickEntryIntent.debt;
 
-      return isInflow
-          ? contextEntry.value['inflow']
-          : contextEntry.value['outflow'];
+      final result = isInflow
+          ? contextEntry.value['inflow']!
+          : contextEntry.value['outflow']!;
+
+      '[AI_PARSING] 🎯 Ambiguous context resolved: "${contextEntry.key}" (direction: $detectedDirection) -> $result'
+          .Log('QuickEntryParserHelper');
+      return result;
     }
   }
 
-  // 4. Final fallback to the detected direction
+  // Final fallback to the detected direction
   return detectedDirection;
 }
 

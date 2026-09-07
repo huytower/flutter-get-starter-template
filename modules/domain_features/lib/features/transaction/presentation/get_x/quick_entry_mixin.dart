@@ -302,6 +302,74 @@ mixin QuickEntryMixin on TransactionFormController
       quickEntrySuggestion.value = null;
       return;
     }
+
+    '[AI_PARSING] 🔍 Reactive parse started | tab=$quickEntryCategoryType | text="$text"'
+        .Log('QuickEntryMixin');
+
+    // Intent detection for cross-tab switching (Reactive)
+    final intent = detectQuickEntryIntent(text);
+    if (intent != null) {
+      '[AI_PARSING] 🎯 Intent detected: $intent'.Log('QuickEntryMixin');
+      final dynamic txController = Get.find<TransactionController>();
+      bool isMismatch = false;
+      switch (intent) {
+        case QuickEntryIntent.expense:
+          if (quickEntryCategoryType != CategoryType.expense) isMismatch = true;
+          break;
+        case QuickEntryIntent.income:
+          if (quickEntryCategoryType != CategoryType.income) isMismatch = true;
+          break;
+        case QuickEntryIntent.investment:
+          if (quickEntryCategoryType != CategoryType.investment) {
+            isMismatch = true;
+          }
+          break;
+        case QuickEntryIntent.debt:
+          if (quickEntryCategoryType != CategoryType.debtLoan ||
+              quickEntryDirection != LiabilityDirection.borrow) {
+            isMismatch = true;
+          }
+          break;
+        case QuickEntryIntent.lend:
+          if (quickEntryCategoryType != CategoryType.debtLoan ||
+              quickEntryDirection != LiabilityDirection.lend) {
+            isMismatch = true;
+          }
+          break;
+      }
+
+      if (isMismatch) {
+        '[AI_PARSING] 🔄 Intent mismatch found (Tab: $quickEntryCategoryType vs Intent: $intent) | switching...'
+            .Log('QuickEntryMixin');
+        txController.switchToTabForIntent(intent);
+
+        // Handoff to the target tab's controller
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          final dynamic targetController = txController
+              .getQuickEntryControllerForIntent(intent);
+          if (targetController != null && targetController != this) {
+            '[AI_PARSING] 🤝 Handing off text to target controller: ${targetController.runtimeType}'
+                .Log('QuickEntryMixin');
+            if (targetController is QuickEntryMixin) {
+              targetController.applyQuickEntryIntent(intent, text);
+            }
+            // Pass the text so the new tab can continue parsing
+            targetController.quickEntryController.text = text;
+            targetController.quickEntryController.selection =
+                TextSelection.collapsed(offset: text.length);
+          }
+        });
+        return;
+      } else {
+        '[AI_PARSING] ✅ Intent matches current tab ($quickEntryCategoryType)'
+            .Log('QuickEntryMixin');
+      }
+    } else {
+      '[AI_PARSING] ❓ No clear intent detected for switching'.Log(
+        'QuickEntryMixin',
+      );
+    }
+
     final local = await getIt<ParseQuickEntryUseCase>().parseLocally(
       text,
       categoryType: quickEntryCategoryType,
@@ -418,9 +486,8 @@ mixin QuickEntryMixin on TransactionFormController
       }
 
       if (isMismatch) {
-        '[AI_PARSING] 🔄 Intent mismatch | switching to $intent'.Log(
-          'QuickEntryMixin',
-        );
+        '[AI_PARSING] 🔄 Intent mismatch detected during typing | switching to $intent'
+            .Log('QuickEntryMixin');
         txController.switchToTabForIntent(intent);
 
         // Handoff to the target tab's controller
@@ -431,8 +498,10 @@ mixin QuickEntryMixin on TransactionFormController
             if (targetController is QuickEntryMixin) {
               targetController.applyQuickEntryIntent(intent, text);
             }
+            // Pass the text so the new tab can continue parsing
             targetController.quickEntryController.text = text;
-            unawaited(targetController.submitQuickEntry(context));
+            targetController.quickEntryController.selection =
+                TextSelection.collapsed(offset: text.length);
           }
         });
         return;

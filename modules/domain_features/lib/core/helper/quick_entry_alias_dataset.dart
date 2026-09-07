@@ -289,6 +289,7 @@ class QuickEntryAliasDataset {
     'thuong': 'i7',
     'freelance': 'i2',
     'lam them': 'i2',
+    'lamthem': 'i2',
     'nhan tien': 'i8',
     'duoc tang': 'i8',
     'nhan tien li xi': 'i8',
