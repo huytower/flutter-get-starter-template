@@ -6,14 +6,9 @@ import 'package:get/get.dart';
 import '../get_x/expense_form_controller.dart';
 import '../models/unified_category_item.dart';
 
-class UnifiedCategorySelectionSection extends StatelessWidget {
-  const UnifiedCategorySelectionSection({
-    super.key,
-    required this.controller,
-    required this.activeColor,
-  });
+class UnifiedCategorySelectionSection extends GetView<ExpenseFormController> {
+  const UnifiedCategorySelectionSection({super.key, required this.activeColor});
 
-  final ExpenseFormController controller;
   final Color activeColor;
 
   @override
@@ -43,6 +38,7 @@ class UnifiedCategorySelectionSection extends StatelessWidget {
           const CcSpaceXS(),
           HorizontalFadeScrollView(
             height: context.respDim(80),
+            scrollController: controller.categoryScrollController,
             builder: (scrollController) => ListView.separated(
               scrollDirection: Axis.horizontal,
               controller: scrollController,
@@ -58,8 +54,6 @@ class UnifiedCategorySelectionSection extends StatelessWidget {
                 if (item.isBudget) {
                   isSelected = selectedBudget?.id == item.budgetId;
                 } else {
-                  // Only highlight the general category if no specific budget is selected
-                  // or if this category doesn't have any budgets.
                   isSelected =
                       selectedBudget == null &&
                       selectedCategory?.id == item.categoryId;
@@ -71,7 +65,6 @@ class UnifiedCategorySelectionSection extends StatelessWidget {
                   activeColor: activeColor,
                   onTap: () {
                     if (item.isBudget) {
-                      // Since we already have the ID, we can find it in the budget controller
                       final realBudget = controller.budgets
                           .firstWhereOrNull((b) => b.budget.id == item.budgetId)
                           ?.budget;

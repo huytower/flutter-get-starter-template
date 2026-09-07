@@ -49,6 +49,8 @@ class ExpenseFormController extends TransactionFormController
   final RxList<UnifiedCategoryItem> unifiedItems = <UnifiedCategoryItem>[].obs;
   final RxBool isLoadingUnified = false.obs;
 
+  final ScrollController categoryScrollController = ScrollController();
+
   @override
   final RxInt categoryKey = 0.obs;
 
@@ -118,6 +120,52 @@ class ExpenseFormController extends TransactionFormController
         Get.find<BudgetLimitController>().budgets,
         (_) => _rebuildUnifiedItems(),
       );
+    }
+
+    // Auto-scroll when selection changes
+    everAll([selectedCategory, selectedBudget], (_) => _scrollToSelected());
+  }
+
+  void _scrollToSelected() {
+    if (unifiedItems.isEmpty) return;
+
+    final budget = selectedBudget.value;
+    final category = selectedCategory.value;
+
+    int index = -1;
+    if (budget != null) {
+      index = unifiedItems.indexWhere(
+        (item) => item.isBudget && item.budgetId == budget.id,
+      );
+    } else if (category != null) {
+      index = unifiedItems.indexWhere(
+        (item) => !item.isBudget && item.categoryId == category.id,
+      );
+    }
+
+    if (index != -1) {
+      // Small delay to ensure the UI has finished updating
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!categoryScrollController.hasClients) return;
+
+        final double itemWidth = 85.0; // context.respDim(85) equivalent logic
+        final double spacing = 8.0; // context.respDim(8)
+        final double targetOffset = index * (itemWidth + spacing);
+
+        final double viewportWidth =
+            categoryScrollController.position.viewportDimension;
+        final double centeredOffset =
+            targetOffset - (viewportWidth / 2) + (itemWidth / 2);
+
+        categoryScrollController.animateTo(
+          centeredOffset.clamp(
+            0,
+            categoryScrollController.position.maxScrollExtent,
+          ),
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+        );
+      });
     }
   }
 
@@ -256,6 +304,7 @@ class ExpenseFormController extends TransactionFormController
   void onClose() {
     _merchantMatchDebounce?.cancel();
     noteController.removeListener(_onNoteChanged);
+    categoryScrollController.dispose();
     disposeQuickEntry();
     super.onClose();
   }

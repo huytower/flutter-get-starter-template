@@ -465,10 +465,20 @@ mixin QuickEntryMixin on TransactionFormController
     // This prioritizes the locally recognized data (Case 1 or Case 2) over
     // escalating to Gemini.
     if (local.amount != null) {
-      '[AI_PARSING] ✅ Local parse found amount | applying to form and short-circuiting'
+      '[AI_PARSING] ✅ Local parse found amount | applying to form and starting auto-save'
           .Log('QuickEntryMixin');
       resetParsingIfCurrent();
-      applyQuickEntryParse(local);
+
+      // Proactively prefill form fields so the UI highlights the match immediately
+      amountStr.value = local.amount!.toString();
+      if (local.categoryId != null) {
+        applyQuickEntryCategory(local.categoryId!);
+      }
+
+      quickEntrySuggestion.value = local;
+      if (!isQuickEntryCategoryMissing) {
+        startAutoSaveTimer(context);
+      }
       return;
     }
 
@@ -512,7 +522,18 @@ mixin QuickEntryMixin on TransactionFormController
       return;
     }
 
-    applyQuickEntryParse(suggestion);
+    // Apply proactive prefill for the cloud result
+    if (suggestion.amount != null) {
+      amountStr.value = suggestion.amount!.toString();
+    }
+    if (suggestion.categoryId != null) {
+      applyQuickEntryCategory(suggestion.categoryId!);
+    }
+
+    quickEntrySuggestion.value = suggestion;
+    if (!isQuickEntryCategoryMissing) {
+      startAutoSaveTimer(context);
+    }
   }
 
   /// Reentrancy gate for receipt-photo entry — call before showing the

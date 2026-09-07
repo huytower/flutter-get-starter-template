@@ -105,10 +105,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            UnifiedCategorySelectionSection(
-              controller: controller,
-              activeColor: accentColor,
-            ),
+            UnifiedCategorySelectionSection(activeColor: accentColor),
             const CcSpaceSM(),
             _buildFormFields(context, controller, guideline, accentColor),
           ],
