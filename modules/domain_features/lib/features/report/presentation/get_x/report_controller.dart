@@ -124,8 +124,16 @@ class ReportController extends CcGetController {
     ];
 
     combined.sort((a, b) {
+      // Primary: Date descending (newest first)
       final dateCompare = b.date.compareTo(a.date);
       if (dateCompare != 0) return dateCompare;
+
+      // Secondary: ID descending (last recorded first).
+      // Since IDs are microsecondsSinceEpoch strings, we compare them
+      // numerically by checking length first, then alphabetical.
+      if (b.id.length != a.id.length) {
+        return b.id.length.compareTo(a.id.length);
+      }
       return b.id.compareTo(a.id);
     });
 

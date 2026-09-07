@@ -33,9 +33,14 @@ class TransactionRepositoryImpl
 
     // Sort by date descending (latest first). Use ID as tie-breaker for
     // same-timestamp entries to ensure "recent records firstly".
+    // IDs are microsecondsSinceEpoch strings, so compare them numerically.
     entities.sort((a, b) {
       final dateCompare = b.date.compareTo(a.date);
       if (dateCompare != 0) return dateCompare;
+
+      if (b.id.length != a.id.length) {
+        return b.id.length.compareTo(a.id.length);
+      }
       return b.id.compareTo(a.id);
     });
 
