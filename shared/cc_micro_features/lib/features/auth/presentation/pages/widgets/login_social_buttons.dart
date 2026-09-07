@@ -37,23 +37,19 @@ class LoginSocialButtons extends StatelessWidget {
 
             const CcSpaceMD(),
 
-            // Facebook login temporarily hidden
-            // CcSocialLoginBtn(
-            //   type: SocialLoginType.facebook,
-            //   onTap: () => context.read<LoginBloc>().add(
-            //     const LoginWithFacebookStarted(),
-            //   ),
-            // ),
-            // Apple login only on iOS
-            if (CcDeviceHelper.isIOS) ...[
-              const CcSpaceMD(),
-              CcSocialLoginBtn(
-                type: SocialLoginType.apple,
-                onTap: () => context.read<LoginBloc>().add(
-                  const LoginWithAppleStarted(),
-                ),
-              ),
-            ],
+            CcSocialLoginBtn(
+              type: SocialLoginType.apple,
+              onTap: () {
+                'Apple Login button tapped (isLinking: $isLinking)'.Log(
+                  'LoginSocialButtons',
+                );
+                context.read<LoginBloc>().add(
+                  isLinking
+                      ? const LinkWithAppleStarted()
+                      : const LoginWithAppleStarted(),
+                );
+              },
+            ),
           ],
         ),
       ),

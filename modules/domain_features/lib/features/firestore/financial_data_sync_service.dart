@@ -157,6 +157,7 @@ class FinancialDataSyncService {
       rethrow;
     }
     for (final model in box.values) {
+      if (!_isAuthenticated) return;
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<WalletHiveModel>(
@@ -185,6 +186,7 @@ class FinancialDataSyncService {
       rethrow;
     }
     for (final model in box.values) {
+      if (!_isAuthenticated) return;
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<TransactionModel>(
@@ -213,6 +215,7 @@ class FinancialDataSyncService {
       rethrow;
     }
     for (final model in box.values) {
+      if (!_isAuthenticated) return;
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<BudgetLimitModel>(
@@ -241,6 +244,7 @@ class FinancialDataSyncService {
       rethrow;
     }
     for (final model in box.values) {
+      if (!_isAuthenticated) return;
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<ReconciliationModel>(
@@ -269,6 +273,7 @@ class FinancialDataSyncService {
       rethrow;
     }
     for (final model in box.values) {
+      if (!_isAuthenticated) return;
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<CategoryModel>(
@@ -297,6 +302,7 @@ class FinancialDataSyncService {
       rethrow;
     }
     for (final model in box.values) {
+      if (!_isAuthenticated) return;
       final status = model.syncMetadata.status;
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<LiabilityModel>(
@@ -403,6 +409,7 @@ class FinancialDataSyncService {
     required Box<dynamic> box,
     required T Function(T, String) updateFn,
   }) async {
+    if (!_isAuthenticated) return;
     try {
       final remoteId = await syncFn(model);
       if (remoteId != null) {
@@ -411,6 +418,8 @@ class FinancialDataSyncService {
         if (key != null) await box.put(key, updated);
       }
     } catch (e) {
+      // Don't log expected authentication errors during logout
+      if (e.toString().contains('User not authenticated')) return;
       'Sync failed for entity: $e'.Log('FinancialDataSyncService');
     }
   }
@@ -421,6 +430,7 @@ class FinancialDataSyncService {
     required Box<T> box,
     required T Function(Map<String, dynamic>, String) fromFirestore,
   }) async {
+    if (!_isAuthenticated) return;
     try {
       final remoteData = await _syncService.fetchFromFirestore(
         userId: userId,
@@ -474,4 +484,3 @@ class FinancialDataSyncService {
     return null;
   }
 }
-

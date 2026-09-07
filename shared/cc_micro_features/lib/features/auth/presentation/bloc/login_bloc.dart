@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../data/datasources/auth_preference_datasource.dart';
+import '../../domain/usecases/link_with_apple_usecase.dart';
 import '../../domain/usecases/link_with_google_usecase.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/login_with_apple_usecase.dart';
@@ -16,6 +17,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginWithGoogleUseCase _loginWithGoogleUseCase;
   final LinkWithGoogleUseCase _linkWithGoogleUseCase;
   final LoginWithAppleUseCase _loginWithAppleUseCase;
+  final LinkWithAppleUseCase _linkWithAppleUseCaseInstance;
   final AuthPreferenceDataSource _preferenceDataSource;
 
   LoginBloc(
@@ -23,12 +25,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     this._loginWithGoogleUseCase,
     this._linkWithGoogleUseCase,
     this._loginWithAppleUseCase,
+    this._linkWithAppleUseCaseInstance,
     this._preferenceDataSource,
   ) : super(const LoginInitial()) {
     on<LoginStarted>(_onLoginStarted);
     on<LoginWithGoogleStarted>(_onLoginWithGoogleStarted);
     on<LinkWithGoogleStarted>(_onLinkWithGoogleStarted);
     on<LoginWithAppleStarted>(_onLoginWithAppleStarted);
+    on<LinkWithAppleStarted>(_onLinkWithAppleStarted);
   }
 
   Future<void> _onLoginStarted(
@@ -116,10 +120,46 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     emit(const LoginLoading());
+    'Logging in with Apple'.Log('LoginBloc');
     final result = await _loginWithAppleUseCase();
-    result.when((user) async {
+    'LoginWithAppleUseCase result: ${result.isSuccess() ? "Success" : "Failure"}'
+        .Log('LoginBloc');
+    if (result.isSuccess()) {
       await _preferenceDataSource.setTermsAccepted(true);
-      emit(LoginSuccess(user));
-    }, (failure) => emit(LoginError(failure.message)));
+    }
+    result.when(
+      (user) {
+        'LoginWithApple Success: ${user.id}'.Log('LoginBloc');
+        emit(LoginSuccess(user));
+      },
+      (failure) {
+        'LoginWithApple Failure: ${failure.message}'.Log('LoginBloc');
+        emit(LoginError(failure.message));
+      },
+    );
+  }
+
+  Future<void> _onLinkWithAppleStarted(
+    LinkWithAppleStarted event,
+    Emitter<LoginState> emit,
+  ) async {
+    emit(const LoginLoading());
+    'Linking Apple account'.Log('LoginBloc');
+    final result = await _linkWithAppleUseCaseInstance();
+    'LinkWithAppleUseCase result: ${result.isSuccess() ? "Success" : "Failure"}'
+        .Log('LoginBloc');
+    if (result.isSuccess()) {
+      await _preferenceDataSource.setTermsAccepted(true);
+    }
+    result.when(
+      (user) {
+        'LinkWithApple Success: ${user.id}'.Log('LoginBloc');
+        emit(LoginSuccess(user));
+      },
+      (failure) {
+        'LinkWithApple Failure: ${failure.message}'.Log('LoginBloc');
+        emit(LoginError(failure.message));
+      },
+    );
   }
 }

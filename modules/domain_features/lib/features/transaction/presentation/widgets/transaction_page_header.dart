@@ -40,9 +40,6 @@ class TransactionPageHeader extends StatelessWidget {
         ? 'assets/bg/bg_header_dark.webp'
         : 'assets/bg/bg_header_light.webp';
 
-    // We calculate the overlap locally to match TransactionPage's logic.
-    final overlap = context.respDim(64) / 2;
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light.copyWith(
         statusBarColor: Colors.transparent,
@@ -63,10 +60,7 @@ class TransactionPageHeader extends StatelessWidget {
           ),
         ),
         clipBehavior: Clip.antiAlias,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: overlap),
-          child: _buildHeroForeground(context),
-        ),
+        child: _buildHeroForeground(context),
       ),
     );
   }

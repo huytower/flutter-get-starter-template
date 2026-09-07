@@ -29,6 +29,10 @@ class LoginWithAppleStarted extends LoginEvent {
   const LoginWithAppleStarted();
 }
 
+class LinkWithAppleStarted extends LoginEvent {
+  const LinkWithAppleStarted();
+}
+
 class LinkWithPhoneStarted extends LoginEvent {
   const LinkWithPhoneStarted();
 }

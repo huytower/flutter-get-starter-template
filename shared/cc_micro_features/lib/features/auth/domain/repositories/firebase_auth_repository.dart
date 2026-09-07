@@ -48,6 +48,9 @@ abstract class FirebaseAuthRepository {
   /// account, or `provider-already-linked` if already linked to this one.
   Future<Result<CcUserEntity, CcFailure>> linkWithGoogle();
 
+  /// Links an Apple account to the currently signed-in user.
+  Future<Result<CcUserEntity, CcFailure>> linkWithApple();
+
   /// Starts phone verification for linking (not signing in) — deliberately
   /// separate from [verifyPhoneNumber], whose `verificationCompleted`
   /// auto-retrieval callback signs in with the credential; that would

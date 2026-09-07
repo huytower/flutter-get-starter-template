@@ -34,6 +34,9 @@ class ExpenseFormController extends TransactionFormController
 
   final TransactionRepository _transactionRepository;
   final GetCategoriesUseCase _getCategories;
+
+  // Use getIt for additional dependencies to avoid DI module mismatches
+  // until a full build_runner run is completed.
   GetBudgetLimitStatsUseCase get _getBudgetStats =>
       getIt<GetBudgetLimitStatsUseCase>();
 
@@ -163,12 +166,12 @@ class ExpenseFormController extends TransactionFormController
         .where((c) => c.type == CategoryType.expense && c.isEnabled)
         .toList();
 
-    List<BudgetLimitStatsEntity> budgets = [];
+    List<BudgetLimitStatsEntity> currentBudgets = [];
     if (Get.isRegistered<BudgetLimitController>()) {
-      budgets = Get.find<BudgetLimitController>().budgets;
+      currentBudgets = Get.find<BudgetLimitController>().budgets;
     } else {
       final statsResult = await _getBudgetStats.call();
-      budgets = statsResult.tryGetSuccess() ?? [];
+      currentBudgets = statsResult.tryGetSuccess() ?? [];
     }
 
     // Map of CategoryID -> Last used Date
@@ -195,8 +198,9 @@ class ExpenseFormController extends TransactionFormController
     final budgetCategoryIds = <String>{};
 
     // Add Budgets
-    for (final b in budgets) {
+    for (final b in currentBudgets) {
       budgetCategoryIds.add(b.budget.categoryId);
+      // Use DateTime(2000) as fallback if no activity, since Entity lacks updatedAt
       final lastActivity = lastUsedBudget[b.budget.id] ?? DateTime(2000);
       items.add(
         UnifiedCategoryItem(

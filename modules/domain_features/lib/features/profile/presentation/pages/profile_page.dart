@@ -257,7 +257,7 @@ class ProfilePage extends CcGetView<ProfileController> {
       onTap: () => controller.logout(context),
       child: CcText(
         el.tr(CcLocaleKeys.auth_logout),
-        textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+        textStyle: context.ccTextTheme.bodySmall?.copyWith(
           color: context.ccColorScheme.onSurfaceVariant,
           fontWeight: FontWeight.w500,
         ),
@@ -298,7 +298,7 @@ class ProfilePage extends CcGetView<ProfileController> {
       },
       child: CcText(
         el.tr(CcLocaleKeys.profile_delete_account),
-        textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+        textStyle: context.ccTextTheme.bodySmall?.copyWith(
           color: context.ccColorScheme.onSurfaceVariant,
           fontWeight: FontWeight.w500,
         ),
