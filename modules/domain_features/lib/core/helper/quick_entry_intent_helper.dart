@@ -38,8 +38,18 @@ class QuickEntryIntentHelper {
     'cho': QuickEntryIntent.expense, // Indicator for giving/lending
     // Loan-related Outflow (Giving to others) -> Lend
     'cho vay': QuickEntryIntent.lend,
+    'chovay': QuickEntryIntent.lend,
+    'cho ban vay': QuickEntryIntent.lend,
+    'chobanvay': QuickEntryIntent.lend,
     'cho muon': QuickEntryIntent.lend,
+    'cho muon tien': QuickEntryIntent.lend,
+    'chomuontien': QuickEntryIntent.lend,
+    'dua tien cho': QuickEntryIntent.lend,
+    'ung truoc': QuickEntryIntent.lend,
     'thu no': QuickEntryIntent.lend,
+    'thuno': QuickEntryIntent.lend,
+    'thu tien': QuickEntryIntent.lend,
+    'thutien': QuickEntryIntent.lend,
     'doi no': QuickEntryIntent.lend,
     'thu tien no': QuickEntryIntent.lend,
     'lend': QuickEntryIntent.lend,
@@ -48,8 +58,11 @@ class QuickEntryIntentHelper {
     'di vay': QuickEntryIntent.debt,
     'muon tien': QuickEntryIntent.debt,
     'tra no': QuickEntryIntent.debt,
+    'trano': QuickEntryIntent.debt,
     'thanh toan no': QuickEntryIntent.debt,
+    'thanhtoanno': QuickEntryIntent.debt,
     'dong lai': QuickEntryIntent.debt,
+    'repay': QuickEntryIntent.debt,
     'borrow': QuickEntryIntent.debt,
     'loan': QuickEntryIntent.debt,
 
@@ -142,7 +155,9 @@ class QuickEntryIntentHelper {
   /// Keywords indicating a Debt Repayment (Outflow/Repay).
   static const List<String> debtRepayKeywords = [
     'tra no',
+    'trano',
     'thanh toan no',
+    'thanhtoanno',
     'dong lai',
     'repay',
     'payback',
@@ -151,9 +166,18 @@ class QuickEntryIntentHelper {
   /// Keywords indicating a Lend Collection (Inflow/Collect).
   static const List<String> lendCollectKeywords = [
     'thu no',
+    'thuno',
+    'thu tien',
+    'thutien',
     'doi no',
     'thu tien no',
+    'thu vao',
+    'nhan',
     'collect',
+    'lay tien no',
+    'doi tien no',
+    'ban tra no',
+    'nguoi ta tra',
   ];
 
   /// Returns true if [text] indicates an investment return action.

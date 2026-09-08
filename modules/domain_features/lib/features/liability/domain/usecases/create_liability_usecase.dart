@@ -80,9 +80,10 @@ class CreateLiabilityUseCase {
       );
     }
     final scheduleMissing =
-        params.repaymentMethod == LiabilityRepaymentMethod.installment
-        ? (params.installments == null || params.installments!.isEmpty)
-        : params.finalDueDate == null;
+        params.direction == LiabilityDirection.borrow &&
+        (params.repaymentMethod == LiabilityRepaymentMethod.installment
+            ? (params.installments == null || params.installments!.isEmpty)
+            : params.finalDueDate == null);
     if (scheduleMissing) {
       return const Error(
         ValidationFailure(

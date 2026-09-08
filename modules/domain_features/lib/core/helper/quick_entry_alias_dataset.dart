@@ -327,6 +327,8 @@ class QuickEntryAliasDataset {
 
     // ===== LIABLE — Vay & Trả nợ (d1 - d5, d9) =====
     'vay ban be': 'd1',
+    'vay ban': 'd1',
+    'muon ban': 'd1',
     'muon tien': 'd1',
     'vay ngan hang': 'd2',
     'vay tin chap': 'd2',
@@ -341,11 +343,14 @@ class QuickEntryAliasDataset {
     'thanh toan no': 'd9',
 
     // ===== LEND — Cho vay & Thu nợ (d6, d8) =====
-    'cho vay': 'd6',
-    'cho muon tien': 'd6',
-    'thu no': 'd8',
-    'doi no': 'd8',
-    'thu tien no': 'd8',
+    'ban be': 'd6',
+    'ban': 'd6',
+    'nguoi quen': 'd6',
+    'ca nhan': 'd6',
+    'dong nghiep': 'd6',
+    'nguoi than': 'd6',
+    'khac': 'd8',
+    'ngoai': 'd8',
   };
 
   /// Aliases for relative dates.

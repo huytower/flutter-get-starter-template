@@ -5,15 +5,11 @@ import 'package:theme/export_theme.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 
 bool computeIsInflow(TransactionEntity transaction) {
-  switch (transaction.type) {
-    case TransactionType.income:
-    case TransactionType.investmentReturn:
-    case TransactionType.debtBorrow:
-    case TransactionType.debtCollect:
-      return true;
-    default:
-      return false;
-  }
+  final type = transaction.type;
+  return type == TransactionType.income ||
+      type == TransactionType.investmentReturn ||
+      type == TransactionType.debtBorrow ||
+      type == TransactionType.debtCollect;
 }
 
 bool isEditableTransaction(TransactionEntity transaction) {
@@ -56,8 +52,8 @@ double computeDailyTotal(
       if (tx.type == TransactionType.investmentOut) return sum - tx.amount;
       if (tx.type == TransactionType.debtBorrow) return sum + tx.amount;
       if (tx.type == TransactionType.debtLend) return sum - tx.amount;
-      if (tx.type == TransactionType.debtRepay) return sum + tx.amount;
-      if (tx.type == TransactionType.debtCollect) return sum - tx.amount;
+      if (tx.type == TransactionType.debtRepay) return sum - tx.amount;
+      if (tx.type == TransactionType.debtCollect) return sum + tx.amount;
     }
     return sum;
   });

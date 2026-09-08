@@ -311,13 +311,19 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
   }
 
   // 4b. Smart Intent Override (Inflow): If an inflow verb (income) is detected
-  // alongside an investment category, it's likely an investment return.
+  // alongside an investment or lend category, it's likely a return/collection.
   if (detectedDirection == QuickEntryIntent.income) {
     for (final keyword in QuickEntryAliasDataset.categoryKeywords.entries) {
-      if (normalized.contains(keyword.key) && keyword.value.startsWith('inv')) {
-        '[AI_PARSING] [LOCAL] 🔄 Smart override: "inflow" + investment category -> investment'
-            .Log('QuickEntryParserHelper');
-        return QuickEntryIntent.investment;
+      if (normalized.contains(keyword.key)) {
+        if (keyword.value.startsWith('inv')) {
+          '[AI_PARSING] [LOCAL] 🔄 Smart override: "inflow" + investment category -> investment'
+              .Log('QuickEntryParserHelper');
+          return QuickEntryIntent.investment;
+        } else if (keyword.value == 'd6' || keyword.value == 'd8') {
+          '[AI_PARSING] [LOCAL] 🔄 Smart override: "inflow" + lend category -> lend'
+              .Log('QuickEntryParserHelper');
+          return QuickEntryIntent.lend;
+        }
       }
     }
   }

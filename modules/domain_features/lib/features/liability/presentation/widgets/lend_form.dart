@@ -14,7 +14,6 @@ import '../get_x/lend_form_controller.dart';
 import '../get_x/liability_base_form_controller.dart';
 import 'liability_action_toggle.dart';
 import 'liability_asset_selector.dart';
-import 'liability_repayment_method_section.dart';
 
 class LendForm extends StatelessWidget {
   const LendForm({super.key});
@@ -85,31 +84,6 @@ class LendForm extends StatelessWidget {
               const CcSpaceSM(),
               _buildWalletSection(context, controller, accentColor),
               const CcSpaceSM(),
-              Obx(() {
-                final liability = controller.mergedItems
-                    .firstWhereOrNull(
-                      (b) => b.liability.id == controller.selectedLoanId.value,
-                    )
-                    ?.liability;
-
-                // Only show repayment plan for new/uninitialized liabilities.
-                // For existing liabilities, we are just lending more.
-                if (liability == null ||
-                    liability.principalAmount > 0 ||
-                    controller.action.value == LiabilityFormAction.decrease) {
-                  return const SizedBox.shrink();
-                }
-
-                return Column(
-                  children: [
-                    LiabilityRepaymentMethodSection(
-                      controller: controller,
-                      accentColor: accentColor,
-                    ),
-                    const CcSpaceSM(),
-                  ],
-                );
-              }),
               TransactionAdditionalDetailsSection(
                 isExpanded: controller.showMoreDetails.value,
                 onToggle: controller.toggleMoreDetails,
@@ -143,7 +117,8 @@ class LendForm extends StatelessWidget {
 
     final isCollect = controller.action.value == LiabilityFormAction.decrease;
 
-    final label = (isCollect || (liability != null && liability.principalAmount > 0))
+    final label =
+        (isCollect || (liability != null && liability.principalAmount > 0))
         ? el.tr(CcLocaleKeys.transaction_amount)
         : el.tr(CcLocaleKeys.transaction_liability_amount_lend_label);
 

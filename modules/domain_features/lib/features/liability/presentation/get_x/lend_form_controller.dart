@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/merchant_match_helper.dart';
 import '../../../../core/helper/quick_entry_intent_helper.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
@@ -98,20 +97,6 @@ class LendFormController extends LiabilityBaseFormController {
     if (selectedLoanId.value == null) return false;
     if (amountStr.value == '0' || amountStr.value.isEmpty) return false;
     if (selectedWalletId.value == null) return false;
-
-    final liability = mergedItems
-        .firstWhereOrNull((b) => b.liability.id == selectedLoanId.value)
-        ?.liability;
-    if (liability == null) return false;
-
-    if (liability.principalAmount == 0) {
-      if (repaymentMethod.value == LiabilityRepaymentMethod.installment) {
-        if (installmentDrafts.isEmpty) return false;
-        if (installmentsTotal != principalAmount) return false;
-        return installmentDrafts.every((d) => d.amount.value > 0);
-      }
-      return finalDueDate.value != null;
-    }
 
     return true;
   }
@@ -361,7 +346,11 @@ class LendFormController extends LiabilityBaseFormController {
   void setAction(LiabilityFormAction value) {
     if (action.value == value) return;
     action.value = value;
-    onReset();
+    // Clearing current selection when switching actions ensures the item picker
+    // re-filters correctly and the form doesn't carry over irrelevant state.
+    selectedLoanId.value = null;
+    selectedCategory.value = null;
+    loadLiabilities();
   }
 
   @override

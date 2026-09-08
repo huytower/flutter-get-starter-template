@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/merchant_match_helper.dart';
 import '../../../../core/helper/quick_entry_intent_helper.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
@@ -110,6 +109,10 @@ class LiabilityFormController extends LiabilityBaseFormController {
         ?.liability;
     if (liability == null) return false;
 
+    // For recording a payment (Decrease), we only need a valid loan and amount.
+    if (action.value == LiabilityFormAction.decrease) return true;
+
+    // For initializing a new loan (Increase when principal is 0)
     if (liability.principalAmount == 0) {
       if (repaymentMethod.value == LiabilityRepaymentMethod.installment) {
         if (installmentDrafts.isEmpty) return false;
@@ -362,7 +365,9 @@ class LiabilityFormController extends LiabilityBaseFormController {
     action.value = value;
     // Clearing current selection when switching actions ensures the item picker
     // re-filters correctly and the form doesn't carry over irrelevant state.
-    onReset();
+    selectedLoanId.value = null;
+    selectedCategory.value = null;
+    loadLiabilities();
   }
 
   @override
