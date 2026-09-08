@@ -12,7 +12,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
 
   @override
   Widget build(BuildContext context) {
-    return GetX<AddLiabilitySheetController>(
+    return GetBuilder<AddLiabilitySheetController>(
       init: getIt<AddLiabilitySheetController>()..init(),
       dispose: (_) => Get.delete<AddLiabilitySheetController>(),
       builder: (controller) {
