@@ -304,7 +304,7 @@
                         "quick_entry_label":  "Nhập nhanh (AI)",
                         "quick_entry_hint":  "chi điện thoại 50.000 từ tiền mặt",
                         "quick_entry_parsed_result":  "Đã nhận diện: {label}",
-                        "quick_entry_category_missing": "Danh mục chưa có (vui lòng thêm trong thiết lập): {label}",
+                        "quick_entry_category_missing": "Danh mục chưa có (hãy thêm +): {label}",
                          "quick_entry_could_not_parse":  "Không hiểu được nội dung này — vui lòng nhập thủ công",
                          "quick_entry_daily_limit_reached":  "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
                         "quick_entry_mic_permission_denied":  "Cần quyền truy cập micro để nhập bằng giọng nói",

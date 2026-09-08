@@ -5,7 +5,7 @@ class QuickEntryRegexDataset {
   /// Grouped-thousands form (e.g. "1.500.000" or "85 000") is tried before
   /// the plain digit-run fallback.
   static final RegExp amountPattern = RegExp(
-    r'(\d{1,3}(?:[., ]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|tr|trieu|ty|b|d|vnd|dong)?(?!\w)',
+    r'(\d{1,3}(?:[., ]\d{3})+|\d+(?:[.,]\d+)?)\s*(k|nghin|trieudong|trieu|tr|ty|b|vnd|dong|d)?(?!\w)',
   );
 
   /// Matches common Vietnamese invoice/serial number prefixes followed by digits.

@@ -14,7 +14,6 @@ import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../liability/domain/entities/liability_entity.dart';
-import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import 'transaction_controller.dart';
@@ -175,11 +174,7 @@ mixin QuickEntryMixin on TransactionFormController
   Future<void> startAutoSaveTimer(BuildContext context) async {
     _cancelAutoSave();
 
-    final settings = await getIt<GetProfileSettingsUseCase>().call();
-    isVip.value = settings.isVip;
-
-    if (!isVip.value) return;
-
+    // Auto-save is a core productivity feature available to all users.
     autoSaveCountdown.value = 2;
     _autoSaveTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (autoSaveCountdown.value > 1) {
@@ -211,7 +206,7 @@ mixin QuickEntryMixin on TransactionFormController
   Future<void> refreshQuickEntryCategories() async {
     final result = await getIt<GetCategoriesUseCase>().call();
     final groupIds = quickEntryCategoryGroupIds;
-    _quickEntryCategories =
+    final list =
         result
             .tryGetSuccess()
             ?.where(
@@ -222,6 +217,10 @@ mixin QuickEntryMixin on TransactionFormController
             )
             .toList() ??
         [];
+    _quickEntryCategories = list;
+
+    '[AI_PARSING] 📚 Categories refreshed | tab=$quickEntryCategoryType | count=${list.length}'
+        .Log('QuickEntryMixin');
   }
 
   CategoryEntity? _findQuickEntryCategory(String id) {
@@ -303,13 +302,13 @@ mixin QuickEntryMixin on TransactionFormController
       return;
     }
 
-    '[AI_PARSING] 🔍 Reactive parse started | tab=$quickEntryCategoryType | text="$text"'
+    '[AI_PARSING] [LOCAL] 🔍 Reactive parse started | tab=$quickEntryCategoryType | text="$text"'
         .Log('QuickEntryMixin');
 
     // Intent detection for cross-tab switching (Reactive)
     final intent = detectQuickEntryIntent(text);
     if (intent != null) {
-      '[AI_PARSING] 🎯 Intent detected: $intent'.Log('QuickEntryMixin');
+      '[AI_PARSING] [LOCAL] 🎯 Intent detected: $intent'.Log('QuickEntryMixin');
       final dynamic txController = Get.find<TransactionController>();
       bool isMismatch = false;
       switch (intent) {
@@ -339,7 +338,7 @@ mixin QuickEntryMixin on TransactionFormController
       }
 
       if (isMismatch) {
-        '[AI_PARSING] 🔄 Intent mismatch found (Tab: $quickEntryCategoryType vs Intent: $intent) | switching...'
+        '[AI_PARSING] [LOCAL] 🔄 Intent mismatch found (Tab: $quickEntryCategoryType vs Intent: $intent) | switching...'
             .Log('QuickEntryMixin');
         txController.switchToTabForIntent(intent);
 
@@ -348,7 +347,7 @@ mixin QuickEntryMixin on TransactionFormController
           final dynamic targetController = txController
               .getQuickEntryControllerForIntent(intent);
           if (targetController != null && targetController != this) {
-            '[AI_PARSING] 🤝 Handing off text to target controller: ${targetController.runtimeType}'
+            '[AI_PARSING] [LOCAL] 🤝 Handing off text to target controller: ${targetController.runtimeType}'
                 .Log('QuickEntryMixin');
             if (targetController is QuickEntryMixin) {
               targetController.applyQuickEntryIntent(intent, text);
@@ -361,11 +360,11 @@ mixin QuickEntryMixin on TransactionFormController
         });
         return;
       } else {
-        '[AI_PARSING] ✅ Intent matches current tab ($quickEntryCategoryType)'
+        '[AI_PARSING] [LOCAL] ✅ Intent matches current tab ($quickEntryCategoryType)'
             .Log('QuickEntryMixin');
       }
     } else {
-      '[AI_PARSING] ❓ No clear intent detected for switching'.Log(
+      '[AI_PARSING] [LOCAL] ❓ No clear intent detected for switching'.Log(
         'QuickEntryMixin',
       );
     }
@@ -379,8 +378,17 @@ mixin QuickEntryMixin on TransactionFormController
       return;
     }
 
+    // Ensure categories are loaded for the current tab before validating completeness.
+    // This is crucial during tab-switches where the new controller was just initialized.
+    if (_quickEntryCategories.isEmpty) {
+      await refreshQuickEntryCategories();
+    }
+
     final isComplete = local.isComplete && !isQuickEntryCategoryMissing;
     quickEntrySuggestion.value = isComplete ? local : null;
+
+    '[AI_PARSING] [LOCAL] ✅ Local parse completed | isComplete=$isComplete | categoryMissing=$isQuickEntryCategoryMissing | categoryId=${local.categoryId} | amount=${local.amount}'
+        .Log('QuickEntryMixin');
 
     // Proactive Prefill: Update form fields (amount and category) immediately
     // as the user types, so the form stays in sync with the visual recognition.
@@ -396,7 +404,14 @@ mixin QuickEntryMixin on TransactionFormController
       clearCategorySelection();
     }
 
-    if (isComplete && Get.context != null) {
+    // Auto-save should only trigger if we have BOTH a valid category and a non-zero amount.
+    final bool canAutoSave =
+        isComplete &&
+        local.amount != null &&
+        local.amount! > 0 &&
+        local.categoryId != null;
+
+    if (canAutoSave && Get.context != null) {
       startAutoSaveTimer(Get.context!);
     }
   }
@@ -450,7 +465,7 @@ mixin QuickEntryMixin on TransactionFormController
     final text = quickEntryController.text.trim();
     if (text.isEmpty) return;
 
-    '[AI_PARSING] 🚀 Submitting quick entry | text="$text"'.Log(
+    '[AI_PARSING] [LOCAL] 🚀 Submitting quick entry | text="$text"'.Log(
       'QuickEntryMixin',
     );
 
@@ -486,7 +501,7 @@ mixin QuickEntryMixin on TransactionFormController
       }
 
       if (isMismatch) {
-        '[AI_PARSING] 🔄 Intent mismatch detected during typing | switching to $intent'
+        '[AI_PARSING] [LOCAL] 🔄 Intent mismatch detected during typing | switching to $intent'
             .Log('QuickEntryMixin');
         txController.switchToTabForIntent(intent);
 
@@ -523,9 +538,8 @@ mixin QuickEntryMixin on TransactionFormController
       groupIds: quickEntryCategoryGroupIds,
     );
     if (!isCurrentGeneration()) return;
-    '[AI_PARSING] 📍 Local fallback ready | result=${local.toJson()}'.Log(
-      'QuickEntryMixin',
-    );
+    '[AI_PARSING] [LOCAL] 📍 Local fallback ready | result=${local.toJson()}'
+        .Log('QuickEntryMixin');
 
     // SHORT-CIRCUIT: If local parsing already resolved the mandatory fields,
     // skip cloud escalation to save cost, latency, and avoid the consent popup.
@@ -534,7 +548,7 @@ mixin QuickEntryMixin on TransactionFormController
     // This prioritizes the locally recognized data (Case 1 or Case 2) over
     // escalating to Gemini.
     if (local.amount != null) {
-      '[AI_PARSING] ✅ Local parse found amount | applying to form and starting auto-save'
+      '[AI_PARSING] [LOCAL] ✅ Local parse found amount | applying to form and starting auto-save'
           .Log('QuickEntryMixin');
       resetParsingIfCurrent();
 
@@ -556,11 +570,13 @@ mixin QuickEntryMixin on TransactionFormController
       isCurrentGeneration: isCurrentGeneration,
       resetParsingIfCurrent: resetParsingIfCurrent,
     )) {
-      '[AI_PARSING] ⛔ Cloud gate blocked escalation'.Log('QuickEntryMixin');
+      '[AI_PARSING] [GEMINI] ⛔ Cloud gate blocked escalation'.Log(
+        'QuickEntryMixin',
+      );
       return;
     }
 
-    '[AI_PARSING] ☁️ Escalating to Gemini...'.Log('QuickEntryMixin');
+    '[AI_PARSING] [GEMINI] ☁️ Escalating to Gemini...'.Log('QuickEntryMixin');
     final cloudResult = await parseUseCase.parseWithCloud(
       text: text,
       localResult: local,
@@ -571,9 +587,8 @@ mixin QuickEntryMixin on TransactionFormController
     // The field stays editable during the round trip — re-check the text
     // still matches what was sent before applying/erroring on anything.
     if (!isCurrentGeneration() || text != quickEntryController.text.trim()) {
-      '[AI_PARSING] ⚠️ Generation stale after cloud call | aborting'.Log(
-        'QuickEntryMixin',
-      );
+      '[AI_PARSING] [GEMINI] ⚠️ Generation stale after cloud call | aborting'
+          .Log('QuickEntryMixin');
       return;
     }
 
@@ -583,7 +598,7 @@ mixin QuickEntryMixin on TransactionFormController
         ? cloudResult
         : local;
 
-    '[AI_PARSING] ✨ Final suggestion resolved | cloudSuccess=${cloudResult != null} | result=${suggestion.toJson()}'
+    '[AI_PARSING] [GEMINI] ✨ Final suggestion resolved | cloudSuccess=${cloudResult != null} | result=${suggestion.toJson()}'
         .Log('QuickEntryMixin');
 
     if (suggestion.isEmpty) {

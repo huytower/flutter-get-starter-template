@@ -332,7 +332,7 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_hint": "spend phone 50.000 by cash",
       "quick_entry_parsed_result": "Got it: {label}",
       "quick_entry_category_missing":
-          "Category not found (please add in settings): {label}",
+          "Category not found (need +): {label}",
       "quick_entry_could_not_parse":
           "Couldn't understand that — please fill in manually",
       "quick_entry_daily_limit_reached":

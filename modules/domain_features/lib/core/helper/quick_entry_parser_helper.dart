@@ -31,7 +31,7 @@ String stripPhoneNumbers(String text) {
     try {
       final parsed = PhoneNumber.parse(potential, callerCountry: IsoCode.VN);
       if (parsed.isValid(type: PhoneNumberType.mobile)) {
-        '[AI_PARSING] 🚫 Phone number stripped | "$potential"'.Log(
+        '[AI_PARSING] [LOCAL] 🚫 Phone number stripped | "$potential"'.Log(
           'QuickEntryParserHelper',
         );
         result = result.replaceFirst(potential, ' ');
@@ -47,7 +47,7 @@ String stripPhoneNumbers(String text) {
 String stripInvoiceNumbers(String text) {
   return text.replaceAllMapped(invoiceNumberPattern, (match) {
     final stripped = match.group(0)!;
-    '[AI_PARSING] 🚫 Serial/invoice number stripped | "$stripped"'.Log(
+    '[AI_PARSING] [LOCAL] 🚫 Serial/invoice number stripped | "$stripped"'.Log(
       'QuickEntryParserHelper',
     );
     return ' ';
@@ -240,9 +240,8 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
   for (final entry in QuickEntryAliasDataset.intentRoots.entries) {
     for (final keyword in entry.value) {
       if (normalized.contains(keyword)) {
-        '[AI_PARSING] 🎯 Intent root matched: "$keyword" -> ${entry.key}'.Log(
-          'QuickEntryParserHelper',
-        );
+        '[AI_PARSING] [LOCAL] 🎯 Intent root matched: "$keyword" -> ${entry.key}'
+            .Log('QuickEntryParserHelper');
         return entry.key;
       }
     }
@@ -259,7 +258,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
     }
   }
   if (detectedDirection != null) {
-    '[AI_PARSING] 🎯 Direction matched: "$matchedVerb" -> $detectedDirection'
+    '[AI_PARSING] [LOCAL] 🎯 Direction matched: "$matchedVerb" -> $detectedDirection'
         .Log('QuickEntryParserHelper');
   }
 
@@ -289,7 +288,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
         }
 
         if (hint != null) {
-          '[AI_PARSING] 💡 Category hint detected: "${aliasEntry.key}" ($catId) -> $hint'
+          '[AI_PARSING] [LOCAL] 💡 Category hint detected: "${aliasEntry.key}" ($catId) -> $hint'
               .Log('QuickEntryParserHelper');
           return hint;
         }
@@ -303,7 +302,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
       normalized.contains('mua')) {
     for (final keyword in QuickEntryAliasDataset.categoryKeywords.entries) {
       if (normalized.contains(keyword.key) && keyword.value.startsWith('inv')) {
-        '[AI_PARSING] 🔄 Smart override: "mua" + investment category -> investment'
+        '[AI_PARSING] [LOCAL] 🔄 Smart override: "mua" + investment category -> investment'
             .Log('QuickEntryParserHelper');
         return QuickEntryIntent.investment;
       }
@@ -319,7 +318,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
     if (pattern.hasMatch(normalized)) {
       if (detectedDirection == null) {
         final result = contextEntry.value['default']!;
-        '[AI_PARSING] 🎯 Ambiguous context (default): "${contextEntry.key}" -> $result'
+        '[AI_PARSING] [LOCAL] 🎯 Ambiguous context (default): "${contextEntry.key}" -> $result'
             .Log('QuickEntryParserHelper');
         return result;
       }
@@ -332,7 +331,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
           ? contextEntry.value['inflow']!
           : contextEntry.value['outflow']!;
 
-      '[AI_PARSING] 🎯 Ambiguous context resolved: "${contextEntry.key}" (direction: $detectedDirection) -> $result'
+      '[AI_PARSING] [LOCAL] 🎯 Ambiguous context resolved: "${contextEntry.key}" (direction: $detectedDirection) -> $result'
           .Log('QuickEntryParserHelper');
       return result;
     }

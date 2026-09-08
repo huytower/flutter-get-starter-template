@@ -77,7 +77,7 @@ class ParseQuickEntryUseCase {
         '${_buildCategoryOptionsPrompt(categories)} '
         '${_buildWalletOptionsPrompt(wallets)}';
 
-    '[AI_PARSING] ☁️ Gemini Text Prompt: \n$prompt'.Log(
+    '[AI_PARSING] [GEMINI] ☁️ Gemini Text Prompt: \n$prompt'.Log(
       'ParseQuickEntryUseCase',
     );
 
@@ -87,12 +87,12 @@ class ParseQuickEntryUseCase {
     );
 
     if (response == null) {
-      '[AI_PARSING] ❌ Gemini returned null response'.Log(
+      '[AI_PARSING] [GEMINI] ❌ Gemini returned null response'.Log(
         'ParseQuickEntryUseCase',
       );
       return null;
     }
-    '[AI_PARSING] 📥 Gemini Text Response: $response'.Log(
+    '[AI_PARSING] [GEMINI] 📥 Gemini Text Response: $response'.Log(
       'ParseQuickEntryUseCase',
     );
 
@@ -131,7 +131,7 @@ class ParseQuickEntryUseCase {
         '${_buildCategoryOptionsPrompt(categories)} '
         '${_buildWalletOptionsPrompt(wallets)}';
 
-    '[AI_PARSING] 🖼️ Gemini Image Prompt: \n$prompt'.Log(
+    '[AI_PARSING] [GEMINI] 🖼️ Gemini Image Prompt: \n$prompt'.Log(
       'ParseQuickEntryUseCase',
     );
 
@@ -143,12 +143,12 @@ class ParseQuickEntryUseCase {
     );
 
     if (response == null) {
-      '[AI_PARSING] ❌ Gemini image response is null'.Log(
+      '[AI_PARSING] [GEMINI] ❌ Gemini image response is null'.Log(
         'ParseQuickEntryUseCase',
       );
       return null;
     }
-    '[AI_PARSING] 📥 Gemini Image Response: $response'.Log(
+    '[AI_PARSING] [GEMINI] 📥 Gemini Image Response: $response'.Log(
       'ParseQuickEntryUseCase',
     );
 

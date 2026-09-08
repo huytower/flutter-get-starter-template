@@ -302,7 +302,7 @@
                         "quick_entry_label":  "Quick entry (AI)",
                         "quick_entry_hint":  "spend phone 50.000 by cash",
                         "quick_entry_parsed_result":  "Got it: {label}",
-                        "quick_entry_category_missing": "Category not found (please add in settings): {label}",
+                        "quick_entry_category_missing": "Category not found (need +): {label}",
                         "quick_entry_could_not_parse":  "Couldn't understand that — please fill in manually",
                         "quick_entry_daily_limit_reached":  "Daily AI quick-entry limit reached — please fill in manually",
                         "quick_entry_mic_permission_denied":  "Microphone access is needed for voice entry",

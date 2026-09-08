@@ -11,6 +11,7 @@ class QuickEntryAliasDataset {
     'nghin': 1000,
     'tr': 1000000,
     'trieu': 1000000,
+    'trieudong': 1000000,
     'ty': 1000000000,
     'b': 1000000000,
     'd': 1,
@@ -286,7 +287,10 @@ class QuickEntryAliasDataset {
 
     // ===== INCOME — Thu nhập (i1 - i9) =====
     'luong': 'i1',
+    'luongchinh': 'i1',
     'thuong': 'i7',
+    'phu cap': 'i3',
+    'phucap': 'i3',
     'freelance': 'i2',
     'lam them': 'i2',
     'lamthem': 'i2',
