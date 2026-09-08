@@ -23,6 +23,12 @@ class LiabilityListController extends CcGetController {
 
   final RxList<LiabilityBalanceEntity> loans = <LiabilityBalanceEntity>[].obs;
 
+  List<LiabilityBalanceEntity> get borrowBalances =>
+      loans.where((b) => b.liability.isBorrow).toList();
+
+  List<LiabilityBalanceEntity> get lendBalances =>
+      loans.where((b) => b.liability.isLend).toList();
+
   final RxBool isEditMode = false.obs;
   final RxBool isVip = false.obs;
 

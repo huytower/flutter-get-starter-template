@@ -108,7 +108,7 @@ class _LiabilityListView extends CcGetView<LiabilityListController> {
 
       if (balances.isEmpty) {
         return CcText(
-          el.tr(CcLocaleKeys.liability_empty_state),
+          el.tr(CcLocaleKeys.liability_empty_state_v2),
           align: Alignment.center,
           textAlign: TextAlign.center,
           textStyle: context.ccTextTheme.bodyMedium?.copyWith(

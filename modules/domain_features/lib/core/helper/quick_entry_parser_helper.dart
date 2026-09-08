@@ -6,6 +6,7 @@ import '../../features/category/domain/entities/category_entity.dart';
 import '../../features/wallet/domain/entities/wallet_entity.dart';
 import 'merchant_match_helper.dart';
 import 'quick_entry_alias_dataset.dart';
+import 'quick_entry_intent_helper.dart';
 import 'quick_entry_parse_result.dart';
 import 'quick_entry_regex_dataset.dart';
 
@@ -237,7 +238,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
   final normalized = stripVietnameseDiacritics(text.toLowerCase());
 
   // 1. Check for high-priority root intents (e.g., "đầu tư", "income")
-  for (final entry in QuickEntryAliasDataset.intentRoots.entries) {
+  for (final entry in QuickEntryIntentHelper.intentRoots.entries) {
     for (final keyword in entry.value) {
       if (normalized.contains(keyword)) {
         '[AI_PARSING] [LOCAL] 🎯 Intent root matched: "$keyword" -> ${entry.key}'
@@ -250,7 +251,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
   // 2. Identify the primary direction of the action (Inflow vs. Outflow)
   QuickEntryIntent? detectedDirection;
   String? matchedVerb;
-  for (final verbEntry in QuickEntryAliasDataset.directionalVerbs.entries) {
+  for (final verbEntry in QuickEntryIntentHelper.directionalVerbs.entries) {
     if (normalized.contains(verbEntry.key)) {
       detectedDirection = verbEntry.value;
       matchedVerb = verbEntry.key;
@@ -273,10 +274,10 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
       if (pattern.hasMatch(normalized)) {
         final catId = aliasEntry.value;
         final QuickEntryIntent? hint;
-        if (catId.startsWith('i')) {
-          hint = QuickEntryIntent.income;
-        } else if (catId.startsWith('inv')) {
+        if (catId.startsWith('inv')) {
           hint = QuickEntryIntent.investment;
+        } else if (catId.startsWith('i')) {
+          hint = QuickEntryIntent.income;
         } else if (catId == 'd6' || catId == 'd8') {
           hint = QuickEntryIntent.lend;
         } else if (catId.startsWith('d')) {
@@ -309,8 +310,20 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
     }
   }
 
+  // 4b. Smart Intent Override (Inflow): If an inflow verb (income) is detected
+  // alongside an investment category, it's likely an investment return.
+  if (detectedDirection == QuickEntryIntent.income) {
+    for (final keyword in QuickEntryAliasDataset.categoryKeywords.entries) {
+      if (normalized.contains(keyword.key) && keyword.value.startsWith('inv')) {
+        '[AI_PARSING] [LOCAL] 🔄 Smart override: "inflow" + investment category -> investment'
+            .Log('QuickEntryParserHelper');
+        return QuickEntryIntent.investment;
+      }
+    }
+  }
+
   // 5. Resolve ambiguous contexts (like "lì xì" or "vay")
-  for (final contextEntry in QuickEntryAliasDataset.ambiguousContexts.entries) {
+  for (final contextEntry in QuickEntryIntentHelper.ambiguousContexts.entries) {
     final pattern = contextEntry.key.length <= 2
         ? RegExp('\\b${RegExp.escape(contextEntry.key)}\\b')
         : RegExp(RegExp.escape(contextEntry.key));
@@ -571,12 +584,12 @@ QuickEntryParseResult parseQuickEntryTextLocally({
   }
 
   // 5. Remove Intent roots and directional verbs from residual
-  for (final rootKeywords in QuickEntryAliasDataset.intentRoots.values) {
+  for (final rootKeywords in QuickEntryIntentHelper.intentRoots.values) {
     for (final keyword in rootKeywords) {
       residual = residual.replaceFirst(keyword, '');
     }
   }
-  for (final verb in QuickEntryAliasDataset.directionalVerbs.keys) {
+  for (final verb in QuickEntryIntentHelper.directionalVerbs.keys) {
     residual = residual.replaceFirst(verb, '');
   }
 

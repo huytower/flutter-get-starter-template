@@ -6,6 +6,9 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/helper/merchant_match_helper.dart';
+import '../../../../core/helper/quick_entry_intent_helper.dart';
+import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
@@ -365,6 +368,17 @@ class LiabilityFormController extends LiabilityBaseFormController {
   @override
   void applyResolvedCategory(CategoryEntity category) {
     selectedCategory.value = category;
+  }
+
+  @override
+  void applyQuickEntryIntent(QuickEntryIntent intent, String text) {
+    if (intent != QuickEntryIntent.debt) return;
+
+    setAction(
+      QuickEntryIntentHelper.isDebtRepayment(text)
+          ? LiabilityFormAction.decrease
+          : LiabilityFormAction.increase,
+    );
   }
 
   @override

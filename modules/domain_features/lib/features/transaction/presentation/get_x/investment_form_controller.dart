@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/helper/merchant_match_helper.dart';
+import '../../../../core/helper/quick_entry_intent_helper.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
@@ -88,15 +89,8 @@ class InvestmentFormController extends TransactionFormController
   void applyQuickEntryIntent(QuickEntryIntent intent, String text) {
     if (intent != QuickEntryIntent.investment) return;
 
-    final normalized = stripVietnameseDiacritics(text.toLowerCase());
-    final isReturn =
-        normalized.contains('ban') ||
-        normalized.contains('rut') ||
-        normalized.contains('profit') ||
-        normalized.contains('return');
-
     setDirection(
-      isReturn
+      QuickEntryIntentHelper.isInvestmentReturn(text)
           ? InvestmentDirection.returnProfit
           : InvestmentDirection.contribute,
     );
