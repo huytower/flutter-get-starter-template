@@ -79,6 +79,8 @@ class ExpenseFormController extends TransactionFormController
 
   TransactionEntity? _lastLocationMatch;
   TransactionEntity? _lastBillMatch;
+  bool _locationSuggestionLoaded = false;
+  String? _dismissedLocationMatchId;
 
   List<TransactionEntity> _recentExpenses = [];
   Timer? _merchantMatchDebounce;
@@ -329,10 +331,14 @@ class ExpenseFormController extends TransactionFormController
     selectedCategory.value = null;
     selectedBudget.value = null;
     merchantMatchSuggestion.value = null;
+    locationMatchSuggestion.value = null;
+    billMatchSuggestion.value = null;
+    _lastLocationMatch = null;
+    _lastBillMatch = null;
+    _dismissedLocationMatchId = null;
     resetQuickEntry();
     refreshTimeBasedSuggestion();
     categoryKey.value++;
-    refreshLocationSuggestion();
     _rebuildUnifiedItems();
   }
 
@@ -427,7 +433,18 @@ class ExpenseFormController extends TransactionFormController
     billMatchSuggestion.value = null;
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      _refreshLocationSuggestionIfMoved();
+    }
+  }
+
   Future<void> refreshLocationSuggestion() async {
+    if (_locationSuggestionLoaded) return;
+    _locationSuggestionLoaded = true;
+
     locationMatchSuggestion.value = null;
     _lastLocationMatch = null;
     _currentLat = null;
@@ -437,6 +454,28 @@ class ExpenseFormController extends TransactionFormController
     await _loadRecentExpenses();
     await _loadLocationSuggestion();
     _loadMonthlyBillSuggestion();
+  }
+
+  Future<void> _refreshLocationSuggestionIfMoved() async {
+    if (!_locationSuggestionLoaded) return;
+    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+
+    final position = await CcLocationHelper.getCurrentPosition();
+    if (position == null) return;
+
+    final hasMoved =
+        _currentLat == null ||
+        _currentLng == null ||
+        CcLocationHelper.distanceBetweenMeters(
+              _currentLat!,
+              _currentLng!,
+              position.latitude,
+              position.longitude,
+            ) >
+            locationMatchRadiusMeters;
+    if (!hasMoved) return;
+
+    _applyLocationFix(position.latitude, position.longitude);
   }
 
   Future<void> _loadLocationSuggestion() async {
@@ -485,12 +524,16 @@ class ExpenseFormController extends TransactionFormController
 
   void _publishFallbackSuggestions() {
     if (merchantMatchSuggestion.value == null) {
-      locationMatchSuggestion.value = _lastLocationMatch;
+      locationMatchSuggestion.value =
+          _lastLocationMatch?.id == _dismissedLocationMatchId
+          ? null
+          : _lastLocationMatch;
       billMatchSuggestion.value = _lastBillMatch;
     }
   }
 
   void dismissLocationMatch() {
+    _dismissedLocationMatchId = locationMatchSuggestion.value?.id;
     locationMatchSuggestion.value = null;
   }
 
@@ -507,6 +550,7 @@ class ExpenseFormController extends TransactionFormController
     categoryKey.value++;
     locationMatchSuggestion.value = null;
     _lastLocationMatch = null;
+    _dismissedLocationMatchId = null;
   }
 
   void applyBillMatch(TransactionEntity match) {
