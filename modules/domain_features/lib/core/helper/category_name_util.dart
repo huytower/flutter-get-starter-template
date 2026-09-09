@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart' as el;
 
-class CategoryNameHelper {
-  CategoryNameHelper._();
+class CategoryNameUtil {
+  CategoryNameUtil._();
 
   /// Returns a localized name if the given [name] matches a known default
   /// category name in either English or Vietnamese. Otherwise returns [name].

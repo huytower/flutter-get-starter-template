@@ -6,7 +6,7 @@ import '../../features/category/domain/entities/category_entity.dart';
 import '../../features/wallet/domain/entities/wallet_entity.dart';
 import 'merchant_match_helper.dart';
 import 'quick_entry_alias_dataset.dart';
-import 'quick_entry_intent_helper.dart';
+import 'quick_entry_intent_util.dart';
 import 'quick_entry_parse_result.dart';
 import 'quick_entry_regex_dataset.dart';
 
@@ -238,7 +238,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
   final normalized = stripVietnameseDiacritics(text.toLowerCase());
 
   // 1. Check for high-priority root intents (e.g., "đầu tư", "income")
-  for (final entry in QuickEntryIntentHelper.intentRoots.entries) {
+  for (final entry in QuickEntryIntentUtil.intentRoots.entries) {
     for (final keyword in entry.value) {
       if (normalized.contains(keyword)) {
         '[AI_PARSING] [LOCAL] 🎯 Intent root matched: "$keyword" -> ${entry.key}'
@@ -251,7 +251,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
   // 2. Identify the primary direction of the action (Inflow vs. Outflow)
   QuickEntryIntent? detectedDirection;
   String? matchedVerb;
-  for (final verbEntry in QuickEntryIntentHelper.directionalVerbs.entries) {
+  for (final verbEntry in QuickEntryIntentUtil.directionalVerbs.entries) {
     if (normalized.contains(verbEntry.key)) {
       detectedDirection = verbEntry.value;
       matchedVerb = verbEntry.key;
@@ -329,7 +329,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
   }
 
   // 5. Resolve ambiguous contexts (like "lì xì" or "vay")
-  for (final contextEntry in QuickEntryIntentHelper.ambiguousContexts.entries) {
+  for (final contextEntry in QuickEntryIntentUtil.ambiguousContexts.entries) {
     final pattern = contextEntry.key.length <= 2
         ? RegExp('\\b${RegExp.escape(contextEntry.key)}\\b')
         : RegExp(RegExp.escape(contextEntry.key));
@@ -590,12 +590,12 @@ QuickEntryParseResult parseQuickEntryTextLocally({
   }
 
   // 5. Remove Intent roots and directional verbs from residual
-  for (final rootKeywords in QuickEntryIntentHelper.intentRoots.values) {
+  for (final rootKeywords in QuickEntryIntentUtil.intentRoots.values) {
     for (final keyword in rootKeywords) {
       residual = residual.replaceFirst(keyword, '');
     }
   }
-  for (final verb in QuickEntryIntentHelper.directionalVerbs.keys) {
+  for (final verb in QuickEntryIntentUtil.directionalVerbs.keys) {
     residual = residual.replaceFirst(verb, '');
   }
 
