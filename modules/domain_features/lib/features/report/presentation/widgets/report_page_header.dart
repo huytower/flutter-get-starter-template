@@ -69,32 +69,26 @@ class ReportPageHeader extends StatelessWidget {
     // Fixed "Cannot hit test a render box with no size" error:
     // This Positioned widget provides explicit constraints to the foreground
     // Column, ensuring it always has a valid size for hit testing and layout.
-    return Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: overlap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (MediaQuery.of(context).padding.top > 0)
-            SizedBox(height: MediaQuery.of(context).padding.top),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (MediaQuery.of(context).padding.top > 0)
+          SizedBox(height: MediaQuery.of(context).padding.top),
 
-          // Using Spacers with flex factors to distribute space proportionally.
-          const Spacer(flex: 1),
-          _buildTitleRow(context),
-          const Spacer(flex: 1),
+        // Using Spacers with flex factors to distribute space proportionally.
+        const Spacer(flex: 1),
+        _buildTitleRow(context),
+        const Spacer(flex: 1),
 
-          Flexible(
-            flex: 20,
-            child: CcSymmetricPadding(
-              horizontal: CcPaddingParams.PAGE_XS,
-              child: _buildRunwaySection(context),
-            ),
+        Flexible(
+          flex: 20,
+          child: CcSymmetricPadding(
+            horizontal: CcPaddingParams.PAGE_XS,
+            child: _buildRunwaySection(context),
           ),
-          const Spacer(flex: 1),
-        ],
-      ),
+        ),
+        const Spacer(flex: 1),
+      ],
     );
   }
 

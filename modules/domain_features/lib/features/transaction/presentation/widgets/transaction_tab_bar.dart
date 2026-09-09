@@ -306,6 +306,7 @@ class TransactionTabBar extends StatelessWidget {
               label: showLabelOnReveal ? guideline.bannerDescription : null,
               labelAbove: false,
               growRight: false,
+              forceHideLabel: true,
             ),
           ),
       ],

@@ -1045,8 +1045,7 @@ class CodegenLoader extends AssetLoader {
       "liability_category_borrow_label": "Hình thức vay",
       "liability_category_lend_label": "Hình thức cho mượn",
       "liability_borrower_label": "Tên khoản vay",
-      "liability_borrower_hint":
-           "VD: Vay mua nhà, Vay ngân hàng...",
+      "liability_borrower_hint": "VD: Vay mua nhà, Vay ngân hàng...",
       "liability_collection_method_label": "Hình thức thu hồi",
       "liability_method_installment_lend": "Thu góp",
       "liability_method_lump_sum_lend": "Thu 1 lần",
@@ -1579,8 +1578,6 @@ abstract class CcLocaleKeys {
       'auth.biometric.error.app_canceled';
   static const auth_biometric_error_system_canceled =
       'auth.biometric.error.system_canceled';
-
-
 
   static const settings_language = 'settings.language';
   static const settings_language_vietnamese = 'settings.language_vietnamese';
@@ -2170,4 +2167,3 @@ abstract class CcLocaleKeys {
       'level_lock.task_positive_cash_flow';
   static const level_lock_progress_archived = 'level_lock.progress_archived';
 }
-
