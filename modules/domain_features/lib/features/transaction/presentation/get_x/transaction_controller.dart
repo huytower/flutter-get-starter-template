@@ -64,20 +64,7 @@ class TransactionController extends CcGetController {
 
   /// Returns whether a specific tab is currently unlocked based on user level.
   bool isTabUnlocked(TransactionTabKind kind) {
-    if (kind == TransactionTabKind.expense ||
-        kind == TransactionTabKind.income) {
-      return true;
-    }
-    if (kind == TransactionTabKind.investment) {
-      return _userLevel.status.value.canUseInvestment;
-    }
-    if (kind == TransactionTabKind.liability) {
-      return _userLevel.status.value.canUseLiability;
-    }
-    if (kind == TransactionTabKind.lend) {
-      return _userLevel.status.value.canUseLiability;
-    }
-    return false;
+    return true;
   }
 
   /// True when the page header should be auto-hidden (scrolled down, or a
