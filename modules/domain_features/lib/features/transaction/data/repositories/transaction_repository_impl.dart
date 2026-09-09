@@ -31,14 +31,9 @@ class TransactionRepositoryImpl
         .where((e) => !e.isDeleted)
         .toList();
 
-    // Sort by date descending (latest first). Use sortKey as tie-breaker for
-    // same-timestamp entries to ensure "recent records firstly".
-    entities.sort((a, b) {
-      final dateCompare = b.date.compareTo(a.date);
-      if (dateCompare != 0) return dateCompare;
-
-      return b.sortKey.compareTo(a.sortKey);
-    });
+    // Sort by sortKey descending (latest recorded first).
+    // This ensures creation-order stability across all forms and types.
+    entities.sort((a, b) => b.sortKey.compareTo(a.sortKey));
 
     return entities;
   }

@@ -123,14 +123,7 @@ class ReportController extends CcGetController {
       ...?liabilityTrend.value?.transactions,
     ];
 
-    combined.sort((a, b) {
-      // Primary: Date descending (newest first)
-      final dateCompare = b.date.compareTo(a.date);
-      if (dateCompare != 0) return dateCompare;
-
-      // Secondary: sortKey descending (last recorded first).
-      return b.sortKey.compareTo(a.sortKey);
-    });
+    combined.sort((a, b) => b.sortKey.compareTo(a.sortKey));
 
     // Debug log for sorting order
     '[REPORT] Combined and sorted ${combined.length} transactions:'.Log(

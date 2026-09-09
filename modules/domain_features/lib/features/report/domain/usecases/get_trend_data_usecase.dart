@@ -74,14 +74,7 @@ class GetTrendDataUseCase {
         .fold<double>(0, (sum, t) => sum + t.amount);
 
     final sortedTransactions = allTransactions.toList();
-    sortedTransactions.sort((a, b) {
-      final dateCompare = b.date.compareTo(a.date);
-      if (dateCompare != 0) return dateCompare;
-
-      final idA = double.tryParse(a.id) ?? 0;
-      final idB = double.tryParse(b.id) ?? 0;
-      return idB.compareTo(idA);
-    });
+    sortedTransactions.sort((a, b) => b.sortKey.compareTo(a.sortKey));
 
     return Success(
       TrendDataEntity(
