@@ -261,7 +261,7 @@ class TransactionTabBar extends StatelessWidget {
     final guideline = Get.find<GuidelineController>();
     return Padding(
       padding: const EdgeInsets.only(left: 4),
-      child: PrjGuidelineBadge(size: 6, label: null),
+      child: PrjGuidelineBadge(size: context.respDim(6), label: null),
     );
   }
 
@@ -299,10 +299,10 @@ class TransactionTabBar extends StatelessWidget {
         ),
         if (showBadgeOnReveal)
           Positioned(
-            top: 10,
-            right: 20,
+            top: context.respDim(10),
+            right: context.respDim(20),
             child: PrjGuidelineBadge(
-              size: 6,
+              size: context.respDim(6),
               label: showLabelOnReveal ? guideline.bannerDescription : null,
               labelAbove: false,
               growRight: false,

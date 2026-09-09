@@ -106,11 +106,11 @@ class _LiquidWalletListView extends CcGetView<WalletController> {
                       guideline.isTaskActive('wallet_balance') &&
                       !controller.isEditMode.value;
                   return Positioned(
-                    bottom: -10,
-                    right: -10,
+                    bottom: context.respDim(-10),
+                    right: context.respDim(-10),
                     child: PrjGuidelineBadge(
                       showing: showing,
-                      size: 10,
+                      size: context.respDim(10),
                       label: null,
                       growRight: false,
                     ),

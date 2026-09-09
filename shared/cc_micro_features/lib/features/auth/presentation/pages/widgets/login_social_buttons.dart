@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,21 +37,22 @@ class LoginSocialButtons extends StatelessWidget {
               },
             ),
 
-            const CcSpaceMD(),
-
-            CcSocialLoginBtn(
-              type: SocialLoginType.apple,
-              onTap: () {
-                'Apple Login button tapped (isLinking: $isLinking)'.Log(
-                  'LoginSocialButtons',
-                );
-                context.read<LoginBloc>().add(
-                  isLinking
-                      ? const LinkWithAppleStarted()
-                      : const LoginWithAppleStarted(),
-                );
-              },
-            ),
+            if (Platform.isIOS) ...[
+              const CcSpaceMD(),
+              CcSocialLoginBtn(
+                type: SocialLoginType.apple,
+                onTap: () {
+                  'Apple Login button tapped (isLinking: $isLinking)'.Log(
+                    'LoginSocialButtons',
+                  );
+                  context.read<LoginBloc>().add(
+                    isLinking
+                        ? const LinkWithAppleStarted()
+                        : const LoginWithAppleStarted(),
+                  );
+                },
+              ),
+            ],
           ],
         ),
       ),

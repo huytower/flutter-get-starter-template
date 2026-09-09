@@ -91,6 +91,10 @@ class ProfileController extends CcGetController {
       appVersion.value = await _deviceInfo.getAppVersion();
       unawaited(userLevel.refresh());
 
+      '[THEME] Settings loaded: isDarkMode=${s.isDarkMode}'.Log(
+        'ProfileController',
+      );
+
       layoutStatus.value = CcLayoutStatus.success;
     } catch (e) {
       Catcher2.reportCheckedError(e, StackTrace.current);

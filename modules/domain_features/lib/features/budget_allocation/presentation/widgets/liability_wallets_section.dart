@@ -62,9 +62,9 @@ class LiabilityWalletsSection extends StatelessWidget {
             ? const SizedBox.shrink()
             : Positioned(
                 // Align with Add button
-                right: 70,
+                right: context.respDim(70),
                 child: PrjGuidelineBadge(
-                  size: 6,
+                  size: context.respDim(6),
                   label: guideline.bannerDescription,
                   labelAbove: false,
                   growRight: false,

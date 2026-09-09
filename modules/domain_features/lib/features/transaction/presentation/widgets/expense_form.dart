@@ -164,7 +164,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
             leadingIconSize: 18,
             badge: guideline.isTaskActive('first_transaction')
                 ? PrjGuidelineBadge(
-                    size: 8,
+                    size: context.respDim(8),
                     label: guideline.bannerDescription,
                     labelAbove: false,
                     growRight: false,

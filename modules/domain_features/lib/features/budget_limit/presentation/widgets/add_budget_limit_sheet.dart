@@ -219,10 +219,10 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
             return const SizedBox.shrink();
           }
           return Positioned(
-            top: -4,
+            top: context.respDim(-4),
             left: 0,
             child: PrjGuidelineBadge(
-              size: 4,
+              size: context.respDim(4),
               label: guideline.bannerDescription,
               forceHideLabel: true,
               labelAbove: false,

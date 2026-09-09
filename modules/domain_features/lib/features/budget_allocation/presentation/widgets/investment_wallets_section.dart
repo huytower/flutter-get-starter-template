@@ -49,10 +49,10 @@ class InvestmentWalletsSection extends StatelessWidget {
                   ),
                   if (showGuidelineBadge)
                     Positioned(
-                      right: 10,
+                      right: context.respDim(10),
                       bottom: 0,
                       child: PrjGuidelineBadge(
-                        size: 6,
+                        size: context.respDim(6),
                         label: guideline.bannerDescription,
                         labelAbove: true,
                         growRight: false,

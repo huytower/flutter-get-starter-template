@@ -114,7 +114,7 @@ class ProfilePage extends CcGetView<ProfileController> {
           onTap: () => controller.navigateToCategorySettings(context),
           badge: guideline.isTaskActive('categories')
               ? PrjGuidelineBadge(
-                  size: 8,
+                  size: context.respDim(8),
                   label: guideline.bannerDescription,
                   growRight: false,
                   labelAbove: true,
@@ -133,7 +133,7 @@ class ProfilePage extends CcGetView<ProfileController> {
           onTap: () => controller.pickBirthYear(context),
           badge: guideline.isTaskActive('birth_year')
               ? PrjGuidelineBadge(
-                  size: 8,
+                  size: context.respDim(8),
                   label: guideline.bannerDescription,
                   growRight: false,
                   labelAbove: true,

@@ -130,10 +130,10 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
-                  context.respPadding(16),
-                  context.respPadding(12),
-                  context.respPadding(16),
-                  context.respPadding(6),
+                  context.respPadding(CcPaddingParams.SPACE_LG),
+                  context.respPadding(CcPaddingParams.SPACE_MD),
+                  context.respPadding(CcPaddingParams.SPACE_LG),
+                  context.respPadding(CcPaddingParams.SPACE_XS),
                 ),
                 child: Column(
                   children: [
@@ -193,7 +193,9 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(
+                  context.respPadding(CcPaddingParams.SPACE_MD),
+                ),
                 child: BudgetLimitGrid(
                   key: const ValueKey('budget-limit-grid'),
                   controller: controller,
@@ -216,9 +218,7 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
       context: context,
       isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: context.brXl),
       builder: (_) => AddBudgetLimitSheet(editTarget: editTarget),
     );
   }
@@ -231,9 +231,7 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
       context: context,
       isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: context.brXl),
       builder: (_) => BudgetLimitDeleteConfirmSheet(
         budget: budget,
         onDelete: () => controller.deleteBudget(budget.id),

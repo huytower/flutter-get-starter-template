@@ -132,7 +132,7 @@ class IncomeForm extends StatelessWidget {
             leadingIconSize: 18,
             badge: guideline.isTaskActive('first_transaction')
                 ? PrjGuidelineBadge(
-                    size: 8,
+                    size: context.respDim(8),
                     label: guideline.bannerDescription,
                     growRight: false,
                   )

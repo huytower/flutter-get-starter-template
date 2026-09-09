@@ -169,12 +169,12 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
             final showing =
                 guideline.isTaskActive('wallet_balance') && controller.isCash;
             return Positioned(
-              bottom: -10,
-              right: -10,
+              bottom: context.respDim(-10),
+              right: context.respDim(-10),
               child: PrjGuidelineBadge(
                 showing: showing,
                 label: guideline.bannerDescription,
-                size: 10,
+                size: context.respDim(10),
                 labelAbove: true,
                 growRight: true,
               ),

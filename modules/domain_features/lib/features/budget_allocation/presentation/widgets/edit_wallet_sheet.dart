@@ -28,9 +28,7 @@ class EditWalletSheet extends StatelessWidget {
     return showModalBottomSheet<void>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: context.brXl),
       builder: (_) =>
           EditWalletSheet(wallet: wallet, onEdit: onEdit, onDelete: onDelete),
     );
@@ -61,11 +59,11 @@ class EditWalletSheet extends StatelessWidget {
                       guideline.isTaskActive('wallet_balance') &&
                       wallet.type == WalletType.cash;
                   return Positioned(
-                    top: -10,
-                    right: -10,
+                    top: context.respDim(-10),
+                    right: context.respDim(-10),
                     child: PrjGuidelineBadge(
                       showing: showing,
-                      size: 8,
+                      size: context.respDim(8),
                       label: guideline.bannerDescription,
                       growRight: false,
                     ),
