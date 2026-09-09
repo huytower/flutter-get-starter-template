@@ -149,6 +149,14 @@ class TransactionEntity extends Equatable {
 
   bool get isDeleted => deletedAt != null;
 
+  /// Returns a numeric value for sorting. Suffixes like `_init`, `_in`,
+  /// `_out` are stripped to recover the original microsecond timestamp,
+  /// ensuring creation-order stability even for multi-leg transactions.
+  double get sortKey {
+    final cleaned = id.split('_').first;
+    return double.tryParse(cleaned) ?? 0;
+  }
+
   TransactionEntity copyWith({
     String? id,
     String? type,

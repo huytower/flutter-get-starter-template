@@ -67,9 +67,7 @@ class GetLiabilityTrendUseCase {
       final dateCompare = b.date.compareTo(a.date);
       if (dateCompare != 0) return dateCompare;
 
-      final idA = double.tryParse(a.id) ?? 0;
-      final idB = double.tryParse(b.id) ?? 0;
-      return idB.compareTo(idA);
+      return b.sortKey.compareTo(a.sortKey);
     });
 
     return Success(

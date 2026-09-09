@@ -31,16 +31,13 @@ class TransactionRepositoryImpl
         .where((e) => !e.isDeleted)
         .toList();
 
-    // Sort by date descending (latest first). Use ID as tie-breaker for
+    // Sort by date descending (latest first). Use sortKey as tie-breaker for
     // same-timestamp entries to ensure "recent records firstly".
-    // IDs are microsecondsSinceEpoch strings, so compare them numerically.
     entities.sort((a, b) {
       final dateCompare = b.date.compareTo(a.date);
       if (dateCompare != 0) return dateCompare;
 
-      final idA = double.tryParse(a.id) ?? 0;
-      final idB = double.tryParse(b.id) ?? 0;
-      return idB.compareTo(idA);
+      return b.sortKey.compareTo(a.sortKey);
     });
 
     return entities;

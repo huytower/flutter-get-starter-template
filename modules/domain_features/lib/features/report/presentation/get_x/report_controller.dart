@@ -128,13 +128,8 @@ class ReportController extends CcGetController {
       final dateCompare = b.date.compareTo(a.date);
       if (dateCompare != 0) return dateCompare;
 
-      // Secondary: ID descending (last recorded first).
-      // Since IDs are microsecondsSinceEpoch strings, we compare them
-      // numerically to ensure "recent records firstly".
-      // We use double.parse for microsecond comparison to avoid string issues.
-      final idA = double.tryParse(a.id) ?? 0;
-      final idB = double.tryParse(b.id) ?? 0;
-      return idB.compareTo(idA);
+      // Secondary: sortKey descending (last recorded first).
+      return b.sortKey.compareTo(a.sortKey);
     });
 
     return combined;
