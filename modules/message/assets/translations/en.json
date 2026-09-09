@@ -472,6 +472,8 @@
         "filtering_wallet": "Filtering: {wallet}",
         "filter_by_wallet": "Filter by wallet",
         "filter_all_wallets": "All wallets",
+        "filter_by_type": "Filter by type",
+        "filter_all_types": "All types",
         "trend_week_label": "Week {number}",
         "ai_advice_title": "AI Financial Advice",
         "ai_advice_empty_body": "Get a personalized review of this month's spending and suggestions to improve your finances.",

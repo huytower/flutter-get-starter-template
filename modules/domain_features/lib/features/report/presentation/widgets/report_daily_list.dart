@@ -1,4 +1,3 @@
-import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../../../transaction/domain/entities/transaction_entity.dart';
@@ -28,21 +27,6 @@ class ReportDailyList extends StatelessWidget {
     }
 
     final sortedDates = groups.keys.toList()..sort((a, b) => b.compareTo(a));
-
-    // Debug log for daily grouping
-    '[REPORT_DAILY_LIST] Building ${sortedDates.length} daily groups:'.Log(
-      'ReportDailyList',
-    );
-    for (final date in sortedDates) {
-      final groupTxns = groups[date]!;
-      'Group ${date.year}-${date.month}-${date.day}: ${groupTxns.length} items'
-          .Log('ReportDailyList');
-      for (int i = 0; i < groupTxns.length; i++) {
-        final tx = groupTxns[i];
-        '  #$i: type=${tx.type} | category=${tx.category} | note=${tx.note} | sortKey=${tx.sortKey}'
-            .Log('ReportDailyList');
-      }
-    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -23,7 +23,9 @@ import '../../domain/usecases/get_financial_runway_usecase.dart';
 import '../../domain/usecases/get_investment_trend_usecase.dart';
 import '../../domain/usecases/get_liability_trend_usecase.dart';
 import '../../domain/usecases/get_trend_data_usecase.dart';
-import '../widgets/wallet_filter_picker_sheet.dart';
+import '../widgets/report_filter_picker_sheet.dart';
+
+enum ReportFilterType { all, expense, income, investment, liability, lend }
 
 @injectable
 class ReportController extends CcGetController {
@@ -56,24 +58,32 @@ class ReportController extends CcGetController {
     result.when((walletList) => wallets.assignAll(walletList), (_) {});
   }
 
-  Future<void> openWalletFilterPicker(BuildContext context) async {
-    final result = await WalletFilterPickerSheet.show(
+  Future<void> openFilterPicker(BuildContext context) async {
+    final result = await ReportFilterPickerSheet.show(
       context,
       wallets: wallets,
       selectedWalletId: filterWalletId.value,
+      selectedType: filterType.value,
     );
+
     if (result == null) return;
-    if (result.isEmpty) {
+
+    filterType.value = result.type;
+
+    if (result.walletId == null || result.walletId!.isEmpty) {
       clearWalletFilter();
     } else {
-      final wallet = wallets.firstWhere((w) => w.id == result);
-      setWalletFilter(wallet.id, wallet.name);
-      load(showLoading: false);
+      final wallet = wallets.firstWhereOrNull((w) => w.id == result.walletId);
+      if (wallet != null) {
+        setWalletFilter(wallet.id, wallet.name);
+        load(showLoading: false);
+      }
     }
   }
 
   final Rx<ReportRange> range = ReportRange.weekly.obs;
   final RxInt navigationOffset = 0.obs;
+  final Rx<ReportFilterType> filterType = ReportFilterType.all.obs;
   final RxnString filterWalletId = RxnString();
   final RxnString filterWalletName = RxnString();
 
@@ -117,23 +127,34 @@ class ReportController extends CcGetController {
   int get rangeExpense => spending.fold<int>(0, (sum, s) => sum + s.amount);
 
   List<TransactionEntity> get dailyListTransactions {
-    final combined = <TransactionEntity>[
+    var combined = <TransactionEntity>[
       ...?trendData.value?.transactions,
       ...?investmentTrend.value?.transactions,
       ...?liabilityTrend.value?.transactions,
     ];
 
-    combined.sort((a, b) => b.sortKey.compareTo(a.sortKey));
-
-    // Debug log for sorting order
-    '[REPORT] Combined and sorted ${combined.length} transactions:'.Log(
-      'ReportController',
-    );
-    for (int i = 0; i < combined.length; i++) {
-      final tx = combined[i];
-      '#$i: date=${tx.date} | sortKey=${tx.sortKey} | type=${tx.type} | category=${tx.category} | note=${tx.note}'
-          .Log('ReportController');
+    if (filterType.value != ReportFilterType.all) {
+      combined = combined.where((t) {
+        switch (filterType.value) {
+          case ReportFilterType.expense:
+            return t.type == TransactionType.expense;
+          case ReportFilterType.income:
+            return t.type == TransactionType.income;
+          case ReportFilterType.investment:
+            return t.isInvestmentActivity;
+          case ReportFilterType.liability:
+            return t.type == TransactionType.debtBorrow ||
+                t.type == TransactionType.debtRepay;
+          case ReportFilterType.lend:
+            return t.type == TransactionType.debtLend ||
+                t.type == TransactionType.debtCollect;
+          default:
+            return true;
+        }
+      }).toList();
     }
+
+    combined.sort((a, b) => b.sortKey.compareTo(a.sortKey));
 
     return combined;
   }

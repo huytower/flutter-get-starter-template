@@ -224,8 +224,16 @@ class _ReportView extends CcGetView<ReportController> {
   Widget _buildTrendCards(BuildContext context, TrendDataEntity data) {
     if (data.points.isEmpty) return const SizedBox.shrink();
 
-    return Column(
-      children: [
+    final filter = controller.filterType.value;
+    if (filter != ReportFilterType.all &&
+        filter != ReportFilterType.expense &&
+        filter != ReportFilterType.income) {
+      return const SizedBox.shrink();
+    }
+
+    final children = <Widget>[];
+    if (filter == ReportFilterType.all || filter == ReportFilterType.expense) {
+      children.add(
         TrendCard(
           title: el.tr(CcLocaleKeys.common_expense),
           amount: data.totalExpense,
@@ -234,7 +242,15 @@ class _ReportView extends CcGetView<ReportController> {
           range: controller.range.value,
           isIncome: false,
         ),
-        const CcSpaceLG(),
+      );
+    }
+
+    if (filter == ReportFilterType.all && children.isNotEmpty) {
+      children.add(const CcSpaceLG());
+    }
+
+    if (filter == ReportFilterType.all || filter == ReportFilterType.income) {
+      children.add(
         TrendCard(
           title: el.tr(CcLocaleKeys.common_income),
           amount: data.totalIncome,
@@ -243,93 +259,118 @@ class _ReportView extends CcGetView<ReportController> {
           range: controller.range.value,
           isIncome: true,
         ),
+      );
+    }
+
+    return Column(children: children);
+  }
+
+  Widget _buildInvestmentSection(BuildContext context) {
+    final data = controller.investmentTrend.value;
+    if (!controller.userLevel.status.value.canUseInvestment ||
+        data == null ||
+        (data.totalIncome == 0 && data.totalExpense == 0)) {
+      return const SizedBox.shrink();
+    }
+
+    final filter = controller.filterType.value;
+    if (filter != ReportFilterType.all &&
+        filter != ReportFilterType.investment) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const CcSpaceLG(),
+        TrendCard(
+          title: el.tr(CcLocaleKeys.report_investment_contributed),
+          amount: data.totalExpense,
+          points: data.points,
+          color: context.ccColorScheme.investment,
+          range: controller.range.value,
+          isIncome: false,
+          icon: Icons.eco,
+        ),
+        const CcSpaceLG(),
+        TrendCard(
+          title: el.tr(CcLocaleKeys.report_investment_returned),
+          amount: data.totalIncome,
+          points: data.points,
+          color: context.ccColorScheme.investmentSecondary,
+          range: controller.range.value,
+          isIncome: true,
+          icon: Icons.auto_graph_rounded,
+        ),
       ],
     );
   }
 
-  Widget _buildInvestmentSection(BuildContext context) {
-    return Obx(() {
-      final data = controller.investmentTrend.value;
-      if (!controller.userLevel.status.value.canUseInvestment ||
-          data == null ||
-          (data.totalIncome == 0 && data.totalExpense == 0)) {
-        return const SizedBox.shrink();
-      }
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const CcSpaceLG(),
-          TrendCard(
-            title: el.tr(CcLocaleKeys.report_investment_contributed),
-            amount: data.totalExpense,
-            points: data.points,
-            color: context.ccColorScheme.investment,
-            range: controller.range.value,
-            isIncome: false,
-            icon: Icons.eco,
-          ),
-          const CcSpaceLG(),
-          TrendCard(
-            title: el.tr(CcLocaleKeys.report_investment_returned),
-            amount: data.totalIncome,
-            points: data.points,
-            color: context.ccColorScheme.investmentSecondary,
-            range: controller.range.value,
-            isIncome: true,
-            icon: Icons.auto_graph_rounded,
-          ),
-        ],
-      );
-    });
-  }
-
   Widget _buildLiabilitySection(BuildContext context) {
-    return Obx(() {
-      final data = controller.liabilityTrend.value;
-      if (!controller.userLevel.status.value.canUseLiability ||
-          data == null ||
-          (data.totalIncome == 0 && data.totalExpense == 0)) {
-        return const SizedBox.shrink();
-      }
+    final data = controller.liabilityTrend.value;
+    if (!controller.userLevel.status.value.canUseLiability ||
+        data == null ||
+        (data.totalIncome == 0 && data.totalExpense == 0)) {
+      return const SizedBox.shrink();
+    }
 
-      final children = <Widget>[];
-      if (data.totalExpense > 0) {
-        children.add(
-          TrendCard(
-            title: el.tr(CcLocaleKeys.report_liability_out),
-            amount: data.totalExpense,
-            points: data.points,
-            color: context.ccColorScheme.liabilitySecondary,
-            range: controller.range.value,
-            isIncome: false,
-          ),
-        );
-      }
-      if (data.totalIncome > 0) {
-        final index = children.length;
-        children.add(
-          TrendCard(
-            title: el.tr(CcLocaleKeys.report_liability_in),
-            amount: data.totalIncome,
-            points: data.points,
-            color: context.ccColorScheme.liability,
-            range: controller.range.value,
-            isIncome: true,
-          ),
-        );
-        if (index > 0) {
-          children.insert(index, const CcSpaceLG());
-        }
-      }
+    final filter = controller.filterType.value;
+    if (filter != ReportFilterType.all &&
+        filter != ReportFilterType.liability &&
+        filter != ReportFilterType.lend) {
+      return const SizedBox.shrink();
+    }
 
-      if (children.isEmpty) return const SizedBox.shrink();
+    final children = <Widget>[];
+    // Show "Liability Out" (Borrow settlement / Lend principal)
+    // Actually liabilityTrend.totalExpense is outflows.
+    // In GetLiabilityTrendUseCase:
+    // inflowAmount: (t) => isCashIn(t) ? t.amount.toDouble() : 0,
+    // outflowAmount: (t) => !isCashIn(t) ? t.amount.toDouble() : 0,
+    // isCashIn: debtBorrow || debtCollect
+    // !isCashIn: debtLend || debtRepay
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [const CcSpaceLG(), ...children, const CcSpaceXL()],
+    // If filter is Liability, we want debtBorrow (+) and debtRepay (-)
+    // If filter is Lend, we want debtLend (-) and debtCollect (+)
+
+    // This is a bit tricky because liabilityTrend combines them.
+    // For now, I'll show both if filter matches either Liability or Lend.
+
+    if (data.totalExpense > 0) {
+      children.add(
+        TrendCard(
+          title: el.tr(CcLocaleKeys.report_liability_out),
+          amount: data.totalExpense,
+          points: data.points,
+          color: context.ccColorScheme.liabilitySecondary,
+          range: controller.range.value,
+          isIncome: false,
+        ),
       );
-    });
+    }
+    if (data.totalIncome > 0) {
+      final index = children.length;
+      children.add(
+        TrendCard(
+          title: el.tr(CcLocaleKeys.report_liability_in),
+          amount: data.totalIncome,
+          points: data.points,
+          color: context.ccColorScheme.liability,
+          range: controller.range.value,
+          isIncome: true,
+        ),
+      );
+      if (index > 0) {
+        children.insert(index, const CcSpaceLG());
+      }
+    }
+
+    if (children.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [const CcSpaceLG(), ...children, const CcSpaceXL()],
+    );
   }
 
   Widget _buildDailyDetailHeader(BuildContext context) {

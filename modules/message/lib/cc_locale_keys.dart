@@ -1929,6 +1929,8 @@ abstract class CcLocaleKeys {
   static const report_uncategorized = 'report.uncategorized';
   static const report_filter_by_wallet = 'report.filter_by_wallet';
   static const report_filter_all_wallets = 'report.filter_all_wallets';
+  static const report_filter_by_type = 'report.filter_by_type';
+  static const report_filter_all_types = 'report.filter_all_types';
   static const report_trend_week_label = 'report.trend_week_label';
   static const report_ai_advice_title = 'report.ai_advice_title';
   static const report_ai_advice_empty_body = 'report.ai_advice_empty_body';

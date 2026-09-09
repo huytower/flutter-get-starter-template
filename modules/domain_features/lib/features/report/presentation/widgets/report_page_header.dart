@@ -107,17 +107,27 @@ class ReportPageHeader extends StatelessWidget {
     );
   }
 
-  /// Selected-wallet label + filter icon, one combined tap target. The label
-  /// always shows something ("Tất cả" when unfiltered, the wallet name
-  /// otherwise) and is width-capped + ellipsized so a long wallet name can
-  /// never grow into (and push around) the "Báo cáo" title — [_buildTitleRow]
-  /// gives this group fixed size and lets the title's own `Expanded` absorb
-  /// the squeeze instead.
+  /// Combined filter button for both wallet and transaction type.
   Widget _buildFilterButton(BuildContext context) {
     return Obx(() {
-      final name = controller.filterWalletName.value;
-      final isActive = name != null;
-      final label = name ?? el.tr(CcLocaleKeys.report_filter_all_wallets);
+      final walletName = controller.filterWalletName.value;
+      final type = controller.filterType.value;
+
+      final isWalletActive = walletName != null;
+      final isTypeActive = type != ReportFilterType.all;
+      final isActive = isWalletActive || isTypeActive;
+
+      String label;
+      if (isWalletActive && isTypeActive) {
+        label = '$walletName · ${_typeLabel(type)}';
+      } else if (isWalletActive) {
+        label = walletName;
+      } else if (isTypeActive) {
+        label = _typeLabel(type);
+      } else {
+        label = el.tr(CcLocaleKeys.report_filter_all_wallets);
+      }
+
       final scheme = context.ccColorScheme;
       final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -125,7 +135,7 @@ class ReportPageHeader extends StatelessWidget {
         message: el.tr(CcLocaleKeys.report_filter_by_wallet),
         child: CcBouncing(
           borderRadius: BorderRadius.circular(context.respDim(8)),
-          onTap: () => controller.openWalletFilterPicker(context),
+          onTap: () => controller.openFilterPicker(context),
           child: Padding(
             padding: EdgeInsets.symmetric(
               horizontal: context.respPadding(CcPaddingParams.SPACE_XS),
@@ -149,10 +159,7 @@ class ReportPageHeader extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: context.respDim(72)),
-                    // Right-aligned so any unused width from the cap opens up
-                    // on the left (toward the flexible title) instead of
-                    // leaving a gap between the label and the filter icon.
+                    constraints: BoxConstraints(maxWidth: context.respDim(100)),
                     child: CcText(
                       label,
                       align: Alignment.centerRight,
@@ -181,6 +188,23 @@ class ReportPageHeader extends StatelessWidget {
         ),
       );
     });
+  }
+
+  String _typeLabel(ReportFilterType type) {
+    switch (type) {
+      case ReportFilterType.all:
+        return el.tr(CcLocaleKeys.report_filter_all_types);
+      case ReportFilterType.expense:
+        return el.tr(CcLocaleKeys.common_expense);
+      case ReportFilterType.income:
+        return el.tr(CcLocaleKeys.common_income);
+      case ReportFilterType.investment:
+        return el.tr(CcLocaleKeys.transaction_investment);
+      case ReportFilterType.liability:
+        return el.tr(CcLocaleKeys.liability_title);
+      case ReportFilterType.lend:
+        return el.tr(CcLocaleKeys.liability_lend);
+    }
   }
 
   Widget _buildPageTitle(BuildContext context) {
