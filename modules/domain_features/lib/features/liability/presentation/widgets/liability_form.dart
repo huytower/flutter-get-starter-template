@@ -94,19 +94,9 @@ class LiabilityForm extends StatelessWidget {
               _buildWalletSection(context, controller, accentColor),
               const CcSpaceSM(),
               Obx(() {
-                final liability = controller.mergedItems
-                    .firstWhereOrNull(
-                      (b) =>
-                          b.liability.id ==
-                          controller.selectedLiabilityId.value,
-                    )
-                    ?.liability;
-
-                // Only show repayment plan for new/uninitialized liabilities.
-                // For existing liabilities, we are just borrowing more.
-                if (liability == null ||
-                    liability.principalAmount > 0 ||
-                    controller.action.value == LiabilityFormAction.decrease) {
+                // Show repayment plan always in "Borrow" subsegment.
+                // It is hidden in "Repay" subsegment.
+                if (controller.action.value == LiabilityFormAction.decrease) {
                   return const SizedBox.shrink();
                 }
 

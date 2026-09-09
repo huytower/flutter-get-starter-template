@@ -130,12 +130,6 @@ class TransactionPageHeader extends StatelessWidget {
         ? expenseFormController
         : controller.getQuickEntryControllerForTab(tab);
 
-    if (result != null) {
-      '[AI_PARSING] 🎮 PageHeader using controller for tab: $tab'.Log(
-        'TransactionPageHeader',
-      );
-    }
-
     return result;
   }
 
@@ -144,11 +138,6 @@ class TransactionPageHeader extends StatelessWidget {
     TransactionTabKind activeTab,
   ) {
     final quickEntry = _quickEntryControllerFor(activeTab);
-
-    if (quickEntry != null) {
-      '[AI_PARSING] 🔨 Building AI Header components | tab=$activeTab | controller=${quickEntry.runtimeType}'
-          .Log('TransactionPageHeader');
-    }
 
     if (quickEntry == null) return const SizedBox.shrink();
 

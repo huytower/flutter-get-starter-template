@@ -66,9 +66,9 @@ class _LiabilityActionToggleState extends State<LiabilityActionToggle>
 
     return Center(
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.8,
+        width: MediaQuery.of(context).size.width * 0.6,
         child: Container(
-          height: context.respDim(30),
+          height: context.respDim(35),
           decoration: BoxDecoration(
             color: scheme.surface,
             borderRadius: context.brLg,

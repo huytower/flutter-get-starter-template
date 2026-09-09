@@ -343,6 +343,13 @@ class QuickEntryAliasDataset {
     'thanh toan no': 'd9',
 
     // ===== LEND — Cho vay & Thu nợ (d6, d8) =====
+    'thu hoi': 'd6',
+    'thu hoi no': 'd6',
+    'thu hồi': 'd6',
+    'thu hồi nợ': 'd6',
+    'thuhoi': 'd6',
+    'doi no': 'd6',
+    'lay no': 'd6',
     'ban be': 'd6',
     'ban': 'd6',
     'nguoi quen': 'd6',
