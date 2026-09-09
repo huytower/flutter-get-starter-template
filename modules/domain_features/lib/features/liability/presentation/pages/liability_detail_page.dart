@@ -39,7 +39,7 @@ class LiabilityDetailPage extends StatelessWidget with CcViewConfigMixin {
       ),
       title: Obx(() {
         final controller = Get.find<LiabilityDetailController>();
-        final current = controller.loan.value ?? liability.liability;
+        final current = controller.liability.value ?? liability.liability;
         return CcText(
           CategoryNameHelper.getLocalizedName(
             current.categoryLabel,
@@ -60,7 +60,7 @@ class LiabilityDetailPage extends StatelessWidget with CcViewConfigMixin {
     controller.load(liability);
 
     return Obx(() {
-      final current = controller.loan.value ?? liability.liability;
+      final current = controller.liability.value ?? liability.liability;
       final accentColor = current.isBorrow
           ? PrjColors.warning
           : context.ccColorScheme.secondary;

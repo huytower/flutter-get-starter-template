@@ -22,22 +22,22 @@ class AddLiabilitySheetController extends CcGetController {
   AddLiabilitySheetController(
     this._getCategories,
     this._getProfileSettings,
-    this._createLoan,
+    this._createLiability,
     this._walletController,
     this._getLiabilityBalances,
   );
 
   final GetCategoriesUseCase _getCategories;
   final GetProfileSettingsUseCase _getProfileSettings;
-  final CreateLiabilityUseCase _createLoan;
+  final CreateLiabilityUseCase _createLiability;
   final WalletController _walletController;
   final GetLiabilityBalancesUseCase _getLiabilityBalances;
 
   late final TextEditingController nameController;
   final RxString direction = LiabilityDirection.borrow.obs;
 
-  final RxList<CategoryEntity> loanCategories = <CategoryEntity>[].obs;
-  final Rxn<CategoryEntity> selectedLoanCategory = Rxn<CategoryEntity>();
+  final RxList<CategoryEntity> liabilityCategories = <CategoryEntity>[].obs;
+  final Rxn<CategoryEntity> selectedLiabilityCategory = Rxn<CategoryEntity>();
   final RxBool isNameValid = false.obs;
   final RxBool isVip = false.obs;
   final Rxn<String> nameError = Rxn<String>();
@@ -51,7 +51,7 @@ class AddLiabilitySheetController extends CcGetController {
         nameError.value = null;
       }
     });
-    _loadLoanCategories();
+    _loadLiabilityCategories();
     _loadVipStatus();
   }
 
@@ -67,17 +67,17 @@ class AddLiabilitySheetController extends CcGetController {
     isVip.value = settings.isVip;
   }
 
-  Future<void> _loadLoanCategories() async {
+  Future<void> _loadLiabilityCategories() async {
     final result = await _getCategories.call();
     result.when((categories) {
       final groupId = direction.value == LiabilityDirection.borrow
-          ? CategorySeed.debtLoanBorrowGroupId
+          ? CategorySeed.liabilityBorrowGroupId
           : CategorySeed.debtLoanLendGroupId;
 
       final filtered = categories
           .where(
             (c) =>
-                c.type == CategoryType.debtLoan &&
+                c.type == CategoryType.liability &&
                 c.isEnabled &&
                 c.groupId == groupId,
           )
@@ -98,19 +98,19 @@ class AddLiabilitySheetController extends CcGetController {
         return indexA.compareTo(indexB);
       });
 
-      loanCategories.assignAll(filtered);
+      liabilityCategories.assignAll(filtered);
     }, (_) {});
   }
 
   void setDirection(String value) {
     if (direction.value == value) return;
     direction.value = value;
-    selectedLoanCategory.value = null;
-    _loadLoanCategories();
+    selectedLiabilityCategory.value = null;
+    _loadLiabilityCategories();
   }
 
-  void selectLoanCategory(CategoryEntity category) {
-    selectedLoanCategory.value = category;
+  void selectLiabilityCategory(CategoryEntity category) {
+    selectedLiabilityCategory.value = category;
     nameController.text = el.tr(category.nameKey);
   }
 
@@ -119,7 +119,7 @@ class AddLiabilitySheetController extends CcGetController {
     isSubmitting.value = true;
 
     final name = nameController.text.trim();
-    final category = selectedLoanCategory.value;
+    final category = selectedLiabilityCategory.value;
     if (category == null) {
       isSubmitting.value = false;
       return;
@@ -167,11 +167,12 @@ class AddLiabilitySheetController extends CcGetController {
       reminderBeforeDueDate: false,
     );
 
-    final result = await _createLoan(params);
+    final result = await _createLiability(params);
+    isSubmitting.value = true;
     isSubmitting.value = false;
 
     result.when(
-      (loan) {
+      (liability) {
         if (context.mounted) {
           debugPrint(
             '[ADD_LIABILITY_SHEET] Save success, triggering refreshes',

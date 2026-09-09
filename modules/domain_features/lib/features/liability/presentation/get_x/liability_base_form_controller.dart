@@ -13,8 +13,8 @@ abstract class LiabilityBaseFormController extends TransactionFormController
     with QuickEntryMixin {
   RxList<LiabilityBalanceEntity> get mergedItems;
   RxBool get isLoadingMerged;
-  RxnString get selectedLoanId;
-  RxList<LoanInstallmentDraft> get installmentDrafts;
+  RxnString get selectedLiabilityId;
+  RxList<LiabilityInstallmentDraft> get installmentDrafts;
   RxnInt get editingInstallmentIndex;
   RxBool get reminderBeforeDueDate;
   RxString get repaymentMethod;
@@ -27,7 +27,11 @@ abstract class LiabilityBaseFormController extends TransactionFormController
   Rx<LiabilityFormAction> get action;
   void setAction(LiabilityFormAction value);
 
-  void selectLoan(LiabilityBalanceEntity balance);
+  void selectLiability(
+    LiabilityBalanceEntity balance, {
+    bool resetAmount = true,
+    String? amount,
+  });
   void setRepaymentMethod(String value);
   void setReminderBeforeDueDate(bool value);
   Future<void> pickFinalDueDate(BuildContext context);
@@ -38,6 +42,9 @@ abstract class LiabilityBaseFormController extends TransactionFormController
 
   @override
   void applyQuickEntryCategory(String categoryId) {
+    // 0. Save current parsed amount before selection resets it
+    final currentParsedAmount = amountStr.value;
+
     // 1. Try to find an existing loan/record for this category
     final matchingItems = mergedItems
         .where((b) => b.liability.categoryId == categoryId)
@@ -47,10 +54,15 @@ abstract class LiabilityBaseFormController extends TransactionFormController
       // Pick the first one (most recently updated due to loadLiabilities sorting)
       final selected = matchingItems.first;
 
-      '[AI_PARSING] 🎯 Matching existing liability found for category: $categoryId'
+      '[AI_PARSING] 🎯 Matching existing liability found for category: $categoryId | amount: $currentParsedAmount'
           .Log(runtimeType.toString());
 
-      selectLoan(selected);
+      // Pass the amount explicitly to avoid it being reset to '0' during selection
+      selectLiability(
+        selected,
+        amount: currentParsedAmount != '0' ? currentParsedAmount : null,
+      );
+
       pendingPrefillCategoryId.value = null;
       return;
     }

@@ -1,5 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
+
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import 'base_hero_banner_card.dart';
 
@@ -27,7 +28,7 @@ class BorrowHeroCard extends StatelessWidget {
       subtitleKey: CcLocaleKeys.wallet_liabilities_desc,
       balanceIcon: Icons.waving_hand,
       bannerIcon: Icons.warning_amber_rounded,
-      color: scheme.debtLoan,
+      color: scheme.liability,
       isFront: isFront,
       onTap: onTap,
     );

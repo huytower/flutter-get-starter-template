@@ -10,7 +10,7 @@ class QuickEntryRegexDataset {
 
   /// Matches common Vietnamese invoice/serial number prefixes followed by digits.
   static final RegExp invoiceNumberPattern = RegExp(
-    r'(?:s[oô]|so|invoice|no|ma\s*hd|hd)\s*:?\s*[a-z0-9-]{4,20}',
+    r'(?:s[oô]|so|invoice|ma\s*hd|hd)\s*:?\s*[a-z0-9-]{4,20}|no\s*:?\s*\d{4,20}',
     caseSensitive: false,
   );
 
@@ -19,7 +19,7 @@ class QuickEntryRegexDataset {
 
   /// Keywords that identify potential address/non-amount numbers to be masked during amount parsing.
   static const String addressKeywords =
-      r'q|quan|p|phuong|duong|so|ngo|ngach|hem|kiet|dist|no|lo|can';
+      r'q|quan|p|phuong|duong|so|ngo|ngach|hem|kiet|dist|lo|can';
 
   /// Regex to identify and temporarily mask potential address/non-amount numbers.
   static final RegExp addressRegex = RegExp(

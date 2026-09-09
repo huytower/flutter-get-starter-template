@@ -81,7 +81,7 @@ class FinancialDataSyncService {
         await _syncPendingBudgets(userId);
         await _syncPendingReconciliations(userId);
         await _syncPendingCategories(userId);
-        await _syncPendingLoans(userId);
+        await _syncPendingLiabilities(userId);
       }
     } catch (e) {
       'syncAll failed: $e'.Log('FinancialDataSyncService');
@@ -112,7 +112,7 @@ class FinancialDataSyncService {
           (m) => m.syncMetadata.status,
         ) +
         _countPendingInBox<LiabilityModel>(
-          CcHiveBox.LOAN_BOX_NAME,
+          CcHiveBox.LIABILITY_BOX_NAME,
           (m) => m.syncMetadata.status,
         );
   }
@@ -141,7 +141,7 @@ class FinancialDataSyncService {
       await _pullBudgets(userId);
       await _pullReconciliations(userId);
       await _pullCategories(userId);
-      await _pullLoans(userId);
+      await _pullLiabilities(userId);
     } catch (e) {
       'pullFromFirestore failed: $e'.Log('FinancialDataSyncService');
     }
@@ -292,11 +292,11 @@ class FinancialDataSyncService {
     }
   }
 
-  Future<void> _syncPendingLoans(String userId) async {
-    if (!Hive.isBoxOpen(CcHiveBox.LOAN_BOX_NAME)) return;
+  Future<void> _syncPendingLiabilities(String userId) async {
+    if (!Hive.isBoxOpen(CcHiveBox.LIABILITY_BOX_NAME)) return;
     Box<LiabilityModel> box;
     try {
-      box = Hive.box<LiabilityModel>(CcHiveBox.LOAN_BOX_NAME);
+      box = Hive.box<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
     } on HiveError catch (e) {
       if (e.message.contains('already open')) return;
       rethrow;
@@ -307,7 +307,7 @@ class FinancialDataSyncService {
       if (status == SyncStatus.pending || status == SyncStatus.failed) {
         await _syncEntity<LiabilityModel>(
           model: model,
-          syncFn: _liabilitySync.syncLoan,
+          syncFn: _liabilitySync.syncLiability,
           box: box,
           updateFn: (m, remoteId) => m.copyWithSyncMetadata(
             m.syncMetadata.copyWith(
@@ -380,8 +380,8 @@ class FinancialDataSyncService {
     );
   }
 
-  Future<void> _pullLoans(String userId) async {
-    final box = await _openBox<LiabilityModel>(CcHiveBox.LOAN_BOX_NAME);
+  Future<void> _pullLiabilities(String userId) async {
+    final box = await _openBox<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
     if (box == null) return;
     await _pullAndMerge<LiabilityModel>(
       userId: userId,

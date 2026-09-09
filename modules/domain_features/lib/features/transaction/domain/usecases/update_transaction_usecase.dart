@@ -145,7 +145,7 @@ class UpdateTransactionUseCase {
       date: params.date,
       walletId: params.walletId,
       transferId: original.transferId,
-      loanId: original.loanId,
+      liabilityId: original.liabilityId,
       lat: original.lat,
       lng: original.lng,
     );

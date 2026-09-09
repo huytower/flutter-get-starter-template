@@ -30,10 +30,10 @@ Color computeAmountColor(BuildContext context, TransactionEntity transaction) {
       return scheme.investmentSecondary;
     case TransactionType.debtLend:
     case TransactionType.debtRepay:
-      return scheme.debtLoanSecondary;
+      return scheme.liabilitySecondary;
     case TransactionType.debtBorrow:
     case TransactionType.debtCollect:
-      return scheme.debtLoan;
+      return scheme.liability;
     case TransactionType.expense:
     default:
       return PrjColors.error;

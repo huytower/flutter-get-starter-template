@@ -6,7 +6,7 @@ import 'package:equatable/equatable.dart';
 abstract class CategoryType {
   static const String expense = 'expense';
   static const String income = 'income';
-  static const String debtLoan = 'debt_loan';
+  static const String liability = 'debt_loan';
   static const String investment = 'investment';
 }
 

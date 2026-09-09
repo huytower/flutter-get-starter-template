@@ -72,10 +72,10 @@ class TransactionController extends CcGetController {
       return _userLevel.status.value.canUseInvestment;
     }
     if (kind == TransactionTabKind.liability) {
-      return _userLevel.status.value.canUseDebtLoan;
+      return _userLevel.status.value.canUseLiability;
     }
     if (kind == TransactionTabKind.lend) {
-      return _userLevel.status.value.canUseDebtLoan;
+      return _userLevel.status.value.canUseLiability;
     }
     return false;
   }

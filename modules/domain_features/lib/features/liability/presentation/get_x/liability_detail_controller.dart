@@ -24,19 +24,19 @@ class LiabilityDetailController extends TransactionFormController {
   LiabilityDetailController(
     this._LiabilityRepository,
     this._transactionRepository,
-    this._recordLoanPayment,
+    this._recordLiabilityPayment,
   );
 
   final LiabilityRepository _LiabilityRepository;
   final TransactionRepository _transactionRepository;
-  final RecordLiabilityPaymentUseCase _recordLoanPayment;
+  final RecordLiabilityPaymentUseCase _recordLiabilityPayment;
 
-  final Rx<LiabilityEntity?> loan = Rx<LiabilityEntity?>(null);
+  final Rx<LiabilityEntity?> liability = Rx<LiabilityEntity?>(null);
   final RxInt outstandingBalance = 0.obs;
   final RxList<TransactionEntity> history = <TransactionEntity>[].obs;
   final RxBool isLoadingDetail = false.obs;
 
-  String? _loanId;
+  String? _liabilityId;
 
   bool get isSettled => outstandingBalance.value <= 0;
 
@@ -55,29 +55,31 @@ class LiabilityDetailController extends TransactionFormController {
   /// Seeds from the already-known [balance] (avoids a loading flash for the
   /// fields the caller already has), then loads fresh history + balance.
   Future<void> load(LiabilityBalanceEntity balance) async {
-    loan.value = balance.liability;
+    liability.value = balance.liability;
     outstandingBalance.value = balance.outstandingBalance;
-    if (_loanId == balance.liability.id) return;
-    _loanId = balance.liability.id;
+    if (_liabilityId == balance.liability.id) return;
+    _liabilityId = balance.liability.id;
     await _refreshDetail();
   }
 
   Future<void> _refreshDetail() async {
-    final loanId = _loanId;
-    if (loanId == null) return;
+    final liabilityId = _liabilityId;
+    if (liabilityId == null) return;
     isLoadingDetail.value = true;
 
-    final loanResult = await _LiabilityRepository.getLoan(loanId);
-    final txnResult = await _transactionRepository.getTransactionsByLoan(
-      loanId,
+    final liabilityResult = await _LiabilityRepository.getLiability(
+      liabilityId,
+    );
+    final txnResult = await _transactionRepository.getTransactionsByLiability(
+      liabilityId,
     );
 
-    loanResult.when((l) => loan.value = l, (_) {});
+    liabilityResult.when((l) => liability.value = l, (_) {});
     txnResult.when((txns) {
       history.assignAll(txns);
-      final current = loan.value;
+      final current = liability.value;
       if (current != null) {
-        outstandingBalance.value = loanOutstandingBalance(
+        outstandingBalance.value = liabilityOutstandingBalance(
           current.principalAmount,
           txns,
         );
@@ -101,19 +103,19 @@ class LiabilityDetailController extends TransactionFormController {
 
   @override
   Future<void> submitForm(BuildContext context) async {
-    final loanId = _loanId;
-    if (isSubmitting.value || !canSubmit || loanId == null) return;
+    final liabilityId = _liabilityId;
+    if (isSubmitting.value || !canSubmit || liabilityId == null) return;
     isSubmitting.value = true;
 
     final params = RecordLiabilityPaymentParams(
-      liabilityId: loanId,
+      liabilityId: liabilityId,
       walletId: selectedWalletId.value ?? '',
       amount: int.tryParse(amountStr.value) ?? 0,
       note: composeNote(),
       date: date.value,
     );
 
-    final result = await _recordLoanPayment(params);
+    final result = await _recordLiabilityPayment(params);
     isSubmitting.value = false;
 
     result.when(

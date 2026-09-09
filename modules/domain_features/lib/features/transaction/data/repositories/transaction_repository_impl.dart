@@ -122,12 +122,12 @@ class TransactionRepositoryImpl
   }
 
   @override
-  Future<Result<List<TransactionEntity>, CcFailure>> getTransactionsByLoan(
-    String loanId,
+  Future<Result<List<TransactionEntity>, CcFailure>> getTransactionsByLiability(
+    String liabilityId,
   ) {
     return safeRequest(() async {
       final all = await _allSortedDesc();
-      return all.where((t) => t.loanId == loanId).toList();
+      return all.where((t) => t.liabilityId == liabilityId).toList();
     });
   }
 

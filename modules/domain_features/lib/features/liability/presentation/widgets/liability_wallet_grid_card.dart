@@ -166,7 +166,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
           TransactionFormHelpers.formatShort(balance.outstandingBalance),
           textStyle: context.ccTextTheme.labelSmall?.copyWith(
             fontWeight: CcTypographyParams.bold,
-            color: PrjColors.debtLoan,
+            color: PrjColors.liability,
           ),
         ),
       ],
@@ -198,7 +198,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
           TransactionFormHelpers.formatShort(liability.principalAmount),
           textStyle: context.ccTextTheme.labelSmall?.copyWith(
             fontWeight: CcTypographyParams.bold,
-            color: PrjColors.debtLoan,
+            color: PrjColors.liability,
           ),
         ),
       ],

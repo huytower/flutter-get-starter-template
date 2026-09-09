@@ -227,7 +227,6 @@ class CodegenLoader extends AssetLoader {
       "liabilities": "Liabilities",
       "liabilities_desc":
           "Loans + Credit cards · balance tracking, stress monitor",
-      "liabilities_net": "Net Liability",
       "investment_roi": "ROI",
       "investment_breakeven": "Breakeven Rate",
     },
@@ -273,7 +272,7 @@ class CodegenLoader extends AssetLoader {
       "source_debt": "Source of Debt",
       "record_debt": "Record Debt",
       "debt_saved": "Debt of {amount} đ saved successfully!",
-      "liability_direction_borrow": "Borrow",
+      "liability_direction_borrow": "Borrowed from",
       "liability_direction_lend": "Lend",
       "liability_name_label": "Liability name",
       "liability_name_hint": "e.g. Laptop purchase, Bank loan...",
@@ -373,7 +372,7 @@ class CodegenLoader extends AssetLoader {
       "delete_title": "Delete Liability",
       "delete_confirm_msg":
           "Are you sure you want to delete this liability? This action cannot be undone.",
-      "borrow": "Borrow",
+      "borrow": "Borrowed from",
       "lend": "Lend",
     },
     "notification": {
@@ -519,7 +518,7 @@ class CodegenLoader extends AssetLoader {
       "investment_contributed": "Contributed",
       "investment_returned": "Returns",
       "liability_title": "Liabilities",
-      "liability_in": "Borrow",
+      "liability_in": "Borrowed from",
       "liability_out": "Lend",
       "daily_detail": "Daily Detail",
       "income_short": "Inc",
@@ -988,7 +987,6 @@ class CodegenLoader extends AssetLoader {
       "liabilities": "Nợ phải trả",
       "liabilities_desc":
           "Vay + Thẻ tín dụng · dư nợ còn lại, theo dõi áp lực tài chính",
-      "liabilities_net": "Nợ ròng",
       "investment_roi": "ROI",
       "investment_breakeven": "Tỷ lệ hòa vốn",
     },
@@ -1034,23 +1032,24 @@ class CodegenLoader extends AssetLoader {
       "source_debt": "Nguồn vay nợ",
       "record_debt": "Ghi chép vay nợ",
       "debt_saved": "Đã lưu khoản vay nợ {amount} đ thành công!",
-      "liability_direction_borrow": "Đi vay",
-      "liability_direction_lend": "Cho vay",
+      "liability_direction_borrow": "Đi vay từ",
+      "liability_direction_lend": "Cho mượn",
       "liability_name_label": "Tên khoản nợ/vay",
       "liability_name_hint": "VD: Mua laptop, Vay ngân hàng...",
       "record_liability": "Ghi nhận khoản nợ/vay",
       "liability_amount_borrow_label": "Số tiền vay",
-      "liability_amount_lend_label": "Số tiền cho vay",
+      "liability_amount_lend_label": "Số tiền cho mượn",
       "liability_wallet_borrow_label": "Ví nhận tiền",
       "liability_wallet_lend_label": "Ví nguồn tiền",
       "liability_saved": "Đã ghi nhận khoản nợ/vay {amount} đ!",
-      "liability_name_duplicate_error": "Tên khoản vay/cho vay này đã tồn tại",
+      "liability_name_duplicate_error": "Tên khoản vay/cho mượn này đã tồn tại",
       "liability_payment_saved": "Đã ghi nhận thanh toán {amount} đ!",
       "liability_category_borrow_label": "Hình thức vay",
-      "liability_category_lend_label": "Hình thức cho vay",
-      "liability_borrower_label": "Tên khoản cho vay",
-      "liability_borrower_hint": "VD: Cho vay mua nhà, Cho bạn vay...",
-      "liability_collection_method_label": "Hình thức thu nợ",
+      "liability_category_lend_label": "Hình thức cho mượn",
+      "liability_borrower_label": "Tên khoản vay",
+      "liability_borrower_hint":
+           "VD: Vay mua nhà, Vay ngân hàng...",
+      "liability_collection_method_label": "Hình thức thu hồi",
       "liability_method_installment_lend": "Thu góp",
       "liability_method_lump_sum_lend": "Thu 1 lần",
       "liability_schedule_lend_label": "Lịch thu góp",
@@ -1065,7 +1064,7 @@ class CodegenLoader extends AssetLoader {
       "liability_schedule_label": "Lịch trả góp",
       "liability_add_period": "Thêm kỳ",
       "record_repay": "Trả nợ",
-      "record_collect": "Thu nợ",
+      "record_collect": "Thu hồi",
       "investment_contribution": "Chi ra",
       "investment_return": "Thu vào",
       "dest_investment": "Nhận vào ví",
@@ -1110,7 +1109,7 @@ class CodegenLoader extends AssetLoader {
         "category_required": "Vui lòng chọn hạng mục!",
         "future_date": "Không thể ghi giao dịch ở tương lai!",
         "insufficient_balance": "Số dư ví không đủ!",
-        "counterparty_required": "Vui lòng nhập đối tượng vay/cho vay!",
+        "counterparty_required": "Vui lòng nhập đối tượng vay/cho mượn!",
         "schedule_required": "Vui lòng nhập lịch trả nợ!",
         "amount_exceeds_outstanding": "Số tiền vượt quá số dư còn lại!",
         "loan_settled": "Khoản vay này đã tất toán!",
@@ -1128,12 +1127,12 @@ class CodegenLoader extends AssetLoader {
       "empty_state": "Chưa có khoản nợ/vay nào",
       "empty_state_v2": "Chưa có khoản nợ/vay nào\nNhấn + để thêm vào.",
       "history_title": "Lịch sử giao dịch",
-      "no_history": "Chưa có giao dịch trả/thu nợ nào",
+      "no_history": "Chưa có giao dịch trả/thu hồi nào",
       "delete_title": "Xóa khoản nợ/vay",
       "delete_confirm_msg":
           "Bạn có chắc chắn muốn xóa khoản nợ/vay này? Hành động này không thể hoàn tác.",
-      "borrow": "Đi vay",
-      "lend": "Cho vay",
+      "borrow": "Đi vay từ",
+      "lend": "Cho mượn",
     },
     "notification": {
       "channel_name": "Nhắc nhở",
@@ -1275,8 +1274,8 @@ class CodegenLoader extends AssetLoader {
       "investment_contributed": "Đã đầu tư",
       "investment_returned": "Lợi nhuận thu về",
       "liability_title": "Vay nợ",
-      "liability_in": "Đi vay",
-      "liability_out": "Cho vay",
+      "liability_in": "Đi vay từ",
+      "liability_out": "Cho mượn",
       "daily_detail": "Chi tiết theo ngày",
       "income_short": "Thu",
       "expense_short": "Chi",
@@ -1381,14 +1380,14 @@ class CodegenLoader extends AssetLoader {
       "income_gift": "Được tặng/Biếu",
       "income_cashback": "Hoàn tiền (Cashback)",
       "debt_loan_settings_title": "Hạng mục Vay & Nợ",
-      "debt_group_borrow": "Đi vay",
-      "debt_group_lend": "Cho vay",
+      "debt_group_borrow": "Đi vay từ",
+      "debt_group_lend": "Cho mượn",
       "debt_personal_borrow": "Vay cá nhân",
       "debt_bank_borrow": "Vay ngân hàng",
       "debt_mortgage": "Vay thế chấp",
       "debt_credit_card": "Nợ thẻ tín dụng",
       "debt_installment": "Vay trả góp",
-      "debt_personal_lend": "Cho vay cá nhân",
+      "debt_personal_lend": "Cho mượn cá nhân",
       "debt_other": "Khác",
       "debt_other_lend": "Khác",
       "investment_settings_title": "Hạng mục Đầu tư",
@@ -1497,7 +1496,7 @@ class CodegenLoader extends AssetLoader {
       "banner_desc_liability":
           "Ghi nhận khoản nợ đầu tiên (Đi vay/Trả nợ) để quản lý nợ",
       "banner_desc_lend":
-          "Ghi nhận khoản cho vay đầu tiên (Cho vay/Thu nợ) để quản lý cho vay",
+          "Ghi nhận khoản cho mượn đầu tiên (Cho mượn/Thu hồi) để quản lý cho mượn",
       "banner_desc_default": "Bạn đã sặn sàng quản lý tài chính!",
       "success_dialog_message":
           "Chúc mừng!\nBạn đã hoàn thành thiết lập ban đầu.",
@@ -1512,7 +1511,7 @@ class CodegenLoader extends AssetLoader {
       "investment_title": "Theo dõi Đầu tư & Tích lũy",
       "investment_desc":
           "Ghi nhận cổ phiếu, quỹ, bất động sản và theo dõi ROI ngay trong app — mở khóa khi hoàn thành thử thách kỷ luật chi tiêu.",
-      "liability_title": "Quản lý Nợ & Cho vay",
+      "liability_title": "Quản lý Nợ & Cho mượn",
       "liability_desc":
           "Theo dõi các khoản nợ, lãi suất và lịch trả nợ chuyên nghiệp — mở khóa khi đạt được kỷ luật tài chính cao hơn.",
       "task_setup_budget": "Thiết lập ngân sách đầu tiên",
@@ -1721,7 +1720,6 @@ abstract class CcLocaleKeys {
   static const wallet_investments_desc = 'wallet.investments_desc';
   static const wallet_liabilities = 'wallet.liabilities';
   static const wallet_liabilities_desc = 'wallet.liabilities_desc';
-  static const wallet_liabilities_net = 'wallet.liabilities_net';
   static const wallet_investment_roi = 'wallet.investment_roi';
   static const wallet_investment_breakeven = 'wallet.investment_breakeven';
 

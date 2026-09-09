@@ -8,10 +8,10 @@ import '../../models/liability_model.dart';
 @lazySingleton
 class LiabilityLocalDatasource {
   Future<Box<LiabilityModel>> get _box async {
-    if (Hive.isBoxOpen(CcHiveBox.LOAN_BOX_NAME)) {
-      return Hive.box<LiabilityModel>(CcHiveBox.LOAN_BOX_NAME);
+    if (Hive.isBoxOpen(CcHiveBox.LIABILITY_BOX_NAME)) {
+      return Hive.box<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
     }
-    return Hive.openBox<LiabilityModel>(CcHiveBox.LOAN_BOX_NAME);
+    return Hive.openBox<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
   }
 
   Future<List<LiabilityModel>> getAll() async {
@@ -34,5 +34,3 @@ class LiabilityLocalDatasource {
     await box.delete(id);
   }
 }
-
-

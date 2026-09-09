@@ -28,8 +28,8 @@ class LiabilityForm extends StatelessWidget {
       final isIncrease =
           controller.action.value == LiabilityFormAction.increase;
       final accentColor = isIncrease
-          ? context.ccColorScheme.debtLoan
-          : context.ccColorScheme.debtLoanSecondary;
+          ? context.ccColorScheme.liability
+          : context.ccColorScheme.liabilitySecondary;
 
       return Column(
         children: [
@@ -96,7 +96,9 @@ class LiabilityForm extends StatelessWidget {
               Obx(() {
                 final liability = controller.mergedItems
                     .firstWhereOrNull(
-                      (b) => b.liability.id == controller.selectedLoanId.value,
+                      (b) =>
+                          b.liability.id ==
+                          controller.selectedLiabilityId.value,
                     )
                     ?.liability;
 
@@ -145,7 +147,7 @@ class LiabilityForm extends StatelessWidget {
   ) {
     final liability = controller.mergedItems
         .firstWhereOrNull(
-          (b) => b.liability.id == controller.selectedLoanId.value,
+          (b) => b.liability.id == controller.selectedLiabilityId.value,
         )
         ?.liability;
 
@@ -207,7 +209,7 @@ class LiabilityForm extends StatelessWidget {
     final isRepay = controller.action.value == LiabilityFormAction.decrease;
     final liability = controller.mergedItems
         .firstWhereOrNull(
-          (b) => b.liability.id == controller.selectedLoanId.value,
+          (b) => b.liability.id == controller.selectedLiabilityId.value,
         )
         ?.liability;
 

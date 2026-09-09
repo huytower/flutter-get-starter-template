@@ -23,7 +23,7 @@ class LiabilityRepositoryImpl with CcBaseRepository implements LiabilityReposito
   final FinancialDataSyncService _syncService;
 
   @override
-  Future<Result<List<LiabilityEntity>, CcFailure>> getLoans() {
+  Future<Result<List<LiabilityEntity>, CcFailure>> getLiabilities() {
     return safeRequest(() async {
       final models = await _local.getAll();
       final unique = <String, LiabilityEntity>{};
@@ -38,20 +38,20 @@ class LiabilityRepositoryImpl with CcBaseRepository implements LiabilityReposito
   }
 
   @override
-  Future<Result<LiabilityEntity, CcFailure>> getLoan(String id) {
+  Future<Result<LiabilityEntity, CcFailure>> getLiability(String id) {
     return safeRequest(() async {
       final model = await _local.getById(id);
       if (model == null) {
-        throw StateError('Loan $id not found');
+        throw StateError('Liability $id not found');
       }
       return model.toEntity();
     });
   }
 
   @override
-  Future<Result<void, CcFailure>> createLoan(LiabilityEntity loan) {
+  Future<Result<void, CcFailure>> createLiability(LiabilityEntity liability) {
     return safeRequest(() async {
-      final model = LiabilityModel.fromEntity(loan);
+      final model = LiabilityModel.fromEntity(liability);
       await _local.put(model);
 
       final pending = model.copyWithSyncMetadata(
@@ -64,10 +64,10 @@ class LiabilityRepositoryImpl with CcBaseRepository implements LiabilityReposito
   }
 
   @override
-  Future<Result<void, CcFailure>> updateLoan(LiabilityEntity loan) {
+  Future<Result<void, CcFailure>> updateLiability(LiabilityEntity liability) {
     return safeRequest(() async {
-      final existing = await _local.getById(loan.id);
-      final model = LiabilityModel.fromEntity(loan);
+      final existing = await _local.getById(liability.id);
+      final model = LiabilityModel.fromEntity(liability);
 
       // Preserve remoteId and lastSyncedAt from existing model
       final toSave = existing != null
@@ -82,7 +82,7 @@ class LiabilityRepositoryImpl with CcBaseRepository implements LiabilityReposito
   }
 
   @override
-  Future<Result<void, CcFailure>> deleteLoan(String id) {
+  Future<Result<void, CcFailure>> deleteLiability(String id) {
     return safeRequest(() async {
       await _local.delete(id);
       _syncService.syncAll();

@@ -136,7 +136,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       final groups = controller.groups;
       const incomeGroups = CategorySeed.incomeGroups;
       const investmentGroups = CategorySeed.investmentGroups;
-      const debtLoanGroups = CategorySeed.debtLoanGroups;
+      const liabilityGroups = CategorySeed.liabilityGroups;
 
       // Get user level status for unlock checks
       final status = getIt<UserLevelController>().status.value;
@@ -190,7 +190,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       }
 
       // 4. Debt & Loan Section - Use status.canUseDebtLoan (level 3)
-      if (status.canUseDebtLoan) {
+      if (status.canUseLiability) {
         sections.add(
           _buildHeader(
             context,
@@ -198,8 +198,8 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
             topPadding: 24,
           ),
         );
-        for (final group in debtLoanGroups) {
-          final groupWidget = _buildDebtLoanGroup(context, group);
+        for (final group in liabilityGroups) {
+          final groupWidget = _buildLiabilityGroup(context, group);
           if (groupWidget is! SizedBox) {
             sections.add(groupWidget);
           }
@@ -234,19 +234,19 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
     );
   }
 
-  Widget _buildDebtLoanGroup(BuildContext context, CategoryGroupEntity group) {
+  Widget _buildLiabilityGroup(BuildContext context, CategoryGroupEntity group) {
     // Check both group ID and any categories of this type as a fallback
-    var cats = controller.debtLoanByGroup[group.id] ?? [];
+    var cats = controller.liabilityByGroup[group.id] ?? [];
     if (cats.isEmpty) {
       // Fallback: Just get all debtLoan type categories regardless of group
-      cats = controller.debtLoanByGroup.values.expand((e) => e).toList();
+      cats = controller.liabilityByGroup.values.expand((e) => e).toList();
     }
 
     if (cats.isEmpty) return const SizedBox.shrink();
     return _buildGroupSection(
       group: group,
       categories: cats,
-      accentColor: context.ccColorScheme.debtLoan,
+      accentColor: context.ccColorScheme.liability,
     );
   }
 

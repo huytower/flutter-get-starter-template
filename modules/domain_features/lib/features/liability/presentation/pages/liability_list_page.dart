@@ -103,7 +103,7 @@ class _LiabilityListView extends CcGetView<LiabilityListController> {
   @override
   Widget buildContent(BuildContext context) {
     return Obx(() {
-      final balances = controller.loans.toList();
+      final balances = controller.liabilities.toList();
       final isEdit = controller.isEditMode.value;
 
       if (balances.isEmpty) {
@@ -176,7 +176,7 @@ class _LiabilityListView extends CcGetView<LiabilityListController> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => LiabilityDeleteConfirmSheet(
-        liability: controller.loans
+        liability: controller.liabilities
             .firstWhere((b) => b.liability.id == id)
             .liability,
         onDelete: () => controller.deleteLiability(context, id),

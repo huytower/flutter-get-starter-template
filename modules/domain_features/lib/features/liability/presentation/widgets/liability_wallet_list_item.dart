@@ -47,28 +47,24 @@ class LiabilityWalletListItem extends StatelessWidget {
             height: context.respIconSize(baseSize: 18),
           ),
         ),
-        CcDividerLine(
-          color: context.ccColorScheme.onSurface.withOpacity(0.06),
-        ),
+        CcDividerLine(color: context.ccColorScheme.onSurface.withOpacity(0.06)),
         AssetStatItem(
           label: el.tr(CcLocaleKeys.liability_remaining_balance),
           value: balance.outstandingBalance,
-          color: PrjColors.debtLoan,
+          color: PrjColors.liability,
           icon: Image.asset(
             'assets/icon/ic_remain.webp',
             width: context.respIconSize(baseSize: 18),
             height: context.respIconSize(baseSize: 18),
           ),
         ),
-        CcDividerLine(
-          color: context.ccColorScheme.onSurface.withOpacity(0.06),
-        ),
+        CcDividerLine(color: context.ccColorScheme.onSurface.withOpacity(0.06)),
         AssetStatItem(
           label: liability.isBorrow
               ? el.tr(CcLocaleKeys.liability_borrow)
               : el.tr(CcLocaleKeys.liability_lend),
           value: liability.principalAmount,
-          color: PrjColors.debtLoan,
+          color: PrjColors.liability,
           icon: Image.asset(
             'assets/icon/${liability.isBorrow ? 'ic_borrow.webp' : 'ic_lend.webp'}',
             width: context.respIconSize(baseSize: 18),

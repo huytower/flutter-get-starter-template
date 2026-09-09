@@ -21,7 +21,7 @@ import '../../domain/usecases/generate_ai_financial_advice_usecase.dart';
 import '../../domain/usecases/get_category_spending_usecase.dart';
 import '../../domain/usecases/get_financial_runway_usecase.dart';
 import '../../domain/usecases/get_investment_trend_usecase.dart';
-import '../../domain/usecases/get_loan_trend_usecase.dart';
+import '../../domain/usecases/get_liability_trend_usecase.dart';
 import '../../domain/usecases/get_trend_data_usecase.dart';
 import '../widgets/wallet_filter_picker_sheet.dart';
 
@@ -43,7 +43,7 @@ class ReportController extends CcGetController {
   final GetFinancialRunwayUseCase _getFinancialRunway;
   final GetTrendDataUseCase _getTrendData;
   final GetInvestmentTrendUseCase _getInvestmentTrend;
-  final GetLoanTrendUseCase _getLiabilityTrend;
+  final GetLiabilityTrendUseCase _getLiabilityTrend;
   final WalletRepository _walletRepository;
   final GenerateAiFinancialAdviceUseCase _generateAiAdvice;
   final AiAdviceCacheDataSource _aiAdviceCache;

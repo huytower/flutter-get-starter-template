@@ -38,7 +38,7 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
   Widget _buildRow(
     BuildContext context,
     int index,
-    LoanInstallmentDraft draft,
+    LiabilityInstallmentDraft draft,
   ) {
     return Padding(
       padding: EdgeInsets.only(

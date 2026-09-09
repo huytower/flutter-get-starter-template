@@ -9,21 +9,21 @@ import '../models/liability_model.dart';
 class LiabilitySyncDatasource {
   final GenericSyncDataSource _delegate;
 
-  LiabilitySyncDatasource(FirestoreSyncService syncService, SessionContract session)
-    : _delegate = GenericSyncDataSource(syncService, session, 'loans');
+  LiabilitySyncDatasource(
+    FirestoreSyncService syncService,
+    SessionContract session,
+  ) : _delegate = GenericSyncDataSource(syncService, session, 'loans');
 
-  Future<String?> syncLoan(LiabilityModel loan) => _delegate.sync(
-    localId: loan.id,
-    data: loan.toFirestoreData(),
-    remoteId: loan.syncMetadata.remoteId,
-    lastSyncedAt: loan.syncMetadata.lastSyncedAt,
+  Future<String?> syncLiability(LiabilityModel liability) => _delegate.sync(
+    localId: liability.id,
+    data: liability.toFirestoreData(),
+    remoteId: liability.syncMetadata.remoteId,
+    lastSyncedAt: liability.syncMetadata.lastSyncedAt,
   );
 
-  Future<List<Map<String, dynamic>>> fetchLoans() => _delegate.fetch();
+  Future<List<Map<String, dynamic>>> fetchLiabilities() => _delegate.fetch();
 
-  Future<void> deleteLoan(String remoteId) => _delegate.delete(remoteId);
+  Future<void> deleteLiability(String remoteId) => _delegate.delete(remoteId);
 
-  Stream<List<Map<String, dynamic>>> streamLoans() => _delegate.stream();
+  Stream<List<Map<String, dynamic>>> streamLiabilities() => _delegate.stream();
 }
-
-

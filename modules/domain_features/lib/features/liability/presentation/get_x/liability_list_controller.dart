@@ -21,13 +21,14 @@ class LiabilityListController extends CcGetController {
   final GetLiabilityBalancesUseCase _getLiabilityBalances;
   final LiabilityRepository _LiabilityRepository;
 
-  final RxList<LiabilityBalanceEntity> loans = <LiabilityBalanceEntity>[].obs;
+  final RxList<LiabilityBalanceEntity> liabilities =
+      <LiabilityBalanceEntity>[].obs;
 
   List<LiabilityBalanceEntity> get borrowBalances =>
-      loans.where((b) => b.liability.isBorrow).toList();
+      liabilities.where((b) => b.liability.isBorrow).toList();
 
   List<LiabilityBalanceEntity> get lendBalances =>
-      loans.where((b) => b.liability.isLend).toList();
+      liabilities.where((b) => b.liability.isLend).toList();
 
   final RxBool isEditMode = false.obs;
   final RxBool isVip = false.obs;
@@ -52,7 +53,7 @@ class LiabilityListController extends CcGetController {
           ..sort(
             (a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt),
           );
-        loans.assignAll(sorted);
+        liabilities.assignAll(sorted);
         layoutStatus.value = CcLayoutStatus.success;
       },
       (_) {
@@ -75,18 +76,18 @@ class LiabilityListController extends CcGetController {
 
   Future<void> reorderLiabilities(int oldIndex, int newIndex) async {
     if (newIndex > oldIndex) newIndex -= 1;
-    final item = loans.removeAt(oldIndex);
-    loans.insert(newIndex, item);
+    final item = liabilities.removeAt(oldIndex);
+    liabilities.insert(newIndex, item);
   }
 
   Future<void> deleteLiability(BuildContext context, String id) async {
-    final index = loans.indexWhere((b) => b.liability.id == id);
+    final index = liabilities.indexWhere((b) => b.liability.id == id);
     if (index == -1) return;
 
-    final result = await _LiabilityRepository.deleteLoan(id);
+    final result = await _LiabilityRepository.deleteLiability(id);
     result.when(
       (_) {
-        loans.removeAt(index);
+        liabilities.removeAt(index);
 
         if (Get.isRegistered<BudgetAllocationController>()) {
           Get.find<BudgetAllocationController>().loadAll();

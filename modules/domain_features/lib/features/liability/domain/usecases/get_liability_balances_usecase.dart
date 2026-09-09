@@ -25,9 +25,9 @@ class GetLiabilityBalancesUseCase {
   final CategoryRepository _categoryRepository;
 
   Future<Result<List<LiabilityBalanceEntity>, CcFailure>> call() async {
-    final loansResult = await _LiabilityRepository.getLoans();
-    if (loansResult.isError()) {
-      return Error(loansResult.tryGetError()!);
+    final liabilitiesResult = await _LiabilityRepository.getLiabilities();
+    if (liabilitiesResult.isError()) {
+      return Error(liabilitiesResult.tryGetError()!);
     }
 
     final txnResult = await _transactionRepository.getListTransactions();
@@ -40,19 +40,23 @@ class GetLiabilityBalancesUseCase {
 
     final transactions = txnResult.tryGetSuccess()!;
     final unique = <String, LiabilityBalanceEntity>{};
-    for (final loan in loansResult.tryGetSuccess()!) {
-      final loanTxns = transactions.where((t) => t.loanId == loan.id).toList();
+    for (final liability in liabilitiesResult.tryGetSuccess()!) {
+      final liabilityTxns = transactions
+          .where((t) => t.liabilityId == liability.id)
+          .toList();
 
-      final cat = categories.firstWhereOrNull((c) => c.id == loan.categoryId);
+      final cat = categories.firstWhereOrNull(
+        (c) => c.id == liability.categoryId,
+      );
 
       final balance = LiabilityBalanceEntity(
-        liability: loan.copyWith(categoryNameKey: cat?.nameKey),
-        outstandingBalance: loanOutstandingBalance(
-          loan.principalAmount,
-          loanTxns,
+        liability: liability.copyWith(categoryNameKey: cat?.nameKey),
+        outstandingBalance: liabilityOutstandingBalance(
+          liability.principalAmount,
+          liabilityTxns,
         ),
       );
-      unique[loan.id] = balance;
+      unique[liability.id] = balance;
     }
     final balances = unique.values.toList()
       ..sort((a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt));

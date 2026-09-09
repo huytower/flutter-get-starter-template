@@ -63,9 +63,9 @@ class TransactionModel {
   @HiveField(16)
   final DateTime? lastModifiedAt;
 
-  /// FK to the Loan this leg belongs to; null for non-loan records.
+  /// FK to the Liability this leg belongs to; null for non-liability records.
   @HiveField(17)
-  final String? loanId;
+  final String? liabilityId;
 
   /// FK to the investment position this leg belongs to; null for non-investment
   /// records. See [TransactionEntity.investmentWalletId].
@@ -97,7 +97,7 @@ class TransactionModel {
     this.syncStatus,
     this.lastSyncedAt,
     this.lastModifiedAt,
-    this.loanId,
+    this.liabilityId,
     this.investmentWalletId,
     this.lat,
     this.lng,
@@ -117,7 +117,7 @@ class TransactionModel {
     transferId: transferId,
     categoryIconCode: categoryIconCode,
     categoryIconFamily: categoryIconFamily,
-    loanId: loanId,
+    liabilityId: liabilityId,
     investmentWalletId: investmentWalletId,
     lat: lat,
     lng: lng,
@@ -143,7 +143,7 @@ class TransactionModel {
         transferId: entity.transferId,
         categoryIconCode: entity.categoryIconCode,
         categoryIconFamily: entity.categoryIconFamily,
-        loanId: entity.loanId,
+        liabilityId: entity.liabilityId,
         investmentWalletId: entity.investmentWalletId,
         lat: entity.lat,
         lng: entity.lng,
@@ -163,7 +163,7 @@ class TransactionModel {
     deletedAt: deletedAt != null ? DateTime.parse(deletedAt!) : null,
     categoryIconCode: categoryIconCode,
     categoryIconFamily: categoryIconFamily,
-    loanId: loanId,
+    liabilityId: liabilityId,
     investmentWalletId: investmentWalletId,
     lat: lat,
     lng: lng,
@@ -201,7 +201,7 @@ class TransactionModel {
       syncStatus: metadata.status.name,
       lastSyncedAt: metadata.lastSyncedAt,
       lastModifiedAt: metadata.lastModifiedAt,
-      loanId: loanId,
+      liabilityId: liabilityId,
       investmentWalletId: investmentWalletId,
       lat: lat,
       lng: lng,
@@ -222,7 +222,7 @@ class TransactionModel {
       'transferId': transferId,
       'categoryIconCode': categoryIconCode,
       'categoryIconFamily': categoryIconFamily,
-      'loanId': loanId,
+      'liabilityId': liabilityId,
       'investmentWalletId': investmentWalletId,
       'lat': lat,
       'lng': lng,
@@ -256,7 +256,7 @@ class TransactionModel {
       syncStatus: SyncStatus.synced.name,
       lastSyncedAt: parsedModifiedAt,
       lastModifiedAt: parsedModifiedAt,
-      loanId: data['loanId'] as String?,
+      liabilityId: data['liabilityId'] as String?,
       investmentWalletId: data['investmentWalletId'] as String?,
       lat: (data['lat'] as num?)?.toDouble(),
       lng: (data['lng'] as num?)?.toDouble(),

@@ -65,10 +65,10 @@ abstract final class PrjColors {
     alpha: 0.8,
   );
 
-  static const Color debtLoan = CcBaseColors.violet600;
+  static const Color liability = CcBaseColors.violet600;
 
   /// Shaded variant for the "money leaves" leg of Liability activity (e.g. Lend/Repay).
-  static final Color debtLoanSecondary = CcBaseColors.violet600.withValues(
+  static final Color liabilitySecondary = CcBaseColors.violet600.withValues(
     alpha: 0.8,
   );
 
@@ -169,7 +169,6 @@ abstract final class PrjColors {
 
   // Nhóm 9: Trả nợ & Vay — đỏ mận
   static const Color categoryInstallment = Color(0xFF991B1B);
-  static const Color categoryLoanInterest = Color(0xFF991B1B);
 
   // Nhóm 10: Bảo hiểm — navy
   static const Color categoryLifeInsurance = Color(0xFF1E3A8A);

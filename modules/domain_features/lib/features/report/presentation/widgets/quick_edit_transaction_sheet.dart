@@ -49,7 +49,7 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
 
   Color get _accentColor {
     if (_isInvestment) return PrjColors.investment;
-    if (_isDebt) return PrjColors.debtLoan;
+    if (_isDebt) return PrjColors.liability;
     return context.ccColorScheme.primary;
   }
 
@@ -80,7 +80,7 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
       case TransactionType.debtLend:
       case TransactionType.debtRepay:
       case TransactionType.debtCollect:
-        return CategoryType.debtLoan;
+        return CategoryType.liability;
       case TransactionType.investmentOut:
       case TransactionType.investmentIn:
       case TransactionType.investmentReturn:

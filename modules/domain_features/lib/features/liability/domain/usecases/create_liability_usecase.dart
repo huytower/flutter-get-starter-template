@@ -127,8 +127,8 @@ class CreateLiabilityUseCase {
     );
 
     final createResult = params.liabilityId != null
-        ? await _LiabilityRepository.updateLoan(liability)
-        : await _LiabilityRepository.createLoan(liability);
+        ? await _LiabilityRepository.updateLiability(liability)
+        : await _LiabilityRepository.createLiability(liability);
     if (createResult.isError()) {
       return Error(createResult.tryGetError()!);
     }
@@ -146,12 +146,12 @@ class CreateLiabilityUseCase {
       note: params.note,
       date: params.date,
       walletId: params.walletId,
-      loanId: liability.id,
+      liabilityId: liability.id,
     );
 
     final txnResult = await _transactionRepository.createTransaction(txn);
     if (txnResult.isError()) {
-      await _LiabilityRepository.deleteLoan(liability.id);
+      await _LiabilityRepository.deleteLiability(liability.id);
       return Error(txnResult.tryGetError()!);
     }
 

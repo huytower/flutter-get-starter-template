@@ -73,7 +73,7 @@ class RecordLiabilityPaymentUseCase {
       );
     }
 
-    final liabilityResult = await _LiabilityRepository.getLoan(
+    final liabilityResult = await _LiabilityRepository.getLiability(
       params.liabilityId,
     );
     if (liabilityResult.isError()) {
@@ -146,7 +146,7 @@ class RecordLiabilityPaymentUseCase {
       note: params.note,
       date: params.date,
       walletId: params.walletId,
-      loanId: liability.id,
+      liabilityId: liability.id,
     );
 
     final txnResult = await _transactionRepository.createTransaction(txn);
@@ -173,7 +173,7 @@ class RecordLiabilityPaymentUseCase {
       updatedAt: DateTime.now(),
       reminderBeforeDueDate: liability.reminderBeforeDueDate,
     );
-    await _LiabilityRepository.updateLoan(updatedLiability);
+    await _LiabilityRepository.updateLiability(updatedLiability);
 
     return Success(updatedLiability);
   }

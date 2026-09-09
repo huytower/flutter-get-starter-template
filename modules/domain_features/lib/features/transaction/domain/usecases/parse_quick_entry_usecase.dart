@@ -163,7 +163,7 @@ class ParseQuickEntryUseCase {
   String _amountKindPhrase(String categoryType) => switch (categoryType) {
     CategoryType.income => 'personal income',
     CategoryType.investment => 'investment contribution or return',
-    CategoryType.debtLoan => 'loan/debt',
+    CategoryType.liability => 'loan/debt',
     _ => 'personal expense',
   };
 
@@ -172,7 +172,7 @@ class ParseQuickEntryUseCase {
       'income receipt, salary slip, or money-received screenshot',
     CategoryType.investment =>
       'investment transaction confirmation or screenshot',
-    CategoryType.debtLoan => 'loan/debt agreement or bank transfer screenshot',
+    CategoryType.liability => 'loan/debt agreement or bank transfer screenshot',
     _ => 'personal-expense receipt or payment screenshot',
   };
 

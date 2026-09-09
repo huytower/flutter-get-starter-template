@@ -23,12 +23,13 @@ import '../get_x/liability_list_controller.dart';
 /// One editable row of an installment schedule being built in the liability
 /// creation form. Presentation-only — converted to [LiabilityInstallmentEntity]
 /// at submit time.
-class LoanInstallmentDraft {
+class LiabilityInstallmentDraft {
   final Rx<DateTime> dueDate;
   final TextEditingController amountController = TextEditingController();
   final RxInt amount = 0.obs;
 
-  LoanInstallmentDraft(DateTime initialDueDate) : dueDate = initialDueDate.obs;
+  LiabilityInstallmentDraft(DateTime initialDueDate)
+    : dueDate = initialDueDate.obs;
 
   void setAmount(String value) {
     amount.value = int.tryParse(value) ?? 0;
@@ -44,11 +45,11 @@ class LoanInstallmentDraft {
 @lazySingleton
 class LiabilityFormController extends LiabilityBaseFormController {
   @override
-  String get quickEntryCategoryType => CategoryType.debtLoan;
+  String get quickEntryCategoryType => CategoryType.liability;
 
   @override
   List<String> get quickEntryCategoryGroupIds => [
-    CategorySeed.debtLoanBorrowGroupId,
+    CategorySeed.liabilityBorrowGroupId,
   ];
 
   @override
@@ -63,16 +64,16 @@ class LiabilityFormController extends LiabilityBaseFormController {
   final RxInt categoryKey = 0.obs;
   final RxString repaymentMethod = LiabilityRepaymentMethod.lumpSum.obs;
   final Rx<DateTime?> finalDueDate = Rx<DateTime?>(null);
-  final RxList<LoanInstallmentDraft> installmentDrafts =
-      <LoanInstallmentDraft>[].obs;
+  final RxList<LiabilityInstallmentDraft> installmentDrafts =
+      <LiabilityInstallmentDraft>[].obs;
   final RxBool reminderBeforeDueDate = false.obs;
 
-  final RxList<LiabilityBalanceEntity> loanBalances =
+  final RxList<LiabilityBalanceEntity> liabilityBalances =
       <LiabilityBalanceEntity>[].obs;
   final RxList<LiabilityBalanceEntity> mergedItems =
       <LiabilityBalanceEntity>[].obs;
   final RxBool isLoadingMerged = true.obs;
-  final RxnString selectedLoanId = RxnString();
+  final RxnString selectedLiabilityId = RxnString();
 
   final RxnInt editingInstallmentIndex = RxnInt();
 
@@ -92,7 +93,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     // Listen to liability list changes to sync with deletions from list page
     if (Get.isRegistered<LiabilityListController>()) {
       final listController = Get.find<LiabilityListController>();
-      ever(listController.loans, (_) {
+      ever(listController.liabilities, (_) {
         loadLiabilities();
       });
     }
@@ -100,12 +101,12 @@ class LiabilityFormController extends LiabilityBaseFormController {
 
   @override
   bool get canSubmit {
-    if (selectedLoanId.value == null) return false;
+    if (selectedLiabilityId.value == null) return false;
     if (amountStr.value == '0' || amountStr.value.isEmpty) return false;
     if (selectedWalletId.value == null) return false;
 
     final liability = mergedItems
-        .firstWhereOrNull((b) => b.liability.id == selectedLoanId.value)
+        .firstWhereOrNull((b) => b.liability.id == selectedLiabilityId.value)
         ?.liability;
     if (liability == null) return false;
 
@@ -137,7 +138,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
   Future<void> loadLiabilities() async {
     final result = await getIt<GetLiabilityBalancesUseCase>().call();
     result.when((balances) {
-      loanBalances.assignAll(balances);
+      liabilityBalances.assignAll(balances);
       final filtered = balances.where((b) => b.liability.isBorrow).toList();
 
       filtered.sort(
@@ -146,27 +147,31 @@ class LiabilityFormController extends LiabilityBaseFormController {
 
       mergedItems.assignAll(filtered);
 
-      if (selectedLoanId.value != null) {
+      if (selectedLiabilityId.value != null) {
         final stillExists = mergedItems.any(
-          (b) => b.liability.id == selectedLoanId.value,
+          (b) => b.liability.id == selectedLiabilityId.value,
         );
         if (!stillExists) {
-          selectedLoanId.value = null;
+          selectedLiabilityId.value = null;
           selectedCategory.value = null;
         }
       }
 
-      if (selectedLoanId.value == null && mergedItems.isNotEmpty) {
-        selectLoan(mergedItems.first);
+      if (selectedLiabilityId.value == null && mergedItems.isNotEmpty) {
+        selectLiability(mergedItems.first, resetAmount: false);
       }
     }, (_) {});
   }
 
   @override
-  void selectLoan(LiabilityBalanceEntity balance) {
-    if (selectedLoanId.value == balance.liability.id) return;
+  void selectLiability(
+    LiabilityBalanceEntity balance, {
+    bool resetAmount = true,
+    String? amount,
+  }) {
+    if (selectedLiabilityId.value == balance.liability.id) return;
 
-    selectedLoanId.value = balance.liability.id;
+    selectedLiabilityId.value = balance.liability.id;
 
     // Only auto-default the wallet if the user hasn't selected one yet.
     // This allows flexible cross-wallet borrowing/repayment.
@@ -174,14 +179,18 @@ class LiabilityFormController extends LiabilityBaseFormController {
       selectedWalletId.value = balance.liability.walletId;
     }
 
-    // Reset amount to avoid carry-over from previous selection
-    amountStr.value = '0';
+    // Handle amount: prefer explicit amount, then reset if requested
+    if (amount != null) {
+      amountStr.value = amount;
+    } else if (resetAmount) {
+      amountStr.value = '0';
+    }
 
     debugPrint(
-      '[LIABILITY_FORM] selectLoan: id=${balance.liability.id}, walletId=${balance.liability.walletId}',
+      '[LIABILITY_FORM] selectLiability: id=${balance.liability.id}, walletId=${balance.liability.walletId}, amount=${amountStr.value}',
     );
 
-    _loadCategoryForLoan(balance.liability.categoryId);
+    _loadCategoryForLiability(balance.liability.categoryId);
 
     if (balance.liability.principalAmount > 0) {
       installmentDrafts.clear();
@@ -189,7 +198,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     }
   }
 
-  Future<void> _loadCategoryForLoan(String categoryId) async {
+  Future<void> _loadCategoryForLiability(String categoryId) async {
     final result = await getIt<GetCategoriesUseCase>().call();
     result.when((categories) {
       selectedCategory.value = categories.firstWhereOrNull(
@@ -210,7 +219,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
   @override
   void clearCategorySelection() {
     selectedCategory.value = null;
-    selectedLoanId.value = null;
+    selectedLiabilityId.value = null;
   }
 
   void setCategory(CategoryEntity category) {
@@ -273,7 +282,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
 
     final nextDate = DateTime(lastDate.year, lastDate.month + 1, lastDate.day);
 
-    final newDraft = LoanInstallmentDraft(nextDate);
+    final newDraft = LiabilityInstallmentDraft(nextDate);
     newDraft.amount.value = defaultAmount;
 
     installmentDrafts.add(newDraft);
@@ -365,7 +374,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     action.value = value;
     // Clearing current selection when switching actions ensures the item picker
     // re-filters correctly and the form doesn't carry over irrelevant state.
-    selectedLoanId.value = null;
+    selectedLiabilityId.value = null;
     selectedCategory.value = null;
     loadLiabilities();
   }
@@ -408,7 +417,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
       draft.dispose();
     }
     installmentDrafts.clear();
-    selectedLoanId.value = null;
+    selectedLiabilityId.value = null;
     loadLiabilities();
     resetQuickEntry();
   }
@@ -419,7 +428,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     isSubmitting.value = true;
 
     final liability = mergedItems
-        .firstWhereOrNull((b) => b.liability.id == selectedLoanId.value)
+        .firstWhereOrNull((b) => b.liability.id == selectedLiabilityId.value)
         ?.liability;
     if (liability == null) {
       isSubmitting.value = false;
@@ -440,7 +449,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
       isSubmitting.value = false;
 
       result.when(
-        (updatedLoan) async {
+        (updatedLiability) async {
           final savedAmount = TransactionFormHelpers.formatAmount(
             amountStr.value,
           );
@@ -501,7 +510,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     isSubmitting.value = false;
 
     result.when(
-      (updatedLoan) async {
+      (updatedLiability) async {
         final savedAmount = TransactionFormHelpers.formatAmount(
           amountStr.value,
         );
@@ -512,7 +521,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
             namedArgs: {'amount': savedAmount},
           ),
         );
-        getIt<ScheduleLiabilityRemindersUseCase>().call(updatedLoan);
+        getIt<ScheduleLiabilityRemindersUseCase>().call(updatedLiability);
         resetForm();
         await refreshParent();
 

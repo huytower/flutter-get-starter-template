@@ -8,7 +8,7 @@ part 'liability_installment_model.g.dart';
 /// Embedded (not its own box) — always read/written as part of a
 /// [LiabilityModel]'s `installments` list, mirrors
 /// `ReconciliationAllocationModel`.
-@HiveType(typeId: CcHiveBox.LOAN_INSTALLMENT_TYPE_ID)
+@HiveType(typeId: CcHiveBox.LIABILITY_INSTALLMENT_TYPE_ID)
 class LiabilityInstallmentModel {
   @HiveField(0)
   final String dueDate;
@@ -18,14 +18,17 @@ class LiabilityInstallmentModel {
 
   LiabilityInstallmentModel({required this.dueDate, required this.amount});
 
-  factory LiabilityInstallmentModel.fromEntity(LiabilityInstallmentEntity entity) =>
-      LiabilityInstallmentModel(
-        dueDate: entity.dueDate.toIso8601String(),
-        amount: entity.amount,
-      );
+  factory LiabilityInstallmentModel.fromEntity(
+    LiabilityInstallmentEntity entity,
+  ) => LiabilityInstallmentModel(
+    dueDate: entity.dueDate.toIso8601String(),
+    amount: entity.amount,
+  );
 
-  LiabilityInstallmentEntity toEntity() =>
-      LiabilityInstallmentEntity(dueDate: DateTime.parse(dueDate), amount: amount);
+  LiabilityInstallmentEntity toEntity() => LiabilityInstallmentEntity(
+    dueDate: DateTime.parse(dueDate),
+    amount: amount,
+  );
 
   Map<String, dynamic> toJson() {
     return {'dueDate': dueDate, 'amount': amount};
@@ -38,5 +41,3 @@ class LiabilityInstallmentModel {
     );
   }
 }
-
-

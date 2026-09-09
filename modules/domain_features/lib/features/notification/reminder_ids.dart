@@ -11,10 +11,11 @@ class ReminderIds {
   static const int cloudBackup = 3;
 
   /// Stable id for the [index]-th reminder (installment or lump-sum
-  /// milestone) belonging to loan [loanId] — derived from the loan id so it
-  /// can be recomputed and cancelled later without tracking ids separately.
-  static int loanReminder(String loanId, int index) =>
-      1000 + (_fnv1a32('$loanId#$index') & 0x0fffffff);
+  /// milestone) belonging to liability [liabilityId] — derived from the
+  /// liability id so it can be recomputed and cancelled later without
+  /// tracking ids separately.
+  static int liabilityReminder(String liabilityId, int index) =>
+      1000 + (_fnv1a32('$liabilityId#$index') & 0x0fffffff);
 
   /// Stable id for budget [budgetId] crossing warning [tier] ("near"/"over").
   /// Hash-derived like [loanReminder], but with bit 30 forced on so its

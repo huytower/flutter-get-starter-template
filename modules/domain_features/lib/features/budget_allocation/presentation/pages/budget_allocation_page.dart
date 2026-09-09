@@ -139,7 +139,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   Widget _buildLiabilityGroup(BuildContext context) {
     return Obx(() {
       final status = controller.userLevel.status.value;
-      if (!status.canUseDebtLoan) return const SizedBox.shrink();
+      if (!status.canUseLiability) return const SizedBox.shrink();
 
       return Column(
         mainAxisSize: MainAxisSize.min,
@@ -154,7 +154,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           LiabilityWalletsSection(
             borrowBalances: controller.borrowBalances,
             lendBalances: controller.lendBalances,
-            onAddLoan: () => controller.openAddLiability(context),
+            onAddLiability: () => controller.openAddLiability(context),
             onSeeAll: () => controller.navigateToLiabilityList(context),
             isLendFront: controller.isLendSectionFront.value,
             showGuidelineBadge: Get.isRegistered<GuidelineController>()

@@ -59,7 +59,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
         const CcSpaceMD(),
         _buildDirectionPicker(context, controller),
         const CcSpaceMD(),
-        _buildLoanCategoryPicker(context, controller),
+        _buildLiabilityCategoryPicker(context, controller),
         const CcSpaceMD(),
         _buildNameField(context, controller),
         const CcSpaceMD(),
@@ -164,12 +164,12 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     );
   }
 
-  Widget _buildLoanCategoryPicker(
+  Widget _buildLiabilityCategoryPicker(
     BuildContext context,
     AddLiabilitySheetController controller,
   ) {
     return Obx(() {
-      final categories = controller.loanCategories.toList();
+      final categories = controller.liabilityCategories.toList();
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -192,13 +192,14 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
                 final category = categories[index];
                 return Obx(() {
                   final isSelected =
-                      controller.selectedLoanCategory.value?.id == category.id;
+                      controller.selectedLiabilityCategory.value?.id ==
+                      category.id;
                   return CcCategoryItem(
                     iconCode: category.iconCode,
                     iconFamily: category.iconFamily,
                     nameKey: category.nameKey,
                     isSelected: isSelected,
-                    onTap: () => controller.selectLoanCategory(category),
+                    onTap: () => controller.selectLiabilityCategory(category),
                   );
                 });
               },
@@ -221,7 +222,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
           hintText: el.tr(CcLocaleKeys.transaction_liability_name_hint),
           onClear: () {
             controller.isNameValid.value = false;
-            controller.selectedLoanCategory.value = null;
+            controller.selectedLiabilityCategory.value = null;
             controller.nameError.value = null;
           },
         ),
@@ -252,7 +253,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
   ) {
     return Obx(() {
       final bool canSave =
-          controller.selectedLoanCategory.value != null &&
+          controller.selectedLiabilityCategory.value != null &&
           !controller.isSubmitting.value;
 
       return CcSaveButton(

@@ -51,7 +51,7 @@ class _EditTransactionSheetState extends State<EditTransactionSheet> {
     if (_isExpense) return context.ccColorScheme.error;
     if (_isIncome) return PrjColors.success;
     if (_isInvestment) return PrjColors.investment;
-    if (_isDebt) return PrjColors.debtLoan;
+    if (_isDebt) return PrjColors.liability;
     return context.ccColorScheme.primary;
   }
 
@@ -111,7 +111,8 @@ class _EditTransactionSheetState extends State<EditTransactionSheet> {
       top: false,
       child: Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom +
+          bottom:
+              MediaQuery.of(context).viewInsets.bottom +
               context.respPadding(CcPaddingParams.PAGE_MD),
         ),
         child: Column(

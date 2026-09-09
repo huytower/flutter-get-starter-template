@@ -77,7 +77,8 @@ class LiabilityAssetSelector extends StatelessWidget {
                 final liability = balance.liability;
 
                 return Obx(() {
-                  final isSelected = controller.selectedLoanId.value == liability.id;
+                  final isSelected =
+                      controller.selectedLiabilityId.value == liability.id;
 
                   return _buildItem(
                     context,
@@ -91,7 +92,7 @@ class LiabilityAssetSelector extends StatelessWidget {
                       debugPrint(
                         '[LIABILITY_ASSET_SELECTOR] Tapped liability: id=${liability.id}, label=${liability.categoryLabel}, selected=$isSelected',
                       );
-                      controller.selectLoan(balance);
+                      controller.selectLiability(balance);
                     },
                   );
                 });

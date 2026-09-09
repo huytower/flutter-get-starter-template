@@ -30,9 +30,9 @@ abstract class TransactionRepository {
     String walletId,
   );
 
-  /// Transactions linked to a loan (initiation + repay/collect legs).
-  Future<Result<List<TransactionEntity>, CcFailure>> getTransactionsByLoan(
-    String loanId,
+  /// Transactions linked to a liability (initiation + repay/collect legs).
+  Future<Result<List<TransactionEntity>, CcFailure>> getTransactionsByLiability(
+    String liabilityId,
   );
 
   /// Transactions counting against a budget.

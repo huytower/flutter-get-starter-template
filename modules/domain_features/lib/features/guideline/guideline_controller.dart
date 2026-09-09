@@ -137,7 +137,7 @@ class GuidelineController extends GetxController {
     final status = _userLevelController.status.value;
     for (final taskId in taskSequence) {
       if (taskId == 'investment' && !status.canUseInvestment) continue;
-      if (taskId == 'liability' && !status.canUseDebtLoan) continue;
+      if (taskId == 'liability' && !status.canUseLiability) continue;
       if (!completedTasks.contains(taskId)) {
         return taskId;
       }

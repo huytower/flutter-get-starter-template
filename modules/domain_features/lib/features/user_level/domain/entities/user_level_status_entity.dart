@@ -26,7 +26,7 @@ class UserLevelStatusEntity extends Equatable {
 
   bool get canUseInvestment => level >= 2;
 
-  bool get canUseDebtLoan => level >= 3;
+  bool get canUseLiability => level >= 3;
 
   bool get canUseAiSmartEntry => level >= 3 || isVip;
 

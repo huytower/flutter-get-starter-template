@@ -20,8 +20,8 @@ extension TransactionTabKindStyle on TransactionTabKind {
     TransactionTabKind.expense => context.ccColorScheme.error,
     TransactionTabKind.income => PrjColors.success,
     TransactionTabKind.investment => context.ccColorScheme.investment,
-    TransactionTabKind.liability => context.ccColorScheme.debtLoan,
-    TransactionTabKind.lend => context.ccColorScheme.debtLoanSecondary,
+    TransactionTabKind.liability => context.ccColorScheme.liability,
+    TransactionTabKind.lend => context.ccColorScheme.liabilitySecondary,
   };
 }
 

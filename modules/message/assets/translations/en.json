@@ -200,9 +200,8 @@
                    "investments":  "Investments / Accumulation",
                    "investments_desc":  "Stocks, funds, real estate...",
                    "liabilities":  "Liabilities",
-                   "liabilities_desc":  "Loans + Credit cards · balance tracking, stress monitor",
-                   "liabilities_net":  "Net Liability",
-                   "investment_roi": "ROI",
+                    "liabilities_desc":  "Loans + Credit cards · balance tracking, stress monitor",
+                    "investment_roi": "ROI",
                    "investment_breakeven": "Breakeven Rate"
                },
     "comment":  {
@@ -248,7 +247,7 @@
                         "source_debt":  "Source of Debt",
                         "record_debt":  "Record Debt",
                         "debt_saved":  "Debt of {amount} đ saved successfully!",
-                        "liability_direction_borrow": "Borrow",
+                        "liability_direction_borrow": "Borrowed from",
                         "liability_direction_lend": "Lend",
                         "liability_name_label": "Liability name",
                         "liability_name_hint": "e.g. Laptop purchase, Bank loan...",
@@ -338,7 +337,7 @@
                    "no_history":  "No repayment/collection yet",
                    "delete_title":  "Delete Liability",
                    "delete_confirm_msg":  "Are you sure you want to delete this liability? This action cannot be undone.",
-                   "borrow":  "Borrow",
+                    "borrow":  "Borrowed from",
                    "lend":  "Lend",
                    "borrow_type_personal":  "Personal",
                    "lend_type_personal":  "Personal"
@@ -466,7 +465,7 @@
                     "investment_contributed":  "Contributed",
                     "investment_returned":  "Returns",
                     "liability_title":  "Liabilities",
-                    "liability_in":  "Borrow",
+                     "liability_in":  "Borrowed from",
                     "liability_out":  "Lend",
                     "daily_detail":  "Daily Detail",
                    "income_short":  "Inc",

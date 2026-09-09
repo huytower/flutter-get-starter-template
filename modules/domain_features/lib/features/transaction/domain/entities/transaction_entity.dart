@@ -41,11 +41,11 @@ abstract class TransactionType {
   static const String investmentReturn = 'investment_return';
 
   /// Đi vay (borrow): a single leg crediting the wallet that received the
-  /// principal, tagged with [TransactionEntity.loanId].
+  /// principal, tagged with [TransactionEntity.liabilityId].
   static const String debtBorrow = 'debt_borrow';
 
   /// Cho vay (lend): a single leg debiting the wallet the principal left
-  /// from, tagged with [TransactionEntity.loanId].
+  /// from, tagged with [TransactionEntity.liabilityId].
   static const String debtLend = 'debt_lend';
 
   /// Trả nợ: settles a [debtBorrow] loan — debits the paying wallet.
@@ -80,13 +80,13 @@ class TransactionEntity extends Equatable {
   /// Links the two legs of a transfer. Null for income/expense records.
   final String? transferId;
 
-  /// FK to the [LoanEntity] this leg belongs to. Set for
+  /// FK to the [LiabilityEntity] this leg belongs to. Set for
   /// debtBorrow/debtLend/debtRepay/debtCollect records, null otherwise.
-  final String? loanId;
+  final String? liabilityId;
 
   /// FK to the investment position (`WalletType.investment`) this leg
   /// belongs to. Set on every investmentOut/investmentIn/investmentReturn
-  /// record, mirroring how [loanId] tags Loan legs — needed because
+  /// record, mirroring how [liabilityId] tags Loan legs — needed because
   /// [walletId] on these legs points at whichever *real* wallet the money
   /// moved through (liquid wallet for investmentOut/investmentReturn, the
   /// position itself for investmentIn), not necessarily the position.
@@ -114,7 +114,7 @@ class TransactionEntity extends Equatable {
     this.categoryIconCode,
     this.categoryIconFamily,
     this.transferId,
-    this.loanId,
+    this.liabilityId,
     this.investmentWalletId,
     this.deletedAt,
     this.lat,
@@ -162,7 +162,7 @@ class TransactionEntity extends Equatable {
     int? categoryIconCode,
     String? categoryIconFamily,
     String? transferId,
-    String? loanId,
+    String? liabilityId,
     String? investmentWalletId,
     DateTime? deletedAt,
     double? lat,
@@ -181,7 +181,7 @@ class TransactionEntity extends Equatable {
       categoryIconCode: categoryIconCode ?? this.categoryIconCode,
       categoryIconFamily: categoryIconFamily ?? this.categoryIconFamily,
       transferId: transferId ?? this.transferId,
-      loanId: loanId ?? this.loanId,
+      liabilityId: liabilityId ?? this.liabilityId,
       investmentWalletId: investmentWalletId ?? this.investmentWalletId,
       deletedAt: deletedAt ?? this.deletedAt,
       lat: lat ?? this.lat,
@@ -203,7 +203,7 @@ class TransactionEntity extends Equatable {
     categoryIconCode,
     categoryIconFamily,
     transferId,
-    loanId,
+    liabilityId,
     investmentWalletId,
     deletedAt,
     lat,

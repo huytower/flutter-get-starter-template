@@ -201,7 +201,7 @@ class _ReportView extends CcGetView<ReportController> {
                                 .status
                                 .value
                                 .canUseInvestment ||
-                            controller.userLevel.status.value.canUseDebtLoan,
+                            controller.userLevel.status.value.canUseLiability,
                         isEditMode: controller.isEditMode.value,
                       ),
                       const CcSpaceSM(),
@@ -287,7 +287,7 @@ class _ReportView extends CcGetView<ReportController> {
   Widget _buildLiabilitySection(BuildContext context) {
     return Obx(() {
       final data = controller.liabilityTrend.value;
-      if (!controller.userLevel.status.value.canUseDebtLoan ||
+      if (!controller.userLevel.status.value.canUseLiability ||
           data == null ||
           (data.totalIncome == 0 && data.totalExpense == 0)) {
         return const SizedBox.shrink();
@@ -300,7 +300,7 @@ class _ReportView extends CcGetView<ReportController> {
             title: el.tr(CcLocaleKeys.report_liability_out),
             amount: data.totalExpense,
             points: data.points,
-            color: context.ccColorScheme.debtLoanSecondary,
+            color: context.ccColorScheme.liabilitySecondary,
             range: controller.range.value,
             isIncome: false,
           ),
@@ -313,7 +313,7 @@ class _ReportView extends CcGetView<ReportController> {
             title: el.tr(CcLocaleKeys.report_liability_in),
             amount: data.totalIncome,
             points: data.points,
-            color: context.ccColorScheme.debtLoan,
+            color: context.ccColorScheme.liability,
             range: controller.range.value,
             isIncome: true,
           ),

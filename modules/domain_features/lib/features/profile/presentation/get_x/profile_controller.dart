@@ -196,7 +196,7 @@ class ProfileController extends CcGetController {
           .where(
             (c) =>
                 c.type == CategoryType.investment ||
-                c.type == CategoryType.debtLoan,
+                c.type == CategoryType.liability,
           )
           .map((c) => c.nameKey)
           .toList();
@@ -272,7 +272,7 @@ class ProfileController extends CcGetController {
           await enableCategories([
             ...CategorySeed.defaultExpenseCategoryKeys[group]!,
             ...CategorySeed.defaultIncomeCategoryKeys[group]!,
-            ...CategorySeed.defaultDebtLoanCategoryKeys[group]!,
+            ...CategorySeed.defaultLiabilityCategoryKeys[group]!,
             ...CategorySeed.defaultInvestmentCategoryKeys[group]!,
             if (CategorySeed.qualifiesForFamilyDefaults(picked))
               ...CategorySeed.familyCategoryKeys,

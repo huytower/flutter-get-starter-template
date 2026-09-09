@@ -35,7 +35,7 @@ class CategorySettingsController extends CcGetController {
       <String, List<CategoryEntity>>{}.obs;
   final RxMap<String, List<CategoryEntity>> incomeByGroup =
       <String, List<CategoryEntity>>{}.obs;
-  final RxMap<String, List<CategoryEntity>> debtLoanByGroup =
+  final RxMap<String, List<CategoryEntity>> liabilityByGroup =
       <String, List<CategoryEntity>>{}.obs;
   final RxMap<String, List<CategoryEntity>> investmentByGroup =
       <String, List<CategoryEntity>>{}.obs;
@@ -60,7 +60,7 @@ class CategorySettingsController extends CcGetController {
     return [
       ...CategorySeed.defaultExpenseCategoryKeys[group] ?? [],
       ...CategorySeed.defaultIncomeCategoryKeys[group] ?? [],
-      ...CategorySeed.defaultDebtLoanCategoryKeys[group] ?? [],
+      ...CategorySeed.defaultLiabilityCategoryKeys[group] ?? [],
       ...CategorySeed.defaultInvestmentCategoryKeys[group] ?? [],
     ];
   }
@@ -95,7 +95,7 @@ class CategorySettingsController extends CcGetController {
     final allCategories = [
       ...byGroup.values.expand((e) => e),
       ...incomeByGroup.values.expand((e) => e),
-      ...debtLoanByGroup.values.expand((e) => e),
+      ...liabilityByGroup.values.expand((e) => e),
       ...investmentByGroup.values.expand((e) => e),
     ];
 
@@ -140,9 +140,9 @@ class CategorySettingsController extends CcGetController {
     // reload was still in flight, briefly showing an empty category list.
     await categoriesResult.when((categories) async {
       // FIX: Force migration for legacy Debt categories.
-      // If we see IDs starting with 'd' but they aren't 'debtLoan' type, they are stale.
+      // If we see IDs starting with 'd' but they aren't 'liability' type, they are stale.
       final needsMigration = categories.any(
-        (c) => c.id.startsWith('d') && c.type != CategoryType.debtLoan,
+        (c) => c.id.startsWith('d') && c.type != CategoryType.liability,
       );
 
       if (needsMigration) {
@@ -170,7 +170,7 @@ class CategorySettingsController extends CcGetController {
       for (final cat in categories) {
         if (cat.type == CategoryType.income) {
           ibg.putIfAbsent(cat.groupId, () => []).add(cat);
-        } else if (cat.type == CategoryType.debtLoan) {
+        } else if (cat.type == CategoryType.liability) {
           dlbg.putIfAbsent(cat.groupId, () => []).add(cat);
         } else if (cat.type == CategoryType.investment) {
           invbg.putIfAbsent(cat.groupId, () => []).add(cat);
@@ -211,7 +211,7 @@ class CategorySettingsController extends CcGetController {
 
       byGroup.assignAll(bg);
       incomeByGroup.assignAll(ibg);
-      debtLoanByGroup.assignAll(dlbg);
+      liabilityByGroup.assignAll(dlbg);
       investmentByGroup.assignAll(invbg);
 
       _categoriesLoaded = true;

@@ -18,25 +18,25 @@ class GetLiabilityOutstandingBalanceUseCase {
   final LiabilityRepository _LiabilityRepository;
   final TransactionRepository _transactionRepository;
 
-  Future<Result<int, CcFailure>> call(String loanId) async {
-    final loanResult = await _LiabilityRepository.getLoan(loanId);
-    if (loanResult.isError()) {
-      return Error(loanResult.tryGetError()!);
+  Future<Result<int, CcFailure>> call(String liabilityId) async {
+    final liabilityResult = await _LiabilityRepository.getLiability(
+      liabilityId,
+    );
+    if (liabilityResult.isError()) {
+      return Error(liabilityResult.tryGetError()!);
     }
 
-    final txnResult = await _transactionRepository.getTransactionsByLoan(
-      loanId,
+    final txnResult = await _transactionRepository.getTransactionsByLiability(
+      liabilityId,
     );
     if (txnResult.isError()) {
       return Error(txnResult.tryGetError()!);
     }
 
-    final balance = loanOutstandingBalance(
-      loanResult.tryGetSuccess()!.principalAmount,
+    final balance = liabilityOutstandingBalance(
+      liabilityResult.tryGetSuccess()!.principalAmount,
       txnResult.tryGetSuccess()!,
     );
     return Success(balance);
   }
 }
-
-

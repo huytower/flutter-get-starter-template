@@ -15,7 +15,7 @@ class LiabilityWalletsSection extends StatelessWidget {
   const LiabilityWalletsSection({
     required this.borrowBalances,
     required this.lendBalances,
-    required this.onAddLoan,
+    required this.onAddLiability,
     required this.onSeeAll,
     required this.isLendFront,
     this.showGuidelineBadge = false,
@@ -25,7 +25,7 @@ class LiabilityWalletsSection extends StatelessWidget {
 
   final List<LiabilityBalanceEntity> borrowBalances;
   final List<LiabilityBalanceEntity> lendBalances;
-  final VoidCallback onAddLoan;
+  final VoidCallback onAddLiability;
   final VoidCallback onSeeAll;
   final bool isLendFront;
   final bool showGuidelineBadge;
@@ -85,7 +85,7 @@ class LiabilityWalletsSection extends StatelessWidget {
         icon: Icons.warning_amber_outlined,
         actions: [
           CcBouncing(
-            onTap: onAddLoan,
+            onTap: onAddLiability,
             child: const CcIconToken(
               Icons.add_circle_outline_rounded,
               size: 20,

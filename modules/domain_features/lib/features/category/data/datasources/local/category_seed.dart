@@ -20,7 +20,7 @@ class CategorySeed {
   static const String incomeInvestGroupId = 'income_invest';
   static const String incomeOtherGroupId = 'income_other';
 
-  static const String debtLoanBorrowGroupId = 'debt_loan_borrow';
+  static const String liabilityBorrowGroupId = 'debt_loan_borrow';
   static const String debtLoanLendGroupId = 'debt_loan_lend';
 
   static const String investmentDefaultGroupId = 'investment_default';
@@ -32,9 +32,9 @@ class CategorySeed {
     ),
   ];
 
-  static const List<CategoryGroupEntity> debtLoanGroups = [
+  static const List<CategoryGroupEntity> liabilityGroups = [
     CategoryGroupEntity(
-      id: debtLoanBorrowGroupId,
+      id: liabilityBorrowGroupId,
       nameKey: CcLocaleKeys.category_debt_group_borrow,
     ),
     CategoryGroupEntity(
@@ -516,40 +516,40 @@ class CategorySeed {
       id: 'd1',
       nameKey: CcLocaleKeys.category_debt_personal_borrow,
       iconCode: Icons.person_outline.codePoint,
-      groupId: debtLoanBorrowGroupId,
-      type: CategoryType.debtLoan,
+      groupId: liabilityBorrowGroupId,
+      type: CategoryType.liability,
       colorValue: PrjColors.categoryInstallment.value,
     ),
     CategoryModel(
       id: 'd2',
       nameKey: CcLocaleKeys.category_debt_bank_borrow,
       iconCode: Icons.account_balance.codePoint,
-      groupId: debtLoanBorrowGroupId,
-      type: CategoryType.debtLoan,
+      groupId: liabilityBorrowGroupId,
+      type: CategoryType.liability,
       colorValue: PrjColors.categoryInstallment.value,
     ),
     CategoryModel(
       id: 'd3',
       nameKey: CcLocaleKeys.category_debt_mortgage,
       iconCode: Icons.home.codePoint,
-      groupId: debtLoanBorrowGroupId,
-      type: CategoryType.debtLoan,
+      groupId: liabilityBorrowGroupId,
+      type: CategoryType.liability,
       colorValue: PrjColors.categoryInstallment.value,
     ),
     CategoryModel(
       id: 'd4',
       nameKey: CcLocaleKeys.category_debt_credit_card,
       iconCode: Icons.credit_card.codePoint,
-      groupId: debtLoanBorrowGroupId,
-      type: CategoryType.debtLoan,
+      groupId: liabilityBorrowGroupId,
+      type: CategoryType.liability,
       colorValue: PrjColors.categoryInstallment.value,
     ),
     CategoryModel(
       id: 'd5',
       nameKey: CcLocaleKeys.category_debt_installment,
       iconCode: Icons.shopping_cart_checkout.codePoint,
-      groupId: debtLoanBorrowGroupId,
-      type: CategoryType.debtLoan,
+      groupId: liabilityBorrowGroupId,
+      type: CategoryType.liability,
       colorValue: PrjColors.categoryInstallment.value,
     ),
     CategoryModel(
@@ -562,8 +562,8 @@ class CategorySeed {
       id: 'd9',
       nameKey: CcLocaleKeys.category_debt_other,
       iconCode: Icons.more_horiz.codePoint,
-      groupId: debtLoanBorrowGroupId,
-      type: CategoryType.debtLoan,
+      groupId: liabilityBorrowGroupId,
+      type: CategoryType.liability,
       colorValue: PrjColors.mediumEmphasis.value,
     ),
 
@@ -573,7 +573,7 @@ class CategorySeed {
       nameKey: CcLocaleKeys.category_debt_personal_lend,
       iconCode: Icons.handshake.codePoint,
       groupId: debtLoanLendGroupId,
-      type: CategoryType.debtLoan,
+      type: CategoryType.liability,
       colorValue: PrjColors.secondary.value,
     ),
     CategoryModel(
@@ -581,7 +581,7 @@ class CategorySeed {
       nameKey: CcLocaleKeys.category_debt_other_lend,
       iconCode: Icons.more_horiz.codePoint,
       groupId: debtLoanLendGroupId,
-      type: CategoryType.debtLoan,
+      type: CategoryType.liability,
       colorValue: PrjColors.mediumEmphasis.value,
     ),
 
@@ -865,8 +865,8 @@ class CategorySeed {
     ],
   };
 
-  /// Default-on debt/loan category `nameKey`s per life stage.
-  static const Map<AgeGroup, List<String>> defaultDebtLoanCategoryKeys = {
+  /// Default-on liability category `nameKey`s per life stage.
+  static const Map<AgeGroup, List<String>> defaultLiabilityCategoryKeys = {
     AgeGroup.youngAdult: [
       CcLocaleKeys.category_debt_personal_borrow,
       CcLocaleKeys.category_debt_credit_card,

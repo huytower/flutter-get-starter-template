@@ -324,13 +324,13 @@ mixin QuickEntryMixin on TransactionFormController
           }
           break;
         case QuickEntryIntent.debt:
-          if (quickEntryCategoryType != CategoryType.debtLoan ||
+          if (quickEntryCategoryType != CategoryType.liability ||
               quickEntryDirection != LiabilityDirection.borrow) {
             isMismatch = true;
           }
           break;
         case QuickEntryIntent.lend:
-          if (quickEntryCategoryType != CategoryType.debtLoan ||
+          if (quickEntryCategoryType != CategoryType.liability ||
               quickEntryDirection != LiabilityDirection.lend) {
             isMismatch = true;
           }
@@ -487,13 +487,13 @@ mixin QuickEntryMixin on TransactionFormController
           }
           break;
         case QuickEntryIntent.debt:
-          if (quickEntryCategoryType != CategoryType.debtLoan ||
+          if (quickEntryCategoryType != CategoryType.liability ||
               quickEntryDirection != LiabilityDirection.borrow) {
             isMismatch = true;
           }
           break;
         case QuickEntryIntent.lend:
-          if (quickEntryCategoryType != CategoryType.debtLoan ||
+          if (quickEntryCategoryType != CategoryType.liability ||
               quickEntryDirection != LiabilityDirection.lend) {
             isMismatch = true;
           }

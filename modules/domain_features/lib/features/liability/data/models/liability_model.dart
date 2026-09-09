@@ -8,7 +8,7 @@ import 'liability_installment_model.dart';
 
 part 'liability_model.g.dart';
 
-@HiveType(typeId: CcHiveBox.LOAN_TYPE_ID)
+@HiveType(typeId: CcHiveBox.LIABILITY_TYPE_ID)
 class LiabilityModel {
   @HiveField(0)
   final String id;
@@ -199,7 +199,10 @@ class LiabilityModel {
       walletId: data['walletId'] as String,
       repaymentMethod: data['repaymentMethod'] as String,
       installments: (data['installments'] as List?)
-          ?.map((i) => LiabilityInstallmentModel.fromJson(i as Map<String, dynamic>))
+          ?.map(
+            (i) =>
+                LiabilityInstallmentModel.fromJson(i as Map<String, dynamic>),
+          )
           .toList(),
       finalDueDate: data['finalDueDate'] as String?,
       note: data['note'] as String?,
@@ -212,5 +215,3 @@ class LiabilityModel {
     );
   }
 }
-
-

@@ -23,21 +23,21 @@ class ScheduleLiabilityRemindersUseCase {
 
   static const _hour = 9;
 
-  Future<void> call(LiabilityEntity loan) async {
-    if (!loan.reminderBeforeDueDate) return;
+  Future<void> call(LiabilityEntity liability) async {
+    if (!liability.reminderBeforeDueDate) return;
 
     // Each entry is (the real due date shown in the notification text, how
     // long before it to fire the reminder).
     final List<(DateTime dueDate, Duration leadTime)> plan;
-    if (loan.isInstallment) {
-      plan = (loan.installments ?? const [])
+    if (liability.isInstallment) {
+      plan = (liability.installments ?? const [])
           .map((i) => (i.dueDate, const Duration(days: 1)))
           .toList();
-    } else if (loan.finalDueDate != null) {
+    } else if (liability.finalDueDate != null) {
       plan = [
-        (loan.finalDueDate!, const Duration(days: 30)),
-        (loan.finalDueDate!, const Duration(days: 7)),
-        (loan.finalDueDate!, const Duration(days: 1)),
+        (liability.finalDueDate!, const Duration(days: 30)),
+        (liability.finalDueDate!, const Duration(days: 7)),
+        (liability.finalDueDate!, const Duration(days: 1)),
       ];
     } else {
       plan = const [];
@@ -48,12 +48,11 @@ class ScheduleLiabilityRemindersUseCase {
       final fireDate = dueDate.subtract(leadTime);
 
       await _notificationService.scheduleAt(
-        id: ReminderIds.loanReminder(loan.id, i),
+        id: ReminderIds.liabilityReminder(liability.id, i),
         title: el.tr(CcLocaleKeys.notification_loan_due_title),
         body: el.tr(
           CcLocaleKeys.notification_loan_due_body,
           namedArgs: {
-            // 'name': loan.counterpartyName,
             'date': '${dueDate.day}/${dueDate.month}/${dueDate.year}',
           },
         ),
@@ -62,5 +61,3 @@ class ScheduleLiabilityRemindersUseCase {
     }
   }
 }
-
-
