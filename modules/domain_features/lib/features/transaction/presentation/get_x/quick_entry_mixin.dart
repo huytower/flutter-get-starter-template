@@ -362,6 +362,8 @@ mixin QuickEntryMixin on TransactionFormController
       } else {
         '[AI_PARSING] [LOCAL] ✅ Intent matches current tab ($quickEntryCategoryType)'
             .Log('QuickEntryMixin');
+        // Apply intent-based state (e.g. switching subsegments) even when tab matches.
+        applyQuickEntryIntent(intent, text);
       }
     } else {
       '[AI_PARSING] [LOCAL] ❓ No clear intent detected for switching'.Log(

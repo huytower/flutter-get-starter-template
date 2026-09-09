@@ -56,56 +56,58 @@ class _InvestmentDirectionToggleState extends State<InvestmentDirectionToggle>
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-      ),
-      height: context.respDim(40),
-      decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: context.brLg,
-        boxShadow: [
-          BoxShadow(
-            color: scheme.onSurface.withOpacity(0.12),
-            blurRadius: context.respDim(12),
-            offset: Offset(0, context.respDim(6)),
+    return Center(
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.6,
+        child: Container(
+          height: context.respDim(35),
+          decoration: BoxDecoration(
+            color: scheme.surface,
+            borderRadius: context.brLg,
+            boxShadow: [
+              BoxShadow(
+                color: scheme.onSurface.withOpacity(0.12),
+                blurRadius: context.respDim(12),
+                offset: Offset(0, context.respDim(6)),
+              ),
+            ],
           ),
-        ],
-      ),
-      padding: EdgeInsets.all(context.respDim(4)),
-      child: TabBar(
-        controller: _tabController,
-        onTap: (index) => widget.onChanged(
-          index == 0
-              ? InvestmentDirection.contribute
-              : InvestmentDirection.returnProfit,
-        ),
-        indicatorSize: TabBarIndicatorSize.tab,
-        dividerColor: Colors.transparent,
-        splashFactory: NoSplash.splashFactory,
-        overlayColor: WidgetStateProperty.all(Colors.transparent),
-        indicator: BoxDecoration(
-          color: widget.activeColor.withOpacity(0.08),
-          borderRadius: context.brLg,
-        ),
-        labelColor: widget.activeColor,
-        unselectedLabelColor: scheme.onSurfaceVariant,
-        labelStyle: context.ccTextTheme.labelMedium?.copyWith(
-          fontWeight: CcTypographyParams.bold,
-        ),
-        labelPadding: EdgeInsets.zero,
-        tabs: [
-          _buildTab(
-            context,
-            el.tr(CcLocaleKeys.transaction_investment_contribution),
-            0,
+          padding: EdgeInsets.all(context.respDim(4)),
+          child: TabBar(
+            controller: _tabController,
+            onTap: (index) => widget.onChanged(
+              index == 0
+                  ? InvestmentDirection.contribute
+                  : InvestmentDirection.returnProfit,
+            ),
+            indicatorSize: TabBarIndicatorSize.tab,
+            dividerColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
+            overlayColor: WidgetStateProperty.all(Colors.transparent),
+            indicator: BoxDecoration(
+              color: widget.activeColor.withOpacity(0.08),
+              borderRadius: context.brLg,
+            ),
+            labelColor: widget.activeColor,
+            unselectedLabelColor: scheme.onSurfaceVariant,
+            labelStyle: context.ccTextTheme.labelMedium?.copyWith(
+              fontWeight: CcTypographyParams.bold,
+            ),
+            labelPadding: EdgeInsets.zero,
+            tabs: [
+              _buildTab(
+                context,
+                el.tr(CcLocaleKeys.transaction_investment_contribution),
+                0,
+              ),
+              _buildTab(
+                context,
+                el.tr(CcLocaleKeys.transaction_investment_return),
+                1,
+              ),
+            ],
           ),
-          _buildTab(
-            context,
-            el.tr(CcLocaleKeys.transaction_investment_return),
-            1,
-          ),
-        ],
+        ),
       ),
     );
   }
