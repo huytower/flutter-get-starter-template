@@ -1159,3 +1159,4 @@ static const Map<String,dynamic> _vi = {
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": _en, "vi": _vi};
 }
+

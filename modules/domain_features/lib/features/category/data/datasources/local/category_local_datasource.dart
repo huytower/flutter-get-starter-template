@@ -55,7 +55,24 @@ class CategoryLocalDataSource {
 
   Future<List<CategoryModel>> getCategories() async {
     final box = await _box;
-    return box.values.toList();
+    final all = box.values.toList();
+
+    // Map of ID to index in CategorySeed.categories for stable sorting
+    final seedOrder = <String, int>{};
+    for (int i = 0; i < CategorySeed.categories.length; i++) {
+      seedOrder[CategorySeed.categories[i].id] = i;
+    }
+
+    // Sort:
+    // 1. Seed categories by their defined order in CategorySeed
+    // 2. User-added categories at the end
+    all.sort((a, b) {
+      final indexA = seedOrder[a.id] ?? 999;
+      final indexB = seedOrder[b.id] ?? 999;
+      return indexA.compareTo(indexB);
+    });
+
+    return all;
   }
 
   Future<CategoryModel?> getCategory(String id) async {

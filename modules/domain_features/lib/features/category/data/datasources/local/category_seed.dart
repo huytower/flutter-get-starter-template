@@ -71,26 +71,25 @@ class CategorySeed {
       id: '3',
       nameKey: CcLocaleKeys.category_group_utilities,
     ),
+    CategoryGroupEntity(id: '8', nameKey: CcLocaleKeys.category_group_shopping),
     CategoryGroupEntity(id: '4', nameKey: CcLocaleKeys.category_group_housing),
     CategoryGroupEntity(id: '5', nameKey: CcLocaleKeys.category_group_health),
     CategoryGroupEntity(
-      id: '6',
-      nameKey: CcLocaleKeys.category_group_education,
+      id: '12',
+      nameKey: CcLocaleKeys.category_group_personal_care,
     ),
     CategoryGroupEntity(
       id: '7',
       nameKey: CcLocaleKeys.category_group_entertainment,
     ),
-    CategoryGroupEntity(id: '8', nameKey: CcLocaleKeys.category_group_shopping),
-    // Group 9 (Trả nợ & Vay) removed - debt payments now properly classified as Debt/Loan type
+    CategoryGroupEntity(id: '11', nameKey: CcLocaleKeys.category_group_gifts),
+    CategoryGroupEntity(
+      id: '6',
+      nameKey: CcLocaleKeys.category_group_education,
+    ),
     CategoryGroupEntity(
       id: '10',
       nameKey: CcLocaleKeys.category_group_insurance,
-    ),
-    CategoryGroupEntity(id: '11', nameKey: CcLocaleKeys.category_group_gifts),
-    CategoryGroupEntity(
-      id: '12',
-      nameKey: CcLocaleKeys.category_group_personal_care,
     ),
     CategoryGroupEntity(
       id: '13',
@@ -100,7 +99,7 @@ class CategorySeed {
   ];
 
   static final List<CategoryModel> categories = [
-    // Group 1: Ăn uống & Cà phê (consolidated)
+    // Group 1: Ăn uống & Cà phê
     CategoryModel(
       id: 'c1',
       nameKey: CcLocaleKeys.category_food_drink,
@@ -109,7 +108,7 @@ class CategorySeed {
       colorValue: PrjColors.categoryFoodDrink.value,
     ),
 
-    // Group 2: Di chuyển (reordered by usage frequency)
+    // Group 2: Di chuyển
     CategoryModel(
       id: 'c6',
       nameKey: CcLocaleKeys.category_gas,
@@ -139,7 +138,7 @@ class CategorySeed {
       colorValue: PrjColors.categoryMaintenance.value,
     ),
 
-    // Group 3: Tiện ích (reordered by usage frequency)
+    // Group 3: Tiện ích
     CategoryModel(
       id: 'c11',
       nameKey: CcLocaleKeys.category_phone,
@@ -162,128 +161,7 @@ class CategorySeed {
       colorValue: PrjColors.categoryInternet.value,
     ),
 
-    // Group 4: Nhà ở (reordered by usage frequency)
-    CategoryModel(
-      id: 'c12',
-      nameKey: CcLocaleKeys.category_rent,
-      iconCode: Icons.house.codePoint,
-      groupId: '4',
-      colorValue: PrjColors.categoryRent.value,
-    ),
-    CategoryModel(
-      id: 'c16',
-      nameKey: CcLocaleKeys.category_condo_fee,
-      iconCode: Icons.apartment.codePoint,
-      groupId: '4',
-      colorValue: PrjColors.categoryCondoFee.value,
-    ),
-    CategoryModel(
-      id: 'c14',
-      nameKey: CcLocaleKeys.category_laundry,
-      iconCode: Icons.local_laundry_service.codePoint,
-      groupId: '4',
-      colorValue: PrjColors.categoryLaundry.value,
-    ),
-    CategoryModel(
-      id: 'c13',
-      nameKey: CcLocaleKeys.category_furniture,
-      iconCode: Icons.chair.codePoint,
-      groupId: '4',
-      colorValue: PrjColors.categoryFurniture.value,
-    ),
-    // Mortgage moved to Debt/Loan type - it's a debt obligation, not housing expense
-
-    // Group 5: Y tế & Sức khỏe (reordered by usage frequency)
-    CategoryModel(
-      id: 'c18',
-      nameKey: CcLocaleKeys.category_medicine,
-      iconCode: Icons.medication.codePoint,
-      groupId: '5',
-      colorValue: PrjColors.categoryMedicine.value,
-    ),
-    CategoryModel(
-      id: 'c17',
-      nameKey: CcLocaleKeys.category_doctor,
-      iconCode: Icons.local_hospital.codePoint,
-      groupId: '5',
-      colorValue: PrjColors.categoryDoctor.value,
-    ),
-    CategoryModel(
-      id: 'c20',
-      nameKey: CcLocaleKeys.category_gym,
-      iconCode: Icons.fitness_center.codePoint,
-      groupId: '5',
-      colorValue: PrjColors.categoryGym.value,
-    ),
-    CategoryModel(
-      id: 'c19',
-      nameKey: CcLocaleKeys.category_health_insurance,
-      iconCode: Icons.health_and_safety.codePoint,
-      groupId: '5',
-      colorValue: PrjColors.categoryHealthInsurance.value,
-    ),
-
-    // Group 6: Giáo dục (reordered by usage frequency)
-    CategoryModel(
-      id: 'c21',
-      nameKey: CcLocaleKeys.category_tuition,
-      iconCode: Icons.school.codePoint,
-      groupId: '6',
-      colorValue: PrjColors.categoryTuition.value,
-    ),
-    CategoryModel(
-      id: 'c23',
-      nameKey: CcLocaleKeys.category_courses,
-      iconCode: Icons.cast_for_education.codePoint,
-      groupId: '6',
-      colorValue: PrjColors.categoryCourses.value,
-    ),
-    CategoryModel(
-      id: 'c22',
-      nameKey: CcLocaleKeys.category_books,
-      iconCode: Icons.menu_book.codePoint,
-      groupId: '6',
-      colorValue: PrjColors.categoryBooks.value,
-    ),
-
-    // Group 7: Giải trí (reordered by usage frequency)
-    CategoryModel(
-      id: 'c26',
-      nameKey: CcLocaleKeys.category_gaming,
-      iconCode: Icons.sports_esports.codePoint,
-      groupId: '7',
-      colorValue: PrjColors.categoryGaming.value,
-    ),
-    CategoryModel(
-      id: 'c24',
-      nameKey: CcLocaleKeys.category_cinema,
-      iconCode: Icons.movie.codePoint,
-      groupId: '7',
-      colorValue: PrjColors.categoryCinema.value,
-    ),
-    CategoryModel(
-      id: 'c27',
-      nameKey: CcLocaleKeys.category_events,
-      iconCode: Icons.event.codePoint,
-      groupId: '7',
-      colorValue: PrjColors.categoryEvents.value,
-    ),
-    CategoryModel(
-      id: 'c25',
-      nameKey: CcLocaleKeys.category_travel,
-      iconCode: Icons.flight.codePoint,
-      groupId: '7',
-      colorValue: PrjColors.categoryTravel.value,
-    ),
-    CategoryModel(
-      id: 'c49',
-      nameKey: CcLocaleKeys.category_leisure,
-      iconCode: Icons.fort_rounded.codePoint,
-      groupId: '7',
-      colorValue: PrjColors.categoryTravel.value,
-    ),
-
-    // Group 8: Mua sắm (reordered by usage frequency)
+    // Group 8: Mua sắm (Moved up because of high frequency)
     CategoryModel(
       id: 'c47',
       nameKey: CcLocaleKeys.category_market_supermarket,
@@ -320,29 +198,124 @@ class CategorySeed {
       colorValue: PrjColors.categoryAppliances.value,
     ),
 
-    // Group 9: Trả nợ & Vay - MOVED to Debt/Loan type for proper financial classification
+    // Group 4: Nhà ở
+    CategoryModel(
+      id: 'c12',
+      nameKey: CcLocaleKeys.category_rent,
+      iconCode: Icons.house.codePoint,
+      groupId: '4',
+      colorValue: PrjColors.categoryRent.value,
+    ),
+    CategoryModel(
+      id: 'c16',
+      nameKey: CcLocaleKeys.category_condo_fee,
+      iconCode: Icons.apartment.codePoint,
+      groupId: '4',
+      colorValue: PrjColors.categoryCondoFee.value,
+    ),
+    CategoryModel(
+      id: 'c14',
+      nameKey: CcLocaleKeys.category_laundry,
+      iconCode: Icons.local_laundry_service.codePoint,
+      groupId: '4',
+      colorValue: PrjColors.categoryLaundry.value,
+    ),
+    CategoryModel(
+      id: 'c13',
+      nameKey: CcLocaleKeys.category_furniture,
+      iconCode: Icons.chair.codePoint,
+      groupId: '4',
+      colorValue: PrjColors.categoryFurniture.value,
+    ),
 
-    // Group 10: Bảo hiểm
+    // Group 5: Y tế & Sức khỏe
     CategoryModel(
-      id: 'c34',
-      nameKey: CcLocaleKeys.category_life_insurance,
-      iconCode: Icons.favorite.codePoint,
-      groupId: '10',
-      colorValue: PrjColors.categoryLifeInsurance.value,
+      id: 'c18',
+      nameKey: CcLocaleKeys.category_medicine,
+      iconCode: Icons.medication.codePoint,
+      groupId: '5',
+      colorValue: PrjColors.categoryMedicine.value,
     ),
     CategoryModel(
-      id: 'c35',
-      nameKey: CcLocaleKeys.category_vehicle_insurance,
-      iconCode: Icons.directions_car.codePoint,
-      groupId: '10',
-      colorValue: PrjColors.categoryVehicleInsurance.value,
+      id: 'c17',
+      nameKey: CcLocaleKeys.category_doctor,
+      iconCode: Icons.local_hospital.codePoint,
+      groupId: '5',
+      colorValue: PrjColors.categoryDoctor.value,
     ),
     CategoryModel(
-      id: 'c36',
-      nameKey: CcLocaleKeys.category_home_insurance,
-      iconCode: Icons.home.codePoint,
-      groupId: '10',
-      colorValue: PrjColors.categoryHomeInsurance.value,
+      id: 'c20',
+      nameKey: CcLocaleKeys.category_gym,
+      iconCode: Icons.fitness_center.codePoint,
+      groupId: '5',
+      colorValue: PrjColors.categoryGym.value,
+    ),
+    CategoryModel(
+      id: 'c19',
+      nameKey: CcLocaleKeys.category_health_insurance,
+      iconCode: Icons.health_and_safety.codePoint,
+      groupId: '5',
+      colorValue: PrjColors.categoryHealthInsurance.value,
+    ),
+
+    // Group 12: Chăm sóc cá nhân
+    CategoryModel(
+      id: 'c41',
+      nameKey: CcLocaleKeys.category_personal_care_product,
+      iconCode: Icons.soap.codePoint,
+      groupId: '12',
+      colorValue: PrjColors.categoryPersonalCareProduct.value,
+    ),
+    CategoryModel(
+      id: 'c39',
+      nameKey: CcLocaleKeys.category_haircut,
+      iconCode: Icons.content_cut.codePoint,
+      groupId: '12',
+      colorValue: PrjColors.categoryHaircut.value,
+    ),
+    CategoryModel(
+      id: 'c40',
+      nameKey: CcLocaleKeys.category_spa,
+      iconCode: Icons.spa.codePoint,
+      groupId: '12',
+      colorValue: PrjColors.categorySpa.value,
+    ),
+
+    // Group 7: Giải trí
+    CategoryModel(
+      id: 'c26',
+      nameKey: CcLocaleKeys.category_gaming,
+      iconCode: Icons.sports_esports.codePoint,
+      groupId: '7',
+      colorValue: PrjColors.categoryGaming.value,
+    ),
+    CategoryModel(
+      id: 'c24',
+      nameKey: CcLocaleKeys.category_cinema,
+      iconCode: Icons.movie.codePoint,
+      groupId: '7',
+      colorValue: PrjColors.categoryCinema.value,
+    ),
+    CategoryModel(
+      id: 'c27',
+      nameKey: CcLocaleKeys.category_events,
+      iconCode: Icons.event.codePoint,
+      groupId: '7',
+      colorValue: PrjColors.categoryEvents.value,
+    ),
+    CategoryModel(
+      id: 'c25',
+      nameKey: CcLocaleKeys.category_travel,
+      iconCode: Icons.flight.codePoint,
+      groupId: '7',
+      colorValue: PrjColors.categoryTravel.value,
+    ),
+    CategoryModel(
+      id: 'c49',
+      nameKey: CcLocaleKeys.category_leisure,
+      iconCode: Icons.fort_rounded.codePoint,
+      groupId: '7',
+      colorValue: PrjColors.categoryTravel.value,
     ),
 
     // Group 11: Quà tặng & Từ thiện
@@ -368,27 +341,50 @@ class CategorySeed {
       colorValue: PrjColors.categoryCharity.value,
     ),
 
-    // Group 12: Chăm sóc cá nhân (reordered by usage frequency)
+    // Group 6: Giáo dục
     CategoryModel(
-      id: 'c41',
-      nameKey: CcLocaleKeys.category_personal_care_product,
-      iconCode: Icons.soap.codePoint,
-      groupId: '12',
-      colorValue: PrjColors.categoryPersonalCareProduct.value,
+      id: 'c21',
+      nameKey: CcLocaleKeys.category_tuition,
+      iconCode: Icons.school.codePoint,
+      groupId: '6',
+      colorValue: PrjColors.categoryTuition.value,
     ),
     CategoryModel(
-      id: 'c39',
-      nameKey: CcLocaleKeys.category_haircut,
-      iconCode: Icons.content_cut.codePoint,
-      groupId: '12',
-      colorValue: PrjColors.categoryHaircut.value,
+      id: 'c23',
+      nameKey: CcLocaleKeys.category_courses,
+      iconCode: Icons.cast_for_education.codePoint,
+      groupId: '6',
+      colorValue: PrjColors.categoryCourses.value,
     ),
     CategoryModel(
-      id: 'c40',
-      nameKey: CcLocaleKeys.category_spa,
-      iconCode: Icons.spa.codePoint,
-      groupId: '12',
-      colorValue: PrjColors.categorySpa.value,
+      id: 'c22',
+      nameKey: CcLocaleKeys.category_books,
+      iconCode: Icons.menu_book.codePoint,
+      groupId: '6',
+      colorValue: PrjColors.categoryBooks.value,
+    ),
+
+    // Group 10: Bảo hiểm
+    CategoryModel(
+      id: 'c34',
+      nameKey: CcLocaleKeys.category_life_insurance,
+      iconCode: Icons.favorite.codePoint,
+      groupId: '10',
+      colorValue: PrjColors.categoryLifeInsurance.value,
+    ),
+    CategoryModel(
+      id: 'c35',
+      nameKey: CcLocaleKeys.category_vehicle_insurance,
+      iconCode: Icons.directions_car.codePoint,
+      groupId: '10',
+      colorValue: PrjColors.categoryVehicleInsurance.value,
+    ),
+    CategoryModel(
+      id: 'c36',
+      nameKey: CcLocaleKeys.category_home_insurance,
+      iconCode: Icons.home.codePoint,
+      groupId: '10',
+      colorValue: PrjColors.categoryHomeInsurance.value,
     ),
 
     // Group 13: Phí dịch vụ
@@ -407,7 +403,7 @@ class CategorySeed {
       colorValue: PrjColors.categoryCardFee.value,
     ),
 
-    // Group 14: Gia đình & Con cái — disabled by default
+    // Group 14: Gia đình & Con cái
     CategoryModel(
       id: 'c44',
       nameKey: CcLocaleKeys.category_milk_formula,

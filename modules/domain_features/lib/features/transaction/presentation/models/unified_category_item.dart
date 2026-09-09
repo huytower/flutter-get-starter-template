@@ -10,6 +10,10 @@ class UnifiedCategoryItem extends Equatable {
   final DateTime lastActivityAt;
   final bool isBudget;
 
+  /// The original order from the seed data, used as a secondary sort key
+  /// when [lastActivityAt] is identical (e.g., first launch).
+  final int initialOrder;
+
   const UnifiedCategoryItem({
     required this.id,
     this.budgetId,
@@ -19,6 +23,7 @@ class UnifiedCategoryItem extends Equatable {
     this.iconFamily,
     required this.lastActivityAt,
     this.isBudget = false,
+    this.initialOrder = 999,
   });
 
   @override
@@ -31,5 +36,6 @@ class UnifiedCategoryItem extends Equatable {
     iconFamily,
     lastActivityAt,
     isBudget,
+    initialOrder,
   ];
 }

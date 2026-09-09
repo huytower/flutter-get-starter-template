@@ -248,6 +248,12 @@ class ExpenseFormController extends TransactionFormController
     final items = <UnifiedCategoryItem>[];
     final budgetCategoryIds = <String>{};
 
+    // Pre-map category seed index for stable tie-breaking when lastActivityAt is same
+    final seedIndexMap = <String, int>{};
+    for (int i = 0; i < expenseCats.length; i++) {
+      seedIndexMap[expenseCats[i].id] = i;
+    }
+
     // Add Budgets
     for (final b in currentBudgets) {
       budgetCategoryIds.add(b.budget.categoryId);
@@ -263,6 +269,7 @@ class ExpenseFormController extends TransactionFormController
           iconFamily: b.iconFamily,
           lastActivityAt: lastActivity,
           isBudget: true,
+          initialOrder: seedIndexMap[b.budget.categoryId] ?? 999,
         ),
       );
     }
@@ -281,12 +288,19 @@ class ExpenseFormController extends TransactionFormController
           iconFamily: c.iconFamily,
           lastActivityAt: lastActivity,
           isBudget: false,
+          initialOrder: seedIndexMap[c.id] ?? 999,
         ),
       );
     }
 
-    // Sort by lastActivityAt descending
-    items.sort((a, b) => b.lastActivityAt.compareTo(a.lastActivityAt));
+    // Sort strategy:
+    // 1. Primary: Most recently used (lastActivityAt descending)
+    // 2. Secondary: Original seed order (initialOrder ascending) for stable first launch
+    items.sort((a, b) {
+      final activityCompare = b.lastActivityAt.compareTo(a.lastActivityAt);
+      if (activityCompare != 0) return activityCompare;
+      return a.initialOrder.compareTo(b.initialOrder);
+    });
 
     unifiedItems.assignAll(items);
   }

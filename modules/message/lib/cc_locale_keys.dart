@@ -327,7 +327,6 @@ class CodegenLoader extends AssetLoader {
       "merchant_match_hint": "Like last time: {label}",
       "bill_match_hint": "Monthly bill: {label}",
       "location_match_hint": "You're nearby: {label}",
-      "quick_entry_label": "Quick entry (AI)",
       "quick_entry_hint": "spend phone 50.000 by cash",
       "quick_entry_parsed_result": "Got it: {label}",
       "quick_entry_category_missing": "Category not found (need +): {label}",
@@ -607,7 +606,6 @@ class CodegenLoader extends AssetLoader {
       "milk_formula": "Milk Formula",
       "diapers": "Diapers",
       "baby_toys": "Baby Toys",
-      "settings_title": "Customise Categories",
       "settings_subtitle": "Select the categories that suit your lifestyle",
       "settings_save": "Save & Continue",
       "settings_saved": "Categories updated successfully",
@@ -1086,7 +1084,6 @@ class CodegenLoader extends AssetLoader {
       "merchant_match_hint": "Giống lần trước: {label}",
       "bill_match_hint": "Hóa đơn hàng tháng: {label}",
       "location_match_hint": "Bạn đang ở gần đây: {label}",
-      "quick_entry_label": "Nhập nhanh (AI)",
       "quick_entry_hint": "chi điện thoại 50.000 từ tiền mặt",
       "quick_entry_parsed_result": "Đã nhận diện: {label}",
       "quick_entry_category_missing": "Danh mục chưa có (hãy thêm +): {label}",
@@ -1362,7 +1359,6 @@ class CodegenLoader extends AssetLoader {
       "milk_formula": "Sữa",
       "diapers": "Bỉm",
       "baby_toys": "Đồ chơi trẻ em",
-      "settings_title": "Tuỳ chỉnh danh mục",
       "settings_subtitle": "Lướt để chọn mục phù hợp với bạn",
       "settings_save": "Lưu và tiếp tục",
       "settings_saved": "Tùy chỉnh danh mục thành công",
@@ -1530,11 +1526,7 @@ class CodegenLoader extends AssetLoader {
 }
 
 abstract class CcLocaleKeys {
-  static const app_name = 'app.name';
-  static const app_version = 'app.version';
-  static const app_description = 'app.description';
   static const app_slogan = 'app.slogan';
-  static const app_copyright = 'app.copyright';
   static const app_copied_email = 'app.copied_email';
   static const app_author = 'app.author';
   static const app_role_tech = 'app.role_tech';
@@ -1544,11 +1536,8 @@ abstract class CcLocaleKeys {
   static const app_author_tech_name = 'app.author_tech_name';
   static const app_author_tech_email = 'app.author_tech_email';
   static const app_address = 'app.address';
-  static const app_loading = 'app.loading';
   static const app_error_general = 'app.error.general';
-  static const app_error_retry = 'app.error.retry';
   static const app_error_network = 'app.error.network';
-  static const app_error_server = 'app.error.server';
   static const app_app_check_initialization_failed =
       'app.app_check.initialization_failed';
   static const app_app_check_token_refresh_failed =
@@ -1561,56 +1550,19 @@ abstract class CcLocaleKeys {
   static const common_save = 'common.save';
   static const common_delete = 'common.delete';
   static const common_edit = 'common.edit';
-  static const common_back = 'common.back';
-  static const common_continue = 'common.continue';
-  static const common_next = 'common.next';
-  static const common_skip = 'common.skip';
   static const common_done = 'common.done';
-  static const common_search = 'common.search';
-  static const common_no_results = 'common.no_results';
-  static const common_no_data = 'common.no_data';
-  static const common_or = 'common.or';
   static const common_not_set = 'common.not_set';
   static const common_income = 'common.income';
   static const common_expense = 'common.expense';
   static const common_press_back_again_to_exit =
       'common.press_back_again_to_exit';
-  static const common_add_source = 'common.add_source';
-  static const common_add = 'common.add';
   static const common_copy = 'common.copy';
   static const common_clear = 'common.clear';
-  static const common_unit_billion = 'common.unit_billion';
-  static const common_unit_million = 'common.unit_million';
-  static const common_unit_thousand = 'common.unit_thousand';
   static const common_weekday_names = 'common.common_weekday_names';
 
-  static const auth_login = 'auth.login';
   static const auth_logout = 'auth.logout';
   static const auth_email = 'auth.email';
-  static const auth_password = 'auth.password';
-  static const auth_forgot_password = 'auth.forgot_password';
-  static const auth_signup = 'auth.signup';
-  static const auth_no_account = 'auth.no_account';
-  static const auth_have_account = 'auth.have_account';
-  static const auth_login_success = 'auth.login_success';
-  static const auth_login_failed = 'auth.login_failed';
-  static const auth_login_google = 'auth.login_google';
-  static const auth_login_apple = 'auth.login_apple';
-  static const auth_login_phone = 'auth.login_phone';
-  static const auth_enter_phone_number = 'auth.enter_phone_number';
   static const auth_phone_number = 'auth.phone_number';
-  static const auth_phone_number_hint = 'auth.phone_number_hint';
-  static const auth_phone_hint = 'auth.phone_hint';
-  static const auth_verify = 'auth.verify';
-  static const auth_send_code = 'auth.send_code';
-  static const auth_enter_code = 'auth.enter_code';
-  static const auth_we_just_sent_sms = 'auth.we_just_sent_sms';
-  static const auth_enter_security_code = 'auth.enter_security_code';
-  static const auth_didnt_receive_code = 'auth.didnt_receive_code';
-  static const auth_resend = 'auth.resend';
-  static const auth_terms_and_privacy = 'auth.terms_and_privacy';
-  static const auth_biometric_reason = 'auth.biometric.reason';
-  static const auth_biometric_fallback = 'auth.biometric.fallback';
   static const auth_biometric_error_not_available =
       'auth.biometric.error.not_available';
   static const auth_biometric_error_not_enrolled =
@@ -1627,47 +1579,20 @@ abstract class CcLocaleKeys {
       'auth.biometric.error.app_canceled';
   static const auth_biometric_error_system_canceled =
       'auth.biometric.error.system_canceled';
-  static const auth_biometric_error_generic = 'auth.biometric.error.generic';
-  static const auth_otp_invalid = 'auth.otp.invalid';
-  static const auth_otp_expired = 'auth.otp.expired';
-  static const auth_otp_too_many_attempts = 'auth.otp.too_many_attempts';
 
-  static const validation_required = 'validation.required';
-  static const validation_email = 'validation.email';
-  static const validation_password_length = 'validation.password_length';
-  static const validation_password_match = 'validation.password_match';
-  static const validation_phone = 'validation.phone';
 
-  static const home_title = 'home.title';
-  static const home_welcome = 'home.welcome';
-  static const home_recent_activity = 'home.recent_activity';
-  static const home_my_wallets = 'home.my_wallets';
 
-  static const settings_title = 'settings.title';
   static const settings_language = 'settings.language';
   static const settings_language_vietnamese = 'settings.language_vietnamese';
   static const settings_language_english = 'settings.language_english';
   static const settings_theme = 'settings.theme';
   static const settings_theme_light = 'settings.theme_light';
   static const settings_theme_dark = 'settings.theme_dark';
-  static const settings_notifications = 'settings.notifications';
-  static const settings_privacy = 'settings.privacy';
-  static const settings_help = 'settings.help';
-  static const settings_about = 'settings.about';
 
-  static const nav_home = 'nav.home';
   static const nav_transaction = 'nav.transaction';
   static const nav_budget_allocation = 'nav.budget_allocation';
-  static const nav_dashboard = 'nav.dashboard';
-  static const nav_quick_test = 'nav.quick_test';
-  static const nav_quick_test_page = 'nav.quick_test_page';
-  static const nav_notification = 'nav.notification';
   static const nav_profile = 'nav.profile';
-  static const nav_profile_info = 'nav.profile_info';
 
-  static const dashboard_item_count = 'dashboard.item_count';
-  static const dashboard_last_updated = 'dashboard.last_updated';
-  static const dashboard_refresh_data = 'dashboard.refresh_data';
   static const dashboard_time_just_now = 'dashboard.time.just_now';
   static const dashboard_time_day = 'dashboard.time.day';
   static const dashboard_time_days = 'dashboard.time.days';
@@ -1676,8 +1601,6 @@ abstract class CcLocaleKeys {
   static const dashboard_time_minute = 'dashboard.time.minute';
   static const dashboard_time_minutes = 'dashboard.time.minutes';
 
-  static const wallet_my_account = 'wallet.my_account';
-  static const wallet_spending_account = 'wallet.spending_account';
   static const wallet_total_assets = 'wallet.total_assets';
   static const wallet_your_wallets = 'wallet.your_wallets';
   static const wallet_see_all = 'wallet.see_all';
@@ -1703,7 +1626,6 @@ abstract class CcLocaleKeys {
   static const wallet_cash = 'wallet.cash';
   static const wallet_ewallet = 'wallet.ewallet';
   static const wallet_emergency_fund = 'wallet.emergency_fund';
-  static const wallet_emergency_fund_desc = 'wallet.emergency_fund_desc';
   static const wallet_emergency_fund_locked_hint =
       'wallet.emergency_fund_locked_hint';
   static const wallet_emergency_fund_view_ebook =
@@ -1720,23 +1642,15 @@ abstract class CcLocaleKeys {
   static const wallet_investments_desc = 'wallet.investments_desc';
   static const wallet_liabilities = 'wallet.liabilities';
   static const wallet_liabilities_desc = 'wallet.liabilities_desc';
-  static const wallet_investment_roi = 'wallet.investment_roi';
   static const wallet_investment_breakeven = 'wallet.investment_breakeven';
 
   static const transaction_title = 'transaction.title';
   static const transaction_wallet = 'transaction.wallet';
-  static const transaction_emergency = 'transaction.emergency';
   static const transaction_investment = 'transaction.investment';
-  static const transaction_debt = 'transaction.debt';
   static const transaction_category = 'transaction.category';
   static const transaction_amount = 'transaction.amount';
   static const transaction_source_expense = 'transaction.source_expense';
-  static const transaction_reason_expense = 'transaction.reason_expense';
-  static const transaction_enter_content = 'transaction.enter_content';
-  static const transaction_payer = 'transaction.payer';
-  static const transaction_staff_name = 'transaction.staff_name';
   static const transaction_time = 'transaction.time';
-  static const transaction_history = 'transaction.history';
   static const transaction_record_expense = 'transaction.record_expense';
   static const transaction_expense_saved = 'transaction.expense_saved';
   static const transaction_income_saved = 'transaction.income_saved';
@@ -1747,8 +1661,6 @@ abstract class CcLocaleKeys {
   static const transaction_delete_confirm_desc =
       'transaction.delete_confirm_desc';
   static const transaction_source_income = 'transaction.source_income';
-  static const transaction_reason_income = 'transaction.reason_income';
-  static const transaction_recipient = 'transaction.recipient';
   static const transaction_record_income = 'transaction.record_income';
   static const transaction_source_investment = 'transaction.source_investment';
   static const transaction_destination_investment =
@@ -1757,7 +1669,6 @@ abstract class CcLocaleKeys {
   static const transaction_investment_saved = 'transaction.investment_saved';
   static const transaction_source_debt = 'transaction.source_debt';
   static const transaction_record_debt = 'transaction.record_debt';
-  static const transaction_debt_saved = 'transaction.debt_saved';
   static const transaction_liability_direction_borrow =
       'transaction.liability_direction_borrow';
   static const transaction_liability_direction_lend =
@@ -1786,7 +1697,6 @@ abstract class CcLocaleKeys {
       'transaction.liability_category_lend_label';
   static const liability_borrow_type_personal =
       'liability.borrow_type_personal';
-  static const liability_lend_type_personal = 'liability.lend_type_personal';
   static const transaction_liability_borrower_label =
       'transaction.liability_borrower_label';
   static const transaction_liability_borrower_hint =
@@ -1822,7 +1732,6 @@ abstract class CcLocaleKeys {
   static const transaction_investment_contribution =
       'transaction.investment_contribution';
   static const transaction_investment_return = 'transaction.investment_return';
-  static const transaction_dest_investment = 'transaction.dest_investment';
   static const transaction_record_investment_return =
       'transaction.record_investment_return';
   static const transaction_investment_item = 'transaction.investment_item';
@@ -1836,7 +1745,6 @@ abstract class CcLocaleKeys {
       'transaction.investment_item_vip_locked';
   static const transaction_expense_slip = 'transaction.expense_slip';
   static const transaction_income_slip = 'transaction.income_slip';
-  static const transaction_category_sub = 'transaction.category_sub';
   static const transaction_today = 'transaction.today';
   static const transaction_yesterday = 'transaction.yesterday';
   static const transaction_note = 'transaction.note';
@@ -1849,7 +1757,6 @@ abstract class CcLocaleKeys {
       'transaction.location_match_hint';
   static const transaction_auto_save_countdown =
       'transaction.auto_save_countdown';
-  static const quick_entry_label = 'transaction.quick_entry_label';
   static const quick_entry_hint = 'transaction.quick_entry_hint';
   static const quick_entry_parsed_result =
       'transaction.quick_entry_parsed_result';
@@ -1930,38 +1837,25 @@ abstract class CcLocaleKeys {
   static const notification_budget_near_limit_body =
       'notification.budget_near_limit_body';
   static const notification_budget_over_body = 'notification.budget_over_body';
-  static const tutorial_nav_title = 'tutorial.nav_title';
-  static const tutorial_nav_desc = 'tutorial.nav_desc';
-  static const tutorial_transaction_title = 'tutorial.transaction_title';
-  static const tutorial_transaction_desc = 'tutorial.transaction_desc';
 
   static const budget_title = 'budget.title';
   static const budget_description = 'budget.description';
   static const budget_empty = 'budget.empty';
-  static const budget_edit_limit = 'budget.edit_limit';
   static const budget_edit_title = 'budget.edit_title';
   static const budget_limit_locked = 'budget.limit_locked';
   static const budget_delete_title = 'budget.delete_title';
   static const budget_delete_confirm = 'budget.delete_confirm';
-  static const budget_reset_period = 'budget.reset_period';
-  static const budget_reset_title = 'budget.reset_title';
   static const budget_add_title = 'budget.add_title';
   static const budget_name = 'budget.name';
   static const budget_name_hint = 'budget.name_hint';
   static const budget_name_duplicate_error = 'budget.name_duplicate_error';
   static const budget_category = 'budget.category';
   static const budget_limit = 'budget.limit';
-  static const budget_limit_hint = 'budget.limit_hint';
-  static const budget_start_date = 'budget.start_date';
-  static const budget_end_date = 'budget.end_date';
   static const budget_added = 'budget.added';
   static const budget_updated = 'budget.updated';
-  static const budget_period_started = 'budget.period_started';
   static const budget_over_limit = 'budget.over_limit';
   static const budget_near_limit = 'budget.near_limit';
   static const budget_over_limit_count = 'budget.over_limit_count';
-  static const budget_over_by = 'budget.over_by';
-  static const budget_remaining = 'budget.remaining';
   static const budget_this_month = 'budget.this_month';
   static const budget_month_indicator = 'budget.month_indicator';
   static const budget_see_all = 'budget.see_all';
@@ -1976,11 +1870,9 @@ abstract class CcLocaleKeys {
   static const budget_deficit_warning = 'budget.deficit_warning';
   static const budget_anomaly_hint = 'budget.anomaly_hint';
   static const budget_insights_title = 'budget.insights_title';
-  static const budget_insights_action_review = 'budget.insights_action_review';
   static const budget_estimate_hint = 'budget.estimate_hint';
 
   static const reconciliation_title = 'reconciliation.title';
-  static const reconciliation_empty = 'reconciliation.empty';
   static const reconciliation_instruction = 'reconciliation.instruction';
   static const reconciliation_book_total = 'reconciliation.book_total';
   static const reconciliation_actual_total = 'reconciliation.actual_total';
@@ -2015,17 +1907,9 @@ abstract class CcLocaleKeys {
       'reconciliation.review_transactions';
 
   static const report_title = 'report.title';
-  static const report_spending_proportion = 'report.spending_proportion';
-  static const report_monthly_chart = 'report.monthly_chart';
-  static const report_this_week = 'report.this_week';
-  static const report_four_weeks_near = 'report.four_weeks_near';
-  static const report_this_month = 'report.this_month';
-  static const report_no_expense = 'report.no_expense';
   static const report_weekly = 'report.weekly';
   static const report_yearly = 'report.yearly';
   static const report_three_months = 'report.three_months';
-  static const report_income_expense = 'report.income_expense';
-  static const report_safety_index = 'report.safety_index';
   static const report_runway_desc_2 = 'report.runway_desc_2';
   static const report_runway_message = 'report.runway_message';
   static const report_runway_fixed_price_desc =
@@ -2038,17 +1922,12 @@ abstract class CcLocaleKeys {
   static const report_runway_caution = 'report.runway_caution';
   static const report_runway_insufficient = 'report.runway_insufficient';
   static const report_runway_not_available = 'report.runway_not_available';
-  static const report_investment_title = 'report.investment_title';
   static const report_investment_contributed = 'report.investment_contributed';
   static const report_investment_returned = 'report.investment_returned';
-  static const report_liability_title = 'report.liability_title';
   static const report_liability_in = 'report.liability_in';
   static const report_liability_out = 'report.liability_out';
   static const report_daily_detail = 'report.daily_detail';
-  static const report_income_short = 'report.income_short';
-  static const report_expense_short = 'report.expense_short';
   static const report_uncategorized = 'report.uncategorized';
-  static const report_filtering_wallet = 'report.filtering_wallet';
   static const report_filter_by_wallet = 'report.filter_by_wallet';
   static const report_filter_all_wallets = 'report.filter_all_wallets';
   static const report_trend_week_label = 'report.trend_week_label';
@@ -2071,8 +1950,6 @@ abstract class CcLocaleKeys {
 
   static const category_settings_title = 'category.settings_title';
   static const category_settings_subtitle = 'category.settings_subtitle';
-  static const category_settings_save = 'category.settings_save';
-  static const category_settings_saved = 'category.settings_saved';
   static const category_expense_settings_title =
       'category.expense_settings_title';
   static const category_income_settings_title =
@@ -2091,13 +1968,8 @@ abstract class CcLocaleKeys {
   static const category_group_service_fees = 'category.group_service_fees';
   static const category_group_family = 'category.group_family';
   static const category_food = 'category.food';
-  static const category_transport = 'category.transport';
-  static const category_shopping = 'category.shopping';
   static const category_health = 'category.health';
   static const category_food_drink = 'category.food_drink';
-  static const category_coffee = 'category.coffee';
-  static const category_water = 'category.water';
-  static const category_eat_out = 'category.eat_out';
   static const category_taxi = 'category.taxi';
   static const category_gas = 'category.gas';
   static const category_parking = 'category.parking';
@@ -2108,7 +1980,6 @@ abstract class CcLocaleKeys {
   static const category_rent = 'category.rent';
   static const category_furniture = 'category.furniture';
   static const category_laundry = 'category.laundry';
-  static const category_mortgage = 'category.mortgage';
   static const category_condo_fee = 'category.condo_fee';
   static const category_doctor = 'category.doctor';
   static const category_medicine = 'category.medicine';
@@ -2125,7 +1996,6 @@ abstract class CcLocaleKeys {
   static const category_electronics = 'category.electronics';
   static const category_clothing = 'category.clothing';
   static const category_cosmetics = 'category.cosmetics';
-  static const category_installment = 'category.installment';
   static const category_life_insurance = 'category.life_insurance';
   static const category_vehicle_insurance = 'category.vehicle_insurance';
   static const category_home_insurance = 'category.home_insurance';
@@ -2196,19 +2066,10 @@ abstract class CcLocaleKeys {
   static const sync_synced_tooltip = 'sync.synced_tooltip';
 
   static const profile_guest = 'profile.guest';
-  static const profile_not_logged_in = 'profile.not_logged_in';
-  static const profile_register_login = 'profile.register_login';
   static const profile_display_name_title = 'profile.display_name_title';
   static const profile_display_name_hint = 'profile.display_name_hint';
   static const profile_display_name_save = 'profile.display_name_save';
   static const profile_display_name_updated = 'profile.display_name_updated';
-  static const profile_link_account_title = 'profile.link_account_title';
-  static const profile_link_account_subtitle = 'profile.link_account_subtitle';
-  static const profile_link_account_google = 'profile.link_account_google';
-  static const profile_link_account_phone = 'profile.link_account_phone';
-  static const profile_link_account_linked = 'profile.link_account_linked';
-  static const profile_link_account_action = 'profile.link_account_action';
-  static const profile_link_account_success = 'profile.link_account_success';
   static const profile_link_account_phone_hint =
       'profile.link_account_phone_hint';
   static const profile_link_account_send_code =
@@ -2218,13 +2079,9 @@ abstract class CcLocaleKeys {
   static const profile_birth_year = 'profile.birth_year';
   static const profile_birth_year_subtitle = 'profile.birth_year_subtitle';
   static const profile_birth_year_hint = 'profile.birth_year_hint';
-  static const profile_birth_year_task_desc = 'profile.birth_year_task_desc';
   static const profile_weekly_audit = 'profile.weekly_audit';
   static const profile_weekly_audit_day_hint = 'profile.weekly_audit_day_hint';
   static const profile_days_left = 'profile.days_left';
-  static const profile_debt_loan = 'profile.debt_loan';
-  static const profile_unlock_at_lv = 'profile.unlock_at_lv';
-  static const profile_unlocked = 'profile.unlocked';
   static const profile_vip = 'profile.vip';
   static const profile_vip_subtitle = 'profile.vip_subtitle';
   static const profile_force_full_access = 'profile.force_full_access';
@@ -2245,8 +2102,6 @@ abstract class CcLocaleKeys {
       'profile.view_tutorial_subtitle';
   static const profile_terms = 'profile.terms';
   static const profile_terms_subtitle = 'profile.terms_subtitle';
-  static const profile_about = 'profile.about';
-  static const profile_about_subtitle = 'profile.about_subtitle';
   static const profile_delete_account = 'profile.delete_account';
   static const profile_delete_confirm = 'profile.delete_confirm';
   static const profile_delete_confirm_desc = 'profile.delete_confirm_desc';
@@ -2299,8 +2154,6 @@ abstract class CcLocaleKeys {
   static const guideline_reset_confirm_cancel =
       'guideline.reset_confirm_cancel';
 
-  static const level_lock_unlock_at_lv = 'level_lock.unlock_at_lv';
-  static const level_lock_remaining_percent = 'level_lock.remaining_percent';
   static const level_lock_investment_title = 'level_lock.investment_title';
   static const level_lock_investment_desc = 'level_lock.investment_desc';
   static const level_lock_liability_title = 'level_lock.liability_title';
@@ -2317,3 +2170,4 @@ abstract class CcLocaleKeys {
       'level_lock.task_positive_cash_flow';
   static const level_lock_progress_archived = 'level_lock.progress_archived';
 }
+
