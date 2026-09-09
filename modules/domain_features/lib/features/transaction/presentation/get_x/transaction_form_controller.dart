@@ -170,7 +170,13 @@ abstract class TransactionFormController extends CcGetController {
   }
 
   void setWalletId(String id) {
-    selectedWalletId.value = id;
+    // Only allow selecting wallets that are present in the controller's
+    // enabled list (which is typically filtered to liquid wallets only).
+    // This prevents AI from incorrectly picking an investment position
+    // or loan record as the source/destination wallet.
+    if (wallets.any((w) => w.id == id)) {
+      selectedWalletId.value = id;
+    }
   }
 
   void toggleMoreDetails() {

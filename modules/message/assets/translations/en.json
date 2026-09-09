@@ -485,6 +485,7 @@
         "ai_advice_generated_days_ago": "Generated {count} days ago"
     },
     "category": {
+        "settings_title": "Category Settings",
         "group_daily": "Daily",
         "group_personal": "Personal",
         "group_food_drink": "Dining & Coffee",
@@ -549,9 +550,6 @@
         "milk_formula": "Milk Formula",
         "diapers": "Diapers",
         "baby_toys": "Baby Toys",
-        "settings_subtitle": "Select the categories that suit your lifestyle",
-        "settings_save": "Save & Continue",
-        "settings_saved": "Categories updated successfully",
         "income_settings_title": "Income Categories",
         "income_group_active": "Active Income",
         "income_group_invest": "Investment Income",
