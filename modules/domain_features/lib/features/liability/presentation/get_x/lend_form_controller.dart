@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/quick_entry_intent_helper.dart';
+import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
@@ -371,7 +371,7 @@ class LendFormController extends LiabilityBaseFormController {
     if (intent != QuickEntryIntent.lend) return;
 
     setAction(
-      QuickEntryIntentHelper.isLendCollection(text)
+      QuickEntryIntentUtil.isLendCollection(text)
           ? LiabilityFormAction.decrease
           : LiabilityFormAction.increase,
     );

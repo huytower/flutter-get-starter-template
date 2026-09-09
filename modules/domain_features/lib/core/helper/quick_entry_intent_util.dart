@@ -3,8 +3,8 @@ import 'quick_entry_parser_helper.dart';
 
 /// Centralized helper for detecting intent sub-segments and directions
 /// (e.g. Return vs Contribute, Repay vs Borrow) across all transaction forms.
-class QuickEntryIntentHelper {
-  QuickEntryIntentHelper._();
+class QuickEntryIntentUtil {
+  QuickEntryIntentUtil._();
 
   /// Explicit intent keywords used for high-level tab switching (High priority).
   static const Map<QuickEntryIntent, List<String>> intentRoots = {

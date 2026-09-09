@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/helper/category_name_helper.dart';
+import '../../../../core/helper/category_name_util.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 import 'budget_limit_pie_chart.dart';
@@ -151,7 +151,7 @@ class BudgetLimitGridCard extends StatelessWidget {
   }
 
   String _getDisplayName(BuildContext context) {
-    return CategoryNameHelper.getLocalizedName(
+    return CategoryNameUtil.getLocalizedName(
       stats.budget.name,
       stats.categoryNameKey,
     );

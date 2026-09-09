@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/helper/category_name_helper.dart';
+import '../../../../core/helper/category_name_util.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
@@ -97,7 +97,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
         const CcSpaceXS(),
         Expanded(
           child: CcText(
-            CategoryNameHelper.getLocalizedName(
+            CategoryNameUtil.getLocalizedName(
               liability.categoryLabel,
               liability.categoryNameKey,
             ),
