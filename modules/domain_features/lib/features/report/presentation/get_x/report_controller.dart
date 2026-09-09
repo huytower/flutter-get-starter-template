@@ -132,6 +132,16 @@ class ReportController extends CcGetController {
       return b.sortKey.compareTo(a.sortKey);
     });
 
+    // Debug log for sorting order
+    '[REPORT] Combined and sorted ${combined.length} transactions:'.Log(
+      'ReportController',
+    );
+    for (int i = 0; i < combined.length; i++) {
+      final tx = combined[i];
+      '#$i: date=${tx.date} | sortKey=${tx.sortKey} | type=${tx.type} | category=${tx.category} | note=${tx.note}'
+          .Log('ReportController');
+    }
+
     return combined;
   }
 
