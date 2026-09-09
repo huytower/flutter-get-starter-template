@@ -61,13 +61,12 @@ class LiabilityWalletsSection extends StatelessWidget {
         !showGuidelineBadge
             ? const SizedBox.shrink()
             : Positioned(
-                top: 0,
                 // Align with Add button
-                right: 55,
+                right: 70,
                 child: PrjGuidelineBadge(
-                  size: 10,
+                  size: 6,
                   label: guideline.bannerDescription,
-                  labelAbove: true,
+                  labelAbove: false,
                   growRight: false,
                 ),
               ),
