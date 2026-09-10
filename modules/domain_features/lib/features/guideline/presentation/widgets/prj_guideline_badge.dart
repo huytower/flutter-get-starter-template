@@ -12,7 +12,7 @@ import '../../guideline_controller.dart';
 class PrjGuidelineBadge extends StatelessWidget {
   const PrjGuidelineBadge({
     super.key,
-    this.size = 12,
+    this.size = 6,
     this.showing = true,
     this.label,
     this.onTap,

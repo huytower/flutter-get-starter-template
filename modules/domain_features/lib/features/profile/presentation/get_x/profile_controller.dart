@@ -91,9 +91,10 @@ class ProfileController extends CcGetController {
       appVersion.value = await _deviceInfo.getAppVersion();
       unawaited(userLevel.refresh());
 
-      '[THEME] Settings loaded: isDarkMode=${s.isDarkMode}'.Log(
-        'ProfileController',
-      );
+      final systemBrightness =
+          WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      '[THEME] Settings loaded | isDarkMode=${s.isDarkMode} | systemBrightness=$systemBrightness'
+          .Log('ProfileController');
 
       layoutStatus.value = CcLayoutStatus.success;
     } catch (e) {
@@ -219,6 +220,9 @@ class ProfileController extends CcGetController {
   }
 
   Future<void> setThemeMode(bool isDarkMode) async {
+    '[THEME] Switching theme mode | isDarkMode=$isDarkMode'.Log(
+      'ProfileController',
+    );
     final updated = settings.value.copyWith(isDarkMode: isDarkMode);
     settings.value = updated;
     if (getIt.isRegistered<ThemeProvider>()) {

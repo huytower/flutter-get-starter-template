@@ -29,11 +29,19 @@ class ProfilePage extends CcGetView<ProfileController> {
       }
     });
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = context.ccColorScheme;
+    '[THEME] Rendering ProfilePage | isDark=$isDark'.Log('ProfilePage');
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light.copyWith(
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ),
+      value: (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+          .copyWith(
+            statusBarColor: Colors.transparent,
+            systemNavigationBarColor: scheme.background,
+            systemNavigationBarIconBrightness: isDark
+                ? Brightness.light
+                : Brightness.dark,
+          ),
       child: Scaffold(
         backgroundColor: context.ccColorScheme.background,
         body: Stack(
@@ -133,10 +141,10 @@ class ProfilePage extends CcGetView<ProfileController> {
           onTap: () => controller.pickBirthYear(context),
           badge: guideline.isTaskActive('birth_year')
               ? PrjGuidelineBadge(
-                  size: context.respDim(8),
+                  size: context.respDim(6),
                   label: guideline.bannerDescription,
                   growRight: false,
-                  labelAbove: true,
+                  labelAbove: false,
                 )
               : null,
         ),
@@ -190,10 +198,11 @@ class ProfilePage extends CcGetView<ProfileController> {
           ),
         ),
       ),
-      Obx(
-        () => ProfileSettingsTile(
+      Obx(() {
+        final isDarkMode = controller.settings.value.isDarkMode ?? false;
+        return ProfileSettingsTile(
           icon: Icons.palette_rounded,
-          label: controller.settings.value.isDarkMode ?? false
+          label: isDarkMode
               ? el.tr(CcLocaleKeys.settings_theme_dark)
               : el.tr(CcLocaleKeys.settings_theme_light),
           subtitle: el.tr(CcLocaleKeys.profile_theme_subtitle),
@@ -203,15 +212,15 @@ class ProfilePage extends CcGetView<ProfileController> {
             child: FittedBox(
               fit: BoxFit.contain,
               child: Switch(
-                value: controller.settings.value.isDarkMode ?? false,
+                value: isDarkMode,
                 onChanged: controller.setThemeMode,
                 activeColor: context.ccColorScheme.primary,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
       ProfileSettingsTile(
         icon: Icons.language_rounded,
         label: el.tr(CcLocaleKeys.settings_language),

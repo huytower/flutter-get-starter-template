@@ -4,6 +4,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/export_domain_features.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
@@ -159,20 +160,33 @@ class _NavigationBarState extends State<NavigationBar>
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: canPop,
-      onPopInvokedWithResult: (didPop, result) =>
-          onPopInvokedWithResult(context, didPop, result),
-      child: Scaffold(
-        // Remove SafeArea here to allow individual pages to manage their own
-        // safe area (e.g. for immersive gradient headers that span into the
-        // status bar). Pages using CcViewConfigMixin (default) still get a
-        // SafeArea wrapper by default unless they override useSafeArea.
-        body: onBodyWrapper(context, _buildBody(context)),
-        appBar: enableAppBar ? buildAppBar(context) : null,
-        bottomNavigationBar: enableBottomNavigationBar
-            ? buildBottomNavigationBar(context)
-            : null,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = context.ccColorScheme;
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+          .copyWith(
+            statusBarColor: Colors.transparent,
+            systemNavigationBarColor: scheme.background,
+            systemNavigationBarIconBrightness: isDark
+                ? Brightness.light
+                : Brightness.dark,
+          ),
+      child: PopScope(
+        canPop: canPop,
+        onPopInvokedWithResult: (didPop, result) =>
+            onPopInvokedWithResult(context, didPop, result),
+        child: Scaffold(
+          // Remove SafeArea here to allow individual pages to manage their own
+          // safe area (e.g. for immersive gradient headers that span into the
+          // status bar). Pages using CcViewConfigMixin (default) still get a
+          // SafeArea wrapper by default unless they override useSafeArea.
+          body: onBodyWrapper(context, _buildBody(context)),
+          appBar: enableAppBar ? buildAppBar(context) : null,
+          bottomNavigationBar: enableBottomNavigationBar
+              ? buildBottomNavigationBar(context)
+              : null,
+        ),
       ),
     );
   }

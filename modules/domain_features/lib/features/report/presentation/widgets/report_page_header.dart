@@ -25,11 +25,18 @@ class ReportPageHeader extends StatelessWidget {
     // base height — the header keeps a correct responsive ratio across screen
     // sizes via flex-based sections instead of a width-scaled respDim() magic
     // number. The Column children resolve against this bounded height.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = context.ccColorScheme;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light.copyWith(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: Colors.transparent,
-      ),
+      value: (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+          .copyWith(
+            statusBarColor: Colors.transparent,
+            systemNavigationBarColor: scheme.background,
+            systemNavigationBarIconBrightness: isDark
+                ? Brightness.light
+                : Brightness.dark,
+          ),
       child: Container(
         width: double.infinity,
         height: double.infinity,
