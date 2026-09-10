@@ -81,15 +81,23 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
 
   @override
   Future<Result<CcUserEntity, CcFailure>> signInWithGoogle() async {
-    'signInWithGoogle triggered'.Log('FirebaseAuthRepository');
+    '[GOOGLE_SIGN_IN] 0. signInWithGoogle triggered'.Log(
+      'FirebaseAuthRepository',
+    );
     final credResult = await _getGoogleCredential();
 
-    return credResult.when((credential) async {
-      'Signing in to Firebase with Google credentials'.Log(
-        'FirebaseAuthRepository',
-      );
-      return _signInWithCredential(credential);
-    }, (failure) => Error(failure));
+    return credResult.when(
+      (credential) async {
+        '[GOOGLE_SIGN_IN] 5. Signing in to Firebase with Google credentials'
+            .Log('FirebaseAuthRepository');
+        return _signInWithCredential(credential);
+      },
+      (failure) {
+        '[GOOGLE_SIGN_IN] ❌ Failed to get Google credential: ${failure.message}'
+            .Log('FirebaseAuthRepository');
+        return Error(failure);
+      },
+    );
   }
 
   @override
@@ -110,10 +118,18 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   Future<Result<firebase_auth.AuthCredential, CcFailure>>
   _getAppleCredential() async {
     try {
-      'Starting Apple Sign In flow'.Log('FirebaseAuthRepository');
+      '[APPLE_SIGN_IN] 1. Starting Apple Sign In flow'.Log(
+        'FirebaseAuthRepository',
+      );
       final rawNonce = _generateNonce();
       final nonce = _sha256ofString(rawNonce);
+      '[APPLE_SIGN_IN] 2. Nonce generated and hashed'.Log(
+        'FirebaseAuthRepository',
+      );
 
+      '[APPLE_SIGN_IN] 3. Calling SignInWithApple.getAppleIDCredential'.Log(
+        'FirebaseAuthRepository',
+      );
       final appleCredential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
@@ -122,22 +138,41 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         nonce: nonce,
       );
 
-      'Apple ID credential received'.Log('FirebaseAuthRepository');
-
-      return Success(
-        firebase_auth.OAuthProvider('apple.com').credential(
-          idToken: appleCredential.identityToken,
-          rawNonce: rawNonce,
-        ),
+      '[APPLE_SIGN_IN] 4. Apple ID credential received'.Log(
+        'FirebaseAuthRepository',
       );
+      '[APPLE_SIGN_IN] 5. Details: email=${appleCredential.email}, familyName=${appleCredential.familyName}, givenName=${appleCredential.givenName}'
+          .Log('FirebaseAuthRepository');
+      '[APPLE_SIGN_IN] 6. identityToken length: ${appleCredential.identityToken?.length}'
+          .Log('FirebaseAuthRepository');
+      '[APPLE_SIGN_IN] 7. authorizationCode length: ${appleCredential.authorizationCode.length}'
+          .Log('FirebaseAuthRepository');
+
+      if (appleCredential.identityToken == null) {
+        '[APPLE_SIGN_IN] ❌ Identity token is null!'.Log(
+          'FirebaseAuthRepository',
+        );
+        return const Error(UnknownFailure('Apple identity token missing'));
+      }
+
+      final credential = firebase_auth.OAuthProvider(
+        'apple.com',
+      ).credential(idToken: appleCredential.identityToken, rawNonce: rawNonce);
+      '[APPLE_SIGN_IN] 8. Firebase AuthCredential created'.Log(
+        'FirebaseAuthRepository',
+      );
+
+      return Success(credential);
     } on SignInWithAppleAuthorizationException catch (e) {
-      'Apple Sign In Exception: ${e.code}'.Log('FirebaseAuthRepository');
+      '[APPLE_SIGN_IN] ❌ Apple Sign In Exception: code=${e.code}, message=${e.message}'
+          .Log('FirebaseAuthRepository');
       if (e.code == AuthorizationErrorCode.canceled) {
         return const Error(UnauthorizedFailure('Authentication cancelled'));
       }
       return Error(ServerFailure(e.toString()));
-    } catch (e) {
-      'Apple Auth Error: $e'.Log('FirebaseAuthRepository');
+    } catch (e, stack) {
+      '[APPLE_SIGN_IN] ❌ Apple Auth Error: $e'.Log('FirebaseAuthRepository');
+      '[APPLE_SIGN_IN] StackTrace: $stack'.Log('FirebaseAuthRepository');
       return const Error(
         UnknownFailure('An error occurred during Apple authentication'),
       );
@@ -150,6 +185,9 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
 
     void onStatus(PhoneAuthStatus status) {
       if (!controller.isClosed) {
+        '[PHONE_AUTH] 📞 Status update: ${status.runtimeType}'.Log(
+          'FirebaseAuthRepository',
+        );
         controller.add(status);
         if (status is PhoneAuthStatusCompleted ||
             status is PhoneAuthStatusFailed) {
@@ -158,21 +196,40 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       }
     }
 
+    '[PHONE_AUTH] 1. Starting verifyPhoneNumber for: $phoneNumber'.Log(
+      'FirebaseAuthRepository',
+    );
     _firebaseAuth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       verificationCompleted: (credential) async {
+        '[PHONE_AUTH] ✅ verificationCompleted (Auto-retrieval)'.Log(
+          'FirebaseAuthRepository',
+        );
         final result = await _signInWithCredential(credential);
         result.when(
           (u) => onStatus(PhoneAuthStatusCompleted(u)),
           (f) => onStatus(PhoneAuthStatusFailed(f)),
         );
       },
-      verificationFailed: (e) => onStatus(
-        PhoneAuthStatusFailed(ServerFailure(e.message ?? _serverError)),
-      ),
-      codeSent: (id, token) => onStatus(PhoneAuthStatusCodeSent(id, token)),
-      codeAutoRetrievalTimeout: (id) =>
-          onStatus(PhoneAuthStatusAutoRetrievalTimeout(id)),
+      verificationFailed: (e) {
+        '[PHONE_AUTH] ❌ verificationFailed: code=${e.code}, message=${e.message}'
+            .Log('FirebaseAuthRepository');
+        onStatus(
+          PhoneAuthStatusFailed(ServerFailure(e.message ?? _serverError)),
+        );
+      },
+      codeSent: (id, token) {
+        '[PHONE_AUTH] 📩 codeSent: verificationId=$id'.Log(
+          'FirebaseAuthRepository',
+        );
+        onStatus(PhoneAuthStatusCodeSent(id, token));
+      },
+      codeAutoRetrievalTimeout: (id) {
+        '[PHONE_AUTH] ⏰ codeAutoRetrievalTimeout: verificationId=$id'.Log(
+          'FirebaseAuthRepository',
+        );
+        onStatus(PhoneAuthStatusAutoRetrievalTimeout(id));
+      },
     );
 
     return controller.stream;
@@ -183,6 +240,8 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
     required String verificationId,
     required String smsCode,
   }) async {
+    '[PHONE_AUTH] 2. signInWithPhoneNumber triggered | verificationId=$verificationId'
+        .Log('FirebaseAuthRepository');
     return _signInWithCredential(
       firebase_auth.PhoneAuthProvider.credential(
         verificationId: verificationId,
@@ -240,17 +299,29 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
     firebase_auth.AuthCredential credential,
   ) async {
     try {
+      '[APPLE_SIGN_IN] 9. _signInWithCredential started'.Log(
+        'FirebaseAuthRepository',
+      );
       final userCredential = await _firebaseAuth.signInWithCredential(
         credential,
       );
       final user = userCredential.user;
+      '[APPLE_SIGN_IN] 10. _signInWithCredential success | userId=${user?.uid}'
+          .Log('FirebaseAuthRepository');
+
       return switch (user) {
         firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
         _ => const Error(UnauthorizedFailure('Login failed')),
       };
     } on firebase_auth.FirebaseAuthException catch (e) {
+      '[APPLE_SIGN_IN] ❌ _signInWithCredential Firebase Error: code=${e.code}, message=${e.message}'
+          .Log('FirebaseAuthRepository');
       return Error(ServerFailure(e.message ?? 'Server error'));
-    } catch (e) {
+    } catch (e, stack) {
+      '[APPLE_SIGN_IN] ❌ _signInWithCredential Unexpected Error: $e'.Log(
+        'FirebaseAuthRepository',
+      );
+      '[APPLE_SIGN_IN] StackTrace: $stack'.Log('FirebaseAuthRepository');
       return const Error(UnknownFailure('An error occurred'));
     }
   }
@@ -286,31 +357,46 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   Future<Result<firebase_auth.AuthCredential, CcFailure>>
   _getGoogleCredential() async {
     try {
-      'Initializing Google Sign In'.Log('FirebaseAuthRepository');
+      '[GOOGLE_SIGN_IN] 1. Initializing Google Sign In'.Log(
+        'FirebaseAuthRepository',
+      );
       await _googleSignIn.initialize();
 
-      'Authenticating Google User'.Log('FirebaseAuthRepository');
+      '[GOOGLE_SIGN_IN] 2. Authenticating Google User'.Log(
+        'FirebaseAuthRepository',
+      );
       final googleUser = await _googleSignIn.authenticate();
 
+      if (googleUser == null) {
+        '[GOOGLE_SIGN_IN] ❌ User cancelled or failed to authenticate'.Log(
+          'FirebaseAuthRepository',
+        );
+        return const Error(UnauthorizedFailure('Authentication cancelled'));
+      }
+
+      '[GOOGLE_SIGN_IN] 3. Fetching authentication details'.Log(
+        'FirebaseAuthRepository',
+      );
       final googleAuth = await googleUser.authentication;
-      'Google authentication received, idToken present: ${googleAuth.idToken != null}'
+      '[GOOGLE_SIGN_IN] 4. Details received | idToken present: ${googleAuth.idToken != null}'
           .Log('FirebaseAuthRepository');
 
       return Success(
         firebase_auth.GoogleAuthProvider.credential(
-          accessToken:
-              null, // Access token is separate in 7.x authorizationClient
           idToken: googleAuth.idToken,
         ),
       );
     } on GoogleSignInException catch (e) {
-      'Google Sign In Exception: ${e.code}'.Log('FirebaseAuthRepository');
+      '[GOOGLE_SIGN_IN] ❌ GoogleSignInException: code=${e.code}'.Log(
+        'FirebaseAuthRepository',
+      );
       if (e.code == GoogleSignInExceptionCode.canceled) {
         return const Error(UnauthorizedFailure('Authentication cancelled'));
       }
       return Error(ServerFailure(e.toString()));
-    } catch (e) {
-      'Google Auth Error: $e'.Log('FirebaseAuthRepository');
+    } catch (e, stack) {
+      '[GOOGLE_SIGN_IN] ❌ Unexpected Error: $e'.Log('FirebaseAuthRepository');
+      '[GOOGLE_SIGN_IN] StackTrace: $stack'.Log('FirebaseAuthRepository');
       return const Error(
         UnknownFailure('An error occurred during Google authentication'),
       );
@@ -398,15 +484,26 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
     firebase_auth.AuthCredential credential,
   ) async {
     try {
+      '[APPLE_SIGN_IN] 11. _linkWithCredential started'.Log(
+        'FirebaseAuthRepository',
+      );
       final current = _firebaseAuth.currentUser;
       if (current == null) {
+        '[APPLE_SIGN_IN] ❌ _linkWithCredential: No current user!'.Log(
+          'FirebaseAuthRepository',
+        );
         return const Error(UnauthorizedFailure('Login failed'));
       }
       final userCredential = await current.linkWithCredential(credential);
       final user = userCredential.user ?? current;
+      '[APPLE_SIGN_IN] 12. _linkWithCredential success | userId=${user.uid}'
+          .Log('FirebaseAuthRepository');
+
       return Success(_mapFirebaseUserToEntity(user));
     } on firebase_auth.FirebaseAuthException catch (e) {
       if (e.code == 'credential-already-in-use') {
+        '[APPLE_SIGN_IN] ⚠️ _linkWithCredential: Credential already in use, switching user...'
+            .Log('FirebaseAuthRepository');
         // The credential is already linked to another Firebase user.
         // Sign in with the credential to switch to that user.
         try {
@@ -415,19 +512,26 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
           );
           final newUser = newCredential.user;
           if (newUser != null) {
+            '[APPLE_SIGN_IN] 13. Switched to existing user: ${newUser.uid}'.Log(
+              'FirebaseAuthRepository',
+            );
             return Success(_mapFirebaseUserToEntity(newUser));
           }
           return const Error(UnauthorizedFailure('Login failed'));
         } catch (signInError) {
-          'Sign in after link conflict failed: $signInError'.Log(
-            'FirebaseAuthRepository',
-          );
+          '[APPLE_SIGN_IN] ❌ Sign in after link conflict failed: $signInError'
+              .Log('FirebaseAuthRepository');
           return const Error(UnknownFailure('An error occurred'));
         }
       }
+      '[APPLE_SIGN_IN] ❌ _linkWithCredential Firebase Error: code=${e.code}, message=${e.message}'
+          .Log('FirebaseAuthRepository');
       return Error(_mapLinkException(e));
-    } catch (e) {
-      'Link with credential error: $e'.Log('FirebaseAuthRepository');
+    } catch (e, stack) {
+      '[APPLE_SIGN_IN] ❌ _linkWithCredential Unexpected Error: $e'.Log(
+        'FirebaseAuthRepository',
+      );
+      '[APPLE_SIGN_IN] StackTrace: $stack'.Log('FirebaseAuthRepository');
       return const Error(UnknownFailure('An error occurred'));
     }
   }
@@ -448,6 +552,8 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   }
 
   CcUserEntity _mapFirebaseUserToEntity(firebase_auth.User user) {
+    '[APPLE_SIGN_IN] 14. Mapping Firebase User to Entity: uid=${user.uid}, email=${user.email}, displayName=${user.displayName}'
+        .Log('FirebaseAuthRepository');
     // Determine status based on Firebase properties
     CcUserStatus status = CcUserStatus.active;
     if (user.email != null && !user.emailVerified) {
