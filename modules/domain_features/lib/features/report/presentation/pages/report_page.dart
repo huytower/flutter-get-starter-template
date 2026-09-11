@@ -374,35 +374,37 @@ class _ReportView extends CcGetView<ReportController> {
   }
 
   Widget _buildDailyDetailHeader(BuildContext context) {
-    return Row(
-      children: [
-        KeyedSubtree(
-          key: controller.dailyDetailKey,
-          child: CcText(
-            el.tr(CcLocaleKeys.report_daily_detail),
-            textStyle: context.ccTextTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
+    return Obx(() {
+      final hasData = controller.dailyListTransactions.isNotEmpty;
+      return Row(
+        children: [
+          KeyedSubtree(
+            key: controller.dailyDetailKey,
+            child: CcText(
+              el.tr(CcLocaleKeys.report_daily_detail),
+              textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
-        const Spacer(),
-        Obx(
-          () => CcIconButton.bouncing(
-            icon: Icon(
-              controller.isEditMode.value
-                  ? Icons.close_rounded
-                  : Icons.edit_rounded,
-              size: context.respIconSize(baseSize: 20),
-              color: context.ccColorScheme.primary,
+          const Spacer(),
+          if (hasData)
+            CcIconButton.bouncing(
+              icon: Icon(
+                controller.isEditMode.value
+                    ? Icons.close_rounded
+                    : Icons.edit_rounded,
+                size: context.respIconSize(baseSize: 20),
+                color: context.ccColorScheme.primary,
+              ),
+              tooltip: controller.isEditMode.value
+                  ? el.tr(CcLocaleKeys.common_done)
+                  : el.tr(CcLocaleKeys.common_edit),
+              onTap: controller.toggleEditMode,
             ),
-            tooltip: controller.isEditMode.value
-                ? el.tr(CcLocaleKeys.common_done)
-                : el.tr(CcLocaleKeys.common_edit),
-            onTap: controller.toggleEditMode,
-          ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   @override

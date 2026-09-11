@@ -1,3 +1,5 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../../transaction/domain/entities/transaction_entity.dart';
@@ -18,7 +20,11 @@ class ReportDailyList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final filtered = transactions.where((tx) => tx.amount != 0).toList();
-    if (filtered.isEmpty) return const SizedBox.shrink();
+    if (filtered.isEmpty) {
+      return CcSectionEmptyState(
+        message: el.tr(CcLocaleKeys.report_no_expense),
+      );
+    }
 
     final groups = <DateTime, List<TransactionEntity>>{};
     for (final tx in filtered) {

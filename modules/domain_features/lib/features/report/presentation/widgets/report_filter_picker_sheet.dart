@@ -138,46 +138,59 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
                       context,
                       el.tr(CcLocaleKeys.report_filter_by_type),
                     ),
-                    _buildTypeRow(
-                      context,
-                      ReportFilterType.all,
-                      Icons.apps_rounded,
-                      el.tr(CcLocaleKeys.report_filter_all_types),
-                    ),
-                    _buildTypeRow(
-                      context,
-                      ReportFilterType.expense,
-                      Icons.south_west,
-                      el.tr(CcLocaleKeys.common_expense),
-                      color: scheme.error,
-                    ),
-                    _buildTypeRow(
-                      context,
-                      ReportFilterType.income,
-                      Icons.north_east,
-                      el.tr(CcLocaleKeys.common_income),
-                      color: PrjColors.success,
-                    ),
-                    _buildTypeRow(
-                      context,
-                      ReportFilterType.investment,
-                      Icons.eco_outlined,
-                      el.tr(CcLocaleKeys.transaction_investment),
-                      color: scheme.investment,
-                    ),
-                    _buildTypeRow(
-                      context,
-                      ReportFilterType.liability,
-                      Icons.file_download_outlined,
-                      el.tr(CcLocaleKeys.liability_title),
-                      color: scheme.liability,
-                    ),
-                    _buildTypeRow(
-                      context,
-                      ReportFilterType.lend,
-                      Icons.file_upload_outlined,
-                      el.tr(CcLocaleKeys.liability_lend),
-                      color: scheme.liabilitySecondary,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.respPadding(
+                          CcPaddingParams.PAGE_MD,
+                        ),
+                      ),
+                      child: Wrap(
+                        spacing: context.respDim(8),
+                        runSpacing: context.respDim(8),
+                        children: [
+                          _buildTypeRow(
+                            context,
+                            ReportFilterType.all,
+                            icon: Icons.apps_rounded,
+                            label: el.tr(CcLocaleKeys.report_filter_all_types),
+                          ),
+                          _buildTypeRow(
+                            context,
+                            ReportFilterType.expense,
+                            icon: Icons.south_west,
+                            label: el.tr(CcLocaleKeys.common_expense),
+                            color: scheme.error,
+                          ),
+                          _buildTypeRow(
+                            context,
+                            ReportFilterType.income,
+                            icon: Icons.north_east,
+                            label: el.tr(CcLocaleKeys.common_income),
+                            color: PrjColors.success,
+                          ),
+                          _buildTypeRow(
+                            context,
+                            ReportFilterType.investment,
+                            icon: Icons.eco_outlined,
+                            label: el.tr(CcLocaleKeys.transaction_investment),
+                            color: scheme.investment,
+                          ),
+                          _buildTypeRow(
+                            context,
+                            ReportFilterType.liability,
+                            iconAsset: 'assets/icon/ic_borrow.webp',
+                            label: el.tr(CcLocaleKeys.liability_title),
+                            color: scheme.liability,
+                          ),
+                          _buildTypeRow(
+                            context,
+                            ReportFilterType.lend,
+                            iconAsset: 'assets/icon/ic_lend.webp',
+                            label: el.tr(CcLocaleKeys.liability_lend),
+                            color: scheme.liabilitySecondary,
+                          ),
+                        ],
+                      ),
                     ),
 
                     const CcSpaceLG(),
@@ -185,19 +198,33 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
                       context,
                       el.tr(CcLocaleKeys.report_filter_by_wallet),
                     ),
-                    _buildWalletRow(
-                      context,
-                      null,
-                      Icons.account_balance_wallet_outlined,
-                      el.tr(CcLocaleKeys.report_filter_all_wallets),
-                    ),
-                    for (final wallet in _orderedWallets)
-                      _buildWalletRow(
-                        context,
-                        wallet.id,
-                        iconDataFromCode(wallet.iconCode),
-                        wallet.name,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.respPadding(
+                          CcPaddingParams.PAGE_MD,
+                        ),
                       ),
+                      child: Wrap(
+                        spacing: context.respDim(8),
+                        runSpacing: context.respDim(8),
+                        children: [
+                          _buildWalletRow(
+                            context,
+                            null,
+                            Icons.account_balance_wallet_outlined,
+                            el.tr(CcLocaleKeys.report_filter_all_wallets),
+                          ),
+                          for (final wallet in _orderedWallets)
+                            _buildWalletRow(
+                              context,
+                              wallet.id,
+                              iconDataFromCode(wallet.iconCode),
+                              wallet.name,
+                            ),
+                        ],
+                      ),
+                    ),
+                    const CcSpaceLG(),
                   ],
                 ),
               ),
@@ -226,51 +253,61 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
 
   Widget _buildTypeRow(
     BuildContext context,
-    ReportFilterType type,
-    IconData icon,
-    String label, {
+    ReportFilterType type, {
+    IconData? icon,
+    String? iconAsset,
+    required String label,
     Color? color,
   }) {
     final isSelected = _currentType == type;
     final scheme = context.ccColorScheme;
+    final accentColor = color ?? scheme.primary;
 
     return CcBouncing(
       onTap: () => setState(() => _currentType = type),
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+          horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
           vertical: context.respPadding(CcPaddingParams.SPACE_SM),
         ),
-        color: isSelected
-            ? scheme.primary.withOpacity(0.05)
-            : Colors.transparent,
+        decoration: BoxDecoration(
+          color: accentColor.withValues(alpha: isSelected ? 0.12 : 0.04),
+          borderRadius: context.brMd,
+          border: Border.all(
+            color: isSelected
+                ? accentColor.withValues(alpha: 0.2)
+                : Colors.transparent,
+            width: 1,
+          ),
+        ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            CcIconToken(
-              icon,
-              color: isSelected
-                  ? scheme.primary
-                  : (color ?? scheme.onSurfaceVariant),
-              size: context.respIconSize(baseSize: 20),
-            ),
-            const CcSpaceMD(),
-            Expanded(
-              child: CcText(
-                label,
-                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  color: isSelected ? scheme.primary : scheme.onSurface,
-                  fontWeight: isSelected
-                      ? CcTypographyParams.bold
-                      : CcTypographyParams.regular,
-                ),
+            if (iconAsset != null)
+              Image.asset(
+                iconAsset,
+                width: context.respIconSize(baseSize: 16),
+                height: context.respIconSize(baseSize: 16),
+                color: accentColor,
+              )
+            else
+              CcIconToken(
+                icon ?? Icons.help_outline,
+                color: accentColor,
+                size: 16,
+              ),
+            const CcSpaceSM(),
+            CcText(
+              label,
+              textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                color: isSelected ? accentColor : scheme.onSurface,
+                fontWeight: isSelected
+                    ? CcTypographyParams.bold
+                    : CcTypographyParams.medium,
+                fontSize: context.respFontSize(10.5),
               ),
             ),
-            if (isSelected)
-              Icon(
-                Icons.check_rounded,
-                size: context.respIconSize(baseSize: 18),
-                color: scheme.primary,
-              ),
           ],
         ),
       ),
@@ -285,42 +322,41 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
   ) {
     final isSelected = _currentWalletId == walletId;
     final scheme = context.ccColorScheme;
+    final accentColor = scheme.primary;
 
     return CcBouncing(
       onTap: () => setState(() => _currentWalletId = walletId),
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+          horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
           vertical: context.respPadding(CcPaddingParams.SPACE_SM),
         ),
-        color: isSelected
-            ? scheme.primary.withOpacity(0.05)
-            : Colors.transparent,
+        decoration: BoxDecoration(
+          color: accentColor.withValues(alpha: isSelected ? 0.12 : 0.04),
+          borderRadius: context.brMd,
+          border: Border.all(
+            color: isSelected
+                ? accentColor.withValues(alpha: 0.2)
+                : Colors.transparent,
+            width: 1,
+          ),
+        ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            CcIconToken(
-              icon,
-              color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
-              size: context.respIconSize(baseSize: 20),
-            ),
-            const CcSpaceMD(),
-            Expanded(
-              child: CcText(
-                label,
-                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  color: isSelected ? scheme.primary : scheme.onSurface,
-                  fontWeight: isSelected
-                      ? CcTypographyParams.bold
-                      : CcTypographyParams.regular,
-                ),
+            CcIconToken(icon, color: accentColor, size: 16),
+            const CcSpaceSM(),
+            CcText(
+              label,
+              textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                color: isSelected ? accentColor : scheme.onSurface,
+                fontWeight: isSelected
+                    ? CcTypographyParams.bold
+                    : CcTypographyParams.medium,
+                fontSize: context.respFontSize(10.5),
               ),
             ),
-            if (isSelected)
-              Icon(
-                Icons.check_rounded,
-                size: context.respIconSize(baseSize: 18),
-                color: scheme.primary,
-              ),
           ],
         ),
       ),

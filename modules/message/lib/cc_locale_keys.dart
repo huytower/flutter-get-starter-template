@@ -493,7 +493,8 @@ class CodegenLoader extends AssetLoader {
       "this_week": "This Week",
       "four_weeks_near": "Last 4 weeks",
       "this_month": "This Month",
-      "no_expense": "No expenses in this period.",
+      "no_expense":
+          "No expenses in this period. \nRecord any Expense/Income, then update if need",
       "weekly": "Weekly",
       "monthly": "Monthly",
       "yearly": "Yearly",
@@ -527,6 +528,8 @@ class CodegenLoader extends AssetLoader {
       "filtering_wallet": "Filtering: {wallet}",
       "filter_by_wallet": "Filter by wallet",
       "filter_all_wallets": "All wallets",
+      "filter_by_type": "Filter by type",
+      "filter_all_types": "All types",
       "trend_week_label": "Week {number}",
       "ai_advice_title": "AI Financial Advice",
       "ai_advice_empty_body":
@@ -1248,7 +1251,9 @@ class CodegenLoader extends AssetLoader {
       "this_week": "Tuần này",
       "four_weeks_near": "4 tuần gần nhất",
       "this_month": "Tháng này",
-      "no_expense": "Chưa có khoản chi nào trong kỳ này.",
+      "no_expense":
+          "Chưa có khoản chi nào trong kỳ này.\n Hãy ghi lại bất kỳ"
+          " 1 khoản chi tiêu/thu nhập, và sau đó cập nhật nếu cần",
       "weekly": "Tuần",
       "monthly": "Tháng",
       "yearly": "Năm",
@@ -1282,6 +1287,8 @@ class CodegenLoader extends AssetLoader {
       "filtering_wallet": "Đang lọc: {wallet}",
       "filter_by_wallet": "Lọc theo ví",
       "filter_all_wallets": "Tất cả các ví",
+      "filter_by_type": "Lọc theo loại",
+      "filter_all_types": "Tất cả các loại",
       "ai_advice_title": "Gợi ý tài chính từ AI",
       "ai_advice_empty_body":
           "Nhận đánh giá chi tiêu tháng này và gợi ý cải thiện tài chính, được cá nhân hóa cho bạn.",
@@ -1928,6 +1935,7 @@ abstract class CcLocaleKeys {
   static const report_liability_in = 'report.liability_in';
   static const report_liability_out = 'report.liability_out';
   static const report_daily_detail = 'report.daily_detail';
+  static const report_no_expense = 'report.no_expense';
   static const report_uncategorized = 'report.uncategorized';
   static const report_filter_by_wallet = 'report.filter_by_wallet';
   static const report_filter_all_wallets = 'report.filter_all_wallets';
