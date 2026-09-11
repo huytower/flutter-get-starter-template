@@ -565,7 +565,7 @@ class CodegenLoader extends AssetLoader {
       "transport": "Transport",
       "shopping": "Shopping",
       "health": "Health",
-      "food_drink": "Food & Drink",
+      "food_drink": "Dining & Coffee",
       "coffee": "Coffee",
       "water": "Water",
       "eat_out": "Eat Out",

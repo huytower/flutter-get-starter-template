@@ -22,32 +22,40 @@ class CategorySelectionLayout extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CcSymmetricPadding(
-          horizontal: CcPaddingParams.PAGE_SM,
-          child: CcText(
-            el.tr(CcLocaleKeys.transaction_category),
-            textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+        _buildHeaderLabel(context),
         const CcSpaceXS(),
-        HorizontalFadeScrollView(
-          height: context.respDim(80),
-          scrollController: scrollController,
-          builder: (listScrollController) => ListView.separated(
-            scrollDirection: Axis.horizontal,
-            controller: listScrollController,
-            padding: EdgeInsets.symmetric(
-              horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-            ),
-            itemCount: items.length,
-            separatorBuilder: (context, index) => const CcSpaceSM(),
-            itemBuilder: itemBuilder,
-          ),
-        ),
+        _buildHorizontalList(context),
       ],
+    );
+  }
+
+  Widget _buildHeaderLabel(BuildContext context) {
+    return CcSymmetricPadding(
+      horizontal: CcPaddingParams.PAGE_SM,
+      child: CcText(
+        el.tr(CcLocaleKeys.transaction_category),
+        textStyle: context.ccTextTheme.labelMedium?.copyWith(
+          color: context.ccColorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHorizontalList(BuildContext context) {
+    return HorizontalFadeScrollView(
+      height: context.respDim(80),
+      scrollController: scrollController,
+      builder: (listScrollController) => ListView.separated(
+        scrollDirection: Axis.horizontal,
+        controller: listScrollController,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+        ),
+        itemCount: items.length,
+        separatorBuilder: (context, index) => const CcSpaceSM(),
+        itemBuilder: itemBuilder,
+      ),
     );
   }
 }
@@ -77,69 +85,81 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          if (isSelected)
-            Positioned.fill(
-              child: CcGlassyGradientBackground(
-                centerColor: activeColor.withValues(alpha: 0.04),
-                endColor: activeColor.withValues(alpha: 0.08),
-              ),
-            ),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: context.respDim(85),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? activeColor.withValues(alpha: 0.02)
-                  : scheme.onSurface.withValues(alpha: 0.02),
-              borderRadius: context.brLg,
-              border: Border.all(
-                color: isSelected
-                    ? activeColor.withValues(alpha: 0.04)
-                    : scheme.onSurface.withValues(alpha: 0.02),
-                width: context.respDim(1),
-              ),
-            ),
-            child: CcPadding(
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildIcon(context),
-                  const CcSpaceXS(),
-                  CcText(
-                    item.customName ?? el.tr(item.nameKey ?? ''),
-                    textAlign: TextAlign.center,
-                    align: Alignment.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                      color: isSelected ? activeColor : scheme.onSurfaceVariant,
-                      fontSize: context.respFontSize(10),
-                    ),
-                  ),
-                ],
-              ),
-              4,
-              6,
-              6,
-              4,
-            ),
-          ),
-          if (item.isBudget)
-            Positioned(
-              top: 4,
-              right: 4,
-              child: Icon(
-                Icons.bolt_rounded,
-                size: 10,
-                color: isSelected
-                    ? activeColor
-                    : scheme.onSurfaceVariant.withOpacity(0.5),
-              ),
-            ),
+          if (isSelected) _buildActiveBackground(context),
+          _buildItemContainer(context, scheme),
+          if (item.isBudget) _buildBudgetIndicator(context, scheme),
         ],
+      ),
+    );
+  }
+
+  Widget _buildActiveBackground(BuildContext context) {
+    return Positioned.fill(
+      child: CcGlassyGradientBackground(
+        centerColor: activeColor.withValues(alpha: 0.04),
+        endColor: activeColor.withValues(alpha: 0.08),
+      ),
+    );
+  }
+
+  Widget _buildItemContainer(BuildContext context, ColorScheme scheme) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      width: context.respDim(85),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? activeColor.withValues(alpha: 0.02)
+            : scheme.onSurface.withValues(alpha: 0.02),
+        borderRadius: context.brLg,
+        border: Border.all(
+          color: isSelected
+              ? activeColor.withValues(alpha: 0.04)
+              : scheme.onSurface.withValues(alpha: 0.02),
+          width: context.respDim(1),
+        ),
+      ),
+      child: CcPadding(
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildIcon(context),
+            const CcSpaceXS(),
+            _buildLabel(context, scheme),
+          ],
+        ),
+        CcPaddingParams.DESC_XS, // bottom
+        CcPaddingParams.SECTION_XS, // left
+        CcPaddingParams.SECTION_XS, // right
+        CcPaddingParams.DESC_XS, // top
+      ),
+    );
+  }
+
+  Widget _buildLabel(BuildContext context, ColorScheme scheme) {
+    return CcText(
+      item.customName ?? el.tr(item.nameKey ?? ''),
+      textAlign: TextAlign.center,
+      align: Alignment.center,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      textStyle: context.ccTextTheme.labelSmall?.copyWith(
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        color: isSelected ? activeColor : scheme.onSurfaceVariant,
+        fontSize: context.respFontSize(10),
+      ),
+    );
+  }
+
+  Widget _buildBudgetIndicator(BuildContext context, ColorScheme scheme) {
+    return Positioned(
+      top: context.respDim(6),
+      right: context.respDim(6),
+      child: Icon(
+        Icons.bar_chart,
+        size: context.respIconSize(baseSize: 14),
+        color: isSelected
+            ? activeColor.withAlpha(50)
+            : scheme.onSurfaceVariant.withAlpha(50),
       ),
     );
   }

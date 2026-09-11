@@ -15,74 +15,61 @@ class BudgetLimitPreviewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
     final guideline = Get.find<GuidelineController>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CcPadding(
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CcFormLabel(
-                text: el.tr(CcLocaleKeys.budget_this_month),
-                color: scheme.onBackground,
-              ),
-              CcIcon(
-                icon: Icons.bar_chart,
-                color: context.ccColorScheme.primary,
-                size: context.respIconSize(baseSize: 24),
-              ),
-              Row(
+          CcSectionHeader(
+            title: el.tr(CcLocaleKeys.budget_this_month),
+            icon: Icons.bar_chart,
+            actions: [
+              Stack(
+                clipBehavior: Clip.none,
                 children: [
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      CcBouncing(
-                        onTap: () => _openAddBudget(context),
-                        child: const CcIconToken(
-                          Icons.add_circle_outline_rounded,
-                          size: 20,
-                        ),
-                      ),
-                      Obx(() {
-                        if (!guideline.isTaskActive('budget_limit') &&
-                            !guideline.isTaskActive('min_living')) {
-                          return const SizedBox.shrink();
-                        }
-                        return Positioned(
-                          bottom: context.respDim(10),
-                          right: context.respDim(10),
-                          child: PrjGuidelineBadge(
-                            size: context.respDim(6),
-                            label: guideline.bannerDescription,
-                            labelAbove: true,
-                            growRight: false,
-                          ),
-                        );
-                      }),
-                    ],
+                  CcBouncing(
+                    onTap: () => _openAddBudget(context),
+                    child: const CcIconToken(
+                      Icons.add_circle_outline_rounded,
+                      size: 20,
+                    ),
                   ),
                   Obx(() {
-                    final hasBudgets =
-                        Get.find<BudgetLimitController>().budgets.isNotEmpty;
-                    if (!hasBudgets) return const SizedBox.shrink();
-
-                    return Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CcSpaceSM(),
-                        CcTextButton(
-                          text: el.tr(CcLocaleKeys.budget_see_all),
-                          onTap: () =>
-                              context.router.push(const BudgetLimitListRoute()),
-                        ),
-                      ],
+                    if (!guideline.isTaskActive('budget_limit') &&
+                        !guideline.isTaskActive('min_living')) {
+                      return const SizedBox.shrink();
+                    }
+                    return Positioned(
+                      bottom: context.respDim(10),
+                      right: context.respDim(10),
+                      child: PrjGuidelineBadge(
+                        size: context.respDim(6),
+                        label: guideline.bannerDescription,
+                        labelAbove: true,
+                        growRight: false,
+                      ),
                     );
                   }),
                 ],
               ),
+              Obx(() {
+                final hasBudgets =
+                    Get.find<BudgetLimitController>().budgets.isNotEmpty;
+                if (!hasBudgets) return const SizedBox.shrink();
+
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CcSpaceSM(),
+                    CcTextButton(
+                      text: el.tr(CcLocaleKeys.budget_see_all),
+                      onTap: () =>
+                          context.router.push(const BudgetLimitListRoute()),
+                    ),
+                  ],
+                );
+              }),
             ],
           ),
           0, // bottom

@@ -11,6 +11,7 @@ import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
 import '../../../budget_limit/domain/usecases/get_budget_insights_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
+import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../../liability/domain/entities/liability_balance_entity.dart';
 import '../../../liability/domain/usecases/get_liability_balances_usecase.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
@@ -211,6 +212,10 @@ class BudgetAllocationController extends CcGetController {
     if (!Get.isRegistered<BudgetLimitController>()) {
       Get.put(budgetLimitController);
     }
+    ever(
+      CategorySettingsController.onCategoriesChanged,
+      (_) => loadAll(),
+    );
   }
 
   @override

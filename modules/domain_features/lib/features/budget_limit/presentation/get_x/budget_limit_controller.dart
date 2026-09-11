@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 import '../../domain/usecases/create_budget_limit_usecase.dart';
 import '../../domain/usecases/delete_budget_limit_usecase.dart';
@@ -35,6 +36,15 @@ class BudgetLimitController extends CcGetController {
   void onCloseEditMode(BuildContext context) {
     isEditMode.value = false;
     Navigator.of(context).pop();
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(
+      CategorySettingsController.onCategoriesChanged,
+      (_) => loadBudgets(),
+    );
   }
 
   @override

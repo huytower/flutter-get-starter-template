@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/budget_over_limit_helper.dart';
 import '../../../../core/helper/location_suggestion_helper.dart';
 import '../../../../core/helper/merchant_match_helper.dart';
@@ -277,7 +278,10 @@ class ExpenseFormController extends TransactionFormController
       // supported language, and the user hasn't customized it, we mark it
       // for translation in the UI.
       if (category != null &&
-          _isDefaultName(b.budget.name, key: category.nameKey)) {
+          BudgetNameHelper.isDefaultName(
+            b.budget.name,
+            key: category.nameKey,
+          )) {
         nameKey = category.nameKey;
       } else {
         customName = b.budget.name;
@@ -330,53 +334,12 @@ class ExpenseFormController extends TransactionFormController
     unifiedItems.assignAll(items);
 
     // Debug first 5 items
-    '[THEME] 🕵️ Debugging first 5 unified items'
-        .Log('ExpenseFormController');
+    '[THEME] 🕵️ Debugging first 5 unified items'.Log('ExpenseFormController');
     for (int i = 0; i < unifiedItems.take(5).length; i++) {
       final item = unifiedItems[i];
       '[THEME]   #$i: id=${item.id} | nameKey=${item.nameKey} | customName=${item.customName} | isBudget=${item.isBudget} | initialOrder=${item.initialOrder}'
           .Log('ExpenseFormController');
     }
-  }
-
-  /// Returns true if the [name] matches a known default name for the given
-  /// [key] in any supported language.
-  bool _isDefaultName(String name, {required String key}) {
-    final searchName = name.trim().toLowerCase();
-
-    // We check against all translations for this specific key across all
-    // locales. This ensures that if a user created a budget in Vietnamese
-    // ("Xăng") it will be recognized and translated when they switch to
-    // English ("Gas"), and vice-versa, without hardcoding any strings here.
-    for (final localeData in CodegenLoader.mapLocales.values) {
-      final value = _getNestedValue(localeData, key);
-      if (value != null &&
-          value.toString().trim().toLowerCase() == searchName) {
-        return true;
-      }
-    }
-
-    // Secondary check: if the name exactly matches the key's value in the
-    // currently loaded translation file (even if mapLocales is stale).
-    if (el.tr(key).trim().toLowerCase() == searchName) {
-      return true;
-    }
-
-    return false;
-  }
-
-  /// Resolves a nested key (e.g., 'category.food_drink') from a translation map.
-  dynamic _getNestedValue(Map<String, dynamic> map, String key) {
-    final parts = key.split('.');
-    dynamic current = map;
-    for (final part in parts) {
-      if (current is Map && current.containsKey(part)) {
-        current = current[part];
-      } else {
-        return null;
-      }
-    }
-    return current;
   }
 
   Future<void> _loadCategories() async {

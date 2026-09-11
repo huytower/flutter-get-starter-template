@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
+import '../../../../core/helper/budget_name_helper.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 
 class BudgetLimitDeleteConfirmSheet extends StatelessWidget {
@@ -52,7 +53,12 @@ class BudgetLimitDeleteConfirmSheet extends StatelessWidget {
             CcText(
               el.tr(
                 CcLocaleKeys.budget_delete_confirm,
-                namedArgs: {'name': budget.name},
+                namedArgs: {
+                  'name': BudgetNameHelper.getDisplayName(
+                    name: budget.name,
+                    categoryNameKey: null,
+                  ),
+                },
               ),
               align: Alignment.center,
               maxLines: 5,
