@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/budget_name_helper.dart';
 import '../get_x/liability_base_form_controller.dart';
 
 class LiabilityAssetSelector extends StatelessWidget {
@@ -80,18 +81,20 @@ class LiabilityAssetSelector extends StatelessWidget {
                   final isSelected =
                       controller.selectedLiabilityId.value == liability.id;
 
+                  final displayName = BudgetNameHelper.getDisplayName(
+                    name: liability.categoryLabel,
+                    categoryNameKey: liability.categoryNameKey,
+                  );
+
                   return _buildItem(
                     context,
-                    label: liability.categoryLabel,
+                    label: displayName,
                     icon: iconDataFromCode(
                       liability.categoryIconCode ?? 0,
                       fontFamily: liability.categoryIconFamily,
                     ),
                     isSelected: isSelected,
                     onTap: () {
-                      debugPrint(
-                        '[LIABILITY_ASSET_SELECTOR] Tapped liability: id=${liability.id}, label=${liability.categoryLabel}, selected=$isSelected',
-                      );
                       controller.selectLiability(balance);
                     },
                   );
