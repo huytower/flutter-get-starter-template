@@ -1,11 +1,17 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/features/category/export_category.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:get/get.dart';
 
+import 'package:domain_features/features/category/export_category.dart';
+
+import '../../../../core/helper/budget_name_helper.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../get_x/investment_form_controller.dart';
+
+void _investmentAssetSelectorDebug(String message) {
+  '[INVESTMENT_ASSET_SELECTOR_DEBUG] $message'.Log('InvestmentAssetSelector');
+}
 
 class InvestmentAssetSelector extends StatelessWidget {
   final InvestmentFormController controller;
@@ -82,9 +88,14 @@ class InvestmentAssetSelector extends StatelessWidget {
                   if (item is WalletEntity) {
                     final isSelected =
                         controller.selectedInvestmentWalletId.value == item.id;
+                    final displayName = BudgetNameHelper.getDisplayName(
+                      name: item.name,
+                      categoryNameKey: item.categoryNameKey,
+                    );
+                    _investmentAssetSelectorDebug('Wallet: id=${item.id}, name=${item.name}, categoryNameKey=${item.categoryNameKey}, displayName=$displayName, isSelected=$isSelected');
                     return _buildItem(
                       context,
-                      label: item.name,
+                      label: displayName,
                       icon: iconDataFromCode(item.iconCode),
                       isSelected: isSelected,
                       onTap: () => controller.selectInvestmentWallet(item),
@@ -93,9 +104,11 @@ class InvestmentAssetSelector extends StatelessWidget {
                     final isSelected =
                         controller.selectedCategory.value?.id == item.id &&
                         controller.isAddingNewItem.value;
+                    final displayName = el.tr(item.nameKey);
+                    _investmentAssetSelectorDebug('Category: id=${item.id}, nameKey=${item.nameKey}, displayName=$displayName, isSelected=$isSelected');
                     return _buildItem(
                       context,
-                      label: el.tr(item.nameKey),
+                      label: displayName,
                       icon: iconDataFromCode(
                         item.iconCode,
                         fontFamily: item.iconFamily,

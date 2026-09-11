@@ -55,6 +55,13 @@ class BudgetNameHelper {
     'category.gym': ['gym', 'thể dục gym', 'the duc gym', 'tập gym'],
     'category.medicine': ['medicine', 'thuốc', 'thuoc'],
     'category.doctor': ['doctor', 'khám bệnh', 'kham benh'],
+    'category.investment_stock': [
+      'cổ phiếu',
+      'co phieu',
+      'stock',
+      'cổ phần',
+      'co phan',
+    ],
   };
 
   /// Returns the localized display name for a budget or category.

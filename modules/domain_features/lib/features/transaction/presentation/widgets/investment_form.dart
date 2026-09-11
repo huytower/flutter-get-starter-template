@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
+import '../../../../core/helper/budget_name_helper.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/export_wallet.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
@@ -16,6 +17,10 @@ import 'money_keypad_panel.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_form_container.dart';
 import 'transaction_submit_button.dart';
+
+void _investmentFormDebug(String message) {
+  '[INVESTMENT_FORM_DEBUG] $message'.Log('InvestmentForm');
+}
 
 class InvestmentForm extends StatelessWidget {
   const InvestmentForm({super.key});
@@ -32,13 +37,7 @@ class InvestmentForm extends StatelessWidget {
       final accentColor = _accentColor(context, controller.direction.value);
       final guideline = Get.find<GuidelineController>();
 
-      final bool isInvestmentTask = guideline.isTaskActive('investment');
-      final bool onInvestmentTab =
-          controller.direction.value == InvestmentDirection.contribute ||
-          controller.direction.value == InvestmentDirection.returnProfit;
-
-      // Only display banner description when user reaches these subsegments
-      final bool hideHeaderDescription = isInvestmentTask && !onInvestmentTab;
+      _investmentFormDebug('Build: direction=${controller.direction.value}, selectedCategory=${controller.selectedCategory.value?.nameKey}, selectedWalletId=${controller.selectedInvestmentWalletId.value}');
 
       return Column(
         children: [
@@ -159,6 +158,16 @@ class InvestmentForm extends StatelessWidget {
     InvestmentFormController controller,
     Color accentColor,
   ) {
+    final selectedCat = controller.selectedCategory.value;
+    final categoryNameKey = selectedCat?.nameKey ?? '';
+    final categoryName = BudgetNameHelper.getDisplayName(
+      name: el.tr(categoryNameKey),
+      categoryNameKey: categoryNameKey.isNotEmpty ? categoryNameKey : null,
+    );
+    final itemName = controller.newItemNameController.text;
+
+    _investmentFormDebug('NewItemNameField: categoryNameKey=$categoryNameKey, categoryName=$categoryName, itemName=$itemName, isVip=${controller.isVip.value}');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -181,9 +190,7 @@ class InvestmentForm extends StatelessWidget {
                     message: el.tr(
                       CcLocaleKeys.transaction_investment_item_vip_locked,
                       namedArgs: {
-                        'name': el.tr(
-                          controller.selectedCategory.value?.nameKey ?? '',
-                        ),
+                        'name': categoryName,
                       },
                     ),
                     child: Icon(

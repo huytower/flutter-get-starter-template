@@ -1,5 +1,5 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
@@ -7,6 +7,10 @@ import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
+
+void _investmentWalletPreviewDebug(String message) {
+  '[INVESTMENT_WALLET_PREVIEW_DEBUG] $message'.Log('InvestmentWalletPreviewCard');
+}
 
 /// Compact horizontal card for an investment asset shown on the dashboard.
 class InvestmentWalletPreviewCard extends StatelessWidget {
@@ -69,17 +73,23 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
                     ),
                     const CcSpaceSM(),
                     Expanded(
-                      child: CcText(
-                        BudgetNameHelper.getDisplayName(
-                          name: wallet.name,
-                          categoryNameKey: wallet.categoryNameKey,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                          fontWeight: CcTypographyParams.bold,
-                          color: scheme.onSurface,
-                        ),
+                      child: Builder(
+                        builder: (builderContext) {
+                          final displayName = BudgetNameHelper.getDisplayName(
+                            name: wallet.name,
+                            categoryNameKey: wallet.categoryNameKey,
+                          );
+                          _investmentWalletPreviewDebug('Wallet: id=${wallet.id}, name=${wallet.name}, categoryNameKey=${wallet.categoryNameKey}, displayName=$displayName');
+                          return CcText(
+                            displayName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textStyle: builderContext.ccTextTheme.labelMedium?.copyWith(
+                              fontWeight: CcTypographyParams.bold,
+                              color: scheme.onSurface,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],
