@@ -7,7 +7,6 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/category_name_util.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
@@ -41,10 +40,7 @@ class LiabilityDetailPage extends StatelessWidget with CcViewConfigMixin {
         final controller = Get.find<LiabilityDetailController>();
         final current = controller.liability.value ?? liability.liability;
         return CcText(
-          CategoryNameUtil.getLocalizedName(
-            current.categoryLabel,
-            current.categoryNameKey,
-          ),
+          current.categoryLabel,
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,

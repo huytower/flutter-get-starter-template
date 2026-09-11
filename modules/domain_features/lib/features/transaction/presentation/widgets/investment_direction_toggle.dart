@@ -55,95 +55,87 @@ class _InvestmentDirectionToggleState extends State<InvestmentDirectionToggle>
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-
-    return Center(
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.6,
-        child: Container(
-          height: context.respDim(35),
-          decoration: BoxDecoration(
-            color: scheme.surface,
-            borderRadius: context.brLg,
-            boxShadow: [
-              BoxShadow(
-                color: scheme.onSurface.withOpacity(0.12),
-                blurRadius: context.respDim(12),
-                offset: Offset(0, context.respDim(6)),
+    final guideline = Get.find<GuidelineController>();
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        Center(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.6,
+            child: Container(
+              height: context.respDim(35),
+              decoration: BoxDecoration(
+                color: scheme.surface,
+                borderRadius: context.brLg,
+                boxShadow: [
+                  BoxShadow(
+                    color: scheme.onSurface.withOpacity(0.12),
+                    blurRadius: context.respDim(12),
+                    offset: Offset(0, context.respDim(6)),
+                  ),
+                ],
               ),
-            ],
-          ),
-          padding: EdgeInsets.all(context.respDim(4)),
-          child: TabBar(
-            controller: _tabController,
-            onTap: (index) => widget.onChanged(
-              index == 0
-                  ? InvestmentDirection.contribute
-                  : InvestmentDirection.returnProfit,
-            ),
-            indicatorSize: TabBarIndicatorSize.tab,
-            dividerColor: Colors.transparent,
-            splashFactory: NoSplash.splashFactory,
-            overlayColor: WidgetStateProperty.all(Colors.transparent),
-            indicator: BoxDecoration(
-              color: widget.activeColor.withOpacity(0.08),
-              borderRadius: context.brLg,
-            ),
-            labelColor: widget.activeColor,
-            unselectedLabelColor: scheme.onSurfaceVariant,
-            labelStyle: context.ccTextTheme.labelMedium?.copyWith(
-              fontWeight: CcTypographyParams.bold,
-            ),
-            labelPadding: EdgeInsets.zero,
-            tabs: [
-              _buildTab(
-                context,
-                el.tr(CcLocaleKeys.transaction_investment_contribution),
-                0,
+              padding: EdgeInsets.all(context.respDim(4)),
+              child: TabBar(
+                controller: _tabController,
+                onTap: (index) => widget.onChanged(
+                  index == 0
+                      ? InvestmentDirection.contribute
+                      : InvestmentDirection.returnProfit,
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                splashFactory: NoSplash.splashFactory,
+                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                indicator: BoxDecoration(
+                  color: widget.activeColor.withOpacity(0.08),
+                  borderRadius: context.brLg,
+                ),
+                labelColor: widget.activeColor,
+                unselectedLabelColor: scheme.onSurfaceVariant,
+                labelStyle: context.ccTextTheme.labelMedium?.copyWith(
+                  fontWeight: CcTypographyParams.bold,
+                ),
+                labelPadding: EdgeInsets.zero,
+                tabs: [
+                  _buildTab(
+                    el.tr(CcLocaleKeys.transaction_investment_contribution),
+                  ),
+                  _buildTab(el.tr(CcLocaleKeys.transaction_investment_return)),
+                ],
               ),
-              _buildTab(
-                context,
-                el.tr(CcLocaleKeys.transaction_investment_return),
-                1,
-              ),
-            ],
+            ),
           ),
         ),
-      ),
+        Obx(() {
+          final bool isInvestmentTask = guideline.isTaskActive('investment');
+          // Badge 1: only show badge at bottom right as current at bottom navigation without displayed banner desc.
+          // Wait, the user said "at bottom navigation bar area, badge 1: only show badge ... without displayed banner desc."
+          // AND "at body area, banner desc & badge was displayed ... expect: align to the right side"
+
+          // For InvestmentDirectionToggle (body area):
+          final index = _indexOf(InvestmentDirection.returnProfit);
+          final bool showBadgeWithLabel = isInvestmentTask && index == 1;
+
+          return showBadgeWithLabel
+              ? Positioned(
+                  top: context.respDim(15),
+                  right: context.respDim(30),
+                  child: PrjGuidelineBadge(
+                    size: context.respDim(6),
+                    label: guideline.bannerDescription,
+                    labelAbove: false,
+                    growRight: false,
+                  ),
+                )
+              : const SizedBox.shrink();
+        }),
+      ],
     );
   }
 
-  Widget _buildTab(BuildContext context, String text, int index) {
-    final guideline = Get.find<GuidelineController>();
-
-    return Tab(
-      child: Obx(() {
-        final bool isInvestmentTask = guideline.isTaskActive('investment');
-        // Badge 1: only show badge at bottom right as current at bottom navigation without displayed banner desc.
-        // Wait, the user said "at bottom navigation bar area, badge 1: only show badge ... without displayed banner desc."
-        // AND "at body area, banner desc & badge was displayed ... expect: align to the right side"
-
-        // For InvestmentDirectionToggle (body area):
-        final bool showBadgeWithLabel = isInvestmentTask && index == 0;
-
-        return Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            Text(text),
-            if (showBadgeWithLabel)
-              Positioned(
-                top: context.respDim(20),
-                right: context.respDim(-50),
-                child: PrjGuidelineBadge(
-                  size: context.respDim(6),
-                  label: guideline.bannerDescription,
-                  labelAbove: false,
-                  growRight: false,
-                ),
-              ),
-          ],
-        );
-      }),
-    );
+  Widget _buildTab(String text) {
+    return Tab(child: Text(text));
   }
 }

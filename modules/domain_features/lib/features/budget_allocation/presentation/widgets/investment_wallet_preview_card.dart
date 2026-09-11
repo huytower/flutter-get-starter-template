@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/helper/category_name_util.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
@@ -70,10 +69,7 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
                     const CcSpaceSM(),
                     Expanded(
                       child: CcText(
-                        CategoryNameUtil.getLocalizedName(
-                          wallet.name,
-                          wallet.categoryNameKey,
-                        ),
+                        wallet.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         textStyle: context.ccTextTheme.labelMedium?.copyWith(

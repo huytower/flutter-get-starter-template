@@ -29,6 +29,11 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                 text: el.tr(CcLocaleKeys.budget_this_month),
                 color: scheme.onBackground,
               ),
+              CcIcon(
+                icon: Icons.bar_chart,
+                color: context.ccColorScheme.onPrimary,
+                size: context.respIconSize(baseSize: 24),
+              ),
               Row(
                 children: [
                   Stack(

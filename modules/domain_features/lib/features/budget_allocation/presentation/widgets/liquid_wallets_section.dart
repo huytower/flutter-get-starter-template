@@ -34,47 +34,50 @@ class LiquidWalletsSection extends StatelessWidget {
     final guideline = Get.find<GuidelineController>();
 
     return CcPadding(
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      Stack(
+        clipBehavior: Clip.none,
         children: [
-          CcSectionHeader(
-            title: el.tr(titleKey),
-            icon: Icons.account_balance_wallet_outlined,
-            actions: [
-              if (showAddButton)
-                CcBouncing(
-                  onTap: onAddWallet,
-                  child: const CcIconToken(
-                    Icons.add_circle_outline_rounded,
-                    size: 20,
-                  ),
-                ),
-              if (showAddButton) const CcSpaceSM(),
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CcSectionHeader(
+                title: el.tr(titleKey),
+                icon: Icons.account_balance_wallet_outlined,
+                actions: [
+                  if (showAddButton)
+                    CcBouncing(
+                      onTap: onAddWallet,
+                      child: const CcIconToken(
+                        Icons.add_circle_outline_rounded,
+                        size: 20,
+                      ),
+                    ),
+                  if (showAddButton) const CcSpaceSM(),
                   CcTextButton(
                     text: el.tr(CcLocaleKeys.wallet_see_all),
                     onTap: () =>
                         context.router.push(const LiquidWalletListRoute()),
                   ),
-                  if (showGuidelineBadge)
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: PrjGuidelineBadge(
-                        size: context.respDim(10),
-                        label: guideline.bannerDescription,
-                        labelAbove: false,
-                        growRight: false,
-                      ),
-                    ),
                 ],
+              ),
+              const CcSpaceSM(),
+              WalletStripCard(
+                wallets: wallets,
+                emptyMessageKey: emptyMessageKey,
               ),
             ],
           ),
-          const CcSpaceSM(),
-          WalletStripCard(wallets: wallets, emptyMessageKey: emptyMessageKey),
+          if (showGuidelineBadge)
+            Positioned(
+              right: 0,
+              top: 0,
+              child: PrjGuidelineBadge(
+                size: context.respDim(6),
+                label: guideline.bannerDescription,
+                labelAbove: false,
+                growRight: false,
+              ),
+            ),
         ],
       ),
       0, // bottom

@@ -669,6 +669,11 @@ class WalletController extends CcGetController {
     _walletsWithTxns.remove(id);
     _bookBalances.remove(id);
     _calculateTotalBalance();
+
+    if (Get.isRegistered<TransactionController>()) {
+      Get.find<TransactionController>().wallets.removeWhere((e) => e.id == id);
+    }
+
     layoutStatus.value = wallets.isEmpty
         ? CcLayoutStatus.empty
         : CcLayoutStatus.success;

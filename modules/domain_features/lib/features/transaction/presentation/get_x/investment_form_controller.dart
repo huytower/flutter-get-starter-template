@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/helper/merchant_match_helper.dart';
 import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
@@ -203,9 +202,17 @@ class InvestmentFormController extends TransactionFormController
   /// not base categories from category_settings_page.
   Future<void> _recomputeMergedItems() async {
     final parentWallets = Get.find<TransactionController>().wallets;
-    final assets = parentWallets
-        .where((w) => w.type == WalletType.investment)
-        .toList();
+
+    // Deduplicate by ID to ensure consistency with investment_list_page logic
+    // and avoid ghost items from stale sync states.
+    final uniqueAssets = <String, WalletEntity>{};
+    for (final w in parentWallets) {
+      if (w.type == WalletType.investment) {
+        uniqueAssets[w.id] = w;
+      }
+    }
+
+    final assets = uniqueAssets.values.toList();
 
     assets.sort((a, b) {
       if (a.displayOrder != b.displayOrder) {
