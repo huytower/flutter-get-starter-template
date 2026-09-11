@@ -4,7 +4,15 @@ class UnifiedCategoryItem extends Equatable {
   final String id;
   final String? budgetId;
   final String categoryId;
-  final String displayName;
+
+  /// The localization key for the category name. If present, the UI will
+  /// translate this key into the current language.
+  final String? nameKey;
+
+  /// A specific name provided by the user (for customized budgets). If
+  /// present, this name will be shown as-is without translation.
+  final String? customName;
+
   final int iconCode;
   final String? iconFamily;
   final DateTime lastActivityAt;
@@ -18,7 +26,8 @@ class UnifiedCategoryItem extends Equatable {
     required this.id,
     this.budgetId,
     required this.categoryId,
-    required this.displayName,
+    this.nameKey,
+    this.customName,
     required this.iconCode,
     this.iconFamily,
     required this.lastActivityAt,
@@ -31,7 +40,8 @@ class UnifiedCategoryItem extends Equatable {
     id,
     budgetId,
     categoryId,
-    displayName,
+    nameKey,
+    customName,
     iconCode,
     iconFamily,
     lastActivityAt,

@@ -4,6 +4,7 @@ import 'package:cc_sdk_data/data/models/pagination_request.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/budget_limit/export_budget_limit.dart';
 import 'package:domain_features/features/category/export_category.dart';
+import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -124,6 +125,12 @@ class ExpenseFormController extends TransactionFormController
       );
     }
 
+    // Refresh when language changes to re-evaluate budget name translations
+    ever(
+      CategorySettingsController.onCategoriesChanged,
+      (_) => _rebuildUnifiedItems(),
+    );
+
     // Auto-scroll when selection changes
     everAll([selectedCategory, selectedBudget], (_) => _scrollToSelected());
   }
@@ -150,8 +157,8 @@ class ExpenseFormController extends TransactionFormController
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!categoryScrollController.hasClients) return;
 
-        final double itemWidth = 85.0; // context.respDim(85) equivalent logic
-        final double spacing = 8.0; // context.respDim(8)
+        const double itemWidth = 85.0; // context.respDim(85) equivalent logic
+        const double spacing = 8.0; // context.respDim(8)
         final double targetOffset = index * (itemWidth + spacing);
 
         final double viewportWidth =
@@ -259,12 +266,30 @@ class ExpenseFormController extends TransactionFormController
       budgetCategoryIds.add(b.budget.categoryId);
       // Use DateTime(2000) as fallback if no activity, since Entity lacks updatedAt
       final lastActivity = lastUsedBudget[b.budget.id] ?? DateTime(2000);
+
+      String? nameKey;
+      String? customName;
+      final category = expenseCats.firstWhereOrNull(
+        (c) => c.id == b.budget.categoryId,
+      );
+
+      // If the budget name matches the default for its category in any
+      // supported language, and the user hasn't customized it, we mark it
+      // for translation in the UI.
+      if (category != null &&
+          _isDefaultName(b.budget.name, key: category.nameKey)) {
+        nameKey = category.nameKey;
+      } else {
+        customName = b.budget.name;
+      }
+
       items.add(
         UnifiedCategoryItem(
           id: 'budget_${b.budget.id}',
           budgetId: b.budget.id,
           categoryId: b.budget.categoryId,
-          displayName: b.budget.name,
+          nameKey: nameKey,
+          customName: customName,
           iconCode: b.iconCode,
           iconFamily: b.iconFamily,
           lastActivityAt: lastActivity,
@@ -283,7 +308,7 @@ class ExpenseFormController extends TransactionFormController
         UnifiedCategoryItem(
           id: 'cat_${c.id}',
           categoryId: c.id,
-          displayName: el.tr(c.nameKey),
+          nameKey: c.nameKey,
           iconCode: c.iconCode,
           iconFamily: c.iconFamily,
           lastActivityAt: lastActivity,
@@ -303,6 +328,55 @@ class ExpenseFormController extends TransactionFormController
     });
 
     unifiedItems.assignAll(items);
+
+    // Debug first 5 items
+    '[THEME] 🕵️ Debugging first 5 unified items'
+        .Log('ExpenseFormController');
+    for (int i = 0; i < unifiedItems.take(5).length; i++) {
+      final item = unifiedItems[i];
+      '[THEME]   #$i: id=${item.id} | nameKey=${item.nameKey} | customName=${item.customName} | isBudget=${item.isBudget} | initialOrder=${item.initialOrder}'
+          .Log('ExpenseFormController');
+    }
+  }
+
+  /// Returns true if the [name] matches a known default name for the given
+  /// [key] in any supported language.
+  bool _isDefaultName(String name, {required String key}) {
+    final searchName = name.trim().toLowerCase();
+
+    // We check against all translations for this specific key across all
+    // locales. This ensures that if a user created a budget in Vietnamese
+    // ("Xăng") it will be recognized and translated when they switch to
+    // English ("Gas"), and vice-versa, without hardcoding any strings here.
+    for (final localeData in CodegenLoader.mapLocales.values) {
+      final value = _getNestedValue(localeData, key);
+      if (value != null &&
+          value.toString().trim().toLowerCase() == searchName) {
+        return true;
+      }
+    }
+
+    // Secondary check: if the name exactly matches the key's value in the
+    // currently loaded translation file (even if mapLocales is stale).
+    if (el.tr(key).trim().toLowerCase() == searchName) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /// Resolves a nested key (e.g., 'category.food_drink') from a translation map.
+  dynamic _getNestedValue(Map<String, dynamic> map, String key) {
+    final parts = key.split('.');
+    dynamic current = map;
+    for (final part in parts) {
+      if (current is Map && current.containsKey(part)) {
+        current = current[part];
+      } else {
+        return null;
+      }
+    }
+    return current;
   }
 
   Future<void> _loadCategories() async {

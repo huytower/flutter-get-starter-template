@@ -1,6 +1,7 @@
 import 'package:cc_sdk_data/data/models/pagination_request.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
+import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -56,6 +57,11 @@ class IncomeFormController extends TransactionFormController
     super.onInit();
     _loadAll();
     initQuickEntry();
+
+    ever(
+      CategorySettingsController.onCategoriesChanged,
+      (_) => _rebuildUnifiedItems(),
+    );
 
     // Auto-scroll when selection changes
     ever(selectedCategory, (_) => _scrollToSelected());
@@ -122,7 +128,7 @@ class IncomeFormController extends TransactionFormController
         UnifiedCategoryItem(
           id: 'cat_${c.id}',
           categoryId: c.id,
-          displayName: el.tr(c.nameKey),
+          nameKey: c.nameKey,
           iconCode: c.iconCode,
           iconFamily: c.iconFamily,
           lastActivityAt: lastActivity,
@@ -150,8 +156,8 @@ class IncomeFormController extends TransactionFormController
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!categoryScrollController.hasClients) return;
 
-        final double itemWidth = 85.0;
-        final double spacing = 8.0;
+        const double itemWidth = 85.0;
+        const double spacing = 8.0;
         final double targetOffset = index * (itemWidth + spacing);
 
         final double viewportWidth =

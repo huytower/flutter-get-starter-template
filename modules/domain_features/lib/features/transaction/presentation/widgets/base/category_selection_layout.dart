@@ -106,7 +106,7 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
                   _buildIcon(context),
                   const CcSpaceXS(),
                   CcText(
-                    item.displayName,
+                    item.customName ?? el.tr(item.nameKey ?? ''),
                     textAlign: TextAlign.center,
                     align: Alignment.center,
                     maxLines: 2,

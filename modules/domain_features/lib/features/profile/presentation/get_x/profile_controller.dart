@@ -348,6 +348,7 @@ class ProfileController extends CcGetController {
     final picked = await LanguageSelectionDialog.show(context);
     if (picked != null && context.mounted) {
       await el.EasyLocalization.of(context)!.setLocale(picked);
+      CategorySettingsController.onCategoriesChanged.value++;
     }
   }
 
