@@ -28,7 +28,7 @@ class LendHeroCard extends StatelessWidget {
       balance: balance,
       subtitleKey: CcLocaleKeys.transaction_liability_category_lend_label,
       balanceIcon: Icons.handshake_outlined,
-      bannerIcon: Icons.trending_up,
+      bannerIconAsset: 'assets/icon/ic_lend.webp',
       color: color,
       isFront: isFront,
       onTap: onTap,

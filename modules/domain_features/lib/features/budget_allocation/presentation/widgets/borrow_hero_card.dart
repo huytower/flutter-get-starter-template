@@ -27,7 +27,7 @@ class BorrowHeroCard extends StatelessWidget {
       balance: balance,
       subtitleKey: CcLocaleKeys.wallet_liabilities_desc,
       balanceIcon: Icons.waving_hand,
-      bannerIcon: Icons.warning_amber_rounded,
+      bannerIconAsset: 'assets/icon/ic_borrow.webp',
       color: scheme.liability,
       isFront: isFront,
       onTap: onTap,

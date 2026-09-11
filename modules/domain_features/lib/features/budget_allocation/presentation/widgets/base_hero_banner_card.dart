@@ -15,7 +15,8 @@ class BaseHeroBannerCard extends StatelessWidget {
     required this.balance,
     required this.subtitleKey,
     required this.balanceIcon,
-    required this.bannerIcon,
+    this.bannerIcon,
+    this.bannerIconAsset,
     required this.color,
     required this.isFront,
     this.onTap,
@@ -26,7 +27,8 @@ class BaseHeroBannerCard extends StatelessWidget {
   final int balance;
   final String subtitleKey;
   final IconData balanceIcon;
-  final IconData bannerIcon;
+  final IconData? bannerIcon;
+  final String? bannerIconAsset;
   final Color color;
   final bool isFront;
   final VoidCallback? onTap;
@@ -168,11 +170,18 @@ class BaseHeroBannerCard extends StatelessWidget {
         color: scheme.onPrimary.withOpacity(0.2),
         shape: BoxShape.circle,
       ),
-      child: CcIconToken(
-        bannerIcon,
-        color: scheme.onPrimary,
-        size: context.respIconSize(baseSize: 16),
-      ),
+      child: bannerIconAsset != null
+          ? Image.asset(
+              bannerIconAsset!,
+              color: scheme.onPrimary,
+              width: context.respIconSize(baseSize: 16),
+              height: context.respIconSize(baseSize: 16),
+            )
+          : CcIconToken(
+              bannerIcon ?? Icons.help_outline,
+              color: scheme.onPrimary,
+              size: 16,
+            ),
     );
   }
 }
