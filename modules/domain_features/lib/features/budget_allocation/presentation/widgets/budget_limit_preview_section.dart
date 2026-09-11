@@ -31,7 +31,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
               ),
               CcIcon(
                 icon: Icons.bar_chart,
-                color: context.ccColorScheme.onPrimary,
+                color: context.ccColorScheme.primary,
                 size: context.respIconSize(baseSize: 24),
               ),
               Row(
