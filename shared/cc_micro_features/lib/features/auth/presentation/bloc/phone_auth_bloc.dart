@@ -124,6 +124,12 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
 
     if (_verificationId == null) {
       'Cannot sign in: verificationId is null'.Log('PhoneAuthBloc');
+      await CcCrashReportingHelper.recordHandledError(
+        StateError('PhoneAuthBloc: verify tapped with null verificationId'),
+        StackTrace.current,
+        reason: 'PhoneAuthBloc._onSignInWithCodeStarted: verificationId lost '
+            'before OTP submit',
+      );
       emit(const PhoneAuthError('An error occurred'));
       return;
     }

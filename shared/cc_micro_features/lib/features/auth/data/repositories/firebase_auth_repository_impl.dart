@@ -322,6 +322,15 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         'FirebaseAuthRepository',
       );
       '[APPLE_SIGN_IN] StackTrace: $stack'.Log('FirebaseAuthRepository');
+      // Not a FirebaseAuthException — likely a native/platform-layer error
+      // (e.g. Keychain, App Check) the plugin didn't wrap. Worth surfacing
+      // in Crashlytics since it otherwise only shows as "An error occurred".
+      await CcCrashReportingHelper.recordHandledError(
+        e,
+        stack,
+        reason: 'FirebaseAuthRepository._signInWithCredential: '
+            'non-FirebaseAuthException error (credential=${credential.signInMethod})',
+      );
       return const Error(UnknownFailure('An error occurred'));
     }
   }
