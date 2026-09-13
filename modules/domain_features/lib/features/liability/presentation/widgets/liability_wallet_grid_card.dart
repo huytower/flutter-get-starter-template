@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/presentation/widgets/edit_badge.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
 
@@ -208,55 +209,23 @@ class LiabilityWalletGridCard extends StatelessWidget {
         Positioned(
           top: context.respDim(-4),
           left: context.respDim(-4),
-          child: _EditBadge(
+          child: EditBadge(
             icon: Icons.remove,
             color: scheme.error,
+            foregroundColor: scheme.onError,
             onTap: onDelete,
           ),
         ),
       Positioned(
         top: context.respDim(-4),
         right: context.respDim(-4),
-        child: _EditBadge(
+        child: EditBadge(
           icon: Icons.edit,
           color: scheme.primary,
+          foregroundColor: scheme.onPrimary,
           onTap: onEdit,
         ),
       ),
     ];
-  }
-}
-
-class _EditBadge extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final VoidCallback? onTap;
-
-  const _EditBadge({required this.icon, required this.color, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-
-    return CcBouncing(
-      onTap: onTap,
-      child: Container(
-        width: context.respDim(20),
-        height: context.respDim(20),
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: scheme.surface,
-            width: context.respDim(1.5),
-          ),
-        ),
-        child: Icon(
-          icon,
-          color: scheme.onPrimary,
-          size: context.respIconSize(baseSize: 12),
-        ),
-      ),
-    );
   }
 }

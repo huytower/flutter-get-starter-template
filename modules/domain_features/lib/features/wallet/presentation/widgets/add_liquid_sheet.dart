@@ -26,35 +26,40 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
       builder: (controller) {
         return SafeArea(
           top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: EdgeInsets.all(
-                  context.respPadding(CcPaddingParams.SPACE_LG),
-                ),
-                decoration: BoxDecoration(
-                  color: context.ccColorScheme.surface,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(
+                    context.respPadding(CcPaddingParams.SPACE_LG),
+                  ),
+                  decoration: BoxDecoration(
+                    color: context.ccColorScheme.surface,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    child: _buildSheetContent(context, controller),
                   ),
                 ),
-                child: SingleChildScrollView(
-                  child: _buildSheetContent(context, controller),
-                ),
-              ),
-              if (controller.showKeypad.value)
-                MoneyKeypadPanel(
-                  onKeyPress: controller.handleKeyPress,
-                  onDelete: controller.handleDelete,
-                  onClear: () => controller.amountStr.value = '0',
-                  suggestions: MoneyConstants.walletQuickAmounts,
-                  onSuggestion: (value) =>
-                      controller.amountStr.value = value.toString(),
-                  onDone: controller.hideKeypad,
-                  activeColor: context.ccColorScheme.primary,
-                ),
-            ],
+                if (controller.showKeypad.value)
+                  MoneyKeypadPanel(
+                    onKeyPress: controller.handleKeyPress,
+                    onDelete: controller.handleDelete,
+                    onClear: () => controller.amountStr.value = '0',
+                    suggestions: MoneyConstants.walletQuickAmounts,
+                    onSuggestion: (value) =>
+                        controller.amountStr.value = value.toString(),
+                    onDone: controller.hideKeypad,
+                    activeColor: context.ccColorScheme.primary,
+                  ),
+              ],
+            ),
           ),
         );
       },

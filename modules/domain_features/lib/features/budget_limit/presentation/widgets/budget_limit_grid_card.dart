@@ -5,6 +5,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/presentation/widgets/edit_badge.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 import 'budget_limit_pie_chart.dart';
 
@@ -237,18 +238,20 @@ class BudgetLimitGridCard extends StatelessWidget {
       Positioned(
         top: context.respDim(-4),
         left: context.respDim(-4),
-        child: _EditBadge(
+        child: EditBadge(
           icon: Icons.remove,
           color: scheme.error,
+          foregroundColor: scheme.onError,
           onTap: onDelete,
         ),
       ),
       Positioned(
         top: context.respDim(-4),
         right: context.respDim(-4),
-        child: _EditBadge(
+        child: EditBadge(
           icon: Icons.edit,
           color: scheme.primary,
+          foregroundColor: scheme.onPrimary,
           onTap: onEdit,
         ),
       ),
@@ -257,36 +260,5 @@ class BudgetLimitGridCard extends StatelessWidget {
 
   Color _cardBackgroundColor(BuildContext context, Color? categoryColor) {
     return context.ccColorScheme.primaryContainer.withValues(alpha: 0.1);
-  }
-}
-
-class _EditBadge extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final VoidCallback? onTap;
-
-  const _EditBadge({required this.icon, required this.color, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-
-    return CcBouncing(
-      onTap: onTap,
-      child: Container(
-        width: context.respDim(24),
-        height: context.respDim(24),
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          border: Border.all(color: scheme.surface, width: context.respDim(2)),
-        ),
-        child: Icon(
-          icon,
-          color: scheme.onPrimary,
-          size: context.respIconSize(baseSize: 14),
-        ),
-      ),
-    );
   }
 }
