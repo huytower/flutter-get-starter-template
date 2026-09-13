@@ -111,6 +111,7 @@ class InvestmentForm extends StatelessWidget {
           onChanged: controller.setDirection,
         ),
         Obx(() {
+          if (guideline.activeTabIndex == 1) return const SizedBox.shrink();
           return Positioned(
             top: context.respDim(15),
             right: context.respDim(50),

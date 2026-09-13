@@ -86,9 +86,10 @@ class LiabilityForm extends StatelessWidget {
           onChanged: controller.setAction,
         ),
         Obx(() {
+          if (guideline.activeTabIndex == 2) return const SizedBox.shrink();
           return Positioned(
-            top: context.respDim(20),
-            right: context.respDim(0),
+            top: context.respDim(15),
+            right: context.respDim(50),
             child: PrjGuidelineBadge(
               size: context.respDim(6),
               label: guideline.bannerDescription,
