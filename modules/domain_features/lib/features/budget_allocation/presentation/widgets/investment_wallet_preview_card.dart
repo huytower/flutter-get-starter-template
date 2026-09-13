@@ -3,7 +3,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/helper/budget_name_helper.dart';
+import '../../../../core/helper/budget_name_util.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
@@ -75,7 +75,7 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
                     Expanded(
                       child: Builder(
                         builder: (builderContext) {
-                          final displayName = BudgetNameHelper.getDisplayName(
+                          final displayName = BudgetNameUtil.getDisplayName(
                             name: wallet.name,
                             categoryNameKey: wallet.categoryNameKey,
                           );

@@ -3,7 +3,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:get/get.dart';
 
-import '../../../../core/helper/budget_name_helper.dart';
+import '../../../../core/helper/budget_name_util.dart';
 import '../get_x/liability_base_form_controller.dart';
 
 class LiabilityAssetSelector extends StatelessWidget {
@@ -81,7 +81,7 @@ class LiabilityAssetSelector extends StatelessWidget {
                   final isSelected =
                       controller.selectedLiabilityId.value == liability.id;
 
-                  final displayName = BudgetNameHelper.getDisplayName(
+                  final displayName = BudgetNameUtil.getDisplayName(
                     name: liability.categoryLabel,
                     categoryNameKey: liability.categoryNameKey,
                   );

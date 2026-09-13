@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 import 'package:domain_features/features/category/export_category.dart';
 
-import '../../../../core/helper/budget_name_helper.dart';
+import '../../../../core/helper/budget_name_util.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../get_x/investment_form_controller.dart';
 
@@ -88,7 +88,7 @@ class InvestmentAssetSelector extends StatelessWidget {
                   if (item is WalletEntity) {
                     final isSelected =
                         controller.selectedInvestmentWalletId.value == item.id;
-                    final displayName = BudgetNameHelper.getDisplayName(
+                    final displayName = BudgetNameUtil.getDisplayName(
                       name: item.name,
                       categoryNameKey: item.categoryNameKey,
                     );

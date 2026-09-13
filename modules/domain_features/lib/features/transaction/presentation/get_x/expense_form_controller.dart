@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/budget_name_helper.dart';
+import '../../../../core/helper/budget_name_util.dart';
 import '../../../../core/helper/budget_over_limit_helper.dart';
 import '../../../../core/helper/location_suggestion_helper.dart';
 import '../../../../core/helper/merchant_match_helper.dart';
@@ -278,7 +278,7 @@ class ExpenseFormController extends TransactionFormController
       // supported language, and the user hasn't customized it, we mark it
       // for translation in the UI.
       if (category != null &&
-          BudgetNameHelper.isDefaultName(
+          BudgetNameUtil.isDefaultName(
             b.budget.name,
             key: category.nameKey,
           )) {

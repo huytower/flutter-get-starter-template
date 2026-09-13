@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
-import '../../../../core/helper/budget_name_helper.dart';
+import '../../../../core/helper/budget_name_util.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../wallet/export_wallet.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
@@ -160,7 +160,7 @@ class InvestmentForm extends StatelessWidget {
   ) {
     final selectedCat = controller.selectedCategory.value;
     final categoryNameKey = selectedCat?.nameKey ?? '';
-    final categoryName = BudgetNameHelper.getDisplayName(
+    final categoryName = BudgetNameUtil.getDisplayName(
       name: el.tr(categoryNameKey),
       categoryNameKey: categoryNameKey.isNotEmpty ? categoryNameKey : null,
     );
