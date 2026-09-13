@@ -49,13 +49,12 @@ class _LoginViewState extends State<LoginView> {
           'Login success, navigating to dashboard'.Log('LoginPage');
           getIt<AuthCoordinator>().navigateToDashboard(context);
         } else if (state is LoginLoading) {
-          'Login loading, showing dialog'.Log('LoginPage');
-          CcDialogHelper.showLoadingDialog(context: context);
+          'Login loading, showing bottom sheet'.Log('LoginPage');
+          CcDialogHelper.showLoadingBottomSheet(context: context);
         } else {
-          'Login state is not Success or Loading, closing dialog if open'.Log(
-            'LoginPage',
-          );
-          if (Get.isDialogOpen ?? false) {
+          'Login state is not Success or Loading, closing bottom sheet if open'
+              .Log('LoginPage');
+          if (Get.isBottomSheetOpen ?? false) {
             Get.back();
           }
         }
