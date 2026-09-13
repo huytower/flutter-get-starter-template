@@ -17,17 +17,17 @@ class BudgetLimitPreviewSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final guideline = Get.find<GuidelineController>();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
+      clipBehavior: Clip.none,
       children: [
-        CcPadding(
-          CcSectionHeader(
-            title: el.tr(CcLocaleKeys.budget_this_month),
-            icon: Icons.bar_chart,
-            actions: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CcPadding(
+              CcSectionHeader(
+                title: el.tr(CcLocaleKeys.budget_this_month),
+                icon: Icons.bar_chart,
+                actions: [
                   CcBouncing(
                     onTap: () => _openAddBudget(context),
                     child: const CcIconToken(
@@ -36,84 +36,85 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                     ),
                   ),
                   Obx(() {
-                    if (!guideline.isTaskActive('budget_limit') &&
-                        !guideline.isTaskActive('min_living')) {
-                      return const SizedBox.shrink();
-                    }
-                    return Positioned(
-                      bottom: context.respDim(10),
-                      right: context.respDim(10),
-                      child: PrjGuidelineBadge(
-                        size: context.respDim(6),
-                        label: guideline.bannerDescription,
-                        labelAbove: true,
-                        growRight: false,
-                      ),
+                    final hasBudgets =
+                        Get.find<BudgetLimitController>().budgets.isNotEmpty;
+                    if (!hasBudgets) return const SizedBox.shrink();
+
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CcSpaceSM(),
+                        CcTextButton(
+                          text: el.tr(CcLocaleKeys.budget_see_all),
+                          onTap: () =>
+                              context.router.push(const BudgetLimitListRoute()),
+                        ),
+                      ],
                     );
                   }),
                 ],
               ),
-              Obx(() {
-                final hasBudgets =
-                    Get.find<BudgetLimitController>().budgets.isNotEmpty;
-                if (!hasBudgets) return const SizedBox.shrink();
-
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const CcSpaceSM(),
-                    CcTextButton(
-                      text: el.tr(CcLocaleKeys.budget_see_all),
-                      onTap: () =>
-                          context.router.push(const BudgetLimitListRoute()),
-                    ),
-                  ],
+              0, // bottom
+              CcPaddingParams.SPACE_LG, // left
+              CcPaddingParams.SPACE_MD, // right
+              0, // top
+            ),
+            const CcSpaceSM(),
+            Obx(() {
+              final budgets = getIt<SortBudgetLimitsByProgressUseCase>().call(
+                Get.find<BudgetLimitController>().budgets,
+                limit: 4,
+              );
+              if (budgets.isEmpty) {
+                return CcSectionEmptyState(
+                  message: el.tr(CcLocaleKeys.budget_empty),
+                  verticalPadding: 12,
+                  horizontalPadding: CcPaddingParams.SPACE_LG,
                 );
-              }),
-            ],
-          ),
-          0, // bottom
-          CcPaddingParams.SPACE_LG, // left
-          CcPaddingParams.SPACE_MD, // right
-          0, // top
-        ),
-        const CcSpaceSM(),
-        Obx(() {
-          final budgets = getIt<SortBudgetLimitsByProgressUseCase>().call(
-            Get.find<BudgetLimitController>().budgets,
-            limit: 4,
-          );
-          if (budgets.isEmpty) {
-            return CcSectionEmptyState(
-              message: el.tr(CcLocaleKeys.budget_empty),
-              verticalPadding: 12,
-              horizontalPadding: CcPaddingParams.SPACE_LG,
-            );
-          }
-          return CcSymmetricPadding(
-            horizontal: CcPaddingParams.SPACE_LG,
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisExtent: context.respDim(110),
-                crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
-                mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
-              ),
-              itemCount: budgets.length,
-              itemBuilder: (context, i) => CcBouncing(
-                onTap: () => context.router.push(const BudgetLimitListRoute()),
-                borderRadius: BorderRadius.circular(12),
-                child: BudgetLimitGridCard(
-                  stats: budgets[i],
-                  showDragHandle: false,
+              }
+              return CcSymmetricPadding(
+                horizontal: CcPaddingParams.SPACE_LG,
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisExtent: context.respDim(110),
+                    crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
+                    mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
+                  ),
+                  itemCount: budgets.length,
+                  itemBuilder: (context, i) => CcBouncing(
+                    onTap: () =>
+                        context.router.push(const BudgetLimitListRoute()),
+                    borderRadius: BorderRadius.circular(12),
+                    child: BudgetLimitGridCard(
+                      stats: budgets[i],
+                      showDragHandle: false,
+                    ),
+                  ),
                 ),
-              ),
+              );
+            }),
+            const CcSpaceMD(),
+          ],
+        ),
+        Obx(() {
+          if (!guideline.isTaskActive('budget_limit') &&
+              !guideline.isTaskActive('min_living')) {
+            return const SizedBox.shrink();
+          }
+          return Positioned(
+            top: context.respDim(0),
+            right: context.respDim(70),
+            child: PrjGuidelineBadge(
+              size: context.respDim(6),
+              label: guideline.bannerDescription,
+              labelAbove: true,
+              growRight: false,
             ),
           );
         }),
-        const CcSpaceMD(),
       ],
     );
   }

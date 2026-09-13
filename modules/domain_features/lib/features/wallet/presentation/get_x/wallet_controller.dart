@@ -77,6 +77,16 @@ class WalletController extends CcGetController {
   }
 
   void confirmDelete(BuildContext context, WalletEntity wallet) {
+    if (wallet.type == WalletType.investment) {
+      final stats = investmentStatsOf(wallet.id);
+      if (stats.contributed == 0 && stats.returned == 0) {
+        deleteWallet(wallet.id).then((outcome) {
+          _handleDeleteOutcome(context, outcome);
+        });
+        return;
+      }
+    }
+
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: context.ccColorScheme.surface,

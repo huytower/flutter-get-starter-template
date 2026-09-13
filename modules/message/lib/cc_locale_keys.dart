@@ -196,6 +196,7 @@ class CodegenLoader extends AssetLoader {
       "investment_edit_title": "Edit Investment",
       "name": "Wallet Name",
       "name_hint": "e.g. Cash, Techcombank...",
+      "name_duplicate_error": "This wallet name already exists",
       "initial_balance": "Opening Balance",
       "initial_balance_hint": "e.g. 1000000",
       "balance_locked_hint":
@@ -957,6 +958,7 @@ class CodegenLoader extends AssetLoader {
       "edit_title": "Sửa ví",
       "investment_edit_title": "Sửa khoản đầu tư",
       "name": "Tên ví",
+      "name_duplicate_error": "Tên ví này đã tồn tại",
       "name_hint": "Ví dụ: Tiền mặt, Techcombank...",
       "initial_balance": "Số dư đầu kỳ",
       "initial_balance_hint": "Ví dụ: 1000000",

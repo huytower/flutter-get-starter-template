@@ -1,12 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../get_x/category_settings_controller.dart';
 
@@ -21,18 +22,14 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
   @override
   void initState() {
     super.initState();
-    // CategorySettingsController is a permanent GetX singleton (see
-    // CcGetView.build()) whose onInit()/load() only fires the first time
-    // this page is ever opened in the app session. Categories toggled
-    // elsewhere (e.g. ProfileController.pickBirthYear's age-based defaults)
-    // persist to Hive correctly but never reach this already-loaded
-    // instance, so reload explicitly on every subsequent visit. Get.put()
-    // itself already triggers onInit() -> load() on first registration, so
-    // only the already-registered case needs an explicit call here.
     if (!Get.isRegistered<CategorySettingsController>()) {
       Get.put(getIt<CategorySettingsController>());
     } else {
       Get.find<CategorySettingsController>().load();
+    }
+
+    if (Get.isRegistered<GuidelineController>()) {
+      Get.find<GuidelineController>().completeTask('categories');
     }
   }
 
@@ -138,12 +135,10 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       const investmentGroups = CategorySeed.investmentGroups;
       const liabilityGroups = CategorySeed.liabilityGroups;
 
-      // Get user level status for unlock checks
       final status = getIt<UserLevelController>().status.value;
 
       final sections = <Widget>[];
 
-      // 1. Expense Section
       sections.add(
         _buildHeader(
           context,
@@ -157,7 +152,6 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
         }
       }
 
-      // 2. Income Section
       sections.add(
         _buildHeader(
           context,
@@ -172,7 +166,6 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
         }
       }
 
-      // 3. Investment Section - Use status.canUseInvestment (level 2)
       if (status.canUseInvestment) {
         sections.add(
           _buildHeader(
@@ -189,7 +182,6 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
         }
       }
 
-      // 4. Debt & Loan Section - Use status.canUseDebtLoan (level 3)
       if (status.canUseLiability) {
         sections.add(
           _buildHeader(
@@ -235,10 +227,8 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
   }
 
   Widget _buildLiabilityGroup(BuildContext context, CategoryGroupEntity group) {
-    // Check both group ID and any categories of this type as a fallback
     var cats = controller.liabilityByGroup[group.id] ?? [];
     if (cats.isEmpty) {
-      // Fallback: Just get all debtLoan type categories regardless of group
       cats = controller.liabilityByGroup.values.expand((e) => e).toList();
     }
 
