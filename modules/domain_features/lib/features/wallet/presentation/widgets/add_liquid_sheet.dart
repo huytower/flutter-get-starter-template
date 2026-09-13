@@ -300,6 +300,11 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     BuildContext context,
     AddLiquidSheetController controller,
   ) {
+    // Explicitly read newType here so the parent GetX/Obx builder tracks it as a
+    // dependency. Without this, the read inside the lazy ListView.builder's
+    // itemBuilder would be missed during the initial build phase.
+    controller.newType.value;
+
     final options = [
       (WalletType.bank, el.tr(CcLocaleKeys.wallet_bank)),
       (WalletType.ewallet, el.tr(CcLocaleKeys.wallet_ewallet)),

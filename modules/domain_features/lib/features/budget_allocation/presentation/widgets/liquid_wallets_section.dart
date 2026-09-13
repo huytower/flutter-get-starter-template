@@ -69,7 +69,7 @@ class LiquidWalletsSection extends StatelessWidget {
           ),
           if (showGuidelineBadge)
             Positioned(
-              right: 0,
+              right: context.respDim(60),
               top: 0,
               child: PrjGuidelineBadge(
                 size: context.respDim(6),

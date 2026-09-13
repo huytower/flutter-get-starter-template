@@ -222,6 +222,11 @@ class CategorySettingsController extends CcGetController {
     }, (_) async {});
 
     layoutStatus.value = CcLayoutStatus.success;
+
+    // Guideline: Mark task as completed once the settings are reached/loaded.
+    if (Get.isRegistered<GuidelineController>()) {
+      Get.find<GuidelineController>().completeTask('categories');
+    }
   }
 
   bool isEnabled(CategoryEntity cat) =>
@@ -250,9 +255,6 @@ class CategorySettingsController extends CcGetController {
         profileSettings.value = updatedSettings;
         await _updateProfileSettings(updatedSettings);
       }
-
-      // Guideline: categories completed
-      Get.find<GuidelineController>().completeTask('categories');
 
       // Global refresh for selection pickers
       onCategoriesChanged.value++;

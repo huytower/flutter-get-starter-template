@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
@@ -9,6 +8,9 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
+import '../../data/datasources/local/category_seed.dart';
+import '../../domain/entities/category_entity.dart';
+import '../../domain/entities/category_group_entity.dart';
 import '../get_x/category_settings_controller.dart';
 
 class CategorySettingsPage extends StatefulWidget {
@@ -28,9 +30,11 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
       Get.find<CategorySettingsController>().load();
     }
 
-    if (Get.isRegistered<GuidelineController>()) {
-      Get.find<GuidelineController>().completeTask('categories');
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<GuidelineController>()) {
+        Get.find<GuidelineController>().completeTask('categories');
+      }
+    });
   }
 
   @override
@@ -129,6 +133,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
 
   Widget _buildCategoryList(BuildContext context) {
     return Obx(() {
+      // Need to access pending to trigger rebuild on toggle
       controller.pending.length;
       final groups = controller.groups;
       const incomeGroups = CategorySeed.incomeGroups;

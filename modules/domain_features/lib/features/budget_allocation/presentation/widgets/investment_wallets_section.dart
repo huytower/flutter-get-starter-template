@@ -29,17 +29,17 @@ class InvestmentWalletsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final guideline = Get.find<GuidelineController>();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
+      clipBehavior: Clip.none,
       children: [
-        CcPadding(
-          CcSectionHeader(
-            title: el.tr(CcLocaleKeys.wallet_investments),
-            icon: Icons.trending_up_outlined,
-            actions: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CcPadding(
+              CcSectionHeader(
+                title: el.tr(CcLocaleKeys.wallet_investments),
+                icon: Icons.trending_up_outlined,
+                actions: [
                   CcBouncing(
                     onTap: onAddInvestment,
                     child: const CcIconToken(
@@ -47,38 +47,37 @@ class InvestmentWalletsSection extends StatelessWidget {
                       size: 20,
                     ),
                   ),
-                  if (showGuidelineBadge)
-                    Positioned(
-                      right: context.respDim(10),
-                      bottom: 0,
-                      child: PrjGuidelineBadge(
-                        size: context.respDim(6),
-                        label: guideline.bannerDescription,
-                        labelAbove: true,
-                        growRight: false,
-                        onTap: () => guideline.isDescriptionHidden.value = true,
-                        onLabelTap: () =>
-                            guideline.isDescriptionHidden.value = true,
-                      ),
-                    ),
+                  const CcSpaceSM(),
+                  CcTextButton(
+                    text: el.tr(CcLocaleKeys.wallet_see_all),
+                    onTap: onSeeAll,
+                  ),
                 ],
               ),
-              const CcSpaceSM(),
-              CcTextButton(
-                text: el.tr(CcLocaleKeys.wallet_see_all),
-                onTap: onSeeAll,
-              ),
-            ],
-          ),
-          0, // bottom
-          CcPaddingParams.SPACE_LG, // left
-          CcPaddingParams.SPACE_MD, // right
-          0, // top
+              0, // bottom
+              CcPaddingParams.SPACE_LG, // left
+              CcPaddingParams.SPACE_MD, // right
+              0, // top
+            ),
+            if (wallets.isEmpty)
+              _buildEmptyState(context)
+            else
+              _buildHorizontalList(context),
+          ],
         ),
-        if (wallets.isEmpty)
-          _buildEmptyState(context)
-        else
-          _buildHorizontalList(context),
+        if (showGuidelineBadge)
+          Positioned(
+            right: context.respDim(70),
+            top: 0,
+            child: PrjGuidelineBadge(
+              size: context.respDim(6),
+              label: guideline.bannerDescription,
+              labelAbove: false,
+              growRight: false,
+              onTap: () => guideline.isDescriptionHidden.value = true,
+              onLabelTap: () => guideline.isDescriptionHidden.value = true,
+            ),
+          ),
       ],
     );
   }

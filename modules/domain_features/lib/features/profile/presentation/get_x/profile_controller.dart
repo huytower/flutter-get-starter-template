@@ -376,6 +376,11 @@ class ProfileController extends CcGetController {
       if (settings.value.birthYear == null) return;
     }
     if (!context.mounted) return;
+
+    if (Get.isRegistered<GuidelineController>()) {
+      Get.find<GuidelineController>().completeTask('categories');
+    }
+
     Navigator.of(context).push(
       MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),
     );
