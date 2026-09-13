@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
+import '../../../transaction/presentation/get_x/transaction_controller.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
@@ -86,7 +87,12 @@ class LiabilityForm extends StatelessWidget {
           onChanged: controller.setAction,
         ),
         Obx(() {
-          if (guideline.activeTabIndex == 2) return const SizedBox.shrink();
+          final txCtrl = Get.find<TransactionController>();
+          if (!guideline.isTaskActive('liability') ||
+              txCtrl.selectedTabIndex.value !=
+                  TransactionTabKind.liability.index) {
+            return const SizedBox.shrink();
+          }
           return Positioned(
             top: context.respDim(15),
             right: context.respDim(50),

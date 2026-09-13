@@ -18,6 +18,7 @@ import 'money_keypad_panel.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_form_container.dart';
 import 'transaction_submit_button.dart';
+import '../get_x/transaction_controller.dart';
 
 void _investmentFormDebug(String message) {
   '[INVESTMENT_FORM_DEBUG] $message'.Log('InvestmentForm');
@@ -111,7 +112,12 @@ class InvestmentForm extends StatelessWidget {
           onChanged: controller.setDirection,
         ),
         Obx(() {
-          if (guideline.activeTabIndex == 1) return const SizedBox.shrink();
+          final txCtrl = Get.find<TransactionController>();
+          if (!guideline.isTaskActive('investment') ||
+              txCtrl.selectedTabIndex.value !=
+                  TransactionTabKind.investment.index) {
+            return const SizedBox.shrink();
+          }
           return Positioned(
             top: context.respDim(15),
             right: context.respDim(50),
