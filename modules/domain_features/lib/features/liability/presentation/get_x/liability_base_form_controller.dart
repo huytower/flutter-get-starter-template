@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 import '../../../transaction/presentation/get_x/quick_entry_mixin.dart';
 import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';
-import 'liability_form_controller.dart';
+import 'liability_installment_draft.dart';
 
-enum LiabilityFormAction { increase, decrease }
+enum LiabilityDirectionForm { increase, decrease }
 
 abstract class LiabilityBaseFormController extends TransactionFormController
     with QuickEntryMixin {
@@ -24,8 +24,8 @@ abstract class LiabilityBaseFormController extends TransactionFormController
   bool get canAddInstallment;
   String get direction;
 
-  Rx<LiabilityFormAction> get action;
-  void setAction(LiabilityFormAction value);
+  Rx<LiabilityDirectionForm> get action;
+  void setAction(LiabilityDirectionForm value);
 
   void selectLiability(
     LiabilityBalanceEntity balance, {

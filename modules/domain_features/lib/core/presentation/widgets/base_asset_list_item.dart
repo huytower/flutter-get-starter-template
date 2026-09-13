@@ -1,8 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import 'edit_badge.dart';
-
 class BaseAssetListItem extends StatelessWidget {
   final Widget header;
   final List<Widget> stats;
@@ -65,7 +63,7 @@ class BaseAssetListItem extends StatelessWidget {
         Positioned(
           top: context.respDim(-6),
           left: context.respDim(-6),
-          child: EditBadge(
+          child: CcEditBadge(
             icon: Icons.remove,
             color: scheme.error,
             foregroundColor: scheme.onError,
@@ -79,7 +77,7 @@ class BaseAssetListItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (dragHandle != null) ...[dragHandle!, const CcSpaceXS()],
-            EditBadge(
+            CcEditBadge(
               icon: Icons.edit,
               color: scheme.primary,
               foregroundColor: scheme.onPrimary,

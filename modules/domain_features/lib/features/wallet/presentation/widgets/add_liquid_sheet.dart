@@ -51,10 +51,9 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                   MoneyKeypadPanel(
                     onKeyPress: controller.handleKeyPress,
                     onDelete: controller.handleDelete,
-                    onClear: () => controller.amountStr.value = '0',
+                    onClear: controller.onClearAmount,
                     suggestions: MoneyConstants.walletQuickAmounts,
-                    onSuggestion: (value) =>
-                        controller.amountStr.value = value.toString(),
+                    onSuggestion: controller.onQuickAmountSelected,
                     onDone: controller.hideKeypad,
                     activeColor: context.ccColorScheme.primary,
                   ),
@@ -162,9 +161,8 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
           activeColor: context.ccColorScheme.primary,
           fieldKey: controller.amountFieldKey,
           onTap: () => controller.showKeypadAndScroll(context),
-          onQuickAmountSelected: (amount) =>
-              controller.amountStr.value = amount.toString(),
-          onClear: () => controller.amountStr.value = '0',
+          onQuickAmountSelected: controller.onQuickAmountSelected,
+          onClear: controller.onClearAmount,
           onCopy: () =>
               CcStringHelper.copyToClipboard(controller.amountStr.value),
         ),
@@ -193,15 +191,18 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     BuildContext context,
     AddLiquidSheetController controller,
   ) {
-    final bool canSave =
-        controller.isNameValid.value &&
-        (controller.newType.value != WalletType.investment ||
-            controller.selectedInvestmentCategory.value != null);
+    return Obx(() {
+      final bool canSave =
+          controller.isNameValid.value &&
+          controller.isAmountValid.value &&
+          (controller.newType.value != WalletType.investment ||
+              controller.selectedInvestmentCategory.value != null);
 
-    return CcSaveButton(
-      onPressed: canSave ? () => controller.save(context) : null,
-      label: el.tr(CcLocaleKeys.wallet_save_info),
-    );
+      return CcSaveButton(
+        onPressed: canSave ? () => controller.save(context) : null,
+        label: el.tr(CcLocaleKeys.wallet_save_info),
+      );
+    });
   }
 
   Widget _buildLockedBalance(
@@ -320,10 +321,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
       builder: (scrollController) => ListView.builder(
         scrollDirection: Axis.horizontal,
         controller: scrollController,
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.SPACE_LG),
-          vertical: context.respDim(4),
-        ),
+        padding: EdgeInsets.symmetric(vertical: context.respDim(4)),
         itemCount: options.length,
         itemBuilder: (context, index) {
           final (type, label) = options[index];

@@ -11,9 +11,8 @@ import '../../../transaction/presentation/widgets/transaction_form_container.dar
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/lend_form_controller.dart';
-import '../get_x/liability_base_form_controller.dart';
-import 'liability_action_toggle.dart';
-import 'liability_asset_selector.dart';
+import 'lend_asset_selector.dart';
+import 'lend_direction_toggle.dart';
 
 class LendForm extends StatelessWidget {
   const LendForm({super.key});
@@ -25,7 +24,7 @@ class LendForm extends StatelessWidget {
 
     return Obx(() {
       final isIncrease =
-          controller.action.value == LiabilityFormAction.increase;
+          controller.action.value == LendDirectionForm.increase;
       final accentColor = isIncrease
           ? context.ccColorScheme.liability
           : context.ccColorScheme.liabilitySecondary;
@@ -43,9 +42,8 @@ class LendForm extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    LiabilityActionToggle(
+                    LendDirectionToggle(
                       value: controller.action.value,
-                      direction: controller.direction,
                       activeColor: accentColor,
                       onChanged: controller.setAction,
                     ),
@@ -71,7 +69,7 @@ class LendForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        LiabilityAssetSelector(
+        LendAssetSelector(
           controller: controller,
           activeColor: accentColor,
         ),
@@ -115,7 +113,8 @@ class LendForm extends StatelessWidget {
         )
         ?.liability;
 
-    final isCollect = controller.action.value == LiabilityFormAction.decrease;
+    final isCollect =
+        controller.action.value == LendDirectionForm.decrease;
 
     final label =
         (isCollect || (liability != null && liability.principalAmount > 0))
@@ -142,7 +141,8 @@ class LendForm extends StatelessWidget {
     LendFormController controller,
     Color accentColor,
   ) {
-    final isCollect = controller.action.value == LiabilityFormAction.decrease;
+    final isCollect =
+        controller.action.value == LendDirectionForm.decrease;
     final text = isCollect
         ? el.tr(CcLocaleKeys.transaction_source_debt)
         : el.tr(CcLocaleKeys.transaction_liability_wallet_lend_label);
@@ -170,7 +170,8 @@ class LendForm extends StatelessWidget {
     LendFormController controller,
     Color accentColor,
   ) {
-    final isCollect = controller.action.value == LiabilityFormAction.decrease;
+    final isCollect =
+        controller.action.value == LendDirectionForm.decrease;
     final liability = controller.mergedItems
         .firstWhereOrNull(
           (b) => b.liability.id == controller.selectedLiabilityId.value,

@@ -18,27 +18,8 @@ import '../../domain/usecases/get_liability_balances_usecase.dart';
 import '../../domain/usecases/record_liability_payment_usecase.dart';
 import '../../domain/usecases/schedule_liability_reminders_usecase.dart';
 import '../get_x/liability_base_form_controller.dart';
+import '../get_x/liability_installment_draft.dart';
 import '../get_x/liability_list_controller.dart';
-
-/// One editable row of an installment schedule being built in the liability
-/// creation form. Presentation-only — converted to [LiabilityInstallmentEntity]
-/// at submit time.
-class LiabilityInstallmentDraft {
-  final Rx<DateTime> dueDate;
-  final TextEditingController amountController = TextEditingController();
-  final RxInt amount = 0.obs;
-
-  LiabilityInstallmentDraft(DateTime initialDueDate)
-    : dueDate = initialDueDate.obs;
-
-  void setAmount(String value) {
-    amount.value = int.tryParse(value) ?? 0;
-  }
-
-  void dispose() {
-    amountController.dispose();
-  }
-}
 
 /// Consolidated Liability form: handles completing a new loan's details (Borrow)
 /// or recording additional borrowings against existing loans.
@@ -80,7 +61,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
   int get principalAmount => int.tryParse(amountStr.value) ?? 0;
 
   int get installmentsTotal =>
-      installmentDrafts.fold(0, (sum, d) => sum + d.amount.value);
+      installmentDrafts.fold<int>(0, (sum, d) => sum + d.amount.value);
 
   bool get canAddInstallment =>
       principalAmount > 0 && installmentsTotal < principalAmount;
@@ -111,7 +92,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     if (liability == null) return false;
 
     // For recording a payment (Decrease), we only need a valid loan and amount.
-    if (action.value == LiabilityFormAction.decrease) return true;
+    if (action.value == LiabilityDirectionForm.decrease) return true;
 
     // For initializing a new loan (Increase when principal is 0)
     if (liability.principalAmount == 0) {
@@ -366,10 +347,10 @@ class LiabilityFormController extends LiabilityBaseFormController {
   }
 
   @override
-  final Rx<LiabilityFormAction> action = LiabilityFormAction.increase.obs;
+  final Rx<LiabilityDirectionForm> action = LiabilityDirectionForm.increase.obs;
 
   @override
-  void setAction(LiabilityFormAction value) {
+  void setAction(LiabilityDirectionForm value) {
     if (action.value == value) return;
     action.value = value;
     // Clearing current selection when switching actions ensures the item picker
@@ -390,15 +371,15 @@ class LiabilityFormController extends LiabilityBaseFormController {
 
     setAction(
       QuickEntryIntentUtil.isDebtRepayment(text)
-          ? LiabilityFormAction.decrease
-          : LiabilityFormAction.increase,
+          ? LiabilityDirectionForm.decrease
+          : LiabilityDirectionForm.increase,
     );
   }
 
   @override
   String? composeNote() {
     final userNote = super.composeNote();
-    final subsegment = action.value == LiabilityFormAction.increase
+    final subsegment = action.value == LiabilityDirectionForm.increase
         ? el.tr(CcLocaleKeys.transaction_liability_direction_borrow)
         : el.tr(CcLocaleKeys.transaction_record_repay);
 
@@ -438,7 +419,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     if (liability.principalAmount > 0) {
       final params = RecordLiabilityPaymentParams(
         liabilityId: liability.id,
-        isSettlement: action.value == LiabilityFormAction.decrease,
+        isSettlement: action.value == LiabilityDirectionForm.decrease,
         walletId: selectedWalletId.value ?? '',
         amount: int.tryParse(amountStr.value) ?? 0,
         note: composeNote(),

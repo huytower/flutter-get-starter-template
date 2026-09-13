@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../guideline/guideline_controller.dart';
+import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
 import '../../../wallet/export_wallet.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
@@ -37,7 +38,9 @@ class InvestmentForm extends StatelessWidget {
       final accentColor = _accentColor(context, controller.direction.value);
       final guideline = Get.find<GuidelineController>();
 
-      _investmentFormDebug('Build: direction=${controller.direction.value}, selectedCategory=${controller.selectedCategory.value?.nameKey}, selectedWalletId=${controller.selectedInvestmentWalletId.value}');
+      _investmentFormDebug(
+        'Build: direction=${controller.direction.value}, selectedCategory=${controller.selectedCategory.value?.nameKey}, selectedWalletId=${controller.selectedInvestmentWalletId.value}',
+      );
 
       return Column(
         children: [
@@ -56,8 +59,8 @@ class InvestmentForm extends StatelessWidget {
     });
   }
 
-  Color _accentColor(BuildContext context, InvestmentDirection direction) =>
-      direction == InvestmentDirection.contribute
+  Color _accentColor(BuildContext context, InvestmentDirectionForm direction) =>
+      direction == InvestmentDirectionForm.contribute
       ? context.ccColorScheme.investment
       : context.ccColorScheme.investmentSecondary;
 
@@ -77,11 +80,7 @@ class InvestmentForm extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            InvestmentDirectionToggle(
-              value: controller.direction.value,
-              activeColor: accentColor,
-              onChanged: controller.setDirection,
-            ),
+            buildInvestDirectionToggle(context, controller, accentColor),
             const CcSpaceSM(),
             InvestmentAssetSelector(
               controller: controller,
@@ -92,6 +91,38 @@ class InvestmentForm extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildInvestDirectionToggle(
+    BuildContext context,
+    InvestmentFormController controller,
+    Color accentColor,
+  ) {
+    final guideline = Get.find<GuidelineController>();
+
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        InvestmentDirectionToggle(
+          value: controller.direction.value,
+          activeColor: accentColor,
+          onChanged: controller.setDirection,
+        ),
+        Obx(() {
+          return Positioned(
+            top: context.respDim(15),
+            right: context.respDim(50),
+            child: PrjGuidelineBadge(
+              size: context.respDim(6),
+              label: guideline.bannerDescription,
+              labelAbove: false,
+              growRight: false,
+            ),
+          );
+        }),
+      ],
     );
   }
 
@@ -133,7 +164,7 @@ class InvestmentForm extends StatelessWidget {
           const CcSpaceSM(),
           TransactionSubmitButton(
             text: el.tr(
-              controller.direction.value == InvestmentDirection.contribute
+              controller.direction.value == InvestmentDirectionForm.contribute
                   ? CcLocaleKeys.transaction_record_investment
                   : CcLocaleKeys.transaction_record_investment_return,
             ),
@@ -142,7 +173,7 @@ class InvestmentForm extends StatelessWidget {
             onTap: () => controller.submitForm(context),
             activeColor: accentColor,
             leadingIcon:
-                controller.direction.value == InvestmentDirection.contribute
+                controller.direction.value == InvestmentDirectionForm.contribute
                 ? Icons.arrow_circle_down
                 : Icons.arrow_circle_up,
             leadingIconSize: 18,
@@ -166,7 +197,9 @@ class InvestmentForm extends StatelessWidget {
     );
     final itemName = controller.newItemNameController.text;
 
-    _investmentFormDebug('NewItemNameField: categoryNameKey=$categoryNameKey, categoryName=$categoryName, itemName=$itemName, isVip=${controller.isVip.value}');
+    _investmentFormDebug(
+      'NewItemNameField: categoryNameKey=$categoryNameKey, categoryName=$categoryName, itemName=$itemName, isVip=${controller.isVip.value}',
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,9 +222,7 @@ class InvestmentForm extends StatelessWidget {
                 ? Tooltip(
                     message: el.tr(
                       CcLocaleKeys.transaction_investment_item_vip_locked,
-                      namedArgs: {
-                        'name': categoryName,
-                      },
+                      namedArgs: {'name': categoryName},
                     ),
                     child: Icon(
                       Icons.lock_outline,
@@ -232,7 +263,7 @@ class InvestmentForm extends StatelessWidget {
     Color accentColor,
   ) {
     final labelKey =
-        controller.direction.value == InvestmentDirection.contribute
+        controller.direction.value == InvestmentDirectionForm.contribute
         ? CcLocaleKeys.transaction_source_investment
         : CcLocaleKeys.transaction_destination_investment;
     return Column(

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
+import '../../../guideline/guideline_controller.dart';
+import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
@@ -12,8 +14,8 @@ import '../../../transaction/presentation/widgets/transaction_submit_button.dart
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/liability_base_form_controller.dart';
 import '../get_x/liability_form_controller.dart';
-import 'liability_action_toggle.dart';
 import 'liability_asset_selector.dart';
+import 'liability_direction_toggle.dart';
 import 'liability_repayment_method_section.dart';
 
 class LiabilityForm extends StatelessWidget {
@@ -26,7 +28,7 @@ class LiabilityForm extends StatelessWidget {
 
     return Obx(() {
       final isIncrease =
-          controller.action.value == LiabilityFormAction.increase;
+          controller.action.value == LiabilityDirectionForm.increase;
       final accentColor = isIncrease
           ? context.ccColorScheme.liability
           : context.ccColorScheme.liabilitySecondary;
@@ -58,17 +60,44 @@ class LiabilityForm extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            LiabilityActionToggle(
-              value: controller.action.value,
-              direction: controller.direction,
-              activeColor: accentColor,
-              onChanged: controller.setAction,
-            ),
+            buildLiabilityDirectionToggle(context, controller, accentColor),
             const CcSpaceSM(),
             _buildInitiateSection(context, controller, accentColor),
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildLiabilityDirectionToggle(
+    BuildContext context,
+    LiabilityFormController controller,
+    Color accentColor,
+  ) {
+    final guideline = Get.find<GuidelineController>();
+
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        LiabilityDirectionToggle(
+          value: controller.action.value,
+          activeColor: accentColor,
+          onChanged: controller.setAction,
+        ),
+        Obx(() {
+          return Positioned(
+            top: context.respDim(20),
+            right: context.respDim(0),
+            child: PrjGuidelineBadge(
+              size: context.respDim(6),
+              label: guideline.bannerDescription,
+              labelAbove: false,
+              growRight: false,
+            ),
+          );
+        }),
+      ],
     );
   }
 
@@ -96,7 +125,8 @@ class LiabilityForm extends StatelessWidget {
               Obx(() {
                 // Show repayment plan always in "Borrow" subsegment.
                 // It is hidden in "Repay" subsegment.
-                if (controller.action.value == LiabilityFormAction.decrease) {
+                if (controller.action.value ==
+                    LiabilityDirectionForm.decrease) {
                   return const SizedBox.shrink();
                 }
 
@@ -141,7 +171,7 @@ class LiabilityForm extends StatelessWidget {
         )
         ?.liability;
 
-    final isRepay = controller.action.value == LiabilityFormAction.decrease;
+    final isRepay = controller.action.value == LiabilityDirectionForm.decrease;
 
     final label =
         (isRepay || (liability != null && liability.principalAmount > 0))
@@ -168,7 +198,7 @@ class LiabilityForm extends StatelessWidget {
     LiabilityFormController controller,
     Color accentColor,
   ) {
-    final isRepay = controller.action.value == LiabilityFormAction.decrease;
+    final isRepay = controller.action.value == LiabilityDirectionForm.decrease;
     final text = isRepay
         ? el.tr(CcLocaleKeys.transaction_source_debt)
         : el.tr(CcLocaleKeys.transaction_liability_wallet_borrow_label);
@@ -196,7 +226,7 @@ class LiabilityForm extends StatelessWidget {
     LiabilityFormController controller,
     Color accentColor,
   ) {
-    final isRepay = controller.action.value == LiabilityFormAction.decrease;
+    final isRepay = controller.action.value == LiabilityDirectionForm.decrease;
     final liability = controller.mergedItems
         .firstWhereOrNull(
           (b) => b.liability.id == controller.selectedLiabilityId.value,

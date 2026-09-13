@@ -366,8 +366,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               local: gh<_i648.TransactionLocalDataSource>(),
               syncService: gh<_i857.FinancialDataSyncService>(),
             ));
-    gh.factory<_i279.LiabilityInstallmentDraft>(
-        () => _i279.LiabilityInstallmentDraft(gh<DateTime>()));
     gh.lazySingleton<_i944.ReconciliationRepository>(
         () => _i513.ReconciliationRepositoryImpl(
               local: gh<_i896.ReconciliationLocalDataSource>(),

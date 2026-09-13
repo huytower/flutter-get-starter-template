@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../get_x/liability_base_form_controller.dart';
-import '../get_x/liability_form_controller.dart';
+import '../get_x/liability_installment_draft.dart';
 import 'liability_date_row.dart';
 
 /// Repeatable due-date + amount row editor for a Trả góp (installment) loan's

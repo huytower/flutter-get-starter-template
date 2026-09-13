@@ -10,11 +10,11 @@ import '../entities/transaction_entity.dart';
 import '../repositories/transaction_repository.dart';
 
 /// Chi ra (capital into a position) vs Thu vào (return/profit recorded on it).
-enum InvestmentDirection { contribute, returnProfit }
+enum InvestmentDirectionForm { contribute, returnProfit }
 
 /// Input for [CreateInvestmentTransactionUseCase].
 class CreateInvestmentTransactionParams {
-  final InvestmentDirection direction;
+  final InvestmentDirectionForm direction;
 
   /// The real (cash/bank/ewallet/emergency fund) wallet involved. Required
   /// for both directions: for [contribute] capital leaves this wallet; for
@@ -107,7 +107,7 @@ class CreateInvestmentTransactionUseCase {
       );
     }
 
-    if (params.direction == InvestmentDirection.contribute) {
+    if (params.direction == InvestmentDirectionForm.contribute) {
       return _contribute(params, investmentWallet);
     }
     return _recordReturn(params, investmentWallet);

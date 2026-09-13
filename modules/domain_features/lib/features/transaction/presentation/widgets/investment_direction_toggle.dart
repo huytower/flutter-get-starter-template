@@ -1,18 +1,16 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-import '../../../guideline/export_guideline.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 
 /// Chi ra / Thu vào pill switch shown at the top of the Investment form —
 /// same [TabBar]-in-a-shadowed-pill construction as [TransactionTabBar]
 /// above it, so the two read as one consistent tab language.
 class InvestmentDirectionToggle extends StatefulWidget {
-  final InvestmentDirection value;
+  final InvestmentDirectionForm value;
   final Color activeColor;
-  final ValueChanged<InvestmentDirection> onChanged;
+  final ValueChanged<InvestmentDirectionForm> onChanged;
 
   const InvestmentDirectionToggle({
     super.key,
@@ -34,8 +32,8 @@ class _InvestmentDirectionToggleState extends State<InvestmentDirectionToggle>
     initialIndex: _indexOf(widget.value),
   );
 
-  static int _indexOf(InvestmentDirection direction) =>
-      direction == InvestmentDirection.contribute ? 0 : 1;
+  static int _indexOf(InvestmentDirectionForm direction) =>
+      direction == InvestmentDirectionForm.contribute ? 0 : 1;
 
   @override
   void didUpdateWidget(covariant InvestmentDirectionToggle oldWidget) {
@@ -55,83 +53,54 @@ class _InvestmentDirectionToggleState extends State<InvestmentDirectionToggle>
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final guideline = Get.find<GuidelineController>();
-    return Stack(
-      clipBehavior: Clip.none,
-      alignment: Alignment.center,
-      children: [
-        Center(
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.6,
-            child: Container(
-              height: context.respDim(35),
-              decoration: BoxDecoration(
-                color: scheme.surface,
-                borderRadius: context.brLg,
-                boxShadow: [
-                  BoxShadow(
-                    color: scheme.onSurface.withOpacity(0.12),
-                    blurRadius: context.respDim(12),
-                    offset: Offset(0, context.respDim(6)),
-                  ),
-                ],
+
+    return Center(
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.6,
+        child: Container(
+          height: context.respDim(35),
+          decoration: BoxDecoration(
+            color: scheme.surface,
+            borderRadius: context.brLg,
+            boxShadow: [
+              BoxShadow(
+                color: scheme.onSurface.withOpacity(0.12),
+                blurRadius: context.respDim(12),
+                offset: Offset(0, context.respDim(6)),
               ),
-              padding: EdgeInsets.all(context.respDim(4)),
-              child: TabBar(
-                controller: _tabController,
-                onTap: (index) => widget.onChanged(
-                  index == 0
-                      ? InvestmentDirection.contribute
-                      : InvestmentDirection.returnProfit,
-                ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                splashFactory: NoSplash.splashFactory,
-                overlayColor: WidgetStateProperty.all(Colors.transparent),
-                indicator: BoxDecoration(
-                  color: widget.activeColor.withOpacity(0.08),
-                  borderRadius: context.brLg,
-                ),
-                labelColor: widget.activeColor,
-                unselectedLabelColor: scheme.onSurfaceVariant,
-                labelStyle: context.ccTextTheme.labelMedium?.copyWith(
-                  fontWeight: CcTypographyParams.bold,
-                ),
-                labelPadding: EdgeInsets.zero,
-                tabs: [
-                  _buildTab(
-                    el.tr(CcLocaleKeys.transaction_investment_contribution),
-                  ),
-                  _buildTab(el.tr(CcLocaleKeys.transaction_investment_return)),
-                ],
-              ),
+            ],
+          ),
+          padding: EdgeInsets.all(context.respDim(4)),
+          child: TabBar(
+            controller: _tabController,
+            onTap: (index) => widget.onChanged(
+              index == 0
+                  ? InvestmentDirectionForm.contribute
+                  : InvestmentDirectionForm.returnProfit,
             ),
+            indicatorSize: TabBarIndicatorSize.tab,
+            dividerColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
+            overlayColor: WidgetStateProperty.all(Colors.transparent),
+            indicator: BoxDecoration(
+              color: widget.activeColor.withOpacity(0.08),
+              borderRadius: context.brLg,
+            ),
+            labelColor: widget.activeColor,
+            unselectedLabelColor: scheme.onSurfaceVariant,
+            labelStyle: context.ccTextTheme.labelMedium?.copyWith(
+              fontWeight: CcTypographyParams.bold,
+            ),
+            labelPadding: EdgeInsets.zero,
+            tabs: [
+              _buildTab(
+                el.tr(CcLocaleKeys.transaction_investment_contribution),
+              ),
+              _buildTab(el.tr(CcLocaleKeys.transaction_investment_return)),
+            ],
           ),
         ),
-        Obx(() {
-          final bool isInvestmentTask = guideline.isTaskActive('investment');
-          // Badge 1: only show badge at bottom right as current at bottom navigation without displayed banner desc.
-          // Wait, the user said "at bottom navigation bar area, badge 1: only show badge ... without displayed banner desc."
-          // AND "at body area, banner desc & badge was displayed ... expect: align to the right side"
-
-          // For InvestmentDirectionToggle (body area):
-          final index = _indexOf(InvestmentDirection.returnProfit);
-          final bool showBadgeWithLabel = isInvestmentTask && index == 1;
-
-          return showBadgeWithLabel
-              ? Positioned(
-                  top: context.respDim(15),
-                  right: context.respDim(30),
-                  child: PrjGuidelineBadge(
-                    size: context.respDim(6),
-                    label: guideline.bannerDescription,
-                    labelAbove: false,
-                    growRight: false,
-                  ),
-                )
-              : const SizedBox.shrink();
-        }),
-      ],
+      ),
     );
   }
 

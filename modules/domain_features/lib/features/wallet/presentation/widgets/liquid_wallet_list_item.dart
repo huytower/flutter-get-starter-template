@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../../core/presentation/widgets/edit_badge.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import 'wallet_display_name.dart';
@@ -116,7 +115,7 @@ class LiquidWalletListItem extends StatelessWidget {
         Positioned(
           top: context.respDim(-6),
           left: context.respDim(-6),
-          child: EditBadge(
+          child: CcEditBadge(
             icon: Icons.remove,
             color: scheme.error,
             foregroundColor: scheme.onError,
@@ -129,7 +128,7 @@ class LiquidWalletListItem extends StatelessWidget {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            EditBadge(
+            CcEditBadge(
               icon: Icons.edit,
               color: scheme.primary,
               foregroundColor: scheme.onPrimary,

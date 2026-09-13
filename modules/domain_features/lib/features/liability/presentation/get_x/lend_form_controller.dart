@@ -17,14 +17,18 @@ import '../../domain/usecases/create_liability_usecase.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
 import '../../domain/usecases/record_liability_payment_usecase.dart';
 import '../../domain/usecases/schedule_liability_reminders_usecase.dart';
-import '../get_x/liability_base_form_controller.dart';
-import '../get_x/liability_form_controller.dart';
+import '../../../transaction/presentation/get_x/quick_entry_mixin.dart';
+import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
+import '../get_x/liability_installment_draft.dart';
 import '../get_x/liability_list_controller.dart';
+
+enum LendDirectionForm { increase, decrease }
 
 /// Consolidated Lend form: handles completing a new loan's details (Lend)
 /// or recording additional lending against existing loan records.
 @lazySingleton
-class LendFormController extends LiabilityBaseFormController {
+class LendFormController extends TransactionFormController
+    with QuickEntryMixin {
   @override
   String get quickEntryCategoryType => CategoryType.liability;
 
@@ -36,7 +40,6 @@ class LendFormController extends LiabilityBaseFormController {
   @override
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 
-  @override
   final String direction = LiabilityDirection.lend;
   @override
   String get quickEntryDirection => direction;
@@ -44,37 +47,26 @@ class LendFormController extends LiabilityBaseFormController {
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   @override
   final RxInt categoryKey = 0.obs;
-  @override
   final RxString repaymentMethod = LiabilityRepaymentMethod.lumpSum.obs;
-  @override
   final Rx<DateTime?> finalDueDate = Rx<DateTime?>(null);
-  @override
   final RxList<LiabilityInstallmentDraft> installmentDrafts =
       <LiabilityInstallmentDraft>[].obs;
-  @override
   final RxBool reminderBeforeDueDate = false.obs;
 
   final RxList<LiabilityBalanceEntity> liabilityBalances =
       <LiabilityBalanceEntity>[].obs;
-  @override
   final RxList<LiabilityBalanceEntity> mergedItems =
       <LiabilityBalanceEntity>[].obs;
-  @override
   final RxBool isLoadingMerged = true.obs;
-  @override
   final RxnString selectedLiabilityId = RxnString();
 
-  @override
   final RxnInt editingInstallmentIndex = RxnInt();
 
-  @override
   int get principalAmount => int.tryParse(amountStr.value) ?? 0;
 
-  @override
   int get installmentsTotal =>
-      installmentDrafts.fold(0, (sum, d) => sum + d.amount.value);
+      installmentDrafts.fold<int>(0, (sum, d) => sum + d.amount.value);
 
-  @override
   bool get canAddInstallment =>
       principalAmount > 0 && installmentsTotal < principalAmount;
 
@@ -92,7 +84,6 @@ class LendFormController extends LiabilityBaseFormController {
     }
   }
 
-  @override
   bool get canSubmit {
     if (selectedLiabilityId.value == null) return false;
     if (amountStr.value == '0' || amountStr.value.isEmpty) return false;
@@ -138,7 +129,6 @@ class LendFormController extends LiabilityBaseFormController {
     }, (_) {});
   }
 
-  @override
   void selectLiability(
     LiabilityBalanceEntity balance, {
     bool resetAmount = true,
@@ -191,7 +181,6 @@ class LendFormController extends LiabilityBaseFormController {
     super.onClose();
   }
 
-  @override
   void clearCategorySelection() {
     selectedCategory.value = null;
     selectedLiabilityId.value = null;
@@ -202,17 +191,14 @@ class LendFormController extends LiabilityBaseFormController {
     pendingPrefillCategoryId.value = null;
   }
 
-  @override
   void setRepaymentMethod(String value) {
     repaymentMethod.value = value;
   }
 
-  @override
   void setReminderBeforeDueDate(bool value) {
     reminderBeforeDueDate.value = value;
   }
 
-  @override
   Future<void> pickFinalDueDate(BuildContext context) async {
     final picked = await _pickFutureDate(
       context,
@@ -221,7 +207,6 @@ class LendFormController extends LiabilityBaseFormController {
     if (picked != null) finalDueDate.value = picked;
   }
 
-  @override
   Future<void> pickInstallmentDueDate(BuildContext context, int index) async {
     final draft = installmentDrafts[index];
     final picked = await _pickFutureDate(context, draft.dueDate.value);
@@ -243,7 +228,6 @@ class LendFormController extends LiabilityBaseFormController {
     );
   }
 
-  @override
   void addInstallmentPeriod() {
     if (!canAddInstallment) return;
 
@@ -268,7 +252,6 @@ class LendFormController extends LiabilityBaseFormController {
     installmentDrafts.add(newDraft);
   }
 
-  @override
   void removeInstallmentPeriod(int index) {
     installmentDrafts.removeAt(index).dispose();
     if (editingInstallmentIndex.value == index) {
@@ -335,7 +318,6 @@ class LendFormController extends LiabilityBaseFormController {
     }
   }
 
-  @override
   void showKeypadForInstallment(BuildContext context, int index) {
     editingInstallmentIndex.value = index;
     showKeypadAndScroll(context);
@@ -347,11 +329,9 @@ class LendFormController extends LiabilityBaseFormController {
     editingInstallmentIndex.value = null;
   }
 
-  @override
-  final Rx<LiabilityFormAction> action = LiabilityFormAction.increase.obs;
+  final Rx<LendDirectionForm> action = LendDirectionForm.increase.obs;
 
-  @override
-  void setAction(LiabilityFormAction value) {
+  void setAction(LendDirectionForm value) {
     if (action.value == value) return;
     action.value = value;
     // Clearing current selection when switching actions ensures the item picker
@@ -372,15 +352,15 @@ class LendFormController extends LiabilityBaseFormController {
 
     setAction(
       QuickEntryIntentUtil.isLendCollection(text)
-          ? LiabilityFormAction.decrease
-          : LiabilityFormAction.increase,
+          ? LendDirectionForm.decrease
+          : LendDirectionForm.increase,
     );
   }
 
   @override
   String? composeNote() {
     final userNote = super.composeNote();
-    final subsegment = action.value == LiabilityFormAction.increase
+    final subsegment = action.value == LendDirectionForm.increase
         ? el.tr(CcLocaleKeys.transaction_liability_direction_lend)
         : el.tr(CcLocaleKeys.transaction_record_collect);
 
@@ -420,7 +400,7 @@ class LendFormController extends LiabilityBaseFormController {
     if (liability.principalAmount > 0) {
       final params = RecordLiabilityPaymentParams(
         liabilityId: liability.id,
-        isSettlement: action.value == LiabilityFormAction.decrease,
+        isSettlement: action.value == LendDirectionForm.decrease,
         walletId: selectedWalletId.value ?? '',
         amount: int.tryParse(amountStr.value) ?? 0,
         note: composeNote(),
@@ -457,7 +437,16 @@ class LendFormController extends LiabilityBaseFormController {
       return;
     }
 
-    final category = selectedCategory.value!;
+    final category = selectedCategory.value;
+    if (category == null) {
+      isSubmitting.value = false;
+      CcSnackBarHelper.showErrorSnackBar(
+        context: context,
+        message: el.tr(CcLocaleKeys.app_error_general),
+      );
+      return;
+    }
+
     final categoryLabel = liability.categoryLabel;
     final isInstallment =
         repaymentMethod.value == LiabilityRepaymentMethod.installment;
@@ -516,5 +505,37 @@ class LendFormController extends LiabilityBaseFormController {
         message: el.tr(error.message),
       ),
     );
+  }
+
+  @override
+  void applyQuickEntryCategory(String categoryId) {
+    // 0. Save current parsed amount before selection resets it
+    final currentParsedAmount = amountStr.value;
+
+    // 1. Try to find an existing loan/record for this category
+    final matchingItems = mergedItems
+        .where((b) => b.liability.categoryId == categoryId)
+        .toList();
+
+    if (matchingItems.isNotEmpty) {
+      // Pick the first one (most recently updated due to loadLiabilities sorting)
+      final selected = matchingItems.first;
+
+      '[AI_PARSING] 🎯 Matching existing liability found for category: $categoryId | amount: $currentParsedAmount'
+          .Log(runtimeType.toString());
+
+      // Pass the amount explicitly to avoid it being reset to '0' during selection
+      selectLiability(
+        selected,
+        amount: currentParsedAmount != '0' ? currentParsedAmount : null,
+      );
+
+      pendingPrefillCategoryId.value = null;
+      return;
+    }
+
+    // 2. Fallback: let the mixin handle setting pendingPrefillCategoryId
+    // and resolving the CategoryEntity.
+    super.applyQuickEntryCategory(categoryId);
   }
 }

@@ -9,9 +9,8 @@ extension WalletDisplayName on WalletEntity {
     if (type == WalletType.cash) {
       return el.tr(CcLocaleKeys.wallet_cash);
     }
-    if (type == WalletType.bank) {
-      return el.tr(CcLocaleKeys.wallet_bank);
-    }
+    // For bank, ewallet, and other wallet types, show the actual wallet name
+    // Only cash wallet uses a fixed localized name
     return name;
   }
 }

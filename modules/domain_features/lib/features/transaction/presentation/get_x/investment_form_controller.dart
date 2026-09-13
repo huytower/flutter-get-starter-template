@@ -90,15 +90,16 @@ class InvestmentFormController extends TransactionFormController
 
     setDirection(
       QuickEntryIntentUtil.isInvestmentReturn(text)
-          ? InvestmentDirection.returnProfit
-          : InvestmentDirection.contribute,
+          ? InvestmentDirectionForm.returnProfit
+          : InvestmentDirectionForm.contribute,
     );
   }
 
   @override
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 
-  final Rx<InvestmentDirection> direction = InvestmentDirection.contribute.obs;
+  final Rx<InvestmentDirectionForm> direction =
+      InvestmentDirectionForm.contribute.obs;
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   @override
   final RxInt categoryKey = 0.obs;
@@ -291,11 +292,11 @@ class InvestmentFormController extends TransactionFormController
     super.onClose();
   }
 
-  void setDirection(InvestmentDirection value) {
+  void setDirection(InvestmentDirectionForm value) {
     if (direction.value == value) return;
     direction.value = value;
     _recomputeMergedItems();
-    if (value == InvestmentDirection.returnProfit) {
+    if (value == InvestmentDirectionForm.returnProfit) {
       // Logic for return profit: must pick existing asset if available
       if (isAddingNewItem.value || selectedInvestmentWalletId.value == null) {
         final firstAsset = mergedItems
@@ -333,7 +334,7 @@ class InvestmentFormController extends TransactionFormController
   @override
   String? composeNote() {
     final userNote = super.composeNote();
-    final subsegment = direction.value == InvestmentDirection.contribute
+    final subsegment = direction.value == InvestmentDirectionForm.contribute
         ? el.tr(CcLocaleKeys.transaction_investment_contribution)
         : el.tr(CcLocaleKeys.transaction_investment_return);
 

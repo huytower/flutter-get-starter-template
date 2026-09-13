@@ -12,6 +12,7 @@ import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
+import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../profile/domain/usecases/update_profile_settings_usecase.dart';
 import '../../../user_level/presentation/get_x/user_level_controller.dart';
@@ -48,6 +49,7 @@ class AddLiquidSheetController extends CcGetController {
   final RxBool emergencyFundUnlocked = false.obs;
   final RxBool showEmergencyFundLockedHint = false.obs;
   final RxBool isNameValid = false.obs;
+  final RxBool isAmountValid = false.obs;
   final RxnString nameError = RxnString();
   final RxBool isSubmitting = false.obs;
 
@@ -69,6 +71,8 @@ class AddLiquidSheetController extends CcGetController {
       amountStr.value = _walletController.bookBalanceOf(wallet!.id).toString();
       newType.value = wallet.type;
     }
+    amountStr.listen((_) => _validateAmount());
+    _validateAmount();
     _loadEmergencyFundGate();
     _loadInvestmentCategories();
   }
@@ -130,6 +134,7 @@ class AddLiquidSheetController extends CcGetController {
     } else {
       amountStr.value += key;
     }
+    _validateAmount();
   }
 
   void handleDelete() {
@@ -141,6 +146,12 @@ class AddLiquidSheetController extends CcGetController {
     } else {
       amountStr.value = '0';
     }
+    _validateAmount();
+  }
+
+  void _validateAmount() {
+    final amount = int.tryParse(amountStr.value) ?? 0;
+    isAmountValid.value = amount > 0;
   }
 
   void showKeypadAndScroll(BuildContext context) {
@@ -160,6 +171,11 @@ class AddLiquidSheetController extends CcGetController {
 
   void hideKeypad() => showKeypad.value = false;
 
+  void onClearAmount() {
+    amountStr.value = '0';
+    _validateAmount();
+  }
+
   void selectType(String type) {
     if (type == WalletType.emergencyFund && !emergencyFundUnlocked.value) {
       showEmergencyFundLockedHint.value = true;
@@ -178,6 +194,11 @@ class AddLiquidSheetController extends CcGetController {
     if (nameController.text.trim().isEmpty) {
       nameController.text = el.tr(category.nameKey);
     }
+  }
+
+  void onQuickAmountSelected(int amount) {
+    amountStr.value = amount.toString();
+    _validateAmount();
   }
 
   Future<void> save(BuildContext context) async {
@@ -242,6 +263,14 @@ class AddLiquidSheetController extends CcGetController {
         _walletController.loadWallets();
         if (Get.isRegistered<BudgetAllocationController>()) {
           Get.find<BudgetAllocationController>().loadAll();
+        }
+
+        // Mark guideline task as completed when adding first wallet
+        if (!isEditing && Get.isRegistered<GuidelineController>()) {
+          final guideline = Get.find<GuidelineController>();
+          if (guideline.isTaskActive('wallet_balance')) {
+            await guideline.completeTask('wallet_balance');
+          }
         }
 
         Navigator.pop(context);

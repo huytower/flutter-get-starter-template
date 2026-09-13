@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../../core/presentation/widgets/edit_badge.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
 
@@ -209,7 +208,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
         Positioned(
           top: context.respDim(-4),
           left: context.respDim(-4),
-          child: EditBadge(
+          child: CcEditBadge(
             icon: Icons.remove,
             color: scheme.error,
             foregroundColor: scheme.onError,
@@ -219,7 +218,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
       Positioned(
         top: context.respDim(-4),
         right: context.respDim(-4),
-        child: EditBadge(
+        child: CcEditBadge(
           icon: Icons.edit,
           color: scheme.primary,
           foregroundColor: scheme.onPrimary,
