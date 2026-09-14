@@ -332,14 +332,6 @@ class ExpenseFormController extends TransactionFormController
     });
 
     unifiedItems.assignAll(items);
-
-    // Debug first 5 items
-    '[THEME] 🕵️ Debugging first 5 unified items'.Log('ExpenseFormController');
-    for (int i = 0; i < unifiedItems.take(5).length; i++) {
-      final item = unifiedItems[i];
-      '[THEME]   #$i: id=${item.id} | nameKey=${item.nameKey} | customName=${item.customName} | isBudget=${item.isBudget} | initialOrder=${item.initialOrder}'
-          .Log('ExpenseFormController');
-    }
   }
 
   Future<void> _loadCategories() async {

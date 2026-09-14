@@ -4,7 +4,9 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/helper/budget_name_helper.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/add_investment_sheet.dart';
 import '../widgets/investment_wallet_list_item.dart';
@@ -142,6 +144,12 @@ class _InvestmentListView extends CcGetView<WalletController> {
           itemCount: wallets.length,
           itemBuilder: (context, index) {
             final wallet = wallets[index];
+            final categoryName = BudgetNameHelper.getDisplayName(
+              name: wallet.name,
+              categoryNameKey: wallet.categoryNameKey,
+            );
+            '[INVESTMENT_LIST_DEBUG] Wallet: id=${wallet.id}, name=${wallet.name}, categoryNameKey=${wallet.categoryNameKey}, displayName=$categoryName, index=$index'
+                .Log('InvestmentListPage');
             final stats = controller.investmentStatsOf(wallet.id);
             return InvestmentWalletListItem(
               key: ValueKey(wallet.id),

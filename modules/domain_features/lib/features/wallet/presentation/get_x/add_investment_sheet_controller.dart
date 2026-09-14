@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../category/data/datasources/local/category_seed.dart';
@@ -151,11 +152,23 @@ class AddInvestmentSheetController extends CcGetController {
     final name = nameController.text.trim();
     final wallet = _wallet;
 
-    // Check for duplicate names (excluding current wallet if editing)
+    // The categoryNameKey this wallet belongs to:
+    // - editing: use the wallet's existing key
+    // - creating: use the selected category's key
+    final targetCategoryKey = wallet?.categoryNameKey ??
+        selectedInvestmentCategory.value?.nameKey;
+
+    // Check for duplicate name OR duplicate category type
+    // (excluding the wallet currently being edited).
     final isDuplicate = _walletController.wallets.any(
-      (w) =>
-          w.name.trim().toLowerCase() == name.toLowerCase() &&
-          w.id != wallet?.id,
+      (w) {
+        if (w.id == wallet?.id) return false;
+        final sameName =
+            w.name.trim().toLowerCase() == name.toLowerCase();
+        final sameCategory = targetCategoryKey != null &&
+            w.categoryNameKey == targetCategoryKey;
+        return sameName || sameCategory;
+      },
     );
 
     if (isDuplicate) {

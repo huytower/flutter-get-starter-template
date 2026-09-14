@@ -6,6 +6,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/helper/budget_name_helper.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/repositories/category_repository.dart';
 import '../../../guideline/guideline_controller.dart';
@@ -265,7 +266,7 @@ class WalletController extends CcGetController {
       }
       return a.name.toLowerCase().compareTo(b.name.toLowerCase());
     });
-    return result;
+    return _dedupByDisplayName(result);
   }
 
   List<WalletEntity> get recentInvestmentWallets {
@@ -278,7 +279,24 @@ class WalletController extends CcGetController {
     }
     final result = unique.values.toList();
     result.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
-    return result;
+    return _dedupByDisplayName(result);
+  }
+
+  /// Deduplicates investment wallets by their resolved display name.
+  ///
+  /// Multiple wallets may share the same resolved display name
+  /// (e.g. "Stock" from both Vietnamese "Cổ phiếu" and English "Stock"
+  /// via [BudgetNameHelper]). Keeps only the first occurrence.
+  List<WalletEntity> _dedupByDisplayName(List<WalletEntity> wallets) {
+    final seen = <String, WalletEntity>{};
+    for (final w in wallets) {
+      final displayName = BudgetNameHelper.getDisplayName(
+        name: w.name,
+        categoryNameKey: w.categoryNameKey,
+      );
+      seen.putIfAbsent(displayName, () => w);
+    }
+    return seen.values.toList();
   }
 
   /// Manually reorders investment assets (drag-and-drop).

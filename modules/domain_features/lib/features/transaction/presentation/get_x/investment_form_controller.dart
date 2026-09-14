@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
@@ -204,10 +205,26 @@ class InvestmentFormController extends TransactionFormController
   Future<void> _recomputeMergedItems() async {
     final parentWallets = Get.find<TransactionController>().wallets;
 
+    // Resolve categoryNameKey for wallets that have categoryId but
+    // no categoryNameKey (common for wallets added via TransactionController
+    // which does not resolve categoryNameKey on load).
+    final categoryMap = {
+      for (final c in _cachedCategories) c.id: c.nameKey
+    };
+    final resolvedWallets = [
+      for (final w in parentWallets)
+        if (w.type == WalletType.investment &&
+            w.categoryId != null &&
+            w.categoryNameKey == null)
+          w.copyWith(categoryNameKey: categoryMap[w.categoryId])
+        else
+          w
+    ];
+
     // Deduplicate by ID to ensure consistency with investment_list_page logic
     // and avoid ghost items from stale sync states.
     final uniqueAssets = <String, WalletEntity>{};
-    for (final w in parentWallets) {
+    for (final w in resolvedWallets) {
       if (w.type == WalletType.investment) {
         uniqueAssets[w.id] = w;
       }
@@ -222,9 +239,22 @@ class InvestmentFormController extends TransactionFormController
       return b.updatedAt.compareTo(a.updatedAt);
     });
 
+    // Deduplicate by resolved display name so that multiple wallets
+    // mapping to the same name (e.g. "Cổ phiếu" and "Stock" both
+    // resolving to "Stock" in English) are not shown as separate items.
+    final seen = <String, WalletEntity>{};
+    for (final w in assets) {
+      final displayName = BudgetNameHelper.getDisplayName(
+        name: w.name,
+        categoryNameKey: w.categoryNameKey,
+      );
+      seen.putIfAbsent(displayName, () => w);
+    }
+    final deduped = seen.values.toList();
+
     // Only include investment wallets, not base categories
     // This ensures consistency with investment_list_page
-    final List<dynamic> items = [...assets];
+    final List<dynamic> items = [...deduped];
     mergedItems.assignAll(items);
 
     if (selectedInvestmentWalletId.value == null &&
