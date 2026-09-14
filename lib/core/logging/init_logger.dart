@@ -34,7 +34,7 @@ Future<void> initEnv() async {
       envFile = '.env.uat';
       break;
     case Environment.PROD:
-      envFile = '.env.production';
+      envFile = '.env.prod';
       break;
   }
   await dotenv.load(fileName: 'env/$envFile');
