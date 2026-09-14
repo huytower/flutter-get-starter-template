@@ -23,7 +23,7 @@ platform :ios do
 
     # 4. Build App (Gym)
     build_app(
-      scheme: "Runner",
+      scheme: flavor == "uat" ? "uat" : "prod",
       workspace: "Runner.xcworkspace",
       include_bitcode: false,
       export_method: "app-store",
