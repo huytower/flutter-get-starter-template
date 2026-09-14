@@ -138,9 +138,12 @@ class AddLiabilitySheetController extends CcGetController {
     final existingResult = await _getLiabilityBalances();
     if (existingResult.isSuccess()) {
       final isDuplicate = existingResult.tryGetSuccess()!.any(
-        (b) =>
-            b.liability.categoryLabel.trim().toLowerCase() ==
-            name.toLowerCase(),
+        (b) {
+          final sameName = b.liability.categoryLabel.trim().toLowerCase() ==
+              name.toLowerCase();
+          final sameCategory = b.liability.categoryId == category.id;
+          return sameName || sameCategory;
+        },
       );
       if (isDuplicate) {
         nameError.value = el.tr(
