@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:message/cc_locale_keys.dart';
 
 /// Helper to handle budget name localization and formatting.
-class BudgetNameHelper {
+abstract final class BudgetNameHelper {
   BudgetNameHelper._();
 
   /// Known legacy / alternative default names mapped to category keys.

@@ -517,14 +517,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i569.GetProfileSettingsUseCase>(),
               gh<_i220.UpdateProfileSettingsUseCase>(),
             ));
-    gh.lazySingleton<_i1003.BudgetLimitController>(
-        () => _i1003.BudgetLimitController(
-              gh<_i743.GetBudgetLimitStatsUseCase>(),
-              gh<_i77.CreateBudgetLimitUseCase>(),
-              gh<_i829.UpdateBudgetLimitUseCase>(),
-              gh<_i256.UpdateBudgetLimitOrdersUseCase>(),
-              gh<_i106.DeleteBudgetLimitUseCase>(),
-            ));
     gh.factory<_i135.InvestmentFormController>(
         () => _i135.InvestmentFormController(
               gh<_i1041.GetCategoriesUseCase>(),
@@ -576,16 +568,18 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i743.GetBudgetLimitStatsUseCase>(),
               gh<_i1027.TransactionRepository>(),
             ));
-    gh.factory<_i752.AddBudgetLimitSheetController>(
-        () => _i752.AddBudgetLimitSheetController(
-              gh<_i1041.GetCategoriesUseCase>(),
-              gh<_i393.GetCategoryAverageMonthlySpendUseCase>(),
-              gh<_i1003.BudgetLimitController>(),
-            ));
     gh.lazySingleton<_i390.CheckBudgetThresholdUseCase>(
         () => _i390.CheckBudgetThresholdUseCase(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
               gh<_i483.NotificationService>(),
+            ));
+    gh.lazySingleton<_i1003.BudgetLimitController>(
+        () => _i1003.BudgetLimitController(
+              gh<_i743.GetBudgetLimitStatsUseCase>(),
+              gh<_i77.CreateBudgetLimitUseCase>(),
+              gh<_i829.UpdateBudgetLimitUseCase>(),
+              gh<_i256.UpdateBudgetLimitOrdersUseCase>(),
+              gh<_i106.DeleteBudgetLimitUseCase>(),
             ));
     gh.factory<_i849.LiabilityDetailController>(
         () => _i849.LiabilityDetailController(
@@ -657,6 +651,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i663.GetLiabilityBalancesUseCase>(),
               gh<_i356.UserLevelController>(),
               gh<_i206.GetBudgetInsightsUseCase>(),
+            ));
+    gh.factory<_i752.AddBudgetLimitSheetController>(
+        () => _i752.AddBudgetLimitSheetController(
+              gh<_i1041.GetCategoriesUseCase>(),
+              gh<_i393.GetCategoryAverageMonthlySpendUseCase>(),
+              gh<_i1003.BudgetLimitController>(),
             ));
     gh.factory<_i95.AddLiquidSheetController>(
         () => _i95.AddLiquidSheetController(

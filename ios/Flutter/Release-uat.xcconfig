@@ -5,3 +5,5 @@
 bundle_suffix = .uat
 // the name displayed below the app icon on the home presentation
 app_display_name = [UAT] CCI REL
+// flavor folder under ios/Firebase used by the GoogleService-Info.plist copy script
+FLAVOR = uat
