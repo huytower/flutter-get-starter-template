@@ -50,7 +50,7 @@ class _LoginViewState extends State<LoginView> {
           getIt<AuthCoordinator>().navigateToDashboard(context);
         } else if (state is LoginLoading) {
           'Login loading, showing dialog'.Log('LoginPage');
-          CcDialogHelper.showLoadingDialog(context: context);
+          CcDialogHelper.showLoadingBottomSheet(context: context);
         } else {
           'Login state is not Success or Loading, closing dialog if open'.Log(
             'LoginPage',

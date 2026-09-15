@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
@@ -39,8 +40,11 @@ class LiabilityDetailPage extends StatelessWidget with CcViewConfigMixin {
       title: Obx(() {
         final controller = Get.find<LiabilityDetailController>();
         final current = controller.liability.value ?? liability.liability;
-        return CcText(
-          current.categoryLabel,
+          return CcText(
+            BudgetNameHelper.getDisplayName(
+              name: current.categoryLabel,
+              categoryNameKey: current.categoryNameKey,
+            ),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             color: context.ccColorScheme.onPrimary,
             fontWeight: CcTypographyParams.bold,

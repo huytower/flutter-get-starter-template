@@ -1,0 +1,10 @@
+"NSCameraUsageDescription" = "Sổ Sách Xịn needs camera access to capture receipt images and expense photos for automatic transaction entry and record keeping.";
+"NSDocumentsFolderUsageDescription" = "Sổ Sách Xịn needs access to your documents folder to save and export your financial reports and transaction data.";
+"NSFaceIDUsageDescription" = "Sổ Sách Xịn uses Face ID to securely authenticate your account and protect your financial data from unauthorized access.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "Sổ Sách Xịn uses your location to detect your country code for phone number formatting and provide smart spending suggestions based on nearby merchants (optional feature).";
+"NSLocationWhenInUseUsageDescription" = "Sổ Sách Xịn uses your location to detect your country code for phone number formatting and provide smart spending suggestions based on nearby merchants (optional feature).";
+"NSMicrophoneUsageDescription" = "Sổ Sách Xịn uses your microphone to let you speak a quick expense entry like \"50k cà phê\" instead of typing (optional feature).";
+"NSPhotoLibraryAddUsageDescription" = "Sổ Sách Xịn needs permission to save receipt images and transaction photos to your photo library for your records.";
+"NSPhotoLibraryUsageDescription" = "Sổ Sách Xịn needs access to your photo library to attach receipt images to your transactions and import expense photos for automatic data entry.";
+"NSSpeechRecognitionUsageDescription" = "Sổ Sách Xịn uses on-device speech recognition to transcribe your voice into text for quick expense entry (optional feature).";
+"NSUserTrackingUsageDescription" = "Sổ Sách Xịn collects crash reports and performance data to improve app stability and identify bugs. Your identity remains private.";

@@ -89,6 +89,8 @@
 	<string>Sổ Sách Xịn needs access to your photo library to attach receipt images to your transactions and import expense photos for automatic data entry.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Sổ Sách Xịn uses on-device speech recognition to transcribe your voice into text for quick expense entry (optional feature).</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Sổ Sách Xịn collects crash reports and performance data to improve app stability and identify bugs. Your identity remains private.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
