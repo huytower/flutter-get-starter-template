@@ -132,7 +132,7 @@ lib/generated_plugin_registrant.dart
 /ios/Podfile.lock
 /ios/Runner.xcodeproj/xcshareddata/xcschemes/Runner.xcscheme
 /ios/Runner.xcodeproj/xcshareddata
-/ios/Runner.xcodeworkspace/contents.xcworkspacedata
+/ios/Runner.xcworkspace/contents.xcworkspacedata
 # MUST only commit for the first time push in .git
 /ios/Runner.xcodeproj/project.pbxproj
 

@@ -1,0 +1,11 @@
+/* Vietnamese (vi) localized permission strings for Sổ Sách Xịn */
+
+"NSCameraUsageDescription" = "Sổ Sách Xịn cần quyền truy cập máy ảnh để chụp ảnh hóa đơn và chi tiêu, phục vụ nhập giao dịch tự động.";
+"NSDocumentsFolderUsageDescription" = "Sổ Sách Xịn cần quyền truy cập thư mục tài liệu để lưu và xuất báo cáo tài chính cùng dữ liệu giao dịch của bạn.";
+"NSFaceIDUsageDescription" = "Sổ Sách Xịn sử dụng Face ID để xác thực tài khoản của bạn một cách an toàn và bảo vệ dữ liệu tài chính khỏi truy cập trái phép.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "Sổ Sách Xịn sử dụng vị trí của bạn để nhận diện mã quốc gia cho định dạng số điện thoại và đưa ra gợi ý chi tiêu thông minh dựa trên các cửa hàng gần bạn (tính năng tùy chọn).";
+"NSLocationWhenInUseUsageDescription" = "Sổ Sách Xịn sử dụng vị trí của bạn để nhận diện mã quốc gia cho định dạng số điện thoại và đưa ra gợi ý chi tiêu thông minh dựa trên các cửa hàng gần bạn (tính năng tùy chọn).";
+"NSMicrophoneUsageDescription" = "Sổ Sách Xịn sử dụng micro để bạn có thể đọc nhanh một khoản chi tiêu như \"50k cà phê\" thay vì phải gõ (tính năng tùy chọn).";
+"NSPhotoLibraryAddUsageDescription" = "Sổ Sách Xịn cần quyền lưu ảnh hóa đơn và ảnh giao dịch vào thư viện ảnh của bạn để lưu trữ.";
+"NSPhotoLibraryUsageDescription" = "Sổ Sách Xịn cần quyền truy cập thư viện ảnh để đính kèm ảnh hóa đơn vào giao dịch và nhập ảnh chi tiêu để nhập liệu tự động.";
+"NSSpeechRecognitionUsageDescription" = "Sổ Sách Xịn sử dụng nhận dạng giọng nói trên thiết bị để chuyển giọng nói của bạn thành văn bản, giúp nhập chi tiêu nhanh (tính năng tùy chọn).";
