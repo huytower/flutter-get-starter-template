@@ -5,5 +5,7 @@
 bundle_suffix = .prod
 // the name displayed below the app icon on the home presentation
 app_display_name = Sổ Sách Xịn
+BUNDLE_DISPLAY_NAME = Sổ Sách Xịn
+BUNDLE_NAME = Sổ Sách Xịn
 // flavor folder under ios/Firebase used by the GoogleService-Info.plist copy script
 FLAVOR = prod
