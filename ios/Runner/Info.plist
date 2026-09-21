@@ -4,6 +4,8 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+    <true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -38,7 +40,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.525600752173-ih1vut9idrrn8pgo80vestpu6gifkoqu</string>
+				<string>com.googleusercontent.apps.787010067332-had738csp983oetr66nnrcfktauqe6de</string>
 				<string>com.googleusercontent.apps.787010067332-5cnkd35mdrfa2hrnhh1qma9therr7ed6</string>
 			</array>
 		</dict>
