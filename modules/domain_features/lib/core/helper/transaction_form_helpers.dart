@@ -50,7 +50,7 @@ class TransactionFormHelpers {
   }
 
   /// Format amount to short representation (e.g., 1000000 -> "1tr", 50000 -> "50k")
-  static String formatShort(num amount) {
-    return formatVndShort(amount);
+  static String formatShort(num amount, {bool useFullSuffix = false}) {
+    return formatVndShort(amount, useFullSuffix: useFullSuffix);
   }
 }

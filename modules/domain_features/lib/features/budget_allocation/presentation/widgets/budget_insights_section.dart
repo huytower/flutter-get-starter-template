@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../get_x/budget_allocation_controller.dart';
 
@@ -33,7 +34,10 @@ class BudgetInsightsSection extends StatelessWidget {
                 description: el.tr(
                   CcLocaleKeys.budget_deficit_warning,
                   namedArgs: {
-                    'amount': formatVndWithSymbol(insights.deficitAmount),
+                    'amount': TransactionFormHelpers.formatShort(
+                      insights.deficitAmount,
+                      useFullSuffix: true,
+                    ),
                   },
                 ),
                 icon: Icons.error_outline_rounded,

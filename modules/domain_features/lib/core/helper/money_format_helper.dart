@@ -4,8 +4,10 @@ import 'package:intl/intl.dart';
 ///   - Clean whole numbers: `1tỷ`, `1tr`, `50k`
 ///   - Decimal numbers: `1,36tỷ`, `1,2tr`
 ///
+/// If [useFullSuffix] is true: `1 tỷ đồng`, `1,2 triệu đồng`, `50 nghìn đồng`.
+///
 /// Negative amounts keep their sign (e.g. `-1,2tr`).
-String formatVndShort(num value) {
+String formatVndShort(num value, {bool useFullSuffix = false}) {
   final amount = value.toDouble();
   final sign = amount < 0 ? '-' : '';
   final abs = amount.abs();
@@ -21,10 +23,16 @@ String formatVndShort(num value) {
     return '${s.replaceFirst('.', ',')}$unit';
   }
 
-  if (abs >= 1e9) return '$sign${format(abs / 1e9, 'tỷ')}';
-  if (abs >= 1e6) return '$sign${format(abs / 1e6, 'tr')}';
-  if (abs >= 1e3) return '$sign${format(abs / 1e3, 'k')}';
-  return '$sign${abs.toStringAsFixed(0)}';
+  if (abs >= 1e9) {
+    return '$sign${format(abs / 1e9, useFullSuffix ? ' tỷ đồng' : 'tỷ')}';
+  }
+  if (abs >= 1e6) {
+    return '$sign${format(abs / 1e6, useFullSuffix ? ' triệu đồng' : 'tr')}';
+  }
+  if (abs >= 1e3) {
+    return '$sign${format(abs / 1e3, useFullSuffix ? ' nghìn đồng' : 'k')}';
+  }
+  return '$sign${abs.toStringAsFixed(0)}${useFullSuffix ? ' đồng' : ''}';
 }
 
 String formatVnd(num value) {

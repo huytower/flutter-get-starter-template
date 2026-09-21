@@ -126,24 +126,27 @@ class BudgetLimitGridCard extends StatelessWidget {
         ),
         const CcSpaceSM(),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CcText(
-                _getDisplayName(context),
-                maxLines: 2,
-                textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                  fontWeight: CcTypographyParams.bold,
-                  color: scheme.onSurface,
+          child: Padding(
+            padding: EdgeInsets.only(right: context.respDim(28)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CcText(
+                  _getDisplayName(context),
+                  maxLines: 2,
+                  textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                    fontWeight: CcTypographyParams.bold,
+                    color: scheme.onSurface,
+                  ),
                 ),
-              ),
-              CcText(
-                TransactionFormHelpers.formatShort(stats.budget.limit),
-                textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                  color: scheme.onSurfaceVariant.withOpacity(0.6),
+                CcText(
+                  TransactionFormHelpers.formatShort(stats.budget.limit),
+                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                    color: scheme.onSurfaceVariant.withOpacity(0.6),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
