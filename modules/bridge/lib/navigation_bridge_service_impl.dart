@@ -6,7 +6,7 @@ import 'package:domain_features/features/firestore/financial_data_sync_service.d
 import 'package:domain_features/features/notification/domain/usecases/check_audit_reminder_usecase.dart';
 import 'package:domain_features/features/notification/domain/usecases/check_cloud_backup_reminder_usecase.dart';
 import 'package:domain_features/features/transaction/presentation/get_x/transaction_controller.dart';
-import 'package:domain_features/features/user_level/presentation/get_x/user_level_controller.dart';
+import 'package:domain_features/features/profile/user_level/presentation/get_x/user_level_controller.dart';
 import 'package:domain_features/features/wallet/presentation/get_x/wallet_controller.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';

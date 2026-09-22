@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
 import '../bloc/login_bloc.dart';
@@ -50,14 +49,15 @@ class _LoginViewState extends State<LoginView> {
           getIt<AuthCoordinator>().navigateToDashboard(context);
         } else if (state is LoginLoading) {
           'Login loading, showing dialog'.Log('LoginPage');
-          CcDialogHelper.showLoadingBottomSheet(context: context);
+          CcDialogHelper.showLoadingBottomSheet(context);
         } else {
           'Login state is not Success or Loading, closing dialog if open'.Log(
             'LoginPage',
           );
-          if (Get.isBottomSheetOpen ?? false) {
-            Get.back();
-          }
+          // Dismiss the loading bottom sheet if it's on top
+          Navigator.of(context, rootNavigator: true).popUntil(
+            (route) => route.isFirst || route is! ModalBottomSheetRoute,
+          );
         }
       },
       child: Scaffold(

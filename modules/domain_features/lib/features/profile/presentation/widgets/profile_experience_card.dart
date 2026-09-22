@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../../../user_level/domain/entities/user_level_status_entity.dart';
+import '../../user_level/domain/entities/user_level_status_entity.dart';
 
 class ProfileExperienceCard extends StatelessWidget {
   final int level;

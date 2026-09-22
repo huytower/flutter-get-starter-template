@@ -15,7 +15,7 @@ import '../../../reconciliation/presentation/get_x/reconciliation_controller.dar
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
-import '../../../user_level/presentation/get_x/user_level_controller.dart';
+import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../../domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/get_investment_roi_usecase.dart';

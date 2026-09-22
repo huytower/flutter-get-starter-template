@@ -113,7 +113,6 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
   @override
   Widget? buildContent(BuildContext context) {
     return Obx(() {
-      final isEdit = controller.isEditMode.value;
       return PopScope(
         canPop: !controller.isEditMode.value,
         onPopInvokedWithResult: (didPop, result) {
@@ -135,60 +134,7 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
                   context.respPadding(CcPaddingParams.SPACE_LG),
                   context.respPadding(CcPaddingParams.SPACE_XS),
                 ),
-                child: Column(
-                  children: [
-                    CcText(
-                      el.tr(CcLocaleKeys.budget_description),
-                      maxLines: 3,
-                      textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                        color: context.ccColorScheme.onSurfaceVariant
-                            .withOpacity(0.5),
-                      ),
-                    ),
-                    const CcSpaceXS(),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.bolt_rounded,
-                          size: context.respIconSize(baseSize: 14),
-                          color: context.ccColorScheme.primary.withOpacity(0.5),
-                        ),
-                        const CcSpaceXS(),
-                        Expanded(
-                          child: CcText(
-                            el.tr(CcLocaleKeys.budget_fixed_price_description),
-                            maxLines: 3,
-                            textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                              color: context.ccColorScheme.onSurfaceVariant
-                                  .withOpacity(0.5),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const CcSpaceXS(),
-                    if (!isEdit)
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.swap_vert,
-                            size: context.respIconSize(baseSize: 14),
-                            color: context.ccColorScheme.onSurfaceVariant
-                                .withOpacity(0.5),
-                          ),
-                          const CcSpaceXS(),
-                          CcText(
-                            el.tr(CcLocaleKeys.budget_drag_reorder_hint),
-                            textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                              color: context.ccColorScheme.onSurfaceVariant
-                                  .withOpacity(0.5),
-                            ),
-                          ),
-                        ],
-                      ),
-                  ],
-                ),
+                child: _buildSeeMoreDescription(context),
               ),
             ),
             SliverToBoxAdapter(
@@ -235,6 +181,81 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
       builder: (_) => BudgetLimitDeleteConfirmSheet(
         budget: budget,
         onDelete: () => controller.deleteBudget(budget.id),
+      ),
+    );
+  }
+
+  Widget _buildSeeMoreDescription(BuildContext context) {
+    final text = el.tr(CcLocaleKeys.budget_description);
+    return CcBouncing(
+      onTap: () => CcDialogHelper.showMessageBottomSheet(
+        context: context,
+        title: el.tr(CcLocaleKeys.budget_title),
+        isOnlyConfirm: true,
+        customWidget: Column(
+          children: [
+            CcText(
+              el.tr(CcLocaleKeys.budget_description),
+              textAlign: TextAlign.center,
+              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                color: context.ccColorScheme.onSurfaceVariant,
+              ),
+            ),
+            const CcSpaceMD(),
+            CcText(
+              el.tr(CcLocaleKeys.budget_fixed_price_description),
+              textAlign: TextAlign.center,
+              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                color: context.ccColorScheme.onSurfaceVariant,
+              ),
+            ),
+            const CcSpaceMD(),
+            CcText(
+              el.tr(CcLocaleKeys.budget_drag_reorder_hint),
+              textAlign: TextAlign.center,
+              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                color: context.ccColorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+      borderRadius: context.brSm,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
+          vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+        ),
+        decoration: BoxDecoration(
+          color: context.ccColorScheme.onSurface.withOpacity(0.05),
+          borderRadius: context.brSm,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: CcText(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                  color: context.ccColorScheme.onSurfaceVariant.withOpacity(
+                    0.5,
+                  ),
+                  fontSize: context.respFontSize(9),
+                ),
+              ),
+            ),
+            const CcSpaceXS(),
+            CcText(
+              '... See more',
+              textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                color: context.ccColorScheme.primary,
+                fontSize: context.respFontSize(9),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

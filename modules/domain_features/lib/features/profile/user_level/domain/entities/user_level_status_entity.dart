@@ -24,9 +24,9 @@ class UserLevelStatusEntity extends Equatable {
   static const int lv3RequiredBudgets = 3;
   static const int lv1RequiredGuidelines = 6;
 
-  bool get canUseInvestment => level >= 2;
+  bool get canUseInvestment => level >= 2 || isVip;
 
-  bool get canUseLiability => level >= 3;
+  bool get canUseLiability => level >= 3 || isVip;
 
   bool get canUseAiSmartEntry => level >= 3 || isVip;
 

@@ -15,7 +15,7 @@ import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../profile/domain/usecases/update_profile_settings_usecase.dart';
-import '../../../user_level/presentation/get_x/user_level_controller.dart';
+import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import 'wallet_controller.dart';
 
@@ -101,10 +101,11 @@ class AddLiquidSheetController extends CcGetController {
   }
 
   Future<void> _loadEmergencyFundGate() async {
-    final level = getIt<UserLevelController>().status.value.level;
+    final status = userLevel.status.value;
+    final level = status.level;
     final settings = await getIt<GetProfileSettingsUseCase>().call();
     emergencyFundUnlocked.value =
-        settings.isVip || (level >= 2 && settings.hasViewedEmergencyFundEbook);
+        settings.isVip || (level >= 3 && settings.hasViewedEmergencyFundEbook);
   }
 
   Future<void> openEmergencyFundEbook(BuildContext context) async {

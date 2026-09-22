@@ -2,11 +2,11 @@ import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../budget_limit/domain/repositories/budget_limit_repository.dart';
-import '../../../profile/domain/repositories/profile_repository.dart';
-import '../../../reconciliation/domain/usecases/get_reconciliation_history_usecase.dart';
-import '../../../transaction/domain/entities/transaction_entity.dart';
-import '../../../transaction/domain/repositories/transaction_repository.dart';
+import '../../../../budget_limit/domain/repositories/budget_limit_repository.dart';
+import '../../../domain/repositories/profile_repository.dart';
+import '../../../../reconciliation/domain/usecases/get_reconciliation_history_usecase.dart';
+import '../../../../transaction/domain/entities/transaction_entity.dart';
+import '../../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/user_level_status_entity.dart';
 import 'reconciliation_streak_calculator.dart';
 
@@ -82,9 +82,7 @@ class GetUserLevelStatusUseCase {
         completedGuidelineCount >= UserLevelStatusEntity.lv1RequiredGuidelines;
 
     int level = 1;
-    if (settings.isVip) {
-      level = 3;
-    } else if (streak >= UserLevelStatusEntity.lv3RequiredStreak &&
+    if (streak >= UserLevelStatusEntity.lv3RequiredStreak &&
         hasMinBudgets &&
         hasPositiveCashFlow) {
       level = 3;

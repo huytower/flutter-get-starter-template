@@ -151,6 +151,10 @@ import 'package:domain_features/features/profile/domain/usecases/update_profile_
     as _i220;
 import 'package:domain_features/features/profile/presentation/get_x/profile_controller.dart'
     as _i920;
+import 'package:domain_features/features/profile/user_level/domain/usecases/get_user_level_status_usecase.dart'
+    as _i973;
+import 'package:domain_features/features/profile/user_level/presentation/get_x/user_level_controller.dart'
+    as _i811;
 import 'package:domain_features/features/reconciliation/data/datasources/local/reconciliation_local_datasource.dart'
     as _i896;
 import 'package:domain_features/features/reconciliation/data/datasources/reconciliation_sync_datasource.dart'
@@ -215,10 +219,6 @@ import 'package:domain_features/features/transaction/presentation/get_x/investme
     as _i135;
 import 'package:domain_features/features/transaction/presentation/get_x/transaction_controller.dart'
     as _i700;
-import 'package:domain_features/features/user_level/domain/usecases/get_user_level_status_usecase.dart'
-    as _i586;
-import 'package:domain_features/features/user_level/presentation/get_x/user_level_controller.dart'
-    as _i356;
 import 'package:domain_features/features/wallet/data/datasources/local/wallet_local_datasource.dart'
     as _i1058;
 import 'package:domain_features/features/wallet/data/datasources/wallet_sync_datasource.dart'
@@ -544,8 +544,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
             ));
-    gh.lazySingleton<_i586.GetUserLevelStatusUseCase>(
-        () => _i586.GetUserLevelStatusUseCase(
+    gh.lazySingleton<_i973.GetUserLevelStatusUseCase>(
+        () => _i973.GetUserLevelStatusUseCase(
               gh<_i446.GetReconciliationHistoryUseCase>(),
               gh<_i544.BudgetLimitRepository>(),
               gh<_i1027.TransactionRepository>(),
@@ -563,6 +563,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i834.GetLiabilityOutstandingBalanceUseCase>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
             ));
+    gh.lazySingleton<_i811.UserLevelController>(
+        () => _i811.UserLevelController(gh<_i973.GetUserLevelStatusUseCase>()));
     gh.lazySingleton<_i463.GetBudgetAnomaliesUseCase>(
         () => _i463.GetBudgetAnomaliesUseCase(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
@@ -573,6 +575,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i743.GetBudgetLimitStatsUseCase>(),
               gh<_i483.NotificationService>(),
             ));
+    gh.lazySingleton<_i128.GuidelineController>(
+        () => _i128.GuidelineController(gh<_i811.UserLevelController>()));
     gh.lazySingleton<_i1003.BudgetLimitController>(
         () => _i1003.BudgetLimitController(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
@@ -595,8 +599,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i231.WalletController>(),
               gh<_i663.GetLiabilityBalancesUseCase>(),
             ));
-    gh.lazySingleton<_i356.UserLevelController>(
-        () => _i356.UserLevelController(gh<_i586.GetUserLevelStatusUseCase>()));
     gh.lazySingleton<_i206.GetBudgetInsightsUseCase>(
         () => _i206.GetBudgetInsightsUseCase(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
@@ -613,7 +615,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i1027.TransactionRepository>(),
           gh<_i167.GetWalletBalancesUseCase>(),
           gh<_i572.WalletRepository>(),
-          gh<_i356.UserLevelController>(),
+          gh<_i811.UserLevelController>(),
         ));
     gh.lazySingleton<_i436.GenerateAiFinancialAdviceUseCase>(
         () => _i436.GenerateAiFinancialAdviceUseCase(
@@ -623,8 +625,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i774.GetMonthToDateCashFlowUseCase>(),
               gh<_i994.AiAdviceCacheDataSource>(),
             ));
-    gh.lazySingleton<_i128.GuidelineController>(
-        () => _i128.GuidelineController(gh<_i356.UserLevelController>()));
     gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
           gh<_i569.GetProfileSettingsUseCase>(),
           gh<_i220.UpdateProfileSettingsUseCase>(),
@@ -632,37 +632,17 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i727.SessionContract>(),
           gh<_i727.CcDeviceInfoHelper>(),
           gh<_i727.AuthCoordinator>(),
-          gh<_i356.UserLevelController>(),
+          gh<_i811.UserLevelController>(),
           gh<_i483.NotificationService>(),
           gh<_i308.DeleteAccountUseCase>(),
         ));
-    gh.factory<_i1051.ReconciliationController>(
-        () => _i1051.ReconciliationController(
-              gh<_i167.GetWalletBalancesUseCase>(),
-              gh<_i804.PerformReconciliationUseCase>(),
-              gh<_i195.UndoReconciliationUseCase>(),
-              gh<_i446.GetReconciliationHistoryUseCase>(),
-              gh<_i356.UserLevelController>(),
-            ));
     gh.lazySingleton<_i451.BudgetAllocationController>(
         () => _i451.BudgetAllocationController(
               gh<_i231.WalletController>(),
               gh<_i1003.BudgetLimitController>(),
               gh<_i663.GetLiabilityBalancesUseCase>(),
-              gh<_i356.UserLevelController>(),
+              gh<_i811.UserLevelController>(),
               gh<_i206.GetBudgetInsightsUseCase>(),
-            ));
-    gh.factory<_i752.AddBudgetLimitSheetController>(
-        () => _i752.AddBudgetLimitSheetController(
-              gh<_i1041.GetCategoriesUseCase>(),
-              gh<_i393.GetCategoryAverageMonthlySpendUseCase>(),
-              gh<_i1003.BudgetLimitController>(),
-            ));
-    gh.factory<_i95.AddLiquidSheetController>(
-        () => _i95.AddLiquidSheetController(
-              gh<_i231.WalletController>(),
-              gh<_i224.GetCategoriesUseCase>(),
-              gh<_i356.UserLevelController>(),
             ));
     gh.factory<_i353.ReportController>(() => _i353.ReportController(
           gh<_i169.GetCategorySpendingUseCase>(),
@@ -671,9 +651,29 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i229.GetInvestmentTrendUseCase>(),
           gh<_i768.GetLiabilityTrendUseCase>(),
           gh<_i572.WalletRepository>(),
-          gh<_i356.UserLevelController>(),
+          gh<_i811.UserLevelController>(),
           gh<_i436.GenerateAiFinancialAdviceUseCase>(),
           gh<_i994.AiAdviceCacheDataSource>(),
         ));
+    gh.factory<_i95.AddLiquidSheetController>(
+        () => _i95.AddLiquidSheetController(
+              gh<_i231.WalletController>(),
+              gh<_i224.GetCategoriesUseCase>(),
+              gh<_i811.UserLevelController>(),
+            ));
+    gh.factory<_i1051.ReconciliationController>(
+        () => _i1051.ReconciliationController(
+              gh<_i167.GetWalletBalancesUseCase>(),
+              gh<_i804.PerformReconciliationUseCase>(),
+              gh<_i195.UndoReconciliationUseCase>(),
+              gh<_i446.GetReconciliationHistoryUseCase>(),
+              gh<_i811.UserLevelController>(),
+            ));
+    gh.factory<_i752.AddBudgetLimitSheetController>(
+        () => _i752.AddBudgetLimitSheetController(
+              gh<_i1041.GetCategoriesUseCase>(),
+              gh<_i393.GetCategoryAverageMonthlySpendUseCase>(),
+              gh<_i1003.BudgetLimitController>(),
+            ));
   }
 }

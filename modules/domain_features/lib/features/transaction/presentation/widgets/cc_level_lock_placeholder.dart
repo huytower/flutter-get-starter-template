@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../../../../core/di/di.dart';
 import '../../../budget_limit/presentation/widgets/budget_limit_pie_chart.dart';
 import '../../../guideline/guideline_controller.dart';
-import '../../../user_level/presentation/get_x/user_level_controller.dart';
+import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../get_x/transaction_controller.dart';
 
 class CcLevelLockPlaceholder extends StatelessWidget {

@@ -1,5 +1,5 @@
-import '../../../reconciliation/domain/entities/reconciliation_entity.dart';
-import '../../../reconciliation/domain/reconciliation_period_utils.dart';
+import '../../../../reconciliation/domain/entities/reconciliation_entity.dart';
+import '../../../../reconciliation/domain/reconciliation_period_utils.dart';
 
 /// Longest run of consecutive ISO weeks that have a qualifying reconciliation
 /// since [since] (exclusive), where "qualifying" means dated on [auditWeekday]

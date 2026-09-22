@@ -311,10 +311,15 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     // itemBuilder would be missed during the initial build phase.
     controller.newType.value;
 
+    final isEmergencyFundVisible =
+        controller.userLevel.status.value.level >= 3 ||
+        controller.userLevel.status.value.isVip;
+
     final options = [
       (WalletType.bank, el.tr(CcLocaleKeys.wallet_bank)),
       (WalletType.ewallet, el.tr(CcLocaleKeys.wallet_ewallet)),
-      (WalletType.emergencyFund, el.tr(CcLocaleKeys.wallet_emergency_fund)),
+      if (isEmergencyFundVisible)
+        (WalletType.emergencyFund, el.tr(CcLocaleKeys.wallet_emergency_fund)),
     ];
     return HorizontalFadeScrollView(
       height: context.respDim(44),

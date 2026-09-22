@@ -63,26 +63,51 @@ class FinancialRunwayWidget extends StatelessWidget {
   }
 
   Widget _buildDescription(BuildContext context, String text) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
-        vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+    return CcBouncing(
+      onTap: () => CcDialogHelper.showMessageBottomSheet(
+        context: context,
+        title: el.tr(CcLocaleKeys.report_safety_index),
+        content: text,
+        isOnlyConfirm: true,
       ),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.1),
-        borderRadius: context.brSm,
-      ),
-      child: CcText(
-        text,
-        maxLines: 5,
-        textStyle: context.ccTextTheme.labelSmall?.copyWith(
-          color: context.ccColorScheme.onPrimary.withOpacity(0.8),
-          fontSize: context.respFontSize(9),
-          shadows: [
-            Shadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              offset: const Offset(0, 1),
-              blurRadius: 4,
+      borderRadius: context.brSm,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
+          vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+        ),
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.1),
+          borderRadius: context.brSm,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: CcText(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                  color: context.ccColorScheme.onPrimary.withOpacity(0.8),
+                  fontSize: context.respFontSize(9),
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      offset: const Offset(0, 1),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const CcSpaceXS(),
+            CcText(
+              '... See more',
+              textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                color: context.ccColorScheme.onPrimary,
+                fontSize: context.respFontSize(9),
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

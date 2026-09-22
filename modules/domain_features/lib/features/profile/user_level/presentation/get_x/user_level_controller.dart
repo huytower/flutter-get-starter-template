@@ -15,8 +15,8 @@ class UserLevelController {
 
   final GetUserLevelStatusUseCase _getUserLevelStatus;
 
-  final Rx<UserLevelStatusEntity> status = const UserLevelStatusEntity.initial()
-      .obs;
+  final Rx<UserLevelStatusEntity> status =
+      const UserLevelStatusEntity.initial().obs;
 
   Future<void> refresh() async {
     final result = await _getUserLevelStatus.call();

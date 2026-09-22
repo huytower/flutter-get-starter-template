@@ -1920,6 +1920,7 @@ abstract class CcLocaleKeys {
   static const report_weekly = 'report.weekly';
   static const report_yearly = 'report.yearly';
   static const report_three_months = 'report.three_months';
+  static const report_safety_index = 'report.safety_index';
   static const report_runway_desc_2 = 'report.runway_desc_2';
   static const report_runway_message = 'report.runway_message';
   static const report_runway_fixed_price_desc =

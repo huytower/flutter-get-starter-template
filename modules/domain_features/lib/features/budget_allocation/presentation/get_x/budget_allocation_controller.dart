@@ -16,8 +16,8 @@ import '../../../liability/domain/entities/liability_balance_entity.dart';
 import '../../../liability/domain/usecases/get_liability_balances_usecase.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../liability/presentation/widgets/add_liability_sheet.dart';
+import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
-import '../../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../../wallet/presentation/widgets/add_investment_sheet.dart';
@@ -212,10 +212,7 @@ class BudgetAllocationController extends CcGetController {
     if (!Get.isRegistered<BudgetLimitController>()) {
       Get.put(budgetLimitController);
     }
-    ever(
-      CategorySettingsController.onCategoriesChanged,
-      (_) => loadAll(),
-    );
+    ever(CategorySettingsController.onCategoriesChanged, (_) => loadAll());
   }
 
   @override

@@ -18,7 +18,7 @@ import '../../../category/export_category.dart';
 import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/notification_service.dart';
-import '../../../user_level/presentation/get_x/user_level_controller.dart';
+import '../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/usecases/update_profile_settings_usecase.dart';

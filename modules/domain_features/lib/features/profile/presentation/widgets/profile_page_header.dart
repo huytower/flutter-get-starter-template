@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:flutter/material.dart';
 
-import '../../../user_level/domain/entities/user_level_status_entity.dart';
+import '../../user_level/domain/entities/user_level_status_entity.dart';
 import 'profile_experience_card.dart';
 import 'profile_info_card.dart';
 
