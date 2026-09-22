@@ -88,7 +88,17 @@ class ProfileInfoCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         // Round corner box icon with Level Badge
-        buildUserAvatar(context),
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            buildUserAvatar(context),
+            Positioned(
+              right: context.respDim(-10),
+              bottom: context.respDim(-10),
+              child: _buildLevelBadge(context),
+            ),
+          ],
+        ),
         const CcSpaceMD(),
         buildUserInfo(context, fullName, email, phoneNumber),
       ],
@@ -99,40 +109,30 @@ class ProfileInfoCard extends StatelessWidget {
     return CcBouncing(
       onTap: onAvatarTap,
       borderRadius: BorderRadius.circular(context.respDim(12)),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            width: context.respDim(56),
-            height: context.respDim(56),
-            decoration: BoxDecoration(
-              color: context.ccColorScheme.onPrimary,
-              borderRadius: BorderRadius.circular(context.respDim(12)),
-            ),
-            child: user?.avatarUrl != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(context.respDim(12)),
-                    child: Image.network(
-                      user!.avatarUrl!,
-                      width: context.respDim(56),
-                      height: context.respDim(56),
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                : Center(
-                    child: CcIconToken(
-                      Icons.person_rounded,
-                      size: 30,
-                      color: context.ccColorScheme.primary,
-                    ),
-                  ),
-          ),
-          Positioned(
-            right: context.respDim(-4),
-            bottom: context.respDim(-4),
-            child: _buildLevelBadge(context),
-          ),
-        ],
+      child: Container(
+        width: context.respDim(56),
+        height: context.respDim(56),
+        decoration: BoxDecoration(
+          color: context.ccColorScheme.onPrimary,
+          borderRadius: BorderRadius.circular(context.respDim(12)),
+        ),
+        child: user?.avatarUrl != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(context.respDim(12)),
+                child: Image.network(
+                  user!.avatarUrl!,
+                  width: context.respDim(56),
+                  height: context.respDim(56),
+                  fit: BoxFit.cover,
+                ),
+              )
+            : Center(
+                child: CcIconToken(
+                  Icons.person_rounded,
+                  size: 30,
+                  color: context.ccColorScheme.primary,
+                ),
+              ),
       ),
     );
   }
@@ -309,38 +309,11 @@ class ProfileInfoCard extends StatelessWidget {
         ? 'assets/icon/ic_yellow.webp'
         : 'assets/icon/ic_green.webp';
 
-    return SizedBox(
+    return Image.asset(
+      assetPath,
       width: context.respDim(32),
       height: context.respDim(32),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Image.asset(
-            assetPath,
-            width: context.respDim(32),
-            height: context.respDim(32),
-            fit: BoxFit.contain,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: context.respDim(14)),
-            child: CcText(
-              'LV$level',
-              textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: context.respFontSize(7),
-                shadows: [
-                  const Shadow(
-                    offset: Offset(0, 0.5),
-                    blurRadius: 1,
-                    color: Colors.black,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+      fit: BoxFit.contain,
     );
   }
 
