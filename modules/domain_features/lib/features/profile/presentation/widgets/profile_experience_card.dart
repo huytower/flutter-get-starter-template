@@ -21,6 +21,11 @@ class ProfileExperienceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isVip = levelStatus.isVip;
+    final themeColor = isVip
+        ? const Color(0xFFF59E0B)
+        : context.ccColorScheme.primary;
+
     return CcBouncing(
       onTap: onTap,
       borderRadius: context.brLg,
@@ -42,14 +47,17 @@ class ProfileExperienceCard extends StatelessWidget {
         child: ClipRRect(
           borderRadius: context.brLg,
           child: Stack(
-            children: [_buildBackgroundWave(context), _buildContent(context)],
+            children: [
+              _buildBackgroundWave(context, themeColor),
+              _buildContent(context, themeColor),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBackgroundWave(BuildContext context) {
+  Widget _buildBackgroundWave(BuildContext context, Color themeColor) {
     return Positioned(
       top: context.respDim(-5),
       right: context.respDim(-10),
@@ -71,7 +79,7 @@ class ProfileExperienceCard extends StatelessWidget {
                 LineChartBarData(
                   isCurved: true,
                   curveSmoothness: 0.5,
-                  color: context.ccColorScheme.primary,
+                  color: themeColor,
                   barWidth: 2,
                   isStrokeCapRound: true,
                   dotData: const FlDotData(show: false),
@@ -81,8 +89,8 @@ class ProfileExperienceCard extends StatelessWidget {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        context.ccColorScheme.primary.withOpacity(0.2),
-                        context.ccColorScheme.primary.withOpacity(0),
+                        themeColor.withOpacity(0.2),
+                        themeColor.withOpacity(0),
                       ],
                     ),
                   ),
@@ -108,7 +116,7 @@ class ProfileExperienceCard extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildContent(BuildContext context, Color themeColor) {
     return Padding(
       padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
       child: Column(
@@ -130,11 +138,11 @@ class ProfileExperienceCard extends StatelessWidget {
                 ),
                 textStyle: context.ccTextTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: context.ccColorScheme.primary,
+                  color: themeColor,
                 ),
               ),
               const CcSpaceXS(),
-              _buildProgressBar(context),
+              _buildProgressBar(context, themeColor),
             ],
           ),
           CcText(
@@ -148,11 +156,14 @@ class ProfileExperienceCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressBar(BuildContext context) {
+  Widget _buildProgressBar(BuildContext context, Color themeColor) {
     final double progress;
     final String progressText;
 
-    if (level < 2) {
+    if (levelStatus.isVip) {
+      progress = 1.0;
+      progressText = el.tr(CcLocaleKeys.profile_unlocked);
+    } else if (level < 2) {
       // LV1 -> LV2: 6 guideline tasks + 2 reconciliations = 8 steps
       final streak = levelStatus.reconciliationStreak.clamp(0, 2);
       final completed = levelStatus.completedGuidelineCount + streak;
@@ -201,16 +212,13 @@ class ProfileExperienceCard extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        context.ccColorScheme.primary,
-                        context.ccColorScheme.primaryContainer,
-                      ],
+                      colors: [themeColor, themeColor.withOpacity(0.7)],
                     ),
                     borderRadius: BorderRadius.circular(4),
                     boxShadow: [
                       if (value > 0)
                         BoxShadow(
-                          color: context.ccColorScheme.primary.withOpacity(0.3),
+                          color: themeColor.withOpacity(0.3),
                           blurRadius: 4,
                           spreadRadius: 1,
                         ),

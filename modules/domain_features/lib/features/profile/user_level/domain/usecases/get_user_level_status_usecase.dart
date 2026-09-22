@@ -3,10 +3,10 @@ import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../budget_limit/domain/repositories/budget_limit_repository.dart';
-import '../../../domain/repositories/profile_repository.dart';
 import '../../../../reconciliation/domain/usecases/get_reconciliation_history_usecase.dart';
 import '../../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../../transaction/domain/repositories/transaction_repository.dart';
+import '../../../domain/repositories/profile_repository.dart';
 import '../entities/user_level_status_entity.dart';
 import 'reconciliation_streak_calculator.dart';
 
@@ -81,22 +81,30 @@ class GetUserLevelStatusUseCase {
     final guidelineCompleted =
         completedGuidelineCount >= UserLevelStatusEntity.lv1RequiredGuidelines;
 
-    int level = 1;
+    // 1. Calculate organic level based on milestones
+    int organicLevel = 1;
     if (streak >= UserLevelStatusEntity.lv3RequiredStreak &&
         hasMinBudgets &&
         hasPositiveCashFlow) {
-      level = 3;
+      organicLevel = 3;
     } else if (streak >= UserLevelStatusEntity.lv2RequiredStreak &&
         guidelineCompleted) {
-      level = 2;
+      organicLevel = 2;
     }
 
-    if (level > settings.highestUserLevelReached) {
+    // 2. Persist highest organic level reached
+    if (organicLevel > settings.highestUserLevelReached) {
       await _profileRepository.saveSettings(
-        settings.copyWith(highestUserLevelReached: level),
+        settings.copyWith(highestUserLevelReached: organicLevel),
       );
-    } else if (level < settings.highestUserLevelReached) {
-      level = settings.highestUserLevelReached;
+    } else if (organicLevel < settings.highestUserLevelReached) {
+      organicLevel = settings.highestUserLevelReached;
+    }
+
+    // 3. Final display level: Milestones OR VIP override
+    int level = organicLevel;
+    if (settings.isVip) {
+      level = 3;
     }
 
     return Success(

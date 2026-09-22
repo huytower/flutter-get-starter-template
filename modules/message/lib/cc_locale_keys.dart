@@ -2119,6 +2119,7 @@ abstract class CcLocaleKeys {
   static const profile_delete_account = 'profile.delete_account';
   static const profile_delete_confirm = 'profile.delete_confirm';
   static const profile_delete_confirm_desc = 'profile.delete_confirm_desc';
+  static const profile_unlocked = 'profile.unlocked';
   static const profile_young_children_message =
       'profile.young_children_message';
   static const profile_experience_level_progress =

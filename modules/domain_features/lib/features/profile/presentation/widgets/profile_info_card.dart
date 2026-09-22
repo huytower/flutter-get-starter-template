@@ -304,26 +304,42 @@ class ProfileInfoCard extends StatelessWidget {
   }
 
   Widget _buildLevelBadge(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.SPACE_XS),
-        vertical: context.respPadding(2),
-      ),
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.secondary,
-        borderRadius: BorderRadius.circular(context.respDim(4)),
-        border: Border.all(
-          color: context.ccColorScheme.onPrimary,
-          width: context.respDim(1.5),
-        ),
-      ),
-      child: CcText(
-        'LV$level',
-        textStyle: context.ccTextTheme.labelSmall?.copyWith(
-          color: context.ccColorScheme.onSecondary,
-          fontWeight: FontWeight.bold,
-          fontSize: context.respFontSize(10),
-        ),
+    final isVip = levelStatus.isVip;
+    final assetPath = isVip
+        ? 'assets/icon/ic_yellow.webp'
+        : 'assets/icon/ic_green.webp';
+
+    return SizedBox(
+      width: context.respDim(32),
+      height: context.respDim(32),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset(
+            assetPath,
+            width: context.respDim(32),
+            height: context.respDim(32),
+            fit: BoxFit.contain,
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: context.respDim(14)),
+            child: CcText(
+              'LV$level',
+              textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: context.respFontSize(7),
+                shadows: [
+                  const Shadow(
+                    offset: Offset(0, 0.5),
+                    blurRadius: 1,
+                    color: Colors.black,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
