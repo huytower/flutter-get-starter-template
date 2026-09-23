@@ -322,7 +322,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         'FirebaseAuthRepository',
       );
       '[APPLE_SIGN_IN] StackTrace: $stack'.Log('FirebaseAuthRepository');
-      return const Error(UnknownFailure('An error occurred'));
+      return Error(UnknownFailure('Sign in failed: $e'));
     }
   }
 
@@ -476,7 +476,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       return const Success(unit);
     } catch (e) {
       'Delete account error: $e'.Log('FirebaseAuthRepository');
-      return const Error(UnknownFailure('An error occurred'));
+      return Error(UnknownFailure('Delete account failed: $e'));
     }
   }
 
@@ -521,7 +521,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         } catch (signInError) {
           '[APPLE_SIGN_IN] ❌ Sign in after link conflict failed: $signInError'
               .Log('FirebaseAuthRepository');
-          return const Error(UnknownFailure('An error occurred'));
+          return Error(UnknownFailure('Sign in conflict: $signInError'));
         }
       }
       '[APPLE_SIGN_IN] ❌ _linkWithCredential Firebase Error: code=${e.code}, message=${e.message}'
@@ -532,7 +532,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         'FirebaseAuthRepository',
       );
       '[APPLE_SIGN_IN] StackTrace: $stack'.Log('FirebaseAuthRepository');
-      return const Error(UnknownFailure('An error occurred'));
+      return Error(UnknownFailure('Link account failed: $e'));
     }
   }
 

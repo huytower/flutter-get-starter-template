@@ -65,9 +65,8 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
         verificationStream,
         onData: (status) {
           'Phone Auth Status: $status'.Log('PhoneAuthBloc');
-          // If we already reached success or are currently loading a manual
-          // verification, don't let background statuses overwrite it.
-          if (state is PhoneAuthSuccess || state is PhoneAuthLoading) {
+          // If we already reached success, don't let background statuses overwrite it.
+          if (state is PhoneAuthSuccess) {
             return state;
           }
 
@@ -93,23 +92,32 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
             'Phone Auth auto retrieval timeout: ${status.verificationId}'.Log(
               'PhoneAuthBloc',
             );
+            if (status.verificationId.isNotEmpty) {
+              _verificationId = status.verificationId;
+            }
             return state;
           }
           return state;
         },
         onError: (error, stackTrace) {
           'Phone Auth error in stream: $error'.Log('PhoneAuthBloc');
-          if (state is PhoneAuthSuccess ||
-              state is PhoneAuthLoading ||
-              _verificationId != null) {
+          if (state is PhoneAuthSuccess || _verificationId != null) {
             return state;
           }
-          return const PhoneAuthError('An error occurred');
+          final msg = error is Exception
+              ? error.toString().replaceAll('Exception: ', '')
+              : error.toString();
+          return PhoneAuthError(
+            msg.isNotEmpty ? msg : 'Phone verification failed',
+          );
         },
       );
     } catch (e) {
       'Phone Auth exception: $e'.Log('PhoneAuthBloc');
-      emit(const PhoneAuthError('An error occurred'));
+      final msg = e is Exception
+          ? e.toString().replaceAll('Exception: ', '')
+          : e.toString();
+      emit(PhoneAuthError(msg.isNotEmpty ? msg : 'Phone verification failed'));
     }
   }
 
@@ -122,9 +130,17 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
       return;
     }
 
-    if (_verificationId == null) {
-      'Cannot sign in: verificationId is null'.Log('PhoneAuthBloc');
-      emit(const PhoneAuthError('An error occurred'));
+    if (_verificationId == null && state is PhoneAuthCodeSent) {
+      _verificationId = (state as PhoneAuthCodeSent).verificationId;
+    }
+
+    if (_verificationId == null || _verificationId!.isEmpty) {
+      'Cannot sign in: verificationId is null or empty'.Log('PhoneAuthBloc');
+      emit(
+        const PhoneAuthError(
+          'Verification session expired or missing. Please resend code.',
+        ),
+      );
       return;
     }
 
@@ -151,26 +167,34 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
   }
 
   String _mapOtpErrorToMessage(String failureMessage) {
+    if (failureMessage.isEmpty || failureMessage == 'An error occurred') {
+      return 'Verification failed. Please try again or resend code.';
+    }
+
     // Firebase Auth error codes for OTP verification
     final lowerMessage = failureMessage.toLowerCase();
 
     if (lowerMessage.contains('invalid') ||
         lowerMessage.contains('wrong') ||
-        lowerMessage.contains('incorrect')) {
-      return 'Invalid OTP code';
+        lowerMessage.contains('incorrect') ||
+        lowerMessage.contains('invalid-verification-code')) {
+      return 'Invalid OTP code. Please check and try again.';
     }
 
-    if (lowerMessage.contains('expired') || lowerMessage.contains('timeout')) {
-      return 'OTP code has expired';
+    if (lowerMessage.contains('expired') ||
+        lowerMessage.contains('timeout') ||
+        lowerMessage.contains('session-expired')) {
+      return 'OTP code or session has expired. Please resend code.';
     }
 
     if (lowerMessage.contains('too many') ||
         lowerMessage.contains('quota') ||
-        lowerMessage.contains('attempts')) {
-      return 'Too many attempts. Please try again later';
+        lowerMessage.contains('attempts') ||
+        lowerMessage.contains('too-many-requests')) {
+      return 'Too many attempts. Please try again later.';
     }
 
-    // Default to general error if no specific match
+    // Default to concise detailed failure message
     return failureMessage;
   }
 
