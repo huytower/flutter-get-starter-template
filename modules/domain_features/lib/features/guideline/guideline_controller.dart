@@ -131,13 +131,20 @@ class GuidelineController extends GetxController {
     }
   }
 
+  /// Filtered list of tasks available at the user's current level & VIP status.
+  List<String> get activeTaskSequence {
+    final status = _userLevelController.status.value;
+    return taskSequence.where((taskId) {
+      if (taskId == 'investment' && !status.canUseInvestment) return false;
+      if (taskId == 'liability' && !status.canUseLiability) return false;
+      return true;
+    }).toList();
+  }
+
   bool isTaskCompleted(String taskId) => completedTasks.contains(taskId);
 
   String? get currentTaskId {
-    final status = _userLevelController.status.value;
-    for (final taskId in taskSequence) {
-      if (taskId == 'investment' && !status.canUseInvestment) continue;
-      if (taskId == 'liability' && !status.canUseLiability) continue;
+    for (final taskId in activeTaskSequence) {
       if (!completedTasks.contains(taskId)) {
         return taskId;
       }
@@ -151,9 +158,13 @@ class GuidelineController extends GetxController {
     return taskColors[activeId] ?? Colors.green;
   }
 
-  int get currentStep => (currentTaskId != null)
-      ? taskSequence.indexOf(currentTaskId!) + 1
-      : taskSequence.length + 1;
+  int get currentStep {
+    final active = activeTaskSequence;
+    final activeId = currentTaskId;
+    return (activeId != null)
+        ? active.indexOf(activeId) + 1
+        : active.length + 1;
+  }
 
   bool isTaskActive(String taskId) => currentTaskId == taskId;
 
@@ -232,10 +243,14 @@ class GuidelineController extends GetxController {
   }
 
   String get bannerTitle {
-    final remaining = taskSequence.length - completedTasks.length;
+    final active = activeTaskSequence;
+    final activeCompletedCount = active
+        .where((t) => completedTasks.contains(t))
+        .length;
+    final remaining = active.length - activeCompletedCount;
     return el.tr(
       CcLocaleKeys.guideline_banner_title_in_progress,
-      namedArgs: {'remaining': remaining.toString()},
+      namedArgs: {'remaining': remaining.clamp(0, active.length).toString()},
     );
   }
 

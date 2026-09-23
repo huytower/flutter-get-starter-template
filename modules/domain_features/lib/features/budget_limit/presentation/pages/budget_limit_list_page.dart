@@ -193,29 +193,25 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
         title: el.tr(CcLocaleKeys.budget_title),
         isOnlyConfirm: true,
         customWidget: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            CcText(
-              el.tr(CcLocaleKeys.budget_description),
-              textAlign: TextAlign.center,
-              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                color: context.ccColorScheme.onSurfaceVariant,
-              ),
+            _buildDescriptionItem(
+              context,
+              icon: Icons.pie_chart_outline_rounded,
+              text: el.tr(CcLocaleKeys.budget_description),
             ),
             const CcSpaceMD(),
-            CcText(
-              el.tr(CcLocaleKeys.budget_fixed_price_description),
-              textAlign: TextAlign.center,
-              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                color: context.ccColorScheme.onSurfaceVariant,
-              ),
+            _buildDescriptionItem(
+              context,
+              icon: Icons.bolt_rounded,
+              text: el.tr(CcLocaleKeys.budget_fixed_price_description),
             ),
             const CcSpaceMD(),
-            CcText(
-              el.tr(CcLocaleKeys.budget_drag_reorder_hint),
-              textAlign: TextAlign.center,
-              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                color: context.ccColorScheme.onSurfaceVariant,
-              ),
+            _buildDescriptionItem(
+              context,
+              icon: Icons.drag_indicator_rounded,
+              text: el.tr(CcLocaleKeys.budget_drag_reorder_hint),
             ),
           ],
         ),
@@ -257,6 +253,44 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildDescriptionItem(
+    BuildContext context, {
+    required IconData icon,
+    required String text,
+  }) {
+    final scheme = context.ccColorScheme;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.all(context.respDim(6)),
+          decoration: BoxDecoration(
+            color: scheme.primary.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            icon,
+            size: context.respIconSize(baseSize: 18),
+            color: scheme.primary,
+          ),
+        ),
+        const CcSpaceSM(),
+        Expanded(
+          child: CcText(
+            text,
+            maxLines: 10,
+            textAlign: TextAlign.start,
+            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+              color: scheme.onSurfaceVariant,
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

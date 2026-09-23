@@ -28,7 +28,6 @@ enum AppRoute {
   budgetLimit,
   reconcile,
   liabilityList,
-  liabilityDetail,
   report,
   termsOfService,
   investmentList,

@@ -34,10 +34,8 @@ class BudgetInsightsSection extends StatelessWidget {
                 description: el.tr(
                   CcLocaleKeys.budget_deficit_warning,
                   namedArgs: {
-                    'amount': TransactionFormHelpers.formatShort(
-                      insights.deficitAmount,
-                      useFullSuffix: true,
-                    ),
+                    'amount':
+                        '${TransactionFormHelpers.formatShort(insights.deficitAmount)} đồng',
                   },
                 ),
                 icon: Icons.error_outline_rounded,
