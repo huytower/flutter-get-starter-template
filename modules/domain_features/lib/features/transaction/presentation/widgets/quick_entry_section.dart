@@ -239,25 +239,27 @@ class QuickEntrySection extends StatelessWidget {
       );
     }
 
-    return CcIconButton.bouncing(
-      icon: Icon(
-        Icons.camera_alt,
-        color: scheme.onSurface.withOpacity(0.45),
-        size: context.respDim(20),
-      ),
-      onTap: isLocked
-          ? () {
-              CcSnackBarHelper.showErrorSnackBar(
-                context: context,
-                message: el.tr(
-                  CcLocaleKeys.level_lock_unlock_at_lv,
-                  namedArgs: {'level': '3'},
-                ),
-              );
-            }
-          : onScanTap,
-      width: context.respDim(30),
-      height: context.respDim(30),
-    );
+    return const SizedBox.shrink();
+    // TODO(huy): TEMPORARY DISABLE AI FUNCTION, ENABLE IT LATER
+    // return CcIconButton.bouncing(
+    //   icon: Icon(
+    //     Icons.camera_alt,
+    //     color: scheme.onSurface.withOpacity(0.45),
+    //     size: context.respDim(20),
+    //   ),
+    //   onTap: isLocked
+    //       ? () {
+    //           CcSnackBarHelper.showErrorSnackBar(
+    //             context: context,
+    //             message: el.tr(
+    //               CcLocaleKeys.level_lock_unlock_at_lv,
+    //               namedArgs: {'level': '3'},
+    //             ),
+    //           );
+    //         }
+    //       : onScanTap,
+    //   width: context.respDim(30),
+    //   height: context.respDim(30),
+    // );
   }
 }

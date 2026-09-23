@@ -216,11 +216,11 @@ class CodegenLoader extends AssetLoader {
       "updated_success": "Wallet updated",
       "delete_title": "Delete Wallet",
       "delete_confirm_msg":
-          "A wallet can only be deleted when its balance is 0. All transactions of the wallet will be soft-deleted. Continue?",
+          "A wallet can only be deleted when it has no transactions. All transactions of the wallet will be soft-deleted. Continue?",
       "investment_delete_title": "Delete Investment",
       "investment_delete_confirm":
           "Deleting an investment item is only possible when its total performance value is 0. All related transactions will be soft-deleted. Continue?",
-      "delete_error_not_empty": "Cannot delete: wallet balance must be 0",
+      "delete_error_not_empty": "Cannot delete: wallet has transactions",
       "delete_error_protected": "This wallet is required and cannot be deleted",
       "liquid_assets": "Liquid Assets",
       "liquid_assets_desc": "Cash + Bank + E-wallet · ready to spend",
@@ -980,11 +980,11 @@ class CodegenLoader extends AssetLoader {
       "updated_success": "Đã cập nhật ví",
       "delete_title": "Xóa ví",
       "delete_confirm_msg":
-          "Chỉ có thể xóa ví khi số dư bằng 0. Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?",
+          "Chỉ có thể xóa ví khi không có giao dịch nào. Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?",
       "investment_delete_title": "Xoá khoản đầu tư",
       "investment_delete_confirm":
           "Chỉ có thể xoá khoản đầu tư khi tổng giá trị hiệu suất bằng 0. Mọi giao dịch liên quan sẽ bị xoá (soft-delete). Tiếp tục?",
-      "delete_error_not_empty": "Không thể xóa: số dư của ví phải bằng 0",
+      "delete_error_not_empty": "Không thể xóa: ví có giao dịch",
       "delete_error_protected": "Ví này là bắt buộc và không thể xóa",
       "liquid_assets": "Tổng tiền thanh khoản",
       "liquid_assets_desc":
