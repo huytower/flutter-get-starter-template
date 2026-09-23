@@ -18,10 +18,10 @@ import '../../../category/export_category.dart';
 import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/notification_service.dart';
-import '../../user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/usecases/update_profile_settings_usecase.dart';
+import '../../user_level/presentation/get_x/user_level_controller.dart';
 import '../pages/terms_of_service_page.dart';
 import '../widgets/birth_year_dialog.dart';
 import '../widgets/display_name_dialog.dart';
@@ -393,11 +393,16 @@ class ProfileController extends CcGetController {
   }
 
   Future<Result<Unit, CcFailure>> deleteAccount() async {
-    final result = await _performDeleteAccount();
-    if (result.isSuccess()) {
-      await _session.clearSession();
+    layoutStatus.value = CcLayoutStatus.loading;
+    try {
+      final result = await _performDeleteAccount();
+      if (result.isSuccess()) {
+        await _session.clearSession();
+      }
+      return result;
+    } finally {
+      layoutStatus.value = CcLayoutStatus.success;
     }
-    return result;
   }
 
   Future<Result<Unit, CcFailure>> _performDeleteAccount() async {

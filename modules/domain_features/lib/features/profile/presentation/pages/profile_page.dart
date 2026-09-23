@@ -279,29 +279,26 @@ class ProfilePage extends CcGetView<ProfileController> {
   Widget _buildDeleteAccountText(BuildContext context) {
     return CcBouncing(
       onTap: () async {
-        final result = await showModalBottomSheet<Result<Unit, CcFailure>>(
-          context: context,
-          isScrollControlled: true,
-          builder: (_) => ProfileDeleteConfirmSheet(
-            onConfirm: (sheetContext) => controller.deleteAccount(),
-          ),
-        );
+        await ProfileDeleteConfirmSheet.show(
+          context,
+          onConfirm: () async {
+            final result = await controller.deleteAccount();
 
-        if (result == null) return;
-
-        result.when(
-          (success) {
-            // After delete success, we stay on this page.
-            // The Obx wrappers will automatically refresh the UI to the
-            // Guest state because session.clearSession() was called.
-          },
-          (failure) {
-            if (context.mounted) {
-              CcSnackBarHelper.showErrorSnackBar(
-                context: context,
-                message: failure.message,
-              );
-            }
+            result.when(
+              (success) {
+                // After delete success, we stay on this page.
+                // The Obx wrappers will automatically refresh the UI to the
+                // Guest state because session.clearSession() was called.
+              },
+              (failure) {
+                if (context.mounted) {
+                  CcSnackBarHelper.showErrorSnackBar(
+                    context: context,
+                    message: failure.message,
+                  );
+                }
+              },
+            );
           },
         );
       },

@@ -1,21 +1,22 @@
-import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:multiple_result/multiple_result.dart';
 
-class ProfileDeleteConfirmSheet extends StatefulWidget {
+class ProfileDeleteConfirmSheet extends StatelessWidget {
   const ProfileDeleteConfirmSheet({super.key, required this.onConfirm});
 
-  final Future<Result<Unit, CcFailure>> Function(BuildContext) onConfirm;
+  final VoidCallback onConfirm;
 
-  @override
-  State<ProfileDeleteConfirmSheet> createState() =>
-      _ProfileDeleteConfirmSheetState();
-}
-
-class _ProfileDeleteConfirmSheetState extends State<ProfileDeleteConfirmSheet> {
-  bool _isLoading = false;
+  static Future<bool?> show(
+    BuildContext context, {
+    required VoidCallback onConfirm,
+  }) {
+    return showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => ProfileDeleteConfirmSheet(onConfirm: onConfirm),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,43 +68,28 @@ class _ProfileDeleteConfirmSheetState extends State<ProfileDeleteConfirmSheet> {
                 Expanded(
                   child: CcBaseBtn(
                     title: el.tr(CcLocaleKeys.common_cancel),
-                    isEnable: !_isLoading,
                     bgColor: [
                       scheme.surfaceContainerHighest,
                       scheme.surfaceContainerHighest,
                     ],
                     textColor: scheme.onSurface,
-                    onTap: () => Navigator.of(context).pop(),
+                    onTap: () => Navigator.of(context).pop(false),
                   ),
                 ),
                 const CcSpaceMD(),
                 Expanded(
                   child: CcBaseBtn(
-                    title: _isLoading
-                        ? null
-                        : el.tr(CcLocaleKeys.profile_delete_account),
-                    isEnable: !_isLoading,
+                    title: el.tr(CcLocaleKeys.profile_delete_account),
                     bgColor: [scheme.error, scheme.error],
                     textColor: scheme.onError,
-                    onTap: () async {
-                      setState(() => _isLoading = true);
-                      try {
-                        final result = await widget.onConfirm(context);
-                        if (context.mounted) {
-                          Navigator.of(context).pop(result);
-                        }
-                      } finally {
-                        if (mounted) setState(() => _isLoading = false);
-                      }
+                    onTap: () {
+                      Navigator.of(context).pop(true);
+                      onConfirm();
                     },
                   ),
                 ),
               ],
             ),
-            if (_isLoading) ...[
-              const CcSpaceMD(),
-              const Center(child: CcLoadingIconWidget()),
-            ],
           ],
         ),
       ),
