@@ -242,15 +242,18 @@ class GuidelineController extends GetxController {
     triggerBounce();
   }
 
-  String get bannerTitle {
+  int get remainingGuidelineStep {
     final active = activeTaskSequence;
     final activeCompletedCount = active
         .where((t) => completedTasks.contains(t))
         .length;
-    final remaining = active.length - activeCompletedCount;
+    return (active.length - activeCompletedCount).clamp(0, active.length);
+  }
+
+  String get bannerTitle {
     return el.tr(
       CcLocaleKeys.guideline_banner_title_in_progress,
-      namedArgs: {'remaining': remaining.clamp(0, active.length).toString()},
+      namedArgs: {'remaining': remainingGuidelineStep.toString()},
     );
   }
 

@@ -310,6 +310,7 @@
         "quick_entry_scan_receipt": "Quét hóa đơn",
         "quick_entry_take_photo": "Chụp ảnh",
         "quick_entry_choose_gallery": "Chọn từ thư viện",
+        "quick_entry_camera_not_available": "Tính năng chụp/quét ảnh chưa khả dụng",
         "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
         "validation": {
             "amount_required": "Số tiền phải lớn hơn 0!",

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 /// once both amount and category are confidently resolved.
 ///
 /// Refactored to comply with a glassmorphic design pattern and AI context guardrails:
-/// [camera icon button] [input text] [audio icon button]
+/// [camera icon button] [input text] [audio icon button / lock icon]
 class QuickEntrySection extends StatelessWidget {
   const QuickEntrySection({
     super.key,
@@ -24,6 +24,7 @@ class QuickEntrySection extends StatelessWidget {
     required this.onApplySuggestion,
     required this.onDismissSuggestion,
     this.onClear,
+    this.isLocked = false,
   });
 
   final TextEditingController controller;
@@ -39,6 +40,7 @@ class QuickEntrySection extends StatelessWidget {
   final VoidCallback onApplySuggestion;
   final VoidCallback onDismissSuggestion;
   final VoidCallback? onClear;
+  final bool isLocked;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +56,21 @@ class QuickEntrySection extends StatelessWidget {
   }
 
   Widget _buildInputBar(BuildContext context) {
-    return CcGlassyInputBar(child: _buildInputContent(context));
+    final bar = CcGlassyInputBar(child: _buildInputContent(context));
+    if (!isLocked) return bar;
+
+    return GestureDetector(
+      onTap: () {
+        CcSnackBarHelper.showErrorSnackBar(
+          context: context,
+          message: el.tr(
+            CcLocaleKeys.level_lock_unlock_at_lv,
+            namedArgs: {'level': '3'},
+          ),
+        );
+      },
+      child: bar,
+    );
   }
 
   Widget _buildInputContent(BuildContext context) {
@@ -74,7 +90,7 @@ class QuickEntrySection extends StatelessWidget {
       builder: (context, child) {
         return TextField(
           controller: controller,
-          enabled: !isParsing,
+          enabled: !isParsing && !isLocked,
           maxLines: 1,
           textAlign: TextAlign.start,
           textInputAction: TextInputAction.done,
@@ -139,6 +155,10 @@ class QuickEntrySection extends StatelessWidget {
   }
 
   Widget _buildActionGroup(BuildContext context) {
+    if (isLocked) {
+      return _buildLockIcon(context);
+    }
+
     return ListenableBuilder(
       listenable: controller,
       builder: (context, _) {
@@ -161,6 +181,26 @@ class QuickEntrySection extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildLockIcon(BuildContext context) {
+    final scheme = context.ccColorScheme;
+    return Tooltip(
+      message: el.tr(
+        CcLocaleKeys.level_lock_unlock_at_lv,
+        namedArgs: {'level': '3'},
+      ),
+      child: Container(
+        width: context.respDim(30),
+        height: context.respDim(30),
+        alignment: Alignment.center,
+        child: Icon(
+          Icons.lock_outline_rounded,
+          size: context.respIconSize(baseSize: 18),
+          color: scheme.onSurfaceVariant.withOpacity(0.6),
+        ),
+      ),
     );
   }
 
@@ -205,7 +245,17 @@ class QuickEntrySection extends StatelessWidget {
         color: scheme.onSurface.withOpacity(0.45),
         size: context.respDim(20),
       ),
-      onTap: onScanTap,
+      onTap: isLocked
+          ? () {
+              CcSnackBarHelper.showErrorSnackBar(
+                context: context,
+                message: el.tr(
+                  CcLocaleKeys.level_lock_unlock_at_lv,
+                  namedArgs: {'level': '3'},
+                ),
+              );
+            }
+          : onScanTap,
       width: context.respDim(30),
       height: context.respDim(30),
     );

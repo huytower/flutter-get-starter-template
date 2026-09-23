@@ -32,8 +32,8 @@ class TransactionHeaderBanner extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
-    final activeId = guideline.currentTaskId;
-    final isGuidelineComplete = activeId == null;
+    final remainingSteps = guideline.remainingGuidelineStep;
+    final isGuidelineComplete = remainingSteps == 0;
 
     final tabs = controller.visibleTabs;
     final activeTabIndex = controller.selectedTabIndex.value;
@@ -80,8 +80,12 @@ class TransactionHeaderBanner extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (canUseAiSmartEntry)
-            _buildQuickEntrySection(context, quickEntry, accentColor),
+          _buildQuickEntrySection(
+            context,
+            quickEntry,
+            accentColor,
+            isLocked: !canUseAiSmartEntry,
+          ),
           if (expenseFormController != null) ...[
             TransactionSmartSuggestionChip(
               expenseFormController: expenseFormController!,
@@ -96,8 +100,9 @@ class TransactionHeaderBanner extends StatelessWidget {
   Widget _buildQuickEntrySection(
     BuildContext context,
     QuickEntryMixin controller,
-    Color accentColor,
-  ) {
+    Color accentColor, {
+    bool isLocked = false,
+  }) {
     final suggestion = controller.quickEntrySuggestion.value;
     final errorKey = controller.quickEntryErrorKey.value;
     return QuickEntrySection(
@@ -110,6 +115,7 @@ class TransactionHeaderBanner extends StatelessWidget {
       isCategoryMissing: controller.isQuickEntryCategoryInvalid,
       errorText: errorKey != null ? el.tr(errorKey) : null,
       activeColor: accentColor,
+      isLocked: isLocked,
       onSubmitted: (_) => controller.submitQuickEntry(context),
       onMicTap: () => controller.toggleVoiceQuickEntry(context),
       onScanTap: () => _pickReceiptSource(context, controller),

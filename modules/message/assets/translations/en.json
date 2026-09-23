@@ -307,6 +307,7 @@
         "quick_entry_scan_receipt": "Scan a receipt",
         "quick_entry_take_photo": "Take photo",
         "quick_entry_choose_gallery": "Choose from gallery",
+        "quick_entry_camera_not_available": "Camera feature is not available yet",
         "claims_in_progress": "You have {count} claims in progress",
         "validation": {
             "amount_required": "Amount must be greater than 0",
