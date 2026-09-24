@@ -8,7 +8,6 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../domain/entities/trend_data_entity.dart';
 import '../get_x/report_controller.dart';
-import '../widgets/ai_advice_section.dart';
 import '../widgets/report_daily_list.dart';
 import '../widgets/report_page_header.dart';
 import '../widgets/report_tab_bar.dart';
@@ -205,7 +204,8 @@ class _ReportView extends CcGetView<ReportController> {
                         isEditMode: controller.isEditMode.value,
                       ),
                       const CcSpaceSM(),
-                      AiAdviceSection(controller: controller),
+                      // TODO(huy): TEMPORARY DISABLE, ENABLE IT LATER
+                      // AiAdviceSection(controller: controller),
                     ],
                   ),
                 ),

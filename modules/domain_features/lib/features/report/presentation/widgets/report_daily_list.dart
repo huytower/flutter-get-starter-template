@@ -39,6 +39,7 @@ class ReportDailyList extends StatelessWidget {
       children: [
         for (final date in sortedDates)
           DailyGroup(
+            key: ValueKey(date.toIso8601String()),
             date: date,
             transactions: groups[date]!,
             includeInvestmentAndLiability: includeInvestmentAndLiability,

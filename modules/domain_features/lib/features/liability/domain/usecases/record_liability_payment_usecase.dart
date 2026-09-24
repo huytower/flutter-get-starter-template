@@ -1,4 +1,5 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:domain_features/features/wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -42,10 +43,12 @@ class RecordLiabilityPaymentUseCase {
   RecordLiabilityPaymentUseCase(
     this._LiabilityRepository,
     this._transactionRepository,
+    this._getWalletBookBalance,
   );
 
   final LiabilityRepository _LiabilityRepository;
   final TransactionRepository _transactionRepository;
+  final GetWalletBookBalanceUseCase _getWalletBookBalance;
 
   Future<Result<LiabilityEntity, CcFailure>> call(
     RecordLiabilityPaymentParams params,
@@ -83,6 +86,26 @@ class RecordLiabilityPaymentUseCase {
       txnType = params.isSettlement
           ? TransactionType.debtCollect
           : TransactionType.debtLend;
+    }
+
+    // Check insufficient wallet balance for transactions where money leaves the wallet
+    final isMoneyLeavingWallet =
+        (liability.isBorrow && params.isSettlement) ||
+        (liability.isLend && !params.isSettlement);
+
+    if (isMoneyLeavingWallet) {
+      final balanceResult = await _getWalletBookBalance(params.walletId);
+      if (balanceResult.isError()) {
+        return Error(balanceResult.tryGetError()!);
+      }
+      final availableBalance = balanceResult.tryGetSuccess()!;
+      if (params.amount > availableBalance) {
+        return const Error(
+          ValidationFailure(
+            CcLocaleKeys.transaction_validation_insufficient_balance,
+          ),
+        );
+      }
     }
 
     final txn = TransactionEntity(
