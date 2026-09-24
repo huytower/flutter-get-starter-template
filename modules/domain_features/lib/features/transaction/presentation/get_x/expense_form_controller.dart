@@ -262,8 +262,11 @@ class ExpenseFormController extends TransactionFormController
       seedIndexMap[expenseCats[i].id] = i;
     }
 
-    // Add Budgets
+    // Add Budgets (deduplicated by categoryId so each category appears at most ONCE)
     for (final b in currentBudgets) {
+      if (budgetCategoryIds.contains(b.budget.categoryId)) {
+        continue; // Skip duplicate budget limits for the same category
+      }
       budgetCategoryIds.add(b.budget.categoryId);
       // Use DateTime(2000) as fallback if no activity, since Entity lacks updatedAt
       final lastActivity = lastUsedBudget[b.budget.id] ?? DateTime(2000);

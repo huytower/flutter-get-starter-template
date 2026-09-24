@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
@@ -43,33 +44,51 @@ class BudgetInsightsSection extends StatelessWidget {
                 onTap: () => context.router.push(const ReportRoute()),
               ),
             for (final warning in insights.penaltyWarnings)
-              _InsightCard(
-                title: warning.budgetName,
-                description: el.tr(
-                  CcLocaleKeys.budget_penalty_warning,
-                  namedArgs: {
-                    'name': warning.budgetName,
-                    'percent': '${warning.percentUsed}',
-                  },
-                ),
-                icon: Icons.warning_amber_rounded,
-                color: context.ccColorScheme.error,
-                onTap: () => context.router.push(const ReportRoute()),
+              Builder(
+                builder: (context) {
+                  final name = BudgetNameHelper.getDisplayName(
+                    name: warning.budgetName,
+                    categoryNameKey: warning.categoryNameKey,
+                  );
+                  return _InsightCard(
+                    title: name,
+                    description: el.tr(
+                      CcLocaleKeys.budget_penalty_warning,
+                      namedArgs: {
+                        'name': name,
+                        'percent': '${warning.percentUsed}',
+                      },
+                    ),
+                    icon: Icons.warning_amber_rounded,
+                    color: context.ccColorScheme.error,
+                    onTap: () => context.router.push(const ReportRoute()),
+                  );
+                },
               ),
             for (final warning in insights.pacingWarnings)
-              _InsightCard(
-                title: warning.budgetName,
-                description: el.tr(
-                  CcLocaleKeys.budget_pacing_hint,
-                  namedArgs: {
-                    'name': warning.budgetName,
-                    'days': '${warning.daysRemaining}',
-                    'amount': formatVndWithSymbol(warning.suggestedDailySpend),
-                  },
-                ),
-                icon: Icons.info_outline_rounded,
-                color: PrjColors.info,
-                onTap: () => context.router.push(const ReportRoute()),
+              Builder(
+                builder: (context) {
+                  final name = BudgetNameHelper.getDisplayName(
+                    name: warning.budgetName,
+                    categoryNameKey: warning.categoryNameKey,
+                  );
+                  return _InsightCard(
+                    title: name,
+                    description: el.tr(
+                      CcLocaleKeys.budget_pacing_hint,
+                      namedArgs: {
+                        'name': name,
+                        'days': '${warning.daysRemaining}',
+                        'amount': formatVndWithSymbol(
+                          warning.suggestedDailySpend,
+                        ),
+                      },
+                    ),
+                    icon: Icons.info_outline_rounded,
+                    color: PrjColors.info,
+                    onTap: () => context.router.push(const ReportRoute()),
+                  );
+                },
               ),
             if (insights.anomalyCount > 0)
               _InsightCard(

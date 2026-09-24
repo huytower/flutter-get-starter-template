@@ -5,6 +5,7 @@ import 'package:multiple_result/multiple_result.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/repositories/category_repository.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
+import '../entities/budget_limit_entity.dart';
 import '../entities/budget_limit_stats_entity.dart';
 import '../repositories/budget_limit_repository.dart';
 
@@ -40,8 +41,19 @@ class GetBudgetLimitStatsUseCase {
     final monthStart = DateTime(now.year, now.month, 1);
     final nextMonthStart = DateTime(now.year, now.month + 1, 1);
 
+    final rawBudgets = budgetsResult.tryGetSuccess()!;
+    final uniqueBudgets = <String, BudgetLimitEntity>{};
+    for (final b in rawBudgets) {
+      final key = b.categoryId.isNotEmpty
+          ? b.categoryId
+          : b.name.trim().toLowerCase();
+      if (!uniqueBudgets.containsKey(key)) {
+        uniqueBudgets[key] = b;
+      }
+    }
+
     final transactions = txnResult.tryGetSuccess()!;
-    final stats = budgetsResult.tryGetSuccess()!.map((budget) {
+    final stats = uniqueBudgets.values.map((budget) {
       final spent = transactions
           .where(
             (t) =>

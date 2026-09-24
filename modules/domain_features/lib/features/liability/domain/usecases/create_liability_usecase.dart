@@ -68,6 +68,11 @@ class CreateLiabilityUseCase {
   Future<Result<LiabilityEntity, CcFailure>> call(
     CreateLiabilityParams params,
   ) async {
+    if (params.principalAmount <= 0) {
+      return const Error(
+        ValidationFailure(CcLocaleKeys.transaction_validation_amount_required),
+      );
+    }
     if (params.categoryId.isEmpty) {
       return const Error(
         ValidationFailure(

@@ -82,14 +82,15 @@ class AddBudgetLimitSheetController extends CcGetController {
         seedIndexMap[CategorySeed.categories[i].id] = i;
       }
 
-      final enabled = cats
-          .where((c) => c.isEnabled && c.type == CategoryType.expense)
-          .toList()
-        ..sort((a, b) {
-          final indexA = seedIndexMap[a.id] ?? 999;
-          final indexB = seedIndexMap[b.id] ?? 999;
-          return indexA.compareTo(indexB);
-        });
+      final enabled =
+          cats
+              .where((c) => c.isEnabled && c.type == CategoryType.expense)
+              .toList()
+            ..sort((a, b) {
+              final indexA = seedIndexMap[a.id] ?? 999;
+              final indexB = seedIndexMap[b.id] ?? 999;
+              return indexA.compareTo(indexB);
+            });
 
       categories.assignAll(enabled);
       if (selectedCategoryId.value == null && enabled.isNotEmpty) {
@@ -117,7 +118,9 @@ class AddBudgetLimitSheetController extends CcGetController {
 
   void _scrollToSelectedCategory() {
     if (selectedCategoryId.value == null) return;
-    final index = categories.indexWhere((c) => c.id == selectedCategoryId.value);
+    final index = categories.indexWhere(
+      (c) => c.id == selectedCategoryId.value,
+    );
     if (index <= 0) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       categoryScrollController.animateTo(
@@ -151,7 +154,12 @@ class AddBudgetLimitSheetController extends CcGetController {
     final budgetName = nameController.text.trim();
     final isDuplicate = _budgetLimitController.budgets.any((b) {
       if (isEdit && b.budget.id == _editTarget!.id) return false;
-      return b.budget.name.trim().toLowerCase() == budgetName.toLowerCase();
+      final sameName =
+          b.budget.name.trim().toLowerCase() == budgetName.toLowerCase();
+      final sameCategory =
+          selectedCategoryId.value != null &&
+          b.budget.categoryId == selectedCategoryId.value;
+      return sameName || sameCategory;
     });
 
     if (isDuplicate) {

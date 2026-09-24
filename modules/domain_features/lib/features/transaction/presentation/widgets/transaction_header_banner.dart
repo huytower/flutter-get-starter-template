@@ -92,7 +92,7 @@ class TransactionHeaderBanner extends StatelessWidget {
               if (isLocked) _buildLockOverlay(context),
             ],
           ),
-          if (expenseFormController != null) ...[
+          if (canUseAiSmartEntry && expenseFormController != null) ...[
             TransactionSmartSuggestionChip(
               expenseFormController: expenseFormController!,
               accentColor: accentColor,
@@ -142,7 +142,7 @@ class TransactionHeaderBanner extends StatelessWidget {
     return Positioned.fill(
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: scheme.surface.withOpacity(0.4),
+          color: scheme.surface.withOpacity(0.3),
           borderRadius: context.brLg,
         ),
         child: Center(
@@ -156,25 +156,14 @@ class TransactionHeaderBanner extends StatelessWidget {
                   color: scheme.surface,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: scheme.onSurfaceVariant.withOpacity(0.2),
+                    color: scheme.onSurfaceVariant.withOpacity(0.1),
                     width: context.respDim(1.5),
                   ),
                 ),
                 child: Icon(
                   Icons.lock_outline_rounded,
-                  size: context.respIconSize(baseSize: 18),
-                  color: scheme.onSurfaceVariant.withOpacity(0.85),
-                ),
-              ),
-              const CcSpaceXS(),
-              CcText(
-                el.tr(
-                  CcLocaleKeys.level_lock_unlock_at_lv,
-                  namedArgs: {'level': '3'},
-                ),
-                textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                  color: scheme.onSurface.withOpacity(0.9),
-                  fontWeight: CcTypographyParams.bold,
+                  size: context.respIconSize(baseSize: 16),
+                  color: scheme.onSurfaceVariant.withOpacity(0.6),
                 ),
               ),
             ],
