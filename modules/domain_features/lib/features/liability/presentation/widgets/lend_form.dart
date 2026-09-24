@@ -90,7 +90,6 @@ class LendForm extends StatelessWidget {
                 onCalendarTap: () => controller.pickDate(context),
                 noteController: controller.noteController,
                 activeColor: accentColor,
-                hideDate: true,
               ),
               const CcSpaceSM(),
               _buildSubmitButton(context, controller, accentColor),

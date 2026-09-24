@@ -61,7 +61,7 @@ class LiabilityForm extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildLiabilityDirectionToggle(context, controller, accentColor),
+            _buildLiabilityDirectionToggle(context, controller, accentColor),
             const CcSpaceSM(),
             _buildInitiateSection(context, controller, accentColor),
           ],
@@ -70,12 +70,14 @@ class LiabilityForm extends StatelessWidget {
     );
   }
 
-  Widget buildLiabilityDirectionToggle(
+  Widget _buildLiabilityDirectionToggle(
     BuildContext context,
     LiabilityFormController controller,
     Color accentColor,
   ) {
-    final guideline = Get.find<GuidelineController>();
+    final guideline = Get.isRegistered<GuidelineController>()
+        ? Get.find<GuidelineController>()
+        : null;
 
     return Stack(
       clipBehavior: Clip.none,
@@ -86,24 +88,28 @@ class LiabilityForm extends StatelessWidget {
           activeColor: accentColor,
           onChanged: controller.setAction,
         ),
-        Obx(() {
-          final txCtrl = Get.find<TransactionController>();
-          if (!guideline.isTaskActive('liability') ||
-              txCtrl.selectedTabIndex.value !=
-                  TransactionTabKind.liability.index) {
-            return const SizedBox.shrink();
-          }
-          return Positioned(
-            top: context.respDim(15),
-            right: context.respDim(50),
-            child: PrjGuidelineBadge(
-              size: context.respDim(6),
-              label: guideline.bannerDescription,
-              labelAbove: false,
-              growRight: false,
-            ),
-          );
-        }),
+        if (guideline != null)
+          Obx(() {
+            final txCtrl = Get.isRegistered<TransactionController>()
+                ? Get.find<TransactionController>()
+                : null;
+            if (txCtrl == null ||
+                !guideline.isTaskActive('liability') ||
+                txCtrl.selectedTabIndex.value !=
+                    TransactionTabKind.liability.index) {
+              return const SizedBox.shrink();
+            }
+            return Positioned(
+              top: context.respDim(15),
+              right: context.respDim(50),
+              child: PrjGuidelineBadge(
+                size: context.respDim(6),
+                label: guideline.bannerDescription,
+                labelAbove: false,
+                growRight: false,
+              ),
+            );
+          }),
       ],
     );
   }
@@ -130,10 +136,18 @@ class LiabilityForm extends StatelessWidget {
               _buildWalletSection(context, controller, accentColor),
               const CcSpaceSM(),
               Obx(() {
-                // Show repayment plan always in "Borrow" subsegment.
-                // It is hidden in "Repay" subsegment.
+                final liability = controller.mergedItems
+                    .firstWhereOrNull(
+                      (b) =>
+                          b.liability.id == controller.selectedLiabilityId.value,
+                    )
+                    ?.liability;
+
+                // Show repayment plan only when initiating a new loan in "Borrow" subsegment.
+                // It is hidden in "Repay" subsegment or when borrowing more on an existing loan.
                 if (controller.action.value ==
-                    LiabilityDirectionForm.decrease) {
+                        LiabilityDirectionForm.decrease ||
+                    (liability != null && liability.principalAmount > 0)) {
                   return const SizedBox.shrink();
                 }
 
@@ -155,7 +169,6 @@ class LiabilityForm extends StatelessWidget {
                 onCalendarTap: () => controller.pickDate(context),
                 noteController: controller.noteController,
                 activeColor: accentColor,
-                hideDate: true,
               ),
               const CcSpaceSM(),
               _buildSubmitButton(context, controller, accentColor),
@@ -249,7 +262,7 @@ class LiabilityForm extends StatelessWidget {
     } else {
       text = (liability != null && liability.principalAmount > 0)
           ? el.tr(CcLocaleKeys.transaction_record_liability) // Borrow more
-          : el.tr(CcLocaleKeys.transaction_record_liability); // Initiate
+          : el.tr(CcLocaleKeys.transaction_liability_direction_borrow); // Initiate
       icon = Icons.arrow_circle_up;
     }
 

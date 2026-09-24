@@ -555,6 +555,7 @@
     },
     "level_lock": {
         "unlock_at_lv": "MỞ KHÓA Ở LV{level}",
+        "unlock_free_at_lv3": "Mở miễn phí khi lên LV3",
         "remaining_percent": "CÒN LẠI {percent}%",
         "investment_title": "Theo dõi Đầu tư & Tích lũy",
         "investment_desc": "Ghi chép cổ phiếu, quỹ, bất động sản và theo dõi ROI ngay trong ứng dụng — mở khóa bằng cách hoàn thành các thử thách kỷ luật chi tiêu.",

@@ -683,6 +683,7 @@
     },
     "level_lock": {
         "unlock_at_lv": "UNLOCK AT LV{level}",
+        "unlock_free_at_lv3": "Free to unlock at LV3",
         "remaining_percent": "{percent}% REMAINING",
         "investment_title": "Track Investment & Accumulation",
         "investment_desc": "Record stocks, funds, real estate and track ROI directly in the app — unlock by completing spending discipline challenges.",

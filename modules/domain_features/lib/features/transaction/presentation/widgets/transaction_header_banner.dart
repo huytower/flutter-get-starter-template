@@ -74,17 +74,18 @@ class TransactionHeaderBanner extends StatelessWidget {
     final canUseAiSmartEntry =
         getIt<UserLevelController>().status.value.canUseAiSmartEntry;
     final accentColor = _getTabColor(context, activeTab);
+    final isLocked = !canUseAiSmartEntry;
 
     return SizedBox(
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildQuickEntrySection(
-            context,
-            quickEntry,
-            accentColor,
-            isLocked: !canUseAiSmartEntry,
+          Stack(
+            children: [
+              _buildQuickEntrySection(context, quickEntry, accentColor, isLocked),
+              if (isLocked) _buildLockOverlay(context),
+            ],
           ),
           if (expenseFormController != null) ...[
             TransactionSmartSuggestionChip(
@@ -100,9 +101,9 @@ class TransactionHeaderBanner extends StatelessWidget {
   Widget _buildQuickEntrySection(
     BuildContext context,
     QuickEntryMixin controller,
-    Color accentColor, {
-    bool isLocked = false,
-  }) {
+    Color accentColor,
+    bool isLocked,
+  ) {
     final suggestion = controller.quickEntrySuggestion.value;
     final errorKey = controller.quickEntryErrorKey.value;
     return QuickEntrySection(
@@ -115,7 +116,6 @@ class TransactionHeaderBanner extends StatelessWidget {
       isCategoryMissing: controller.isQuickEntryCategoryInvalid,
       errorText: errorKey != null ? el.tr(errorKey) : null,
       activeColor: accentColor,
-      isLocked: isLocked,
       onSubmitted: (_) => controller.submitQuickEntry(context),
       onMicTap: () => controller.toggleVoiceQuickEntry(context),
       onScanTap: () => _pickReceiptSource(context, controller),
@@ -127,6 +127,51 @@ class TransactionHeaderBanner extends StatelessWidget {
         controller.dismissQuickEntrySuggestion();
         controller.isParsingQuickEntry.value = false;
       },
+      isLocked: isLocked,
+    );
+  }
+
+  Widget _buildLockOverlay(BuildContext context) {
+    final scheme = context.ccColorScheme;
+
+    return Positioned.fill(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: scheme.surface.withOpacity(0.4),
+          borderRadius: context.brLg,
+        ),
+child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(context.respDim(6)),
+                  decoration: BoxDecoration(
+                    color: scheme.surface,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: scheme.onSurfaceVariant.withOpacity(0.2),
+                      width: context.respDim(1),
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.lock_outline_rounded,
+                    size: context.respIconSize(baseSize: 18),
+                    color: scheme.onSurfaceVariant.withOpacity(0.85),
+                  ),
+                ),
+                const CcSpaceXS(),
+                CcText(
+                  el.tr(CcLocaleKeys.level_lock_unlock_free_at_lv3),
+                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                    color: scheme.onSurface.withOpacity(0.9),
+                    fontWeight: CcTypographyParams.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ),
     );
   }
 

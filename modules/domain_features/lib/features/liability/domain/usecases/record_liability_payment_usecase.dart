@@ -5,10 +5,8 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
-import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../entities/liability_entity.dart';
 import '../repositories/liability_repository.dart';
-import 'get_liability_outstanding_balance_usecase.dart';
 
 /// Input for [RecordLiabilityPaymentUseCase].
 class RecordLiabilityPaymentParams {
@@ -34,25 +32,20 @@ class RecordLiabilityPaymentParams {
   });
 }
 
-/// Records a settlement leg (Trả nợ / Thu nợ) or an incremental leg
-/// (Vay thêm / Cho vay thêm) against an existing liability.
+/// Records a payment leg: Repayment / Collection (decrease) or Borrowing / Lending (increase)
+/// against a selected liability category (e.g., "Nợ thẻ tín dụng", "Vay thế chấp").
 ///
-/// Settlements decrease the outstanding balance and are blocked if the amount
-/// exceeds it. Incremental legs increase the balance and have no liability-side
-/// limit. Both respect standard wallet balance guards for outflows (Chi ra).
+/// Users manage their debts freely without restrictive settlement guards
+/// (no limits on repayments or borrowings, allowing revolving credit management).
 @lazySingleton
 class RecordLiabilityPaymentUseCase {
   RecordLiabilityPaymentUseCase(
     this._LiabilityRepository,
     this._transactionRepository,
-    this._getLiabilityOutstandingBalance,
-    this._getWalletBookBalance,
   );
 
   final LiabilityRepository _LiabilityRepository;
   final TransactionRepository _transactionRepository;
-  final GetLiabilityOutstandingBalanceUseCase _getLiabilityOutstandingBalance;
-  final GetWalletBookBalanceUseCase _getWalletBookBalance;
 
   Future<Result<LiabilityEntity, CcFailure>> call(
     RecordLiabilityPaymentParams params,
@@ -80,49 +73,6 @@ class RecordLiabilityPaymentUseCase {
       return Error(liabilityResult.tryGetError()!);
     }
     final liability = liabilityResult.tryGetSuccess()!;
-
-    final outstandingResult = await _getLiabilityOutstandingBalance(
-      params.liabilityId,
-    );
-    if (outstandingResult.isError()) {
-      return Error(outstandingResult.tryGetError()!);
-    }
-    final outstanding = outstandingResult.tryGetSuccess()!;
-
-    if (params.isSettlement) {
-      if (outstanding <= 0) {
-        return const Error(
-          ValidationFailure(
-            CcLocaleKeys.transaction_validation_liability_settled,
-          ),
-        );
-      }
-      if (params.amount > outstanding) {
-        return const Error(
-          ValidationFailure(
-            CcLocaleKeys.transaction_validation_amount_exceeds_outstanding,
-          ),
-        );
-      }
-    }
-
-    final isOutflow =
-        (liability.isBorrow && params.isSettlement) ||
-        (!liability.isBorrow && !params.isSettlement);
-
-    if (isOutflow) {
-      final balanceResult = await _getWalletBookBalance(params.walletId);
-      if (balanceResult.isError()) {
-        return Error(balanceResult.tryGetError()!);
-      }
-      if (params.amount > balanceResult.tryGetSuccess()!) {
-        return const Error(
-          ValidationFailure(
-            CcLocaleKeys.transaction_validation_insufficient_balance,
-          ),
-        );
-      }
-    }
 
     final String txnType;
     if (liability.isBorrow) {

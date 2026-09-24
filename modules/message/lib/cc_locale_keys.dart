@@ -2175,6 +2175,7 @@ abstract class CcLocaleKeys {
       'guideline.reset_confirm_cancel';
 
   static const level_lock_unlock_at_lv = 'level_lock.unlock_at_lv';
+  static const level_lock_unlock_free_at_lv3 = 'level_lock.unlock_free_at_lv3';
   static const level_lock_investment_title = 'level_lock.investment_title';
   static const level_lock_investment_desc = 'level_lock.investment_desc';
   static const level_lock_liability_title = 'level_lock.liability_title';

@@ -23,7 +23,7 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final drafts = controller.installmentDrafts.value;
+      final drafts = controller.installmentDrafts;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
