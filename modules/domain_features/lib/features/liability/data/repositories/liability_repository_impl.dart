@@ -11,7 +11,9 @@ import '../datasources/local/liability_local_datasource.dart';
 import '../models/liability_model.dart';
 
 @LazySingleton(as: LiabilityRepository)
-class LiabilityRepositoryImpl with CcBaseRepository implements LiabilityRepository {
+class LiabilityRepositoryImpl
+    with CcBaseRepository
+    implements LiabilityRepository {
   @factoryMethod
   LiabilityRepositoryImpl({
     required LiabilityLocalDatasource local,
@@ -84,10 +86,23 @@ class LiabilityRepositoryImpl with CcBaseRepository implements LiabilityReposito
   @override
   Future<Result<void, CcFailure>> deleteLiability(String id) {
     return safeRequest(() async {
-      await _local.delete(id);
+      final target = await _local.getById(id);
+      if (target != null) {
+        final all = await _local.getAll();
+        final sameGroup = all.where(
+          (m) =>
+              m.direction == target.direction &&
+              (m.categoryId == target.categoryId ||
+                  m.categoryLabel.trim().toLowerCase() ==
+                      target.categoryLabel.trim().toLowerCase()),
+        );
+        for (final m in sameGroup) {
+          await _local.delete(m.id);
+        }
+      } else {
+        await _local.delete(id);
+      }
       _syncService.syncAll();
     });
   }
 }
-
-

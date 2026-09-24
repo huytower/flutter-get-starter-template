@@ -83,7 +83,12 @@ class TransactionHeaderBanner extends StatelessWidget {
         children: [
           Stack(
             children: [
-              _buildQuickEntrySection(context, quickEntry, accentColor, isLocked),
+              _buildQuickEntrySection(
+                context,
+                quickEntry,
+                accentColor,
+                isLocked,
+              ),
               if (isLocked) _buildLockOverlay(context),
             ],
           ),
@@ -140,37 +145,41 @@ class TransactionHeaderBanner extends StatelessWidget {
           color: scheme.surface.withOpacity(0.4),
           borderRadius: context.brLg,
         ),
-child: Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(context.respDim(6)),
-                  decoration: BoxDecoration(
-                    color: scheme.surface,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: scheme.onSurfaceVariant.withOpacity(0.2),
-                      width: context.respDim(1),
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.lock_outline_rounded,
-                    size: context.respIconSize(baseSize: 18),
-                    color: scheme.onSurfaceVariant.withOpacity(0.85),
+        child: Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: context.respDim(32),
+                height: context.respDim(32),
+                decoration: BoxDecoration(
+                  color: scheme.surface,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: scheme.onSurfaceVariant.withOpacity(0.2),
+                    width: context.respDim(1.5),
                   ),
                 ),
-                const CcSpaceXS(),
-                CcText(
-                  el.tr(CcLocaleKeys.level_lock_unlock_free_at_lv3),
-                  textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                    color: scheme.onSurface.withOpacity(0.9),
-                    fontWeight: CcTypographyParams.bold,
-                  ),
+                child: Icon(
+                  Icons.lock_outline_rounded,
+                  size: context.respIconSize(baseSize: 18),
+                  color: scheme.onSurfaceVariant.withOpacity(0.85),
                 ),
-              ],
-            ),
+              ),
+              const CcSpaceXS(),
+              CcText(
+                el.tr(
+                  CcLocaleKeys.level_lock_unlock_at_lv,
+                  namedArgs: {'level': '3'},
+                ),
+                textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                  color: scheme.onSurface.withOpacity(0.9),
+                  fontWeight: CcTypographyParams.bold,
+                ),
+              ),
+            ],
           ),
+        ),
       ),
     );
   }

@@ -49,13 +49,14 @@ class QuickEntrySection extends StatelessWidget {
     return Opacity(
       opacity: isLocked ? 0.5 : 1.0,
       child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildInputBar(context),
-        const CcSpaceXS(),
-        _buildSuggestionChip(context),
-        _buildErrorMessage(context),
-      ],
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInputBar(context),
+          const CcSpaceXS(),
+          _buildSuggestionChip(context),
+          _buildErrorMessage(context),
+        ],
+      ),
     );
   }
 

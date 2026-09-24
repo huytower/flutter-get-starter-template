@@ -1,4 +1,5 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:get/get_navigation/src/root/parse_route.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -106,12 +107,37 @@ class CreateLiabilityUseCase {
       }
     }
 
+    // Reuse existing liability ID for same direction & category if liabilityId not provided
+    String targetId = params.liabilityId ?? '';
+    int? updatedPrincipal = params.principalAmount;
+    bool isUpdate = params.liabilityId != null;
+
+    if (targetId.isEmpty) {
+      final existingResult = await _LiabilityRepository.getLiabilities();
+      if (existingResult.isSuccess()) {
+        final existing = existingResult.tryGetSuccess()!.firstWhereOrNull(
+          (l) =>
+              l.direction == params.direction &&
+              (l.categoryId == params.categoryId ||
+                  l.categoryLabel.trim().toLowerCase() ==
+                      params.categoryLabel.trim().toLowerCase()),
+        );
+        if (existing != null) {
+          targetId = existing.id;
+          updatedPrincipal += existing.principalAmount;
+          isUpdate = true;
+        }
+      }
+    }
+
+    if (targetId.isEmpty) {
+      targetId = DateTime.now().microsecondsSinceEpoch.toString();
+    }
+
     final liability = LiabilityEntity(
-      id:
-          params.liabilityId ??
-          DateTime.now().microsecondsSinceEpoch.toString(),
+      id: targetId,
       direction: params.direction,
-      principalAmount: params.principalAmount,
+      principalAmount: updatedPrincipal,
       categoryId: params.categoryId,
       categoryLabel: params.categoryLabel,
       categoryIconCode: params.categoryIconCode,
@@ -126,7 +152,7 @@ class CreateLiabilityUseCase {
       reminderBeforeDueDate: params.reminderBeforeDueDate,
     );
 
-    final createResult = params.liabilityId != null
+    final createResult = isUpdate
         ? await _LiabilityRepository.updateLiability(liability)
         : await _LiabilityRepository.createLiability(liability);
     if (createResult.isError()) {

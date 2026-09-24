@@ -8,6 +8,7 @@ import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/repositories/category_repository.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/liability_balance_entity.dart';
+import '../entities/liability_entity.dart';
 import '../repositories/liability_repository.dart';
 import 'liability_balance_calculator.dart';
 
@@ -38,28 +39,64 @@ class GetLiabilityBalancesUseCase {
     final catResult = await _categoryRepository.getCategories();
     final categories = catResult.tryGetSuccess() ?? <CategoryEntity>[];
 
+    final rawLiabilities = liabilitiesResult.tryGetSuccess()!;
     final transactions = txnResult.tryGetSuccess()!;
-    final unique = <String, LiabilityBalanceEntity>{};
-    for (final liability in liabilitiesResult.tryGetSuccess()!) {
-      final liabilityTxns = transactions
-          .where((t) => t.liabilityId == liability.id)
+
+    // Group liabilities by direction + categoryId (or categoryLabel) to consolidate duplicates
+    final grouped = <String, List<LiabilityEntity>>{};
+    for (final l in rawLiabilities) {
+      final catKey = l.categoryId.isNotEmpty
+          ? l.categoryId
+          : l.categoryLabel.trim().toLowerCase();
+      final key = '${l.direction}_$catKey';
+      grouped.putIfAbsent(key, () => <LiabilityEntity>[]).add(l);
+    }
+
+    final balances = <LiabilityBalanceEntity>[];
+
+    for (final entry in grouped.entries) {
+      final List<LiabilityEntity> items = entry.value;
+      // Primary liability entity (most recently updated)
+      items.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+      final primary = items.first;
+
+      // Collect all liability IDs belonging to this group
+      final groupIds = items.map((e) => e.id).toSet();
+
+      // Collect all transactions belonging to any liability in this group
+      final groupTxns = transactions
+          .where((t) => groupIds.contains(t.liabilityId))
           .toList();
 
+      // Total principal amount across all liabilities in this group
+      final totalPrincipal = items.fold<int>(
+        0,
+        (sum, item) => sum + item.principalAmount,
+      );
+
       final cat = categories.firstWhereOrNull(
-        (c) => c.id == liability.categoryId,
+        (c) => c.id == primary.categoryId,
+      );
+
+      final combinedEntity = primary.copyWith(
+        principalAmount: totalPrincipal,
+        categoryNameKey: cat?.nameKey,
       );
 
       final balance = LiabilityBalanceEntity(
-        liability: liability.copyWith(categoryNameKey: cat?.nameKey),
+        liability: combinedEntity,
         outstandingBalance: liabilityOutstandingBalance(
-          liability.principalAmount,
-          liabilityTxns,
+          totalPrincipal,
+          groupTxns,
         ),
       );
-      unique[liability.id] = balance;
+
+      balances.add(balance);
     }
-    final balances = unique.values.toList()
-      ..sort((a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt));
+
+    balances.sort(
+      (a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt),
+    );
 
     return Success(balances);
   }
