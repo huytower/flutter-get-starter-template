@@ -39,7 +39,13 @@ abstract final class BudgetNameHelper {
     'category.rent': ['rent', 'thuê nhà', 'thue nha', 'tiền nhà', 'tien nha'],
     'category.taxi': ['taxi', 'xe ôm', 'xe cong nghe'],
     'category.parking': ['parking', 'đỗ xe', 'do xe', 'gửi xe', 'gui xe'],
-    'category.maintenance': ['maintenance', 'bảo trì', 'bao tri', 'sửa xe', 'sua xe'],
+    'category.maintenance': [
+      'maintenance',
+      'bảo trì',
+      'bao tri',
+      'sửa xe',
+      'sua xe',
+    ],
     'category.market_supermarket': [
       'market & supermarket',
       'đi chợ & siêu thị',
@@ -55,6 +61,62 @@ abstract final class BudgetNameHelper {
     'category.gym': ['gym', 'thể dục gym', 'the duc gym', 'tập gym'],
     'category.medicine': ['medicine', 'thuốc', 'thuoc'],
     'category.doctor': ['doctor', 'khám bệnh', 'kham benh'],
+    'category.income_salary': [
+      'salary',
+      'main salary',
+      'lương chính',
+      'luong chinh',
+      'lương',
+      'luong',
+    ],
+    'category.income_freelance': [
+      'freelance',
+      'side job',
+      'làm thêm (freelance)',
+      'lam them (freelance)',
+      'làm thêm',
+      'lam them',
+    ],
+    'category.income_allowance': ['allowance', 'trợ cấp', 'tro cap'],
+    'category.income_cashback': [
+      'cashback',
+      'hoàn tiền (cashback)',
+      'hoan tien (cashback)',
+      'hoàn tiền',
+      'hoan tien',
+    ],
+    'category.income_bonus': [
+      'bonus',
+      'tiền thưởng',
+      'tien thuong',
+      'thưởng',
+      'thuong',
+    ],
+    'category.income_gift': ['gift', 'quà tặng', 'qua tang'],
+    'category.debt_personal_borrow': [
+      'personal borrowing',
+      'vay cá nhân',
+      'vay ca nhan',
+    ],
+    'category.debt_credit_card_borrow': [
+      'credit card debt',
+      'nợ thẻ tín dụng',
+      'no the tin dung',
+      'thẻ tín dụng',
+      'the tin dung',
+    ],
+    'category.debt_mortgage_borrow': [
+      'mortgage loan',
+      'vay thế chấp',
+      'vay the chap',
+    ],
+    'category.debt_personal_lend': [
+      'personal lending',
+      'cho mượn cá nhân',
+      'cho muon ca nhan',
+      'cho mượn',
+      'cho muon',
+    ],
     'category.investment_stock': [
       'cổ phiếu',
       'co phieu',
@@ -72,8 +134,7 @@ abstract final class BudgetNameHelper {
     required String name,
     required String? categoryNameKey,
   }) {
-    if (categoryNameKey != null &&
-        isDefaultName(name, key: categoryNameKey)) {
+    if (categoryNameKey != null && isDefaultName(name, key: categoryNameKey)) {
       return el.tr(categoryNameKey);
     }
     if (categoryNameKey == null) {

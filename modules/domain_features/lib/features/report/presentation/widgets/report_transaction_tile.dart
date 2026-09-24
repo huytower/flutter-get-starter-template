@@ -1,4 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/helper/budget_name_helper.dart';
+import 'package:domain_features/features/category/data/datasources/local/category_seed.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -73,7 +75,14 @@ class TransactionTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CcText(
-                    transaction.category,
+                    BudgetNameHelper.getDisplayName(
+                      name: transaction.category,
+                      categoryNameKey: CategorySeed.categories
+                          .firstWhereOrNull(
+                            (c) => c.id == transaction.categoryId,
+                          )
+                          ?.nameKey,
+                    ),
                     textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
