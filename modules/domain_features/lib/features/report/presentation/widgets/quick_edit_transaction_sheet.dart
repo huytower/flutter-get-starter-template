@@ -7,10 +7,10 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/budget_name_helper.dart';
-import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
-import '../../../liability/presentation/widgets/liability_asset_selector.dart';
+import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../liability/presentation/widgets/lend_asset_selector.dart';
+import '../../../liability/presentation/widgets/liability_asset_selector.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/usecases/update_transaction_usecase.dart';
 import '../../../transaction/presentation/get_x/investment_form_controller.dart';
@@ -94,8 +94,12 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
         tag: 'quick_edit_${widget.transaction.id}',
       );
       if (widget.transaction.investmentWalletId != null) {
-        _investmentController!.selectedInvestmentWalletId.value =
-            widget.transaction.investmentWalletId;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _investmentController != null) {
+            _investmentController!.selectedInvestmentWalletId.value =
+                widget.transaction.investmentWalletId;
+          }
+        });
       }
     } else if (_isBorrow) {
       _liabilityController = Get.put(
@@ -103,8 +107,12 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
         tag: 'quick_edit_${widget.transaction.id}',
       );
       if (widget.transaction.liabilityId != null) {
-        _liabilityController!.selectedLiabilityId.value =
-            widget.transaction.liabilityId;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _liabilityController != null) {
+            _liabilityController!.selectedLiabilityId.value =
+                widget.transaction.liabilityId;
+          }
+        });
       }
     } else if (_isLend) {
       _lendController = Get.put(
@@ -112,8 +120,12 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
         tag: 'quick_edit_${widget.transaction.id}',
       );
       if (widget.transaction.liabilityId != null) {
-        _lendController!.selectedLiabilityId.value =
-            widget.transaction.liabilityId;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _lendController != null) {
+            _lendController!.selectedLiabilityId.value =
+                widget.transaction.liabilityId;
+          }
+        });
       }
     }
   }

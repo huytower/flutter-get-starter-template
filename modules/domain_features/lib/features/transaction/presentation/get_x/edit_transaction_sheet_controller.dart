@@ -37,11 +37,15 @@ class EditTransactionSheetController extends CcGetController {
     if (isExpense) {
       final controller = Get.put(getIt<ExpenseFormController>(), tag: editTag);
       controller.onEditSaved = _onCloseSheet;
-      controller.loadForEdit(transaction);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.loadForEdit(transaction);
+      });
     } else if (isIncome) {
       final controller = Get.put(getIt<IncomeFormController>(), tag: editTag);
       controller.onEditSaved = _onCloseSheet;
-      controller.loadForEdit(transaction);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.loadForEdit(transaction);
+      });
     }
   }
 
