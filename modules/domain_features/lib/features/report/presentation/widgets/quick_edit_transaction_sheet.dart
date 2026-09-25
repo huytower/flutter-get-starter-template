@@ -2,15 +2,22 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/usecases/update_transaction_usecase.dart';
+import '../../../transaction/presentation/get_x/investment_form_controller.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
+import '../../../transaction/presentation/widgets/investment_asset_selector.dart';
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
+
+void _quickEditDebug(String message) {
+  '[QUICK_EDIT_DEBUG] $message'.Log('QuickEditTransactionSheet');
+}
 
 class QuickEditTransactionSheet extends StatefulWidget {
   const QuickEditTransactionSheet({super.key, required this.transaction});
@@ -43,6 +50,7 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
   late final TextEditingController _amountController;
   late DateTime _selectedDate;
   CategoryEntity? _selectedCategory;
+  InvestmentFormController? _investmentController;
 
   bool get _isInvestment => widget.transaction.isInvestmentActivity;
   bool get _isDebt => widget.transaction.isDebtActivity;
@@ -61,12 +69,32 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
     );
     _selectedDate = widget.transaction.date;
     _noteController.text = widget.transaction.note ?? '';
+
+    _quickEditDebug(
+      'initState: id=${widget.transaction.id}, type=${widget.transaction.type}, category=${widget.transaction.category}, amount=${widget.transaction.amount}, isInvestment=$_isInvestment',
+    );
+
+    if (_isInvestment) {
+      _investmentController = Get.put(
+        getIt<InvestmentFormController>(),
+        tag: 'quick_edit_${widget.transaction.id}',
+      );
+      if (widget.transaction.investmentWalletId != null) {
+        _investmentController!.selectedInvestmentWalletId.value =
+            widget.transaction.investmentWalletId;
+      }
+    }
   }
 
   @override
   void dispose() {
     _amountController.dispose();
     _noteController.dispose();
+    if (_investmentController != null) {
+      Get.delete<InvestmentFormController>(
+        tag: 'quick_edit_${widget.transaction.id}',
+      );
+    }
     super.dispose();
   }
 
@@ -98,14 +126,38 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
     final newAmount = int.tryParse(_amountController.text.trim()) ?? 0;
     final noteText = _noteController.text.trim();
 
-    final categoryId = _selectedCategory?.id ?? widget.transaction.categoryId;
-    final categoryLabel = _selectedCategory != null
-        ? el.tr(_selectedCategory!.nameKey)
-        : widget.transaction.category;
-    final categoryIconCode =
-        _selectedCategory?.iconCode ?? widget.transaction.categoryIconCode;
-    final categoryIconFamily =
-        _selectedCategory?.iconFamily ?? widget.transaction.categoryIconFamily;
+    final String categoryId;
+    final String categoryLabel;
+    final int? categoryIconCode;
+    final String? categoryIconFamily;
+
+    if (_isInvestment && _investmentController != null) {
+      final selectedCat = _investmentController!.selectedCategory.value;
+      categoryId = selectedCat?.id ?? widget.transaction.categoryId;
+      categoryLabel = selectedCat != null
+          ? el.tr(selectedCat.nameKey)
+          : widget.transaction.category;
+      categoryIconCode =
+          selectedCat?.iconCode ?? widget.transaction.categoryIconCode;
+      categoryIconFamily =
+          selectedCat?.iconFamily ?? widget.transaction.categoryIconFamily;
+      _quickEditDebug(
+        '_save investment: categoryId=$categoryId, categoryLabel=$categoryLabel, selectedInvestmentWalletId=${_investmentController!.selectedInvestmentWalletId.value}',
+      );
+    } else {
+      categoryId = _selectedCategory?.id ?? widget.transaction.categoryId;
+      categoryLabel = _selectedCategory != null
+          ? el.tr(_selectedCategory!.nameKey)
+          : widget.transaction.category;
+      categoryIconCode =
+          _selectedCategory?.iconCode ?? widget.transaction.categoryIconCode;
+      categoryIconFamily =
+          _selectedCategory?.iconFamily ??
+          widget.transaction.categoryIconFamily;
+      _quickEditDebug(
+        '_save general: categoryId=$categoryId, categoryLabel=$categoryLabel',
+      );
+    }
 
     final result = await updateUseCase.call(
       UpdateTransactionParams(
@@ -159,17 +211,7 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CategorySelectionSection(
-                      type: _categoryType!,
-                      activeColor: _accentColor,
-                      autoSelectFirst: false,
-                      initialSelectedCategoryId: widget.transaction.categoryId,
-                      onCategorySelected: (category) {
-                        if (mounted) {
-                          setState(() => _selectedCategory = category);
-                        }
-                      },
-                    ),
+                    _buildCategorySelectionSection(),
                     const CcSpaceSM(),
                     _buildAmountSection(context),
                     const CcSpaceSM(),
@@ -195,6 +237,30 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCategorySelectionSection() {
+    if (_isInvestment && _investmentController != null) {
+      _quickEditDebug(
+        'buildCategorySelectionSection: rendering InvestmentAssetSelector with mergedItems count=${_investmentController!.mergedItems.length}',
+      );
+      return InvestmentAssetSelector(
+        controller: _investmentController!,
+        activeColor: _accentColor,
+      );
+    }
+
+    return CategorySelectionSection(
+      type: _categoryType!,
+      activeColor: _accentColor,
+      autoSelectFirst: false,
+      initialSelectedCategoryId: widget.transaction.categoryId,
+      onCategorySelected: (category) {
+        if (mounted) {
+          setState(() => _selectedCategory = category);
+        }
+      },
     );
   }
 

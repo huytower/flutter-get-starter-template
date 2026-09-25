@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:domain_features/features/transaction/presentation/widgets/transaction_smart_suggestion_chip.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,7 +13,6 @@ import '../get_x/quick_entry_mixin.dart';
 import '../get_x/transaction_controller.dart';
 import 'quick_entry_section.dart';
 import 'receipt_source_sheet.dart';
-import 'transaction_smart_suggestion_chip.dart';
 
 class TransactionHeaderBanner extends StatelessWidget {
   const TransactionHeaderBanner({
@@ -92,12 +92,11 @@ class TransactionHeaderBanner extends StatelessWidget {
               if (isLocked) _buildLockOverlay(context),
             ],
           ),
-          if (canUseAiSmartEntry && expenseFormController != null) ...[
+          if (canUseAiSmartEntry && expenseFormController != null)
             TransactionSmartSuggestionChip(
               expenseFormController: expenseFormController!,
               accentColor: accentColor,
             ),
-          ],
         ],
       ),
     );
