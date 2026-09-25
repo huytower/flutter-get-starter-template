@@ -33,14 +33,12 @@ class SessionProviderImpl implements SessionContract {
     final result = await _getCurrentUserUseCase();
     result.when((userEntity) {
       if (userEntity != null) {
-        'Initial session user: ${userEntity.id}'.Log('SessionProvider');
         _userSubject.add(_mapToBridge(userEntity));
       }
     }, (failure) => _userSubject.add(null));
 
     // Listen to changes
     _authStateChangesUseCase().listen((userEntity) {
-      'Auth state changed: ${userEntity?.id}'.Log('SessionProvider');
       _userSubject.add(userEntity != null ? _mapToBridge(userEntity) : null);
     });
   }

@@ -10,15 +10,8 @@ Future<void> logVersionInfo() async {
     final versionService = AppVersionAPI();
     final version = await versionService.getCurrentVersion();
     final buildNumber = await versionService.getBuildNumber();
-    final packageName = await versionService.getPackageName();
-    final isPreRelease = await versionService.isPreRelease();
 
-    '📱 App Version Info\n'
-            '   • Version: $version\n'
-            '   • Build: $buildNumber\n'
-            '   • Package: $packageName\n'
-            '   • Pre-release: $isPreRelease'
-        .Log('AppVersion');
+    'App v$version (build $buildNumber)'.Log('AppVersion');
   } catch (e, stackTrace) {
     '❌ Failed to get version info: $e'.Log('AppVersion');
     stackTrace.Log('AppVersion');
@@ -49,17 +42,10 @@ Future<void> logEnv() async {
       await initEnv();
     }
 
-    // Log env info
-    // Log all loaded variables in debug mode
+    // Log only essential env info
     assert(() {
-      final buffer = StringBuffer('📋 Loaded env variables:\n');
-      dotenv.env.forEach((key, value) {
-        buffer.writeln(
-          '   $key: ${key.toLowerCase().contains('key') || key.toLowerCase().contains('secret') ? '***' : value}',
-        );
-      });
-      buffer.toString().Log('EnvConfig');
-
+      final appName = dotenv.env['APP_NAME'] ?? 'Unknown';
+      'Env: $env - $appName'.Log('EnvConfig');
       return true;
     }());
   } catch (e, stackTrace) {
