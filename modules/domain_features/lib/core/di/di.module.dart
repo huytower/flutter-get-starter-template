@@ -171,6 +171,8 @@ import 'package:domain_features/features/reconciliation/presentation/get_x/recon
     as _i1051;
 import 'package:domain_features/features/report/domain/usecases/generate_ai_financial_advice_usecase.dart'
     as _i436;
+import 'package:domain_features/features/transaction/presentation/get_x/edit_transaction_sheet_controller.dart'
+    as _i789;
 import 'package:domain_features/features/report/domain/usecases/get_category_spending_usecase.dart'
     as _i169;
 import 'package:domain_features/features/report/domain/usecases/get_financial_runway_usecase.dart'
@@ -586,6 +588,9 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         gh<_i1027.TransactionRepository>(),
         gh<_i1041.GetCategoriesUseCase>(),
       ),
+    );
+    gh.factory<_i789.EditTransactionSheetController>(
+      () => _i789.EditTransactionSheetController(),
     );
     gh.lazySingleton<_i743.GetBudgetLimitStatsUseCase>(
       () => _i743.GetBudgetLimitStatsUseCase(

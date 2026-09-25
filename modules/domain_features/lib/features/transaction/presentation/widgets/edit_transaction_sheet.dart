@@ -3,11 +3,9 @@ import 'package:domain_features/features/transaction/domain/entities/transaction
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
-import '../get_x/expense_form_controller.dart';
-import '../get_x/income_form_controller.dart';
+import '../get_x/edit_transaction_sheet_controller.dart';
 import 'expense_form.dart';
 import 'income_form.dart';
 
@@ -15,12 +13,10 @@ import 'income_form.dart';
 /// transaction — reuses [ExpenseForm]/[IncomeForm] as-is in edit mode via a
 /// tagged GetX instance, so the entry tab's own in-progress draft is never
 /// touched.
-class EditTransactionSheet extends StatefulWidget {
+class EditTransactionSheet extends StatelessWidget {
   const EditTransactionSheet({super.key, required this.transaction});
 
   final TransactionEntity transaction;
-
-  static const _tag = 'edit_transaction';
 
   static Future<void> show(
     BuildContext context,
@@ -38,74 +34,28 @@ class EditTransactionSheet extends StatefulWidget {
   }
 
   @override
-  State<EditTransactionSheet> createState() => _EditTransactionSheetState();
-}
-
-class _EditTransactionSheetState extends State<EditTransactionSheet> {
-  bool get _isExpense => widget.transaction.type == TransactionType.expense;
-  bool get _isIncome => widget.transaction.type == TransactionType.income;
-  bool get _isInvestment => widget.transaction.isInvestmentActivity;
-  bool get _isDebt => widget.transaction.isDebtActivity;
-
-  Color get _accentColor {
-    if (_isExpense) return context.ccColorScheme.error;
-    if (_isIncome) return PrjColors.success;
-    if (_isInvestment) return PrjColors.investment;
-    if (_isDebt) return PrjColors.liability;
-    return context.ccColorScheme.primary;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    if (_isExpense) {
-      final controller = Get.put(
-        getIt<ExpenseFormController>(),
-        tag: EditTransactionSheet._tag,
-      );
-      controller.onEditSaved = _close;
-      controller.loadForEdit(widget.transaction);
-    } else if (_isIncome) {
-      final controller = Get.put(
-        getIt<IncomeFormController>(),
-        tag: EditTransactionSheet._tag,
-      );
-      controller.onEditSaved = _close;
-      controller.loadForEdit(widget.transaction);
-    }
-    // Investment and debt transactions are not yet editable via this sheet
-    // When implemented, they will use the appropriate accent colors:
-    // - Investment: PrjColors.investment
-    // - Debt/Liability: PrjColors.debtLoan
-  }
-
-  @override
-  void dispose() {
-    if (_isExpense) {
-      Get.delete<ExpenseFormController>(tag: EditTransactionSheet._tag);
-    } else if (_isIncome) {
-      Get.delete<IncomeFormController>(tag: EditTransactionSheet._tag);
-    }
-    super.dispose();
-  }
-
-  void _close() {
-    if (mounted) Navigator.of(context).pop();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final controller = Get.put(getIt<EditTransactionSheetController>());
+    controller.init(transaction, () {
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+    });
+
+    final isExpense = controller.isExpense;
+    final isIncome = controller.isIncome;
+
     // Only show edit form for income and expense transactions
-    if (!_isIncome && !_isExpense) {
-      // Investment and debt transactions are not yet editable via this sheet
-      // When implemented, they will use accent colors:
-      // - Investment: PrjColors.investment
-      // - Debt/Liability: PrjColors.debtLoan
+    if (!isIncome && !isExpense) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) Navigator.of(context).pop();
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
       });
       return const SizedBox.shrink();
     }
+
+    final accentColor = controller.accentColor(context);
 
     return SafeArea(
       top: false,
@@ -118,10 +68,10 @@ class _EditTransactionSheetState extends State<EditTransactionSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildHeader(context, _accentColor),
-            _isExpense
-                ? const ExpenseForm(tag: EditTransactionSheet._tag)
-                : const IncomeForm(tag: EditTransactionSheet._tag),
+            _buildHeader(context, accentColor),
+            isExpense
+                ? const ExpenseForm(tag: EditTransactionSheetController.editTag)
+                : const IncomeForm(tag: EditTransactionSheetController.editTag),
           ],
         ),
       ),

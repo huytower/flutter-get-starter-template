@@ -21,10 +21,9 @@ class LendWalletsCard extends StatelessWidget {
     final scheme = context.ccColorScheme;
     final cardHeight = balances.isEmpty ? 35.0 : 95.0;
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: context.respDim(cardHeight),
-      decoration: BoxDecoration(color: scheme.surface),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

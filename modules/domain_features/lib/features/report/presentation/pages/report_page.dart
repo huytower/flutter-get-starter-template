@@ -153,11 +153,13 @@ class _ReportView extends CcGetView<ReportController> {
           final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
           final hidden = controller.isHeaderHidden.value || keyboardUp;
 
+          final topPadding = MediaQuery.of(context).padding.top;
+
           return Column(
             children: [
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                height: hidden ? 0 : headerHeight - overlap,
+                height: hidden ? topPadding : headerHeight - overlap,
               ),
               ReportTabBar(controller: controller),
               const CcSpaceSM(),

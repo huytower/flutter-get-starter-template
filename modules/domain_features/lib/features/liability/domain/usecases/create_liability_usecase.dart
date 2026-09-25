@@ -68,7 +68,7 @@ class CreateLiabilityUseCase {
   Future<Result<LiabilityEntity, CcFailure>> call(
     CreateLiabilityParams params,
   ) async {
-    if (params.principalAmount <= 0) {
+    if (params.principalAmount < 0) {
       return const Error(
         ValidationFailure(CcLocaleKeys.transaction_validation_amount_required),
       );
@@ -98,7 +98,8 @@ class CreateLiabilityUseCase {
       );
     }
 
-    if (params.direction == LiabilityDirection.lend) {
+    if (params.direction == LiabilityDirection.lend &&
+        params.principalAmount > 0) {
       final balanceResult = await _getWalletBookBalance(params.walletId);
       if (balanceResult.isError()) {
         return Error(balanceResult.tryGetError()!);
@@ -114,7 +115,7 @@ class CreateLiabilityUseCase {
 
     // Reuse existing liability ID for same direction & category if liabilityId not provided
     String targetId = params.liabilityId ?? '';
-    int? updatedPrincipal = params.principalAmount;
+    int updatedPrincipal = params.principalAmount;
     bool isUpdate = params.liabilityId != null;
 
     if (targetId.isEmpty) {
@@ -164,26 +165,28 @@ class CreateLiabilityUseCase {
       return Error(createResult.tryGetError()!);
     }
 
-    final txn = TransactionEntity(
-      id: '${liability.id}_init',
-      type: params.direction == LiabilityDirection.borrow
-          ? TransactionType.debtBorrow
-          : TransactionType.debtLend,
-      amount: params.principalAmount,
-      category: params.categoryLabel,
-      categoryId: params.categoryId,
-      categoryIconCode: params.categoryIconCode,
-      categoryIconFamily: params.categoryIconFamily,
-      note: params.note,
-      date: params.date,
-      walletId: params.walletId,
-      liabilityId: liability.id,
-    );
+    if (params.principalAmount > 0) {
+      final txn = TransactionEntity(
+        id: '${liability.id}_init',
+        type: params.direction == LiabilityDirection.borrow
+            ? TransactionType.debtBorrow
+            : TransactionType.debtLend,
+        amount: params.principalAmount,
+        category: params.categoryLabel,
+        categoryId: params.categoryId,
+        categoryIconCode: params.categoryIconCode,
+        categoryIconFamily: params.categoryIconFamily,
+        note: params.note,
+        date: params.date,
+        walletId: params.walletId,
+        liabilityId: liability.id,
+      );
 
-    final txnResult = await _transactionRepository.createTransaction(txn);
-    if (txnResult.isError()) {
-      await _LiabilityRepository.deleteLiability(liability.id);
-      return Error(txnResult.tryGetError()!);
+      final txnResult = await _transactionRepository.createTransaction(txn);
+      if (txnResult.isError()) {
+        await _LiabilityRepository.deleteLiability(liability.id);
+        return Error(txnResult.tryGetError()!);
+      }
     }
 
     return Success(liability);
