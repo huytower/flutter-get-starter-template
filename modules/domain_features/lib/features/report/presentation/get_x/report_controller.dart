@@ -6,7 +6,6 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
-import '../../../../core/helper/ai_advice_cache_datasource.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
@@ -38,7 +37,6 @@ class ReportController extends CcGetController {
     this._walletRepository,
     this.userLevel,
     this._generateAiAdvice,
-    this._aiAdviceCache,
   );
 
   final GetCategorySpendingUseCase _getCategorySpending;
@@ -48,7 +46,6 @@ class ReportController extends CcGetController {
   final GetLiabilityTrendUseCase _getLiabilityTrend;
   final WalletRepository _walletRepository;
   final GenerateAiFinancialAdviceUseCase _generateAiAdvice;
-  final AiAdviceCacheDataSource _aiAdviceCache;
   final UserLevelController userLevel;
 
   final RxList<WalletEntity> wallets = <WalletEntity>[].obs;
@@ -173,7 +170,6 @@ class ReportController extends CcGetController {
     isEditMode.value = false;
     load();
     loadWallets();
-    loadCachedAiAdvice();
   }
 
   @override
@@ -181,14 +177,6 @@ class ReportController extends CcGetController {
     isEditMode.value = false;
     scrollController.dispose();
     super.onClose();
-  }
-
-  Future<void> loadCachedAiAdvice() async {
-    final text = await _aiAdviceCache.getCachedText();
-    final generatedAt = await _aiAdviceCache.getCachedGeneratedAt();
-    if (text != null && generatedAt != null) {
-      aiAdvice.value = AiAdviceEntity(text: text, generatedAt: generatedAt);
-    }
   }
 
   Future<void> generateAiAdvice(BuildContext context) async {

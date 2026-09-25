@@ -2,7 +2,6 @@ import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../../core/helper/ai_advice_cache_datasource.dart';
 import '../../../../core/helper/ai_advice_helper.dart';
 import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
 import '../../../budget_limit/domain/usecases/get_budget_anomalies_usecase.dart';
@@ -28,14 +27,12 @@ class GenerateAiFinancialAdviceUseCase {
     this._getAnomalies,
     this._getRunway,
     this._getCashFlow,
-    this._cache,
   );
 
   final GetBudgetInsightsUseCase _getInsights;
   final GetBudgetAnomaliesUseCase _getAnomalies;
   final GetFinancialRunwayUseCase _getRunway;
   final GetMonthToDateCashFlowUseCase _getCashFlow;
-  final AiAdviceCacheDataSource _cache;
 
   /// Never throws; returns null on a failed/empty cloud call. A failed
   /// local data source degrades to null/empty for that one input rather
@@ -70,8 +67,6 @@ class GenerateAiFinancialAdviceUseCase {
     final raw = await CcGeminiHelper.generateText(prompt: prompt);
     if (raw == null || raw.trim().isEmpty) return null;
 
-    final entity = AiAdviceEntity(text: raw.trim(), generatedAt: DateTime.now());
-    await _cache.saveAdvice(text: entity.text, generatedAt: entity.generatedAt);
-    return entity;
+    return AiAdviceEntity(text: raw.trim(), generatedAt: DateTime.now());
   }
 }
