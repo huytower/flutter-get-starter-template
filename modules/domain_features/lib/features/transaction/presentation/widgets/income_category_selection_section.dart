@@ -30,8 +30,10 @@ class IncomeCategorySelectionSection extends GetView<IncomeFormController> {
         itemBuilder: (context, index) {
           final item = items[index];
           final isSelected = selectedCategory?.id == item.categoryId;
+          final key = controller.getItemKey(index);
 
           return UnifiedCategoryItemWidget(
+            key: key,
             item: item,
             isSelected: isSelected,
             activeColor: activeColor,

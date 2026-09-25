@@ -30,6 +30,7 @@ class ExpenseCategorySelectionSection extends GetView<ExpenseFormController> {
         scrollController: controller.categoryScrollController,
         itemBuilder: (context, index) {
           final item = items[index];
+          final key = controller.getItemKey(index);
 
           bool isSelected = false;
           if (item.isBudget) {
@@ -41,6 +42,7 @@ class ExpenseCategorySelectionSection extends GetView<ExpenseFormController> {
           }
 
           return UnifiedCategoryItemWidget(
+            key: key,
             item: item,
             isSelected: isSelected,
             activeColor: activeColor,

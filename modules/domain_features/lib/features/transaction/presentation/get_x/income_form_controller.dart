@@ -40,6 +40,18 @@ class IncomeFormController extends TransactionFormController
   @override
   final RxInt categoryKey = 0.obs;
 
+  String? _lastSelectedCategoryId;
+  final Map<String, GlobalKey> _itemKeys = {};
+
+  GlobalKey getItemKey(int index) {
+    // Create a stable key for each item based on its unique ID
+    if (index < 0 || index >= unifiedItems.length) {
+      return GlobalKey(debugLabel: 'category_item_invalid');
+    }
+    final itemId = unifiedItems[index].id;
+    return _itemKeys.putIfAbsent(itemId, () => GlobalKey(debugLabel: 'category_item_$itemId'));
+  }
+
   final RxList<CategoryEntity> _cachedCategories = <CategoryEntity>[].obs;
   final RxBool isLoadingCategories = false.obs;
 
@@ -103,11 +115,26 @@ class IncomeFormController extends TransactionFormController
   final Map<String, DateTime> _lastRecordedCatTime = {};
 
   Future<void> _rebuildUnifiedItems() async {
+    // Track selected category before rebuild to preserve scroll position
+    final selectedId = selectedCategory.value?.id;
+    _lastSelectedCategoryId = selectedId;
+
     final result = await _getCategories();
     final allCats = result.tryGetSuccess() ?? [];
     final incomeCats = allCats
         .where((c) => c.type == CategoryType.income && c.isEnabled)
         .toList();
+
+    // Check if selected category still exists and is enabled
+    final selectedCategoryStillExists = incomeCats.any((c) => c.id == selectedId);
+    if (!selectedCategoryStillExists && selectedId != null) {
+      // Clear selection if category no longer exists or is disabled
+      selectedCategory.value = null;
+    }
+
+    // Clear old keys that are no longer in the new list
+    final newIds = incomeCats.map((c) => 'cat_${c.id}').toSet();
+    _itemKeys.removeWhere((id, key) => !newIds.contains(id));
 
     // Map of CategoryID -> Last used Date
     final lastUsedCat = <String, DateTime>{};
@@ -152,6 +179,24 @@ class IncomeFormController extends TransactionFormController
     items.sort((a, b) => b.lastActivityAt.compareTo(a.lastActivityAt));
 
     unifiedItems.assignAll(items);
+
+    // Scroll to selected category after rebuild if it still exists
+    if (selectedCategoryStillExists && selectedId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToSelected();
+      });
+    } else if (!selectedCategoryStillExists) {
+      // Reset scroll to start if selected category no longer exists
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (categoryScrollController.hasClients) {
+          categoryScrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+          );
+        }
+      });
+    }
   }
 
   void _scrollToSelected() {
@@ -167,22 +212,19 @@ class IncomeFormController extends TransactionFormController
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!categoryScrollController.hasClients) return;
 
-        const double itemWidth = 85.0;
-        const double spacing = 8.0;
-        final double targetOffset = index * (itemWidth + spacing);
+        final key = getItemKey(index);
+        if (key == null) return;
 
-        final double viewportWidth =
-            categoryScrollController.position.viewportDimension;
-        final double centeredOffset =
-            targetOffset - (viewportWidth / 2) + (itemWidth / 2);
+        final context = key.currentContext;
+        if (context == null) return;
 
-        categoryScrollController.animateTo(
-          centeredOffset.clamp(
-            0,
-            categoryScrollController.position.maxScrollExtent,
-          ),
+        // Use Scrollable.ensureVisible for accurate, responsive positioning
+        // This automatically handles actual widget dimensions and layout
+        Scrollable.ensureVisible(
+          context,
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeOutCubic,
+          alignment: 0.5, // Center the item
         );
       });
     }

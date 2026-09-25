@@ -62,6 +62,19 @@ class ExpenseFormController extends TransactionFormController
   @override
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 
+  String? _lastSelectedCategoryId;
+  String? _lastSelectedBudgetId;
+  final Map<String, GlobalKey> _itemKeys = {};
+
+  GlobalKey getItemKey(int index) {
+    // Create a stable key for each item based on its unique ID
+    if (index < 0 || index >= unifiedItems.length) {
+      return GlobalKey(debugLabel: 'category_item_invalid');
+    }
+    final itemId = unifiedItems[index].id;
+    return _itemKeys.putIfAbsent(itemId, () => GlobalKey(debugLabel: 'category_item_$itemId'));
+  }
+
   String? timeBasedSuggestedCategoryId;
 
   final Rx<TransactionEntity?> merchantMatchSuggestion = Rx<TransactionEntity?>(
@@ -156,26 +169,22 @@ class ExpenseFormController extends TransactionFormController
     }
 
     if (index != -1) {
-      // Small delay to ensure the UI has finished updating
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!categoryScrollController.hasClients) return;
 
-        const double itemWidth = 85.0; // context.respDim(85) equivalent logic
-        const double spacing = 8.0; // context.respDim(8)
-        final double targetOffset = index * (itemWidth + spacing);
+        final key = getItemKey(index);
+        if (key == null) return;
 
-        final double viewportWidth =
-            categoryScrollController.position.viewportDimension;
-        final double centeredOffset =
-            targetOffset - (viewportWidth / 2) + (itemWidth / 2);
+        final context = key.currentContext;
+        if (context == null) return;
 
-        categoryScrollController.animateTo(
-          centeredOffset.clamp(
-            0,
-            categoryScrollController.position.maxScrollExtent,
-          ),
+        // Use Scrollable.ensureVisible for accurate, responsive positioning
+        // This automatically handles actual widget dimensions and layout
+        Scrollable.ensureVisible(
+          context,
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeOutCubic,
+          alignment: 0.5, // Center the item
         );
       });
     }
@@ -221,6 +230,12 @@ class ExpenseFormController extends TransactionFormController
   }
 
   Future<void> _rebuildUnifiedItems() async {
+    // Track selected items before rebuild to preserve scroll position
+    final selectedCategoryId = selectedCategory.value?.id;
+    final selectedBudgetId = selectedBudget.value?.id;
+    _lastSelectedCategoryId = selectedCategoryId;
+    _lastSelectedBudgetId = selectedBudgetId;
+
     final result = await _getCategories();
     final allCats = result.tryGetSuccess() ?? [];
     final expenseCats = allCats
@@ -234,6 +249,27 @@ class ExpenseFormController extends TransactionFormController
       final statsResult = await _getBudgetStats.call();
       currentBudgets = statsResult.tryGetSuccess() ?? [];
     }
+
+    // Check if selected category/budget still exists and is enabled
+    final selectedCategoryStillExists = expenseCats.any((c) => c.id == selectedCategoryId);
+    final selectedBudgetStillExists = currentBudgets.any((b) => b.budget.id == selectedBudgetId);
+
+    if (!selectedCategoryStillExists && selectedCategoryId != null) {
+      selectedCategory.value = null;
+    }
+    if (!selectedBudgetStillExists && selectedBudgetId != null) {
+      selectedBudget.value = null;
+    }
+
+    // Clear old keys that are no longer in the new list
+    final newIds = <String>{};
+    for (final c in expenseCats) {
+      newIds.add('cat_${c.id}');
+    }
+    for (final b in currentBudgets) {
+      newIds.add('budget_${b.budget.id}');
+    }
+    _itemKeys.removeWhere((id, key) => !newIds.contains(id));
 
     // Map of CategoryID -> Last used Date
     // Map of BudgetID -> Last used Date
@@ -353,6 +389,25 @@ class ExpenseFormController extends TransactionFormController
     });
 
     unifiedItems.assignAll(items);
+
+    // Scroll to selected item after rebuild if it still exists
+    final selectedStillExists = selectedBudgetStillExists || selectedCategoryStillExists;
+    if (selectedStillExists) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToSelected();
+      });
+    } else if (!selectedStillExists) {
+      // Reset scroll to start if selected item no longer exists
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (categoryScrollController.hasClients) {
+          categoryScrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+          );
+        }
+      });
+    }
   }
 
   Future<void> _loadCategories() async {

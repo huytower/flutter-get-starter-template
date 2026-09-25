@@ -17,6 +17,14 @@ class CategorySelectionLayout extends StatelessWidget {
   final ScrollController scrollController;
   final IndexedWidgetBuilder itemBuilder;
 
+  // Create a stable key based on item count and content
+  // This forces HorizontalFadeScrollView to rebuild when content changes
+  Key get _contentKey {
+    if (items.isEmpty) return const ValueKey('empty');
+    // Use item count combined with first and last item IDs for content tracking
+    return ValueKey('category_layout_${items.length}_${items.first.id}_${items.last.id}');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -44,6 +52,7 @@ class CategorySelectionLayout extends StatelessWidget {
 
   Widget _buildHorizontalList(BuildContext context) {
     return HorizontalFadeScrollView(
+      key: _contentKey,
       height: context.respDim(80),
       scrollController: scrollController,
       builder: (listScrollController) => ListView.separated(
