@@ -100,6 +100,7 @@ class IncomeFormController extends TransactionFormController
   }
 
   List<TransactionEntity> _recentIncomes = [];
+  final Map<String, DateTime> _lastRecordedCatTime = {};
 
   Future<void> _rebuildUnifiedItems() async {
     final result = await _getCategories();
@@ -112,13 +113,23 @@ class IncomeFormController extends TransactionFormController
     final lastUsedCat = <String, DateTime>{};
 
     for (final tx in _recentIncomes) {
+      final txTime = DateTime.fromMicrosecondsSinceEpoch(
+        int.tryParse(tx.id.split('_').first) ?? tx.date.microsecondsSinceEpoch,
+      );
       if (tx.categoryId.isNotEmpty) {
         final current = lastUsedCat[tx.categoryId];
-        if (current == null || tx.date.isAfter(current)) {
-          lastUsedCat[tx.categoryId] = tx.date;
+        if (current == null || txTime.isAfter(current)) {
+          lastUsedCat[tx.categoryId] = txTime;
         }
       }
     }
+
+    _lastRecordedCatTime.forEach((catId, time) {
+      final current = lastUsedCat[catId];
+      if (current == null || time.isAfter(current)) {
+        lastUsedCat[catId] = time;
+      }
+    });
 
     final items = <UnifiedCategoryItem>[];
 
@@ -245,6 +256,10 @@ class IncomeFormController extends TransactionFormController
         : '';
     final amount = int.tryParse(amountStr.value) ?? 0;
 
+    final lastCategory = selectedCategory.value;
+    if (categoryId.isNotEmpty)
+      _lastRecordedCatTime[categoryId] = DateTime.now();
+
     final result = isEditing
         ? await getIt<UpdateTransactionUseCase>().call(
             UpdateTransactionParams(
@@ -292,6 +307,7 @@ class IncomeFormController extends TransactionFormController
           onEditSaved?.call();
         } else {
           resetForm();
+          if (lastCategory != null) setCategory(lastCategory);
         }
         await refreshParent();
       },

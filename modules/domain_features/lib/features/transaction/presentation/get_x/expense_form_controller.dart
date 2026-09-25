@@ -86,6 +86,8 @@ class ExpenseFormController extends TransactionFormController
 
   List<TransactionEntity> _recentExpenses = [];
   Timer? _merchantMatchDebounce;
+  final Map<String, DateTime> _lastRecordedCatTime = {};
+  final Map<String, DateTime> _lastRecordedBudgetTime = {};
 
   @override
   bool get canSubmit =>
@@ -239,19 +241,35 @@ class ExpenseFormController extends TransactionFormController
     final lastUsedBudget = <String, DateTime>{};
 
     for (final tx in _recentExpenses) {
+      final txTime = DateTime.fromMicrosecondsSinceEpoch(
+        int.tryParse(tx.id.split('_').first) ?? tx.date.microsecondsSinceEpoch,
+      );
       if (tx.categoryId.isNotEmpty) {
         final current = lastUsedCat[tx.categoryId];
-        if (current == null || tx.date.isAfter(current)) {
-          lastUsedCat[tx.categoryId] = tx.date;
+        if (current == null || txTime.isAfter(current)) {
+          lastUsedCat[tx.categoryId] = txTime;
         }
       }
       if (tx.budgetId != null && tx.budgetId!.isNotEmpty) {
         final current = lastUsedBudget[tx.budgetId!];
-        if (current == null || tx.date.isAfter(current)) {
-          lastUsedBudget[tx.budgetId!] = tx.date;
+        if (current == null || txTime.isAfter(current)) {
+          lastUsedBudget[tx.budgetId!] = txTime;
         }
       }
     }
+
+    _lastRecordedCatTime.forEach((catId, time) {
+      final current = lastUsedCat[catId];
+      if (current == null || time.isAfter(current)) {
+        lastUsedCat[catId] = time;
+      }
+    });
+    _lastRecordedBudgetTime.forEach((budgetId, time) {
+      final current = lastUsedBudget[budgetId];
+      if (current == null || time.isAfter(current)) {
+        lastUsedBudget[budgetId] = time;
+      }
+    });
 
     final items = <UnifiedCategoryItem>[];
     final budgetCategoryIds = <String>{};
@@ -623,6 +641,14 @@ class ExpenseFormController extends TransactionFormController
         : '';
     final amount = int.tryParse(amountStr.value) ?? 0;
 
+    final lastCategory = selectedCategory.value;
+    final lastBudget = selectedBudget.value;
+    final now = DateTime.now();
+    if (categoryId.isNotEmpty) _lastRecordedCatTime[categoryId] = now;
+    if (selectedBudget.value?.id != null) {
+      _lastRecordedBudgetTime[selectedBudget.value!.id] = now;
+    }
+
     final result = isEditing
         ? await getIt<UpdateTransactionUseCase>().call(
             UpdateTransactionParams(
@@ -708,6 +734,11 @@ class ExpenseFormController extends TransactionFormController
           onEditSaved?.call();
         } else {
           resetForm();
+          if (lastBudget != null) {
+            setBudget(lastBudget);
+          } else if (lastCategory != null) {
+            setCategory(lastCategory);
+          }
         }
         await refreshParent();
         // Guideline: first_transaction completed
