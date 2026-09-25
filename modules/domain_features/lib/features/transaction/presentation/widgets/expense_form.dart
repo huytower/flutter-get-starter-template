@@ -46,11 +46,16 @@ class _ExpenseFormState extends State<ExpenseForm> {
       ) {
         if (!mounted) return;
         final tabs = transactionController.visibleTabs;
-        if (index >= 0 &&
+        final isExpenseActive =
+            index >= 0 &&
             index < tabs.length &&
-            tabs[index] == TransactionTabKind.expense) {
+            tabs[index] == TransactionTabKind.expense;
+        if (isExpenseActive) {
           controller.refreshTimeBasedSuggestion();
           controller.refreshLocationSuggestion();
+          controller.restoreActiveTabSuggestions();
+        } else {
+          controller.hideSuggestionsWhileInactive();
         }
       });
     }

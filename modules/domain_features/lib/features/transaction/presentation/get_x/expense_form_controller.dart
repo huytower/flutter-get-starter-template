@@ -531,6 +531,12 @@ class ExpenseFormController extends TransactionFormController
       _applyLocationFix(lastKnown.latitude, lastKnown.longitude);
     }
 
+    // Fire the real GPS lock in the background so the cached fix above (if
+    // any) isn't held up waiting for it.
+    unawaited(_refreshWithCurrentPosition());
+  }
+
+  Future<void> _refreshWithCurrentPosition() async {
     final position = await CcLocationHelper.getCurrentPosition();
     if (position != null) {
       _applyLocationFix(position.latitude, position.longitude);
@@ -573,6 +579,16 @@ class ExpenseFormController extends TransactionFormController
           : _lastLocationMatch;
       billMatchSuggestion.value = _lastBillMatch;
     }
+  }
+
+  void hideSuggestionsWhileInactive() {
+    merchantMatchSuggestion.value = null;
+    locationMatchSuggestion.value = null;
+    billMatchSuggestion.value = null;
+  }
+
+  void restoreActiveTabSuggestions() {
+    _publishFallbackSuggestions();
   }
 
   void dismissLocationMatch() {
