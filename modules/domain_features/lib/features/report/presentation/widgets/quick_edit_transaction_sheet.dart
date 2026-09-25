@@ -6,6 +6,11 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/helper/budget_name_helper.dart';
+import '../../../liability/presentation/get_x/liability_form_controller.dart';
+import '../../../liability/presentation/get_x/lend_form_controller.dart';
+import '../../../liability/presentation/widgets/liability_asset_selector.dart';
+import '../../../liability/presentation/widgets/lend_asset_selector.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/usecases/update_transaction_usecase.dart';
 import '../../../transaction/presentation/get_x/investment_form_controller.dart';
@@ -50,10 +55,19 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
   late final TextEditingController _amountController;
   late DateTime _selectedDate;
   CategoryEntity? _selectedCategory;
+
   InvestmentFormController? _investmentController;
+  LiabilityFormController? _liabilityController;
+  LendFormController? _lendController;
 
   bool get _isInvestment => widget.transaction.isInvestmentActivity;
   bool get _isDebt => widget.transaction.isDebtActivity;
+  bool get _isLend =>
+      widget.transaction.type == TransactionType.debtLend ||
+      widget.transaction.type == TransactionType.debtCollect;
+  bool get _isBorrow =>
+      widget.transaction.type == TransactionType.debtBorrow ||
+      widget.transaction.type == TransactionType.debtRepay;
 
   Color get _accentColor {
     if (_isInvestment) return PrjColors.investment;
@@ -71,7 +85,7 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
     _noteController.text = widget.transaction.note ?? '';
 
     _quickEditDebug(
-      'initState: id=${widget.transaction.id}, type=${widget.transaction.type}, category=${widget.transaction.category}, amount=${widget.transaction.amount}, isInvestment=$_isInvestment',
+      'initState: id=${widget.transaction.id}, type=${widget.transaction.type}, category=${widget.transaction.category}, amount=${widget.transaction.amount}, isInvestment=$_isInvestment, isBorrow=$_isBorrow, isLend=$_isLend',
     );
 
     if (_isInvestment) {
@@ -83,6 +97,24 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
         _investmentController!.selectedInvestmentWalletId.value =
             widget.transaction.investmentWalletId;
       }
+    } else if (_isBorrow) {
+      _liabilityController = Get.put(
+        getIt<LiabilityFormController>(),
+        tag: 'quick_edit_${widget.transaction.id}',
+      );
+      if (widget.transaction.liabilityId != null) {
+        _liabilityController!.selectedLiabilityId.value =
+            widget.transaction.liabilityId;
+      }
+    } else if (_isLend) {
+      _lendController = Get.put(
+        getIt<LendFormController>(),
+        tag: 'quick_edit_${widget.transaction.id}',
+      );
+      if (widget.transaction.liabilityId != null) {
+        _lendController!.selectedLiabilityId.value =
+            widget.transaction.liabilityId;
+      }
     }
   }
 
@@ -90,10 +122,15 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
   void dispose() {
     _amountController.dispose();
     _noteController.dispose();
+    final tag = 'quick_edit_${widget.transaction.id}';
     if (_investmentController != null) {
-      Get.delete<InvestmentFormController>(
-        tag: 'quick_edit_${widget.transaction.id}',
-      );
+      Get.delete<InvestmentFormController>(tag: tag);
+    }
+    if (_liabilityController != null) {
+      Get.delete<LiabilityFormController>(tag: tag);
+    }
+    if (_lendController != null) {
+      Get.delete<LendFormController>(tag: tag);
     }
     super.dispose();
   }
@@ -142,7 +179,52 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
       categoryIconFamily =
           selectedCat?.iconFamily ?? widget.transaction.categoryIconFamily;
       _quickEditDebug(
-        '_save investment: categoryId=$categoryId, categoryLabel=$categoryLabel, selectedInvestmentWalletId=${_investmentController!.selectedInvestmentWalletId.value}',
+        '_save investment: categoryId=$categoryId, categoryLabel=$categoryLabel',
+      );
+    } else if (_isBorrow && _liabilityController != null) {
+      final selectedLiabilityId =
+          _liabilityController!.selectedLiabilityId.value;
+      final balance = _liabilityController!.mergedItems.firstWhereOrNull(
+        (b) => b.liability.id == selectedLiabilityId,
+      );
+      categoryId =
+          balance?.liability.categoryId ?? widget.transaction.categoryId;
+      categoryLabel = balance != null
+          ? BudgetNameHelper.getDisplayName(
+              name: balance.liability.categoryLabel,
+              categoryNameKey: balance.liability.categoryNameKey,
+            )
+          : widget.transaction.category;
+      categoryIconCode =
+          balance?.liability.categoryIconCode ??
+          widget.transaction.categoryIconCode;
+      categoryIconFamily =
+          balance?.liability.categoryIconFamily ??
+          widget.transaction.categoryIconFamily;
+      _quickEditDebug(
+        '_save borrow: categoryId=$categoryId, categoryLabel=$categoryLabel, selectedLiabilityId=$selectedLiabilityId',
+      );
+    } else if (_isLend && _lendController != null) {
+      final selectedLiabilityId = _lendController!.selectedLiabilityId.value;
+      final balance = _lendController!.mergedItems.firstWhereOrNull(
+        (b) => b.liability.id == selectedLiabilityId,
+      );
+      categoryId =
+          balance?.liability.categoryId ?? widget.transaction.categoryId;
+      categoryLabel = balance != null
+          ? BudgetNameHelper.getDisplayName(
+              name: balance.liability.categoryLabel,
+              categoryNameKey: balance.liability.categoryNameKey,
+            )
+          : widget.transaction.category;
+      categoryIconCode =
+          balance?.liability.categoryIconCode ??
+          widget.transaction.categoryIconCode;
+      categoryIconFamily =
+          balance?.liability.categoryIconFamily ??
+          widget.transaction.categoryIconFamily;
+      _quickEditDebug(
+        '_save lend: categoryId=$categoryId, categoryLabel=$categoryLabel, selectedLiabilityId=$selectedLiabilityId',
       );
     } else {
       categoryId = _selectedCategory?.id ?? widget.transaction.categoryId;
@@ -247,6 +329,26 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
       );
       return InvestmentAssetSelector(
         controller: _investmentController!,
+        activeColor: _accentColor,
+      );
+    }
+
+    if (_isBorrow && _liabilityController != null) {
+      _quickEditDebug(
+        'buildCategorySelectionSection: rendering LiabilityAssetSelector with mergedItems count=${_liabilityController!.mergedItems.length}',
+      );
+      return LiabilityAssetSelector(
+        controller: _liabilityController!,
+        activeColor: _accentColor,
+      );
+    }
+
+    if (_isLend && _lendController != null) {
+      _quickEditDebug(
+        'buildCategorySelectionSection: rendering LendAssetSelector with mergedItems count=${_lendController!.mergedItems.length}',
+      );
+      return LendAssetSelector(
+        controller: _lendController!,
         activeColor: _accentColor,
       );
     }
