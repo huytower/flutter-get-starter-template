@@ -66,16 +66,6 @@ class ReportPageHeader extends StatelessWidget {
   }
 
   Widget _buildHeroForeground(BuildContext context) {
-    // We calculate the overlap locally to match ReportPage's logic.
-    final overlap = context.respDim(60) / 2;
-
-    // We use a flex-based layout within the bounded height (30% mobile / 25% tablet).
-    // Positioned(bottom: overlap) ensures content never bleeds into the area
-    // covered by the TabBar, eliminating overlap conflicts on small phones.
-    //
-    // Fixed "Cannot hit test a render box with no size" error:
-    // This Positioned widget provides explicit constraints to the foreground
-    // Column, ensuring it always has a valid size for hit testing and layout.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

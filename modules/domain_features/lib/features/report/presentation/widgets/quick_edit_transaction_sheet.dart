@@ -7,10 +7,10 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/budget_name_helper.dart';
-import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
-import '../../../liability/presentation/widgets/lend_asset_selector.dart';
+import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/widgets/liability_asset_selector.dart';
+import '../../../liability/presentation/widgets/lend_asset_selector.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/usecases/update_transaction_usecase.dart';
 import '../../../transaction/presentation/get_x/investment_form_controller.dart';
@@ -19,10 +19,6 @@ import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/investment_asset_selector.dart';
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
-
-void _quickEditDebug(String message) {
-  '[QUICK_EDIT_DEBUG] $message'.Log('QuickEditTransactionSheet');
-}
 
 class QuickEditTransactionSheet extends StatefulWidget {
   const QuickEditTransactionSheet({super.key, required this.transaction});
@@ -83,10 +79,6 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
     );
     _selectedDate = widget.transaction.date;
     _noteController.text = widget.transaction.note ?? '';
-
-    _quickEditDebug(
-      'initState: id=${widget.transaction.id}, type=${widget.transaction.type}, category=${widget.transaction.category}, amount=${widget.transaction.amount}, isInvestment=$_isInvestment, isBorrow=$_isBorrow, isLend=$_isLend',
-    );
 
     if (_isInvestment) {
       _investmentController = Get.put(
@@ -190,9 +182,6 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
           selectedCat?.iconCode ?? widget.transaction.categoryIconCode;
       categoryIconFamily =
           selectedCat?.iconFamily ?? widget.transaction.categoryIconFamily;
-      _quickEditDebug(
-        '_save investment: categoryId=$categoryId, categoryLabel=$categoryLabel',
-      );
     } else if (_isBorrow && _liabilityController != null) {
       final selectedLiabilityId =
           _liabilityController!.selectedLiabilityId.value;
@@ -213,9 +202,6 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
       categoryIconFamily =
           balance?.liability.categoryIconFamily ??
           widget.transaction.categoryIconFamily;
-      _quickEditDebug(
-        '_save borrow: categoryId=$categoryId, categoryLabel=$categoryLabel, selectedLiabilityId=$selectedLiabilityId',
-      );
     } else if (_isLend && _lendController != null) {
       final selectedLiabilityId = _lendController!.selectedLiabilityId.value;
       final balance = _lendController!.mergedItems.firstWhereOrNull(
@@ -235,9 +221,6 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
       categoryIconFamily =
           balance?.liability.categoryIconFamily ??
           widget.transaction.categoryIconFamily;
-      _quickEditDebug(
-        '_save lend: categoryId=$categoryId, categoryLabel=$categoryLabel, selectedLiabilityId=$selectedLiabilityId',
-      );
     } else {
       categoryId = _selectedCategory?.id ?? widget.transaction.categoryId;
       categoryLabel = _selectedCategory != null
@@ -248,9 +231,6 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
       categoryIconFamily =
           _selectedCategory?.iconFamily ??
           widget.transaction.categoryIconFamily;
-      _quickEditDebug(
-        '_save general: categoryId=$categoryId, categoryLabel=$categoryLabel',
-      );
     }
 
     final result = await updateUseCase.call(
@@ -336,9 +316,6 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
 
   Widget _buildCategorySelectionSection() {
     if (_isInvestment && _investmentController != null) {
-      _quickEditDebug(
-        'buildCategorySelectionSection: rendering InvestmentAssetSelector with mergedItems count=${_investmentController!.mergedItems.length}',
-      );
       return InvestmentAssetSelector(
         controller: _investmentController!,
         activeColor: _accentColor,
@@ -346,9 +323,6 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
     }
 
     if (_isBorrow && _liabilityController != null) {
-      _quickEditDebug(
-        'buildCategorySelectionSection: rendering LiabilityAssetSelector with mergedItems count=${_liabilityController!.mergedItems.length}',
-      );
       return LiabilityAssetSelector(
         controller: _liabilityController!,
         activeColor: _accentColor,
@@ -356,9 +330,6 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
     }
 
     if (_isLend && _lendController != null) {
-      _quickEditDebug(
-        'buildCategorySelectionSection: rendering LendAssetSelector with mergedItems count=${_lendController!.mergedItems.length}',
-      );
       return LendAssetSelector(
         controller: _lendController!,
         activeColor: _accentColor,

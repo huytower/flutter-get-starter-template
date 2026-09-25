@@ -58,9 +58,7 @@ class AddLiquidSheetController extends CcGetController {
   bool get isCash => _wallet?.type == WalletType.cash;
 
   bool get balanceLocked =>
-      isEditing &&
-      _walletController.walletHasTransactions(_wallet!.id) &&
-      _wallet!.balance != 0;
+      isEditing && _walletController.walletHasTransactions(_wallet!.id);
 
   void init(WalletEntity? wallet) {
     _wallet = wallet;
@@ -225,11 +223,12 @@ class AddLiquidSheetController extends CcGetController {
 
     try {
       if (wallet != null) {
+        final targetBalance = balanceLocked ? wallet.balance : balance;
         await _walletController.updateWallet(
           WalletEntity(
             id: wallet.id,
             name: name,
-            balance: balance,
+            balance: targetBalance,
             iconCode:
                 newType.value == WalletType.investment &&
                     selectedInvestmentCategory.value != null
@@ -244,6 +243,7 @@ class AddLiquidSheetController extends CcGetController {
           ),
         );
       } else {
+        _walletController.errorMessage.value = '';
         await _walletController.addWallet(
           name: name,
           initialBalance: balance,
@@ -257,6 +257,16 @@ class AddLiquidSheetController extends CcGetController {
               ? selectedInvestmentCategory.value?.id
               : null,
         );
+
+        if (_walletController.errorMessage.value.isNotEmpty) {
+          if (context.mounted) {
+            CcSnackBarHelper.showErrorSnackBar(
+              context: context,
+              message: _walletController.errorMessage.value,
+            );
+          }
+          return;
+        }
       }
 
       if (context.mounted) {

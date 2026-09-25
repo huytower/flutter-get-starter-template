@@ -1,17 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:get/get.dart';
-
 import 'package:domain_features/features/category/export_category.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../get_x/investment_form_controller.dart';
-
-void _investmentAssetSelectorDebug(String message) {
-  '[INVESTMENT_ASSET_SELECTOR_DEBUG] $message'.Log('InvestmentAssetSelector');
-}
 
 class InvestmentAssetSelector extends StatelessWidget {
   final InvestmentFormController controller;
@@ -92,7 +87,6 @@ class InvestmentAssetSelector extends StatelessWidget {
                       name: item.name,
                       categoryNameKey: item.categoryNameKey,
                     );
-                    _investmentAssetSelectorDebug('Wallet: id=${item.id}, name=${item.name}, categoryNameKey=${item.categoryNameKey}, displayName=$displayName, isSelected=$isSelected');
                     return _buildItem(
                       context,
                       label: displayName,
@@ -105,7 +99,6 @@ class InvestmentAssetSelector extends StatelessWidget {
                         controller.selectedCategory.value?.id == item.id &&
                         controller.isAddingNewItem.value;
                     final displayName = el.tr(item.nameKey);
-                    _investmentAssetSelectorDebug('Category: id=${item.id}, nameKey=${item.nameKey}, displayName=$displayName, isSelected=$isSelected');
                     return _buildItem(
                       context,
                       label: displayName,

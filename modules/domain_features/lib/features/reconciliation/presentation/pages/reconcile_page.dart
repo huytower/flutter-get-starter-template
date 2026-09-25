@@ -86,7 +86,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
         children: [
           _buildSeeMoreDescription(context),
-          const CcSpaceSM(),
+          _buildInstructionText(context),
           _buildWalletTiles(context),
           const ReconciliationMismatchWarning(),
           const CcSpaceXS(),
@@ -96,6 +96,22 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
           const ReconciliationHistorySection(),
         ],
       ),
+    );
+  }
+
+  Widget _buildInstructionText(BuildContext context) {
+    return CcPadding(
+      CcText(
+        el.tr(CcLocaleKeys.reconciliation_instruction),
+        textStyle: context.ccTextTheme.labelMedium?.copyWith(
+          color: context.ccColorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      CcPaddingParams.SPACE_XS,
+      0,
+      0,
+      CcPaddingParams.SPACE_SM,
     );
   }
 
@@ -126,12 +142,6 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
               context,
               icon: Icons.event_repeat_rounded,
               text: el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
-            ),
-            const CcSpaceMD(),
-            _buildDescriptionItem(
-              context,
-              icon: Icons.check_circle_outline_rounded,
-              text: el.tr(CcLocaleKeys.reconciliation_instruction),
             ),
           ],
         ),

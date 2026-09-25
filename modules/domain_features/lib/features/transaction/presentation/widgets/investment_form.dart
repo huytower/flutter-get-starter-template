@@ -11,6 +11,7 @@ import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
 import '../../../wallet/export_wallet.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
+import '../get_x/transaction_controller.dart';
 import 'cc_amount_input_section.dart';
 import 'investment_asset_selector.dart';
 import 'investment_direction_toggle.dart';
@@ -18,11 +19,6 @@ import 'money_keypad_panel.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_form_container.dart';
 import 'transaction_submit_button.dart';
-import '../get_x/transaction_controller.dart';
-
-void _investmentFormDebug(String message) {
-  '[INVESTMENT_FORM_DEBUG] $message'.Log('InvestmentForm');
-}
 
 class InvestmentForm extends StatelessWidget {
   const InvestmentForm({super.key});
@@ -38,10 +34,6 @@ class InvestmentForm extends StatelessWidget {
     return Obx(() {
       final accentColor = _accentColor(context, controller.direction.value);
       final guideline = Get.find<GuidelineController>();
-
-      _investmentFormDebug(
-        'Build: direction=${controller.direction.value}, selectedCategory=${controller.selectedCategory.value?.nameKey}, selectedWalletId=${controller.selectedInvestmentWalletId.value}',
-      );
 
       return Column(
         children: [
@@ -201,11 +193,6 @@ class InvestmentForm extends StatelessWidget {
     final categoryName = BudgetNameHelper.getDisplayName(
       name: el.tr(categoryNameKey),
       categoryNameKey: categoryNameKey.isNotEmpty ? categoryNameKey : null,
-    );
-    final itemName = controller.newItemNameController.text;
-
-    _investmentFormDebug(
-      'NewItemNameField: categoryNameKey=$categoryNameKey, categoryName=$categoryName, itemName=$itemName, isVip=${controller.isVip.value}',
     );
 
     return Column(
