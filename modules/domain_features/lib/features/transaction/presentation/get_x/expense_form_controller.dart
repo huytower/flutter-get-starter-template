@@ -446,7 +446,7 @@ class ExpenseFormController extends TransactionFormController
   }
 
   @override
-  void onReset() {
+  Future<void> onReset() async {
     selectedCategory.value = null;
     selectedBudget.value = null;
     merchantMatchSuggestion.value = null;
@@ -458,7 +458,7 @@ class ExpenseFormController extends TransactionFormController
     resetQuickEntry();
     refreshTimeBasedSuggestion();
     categoryKey.value++;
-    _rebuildUnifiedItems();
+    await _rebuildUnifiedItems();
   }
 
   @override
@@ -788,12 +788,18 @@ class ExpenseFormController extends TransactionFormController
         if (isEditing) {
           onEditSaved?.call();
         } else {
-          resetForm();
+          await resetForm();
           if (lastBudget != null) {
             setBudget(lastBudget);
           } else if (lastCategory != null) {
             setCategory(lastCategory);
           }
+          // Reset scroll to start since the selected item is now at index 0
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (categoryScrollController.hasClients) {
+              categoryScrollController.jumpTo(0);
+            }
+          });
         }
         await refreshParent();
         // Guideline: first_transaction completed

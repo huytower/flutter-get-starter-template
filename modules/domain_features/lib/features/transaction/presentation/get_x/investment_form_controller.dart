@@ -370,14 +370,14 @@ class InvestmentFormController extends TransactionFormController
   }
 
   @override
-  void onReset() {
+  Future<void> onReset() async {
     selectedCategory.value = null;
     categoryKey.value++;
     selectedInvestmentWalletId.value = null;
     isAddingNewItem.value = false;
     newItemName.value = '';
     newItemNameController.clear();
-    _recomputeMergedItems();
+    await _recomputeMergedItems();
     resetQuickEntry();
   }
 
@@ -457,7 +457,7 @@ class InvestmentFormController extends TransactionFormController
           ),
         );
 
-        resetForm();
+        await resetForm();
         selectInvestmentWallet(updatedWallet);
         await refreshParent();
 

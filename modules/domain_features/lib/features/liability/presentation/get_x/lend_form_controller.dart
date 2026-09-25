@@ -367,7 +367,7 @@ class LendFormController extends TransactionFormController
   }
 
   @override
-  void onReset() {
+  Future<void> onReset() async {
     selectedCategory.value = null;
     categoryKey.value++;
     repaymentMethod.value = LiabilityRepaymentMethod.lumpSum;
@@ -378,7 +378,7 @@ class LendFormController extends TransactionFormController
     }
     installmentDrafts.clear();
     selectedLiabilityId.value = null;
-    loadLiabilities();
+    await loadLiabilities();
     resetQuickEntry();
   }
 
@@ -419,7 +419,7 @@ class LendFormController extends TransactionFormController
             namedArgs: {'amount': savedAmount},
           ),
         );
-        resetForm();
+        await resetForm();
         await refreshParent();
 
         if (Get.isRegistered<GuidelineController>()) {

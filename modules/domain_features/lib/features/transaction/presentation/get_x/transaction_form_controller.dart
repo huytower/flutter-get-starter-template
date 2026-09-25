@@ -131,16 +131,16 @@ abstract class TransactionFormController extends CcGetController {
     return TransactionFormHelpers.composeNote(noteController);
   }
 
-  void resetForm() {
+  Future<void> resetForm() async {
     amountStr.value = '0';
     noteController.clear();
     date.value = DateTime.now();
     showKeypad.value = false;
     _notifyParentKeypad(false);
-    onReset();
+    await onReset();
   }
 
-  void onReset();
+  Future<void> onReset();
 
   void showKeypadAndScroll(BuildContext context) {
     FocusScope.of(context).unfocus();

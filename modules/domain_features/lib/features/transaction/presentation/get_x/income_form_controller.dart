@@ -268,11 +268,11 @@ class IncomeFormController extends TransactionFormController
   }
 
   @override
-  void onReset() {
+  Future<void> onReset() async {
     selectedCategory.value = null;
     categoryKey.value++;
     resetQuickEntry();
-    _rebuildUnifiedItems();
+    await _rebuildUnifiedItems();
   }
 
   @override
@@ -348,8 +348,16 @@ class IncomeFormController extends TransactionFormController
         if (isEditing) {
           onEditSaved?.call();
         } else {
-          resetForm();
-          if (lastCategory != null) setCategory(lastCategory);
+          await resetForm();
+          if (lastCategory != null) {
+            setCategory(lastCategory);
+            // Reset scroll to start since the category is now at index 0
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (categoryScrollController.hasClients) {
+                categoryScrollController.jumpTo(0);
+              }
+            });
+          }
         }
         await refreshParent();
       },
