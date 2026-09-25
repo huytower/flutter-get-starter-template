@@ -145,7 +145,6 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
       textStyle: context.ccTextTheme.labelSmall?.copyWith(
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         color: isSelected ? activeColor : scheme.onSurfaceVariant,
-        fontSize: context.respFontSize(10),
       ),
     );
   }

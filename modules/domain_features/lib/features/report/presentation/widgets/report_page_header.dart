@@ -84,7 +84,6 @@ class ReportPageHeader extends StatelessWidget {
             child: _buildRunwaySection(context),
           ),
         ),
-        const Spacer(flex: 1),
       ],
     );
   }

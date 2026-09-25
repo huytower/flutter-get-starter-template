@@ -262,10 +262,12 @@ class _TransactionDatePickerDialogContentState
     final isCurrentMonth = _isInMonth(date, _viewedMonth);
     final isSelected = _isSameDay(date, _selectedDate);
     final isToday = _isSameDay(date, today);
+    final isSelectable =
+        !date.isBefore(widget.firstDate) && !date.isAfter(widget.lastDate);
 
     return CcBouncing(
       onTap: () {
-        if (date.isBefore(widget.firstDate) || date.isAfter(widget.lastDate)) {
+        if (!isSelectable) {
           return;
         }
         _onDateTap(date);
@@ -295,8 +297,10 @@ class _TransactionDatePickerDialogContentState
                   : CcTypographyParams.regular,
               color: isSelected
                   ? scheme.onPrimary
-                  : isCurrentMonth
+                  : isSelectable
+                  ? isCurrentMonth
                   ? scheme.onSurface
+                  : scheme.onSurfaceVariant.withOpacity(0.4)
                   : scheme.onSurfaceVariant.withOpacity(0.4),
             ),
           ),
