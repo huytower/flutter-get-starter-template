@@ -124,9 +124,8 @@ class CreateLiabilityUseCase {
         final existing = existingResult.tryGetSuccess()!.firstWhereOrNull(
           (l) =>
               l.direction == params.direction &&
-              (l.categoryId == params.categoryId ||
-                  l.categoryLabel.trim().toLowerCase() ==
-                      params.categoryLabel.trim().toLowerCase()),
+              l.categoryLabel.trim().toLowerCase() ==
+                  params.categoryLabel.trim().toLowerCase(),
         );
         if (existing != null) {
           targetId = existing.id;

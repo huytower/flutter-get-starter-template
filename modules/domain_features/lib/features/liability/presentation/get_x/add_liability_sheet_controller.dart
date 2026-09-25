@@ -118,105 +118,102 @@ class AddLiabilitySheetController extends CcGetController {
     if (isSubmitting.value) return;
     isSubmitting.value = true;
 
-    final name = nameController.text.trim();
-    final category = selectedLiabilityCategory.value;
-    if (category == null) {
-      isSubmitting.value = false;
-      return;
-    }
-
-    // Default to 0 amount
-    const amount = 0;
-
-    // Use default wallet (first liquid wallet) for simplified flow
-    final wallet = _walletController.liquidWallets.firstOrNull;
-    if (wallet == null) {
-      isSubmitting.value = false;
-      return;
-    }
-
-    final existingResult = await _getLiabilityBalances();
-    if (existingResult.isSuccess()) {
-      final isDuplicate = existingResult.tryGetSuccess()!.any(
-        (b) {
-          final sameName = b.liability.categoryLabel.trim().toLowerCase() ==
-              name.toLowerCase();
-          final sameCategory = b.liability.categoryId == category.id;
-          return sameName || sameCategory;
-        },
-      );
-      if (isDuplicate) {
-        nameError.value = el.tr(
-          CcLocaleKeys.transaction_liability_name_duplicate_error,
-        );
-        isSubmitting.value = false;
+    try {
+      final name = nameController.text.trim();
+      final category = selectedLiabilityCategory.value;
+      if (category == null) {
         return;
       }
+
+      // Default to 0 amount
+      const amount = 0;
+
+      // Use default wallet (first liquid wallet) for simplified flow
+      final wallet = _walletController.liquidWallets.firstOrNull;
+      if (wallet == null) {
+        return;
+      }
+
+      final existingResult = await _getLiabilityBalances();
+      if (existingResult.isSuccess()) {
+        final isDuplicate = existingResult.tryGetSuccess()!.any(
+          (b) =>
+              b.liability.direction == direction.value &&
+              b.liability.categoryLabel.trim().toLowerCase() ==
+                  name.toLowerCase(),
+        );
+        if (isDuplicate) {
+          nameError.value = el.tr(
+            CcLocaleKeys.transaction_liability_name_duplicate_error,
+          );
+          return;
+        }
+      }
+
+      final params = CreateLiabilityParams(
+        direction: direction.value,
+        principalAmount: amount,
+        categoryId: category.id,
+        categoryLabel: name,
+        categoryIconCode: category.iconCode,
+        categoryIconFamily: category.iconFamily,
+        walletId: wallet.id,
+        repaymentMethod: LiabilityRepaymentMethod.lumpSum,
+        installments: null,
+        finalDueDate: DateTime.now().add(const Duration(days: 30)),
+        note: '',
+        date: DateTime.now(),
+        reminderBeforeDueDate: false,
+      );
+
+      final result = await _createLiability(params);
+
+      result.when(
+        (liability) {
+          if (context.mounted) {
+            debugPrint(
+              '[ADD_LIABILITY_SHEET] Save success, triggering refreshes',
+            );
+            nameError.value = null;
+
+            // Refresh related lists immediately
+            if (Get.isRegistered<BudgetAllocationController>()) {
+              Get.find<BudgetAllocationController>().loadAll();
+            }
+            if (Get.isRegistered<LiabilityListController>()) {
+              Get.find<LiabilityListController>().load();
+            }
+            if (Get.isRegistered<LiabilityFormController>()) {
+              Get.find<LiabilityFormController>().loadLiabilities();
+            }
+            if (Get.isRegistered<LendFormController>()) {
+              Get.find<LendFormController>().loadLiabilities();
+            }
+
+            Navigator.pop(context);
+            CcSnackBarHelper.showSuccessSnackBar(
+              context: context,
+              message: el.tr(CcLocaleKeys.common_done),
+            );
+
+            // Guideline: update status so the badge moves to the Transaction tab
+            if (Get.isRegistered<GuidelineController>()) {
+              Get.find<GuidelineController>().setLiabilityCreated();
+            }
+          }
+        },
+        (error) {
+          if (context.mounted) {
+            CcSnackBarHelper.showErrorSnackBar(
+              context: context,
+              message: el.tr(error.message),
+            );
+          }
+        },
+      );
+    } finally {
+      isSubmitting.value = false;
     }
-
-    final params = CreateLiabilityParams(
-      direction: direction.value,
-      principalAmount: amount,
-      categoryId: category.id,
-      categoryLabel: name,
-      categoryIconCode: category.iconCode,
-      categoryIconFamily: category.iconFamily,
-      walletId: wallet.id,
-      repaymentMethod: LiabilityRepaymentMethod.lumpSum,
-      installments: null,
-      finalDueDate: DateTime.now().add(const Duration(days: 30)),
-      note: '',
-      date: DateTime.now(),
-      reminderBeforeDueDate: false,
-    );
-
-    final result = await _createLiability(params);
-    isSubmitting.value = true;
-    isSubmitting.value = false;
-
-    result.when(
-      (liability) {
-        if (context.mounted) {
-          debugPrint(
-            '[ADD_LIABILITY_SHEET] Save success, triggering refreshes',
-          );
-          nameError.value = null;
-
-          // Refresh related lists immediately
-          if (Get.isRegistered<BudgetAllocationController>()) {
-            Get.find<BudgetAllocationController>().loadAll();
-          }
-          if (Get.isRegistered<LiabilityListController>()) {
-            Get.find<LiabilityListController>().load();
-          }
-          if (Get.isRegistered<LiabilityFormController>()) {
-            Get.find<LiabilityFormController>().loadLiabilities();
-          }
-          if (Get.isRegistered<LendFormController>()) {
-            Get.find<LendFormController>().loadLiabilities();
-          }
-
-          Navigator.pop(context);
-          CcSnackBarHelper.showSuccessSnackBar(
-            context: context,
-            message: el.tr(CcLocaleKeys.common_done),
-          );
-
-          // Guideline: update status so the badge moves to the Transaction tab
-          if (Get.isRegistered<GuidelineController>()) {
-            Get.find<GuidelineController>().setLiabilityCreated();
-          }
-        }
-      },
-      (error) {
-        if (context.mounted) {
-          CcSnackBarHelper.showErrorSnackBar(
-            context: context,
-            message: el.tr(error.message),
-          );
-        }
-      },
-    );
   }
 
   @override

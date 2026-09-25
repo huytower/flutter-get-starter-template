@@ -42,13 +42,11 @@ class GetLiabilityBalancesUseCase {
     final rawLiabilities = liabilitiesResult.tryGetSuccess()!;
     final transactions = txnResult.tryGetSuccess()!;
 
-    // Group liabilities by direction + categoryId (or categoryLabel) to consolidate duplicates
+    // Group liabilities by direction + categoryLabel (unique liability name)
     final grouped = <String, List<LiabilityEntity>>{};
     for (final l in rawLiabilities) {
-      final catKey = l.categoryId.isNotEmpty
-          ? l.categoryId
-          : l.categoryLabel.trim().toLowerCase();
-      final key = '${l.direction}_$catKey';
+      final labelKey = l.categoryLabel.trim().toLowerCase();
+      final key = '${l.direction}_$labelKey';
       grouped.putIfAbsent(key, () => <LiabilityEntity>[]).add(l);
     }
 
