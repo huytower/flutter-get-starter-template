@@ -40,6 +40,21 @@ class IncomeFormController extends TransactionFormController
   @override
   final RxInt categoryKey = 0.obs;
 
+  String? _lastSelectedCategoryId;
+  final Map<String, GlobalKey> _itemKeys = {};
+
+  GlobalKey getItemKey(int index) {
+    // Create a stable key for each item based on its unique ID
+    if (index < 0 || index >= unifiedItems.length) {
+      return GlobalKey(debugLabel: 'category_item_invalid');
+    }
+    final itemId = unifiedItems[index].id;
+    return _itemKeys.putIfAbsent(
+      itemId,
+      () => GlobalKey(debugLabel: 'category_item_$itemId'),
+    );
+  }
+
   final RxList<CategoryEntity> _cachedCategories = <CategoryEntity>[].obs;
   final RxBool isLoadingCategories = false.obs;
 
@@ -77,8 +92,9 @@ class IncomeFormController extends TransactionFormController
     isLoadingCategories.value = false;
     isLoadingUnified.value = false;
 
-    // Auto-select first item if the user hasn't started typing in the AI box
-    if (unifiedItems.isNotEmpty &&
+    if (isEditing && editingTransaction != null) {
+      _resolveCategoryForEdit(editingTransaction!);
+    } else if (unifiedItems.isNotEmpty &&
         selectedCategory.value == null &&
         !isEditing &&
         quickEntryController.text.isEmpty) {
@@ -86,6 +102,23 @@ class IncomeFormController extends TransactionFormController
       final cat = getCachedCategoryById(first.categoryId);
       if (cat != null) setCategory(cat);
     }
+  }
+
+  @override
+  void loadForEdit(TransactionEntity transaction) {
+    super.loadForEdit(transaction);
+    _resolveCategoryForEdit(transaction);
+  }
+
+  void _resolveCategoryForEdit(TransactionEntity transaction) {
+    if (transaction.categoryId.isNotEmpty) {
+      final category = getCachedCategoryById(transaction.categoryId);
+      if (category != null) {
+        setCategory(category);
+        return;
+      }
+    }
+    clearCategorySelection();
   }
 
   Future<void> _loadRecentIncomes() async {
@@ -100,25 +133,53 @@ class IncomeFormController extends TransactionFormController
   }
 
   List<TransactionEntity> _recentIncomes = [];
+  final Map<String, DateTime> _lastRecordedCatTime = {};
 
   Future<void> _rebuildUnifiedItems() async {
+    // Track selected category before rebuild to preserve scroll position
+    final selectedId = selectedCategory.value?.id;
+    _lastSelectedCategoryId = selectedId;
+
     final result = await _getCategories();
     final allCats = result.tryGetSuccess() ?? [];
     final incomeCats = allCats
         .where((c) => c.type == CategoryType.income && c.isEnabled)
         .toList();
 
+    // Check if selected category still exists and is enabled
+    final selectedCategoryStillExists = incomeCats.any(
+      (c) => c.id == selectedId,
+    );
+    if (!selectedCategoryStillExists && selectedId != null) {
+      // Clear selection if category no longer exists or is disabled
+      selectedCategory.value = null;
+    }
+
+    // Clear old keys that are no longer in the new list
+    final newIds = incomeCats.map((c) => 'cat_${c.id}').toSet();
+    _itemKeys.removeWhere((id, key) => !newIds.contains(id));
+
     // Map of CategoryID -> Last used Date
     final lastUsedCat = <String, DateTime>{};
 
     for (final tx in _recentIncomes) {
+      final txTime = DateTime.fromMicrosecondsSinceEpoch(
+        int.tryParse(tx.id.split('_').first) ?? tx.date.microsecondsSinceEpoch,
+      );
       if (tx.categoryId.isNotEmpty) {
         final current = lastUsedCat[tx.categoryId];
-        if (current == null || tx.date.isAfter(current)) {
-          lastUsedCat[tx.categoryId] = tx.date;
+        if (current == null || txTime.isAfter(current)) {
+          lastUsedCat[tx.categoryId] = txTime;
         }
       }
     }
+
+    _lastRecordedCatTime.forEach((catId, time) {
+      final current = lastUsedCat[catId];
+      if (current == null || time.isAfter(current)) {
+        lastUsedCat[catId] = time;
+      }
+    });
 
     final items = <UnifiedCategoryItem>[];
 
@@ -141,6 +202,24 @@ class IncomeFormController extends TransactionFormController
     items.sort((a, b) => b.lastActivityAt.compareTo(a.lastActivityAt));
 
     unifiedItems.assignAll(items);
+
+    // Scroll to selected category after rebuild if it still exists
+    if (selectedCategoryStillExists && selectedId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToSelected();
+      });
+    } else if (!selectedCategoryStillExists) {
+      // Reset scroll to start if selected category no longer exists
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (categoryScrollController.hasClients) {
+          categoryScrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+          );
+        }
+      });
+    }
   }
 
   void _scrollToSelected() {
@@ -155,23 +234,11 @@ class IncomeFormController extends TransactionFormController
     if (index != -1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!categoryScrollController.hasClients) return;
-
-        const double itemWidth = 85.0;
-        const double spacing = 8.0;
-        final double targetOffset = index * (itemWidth + spacing);
-
-        final double viewportWidth =
-            categoryScrollController.position.viewportDimension;
-        final double centeredOffset =
-            targetOffset - (viewportWidth / 2) + (itemWidth / 2);
-
-        categoryScrollController.animateTo(
-          centeredOffset.clamp(
-            0,
-            categoryScrollController.position.maxScrollExtent,
-          ),
+        Scrollable.ensureVisible(
+          getItemKey(index).currentContext!,
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeOutCubic,
+          alignment: 0.5,
         );
       });
     }
@@ -215,11 +282,11 @@ class IncomeFormController extends TransactionFormController
   }
 
   @override
-  void onReset() {
+  Future<void> onReset() async {
     selectedCategory.value = null;
     categoryKey.value++;
     resetQuickEntry();
-    _rebuildUnifiedItems();
+    await _rebuildUnifiedItems();
   }
 
   @override
@@ -244,6 +311,10 @@ class IncomeFormController extends TransactionFormController
         ? el.tr(selectedCategory.value!.nameKey)
         : '';
     final amount = int.tryParse(amountStr.value) ?? 0;
+
+    final lastCategory = selectedCategory.value;
+    if (categoryId.isNotEmpty)
+      _lastRecordedCatTime[categoryId] = DateTime.now();
 
     final result = isEditing
         ? await getIt<UpdateTransactionUseCase>().call(
@@ -291,7 +362,16 @@ class IncomeFormController extends TransactionFormController
         if (isEditing) {
           onEditSaved?.call();
         } else {
-          resetForm();
+          await resetForm();
+          if (lastCategory != null) {
+            setCategory(lastCategory);
+            // Reset scroll to start since the category is now at index 0
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (categoryScrollController.hasClients) {
+                categoryScrollController.jumpTo(0);
+              }
+            });
+          }
         }
         await refreshParent();
       },

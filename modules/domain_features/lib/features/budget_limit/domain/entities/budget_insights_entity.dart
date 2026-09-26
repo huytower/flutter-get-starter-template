@@ -7,12 +7,14 @@ import 'budget_limit_stats_entity.dart';
 /// remaining days, daily spend already at 0).
 class BudgetPacingWarning extends Equatable {
   final String budgetName;
+  final String? categoryNameKey;
   final BudgetLimitStatus status;
   final int daysRemaining;
   final int suggestedDailySpend;
 
   const BudgetPacingWarning({
     required this.budgetName,
+    this.categoryNameKey,
     required this.status,
     required this.daysRemaining,
     required this.suggestedDailySpend,
@@ -21,6 +23,7 @@ class BudgetPacingWarning extends Equatable {
   @override
   List<Object?> get props => [
     budgetName,
+    categoryNameKey,
     status,
     daysRemaining,
     suggestedDailySpend,
@@ -30,17 +33,19 @@ class BudgetPacingWarning extends Equatable {
 /// A budget that has crossed one of the 120/150/200% penalty tiers.
 class BudgetPenaltyWarning extends Equatable {
   final String budgetName;
+  final String? categoryNameKey;
   final int percentUsed;
   final BudgetPenaltyTier tier;
 
   const BudgetPenaltyWarning({
     required this.budgetName,
+    this.categoryNameKey,
     required this.percentUsed,
     required this.tier,
   });
 
   @override
-  List<Object?> get props => [budgetName, percentUsed, tier];
+  List<Object?> get props => [budgetName, categoryNameKey, percentUsed, tier];
 }
 
 /// Aggregated Phase 3.4 "AI Actions" for the Budget Allocation page — empty

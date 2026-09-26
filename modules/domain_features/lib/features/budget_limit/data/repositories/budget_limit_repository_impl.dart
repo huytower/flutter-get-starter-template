@@ -30,12 +30,19 @@ class BudgetLimitRepositoryImpl
   }) {
     return safeRequest(() async {
       final models = await _local.getAll();
-      final budgets =
-          models
-              .map((m) => m.toEntity())
-              .where((b) => !activeOnly || !b.isClosed)
-              .toList()
-            ..sort((a, b) => a.order.compareTo(b.order));
+      final uniqueMap = <String, BudgetLimitEntity>{};
+      for (final m in models) {
+        final entity = m.toEntity();
+        if (activeOnly && entity.isClosed) continue;
+        final key = entity.categoryId.isNotEmpty
+            ? entity.categoryId
+            : entity.name.trim().toLowerCase();
+        if (!uniqueMap.containsKey(key)) {
+          uniqueMap[key] = entity;
+        }
+      }
+      final budgets = uniqueMap.values.toList()
+        ..sort((a, b) => a.order.compareTo(b.order));
       return budgets;
     });
   }
@@ -84,7 +91,21 @@ class BudgetLimitRepositoryImpl
   @override
   Future<Result<void, CcFailure>> deleteBudget(String id) {
     return safeRequest(() async {
-      await _local.delete(id);
+      final target = await _local.getById(id);
+      if (target != null) {
+        final all = await _local.getAll();
+        for (final m in all) {
+          final sameCategory = target.categoryId.isNotEmpty &&
+              m.categoryId == target.categoryId;
+          final sameName = m.name.trim().toLowerCase() ==
+              target.name.trim().toLowerCase();
+          if (m.id == id || sameCategory || sameName) {
+            await _local.delete(m.id);
+          }
+        }
+      } else {
+        await _local.delete(id);
+      }
       _syncService.syncAll();
     });
   }

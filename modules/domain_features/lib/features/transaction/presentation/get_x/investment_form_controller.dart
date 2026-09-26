@@ -208,9 +208,7 @@ class InvestmentFormController extends TransactionFormController
     // Resolve categoryNameKey for wallets that have categoryId but
     // no categoryNameKey (common for wallets added via TransactionController
     // which does not resolve categoryNameKey on load).
-    final categoryMap = {
-      for (final c in _cachedCategories) c.id: c.nameKey
-    };
+    final categoryMap = {for (final c in _cachedCategories) c.id: c.nameKey};
     final resolvedWallets = [
       for (final w in parentWallets)
         if (w.type == WalletType.investment &&
@@ -218,7 +216,7 @@ class InvestmentFormController extends TransactionFormController
             w.categoryNameKey == null)
           w.copyWith(categoryNameKey: categoryMap[w.categoryId])
         else
-          w
+          w,
     ];
 
     // Deduplicate by ID to ensure consistency with investment_list_page logic
@@ -233,10 +231,9 @@ class InvestmentFormController extends TransactionFormController
     final assets = uniqueAssets.values.toList();
 
     assets.sort((a, b) {
-      if (a.displayOrder != b.displayOrder) {
-        return a.displayOrder.compareTo(b.displayOrder);
-      }
-      return b.updatedAt.compareTo(a.updatedAt);
+      final timeCompare = b.updatedAt.compareTo(a.updatedAt);
+      if (timeCompare != 0) return timeCompare;
+      return a.displayOrder.compareTo(b.displayOrder);
     });
 
     // Deduplicate by resolved display name so that multiple wallets
@@ -373,14 +370,14 @@ class InvestmentFormController extends TransactionFormController
   }
 
   @override
-  void onReset() {
+  Future<void> onReset() async {
     selectedCategory.value = null;
     categoryKey.value++;
     selectedInvestmentWalletId.value = null;
     isAddingNewItem.value = false;
     newItemName.value = '';
     newItemNameController.clear();
-    _recomputeMergedItems();
+    await _recomputeMergedItems();
     resetQuickEntry();
   }
 
@@ -437,8 +434,16 @@ class InvestmentFormController extends TransactionFormController
     result.when(
       (investmentWallet) async {
         final parentController = Get.find<TransactionController>();
-        if (!parentController.wallets.any((w) => w.id == investmentWallet.id)) {
-          parentController.wallets.add(investmentWallet);
+        final now = DateTime.now();
+        final updatedWallet = investmentWallet.copyWith(updatedAt: now);
+
+        final idx = parentController.wallets.indexWhere(
+          (w) => w.id == updatedWallet.id,
+        );
+        if (idx >= 0) {
+          parentController.wallets[idx] = updatedWallet;
+        } else {
+          parentController.wallets.add(updatedWallet);
         }
 
         final savedAmount = TransactionFormHelpers.formatAmount(
@@ -451,7 +456,9 @@ class InvestmentFormController extends TransactionFormController
             namedArgs: {'amount': savedAmount},
           ),
         );
-        resetForm();
+
+        await resetForm();
+        selectInvestmentWallet(updatedWallet);
         await refreshParent();
 
         // Complete the investment guideline task

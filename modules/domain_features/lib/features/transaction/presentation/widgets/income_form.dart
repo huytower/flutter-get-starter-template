@@ -31,7 +31,9 @@ class IncomeForm extends StatelessWidget {
     // TransactionController.onInit(), the tagged edit-mode instance isn't.
     final controller = tag == null
         ? Get.find<IncomeFormController>()
-        : Get.put(getIt<IncomeFormController>(), tag: tag);
+        : (Get.isRegistered<IncomeFormController>(tag: tag)
+            ? Get.find<IncomeFormController>(tag: tag)
+            : Get.put(getIt<IncomeFormController>(), tag: tag));
     final guideline = Get.find<GuidelineController>();
 
     const accentColor = PrjColors.success;
@@ -73,7 +75,10 @@ class IncomeForm extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            IncomeCategorySelectionSection(activeColor: accentColor),
+            IncomeCategorySelectionSection(
+              controller: controller,
+              activeColor: accentColor,
+            ),
             const CcSpaceSM(),
             _buildFormFields(context, controller, guideline, accentColor),
           ],

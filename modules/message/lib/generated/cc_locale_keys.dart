@@ -656,6 +656,7 @@ abstract class  LocaleKeys {
   static const guideline_reset_confirm_cancel = 'guideline.reset_confirm_cancel';
   static const guideline = 'guideline';
   static const level_lock_unlock_at_lv = 'level_lock.unlock_at_lv';
+  static const level_lock_unlock_free_at_lv3 = 'level_lock.unlock_free_at_lv3';
   static const level_lock_remaining_percent = 'level_lock.remaining_percent';
   static const level_lock_investment_title = 'level_lock.investment_title';
   static const level_lock_investment_desc = 'level_lock.investment_desc';

@@ -11,11 +11,11 @@ import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/repositories/category_repository.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
+import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
-import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../../domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/get_investment_roi_usecase.dart';
@@ -227,6 +227,26 @@ class WalletController extends CcGetController {
         .where((w) => _liquidTypeOrder.contains(w.type))
         .toList();
     liquid.sort((a, b) {
+      // Special handling: ensure Cash wallet is always first
+      if (a.type == WalletType.cash && b.type != WalletType.cash) return -1;
+      if (b.type == WalletType.cash && a.type != WalletType.cash) return 1;
+
+      // Special handling: ensure default Bank wallet (using localized name) is always second (after Cash)
+      final defaultBankName = el.tr(CcLocaleKeys.wallet_bank);
+      if (a.type == WalletType.bank &&
+          a.name == defaultBankName &&
+          b.type != WalletType.cash) {
+        if (b.type == WalletType.bank && b.name != defaultBankName) return -1;
+        return -1;
+      }
+      if (b.type == WalletType.bank &&
+          b.name == defaultBankName &&
+          a.type != WalletType.cash) {
+        if (a.type == WalletType.bank && a.name != defaultBankName) return 1;
+        return 1;
+      }
+
+      // Standard sorting by type order
       final typeCompare = _liquidTypeOrder
           .indexOf(a.type)
           .compareTo(_liquidTypeOrder.indexOf(b.type));
@@ -326,13 +346,16 @@ class WalletController extends CcGetController {
 
   /// Protected wallets can be renamed but never deleted:
   /// - the `cash` wallet is a fixed singleton, and
-  /// - at least one `bank` account must always remain (mandatory).
+  /// - the default `bank` wallet (using localized name) is a fixed singleton.
+  /// All other liquid wallets can be deleted when they have no transactions.
   bool canDeleteWallet(WalletEntity wallet) {
     if (wallet.type == WalletType.cash) return false;
     if (wallet.type == WalletType.bank) {
-      final bankCount = wallets.where((w) => w.type == WalletType.bank).length;
-      if (bankCount <= 1) return false;
+      final defaultBankName = el.tr(CcLocaleKeys.wallet_bank);
+      if (wallet.name == defaultBankName) return false;
     }
+    // All other wallet types (other bank accounts, e-wallets, emergency funds)
+    // can be considered for deletion; the actual transaction check happens in deleteWallet()
     return true;
   }
 
@@ -549,9 +572,12 @@ class WalletController extends CcGetController {
     String? categoryId,
   }) async {
     if (type == WalletType.emergencyFund) {
-      final level = getIt<UserLevelController>().status.value.level;
+      final status = getIt<UserLevelController>().status.value;
       final settings = await getIt<GetProfileSettingsUseCase>().call();
-      if (level < 2 || !settings.hasViewedEmergencyFundEbook) {
+      final unlocked =
+          settings.isVip ||
+          (status.level >= 3 && settings.hasViewedEmergencyFundEbook);
+      if (!unlocked) {
         errorMessage.value = el.tr(
           CcLocaleKeys.wallet_emergency_fund_locked_hint,
         );
@@ -653,10 +679,10 @@ class WalletController extends CcGetController {
 
   /// Investment wallets can always be deleted (in edit mode) — their
   /// transactions are soft-deleted alongside the wallet. Other wallet types
-  /// can be deleted only when their book balance is 0.
+  /// can be deleted only when they have no transactions.
   /// On deletion every income/expense record of the wallet is soft-deleted.
   Future<WalletDeleteOutcome> deleteWallet(String id) async {
-    // Guard: cash and the last remaining bank account are mandatory.
+    // Guard: cash and the default bank wallet are mandatory.
     final index = wallets.indexWhere((w) => w.id == id);
     if (index == -1) return WalletDeleteOutcome.error;
     final wallet = wallets[index];
@@ -670,13 +696,10 @@ class WalletController extends CcGetController {
       // contributed/returned activity — their transactions are soft-deleted
       // alongside the wallet below.
     } else {
-      final balanceResult = await _getWalletBookBalance(id);
-      if (balanceResult.isError()) {
-        errorMessage.value = balanceResult.tryGetError()!.message;
-        return WalletDeleteOutcome.error;
-      }
-
-      if (balanceResult.tryGetSuccess()!.abs() > 0) {
+      // For all other liquid wallets (bank, e-wallet, emergency fund), check if there are any transactions recorded.
+      // This allows deletion when the wallet has an initial amount but no transactions.
+      // Cash and default Bank wallets are already protected by canDeleteWallet().
+      if (_walletsWithTxns.contains(id)) {
         return WalletDeleteOutcome.notEmpty;
       }
     }

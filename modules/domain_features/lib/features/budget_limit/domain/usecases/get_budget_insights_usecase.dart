@@ -35,6 +35,7 @@ class GetBudgetInsightsUseCase {
         if (stat.status != BudgetLimitStatus.safe)
           BudgetPacingWarning(
             budgetName: stat.budget.name,
+            categoryNameKey: stat.categoryNameKey,
             status: stat.status,
             daysRemaining: daysRemaining,
             suggestedDailySpend: suggestedDailySpend(
@@ -49,6 +50,7 @@ class GetBudgetInsightsUseCase {
         if (stat.penaltyTier != BudgetPenaltyTier.none)
           BudgetPenaltyWarning(
             budgetName: stat.budget.name,
+            categoryNameKey: stat.categoryNameKey,
             percentUsed: (stat.percentUsed * 100).round(),
             tier: stat.penaltyTier,
           ),

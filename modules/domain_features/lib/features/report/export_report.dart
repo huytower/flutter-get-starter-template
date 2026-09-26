@@ -12,5 +12,7 @@ export 'domain/usecases/get_loan_trend_usecase.dart';
 export 'domain/usecases/get_trend_data_usecase.dart';
 export 'domain/usecases/trend_bucketer.dart';
 // Presentation
+export 'presentation/get_x/quick_edit_transaction_sheet_controller.dart';
 export 'presentation/get_x/report_controller.dart';
 export 'presentation/pages/report_page.dart';
+export 'presentation/widgets/quick_edit_transaction_sheet.dart';

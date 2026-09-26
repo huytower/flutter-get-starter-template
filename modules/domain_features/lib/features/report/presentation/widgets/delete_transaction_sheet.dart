@@ -9,7 +9,7 @@ import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../get_x/report_controller.dart';
 
-class DeleteTransactionSheet extends StatefulWidget {
+class DeleteTransactionSheet extends StatelessWidget {
   const DeleteTransactionSheet({super.key, required this.transaction});
 
   final TransactionEntity transaction;
@@ -21,158 +21,101 @@ class DeleteTransactionSheet extends StatefulWidget {
     return showModalBottomSheet<Result<Unit, CcFailure>>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: context.ccColorScheme.surface,
+      shape: RoundedRectangleBorder(borderRadius: context.brXl),
       builder: (_) => DeleteTransactionSheet(transaction: transaction),
     );
   }
 
   @override
-  State<DeleteTransactionSheet> createState() => _DeleteTransactionSheetState();
-}
-
-class _DeleteTransactionSheetState extends State<DeleteTransactionSheet> {
-  bool _isLoading = false;
-
-  @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
     return SafeArea(
-      top: false,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [_buildHeader(context, scheme), _buildBody(context, scheme)],
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, ColorScheme scheme) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        vertical: context.respPadding(CcPaddingParams.SPACE_LG),
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [scheme.error, scheme.errorContainer],
-        ),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(context.respDim(24)),
-          topRight: Radius.circular(context.respDim(24)),
-        ),
-      ),
-      child: Row(
-        children: [
-          CcIconToken(
-            Icons.delete_outline_rounded,
-            size: context.respIconSize(baseSize: 20),
-            color: scheme.onError,
-          ),
-          const CcSpaceSM(),
-          CcText(
-            el.tr(CcLocaleKeys.transaction_delete_title),
-            maxLines: 1,
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-              color: scheme.onError,
-              fontWeight: CcTypographyParams.semiBold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBody(BuildContext context, ColorScheme scheme) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(context.respDim(24)),
-          bottomRight: Radius.circular(context.respDim(24)),
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildDescription(context, scheme),
-          _buildActions(context, scheme),
-          SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDescription(BuildContext context, ColorScheme scheme) {
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.PAGE_MD,
-      vertical: CcPaddingParams.SPACE_MD,
-      child: CcText(
-        el.tr(CcLocaleKeys.transaction_delete_confirm_desc),
-        maxLines: 5,
-        textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-          color: scheme.onSurfaceVariant,
-          height: 1.4,
-        ),
-        textAlign: TextAlign.start,
-      ),
-    );
-  }
-
-  Widget _buildActions(BuildContext context, ColorScheme scheme) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        context.respPadding(CcPaddingParams.PAGE_MD),
-        0,
-        context.respPadding(CcPaddingParams.PAGE_MD),
-        context.respPadding(CcPaddingParams.SPACE_XS),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          TextButton(
-            onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-            child: CcText(
-              el.tr(CcLocaleKeys.common_cancel),
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                color: scheme.primary,
-                fontWeight: CcTypographyParams.semiBold,
+      child: Padding(
+        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_LG)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                padding: EdgeInsets.all(context.respDim(14)),
+                decoration: BoxDecoration(
+                  color: scheme.error.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.delete_outline_rounded,
+                  color: scheme.error,
+                  size: context.respIconSize(baseSize: 28),
+                ),
               ),
             ),
-          ),
-          const CcSpaceSM(),
-          TextButton(
-            onPressed: _isLoading
-                ? null
-                : () async {
-                    setState(() => _isLoading = true);
-                    try {
+            const CcSpaceMD(),
+            CcText(
+              el.tr(CcLocaleKeys.transaction_delete_title),
+              align: Alignment.center,
+              textAlign: TextAlign.center,
+              textStyle: context.ccTextTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: scheme.onSurface,
+              ),
+            ),
+            const CcSpaceSM(),
+            CcText(
+              el.tr(CcLocaleKeys.transaction_delete_confirm_desc),
+              align: Alignment.center,
+              maxLines: 5,
+              textAlign: TextAlign.center,
+              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+            const CcSpaceLG(),
+            Row(
+              children: [
+                Expanded(
+                  child: CcBaseBtn(
+                    title: el.tr(CcLocaleKeys.common_cancel),
+                    bgColor: [
+                      scheme.surfaceContainerHighest,
+                      scheme.surfaceContainerHighest,
+                    ],
+                    textColor: scheme.onSurface,
+                    onTap: () => Navigator.of(context).pop(),
+                  ),
+                ),
+                const CcSpaceMD(),
+                Expanded(
+                  child: CcBaseBtn(
+                    title: el.tr(CcLocaleKeys.common_delete),
+                    bgColor: [scheme.error, scheme.error],
+                    textColor: scheme.onError,
+                    onTap: () async {
+                      Navigator.of(context).pop();
                       final result = await _delete(context);
-                      if (context.mounted) {
-                        Navigator.of(context).pop(result);
+                      if (result.isError() && context.mounted) {
+                        CcSnackBarHelper.showErrorSnackBar(
+                          context: context,
+                          message:
+                              result.tryGetError()?.message ??
+                              el.tr(CcLocaleKeys.app_error_general),
+                        );
                       }
-                    } finally {
-                      if (mounted) setState(() => _isLoading = false);
-                    }
-                  },
-            child: CcText(
-              _isLoading ? '' : el.tr(CcLocaleKeys.common_delete),
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                color: scheme.error,
-                fontWeight: CcTypographyParams.semiBold,
-              ),
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Future<Result<Unit, CcFailure>> _delete(BuildContext context) async {
-    if (!mounted) return const Success(unit);
     final repo = getIt<TransactionRepository>();
-    final result = await repo.deleteTransaction(widget.transaction.id);
+    final result = await repo.deleteTransaction(transaction.id);
 
     if (result.isSuccess() && context.mounted) {
       CcSnackBarHelper.showSuccessSnackBar(
@@ -182,13 +125,6 @@ class _DeleteTransactionSheetState extends State<DeleteTransactionSheet> {
       if (Get.isRegistered<ReportController>()) {
         await Get.find<ReportController>().load(showLoading: false);
       }
-    } else if (context.mounted) {
-      CcSnackBarHelper.showErrorSnackBar(
-        context: context,
-        message:
-            result.tryGetError()?.message ??
-            el.tr(CcLocaleKeys.app_error_general),
-      );
     }
 
     return result.map(successMapper: (_) => unit, errorMapper: (e) => e);

@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 ///
 /// Refactored to comply with a glassmorphic design pattern and AI context guardrails:
 /// [camera icon button] [input text] [audio icon button]
+///
+/// Lock overlay is handled by the parent widget (TransactionHeaderBanner) using Stack.
 class QuickEntrySection extends StatelessWidget {
   const QuickEntrySection({
     super.key,
@@ -24,6 +26,7 @@ class QuickEntrySection extends StatelessWidget {
     required this.onApplySuggestion,
     required this.onDismissSuggestion,
     this.onClear,
+    this.isLocked = false,
   });
 
   final TextEditingController controller;
@@ -39,17 +42,21 @@ class QuickEntrySection extends StatelessWidget {
   final VoidCallback onApplySuggestion;
   final VoidCallback onDismissSuggestion;
   final VoidCallback? onClear;
+  final bool isLocked;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildInputBar(context),
-        const CcSpaceXS(),
-        _buildSuggestionChip(context),
-        _buildErrorMessage(context),
-      ],
+    return Opacity(
+      opacity: isLocked ? 0.5 : 1.0,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInputBar(context),
+          const CcSpaceXS(),
+          _buildSuggestionChip(context),
+          _buildErrorMessage(context),
+        ],
+      ),
     );
   }
 
@@ -180,34 +187,7 @@ class QuickEntrySection extends StatelessWidget {
   }
 
   Widget _buildTrailingIcons(BuildContext context) {
-    final scheme = context.ccColorScheme;
-
-    if (isParsing) {
-      return SizedBox(
-        width: context.respDim(30),
-        height: context.respDim(30),
-        child: Center(
-          child: SizedBox(
-            width: context.respDim(16),
-            height: context.respDim(16),
-            child: CircularProgressIndicator(
-              strokeWidth: context.respDim(2),
-              valueColor: AlwaysStoppedAnimation<Color>(activeColor),
-            ),
-          ),
-        ),
-      );
-    }
-
-    return CcIconButton.bouncing(
-      icon: Icon(
-        Icons.camera_alt,
-        color: scheme.onSurface.withOpacity(0.45),
-        size: context.respDim(20),
-      ),
-      onTap: onScanTap,
-      width: context.respDim(30),
-      height: context.respDim(30),
-    );
+    return const SizedBox.shrink();
+    // TODO(huy): TEMPORARY DISABLE AI FUNCTION, ENABLE IT LATER
   }
 }

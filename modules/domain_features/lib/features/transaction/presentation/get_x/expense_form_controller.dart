@@ -62,6 +62,22 @@ class ExpenseFormController extends TransactionFormController
   @override
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 
+  String? _lastSelectedCategoryId;
+  String? _lastSelectedBudgetId;
+  final Map<String, GlobalKey> _itemKeys = {};
+
+  GlobalKey getItemKey(int index) {
+    // Create a stable key for each item based on its unique ID
+    if (index < 0 || index >= unifiedItems.length) {
+      return GlobalKey(debugLabel: 'category_item_invalid');
+    }
+    final itemId = unifiedItems[index].id;
+    return _itemKeys.putIfAbsent(
+      itemId,
+      () => GlobalKey(debugLabel: 'category_item_$itemId'),
+    );
+  }
+
   String? timeBasedSuggestedCategoryId;
 
   final Rx<TransactionEntity?> merchantMatchSuggestion = Rx<TransactionEntity?>(
@@ -86,6 +102,8 @@ class ExpenseFormController extends TransactionFormController
 
   List<TransactionEntity> _recentExpenses = [];
   Timer? _merchantMatchDebounce;
+  final Map<String, DateTime> _lastRecordedCatTime = {};
+  final Map<String, DateTime> _lastRecordedBudgetTime = {};
 
   @override
   bool get canSubmit =>
@@ -154,26 +172,13 @@ class ExpenseFormController extends TransactionFormController
     }
 
     if (index != -1) {
-      // Small delay to ensure the UI has finished updating
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!categoryScrollController.hasClients) return;
-
-        const double itemWidth = 85.0; // context.respDim(85) equivalent logic
-        const double spacing = 8.0; // context.respDim(8)
-        final double targetOffset = index * (itemWidth + spacing);
-
-        final double viewportWidth =
-            categoryScrollController.position.viewportDimension;
-        final double centeredOffset =
-            targetOffset - (viewportWidth / 2) + (itemWidth / 2);
-
-        categoryScrollController.animateTo(
-          centeredOffset.clamp(
-            0,
-            categoryScrollController.position.maxScrollExtent,
-          ),
+        Scrollable.ensureVisible(
+          getItemKey(index).currentContext!,
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeOutCubic,
+          alignment: 0.5,
         );
       });
     }
@@ -201,8 +206,9 @@ class ExpenseFormController extends TransactionFormController
 
     refreshTimeBasedSuggestion();
 
-    // Only auto-select first item if the user hasn't started typing in the AI box
-    if (unifiedItems.isNotEmpty &&
+    if (isEditing && editingTransaction != null) {
+      _resolveCategoryForEdit(editingTransaction!);
+    } else if (unifiedItems.isNotEmpty &&
         selectedBudget.value == null &&
         selectedCategory.value == null &&
         !isEditing &&
@@ -218,7 +224,39 @@ class ExpenseFormController extends TransactionFormController
     }
   }
 
+  @override
+  void loadForEdit(TransactionEntity transaction) {
+    super.loadForEdit(transaction);
+    _resolveCategoryForEdit(transaction);
+  }
+
+  void _resolveCategoryForEdit(TransactionEntity transaction) {
+    if (transaction.budgetId != null && transaction.budgetId!.isNotEmpty) {
+      final budget = _findBudgetById(transaction.budgetId!);
+      if (budget != null) {
+        setBudget(budget);
+        return;
+      }
+    }
+
+    if (transaction.categoryId.isNotEmpty) {
+      final category = getCachedCategoryById(transaction.categoryId);
+      if (category != null) {
+        setCategory(category);
+        return;
+      }
+    }
+
+    clearCategorySelection();
+  }
+
   Future<void> _rebuildUnifiedItems() async {
+    // Track selected items before rebuild to preserve scroll position
+    final selectedCategoryId = selectedCategory.value?.id;
+    final selectedBudgetId = selectedBudget.value?.id;
+    _lastSelectedCategoryId = selectedCategoryId;
+    _lastSelectedBudgetId = selectedBudgetId;
+
     final result = await _getCategories();
     final allCats = result.tryGetSuccess() ?? [];
     final expenseCats = allCats
@@ -233,25 +271,66 @@ class ExpenseFormController extends TransactionFormController
       currentBudgets = statsResult.tryGetSuccess() ?? [];
     }
 
+    // Check if selected category/budget still exists and is enabled
+    final selectedCategoryStillExists = expenseCats.any(
+      (c) => c.id == selectedCategoryId,
+    );
+    final selectedBudgetStillExists = currentBudgets.any(
+      (b) => b.budget.id == selectedBudgetId,
+    );
+
+    if (!selectedCategoryStillExists && selectedCategoryId != null) {
+      selectedCategory.value = null;
+    }
+    if (!selectedBudgetStillExists && selectedBudgetId != null) {
+      selectedBudget.value = null;
+    }
+
+    // Clear old keys that are no longer in the new list
+    final newIds = <String>{};
+    for (final c in expenseCats) {
+      newIds.add('cat_${c.id}');
+    }
+    for (final b in currentBudgets) {
+      newIds.add('budget_${b.budget.id}');
+    }
+    _itemKeys.removeWhere((id, key) => !newIds.contains(id));
+
     // Map of CategoryID -> Last used Date
     // Map of BudgetID -> Last used Date
     final lastUsedCat = <String, DateTime>{};
     final lastUsedBudget = <String, DateTime>{};
 
     for (final tx in _recentExpenses) {
+      final txTime = DateTime.fromMicrosecondsSinceEpoch(
+        int.tryParse(tx.id.split('_').first) ?? tx.date.microsecondsSinceEpoch,
+      );
       if (tx.categoryId.isNotEmpty) {
         final current = lastUsedCat[tx.categoryId];
-        if (current == null || tx.date.isAfter(current)) {
-          lastUsedCat[tx.categoryId] = tx.date;
+        if (current == null || txTime.isAfter(current)) {
+          lastUsedCat[tx.categoryId] = txTime;
         }
       }
       if (tx.budgetId != null && tx.budgetId!.isNotEmpty) {
         final current = lastUsedBudget[tx.budgetId!];
-        if (current == null || tx.date.isAfter(current)) {
-          lastUsedBudget[tx.budgetId!] = tx.date;
+        if (current == null || txTime.isAfter(current)) {
+          lastUsedBudget[tx.budgetId!] = txTime;
         }
       }
     }
+
+    _lastRecordedCatTime.forEach((catId, time) {
+      final current = lastUsedCat[catId];
+      if (current == null || time.isAfter(current)) {
+        lastUsedCat[catId] = time;
+      }
+    });
+    _lastRecordedBudgetTime.forEach((budgetId, time) {
+      final current = lastUsedBudget[budgetId];
+      if (current == null || time.isAfter(current)) {
+        lastUsedBudget[budgetId] = time;
+      }
+    });
 
     final items = <UnifiedCategoryItem>[];
     final budgetCategoryIds = <String>{};
@@ -262,8 +341,11 @@ class ExpenseFormController extends TransactionFormController
       seedIndexMap[expenseCats[i].id] = i;
     }
 
-    // Add Budgets
+    // Add Budgets (deduplicated by categoryId so each category appears at most ONCE)
     for (final b in currentBudgets) {
+      if (budgetCategoryIds.contains(b.budget.categoryId)) {
+        continue; // Skip duplicate budget limits for the same category
+      }
       budgetCategoryIds.add(b.budget.categoryId);
       // Use DateTime(2000) as fallback if no activity, since Entity lacks updatedAt
       final lastActivity = lastUsedBudget[b.budget.id] ?? DateTime(2000);
@@ -332,6 +414,26 @@ class ExpenseFormController extends TransactionFormController
     });
 
     unifiedItems.assignAll(items);
+
+    // Scroll to selected item after rebuild if it still exists
+    final selectedStillExists =
+        selectedBudgetStillExists || selectedCategoryStillExists;
+    if (selectedStillExists) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToSelected();
+      });
+    } else if (!selectedStillExists) {
+      // Reset scroll to start if selected item no longer exists
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (categoryScrollController.hasClients) {
+          categoryScrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+          );
+        }
+      });
+    }
   }
 
   Future<void> _loadCategories() async {
@@ -370,7 +472,7 @@ class ExpenseFormController extends TransactionFormController
   }
 
   @override
-  void onReset() {
+  Future<void> onReset() async {
     selectedCategory.value = null;
     selectedBudget.value = null;
     merchantMatchSuggestion.value = null;
@@ -382,7 +484,7 @@ class ExpenseFormController extends TransactionFormController
     resetQuickEntry();
     refreshTimeBasedSuggestion();
     categoryKey.value++;
-    _rebuildUnifiedItems();
+    await _rebuildUnifiedItems();
   }
 
   @override
@@ -636,6 +738,14 @@ class ExpenseFormController extends TransactionFormController
         : '';
     final amount = int.tryParse(amountStr.value) ?? 0;
 
+    final lastCategory = selectedCategory.value;
+    final lastBudget = selectedBudget.value;
+    final now = DateTime.now();
+    if (categoryId.isNotEmpty) _lastRecordedCatTime[categoryId] = now;
+    if (selectedBudget.value?.id != null) {
+      _lastRecordedBudgetTime[selectedBudget.value!.id] = now;
+    }
+
     final result = isEditing
         ? await getIt<UpdateTransactionUseCase>().call(
             UpdateTransactionParams(
@@ -720,7 +830,18 @@ class ExpenseFormController extends TransactionFormController
         if (isEditing) {
           onEditSaved?.call();
         } else {
-          resetForm();
+          await resetForm();
+          if (lastBudget != null) {
+            setBudget(lastBudget);
+          } else if (lastCategory != null) {
+            setCategory(lastCategory);
+          }
+          // Reset scroll to start since the selected item is now at index 0
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (categoryScrollController.hasClients) {
+              categoryScrollController.jumpTo(0);
+            }
+          });
         }
         await refreshParent();
         // Guideline: first_transaction completed

@@ -219,8 +219,7 @@ mixin QuickEntryMixin on TransactionFormController
         [];
     _quickEntryCategories = list;
 
-    '[AI_PARSING] 📚 Categories refreshed | tab=$quickEntryCategoryType | count=${list.length}'
-        .Log('QuickEntryMixin');
+    'Categories: $quickEntryCategoryType (${list.length})'.Log('QuickEntryMixin');
   }
 
   CategoryEntity? _findQuickEntryCategory(String id) {

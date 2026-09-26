@@ -1,4 +1,5 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:get/get_navigation/src/root/parse_route.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -67,6 +68,11 @@ class CreateLiabilityUseCase {
   Future<Result<LiabilityEntity, CcFailure>> call(
     CreateLiabilityParams params,
   ) async {
+    if (params.principalAmount < 0) {
+      return const Error(
+        ValidationFailure(CcLocaleKeys.transaction_validation_amount_required),
+      );
+    }
     if (params.categoryId.isEmpty) {
       return const Error(
         ValidationFailure(
@@ -92,7 +98,8 @@ class CreateLiabilityUseCase {
       );
     }
 
-    if (params.direction == LiabilityDirection.lend) {
+    if (params.direction == LiabilityDirection.lend &&
+        params.principalAmount > 0) {
       final balanceResult = await _getWalletBookBalance(params.walletId);
       if (balanceResult.isError()) {
         return Error(balanceResult.tryGetError()!);
@@ -106,12 +113,36 @@ class CreateLiabilityUseCase {
       }
     }
 
+    // Reuse existing liability ID for same direction & category if liabilityId not provided
+    String targetId = params.liabilityId ?? '';
+    int updatedPrincipal = params.principalAmount;
+    bool isUpdate = params.liabilityId != null;
+
+    if (targetId.isEmpty) {
+      final existingResult = await _LiabilityRepository.getLiabilities();
+      if (existingResult.isSuccess()) {
+        final existing = existingResult.tryGetSuccess()!.firstWhereOrNull(
+          (l) =>
+              l.direction == params.direction &&
+              l.categoryLabel.trim().toLowerCase() ==
+                  params.categoryLabel.trim().toLowerCase(),
+        );
+        if (existing != null) {
+          targetId = existing.id;
+          updatedPrincipal += existing.principalAmount;
+          isUpdate = true;
+        }
+      }
+    }
+
+    if (targetId.isEmpty) {
+      targetId = DateTime.now().microsecondsSinceEpoch.toString();
+    }
+
     final liability = LiabilityEntity(
-      id:
-          params.liabilityId ??
-          DateTime.now().microsecondsSinceEpoch.toString(),
+      id: targetId,
       direction: params.direction,
-      principalAmount: params.principalAmount,
+      principalAmount: updatedPrincipal,
       categoryId: params.categoryId,
       categoryLabel: params.categoryLabel,
       categoryIconCode: params.categoryIconCode,
@@ -126,33 +157,35 @@ class CreateLiabilityUseCase {
       reminderBeforeDueDate: params.reminderBeforeDueDate,
     );
 
-    final createResult = params.liabilityId != null
+    final createResult = isUpdate
         ? await _LiabilityRepository.updateLiability(liability)
         : await _LiabilityRepository.createLiability(liability);
     if (createResult.isError()) {
       return Error(createResult.tryGetError()!);
     }
 
-    final txn = TransactionEntity(
-      id: '${liability.id}_init',
-      type: params.direction == LiabilityDirection.borrow
-          ? TransactionType.debtBorrow
-          : TransactionType.debtLend,
-      amount: params.principalAmount,
-      category: params.categoryLabel,
-      categoryId: params.categoryId,
-      categoryIconCode: params.categoryIconCode,
-      categoryIconFamily: params.categoryIconFamily,
-      note: params.note,
-      date: params.date,
-      walletId: params.walletId,
-      liabilityId: liability.id,
-    );
+    if (params.principalAmount > 0) {
+      final txn = TransactionEntity(
+        id: '${liability.id}_init',
+        type: params.direction == LiabilityDirection.borrow
+            ? TransactionType.debtBorrow
+            : TransactionType.debtLend,
+        amount: params.principalAmount,
+        category: params.categoryLabel,
+        categoryId: params.categoryId,
+        categoryIconCode: params.categoryIconCode,
+        categoryIconFamily: params.categoryIconFamily,
+        note: params.note,
+        date: params.date,
+        walletId: params.walletId,
+        liabilityId: liability.id,
+      );
 
-    final txnResult = await _transactionRepository.createTransaction(txn);
-    if (txnResult.isError()) {
-      await _LiabilityRepository.deleteLiability(liability.id);
-      return Error(txnResult.tryGetError()!);
+      final txnResult = await _transactionRepository.createTransaction(txn);
+      if (txnResult.isError()) {
+        await _LiabilityRepository.deleteLiability(liability.id);
+        return Error(txnResult.tryGetError()!);
+      }
     }
 
     return Success(liability);

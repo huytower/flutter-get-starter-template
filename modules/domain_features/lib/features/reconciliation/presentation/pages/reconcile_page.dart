@@ -85,8 +85,8 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
       child: ListView(
         padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
         children: [
-          ..._buildIntro(context),
-          const CcSpaceXS(),
+          _buildSeeMoreDescription(context),
+          _buildInstructionText(context),
           _buildWalletTiles(context),
           const ReconciliationMismatchWarning(),
           const CcSpaceXS(),
@@ -99,31 +99,129 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
     );
   }
 
-  /// The explanatory copy shown above the wallet list.
-  List<Widget> _buildIntro(BuildContext context) {
-    return [
-      CcText(
-        el.tr(CcLocaleKeys.reconciliation_description_line_1),
-        maxLines: 3,
-        textStyle: _mutedBodyStyle(context),
-      ),
-      const CcSpaceXS(),
-      CcText(
-        el.tr(CcLocaleKeys.reconciliation_description_line_2),
-        maxLines: 3,
-        textStyle: _mutedBodyStyle(context),
-      ),
-      const CcSpaceXS(),
-      CcText(
-        el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
-        textStyle: _mutedBodyStyle(context),
-      ),
-      const CcSpaceMD(),
+  Widget _buildInstructionText(BuildContext context) {
+    return CcPadding(
       CcText(
         el.tr(CcLocaleKeys.reconciliation_instruction),
-        textStyle: _mutedBodyStyle(context),
+        textStyle: context.ccTextTheme.labelMedium?.copyWith(
+          color: context.ccColorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.bold,
+        ),
       ),
-    ];
+      CcPaddingParams.SPACE_XS,
+      0,
+      0,
+      CcPaddingParams.SPACE_SM,
+    );
+  }
+
+  Widget _buildSeeMoreDescription(BuildContext context) {
+    final text = el.tr(CcLocaleKeys.reconciliation_description_line_1);
+    return CcBouncing(
+      onTap: () => CcDialogHelper.showMessageBottomSheet(
+        context: context,
+        title: el.tr(CcLocaleKeys.reconciliation_title),
+        isOnlyConfirm: true,
+        customWidget: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildDescriptionItem(
+              context,
+              icon: Icons.info_outline_rounded,
+              text: el.tr(CcLocaleKeys.reconciliation_description_line_1),
+            ),
+            const CcSpaceMD(),
+            _buildDescriptionItem(
+              context,
+              icon: Icons.sync_alt_rounded,
+              text: el.tr(CcLocaleKeys.reconciliation_description_line_2),
+            ),
+            const CcSpaceMD(),
+            _buildDescriptionItem(
+              context,
+              icon: Icons.event_repeat_rounded,
+              text: el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
+            ),
+          ],
+        ),
+      ),
+      borderRadius: context.brSm,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
+          vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+        ),
+        decoration: BoxDecoration(
+          color: context.ccColorScheme.onSurface.withOpacity(0.05),
+          borderRadius: context.brSm,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: CcText(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                  color: context.ccColorScheme.onSurfaceVariant.withOpacity(
+                    0.5,
+                  ),
+                  fontSize: context.respFontSize(9),
+                ),
+              ),
+            ),
+            const CcSpaceXS(),
+            CcText(
+              '... See more',
+              textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                color: context.ccColorScheme.primary,
+                fontSize: context.respFontSize(9),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDescriptionItem(
+    BuildContext context, {
+    required IconData icon,
+    required String text,
+  }) {
+    final scheme = context.ccColorScheme;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.all(context.respDim(6)),
+          decoration: BoxDecoration(
+            color: scheme.primary.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            icon,
+            size: context.respIconSize(baseSize: 18),
+            color: scheme.primary,
+          ),
+        ),
+        const CcSpaceSM(),
+        Expanded(
+          child: CcText(
+            text,
+            maxLines: 10,
+            textAlign: TextAlign.start,
+            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+              color: scheme.onSurfaceVariant,
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildWalletTiles(BuildContext context) {
@@ -176,13 +274,6 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         ),
       );
     });
-  }
-
-  /// Shared de-emphasised body style used by every line of intro copy.
-  TextStyle? _mutedBodyStyle(BuildContext context) {
-    return context.ccTextTheme.bodySmall?.copyWith(
-      color: context.ccColorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-    );
   }
 }
 

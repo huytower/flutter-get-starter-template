@@ -192,8 +192,8 @@
         "added_success": "New wallet added",
         "updated_success": "Wallet updated",
         "delete_title": "Delete Wallet",
-        "delete_confirm_msg": "A wallet can only be deleted when its balance is 0. All transactions of the wallet will be soft-deleted. Continue?",
-        "delete_error_not_empty": "Cannot delete: wallet balance must be 0",
+        "delete_confirm_msg": "A wallet can only be deleted when it has no transactions. All transactions of the wallet will be soft-deleted. Continue?",
+        "delete_error_not_empty": "Cannot delete: wallet has transactions",
         "delete_error_protected": "This wallet is required and cannot be deleted",
         "liquid_assets": "Liquid Assets",
         "liquid_assets_desc": "Cash + Bank + E-wallet · ready to spend",
@@ -307,6 +307,7 @@
         "quick_entry_scan_receipt": "Scan a receipt",
         "quick_entry_take_photo": "Take photo",
         "quick_entry_choose_gallery": "Choose from gallery",
+        "quick_entry_camera_not_available": "Camera feature is not available yet",
         "claims_in_progress": "You have {count} claims in progress",
         "validation": {
             "amount_required": "Amount must be greater than 0",
@@ -682,6 +683,7 @@
     },
     "level_lock": {
         "unlock_at_lv": "UNLOCK AT LV{level}",
+        "unlock_free_at_lv3": "Free to unlock at LV3",
         "remaining_percent": "{percent}% REMAINING",
         "investment_title": "Track Investment & Accumulation",
         "investment_desc": "Record stocks, funds, real estate and track ROI directly in the app — unlock by completing spending discipline challenges.",

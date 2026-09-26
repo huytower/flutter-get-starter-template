@@ -8,7 +8,6 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../domain/entities/trend_data_entity.dart';
 import '../get_x/report_controller.dart';
-import '../widgets/ai_advice_section.dart';
 import '../widgets/report_daily_list.dart';
 import '../widgets/report_page_header.dart';
 import '../widgets/report_tab_bar.dart';
@@ -66,7 +65,7 @@ class _ReportView extends CcGetView<ReportController> {
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
       mobile: 0.3,
-      tablet: 0.28,
+      tablet: 0.25,
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
@@ -132,7 +131,7 @@ class _ReportView extends CcGetView<ReportController> {
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
       mobile: 0.3,
-      tablet: 0.32,
+      tablet: 0.28,
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
@@ -154,11 +153,13 @@ class _ReportView extends CcGetView<ReportController> {
           final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
           final hidden = controller.isHeaderHidden.value || keyboardUp;
 
+          final topPadding = MediaQuery.of(context).padding.top;
+
           return Column(
             children: [
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                height: hidden ? 0 : headerHeight - overlap,
+                height: hidden ? topPadding : headerHeight - overlap,
               ),
               ReportTabBar(controller: controller),
               const CcSpaceSM(),
@@ -205,7 +206,8 @@ class _ReportView extends CcGetView<ReportController> {
                         isEditMode: controller.isEditMode.value,
                       ),
                       const CcSpaceSM(),
-                      AiAdviceSection(controller: controller),
+                      // TODO(huy): TEMPORARY DISABLE, ENABLE IT LATER
+                      // AiAdviceSection(controller: controller),
                     ],
                   ),
                 ),

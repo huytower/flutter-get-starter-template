@@ -552,8 +552,6 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   }
 
   CcUserEntity _mapFirebaseUserToEntity(firebase_auth.User user) {
-    '[APPLE_SIGN_IN] 14. Mapping Firebase User to Entity: uid=${user.uid}, email=${user.email}, displayName=${user.displayName}'
-        .Log('FirebaseAuthRepository');
     // Determine status based on Firebase properties
     CcUserStatus status = CcUserStatus.active;
     if (user.email != null && !user.emailVerified) {

@@ -153,6 +153,7 @@ class InvestHeroBanner extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     return Obx(() {
+      final isVisible = walletController.isBalanceVisible.value;
       final roi = walletController.monthlyRoiPercent.value;
       final breakeven = walletController.monthlyBreakevenPercent.value;
 
@@ -168,13 +169,15 @@ class InvestHeroBanner extends StatelessWidget {
           const SizedBox(height: 6),
           CompactStatRow(
             label: 'ROI',
-            value: '${roi >= 0 ? '+' : ''}${roi.toStringAsFixed(1)}%',
+            value: isVisible
+                ? '${roi >= 0 ? '+' : ''}${roi.toStringAsFixed(1)}%'
+                : '***%',
             color: scheme.onPrimary,
           ),
           const SizedBox(height: 2),
           CompactStatRow(
             label: el.tr(CcLocaleKeys.wallet_investment_breakeven),
-            value: '${breakeven.toStringAsFixed(1)}%',
+            value: isVisible ? '${breakeven.toStringAsFixed(1)}%' : '***%',
             color: scheme.onPrimary.withOpacity(0.9),
           ),
           const SizedBox(height: 6),

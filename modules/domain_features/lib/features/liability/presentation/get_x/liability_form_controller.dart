@@ -13,10 +13,8 @@ import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
-import '../../domain/usecases/create_liability_usecase.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
 import '../../domain/usecases/record_liability_payment_usecase.dart';
-import '../../domain/usecases/schedule_liability_reminders_usecase.dart';
 import '../get_x/liability_base_form_controller.dart';
 import '../get_x/liability_installment_draft.dart';
 import '../get_x/liability_list_controller.dart';
@@ -85,24 +83,6 @@ class LiabilityFormController extends LiabilityBaseFormController {
     if (selectedLiabilityId.value == null) return false;
     if (amountStr.value == '0' || amountStr.value.isEmpty) return false;
     if (selectedWalletId.value == null) return false;
-
-    final liability = mergedItems
-        .firstWhereOrNull((b) => b.liability.id == selectedLiabilityId.value)
-        ?.liability;
-    if (liability == null) return false;
-
-    // For recording a payment (Decrease), we only need a valid loan and amount.
-    if (action.value == LiabilityDirectionForm.decrease) return true;
-
-    // For initializing a new loan (Increase when principal is 0)
-    if (liability.principalAmount == 0) {
-      if (repaymentMethod.value == LiabilityRepaymentMethod.installment) {
-        if (installmentDrafts.isEmpty) return false;
-        if (installmentsTotal != principalAmount) return false;
-        return installmentDrafts.every((d) => d.amount.value > 0);
-      }
-      return finalDueDate.value != null;
-    }
 
     return true;
   }
@@ -388,7 +368,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
   }
 
   @override
-  void onReset() {
+  Future<void> onReset() async {
     selectedCategory.value = null;
     categoryKey.value++;
     repaymentMethod.value = LiabilityRepaymentMethod.lumpSum;
@@ -399,7 +379,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     }
     installmentDrafts.clear();
     selectedLiabilityId.value = null;
-    loadLiabilities();
+    await loadLiabilities();
     resetQuickEntry();
   }
 
@@ -416,78 +396,16 @@ class LiabilityFormController extends LiabilityBaseFormController {
       return;
     }
 
-    if (liability.principalAmount > 0) {
-      final params = RecordLiabilityPaymentParams(
-        liabilityId: liability.id,
-        isSettlement: action.value == LiabilityDirectionForm.decrease,
-        walletId: selectedWalletId.value ?? '',
-        amount: int.tryParse(amountStr.value) ?? 0,
-        note: composeNote(),
-        date: date.value,
-      );
-
-      final result = await getIt<RecordLiabilityPaymentUseCase>().call(params);
-      isSubmitting.value = false;
-
-      result.when(
-        (updatedLiability) async {
-          final savedAmount = TransactionFormHelpers.formatAmount(
-            amountStr.value,
-          );
-          CcSnackBarHelper.showSuccessSnackBar(
-            context: context,
-            message: el.tr(
-              CcLocaleKeys.transaction_liability_payment_saved,
-              namedArgs: {'amount': savedAmount},
-            ),
-          );
-          resetForm();
-          await refreshParent();
-
-          if (Get.isRegistered<GuidelineController>()) {
-            Get.find<GuidelineController>().completeTask('liability');
-          }
-        },
-        (error) => CcSnackBarHelper.showErrorSnackBar(
-          context: context,
-          message: el.tr(error.message),
-        ),
-      );
-      return;
-    }
-
-    final category = selectedCategory.value!;
-    final categoryLabel = liability.categoryLabel;
-    final isInstallment =
-        repaymentMethod.value == LiabilityRepaymentMethod.installment;
-
-    final params = CreateLiabilityParams(
+    final params = RecordLiabilityPaymentParams(
       liabilityId: liability.id,
-      direction: direction,
-      principalAmount: int.tryParse(amountStr.value) ?? 0,
-      categoryId: category.id,
-      categoryLabel: categoryLabel,
-      categoryIconCode: category.iconCode,
-      categoryIconFamily: category.iconFamily,
+      isSettlement: action.value == LiabilityDirectionForm.decrease,
       walletId: selectedWalletId.value ?? '',
-      repaymentMethod: repaymentMethod.value,
-      installments: isInstallment
-          ? installmentDrafts
-                .map(
-                  (d) => LiabilityInstallmentEntity(
-                    dueDate: d.dueDate.value,
-                    amount: d.amount.value,
-                  ),
-                )
-                .toList()
-          : null,
-      finalDueDate: isInstallment ? null : finalDueDate.value,
+      amount: int.tryParse(amountStr.value) ?? 0,
       note: composeNote(),
       date: date.value,
-      reminderBeforeDueDate: reminderBeforeDueDate.value,
     );
 
-    final result = await getIt<CreateLiabilityUseCase>().call(params);
+    final result = await getIt<RecordLiabilityPaymentUseCase>().call(params);
     isSubmitting.value = false;
 
     result.when(
@@ -498,12 +416,11 @@ class LiabilityFormController extends LiabilityBaseFormController {
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(
-            CcLocaleKeys.transaction_liability_saved,
+            CcLocaleKeys.transaction_liability_payment_saved,
             namedArgs: {'amount': savedAmount},
           ),
         );
-        getIt<ScheduleLiabilityRemindersUseCase>().call(updatedLiability);
-        resetForm();
+        await resetForm();
         await refreshParent();
 
         if (Get.isRegistered<GuidelineController>()) {

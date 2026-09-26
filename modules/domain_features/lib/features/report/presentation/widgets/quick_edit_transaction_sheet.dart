@@ -1,26 +1,34 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:theme/export_theme.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../liability/presentation/widgets/liability_asset_selector.dart';
+import '../../../liability/presentation/widgets/lend_asset_selector.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
-import '../../../transaction/domain/usecases/update_transaction_usecase.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
+import '../../../transaction/presentation/widgets/investment_asset_selector.dart';
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
+import '../get_x/quick_edit_transaction_sheet_controller.dart';
 
-class QuickEditTransactionSheet extends StatefulWidget {
-  const QuickEditTransactionSheet({super.key, required this.transaction});
-
-  final TransactionEntity transaction;
+class QuickEditTransactionSheet
+    extends GetView<QuickEditTransactionSheetController> {
+  const QuickEditTransactionSheet({super.key});
 
   static Future<void> show(
     BuildContext context,
     TransactionEntity transaction,
   ) {
+    final controller = Get.put(getIt<QuickEditTransactionSheetController>());
+    controller.init(transaction, () {
+      if (context.mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+    });
+
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -28,173 +36,98 @@ class QuickEditTransactionSheet extends StatefulWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => QuickEditTransactionSheet(transaction: transaction),
-    );
-  }
-
-  @override
-  State<QuickEditTransactionSheet> createState() =>
-      _QuickEditTransactionSheetState();
-}
-
-class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
-  bool _isSubmitting = false;
-  final TextEditingController _noteController = TextEditingController();
-  late final TextEditingController _amountController;
-  late DateTime _selectedDate;
-  CategoryEntity? _selectedCategory;
-
-  bool get _isInvestment => widget.transaction.isInvestmentActivity;
-  bool get _isDebt => widget.transaction.isDebtActivity;
-
-  Color get _accentColor {
-    if (_isInvestment) return PrjColors.investment;
-    if (_isDebt) return PrjColors.liability;
-    return context.ccColorScheme.primary;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _amountController = TextEditingController(
-      text: widget.transaction.amount.toString(),
-    );
-    _selectedDate = widget.transaction.date;
-    _noteController.text = widget.transaction.note ?? '';
-  }
-
-  @override
-  void dispose() {
-    _amountController.dispose();
-    _noteController.dispose();
-    super.dispose();
-  }
-
-  String? get _categoryType {
-    switch (widget.transaction.type) {
-      case TransactionType.expense:
-        return CategoryType.expense;
-      case TransactionType.income:
-        return CategoryType.income;
-      case TransactionType.debtBorrow:
-      case TransactionType.debtLend:
-      case TransactionType.debtRepay:
-      case TransactionType.debtCollect:
-        return CategoryType.liability;
-      case TransactionType.investmentOut:
-      case TransactionType.investmentIn:
-      case TransactionType.investmentReturn:
-        return CategoryType.investment;
-      default:
-        return CategoryType.expense;
-    }
-  }
-
-  Future<void> _save() async {
-    if (_isSubmitting) return;
-    setState(() => _isSubmitting = true);
-
-    final updateUseCase = getIt<UpdateTransactionUseCase>();
-    final newAmount = int.tryParse(_amountController.text.trim()) ?? 0;
-    final noteText = _noteController.text.trim();
-
-    final categoryId = _selectedCategory?.id ?? widget.transaction.categoryId;
-    final categoryLabel = _selectedCategory != null
-        ? el.tr(_selectedCategory!.nameKey)
-        : widget.transaction.category;
-    final categoryIconCode =
-        _selectedCategory?.iconCode ?? widget.transaction.categoryIconCode;
-    final categoryIconFamily =
-        _selectedCategory?.iconFamily ?? widget.transaction.categoryIconFamily;
-
-    final result = await updateUseCase.call(
-      UpdateTransactionParams(
-        original: widget.transaction,
-        amount: newAmount,
-        categoryId: categoryId,
-        categoryLabel: categoryLabel,
-        categoryIconCode: categoryIconCode,
-        categoryIconFamily: categoryIconFamily,
-        walletId: widget.transaction.walletId,
-        note: noteText.isEmpty ? null : noteText,
-        date: _selectedDate,
-      ),
-    );
-
-    if (!mounted) return;
-
-    if (result.isSuccess()) {
-      CcSnackBarHelper.showSuccessSnackBar(
-        context: context,
-        message: el.tr(CcLocaleKeys.common_save),
-      );
-      Navigator.of(context).pop();
-    } else {
-      CcSnackBarHelper.showErrorSnackBar(
-        context: context,
-        message:
-            result.tryGetError()?.message ??
-            el.tr(CcLocaleKeys.app_error_general),
-      );
-    }
-
-    setState(() => _isSubmitting = false);
+      builder: (_) => const QuickEditTransactionSheet(),
+    ).whenComplete(() {
+      Future.delayed(const Duration(milliseconds: 350), () {
+        if (Get.isRegistered<QuickEditTransactionSheetController>()) {
+          Get.delete<QuickEditTransactionSheetController>();
+        }
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildHeader(context),
-            Flexible(
-              fit: FlexFit.loose,
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CategorySelectionSection(
-                      type: _categoryType!,
-                      activeColor: _accentColor,
-                      autoSelectFirst: false,
-                      initialSelectedCategoryId: widget.transaction.categoryId,
-                      onCategorySelected: (category) {
-                        if (mounted) {
-                          setState(() => _selectedCategory = category);
-                        }
-                      },
-                    ),
-                    const CcSpaceSM(),
-                    _buildAmountSection(context),
-                    const CcSpaceSM(),
-                    TransactionFormContainer(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [_buildDateAndNoteSection(context)],
+    return Obx(() {
+      final accentColor = controller.accentColor(context);
+
+      return SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildHeader(context),
+              Flexible(
+                fit: FlexFit.loose,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildCategorySelectionSection(context, accentColor),
+                      const CcSpaceSM(),
+                      _buildAmountSection(context, accentColor),
+                      const CcSpaceSM(),
+                      TransactionFormContainer(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [_buildDateAndNoteSection(context)],
+                        ),
                       ),
-                    ),
-                    const CcSpaceSM(),
-                    TransactionSubmitButton(
-                      text: el.tr(CcLocaleKeys.common_save),
-                      isSubmitting: _isSubmitting,
-                      isEnabled: true,
-                      onTap: _save,
-                      activeColor: _accentColor,
-                    ),
-                    const CcSpaceXS(),
-                  ],
+                      const CcSpaceSM(),
+                      TransactionSubmitButton(
+                        text: el.tr(CcLocaleKeys.common_save),
+                        isSubmitting: controller.isSubmitting.value,
+                        isEnabled: true,
+                        onTap: () => controller.save(context),
+                        activeColor: accentColor,
+                      ),
+                      const CcSpaceXS(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      );
+    });
+  }
+
+  Widget _buildCategorySelectionSection(
+    BuildContext context,
+    Color accentColor,
+  ) {
+    if (controller.isInvestment && controller.investmentController != null) {
+      return InvestmentAssetSelector(
+        controller: controller.investmentController!,
+        activeColor: accentColor,
+      );
+    }
+
+    if (controller.isBorrow && controller.liabilityController != null) {
+      return LiabilityAssetSelector(
+        controller: controller.liabilityController!,
+        activeColor: accentColor,
+      );
+    }
+
+    if (controller.isLend && controller.lendController != null) {
+      return LendAssetSelector(
+        controller: controller.lendController!,
+        activeColor: accentColor,
+      );
+    }
+
+    return CategorySelectionSection(
+      type: controller.categoryType!,
+      activeColor: accentColor,
+      autoSelectFirst: false,
+      initialSelectedCategoryId: controller.transaction.categoryId,
+      onCategorySelected: controller.setCategory,
     );
   }
 
@@ -222,26 +155,31 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
     );
   }
 
-  Widget _buildAmountSection(BuildContext context) {
-    return CcAmountInputSection(
-      label: el.tr(CcLocaleKeys.transaction_amount),
-      amountStr: _amountController.text,
-      quickAmounts: const [
-        10000,
-        20000,
-        50000,
-        100000,
-        200000,
-        500000,
-        1000000,
-      ],
-      isKeypadVisible: false,
-      activeColor: _accentColor,
-      onTap: () {},
-      onQuickAmountSelected: (amount) {
-        _amountController.text = amount.toString();
-      },
-      onClear: () => _amountController.text = '0',
+  Widget _buildAmountSection(BuildContext context, Color accentColor) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
+      ),
+      child: Obx(
+        () => CcAmountInputSection(
+          label: el.tr(CcLocaleKeys.transaction_amount),
+          amountStr: controller.amountStr.value,
+          quickAmounts: const [
+            10000,
+            20000,
+            50000,
+            100000,
+            200000,
+            500000,
+            1000000,
+          ],
+          isKeypadVisible: false,
+          activeColor: accentColor,
+          onTap: () {},
+          onQuickAmountSelected: controller.onQuickAmountSelected,
+          onClear: controller.onClearAmount,
+        ),
+      ),
     );
   }
 
@@ -249,7 +187,7 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
     final scheme = context.ccColorScheme;
 
     return CcNoteInputField(
-      controller: _noteController,
+      controller: controller.noteController,
       hintText: el.tr(CcLocaleKeys.transaction_note_hint),
       maxLines: 2,
       color: scheme.surfaceVariant.withAlpha(80),

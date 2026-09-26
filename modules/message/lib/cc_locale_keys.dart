@@ -216,11 +216,11 @@ class CodegenLoader extends AssetLoader {
       "updated_success": "Wallet updated",
       "delete_title": "Delete Wallet",
       "delete_confirm_msg":
-          "A wallet can only be deleted when its balance is 0. All transactions of the wallet will be soft-deleted. Continue?",
+          "A wallet can only be deleted when it has no transactions. All transactions of the wallet will be soft-deleted. Continue?",
       "investment_delete_title": "Delete Investment",
       "investment_delete_confirm":
           "Deleting an investment item is only possible when its total performance value is 0. All related transactions will be soft-deleted. Continue?",
-      "delete_error_not_empty": "Cannot delete: wallet balance must be 0",
+      "delete_error_not_empty": "Cannot delete: wallet has transactions",
       "delete_error_protected": "This wallet is required and cannot be deleted",
       "liquid_assets": "Liquid Assets",
       "liquid_assets_desc": "Cash + Bank + E-wallet · ready to spend",
@@ -343,6 +343,7 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_scan_receipt": "Scan a receipt",
       "quick_entry_take_photo": "Take photo",
       "quick_entry_choose_gallery": "Choose from gallery",
+      "quick_entry_camera_not_available": "Camera feature is not available yet",
       "claims_in_progress": "You have {count} claims in progress",
       "auto_save_countdown": "Auto-save in {countdown}s...",
       "validation": {
@@ -979,11 +980,11 @@ class CodegenLoader extends AssetLoader {
       "updated_success": "Đã cập nhật ví",
       "delete_title": "Xóa ví",
       "delete_confirm_msg":
-          "Chỉ có thể xóa ví khi số dư bằng 0. Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?",
+          "Chỉ có thể xóa ví khi không có giao dịch nào. Mọi giao dịch của ví sẽ được xóa (soft-delete). Tiếp tục?",
       "investment_delete_title": "Xoá khoản đầu tư",
       "investment_delete_confirm":
           "Chỉ có thể xoá khoản đầu tư khi tổng giá trị hiệu suất bằng 0. Mọi giao dịch liên quan sẽ bị xoá (soft-delete). Tiếp tục?",
-      "delete_error_not_empty": "Không thể xóa: số dư của ví phải bằng 0",
+      "delete_error_not_empty": "Không thể xóa: ví có giao dịch",
       "delete_error_protected": "Ví này là bắt buộc và không thể xóa",
       "liquid_assets": "Tổng tiền thanh khoản",
       "liquid_assets_desc":
@@ -1105,6 +1106,8 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_scan_receipt": "Quét hóa đơn",
       "quick_entry_take_photo": "Chụp ảnh",
       "quick_entry_choose_gallery": "Chọn từ thư viện",
+      "quick_entry_camera_not_available":
+          "Tính năng chụp/quét ảnh chưa khả dụng",
       "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
       "auto_save_countdown": "Tự động lưu trong {countdown}s...",
       "validation": {
@@ -1787,6 +1790,8 @@ abstract class CcLocaleKeys {
   static const quick_entry_take_photo = 'transaction.quick_entry_take_photo';
   static const quick_entry_choose_gallery =
       'transaction.quick_entry_choose_gallery';
+  static const quick_entry_camera_not_available =
+      'transaction.quick_entry_camera_not_available';
   static const transaction_claims_in_progress =
       'transaction.claims_in_progress';
   static const transaction_validation_amount_required =
@@ -2169,6 +2174,8 @@ abstract class CcLocaleKeys {
   static const guideline_reset_confirm_cancel =
       'guideline.reset_confirm_cancel';
 
+  static const level_lock_unlock_at_lv = 'level_lock.unlock_at_lv';
+  static const level_lock_unlock_free_at_lv3 = 'level_lock.unlock_free_at_lv3';
   static const level_lock_investment_title = 'level_lock.investment_title';
   static const level_lock_investment_desc = 'level_lock.investment_desc';
   static const level_lock_liability_title = 'level_lock.liability_title';
