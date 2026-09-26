@@ -17,8 +17,11 @@ class EditTransactionSheetController extends CcGetController {
   late final TransactionEntity transaction;
   late final VoidCallback _onCloseSheet;
 
-  bool get isExpense => transaction.type == TransactionType.expense;
-  bool get isIncome => transaction.type == TransactionType.income;
+  final RxBool _isExpense = false.obs;
+  final RxBool _isIncome = false.obs;
+
+  bool get isExpense => _isExpense.value;
+  bool get isIncome => _isIncome.value;
   bool get isInvestment => transaction.isInvestmentActivity;
   bool get isDebt => transaction.isDebtActivity;
 
@@ -33,6 +36,8 @@ class EditTransactionSheetController extends CcGetController {
   void init(TransactionEntity tx, VoidCallback onCloseSheet) {
     transaction = tx;
     _onCloseSheet = onCloseSheet;
+    _isExpense.value = tx.type == TransactionType.expense;
+    _isIncome.value = tx.type == TransactionType.income;
 
     if (isExpense) {
       final controller = Get.put(getIt<ExpenseFormController>(), tag: editTag);

@@ -13,15 +13,20 @@ import 'income_form.dart';
 /// transaction — reuses [ExpenseForm]/[IncomeForm] as-is in edit mode via a
 /// tagged GetX instance, so the entry tab's own in-progress draft is never
 /// touched.
-class EditTransactionSheet extends StatelessWidget {
-  const EditTransactionSheet({super.key, required this.transaction});
-
-  final TransactionEntity transaction;
+class EditTransactionSheet extends GetView<EditTransactionSheetController> {
+  const EditTransactionSheet({super.key});
 
   static Future<void> show(
     BuildContext context,
     TransactionEntity transaction,
   ) {
+    final controller = Get.put(getIt<EditTransactionSheetController>());
+    controller.init(transaction, () {
+      if (context.mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+    });
+
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -29,53 +34,60 @@ class EditTransactionSheet extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => EditTransactionSheet(transaction: transaction),
-    );
+      builder: (_) => const EditTransactionSheet(),
+    ).whenComplete(() {
+      Future.delayed(const Duration(milliseconds: 350), () {
+        if (Get.isRegistered<EditTransactionSheetController>()) {
+          Get.delete<EditTransactionSheetController>();
+        }
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(getIt<EditTransactionSheetController>());
-    controller.init(transaction, () {
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
+    return Obx(() {
+      final isExpense = controller.isExpense;
+      final isIncome = controller.isIncome;
+
+      // Only income/expense transactions are editable here; if this is a
+      // transfer or investment/liability entry, dismiss immediately.
+      if (!isIncome && !isExpense) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted && Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
+        });
+        return const SizedBox.shrink();
       }
+
+      final accentColor = controller.accentColor(context);
+
+      return SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildHeader(context, accentColor),
+              Flexible(
+                fit: FlexFit.loose,
+                child: isExpense
+                    ? const ExpenseForm(
+                        tag: EditTransactionSheetController.editTag,
+                      )
+                    : const IncomeForm(
+                        tag: EditTransactionSheetController.editTag,
+                      ),
+              ),
+            ],
+          ),
+        ),
+      );
     });
-
-    final isExpense = controller.isExpense;
-    final isIncome = controller.isIncome;
-
-    // Only show edit form for income and expense transactions
-    if (!isIncome && !isExpense) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
-        }
-      });
-      return const SizedBox.shrink();
-    }
-
-    final accentColor = controller.accentColor(context);
-
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.only(
-          bottom:
-              MediaQuery.of(context).viewInsets.bottom +
-              context.respPadding(CcPaddingParams.PAGE_MD),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildHeader(context, accentColor),
-            isExpense
-                ? const ExpenseForm(tag: EditTransactionSheetController.editTag)
-                : const IncomeForm(tag: EditTransactionSheetController.editTag),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildHeader(BuildContext context, Color accentColor) {

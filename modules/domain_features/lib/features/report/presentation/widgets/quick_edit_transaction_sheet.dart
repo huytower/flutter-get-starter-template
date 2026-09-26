@@ -374,7 +374,11 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
   }
 
   Widget _buildAmountSection(BuildContext context) {
-    return CcAmountInputSection(
+    return Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
+        ),
+        child: CcAmountInputSection(
       label: el.tr(CcLocaleKeys.transaction_amount),
       amountStr: _amountController.text,
       quickAmounts: const [
@@ -393,7 +397,7 @@ class _QuickEditTransactionSheetState extends State<QuickEditTransactionSheet> {
         _amountController.text = amount.toString();
       },
       onClear: () => _amountController.text = '0',
-    );
+    ));
   }
 
   Widget _buildDateAndNoteSection(BuildContext context) {

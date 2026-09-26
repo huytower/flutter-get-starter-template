@@ -9,9 +9,14 @@ import 'base/category_selection_layout.dart';
 ///
 /// Shows only standard income categories, sorted by most-recent activity.
 /// Decoupled from the budget-limit logic used in the Expense tab.
-class IncomeCategorySelectionSection extends GetView<IncomeFormController> {
-  const IncomeCategorySelectionSection({super.key, required this.activeColor});
+class IncomeCategorySelectionSection extends StatelessWidget {
+  const IncomeCategorySelectionSection({
+    super.key,
+    required this.controller,
+    required this.activeColor,
+  });
 
+  final IncomeFormController controller;
   final Color activeColor;
 
   @override

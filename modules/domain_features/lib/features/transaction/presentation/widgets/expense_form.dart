@@ -31,7 +31,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
     super.initState();
     controller = widget.tag == null
         ? Get.find<ExpenseFormController>()
-        : Get.put(getIt<ExpenseFormController>(), tag: widget.tag);
+        : (Get.isRegistered<ExpenseFormController>(tag: widget.tag)
+            ? Get.find<ExpenseFormController>(tag: widget.tag)
+            : Get.put(getIt<ExpenseFormController>(), tag: widget.tag));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -105,7 +107,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ExpenseCategorySelectionSection(activeColor: accentColor),
+            ExpenseCategorySelectionSection(
+              controller: controller,
+              activeColor: accentColor,
+            ),
             const CcSpaceSM(),
             _buildFormFields(context, controller, guideline, accentColor),
           ],

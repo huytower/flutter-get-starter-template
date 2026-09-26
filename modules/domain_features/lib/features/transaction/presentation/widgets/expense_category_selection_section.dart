@@ -9,9 +9,14 @@ import 'base/category_selection_layout.dart';
 ///
 /// Merges standard expense categories with user-defined budget limits in a
 /// single unified row, with budgets identified by a lightning-bolt icon.
-class ExpenseCategorySelectionSection extends GetView<ExpenseFormController> {
-  const ExpenseCategorySelectionSection({super.key, required this.activeColor});
+class ExpenseCategorySelectionSection extends StatelessWidget {
+  const ExpenseCategorySelectionSection({
+    super.key,
+    required this.controller,
+    required this.activeColor,
+  });
 
+  final ExpenseFormController controller;
   final Color activeColor;
 
   @override
