@@ -746,9 +746,9 @@ class CodegenLoader extends AssetLoader {
       "banner_desc_investment":
           "Create your first investment to grow your wealth",
       "banner_desc_liability":
-          "Record your first liability (Borrow/Repay) to manage your debts",
+          "Record your first liability to manage your debts",
       "banner_desc_lend":
-          "Record your first lend (Lend/Collect) to manage your loans",
+          "Record your first lend to manage your loans",
       "banner_desc_default": "You are ready to manage your finances!",
       "success_dialog_message":
           "Congratulations!\nYou have completed the initial setup.",
@@ -1505,9 +1505,9 @@ class CodegenLoader extends AssetLoader {
       "banner_desc_first_transaction": "Ghi chép giao dịch chi tiêu đầu tiên",
       "banner_desc_investment": "Tạo khoản đầu tư đầu tiên để gia tăng tài sản",
       "banner_desc_liability":
-          "Ghi nhận khoản nợ đầu tiên (Đi vay/Trả nợ) để quản lý nợ",
+          "Ghi nhận khoản nợ đầu tiên để quản lý nợ",
       "banner_desc_lend":
-          "Ghi nhận khoản cho mượn đầu tiên (Cho mượn/Thu hồi) để quản lý cho mượn",
+          "Ghi nhận khoản cho mượn đầu tiên để quản lý cho mượn",
       "banner_desc_default": "Bạn đã sặn sàng quản lý tài chính!",
       "success_dialog_message":
           "Chúc mừng!\nBạn đã hoàn thành thiết lập ban đầu.",

@@ -150,7 +150,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
             lendBalance: controller.lendBalance,
             totalBalance: controller.liabilityBalance,
           ),
-          const CcSpaceSM(),
+          const CcSpaceXL(),
           LiabilityWalletsSection(
             borrowBalances: controller.borrowBalances,
             lendBalances: controller.lendBalances,
