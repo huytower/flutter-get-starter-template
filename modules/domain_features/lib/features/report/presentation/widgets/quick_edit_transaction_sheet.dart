@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../liability/presentation/widgets/liability_asset_selector.dart';
 import '../../../liability/presentation/widgets/lend_asset_selector.dart';
+import '../../../liability/presentation/widgets/liability_asset_selector.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
@@ -48,23 +48,23 @@ class QuickEditTransactionSheet
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      final accentColor = controller.accentColor(context);
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildHeader(context),
+            Flexible(
+              fit: FlexFit.loose,
+              child: SingleChildScrollView(
+                child: Obx(() {
+                  final accentColor = controller.accentColor(context);
 
-      return SafeArea(
-        top: false,
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildHeader(context),
-              Flexible(
-                fit: FlexFit.loose,
-                child: SingleChildScrollView(
-                  child: Column(
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildCategorySelectionSection(context, accentColor),
@@ -87,14 +87,14 @@ class QuickEditTransactionSheet
                       ),
                       const CcSpaceXS(),
                     ],
-                  ),
-                ),
+                  );
+                }),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-    });
+      ),
+    );
   }
 
   Widget _buildCategorySelectionSection(
