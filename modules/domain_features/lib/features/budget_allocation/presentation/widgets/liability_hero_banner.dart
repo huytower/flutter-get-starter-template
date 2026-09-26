@@ -53,11 +53,11 @@ class LiabilityHeroBanner extends StatelessWidget {
           clipBehavior: Clip.none,
           children: [
             // Back Card
-            // _buildAnimatedCard(
-            //   context: context,
-            //   isFront: false,
-            //   child: isLendFront ? borrowCard : lendCard,
-            // ),
+            _buildAnimatedCard(
+              context: context,
+              isFront: false,
+              child: isLendFront ? borrowCard : lendCard,
+            ),
             // Front Card
             _buildAnimatedCard(
               context: context,

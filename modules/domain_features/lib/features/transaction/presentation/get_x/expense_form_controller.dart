@@ -72,7 +72,10 @@ class ExpenseFormController extends TransactionFormController
       return GlobalKey(debugLabel: 'category_item_invalid');
     }
     final itemId = unifiedItems[index].id;
-    return _itemKeys.putIfAbsent(itemId, () => GlobalKey(debugLabel: 'category_item_$itemId'));
+    return _itemKeys.putIfAbsent(
+      itemId,
+      () => GlobalKey(debugLabel: 'category_item_$itemId'),
+    );
   }
 
   String? timeBasedSuggestedCategoryId;
@@ -171,20 +174,11 @@ class ExpenseFormController extends TransactionFormController
     if (index != -1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!categoryScrollController.hasClients) return;
-
-        final key = getItemKey(index);
-        if (key == null) return;
-
-        final context = key.currentContext;
-        if (context == null) return;
-
-        // Use Scrollable.ensureVisible for accurate, responsive positioning
-        // This automatically handles actual widget dimensions and layout
         Scrollable.ensureVisible(
-          context,
+          getItemKey(index).currentContext!,
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeOutCubic,
-          alignment: 0.5, // Center the item
+          alignment: 0.5,
         );
       });
     }
@@ -212,8 +206,9 @@ class ExpenseFormController extends TransactionFormController
 
     refreshTimeBasedSuggestion();
 
-    // Only auto-select first item if the user hasn't started typing in the AI box
-    if (unifiedItems.isNotEmpty &&
+    if (isEditing && editingTransaction != null) {
+      _resolveCategoryForEdit(editingTransaction!);
+    } else if (unifiedItems.isNotEmpty &&
         selectedBudget.value == null &&
         selectedCategory.value == null &&
         !isEditing &&
@@ -227,6 +222,32 @@ class ExpenseFormController extends TransactionFormController
         if (cat != null) setCategory(cat);
       }
     }
+  }
+
+  @override
+  void loadForEdit(TransactionEntity transaction) {
+    super.loadForEdit(transaction);
+    _resolveCategoryForEdit(transaction);
+  }
+
+  void _resolveCategoryForEdit(TransactionEntity transaction) {
+    if (transaction.budgetId != null && transaction.budgetId!.isNotEmpty) {
+      final budget = _findBudgetById(transaction.budgetId!);
+      if (budget != null) {
+        setBudget(budget);
+        return;
+      }
+    }
+
+    if (transaction.categoryId.isNotEmpty) {
+      final category = getCachedCategoryById(transaction.categoryId);
+      if (category != null) {
+        setCategory(category);
+        return;
+      }
+    }
+
+    clearCategorySelection();
   }
 
   Future<void> _rebuildUnifiedItems() async {
@@ -251,8 +272,12 @@ class ExpenseFormController extends TransactionFormController
     }
 
     // Check if selected category/budget still exists and is enabled
-    final selectedCategoryStillExists = expenseCats.any((c) => c.id == selectedCategoryId);
-    final selectedBudgetStillExists = currentBudgets.any((b) => b.budget.id == selectedBudgetId);
+    final selectedCategoryStillExists = expenseCats.any(
+      (c) => c.id == selectedCategoryId,
+    );
+    final selectedBudgetStillExists = currentBudgets.any(
+      (b) => b.budget.id == selectedBudgetId,
+    );
 
     if (!selectedCategoryStillExists && selectedCategoryId != null) {
       selectedCategory.value = null;
@@ -391,7 +416,8 @@ class ExpenseFormController extends TransactionFormController
     unifiedItems.assignAll(items);
 
     // Scroll to selected item after rebuild if it still exists
-    final selectedStillExists = selectedBudgetStillExists || selectedCategoryStillExists;
+    final selectedStillExists =
+        selectedBudgetStillExists || selectedCategoryStillExists;
     if (selectedStillExists) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToSelected();

@@ -49,7 +49,10 @@ class IncomeFormController extends TransactionFormController
       return GlobalKey(debugLabel: 'category_item_invalid');
     }
     final itemId = unifiedItems[index].id;
-    return _itemKeys.putIfAbsent(itemId, () => GlobalKey(debugLabel: 'category_item_$itemId'));
+    return _itemKeys.putIfAbsent(
+      itemId,
+      () => GlobalKey(debugLabel: 'category_item_$itemId'),
+    );
   }
 
   final RxList<CategoryEntity> _cachedCategories = <CategoryEntity>[].obs;
@@ -89,8 +92,9 @@ class IncomeFormController extends TransactionFormController
     isLoadingCategories.value = false;
     isLoadingUnified.value = false;
 
-    // Auto-select first item if the user hasn't started typing in the AI box
-    if (unifiedItems.isNotEmpty &&
+    if (isEditing && editingTransaction != null) {
+      _resolveCategoryForEdit(editingTransaction!);
+    } else if (unifiedItems.isNotEmpty &&
         selectedCategory.value == null &&
         !isEditing &&
         quickEntryController.text.isEmpty) {
@@ -98,6 +102,23 @@ class IncomeFormController extends TransactionFormController
       final cat = getCachedCategoryById(first.categoryId);
       if (cat != null) setCategory(cat);
     }
+  }
+
+  @override
+  void loadForEdit(TransactionEntity transaction) {
+    super.loadForEdit(transaction);
+    _resolveCategoryForEdit(transaction);
+  }
+
+  void _resolveCategoryForEdit(TransactionEntity transaction) {
+    if (transaction.categoryId.isNotEmpty) {
+      final category = getCachedCategoryById(transaction.categoryId);
+      if (category != null) {
+        setCategory(category);
+        return;
+      }
+    }
+    clearCategorySelection();
   }
 
   Future<void> _loadRecentIncomes() async {
@@ -126,7 +147,9 @@ class IncomeFormController extends TransactionFormController
         .toList();
 
     // Check if selected category still exists and is enabled
-    final selectedCategoryStillExists = incomeCats.any((c) => c.id == selectedId);
+    final selectedCategoryStillExists = incomeCats.any(
+      (c) => c.id == selectedId,
+    );
     if (!selectedCategoryStillExists && selectedId != null) {
       // Clear selection if category no longer exists or is disabled
       selectedCategory.value = null;
@@ -211,20 +234,11 @@ class IncomeFormController extends TransactionFormController
     if (index != -1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!categoryScrollController.hasClients) return;
-
-        final key = getItemKey(index);
-        if (key == null) return;
-
-        final context = key.currentContext;
-        if (context == null) return;
-
-        // Use Scrollable.ensureVisible for accurate, responsive positioning
-        // This automatically handles actual widget dimensions and layout
         Scrollable.ensureVisible(
-          context,
+          getItemKey(index).currentContext!,
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeOutCubic,
-          alignment: 0.5, // Center the item
+          alignment: 0.5,
         );
       });
     }

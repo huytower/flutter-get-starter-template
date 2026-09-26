@@ -171,6 +171,8 @@ import 'package:domain_features/features/reconciliation/presentation/get_x/recon
     as _i1051;
 import 'package:domain_features/features/report/domain/usecases/generate_ai_financial_advice_usecase.dart'
     as _i436;
+import 'package:domain_features/features/report/presentation/get_x/quick_edit_transaction_sheet_controller.dart'
+    as _i621;
 import 'package:domain_features/features/transaction/presentation/get_x/edit_transaction_sheet_controller.dart'
     as _i789;
 import 'package:domain_features/features/report/domain/usecases/get_category_spending_usecase.dart'
@@ -211,6 +213,8 @@ import 'package:domain_features/features/transaction/domain/usecases/update_tran
     as _i756;
 import 'package:domain_features/features/transaction/presentation/get_x/category_selection_controller.dart'
     as _i615;
+import 'package:domain_features/features/transaction/presentation/get_x/edit_transaction_sheet_controller.dart'
+    as _i789;
 import 'package:domain_features/features/transaction/presentation/get_x/expense_form_controller.dart'
     as _i754;
 import 'package:domain_features/features/transaction/presentation/get_x/income_form_controller.dart'
@@ -591,6 +595,9 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     );
     gh.factory<_i789.EditTransactionSheetController>(
       () => _i789.EditTransactionSheetController(),
+    );
+    gh.factory<_i621.QuickEditTransactionSheetController>(
+      () => _i621.QuickEditTransactionSheetController(),
     );
     gh.lazySingleton<_i743.GetBudgetLimitStatsUseCase>(
       () => _i743.GetBudgetLimitStatsUseCase(
