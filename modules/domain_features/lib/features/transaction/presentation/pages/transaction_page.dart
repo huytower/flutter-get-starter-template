@@ -102,8 +102,8 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
-      mobile: 0.27,
-      tablet: 0.27,
+      mobile: 0.25,
+      tablet: 0.26,
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
@@ -143,8 +143,8 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
-      mobile: 0.29,
-      tablet: 0.28,
+      mobile: 0.26,
+      tablet: 0.26,
     );
     final headerHeight = screenHeight * headerHeightFactor;
 

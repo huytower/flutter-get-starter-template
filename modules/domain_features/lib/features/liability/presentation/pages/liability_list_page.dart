@@ -95,7 +95,7 @@ class _LiabilityListView extends CcGetView<LiabilityListController> {
             ),
           );
         }),
-        SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
+        const CcSpaceSM(),
       ],
     );
   }
@@ -132,7 +132,7 @@ class _LiabilityListView extends CcGetView<LiabilityListController> {
           padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_XS)),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            mainAxisExtent: context.respDim(145),
+            mainAxisExtent: context.respDim(120),
             crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
             mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
           ),

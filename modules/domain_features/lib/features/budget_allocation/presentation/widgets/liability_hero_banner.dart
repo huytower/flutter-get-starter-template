@@ -47,7 +47,7 @@ class LiabilityHeroBanner extends StatelessWidget {
       );
 
       return SizedBox(
-        height: context.respDim(100),
+        height: context.respDim(85),
         child: Stack(
           alignment: Alignment.topCenter,
           clipBehavior: Clip.none,
