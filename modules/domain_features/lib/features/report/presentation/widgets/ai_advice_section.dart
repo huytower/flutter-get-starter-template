@@ -158,6 +158,7 @@ class AiAdviceSection extends StatelessWidget {
       children: [
         CcText(
           advice.text,
+          overflow: TextOverflow.visible,
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
             color: context.ccColorScheme.onSurface,
           ),

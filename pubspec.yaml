@@ -125,6 +125,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  # Avoid LLDB stopping on iOS's UIScene-lifecycle runtime-issue breakpoint
+  # and freezing the app on launch (e.g. stuck on splash).
+  config:
+    enable-lldb-debugging: false
+
   # Environment files
   assets:
     - env/.env.uat

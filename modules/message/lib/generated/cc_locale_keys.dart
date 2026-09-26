@@ -293,6 +293,7 @@ abstract class  LocaleKeys {
   static const transaction_quick_entry_scan_receipt = 'transaction.quick_entry_scan_receipt';
   static const transaction_quick_entry_take_photo = 'transaction.quick_entry_take_photo';
   static const transaction_quick_entry_choose_gallery = 'transaction.quick_entry_choose_gallery';
+  static const transaction_quick_entry_camera_not_available = 'transaction.quick_entry_camera_not_available';
   static const transaction_claims_in_progress = 'transaction.claims_in_progress';
   static const transaction_validation_amount_required = 'transaction.validation.amount_required';
   static const transaction_validation_wallet_required = 'transaction.validation.wallet_required';

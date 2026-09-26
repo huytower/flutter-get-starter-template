@@ -103,7 +103,7 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
       mobile: 0.27,
-      tablet: 0.28,
+      tablet: 0.27,
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
