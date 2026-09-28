@@ -30,7 +30,7 @@ class TransactionAutoSaveMessage extends StatelessWidget {
               namedArgs: {'countdown': countdown.toString()},
             ),
             textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.onPrimary,
+              color: context.ccColorScheme.primary,
               fontWeight: FontWeight.bold,
             ),
             maxLines: 1,
@@ -41,7 +41,7 @@ class TransactionAutoSaveMessage extends StatelessWidget {
           icon: Icon(
             Icons.close_rounded,
             size: context.respIconSize(baseSize: 16),
-            color: context.ccColorScheme.onPrimary.withOpacity(0.8),
+            color: context.ccColorScheme.primary.withOpacity(0.8),
           ),
           onTap: onCancel,
           width: context.respDim(24),

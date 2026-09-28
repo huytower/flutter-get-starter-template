@@ -49,8 +49,15 @@ class QuickEntryAliasDataset {
   /// Maximum plausible amount for a single item on a receipt.
   static const int maxLineItemAmount = 10000000;
 
-  /// Maximum plausible total amount for local parsing (escalate to cloud if higher).
-  static const int maxLocalTotalAmount = 1000000000;
+  /// Upper bound for local parsing, exclusive — the parser accepts
+  /// `value < maxLocalTotalAmount`, so this is the first amount *rejected*.
+  ///
+  /// This is a sanity ceiling against garbage input, not a tuning knob for
+  /// "when to ask the cloud" — anything rejected here is dropped as `null` and
+  /// the reactive typing path never escalates, so a low cap silently loses the
+  /// amount. The liability/borrow tabs exist precisely for mortgages and
+  /// business loans, and 99 tỷ must still parse, hence 100 tỷ as the cutoff.
+  static const int maxLocalTotalAmount = 100000000000;
 
   /// Field-label prefixes marking the transfer message.
   static const List<String> noteFieldLabels = [
@@ -312,6 +319,7 @@ class QuickEntryAliasDataset {
     'trai phieu': 'inv3',
     'gui tiet kiem': 'inv4',
     'so tiet kiem': 'inv4',
+    'tiet kiem': 'inv4',
     'vang': 'inv5',
     'vang mieng': 'inv5',
     'vang nhan': 'inv5',

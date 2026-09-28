@@ -14,6 +14,9 @@ class QuickEntryIntentUtil {
       'mua vang',
       'mua chung khoan',
       'gui tiet kiem',
+      // Bare "tiet kiem" is how people actually type a savings entry; without
+      // it, "tiet kiem 100k" matched no root and stayed on the current tab.
+      'tiet kiem',
     ],
     QuickEntryIntent.expense: ['chi tieu', 'spent'],
   };
