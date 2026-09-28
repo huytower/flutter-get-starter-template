@@ -26,15 +26,54 @@ class _ReportDailyDetailView extends CcGetView<ReportController> {
 
   @override
   PreferredSizeWidget buildAppBar(BuildContext context) {
-    return AppBar(
-      backgroundColor: context.ccColorScheme.surface,
-      elevation: 0,
-      centerTitle: true,
-      leading: CcBackBtn(onTap: () => Navigator.of(context).maybePop()),
-      title: CcText(
-        el.tr(CcLocaleKeys.report_daily_detail),
-        textStyle: context.ccTextTheme.titleMedium,
+    return buildDomainGradientAppBar(
+      context,
+      leading: CcBackBtn(onTap: () => controller.onBack(context)),
+      title: Center(
+        child: CcText(
+          el.tr(CcLocaleKeys.report_daily_detail),
+          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            color: context.ccColorScheme.onPrimary,
+            fontWeight: CcTypographyParams.bold,
+          ),
+        ),
       ),
+      actions: [
+        Obx(() {
+          if (!controller.userLevel.status.value.isVip) {
+            return const SizedBox.shrink();
+          }
+          return CcIconButton.bouncing(
+            onTap: () => controller.generateAiAdvice(context),
+            tooltip: el.tr(CcLocaleKeys.report_ai_advice_title),
+            icon: Icon(
+              Icons.auto_awesome,
+              color: context.ccColorScheme.onPrimary,
+              size: context.respIconSize(baseSize: 20),
+            ),
+          );
+        }),
+        const CcSpaceXS(),
+        Obx(
+          () => CcIconButton.bouncing(
+            onTap: controller.toggleEditMode,
+            tooltip: controller.isEditMode.value
+                ? el.tr(CcLocaleKeys.common_done)
+                : el.tr(CcLocaleKeys.common_edit),
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                controller.isEditMode.value
+                    ? Icons.check_circle_outline_rounded
+                    : Icons.edit_rounded,
+                key: ValueKey(controller.isEditMode.value),
+                color: context.ccColorScheme.onPrimary,
+                size: context.respIconSize(baseSize: 20),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -49,8 +88,8 @@ class _ReportDailyDetailView extends CcGetView<ReportController> {
           }
         },
         child: ListView(
-          padding: EdgeInsets.all(
-            context.respPadding(CcPaddingParams.SPACE_MD),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.respPadding(CcPaddingParams.PAGE_XS),
           ),
           children: [ReportDailyDetailSection(controller: controller)],
         ),
