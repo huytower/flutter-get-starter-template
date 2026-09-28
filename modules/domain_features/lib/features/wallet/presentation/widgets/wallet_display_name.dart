@@ -10,6 +10,9 @@ extension WalletDisplayName on WalletEntity {
     if (type == WalletType.cash) {
       return el.tr(CcLocaleKeys.wallet_cash);
     }
+    if (type == WalletType.bank) {
+      return el.tr(CcLocaleKeys.wallet_bank);
+    }
     return BudgetNameHelper.getDisplayName(
       name: name,
       categoryNameKey: categoryNameKey,
