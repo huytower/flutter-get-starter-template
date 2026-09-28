@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../get_x/investment_form_controller.dart';
+import '../helper/horizontal_row_reveal.dart';
 
 class InvestmentAssetSelector extends StatelessWidget {
   final InvestmentFormController controller;
@@ -68,6 +69,7 @@ class InvestmentAssetSelector extends StatelessWidget {
 
           return HorizontalFadeScrollView(
             height: context.respDim(100),
+            scrollController: controller.assetRowScrollController,
             builder: (scrollController) => ListView.separated(
               scrollDirection: Axis.horizontal,
               controller: scrollController,
@@ -144,7 +146,7 @@ class InvestmentAssetSelector extends StatelessWidget {
             ),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: context.respDim(68),
+            width: context.respDim(assetCardWidth),
             padding: EdgeInsets.all(context.respDim(10)),
             decoration: BoxDecoration(
               color: isSelected

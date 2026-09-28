@@ -1,13 +1,16 @@
-import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../transaction/presentation/get_x/quick_entry_mixin.dart';
 import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
+import '../../../transaction/presentation/helper/horizontal_row_reveal.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import 'liability_installment_draft.dart';
 
 enum LiabilityDirectionForm { increase, decrease }
+
+const String _debugTag = 'LiabilityAssetRow';
 
 abstract class LiabilityBaseFormController extends TransactionFormController
     with QuickEntryMixin {
@@ -27,6 +30,10 @@ abstract class LiabilityBaseFormController extends TransactionFormController
   Rx<LiabilityDirectionForm> get action;
   void setAction(LiabilityDirectionForm value);
 
+  /// Drives the asset row in the liability/lend asset selector so the selected
+  /// asset can be brought into view.
+  ScrollController get assetRowScrollController;
+
   void selectLiability(
     LiabilityBalanceEntity balance, {
     bool resetAmount = true,
@@ -39,6 +46,41 @@ abstract class LiabilityBaseFormController extends TransactionFormController
   void addInstallmentPeriod();
   void removeInstallmentPeriod(int index);
   void showKeypadForInstallment(BuildContext context, int index);
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Keep the selected asset card visible when the selection changes (tap,
+    // quick entry, direction switch).
+    ever(selectedLiabilityId, (_) => revealSelectedAsset());
+  }
+
+  /// Centers the selected asset card in the asset row.
+  void revealSelectedAsset() {
+    final id = selectedLiabilityId.value;
+    if (id == null || mergedItems.isEmpty) return;
+
+    final index = mergedItems.indexWhere((b) => b.liability.id == id);
+    if (index == -1) return;
+
+    'liabilityReveal | index=$index id=$id'.Log(_debugTag);
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => revealRowCard(
+        scrollController: assetRowScrollController,
+        index: index,
+        itemWidth: assetCardWidth,
+        itemGap: assetCardGap,
+        leadingPadding: CcPaddingParams.PAGE_XS,
+        tag: _debugTag,
+      ),
+    );
+  }
+
+  /// The asset row is empty until the user creates their first loan/record, so
+  /// there is nothing a parsed quick entry could be saved into.
+  @override
+  bool get quickEntryHasSelectableCategory => mergedItems.isNotEmpty;
 
   @override
   void applyQuickEntryCategory(String categoryId) {

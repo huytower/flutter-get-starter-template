@@ -15,9 +15,13 @@ import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/update_transaction_usecase.dart';
+import '../helper/horizontal_row_reveal.dart';
 import '../models/unified_category_item.dart';
+import '../widgets/base/category_selection_layout.dart';
 import 'quick_entry_mixin.dart';
 import 'transaction_form_controller.dart';
+
+const String _debugTag = 'IncomeCategoryScroll';
 
 @injectable
 class IncomeFormController extends TransactionFormController
@@ -228,20 +232,24 @@ class IncomeFormController extends TransactionFormController
     if (category == null) return;
 
     final index = unifiedItems.indexWhere(
-      (item) => !item.isBudget && item.categoryId == category.id,
+      (item) => item.categoryId == category.id,
     );
+    if (index == -1) return;
 
-    if (index != -1) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!categoryScrollController.hasClients) return;
-        Scrollable.ensureVisible(
-          getItemKey(index).currentContext!,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeOutCubic,
-          alignment: 0.5,
-        );
-      });
-    }
+    'scrollToSelected | index=$index item=${unifiedItems[index].id} '
+            'name=${unifiedItems[index].nameKey ?? unifiedItems[index].customName}'
+        .Log(_debugTag);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      revealRowCard(
+        scrollController: categoryScrollController,
+        index: index,
+        itemWidth: categoryItemWidth,
+        itemGap: categoryItemGap,
+        leadingPadding: CcPaddingParams.PAGE_SM,
+        tag: _debugTag,
+      );
+    });
   }
 
   Future<void> _loadCategories() async {

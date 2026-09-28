@@ -25,9 +25,13 @@ import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/update_transaction_usecase.dart';
+import '../helper/horizontal_row_reveal.dart';
 import '../models/unified_category_item.dart';
+import '../widgets/base/category_selection_layout.dart';
 import 'quick_entry_mixin.dart';
 import 'transaction_form_controller.dart';
+
+const String _debugTag = 'ExpenseFormCategoryScroll';
 
 @injectable
 class ExpenseFormController extends TransactionFormController
@@ -161,34 +165,52 @@ class ExpenseFormController extends TransactionFormController
     everAll([selectedCategory, selectedBudget], (_) => _scrollToSelected());
   }
 
-  void _scrollToSelected() {
-    if (unifiedItems.isEmpty) return;
-
+  /// Index of the card that represents the current selection, or -1.
+  ///
+  /// A category that owns a budget is represented in [unifiedItems] by its
+  /// budget card alone, so the lookup has to fall back to a category-id match
+  /// instead of requiring a non-budget item.
+  int _selectedItemIndex() {
     final budget = selectedBudget.value;
     final category = selectedCategory.value;
 
-    int index = -1;
     if (budget != null) {
-      index = unifiedItems.indexWhere(
+      final byBudget = unifiedItems.indexWhere(
         (item) => item.isBudget && item.budgetId == budget.id,
       );
-    } else if (category != null) {
-      index = unifiedItems.indexWhere(
-        (item) => !item.isBudget && item.categoryId == category.id,
-      );
+      if (byBudget != -1) return byBudget;
     }
+    if (category != null) {
+      return unifiedItems.indexWhere((item) => item.categoryId == category.id);
+    }
+    return -1;
+  }
 
-    if (index != -1) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!categoryScrollController.hasClients) return;
-        Scrollable.ensureVisible(
-          getItemKey(index).currentContext!,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeOutCubic,
-          alignment: 0.5,
-        );
-      });
-    }
+  void _scrollToSelected() {
+    if (unifiedItems.isEmpty) return;
+
+    final index = _selectedItemIndex();
+    if (index == -1) return;
+
+    'scrollToSelected | index=$index item=${unifiedItems[index].id} '
+            'name=${unifiedItems[index].nameKey ?? unifiedItems[index].customName}'
+        .Log(_debugTag);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => _revealItem(index));
+  }
+
+  /// Brings the selected card into view by animating the category row to that
+  /// card's offset.
+  void _revealItem(int index, [int attemptsLeft = 4]) {
+    revealRowCard(
+      scrollController: categoryScrollController,
+      index: index,
+      itemWidth: categoryItemWidth,
+      itemGap: categoryItemGap,
+      leadingPadding: CcPaddingParams.PAGE_SM,
+      tag: _debugTag,
+      attemptsLeft: attemptsLeft,
+    );
   }
 
   BudgetLimitEntity? _findBudgetById(String id) {

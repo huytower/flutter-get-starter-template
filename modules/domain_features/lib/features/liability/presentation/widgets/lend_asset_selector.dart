@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:get/get.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
+import '../../../transaction/presentation/helper/horizontal_row_reveal.dart';
 import '../get_x/lend_form_controller.dart';
 
 class LendAssetSelector extends StatelessWidget {
@@ -64,6 +65,7 @@ class LendAssetSelector extends StatelessWidget {
 
           return HorizontalFadeScrollView(
             height: context.respDim(100),
+            scrollController: controller.assetRowScrollController,
             builder: (scrollController) => ListView.separated(
               scrollDirection: Axis.horizontal,
               controller: scrollController,
@@ -131,7 +133,7 @@ class LendAssetSelector extends StatelessWidget {
             ),
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: context.respDim(68),
+            width: context.respDim(assetCardWidth),
             padding: EdgeInsets.all(context.respDim(10)),
             decoration: BoxDecoration(
               color: isSelected

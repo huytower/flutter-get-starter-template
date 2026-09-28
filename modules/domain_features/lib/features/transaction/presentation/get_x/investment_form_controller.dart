@@ -15,9 +15,12 @@ import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
+import '../helper/horizontal_row_reveal.dart';
 import 'quick_entry_mixin.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
+
+const String _debugTag = 'InvestmentAssetRow';
 
 @injectable
 class InvestmentFormController extends TransactionFormController
@@ -111,11 +114,20 @@ class InvestmentFormController extends TransactionFormController
   final RxList<dynamic> mergedItems = <dynamic>[].obs;
   final RxBool isLoadingMerged = true.obs;
 
+  /// Drives the asset row in `InvestmentAssetSelector` so the selected asset can
+  /// be brought into view.
+  final ScrollController assetRowScrollController = ScrollController();
+
   final Rx<String?> selectedInvestmentWalletId = Rx<String?>(null);
 
   final RxBool isAddingNewItem = false.obs;
   final TextEditingController newItemNameController = TextEditingController();
   final RxString newItemName = ''.obs;
+
+  /// The asset row is empty until the user creates their first investment
+  /// item, so there is nothing a parsed quick entry could be saved into.
+  @override
+  bool get quickEntryHasSelectableCategory => mergedItems.isNotEmpty;
 
   @override
   List<String> get quickEntryAvailableCategoryIds {
@@ -180,7 +192,48 @@ class InvestmentFormController extends TransactionFormController
       _loadCategories();
       _recomputeMergedItems();
     });
+
+    // Keep the selected asset card visible when the selection changes (tap,
+    // quick entry, direction switch).
+    everAll([selectedInvestmentWalletId, selectedCategory], (_) {
+      _revealSelectedAsset();
+    });
     initQuickEntry();
+  }
+
+  /// Centers the selected asset card in the asset row.
+  void _revealSelectedAsset() {
+    if (mergedItems.isEmpty) return;
+
+    final walletId = selectedInvestmentWalletId.value;
+    final categoryId = selectedCategory.value?.id;
+
+    int index = -1;
+    if (walletId != null) {
+      index = mergedItems.indexWhere(
+        (i) => i is WalletEntity && i.id == walletId,
+      );
+    }
+    if (index == -1 && categoryId != null) {
+      index = mergedItems.indexWhere(
+        (i) => i is CategoryEntity && i.id == categoryId,
+      );
+    }
+    if (index == -1) return;
+
+    'investmentReveal | index=$index walletId=$walletId categoryId=$categoryId'
+        .Log(_debugTag);
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => revealRowCard(
+        scrollController: assetRowScrollController,
+        index: index,
+        itemWidth: assetCardWidth,
+        itemGap: assetCardGap,
+        leadingPadding: CcPaddingParams.PAGE_XS,
+        tag: _debugTag,
+      ),
+    );
   }
 
   Future<void> _loadAll() async {
@@ -315,6 +368,7 @@ class InvestmentFormController extends TransactionFormController
   @override
   void onClose() {
     newItemNameController.dispose();
+    assetRowScrollController.dispose();
     disposeQuickEntry();
     super.onClose();
   }

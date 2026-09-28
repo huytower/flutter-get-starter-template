@@ -6,6 +6,14 @@ import '../../models/unified_category_item.dart';
 
 const String _debugTag = 'CategorySelection';
 
+/// Base width of a category card in the horizontal row, and the gap between
+/// two cards (the row separates items with [CcSpaceSM], also 8pt).
+///
+/// Shared with the form controllers so an off-screen card can be located by
+/// its estimated offset before the list has built it.
+const double categoryItemWidth = 85;
+const double categoryItemGap = 8;
+
 /// Shared layout for horizontal category lists on the Transaction page.
 class CategorySelectionLayout extends StatelessWidget {
   const CategorySelectionLayout({
@@ -125,7 +133,7 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
   Widget _buildItemContainer(BuildContext context, ColorScheme scheme) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      width: context.respDim(85),
+      width: context.respDim(categoryItemWidth),
       decoration: BoxDecoration(
         color: isSelected
             ? activeColor.withValues(alpha: 0.02)

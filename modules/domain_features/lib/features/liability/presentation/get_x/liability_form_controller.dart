@@ -54,6 +54,9 @@ class LiabilityFormController extends LiabilityBaseFormController {
   final RxBool isLoadingMerged = true.obs;
   final RxnString selectedLiabilityId = RxnString();
 
+  @override
+  final ScrollController assetRowScrollController = ScrollController();
+
   final RxnInt editingInstallmentIndex = RxnInt();
 
   int get principalAmount => int.tryParse(amountStr.value) ?? 0;
@@ -173,6 +176,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     for (final draft in installmentDrafts) {
       draft.dispose();
     }
+    assetRowScrollController.dispose();
     disposeQuickEntry();
     super.onClose();
   }

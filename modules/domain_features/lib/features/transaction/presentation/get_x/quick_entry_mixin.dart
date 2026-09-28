@@ -183,6 +183,16 @@ mixin QuickEntryMixin on TransactionFormController
         _cancelAutoSave();
         final suggestion = quickEntrySuggestion.value;
         if (suggestion != null) {
+          // Last-line guard: the asset row can be emptied (e.g. the record the
+          // entry targeted was deleted) while the countdown is running.
+          if (!quickEntryHasSelectableCategory) {
+            '[AI_PARSING] ⛔ Auto-save aborted at countdown end | '
+                    'no category/asset defined for this tab'
+                .Log('QuickEntryMixin');
+            quickEntryErrorKey.value =
+                CcLocaleKeys.quick_entry_no_category_defined;
+            return;
+          }
           applyQuickEntryParse(suggestion);
           submitForm(context);
         }
@@ -219,7 +229,9 @@ mixin QuickEntryMixin on TransactionFormController
         [];
     _quickEntryCategories = list;
 
-    'Categories: $quickEntryCategoryType (${list.length})'.Log('QuickEntryMixin');
+    'Categories: $quickEntryCategoryType (${list.length})'.Log(
+      'QuickEntryMixin',
+    );
   }
 
   CategoryEntity? _findQuickEntryCategory(String id) {
@@ -282,6 +294,43 @@ mixin QuickEntryMixin on TransactionFormController
   /// Used to determine if a parsed category is "Missing" (Case 2).
   List<String> get quickEntryAvailableCategoryIds =>
       _quickEntryCategories.map((category) => category.id).toList();
+
+  /// Whether this form currently has at least one row a parsed entry can be
+  /// recorded against.
+  ///
+  /// Category-backed forms (expense, income) always do. The asset-backed forms
+  /// (investment, borrow, lend) render an empty row until the user creates
+  /// their first asset, and their submit button stays disabled — so an entry
+  /// typed there has nowhere to go and must not be auto-saved.
+  bool get quickEntryHasSelectableCategory => true;
+
+  /// Cancels auto-save and surfaces why when this form has nothing to save
+  /// into. Returns true when auto-save was blocked.
+  ///
+  /// [showSnackBar] is off for the reactive typing path — it re-fires on every
+  /// pause while typing, so a snackbar there would spam. The inline status
+  /// ([quickEntryErrorKey]) is still set.
+  bool _blockAutoSaveWhenNoCategory(
+    BuildContext context,
+    String stage, {
+    bool showSnackBar = true,
+  }) {
+    if (quickEntryHasSelectableCategory) return false;
+
+    _cancelAutoSave();
+    '[AI_PARSING] ⛔ Auto-save blocked | stage=$stage | '
+            'no category/asset defined for this tab'
+        .Log('QuickEntryMixin');
+
+    quickEntryErrorKey.value = CcLocaleKeys.quick_entry_no_category_defined;
+    if (showSnackBar) {
+      CcSnackBarHelper.showErrorSnackBar(
+        context: context,
+        message: el.tr(CcLocaleKeys.quick_entry_no_category_defined),
+      );
+    }
+    return true;
+  }
 
   void _onQuickEntryTextChanged() {
     _cancelAutoSave();
@@ -413,6 +462,13 @@ mixin QuickEntryMixin on TransactionFormController
         local.categoryId != null;
 
     if (canAutoSave && Get.context != null) {
+      if (_blockAutoSaveWhenNoCategory(
+        Get.context!,
+        'reactive',
+        showSnackBar: false,
+      )) {
+        return;
+      }
       startAutoSaveTimer(Get.context!);
     }
   }
@@ -560,6 +616,7 @@ mixin QuickEntryMixin on TransactionFormController
       }
 
       quickEntrySuggestion.value = local;
+      if (_blockAutoSaveWhenNoCategory(context, 'local')) return;
       if (!isQuickEntryCategoryMissing) {
         startAutoSaveTimer(context);
       }
@@ -616,6 +673,7 @@ mixin QuickEntryMixin on TransactionFormController
     }
 
     quickEntrySuggestion.value = suggestion;
+    if (_blockAutoSaveWhenNoCategory(context, 'cloud')) return;
     if (!isQuickEntryCategoryMissing) {
       startAutoSaveTimer(context);
     }
@@ -741,6 +799,7 @@ mixin QuickEntryMixin on TransactionFormController
     }
 
     quickEntrySuggestion.value = suggestion;
+    if (_blockAutoSaveWhenNoCategory(context, 'image')) return;
     if (!isQuickEntryCategoryMissing) {
       startAutoSaveTimer(context);
     }

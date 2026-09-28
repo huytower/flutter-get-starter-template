@@ -334,6 +334,8 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_category_missing": "Category not found (need +): {label}",
       "quick_entry_could_not_parse":
           "Couldn't understand that — please fill in manually",
+      "quick_entry_no_category_defined":
+          "No category is set up in this tab yet — add one first, then record here",
       "quick_entry_daily_limit_reached":
           "Daily AI quick-entry limit reached — please fill in manually",
       "quick_entry_mic_permission_denied":
@@ -1097,6 +1099,8 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_category_missing": "Danh mục chưa có (hãy thêm +): {label}",
       "quick_entry_could_not_parse":
           "Không hiểu được nội dung này — vui lòng nhập thủ công",
+      "quick_entry_no_category_defined":
+          "Tab này chưa thiết lập danh mục nào — vui lòng tạo danh mục trước khi ghi giao dịch",
       "quick_entry_daily_limit_reached":
           "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
       "quick_entry_mic_permission_denied":
@@ -1777,6 +1781,8 @@ abstract class CcLocaleKeys {
       'transaction.quick_entry_category_missing';
   static const quick_entry_could_not_parse =
       'transaction.quick_entry_could_not_parse';
+  static const quick_entry_no_category_defined =
+      'transaction.quick_entry_no_category_defined';
   static const quick_entry_vip_required =
       'transaction.quick_entry_vip_required';
   static const quick_entry_daily_limit_reached =

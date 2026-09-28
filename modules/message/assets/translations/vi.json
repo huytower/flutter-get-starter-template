@@ -304,6 +304,7 @@
         "quick_entry_parsed_result": "Đã nhận diện: {label}",
         "quick_entry_category_missing": "Danh mục chưa có (hãy thêm +): {label}",
         "quick_entry_could_not_parse": "Không hiểu được nội dung này — vui lòng nhập thủ công",
+        "quick_entry_no_category_defined": "Tab này chưa thiết lập danh mục nào — vui lòng tạo danh mục trước khi ghi giao dịch",
         "quick_entry_daily_limit_reached": "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
         "quick_entry_mic_permission_denied": "Cần quyền truy cập micro để nhập bằng giọng nói",
         "quick_entry_photo_permission_denied": "Cần quyền truy cập máy ảnh/thư viện ảnh để quét hóa đơn",

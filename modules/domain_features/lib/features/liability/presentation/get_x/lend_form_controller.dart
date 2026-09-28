@@ -58,7 +58,15 @@ class LendFormController extends TransactionFormController
   final RxBool isLoadingMerged = true.obs;
   final RxnString selectedLiabilityId = RxnString();
 
+  @override
+  final ScrollController assetRowScrollController = ScrollController();
+
   final RxnInt editingInstallmentIndex = RxnInt();
+
+  /// The asset row is empty until the user creates their first loan/record, so
+  /// there is nothing a parsed quick entry could be saved into.
+  @override
+  bool get quickEntryHasSelectableCategory => mergedItems.isNotEmpty;
 
   int get principalAmount => int.tryParse(amountStr.value) ?? 0;
 
@@ -175,6 +183,7 @@ class LendFormController extends TransactionFormController
     for (final draft in installmentDrafts) {
       draft.dispose();
     }
+    assetRowScrollController.dispose();
     disposeQuickEntry();
     super.onClose();
   }
