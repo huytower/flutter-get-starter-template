@@ -236,10 +236,6 @@ class IncomeFormController extends TransactionFormController
     );
     if (index == -1) return;
 
-    'scrollToSelected | index=$index item=${unifiedItems[index].id} '
-            'name=${unifiedItems[index].nameKey ?? unifiedItems[index].customName}'
-        .Log(_debugTag);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       revealRowCard(
         scrollController: categoryScrollController,

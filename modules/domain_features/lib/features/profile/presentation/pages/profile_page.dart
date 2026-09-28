@@ -31,7 +31,6 @@ class ProfilePage extends CcGetView<ProfileController> {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final scheme = context.ccColorScheme;
-    '[THEME] Rendering ProfilePage | isDark=$isDark'.Log('ProfilePage');
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)

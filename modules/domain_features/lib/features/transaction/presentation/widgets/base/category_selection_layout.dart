@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../../models/unified_category_item.dart';
 
-const String _debugTag = 'CategorySelection';
-
 /// Base width of a category card in the horizontal row, and the gap between
 /// two cards (the row separates items with [CcSpaceSM], also 8pt).
 ///
@@ -98,13 +96,6 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-
-    'build | item=${item.id} isBudget=${item.isBudget} '
-            'categoryId=${item.categoryId} budgetId=${item.budgetId} '
-            'isSelected=$isSelected label=${item.customName ?? item.nameKey} '
-            'textColor=${isSelected ? activeColor : scheme.onSurfaceVariant} '
-            'bgColor=${isSelected ? activeColor.withValues(alpha: 0.02) : scheme.onSurface.withValues(alpha: 0.02)}'
-        .Log(_debugTag);
 
     return CcInteractBtnWrapper(
       onTap: onTap,

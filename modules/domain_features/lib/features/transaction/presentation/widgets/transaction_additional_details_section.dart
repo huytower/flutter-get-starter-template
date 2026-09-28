@@ -41,27 +41,26 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
 
   Widget _buildMoreDetailsToggle(BuildContext context) {
     if (onToggle == null) return const SizedBox.shrink();
-    return SizedBox(
-      width: context.respDim(120),
-      child: CcBouncing(
-        onTap: onToggle,
-        child: Row(
-          children: [
-            Icon(
-              isExpanded ? Icons.expand_less : Icons.expand_more,
-              color: context.ccColorScheme.onSurfaceVariant,
-              size: context.respDim(24),
-            ),
-            const CcSpaceSM(),
-            CcText(
-              el.tr(CcLocaleKeys.transaction_more_details),
-              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                color: context.ccColorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Icon(
+          isExpanded ? Icons.expand_less : Icons.expand_more,
+          color: context.ccColorScheme.onSurfaceVariant,
+          size: context.respDim(24),
         ),
-      ),
+        const CcSpaceXS(),
+        CcBouncing(
+          onTap: onToggle,
+          child: CcText(
+            el.tr(CcLocaleKeys.transaction_more_details),
+            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+              color: context.ccColorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -69,14 +68,13 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
     return Column(
       children: [
         if (!hideDate) ...[
-          const CcSpaceMD(),
           QuickDateRow(
             selectedDate: selectedDate,
             onDateSelected: onDateSelected,
             onCalendarTap: onCalendarTap,
             activeColor: activeColor,
           ),
-          const CcSpaceXS(),
+          const CcSpaceSM(),
         ],
         _buildNoteField(context),
       ],
@@ -86,25 +84,15 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
   Widget _buildNoteField(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcFormLabel(
-          text: el.tr(CcLocaleKeys.transaction_note),
-          color: scheme.onSurfaceVariant.withAlpha(70),
-        ),
-        const CcSpaceXS(),
-        CcNoteInputField(
-          controller: noteController,
-          hintText: el.tr(CcLocaleKeys.transaction_note_hint),
-          maxLines: 3,
-          onTap: onNoteTap,
-          color: scheme.surfaceVariant.withAlpha(80),
-          borderColor: scheme.outlineVariant.withAlpha(10),
-          height: context.respDim(45),
-          margin: EdgeInsets.zero,
-        ),
-      ],
+    return CcNoteInputField(
+      controller: noteController,
+      hintText: el.tr(CcLocaleKeys.transaction_note_hint),
+      maxLines: 3,
+      onTap: onNoteTap,
+      color: scheme.surfaceVariant.withAlpha(80),
+      borderColor: scheme.outlineVariant.withAlpha(10),
+      height: context.respDim(45),
+      margin: EdgeInsets.zero,
     );
   }
 }
