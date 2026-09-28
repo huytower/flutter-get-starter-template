@@ -28,7 +28,18 @@ class _ReportDailyDetailView extends CcGetView<ReportController> {
   PreferredSizeWidget buildAppBar(BuildContext context) {
     return buildDomainGradientAppBar(
       context,
-      leading: CcBackBtn(onTap: () => controller.onBack(context)),
+      leading: Obx(
+        () => CcIconButton.bouncing(
+          icon: Icon(
+            controller.isEditMode.value
+                ? Icons.close_rounded
+                : Icons.arrow_back_ios_new_rounded,
+            color: context.ccColorScheme.onPrimary,
+            size: context.respIconSize(baseSize: 24),
+          ),
+          onTap: () => controller.onBack(context),
+        ),
+      ),
       title: Center(
         child: CcText(
           el.tr(CcLocaleKeys.report_daily_detail),

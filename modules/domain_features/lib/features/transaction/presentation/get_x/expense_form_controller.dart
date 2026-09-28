@@ -422,6 +422,20 @@ class ExpenseFormController extends TransactionFormController
 
     unifiedItems.assignAll(items);
 
+    // A rebuild can drop the resolved budget (e.g. the shared
+    // BudgetLimitController had not loaded its list yet) while keeping the
+    // selected category. Since the unified list represents a category that has
+    // a budget with the budget item only, losing the budget leaves the selected
+    // category with no visible card. Re-resolve it from the freshly built list.
+    final currentCategory = selectedCategory.value;
+    if (currentCategory != null && selectedBudget.value == null) {
+      final budgetMatch = items.firstWhereOrNull(
+        (i) => i.isBudget && i.categoryId == currentCategory.id,
+      );
+      if (budgetMatch != null) {
+        selectedBudget.value = _findBudgetById(budgetMatch.budgetId!);
+      }
+    }
     // Scroll to selected item after rebuild if it still exists
     final selectedStillExists =
         selectedBudgetStillExists || selectedCategoryStillExists;

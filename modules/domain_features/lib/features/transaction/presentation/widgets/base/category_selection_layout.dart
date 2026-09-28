@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../../models/unified_category_item.dart';
 
+const String _debugTag = 'CategorySelection';
+
 /// Shared layout for horizontal category lists on the Transaction page.
 class CategorySelectionLayout extends StatelessWidget {
   const CategorySelectionLayout({
@@ -89,6 +91,13 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
+    'build | item=${item.id} isBudget=${item.isBudget} '
+            'categoryId=${item.categoryId} budgetId=${item.budgetId} '
+            'isSelected=$isSelected label=${item.customName ?? item.nameKey} '
+            'textColor=${isSelected ? activeColor : scheme.onSurfaceVariant} '
+            'bgColor=${isSelected ? activeColor.withValues(alpha: 0.02) : scheme.onSurface.withValues(alpha: 0.02)}'
+        .Log(_debugTag);
+
     return CcInteractBtnWrapper(
       onTap: onTap,
       isBouncing: true,
@@ -107,8 +116,8 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
   Widget _buildActiveBackground(BuildContext context) {
     return Positioned.fill(
       child: CcGlassyGradientBackground(
-        centerColor: activeColor.withValues(alpha: 0.12),
-        endColor: activeColor.withValues(alpha: 0.25),
+        centerColor: activeColor.withValues(alpha: 0.04),
+        endColor: activeColor.withValues(alpha: 0.08),
       ),
     );
   }
@@ -119,14 +128,14 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
       width: context.respDim(85),
       decoration: BoxDecoration(
         color: isSelected
-            ? activeColor.withValues(alpha: 0.12)
+            ? activeColor.withValues(alpha: 0.02)
             : scheme.onSurface.withValues(alpha: 0.02),
         borderRadius: context.brLg,
         border: Border.all(
           color: isSelected
-              ? activeColor.withValues(alpha: 0.35)
+              ? activeColor.withValues(alpha: 0.04)
               : scheme.onSurface.withValues(alpha: 0.02),
-          width: context.respDim(isSelected ? 1.5 : 1),
+          width: context.respDim(1),
         ),
       ),
       child: CcPadding(
@@ -182,7 +191,7 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
       height: context.respDim(35),
       decoration: BoxDecoration(
         color: isSelected
-            ? activeColor.withValues(alpha: 0.15)
+            ? activeColor.withValues(alpha: 0.04)
             : scheme.onSurface.withValues(alpha: 0.02),
         borderRadius: context.brMd,
       ),
@@ -192,8 +201,8 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
           if (isSelected)
             Positioned.fill(
               child: CcGlassyGradientIcon(
-                centerColor: activeColor.withValues(alpha: 0.20),
-                endColor: activeColor.withValues(alpha: 0.40),
+                centerColor: activeColor.withValues(alpha: 0.08),
+                endColor: activeColor.withValues(alpha: 0.16),
               ),
             ),
           CcIcon(
