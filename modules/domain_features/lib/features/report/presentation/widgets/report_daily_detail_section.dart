@@ -1,4 +1,3 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,7 +18,6 @@ class ReportDailyDetailSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const CcSpaceSM(),
         Obx(
           () => ReportDailyList(
             transactions: controller.dailyListTransactions,
@@ -29,7 +27,6 @@ class ReportDailyDetailSection extends StatelessWidget {
             isEditMode: controller.isEditMode.value,
           ),
         ),
-        const CcSpaceSM(),
         AiAdviceSection(controller: controller),
       ],
     );

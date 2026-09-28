@@ -176,16 +176,8 @@ class _ReportView extends CcGetView<ReportController> {
                       padding,
                       0,
                       padding,
-                      headerHeight,
+                      tabBarHeight,
                     ),
-                    // The report body is a bounded, finite set of sections
-                    // (not an infinite feed) — a generous cacheExtent forces
-                    // every section to mount eagerly instead of staying
-                    // lazily unbuilt while off-screen, which is required for
-                    // ReportController's scroll-to-daily-detail (a GlobalKey
-                    // has no BuildContext to scroll to until its widget has
-                    // actually been mounted at least once).
-                    cacheExtent: 3000,
                     children: [
                       _buildTrendCards(context, data),
                       _buildInvestmentSection(context),

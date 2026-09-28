@@ -338,10 +338,20 @@ class QuickEntryAliasDataset {
     'vay ban': 'd1',
     'muon ban': 'd1',
     'muon tien': 'd1',
+    // Named lender, e.g. "tra no vay ca nhan 100tr" or "vay ca nhan An".
+    // The existing d1 keys all need a lender name ("vay ban be"), so an
+    // unnamed personal loan fell through to "tra no" (d9), which names the
+    // action rather than the loan. Longest key wins, so this outranks it.
+    'vay ca nhan': 'd1',
     'vay ngan hang': 'd2',
     'vay tin chap': 'd2',
     'vay the chap': 'd3',
     'vay mua nha': 'd3',
+    // Bare "the chap" without the "vay" prefix, e.g. "tra no the chap 10tr".
+    // Needed because the alternative matches in that sentence — "no the" (d4,
+    // credit card) and "tra no" (d9) — both describe the *action*, not the loan
+    // being paid, and were winning on length. Longer keys are matched first.
+    'the chap': 'd3',
     'no the': 'd4',
     'the tin dung': 'd4',
     'quet the': 'd4',

@@ -15,6 +15,8 @@ class TransactionAutoSaveMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
       key: const ValueKey('auto_save_message'),
       children: [
         Icon(
@@ -23,20 +25,19 @@ class TransactionAutoSaveMessage extends StatelessWidget {
           color: context.ccColorScheme.primary,
         ),
         const CcSpaceXS(),
-        Expanded(
-          child: CcText(
-            el.tr(
-              CcLocaleKeys.transaction_auto_save_countdown,
-              namedArgs: {'countdown': countdown.toString()},
-            ),
-            textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.primary,
-              fontWeight: FontWeight.bold,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+        CcText(
+          el.tr(
+            CcLocaleKeys.transaction_auto_save_countdown,
+            namedArgs: {'countdown': countdown.toString()},
           ),
+          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+            color: context.ccColorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
+        const CcSpaceXS(),
         CcIconButton.bouncing(
           icon: Icon(
             Icons.close_rounded,
