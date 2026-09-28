@@ -68,6 +68,15 @@ class LendFormController extends TransactionFormController
   @override
   bool get quickEntryHasSelectableCategory => mergedItems.isNotEmpty;
 
+  /// Only categories carried by an existing lend record are selectable — the
+  /// seeded category list would otherwise make any known category look valid.
+  @override
+  List<String> get quickEntryAvailableCategoryIds => mergedItems
+      .map((b) => b.liability.categoryId)
+      .whereType<String>()
+      .toSet()
+      .toList();
+
   int get principalAmount => int.tryParse(amountStr.value) ?? 0;
 
   int get installmentsTotal =>

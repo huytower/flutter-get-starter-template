@@ -189,8 +189,6 @@ mixin QuickEntryMixin on TransactionFormController
             '[AI_PARSING] ⛔ Auto-save aborted at countdown end | '
                     'no category/asset defined for this tab'
                 .Log('QuickEntryMixin');
-            quickEntryErrorKey.value =
-                CcLocaleKeys.quick_entry_no_category_defined;
             return;
           }
           applyQuickEntryParse(suggestion);
@@ -266,17 +264,29 @@ mixin QuickEntryMixin on TransactionFormController
   }
 
   /// Reports whether the current suggestion's category is considered
-  /// "missing" (was either never resolved, or resolved to an ID that
-  /// doesn't exist in the current form's enabled categories).
+  /// "missing" (was either never resolved, or resolved to an ID this form can't
+  /// record against).
   bool get isQuickEntryCategoryMissing {
     final suggestion = quickEntrySuggestion.value;
     if (suggestion == null) return false;
-    final id = suggestion.categoryId;
+    return isCategoryMissingFor(suggestion);
+  }
+
+  /// Whether [result]'s category is unusable in this form — either never
+  /// resolved, or resolved to an ID this form can't actually record against.
+  ///
+  /// Prefer this over the [isQuickEntryCategoryMissing] getter when validating a
+  /// parse that hasn't been published to [quickEntrySuggestion] yet: the getter
+  /// reads that Rx and would score the *previous* keystroke's result.
+  bool isCategoryMissingFor(QuickEntryParseResult result) {
+    // Nothing to record against at all, whatever the parse resolved.
+    if (!quickEntryHasSelectableCategory) return true;
+
+    final id = result.categoryId;
 
     // If we have no category ID at all, it's definitely missing (Case 2).
     if (id == null) return true;
 
-    // Check if the category exists in the form's allowed list
     final availableIds = quickEntryAvailableCategoryIds;
     final isAvailable = availableIds.contains(id);
 
@@ -304,31 +314,20 @@ mixin QuickEntryMixin on TransactionFormController
   /// typed there has nowhere to go and must not be auto-saved.
   bool get quickEntryHasSelectableCategory => true;
 
-  /// Cancels auto-save and surfaces why when this form has nothing to save
+  /// Cancels auto-save and reports why when this form has nothing to save
   /// into. Returns true when auto-save was blocked.
   ///
-  /// [showSnackBar] is off for the reactive typing path — it re-fires on every
-  /// pause while typing, so a snackbar there would spam. The inline status
-  /// ([quickEntryErrorKey]) is still set.
-  bool _blockAutoSaveWhenNoCategory(
-    BuildContext context,
-    String stage, {
-    bool showSnackBar = true,
-  }) {
+  /// No snackbar, no error key: the published suggestion chip already renders
+  /// [CcLocaleKeys.quick_entry_category_missing] once this form reports
+  /// [isQuickEntryCategoryInvalid], so the user still gets the message — a
+  /// second copy on top of it would just be noise.
+  bool _blockAutoSaveWhenNoCategory(String stage) {
     if (quickEntryHasSelectableCategory) return false;
 
     _cancelAutoSave();
     '[AI_PARSING] ⛔ Auto-save blocked | stage=$stage | '
             'no category/asset defined for this tab'
         .Log('QuickEntryMixin');
-
-    quickEntryErrorKey.value = CcLocaleKeys.quick_entry_no_category_defined;
-    if (showSnackBar) {
-      CcSnackBarHelper.showErrorSnackBar(
-        context: context,
-        message: el.tr(CcLocaleKeys.quick_entry_no_category_defined),
-      );
-    }
     return true;
   }
 
@@ -434,10 +433,19 @@ mixin QuickEntryMixin on TransactionFormController
       await refreshQuickEntryCategories();
     }
 
-    final isComplete = local.isComplete && !isQuickEntryCategoryMissing;
-    quickEntrySuggestion.value = isComplete ? local : null;
+    // Score the fresh parse, not [isQuickEntryCategoryMissing] — the Rx still
+    // holds the previous keystroke's result at this point.
+    final hasAmount = local.amount != null && local.amount! > 0;
+    final categoryMissing = isCategoryMissingFor(local);
+    final isComplete = local.isComplete && !categoryMissing;
 
-    '[AI_PARSING] [LOCAL] ✅ Local parse completed | isComplete=$isComplete | categoryMissing=$isQuickEntryCategoryMissing | categoryId=${local.categoryId} | amount=${local.amount}'
+    // Publish the suggestion whenever an amount resolved, even if the category
+    // didn't: the chip renders the "category missing (need +)" wording from
+    // [isQuickEntryCategoryInvalid] instead of the success wording. Nulling it
+    // here would leave the user with no feedback at all.
+    quickEntrySuggestion.value = hasAmount ? local : null;
+
+    '[AI_PARSING] [LOCAL] ✅ Local parse completed | isComplete=$isComplete | categoryMissing=$categoryMissing | categoryId=${local.categoryId} | amount=${local.amount}'
         .Log('QuickEntryMixin');
 
     // Proactive Prefill: Update form fields (amount and category) immediately
@@ -445,30 +453,21 @@ mixin QuickEntryMixin on TransactionFormController
     if (local.amount != null) {
       amountStr.value = local.amount!.toString();
     }
-    if (local.categoryId != null) {
+    if (local.categoryId != null && !categoryMissing) {
       applyQuickEntryCategory(local.categoryId!);
     } else if (text.isNotEmpty) {
-      // If we are actively parsing text but no category was identified,
-      // clear any previous selection. This ensures the "Record" button
-      // stays disabled until a valid category is found or manually picked.
+      // No usable category (never resolved, or no record in this tab carries
+      // it). Clear any previous selection so the submit button stays disabled
+      // until a valid category is found or picked by hand.
       clearCategorySelection();
     }
 
-    // Auto-save should only trigger if we have BOTH a valid category and a non-zero amount.
+    // Auto-save should only trigger if we have BOTH a valid category and a
+    // non-zero amount.
     final bool canAutoSave =
-        isComplete &&
-        local.amount != null &&
-        local.amount! > 0 &&
-        local.categoryId != null;
+        isComplete && hasAmount && local.categoryId != null;
 
     if (canAutoSave && Get.context != null) {
-      if (_blockAutoSaveWhenNoCategory(
-        Get.context!,
-        'reactive',
-        showSnackBar: false,
-      )) {
-        return;
-      }
       startAutoSaveTimer(Get.context!);
     }
   }
@@ -611,12 +610,14 @@ mixin QuickEntryMixin on TransactionFormController
 
       // Proactively prefill form fields so the UI highlights the match immediately
       amountStr.value = local.amount!.toString();
-      if (local.categoryId != null) {
+      if (local.categoryId != null && !isCategoryMissingFor(local)) {
         applyQuickEntryCategory(local.categoryId!);
       }
 
+      // Published before the guard so the chip can render the missing-category
+      // wording even when auto-save is blocked.
       quickEntrySuggestion.value = local;
-      if (_blockAutoSaveWhenNoCategory(context, 'local')) return;
+      if (_blockAutoSaveWhenNoCategory('local')) return;
       if (!isQuickEntryCategoryMissing) {
         startAutoSaveTimer(context);
       }
@@ -668,12 +669,14 @@ mixin QuickEntryMixin on TransactionFormController
     if (suggestion.amount != null) {
       amountStr.value = suggestion.amount!.toString();
     }
-    if (suggestion.categoryId != null) {
+    if (suggestion.categoryId != null && !isCategoryMissingFor(suggestion)) {
       applyQuickEntryCategory(suggestion.categoryId!);
     }
 
+    // Published before the guard so the chip can render the missing-category
+    // wording even when auto-save is blocked.
     quickEntrySuggestion.value = suggestion;
-    if (_blockAutoSaveWhenNoCategory(context, 'cloud')) return;
+    if (_blockAutoSaveWhenNoCategory('cloud')) return;
     if (!isQuickEntryCategoryMissing) {
       startAutoSaveTimer(context);
     }
@@ -799,7 +802,7 @@ mixin QuickEntryMixin on TransactionFormController
     }
 
     quickEntrySuggestion.value = suggestion;
-    if (_blockAutoSaveWhenNoCategory(context, 'image')) return;
+    if (_blockAutoSaveWhenNoCategory('image')) return;
     if (!isQuickEntryCategoryMissing) {
       startAutoSaveTimer(context);
     }

@@ -82,6 +82,17 @@ abstract class LiabilityBaseFormController extends TransactionFormController
   @override
   bool get quickEntryHasSelectableCategory => mergedItems.isNotEmpty;
 
+  /// A parsed category is only usable if the user already has a record in this
+  /// tab carrying it. Validating against the seeded category list instead would
+  /// accept any known category and report success even when the asset row can't
+  /// hold the entry.
+  @override
+  List<String> get quickEntryAvailableCategoryIds => mergedItems
+      .map((b) => b.liability.categoryId)
+      .whereType<String>()
+      .toSet()
+      .toList();
+
   @override
   void applyQuickEntryCategory(String categoryId) {
     // 0. Save current parsed amount before selection resets it

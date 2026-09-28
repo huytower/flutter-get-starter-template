@@ -287,7 +287,6 @@ abstract class  LocaleKeys {
   static const transaction_quick_entry_parsed_result = 'transaction.quick_entry_parsed_result';
   static const transaction_quick_entry_category_missing = 'transaction.quick_entry_category_missing';
   static const transaction_quick_entry_could_not_parse = 'transaction.quick_entry_could_not_parse';
-  static const transaction_quick_entry_no_category_defined = 'transaction.quick_entry_no_category_defined';
   static const transaction_quick_entry_daily_limit_reached = 'transaction.quick_entry_daily_limit_reached';
   static const transaction_quick_entry_mic_permission_denied = 'transaction.quick_entry_mic_permission_denied';
   static const transaction_quick_entry_photo_permission_denied = 'transaction.quick_entry_photo_permission_denied';

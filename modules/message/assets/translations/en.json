@@ -301,7 +301,6 @@
         "quick_entry_parsed_result": "Got it: {label}",
         "quick_entry_category_missing": "Category not found (need +): {label}",
         "quick_entry_could_not_parse": "Couldn't understand that — please fill in manually",
-        "quick_entry_no_category_defined": "No category is set up in this tab yet — add one first, then record here",
         "quick_entry_daily_limit_reached": "Daily AI quick-entry limit reached — please fill in manually",
         "quick_entry_mic_permission_denied": "Microphone access is needed for voice entry",
         "quick_entry_photo_permission_denied": "Camera/photo access is needed to scan a receipt",
