@@ -206,8 +206,7 @@ class _ReportView extends CcGetView<ReportController> {
                         isEditMode: controller.isEditMode.value,
                       ),
                       const CcSpaceSM(),
-                      // TODO(huy): TEMPORARY DISABLE, ENABLE IT LATER
-                      // AiAdviceSection(controller: controller),
+                      AiAdviceSection(controller: controller),
                     ],
                   ),
                 ),
