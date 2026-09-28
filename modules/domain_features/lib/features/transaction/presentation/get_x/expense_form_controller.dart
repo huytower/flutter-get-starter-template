@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:cc_sdk_data/data/models/pagination_request.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt, el;
 import 'package:domain_features/features/budget_limit/export_budget_limit.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart';
@@ -120,19 +120,26 @@ class ExpenseFormController extends TransactionFormController
     noteController.addListener(_onNoteChanged);
     initQuickEntry();
 
-    // Handle AI category suggestions by resolving to a budget if possible
+    // Handle AI category suggestions by resolving to a budget or category
     ever(pendingPrefillCategoryId, (String? categoryId) {
-      if (categoryId != null) {
-        // Try to find a budget for this category first (highest priority)
+      if (categoryId != null && categoryId.isNotEmpty) {
+        // 1. Try to find a budget for this category first (highest priority)
         final budgetMatch = unifiedItems.firstWhereOrNull(
           (item) => item.isBudget && item.categoryId == categoryId,
         );
         if (budgetMatch != null) {
           final budget = _findBudgetById(budgetMatch.budgetId!);
           if (budget != null) {
-            selectedBudget.value = budget;
+            setBudget(budget);
             return;
           }
+        }
+
+        // 2. Fallback: Select the base category if no budget exists
+        final cat = getCachedCategoryById(categoryId);
+        if (cat != null) {
+          setCategory(cat);
+          return;
         }
       }
     });

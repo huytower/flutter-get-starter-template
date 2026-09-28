@@ -6,9 +6,9 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/navigation/domain_router.gr.dart';
 import '../../domain/entities/trend_data_entity.dart';
 import '../get_x/report_controller.dart';
-import '../widgets/report_daily_list.dart';
 import '../widgets/report_page_header.dart';
 import '../widgets/report_tab_bar.dart';
 import '../widgets/trend_card.dart';
@@ -187,26 +187,10 @@ class _ReportView extends CcGetView<ReportController> {
                     // actually been mounted at least once).
                     cacheExtent: 3000,
                     children: [
-                      const CcSpaceSM(),
                       _buildTrendCards(context, data),
                       _buildInvestmentSection(context),
                       _buildLiabilitySection(context),
-                      const CcSpaceSM(),
-                      _buildDailyDetailHeader(context),
-                      const CcSpaceSM(),
-                      ReportDailyList(
-                        transactions: controller.dailyListTransactions,
-                        includeInvestmentAndLiability:
-                            controller
-                                .userLevel
-                                .status
-                                .value
-                                .canUseInvestment ||
-                            controller.userLevel.status.value.canUseLiability,
-                        isEditMode: controller.isEditMode.value,
-                      ),
-                      const CcSpaceSM(),
-                      AiAdviceSection(controller: controller),
+                      _buildDailyDetailEntry(context),
                     ],
                   ),
                 ),
@@ -220,6 +204,30 @@ class _ReportView extends CcGetView<ReportController> {
 
   Widget _buildLoading() {
     return const CcProgressIndicator(paddingTop: 0);
+  }
+
+  Widget _buildDailyDetailEntry(BuildContext context) {
+    return CcBouncing(
+      onTap: () => context.router.push(const ReportDailyDetailRoute()),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CcText(
+            el.tr(CcLocaleKeys.report_daily_detail),
+            textStyle: context.ccTextTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const CcSpaceXS(),
+          Icon(
+            Icons.chevron_right_rounded,
+            size: context.respIconSize(baseSize: 20),
+            color: context.ccColorScheme.primary,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildTrendCards(BuildContext context, TrendDataEntity data) {
@@ -370,42 +378,8 @@ class _ReportView extends CcGetView<ReportController> {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [const CcSpaceLG(), ...children, const CcSpaceXL()],
+      children: [const CcSpaceLG(), ...children, const CcSpaceSM()],
     );
-  }
-
-  Widget _buildDailyDetailHeader(BuildContext context) {
-    return Obx(() {
-      final hasData = controller.dailyListTransactions.isNotEmpty;
-      return Row(
-        children: [
-          KeyedSubtree(
-            key: controller.dailyDetailKey,
-            child: CcText(
-              el.tr(CcLocaleKeys.report_daily_detail),
-              textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const Spacer(),
-          if (hasData)
-            CcIconButton.bouncing(
-              icon: Icon(
-                controller.isEditMode.value
-                    ? Icons.close_rounded
-                    : Icons.edit_rounded,
-                size: context.respIconSize(baseSize: 20),
-                color: context.ccColorScheme.primary,
-              ),
-              tooltip: controller.isEditMode.value
-                  ? el.tr(CcLocaleKeys.common_done)
-                  : el.tr(CcLocaleKeys.common_edit),
-              onTap: controller.toggleEditMode,
-            ),
-        ],
-      );
-    });
   }
 
   @override

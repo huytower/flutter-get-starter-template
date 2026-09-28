@@ -22,7 +22,9 @@ class CategorySelectionLayout extends StatelessWidget {
   Key get _contentKey {
     if (items.isEmpty) return const ValueKey('empty');
     // Use item count combined with first and last item IDs for content tracking
-    return ValueKey('category_layout_${items.length}_${items.first.id}_${items.last.id}');
+    return ValueKey(
+      'category_layout_${items.length}_${items.first.id}_${items.last.id}',
+    );
   }
 
   @override
@@ -105,8 +107,8 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
   Widget _buildActiveBackground(BuildContext context) {
     return Positioned.fill(
       child: CcGlassyGradientBackground(
-        centerColor: activeColor.withValues(alpha: 0.04),
-        endColor: activeColor.withValues(alpha: 0.08),
+        centerColor: activeColor.withValues(alpha: 0.12),
+        endColor: activeColor.withValues(alpha: 0.25),
       ),
     );
   }
@@ -117,14 +119,14 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
       width: context.respDim(85),
       decoration: BoxDecoration(
         color: isSelected
-            ? activeColor.withValues(alpha: 0.02)
+            ? activeColor.withValues(alpha: 0.12)
             : scheme.onSurface.withValues(alpha: 0.02),
         borderRadius: context.brLg,
         border: Border.all(
           color: isSelected
-              ? activeColor.withValues(alpha: 0.04)
+              ? activeColor.withValues(alpha: 0.35)
               : scheme.onSurface.withValues(alpha: 0.02),
-          width: context.respDim(1),
+          width: context.respDim(isSelected ? 1.5 : 1),
         ),
       ),
       child: CcPadding(
@@ -180,7 +182,7 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
       height: context.respDim(35),
       decoration: BoxDecoration(
         color: isSelected
-            ? activeColor.withValues(alpha: 0.04)
+            ? activeColor.withValues(alpha: 0.15)
             : scheme.onSurface.withValues(alpha: 0.02),
         borderRadius: context.brMd,
       ),
@@ -190,8 +192,8 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
           if (isSelected)
             Positioned.fill(
               child: CcGlassyGradientIcon(
-                centerColor: activeColor.withValues(alpha: 0.08),
-                endColor: activeColor.withValues(alpha: 0.16),
+                centerColor: activeColor.withValues(alpha: 0.20),
+                endColor: activeColor.withValues(alpha: 0.40),
               ),
             ),
           CcIcon(

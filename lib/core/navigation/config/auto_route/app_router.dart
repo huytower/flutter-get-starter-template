@@ -43,6 +43,10 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: LiabilityListRoute.page, path: AppRoute.liabilityList.path),
     AutoRoute(page: ReportRoute.page, path: AppRoute.report.path),
     AutoRoute(
+      page: ReportDailyDetailRoute.page,
+      path: AppRoute.reportDailyDetail.path,
+    ),
+    AutoRoute(
       page: TermsOfServiceRoute.page,
       path: AppRoute.termsOfService.path,
     ),

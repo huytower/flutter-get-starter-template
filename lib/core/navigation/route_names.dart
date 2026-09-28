@@ -29,6 +29,7 @@ enum AppRoute {
   reconcile,
   liabilityList,
   report,
+  reportDailyDetail,
   termsOfService,
   investmentList,
 }
