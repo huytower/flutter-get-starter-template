@@ -85,11 +85,25 @@ class FinancialDataSyncService {
   /// .init()`); safe to call more than once.
   void startWatching() {
     _connectivitySubscription ??= _connection.onStatusChange.listen((status) {
-      isOnline.value = status == InternetStatus.connected;
+      final online = status == InternetStatus.connected;
+      isOnline.value = online;
+      if (online && pendingCount.value > 0) {
+        '[LOGOUT_DEBUG] Connectivity restored — auto-triggering syncAll() for ${pendingCount.value} pending records'
+            .Log('FinancialDataSyncService');
+        unawaited(syncAll());
+      }
     });
     _sessionSubscription ??= _session.userStream.listen(_handleSessionChange);
     pendingCount.value = _countPending();
-    unawaited(_probeOnline());
+    unawaited(
+      _probeOnline().then((online) {
+        if (online && pendingCount.value > 0) {
+          '[LOGOUT_DEBUG] Initial online probe succeeded — auto-triggering syncAll() for ${pendingCount.value} pending records'
+              .Log('FinancialDataSyncService');
+          unawaited(syncAll());
+        }
+      }),
+    );
     SyncTrace.log(
       'WATCH  startWatching() online=${isOnline.value} '
       'pendingCount=${pendingCount.value} authed=${_isAuthenticated}',
@@ -103,10 +117,13 @@ class FinancialDataSyncService {
     try {
       final online = await _connection.hasInternetAccess;
       isOnline.value = online;
+      '[LOGOUT_DEBUG] _probeOnline result=$online'.Log(
+        'FinancialDataSyncService',
+      );
       return online;
     } catch (e) {
       isOnline.value = false;
-      'Connectivity probe failed, treating as offline: $e'.Log(
+      '[LOGOUT_DEBUG] Connectivity probe failed, treating as offline: $e'.Log(
         'FinancialDataSyncService',
       );
       return false;
@@ -228,7 +245,13 @@ class FinancialDataSyncService {
   }
 
   /// Whether the user is currently allowed to sign out.
-  bool canLogout() => logoutBlock == null;
+  bool canLogout() {
+    final block = logoutBlock;
+    final allowed = block == null;
+    '[LOGOUT_DEBUG] canLogout() called -> allowed=$allowed (block=$block) | isOnline=${isOnline.value} | pendingCount=${pendingCount.value}'
+        .Log('FinancialDataSyncService');
+    return allowed;
+  }
 
   /// Null when sign-out is allowed, otherwise the reason it is blocked.
   /// Surfaced verbatim to the user by the Profile screen.
@@ -237,9 +260,19 @@ class FinancialDataSyncService {
   /// rebuilds when either connectivity or the unsynced count changes. The
   /// authoritative check happens in [logoutSafely], which re-counts.
   LogoutBlock? get logoutBlock {
-    if (!isOnline.value) return LogoutBlock.offline;
-    if (pendingCount.value > 0) return LogoutBlock.pendingSync;
-    return null;
+    final online = isOnline.value;
+    final pending = pendingCount.value;
+    LogoutBlock? block;
+    if (!online) {
+      block = LogoutBlock.offline;
+    } else if (pending > 0) {
+      block = LogoutBlock.pendingSync;
+    } else {
+      block = null;
+    }
+    '[LOGOUT_DEBUG] logoutBlock getter evaluated -> block=$block | isOnline=$online | pendingCount=$pending'
+        .Log('FinancialDataSyncService');
+    return block;
   }
 
   /// Runs the full sign-out handshake.
@@ -315,30 +348,40 @@ class FinancialDataSyncService {
   }
 
   int _countPending() {
-    return _countPendingInBox<WalletHiveModel>(
-          CcHiveBox.WALLET_BOX_NAME,
-          (m) => m.syncMetadata.status,
-        ) +
-        _countPendingInBox<TransactionModel>(
-          CcHiveBox.TRANSACTION_BOX_NAME,
-          (m) => m.syncMetadata.status,
-        ) +
-        _countPendingInBox<BudgetLimitModel>(
-          CcHiveBox.BUDGET_BOX_NAME,
-          (m) => m.syncMetadata.status,
-        ) +
-        _countPendingInBox<ReconciliationModel>(
-          CcHiveBox.RECONCILIATION_BOX_NAME,
-          (m) => m.syncMetadata.status,
-        ) +
-        _countPendingInBox<CategoryModel>(
-          CcHiveBox.CATEGORY_BOX_NAME,
-          (m) => m.syncMetadata.status,
-        ) +
-        _countPendingInBox<LiabilityModel>(
-          CcHiveBox.LIABILITY_BOX_NAME,
-          (m) => m.syncMetadata.status,
-        );
+    final walletPending = _countPendingInBox<WalletHiveModel>(
+      CcHiveBox.WALLET_BOX_NAME,
+      (m) => m.syncMetadata.status,
+    );
+    final txPending = _countPendingInBox<TransactionModel>(
+      CcHiveBox.TRANSACTION_BOX_NAME,
+      (m) => m.syncMetadata.status,
+    );
+    final budgetPending = _countPendingInBox<BudgetLimitModel>(
+      CcHiveBox.BUDGET_BOX_NAME,
+      (m) => m.syncMetadata.status,
+    );
+    final reconPending = _countPendingInBox<ReconciliationModel>(
+      CcHiveBox.RECONCILIATION_BOX_NAME,
+      (m) => m.syncMetadata.status,
+    );
+    final catPending = _countPendingInBox<CategoryModel>(
+      CcHiveBox.CATEGORY_BOX_NAME,
+      (m) => m.syncMetadata.status,
+    );
+    final liabilityPending = _countPendingInBox<LiabilityModel>(
+      CcHiveBox.LIABILITY_BOX_NAME,
+      (m) => m.syncMetadata.status,
+    );
+    final total =
+        walletPending +
+        txPending +
+        budgetPending +
+        reconPending +
+        catPending +
+        liabilityPending;
+    '[LOGOUT_DEBUG] _countPending() evaluated -> total=$total (wallet=$walletPending, tx=$txPending, budget=$budgetPending, recon=$reconPending, cat=$catPending, liability=$liabilityPending)'
+        .Log('FinancialDataSyncService');
+    return total;
   }
 
   int _countPendingInBox<T>(String boxName, SyncStatus Function(T) statusOf) {

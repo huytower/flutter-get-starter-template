@@ -69,8 +69,11 @@ class ProfileInfoCard extends StatelessWidget {
           vertical: CcPaddingParams.SPACE_MD,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [buildUserInfoRow(context, fullName, email, phoneNumber)],
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              buildUserInfoRow(context, fullName, email, phoneNumber),
+              _buildStatsRow(context),
+            ],
           ),
         ),
       ),
