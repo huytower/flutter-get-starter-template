@@ -8,6 +8,7 @@ import '../../../../core/di/di.dart';
 import '../../../guideline/export_guideline.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/income_form_controller.dart';
+import '../get_x/transaction_controller.dart';
 import 'cc_amount_input_section.dart';
 import 'income_category_selection_section.dart';
 import 'money_keypad_panel.dart';
@@ -15,7 +16,7 @@ import 'transaction_additional_details_section.dart';
 import 'transaction_form_container.dart';
 import 'transaction_submit_button.dart';
 
-class IncomeForm extends StatelessWidget {
+class IncomeForm extends StatefulWidget {
   const IncomeForm({super.key, this.tag});
 
   /// GetX tag for the underlying [IncomeFormController] instance. Leave null
@@ -25,15 +26,56 @@ class IncomeForm extends StatelessWidget {
   final String? tag;
 
   @override
+  State<IncomeForm> createState() => _IncomeFormState();
+}
+
+class _IncomeFormState extends State<IncomeForm> {
+  late final IncomeFormController controller;
+  Worker? _tabRevisitWorker;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = widget.tag == null
+        ? Get.find<IncomeFormController>()
+        : (Get.isRegistered<IncomeFormController>(tag: widget.tag)
+              ? Get.find<IncomeFormController>(tag: widget.tag)
+              : Get.put(getIt<IncomeFormController>(), tag: widget.tag));
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      controller.loadSuggestions();
+    });
+
+    if (Get.isRegistered<TransactionController>()) {
+      final transactionController = Get.find<TransactionController>();
+      _tabRevisitWorker = ever(transactionController.selectedTabIndex, (
+        int index,
+      ) {
+        if (!mounted) return;
+        final tabs = transactionController.visibleTabs;
+        final isIncomeActive =
+            index >= 0 &&
+            index < tabs.length &&
+            tabs[index] == TransactionTabKind.income;
+        if (isIncomeActive) {
+          controller.loadSuggestions();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabRevisitWorker?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // See ExpenseForm.build() for why untagged vs. tagged resolve
     // differently: the untagged instance is pre-registered by
     // TransactionController.onInit(), the tagged edit-mode instance isn't.
-    final controller = tag == null
-        ? Get.find<IncomeFormController>()
-        : (Get.isRegistered<IncomeFormController>(tag: tag)
-            ? Get.find<IncomeFormController>(tag: tag)
-            : Get.put(getIt<IncomeFormController>(), tag: tag));
     final guideline = Get.find<GuidelineController>();
 
     const accentColor = PrjColors.success;

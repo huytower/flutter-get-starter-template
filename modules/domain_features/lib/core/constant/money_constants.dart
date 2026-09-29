@@ -47,30 +47,52 @@ abstract class MoneyConstants {
   ];
 
   /// Dynamic income suggestions (Age-based)
-  static const List<int> incomeUnder30 = [
+  static const List<int> incomeUnder20 = [
+    50000,
     100000,
-    150000,
     200000,
+    300000,
     500000,
     1000000,
     1500000,
     2000000,
     3000000,
-    4000000,
+  ];
+
+  static const List<int> income20To30 = [
+    200000,
+    500000,
+    1000000,
+    2000000,
+    3000000,
     5000000,
+    7000000,
+    10000000,
+    12000000,
+    15000000,
+    20000000,
   ];
 
   static const List<int> incomeAbove30 = [
+    200000,
     500000,
     1000000,
+    3000000,
     5000000,
     10000000,
     15000000,
+    20000000,
+    25000000,
+    30000000,
+    40000000,
+    50000000,
   ];
 
   static List<int> getIncomeSuggestions(int? birthYear) {
     if (birthYear == null) return quickAmounts;
     final age = DateTime.now().year - birthYear;
-    return age < 30 ? incomeUnder30 : incomeAbove30;
+    if (age < 20) return incomeUnder20;
+    if (age < 30) return income20To30;
+    return incomeAbove30;
   }
 }

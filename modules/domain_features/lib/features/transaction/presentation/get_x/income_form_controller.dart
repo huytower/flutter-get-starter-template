@@ -90,7 +90,7 @@ class IncomeFormController extends TransactionFormController
     isLoadingCategories.value = true;
     isLoadingUnified.value = true;
     await _loadCategories();
-    await _loadSuggestions();
+    await loadSuggestions();
     await _loadRecentIncomes();
     await _rebuildUnifiedItems();
     isLoadingCategories.value = false;
@@ -266,7 +266,7 @@ class IncomeFormController extends TransactionFormController
     super.onClose();
   }
 
-  Future<void> _loadSuggestions() async {
+  Future<void> loadSuggestions() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
     quickAmounts.assignAll(
       MoneyConstants.getIncomeSuggestions(settings.birthYear),
