@@ -35,11 +35,17 @@ class SessionProviderImpl implements SessionContract {
       if (userEntity != null) {
         _userSubject.add(_mapToBridge(userEntity));
       }
-    }, (failure) => _userSubject.add(null));
+      'SYNC_TRACE session seeded user=${userEntity?.id}'.Log('SYNC_TRACE');
+    }, (failure) {
+      _userSubject.add(null);
+      'SYNC_TRACE session seed FAILED ${failure.message}'.Log('SYNC_TRACE');
+    });
 
     // Listen to changes
     _authStateChangesUseCase().listen((userEntity) {
       _userSubject.add(userEntity != null ? _mapToBridge(userEntity) : null);
+      'SYNC_TRACE authStateChanges -> user=${userEntity?.id}'
+          .Log('SYNC_TRACE');
     });
   }
 

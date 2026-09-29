@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:data_config/core/util/sync_trace.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -223,6 +224,7 @@ class BudgetAllocationController extends CcGetController {
 
   Future<void> loadAll() async {
     layoutStatus.value = CcLayoutStatus.loading;
+    SyncTrace.log('UI     BudgetAllocation.loadAll() ENTER');
 
     try {
       // Parallelize loading to satisfy Law 5 (Clean Bootstrap Integrity - parallelize)
@@ -245,12 +247,18 @@ class BudgetAllocationController extends CcGetController {
       } else {
         layoutStatus.value = CcLayoutStatus.success;
       }
+      SyncTrace.log(
+        'UI     BudgetAllocation.loadAll() EXIT status=${layoutStatus.value} '
+        'wallets=${walletController.wallets.length} '
+        'liquidBalance=${walletController.liquidBalance}',
+      );
     } catch (e) {
       if (kDebugMode) {
         'Error loading budget allocation: $e'.Log();
       }
       errorMessage.value = e.toString();
       layoutStatus.value = CcLayoutStatus.error;
+      SyncTrace.log('UI     BudgetAllocation.loadAll() FAILED error=$e');
     }
   }
 

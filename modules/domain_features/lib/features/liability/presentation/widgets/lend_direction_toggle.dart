@@ -2,13 +2,13 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../get_x/lend_form_controller.dart';
+import '../get_x/liability_base_form_controller.dart';
 
 /// Lend/Collect pill switch shown at the top of the Lend form.
 class LendDirectionToggle extends StatefulWidget {
-  final LendDirectionForm value;
+  final LiabilityDirectionForm value;
   final Color activeColor;
-  final ValueChanged<LendDirectionForm> onChanged;
+  final ValueChanged<LiabilityDirectionForm> onChanged;
 
   const LendDirectionToggle({
     super.key,
@@ -29,8 +29,8 @@ class _LendDirectionToggleState extends State<LendDirectionToggle>
     initialIndex: _indexOf(widget.value),
   );
 
-  static int _indexOf(LendDirectionForm action) =>
-      action == LendDirectionForm.increase ? 0 : 1;
+  static int _indexOf(LiabilityDirectionForm action) =>
+      action == LiabilityDirectionForm.increase ? 0 : 1;
 
   @override
   void didUpdateWidget(covariant LendDirectionToggle oldWidget) {
@@ -75,8 +75,8 @@ class _LendDirectionToggleState extends State<LendDirectionToggle>
             controller: _tabController,
             onTap: (index) => widget.onChanged(
               index == 0
-                  ? LendDirectionForm.increase
-                  : LendDirectionForm.decrease,
+                  ? LiabilityDirectionForm.increase
+                  : LiabilityDirectionForm.decrease,
             ),
             indicatorSize: TabBarIndicatorSize.tab,
             dividerColor: Colors.transparent,

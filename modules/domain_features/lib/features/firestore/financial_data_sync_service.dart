@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:data_config/core/util/firestore_sync_service.dart';
+import 'package:data_config/core/util/sync_trace.dart';
 import 'package:get/get.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
@@ -20,6 +22,9 @@ import '../../../features/transaction/data/datasources/transaction_sync_datasour
 import '../../../features/transaction/data/models/transaction_model.dart';
 import '../../../features/wallet/data/datasources/wallet_sync_datasource.dart';
 import '../../../features/wallet/data/models/wallet_hive_model.dart';
+import '../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
+import '../transaction/presentation/get_x/transaction_controller.dart';
+import '../wallet/presentation/get_x/wallet_controller.dart';
 import 'enum/sync_status.dart';
 
 @lazySingleton
@@ -61,6 +66,9 @@ class FinancialDataSyncService {
   final RxInt pendingCount = 0.obs;
 
   StreamSubscription<InternetStatus>? _connectivitySubscription;
+  StreamSubscription<CcUserEntity?>? _sessionSubscription;
+  Future<void>? _accountTransition;
+  String? _observedUserId;
 
   /// Starts watching connectivity in the background and seeds the initial
   /// [pendingCount]. Call once at app boot (mirrors `NotificationService
@@ -69,7 +77,71 @@ class FinancialDataSyncService {
     _connectivitySubscription ??= _connection.onStatusChange.listen((status) {
       isOnline.value = status == InternetStatus.connected;
     });
+    _sessionSubscription ??= _session.userStream.listen(_handleSessionChange);
     pendingCount.value = _countPending();
+    SyncTrace.log(
+      'WATCH  startWatching() online=${isOnline.value} '
+      'pendingCount=${pendingCount.value} authed=${_isAuthenticated}',
+    );
+  }
+
+  Future<void> _handleSessionChange(CcUserEntity? user) {
+    final nextUserId = user?.id;
+    if (nextUserId == null && _observedUserId == null) return Future.value();
+    if (nextUserId == _observedUserId) return Future.value();
+
+    _accountTransition = (_accountTransition ?? Future.value()).then((_) async {
+      if (nextUserId == null) {
+        await _clearFinancialCache();
+        _observedUserId = null;
+        return;
+      }
+
+      if (_observedUserId != null && _observedUserId != nextUserId) {
+        await _clearFinancialCache();
+      }
+      await _ensureCacheOwner(nextUserId);
+      _observedUserId = nextUserId;
+      await pullFromFirestore();
+      await _refreshLoadedControllers();
+    }).catchError((error) {
+      'Account transition failed: $error'.Log('FinancialDataSyncService');
+    });
+    return _accountTransition!;
+  }
+
+  Future<void> _ensureCacheOwner(String userId) async {
+    final previousOwner = CcAppStorage.instance.financialDataOwnerId;
+    if (previousOwner != userId) {
+      await _clearFinancialCache();
+    }
+    CcAppStorage.instance.financialDataOwnerId = userId;
+    await CcAppStorage.instance.save();
+  }
+
+  Future<void> _clearFinancialCache() async {
+    for (final boxName in CcHiveBox.financialBoxes) {
+      if (Hive.isBoxOpen(boxName)) {
+        await Hive.box(boxName).clear();
+      } else {
+        await Hive.deleteBoxFromDisk(boxName);
+      }
+    }
+    CcAppStorage.instance.financialDataOwnerId = null;
+    await CcAppStorage.instance.save();
+    pendingCount.value = 0;
+  }
+
+  Future<void> _refreshLoadedControllers() async {
+    if (Get.isRegistered<WalletController>()) {
+      await Get.find<WalletController>().loadWallets();
+    }
+    if (Get.isRegistered<BudgetAllocationController>()) {
+      await Get.find<BudgetAllocationController>().loadAll();
+    }
+    if (Get.isRegistered<TransactionController>()) {
+      await Get.find<TransactionController>().refreshData();
+    }
   }
 
   Future<void> syncAll() async {
@@ -87,6 +159,7 @@ class FinancialDataSyncService {
       'syncAll failed: $e'.Log('FinancialDataSyncService');
     } finally {
       pendingCount.value = _countPending();
+      SyncTrace.log('PUSH  syncAll() done pendingCount=${pendingCount.value}');
     }
   }
 
@@ -133,8 +206,16 @@ class FinancialDataSyncService {
   Future<void> pullFromFirestore() async {
     try {
       final userId = _userId;
-      if (userId == null) return;
-      if (!await _connection.hasInternetAccess) return;
+      if (userId == null) {
+        SyncTrace.log('PULL  ABORTED — no authenticated userId');
+        return;
+      }
+      if (!await _connection.hasInternetAccess) {
+        SyncTrace.log('PULL  ABORTED — no internet');
+        return;
+      }
+
+      SyncTrace.log('PULL  ===== begin pullFromFirestore userId=$userId =====');
 
       await _pullWallets(userId);
       await _pullTransactions(userId);
@@ -142,8 +223,11 @@ class FinancialDataSyncService {
       await _pullReconciliations(userId);
       await _pullCategories(userId);
       await _pullLiabilities(userId);
+
+      SyncTrace.log('PULL  ===== end pullFromFirestore userId=$userId =====');
     } catch (e) {
       'pullFromFirestore failed: $e'.Log('FinancialDataSyncService');
+      SyncTrace.log('PULL  FAILED error=$e');
     }
   }
 
@@ -437,6 +521,11 @@ class FinancialDataSyncService {
         collectionName: collectionName,
       );
 
+      SyncTrace.log(
+        'MERGE $collectionName: ${remoteData.length} remote doc(s), '
+        '${box.length} local record(s)',
+      );
+
       for (final data in remoteData) {
         final localId = data['localId'] as String;
         final existing = box.get(localId);
@@ -444,6 +533,7 @@ class FinancialDataSyncService {
         if (existing == null) {
           final model = fromFirestore(data, localId);
           await box.put(localId, model);
+          SyncTrace.log('MERGE $collectionName: INSERTED localId=$localId');
         } else {
           final remoteModifiedAt = data['lastModifiedAt'] as String?;
           final parsedRemote = remoteModifiedAt != null
@@ -456,11 +546,21 @@ class FinancialDataSyncService {
               (parsedRemote != null && parsedRemote.isAfter(localModifiedAt))) {
             final model = fromFirestore(data, localId);
             await box.put(localId, model);
+            SyncTrace.log(
+              'MERGE $collectionName: OVERWROTE localId=$localId '
+              '(localModAt=$localModifiedAt remoteModAt=$parsedRemote)',
+            );
+          } else {
+            SyncTrace.log(
+              'MERGE $collectionName: KEPT LOCAL localId=$localId '
+              '(localModAt=$localModifiedAt remoteModAt=$parsedRemote)',
+            );
           }
         }
       }
     } catch (e) {
       'Pull failed for $collectionName: $e'.Log('FinancialDataSyncService');
+      SyncTrace.log('MERGE $collectionName: FAILED error=$e');
     }
   }
 

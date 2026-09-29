@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/budget_over_limit_helper.dart';
@@ -20,6 +21,7 @@ import '../../../../core/helper/time_based_suggestion_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
+import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
@@ -65,6 +67,15 @@ class ExpenseFormController extends TransactionFormController
 
   @override
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
+
+  final RxList<int> quickAmounts = RxList<int>(MoneyConstants.quickAmounts);
+
+  Future<void> loadSuggestions() async {
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    quickAmounts.assignAll(
+      MoneyConstants.getExpenseSuggestions(settings.birthYear),
+    );
+  }
 
   String? _lastSelectedCategoryId;
   String? _lastSelectedBudgetId;
@@ -224,6 +235,7 @@ class ExpenseFormController extends TransactionFormController
     isLoadingCategories.value = true;
     isLoadingUnified.value = true;
     await _loadCategories();
+    await loadSuggestions();
     await _loadRecentExpenses();
     await _rebuildUnifiedItems();
     isLoadingCategories.value = false;

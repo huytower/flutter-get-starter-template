@@ -3,28 +3,69 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constant/money_constants.dart';
+import '../../../transaction/presentation/get_x/transaction_controller.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
+import '../get_x/liability_base_form_controller.dart';
 import '../get_x/lend_form_controller.dart';
 import 'lend_asset_selector.dart';
 import 'lend_direction_toggle.dart';
 
-class LendForm extends StatelessWidget {
+class LendForm extends StatefulWidget {
   const LendForm({super.key});
+
+  @override
+  State<LendForm> createState() => _LendFormState();
+}
+
+class _LendFormState extends State<LendForm> {
+  late final LendFormController controller;
+  Worker? _tabRevisitWorker;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<LendFormController>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      controller.loadSuggestions();
+    });
+
+    if (Get.isRegistered<TransactionController>()) {
+      final transactionController = Get.find<TransactionController>();
+      _tabRevisitWorker = ever(transactionController.selectedTabIndex, (
+        int index,
+      ) {
+        if (!mounted) return;
+        final tabs = transactionController.visibleTabs;
+        final isLendActive =
+            index >= 0 &&
+            index < tabs.length &&
+            tabs[index] == TransactionTabKind.liability;
+        if (isLendActive) {
+          controller.loadSuggestions();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabRevisitWorker?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     // Pre-registered by TransactionController.onInit()
-    final controller = Get.find<LendFormController>();
-
     return Obx(() {
       final isIncrease =
-          controller.action.value == LendDirectionForm.increase;
+          controller.action.value == LiabilityDirectionForm.increase;
       final accentColor = isIncrease
           ? context.ccColorScheme.liability
           : context.ccColorScheme.liabilitySecondary;
@@ -69,18 +110,15 @@ class LendForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        LendAssetSelector(
-          controller: controller,
-          activeColor: accentColor,
-        ),
+        LendAssetSelector(controller: controller, activeColor: accentColor),
         const CcSpaceSM(),
         TransactionFormContainer(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildAmountSection(context, controller, accentColor),
+              Obx(() => _buildAmountSection(context, controller, accentColor)),
               const CcSpaceSM(),
-              _buildWalletSection(context, controller, accentColor),
+              Obx(() => _buildWalletSection(context, controller, accentColor)),
               const CcSpaceSM(),
               TransactionAdditionalDetailsSection(
                 isExpanded: controller.showMoreDetails.value,
@@ -113,7 +151,7 @@ class LendForm extends StatelessWidget {
         ?.liability;
 
     final isCollect =
-        controller.action.value == LendDirectionForm.decrease;
+        controller.action.value == LiabilityDirectionForm.decrease;
 
     final label =
         (isCollect || (liability != null && liability.principalAmount > 0))
@@ -123,7 +161,7 @@ class LendForm extends StatelessWidget {
     return CcAmountInputSection(
       label: label,
       amountStr: controller.amountStr.value,
-      quickAmounts: MoneyConstants.quickAmounts,
+      quickAmounts: controller.quickAmounts,
       isKeypadVisible: controller.showKeypad.value,
       activeColor: accentColor,
       fieldKey: controller.amountFieldKey,
@@ -141,7 +179,7 @@ class LendForm extends StatelessWidget {
     Color accentColor,
   ) {
     final isCollect =
-        controller.action.value == LendDirectionForm.decrease;
+        controller.action.value == LiabilityDirectionForm.decrease;
     final text = isCollect
         ? el.tr(CcLocaleKeys.transaction_source_debt)
         : el.tr(CcLocaleKeys.transaction_liability_wallet_lend_label);
@@ -170,7 +208,7 @@ class LendForm extends StatelessWidget {
     Color accentColor,
   ) {
     final isCollect =
-        controller.action.value == LendDirectionForm.decrease;
+        controller.action.value == LiabilityDirectionForm.decrease;
     final liability = controller.mergedItems
         .firstWhereOrNull(
           (b) => b.liability.id == controller.selectedLiabilityId.value,
@@ -210,7 +248,7 @@ class LendForm extends StatelessWidget {
       onKeyPress: controller.handleKeyPress,
       onDelete: controller.handleDelete,
       onClear: controller.handleClear,
-      suggestions: MoneyConstants.quickAmounts,
+      suggestions: controller.quickAmounts,
       onSuggestion: (value) => controller.handleSuggestion(value),
       onDone: controller.hideKeypad,
       activeColor: accentColor,

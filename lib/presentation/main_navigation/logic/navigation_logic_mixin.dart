@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bridge/navigation_bridge_service.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:cc_micro_features/features/splash/core/splash_manager.dart';
+import 'package:data_config/core/util/sync_trace.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -40,8 +41,10 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
 
   void _initBackgroundServices() {
     // Delay non-critical background services to avoid competing with UI/Boot
+    SyncTrace.log('BOOT   3s background-services timer scheduled');
     Future.delayed(const Duration(seconds: 3), () async {
       if (!mounted) return;
+      SyncTrace.log('BOOT   3s timer FIRED');
 
       // Native security & analytics
       CcAppCheckHelper.initialize();

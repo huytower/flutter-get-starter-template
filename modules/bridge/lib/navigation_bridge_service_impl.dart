@@ -27,13 +27,26 @@ class NavigationBridgeServiceImpl implements NavigationBridgeService {
   Future<void> syncAuthenticatedData() async {
     final session = getIt<SessionContract>();
 
+    'SYNC_TRACE BRIDGE syncAuthenticatedData() '
+    'authed=${session.isAuthenticated} userId=${session.currentUser?.id}'.Log(
+      'SYNC_TRACE',
+    );
+
     if (session.isAuthenticated) {
       try {
         await getIt<FinancialDataSyncService>().pullFromFirestore();
+        'SYNC_TRACE BRIDGE pullFromFirestore() returned'.Log('SYNC_TRACE');
       } catch (e) {
         '❌ getIt<FinancialDataSyncService>() pullFromFirestore() failed | error=$e'
             .Log('NavigationBridgeService');
+        'SYNC_TRACE BRIDGE pullFromFirestore() THREW error=$e'.Log(
+          'SYNC_TRACE',
+        );
       }
+    } else {
+      'SYNC_TRACE BRIDGE pull SKIPPED — session not authenticated'.Log(
+        'SYNC_TRACE',
+      );
     }
   }
 

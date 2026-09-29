@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:data_config/core/util/sync_trace.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -372,6 +373,7 @@ class WalletController extends CcGetController {
   /// replaced by a full-screen loader.
   Future<void> loadWallets() async {
     layoutStatus.value = CcLayoutStatus.loading;
+    SyncTrace.log('UI     loadWallets() ENTER');
 
     final settings = await _getProfileSettings();
     isVip.value = settings.isVip;
@@ -381,6 +383,7 @@ class WalletController extends CcGetController {
     if (result.isError()) {
       errorMessage.value = result.tryGetError()!.message;
       layoutStatus.value = CcLayoutStatus.error;
+      SyncTrace.log('UI     loadWallets() ERROR ${result.tryGetError()!.message}');
       return;
     }
 
@@ -406,6 +409,10 @@ class WalletController extends CcGetController {
     _calculateTotalBalance();
 
     layoutStatus.value = CcLayoutStatus.success;
+    SyncTrace.log(
+      'UI     loadWallets() EXIT -> assigned ${list.length} wallet(s) '
+      'liquidBalance=$liquidBalance',
+    );
   }
 
   /// Fetches transactions once and derives, per wallet, both the activity flag

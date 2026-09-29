@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/money_constants.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
@@ -101,6 +102,17 @@ class InvestmentFormController extends TransactionFormController
 
   @override
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
+
+  final RxList<int> quickAmounts = RxList<int>(
+    MoneyConstants.budgetQuickAmounts,
+  );
+
+  Future<void> loadSuggestions() async {
+    final settings = await _getProfileSettings();
+    quickAmounts.assignAll(
+      MoneyConstants.getInvestmentSuggestions(settings.birthYear),
+    );
+  }
 
   final Rx<InvestmentDirectionForm> direction =
       InvestmentDirectionForm.contribute.obs;
@@ -240,6 +252,7 @@ class InvestmentFormController extends TransactionFormController
     isLoadingMerged.value = true;
     final settings = await _getProfileSettings();
     isVip.value = settings.isVip;
+    await loadSuggestions();
     await _loadCategories();
     await _recomputeMergedItems();
     isLoadingMerged.value = false;

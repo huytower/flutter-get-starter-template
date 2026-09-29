@@ -1,10 +1,8 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constant/money_constants.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
@@ -20,8 +18,50 @@ import 'transaction_additional_details_section.dart';
 import 'transaction_form_container.dart';
 import 'transaction_submit_button.dart';
 
-class InvestmentForm extends StatelessWidget {
+class InvestmentForm extends StatefulWidget {
   const InvestmentForm({super.key});
+
+  @override
+  State<InvestmentForm> createState() => _InvestmentFormState();
+}
+
+class _InvestmentFormState extends State<InvestmentForm> {
+  late final InvestmentFormController controller;
+  Worker? _tabRevisitWorker;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<InvestmentFormController>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      controller.loadSuggestions();
+    });
+
+    if (Get.isRegistered<TransactionController>()) {
+      final transactionController = Get.find<TransactionController>();
+      _tabRevisitWorker = ever(transactionController.selectedTabIndex, (
+        int index,
+      ) {
+        if (!mounted) return;
+        final tabs = transactionController.visibleTabs;
+        final isInvestmentActive =
+            index >= 0 &&
+            index < tabs.length &&
+            tabs[index] == TransactionTabKind.investment;
+        if (isInvestmentActive) {
+          controller.loadSuggestions();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabRevisitWorker?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +69,6 @@ class InvestmentForm extends StatelessWidget {
     // site's comment for why this must be Get.find, not Get.put (this form
     // has no tagged/edit-mode variant, so there's never a second instance
     // to create here).
-    final controller = Get.find<InvestmentFormController>();
-
     return Obx(() {
       final accentColor = _accentColor(context, controller.direction.value);
       final guideline = Get.find<GuidelineController>();
@@ -239,7 +277,7 @@ class InvestmentForm extends StatelessWidget {
     return CcAmountInputSection(
       label: el.tr(CcLocaleKeys.transaction_amount),
       amountStr: controller.amountStr.value,
-      quickAmounts: MoneyConstants.quickAmounts,
+      quickAmounts: controller.quickAmounts,
       isKeypadVisible: controller.showKeypad.value,
       activeColor: accentColor,
       fieldKey: controller.amountFieldKey,
@@ -285,7 +323,7 @@ class InvestmentForm extends StatelessWidget {
       onKeyPress: controller.handleKeyPress,
       onDelete: controller.handleDelete,
       onClear: () => controller.amountStr.value = '0',
-      suggestions: MoneyConstants.budgetQuickAmounts,
+      suggestions: controller.quickAmounts,
       onSuggestion: (value) => controller.amountStr.value = value.toString(),
       onDone: controller.hideKeypad,
       activeColor: accentColor,

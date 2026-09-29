@@ -1,4 +1,5 @@
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
+import 'package:data_config/core/util/sync_trace.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
@@ -31,11 +32,10 @@ class WalletLocalDataSource {
   );
 
   Future<Box<WalletHiveModel>> get _box async {
-    if (Hive.isBoxOpen(CcHiveBox.WALLET_BOX_NAME)) {
-      return Hive.box<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
-    }
-    final box = await Hive.openBox<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
-    if (_initialized) return box;
+    final box = Hive.isBoxOpen(CcHiveBox.WALLET_BOX_NAME)
+        ? Hive.box<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME)
+        : await Hive.openBox<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
+    if (_initialized && box.isNotEmpty) return box;
     _initialized = true;
 
     if (box.isEmpty) {
@@ -50,6 +50,9 @@ class WalletLocalDataSource {
           createdAt: DateTime.now(),
         ),
       });
+      SyncTrace.log(
+        'HIVE   WALLET box was EMPTY -> seeded default cash+bank (0 balance)',
+      );
       return box;
     }
 
@@ -80,6 +83,10 @@ class WalletLocalDataSource {
 
   Future<List<WalletEntity>> getWallets() async {
     final box = await _box;
+    SyncTrace.log(
+      'HIVE   WALLET getWallets() reads ${box.length} record(s) '
+      'ids=${box.keys.toList()}',
+    );
     return box.values.map((m) => m.toEntity()).toList();
   }
 

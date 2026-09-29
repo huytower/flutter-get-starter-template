@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constant/money_constants.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
@@ -19,14 +18,54 @@ import 'liability_asset_selector.dart';
 import 'liability_direction_toggle.dart';
 import 'liability_repayment_method_section.dart';
 
-class LiabilityForm extends StatelessWidget {
+class LiabilityForm extends StatefulWidget {
   const LiabilityForm({super.key});
+
+  @override
+  State<LiabilityForm> createState() => _LiabilityFormState();
+}
+
+class _LiabilityFormState extends State<LiabilityForm> {
+  late final LiabilityFormController controller;
+  Worker? _tabRevisitWorker;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<LiabilityFormController>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      controller.loadSuggestions();
+    });
+
+    if (Get.isRegistered<TransactionController>()) {
+      final transactionController = Get.find<TransactionController>();
+      _tabRevisitWorker = ever(transactionController.selectedTabIndex, (
+        int index,
+      ) {
+        if (!mounted) return;
+        final tabs = transactionController.visibleTabs;
+        final isLiabilityActive =
+            index >= 0 &&
+            index < tabs.length &&
+            tabs[index] == TransactionTabKind.liability;
+        if (isLiabilityActive) {
+          controller.loadSuggestions();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabRevisitWorker?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     // Pre-registered by TransactionController.onInit()
-    final controller = Get.find<LiabilityFormController>();
-
     return Obx(() {
       final isIncrease =
           controller.action.value == LiabilityDirectionForm.increase;
@@ -131,22 +170,23 @@ class LiabilityForm extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildAmountSection(context, controller, accentColor),
+              Obx(() => _buildAmountSection(context, controller, accentColor)),
               const CcSpaceSM(),
-              _buildWalletSection(context, controller, accentColor),
+              Obx(() => _buildWalletSection(context, controller, accentColor)),
               const CcSpaceSM(),
               Obx(() {
                 final liability = controller.mergedItems
                     .firstWhereOrNull(
                       (b) =>
-                          b.liability.id == controller.selectedLiabilityId.value,
+                          b.liability.id ==
+                          controller.selectedLiabilityId.value,
                     )
                     ?.liability;
 
-                // Show repayment plan only when initiating a new loan in "Borrow" subsegment.
-                // It is hidden in "Repay" subsegment or when borrowing more on an existing loan.
-                if (controller.action.value ==
-                        LiabilityDirectionForm.decrease ||
+                final isRepay =
+                    controller.action.value == LiabilityDirectionForm.decrease;
+
+                if (isRepay ||
                     (liability != null && liability.principalAmount > 0)) {
                   return const SizedBox.shrink();
                 }
@@ -201,7 +241,7 @@ class LiabilityForm extends StatelessWidget {
     return CcAmountInputSection(
       label: label,
       amountStr: controller.amountStr.value,
-      quickAmounts: MoneyConstants.quickAmounts,
+      quickAmounts: controller.quickAmounts,
       isKeypadVisible: controller.showKeypad.value,
       activeColor: accentColor,
       fieldKey: controller.amountFieldKey,
@@ -262,7 +302,9 @@ class LiabilityForm extends StatelessWidget {
     } else {
       text = (liability != null && liability.principalAmount > 0)
           ? el.tr(CcLocaleKeys.transaction_record_liability) // Borrow more
-          : el.tr(CcLocaleKeys.transaction_liability_direction_borrow); // Initiate
+          : el.tr(
+              CcLocaleKeys.transaction_liability_direction_borrow,
+            ); // Initiate
       icon = Icons.arrow_circle_up;
     }
 
@@ -286,7 +328,7 @@ class LiabilityForm extends StatelessWidget {
       onKeyPress: controller.handleKeyPress,
       onDelete: controller.handleDelete,
       onClear: controller.handleClear,
-      suggestions: MoneyConstants.quickAmounts,
+      suggestions: controller.quickAmounts,
       onSuggestion: (value) => controller.handleSuggestion(value),
       onDone: controller.hideKeypad,
       activeColor: accentColor,

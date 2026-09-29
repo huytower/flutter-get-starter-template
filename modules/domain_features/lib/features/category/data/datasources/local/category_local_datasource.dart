@@ -11,10 +11,9 @@ import 'category_seed.dart';
 @lazySingleton
 class CategoryLocalDataSource {
   Future<Box<CategoryModel>> get _box async {
-    if (Hive.isBoxOpen(CcHiveBox.CATEGORY_BOX_NAME)) {
-      return Hive.box<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
-    }
-    final box = await Hive.openBox<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
+    final box = Hive.isBoxOpen(CcHiveBox.CATEGORY_BOX_NAME)
+        ? Hive.box<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME)
+        : await Hive.openBox<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
     if (box.isEmpty) {
       await box.putAll({for (final c in CategorySeed.categories) c.id: c});
     } else {

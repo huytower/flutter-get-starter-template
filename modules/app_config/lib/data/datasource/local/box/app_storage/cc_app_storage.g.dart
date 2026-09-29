@@ -40,13 +40,14 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       isProfileHeaderFlipped: fields[21] as bool?,
       hasCustomizedCategories: fields[22] as bool?,
       hasInteractedWithTransactionCardStack: fields[23] as bool?,
+      financialDataOwnerId: fields[24] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, CcAppStorage obj) {
     writer
-      ..writeByte(23)
+      ..writeByte(24)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)
@@ -92,7 +93,9 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..writeByte(22)
       ..write(obj.hasCustomizedCategories)
       ..writeByte(23)
-      ..write(obj.hasInteractedWithTransactionCardStack);
+      ..write(obj.hasInteractedWithTransactionCardStack)
+      ..writeByte(24)
+      ..write(obj.financialDataOwnerId);
   }
 
   @override
@@ -148,6 +151,7 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
   hasCustomizedCategories: json['hasCustomizedCategories'] as bool?,
   hasInteractedWithTransactionCardStack:
       json['hasInteractedWithTransactionCardStack'] as bool?,
+  financialDataOwnerId: json['financialDataOwnerId'] as String?,
 );
 
 Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
@@ -178,4 +182,5 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
       'hasCustomizedCategories': instance.hasCustomizedCategories,
       'hasInteractedWithTransactionCardStack':
           instance.hasInteractedWithTransactionCardStack,
+      'financialDataOwnerId': instance.financialDataOwnerId,
     };

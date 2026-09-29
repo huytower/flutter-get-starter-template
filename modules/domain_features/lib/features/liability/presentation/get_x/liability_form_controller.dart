@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
@@ -31,8 +32,16 @@ class LiabilityFormController extends LiabilityBaseFormController {
     CategorySeed.liabilityBorrowGroupId,
   ];
 
-  @override
-  final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
+  final RxList<int> quickAmounts = RxList<int>(
+    MoneyConstants.budgetQuickAmounts,
+  );
+
+  Future<void> loadSuggestions() async {
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    quickAmounts.assignAll(
+      MoneyConstants.getLiabilitySuggestions(settings.birthYear),
+    );
+  }
 
   final String direction = LiabilityDirection.borrow;
   @override
@@ -41,6 +50,8 @@ class LiabilityFormController extends LiabilityBaseFormController {
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   @override
   final RxInt categoryKey = 0.obs;
+  @override
+  final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
   final RxString repaymentMethod = LiabilityRepaymentMethod.lumpSum.obs;
   final Rx<DateTime?> finalDueDate = Rx<DateTime?>(null);
   final RxList<LiabilityInstallmentDraft> installmentDrafts =
@@ -94,6 +105,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     isLoadingMerged.value = true;
     final settings = await getIt<GetProfileSettingsUseCase>().call();
     isVip.value = settings.isVip;
+    await loadSuggestions();
     await loadLiabilities();
     isLoadingMerged.value = false;
     initQuickEntry();

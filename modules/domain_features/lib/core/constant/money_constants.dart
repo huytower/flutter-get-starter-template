@@ -88,11 +88,143 @@ abstract class MoneyConstants {
     50000000,
   ];
 
+  /// Dynamic expense suggestions (Age-based)
+  static const List<int> expenseUnder20 = [
+    10000,
+    20000,
+    30000,
+    50000,
+    100000,
+    150000,
+    200000,
+    300000,
+    500000,
+  ];
+
+  static const List<int> expense20To30 = [
+    20000,
+    50000,
+    100000,
+    150000,
+    200000,
+    300000,
+    500000,
+    700000,
+    1000000,
+    1500000,
+  ];
+
+  static const List<int> expenseAbove30 = [
+    50000,
+    100000,
+    200000,
+    300000,
+    500000,
+    700000,
+    1000000,
+    1500000,
+    2000000,
+    3000000,
+  ];
+
+  /// Dynamic investment suggestions (Age-based)
+  static const List<int> investmentUnder20 = [
+    50000,
+    100000,
+    200000,
+    300000,
+    500000,
+    1000000,
+    2000000,
+    3000000,
+  ];
+
+  static const List<int> investment20To30 = [
+    200000,
+    500000,
+    1000000,
+    2000000,
+    5000000,
+    10000000,
+    20000000,
+    50000000,
+    100000000,
+  ];
+
+  static const List<int> investmentAbove30 = [
+    1000000,
+    5000000,
+    10000000,
+    20000000,
+    50000000,
+    100000000,
+    200000000,
+    500000000,
+    1000000000,
+  ];
+
+  /// Dynamic liability suggestions (Age-based)
+  static const List<int> liabilityUnder20 = [
+    100000,
+    200000,
+    300000,
+    500000,
+    1000000,
+    2000000,
+    3000000,
+  ];
+
+  static const List<int> liability20To30 = [
+    500000,
+    1000000,
+    2000000,
+    3000000,
+    5000000,
+    10000000,
+    20000000,
+    50000000,
+  ];
+
+  static const List<int> liabilityAbove30 = [
+    1000000,
+    3000000,
+    5000000,
+    10000000,
+    20000000,
+    50000000,
+    100000000,
+    200000000,
+  ];
+
   static List<int> getIncomeSuggestions(int? birthYear) {
     if (birthYear == null) return quickAmounts;
     final age = DateTime.now().year - birthYear;
     if (age < 20) return incomeUnder20;
     if (age < 30) return income20To30;
     return incomeAbove30;
+  }
+
+  static List<int> getExpenseSuggestions(int? birthYear) {
+    if (birthYear == null) return quickAmounts;
+    final age = DateTime.now().year - birthYear;
+    if (age < 20) return expenseUnder20;
+    if (age < 30) return expense20To30;
+    return expenseAbove30;
+  }
+
+  static List<int> getInvestmentSuggestions(int? birthYear) {
+    if (birthYear == null) return budgetQuickAmounts;
+    final age = DateTime.now().year - birthYear;
+    if (age < 20) return investmentUnder20;
+    if (age < 30) return investment20To30;
+    return investmentAbove30;
+  }
+
+  static List<int> getLiabilitySuggestions(int? birthYear) {
+    if (birthYear == null) return budgetQuickAmounts;
+    final age = DateTime.now().year - birthYear;
+    if (age < 20) return liabilityUnder20;
+    if (age < 30) return liability20To30;
+    return liabilityAbove30;
   }
 }

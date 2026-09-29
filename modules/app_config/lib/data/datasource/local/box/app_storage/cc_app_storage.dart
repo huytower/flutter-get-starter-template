@@ -139,6 +139,10 @@ class CcAppStorage extends HiveObject {
   @HiveField(23)
   bool? hasInteractedWithTransactionCardStack;
 
+  /// Firebase UID that owns the financial Hive cache on this device.
+  @HiveField(24)
+  String? financialDataOwnerId;
+
   CcAppStorage({
     this.accessToken,
     this.fcmToken,
@@ -163,5 +167,6 @@ class CcAppStorage extends HiveObject {
     this.isProfileHeaderFlipped,
     this.hasCustomizedCategories,
     this.hasInteractedWithTransactionCardStack,
+    this.financialDataOwnerId,
   });
 }
