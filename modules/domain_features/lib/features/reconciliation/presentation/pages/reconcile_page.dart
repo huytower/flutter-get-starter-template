@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
@@ -173,7 +174,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
             ),
             const CcSpaceXS(),
             CcText(
-              '... See more',
+              el.tr(CcLocaleKeys.wallet_see_all),
               textStyle: context.ccTextTheme.labelSmall?.copyWith(
                 color: context.ccColorScheme.primary,
                 fontSize: context.respFontSize(9),
@@ -260,14 +261,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
           onKeyPress: controller.updateAmount,
           onDelete: controller.deleteChar,
           onClear: controller.clearAmount,
-          suggestions: const [
-            100000,
-            200000,
-            500000,
-            1000000,
-            2000000,
-            5000000,
-          ],
+          suggestions: MoneyConstants.reconciliationQuickAmounts,
           onSuggestion: (value) => controller.setAmount(value),
           onDone: controller.stopEditing,
           activeColor: context.ccColorScheme.primary,

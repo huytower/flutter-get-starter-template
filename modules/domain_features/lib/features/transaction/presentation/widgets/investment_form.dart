@@ -285,7 +285,7 @@ class InvestmentForm extends StatelessWidget {
       onKeyPress: controller.handleKeyPress,
       onDelete: controller.handleDelete,
       onClear: () => controller.amountStr.value = '0',
-      suggestions: MoneyConstants.quickAmounts,
+      suggestions: MoneyConstants.budgetQuickAmounts,
       onSuggestion: (value) => controller.amountStr.value = value.toString(),
       onDone: controller.hideKeypad,
       activeColor: accentColor,

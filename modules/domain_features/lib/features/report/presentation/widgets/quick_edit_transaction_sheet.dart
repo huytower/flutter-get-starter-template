@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../liability/presentation/widgets/lend_asset_selector.dart';
 import '../../../liability/presentation/widgets/liability_asset_selector.dart';
@@ -164,15 +165,7 @@ class QuickEditTransactionSheet
         () => CcAmountInputSection(
           label: el.tr(CcLocaleKeys.transaction_amount),
           amountStr: controller.amountStr.value,
-          quickAmounts: const [
-            10000,
-            20000,
-            50000,
-            100000,
-            200000,
-            500000,
-            1000000,
-          ],
+          quickAmounts: MoneyConstants.quickAmounts,
           isKeypadVisible: false,
           activeColor: accentColor,
           onTap: () {},

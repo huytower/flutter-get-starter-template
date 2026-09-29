@@ -36,6 +36,16 @@ abstract class MoneyConstants {
     50000000,
   ];
 
+  /// quick amounts for reconciliation actual balance keypad suggestions
+  static const List<int> reconciliationQuickAmounts = [
+    100000,
+    200000,
+    500000,
+    1000000,
+    2000000,
+    5000000,
+  ];
+
   /// Dynamic income suggestions (Age-based)
   static const List<int> incomeUnder30 = [
     100000,
