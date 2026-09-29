@@ -130,7 +130,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
                 ? Get.find<GuidelineController>().currentColor
                 : null,
           ),
-          const CcSpaceLG(),
+          const CcSpaceXL(),
         ],
       );
     });
