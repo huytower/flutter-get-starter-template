@@ -597,7 +597,13 @@
     "sync": {
         "offline_tooltip": "Offline — your data is only saved on this device until you reconnect",
         "pending_tooltip": "{count} item(s) not yet backed up to Cloud — tap to sync",
-        "synced_tooltip": "All data backed up to Cloud"
+        "synced_tooltip": "All data backed up to Cloud",
+        "logout_blocked_offline": "Connect to the internet before logging out",
+        "logout_blocked_pending": "You have data that hasn't synced yet. Reconnect and sync before logging out.",
+        "discard_title": "Discard unsynced data?",
+        "discard_message": "Some of your data could not be backed up and will be permanently deleted from this device. This cannot be undone.",
+        "discard_confirm": "Discard",
+        "discard_done": "Discarded unsynced data"
     },
     "profile": {
         "guest": "Guest",

@@ -57,7 +57,12 @@ class FinancialDataSyncService {
 
   /// Whether the device currently has internet access — drives the
   /// sync-status indicator. Kept live by [startWatching].
-  final RxBool isOnline = true.obs;
+  ///
+  /// Starts pessimistic (`false`) and is corrected by [_probeOnline] before
+  /// anything destructive (logout / cache clear) consults it. `onStatusChange`
+  /// does not emit an initial value, so a device that boots offline would
+  /// otherwise report "online" until connectivity actually changed.
+  final RxBool isOnline = false.obs;
 
   /// Count of locally-stored records not yet backed up to Cloud (across all
   /// synced entity types) — also drives the sync-status icon. Recomputed
@@ -79,12 +84,38 @@ class FinancialDataSyncService {
     });
     _sessionSubscription ??= _session.userStream.listen(_handleSessionChange);
     pendingCount.value = _countPending();
+    unawaited(_probeOnline());
     SyncTrace.log(
       'WATCH  startWatching() online=${isOnline.value} '
       'pendingCount=${pendingCount.value} authed=${_isAuthenticated}',
     );
   }
 
+  /// Asks the connectivity checker for the real current state and mirrors it
+  /// into [isOnline]. Fails closed — if the probe itself throws we treat the
+  /// device as offline, because every destructive path keys off this value.
+  Future<bool> _probeOnline() async {
+    try {
+      final online = await _connection.hasInternetAccess;
+      isOnline.value = online;
+      return online;
+    } catch (e) {
+      isOnline.value = false;
+      'Connectivity probe failed, treating as offline: $e'
+          .Log('FinancialDataSyncService');
+      return false;
+    }
+  }
+
+  /// Observes the session and drives cache transitions.
+  ///
+  /// This listener is deliberately **non-destructive**: an auth event is a
+  /// notification, not a safe point to delete data. Signing out only marks
+  /// the session as ended — the on-disk cache and its
+  /// [CcAppStorage.financialDataOwnerId] stay intact so a failed or offline
+  /// logout can never destroy unsynced records. The cache is only cleared
+  /// when a *different* user signs in, and by then the previous owner is
+  /// guaranteed to have synced (see [logoutSafely]).
   Future<void> _handleSessionChange(CcUserEntity? user) {
     final nextUserId = user?.id;
     if (nextUserId == null && _observedUserId == null) return Future.value();
@@ -92,8 +123,13 @@ class FinancialDataSyncService {
 
     _accountTransition = (_accountTransition ?? Future.value()).then((_) async {
       if (nextUserId == null) {
-        await _clearFinancialCache();
+        // Signed out — preserve the cache, just forget the live user.
         _observedUserId = null;
+        SyncTrace.log(
+          'SESSION signed out — cache preserved '
+          'owner=${CcAppStorage.instance.financialDataOwnerId}',
+        );
+        await _releaseLoadedControllers();
         return;
       }
 
@@ -142,6 +178,94 @@ class FinancialDataSyncService {
     if (Get.isRegistered<TransactionController>()) {
       await Get.find<TransactionController>().refreshData();
     }
+  }
+
+  /// Blanks the in-memory financial state on sign-out.
+  ///
+  /// The GetX controllers are `@lazySingleton` and are never disposed, so
+  /// without this the previous user's records stay live in their `RxList`s
+  /// for the whole unauthenticated window. The Hive boxes keep their data —
+  /// this only clears what is currently rendered.
+  Future<void> _releaseLoadedControllers() async {
+    try {
+      if (Get.isRegistered<WalletController>()) {
+        Get.find<WalletController>().wallets.clear();
+      }
+      if (Get.isRegistered<BudgetAllocationController>()) {
+        Get.find<BudgetAllocationController>().liabilityBalances.clear();
+      }
+    } catch (e) {
+      'Failed to release in-memory controllers: $e'
+          .Log('FinancialDataSyncService');
+    }
+  }
+
+  /// Whether the user is currently allowed to sign out.
+  bool canLogout() => logoutBlock == null;
+
+  /// Null when sign-out is allowed, otherwise the reason it is blocked.
+  /// Surfaced verbatim to the user by the Profile screen.
+  ///
+  /// Reads [pendingCount] rather than recomputing so an `Obx` in the UI
+  /// rebuilds when either connectivity or the unsynced count changes. The
+  /// authoritative check happens in [logoutSafely], which re-counts.
+  LogoutBlock? get logoutBlock {
+    if (!isOnline.value) return LogoutBlock.offline;
+    if (pendingCount.value > 0) return LogoutBlock.pendingSync;
+    return null;
+  }
+
+  /// Runs the full sign-out handshake.
+  ///
+  /// Probes the real connection, pushes any pending/failed records, and only
+  /// then signs out. The on-disk cache is left alone — see
+  /// [_handleSessionChange]. Returns the reason if the user must stay signed
+  /// in, in which case nothing was destroyed.
+  Future<LogoutResult> logoutSafely() async {
+    // Always trust the probe over the cached Rx value.
+    if (!await _probeOnline()) {
+      SyncTrace.log('LOGOUT blocked — offline');
+      return LogoutResult.offline;
+    }
+
+    if (_countPending() > 0) {
+      await syncAll();
+    }
+
+    if (_countPending() > 0) {
+      final remaining = _countPending();
+      SyncTrace.log('LOGOUT blocked — $remaining record(s) still unsynced');
+      return LogoutResult.pendingSync;
+    }
+
+    await _session.clearSession();
+    SyncTrace.log('LOGOUT completed — cache preserved');
+    return LogoutResult.success;
+  }
+
+  /// Deletes every record that never made it to the cloud.
+  ///
+  /// This is the escape hatch for the `failed`/`pending` state that would
+  /// otherwise block sign-out forever. It is destructive and must only be
+  /// reachable behind an explicit user confirmation.
+  Future<int> discardUnsynced() async {
+    var removed = 0;
+    for (final boxName in CcHiveBox.financialBoxes) {
+      if (!Hive.isBoxOpen(boxName)) continue;
+      final box = Hive.box<dynamic>(boxName);
+      final doomed = <dynamic>[];
+      for (final model in box.values) {
+        if (_isUnsynced(model)) doomed.add(_getLocalId(model));
+      }
+      for (final key in doomed) {
+        if (key == null) continue;
+        await box.delete(key);
+        removed++;
+      }
+    }
+    pendingCount.value = _countPending();
+    SyncTrace.log('LOGOUT discarded $removed unsynced record(s)');
+    return removed;
   }
 
   Future<void> syncAll() async {
@@ -505,6 +629,15 @@ class FinancialDataSyncService {
       // Don't log expected authentication errors during logout
       if (e.toString().contains('User not authenticated')) return;
       'Sync failed for entity: $e'.Log('FinancialDataSyncService');
+
+      // Persist the failure. Without this the record stays `pending`
+      // forever, `_countPending()` never drops to zero, and the guarded
+      // logout would lock the user out of their own account.
+      final key = _getLocalId(model);
+      if (key != null) {
+        await box.put(key, _withSyncStatus(model, SyncStatus.failed));
+      }
+      SyncTrace.log('PUSH  marked FAILED localId=$key error=$e');
     }
   }
 
@@ -574,6 +707,64 @@ class FinancialDataSyncService {
     return null;
   }
 
+  /// Whether this record still needs to reach the cloud. Mirrors the
+  /// `_countPendingInBox` filter so the two can never disagree.
+  bool _isUnsynced<T>(T model) {
+    SyncStatus? statusOf(T m) {
+      if (m is WalletHiveModel) return m.syncMetadata.status;
+      if (m is TransactionModel) return m.syncMetadata.status;
+      if (m is BudgetLimitModel) return m.syncMetadata.status;
+      if (m is ReconciliationModel) return m.syncMetadata.status;
+      if (m is CategoryModel) return m.syncMetadata.status;
+      if (m is LiabilityModel) return m.syncMetadata.status;
+      return null;
+    }
+
+    final status = statusOf(model);
+    return status == SyncStatus.pending || status == SyncStatus.failed;
+  }
+
+  /// Returns [model] with its sync status replaced. Used to persist a
+  /// terminal `failed` so a record that can never upload stops spinning and
+  /// becomes discardable instead of blocking sign-out forever.
+  ///
+  /// The `errorMessage` is intentionally not persisted — none of the six Hive
+  /// models carry a field for it, and adding one to all of them is a schema
+  /// change out of proportion to its value. It is logged instead.
+  T _withSyncStatus<T>(T model, SyncStatus status) {
+    if (model is WalletHiveModel) {
+      return model.copyWithSyncMetadata(
+        model.syncMetadata.copyWith(status: status),
+      ) as T;
+    }
+    if (model is TransactionModel) {
+      return model.copyWithSyncMetadata(
+        model.syncMetadata.copyWith(status: status),
+      ) as T;
+    }
+    if (model is BudgetLimitModel) {
+      return model.copyWithSyncMetadata(
+        model.syncMetadata.copyWith(status: status),
+      ) as T;
+    }
+    if (model is ReconciliationModel) {
+      return model.copyWithSyncMetadata(
+        model.syncMetadata.copyWith(status: status),
+      ) as T;
+    }
+    if (model is CategoryModel) {
+      return model.copyWithSyncMetadata(
+        model.syncMetadata.copyWith(status: status),
+      ) as T;
+    }
+    if (model is LiabilityModel) {
+      return model.copyWithSyncMetadata(
+        model.syncMetadata.copyWith(status: status),
+      ) as T;
+    }
+    return model;
+  }
+
   DateTime? _getLastModifiedAt<T>(T model) {
     if (model is WalletHiveModel) return model.lastModifiedAt;
     if (model is TransactionModel) return model.lastModifiedAt;
@@ -583,4 +774,26 @@ class FinancialDataSyncService {
     if (model is LiabilityModel) return model.lastModifiedAt;
     return null;
   }
+}
+
+/// Outcome of [FinancialDataSyncService.logoutSafely].
+enum LogoutResult {
+  /// Signed out. The on-disk cache was preserved.
+  success,
+
+  /// Device is offline — refusing so unsynced records are never abandoned.
+  offline,
+
+  /// Records remain unsynced after a sync attempt — refusing so the user
+  /// stays signed in and can retry or discard.
+  pendingSync,
+}
+
+/// Why sign-out is currently unavailable.
+enum LogoutBlock {
+  /// No connectivity, so pending records could not be uploaded.
+  offline,
+
+  /// Local records have not reached the cloud yet.
+  pendingSync,
 }

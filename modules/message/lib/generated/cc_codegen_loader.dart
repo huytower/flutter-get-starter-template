@@ -613,7 +613,13 @@ class CodegenLoader extends AssetLoader{
   "sync": {
     "offline_tooltip": "Offline — your data is only saved on this device until you reconnect",
     "pending_tooltip": "{count} item(s) not yet backed up to Cloud — tap to sync",
-    "synced_tooltip": "All data backed up to Cloud"
+    "synced_tooltip": "All data backed up to Cloud",
+    "logout_blocked_offline": "Connect to the internet before logging out",
+    "logout_blocked_pending": "You have data that hasn't synced yet. Reconnect and sync before logging out.",
+    "discard_title": "Discard unsynced data?",
+    "discard_message": "Some of your data could not be backed up and will be permanently deleted from this device. This cannot be undone.",
+    "discard_confirm": "Discard",
+    "discard_done": "Discarded unsynced data"
   },
   "profile": {
     "guest": "Guest",
@@ -1415,7 +1421,13 @@ static const Map<String,dynamic> _vi = {
   "sync": {
     "offline_tooltip": "Offline — your data is only saved on this device until you reconnect",
     "pending_tooltip": "{count} item(s) not yet backed up to Cloud — tap to sync",
-    "synced_tooltip": "All data backed up to Cloud"
+    "synced_tooltip": "All data backed up to Cloud",
+    "logout_blocked_offline": "Kết nối mạng trước khi đăng xuất",
+    "logout_blocked_pending": "Bạn có dữ liệu chưa đồng bộ. Kết nối mạng và đồng bộ trước khi đăng xuất.",
+    "discard_title": "Xoá dữ liệu chưa đồng bộ?",
+    "discard_message": "Một phần dữ liệu của bạn không thể sao lưu và sẽ bị xoá vĩnh viễn khỏi thiết bị này. Hành động này không thể hoàn tác.",
+    "discard_confirm": "Xoá",
+    "discard_done": "Đã xoá dữ liệu chưa đồng bộ"
   }
 };
 static const Map<String, Map<String,dynamic>> mapLocales = {"en": _en, "vi": _vi};

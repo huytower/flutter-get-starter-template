@@ -699,6 +699,12 @@
     "sync": {
         "offline_tooltip": "Offline — your data is only saved on this device until you reconnect",
         "pending_tooltip": "{count} item(s) not yet backed up to Cloud — tap to sync",
-        "synced_tooltip": "All data backed up to Cloud"
+        "synced_tooltip": "All data backed up to Cloud",
+        "logout_blocked_offline": "Kết nối mạng trước khi đăng xuất",
+        "logout_blocked_pending": "Bạn có dữ liệu chưa đồng bộ. Kết nối mạng và đồng bộ trước khi đăng xuất.",
+        "discard_title": "Xoá dữ liệu chưa đồng bộ?",
+        "discard_message": "Một phần dữ liệu của bạn không thể sao lưu và sẽ bị xoá vĩnh viễn khỏi thiết bị này. Hành động này không thể hoàn tác.",
+        "discard_confirm": "Xoá",
+        "discard_done": "Đã xoá dữ liệu chưa đồng bộ"
     }
 }

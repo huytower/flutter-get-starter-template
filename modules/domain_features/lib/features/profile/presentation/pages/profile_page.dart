@@ -1,4 +1,5 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/core/getx/cc_get_view.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../firestore/financial_data_sync_service.dart';
 import '../../../guideline/export_guideline.dart';
 import '../get_x/profile_controller.dart';
 import '../widgets/guideline_reset_bottom_sheet.dart';
@@ -261,17 +263,98 @@ class ProfilePage extends CcGetView<ProfileController> {
   }
 
   Widget _buildLogoutButton(BuildContext context) {
-    return CcBouncing(
-      onTap: () => controller.logout(context),
-      child: CcText(
-        el.tr(CcLocaleKeys.auth_logout),
-        textStyle: context.ccTextTheme.bodySmall?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant,
-          fontWeight: FontWeight.w500,
-        ),
-        align: Alignment.center,
-        textAlign: TextAlign.center,
-      ),
+    return Obx(() {
+      final block = controller.logoutBlock;
+
+      final reason = switch (block) {
+        LogoutBlock.offline => el.tr(CcLocaleKeys.sync_logout_blocked_offline),
+        LogoutBlock.pendingSync =>
+          el.tr(CcLocaleKeys.sync_logout_blocked_pending),
+        null => null,
+      };
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CcBouncing(
+            onTap: block == null ? () => _handleLogout(context) : null,
+            child: CcText(
+              el.tr(CcLocaleKeys.auth_logout),
+              textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                color: block == null
+                    ? context.ccColorScheme.onSurfaceVariant
+                    : context.ccColorScheme.onSurfaceVariant.withOpacity(0.4),
+                fontWeight: FontWeight.w500,
+              ),
+              align: Alignment.center,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          if (reason != null) ...[
+            const CcSpaceXS(),
+            CcText(
+              reason,
+              textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                color: context.ccColorScheme.error,
+                fontSize: context.respFontSize(11),
+              ),
+              align: Alignment.center,
+              textAlign: TextAlign.center,
+            ),
+          ],
+          if (block == LogoutBlock.pendingSync) ...[
+            const CcSpaceXS(),
+            CcInteractBtnWrapper(
+              onTap: () => _handleDiscard(context),
+              useDebounce: true,
+              isBouncing: false,
+              child: CcText(
+                el.tr(CcLocaleKeys.sync_discard_confirm),
+                textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                  color: context.ccColorScheme.error,
+                  decoration: TextDecoration.underline,
+                  fontSize: context.respFontSize(11),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ],
+      );
+    });
+  }
+
+  Future<void> _handleLogout(BuildContext context) async {
+    final result = await controller.logout(context);
+    if (result == null || !context.mounted) return;
+
+    CcSnackBarHelper.showErrorSnackBar(
+      context: context,
+      message: switch (result) {
+        LogoutResult.offline =>
+          el.tr(CcLocaleKeys.sync_logout_blocked_offline),
+        LogoutResult.pendingSync =>
+          el.tr(CcLocaleKeys.sync_logout_blocked_pending),
+        LogoutResult.success => '',
+      },
+    );
+  }
+
+  Future<void> _handleDiscard(BuildContext context) async {
+    final confirmed = await CcDialogHelper.showMessageBottomSheet(
+      context: context,
+      title: el.tr(CcLocaleKeys.sync_discard_title),
+      content: el.tr(CcLocaleKeys.sync_discard_message),
+      confirmText: el.tr(CcLocaleKeys.sync_discard_confirm),
+      cancelText: el.tr(CcLocaleKeys.common_cancel),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    await controller.discardUnsynced();
+    if (!context.mounted) return;
+    CcSnackBarHelper.showSuccessSnackBar(
+      context: context,
+      message: el.tr(CcLocaleKeys.sync_discard_done),
     );
   }
 

@@ -2083,6 +2083,12 @@ abstract class CcLocaleKeys {
   static const sync_offline_tooltip = 'sync.offline_tooltip';
   static const sync_pending_tooltip = 'sync.pending_tooltip';
   static const sync_synced_tooltip = 'sync.synced_tooltip';
+  static const sync_logout_blocked_offline = 'sync.logout_blocked_offline';
+  static const sync_logout_blocked_pending = 'sync.logout_blocked_pending';
+  static const sync_discard_title = 'sync.discard_title';
+  static const sync_discard_message = 'sync.discard_message';
+  static const sync_discard_confirm = 'sync.discard_confirm';
+  static const sync_discard_done = 'sync.discard_done';
 
   static const profile_guest = 'profile.guest';
   static const profile_display_name_title = 'profile.display_name_title';

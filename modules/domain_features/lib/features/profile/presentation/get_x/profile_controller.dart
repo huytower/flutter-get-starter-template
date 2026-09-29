@@ -16,6 +16,7 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../category/export_category.dart';
 import '../../../category/presentation/get_x/category_settings_controller.dart';
+import '../../../firestore/financial_data_sync_service.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/notification_service.dart';
 import '../../domain/entities/profile_settings_entity.dart';
@@ -238,9 +239,27 @@ class ProfileController extends CcGetController {
     await _updateSettings(updated);
   }
 
-  Future<void> logout(BuildContext context) async {
-    await _session.clearSession();
+  /// Guards sign-out so the user can never leave behind unsynced financial
+  /// records. Returns the reason it was refused, or null on success.
+  Future<LogoutResult?> logout(BuildContext context) async {
+    final syncService = getIt<FinancialDataSyncService>();
+    final result = await syncService.logoutSafely();
+
+    if (result == LogoutResult.success) return null;
+    return result;
   }
+
+  /// Whether the logout button should be interactive.
+  bool get canLogout => getIt<FinancialDataSyncService>().canLogout();
+
+  /// Null when logout is allowed, otherwise why it is blocked.
+  LogoutBlock? get logoutBlock =>
+      getIt<FinancialDataSyncService>().logoutBlock;
+
+  /// Deletes every record that never reached the cloud. Destructive — only
+  /// reachable behind an explicit confirmation from the Profile screen.
+  Future<int> discardUnsynced() =>
+      getIt<FinancialDataSyncService>().discardUnsynced();
 
   void handleHeroBannerTap(BuildContext context) {
     if (!isLoggedIn) {
