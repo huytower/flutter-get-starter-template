@@ -46,9 +46,6 @@ class ReconciliationHistorySection extends StatelessWidget {
   }
 
   void _showUndoDialog(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (_) => const ReconciliationUndoDialog(),
-    );
+    ReconciliationUndoSheet.show(context);
   }
 }

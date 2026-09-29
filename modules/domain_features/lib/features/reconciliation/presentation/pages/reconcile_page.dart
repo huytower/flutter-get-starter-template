@@ -83,7 +83,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
       behavior: HitTestBehavior.translucent,
       onTap: controller.stopEditing,
       child: ListView(
-        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
+        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_SM)),
         children: [
           _buildSeeMoreDescription(context),
           _buildInstructionText(context),
@@ -251,7 +251,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
   Widget _buildBottomSlot(BuildContext context) {
     return Obx(() {
       if (controller.editingWalletId.value == null) {
-        return SizedBox(height: MediaQuery.of(context).padding.bottom);
+        return const SizedBox.shrink();
       }
 
       return SafeArea(

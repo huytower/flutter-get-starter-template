@@ -73,37 +73,102 @@ class _ReconciliationSuccessDialogState
   }
 }
 
-class ReconciliationUndoDialog extends StatelessWidget {
-  const ReconciliationUndoDialog({super.key});
+class ReconciliationUndoSheet extends StatelessWidget {
+  const ReconciliationUndoSheet({super.key});
+
+  static Future<void> show(BuildContext context) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => const ReconciliationUndoSheet(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ReconciliationController>();
+    final scheme = context.ccColorScheme;
 
-    return AlertDialog(
-      title: Text(el.tr(CcLocaleKeys.reconciliation_undo_title)),
-      content: Text(el.tr(CcLocaleKeys.reconciliation_undo_confirm)),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(el.tr(CcLocaleKeys.common_cancel)),
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_LG)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                padding: EdgeInsets.all(context.respDim(14)),
+                decoration: BoxDecoration(
+                  color: scheme.primary.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.undo_rounded,
+                  color: scheme.primary,
+                  size: context.respIconSize(baseSize: 28),
+                ),
+              ),
+            ),
+            const CcSpaceMD(),
+            CcText(
+              el.tr(CcLocaleKeys.reconciliation_undo_title),
+              align: Alignment.center,
+              textAlign: TextAlign.center,
+              textStyle: context.ccTextTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: scheme.onSurface,
+              ),
+            ),
+            const CcSpaceSM(),
+            CcText(
+              el.tr(CcLocaleKeys.reconciliation_undo_confirm),
+              align: Alignment.center,
+              maxLines: 5,
+              textAlign: TextAlign.center,
+              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+            const CcSpaceLG(),
+            Row(
+              children: [
+                Expanded(
+                  child: CcBaseBtn(
+                    title: el.tr(CcLocaleKeys.common_cancel),
+                    bgColor: [
+                      scheme.surfaceContainerHighest,
+                      scheme.surfaceContainerHighest,
+                    ],
+                    textColor: scheme.onSurface,
+                    onTap: () => Navigator.of(context).pop(),
+                  ),
+                ),
+                const CcSpaceMD(),
+                Expanded(
+                  child: CcBaseBtn(
+                    title: el.tr(CcLocaleKeys.reconciliation_undo),
+                    bgColor: [scheme.primary, scheme.primaryContainer],
+                    textColor: scheme.onPrimary,
+                    onTap: () async {
+                      if (controller.isSubmitting.value) return;
+                      Navigator.of(context).pop();
+                      final error = await controller.undoLast();
+                      if (!context.mounted) return;
+                      if (error != null) {
+                        CcSnackBarHelper.showErrorSnackBar(
+                          context: context,
+                          message: error,
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-        TextButton(
-          onPressed: () async {
-            if (controller.isSubmitting.value) return;
-            Navigator.pop(context);
-            final error = await controller.undoLast();
-            if (!context.mounted) return;
-            if (error != null) {
-              CcSnackBarHelper.showErrorSnackBar(
-                context: context,
-                message: error,
-              );
-            }
-          },
-          child: Text(el.tr(CcLocaleKeys.reconciliation_undo)),
-        ),
-      ],
+      ),
     );
   }
 }

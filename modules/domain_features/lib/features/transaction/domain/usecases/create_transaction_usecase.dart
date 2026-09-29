@@ -101,7 +101,8 @@ class CreateTransactionUseCase {
       if (balanceResult.isError()) {
         return Error(balanceResult.tryGetError()!);
       }
-      if (params.amount > balanceResult.tryGetSuccess()!) {
+      final availableBalance = balanceResult.tryGetSuccess()!;
+      if (params.amount > availableBalance) {
         return const Error(
           ValidationFailure(
             CcLocaleKeys.transaction_validation_insufficient_balance,
