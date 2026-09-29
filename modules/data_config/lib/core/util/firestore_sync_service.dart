@@ -68,22 +68,25 @@ class FirestoreSyncService {
           );
           return remoteId;
         } else {
-          // Document doesn't exist remotely, create it
-          final docRef = await collection.add(syncData);
+          // Document doesn't exist remotely, recreate it under the same id so
+          // that repeat pushes stay idempotent instead of duplicating.
+          await collection.doc(remoteId).set(syncData);
           SyncTrace.log(
-            'PUSH  remoteId pointed at a deleted doc -> created new '
-            'doc=${docRef.id} collection=$collectionName localId=$localId',
+            'PUSH  remoteId pointed at a deleted doc -> recreated '
+            'doc=$remoteId collection=$collectionName localId=$localId',
           );
-          return docRef.id;
+          return remoteId;
         }
       } else {
-        // Create new document
-        final docRef = await collection.add(syncData);
+        // Create new document using the local id as the document id. Using
+        // `collection.add()` here would allocate a random auto-id, so every
+        // repeated push of the same local record spawned a new duplicate.
+        await collection.doc(localId).set(syncData);
         SyncTrace.log(
-          'PUSH  created doc=${docRef.id} collection=$collectionName '
+          'PUSH  created doc=$localId collection=$collectionName '
           'localId=$localId',
         );
-        return docRef.id;
+        return localId;
       }
     } catch (e) {
       SyncTrace.log('PUSH  FAILED collection=$collectionName error=$e');

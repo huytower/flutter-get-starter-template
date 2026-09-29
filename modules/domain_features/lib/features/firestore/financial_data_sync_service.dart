@@ -138,8 +138,9 @@ class FinancialDataSyncService {
       }
       await _ensureCacheOwner(nextUserId);
       _observedUserId = nextUserId;
+      // `pullFromFirestore()` refreshes the loaded controllers itself once the
+      // merge completes, so the UI is updated from the post-pull Hive state.
       await pullFromFirestore();
-      await _refreshLoadedControllers();
     }).catchError((error) {
       'Account transition failed: $error'.Log('FinancialDataSyncService');
     });
@@ -168,15 +169,32 @@ class FinancialDataSyncService {
     pendingCount.value = 0;
   }
 
+  /// Re-reads every already-registered screen controller from the freshly
+  /// merged Hive state.
+  ///
+  /// Runs with `showLoading: false` — a pull finishes on a background task, so
+  /// replacing a screen the user is currently looking at with a full-screen
+  /// loader (only to repaint it a moment later with the same data) is a
+  /// regression, not a refresh. Callers that want visible loading state pass
+  /// it themselves via their own pull-to-refresh handlers.
+  ///
+  /// Each controller is refreshed exactly once. [TransactionController
+  /// .refreshData] re-enters both [WalletController] and
+  /// [BudgetAllocationController] internally, so invoking it alongside the
+  /// other two would run every load twice per pull.
   Future<void> _refreshLoadedControllers() async {
+    if (Get.isRegistered<TransactionController>()) {
+      final transaction = Get.find<TransactionController>();
+      await Future.wait([
+        transaction.refreshWalletTotal(),
+        transaction.loadWallets(),
+      ]);
+    }
     if (Get.isRegistered<WalletController>()) {
-      await Get.find<WalletController>().loadWallets();
+      await Get.find<WalletController>().loadWallets(showLoading: false);
     }
     if (Get.isRegistered<BudgetAllocationController>()) {
-      await Get.find<BudgetAllocationController>().loadAll();
-    }
-    if (Get.isRegistered<TransactionController>()) {
-      await Get.find<TransactionController>().refreshData();
+      await Get.find<BudgetAllocationController>().loadAll(showLoading: false);
     }
   }
 
@@ -349,6 +367,14 @@ class FinancialDataSyncService {
       await _pullLiabilities(userId);
 
       SyncTrace.log('PULL  ===== end pullFromFirestore userId=$userId =====');
+
+      // The pull mutated the Hive boxes, so anything already rendered from
+      // them is now stale. Refreshing here (rather than at each call site)
+      // makes "UI always mirrors Hive after a pull" an invariant of the pull
+      // itself — otherwise correctness depended on which caller remembered to
+      // do it, and the bridge's `syncAuthenticatedData()` path silently left
+      // the wallet/budget screens showing pre-pull data.
+      await _refreshLoadedControllers();
     } catch (e) {
       'pullFromFirestore failed: $e'.Log('FinancialDataSyncService');
       SyncTrace.log('PULL  FAILED error=$e');

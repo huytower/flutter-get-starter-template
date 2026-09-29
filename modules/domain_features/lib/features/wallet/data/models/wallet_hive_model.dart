@@ -132,19 +132,23 @@ class WalletHiveModel extends HiveObject {
     Map<String, dynamic> data,
     String localId,
   ) {
+    final remoteModifiedAt = data['lastModifiedAt'] as String?;
+    final parsedModifiedAt = remoteModifiedAt != null
+        ? DateTime.tryParse(remoteModifiedAt)
+        : null;
+
     return WalletHiveModel(
       id: localId,
       name: data['name'] as String,
       balance: data['balance'] as int,
       iconCode: data['iconCode'] as int,
       type: data['type'] as String,
-      createdAt: DateTime.parse(data['createdAt'] as String),
+      createdAt:
+          DateTime.tryParse(data['createdAt'] as String? ?? '') ?? DateTime.now(),
       remoteId: data['remoteId'] as String?,
       syncStatus: SyncStatus.synced.name,
-      lastSyncedAt: DateTime.now(),
-      lastModifiedAt: data['updatedAt'] != null
-          ? DateTime.parse(data['updatedAt'] as String)
-          : DateTime.now(),
+      lastSyncedAt: parsedModifiedAt,
+      lastModifiedAt: parsedModifiedAt,
       categoryId: data['categoryId'] as String?,
       displayOrder: (data['displayOrder'] as num?)?.toInt() ?? 0,
     );

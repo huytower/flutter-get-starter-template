@@ -75,7 +75,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       child: Builder(
         builder: (context) => buildPullToRefresh(
           context: context,
-          onRefresh: controller.loadAll,
+            onRefresh: controller.refreshFromCloud,
           child: ListView(
             padding: EdgeInsets.symmetric(
               vertical: context.respPadding(CcPaddingParams.SPACE_MD),

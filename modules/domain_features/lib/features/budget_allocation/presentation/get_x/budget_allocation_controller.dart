@@ -7,12 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
 import '../../../budget_limit/domain/usecases/get_budget_insights_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
 import '../../../category/presentation/get_x/category_settings_controller.dart';
+import '../../../firestore/financial_data_sync_service.dart';
 import '../../../liability/domain/entities/liability_balance_entity.dart';
 import '../../../liability/domain/usecases/get_liability_balances_usecase.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
@@ -222,14 +224,26 @@ class BudgetAllocationController extends CcGetController {
     loadAll();
   }
 
-  Future<void> loadAll() async {
-    layoutStatus.value = CcLayoutStatus.loading;
-    SyncTrace.log('UI     BudgetAllocation.loadAll() ENTER');
+  /// Pull-to-refresh: fetches the newest cloud state, then re-renders.
+  ///
+  /// Re-reading the local Hive cache alone would make a manual refresh a no-op
+  /// for anything synced from another device. [pullFromFirestore] merges the
+  /// remote state into Hive and refreshes the live controllers itself, so this
+  /// must not also call [loadAll] — that would run every load twice.
+  Future<void> refreshFromCloud() async {
+    await getIt<FinancialDataSyncService>().pullFromFirestore();
+  }
+
+  Future<void> loadAll({bool showLoading = true}) async {
+    if (showLoading) {
+      layoutStatus.value = CcLayoutStatus.loading;
+    }
+    SyncTrace.log('UI     BudgetAllocation.loadAll() ENTER showLoading=$showLoading');
 
     try {
       // Parallelize loading to satisfy Law 5 (Clean Bootstrap Integrity - parallelize)
       await Future.wait([
-        walletController.loadWallets(),
+        walletController.loadWallets(showLoading: showLoading),
         budgetLimitController.loadBudgets(),
         loadLiabilities(),
         userLevel.refresh(),

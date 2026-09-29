@@ -371,9 +371,11 @@ class WalletController extends CcGetController {
   /// Pass [showLoading] false for background refreshes (e.g. re-opening the
   /// Wallet tab after adding a transaction elsewhere) so the list isn't
   /// replaced by a full-screen loader.
-  Future<void> loadWallets() async {
-    layoutStatus.value = CcLayoutStatus.loading;
-    SyncTrace.log('UI     loadWallets() ENTER');
+  Future<void> loadWallets({bool showLoading = true}) async {
+    if (showLoading) {
+      layoutStatus.value = CcLayoutStatus.loading;
+    }
+    SyncTrace.log('UI     loadWallets() ENTER showLoading=$showLoading');
 
     final settings = await _getProfileSettings();
     isVip.value = settings.isVip;
