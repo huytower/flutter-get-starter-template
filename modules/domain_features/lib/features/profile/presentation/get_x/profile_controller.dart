@@ -253,13 +253,7 @@ class ProfileController extends CcGetController {
   bool get canLogout => getIt<FinancialDataSyncService>().canLogout();
 
   /// Null when logout is allowed, otherwise why it is blocked.
-  LogoutBlock? get logoutBlock =>
-      getIt<FinancialDataSyncService>().logoutBlock;
-
-  /// Deletes every record that never reached the cloud. Destructive — only
-  /// reachable behind an explicit confirmation from the Profile screen.
-  Future<int> discardUnsynced() =>
-      getIt<FinancialDataSyncService>().discardUnsynced();
+  LogoutBlock? get logoutBlock => getIt<FinancialDataSyncService>().logoutBlock;
 
   void handleHeroBannerTap(BuildContext context) {
     if (!isLoggedIn) {

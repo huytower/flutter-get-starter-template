@@ -303,24 +303,6 @@ class ProfilePage extends CcGetView<ProfileController> {
     );
   }
 
-  Future<void> _handleDiscard(BuildContext context) async {
-    final confirmed = await CcDialogHelper.showMessageBottomSheet(
-      context: context,
-      title: el.tr(CcLocaleKeys.sync_discard_title),
-      content: el.tr(CcLocaleKeys.sync_discard_message),
-      confirmText: el.tr(CcLocaleKeys.sync_discard_confirm),
-      cancelText: el.tr(CcLocaleKeys.common_cancel),
-    );
-    if (confirmed != true || !context.mounted) return;
-
-    await controller.discardUnsynced();
-    if (!context.mounted) return;
-    CcSnackBarHelper.showSuccessSnackBar(
-      context: context,
-      message: el.tr(CcLocaleKeys.sync_discard_done),
-    );
-  }
-
   Widget _buildDeleteAccountText(BuildContext context) {
     return CcBouncing(
       onTap: () async {

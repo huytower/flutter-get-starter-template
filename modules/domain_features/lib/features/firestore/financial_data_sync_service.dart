@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:data_config/core/util/firestore_sync_service.dart';
 import 'package:data_config/core/util/sync_trace.dart';
@@ -25,7 +25,12 @@ import '../../../features/wallet/data/models/wallet_hive_model.dart';
 import '../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../transaction/presentation/get_x/transaction_controller.dart';
 import '../wallet/presentation/get_x/wallet_controller.dart';
+import 'enum/logout_block.dart';
+import 'enum/logout_result.dart';
 import 'enum/sync_status.dart';
+
+export 'enum/logout_block.dart';
+export 'enum/logout_result.dart';
 
 @lazySingleton
 class FinancialDataSyncService {
@@ -101,8 +106,9 @@ class FinancialDataSyncService {
       return online;
     } catch (e) {
       isOnline.value = false;
-      'Connectivity probe failed, treating as offline: $e'
-          .Log('FinancialDataSyncService');
+      'Connectivity probe failed, treating as offline: $e'.Log(
+        'FinancialDataSyncService',
+      );
       return false;
     }
   }
@@ -121,29 +127,31 @@ class FinancialDataSyncService {
     if (nextUserId == null && _observedUserId == null) return Future.value();
     if (nextUserId == _observedUserId) return Future.value();
 
-    _accountTransition = (_accountTransition ?? Future.value()).then((_) async {
-      if (nextUserId == null) {
-        // Signed out — preserve the cache, just forget the live user.
-        _observedUserId = null;
-        SyncTrace.log(
-          'SESSION signed out — cache preserved '
-          'owner=${CcAppStorage.instance.financialDataOwnerId}',
-        );
-        await _releaseLoadedControllers();
-        return;
-      }
+    _accountTransition = (_accountTransition ?? Future.value())
+        .then((_) async {
+          if (nextUserId == null) {
+            // Signed out — preserve the cache, just forget the live user.
+            _observedUserId = null;
+            SyncTrace.log(
+              'SESSION signed out — cache preserved '
+              'owner=${CcAppStorage.instance.financialDataOwnerId}',
+            );
+            await _releaseLoadedControllers();
+            return;
+          }
 
-      if (_observedUserId != null && _observedUserId != nextUserId) {
-        await _clearFinancialCache();
-      }
-      await _ensureCacheOwner(nextUserId);
-      _observedUserId = nextUserId;
-      // `pullFromFirestore()` refreshes the loaded controllers itself once the
-      // merge completes, so the UI is updated from the post-pull Hive state.
-      await pullFromFirestore();
-    }).catchError((error) {
-      'Account transition failed: $error'.Log('FinancialDataSyncService');
-    });
+          if (_observedUserId != null && _observedUserId != nextUserId) {
+            await _clearFinancialCache();
+          }
+          await _ensureCacheOwner(nextUserId);
+          _observedUserId = nextUserId;
+          // `pullFromFirestore()` refreshes the loaded controllers itself once the
+          // merge completes, so the UI is updated from the post-pull Hive state.
+          await pullFromFirestore();
+        })
+        .catchError((error) {
+          'Account transition failed: $error'.Log('FinancialDataSyncService');
+        });
     return _accountTransition!;
   }
 
@@ -213,8 +221,9 @@ class FinancialDataSyncService {
         Get.find<BudgetAllocationController>().liabilityBalances.clear();
       }
     } catch (e) {
-      'Failed to release in-memory controllers: $e'
-          .Log('FinancialDataSyncService');
+      'Failed to release in-memory controllers: $e'.Log(
+        'FinancialDataSyncService',
+      );
     }
   }
 
@@ -760,33 +769,39 @@ class FinancialDataSyncService {
   T _withSyncStatus<T>(T model, SyncStatus status) {
     if (model is WalletHiveModel) {
       return model.copyWithSyncMetadata(
-        model.syncMetadata.copyWith(status: status),
-      ) as T;
+            model.syncMetadata.copyWith(status: status),
+          )
+          as T;
     }
     if (model is TransactionModel) {
       return model.copyWithSyncMetadata(
-        model.syncMetadata.copyWith(status: status),
-      ) as T;
+            model.syncMetadata.copyWith(status: status),
+          )
+          as T;
     }
     if (model is BudgetLimitModel) {
       return model.copyWithSyncMetadata(
-        model.syncMetadata.copyWith(status: status),
-      ) as T;
+            model.syncMetadata.copyWith(status: status),
+          )
+          as T;
     }
     if (model is ReconciliationModel) {
       return model.copyWithSyncMetadata(
-        model.syncMetadata.copyWith(status: status),
-      ) as T;
+            model.syncMetadata.copyWith(status: status),
+          )
+          as T;
     }
     if (model is CategoryModel) {
       return model.copyWithSyncMetadata(
-        model.syncMetadata.copyWith(status: status),
-      ) as T;
+            model.syncMetadata.copyWith(status: status),
+          )
+          as T;
     }
     if (model is LiabilityModel) {
       return model.copyWithSyncMetadata(
-        model.syncMetadata.copyWith(status: status),
-      ) as T;
+            model.syncMetadata.copyWith(status: status),
+          )
+          as T;
     }
     return model;
   }
@@ -800,26 +815,4 @@ class FinancialDataSyncService {
     if (model is LiabilityModel) return model.lastModifiedAt;
     return null;
   }
-}
-
-/// Outcome of [FinancialDataSyncService.logoutSafely].
-enum LogoutResult {
-  /// Signed out. The on-disk cache was preserved.
-  success,
-
-  /// Device is offline — refusing so unsynced records are never abandoned.
-  offline,
-
-  /// Records remain unsynced after a sync attempt — refusing so the user
-  /// stays signed in and can retry or discard.
-  pendingSync,
-}
-
-/// Why sign-out is currently unavailable.
-enum LogoutBlock {
-  /// No connectivity, so pending records could not be uploaded.
-  offline,
-
-  /// Local records have not reached the cloud yet.
-  pendingSync,
 }
