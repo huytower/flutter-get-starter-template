@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
+import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
@@ -426,8 +427,11 @@ class LiabilityFormController extends LiabilityBaseFormController {
 
     result.when(
       (updatedLiability) async {
-        final savedAmount = TransactionFormHelpers.formatAmount(
-          amountStr.value,
+        final settings = await getIt<GetProfileSettingsUseCase>().call();
+        final amount = int.tryParse(amountStr.value) ?? 0;
+        final savedAmount = MoneyFormatter.formatWithSymbol(
+          amount,
+          currencyCode: settings.currencyCode,
         );
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,

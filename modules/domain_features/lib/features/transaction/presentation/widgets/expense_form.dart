@@ -7,7 +7,6 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constant/money_constants.dart';
 import '../get_x/expense_form_controller.dart';
 import 'cc_amount_input_section.dart';
 import 'expense_category_selection_section.dart';
@@ -32,11 +31,12 @@ class _ExpenseFormState extends State<ExpenseForm> {
     controller = widget.tag == null
         ? Get.find<ExpenseFormController>()
         : (Get.isRegistered<ExpenseFormController>(tag: widget.tag)
-            ? Get.find<ExpenseFormController>(tag: widget.tag)
-            : Get.put(getIt<ExpenseFormController>(), tag: widget.tag));
+              ? Get.find<ExpenseFormController>(tag: widget.tag)
+              : Get.put(getIt<ExpenseFormController>(), tag: widget.tag));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      controller.loadSuggestions();
       controller.refreshTimeBasedSuggestion();
       controller.refreshLocationSuggestion();
     });
@@ -53,6 +53,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
             index < tabs.length &&
             tabs[index] == TransactionTabKind.expense;
         if (isExpenseActive) {
+          controller.loadSuggestions();
           controller.refreshTimeBasedSuggestion();
           controller.refreshLocationSuggestion();
           controller.restoreActiveTabSuggestions();
@@ -199,7 +200,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
     return CcAmountInputSection(
       label: el.tr(CcLocaleKeys.transaction_amount),
       amountStr: controller.amountStr.value,
-      quickAmounts: MoneyConstants.quickAmounts,
+      quickAmounts: controller.quickAmounts,
       isKeypadVisible: controller.showKeypad.value,
       activeColor: accentColor,
       fieldKey: controller.amountFieldKey,
@@ -241,7 +242,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
       onKeyPress: controller.handleKeyPress,
       onDelete: controller.handleDelete,
       onClear: () => controller.amountStr.value = '0',
-      suggestions: MoneyConstants.quickAmounts,
+      suggestions: controller.quickAmounts,
       onSuggestion: (value) => controller.amountStr.value = value.toString(),
       onDone: controller.hideKeypad,
       activeColor: accentColor,

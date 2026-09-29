@@ -44,6 +44,7 @@ String buildAiFinancialAdvicePrompt({
   required BudgetInsightsEntity? insights,
   required List<BudgetAnomalyEntity> anomalies,
   required FinancialRunwayEntity? runway,
+  String currencyCode = 'VND',
 }) {
   final buffer = StringBuffer()
     ..writeln(
@@ -64,9 +65,9 @@ String buildAiFinancialAdvicePrompt({
 
   if (cashFlow != null) {
     buffer.writeln(
-      '- Thu nhập: ${formatVndWithSymbol(cashFlow.income)}. '
-      'Chi tiêu: ${formatVndWithSymbol(cashFlow.expense)}. '
-      'Chênh lệch: ${formatVndWithSymbol(cashFlow.net)} '
+      '- Thu nhập: ${formatVndWithSymbol(cashFlow.income, currencyCode: currencyCode)}. '
+      'Chi tiêu: ${formatVndWithSymbol(cashFlow.expense, currencyCode: currencyCode)}. '
+      'Chênh lệch: ${formatVndWithSymbol(cashFlow.net, currencyCode: currencyCode)} '
       '(${cashFlow.isDeficit ? "thâm hụt" : "dương"}).',
     );
   } else {
@@ -82,7 +83,7 @@ String buildAiFinancialAdvicePrompt({
     for (final w in pacingWarnings) {
       buffer.writeln(
         '  + ${w.budgetName}: còn ${w.daysRemaining} ngày, nên chi '
-        '≤ ${formatVndWithSymbol(w.suggestedDailySpend)}/ngày.',
+        '≤ ${formatVndWithSymbol(w.suggestedDailySpend, currencyCode: currencyCode)}/ngày.',
       );
     }
     for (final w in penaltyWarnings) {
@@ -99,9 +100,9 @@ String buildAiFinancialAdvicePrompt({
     buffer.writeln('- Khoản chi bất thường:');
     for (final a in anomalies) {
       buffer.writeln(
-        '  + ${a.budgetName}: ${formatVndWithSymbol(a.thisMonthSpend)} '
+        '  + ${a.budgetName}: ${formatVndWithSymbol(a.thisMonthSpend, currencyCode: currencyCode)} '
         'tháng này so với trung bình '
-        '${formatVndWithSymbol(a.avgPrevMonths.round())} 3 tháng trước.',
+        '${formatVndWithSymbol(a.avgPrevMonths.round(), currencyCode: currencyCode)} 3 tháng trước.',
       );
     }
   }
@@ -111,7 +112,7 @@ String buildAiFinancialAdvicePrompt({
       '- Chỉ số an toàn tài chính (runway): ${runway.months} tháng '
       '${runway.days} ngày (${_runwayStatusLabel(runway.status)}), chi '
       'tiêu trung bình/bắt buộc hàng tháng: '
-      '${formatVndWithSymbol(runway.monthlyBurn.round())}.',
+      '${formatVndWithSymbol(runway.monthlyBurn.round(), currencyCode: currencyCode)}.',
     );
   } else {
     buffer.writeln('- Không có dữ liệu chỉ số an toàn tài chính.');

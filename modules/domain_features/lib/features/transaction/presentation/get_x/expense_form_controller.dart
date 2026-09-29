@@ -16,9 +16,9 @@ import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/budget_over_limit_helper.dart';
 import '../../../../core/helper/location_suggestion_helper.dart';
 import '../../../../core/helper/merchant_match_helper.dart';
+import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/monthly_bill_suggestion_helper.dart';
 import '../../../../core/helper/time_based_suggestion_helper.dart';
-import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
@@ -832,8 +832,10 @@ class ExpenseFormController extends TransactionFormController
 
     result.when(
       (_) async {
-        final savedAmount = TransactionFormHelpers.formatAmount(
-          amountStr.value,
+        final settings = await getIt<GetProfileSettingsUseCase>().call();
+        final savedAmount = MoneyFormatter.formatWithSymbol(
+          amount,
+          currencyCode: settings.currencyCode,
         );
 
         BudgetOverLimitEntity? overLimit;

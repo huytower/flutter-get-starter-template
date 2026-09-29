@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
 import '../../features/transaction/presentation/widgets/transaction_date_picker_dialog.dart';
@@ -8,10 +7,8 @@ import 'money_format_helper.dart';
 /// State-management agnostic - pure functions only.
 class TransactionFormHelpers {
   /// Format amount string for display (e.g., "1000000" -> "1.000.000")
-  static String formatAmount(String amount) {
-    if (amount == '0') return '0';
-    final formatter = el.NumberFormat('#,###', 'vi_VN');
-    return formatter.format(int.parse(amount));
+  static String formatAmount(String amount, {String currencyCode = 'VND'}) {
+    return MoneyFormatter.formatInput(amount, currencyCode: currencyCode);
   }
 
   /// Pick a date using the custom date picker dialog.
@@ -50,7 +47,15 @@ class TransactionFormHelpers {
   }
 
   /// Format amount to short representation (e.g., 1000000 -> "1tr", 50000 -> "50k")
-  static String formatShort(num amount, {bool useFullSuffix = false}) {
-    return formatVndShort(amount, useFullSuffix: useFullSuffix);
+  static String formatShort(
+    num amount, {
+    bool useFullSuffix = false,
+    String currencyCode = 'VND',
+  }) {
+    return formatVndShort(
+      amount,
+      useFullSuffix: useFullSuffix,
+      currencyCode: currencyCode,
+    );
   }
 }

@@ -9,7 +9,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/helper/money_format_helper.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
@@ -351,8 +351,11 @@ class IncomeFormController extends TransactionFormController
 
     result.when(
       (_) async {
-        final savedAmount = TransactionFormHelpers.formatAmount(
-          amountStr.value,
+        final settings = await getIt<GetProfileSettingsUseCase>().call();
+        final amount = int.tryParse(amountStr.value) ?? 0;
+        final savedAmount = MoneyFormatter.formatWithSymbol(
+          amount,
+          currencyCode: settings.currencyCode,
         );
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,

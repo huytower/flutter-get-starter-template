@@ -12,6 +12,7 @@ import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
 import 'package:dio/dio.dart' as _i361;
 import 'package:domain_features/core/helper/ai_fallback_preference_datasource.dart'
     as _i967;
+import 'package:domain_features/core/helper/money_format_helper.dart' as _i645;
 import 'package:domain_features/export_domain_features.dart' as _i857;
 import 'package:domain_features/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart'
     as _i451;
@@ -247,6 +248,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
+    gh.factory<_i645.MoneyFormatter>(() => const _i645.MoneyFormatter());
     gh.factory<_i917.QuickEditTransactionSheetController>(
         () => _i917.QuickEditTransactionSheetController());
     gh.factory<_i94.EditTransactionSheetController>(

@@ -9,9 +9,9 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/helper/budget_name_helper.dart';
+import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
-import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
@@ -513,8 +513,11 @@ class InvestmentFormController extends TransactionFormController
           parentController.wallets.add(updatedWallet);
         }
 
-        final savedAmount = TransactionFormHelpers.formatAmount(
-          amountStr.value,
+        final settings = await _getProfileSettings();
+        final amount = int.tryParse(amountStr.value) ?? 0;
+        final savedAmount = MoneyFormatter.formatWithSymbol(
+          amount,
+          currencyCode: settings.currencyCode,
         );
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
