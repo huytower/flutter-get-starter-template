@@ -5,15 +5,23 @@ import 'currency_constants.dart';
 class CurrencyDefinition {
   const CurrencyDefinition({
     required this.code,
-    required this.name,
+    required this.nameKey,
     required this.symbol,
     required this.sampleAmount,
+    required this.locale,
+    required this.decimalDigits,
+    required this.isPrefixSymbol,
+    this.aliases = const [],
   });
 
   final String code;
-  final String name;
+  final String nameKey;
   final String symbol;
   final int sampleAmount;
+  final String locale;
+  final int decimalDigits;
+  final bool isPrefixSymbol;
+  final List<String> aliases;
 }
 
 /// Centralized catalog and privacy-first initial currency detection
@@ -25,39 +33,63 @@ class CurrencyCatalog {
   static const List<CurrencyDefinition> definitions = [
     CurrencyDefinition(
       code: CurrencyConstants.vnd,
-      name: 'Vietnamese Dong',
+      nameKey: 'currency.vnd',
       symbol: 'đ',
       sampleAmount: 2500000,
+      locale: 'vi_VN',
+      decimalDigits: 0,
+      isPrefixSymbol: false,
+      aliases: ['vnd', 'dong', 'd', 'đ'],
     ),
     CurrencyDefinition(
       code: CurrencyConstants.usd,
-      name: 'United States Dollar',
+      nameKey: 'currency.usd',
       symbol: '\$',
       sampleAmount: 100,
+      locale: 'en_US',
+      decimalDigits: 2,
+      isPrefixSymbol: true,
+      aliases: ['usd', 'dollar', 'dollars', '\$'],
     ),
     CurrencyDefinition(
       code: CurrencyConstants.eur,
-      name: 'Euro',
+      nameKey: 'currency.eur',
       symbol: '€',
       sampleAmount: 85,
+      locale: 'en_US',
+      decimalDigits: 2,
+      isPrefixSymbol: true,
+      aliases: ['eur', 'euro', 'euros', '€'],
     ),
     CurrencyDefinition(
       code: CurrencyConstants.jpy,
-      name: 'Japanese Yen',
+      nameKey: 'currency.jpy',
       symbol: '¥',
       sampleAmount: 11347,
+      locale: 'ja_JP',
+      decimalDigits: 0,
+      isPrefixSymbol: true,
+      aliases: ['jpy', 'yen', '¥'],
     ),
     CurrencyDefinition(
       code: CurrencyConstants.krw,
-      name: 'South Korean Won',
+      nameKey: 'currency.krw',
       symbol: '₩',
       sampleAmount: 135000,
+      locale: 'ko_KR',
+      decimalDigits: 0,
+      isPrefixSymbol: true,
+      aliases: ['krw', 'won', '₩'],
     ),
     CurrencyDefinition(
       code: CurrencyConstants.cny,
-      name: 'Chinese Yuan',
+      nameKey: 'currency.cny',
       symbol: '¥',
       sampleAmount: 639,
+      locale: 'zh_CN',
+      decimalDigits: 2,
+      isPrefixSymbol: true,
+      aliases: ['cny', 'rmb', 'yuan', '¥'],
     ),
   ];
 

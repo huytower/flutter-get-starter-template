@@ -1,4 +1,4 @@
-import 'package:intl/intl.dart';
+import 'currency_catalog.dart';
 
 abstract final class CurrencySelectionSources {
   static const detected = 'detected';
@@ -36,7 +36,7 @@ enum CurrencySelectionSourceType {
 
 /// Single Source of Truth (SSOT) for currency codes, default currency,
 /// currency symbols, and locale/region mappings across the app.
-/// Restricted to: VND, USD, JPY, EUR, KRW, CNY.
+/// Delegates metadata directly to [CurrencyCatalog] to prevent drift.
 class CurrencyConstants {
   CurrencyConstants._();
 
@@ -49,14 +49,8 @@ class CurrencyConstants {
   static const String krw = 'KRW';
   static const String cny = 'CNY';
 
-  static const List<String> supportedCurrencyCodes = [
-    vnd,
-    usd,
-    jpy,
-    eur,
-    krw,
-    cny,
-  ];
+  static List<String> get supportedCurrencyCodes =>
+      CurrencyCatalog.definitions.map((d) => d.code).toList();
 
   /// Validates whether [code] is a supported currency; returns [defaultCurrencyCode] otherwise.
   static String validateCurrencyCode(String? code) {
@@ -68,44 +62,11 @@ class CurrencyConstants {
 
   /// Gets the currency symbol for a given currency code.
   static String getSymbol(String currencyCode) {
-    switch (currencyCode.toUpperCase()) {
-      case usd:
-        return '\$';
-      case jpy:
-        return '¥';
-      case eur:
-        return '€';
-      case krw:
-        return '₩';
-      case cny:
-        return '¥';
-      case vnd:
-      default:
-        return 'đ';
-    }
+    return CurrencyCatalog.getDefinition(currencyCode).symbol;
   }
 
-  /// Gets the number format locale for a given currency code and app language.
+  /// Gets the number format locale for a given currency code.
   static String getLocale(String currencyCode) {
-    final code = currencyCode.toUpperCase();
-    if (code == vnd) {
-      return 'vi_VN';
-    }
-    if (code == krw) {
-      return 'ko_KR';
-    }
-    if (code == cny) {
-      return 'zh_CN';
-    }
-    if (code == jpy) {
-      return 'ja_JP';
-    }
-    try {
-      final lang = Intl.getCurrentLocale().split('_').first.toLowerCase();
-      if (lang == 'vi') {
-        return 'vi_VN';
-      }
-    } catch (_) {}
-    return 'en_US';
+    return CurrencyCatalog.getDefinition(currencyCode).locale;
   }
 }

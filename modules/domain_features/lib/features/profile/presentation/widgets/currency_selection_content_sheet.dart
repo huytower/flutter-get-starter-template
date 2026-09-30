@@ -41,7 +41,7 @@ class _CurrencySelectionContentSheetState
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    const currencies = CurrencyConstants.supportedCurrencyCodes;
+    final currencies = CurrencyConstants.supportedCurrencyCodes;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -157,7 +157,7 @@ class _CurrencySelectionContentSheetState
   Widget _buildHiddenTagsSection(BuildContext context, ColorScheme scheme) {
     if (!_showHiddenTags) return const SizedBox.shrink();
 
-    const currencies = CurrencyConstants.supportedCurrencyCodes;
+    final currencies = CurrencyConstants.supportedCurrencyCodes;
     return Padding(
       padding: EdgeInsets.fromLTRB(
         context.respPadding(CcPaddingParams.PAGE_MD),
@@ -215,8 +215,9 @@ class _CurrencySelectionContentSheetState
                   CcText(
                     code,
                     textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                       color: isSelected ? scheme.primary : scheme.onSurface,
                     ),
                   ),
@@ -292,7 +293,7 @@ class _CurrencySelectionContentSheetState
                   ),
                   const SizedBox(height: 2),
                   CcText(
-                    definition.name,
+                    tr(definition.nameKey),
                     textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                       fontWeight: isSelected
                           ? CcTypographyParams.bold
