@@ -1,6 +1,7 @@
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../../core/constant/currency_constants.dart';
 import '../../../domain/entities/profile_settings_entity.dart';
 
 @lazySingleton
@@ -30,7 +31,7 @@ class ProfileLocalDataSource {
     return ProfileSettingsEntity(
       reminderEnabled: s.reminderEnabled ?? false,
       weeklyAuditDayIndex: s.weeklyAuditDayIndex ?? 6,
-      currencyCode: s.currencyCode ?? 'VND',
+      currencyCode: s.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
       birthYear: s.birthYear,
       isDarkMode: s.isDarkMode,
       weeklyAuditDayChangedAt: s.weeklyAuditDayChangedAt,

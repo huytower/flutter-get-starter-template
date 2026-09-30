@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../get_x/expense_form_controller.dart';
@@ -62,7 +63,7 @@ class TransactionSmartSuggestionChip extends StatelessWidget {
   }
 
   String _formatSuggestionLabel(TransactionEntity match) =>
-      '${match.category} · ${MoneyFormatter.formatShort(match.amount)} ${MoneyFormatter.getSymbol('VND')}';
+      '${match.category} · ${MoneyFormatter.formatShort(match.amount)} ${MoneyFormatter.getSymbol(CurrencyConstants.defaultCurrencyCode)}';
 
   void _applySuggestion(ExpenseFormController controller) {
     final merchantMatch = controller.merchantMatchSuggestion.value;

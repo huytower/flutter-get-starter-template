@@ -1,8 +1,10 @@
+import '../../../../core/constant/currency_constants.dart';
+
 class ProfileSettingsEntity {
   const ProfileSettingsEntity({
     this.reminderEnabled = false,
     this.weeklyAuditDayIndex = 6,
-    this.currencyCode = 'VND',
+    this.currencyCode = CurrencyConstants.defaultCurrencyCode,
     this.birthYear,
     this.isDarkMode,
     this.weeklyAuditDayChangedAt,

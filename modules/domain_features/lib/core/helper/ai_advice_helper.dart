@@ -3,6 +3,7 @@ import '../../features/budget_limit/domain/entities/budget_limit_stats_entity.da
 import '../../features/budget_limit/domain/usecases/get_budget_anomalies_usecase.dart';
 import '../../features/report/domain/entities/financial_runway_entity.dart';
 import '../../features/transaction/domain/usecases/get_month_to_date_cash_flow_usecase.dart';
+import '../constant/currency_constants.dart';
 import 'money_format_helper.dart';
 
 String _penaltyTierLabel(BudgetPenaltyTier tier) {
@@ -44,7 +45,7 @@ String buildAiFinancialAdvicePrompt({
   required BudgetInsightsEntity? insights,
   required List<BudgetAnomalyEntity> anomalies,
   required FinancialRunwayEntity? runway,
-  String currencyCode = 'VND',
+  String currencyCode = CurrencyConstants.defaultCurrencyCode,
 }) {
   final buffer = StringBuffer()
     ..writeln(

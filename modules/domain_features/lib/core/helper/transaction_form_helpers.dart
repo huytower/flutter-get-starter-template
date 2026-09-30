@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../features/transaction/presentation/widgets/transaction_date_picker_dialog.dart';
+import '../constant/currency_constants.dart';
 import 'money_format_helper.dart';
 
 /// Common helper functions for transaction forms.
 /// State-management agnostic - pure functions only.
 class TransactionFormHelpers {
   /// Format amount string for display (e.g., "1000000" -> "1.000.000")
-  static String formatAmount(String amount, {String currencyCode = 'VND'}) {
+  static String formatAmount(
+    String amount, {
+    String currencyCode = CurrencyConstants.defaultCurrencyCode,
+  }) {
     return MoneyFormatter.formatInput(amount, currencyCode: currencyCode);
   }
 
@@ -50,7 +54,7 @@ class TransactionFormHelpers {
   static String formatShort(
     num amount, {
     bool useFullSuffix = false,
-    String currencyCode = 'VND',
+    String currencyCode = CurrencyConstants.defaultCurrencyCode,
   }) {
     return formatVndShort(
       amount,

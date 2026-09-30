@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
+
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/budget_name_helper.dart';
@@ -53,7 +55,7 @@ class WalletController extends CcGetController {
   final RxBool isEditMode = false.obs;
 
   final RxBool isVip = false.obs;
-  final RxString currencyCode = 'VND'.obs;
+  final RxString currencyCode = CurrencyConstants.defaultCurrencyCode.obs;
 
   void toggleEditMode() {
     isEditMode.toggle();
@@ -387,7 +389,9 @@ class WalletController extends CcGetController {
     if (result.isError()) {
       errorMessage.value = result.tryGetError()!.message;
       layoutStatus.value = CcLayoutStatus.error;
-      SyncTrace.log('UI     loadWallets() ERROR ${result.tryGetError()!.message}');
+      SyncTrace.log(
+        'UI     loadWallets() ERROR ${result.tryGetError()!.message}',
+      );
       return;
     }
 
