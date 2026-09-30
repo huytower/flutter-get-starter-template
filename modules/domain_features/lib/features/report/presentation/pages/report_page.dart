@@ -182,6 +182,7 @@ class _ReportView extends CcGetView<ReportController> {
                       _buildTrendCards(context, data),
                       _buildInvestmentSection(context),
                       _buildLiabilitySection(context),
+                      const CcSpaceSM(),
                       _buildDailyDetailEntry(context),
                     ],
                   ),
@@ -205,7 +206,6 @@ class _ReportView extends CcGetView<ReportController> {
         mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const CcSpaceXS(),
           CcText(
             el.tr(CcLocaleKeys.report_daily_detail),
             textStyle: context.ccTextTheme.titleSmall?.copyWith(

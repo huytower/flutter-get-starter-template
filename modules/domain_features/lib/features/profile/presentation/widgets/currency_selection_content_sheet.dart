@@ -307,16 +307,11 @@ class _CurrencySelectionContentSheetState
                   ),
                 ],
               ),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  color: PrjColors.success.withOpacity(0.15),
-                ),
-                child: CcText(
-                  formattedSample,
-                  textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isSelected ? scheme.onPrimary : PrjColors.success,
-                  ),
+              CcText(
+                formattedSample,
+                textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: isSelected ? scheme.primary : PrjColors.success,
                 ),
               ),
             ],
