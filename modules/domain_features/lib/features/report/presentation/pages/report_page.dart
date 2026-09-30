@@ -64,7 +64,7 @@ class _ReportView extends CcGetView<ReportController> {
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
-      mobile: 0.25,
+      mobile: 0.26,
       tablet: 0.24,
     );
     final headerHeight = screenHeight * headerHeightFactor;
@@ -130,7 +130,7 @@ class _ReportView extends CcGetView<ReportController> {
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
-      mobile: 0.28,
+      mobile: 0.29,
       tablet: 0.27,
     );
     final headerHeight = screenHeight * headerHeightFactor;
@@ -205,6 +205,7 @@ class _ReportView extends CcGetView<ReportController> {
         mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
+          const CcSpaceXS(),
           CcText(
             el.tr(CcLocaleKeys.report_daily_detail),
             textStyle: context.ccTextTheme.titleSmall?.copyWith(

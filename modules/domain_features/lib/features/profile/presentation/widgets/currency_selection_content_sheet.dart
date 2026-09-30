@@ -103,13 +103,7 @@ class _CurrencySelectionContentSheetState
     List<String> currencies,
   ) {
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(context.respDim(24)),
-          bottomRight: Radius.circular(context.respDim(24)),
-        ),
-      ),
+      decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -117,7 +111,6 @@ class _CurrencySelectionContentSheetState
           _buildDefaultCurrencyNotice(context, scheme),
           _buildHiddenTagsSection(context, scheme),
           _buildActions(context, scheme),
-          SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
         ],
       ),
     );
@@ -134,7 +127,7 @@ class _CurrencySelectionContentSheetState
         children: [
           RichText(
             text: TextSpan(
-              text: 'Default currency is $_selectedCurrencyCode, ',
+              text: 'Base currency is $_selectedCurrencyCode, ',
               style: context.ccTextTheme.bodySmall?.copyWith(
                 color: scheme.onSurface.withOpacity(0.7),
               ),
@@ -286,13 +279,6 @@ class _CurrencySelectionContentSheetState
             color: isSelected
                 ? scheme.primary.withOpacity(0.15)
                 : scheme.surface,
-            borderRadius: context.brMd,
-            border: Border.all(
-              color: isSelected
-                  ? scheme.primary
-                  : scheme.outline.withOpacity(0.1),
-              width: isSelected ? 1.5 : 1,
-            ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -321,16 +307,9 @@ class _CurrencySelectionContentSheetState
                   ),
                 ],
               ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
-                  vertical: context.respPadding(CcPaddingParams.SPACE_XS),
-                ),
+              DecoratedBox(
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? scheme.primary
-                      : PrjColors.success.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(context.respDim(8)),
+                  color: PrjColors.success.withOpacity(0.15),
                 ),
                 child: CcText(
                   formattedSample,

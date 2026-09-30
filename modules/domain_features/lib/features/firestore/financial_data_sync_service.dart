@@ -89,6 +89,13 @@ class FinancialDataSyncService {
   /// when, say, a connectivity-triggered [syncAll] overlaps a manual pull.
   int _activeSyncOps = 0;
 
+  /// Whether a coalesced push pass is currently running, and whether another
+  /// request arrived while it was. Together these let [syncAll] collapse a
+  /// burst of write requests into at most one extra pass.
+  bool _pushInFlight = false;
+  bool _pushQueued = false;
+  Future<void>? _pushLoop;
+
   /// Runs [task] with [isSyncing] raised, using a counter so overlapping
   /// operations cannot clear the flag while another is still in flight.
   Future<T> _trackSync<T>(Future<T> Function() task) async {
@@ -491,8 +498,37 @@ class FinancialDataSyncService {
 
   /// Pushes every pending/failed record to the cloud.
   ///
-  /// Tracked by [isSyncing]; the work itself lives in [_runSyncAll].
-  Future<void> syncAll() => _trackSync(_runSyncAll);
+  /// Repositories call this fire-and-forget after each local write, so a
+  /// single user gesture can request it many times in a row (toggling
+  /// "full access" alone enables ~19 investment/liability categories, each of
+  /// which calls `syncAll()`). Running each request as its own full push means
+  /// N overlapping scans of the pending set and N concurrent writers for the
+  /// same records. Requests are therefore coalesced: the first caller starts
+  /// the run, and every caller arriving while it is in flight shares that same
+  /// future instead of starting another. If requests landed while the run was
+  /// in flight, one extra pass runs afterwards so records written after their
+  /// collection was already scanned are not missed.
+  Future<void> syncAll() {
+    if (_pushInFlight) {
+      _pushQueued = true;
+      return _pushLoop ?? Future<void>.value();
+    }
+    return _pushLoop = _pushDrain();
+  }
+
+  /// Loops [_runSyncAll] until no further request arrived during a pass.
+  Future<void> _pushDrain() async {
+    _pushInFlight = true;
+    try {
+      do {
+        _pushQueued = false;
+        await _trackSync(_runSyncAll);
+      } while (_pushQueued);
+    } finally {
+      _pushInFlight = false;
+      _pushLoop = null;
+    }
+  }
 
   Future<void> _runSyncAll() async {
     try {
