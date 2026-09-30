@@ -697,9 +697,10 @@
         "transaction_desc": "Pick Chi tiêu/Thu nhập/Đầu tư/Vay-Nợ here, then fill in the amount and save."
     },
     "sync": {
-        "offline_tooltip": "Offline — your data is only saved on this device until you reconnect",
-        "pending_tooltip": "{count} item(s) not yet backed up to Cloud — tap to sync",
-        "synced_tooltip": "All data backed up to Cloud",
+        "offline_tooltip": "Ngoại tuyến — dữ liệu của bạn chỉ được lưu trên thiết bị này cho đến khi kết nối lại",
+        "syncing_tooltip": "Đang đồng bộ — sao lưu dữ liệu của bạn lên Cloud…",
+        "pending_tooltip": "{count} mục chưa được sao lưu lên Cloud — nhấn để đồng bộ",
+        "synced_tooltip": "Đã sao lưu toàn bộ dữ liệu lên Cloud",
         "logout_blocked_offline": "Kết nối mạng trước khi đăng xuất",
         "logout_blocked_pending": "Bạn có dữ liệu chưa đồng bộ. Kết nối mạng và đồng bộ trước khi đăng xuất.",
         "discard_title": "Xoá dữ liệu chưa đồng bộ?",

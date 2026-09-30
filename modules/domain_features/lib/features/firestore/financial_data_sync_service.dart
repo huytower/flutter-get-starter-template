@@ -75,6 +75,33 @@ class FinancialDataSyncService {
   /// write-repository already fires `syncAll()` after each local write.
   final RxInt pendingCount = 0.obs;
 
+  /// Whether a push or pull is currently running — also drives the
+  /// sync-status icon. A pull across six collections can run for tens of
+  /// seconds (see the `MERGE` trace volume), which is exactly when the user
+  /// needs to be told the app is working rather than idle.
+  ///
+  /// [pendingCount] alone cannot express this: it is only recomputed *after* a
+  /// sync completes, so it reads `0` for the whole duration of a clean pull
+  /// and the indicator would sit on "synced" while thousands of records merge.
+  final RxBool isSyncing = false.obs;
+
+  /// Number of overlapping sync operations. A plain flag would flicker off
+  /// when, say, a connectivity-triggered [syncAll] overlaps a manual pull.
+  int _activeSyncOps = 0;
+
+  /// Runs [task] with [isSyncing] raised, using a counter so overlapping
+  /// operations cannot clear the flag while another is still in flight.
+  Future<T> _trackSync<T>(Future<T> Function() task) async {
+    _activeSyncOps++;
+    isSyncing.value = true;
+    try {
+      return await task();
+    } finally {
+      _activeSyncOps--;
+      isSyncing.value = _activeSyncOps > 0;
+    }
+  }
+
   StreamSubscription<InternetStatus>? _connectivitySubscription;
   StreamSubscription<CcUserEntity?>? _sessionSubscription;
   Future<void>? _accountTransition;
@@ -462,7 +489,12 @@ class FinancialDataSyncService {
     await _refreshLoadedControllers();
   }
 
-  Future<void> syncAll() async {
+  /// Pushes every pending/failed record to the cloud.
+  ///
+  /// Tracked by [isSyncing]; the work itself lives in [_runSyncAll].
+  Future<void> syncAll() => _trackSync(_runSyncAll);
+
+  Future<void> _runSyncAll() async {
     try {
       final userId = _userId;
       if (userId != null && await _connection.hasInternetAccess) {
@@ -531,7 +563,12 @@ class FinancialDataSyncService {
     }
   }
 
-  Future<void> pullFromFirestore() async {
+  /// Merges the current user's Firestore state into Hive and refreshes the UI.
+  ///
+  /// Tracked by [isSyncing]; the work itself lives in [_runPull].
+  Future<void> pullFromFirestore() => _trackSync(_runPull);
+
+  Future<void> _runPull() async {
     try {
       final userId = _userId;
       if (userId == null) {

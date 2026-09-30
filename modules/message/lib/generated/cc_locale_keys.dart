@@ -573,6 +573,7 @@ abstract class  LocaleKeys {
   static const category_expense_settings_title = 'category.expense_settings_title';
   static const category = 'category';
   static const sync_offline_tooltip = 'sync.offline_tooltip';
+  static const sync_syncing_tooltip = 'sync.syncing_tooltip';
   static const sync_pending_tooltip = 'sync.pending_tooltip';
   static const sync_synced_tooltip = 'sync.synced_tooltip';
   static const sync_logout_blocked_offline = 'sync.logout_blocked_offline';

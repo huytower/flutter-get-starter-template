@@ -83,7 +83,7 @@ class _ProfilePageHeaderState extends State<ProfilePageHeader>
   @override
   Widget build(BuildContext context) {
     // Fixed height to ensure both surfaces are identical
-    final cardHeight = context.respDim(120);
+    final cardHeight = context.respDim(125);
 
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_SM,

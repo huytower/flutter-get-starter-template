@@ -213,38 +213,83 @@ class ProfileInfoCard extends StatelessWidget {
     );
   }
 
+  /// Sync indicator, resolved in strict priority order.
+  ///
+  /// Syncing is checked before pending on purpose: mid-merge the user is
+  /// actively being rescued, and showing "N items not backed up — tap to
+  /// sync" while the sync is already running invites a redundant tap.
   Widget _buildSyncStatusIcon(BuildContext context) {
     return Obx(() {
       final service = getIt<FinancialDataSyncService>();
       final online = service.isOnline.value;
+      final syncing = service.isSyncing.value;
       final pending = service.pendingCount.value;
-      final flagged = !online || pending > 0;
 
-      final icon = !online
-          ? Icons.cloud_off_rounded
-          : pending > 0
-          ? Icons.cloud_sync_rounded
-          : Icons.cloud_done_rounded;
+      final iconColor = context.ccColorScheme.onPrimary.withOpacity(0.8);
+      final iconSize = context.respIconSize(baseSize: 20);
 
-      final tooltip = !online
-          ? el.tr(CcLocaleKeys.sync_offline_tooltip)
-          : pending > 0
-          ? el.tr(
-              CcLocaleKeys.sync_pending_tooltip,
-              namedArgs: {'count': '$pending'},
-            )
-          : el.tr(CcLocaleKeys.sync_synced_tooltip);
+      late final Widget indicator;
+      late final String tooltip;
+      late final bool flagged;
+      late final bool tappable;
 
-      return CcIconButton.bouncing(
-        onTap: online ? () => service.syncAll() : () {},
+      if (!online) {
+        indicator = Icon(
+          Icons.cloud_off_rounded,
+          size: iconSize,
+          color: iconColor,
+        );
+        tooltip = el.tr(CcLocaleKeys.sync_offline_tooltip);
+        flagged = true;
+        tappable = false;
+      } else if (syncing) {
+        indicator = SizedBox(
+          width: iconSize,
+          height: iconSize,
+          child: CircularProgressIndicator(
+            strokeWidth: context.respDim(2),
+            valueColor: AlwaysStoppedAnimation<Color>(iconColor),
+          ),
+        );
+        tooltip = el.tr(CcLocaleKeys.sync_syncing_tooltip);
+        // Not an error and not actionable while the sync is in flight.
+        flagged = false;
+        tappable = false;
+      } else if (pending > 0) {
+        indicator = Icon(
+          Icons.cloud_sync_rounded,
+          size: iconSize,
+          color: iconColor,
+        );
+        tooltip = el.tr(
+          CcLocaleKeys.sync_pending_tooltip,
+          namedArgs: {'count': '$pending'},
+        );
+        flagged = true;
+        tappable = true;
+      } else {
+        indicator = Icon(
+          Icons.cloud_done_rounded,
+          size: iconSize,
+          color: iconColor,
+        );
+        tooltip = el.tr(CcLocaleKeys.sync_synced_tooltip);
+        flagged = false;
+        tappable = false;
+      }
+
+      return CcIconButton(
+        // The base constructor (not `.bouncing`) because that factory demands
+        // a non-null callback. A null `onTap` is what makes the non-actionable
+        // states genuinely inert. `isEnable` is deliberately left at its
+        // default: it dims to 50% opacity, which would under-emphasise the
+        // healthy "synced" icon — the red badge already carries "needs
+        // attention" and the spinner already carries "busy".
+        onTap: tappable ? () => service.syncAll() : null,
         icon: Stack(
           clipBehavior: Clip.none,
           children: [
-            Icon(
-              icon,
-              size: context.respIconSize(baseSize: 20),
-              color: context.ccColorScheme.onPrimary.withOpacity(0.8),
-            ),
+            indicator,
             if (flagged)
               Positioned(
                 right: context.respDim(-2),

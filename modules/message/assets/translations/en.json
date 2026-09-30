@@ -596,6 +596,7 @@
     },
     "sync": {
         "offline_tooltip": "Offline — your data is only saved on this device until you reconnect",
+        "syncing_tooltip": "Syncing — backing up your data to Cloud…",
         "pending_tooltip": "{count} item(s) not yet backed up to Cloud — tap to sync",
         "synced_tooltip": "All data backed up to Cloud",
         "logout_blocked_offline": "Connect to the internet before logging out",

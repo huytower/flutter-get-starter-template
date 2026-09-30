@@ -2081,6 +2081,7 @@ abstract class CcLocaleKeys {
   static const comment_detail_id = 'comment.detail.id';
 
   static const sync_offline_tooltip = 'sync.offline_tooltip';
+  static const sync_syncing_tooltip = 'sync.syncing_tooltip';
   static const sync_pending_tooltip = 'sync.pending_tooltip';
   static const sync_synced_tooltip = 'sync.synced_tooltip';
   static const sync_logout_blocked_offline = 'sync.logout_blocked_offline';
