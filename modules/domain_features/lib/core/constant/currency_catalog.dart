@@ -2,11 +2,73 @@ import 'dart:ui';
 
 import 'currency_constants.dart';
 
+class CurrencyDefinition {
+  const CurrencyDefinition({
+    required this.code,
+    required this.name,
+    required this.symbol,
+    required this.sampleAmount,
+  });
+
+  final String code;
+  final String name;
+  final String symbol;
+  final int sampleAmount;
+}
+
 /// Centralized catalog and privacy-first initial currency detection
 /// using device region and app locale (without requesting GPS permissions).
 /// Restricted to: VND, USD, JPY, EUR, KRW, CNY.
 class CurrencyCatalog {
   CurrencyCatalog._();
+
+  static const List<CurrencyDefinition> definitions = [
+    CurrencyDefinition(
+      code: CurrencyConstants.vnd,
+      name: 'Vietnamese Dong',
+      symbol: 'đ',
+      sampleAmount: 2500000,
+    ),
+    CurrencyDefinition(
+      code: CurrencyConstants.usd,
+      name: 'United States Dollar',
+      symbol: '\$',
+      sampleAmount: 100,
+    ),
+    CurrencyDefinition(
+      code: CurrencyConstants.eur,
+      name: 'Euro',
+      symbol: '€',
+      sampleAmount: 85,
+    ),
+    CurrencyDefinition(
+      code: CurrencyConstants.jpy,
+      name: 'Japanese Yen',
+      symbol: '¥',
+      sampleAmount: 11347,
+    ),
+    CurrencyDefinition(
+      code: CurrencyConstants.krw,
+      name: 'South Korean Won',
+      symbol: '₩',
+      sampleAmount: 135000,
+    ),
+    CurrencyDefinition(
+      code: CurrencyConstants.cny,
+      name: 'Chinese Yuan',
+      symbol: '¥',
+      sampleAmount: 639,
+    ),
+  ];
+
+  static CurrencyDefinition getDefinition(String code) {
+    for (final def in definitions) {
+      if (def.code.toUpperCase() == code.toUpperCase()) {
+        return def;
+      }
+    }
+    return definitions.first;
+  }
 
   /// Mapping from country code (ISO 3166-1 alpha-2) to currency code.
   static const Map<String, String> countryCodeToCurrency = {

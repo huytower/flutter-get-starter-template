@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../../core/constant/currency_catalog.dart';
 import '../../../../../core/constant/currency_constants.dart';
 import '../../../../../core/helper/money_format_helper.dart';
 
@@ -21,38 +22,21 @@ class CurrencySelectionContentSheet extends StatefulWidget {
 
 class _CurrencySelectionContentSheetState
     extends State<CurrencySelectionContentSheet> {
-  late String _selectedCurrencyCode;
+  // primaryCurrencyCode: User's selected default currency for new entries and reporting.
+  late String _primaryCurrencyCode;
   bool _showHiddenTags = false;
 
   @override
   void initState() {
     super.initState();
-    _selectedCurrencyCode = widget.initialCurrencyCode;
+    _primaryCurrencyCode = widget.initialCurrencyCode;
   }
 
   void _onCurrencyTap(String code) {
     setState(() {
-      _selectedCurrencyCode = code;
+      _primaryCurrencyCode = code;
     });
   }
-
-  static const Map<String, String> currencyNames = {
-    'VND': 'Vietnamese Dong',
-    'USD': 'United States Dollar',
-    'EUR': 'Euro',
-    'JPY': 'Japanese Yen',
-    'KRW': 'South Korean Won',
-    'CNY': 'Chinese Yuan',
-  };
-
-  static const Map<String, int> sampleAmounts = {
-    'VND': 2500000,
-    'USD': 100,
-    'EUR': 85,
-    'JPY': 11347,
-    'KRW': 135000,
-    'CNY': 639,
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +113,7 @@ class _CurrencySelectionContentSheetState
         children: [
           RichText(
             text: TextSpan(
-              text: 'Base currency is $_selectedCurrencyCode, ',
+              text: 'Primary currency is $_primaryCurrencyCode, ',
               style: context.ccTextTheme.bodySmall?.copyWith(
                 color: scheme.onSurface.withOpacity(0.7),
               ),
@@ -186,7 +170,7 @@ class _CurrencySelectionContentSheetState
         runSpacing: context.respDim(8),
         children: currencies.map((code) {
           final isSelected =
-              code.toUpperCase() == _selectedCurrencyCode.toUpperCase();
+              code.toUpperCase() == _primaryCurrencyCode.toUpperCase();
           final symbol = MoneyFormatter.getSymbol(code);
           return InkWell(
             onTap: () => _onCurrencyTap(code),
@@ -231,9 +215,8 @@ class _CurrencySelectionContentSheetState
                   CcText(
                     code,
                     textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
                       color: isSelected ? scheme.primary : scheme.onSurface,
                     ),
                   ),
@@ -268,11 +251,10 @@ class _CurrencySelectionContentSheetState
     String code,
   ) {
     final bool isSelected =
-        code.toUpperCase() == _selectedCurrencyCode.toUpperCase();
-    final name = currencyNames[code] ?? code;
-    final sampleValue = sampleAmounts[code] ?? 100;
+        code.toUpperCase() == _primaryCurrencyCode.toUpperCase();
+    final definition = CurrencyCatalog.getDefinition(code);
     final formattedSample = MoneyFormatter.formatWithSymbol(
-      sampleValue,
+      definition.sampleAmount,
       currencyCode: code,
     );
 
@@ -310,7 +292,7 @@ class _CurrencySelectionContentSheetState
                   ),
                   const SizedBox(height: 2),
                   CcText(
-                    name,
+                    definition.name,
                     textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                       fontWeight: isSelected
                           ? CcTypographyParams.bold
@@ -355,7 +337,7 @@ class _CurrencySelectionContentSheetState
           ),
           const CcSpaceSM(),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(_selectedCurrencyCode),
+            onPressed: () => Navigator.of(context).pop(_primaryCurrencyCode),
             child: CcText(
               tr(CcLocaleKeys.common_ok),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
