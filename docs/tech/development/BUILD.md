@@ -38,21 +38,24 @@ e. Visit `App Store Connect -> Testflight`, to see new version
 ##### Android
 
 <br />
-a. Open with folder `android` as Android Project
+a. Bump the version in `pubspec.yaml` (`version: 1.0.0+<code>`). This is the single source of truth:
+   `android/app/build.gradle.kts` parses it, so every build path (Flutter CLI, Android Studio, fastlane)
+   produces the same `versionCode`/`versionName`. `flutter.versionCode` in `android/local.properties` is
+   only rewritten by the CLI and must never be edited by hand.
 <br />
-b. `Android studio tool => Build => Generate signed app`
+b. Check the release keystore matches the upload key registered in Play Console
+   (Setup -> App signing -> Upload key certificate), otherwise the upload is rejected:
+   `keytool -list -v -keystore android/app/release.jks -alias release`
 <br />
-c. Create new Keystore name : release
+c. Build the bundle: `flutter build appbundle --release --flavor prod` (or `--flavor uat`)
+   → `build/app/outputs/bundle/prodRelease/app-prod-release.aab`
 <br />
-d. Fill in Keystore alias|password
+d. Verify the produced version before uploading:
+   `Select-String build/app/intermediates/manifest_merge_blame_file/prodRelease/processProdReleaseMainManifest/manifest-merger-blame-prod-release-report.txt -Pattern "versionCode|versionName"`
+   Play rejects an upload whose `versionCode` is not strictly greater than every code ever uploaded for the
+   app, with `Version code X has already been used`, even if the previous release was never published.
 <br />
-e. type alias + password + select file path `release` => Next
-<br />
-f. Select release variant
-<br />
-g. Locate *.apk || *.aab folder path
-<br />
-h. Visit `Google Play Console`, upload `App Production version`
+e. Open `Google Play Console`, create a release, and upload `app-prod-release.aab`
 
 #### Docs. || Refs.
 

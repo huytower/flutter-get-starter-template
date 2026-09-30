@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../guideline/export_guideline.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
@@ -232,7 +232,9 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
           ),
           alignment: Alignment.center,
           child: CcText(
-            '${TransactionFormHelpers.formatAmount(controller.amountStr.value)} đ',
+            MoneyFormatter.formatWithSymbol(
+              int.tryParse(controller.amountStr.value) ?? 0,
+            ),
             align: Alignment.center,
             textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.headlineMedium?.copyWith(

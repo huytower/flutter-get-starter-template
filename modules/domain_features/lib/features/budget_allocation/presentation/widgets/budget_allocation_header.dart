@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/money_format_helper.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
 class BudgetAllocationHeader extends StatelessWidget {
@@ -12,8 +13,12 @@ class BudgetAllocationHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<WalletController>();
 
-    return CcPadding(
-      Container(
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
+        vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+      ),
+      child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_LG)),
         decoration: BoxDecoration(
@@ -44,7 +49,10 @@ class BudgetAllocationHeader extends StatelessWidget {
                 Obx(
                   () => CcText(
                     controller.isBalanceVisible.value
-                        ? '${controller.totalBalance.value.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} đ'
+                        ? MoneyFormatter.formatWithSymbol(
+                            controller.totalBalance.value,
+                            currencyCode: controller.currencyCode.value,
+                          )
                         : '*********',
                     textStyle: context.ccTextTheme.headlineMedium?.copyWith(
                       color: context.ccColorScheme.onPrimary,
@@ -58,32 +66,20 @@ class BudgetAllocationHeader extends StatelessWidget {
               () => CcBouncing(
                 onTap: controller.toggleBalanceVisibility,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: context.ccColorScheme.onPrimary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(context.respDim(6)),
-                      child: CcIconToken(
-                        controller.isBalanceVisible.value
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                        size: 24,
-                      ),
-                    ),
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(
+                    controller.isBalanceVisible.value
+                        ? Icons.visibility_rounded
+                        : Icons.visibility_off_rounded,
+                    color: context.ccColorScheme.onPrimary.withOpacity(0.9),
+                    size: context.respIconSize(baseSize: 24),
                   ),
                 ),
               ),
             ),
-        ],
+          ],
+        ),
       ),
-    ),
-    CcPaddingParams.SPACE_SM, // bottom
-    CcPaddingParams.SPACE_LG, // left
-    CcPaddingParams.SPACE_LG, // right
-    CcPaddingParams.SPACE_MD, // top
     );
   }
 }

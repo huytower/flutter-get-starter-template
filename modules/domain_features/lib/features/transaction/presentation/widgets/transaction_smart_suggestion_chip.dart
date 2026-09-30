@@ -62,7 +62,7 @@ class TransactionSmartSuggestionChip extends StatelessWidget {
   }
 
   String _formatSuggestionLabel(TransactionEntity match) =>
-      '${match.category} · ${formatVndShort(match.amount)}đ';
+      '${match.category} · ${MoneyFormatter.formatShort(match.amount)} ${MoneyFormatter.getSymbol('VND')}';
 
   void _applySuggestion(ExpenseFormController controller) {
     final merchantMatch = controller.merchantMatchSuggestion.value;

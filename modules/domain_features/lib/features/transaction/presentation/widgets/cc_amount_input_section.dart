@@ -2,7 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/helper/money_format_helper.dart';
 import 'cc_quick_amount_chips.dart';
 
 /// A specialized input section for transaction amounts, featuring a display box
@@ -101,7 +101,9 @@ class CcAmountInputSection extends StatelessWidget {
     return Align(
       alignment: Alignment.center,
       child: CcText(
-        '${TransactionFormHelpers.formatAmount(_limitedAmountStr)} đ',
+        MoneyFormatter.formatWithSymbol(
+          int.tryParse(_limitedAmountStr) ?? 0,
+        ),
         align: Alignment.center,
         textAlign: TextAlign.center,
         textStyle: context.ccTextTheme.headlineMedium?.copyWith(

@@ -9,15 +9,29 @@ plugins {
     id("com.google.firebase.firebase-perf")
 }
 
-
-val localProperties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.inputStream().use { localProperties.load(it) }
+// Version SSOT: pubspec.yaml (`version: 1.0.0+2`).
+//
+// `flutter.versionCode` in android/local.properties is only rewritten by the
+// Flutter CLI, so it goes stale when the bundle is built from Android Studio
+// and would silently ship an already-used versionCode to Play. Reading the
+// manifest here keeps every entry point (CLI, Android Studio, fastlane) on the
+// same version. For AAB the artifact also uses an override of
+// `abiCode * 1000 + versionCode`, so only the plain versionCode reaches Play.
+fun readPubspecVersion(): Pair<String, String> {
+    val manifest = rootProject.file("../pubspec.yaml")
+    check(manifest.exists()) { "Cannot read app version, missing manifest: $manifest" }
+    val raw = manifest.readLines()
+        .firstOrNull { it.trimStart().startsWith("version:") }
+        ?.substringAfter("version:")
+        ?.trim()
+    val parts = raw.orEmpty().split("+").map { it.trim() }
+    check(parts.size == 2) {
+        "pubspec.yaml `version:` must be <name>+<code> (e.g. 1.0.0+2), found: $raw"
+    }
+    return parts[0] to parts[1]
 }
 
-val flutterVersionCode = localProperties.getProperty("flutter.versionCode") ?: "1"
-val flutterVersionName = localProperties.getProperty("flutter.versionName") ?: "1.0.0"
+val (pubspecVersionName, pubspecVersionCode) = readPubspecVersion()
 
 // Load keystore properties
 val keystorePropertiesFile = rootProject.file("key.properties")
@@ -54,8 +68,8 @@ android {
         applicationId = "vn.sosachxin.finance"
         minSdk = 28
         targetSdk = 37
-        versionCode = flutterVersionCode.toInt()
-        versionName = flutterVersionName
+        versionCode = pubspecVersionCode.toInt()
+        versionName = pubspecVersionName
         // Enabling multidex support.
         multiDexEnabled = true
     }

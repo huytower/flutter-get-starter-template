@@ -53,6 +53,7 @@ class WalletController extends CcGetController {
   final RxBool isEditMode = false.obs;
 
   final RxBool isVip = false.obs;
+  final RxString currencyCode = 'VND'.obs;
 
   void toggleEditMode() {
     isEditMode.toggle();
@@ -379,6 +380,7 @@ class WalletController extends CcGetController {
 
     final settings = await _getProfileSettings();
     isVip.value = settings.isVip;
+    currencyCode.value = settings.currencyCode;
 
     final result = await _repository.getWallets();
 

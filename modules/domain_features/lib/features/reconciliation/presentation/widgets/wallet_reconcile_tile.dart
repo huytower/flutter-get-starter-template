@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/money_format_helper.dart';
-import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
 import '../get_x/reconciliation_controller.dart';
 
@@ -157,7 +156,7 @@ class WalletActualBalanceInput extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CcText(
-                  '${TransactionFormHelpers.formatAmount(actual.toString())} đ',
+                  MoneyFormatter.formatWithSymbol(actual),
                   textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isEditing ? scheme.primary : null,
