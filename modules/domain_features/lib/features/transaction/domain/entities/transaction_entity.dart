@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
+
 /// Only [TransactionType.income], [TransactionType.expense], debt/loan, and
 /// investment entries dated within this many days of "now" can be corrected
 /// — the single source of truth shared by `UpdateTransactionUseCase`'s
@@ -100,6 +102,7 @@ class TransactionEntity extends Equatable {
   /// denied/not an expense — never backfilled for older records.
   final double? lat;
   final double? lng;
+  final String currencyCode;
 
   const TransactionEntity({
     required this.id,
@@ -119,6 +122,7 @@ class TransactionEntity extends Equatable {
     this.deletedAt,
     this.lat,
     this.lng,
+    this.currencyCode = CurrencyConstants.defaultCurrencyCode,
   });
 
   /// True for either leg of a transfer.
@@ -175,6 +179,7 @@ class TransactionEntity extends Equatable {
     DateTime? deletedAt,
     double? lat,
     double? lng,
+    String? currencyCode,
   }) {
     return TransactionEntity(
       id: id ?? this.id,
@@ -194,6 +199,7 @@ class TransactionEntity extends Equatable {
       deletedAt: deletedAt ?? this.deletedAt,
       lat: lat ?? this.lat,
       lng: lng ?? this.lng,
+      currencyCode: currencyCode ?? this.currencyCode,
     );
   }
 
@@ -216,5 +222,6 @@ class TransactionEntity extends Equatable {
     deletedAt,
     lat,
     lng,
+    currencyCode,
   ];
 }

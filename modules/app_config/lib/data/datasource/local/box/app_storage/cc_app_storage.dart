@@ -151,6 +151,10 @@ class CcAppStorage extends HiveObject {
   @HiveField(26)
   String? currencyDetectionCountryCode;
 
+  /// Version of the financial schema migration runner.
+  @HiveField(27)
+  int? financialSchemaVersion;
+
   CcAppStorage({
     this.accessToken,
     this.fcmToken,
@@ -178,5 +182,6 @@ class CcAppStorage extends HiveObject {
     this.financialDataOwnerId,
     this.currencySelectionSource,
     this.currencyDetectionCountryCode,
+    this.financialSchemaVersion,
   });
 }

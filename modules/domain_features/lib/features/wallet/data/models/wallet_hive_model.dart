@@ -45,6 +45,9 @@ class WalletHiveModel extends HiveObject {
   @HiveField(11)
   final int? displayOrder;
 
+  @HiveField(12)
+  final String? currencyCode;
+
   WalletHiveModel({
     required this.id,
     required this.name,
@@ -58,6 +61,7 @@ class WalletHiveModel extends HiveObject {
     this.lastModifiedAt,
     this.categoryId,
     this.displayOrder = 0,
+    this.currencyCode,
   });
 
   factory WalletHiveModel.fromEntity(WalletEntity entity) => WalletHiveModel(
@@ -70,6 +74,7 @@ class WalletHiveModel extends HiveObject {
     lastModifiedAt: entity.updatedAt,
     categoryId: entity.categoryId,
     displayOrder: entity.displayOrder,
+    currencyCode: entity.currencyCode,
   );
 
   WalletEntity toEntity() => WalletEntity(
@@ -82,6 +87,7 @@ class WalletHiveModel extends HiveObject {
     updatedAt: lastModifiedAt ?? createdAt,
     categoryId: categoryId,
     displayOrder: displayOrder ?? 0,
+    currencyCode: currencyCode ?? 'VND',
   );
 
   SyncMetadata get syncMetadata => SyncMetadata(
@@ -107,6 +113,7 @@ class WalletHiveModel extends HiveObject {
       createdAt: createdAt,
       categoryId: categoryId,
       displayOrder: displayOrder,
+      currencyCode: currencyCode,
       remoteId: metadata.remoteId,
       syncStatus: metadata.status.name,
       lastSyncedAt: metadata.lastSyncedAt,
@@ -125,6 +132,7 @@ class WalletHiveModel extends HiveObject {
           lastModifiedAt?.toIso8601String() ?? DateTime.now().toIso8601String(),
       'categoryId': categoryId,
       'displayOrder': displayOrder,
+      'currencyCode': currencyCode ?? 'VND',
     };
   }
 
@@ -144,13 +152,15 @@ class WalletHiveModel extends HiveObject {
       iconCode: data['iconCode'] as int,
       type: data['type'] as String,
       createdAt:
-          DateTime.tryParse(data['createdAt'] as String? ?? '') ?? DateTime.now(),
+          DateTime.tryParse(data['createdAt'] as String? ?? '') ??
+          DateTime.now(),
       remoteId: data['remoteId'] as String?,
       syncStatus: SyncStatus.synced.name,
       lastSyncedAt: parsedModifiedAt,
       lastModifiedAt: parsedModifiedAt,
       categoryId: data['categoryId'] as String?,
       displayOrder: (data['displayOrder'] as num?)?.toInt() ?? 0,
+      currencyCode: data['currencyCode'] as String? ?? 'VND',
     );
   }
 }

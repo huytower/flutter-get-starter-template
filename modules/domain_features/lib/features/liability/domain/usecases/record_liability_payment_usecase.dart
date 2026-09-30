@@ -120,6 +120,7 @@ class RecordLiabilityPaymentUseCase {
       date: params.date,
       walletId: params.walletId,
       liabilityId: liability.id,
+      currencyCode: liability.currencyCode,
     );
 
     final txnResult = await _transactionRepository.createTransaction(txn);
@@ -145,6 +146,7 @@ class RecordLiabilityPaymentUseCase {
       createdAt: liability.createdAt,
       updatedAt: DateTime.now(),
       reminderBeforeDueDate: liability.reminderBeforeDueDate,
+      currencyCode: liability.currencyCode,
     );
     await _LiabilityRepository.updateLiability(updatedLiability);
 

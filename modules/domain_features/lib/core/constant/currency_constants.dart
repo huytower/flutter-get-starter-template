@@ -1,3 +1,6 @@
+import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
+import 'package:hive_ce/hive_ce.dart';
 import 'currency_catalog.dart';
 
 abstract final class CurrencySelectionSources {
@@ -51,6 +54,20 @@ class CurrencyConstants {
 
   static List<String> get supportedCurrencyCodes =>
       CurrencyCatalog.definitions.map((d) => d.code).toList();
+
+  /// Returns the active user primary currency (fallback to defaultCurrencyCode if uninitialized).
+  static String get currentPrimaryCurrency {
+    try {
+      if (Hive.isBoxOpen(CcHiveBox.APP_BOX_NAME)) {
+        final code = CcAppStorage.instance.currencyCode;
+        if (code != null &&
+            supportedCurrencyCodes.contains(code.toUpperCase())) {
+          return code.toUpperCase();
+        }
+      }
+    } catch (_) {}
+    return defaultCurrencyCode;
+  }
 
   /// Validates whether [code] is a supported currency; returns [defaultCurrencyCode] otherwise.
   static String validateCurrencyCode(String? code) {

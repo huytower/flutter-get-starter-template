@@ -3,12 +3,16 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../../core/constant/currency_catalog.dart';
 import '../../../../../core/constant/currency_constants.dart';
+import '../../../../../core/migration/financial_schema_migration.dart';
 import '../../../domain/entities/profile_settings_entity.dart';
 
 @lazySingleton
 class ProfileLocalDataSource {
   Future<ProfileSettingsEntity> getSettings() async {
     final s = CcAppStorage.instance;
+
+    // Run versioned migration to annotate existing financial records with currencyCode (default VND)
+    await FinancialSchema.runMigrationIfNeeded();
 
     // Stamp the user-level feature anchor once, the first time settings are
     // read after this feature shipped. Pre-existing reconciliation/budget

@@ -66,6 +66,9 @@ class LiabilityModel {
   @HiveField(18, defaultValue: false)
   final bool reminderBeforeDueDate;
 
+  @HiveField(20)
+  final String? currencyCode;
+
   LiabilityModel({
     required this.id,
     required this.direction,
@@ -85,6 +88,7 @@ class LiabilityModel {
     this.lastSyncedAt,
     this.lastModifiedAt,
     this.reminderBeforeDueDate = false,
+    this.currencyCode,
   });
 
   factory LiabilityModel.fromEntity(LiabilityEntity entity) => LiabilityModel(
@@ -105,6 +109,7 @@ class LiabilityModel {
     createdAt: entity.createdAt.toIso8601String(),
     lastModifiedAt: entity.updatedAt,
     reminderBeforeDueDate: entity.reminderBeforeDueDate,
+    currencyCode: entity.currencyCode,
   );
 
   LiabilityEntity toEntity() => LiabilityEntity(
@@ -118,11 +123,15 @@ class LiabilityModel {
     walletId: walletId,
     repaymentMethod: repaymentMethod,
     installments: installments?.map((i) => i.toEntity()).toList(),
-    finalDueDate: finalDueDate != null ? DateTime.parse(finalDueDate!) : null,
+    finalDueDate: finalDueDate != null
+        ? DateTime.tryParse(finalDueDate!)
+        : null,
     note: note,
-    createdAt: DateTime.parse(createdAt),
-    updatedAt: lastModifiedAt ?? DateTime.parse(createdAt),
+    createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
+    updatedAt:
+        lastModifiedAt ?? (DateTime.tryParse(createdAt) ?? DateTime.now()),
     reminderBeforeDueDate: reminderBeforeDueDate,
+    currencyCode: currencyCode ?? 'VND',
   );
 
   SyncMetadata get syncMetadata => SyncMetadata(
@@ -153,11 +162,12 @@ class LiabilityModel {
       finalDueDate: finalDueDate,
       note: note,
       createdAt: createdAt,
+      reminderBeforeDueDate: reminderBeforeDueDate,
+      currencyCode: currencyCode,
       remoteId: metadata.remoteId,
       syncStatus: metadata.status.name,
       lastSyncedAt: metadata.lastSyncedAt,
       lastModifiedAt: metadata.lastModifiedAt,
-      reminderBeforeDueDate: reminderBeforeDueDate,
     );
   }
 
@@ -176,6 +186,7 @@ class LiabilityModel {
       'note': note,
       'createdAt': createdAt,
       'reminderBeforeDueDate': reminderBeforeDueDate,
+      'currencyCode': currencyCode ?? 'VND',
     };
   }
 
@@ -191,27 +202,29 @@ class LiabilityModel {
     return LiabilityModel(
       id: localId,
       direction: data['direction'] as String,
-      principalAmount: data['principalAmount'] as int,
+      principalAmount: (data['principalAmount'] as num).toInt(),
       categoryId: data['categoryId'] as String,
       categoryLabel: data['categoryLabel'] as String,
-      categoryIconCode: data['categoryIconCode'] as int?,
+      categoryIconCode: (data['categoryIconCode'] as num?)?.toInt(),
       categoryIconFamily: data['categoryIconFamily'] as String?,
       walletId: data['walletId'] as String,
       repaymentMethod: data['repaymentMethod'] as String,
-      installments: (data['installments'] as List?)
-          ?.map(
+      installments: (data['installments'] as List? ?? [])
+          .map(
             (i) =>
                 LiabilityInstallmentModel.fromJson(i as Map<String, dynamic>),
           )
           .toList(),
       finalDueDate: data['finalDueDate'] as String?,
       note: data['note'] as String?,
-      createdAt: data['createdAt'] as String,
+      createdAt:
+          data['createdAt'] as String? ?? DateTime.now().toIso8601String(),
+      reminderBeforeDueDate: data['reminderBeforeDueDate'] as bool? ?? false,
+      currencyCode: data['currencyCode'] as String? ?? 'VND',
       remoteId: data['remoteId'] as String?,
       syncStatus: SyncStatus.synced.name,
       lastSyncedAt: parsedModifiedAt,
       lastModifiedAt: parsedModifiedAt,
-      reminderBeforeDueDate: data['reminderBeforeDueDate'] as bool? ?? false,
     );
   }
 }

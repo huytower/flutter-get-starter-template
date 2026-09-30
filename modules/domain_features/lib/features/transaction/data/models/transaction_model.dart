@@ -79,6 +79,9 @@ class TransactionModel {
   @HiveField(20)
   final double? lng;
 
+  @HiveField(21)
+  final String? currencyCode;
+
   TransactionModel({
     this.id,
     this.type,
@@ -101,32 +104,58 @@ class TransactionModel {
     this.investmentWalletId,
     this.lat,
     this.lng,
+    this.currencyCode,
   });
 
-  TransactionModel copyWith({String? deletedAt}) => TransactionModel(
-    id: id,
-    type: type,
-    amount: amount,
-    category: category,
-    note: note,
-    date: date,
-    walletId: walletId,
-    categoryId: categoryId,
-    budgetId: budgetId,
-    deletedAt: deletedAt ?? this.deletedAt,
-    transferId: transferId,
-    categoryIconCode: categoryIconCode,
-    categoryIconFamily: categoryIconFamily,
-    liabilityId: liabilityId,
-    investmentWalletId: investmentWalletId,
-    lat: lat,
-    lng: lng,
-  );
-
-  factory TransactionModel.fromJson(Map<String, dynamic> json) =>
-      _$TransactionModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$TransactionModelToJson(this);
+  TransactionModel copyWith({
+    String? id,
+    String? type,
+    int? amount,
+    String? category,
+    String? note,
+    String? date,
+    String? walletId,
+    String? categoryId,
+    String? budgetId,
+    String? deletedAt,
+    String? transferId,
+    int? categoryIconCode,
+    String? categoryIconFamily,
+    String? remoteId,
+    String? syncStatus,
+    DateTime? lastSyncedAt,
+    DateTime? lastModifiedAt,
+    String? liabilityId,
+    String? investmentWalletId,
+    double? lat,
+    double? lng,
+    String? currencyCode,
+  }) {
+    return TransactionModel(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      amount: amount ?? this.amount,
+      category: category ?? this.category,
+      note: note ?? this.note,
+      date: date ?? this.date,
+      walletId: walletId ?? this.walletId,
+      categoryId: categoryId ?? this.categoryId,
+      budgetId: budgetId ?? this.budgetId,
+      deletedAt: deletedAt ?? this.deletedAt,
+      transferId: transferId ?? this.transferId,
+      categoryIconCode: categoryIconCode ?? this.categoryIconCode,
+      categoryIconFamily: categoryIconFamily ?? this.categoryIconFamily,
+      remoteId: remoteId ?? this.remoteId,
+      syncStatus: syncStatus ?? this.syncStatus,
+      lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+      lastModifiedAt: lastModifiedAt ?? this.lastModifiedAt,
+      liabilityId: liabilityId ?? this.liabilityId,
+      investmentWalletId: investmentWalletId ?? this.investmentWalletId,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
+      currencyCode: currencyCode ?? this.currencyCode,
+    );
+  }
 
   factory TransactionModel.fromEntity(TransactionEntity entity) =>
       TransactionModel(
@@ -134,37 +163,39 @@ class TransactionModel {
         type: entity.type,
         amount: entity.amount,
         category: entity.category,
+        categoryId: entity.categoryId,
+        budgetId: entity.budgetId,
         note: entity.note,
         date: entity.date.toIso8601String(),
         walletId: entity.walletId,
-        categoryId: entity.categoryId,
-        budgetId: entity.budgetId,
-        deletedAt: entity.deletedAt?.toIso8601String(),
-        transferId: entity.transferId,
         categoryIconCode: entity.categoryIconCode,
         categoryIconFamily: entity.categoryIconFamily,
+        transferId: entity.transferId,
         liabilityId: entity.liabilityId,
         investmentWalletId: entity.investmentWalletId,
+        deletedAt: entity.deletedAt?.toIso8601String(),
         lat: entity.lat,
         lng: entity.lng,
       );
 
   TransactionEntity toEntity() => TransactionEntity(
     id: id ?? '',
-    type: type ?? '',
+    type: type ?? TransactionType.expense,
     amount: amount ?? 0,
     category: category ?? '',
     categoryId: categoryId ?? '',
     budgetId: budgetId,
     note: note,
-    date: date != null ? DateTime.parse(date!) : DateTime.now(),
+    date: date != null
+        ? DateTime.tryParse(date!) ?? DateTime.now()
+        : DateTime.now(),
     walletId: walletId ?? '',
-    transferId: transferId,
-    deletedAt: deletedAt != null ? DateTime.parse(deletedAt!) : null,
     categoryIconCode: categoryIconCode,
     categoryIconFamily: categoryIconFamily,
+    transferId: transferId,
     liabilityId: liabilityId,
     investmentWalletId: investmentWalletId,
+    deletedAt: deletedAt != null ? DateTime.tryParse(deletedAt!) : null,
     lat: lat,
     lng: lng,
   );
@@ -188,23 +219,24 @@ class TransactionModel {
       type: type,
       amount: amount,
       category: category,
+      budgetId: budgetId,
       note: note,
       date: date,
       walletId: walletId,
       categoryId: categoryId,
-      budgetId: budgetId,
-      deletedAt: deletedAt,
-      transferId: transferId,
       categoryIconCode: categoryIconCode,
       categoryIconFamily: categoryIconFamily,
+      transferId: transferId,
+      liabilityId: liabilityId,
+      investmentWalletId: investmentWalletId,
+      deletedAt: deletedAt,
+      lat: lat,
+      lng: lng,
+      currencyCode: currencyCode,
       remoteId: metadata.remoteId,
       syncStatus: metadata.status.name,
       lastSyncedAt: metadata.lastSyncedAt,
       lastModifiedAt: metadata.lastModifiedAt,
-      liabilityId: liabilityId,
-      investmentWalletId: investmentWalletId,
-      lat: lat,
-      lng: lng,
     );
   }
 
@@ -213,19 +245,20 @@ class TransactionModel {
       'type': type,
       'amount': amount,
       'category': category,
+      'categoryId': categoryId,
+      'budgetId': budgetId,
       'note': note,
       'date': date,
       'walletId': walletId,
-      'categoryId': categoryId,
-      'budgetId': budgetId,
-      'deletedAt': deletedAt,
-      'transferId': transferId,
       'categoryIconCode': categoryIconCode,
       'categoryIconFamily': categoryIconFamily,
+      'transferId': transferId,
       'liabilityId': liabilityId,
       'investmentWalletId': investmentWalletId,
+      'deletedAt': deletedAt,
       'lat': lat,
       'lng': lng,
+      'currencyCode': currencyCode ?? 'VND',
     };
   }
 
@@ -241,25 +274,31 @@ class TransactionModel {
     return TransactionModel(
       id: localId,
       type: data['type'] as String?,
-      amount: data['amount'] as int?,
+      amount: (data['amount'] as num?)?.toInt(),
       category: data['category'] as String?,
+      categoryId: data['categoryId'] as String?,
+      budgetId: data['budgetId'] as String?,
       note: data['note'] as String?,
       date: data['date'] as String?,
       walletId: data['walletId'] as String?,
-      categoryId: data['categoryId'] as String?,
-      budgetId: data['budgetId'] as String?,
-      deletedAt: data['deletedAt'] as String?,
-      transferId: data['transferId'] as String?,
-      categoryIconCode: data['categoryIconCode'] as int?,
+      categoryIconCode: (data['categoryIconCode'] as num?)?.toInt(),
       categoryIconFamily: data['categoryIconFamily'] as String?,
+      transferId: data['transferId'] as String?,
+      liabilityId: data['liabilityId'] as String?,
+      investmentWalletId: data['investmentWalletId'] as String?,
+      deletedAt: data['deletedAt'] as String?,
+      lat: (data['lat'] as num?)?.toDouble(),
+      lng: (data['lng'] as num?)?.toDouble(),
+      currencyCode: data['currencyCode'] as String? ?? 'VND',
       remoteId: data['remoteId'] as String?,
       syncStatus: SyncStatus.synced.name,
       lastSyncedAt: parsedModifiedAt,
       lastModifiedAt: parsedModifiedAt,
-      liabilityId: data['liabilityId'] as String?,
-      investmentWalletId: data['investmentWalletId'] as String?,
-      lat: (data['lat'] as num?)?.toDouble(),
-      lng: (data['lng'] as num?)?.toDouble(),
     );
   }
+
+  factory TransactionModel.fromJson(Map<String, dynamic> json) =>
+      _$TransactionModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TransactionModelToJson(this);
 }

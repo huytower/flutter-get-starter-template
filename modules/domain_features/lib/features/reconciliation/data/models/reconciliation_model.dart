@@ -49,6 +49,9 @@ class ReconciliationModel {
   @HiveField(12)
   final DateTime? lastModifiedAt;
 
+  @HiveField(13)
+  final String? currencyCode;
+
   ReconciliationModel({
     required this.id,
     required this.year,
@@ -63,6 +66,7 @@ class ReconciliationModel {
     this.syncStatus,
     this.lastSyncedAt,
     this.lastModifiedAt,
+    this.currencyCode,
   });
 
   factory ReconciliationModel.fromEntity(ReconciliationEntity entity) =>
@@ -78,6 +82,7 @@ class ReconciliationModel {
         allocations: entity.allocations
             .map(ReconciliationAllocationModel.fromEntity)
             .toList(),
+        currencyCode: entity.currencyCode,
       );
 
   ReconciliationEntity toEntity() => ReconciliationEntity(
@@ -90,6 +95,7 @@ class ReconciliationModel {
     date: DateTime.parse(date),
     adjustmentTransactionIds: adjustmentTransactionIds,
     allocations: allocations.map((a) => a.toEntity()).toList(),
+    currencyCode: currencyCode ?? 'VND',
   );
 
   SyncMetadata get syncMetadata => SyncMetadata(
@@ -116,6 +122,7 @@ class ReconciliationModel {
       date: date,
       adjustmentTransactionIds: adjustmentTransactionIds,
       allocations: allocations,
+      currencyCode: currencyCode,
       remoteId: metadata.remoteId,
       syncStatus: metadata.status.name,
       lastSyncedAt: metadata.lastSyncedAt,
@@ -133,6 +140,7 @@ class ReconciliationModel {
       'date': date,
       'adjustmentTransactionIds': adjustmentTransactionIds,
       'allocations': allocations.map((a) => a.toJson()).toList(),
+      'currencyCode': currencyCode ?? 'VND',
     };
   }
 
@@ -163,6 +171,7 @@ class ReconciliationModel {
             ),
           )
           .toList(),
+      currencyCode: data['currencyCode'] as String? ?? 'VND',
       remoteId: data['remoteId'] as String?,
       syncStatus: SyncStatus.synced.name,
       lastSyncedAt: parsedModifiedAt,

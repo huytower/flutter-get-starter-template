@@ -47,6 +47,9 @@ class BudgetLimitModel {
   @HiveField(12)
   final DateTime? lastModifiedAt;
 
+  @HiveField(13)
+  final String? currencyCode;
+
   BudgetLimitModel({
     required this.id,
     required this.categoryId,
@@ -59,6 +62,7 @@ class BudgetLimitModel {
     this.syncStatus,
     this.lastSyncedAt,
     this.lastModifiedAt,
+    this.currencyCode,
   });
 
   factory BudgetLimitModel.fromEntity(BudgetLimitEntity entity) =>
@@ -70,6 +74,7 @@ class BudgetLimitModel {
         order: entity.order,
         isClosed: entity.isClosed,
         isFixedPrice: entity.isFixedPrice,
+        currencyCode: entity.currencyCode,
       );
 
   BudgetLimitEntity toEntity() => BudgetLimitEntity(
@@ -80,6 +85,7 @@ class BudgetLimitModel {
     order: order,
     isClosed: isClosed,
     isFixedPrice: isFixedPrice,
+    currencyCode: currencyCode ?? 'VND',
   );
 
   SyncMetadata get syncMetadata => SyncMetadata(
@@ -104,6 +110,7 @@ class BudgetLimitModel {
       order: order,
       isClosed: isClosed,
       isFixedPrice: isFixedPrice,
+      currencyCode: currencyCode,
       remoteId: metadata.remoteId,
       syncStatus: metadata.status.name,
       lastSyncedAt: metadata.lastSyncedAt,
@@ -119,6 +126,7 @@ class BudgetLimitModel {
       'order': order,
       'isClosed': isClosed,
       'isFixedPrice': isFixedPrice,
+      'currencyCode': currencyCode ?? 'VND',
     };
   }
 
@@ -143,6 +151,7 @@ class BudgetLimitModel {
       syncStatus: SyncStatus.synced.name,
       lastSyncedAt: parsedModifiedAt,
       lastModifiedAt: parsedModifiedAt,
+      currencyCode: data['currencyCode'] as String? ?? 'VND',
     );
   }
 }

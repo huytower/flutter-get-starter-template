@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
+
 /// Wallet type values stored in [WalletEntity.type].
 ///
 /// `cash` is a singleton wallet with a fixed name/icon; `bank` and `credit`
@@ -29,6 +31,7 @@ class WalletEntity extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final int displayOrder;
+  final String currencyCode;
 
   /// FK to a [CategoryEntity] of type `investment` — classifies which
   /// investment category (Cổ phiếu, Kinh doanh cá nhân, ...) this wallet
@@ -47,6 +50,7 @@ class WalletEntity extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     this.displayOrder = 0,
+    this.currencyCode = CurrencyConstants.defaultCurrencyCode,
     this.categoryId,
     this.categoryNameKey,
   });
@@ -60,6 +64,7 @@ class WalletEntity extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
     int? displayOrder,
+    String? currencyCode,
     String? categoryId,
     String? categoryNameKey,
   }) {
@@ -72,6 +77,7 @@ class WalletEntity extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       displayOrder: displayOrder ?? this.displayOrder,
+      currencyCode: currencyCode ?? this.currencyCode,
       categoryId: categoryId ?? this.categoryId,
       categoryNameKey: categoryNameKey ?? this.categoryNameKey,
     );
@@ -87,6 +93,7 @@ class WalletEntity extends Equatable {
     createdAt,
     updatedAt,
     displayOrder,
+    currencyCode,
     categoryId,
     categoryNameKey,
   ];

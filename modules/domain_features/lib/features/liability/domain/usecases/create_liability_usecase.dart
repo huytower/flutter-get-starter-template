@@ -1,9 +1,9 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
-import 'package:get/get_navigation/src/root/parse_route.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
@@ -13,14 +13,14 @@ import '../repositories/liability_repository.dart';
 /// Input for [CreateLiabilityUseCase].
 class CreateLiabilityParams {
   final String? liabilityId;
-  final String direction;
+  final String direction; // borrow or lend
   final int principalAmount;
   final String categoryId;
   final String categoryLabel;
   final int? categoryIconCode;
   final String? categoryIconFamily;
   final String walletId;
-  final String repaymentMethod;
+  final String repaymentMethod; // installment or lump_sum
   final List<LiabilityInstallmentEntity>? installments;
   final DateTime? finalDueDate;
   final String? note;
@@ -45,14 +45,7 @@ class CreateLiabilityParams {
   });
 }
 
-/// Initiates a liability (Đi vay/Cho vay): creates the [LiabilityEntity] plus a single
-/// [TransactionEntity] leg tagged with its id.
-///
-/// Cho vay (lend) mirrors expense/`_contribute`: money leaves the wallet, so
-/// it's blocked if it exceeds the wallet's book balance. Đi vay (borrow)
-/// mirrors income/`_recordReturn`: money is arriving from outside, no
-/// balance check. Rolls back the liability record if the transaction write fails,
-/// mirroring the two-leg rollback in `CreateInvestmentTransactionUseCase`.
+/// Creates or updates a liability (loan / lend) record and records its principal transaction leg.
 @lazySingleton
 class CreateLiabilityUseCase {
   CreateLiabilityUseCase(
@@ -68,9 +61,14 @@ class CreateLiabilityUseCase {
   Future<Result<LiabilityEntity, CcFailure>> call(
     CreateLiabilityParams params,
   ) async {
-    if (params.principalAmount < 0) {
+    if (params.principalAmount <= 0) {
       return const Error(
         ValidationFailure(CcLocaleKeys.transaction_validation_amount_required),
+      );
+    }
+    if (params.walletId.isEmpty) {
+      return const Error(
+        ValidationFailure(CcLocaleKeys.transaction_validation_wallet_required),
       );
     }
     if (params.categoryId.isEmpty) {
@@ -85,26 +83,16 @@ class CreateLiabilityUseCase {
         ValidationFailure(CcLocaleKeys.transaction_validation_future_date),
       );
     }
-    final scheduleMissing =
-        params.direction == LiabilityDirection.borrow &&
-        (params.repaymentMethod == LiabilityRepaymentMethod.installment
-            ? (params.installments == null || params.installments!.isEmpty)
-            : params.finalDueDate == null);
-    if (scheduleMissing) {
-      return const Error(
-        ValidationFailure(
-          CcLocaleKeys.transaction_validation_schedule_required,
-        ),
-      );
-    }
 
-    if (params.direction == LiabilityDirection.lend &&
-        params.principalAmount > 0) {
+    // For borrow, money flows in (unrestricted balance).
+    // For lend, money flows out — block overspending.
+    if (params.direction == LiabilityDirection.lend) {
       final balanceResult = await _getWalletBookBalance(params.walletId);
       if (balanceResult.isError()) {
         return Error(balanceResult.tryGetError()!);
       }
-      if (params.principalAmount > balanceResult.tryGetSuccess()!) {
+      final availableBalance = balanceResult.tryGetSuccess()!;
+      if (params.principalAmount > availableBalance) {
         return const Error(
           ValidationFailure(
             CcLocaleKeys.transaction_validation_insufficient_balance,
@@ -113,20 +101,14 @@ class CreateLiabilityUseCase {
       }
     }
 
-    // Reuse existing liability ID for same direction & category if liabilityId not provided
-    String targetId = params.liabilityId ?? '';
-    int updatedPrincipal = params.principalAmount;
-    bool isUpdate = params.liabilityId != null;
+    var targetId = params.liabilityId ?? '';
+    var updatedPrincipal = params.principalAmount;
+    var isUpdate = false;
 
-    if (targetId.isEmpty) {
-      final existingResult = await _LiabilityRepository.getLiabilities();
+    if (targetId.isNotEmpty) {
+      final existingResult = await _LiabilityRepository.getLiability(targetId);
       if (existingResult.isSuccess()) {
-        final existing = existingResult.tryGetSuccess()!.firstWhereOrNull(
-          (l) =>
-              l.direction == params.direction &&
-              l.categoryLabel.trim().toLowerCase() ==
-                  params.categoryLabel.trim().toLowerCase(),
-        );
+        final existing = existingResult.tryGetSuccess();
         if (existing != null) {
           targetId = existing.id;
           updatedPrincipal += existing.principalAmount;
@@ -155,6 +137,7 @@ class CreateLiabilityUseCase {
       createdAt: params.date,
       updatedAt: DateTime.now(),
       reminderBeforeDueDate: params.reminderBeforeDueDate,
+      currencyCode: CurrencyConstants.currentPrimaryCurrency,
     );
 
     final createResult = isUpdate
@@ -179,11 +162,11 @@ class CreateLiabilityUseCase {
         date: params.date,
         walletId: params.walletId,
         liabilityId: liability.id,
+        currencyCode: CurrencyConstants.currentPrimaryCurrency,
       );
 
       final txnResult = await _transactionRepository.createTransaction(txn);
       if (txnResult.isError()) {
-        await _LiabilityRepository.deleteLiability(liability.id);
         return Error(txnResult.tryGetError()!);
       }
     }
