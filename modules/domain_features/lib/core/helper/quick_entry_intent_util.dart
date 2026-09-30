@@ -18,7 +18,7 @@ class QuickEntryIntentUtil {
       // it, "tiet kiem 100k" matched no root and stayed on the current tab.
       'tiet kiem',
     ],
-    QuickEntryIntent.expense: ['chi tieu', 'spent'],
+    QuickEntryIntent.expense: ['chi tieu', 'spent', 'spend', 'buy'],
   };
 
   /// Maps directional verbs to their financial intent.
@@ -35,7 +35,9 @@ class QuickEntryIntentUtil {
     'chi': QuickEntryIntent.expense,
     'tra tien': QuickEntryIntent.expense,
     'pay': QuickEntryIntent.expense,
+    'spend': QuickEntryIntent.expense,
     'spent': QuickEntryIntent.expense,
+    'buy': QuickEntryIntent.expense,
     'bought': QuickEntryIntent.expense,
     'mua': QuickEntryIntent.expense,
     'cho': QuickEntryIntent.expense, // Indicator for giving/lending
