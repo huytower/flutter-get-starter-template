@@ -1,6 +1,7 @@
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../../core/constant/currency_catalog.dart';
 import '../../../../../core/constant/currency_constants.dart';
 import '../../../domain/entities/profile_settings_entity.dart';
 
@@ -23,6 +24,12 @@ class ProfileLocalDataSource {
     // reminder (see CheckCloudBackupReminderUseCase).
     if (s.firstLaunchAt == null) {
       s.firstLaunchAt = DateTime.now();
+      await s.save();
+    }
+
+    // Initialize currency from device region if not explicitly set yet (stored preference wins)
+    if (s.currencyCode == null) {
+      s.currencyCode = CurrencyCatalog.detectSuggestedCurrency();
       await s.save();
     }
 
