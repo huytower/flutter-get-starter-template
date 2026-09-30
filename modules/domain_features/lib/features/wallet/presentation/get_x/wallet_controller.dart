@@ -610,6 +610,7 @@ class WalletController extends CcGetController {
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       displayOrder: wallets.length,
+      currencyCode: currencyCode.value,
     );
 
     final result = await _repository.addWallet(newWallet);
@@ -650,6 +651,7 @@ class WalletController extends CcGetController {
         createdAt: wallet.createdAt,
         updatedAt: DateTime.now(),
         categoryId: wallet.categoryId,
+        currencyCode: original.currencyCode,
       );
     } else {
       toSave = WalletEntity(
@@ -661,6 +663,7 @@ class WalletController extends CcGetController {
         createdAt: wallet.createdAt,
         updatedAt: DateTime.now(),
         categoryId: wallet.categoryId,
+        currencyCode: wallet.currencyCode,
       );
     }
 

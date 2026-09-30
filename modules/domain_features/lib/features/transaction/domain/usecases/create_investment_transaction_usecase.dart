@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../core/constant/currency_constants.dart';
+import 'package:domain_features/core/constant/currency_constants.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';

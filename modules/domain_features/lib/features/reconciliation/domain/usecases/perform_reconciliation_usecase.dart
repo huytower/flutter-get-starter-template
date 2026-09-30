@@ -1,9 +1,8 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:injectable/injectable.dart';
-import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../core/constant/currency_constants.dart';
+import 'package:domain_features/core/constant/currency_constants.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';

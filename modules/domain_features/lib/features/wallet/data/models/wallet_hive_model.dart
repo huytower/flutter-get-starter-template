@@ -3,6 +3,7 @@ import 'package:domain_features/features/firestore/enum/sync_status.dart';
 import 'package:domain_features/features/firestore/model/sync_metadata.dart';
 import 'package:hive_ce/hive_ce.dart';
 
+import 'package:domain_features/core/constant/currency_constants.dart';
 import '../../domain/entities/wallet_entity.dart';
 
 part 'wallet_hive_model.g.dart';
@@ -87,7 +88,7 @@ class WalletHiveModel extends HiveObject {
     updatedAt: lastModifiedAt ?? createdAt,
     categoryId: categoryId,
     displayOrder: displayOrder ?? 0,
-    currencyCode: currencyCode ?? 'VND',
+    currencyCode: currencyCode ?? CurrencyConstants.defaultCurrencyCode,
   );
 
   SyncMetadata get syncMetadata => SyncMetadata(
@@ -132,7 +133,7 @@ class WalletHiveModel extends HiveObject {
           lastModifiedAt?.toIso8601String() ?? DateTime.now().toIso8601String(),
       'categoryId': categoryId,
       'displayOrder': displayOrder,
-      'currencyCode': currencyCode ?? 'VND',
+      'currencyCode': currencyCode ?? CurrencyConstants.defaultCurrencyCode,
     };
   }
 

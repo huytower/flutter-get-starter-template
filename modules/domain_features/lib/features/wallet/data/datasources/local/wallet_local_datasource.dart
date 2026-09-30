@@ -6,6 +6,7 @@ import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 
+import 'package:domain_features/core/constant/currency_constants.dart';
 import '../../../domain/entities/wallet_entity.dart';
 import '../../models/wallet_hive_model.dart';
 
@@ -29,6 +30,7 @@ class WalletLocalDataSource {
     iconCode: Icons.payments.codePoint,
     type: WalletType.cash,
     createdAt: DateTime.now(),
+    currencyCode: CurrencyConstants.defaultCurrencyCode,
   );
 
   Future<Box<WalletHiveModel>> get _box async {
@@ -48,6 +50,7 @@ class WalletLocalDataSource {
           iconCode: Icons.account_balance.codePoint,
           type: WalletType.bank,
           createdAt: DateTime.now(),
+          currencyCode: CurrencyConstants.defaultCurrencyCode,
         ),
       });
       SyncTrace.log(
@@ -72,6 +75,7 @@ class WalletLocalDataSource {
             iconCode: Icons.account_balance.codePoint,
             type: WalletType.bank,
             createdAt: m.createdAt,
+            currencyCode: m.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
           ),
     };
     if (!box.values.any((m) => m.type == WalletType.cash)) {
