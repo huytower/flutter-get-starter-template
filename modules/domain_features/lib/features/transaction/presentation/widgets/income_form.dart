@@ -196,18 +196,22 @@ class _IncomeFormState extends State<IncomeForm> {
     IncomeFormController controller,
     Color accentColor,
   ) {
-    return CcAmountInputSection(
-      label: el.tr(CcLocaleKeys.transaction_amount),
-      amountStr: controller.amountStr.value,
-      quickAmounts: controller.quickAmounts,
-      isKeypadVisible: controller.showKeypad.value,
-      activeColor: accentColor,
-      fieldKey: controller.amountFieldKey,
-      onTap: () => controller.showKeypadAndScroll(context),
-      onQuickAmountSelected: (amount) =>
-          controller.amountStr.value = amount.toString(),
-      onClear: () => controller.amountStr.value = '0',
-      onCopy: () => CcStringHelper.copyToClipboard(controller.amountStr.value),
+    return Obx(
+      () => CcAmountInputSection(
+        label: el.tr(CcLocaleKeys.transaction_amount),
+        amountStr: controller.amountStr.value,
+        quickAmounts: controller.quickAmounts,
+        isKeypadVisible: controller.showKeypad.value,
+        activeColor: accentColor,
+        currencyCode: controller.currencyCode.value,
+        fieldKey: controller.amountFieldKey,
+        onTap: () => controller.showKeypadAndScroll(context),
+        onQuickAmountSelected: (amount) =>
+            controller.amountStr.value = amount.toString(),
+        onClear: () => controller.amountStr.value = '0',
+        onCopy: () =>
+            CcStringHelper.copyToClipboard(controller.amountStr.value),
+      ),
     );
   }
 

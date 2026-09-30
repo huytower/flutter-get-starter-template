@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 /// Single Source of Truth (SSOT) for currency codes, default currency,
 /// currency symbols, and locale/region mappings across the app.
 class CurrencyConstants {
@@ -30,17 +32,18 @@ class CurrencyConstants {
     }
   }
 
-  /// Gets the number format locale for a given currency code.
+  /// Gets the number format locale for a given currency code and app language.
   static String getLocale(String currencyCode) {
-    switch (currencyCode.toUpperCase()) {
-      case vnd:
-        return 'vi_VN';
-      case usd:
-      case eur:
-      case gbp:
-      case jpy:
-      default:
-        return 'en_US';
+    final code = currencyCode.toUpperCase();
+    if (code == vnd) {
+      return 'vi_VN';
     }
+    try {
+      final lang = Intl.getCurrentLocale().split('_').first.toLowerCase();
+      if (lang == 'vi') {
+        return 'vi_VN';
+      }
+    } catch (_) {}
+    return 'en_US';
   }
 }

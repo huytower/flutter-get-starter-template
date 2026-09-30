@@ -10,8 +10,8 @@ import '../../../transaction/presentation/widgets/transaction_additional_details
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
-import '../get_x/liability_base_form_controller.dart';
 import '../get_x/lend_form_controller.dart';
+import '../get_x/liability_base_form_controller.dart';
 import 'lend_asset_selector.dart';
 import 'lend_direction_toggle.dart';
 
@@ -158,18 +158,22 @@ class _LendFormState extends State<LendForm> {
         ? el.tr(CcLocaleKeys.transaction_amount)
         : el.tr(CcLocaleKeys.transaction_liability_amount_lend_label);
 
-    return CcAmountInputSection(
-      label: label,
-      amountStr: controller.amountStr.value,
-      quickAmounts: controller.quickAmounts,
-      isKeypadVisible: controller.showKeypad.value,
-      activeColor: accentColor,
-      fieldKey: controller.amountFieldKey,
-      onTap: () => controller.showKeypadAndScroll(context),
-      onQuickAmountSelected: (amount) =>
-          controller.amountStr.value = amount.toString(),
-      onClear: controller.handleClear,
-      onCopy: () => CcStringHelper.copyToClipboard(controller.amountStr.value),
+    return Obx(
+      () => CcAmountInputSection(
+        label: label,
+        amountStr: controller.amountStr.value,
+        quickAmounts: controller.quickAmounts,
+        isKeypadVisible: controller.showKeypad.value,
+        activeColor: accentColor,
+        currencyCode: controller.currencyCode.value,
+        fieldKey: controller.amountFieldKey,
+        onTap: () => controller.showKeypadAndScroll(context),
+        onQuickAmountSelected: (amount) =>
+            controller.amountStr.value = amount.toString(),
+        onClear: controller.handleClear,
+        onCopy: () =>
+            CcStringHelper.copyToClipboard(controller.amountStr.value),
+      ),
     );
   }
 

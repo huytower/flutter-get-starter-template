@@ -238,18 +238,22 @@ class _LiabilityFormState extends State<LiabilityForm> {
         ? el.tr(CcLocaleKeys.transaction_amount)
         : el.tr(CcLocaleKeys.transaction_liability_amount_borrow_label);
 
-    return CcAmountInputSection(
-      label: label,
-      amountStr: controller.amountStr.value,
-      quickAmounts: controller.quickAmounts,
-      isKeypadVisible: controller.showKeypad.value,
-      activeColor: accentColor,
-      fieldKey: controller.amountFieldKey,
-      onTap: () => controller.showKeypadAndScroll(context),
-      onQuickAmountSelected: (amount) =>
-          controller.amountStr.value = amount.toString(),
-      onClear: controller.handleClear,
-      onCopy: () => CcStringHelper.copyToClipboard(controller.amountStr.value),
+    return Obx(
+      () => CcAmountInputSection(
+        label: label,
+        amountStr: controller.amountStr.value,
+        quickAmounts: controller.quickAmounts,
+        isKeypadVisible: controller.showKeypad.value,
+        activeColor: accentColor,
+        currencyCode: controller.currencyCode.value,
+        fieldKey: controller.amountFieldKey,
+        onTap: () => controller.showKeypadAndScroll(context),
+        onQuickAmountSelected: (amount) =>
+            controller.amountStr.value = amount.toString(),
+        onClear: controller.handleClear,
+        onCopy: () =>
+            CcStringHelper.copyToClipboard(controller.amountStr.value),
+      ),
     );
   }
 

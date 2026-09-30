@@ -228,11 +228,14 @@ class ProfilePage extends CcGetView<ProfileController> {
         trailingLabel: controller.currentLanguageName(context),
         onTap: () => controller.pickLanguage(context),
       ),
-      ProfileSettingsTile(
-        icon: Icons.attach_money_rounded,
-        label: el.tr(CcLocaleKeys.profile_currency),
-        subtitle: el.tr(CcLocaleKeys.profile_currency_subtitle),
-        trailingLabel: el.tr(CcLocaleKeys.profile_currency_dong),
+      Obx(
+        () => ProfileSettingsTile(
+          icon: Icons.attach_money_rounded,
+          label: el.tr(CcLocaleKeys.profile_currency),
+          subtitle: el.tr(CcLocaleKeys.profile_currency_subtitle),
+          trailingLabel: controller.settings.value.currencyCode,
+          onTap: () => controller.pickCurrency(context),
+        ),
       ),
       ProfileSettingsTile(
         icon: Icons.play_circle_outline_rounded,

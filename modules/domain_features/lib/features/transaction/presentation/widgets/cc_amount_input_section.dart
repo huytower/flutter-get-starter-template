@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import 'cc_quick_amount_chips.dart';
 
@@ -13,6 +14,7 @@ class CcAmountInputSection extends StatelessWidget {
   final List<int> quickAmounts;
   final bool isKeypadVisible;
   final Color? activeColor;
+  final String currencyCode;
   final VoidCallback onTap;
   final Function(int) onQuickAmountSelected;
   final VoidCallback? onClear;
@@ -27,6 +29,7 @@ class CcAmountInputSection extends StatelessWidget {
     required this.isKeypadVisible,
     required this.onTap,
     required this.onQuickAmountSelected,
+    this.currencyCode = CurrencyConstants.defaultCurrencyCode,
     this.activeColor,
     this.onClear,
     this.onCopy,
@@ -103,6 +106,7 @@ class CcAmountInputSection extends StatelessWidget {
       child: CcText(
         MoneyFormatter.formatWithSymbol(
           int.tryParse(_limitedAmountStr) ?? 0,
+          currencyCode: currencyCode,
         ),
         align: Alignment.center,
         textAlign: TextAlign.center,

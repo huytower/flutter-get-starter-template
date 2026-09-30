@@ -4,8 +4,11 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constant/currency_constants.dart';
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
@@ -24,6 +27,7 @@ abstract class TransactionFormController extends CcGetController {
   final RxBool showKeypad = false.obs;
   final RxBool showMoreDetails = false.obs;
   final RxBool hasNoteText = false.obs;
+  final RxString currencyCode = CurrencyConstants.defaultCurrencyCode.obs;
 
   final Rx<String?> selectedWalletId = Rx<String?>(null);
 
@@ -43,8 +47,14 @@ abstract class TransactionFormController extends CcGetController {
   void onInit() {
     super.onInit();
     _loadWallets();
+    _loadCurrency();
     noteController.addListener(_updateNoteState);
     layoutStatus.value = CcLayoutStatus.success;
+  }
+
+  Future<void> _loadCurrency() async {
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    currencyCode.value = settings.currencyCode;
   }
 
   void _updateNoteState() {

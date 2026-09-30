@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/emergency_fund_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
@@ -52,6 +53,7 @@ class AddLiquidSheetController extends CcGetController {
   final RxBool isAmountValid = false.obs;
   final RxnString nameError = RxnString();
   final RxBool isSubmitting = false.obs;
+  final RxString currencyCode = CurrencyConstants.defaultCurrencyCode.obs;
 
   bool get isEditing => _wallet != null;
 
@@ -60,8 +62,10 @@ class AddLiquidSheetController extends CcGetController {
   bool get balanceLocked =>
       isEditing && _walletController.walletHasTransactions(_wallet!.id);
 
-  void init(WalletEntity? wallet) {
+  void init(WalletEntity? wallet) async {
     _wallet = wallet;
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    currencyCode.value = settings.currencyCode;
     nameController = TextEditingController(text: wallet?.name ?? '');
     nameController.addListener(_onNameChanged);
     _onNameChanged();

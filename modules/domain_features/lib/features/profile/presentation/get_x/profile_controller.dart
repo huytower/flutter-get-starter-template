@@ -25,6 +25,7 @@ import '../../domain/usecases/update_profile_settings_usecase.dart';
 import '../../user_level/presentation/get_x/user_level_controller.dart';
 import '../pages/terms_of_service_page.dart';
 import '../widgets/birth_year_dialog.dart';
+import '../widgets/currency_selection_dialog.dart';
 import '../widgets/display_name_dialog.dart';
 import '../widgets/language_selection_dialog.dart';
 import '../widgets/weekly_audit_day_dialog.dart';
@@ -361,6 +362,20 @@ class ProfileController extends CcGetController {
     final picked = await LanguageSelectionDialog.show(context);
     if (picked != null && context.mounted) {
       await el.EasyLocalization.of(context)!.setLocale(picked);
+      CategorySettingsController.onCategoriesChanged.value++;
+    }
+  }
+
+  Future<void> pickCurrency(BuildContext context) async {
+    final picked = await CurrencySelectionDialog.show(
+      context,
+      settings.value.currencyCode,
+    );
+    if (picked != null && picked != settings.value.currencyCode) {
+      final updated = settings.value.copyWith(currencyCode: picked);
+      settings.value = updated;
+      await _updateSettings(updated);
+      await _load();
       CategorySettingsController.onCategoriesChanged.value++;
     }
   }

@@ -152,19 +152,22 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        CcAmountInputSection(
-          key: const Key('wallet_balance'),
-          label: el.tr(CcLocaleKeys.wallet_initial_balance),
-          amountStr: controller.amountStr.value,
-          quickAmounts: MoneyConstants.walletQuickAmounts,
-          isKeypadVisible: controller.showKeypad.value,
-          activeColor: context.ccColorScheme.primary,
-          fieldKey: controller.amountFieldKey,
-          onTap: () => controller.showKeypadAndScroll(context),
-          onQuickAmountSelected: controller.onQuickAmountSelected,
-          onClear: controller.onClearAmount,
-          onCopy: () =>
-              CcStringHelper.copyToClipboard(controller.amountStr.value),
+        Obx(
+          () => CcAmountInputSection(
+            key: const Key('wallet_balance'),
+            label: el.tr(CcLocaleKeys.wallet_initial_balance),
+            amountStr: controller.amountStr.value,
+            quickAmounts: MoneyConstants.walletQuickAmounts,
+            isKeypadVisible: controller.showKeypad.value,
+            activeColor: context.ccColorScheme.primary,
+            currencyCode: controller.currencyCode.value,
+            fieldKey: controller.amountFieldKey,
+            onTap: () => controller.showKeypadAndScroll(context),
+            onQuickAmountSelected: controller.onQuickAmountSelected,
+            onClear: controller.onClearAmount,
+            onCopy: () =>
+                CcStringHelper.copyToClipboard(controller.amountStr.value),
+          ),
         ),
         if (Get.isRegistered<GuidelineController>())
           Obx(() {
