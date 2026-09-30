@@ -109,6 +109,8 @@ class _CurrencySelectionContentSheetState
         children: [
           _buildCurrencyList(context, scheme, currencies),
           _buildDefaultCurrencyNotice(context, scheme),
+          _buildProviderAttribution(context, scheme),
+          const CcSpaceXS(),
           _buildHiddenTagsSection(context, scheme),
           _buildActions(context, scheme),
         ],
@@ -153,6 +155,17 @@ class _CurrencySelectionContentSheetState
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildProviderAttribution(BuildContext context, ColorScheme scheme) {
+    return CcText(
+      'Exchange rates provided by Frankfurter service',
+      align: Alignment.center,
+      textAlign: TextAlign.center,
+      textStyle: context.ccTextTheme.labelSmall?.copyWith(
+        color: scheme.onSurface.withOpacity(0.5),
       ),
     );
   }
