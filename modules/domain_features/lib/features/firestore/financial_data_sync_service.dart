@@ -130,65 +130,167 @@ class FinancialDataSyncService {
     }
   }
 
-  /// Observes the session and drives cache transitions.
+  /// Serialises [task] behind any in-flight account transition.
   ///
-  /// This listener is deliberately **non-destructive**: an auth event is a
-  /// notification, not a safe point to delete data. Signing out only marks
-  /// the session as ended — the on-disk cache and its
-  /// [CcAppStorage.financialDataOwnerId] stay intact so a failed or offline
-  /// logout can never destroy unsynced records. The cache is only cleared
-  /// when a *different* user signs in, and by then the previous owner is
-  /// guaranteed to have synced (see [logoutSafely]).
-  Future<void> _handleSessionChange(CcUserEntity? user) {
-    final nextUserId = user?.id;
-    if (nextUserId == null && _observedUserId == null) return Future.value();
-    if (nextUserId == _observedUserId) return Future.value();
-
+  /// A cache clear must never interleave with a sign-in transition, otherwise
+  /// a wipe could land between another user's `pullFromFirestore()` and the
+  /// owner bookkeeping that follows it.
+  Future<void> _enqueueTransition(Future<void> Function() task) {
     _accountTransition = (_accountTransition ?? Future.value())
-        .then((_) async {
-          if (nextUserId == null) {
-            // Signed out — preserve the cache, just forget the live user.
-            _observedUserId = null;
-            SyncTrace.log(
-              'SESSION signed out — cache preserved '
-              'owner=${CcAppStorage.instance.financialDataOwnerId}',
-            );
-            await _releaseLoadedControllers();
-            return;
-          }
-
-          if (_observedUserId != null && _observedUserId != nextUserId) {
-            await _clearFinancialCache();
-          }
-          await _ensureCacheOwner(nextUserId);
-          _observedUserId = nextUserId;
-          // `pullFromFirestore()` refreshes the loaded controllers itself once the
-          // merge completes, so the UI is updated from the post-pull Hive state.
-          await pullFromFirestore();
-        })
+        .then((_) => task())
         .catchError((error) {
           'Account transition failed: $error'.Log('FinancialDataSyncService');
         });
     return _accountTransition!;
   }
 
+  /// Observes the session and drives cache transitions.
+  ///
+  /// The sign-out branch is deliberately **non-destructive**. Firebase can
+  /// emit a sign-out for reasons that have nothing to do with the user asking
+  /// to leave — token revocation, credential clearing, account removal — and
+  /// none of those are gated on [pendingCount]. Deleting the cache here would
+  /// throw away unsynced records the user never got the chance to back up.
+  ///
+  /// The only place a successful, fully-synced logout wipes the cache is
+  /// [logoutSafely], which verifies `pendingCount == 0` first. An unsolicited
+  /// sign-out therefore only blanks the in-memory state and keeps the records
+  /// on disk, ready for the same user to sign back in.
+  Future<void> _handleSessionChange(CcUserEntity? user) {
+    final nextUserId = user?.id;
+    if (nextUserId == null && _observedUserId == null) return Future.value();
+    if (nextUserId == _observedUserId) return Future.value();
+
+    return _enqueueTransition(() async {
+      if (nextUserId == null) {
+        // Signed out without a verified sync — forget the live user, keep the
+        // records so they can still be pushed if the same user returns.
+        _observedUserId = null;
+        SyncTrace.log(
+          'SESSION signed out — cache kept '
+          'owner=${CcAppStorage.instance.financialDataOwnerId} '
+          'pending=${pendingCount.value}',
+        );
+        await _releaseLoadedControllers();
+        return;
+      }
+
+      if (_observedUserId != null && _observedUserId != nextUserId) {
+        await _clearFinancialCache();
+      }
+      await _ensureCacheOwner(nextUserId);
+      _observedUserId = nextUserId;
+      // `pullFromFirestore()` refreshes the loaded controllers itself once the
+      // merge completes, so the UI is updated from the post-pull Hive state.
+      await pullFromFirestore();
+    });
+  }
+
   Future<void> _ensureCacheOwner(String userId) async {
     final previousOwner = CcAppStorage.instance.financialDataOwnerId;
     if (previousOwner != userId) {
+      // `previousOwner == null` after a logout means the cache now holds the
+      // guest account's own records. They have no cloud destination yet, so
+      // they cannot be adopted by [userId] — they are cleared and the pull
+      // repopulates from Firestore. Log loudly rather than letting a guest's
+      // work disappear with no trace.
+      final orphaned = previousOwner == null ? _countPending() : 0;
+      if (orphaned > 0) {
+        SyncTrace.log(
+          'CACHE  discarding $orphaned guest record(s) created while signed '
+          'out — no owner to sync them to before $userId signs in',
+        );
+      }
       await _clearFinancialCache();
     }
     CcAppStorage.instance.financialDataOwnerId = userId;
     await CcAppStorage.instance.save();
   }
 
-  Future<void> _clearFinancialCache() async {
-    for (final boxName in CcHiveBox.financialBoxes) {
+  /// Box names wired into [_clearFinancialCache] / [_forEachFinancialBox].
+  ///
+  /// `hive_ce` matches a box's registered model by **exact** `Type`
+  /// equality, so those two methods cannot iterate [CcHiveBox.financialBoxes]
+  /// generically — the type argument has to be supplied per box. This set is
+  /// what makes that wiring auditable: if a seventh financial box is added, the
+  /// guard below reports it instead of silently leaving it behind.
+  static const Set<String> _typedFinancialBoxes = {
+    CcHiveBox.WALLET_BOX_NAME,
+    CcHiveBox.CATEGORY_BOX_NAME,
+    CcHiveBox.TRANSACTION_BOX_NAME,
+    CcHiveBox.BUDGET_BOX_NAME,
+    CcHiveBox.RECONCILIATION_BOX_NAME,
+    CcHiveBox.LIABILITY_BOX_NAME,
+  };
+
+  /// Fails loudly when a financial box has no typed accessor, rather than
+  /// letting it be skipped in silence on every logout.
+  static void _assertAllFinancialBoxesWired() {
+    final unwired = CcHiveBox.financialBoxes
+        .where((name) => !_typedFinancialBoxes.contains(name))
+        .toList(growable: false);
+    if (unwired.isEmpty) return;
+    '⚠️ financial box(es) with no typed accessor — they will never be '
+            'cleared on logout: $unwired'
+        .Log('FinancialDataSyncService');
+  }
+
+  /// Clears one financial box using the model type it was registered with.
+  ///
+  /// `Hive.box(name)` infers `dynamic`, and `hive_ce` compares `valueType` by
+  /// exact equality rather than subtyping, so it throws `HiveError: The box
+  /// "wallet" is already open and of type Box<WalletHiveModel>` for every
+  /// typed box. The failure is caught per box on purpose: a single throw used
+  /// to abort the remaining boxes and the caller still reported success.
+  Future<void> _wipeBox<T>(String boxName) async {
+    try {
       if (Hive.isBoxOpen(boxName)) {
-        await Hive.box(boxName).clear();
+        await Hive.box<T>(boxName).clear();
       } else {
         await Hive.deleteBoxFromDisk(boxName);
       }
+    } on HiveError catch (e) {
+      'Cache wipe skipped $boxName: $e'.Log('FinancialDataSyncService');
     }
+  }
+
+  /// Applies [action] to every open financial box, supplying the right model
+  /// type when fetching each one. Closed boxes are skipped, and a box that
+  /// cannot be fetched is reported rather than aborting the rest.
+  ///
+  /// The callback receives the box as `Box<dynamic>` — only the static type is
+  /// erased, the underlying object is still the correctly typed box, so
+  /// `values` and `delete` behave normally.
+  Future<void> _forEachFinancialBox(
+    Future<void> Function(String boxName, Box<dynamic> box) action,
+  ) async {
+    Future<void> run<T>(String boxName) async {
+      if (!Hive.isBoxOpen(boxName)) return;
+      try {
+        await action(boxName, Hive.box<T>(boxName));
+      } on HiveError catch (e) {
+        'Financial box task skipped $boxName: $e'.Log(
+          'FinancialDataSyncService',
+        );
+      }
+    }
+
+    await run<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
+    await run<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
+    await run<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME);
+    await run<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
+    await run<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME);
+    await run<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
+  }
+
+  Future<void> _clearFinancialCache() async {
+    _assertAllFinancialBoxesWired();
+    await _wipeBox<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
+    await _wipeBox<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
+    await _wipeBox<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME);
+    await _wipeBox<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
+    await _wipeBox<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME);
+    await _wipeBox<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
     CcAppStorage.instance.financialDataOwnerId = null;
     await CcAppStorage.instance.save();
     pendingCount.value = 0;
@@ -203,10 +305,18 @@ class FinancialDataSyncService {
   /// regression, not a refresh. Callers that want visible loading state pass
   /// it themselves via their own pull-to-refresh handlers.
   ///
-  /// Each controller is refreshed exactly once. [TransactionController
-  /// .refreshData] re-enters both [WalletController] and
-  /// [BudgetAllocationController] internally, so invoking it alongside the
-  /// other two would run every load twice per pull.
+  /// Each controller is refreshed exactly once, and only when it is actually
+  /// mounted.
+  ///
+  /// [BudgetAllocationController.loadAll] already calls
+  /// [WalletController.loadWallets] internally, so the wallet controller is
+  /// only refreshed directly when the allocation controller is absent — the
+  /// standalone case the `refreshTab` fallback registers. Doing both
+  /// unconditionally re-read the same Hive box twice per pull.
+  ///
+  /// [TransactionController.loadWallets] is a different controller with its
+  /// own `RxList` and no loading flag, so it is always refreshed alongside
+  /// [TransactionController.refreshWalletTotal].
   Future<void> _refreshLoadedControllers() async {
     if (Get.isRegistered<TransactionController>()) {
       final transaction = Get.find<TransactionController>();
@@ -215,20 +325,25 @@ class FinancialDataSyncService {
         transaction.loadWallets(),
       ]);
     }
-    if (Get.isRegistered<WalletController>()) {
-      await Get.find<WalletController>().loadWallets(showLoading: false);
-    }
     if (Get.isRegistered<BudgetAllocationController>()) {
       await Get.find<BudgetAllocationController>().loadAll(showLoading: false);
+    } else if (Get.isRegistered<WalletController>()) {
+      await Get.find<WalletController>().loadWallets(showLoading: false);
     }
   }
 
   /// Blanks the in-memory financial state on sign-out.
   ///
   /// The GetX controllers are `@lazySingleton` and are never disposed, so
-  /// without this the previous user's records stay live in their `RxList`s
-  /// for the whole unauthenticated window. The Hive boxes keep their data —
-  /// this only clears what is currently rendered.
+  /// without this the previous user's records stay live in their `RxList`s for
+  /// the whole unauthenticated window.
+  ///
+  /// This only clears what is currently rendered. On its own it cannot hold —
+  /// any later `loadAll()` re-reads the Hive boxes and repopulates from disk —
+  /// so it is always paired with either a cache clear ([_resetAfterLogout]) or
+  /// the intention to keep the records for a returning user. Everything else
+  /// derived (`borrowBalance`, `lendBalance`, `insights`, budgets) is recomputed
+  /// by [_refreshLoadedControllers] from the same post-reset read.
   Future<void> _releaseLoadedControllers() async {
     try {
       if (Get.isRegistered<WalletController>()) {
@@ -259,18 +374,25 @@ class FinancialDataSyncService {
   /// Reads [pendingCount] rather than recomputing so an `Obx` in the UI
   /// rebuilds when either connectivity or the unsynced count changes. The
   /// authoritative check happens in [logoutSafely], which re-counts.
+  ///
+  /// Returns null when there is no session: there is no sign-out to perform, so
+  /// connectivity and unsynced records cannot block anything. Both guards below
+  /// only make sense for a user who is *about to lose* access to an account —
+  /// and the Profile screen already hides the button for guests.
   LogoutBlock? get logoutBlock {
     final online = isOnline.value;
     final pending = pendingCount.value;
     LogoutBlock? block;
-    if (!online) {
+    if (!_isAuthenticated) {
+      block = null;
+    } else if (!online) {
       block = LogoutBlock.offline;
     } else if (pending > 0) {
       block = LogoutBlock.pendingSync;
     } else {
       block = null;
     }
-    '[LOGOUT_DEBUG] logoutBlock getter evaluated -> block=$block | isOnline=$online | pendingCount=$pending'
+    '[LOGOUT_DEBUG] logoutBlock getter evaluated -> block=$block | authed=$_isAuthenticated | isOnline=$online | pendingCount=$pending'
         .Log('FinancialDataSyncService');
     return block;
   }
@@ -278,10 +400,27 @@ class FinancialDataSyncService {
   /// Runs the full sign-out handshake.
   ///
   /// Probes the real connection, pushes any pending/failed records, and only
-  /// then signs out. The on-disk cache is left alone — see
-  /// [_handleSessionChange]. Returns the reason if the user must stay signed
-  /// in, in which case nothing was destroyed.
+  /// then signs out. Reaching the end means `pendingCount == 0` was verified,
+  /// i.e. every record already lives in Firestore — so the local cache is then
+  /// cleared. Keeping it would only repaint the previous account's balances
+  /// into the still-mounted shell, since the app deliberately stays on the
+  /// current tab instead of routing to Login.
+  ///
+  /// The failure paths return *before* signing out and leave the cache
+  /// untouched, so an offline or unsynced logout still cannot lose data.
   Future<LogoutResult> logoutSafely() async {
+    if (!_isAuthenticated) {
+      // Nothing to end. Signing out again would be a no-op, and running the
+      // cache clear would silently destroy a guest's local records — they
+      // belong to no account, so there is nothing to protect them from and
+      // nowhere to push them to. They stay put until an account signs in.
+      SyncTrace.log(
+        'LOGOUT no-op — already signed out '
+        'pending=${_countPending()} left untouched',
+      );
+      return LogoutResult.success;
+    }
+
     // Always trust the probe over the cached Rx value.
     if (!await _probeOnline()) {
       SyncTrace.log('LOGOUT blocked — offline');
@@ -299,33 +438,28 @@ class FinancialDataSyncService {
     }
 
     await _session.clearSession();
-    SyncTrace.log('LOGOUT completed — cache preserved');
+
+    // Signed out and fully backed up: drop the cache so the next account
+    // cannot read it. Serialised against any in-flight session transition, and
+    // the refresh leaves the mounted controllers showing a fresh, empty state
+    // (WalletLocalDataSource re-seeds Cash + Bank at 0) instead of the
+    // previous user's balances.
+    final owner = CcAppStorage.instance.financialDataOwnerId;
+    await _enqueueTransition(_resetAfterLogout);
+    SyncTrace.log('LOGOUT completed — cache cleared (previous owner=$owner)');
     return LogoutResult.success;
   }
 
-  /// Deletes every record that never made it to the cloud.
+  /// Blanks the device's financial state after a completed sign-out.
   ///
-  /// This is the escape hatch for the `failed`/`pending` state that would
-  /// otherwise block sign-out forever. It is destructive and must only be
-  /// reachable behind an explicit user confirmation.
-  Future<int> discardUnsynced() async {
-    var removed = 0;
-    for (final boxName in CcHiveBox.financialBoxes) {
-      if (!Hive.isBoxOpen(boxName)) continue;
-      final box = Hive.box<dynamic>(boxName);
-      final doomed = <dynamic>[];
-      for (final model in box.values) {
-        if (_isUnsynced(model)) doomed.add(_getLocalId(model));
-      }
-      for (final key in doomed) {
-        if (key == null) continue;
-        await box.delete(key);
-        removed++;
-      }
-    }
-    pendingCount.value = _countPending();
-    SyncTrace.log('LOGOUT discarded $removed unsynced record(s)');
-    return removed;
+  /// In-memory release runs first so no frame is ever painted with the
+  /// outgoing account's data, then the boxes are wiped, then the controllers
+  /// are re-read from the now-empty boxes so the UI the user is looking at
+  /// settles on a consistent logged-out state instead of a full-screen loader.
+  Future<void> _resetAfterLogout() async {
+    await _releaseLoadedControllers();
+    await _clearFinancialCache();
+    await _refreshLoadedControllers();
   }
 
   Future<void> syncAll() async {

@@ -83,7 +83,7 @@ class _ProfilePageHeaderState extends State<ProfilePageHeader>
   @override
   Widget build(BuildContext context) {
     // Fixed height to ensure both surfaces are identical
-    final cardHeight = context.respDim(150);
+    final cardHeight = context.respDim(120);
 
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_SM,
@@ -119,33 +119,18 @@ class _ProfilePageHeaderState extends State<ProfilePageHeader>
                       daysToNextAudit: widget.daysToNextAudit,
                       levelStatus: widget.levelStatus,
                       onTap: () {
-                        'ProfilePageHeader card tapped (Info)'.Log(
-                          'ProfilePageHeader',
-                        );
                         _toggleCard();
                       },
                       onEditName: () {
-                        'ProfilePageHeader onEditName triggered'.Log(
-                          'ProfilePageHeader',
-                        );
                         widget.onEditName?.call();
                       },
                       onLinkAccount: () {
-                        'ProfilePageHeader onLinkAccount triggered'.Log(
-                          'ProfilePageHeader',
-                        );
                         widget.onLinkAccount?.call();
                       },
                       onAvatarTap: () {
-                        'ProfilePageHeader onAvatarTap triggered'.Log(
-                          'ProfilePageHeader',
-                        );
                         widget.onAvatarTap?.call();
                       },
                       onLinkPhone: () {
-                        'ProfilePageHeader onLinkPhone triggered'.Log(
-                          'ProfilePageHeader',
-                        );
                         widget.onLinkPhone?.call();
                       },
                     ),
