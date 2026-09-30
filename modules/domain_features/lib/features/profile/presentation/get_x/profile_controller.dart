@@ -12,6 +12,7 @@ import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../category/export_category.dart';
@@ -24,11 +25,11 @@ import '../../domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/usecases/update_profile_settings_usecase.dart';
 import '../../user_level/presentation/get_x/user_level_controller.dart';
 import '../pages/terms_of_service_page.dart';
-import '../widgets/birth_year_dialog.dart';
-import '../widgets/currency_selection_dialog.dart';
-import '../widgets/display_name_dialog.dart';
-import '../widgets/language_selection_dialog.dart';
-import '../widgets/weekly_audit_day_dialog.dart';
+import '../widgets/birth_year_sheet.dart';
+import '../widgets/currency_selection_sheet.dart';
+import '../widgets/display_name_sheet.dart';
+import '../widgets/language_selection_sheet.dart';
+import '../widgets/weekly_audit_day_sheet.dart';
 
 @lazySingleton
 class ProfileController extends CcGetController {
@@ -277,7 +278,7 @@ class ProfileController extends CcGetController {
       maxYear,
     );
 
-    final picked = await BirthYearDialog.show(
+    final picked = await BirthYearSheet.show(
       context,
       currentYear: current,
       minYear: minYear,
@@ -310,10 +311,7 @@ class ProfileController extends CcGetController {
   Future<void> pickWeeklyAuditDay(BuildContext context) async {
     final current = settings.value.weeklyAuditDayIndex + 1;
 
-    final picked = await WeeklyAuditDayDialog.show(
-      context,
-      currentDay: current,
-    );
+    final picked = await WeeklyAuditDaySheet.show(context, currentDay: current);
 
     if (picked != null) await setWeeklyAuditDay(picked - 1);
   }
@@ -329,7 +327,7 @@ class ProfileController extends CcGetController {
       u?.lastName,
     ].whereType<String>().where((s) => s.isNotEmpty).join(' ');
 
-    final name = await DisplayNameDialog.show(context, currentName: fullName);
+    final name = await DisplayNameSheet.show(context, currentName: fullName);
     if (name == null || name.trim().isEmpty) return;
 
     final result = await getIt<FirebaseAuthRepository>().updateDisplayName(
@@ -359,7 +357,7 @@ class ProfileController extends CcGetController {
   }
 
   Future<void> pickLanguage(BuildContext context) async {
-    final picked = await LanguageSelectionDialog.show(context);
+    final picked = await LanguageSelectionSheet.show(context);
     if (picked != null && context.mounted) {
       await el.EasyLocalization.of(context)!.setLocale(picked);
       CategorySettingsController.onCategoriesChanged.value++;
@@ -367,12 +365,15 @@ class ProfileController extends CcGetController {
   }
 
   Future<void> pickCurrency(BuildContext context) async {
-    final picked = await CurrencySelectionDialog.show(
+    final picked = await CurrencySelectionSheet.show(
       context,
       settings.value.currencyCode,
     );
     if (picked != null && picked != settings.value.currencyCode) {
-      final updated = settings.value.copyWith(currencyCode: picked);
+      final updated = settings.value.copyWith(
+        currencyCode: picked,
+        currencySelectionSource: CurrencySelectionSources.userSelected,
+      );
       settings.value = updated;
       await _updateSettings(updated);
       await _load();

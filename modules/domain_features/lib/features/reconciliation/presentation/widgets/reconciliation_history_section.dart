@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../get_x/reconciliation_controller.dart';
-import 'reconciliation_dialogs.dart';
 import 'reconciliation_history_card.dart';
 
 class ReconciliationHistorySection extends StatelessWidget {
@@ -29,11 +28,6 @@ class ReconciliationHistorySection extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              TextButton.icon(
-                onPressed: () => _showUndoDialog(context),
-                icon: const Icon(Icons.undo, size: 18),
-                label: Text(el.tr(CcLocaleKeys.reconciliation_undo)),
-              ),
             ],
           ),
           const CcSpaceSM(),
@@ -43,9 +37,5 @@ class ReconciliationHistorySection extends StatelessWidget {
         ],
       );
     });
-  }
-
-  void _showUndoDialog(BuildContext context) {
-    ReconciliationUndoSheet.show(context);
   }
 }

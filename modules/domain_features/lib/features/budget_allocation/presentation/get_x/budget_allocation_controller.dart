@@ -26,7 +26,7 @@ import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../../wallet/presentation/widgets/add_investment_sheet.dart';
 import '../../../wallet/presentation/widgets/add_liquid_sheet.dart';
 import '../widgets/edit_wallet_sheet.dart';
-import '../widgets/wallet_delete_confirmation_dialog.dart';
+import '../widgets/wallet_delete_confirmation_sheet.dart';
 
 @lazySingleton
 class BudgetAllocationController extends CcGetController {
@@ -160,7 +160,7 @@ class BudgetAllocationController extends CcGetController {
   }
 
   void _confirmDelete(BuildContext context, WalletEntity wallet) {
-    WalletDeleteConfirmationDialog.show(
+    WalletDeleteConfirmationSheet.show(
       context,
       wallet: wallet,
       onConfirm: () async {
@@ -238,7 +238,9 @@ class BudgetAllocationController extends CcGetController {
     if (showLoading) {
       layoutStatus.value = CcLayoutStatus.loading;
     }
-    SyncTrace.log('UI     BudgetAllocation.loadAll() ENTER showLoading=$showLoading');
+    SyncTrace.log(
+      'UI     BudgetAllocation.loadAll() ENTER showLoading=$showLoading',
+    );
 
     try {
       // Parallelize loading to satisfy Law 5 (Clean Bootstrap Integrity - parallelize)

@@ -23,41 +23,47 @@ class CurrencyCatalog {
     'CN': CurrencyConstants.cny,
   };
 
-  /// Detects the suggested currency code based on device regional settings
-  /// (platform dispatcher locale country code) without requesting GPS permissions.
-  ///
-  /// Detection Priority:
-  /// 1. Device country code (e.g. VN -> VND, US -> USD).
-  /// 2. Language fallback (e.g. 'vi' -> VND as primary market default).
-  /// 3. Default fallback (VND).
-  static String detectSuggestedCurrency() {
+  /// Detects suggested currency code along with detected country code.
+  static ({String currencyCode, String? countryCode})
+  detectSuggestedCurrencyWithDetails() {
     try {
       final locale = PlatformDispatcher.instance.locale;
       final countryCode = locale.countryCode?.toUpperCase();
       if (countryCode != null &&
           countryCodeToCurrency.containsKey(countryCode)) {
-        return countryCodeToCurrency[countryCode]!;
+        return (
+          currencyCode: countryCodeToCurrency[countryCode]!,
+          countryCode: countryCode,
+        );
       }
 
       // Language fallback
       final languageCode = locale.languageCode.toLowerCase();
       if (languageCode == 'vi') {
-        return CurrencyConstants.vnd;
+        return (currencyCode: CurrencyConstants.vnd, countryCode: 'VN');
       }
       if (languageCode == 'ja') {
-        return CurrencyConstants.jpy;
+        return (currencyCode: CurrencyConstants.jpy, countryCode: 'JP');
       }
       if (languageCode == 'ko') {
-        return CurrencyConstants.krw;
+        return (currencyCode: CurrencyConstants.krw, countryCode: 'KR');
       }
       if (languageCode == 'zh') {
-        return CurrencyConstants.cny;
+        return (currencyCode: CurrencyConstants.cny, countryCode: 'CN');
       }
       if (languageCode == 'en') {
-        return CurrencyConstants.usd;
+        return (currencyCode: CurrencyConstants.usd, countryCode: 'US');
       }
     } catch (_) {}
 
-    return CurrencyConstants.defaultCurrencyCode;
+    return (
+      currencyCode: CurrencyConstants.defaultCurrencyCode,
+      countryCode: null,
+    );
+  }
+
+  /// Detects the suggested currency code based on device regional settings.
+  static String detectSuggestedCurrency() {
+    return detectSuggestedCurrencyWithDetails().currencyCode;
   }
 }

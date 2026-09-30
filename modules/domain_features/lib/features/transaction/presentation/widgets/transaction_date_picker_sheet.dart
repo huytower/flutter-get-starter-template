@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'transaction_date_picker_dialog_content.dart';
+import 'transaction_date_picker_content_sheet.dart';
 
-class TransactionDatePickerDialog extends StatelessWidget {
+class TransactionDatePickerSheet extends StatelessWidget {
   final DateTime initialDate;
   final DateTime firstDate;
   final DateTime lastDate;
 
-  const TransactionDatePickerDialog({
+  const TransactionDatePickerSheet({
     super.key,
     required this.initialDate,
     required this.firstDate,
@@ -24,7 +24,7 @@ class TransactionDatePickerDialog extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => TransactionDatePickerDialog(
+      builder: (context) => TransactionDatePickerSheet(
         initialDate: initialDate,
         firstDate: firstDate,
         lastDate: lastDate,
@@ -34,7 +34,7 @@ class TransactionDatePickerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TransactionDatePickerDialogContent(
+    return TransactionDatePickerContentSheet(
       initialDate: initialDate,
       firstDate: firstDate,
       lastDate: lastDate,

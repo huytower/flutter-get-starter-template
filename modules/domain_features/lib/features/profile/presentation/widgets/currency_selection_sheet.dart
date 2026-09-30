@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'currency_selection_dialog_content.dart';
+import 'currency_selection_content_sheet.dart';
 
-class CurrencySelectionDialog extends StatelessWidget {
-  const CurrencySelectionDialog({super.key, required this.initialCurrencyCode});
+class CurrencySelectionSheet extends StatelessWidget {
+  const CurrencySelectionSheet({super.key, required this.initialCurrencyCode});
 
   final String initialCurrencyCode;
 
@@ -16,13 +16,13 @@ class CurrencySelectionDialog extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) =>
-          CurrencySelectionDialog(initialCurrencyCode: initialCurrencyCode),
+          CurrencySelectionSheet(initialCurrencyCode: initialCurrencyCode),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return CurrencySelectionDialogContent(
+    return CurrencySelectionContentSheet(
       initialCurrencyCode: initialCurrencyCode,
     );
   }

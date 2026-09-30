@@ -2,8 +2,8 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-class DisplayNameDialog extends StatefulWidget {
-  const DisplayNameDialog({super.key, required this.currentName});
+class DisplayNameSheet extends StatefulWidget {
+  const DisplayNameSheet({super.key, required this.currentName});
 
   final String currentName;
 
@@ -15,15 +15,15 @@ class DisplayNameDialog extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => DisplayNameDialog(currentName: currentName),
+      builder: (context) => DisplayNameSheet(currentName: currentName),
     );
   }
 
   @override
-  State<DisplayNameDialog> createState() => _DisplayNameDialogState();
+  State<DisplayNameSheet> createState() => _DisplayNameSheetState();
 }
 
-class _DisplayNameDialogState extends State<DisplayNameDialog> {
+class _DisplayNameSheetState extends State<DisplayNameSheet> {
   late final TextEditingController _nameController;
 
   bool get _isValid => _nameController.text.trim().isNotEmpty;

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'birth_year_dialog_content.dart';
+import 'birth_year_content_sheet.dart';
 
-class BirthYearDialog extends StatelessWidget {
+class BirthYearSheet extends StatelessWidget {
   final int currentYear;
   final int minYear;
   final int maxYear;
 
-  const BirthYearDialog({
+  const BirthYearSheet({
     super.key,
     required this.currentYear,
     required this.minYear,
@@ -24,7 +24,7 @@ class BirthYearDialog extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => BirthYearDialog(
+      builder: (context) => BirthYearSheet(
         currentYear: currentYear,
         minYear: minYear,
         maxYear: maxYear,
@@ -34,7 +34,7 @@ class BirthYearDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BirthYearDialogContent(
+    return BirthYearContentSheet(
       currentYear: currentYear,
       minYear: minYear,
       maxYear: maxYear,

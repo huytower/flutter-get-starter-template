@@ -27,9 +27,26 @@ class ProfileLocalDataSource {
       await s.save();
     }
 
-    // Initialize currency from device region if not explicitly set yet (stored preference wins)
+    // Initialize/validate currency and normalized selection source
+    final validatedCurrencyCode = CurrencyConstants.validateCurrencyCode(
+      s.currencyCode,
+    );
+    final validatedSource = CurrencySelectionSources.validate(
+      s.currencySelectionSource,
+    );
+
     if (s.currencyCode == null) {
-      s.currencyCode = CurrencyCatalog.detectSuggestedCurrency();
+      final suggestion = CurrencyCatalog.detectSuggestedCurrencyWithDetails();
+      s.currencyCode = CurrencyConstants.validateCurrencyCode(
+        suggestion.currencyCode,
+      );
+      s.currencyDetectionCountryCode = suggestion.countryCode;
+      s.currencySelectionSource = CurrencySelectionSources.detected;
+      await s.save();
+    } else if (s.currencyCode != validatedCurrencyCode ||
+        s.currencySelectionSource != validatedSource) {
+      s.currencyCode = validatedCurrencyCode;
+      s.currencySelectionSource = validatedSource;
       await s.save();
     }
 
@@ -39,6 +56,8 @@ class ProfileLocalDataSource {
       reminderEnabled: s.reminderEnabled ?? false,
       weeklyAuditDayIndex: s.weeklyAuditDayIndex ?? 6,
       currencyCode: s.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
+      currencySelectionSource: s.currencySelectionSource,
+      currencyDetectionCountryCode: s.currencyDetectionCountryCode,
       birthYear: s.birthYear,
       isDarkMode: s.isDarkMode,
       weeklyAuditDayChangedAt: s.weeklyAuditDayChangedAt,
@@ -59,7 +78,13 @@ class ProfileLocalDataSource {
     final s = CcAppStorage.instance;
     s.reminderEnabled = entity.reminderEnabled;
     s.weeklyAuditDayIndex = entity.weeklyAuditDayIndex;
-    s.currencyCode = entity.currencyCode;
+    s.currencyCode = CurrencyConstants.validateCurrencyCode(
+      entity.currencyCode,
+    );
+    s.currencySelectionSource = CurrencySelectionSources.validate(
+      entity.currencySelectionSource,
+    );
+    s.currencyDetectionCountryCode = entity.currencyDetectionCountryCode;
     s.birthYear = entity.birthYear;
     s.isDarkMode = entity.isDarkMode;
     s.weeklyAuditDayChangedAt = entity.weeklyAuditDayChangedAt;

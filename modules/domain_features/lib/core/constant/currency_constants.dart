@@ -1,5 +1,39 @@
 import 'package:intl/intl.dart';
 
+abstract final class CurrencySelectionSources {
+  static const detected = 'detected';
+  static const userSelected = 'user_selected';
+  static const migrated = 'migrated';
+
+  /// Validates and normalizes selection source strings; defaults to [migrated] if invalid.
+  static String validate(String? source) {
+    if (source != null) {
+      final normalized = source.toLowerCase().trim();
+      if (normalized == detected ||
+          normalized == userSelected ||
+          normalized == migrated) {
+        return normalized;
+      }
+    }
+    return migrated;
+  }
+}
+
+enum CurrencySelectionSourceType {
+  detected,
+  userSelected,
+  migrated;
+
+  static CurrencySelectionSourceType parse(String? value) {
+    return switch (CurrencySelectionSources.validate(value)) {
+      CurrencySelectionSources.detected => CurrencySelectionSourceType.detected,
+      CurrencySelectionSources.userSelected =>
+        CurrencySelectionSourceType.userSelected,
+      _ => CurrencySelectionSourceType.migrated,
+    };
+  }
+}
+
 /// Single Source of Truth (SSOT) for currency codes, default currency,
 /// currency symbols, and locale/region mappings across the app.
 /// Restricted to: VND, USD, JPY, EUR, KRW, CNY.
@@ -23,6 +57,14 @@ class CurrencyConstants {
     krw,
     cny,
   ];
+
+  /// Validates whether [code] is a supported currency; returns [defaultCurrencyCode] otherwise.
+  static String validateCurrencyCode(String? code) {
+    if (code != null && supportedCurrencyCodes.contains(code.toUpperCase())) {
+      return code.toUpperCase();
+    }
+    return defaultCurrencyCode;
+  }
 
   /// Gets the currency symbol for a given currency code.
   static String getSymbol(String currencyCode) {

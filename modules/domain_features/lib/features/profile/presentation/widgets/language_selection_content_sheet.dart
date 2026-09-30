@@ -2,48 +2,46 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../core/constant/currency_constants.dart';
-import '../../../../../core/helper/money_format_helper.dart';
-
-class CurrencySelectionDialogContent extends StatefulWidget {
-  const CurrencySelectionDialogContent({
-    super.key,
-    required this.initialCurrencyCode,
-  });
-
-  final String initialCurrencyCode;
+class LanguageSelectionContentSheet extends StatefulWidget {
+  const LanguageSelectionContentSheet({super.key});
 
   @override
-  State<CurrencySelectionDialogContent> createState() =>
-      _CurrencySelectionDialogContentState();
+  State<LanguageSelectionContentSheet> createState() =>
+      _LanguageSelectionContentSheetState();
 }
 
-class _CurrencySelectionDialogContentState
-    extends State<CurrencySelectionDialogContent> {
-  late String _selectedCurrencyCode;
+class _LanguageSelectionContentSheetState
+    extends State<LanguageSelectionContentSheet> {
+  late Locale _selectedLocale;
 
   @override
   void initState() {
     super.initState();
-    _selectedCurrencyCode = widget.initialCurrencyCode;
+    // We'll initialize in didChangeDependencies to have access to context.locale
   }
 
-  void _onCurrencyTap(String code) {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _selectedLocale = context.locale;
+  }
+
+  void _onLocaleTap(Locale locale) {
     setState(() {
-      _selectedCurrencyCode = code;
+      _selectedLocale = locale;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    const currencies = CurrencyConstants.supportedCurrencyCodes;
+    const locales = CcLocalization.supportedLocales;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildHeader(context, scheme),
-        _buildBody(context, scheme, currencies),
+        _buildBody(context, scheme, locales),
       ],
     );
   }
@@ -67,7 +65,7 @@ class _CurrencySelectionDialogContentState
         ),
       ),
       child: CcText(
-        tr(CcLocaleKeys.profile_currency),
+        tr(CcLocaleKeys.settings_language),
         maxLines: 1,
         textStyle: context.ccTextTheme.titleLarge?.copyWith(
           color: scheme.onPrimary,
@@ -80,7 +78,7 @@ class _CurrencySelectionDialogContentState
   Widget _buildBody(
     BuildContext context,
     ColorScheme scheme,
-    List<String> currencies,
+    List<Locale> locales,
   ) {
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -93,7 +91,7 @@ class _CurrencySelectionDialogContentState
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildCurrencyList(context, scheme, currencies),
+          _buildLanguageRow(context, scheme, locales),
           _buildActions(context, scheme),
           SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
         ],
@@ -101,47 +99,46 @@ class _CurrencySelectionDialogContentState
     );
   }
 
-  Widget _buildCurrencyList(
+  Widget _buildLanguageRow(
     BuildContext context,
     ColorScheme scheme,
-    List<String> currencies,
+    List<Locale> locales,
   ) {
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_MD,
       vertical: CcPaddingParams.PAGE_SM,
-      child: Column(
-        children: currencies
-            .map((code) => _buildCurrencyTile(context, scheme, code))
+      child: Row(
+        children: locales
+            .map(
+              (locale) => _buildLanguageChip(context, scheme, locale, locales),
+            )
             .toList(),
       ),
     );
   }
 
-  Widget _buildCurrencyTile(
+  Widget _buildLanguageChip(
     BuildContext context,
     ColorScheme scheme,
-    String code,
+    Locale locale,
+    List<Locale> locales,
   ) {
-    final bool isSelected =
-        code.toUpperCase() == _selectedCurrencyCode.toUpperCase();
-    final symbol = MoneyFormatter.getSymbol(code);
+    final bool isSelected = locale.languageCode == _selectedLocale.languageCode;
+    final String label = locale.languageCode.toUpperCase();
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: context.respDim(8)),
+    return Expanded(
       child: CcBouncing(
-        onTap: () => _onCurrencyTap(code),
+        onTap: () => _onLocaleTap(locale),
         borderRadius: context.brMd,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          height: context.respDim(50),
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+          margin: EdgeInsets.only(
+            right: locale == locales.last ? 0.0 : context.respDim(8),
           ),
-          alignment: Alignment.centerLeft,
+          height: context.respDim(40),
+          alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected
-                ? scheme.primary.withOpacity(0.15)
-                : scheme.surface,
+            color: isSelected ? scheme.primary : Colors.transparent,
             borderRadius: context.brMd,
             border: Border.all(
               color: isSelected
@@ -149,25 +146,15 @@ class _CurrencySelectionDialogContentState
                   : scheme.outline.withOpacity(0.1),
             ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CcText(
-                '$code ($symbol)',
-                textStyle: context.ccTextTheme.bodyLarge?.copyWith(
-                  fontWeight: isSelected
-                      ? CcTypographyParams.bold
-                      : CcTypographyParams.regular,
-                  color: isSelected ? scheme.primary : scheme.onSurface,
-                ),
-              ),
-              if (isSelected)
-                Icon(
-                  Icons.check_rounded,
-                  color: scheme.primary,
-                  size: context.respIconSize(baseSize: 20),
-                ),
-            ],
+          child: CcText(
+            label,
+            align: Alignment.center,
+            textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+              fontWeight: isSelected
+                  ? CcTypographyParams.bold
+                  : CcTypographyParams.regular,
+              color: isSelected ? scheme.onPrimary : scheme.onSurface,
+            ),
           ),
         ),
       ),
@@ -180,7 +167,7 @@ class _CurrencySelectionDialogContentState
         context.respPadding(CcPaddingParams.PAGE_MD),
         0,
         context.respPadding(CcPaddingParams.PAGE_MD),
-        context.respPadding(CcPaddingParams.SPACE_XS),
+        context.respPadding(CcPaddingParams.PAGE_XS),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -197,7 +184,7 @@ class _CurrencySelectionDialogContentState
           ),
           const CcSpaceSM(),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(_selectedCurrencyCode),
+            onPressed: () => Navigator.of(context).pop(_selectedLocale),
             child: CcText(
               tr(CcLocaleKeys.common_ok),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(

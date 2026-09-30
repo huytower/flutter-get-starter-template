@@ -2,12 +2,12 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-class TransactionDatePickerDialogContent extends StatefulWidget {
+class TransactionDatePickerContentSheet extends StatefulWidget {
   final DateTime initialDate;
   final DateTime firstDate;
   final DateTime lastDate;
 
-  const TransactionDatePickerDialogContent({
+  const TransactionDatePickerContentSheet({
     super.key,
     required this.initialDate,
     required this.firstDate,
@@ -15,12 +15,12 @@ class TransactionDatePickerDialogContent extends StatefulWidget {
   });
 
   @override
-  State<TransactionDatePickerDialogContent> createState() =>
-      _TransactionDatePickerDialogContentState();
+  State<TransactionDatePickerContentSheet> createState() =>
+      _TransactionDatePickerContentSheetState();
 }
 
-class _TransactionDatePickerDialogContentState
-    extends State<TransactionDatePickerDialogContent> {
+class _TransactionDatePickerContentSheetState
+    extends State<TransactionDatePickerContentSheet> {
   late DateTime _selectedDate;
   late DateTime _viewedMonth;
 
@@ -299,8 +299,8 @@ class _TransactionDatePickerDialogContentState
                   ? scheme.onPrimary
                   : isSelectable
                   ? isCurrentMonth
-                  ? scheme.onSurface
-                  : scheme.onSurfaceVariant.withOpacity(0.4)
+                        ? scheme.onSurface
+                        : scheme.onSurfaceVariant.withOpacity(0.4)
                   : scheme.onSurfaceVariant.withOpacity(0.4),
             ),
           ),

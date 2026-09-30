@@ -2,12 +2,12 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-class BirthYearDialogContent extends StatefulWidget {
+class BirthYearContentSheet extends StatefulWidget {
   final int currentYear;
   final int minYear;
   final int maxYear;
 
-  const BirthYearDialogContent({
+  const BirthYearContentSheet({
     super.key,
     required this.currentYear,
     required this.minYear,
@@ -15,10 +15,10 @@ class BirthYearDialogContent extends StatefulWidget {
   });
 
   @override
-  State<BirthYearDialogContent> createState() => _BirthYearDialogContentState();
+  State<BirthYearContentSheet> createState() => _BirthYearContentSheetState();
 }
 
-class _BirthYearDialogContentState extends State<BirthYearDialogContent> {
+class _BirthYearContentSheetState extends State<BirthYearContentSheet> {
   late DateTime _selectedDate;
   late int _selectedYear;
   ScrollController? _scrollController;
