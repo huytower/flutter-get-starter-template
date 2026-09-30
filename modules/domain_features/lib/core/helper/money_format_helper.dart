@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import '../constant/currency_constants.dart';
 
 /// Consolidated money formatting helper supporting multiple currencies
-/// (e.g., VND, USD, EUR, etc.) based on currencyCode.
+/// (e.g., VND, USD, EUR, etc.) and locale-aware short representations.
 class MoneyFormatter {
   const MoneyFormatter();
 
@@ -50,61 +50,50 @@ class MoneyFormatter {
     return formatAmount(parsed, currencyCode: currencyCode);
   }
 
-  /// Formats amount into a short, human-readable form (e.g. 1.5M, 50K or 1tr, 50k).
+  /// Formats amount into a short, human-readable form (e.g. 1.5M, 50K for English; 1.5tr, 50k for Vietnamese).
   static String formatShort(
     num value, {
     String currencyCode = CurrencyConstants.defaultCurrencyCode,
     bool useFullSuffix = false,
   }) {
-    final code = currencyCode.toUpperCase();
     final amount = value.toDouble();
     final sign = amount < 0 ? '-' : '';
     final abs = amount.abs();
 
-    if (code == CurrencyConstants.vnd) {
-      String format(double val, String unit) {
-        if (val == val.toInt().toDouble()) {
-          return '${val.toInt()}$unit';
-        }
-        String s = val.toStringAsFixed(2);
-        if (s.endsWith('.00')) s = s.substring(0, s.length - 3);
-        if (s.contains('.') && s.endsWith('0'))
-          s = s.substring(0, s.length - 1);
+    // Detect language code (vi vs en)
+    String lang = 'vi';
+    try {
+      final currentLocale = Intl.getCurrentLocale();
+      if (currentLocale.isNotEmpty) {
+        lang = currentLocale.split('_').first.toLowerCase();
+      }
+    } catch (_) {}
+
+    final isVi = lang == 'vi';
+
+    String format(double val, String unit, {bool useComma = true}) {
+      if (val == val.toInt().toDouble()) {
+        return '${val.toInt()}$unit';
+      }
+      String s = val.toStringAsFixed(2);
+      if (s.endsWith('.00')) s = s.substring(0, s.length - 3);
+      if (s.contains('.') && s.endsWith('0')) s = s.substring(0, s.length - 1);
+      if (useComma) {
         return '${s.replaceFirst('.', ',')}$unit';
       }
-
-      if (abs >= 1e9) {
-        return '$sign${format(abs / 1e9, useFullSuffix ? ' tỷ đồng' : 'tỷ')}';
-      }
-      if (abs >= 1e6) {
-        return '$sign${format(abs / 1e6, useFullSuffix ? ' triệu đồng' : 'tr')}';
-      }
-      if (abs >= 1e3) {
-        return '$sign${format(abs / 1e3, useFullSuffix ? ' nghìn đồng' : 'k')}';
-      }
-      return '$sign${abs.toStringAsFixed(0)}${useFullSuffix ? ' đồng' : ''}';
-    } else {
-      // USD / general format
-      String format(double val, String unit) {
-        if (val == val.toInt().toDouble()) {
-          return '${val.toInt()}$unit';
-        }
-        String s = val.toStringAsFixed(1);
-        if (s.endsWith('.00')) s = s.substring(0, s.length - 3);
-        return '$s$unit';
-      }
-
-      if (abs >= 1e9) {
-        return '$sign${format(abs / 1e9, useFullSuffix ? ' billions' : 'B')}';
-      }
-      if (abs >= 1e6) {
-        return '$sign${format(abs / 1e6, useFullSuffix ? ' millions' : 'M')}';
-      }
-      if (abs >= 1e3) {
-        return '$sign${format(abs / 1e3, useFullSuffix ? ' thousands' : 'K')}';
-      }
-      return '$sign${abs.toStringAsFixed(0)}';
+      return '$s$unit';
     }
+
+    if (abs >= 1e9) {
+      return '$sign${format(abs / 1e9, isVi ? (useFullSuffix ? ' tỷ đồng' : 'tỷ') : (useFullSuffix ? ' billions' : 'B'), useComma: isVi)}';
+    }
+    if (abs >= 1e6) {
+      return '$sign${format(abs / 1e6, isVi ? (useFullSuffix ? ' triệu đồng' : 'tr') : (useFullSuffix ? ' millions' : 'M'), useComma: isVi)}';
+    }
+    if (abs >= 1e3) {
+      return '$sign${format(abs / 1e3, isVi ? (useFullSuffix ? ' nghìn đồng' : 'k') : (useFullSuffix ? ' thousands' : 'K'), useComma: isVi)}';
+    }
+    return '$sign${abs.toStringAsFixed(0)}${useFullSuffix ? (isVi ? ' đồng' : '') : ''}';
   }
 }
 
