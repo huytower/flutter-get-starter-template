@@ -1,5 +1,6 @@
 import 'package:app_config/data/datasource/local/box/register_hive_adapter.dart'
     as app_config;
+import 'package:data_config/export_data.dart' as data_config;
 import 'package:domain_features/export_domain_features.dart';
 import 'package:hive_ce/hive_ce.dart';
 
@@ -34,6 +35,9 @@ class HiveRegistrar {
     // Register Loan adapters (record + nested installment)
     Hive.registerAdapter(LiabilityInstallmentModelAdapter());
     Hive.registerAdapter(LiabilityModelAdapter());
+
+    // Register Exchange Rate adapter from data_config
+    Hive.registerAdapter(data_config.ExchangeRateHiveModelAdapter());
 
     // Add other feature adapters here as needed
   }

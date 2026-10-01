@@ -50,7 +50,7 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
   @override
   void write(BinaryWriter writer, CcAppStorage obj) {
     writer
-      ..writeByte(28)
+      ..writeByte(27)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)

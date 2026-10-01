@@ -2,6 +2,7 @@ library domain_features;
 
 // Core
 export 'core/di/di.dart';
+export 'core/exchange_rates/exchange_rate_types.dart';
 export 'core/getx/cc_get_controller.dart';
 export 'core/getx/cc_get_view.dart';
 // Budget Allocation (composite: Wallet + Budget Limit)
@@ -30,6 +31,8 @@ export 'features/notification/notification_service.dart';
 export 'features/notification/reminder_ids.dart';
 // Profile
 export 'features/profile/export_profile.dart';
+// User Level
+export 'features/profile/user_level/export_user_level.dart';
 // Reconciliation
 export 'features/reconciliation/export_reconciliation.dart';
 // Report
@@ -38,8 +41,6 @@ export 'features/report/export_report.dart';
 export 'features/transaction/domain/entities/transaction_entity.dart';
 export 'features/transaction/domain/repositories/transaction_repository.dart';
 export 'features/transaction/export_transaction.dart';
-// User Level
-export 'features/profile/user_level/export_user_level.dart';
 // Wallet
 export 'features/wallet/domain/entities/wallet_entity.dart';
 export 'features/wallet/domain/repositories/wallet_repository.dart';

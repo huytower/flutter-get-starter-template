@@ -28,6 +28,7 @@ class CcHiveBox {
   static const int APP_STORAGE_TYPE_ID = 2;
   static const int DEVICE_TYPE_ID = 3;
   static const int APP_TRACK_LOG_TYPE_ID = 4;
+  static const int EXCHANGE_RATE_TYPE_ID = 13;
 
   // Financial data (encrypted)
   static const int WALLET_TYPE_ID = 5;
