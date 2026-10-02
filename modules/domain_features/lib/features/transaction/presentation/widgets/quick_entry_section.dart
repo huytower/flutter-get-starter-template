@@ -187,7 +187,34 @@ class QuickEntrySection extends StatelessWidget {
   }
 
   Widget _buildTrailingIcons(BuildContext context) {
-    return const SizedBox.shrink();
-    // TODO(huy): TEMPORARY DISABLE AI FUNCTION, ENABLE IT LATER
+    final scheme = context.ccColorScheme;
+
+    if (isParsing) {
+      return SizedBox(
+        width: context.respDim(30),
+        height: context.respDim(30),
+        child: Center(
+          child: SizedBox(
+            width: context.respDim(16),
+            height: context.respDim(16),
+            child: CircularProgressIndicator(
+              strokeWidth: context.respDim(2),
+              valueColor: AlwaysStoppedAnimation<Color>(activeColor),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return CcIconButton.bouncing(
+      icon: Icon(
+        Icons.camera_alt,
+        color: scheme.onSurface.withOpacity(0.45),
+        size: context.respDim(20),
+      ),
+      onTap: onScanTap,
+      width: context.respDim(30),
+      height: context.respDim(30),
+    );
   }
 }
