@@ -38,8 +38,10 @@ String _runwayStatusLabel(FinancialRunwayStatus? status) {
 
 /// Builds the Gemini prompt for the combined budget-issues + spending-
 /// optimization advice. Grounds every claim in numbers already computed
-/// locally (no invented figures) and forbids markdown, since no UI layer
-/// here renders it.
+/// locally (no invented figures). The response shape (a `sections` array of
+/// `{status, text}`) is enforced separately via the `responseSchema` passed
+/// to `CcGeminiHelper.generateText` — this prompt only needs to explain what
+/// each section should contain and how to pick its `status`.
 String buildAiFinancialAdvicePrompt({
   required CashFlowEntity? cashFlow,
   required BudgetInsightsEntity? insights,
@@ -50,17 +52,41 @@ String buildAiFinancialAdvicePrompt({
   final buffer = StringBuffer()
     ..writeln(
       'Bạn là một cố vấn tài chính cá nhân cho ứng dụng quản lý chi tiêu. '
-      'Dựa trên dữ liệu tháng này của người dùng bên dưới, hãy viết một '
-      'đoạn tư vấn gồm: (1) nhận xét về các khoản chi bất thường so với '
-      '3 tháng gần nhất nếu có; (2) nếu thu không đủ chi (thâm hụt), đề '
-      'xuất 1-2 chiến lược tăng thu nhập cụ thể, thực tế và các việc nên '
-      'làm để bù đắp phần thâm hụt; (3) đưa ra 2-3 gợi ý tối ưu chi tiêu, '
-      'cảnh báo ngắn gọn nếu có thói quen chi tiêu không lành mạnh, và '
-      'khuyến khích các hành vi tài chính tích cực (tiết kiệm, chi tiêu '
-      'có kế hoạch). Nếu tình hình đang tốt, hãy khen ngợi ngắn gọn và '
-      'gợi ý duy trì/tối ưu thêm — không tạo cảm giác lo lắng không cần '
-      'thiết khi không có vấn đề gì.',
+      'Dựa trên dữ liệu tháng này của người dùng bên dưới, hãy trả về các '
+      'phần tư vấn (sections) riêng biệt, mỗi phần có "status" là good, '
+      'normal hoặc bad, và "text" là nội dung ngắn gọn (1-3 câu) bằng '
+      'tiếng Việt cho phần đó, văn xuôi thuần túy (KHÔNG dùng markdown, '
+      'KHÔNG dùng gạch đầu dòng, KHÔNG dùng ký hiệu *).',
     )
+    ..writeln(
+      'Mỗi phần cũng có "highlights" là 1-3 từ hoặc cụm từ quan trọng nhất '
+      'trong "text" cần nhấn mạnh cho người dùng (số tiền, tỷ lệ %, tên '
+      'danh mục, hành động chính). Phải sao chép CHÍNH XÁC từng ký tự từ '
+      '"text" (cùng chính tả, cùng chữ hoa/thường), mỗi cụm tối đa 6 từ, '
+      'không trùng nhau. Dùng mảng rỗng nếu không có gì đáng nhấn mạnh.',
+    )
+    ..writeln()
+    ..writeln(
+      'Chọn 2-4 phần phù hợp nhất với dữ liệu trong các loại sau (bỏ qua '
+      'loại không áp dụng):',
+    )
+    ..writeln(
+      '- Nhận xét về các khoản chi bất thường so với 3 tháng gần nhất: '
+      'status="bad" nếu phát hiện bất thường, status="good" nếu không có.',
+    )
+    ..writeln(
+      '- Nếu thu không đủ chi (thâm hụt): 1-2 chiến lược tăng thu nhập cụ '
+      'thể, thực tế để bù đắp phần thâm hụt, status="bad".',
+    )
+    ..writeln(
+      '- Gợi ý tối ưu chi tiêu và khuyến khích hành vi tài chính tích cực '
+      '(tiết kiệm, chi tiêu có kế hoạch): status="normal" nếu là lời '
+      'khuyên trung lập, status="good" nếu tình hình đang tốt và đây là '
+      'lời khen — không tạo cảm giác lo lắng không cần thiết khi không có '
+      'vấn đề gì.',
+    )
+    ..writeln()
+    ..writeln('Tổng độ dài toàn bộ các phần khoảng 120-200 từ.')
     ..writeln()
     ..writeln('Dữ liệu tháng này:');
 
@@ -118,13 +144,6 @@ String buildAiFinancialAdvicePrompt({
   } else {
     buffer.writeln('- Không có dữ liệu chỉ số an toàn tài chính.');
   }
-
-  buffer.writeln();
-  buffer.writeln(
-    'Yêu cầu định dạng: trả lời bằng tiếng Việt, văn xuôi thuần túy '
-    '(KHÔNG dùng markdown, KHÔNG dùng gạch đầu dòng, KHÔNG dùng ký hiệu '
-    '*), độ dài khoảng 120-200 từ.',
-  );
 
   return buffer.toString();
 }

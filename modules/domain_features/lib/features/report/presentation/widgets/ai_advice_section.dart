@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/ai_advice_helper.dart';
+import '../../../../core/helper/ai_advice_highlight_helper.dart';
 import '../../domain/entities/ai_advice_entity.dart';
 import '../get_x/report_controller.dart';
 
@@ -156,14 +157,10 @@ class AiAdviceSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CcText(
-          advice.text,
-          overflow: TextOverflow.visible,
-          textStyle: context.ccTextTheme.bodySmall?.copyWith(
-            color: context.ccColorScheme.onSurface,
-          ),
-        ),
-        const CcSpaceXS(),
+        for (final section in advice.sections) ...[
+          _buildSectionCard(context, section),
+          const CcSpaceXS(),
+        ],
         CcText(
           _generatedAtLabel(advice.generatedAt),
           textStyle: context.ccTextTheme.labelSmall?.copyWith(
@@ -172,6 +169,79 @@ class AiAdviceSection extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _buildSectionCard(BuildContext context, AiAdviceSectionItem section) {
+    final color = _statusColor(context, section.status);
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(context.respDim(10)),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: context.brMd,
+        border: Border.all(color: color.withOpacity(0.15)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            _statusIcon(section.status),
+            size: context.respIconSize(baseSize: 16),
+            color: color,
+          ),
+          const CcSpaceXS(),
+          Expanded(child: _buildSectionText(context, section, color)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionText(
+    BuildContext context,
+    AiAdviceSectionItem section,
+    Color color,
+  ) {
+    final baseStyle = context.ccTextTheme.bodySmall?.copyWith(
+      color: context.ccColorScheme.onSurface,
+    );
+    final highlightStyle = baseStyle?.copyWith(
+      color: color,
+      fontWeight: CcTypographyParams.bold,
+    );
+
+    return CcTextSpans([
+      for (final segment in splitAiAdviceHighlights(
+        section.text,
+        section.highlights,
+      ))
+        TextSpan(
+          text: segment.text,
+          style: segment.isHighlighted ? highlightStyle : baseStyle,
+        ),
+    ]);
+  }
+
+  Color _statusColor(BuildContext context, AiAdviceSectionStatus status) {
+    switch (status) {
+      case AiAdviceSectionStatus.good:
+        return PrjColors.success;
+      case AiAdviceSectionStatus.normal:
+        return PrjColors.info;
+      case AiAdviceSectionStatus.bad:
+        return context.ccColorScheme.error;
+    }
+  }
+
+  IconData _statusIcon(AiAdviceSectionStatus status) {
+    switch (status) {
+      case AiAdviceSectionStatus.good:
+        return Icons.check_circle_outline_rounded;
+      case AiAdviceSectionStatus.normal:
+        return Icons.info_outline_rounded;
+      case AiAdviceSectionStatus.bad:
+        return Icons.warning_amber_rounded;
+    }
   }
 
   String _generatedAtLabel(DateTime generatedAt) {
