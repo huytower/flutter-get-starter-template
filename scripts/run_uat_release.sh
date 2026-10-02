@@ -12,6 +12,7 @@ set -euo pipefail
 
 DEFAULT_DEVICE_ID="00008101-001A259E1AE9003A"
 ENTRY_POINT="lib/main_uat.dart"
+FLAVOR="uat"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
@@ -31,4 +32,4 @@ echo "==> [3/4] melos run gen"
 melos run gen
 
 echo "==> [4/4] flutter run -d $DEVICE_ID --release -t $ENTRY_POINT $*"
-flutter run -d "$DEVICE_ID" --release -t "$ENTRY_POINT" "$@"
+flutter run -d "$DEVICE_ID" --flavor "$FLAVOR" --release -t "$ENTRY_POINT" "$@"
