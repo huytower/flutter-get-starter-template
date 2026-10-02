@@ -20,12 +20,6 @@ void main() async {
   try {
     WidgetsFlutterBinding.ensureInitialized();
 
-    // Force portrait orientation across the entire app
-    await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-
     // 0. Edge-to-Edge and System UI Configuration
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
