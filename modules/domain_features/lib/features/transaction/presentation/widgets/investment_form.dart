@@ -172,7 +172,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Obx(() => _buildAmountSection(context, controller, accentColor)),
+          _buildAmountSection(context, controller, accentColor),
           const CcSpaceSM(),
           Obx(() => _buildWalletSection(context, controller, accentColor)),
           const CcSpaceSM(),
