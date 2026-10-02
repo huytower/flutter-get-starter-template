@@ -5,6 +5,12 @@ import 'package:injectable/injectable.dart';
 
 import 'exchange_rate_hive_model.dart';
 
+class RateCachePolicy {
+  const RateCachePolicy({this.maxAge = const Duration(days: 90)});
+
+  final Duration maxAge;
+}
+
 @lazySingleton
 class ExchangeRateLocalDataSource {
   ExchangeRateLocalDataSource();
@@ -50,5 +56,25 @@ class ExchangeRateLocalDataSource {
       ),
     );
     return model?.toTable();
+  }
+
+  Future<int> deleteExpired({
+    required DateTime now,
+    required Duration retention,
+  }) async {
+    final box = await _box;
+    final expiredKeys = <dynamic>[];
+    for (final key in box.keys) {
+      final model = box.get(key);
+      if (model == null) continue;
+      final age = now.difference(model.fetchedAt);
+      if (age > retention) {
+        expiredKeys.add(key);
+      }
+    }
+    if (expiredKeys.isNotEmpty) {
+      await box.deleteAll(expiredKeys);
+    }
+    return expiredKeys.length;
   }
 }

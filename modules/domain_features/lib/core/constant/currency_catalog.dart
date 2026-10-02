@@ -160,4 +160,17 @@ class CurrencyCatalog {
   static String detectSuggestedCurrency() {
     return detectSuggestedCurrencyWithDetails().currencyCode;
   }
+
+  /// Tries to get the definition for a given currency code strictly.
+  static CurrencyDefinition? tryGetDefinition(String? code) {
+    final normalized = code?.trim().toUpperCase();
+    if (normalized == null || normalized.isEmpty) return null;
+    for (final definition in definitions) {
+      if (definition.code == normalized) return definition;
+    }
+    return null;
+  }
+
+  /// Checks whether a given currency code is supported strictly.
+  static bool isSupported(String? code) => tryGetDefinition(code) != null;
 }

@@ -1,5 +1,6 @@
-import 'package:domain_features/core/constant/currency_constants.dart';
+import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -27,26 +28,37 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
     required List<String> quoteCurrencies,
     DateTime? date,
   }) async {
-    final validatedBase = CurrencyConstants.validateCurrencyCode(baseCurrency);
-    final validatedQuotes =
-        quoteCurrencies
-            .map((q) => CurrencyConstants.validateCurrencyCode(q))
-            .toSet()
-            .toList()
-          ..sort();
+    // 1. Strict validation before normalization
+    final baseDef = CurrencyCatalog.tryGetDefinition(baseCurrency);
+    if (baseDef == null) {
+      return Error(UnsupportedCurrencyFailure(baseCurrency));
+    }
+
+    final quoteDefs = <CurrencyDefinition>[];
+    for (final quote in quoteCurrencies) {
+      final qDef = CurrencyCatalog.tryGetDefinition(quote);
+      if (qDef == null) {
+        return Error(UnsupportedCurrencyFailure(quote));
+      }
+      quoteDefs.add(qDef);
+    }
+
+    final normalizedBase = baseDef.code;
+    final normalizedQuotes = quoteDefs.map((d) => d.code).toSet().toList()
+      ..sort();
 
     final dateStr = date != null
         ? _formatDate(date)
         : _formatDate(DateTime.now());
 
-    final requestKey = '$validatedBase|$dateStr|${validatedQuotes.join(',')}';
+    final requestKey = '$normalizedBase|$dateStr|${normalizedQuotes.join(',')}';
     if (_inFlightRequests.containsKey(requestKey)) {
       return _inFlightRequests[requestKey]!;
     }
 
     final future = _getExchangeRatesInternal(
-      validatedBase: validatedBase,
-      validatedQuotes: validatedQuotes,
+      validatedBase: normalizedBase,
+      validatedQuotes: normalizedQuotes,
       date: date,
       dateStr: dateStr,
     );
@@ -84,7 +96,6 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
             cached.rates[q]!.isFinite,
       );
 
-      // If cache is present and valid, check if it's fresh (or historical)
       if (hasValidCachedQuotes) {
         if (date != null || _freshness.isFresh(cached.fetchedAt)) {
           return Success(
@@ -97,7 +108,7 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
       }
     }
 
-    // 2. Fetch from API (since cache was missing, invalid, or stale)
+    // 2. Fetch from API
     try {
       final symbolsParam = validatedQuotes.isEmpty
           ? null
@@ -117,10 +128,12 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
 
       final validatedRates = <String, double>{};
       for (final entry in response.rates.entries) {
-        final quoteCode = CurrencyConstants.validateCurrencyCode(entry.key);
-        final rate = entry.value;
-        if (rate > 0 && rate.isFinite) {
-          validatedRates[quoteCode] = rate;
+        final qDef = CurrencyCatalog.tryGetDefinition(entry.key);
+        if (qDef != null) {
+          final rate = entry.value;
+          if (rate > 0 && rate.isFinite) {
+            validatedRates[qDef.code] = rate;
+          }
         }
       }
 
@@ -145,14 +158,21 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
         provider: _provider,
       );
 
-      // Cache result immediately (newest-cache-wins)
+      // Cache result immediately and perform opportunistic cleanup
       await _local.cacheRates(table, validatedQuotes);
+      try {
+        await _local.deleteExpired(
+          now: DateTime.now().toUtc(),
+          retention: const Duration(days: 90),
+        );
+      } catch (e) {
+        debugPrint('[ExchangeRateRepository] Cache cleanup failed: $e');
+      }
 
       return Success(
         ExchangeRateResult(table: table, provenance: RateProvenance.network),
       );
     } catch (e) {
-      // Network request failed: if we have a valid cached version (even if stale), return staleCache
       if (cached != null && hasValidCachedQuotes) {
         return Success(
           ExchangeRateResult(

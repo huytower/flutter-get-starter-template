@@ -8,7 +8,7 @@ import '../../core/constant/currency_catalog.dart';
 import 'exchange_rate_types.dart';
 
 /// Service for converting amounts between currencies using exchange rates
-/// with precise minor-unit / decimal-scale handling.
+/// with precise minor-unit / decimal-scale handling and policy checks.
 @lazySingleton
 class CurrencyConversionService {
   CurrencyConversionService(this._repository);
@@ -21,13 +21,19 @@ class CurrencyConversionService {
     required String fromCurrency,
     required String toCurrency,
     DateTime? date,
+    ConversionUse use = ConversionUse.display,
   }) async {
     if (fromCurrency.toUpperCase() == toCurrency.toUpperCase()) {
       return Success(amount);
     }
 
-    final fromDef = CurrencyCatalog.getDefinition(fromCurrency);
-    final toDef = CurrencyCatalog.getDefinition(toCurrency);
+    final fromDef = CurrencyCatalog.tryGetDefinition(fromCurrency);
+    final toDef = CurrencyCatalog.tryGetDefinition(toCurrency);
+    if (fromDef == null || toDef == null) {
+      return const Error(
+        ValidationFailure('Unsupported currency code for conversion'),
+      );
+    }
 
     final result = await _repository.getExchangeRates(
       baseCurrency: fromDef.code,
@@ -49,9 +55,13 @@ class CurrencyConversionService {
     }
 
     final rateResult = result.tryGetSuccess()!;
-    if (!rateResult.isUsable) {
+    final allowed = switch (use) {
+      ConversionUse.display => rateResult.isUsableForDisplay,
+      ConversionUse.persist => rateResult.isSafeForPersistedConversion,
+    };
+    if (!allowed) {
       return const Error(
-        CacheFailure('Exchange rate cache stale or unavailable'),
+        CacheFailure('No sufficiently fresh exchange rate is available'),
       );
     }
 
@@ -77,12 +87,19 @@ class CurrencyConversionService {
     required Map<String, int> amountsByCurrency,
     required String targetCurrency,
     DateTime? date,
+    ConversionUse use = ConversionUse.display,
   }) async {
     if (amountsByCurrency.isEmpty) {
       return const Success({});
     }
 
-    final targetDef = CurrencyCatalog.getDefinition(targetCurrency);
+    final targetDef = CurrencyCatalog.tryGetDefinition(targetCurrency);
+    if (targetDef == null) {
+      return const Error(
+        ValidationFailure('Unsupported target currency code for conversion'),
+      );
+    }
+
     final uniqueCurrencies = amountsByCurrency.keys
         .where((c) => c.toUpperCase() != targetDef.code.toUpperCase())
         .toList();
@@ -91,9 +108,18 @@ class CurrencyConversionService {
       return Success(amountsByCurrency);
     }
 
+    final quoteDefs = <CurrencyDefinition>[];
+    for (final c in uniqueCurrencies) {
+      final qDef = CurrencyCatalog.tryGetDefinition(c);
+      if (qDef == null) {
+        return Error(ValidationFailure('Unsupported currency code: $c'));
+      }
+      quoteDefs.add(qDef);
+    }
+
     final result = await _repository.getExchangeRates(
       baseCurrency: targetDef.code,
-      quoteCurrencies: uniqueCurrencies,
+      quoteCurrencies: quoteDefs.map((d) => d.code).toList(),
       date: date,
     );
 
@@ -111,9 +137,13 @@ class CurrencyConversionService {
     }
 
     final rateResult = result.tryGetSuccess()!;
-    if (!rateResult.isUsable) {
+    final allowed = switch (use) {
+      ConversionUse.display => rateResult.isUsableForDisplay,
+      ConversionUse.persist => rateResult.isSafeForPersistedConversion,
+    };
+    if (!allowed) {
       return const Error(
-        CacheFailure('Exchange rate cache stale or unavailable'),
+        CacheFailure('No sufficiently fresh exchange rate is available'),
       );
     }
 
@@ -130,7 +160,7 @@ class CurrencyConversionService {
         continue;
       }
 
-      final currDef = CurrencyCatalog.getDefinition(currency);
+      final currDef = CurrencyCatalog.tryGetDefinition(currency)!;
       final rate = table.rates[currDef.code];
       if (rate == null) {
         return Error(
