@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
@@ -58,9 +57,6 @@ class CurrencySelectionController extends CcGetController {
 
       final unitAmount = pow(10, fromDef.decimalDigits).round();
 
-      '[CurrencySelectionController] Converting: 1 $fromCur -> $toCur (unitAmount=$unitAmount)'
-          .Log();
-
       final result = await _conversionService.convertAmount(
         amount: unitAmount,
         fromCurrency: fromCur,
@@ -71,8 +67,6 @@ class CurrencySelectionController extends CcGetController {
       result.when(
         (converted) {
           convertedAmounts[code] = converted;
-          '[CurrencySelectionController] Success $fromCur -> $toCur: converted=$converted'
-              .Log();
         },
         (error) {
           convertedAmounts[code] = 0;

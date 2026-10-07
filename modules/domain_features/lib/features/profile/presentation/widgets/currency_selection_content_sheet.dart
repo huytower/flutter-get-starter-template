@@ -291,8 +291,6 @@ class CurrencySelectionContentSheet
     } else if (convertedAmount != null) {
       final scale = pow(10, formatDefinition.decimalDigits).toDouble();
       final majorValue = convertedAmount / scale;
-      '[CurrencySelectionContentSheet] Parsing amount for $code (formatCurrencyCode=$formatCurrencyCode): minor=$convertedAmount, scale=$scale, major=$majorValue'
-          .Log();
 
       if (formatDefinition.decimalDigits > 0) {
         final formatter = NumberFormat(
