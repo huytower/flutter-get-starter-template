@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
@@ -36,6 +37,11 @@ class CurrencySelectionController extends CcGetController {
 
   Future<void> loadConvertedRates() async {
     final baseCurrency = primaryCurrencyCode.value;
+    final baseDef =
+        CurrencyCatalog.tryGetDefinition(baseCurrency) ??
+        CurrencyCatalog.definitions.first;
+
+    final bool isBaseVnd = baseCurrency.toUpperCase() == 'VND';
 
     for (final code in CurrencyConstants.supportedCurrencyCodes) {
       if (code.toUpperCase() == baseCurrency.toUpperCase()) continue;
@@ -44,23 +50,34 @@ class CurrencySelectionController extends CcGetController {
       final codeDef = CurrencyCatalog.tryGetDefinition(code);
       if (codeDef == null) continue;
 
-      final unitAmount = pow(10, codeDef.decimalDigits).round();
+      // If base is VND, convert 1 unit of row 'code' to VND (e.g. 1 USD -> VND).
+      // If base is major currency (USD/EUR...), convert 1 unit of base to row 'code' (e.g. 1 USD -> CNY).
+      final fromCur = isBaseVnd ? code : baseCurrency;
+      final toCur = isBaseVnd ? baseCurrency : code;
+      final fromDef = isBaseVnd ? codeDef : baseDef;
+
+      final unitAmount = pow(10, fromDef.decimalDigits).round();
+
+      '[CurrencySelectionController] Converting: 1 $fromCur -> $toCur (unitAmount=$unitAmount)'
+          .Log();
 
       final result = await _conversionService.convertAmount(
         amount: unitAmount,
-        fromCurrency: code,
-        toCurrency: baseCurrency,
+        fromCurrency: fromCur,
+        toCurrency: toCur,
       );
 
       isLoadingRates[code] = false;
       result.when(
         (converted) {
           convertedAmounts[code] = converted;
+          '[CurrencySelectionController] Success $fromCur -> $toCur: converted=$converted'
+              .Log();
         },
         (error) {
           convertedAmounts[code] = 0;
           debugPrint(
-            '[CurrencySelectionController] Rate conversion failed for $code -> $baseCurrency: $error',
+            '[CurrencySelectionController] Rate conversion failed for $fromCur -> $toCur: $error',
           );
         },
       );

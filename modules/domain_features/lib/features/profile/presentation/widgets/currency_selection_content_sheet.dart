@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../../core/constant/currency_catalog.dart';
@@ -35,10 +38,7 @@ class CurrencySelectionContentSheet
 
   @override
   Widget onPageBodyWrapper(BuildContext context, Widget body) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: body,
-    );
+    return Align(alignment: Alignment.bottomCenter, child: body);
   }
 
   @override
@@ -53,10 +53,7 @@ class CurrencySelectionContentSheet
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildHeader(context, scheme),
-        _buildBody(context, scheme),
-      ],
+      children: [_buildHeader(context, scheme), _buildBody(context, scheme)],
     );
   }
 
@@ -89,10 +86,7 @@ class CurrencySelectionContentSheet
     );
   }
 
-  Widget _buildBody(
-    BuildContext context,
-    ColorScheme scheme,
-  ) {
+  Widget _buildBody(BuildContext context, ColorScheme scheme) {
     final currencies = CurrencyConstants.supportedCurrencyCodes
         .where(
           (code) =>
@@ -117,10 +111,7 @@ class CurrencySelectionContentSheet
     );
   }
 
-  Widget _buildDefaultCurrencyNotice(
-    BuildContext context,
-    ColorScheme scheme,
-  ) {
+  Widget _buildDefaultCurrencyNotice(BuildContext context, ColorScheme scheme) {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
@@ -169,10 +160,7 @@ class CurrencySelectionContentSheet
     );
   }
 
-  Widget _buildHiddenTagsSection(
-    BuildContext context,
-    ColorScheme scheme,
-  ) {
+  Widget _buildHiddenTagsSection(BuildContext context, ColorScheme scheme) {
     if (!controller.showHiddenTags.value) return const SizedBox.shrink();
 
     final currencies = CurrencyConstants.supportedCurrencyCodes
@@ -273,9 +261,7 @@ class CurrencySelectionContentSheet
       vertical: CcPaddingParams.SPACE_SM,
       child: Column(
         children: currencies
-            .map(
-              (code) => _buildCurrencyTile(context, scheme, code),
-            )
+            .map((code) => _buildCurrencyTile(context, scheme, code))
             .toList(),
       ),
     );
@@ -294,13 +280,35 @@ class CurrencySelectionContentSheet
     final isLoading = controller.isLoadingRates[code] ?? false;
     final convertedAmount = controller.convertedAmounts[code];
     final String displayAmount;
+
+    final baseCurrency = controller.primaryCurrencyCode.value;
+    final bool isBaseVnd = baseCurrency.toUpperCase() == 'VND';
+    final formatCurrencyCode = isBaseVnd ? baseCurrency : code;
+    final formatDefinition = CurrencyCatalog.getDefinition(formatCurrencyCode);
+
     if (isLoading && convertedAmount == null) {
       displayAmount = '...';
-    } else if (convertedAmount != null && convertedAmount > 0) {
-      displayAmount = MoneyFormatter.formatWithSymbol(
-        convertedAmount,
-        currencyCode: controller.primaryCurrencyCode.value,
-      );
+    } else if (convertedAmount != null) {
+      final scale = pow(10, formatDefinition.decimalDigits).toDouble();
+      final majorValue = convertedAmount / scale;
+      '[CurrencySelectionContentSheet] Parsing amount for $code (formatCurrencyCode=$formatCurrencyCode): minor=$convertedAmount, scale=$scale, major=$majorValue'
+          .Log();
+
+      if (formatDefinition.decimalDigits > 0) {
+        final formatter = NumberFormat(
+          '#,##0.${'0' * formatDefinition.decimalDigits}',
+          CurrencyConstants.getLocale(formatCurrencyCode),
+        );
+        final formattedNum = formatter.format(majorValue);
+        displayAmount = formatDefinition.isPrefixSymbol
+            ? '${formatDefinition.symbol}$formattedNum'
+            : '$formattedNum ${formatDefinition.symbol}';
+      } else {
+        displayAmount = MoneyFormatter.formatWithSymbol(
+          convertedAmount,
+          currencyCode: formatCurrencyCode,
+        );
+      }
     } else {
       displayAmount = 'N/A';
     }
@@ -367,10 +375,7 @@ class CurrencySelectionContentSheet
     );
   }
 
-  Widget _buildActions(
-    BuildContext context,
-    ColorScheme scheme,
-  ) {
+  Widget _buildActions(BuildContext context, ColorScheme scheme) {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: context.respPadding(CcPaddingParams.PAGE_MD),

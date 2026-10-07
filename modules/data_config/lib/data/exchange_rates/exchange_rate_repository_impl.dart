@@ -146,6 +146,9 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
           final rate = entry.value;
           if (rate > 0 && rate.isFinite) {
             validatedRates[qDef.code] = rate;
+            debugPrint(
+              '[ExchangeRateRepository] Parsed rate from Frankfurter: base=${response.base} -> quote=${qDef.code}, rate=$rate',
+            );
           }
         }
       }
