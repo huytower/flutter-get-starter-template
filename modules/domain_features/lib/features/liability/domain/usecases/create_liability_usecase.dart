@@ -61,11 +61,6 @@ class CreateLiabilityUseCase {
   Future<Result<LiabilityEntity, CcFailure>> call(
     CreateLiabilityParams params,
   ) async {
-    if (params.principalAmount <= 0) {
-      return const Error(
-        ValidationFailure(CcLocaleKeys.transaction_validation_amount_required),
-      );
-    }
     if (params.walletId.isEmpty) {
       return const Error(
         ValidationFailure(CcLocaleKeys.transaction_validation_wallet_required),
@@ -86,7 +81,8 @@ class CreateLiabilityUseCase {
 
     // For borrow, money flows in (unrestricted balance).
     // For lend, money flows out — block overspending.
-    if (params.direction == LiabilityDirection.lend) {
+    if (params.direction == LiabilityDirection.lend &&
+        params.principalAmount > 0) {
       final balanceResult = await _getWalletBookBalance(params.walletId);
       if (balanceResult.isError()) {
         return Error(balanceResult.tryGetError()!);
