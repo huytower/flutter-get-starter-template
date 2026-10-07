@@ -2,7 +2,13 @@ import 'package:injectable/injectable.dart';
 
 @lazySingleton
 class RateFreshness {
-  const RateFreshness({required this.maxAge, this.warningThreshold});
+  @factoryMethod
+  factory RateFreshness.defaultPolicy() => const RateFreshness();
+
+  const RateFreshness({
+    this.maxAge = const Duration(hours: 24),
+    this.warningThreshold = const Duration(hours: 12),
+  });
 
   final Duration maxAge;
   final Duration? warningThreshold;
@@ -10,10 +16,5 @@ class RateFreshness {
   bool isFresh(DateTime fetchedAt) {
     return DateTime.now().difference(fetchedAt) < maxAge;
   }
-
-  @factoryMethod
-  static RateFreshness get defaultPolicy => const RateFreshness(
-    maxAge: Duration(hours: 24),
-    warningThreshold: Duration(hours: 12),
-  );
 }
+

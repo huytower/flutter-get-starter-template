@@ -18,6 +18,8 @@ import 'package:data_config/data/exchange_rates/frankfurter_remote.dart'
     as _i1048;
 import 'package:data_config/data/exchange_rates/rate_freshness.dart' as _i221;
 import 'package:dio/dio.dart' as _i361;
+import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart'
+    as _i686;
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
@@ -34,6 +36,8 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
         () => _i954.FirestoreSyncService());
     gh.lazySingleton<_i25.ExchangeRateLocalDataSource>(
         () => _i25.ExchangeRateLocalDataSource());
+    gh.lazySingleton<_i221.RateFreshness>(
+        () => _i221.RateFreshness.defaultPolicy());
     gh.lazySingleton<_i361.Interceptor>(
       () => dataModule.cacheInterceptor,
       instanceName: 'cacheInterceptor',
@@ -70,10 +74,6 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
           gh<_i727.SessionContract>(),
           gh<String>(),
         ));
-    gh.lazySingleton<_i221.RateFreshness>(() => _i221.RateFreshness(
-          maxAge: gh<Duration>(),
-          warningThreshold: gh<Duration>(),
-        ));
     gh.lazySingleton<_i361.BaseOptions>(
         () => dataModule.baseOptions(gh<String>(instanceName: 'baseUrl')));
     gh.lazySingleton<_i361.Dio>(
@@ -85,7 +85,7 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
     );
     gh.lazySingleton<_i1048.FrankfurterRemote>(
         () => _i1048.FrankfurterRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.lazySingleton<_i626.ExchangeRateRepositoryImpl>(
+    gh.lazySingleton<_i686.ExchangeRateRepository>(
         () => _i626.ExchangeRateRepositoryImpl(
               gh<_i1048.FrankfurterRemote>(),
               gh<_i25.ExchangeRateLocalDataSource>(),

@@ -111,8 +111,6 @@ class ProfilePage extends CcGetView<ProfileController> {
   List<Widget> _buildMenuItems(BuildContext context) {
     final guideline = Get.find<GuidelineController>();
 
-    final color = guideline.currentColor;
-
     return [
       Obx(
         () => ProfileSettingsTile(

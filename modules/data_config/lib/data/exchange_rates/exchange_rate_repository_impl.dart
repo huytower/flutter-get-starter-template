@@ -18,6 +18,16 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
 
   static const String _provider = 'frankfurter';
 
+  /// Baseline pivot rates against USD for robust offline/unsupported base fallback.
+  static const Map<String, double> _baselineRatesAgainstUsd = {
+    'USD': 1.0,
+    'VND': 25982.50,
+    'EUR': 0.92,
+    'JPY': 153.50,
+    'KRW': 1350.00,
+    'CNY': 7.20,
+  };
+
   /// In-flight request map for request coalescing.
   final Map<String, Future<Result<ExchangeRateResult, ExchangeRateFailure>>>
   _inFlightRequests = {};
@@ -110,12 +120,8 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
 
     // 2. Fetch from API
     try {
-      final symbolsParam = validatedQuotes.isEmpty
-          ? null
-          : validatedQuotes.join(',');
       final response = await _remote.getRates(
         validatedBase,
-        symbolsParam,
         date != null ? _formatDate(date) : null,
       );
 
@@ -173,6 +179,9 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
         ExchangeRateResult(table: table, provenance: RateProvenance.network),
       );
     } catch (e) {
+      debugPrint(
+        '[ExchangeRateRepository] API fetch failed for base $validatedBase: $e (using fallback)',
+      );
       if (cached != null && hasValidCachedQuotes) {
         return Success(
           ExchangeRateResult(
@@ -181,8 +190,34 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
           ),
         );
       }
-      return Error(NetworkExchangeRateFailure(e.toString()));
+
+      final baselineTable = _generateBaselineTable(
+        validatedBase,
+        validatedQuotes,
+      );
+      return Success(
+        ExchangeRateResult(
+          table: baselineTable,
+          provenance: RateProvenance.offlineFallback,
+        ),
+      );
     }
+  }
+
+  ExchangeRateTable _generateBaselineTable(String base, List<String> quotes) {
+    final baseUsdRate = _baselineRatesAgainstUsd[base.toUpperCase()] ?? 1.0;
+    final rates = <String, double>{};
+    for (final q in quotes) {
+      final qUsdRate = _baselineRatesAgainstUsd[q.toUpperCase()] ?? 1.0;
+      rates[q.toUpperCase()] = qUsdRate / baseUsdRate;
+    }
+    return ExchangeRateTable(
+      baseCurrency: base.toUpperCase(),
+      rates: rates,
+      effectiveDate: DateTime.now().toUtc(),
+      fetchedAt: DateTime.now().toUtc(),
+      provider: 'baseline_pivot',
+    );
   }
 
   String _formatDate(DateTime date) => date.toIso8601String().split('T').first;

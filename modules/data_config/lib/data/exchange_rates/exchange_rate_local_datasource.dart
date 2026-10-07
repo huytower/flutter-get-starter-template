@@ -16,10 +16,12 @@ class ExchangeRateLocalDataSource {
   ExchangeRateLocalDataSource();
 
   Future<Box<ExchangeRateHiveModel>> get _box async {
-    if (!Hive.isBoxOpen(CcHiveBox.APP_BOX_NAME)) {
-      await Hive.openBox(CcHiveBox.APP_BOX_NAME);
+    if (!Hive.isBoxOpen(CcHiveBox.EXCHANGE_RATE_BOX_NAME)) {
+      await Hive.openBox<ExchangeRateHiveModel>(
+        CcHiveBox.EXCHANGE_RATE_BOX_NAME,
+      );
     }
-    return Hive.box<ExchangeRateHiveModel>(CcHiveBox.APP_BOX_NAME);
+    return Hive.box<ExchangeRateHiveModel>(CcHiveBox.EXCHANGE_RATE_BOX_NAME);
   }
 
   Future<void> cacheRates(ExchangeRateTable table, List<String> quotes) async {

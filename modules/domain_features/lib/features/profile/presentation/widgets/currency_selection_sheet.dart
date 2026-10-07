@@ -22,8 +22,13 @@ class CurrencySelectionSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CurrencySelectionContentSheet(
-      initialCurrencyCode: initialCurrencyCode,
+    return Theme(
+      data: Theme.of(context).copyWith(
+        scaffoldBackgroundColor: Colors.transparent,
+      ),
+      child: CurrencySelectionContentSheet(
+        initialCurrencyCode: initialCurrencyCode,
+      ),
     );
   }
 }

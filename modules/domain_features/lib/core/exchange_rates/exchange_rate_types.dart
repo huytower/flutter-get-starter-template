@@ -1,6 +1,6 @@
 import 'package:multiple_result/multiple_result.dart';
 
-enum RateProvenance { freshCache, staleCache, network }
+enum RateProvenance { freshCache, staleCache, network, offlineFallback }
 
 class ExchangeRateResult {
   const ExchangeRateResult({required this.table, required this.provenance});
@@ -8,12 +8,17 @@ class ExchangeRateResult {
   final ExchangeRateTable table;
   final RateProvenance provenance;
 
+  bool get isUsable => isUsableForDisplay;
+
   bool get isUsableForDisplay =>
       provenance == RateProvenance.freshCache ||
       provenance == RateProvenance.staleCache ||
-      provenance == RateProvenance.network;
+      provenance == RateProvenance.network ||
+      provenance == RateProvenance.offlineFallback;
 
-  bool get requiresFreshnessWarning => provenance == RateProvenance.staleCache;
+  bool get requiresFreshnessWarning =>
+      provenance == RateProvenance.staleCache ||
+      provenance == RateProvenance.offlineFallback;
 
   bool get isSafeForPersistedConversion =>
       provenance == RateProvenance.freshCache ||
@@ -33,7 +38,9 @@ class ConvertedMoney {
   final String currencyCode;
   final RateProvenance provenance;
 
-  bool get showStaleWarning => provenance == RateProvenance.staleCache;
+  bool get showStaleWarning =>
+      provenance == RateProvenance.staleCache ||
+      provenance == RateProvenance.offlineFallback;
 }
 
 /// Domain contract for exchange rate tables, repositories, and failures.

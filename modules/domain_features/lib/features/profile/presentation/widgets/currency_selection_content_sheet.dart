@@ -1,13 +1,16 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../../core/constant/currency_catalog.dart';
 import '../../../../../core/constant/currency_constants.dart';
+import '../../../../../core/getx/cc_get_view.dart';
 import '../../../../../core/helper/money_format_helper.dart';
+import '../get_x/currency_selection_controller.dart';
 
-class CurrencySelectionContentSheet extends StatefulWidget {
+class CurrencySelectionContentSheet
+    extends CcGetView<CurrencySelectionController> {
   const CurrencySelectionContentSheet({
     super.key,
     required this.initialCurrencyCode,
@@ -16,38 +19,43 @@ class CurrencySelectionContentSheet extends StatefulWidget {
   final String initialCurrencyCode;
 
   @override
-  State<CurrencySelectionContentSheet> createState() =>
-      _CurrencySelectionContentSheetState();
-}
-
-class _CurrencySelectionContentSheetState
-    extends State<CurrencySelectionContentSheet> {
-  // primaryCurrencyCode: User's selected default currency for new entries and reporting.
-  late String _primaryCurrencyCode;
-  bool _showHiddenTags = false;
+  bool get enableAppBar => false;
 
   @override
-  void initState() {
-    super.initState();
-    _primaryCurrencyCode = widget.initialCurrencyCode;
+  bool get enableBottomNavigationBar => false;
+
+  @override
+  bool get useSafeArea => false;
+
+  @override
+  bool get enableLoading => false;
+
+  @override
+  CcLayoutStatus get layoutStatus => CcLayoutStatus.success;
+
+  @override
+  Widget onPageBodyWrapper(BuildContext context, Widget body) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: body,
+    );
   }
 
-  void _onCurrencyTap(String code) {
-    setState(() {
-      _primaryCurrencyCode = code;
+  @override
+  Widget? buildContent(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.convertedAmounts.isEmpty) {
+        controller.init(initialCurrencyCode);
+      }
     });
-  }
 
-  @override
-  Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final currencies = CurrencyConstants.supportedCurrencyCodes;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildHeader(context, scheme),
-        _buildBody(context, scheme, currencies),
+        _buildBody(context, scheme),
       ],
     );
   }
@@ -71,7 +79,7 @@ class _CurrencySelectionContentSheetState
         ),
       ),
       child: CcText(
-        tr(CcLocaleKeys.profile_currency),
+        el.tr(CcLocaleKeys.profile_currency),
         maxLines: 1,
         textStyle: context.ccTextTheme.titleLarge?.copyWith(
           color: scheme.onPrimary,
@@ -84,8 +92,15 @@ class _CurrencySelectionContentSheetState
   Widget _buildBody(
     BuildContext context,
     ColorScheme scheme,
-    List<String> currencies,
   ) {
+    final currencies = CurrencyConstants.supportedCurrencyCodes
+        .where(
+          (code) =>
+              code.toUpperCase() !=
+              controller.primaryCurrencyCode.value.toUpperCase(),
+        )
+        .toList();
+
     return DecoratedBox(
       decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
       child: Column(
@@ -102,7 +117,10 @@ class _CurrencySelectionContentSheetState
     );
   }
 
-  Widget _buildDefaultCurrencyNotice(BuildContext context, ColorScheme scheme) {
+  Widget _buildDefaultCurrencyNotice(
+    BuildContext context,
+    ColorScheme scheme,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
@@ -113,18 +131,15 @@ class _CurrencySelectionContentSheetState
         children: [
           RichText(
             text: TextSpan(
-              text: 'Primary currency is $_primaryCurrencyCode, ',
+              text:
+                  'Primary currency is ${controller.primaryCurrencyCode.value}, ',
               style: context.ccTextTheme.bodySmall?.copyWith(
                 color: scheme.onSurface.withOpacity(0.7),
               ),
               children: [
                 WidgetSpan(
                   child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _showHiddenTags = !_showHiddenTags;
-                      });
-                    },
+                    onTap: () => controller.toggleHiddenTags(),
                     child: Text(
                       'change it?',
                       style: context.ccTextTheme.bodySmall?.copyWith(
@@ -154,10 +169,19 @@ class _CurrencySelectionContentSheetState
     );
   }
 
-  Widget _buildHiddenTagsSection(BuildContext context, ColorScheme scheme) {
-    if (!_showHiddenTags) return const SizedBox.shrink();
+  Widget _buildHiddenTagsSection(
+    BuildContext context,
+    ColorScheme scheme,
+  ) {
+    if (!controller.showHiddenTags.value) return const SizedBox.shrink();
 
-    final currencies = CurrencyConstants.supportedCurrencyCodes;
+    final currencies = CurrencyConstants.supportedCurrencyCodes
+        .where(
+          (code) =>
+              code.toUpperCase() !=
+              controller.primaryCurrencyCode.value.toUpperCase(),
+        )
+        .toList();
     return Padding(
       padding: EdgeInsets.fromLTRB(
         context.respPadding(CcPaddingParams.PAGE_MD),
@@ -170,10 +194,15 @@ class _CurrencySelectionContentSheetState
         runSpacing: context.respDim(8),
         children: currencies.map((code) {
           final isSelected =
-              code.toUpperCase() == _primaryCurrencyCode.toUpperCase();
+              code.toUpperCase() ==
+              controller.primaryCurrencyCode.value.toUpperCase();
           final symbol = MoneyFormatter.getSymbol(code);
           return InkWell(
-            onTap: () => _onCurrencyTap(code),
+            onTap: () {
+              '[CurrencySelectionContentSheet] Tag selected base currency: $code'
+                  .Log();
+              controller.setPrimaryCurrency(code);
+            },
             borderRadius: context.brMd,
             child: Container(
               padding: EdgeInsets.symmetric(
@@ -198,7 +227,11 @@ class _CurrencySelectionContentSheetState
                     height: 18,
                     child: Checkbox(
                       value: isSelected,
-                      onChanged: (_) => _onCurrencyTap(code),
+                      onChanged: (_) {
+                        '[CurrencySelectionContentSheet] Tag checkbox selected base currency: $code'
+                            .Log();
+                        controller.setPrimaryCurrency(code);
+                      },
                       activeColor: scheme.primary,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
@@ -240,7 +273,9 @@ class _CurrencySelectionContentSheetState
       vertical: CcPaddingParams.SPACE_SM,
       child: Column(
         children: currencies
-            .map((code) => _buildCurrencyTile(context, scheme, code))
+            .map(
+              (code) => _buildCurrencyTile(context, scheme, code),
+            )
             .toList(),
       ),
     );
@@ -251,18 +286,33 @@ class _CurrencySelectionContentSheetState
     ColorScheme scheme,
     String code,
   ) {
-    final bool isSelected =
-        code.toUpperCase() == _primaryCurrencyCode.toUpperCase();
     final definition = CurrencyCatalog.getDefinition(code);
-    final formattedSample = MoneyFormatter.formatWithSymbol(
-      definition.sampleAmount,
-      currencyCode: code,
-    );
+
+    final isSelected =
+        code.toUpperCase() ==
+        controller.primaryCurrencyCode.value.toUpperCase();
+    final isLoading = controller.isLoadingRates[code] ?? false;
+    final convertedAmount = controller.convertedAmounts[code];
+    final String displayAmount;
+    if (isLoading && convertedAmount == null) {
+      displayAmount = '...';
+    } else if (convertedAmount != null && convertedAmount > 0) {
+      displayAmount = MoneyFormatter.formatWithSymbol(
+        convertedAmount,
+        currencyCode: controller.primaryCurrencyCode.value,
+      );
+    } else {
+      displayAmount = 'N/A';
+    }
 
     return Padding(
       padding: EdgeInsets.only(bottom: context.respDim(8)),
       child: CcBouncing(
-        onTap: () => _onCurrencyTap(code),
+        onTap: () {
+          '[CurrencySelectionContentSheet] Tile selected base currency: $code'
+              .Log();
+          controller.setPrimaryCurrency(code);
+        },
         borderRadius: context.brMd,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
@@ -293,7 +343,7 @@ class _CurrencySelectionContentSheetState
                   ),
                   const SizedBox(height: 2),
                   CcText(
-                    tr(definition.nameKey),
+                    el.tr(definition.nameKey),
                     textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                       fontWeight: isSelected
                           ? CcTypographyParams.bold
@@ -304,7 +354,7 @@ class _CurrencySelectionContentSheetState
                 ],
               ),
               CcText(
-                formattedSample,
+                displayAmount,
                 textStyle: context.ccTextTheme.labelMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isSelected ? scheme.primary : PrjColors.success,
@@ -317,7 +367,10 @@ class _CurrencySelectionContentSheetState
     );
   }
 
-  Widget _buildActions(BuildContext context, ColorScheme scheme) {
+  Widget _buildActions(
+    BuildContext context,
+    ColorScheme scheme,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
@@ -327,9 +380,12 @@ class _CurrencySelectionContentSheetState
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(null),
+            onPressed: () {
+              '[CurrencySelectionContentSheet] Cancel currency selection'.Log();
+              Navigator.of(context).pop(null);
+            },
             child: CcText(
-              tr(CcLocaleKeys.common_cancel),
+              el.tr(CcLocaleKeys.common_cancel),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,
@@ -338,9 +394,14 @@ class _CurrencySelectionContentSheetState
           ),
           const CcSpaceSM(),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(_primaryCurrencyCode),
+            onPressed: () {
+              final selectedCode = controller.primaryCurrencyCode.value;
+              '[CurrencySelectionContentSheet] Confirmed base currency: $selectedCode'
+                  .Log();
+              Navigator.of(context).pop(selectedCode);
+            },
             child: CcText(
-              tr(CcLocaleKeys.common_ok),
+              el.tr(CcLocaleKeys.common_ok),
               textStyle: context.ccTextTheme.titleMedium?.copyWith(
                 color: scheme.primary,
                 fontWeight: CcTypographyParams.semiBold,

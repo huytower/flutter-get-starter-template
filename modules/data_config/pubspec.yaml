@@ -12,6 +12,8 @@ resolution: workspace
 dependencies:
   app_config:
     path: ../app_config
+  domain_features:
+    path: ../domain_features
   cc_sdk:
     path: ../../shared/cc_core_sdk/cc_sdk
   cc_sdk_ui:

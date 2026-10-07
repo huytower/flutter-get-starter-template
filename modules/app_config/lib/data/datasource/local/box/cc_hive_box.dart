@@ -40,7 +40,7 @@ class CcHiveBox {
   static const int LIABILITY_TYPE_ID = 11;
   static const int LIABILITY_INSTALLMENT_TYPE_ID = 12;
 
-  // Add new type IDs here (next would be 13)
+  // Add new type IDs here (next would be 14)
 
   // ===== Box Names =====
   // Use these with Hive.openBox()
@@ -49,6 +49,7 @@ class CcHiveBox {
   static const String APP_BOX_NAME = 'application';
   static const String DEVICE_BOX_NAME = 'device';
   static const String TRACK_LOG_BOX_NAME = 'track_log';
+  static const String EXCHANGE_RATE_BOX_NAME = 'exchange_rates';
 
   // Financial boxes (encrypted)
   static const String WALLET_BOX_NAME = 'wallet';
@@ -80,6 +81,7 @@ class CcHiveBox {
       APP_BOX_NAME,
       DEVICE_BOX_NAME,
       TRACK_LOG_BOX_NAME,
+      EXCHANGE_RATE_BOX_NAME,
     ].contains(boxName);
   }
 
@@ -98,5 +100,6 @@ class CcHiveBox {
     APP_BOX_NAME,
     DEVICE_BOX_NAME,
     TRACK_LOG_BOX_NAME,
+    EXCHANGE_RATE_BOX_NAME,
   ];
 }

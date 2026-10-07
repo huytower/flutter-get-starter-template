@@ -150,6 +150,8 @@ import 'package:domain_features/features/profile/domain/usecases/get_profile_set
     as _i569;
 import 'package:domain_features/features/profile/domain/usecases/update_profile_settings_usecase.dart'
     as _i220;
+import 'package:domain_features/features/profile/presentation/get_x/currency_selection_controller.dart'
+    as _i429;
 import 'package:domain_features/features/profile/presentation/get_x/profile_controller.dart'
     as _i920;
 import 'package:domain_features/features/profile/user_level/domain/usecases/get_user_level_status_usecase.dart'
@@ -322,6 +324,9 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         ));
     gh.lazySingleton<_i130.CommentRemote>(
         () => _i130.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+    gh.factory<_i429.CurrencySelectionController>(() =>
+        _i429.CurrencySelectionController(
+            gh<_i195.CurrencyConversionService>()));
     gh.lazySingleton<_i402.SimpleCubitInterface>(
       () => _i691.SimpleCubit(),
       dispose: (i) => i.close(),
