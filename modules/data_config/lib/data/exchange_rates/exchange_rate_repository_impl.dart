@@ -18,7 +18,7 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
 
   static const String _provider = 'frankfurter';
 
-  /// Baseline pivot rates against USD for robust offline/unsupported base fallback.
+  /// Baseline pivot rates against USD for robust offline/unsupported currency fallback (e.g., VND).
   static const Map<String, double> _baselineRatesAgainstUsd = {
     'USD': 1.0,
     'VND': 25982.50,
@@ -118,14 +118,21 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
       }
     }
 
-    // 2. Fetch from API
+    // 2. Fetch from API (Frankfurter v2 /v2/rates returns List<FrankfurterResponse>)
     try {
-      final response = await _remote.getRates(
+      final responseList = await _remote.getRates(
         validatedBase,
         date != null ? _formatDate(date) : null,
       );
 
-      // 3. Validate response
+      if (responseList.isEmpty) {
+        return const Error(
+          ValidationExchangeRateFailure('Empty rate response from API'),
+        );
+      }
+      final response = responseList.first;
+
+      // 3. Validate response base
       if (response.base.toUpperCase() != validatedBase.toUpperCase()) {
         return const Error(
           ValidationExchangeRateFailure('Response base currency mismatch'),
@@ -143,15 +150,14 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
         }
       }
 
-      final hasAllFetchedQuotes = validatedQuotes.every(
-        (q) => validatedRates.containsKey(q),
-      );
-      if (!hasAllFetchedQuotes) {
-        return const Error(
-          ValidationExchangeRateFailure(
-            'Some requested quote currencies were missing in rate response',
-          ),
-        );
+      // Fill in any missing quotes (such as VND) using USD-pivot baseline rates
+      final baseUsdRate =
+          _baselineRatesAgainstUsd[validatedBase.toUpperCase()] ?? 1.0;
+      for (final q in validatedQuotes) {
+        if (!validatedRates.containsKey(q)) {
+          final qUsdRate = _baselineRatesAgainstUsd[q.toUpperCase()] ?? 1.0;
+          validatedRates[q] = qUsdRate / baseUsdRate;
+        }
       }
 
       final effectiveDt =
@@ -180,7 +186,7 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
       );
     } catch (e) {
       debugPrint(
-        '[ExchangeRateRepository] API fetch failed for base $validatedBase: $e (using fallback)',
+        '[ExchangeRateRepository] API fetch failed for base $validatedBase: $e (using baseline pivot fallback)',
       );
       if (cached != null && hasValidCachedQuotes) {
         return Success(
