@@ -143,6 +143,18 @@ class CcAppStorage extends HiveObject {
   @HiveField(24)
   String? financialDataOwnerId;
 
+  /// Source of currency selection ('detected', 'user_selected', 'migrated').
+  @HiveField(25)
+  String? currencySelectionSource;
+
+  /// Country code detected during initial currency suggestion.
+  @HiveField(26)
+  String? currencyDetectionCountryCode;
+
+  /// Version of the financial schema migration runner.
+  @HiveField(27)
+  int? financialSchemaVersion;
+
   CcAppStorage({
     this.accessToken,
     this.fcmToken,
@@ -168,5 +180,8 @@ class CcAppStorage extends HiveObject {
     this.hasCustomizedCategories,
     this.hasInteractedWithTransactionCardStack,
     this.financialDataOwnerId,
+    this.currencySelectionSource,
+    this.currencyDetectionCountryCode,
+    this.financialSchemaVersion,
   });
 }

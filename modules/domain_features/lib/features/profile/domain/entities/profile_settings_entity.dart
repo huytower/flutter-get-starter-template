@@ -5,6 +5,8 @@ class ProfileSettingsEntity {
     this.reminderEnabled = false,
     this.weeklyAuditDayIndex = 6,
     this.currencyCode = CurrencyConstants.defaultCurrencyCode,
+    this.currencySelectionSource,
+    this.currencyDetectionCountryCode,
     this.birthYear,
     this.isDarkMode,
     this.weeklyAuditDayChangedAt,
@@ -23,6 +25,11 @@ class ProfileSettingsEntity {
   final bool reminderEnabled;
   final int weeklyAuditDayIndex;
   final String currencyCode;
+  final String? currencySelectionSource;
+  final String? currencyDetectionCountryCode;
+
+  CurrencySelectionSourceType? get selectionSourceType =>
+      CurrencySelectionSourceType.parse(currencySelectionSource);
 
   /// Used to pick age-appropriate income suggestions; null until set.
   final int? birthYear;
@@ -79,6 +86,8 @@ class ProfileSettingsEntity {
     bool? reminderEnabled,
     int? weeklyAuditDayIndex,
     String? currencyCode,
+    String? currencySelectionSource,
+    String? currencyDetectionCountryCode,
     int? birthYear,
     bool? isDarkMode,
     DateTime? weeklyAuditDayChangedAt,
@@ -96,6 +105,10 @@ class ProfileSettingsEntity {
     reminderEnabled: reminderEnabled ?? this.reminderEnabled,
     weeklyAuditDayIndex: weeklyAuditDayIndex ?? this.weeklyAuditDayIndex,
     currencyCode: currencyCode ?? this.currencyCode,
+    currencySelectionSource:
+        currencySelectionSource ?? this.currencySelectionSource,
+    currencyDetectionCountryCode:
+        currencyDetectionCountryCode ?? this.currencyDetectionCountryCode,
     birthYear: birthYear ?? this.birthYear,
     isDarkMode: isDarkMode ?? this.isDarkMode,
     weeklyAuditDayChangedAt:

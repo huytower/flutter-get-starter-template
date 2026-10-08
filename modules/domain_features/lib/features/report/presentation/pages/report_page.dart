@@ -64,7 +64,7 @@ class _ReportView extends CcGetView<ReportController> {
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
-      mobile: 0.25,
+      mobile: 0.26,
       tablet: 0.24,
     );
     final headerHeight = screenHeight * headerHeightFactor;
@@ -130,7 +130,7 @@ class _ReportView extends CcGetView<ReportController> {
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
-      mobile: 0.28,
+      mobile: 0.29,
       tablet: 0.27,
     );
     final headerHeight = screenHeight * headerHeightFactor;
@@ -182,6 +182,7 @@ class _ReportView extends CcGetView<ReportController> {
                       _buildTrendCards(context, data),
                       _buildInvestmentSection(context),
                       _buildLiabilitySection(context),
+                      const CcSpaceSM(),
                       _buildDailyDetailEntry(context),
                     ],
                   ),

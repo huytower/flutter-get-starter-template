@@ -41,13 +41,16 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       hasCustomizedCategories: fields[22] as bool?,
       hasInteractedWithTransactionCardStack: fields[23] as bool?,
       financialDataOwnerId: fields[24] as String?,
+      currencySelectionSource: fields[25] as String?,
+      currencyDetectionCountryCode: fields[26] as String?,
+      financialSchemaVersion: (fields[27] as num?)?.toInt(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CcAppStorage obj) {
     writer
-      ..writeByte(24)
+      ..writeByte(27)
       ..writeByte(0)
       ..write(obj.accessToken)
       ..writeByte(1)
@@ -95,7 +98,13 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..writeByte(23)
       ..write(obj.hasInteractedWithTransactionCardStack)
       ..writeByte(24)
-      ..write(obj.financialDataOwnerId);
+      ..write(obj.financialDataOwnerId)
+      ..writeByte(25)
+      ..write(obj.currencySelectionSource)
+      ..writeByte(26)
+      ..write(obj.currencyDetectionCountryCode)
+      ..writeByte(27)
+      ..write(obj.financialSchemaVersion);
   }
 
   @override
@@ -152,6 +161,9 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
   hasInteractedWithTransactionCardStack:
       json['hasInteractedWithTransactionCardStack'] as bool?,
   financialDataOwnerId: json['financialDataOwnerId'] as String?,
+  currencySelectionSource: json['currencySelectionSource'] as String?,
+  currencyDetectionCountryCode: json['currencyDetectionCountryCode'] as String?,
+  financialSchemaVersion: (json['financialSchemaVersion'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
@@ -183,4 +195,7 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
       'hasInteractedWithTransactionCardStack':
           instance.hasInteractedWithTransactionCardStack,
       'financialDataOwnerId': instance.financialDataOwnerId,
+      'currencySelectionSource': instance.currencySelectionSource,
+      'currencyDetectionCountryCode': instance.currencyDetectionCountryCode,
+      'financialSchemaVersion': instance.financialSchemaVersion,
     };

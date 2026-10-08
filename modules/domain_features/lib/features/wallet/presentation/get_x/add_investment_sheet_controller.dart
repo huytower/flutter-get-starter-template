@@ -187,6 +187,7 @@ class AddInvestmentSheetController extends CcGetController {
           createdAt: wallet.createdAt,
           updatedAt: DateTime.now(),
           categoryId: selectedInvestmentCategory.value?.id ?? wallet.categoryId,
+          currencyCode: wallet.currencyCode,
         ),
       );
     } else {

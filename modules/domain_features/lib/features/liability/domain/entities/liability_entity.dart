@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
+
 /// Direction values stored in [LiabilityEntity.direction].
 abstract class LiabilityDirection {
   /// Đi vay — money flows into the user's wallet, owed back later.
@@ -78,6 +80,8 @@ class LiabilityEntity extends Equatable {
   /// lump-sum: 1 month/1 week/1 day before the final due date.
   final bool reminderBeforeDueDate;
 
+  final String currencyCode;
+
   const LiabilityEntity({
     required this.id,
     required this.direction,
@@ -95,6 +99,7 @@ class LiabilityEntity extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     this.reminderBeforeDueDate = false,
+    this.currencyCode = CurrencyConstants.defaultCurrencyCode,
   });
 
   bool get isBorrow => direction == LiabilityDirection.borrow;
@@ -119,6 +124,7 @@ class LiabilityEntity extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? reminderBeforeDueDate,
+    String? currencyCode,
   }) {
     return LiabilityEntity(
       id: id ?? this.id,
@@ -138,6 +144,7 @@ class LiabilityEntity extends Equatable {
       updatedAt: updatedAt ?? this.updatedAt,
       reminderBeforeDueDate:
           reminderBeforeDueDate ?? this.reminderBeforeDueDate,
+      currencyCode: currencyCode ?? this.currencyCode,
     );
   }
 
@@ -159,5 +166,6 @@ class LiabilityEntity extends Equatable {
     createdAt,
     updatedAt,
     reminderBeforeDueDate,
+    currencyCode,
   ];
 }

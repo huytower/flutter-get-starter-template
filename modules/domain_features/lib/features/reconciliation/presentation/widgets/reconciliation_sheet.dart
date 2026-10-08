@@ -7,18 +7,18 @@ import 'package:get/get.dart';
 
 import '../get_x/reconciliation_controller.dart';
 
-class ReconciliationSuccessDialog extends StatefulWidget {
-  const ReconciliationSuccessDialog({super.key, this.onDismiss});
+class ReconciliationSuccessSheet extends StatefulWidget {
+  const ReconciliationSuccessSheet({super.key, this.onDismiss});
 
   final VoidCallback? onDismiss;
 
   @override
-  State<ReconciliationSuccessDialog> createState() =>
-      _ReconciliationSuccessDialogState();
+  State<ReconciliationSuccessSheet> createState() =>
+      _ReconciliationSuccessSheetState();
 }
 
-class _ReconciliationSuccessDialogState
-    extends State<ReconciliationSuccessDialog> {
+class _ReconciliationSuccessSheetState
+    extends State<ReconciliationSuccessSheet> {
   Timer? _timer;
   bool _dismissed = false;
 

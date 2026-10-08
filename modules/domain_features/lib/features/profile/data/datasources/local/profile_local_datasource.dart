@@ -1,13 +1,18 @@
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../../core/constant/currency_catalog.dart';
 import '../../../../../core/constant/currency_constants.dart';
+import '../../../../../core/migration/financial_schema_migration.dart';
 import '../../../domain/entities/profile_settings_entity.dart';
 
 @lazySingleton
 class ProfileLocalDataSource {
   Future<ProfileSettingsEntity> getSettings() async {
     final s = CcAppStorage.instance;
+
+    // Run versioned migration to annotate existing financial records with currencyCode (default VND)
+    await FinancialSchema.runMigrationIfNeeded();
 
     // Stamp the user-level feature anchor once, the first time settings are
     // read after this feature shipped. Pre-existing reconciliation/budget
@@ -26,12 +31,37 @@ class ProfileLocalDataSource {
       await s.save();
     }
 
+    // Initialize/validate currency and normalized selection source
+    final validatedCurrencyCode = CurrencyConstants.validateCurrencyCode(
+      s.currencyCode,
+    );
+    final validatedSource = CurrencySelectionSources.validate(
+      s.currencySelectionSource,
+    );
+
+    if (s.currencyCode == null) {
+      final suggestion = CurrencyCatalog.detectSuggestedCurrencyWithDetails();
+      s.currencyCode = CurrencyConstants.validateCurrencyCode(
+        suggestion.currencyCode,
+      );
+      s.currencyDetectionCountryCode = suggestion.countryCode;
+      s.currencySelectionSource = CurrencySelectionSources.detected;
+      await s.save();
+    } else if (s.currencyCode != validatedCurrencyCode ||
+        s.currencySelectionSource != validatedSource) {
+      s.currencyCode = validatedCurrencyCode;
+      s.currencySelectionSource = validatedSource;
+      await s.save();
+    }
+
     // Don't default isDarkMode to false - keep it null if not set
     // This allows the system theme to be used as default
     return ProfileSettingsEntity(
       reminderEnabled: s.reminderEnabled ?? false,
       weeklyAuditDayIndex: s.weeklyAuditDayIndex ?? 6,
       currencyCode: s.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
+      currencySelectionSource: s.currencySelectionSource,
+      currencyDetectionCountryCode: s.currencyDetectionCountryCode,
       birthYear: s.birthYear,
       isDarkMode: s.isDarkMode,
       weeklyAuditDayChangedAt: s.weeklyAuditDayChangedAt,
@@ -52,7 +82,13 @@ class ProfileLocalDataSource {
     final s = CcAppStorage.instance;
     s.reminderEnabled = entity.reminderEnabled;
     s.weeklyAuditDayIndex = entity.weeklyAuditDayIndex;
-    s.currencyCode = entity.currencyCode;
+    s.currencyCode = CurrencyConstants.validateCurrencyCode(
+      entity.currencyCode,
+    );
+    s.currencySelectionSource = CurrencySelectionSources.validate(
+      entity.currencySelectionSource,
+    );
+    s.currencyDetectionCountryCode = entity.currencyDetectionCountryCode;
     s.birthYear = entity.birthYear;
     s.isDarkMode = entity.isDarkMode;
     s.weeklyAuditDayChangedAt = entity.weeklyAuditDayChangedAt;

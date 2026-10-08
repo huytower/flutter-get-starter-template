@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/currency_constants.dart';
-
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/budget_name_helper.dart';
@@ -56,6 +55,12 @@ class WalletController extends CcGetController {
 
   final RxBool isVip = false.obs;
   final RxString currencyCode = CurrencyConstants.defaultCurrencyCode.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(CurrencyConstants.onCurrencyChanged, (_) => loadWallets());
+  }
 
   void toggleEditMode() {
     isEditMode.toggle();
@@ -610,6 +615,7 @@ class WalletController extends CcGetController {
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       displayOrder: wallets.length,
+      currencyCode: currencyCode.value,
     );
 
     final result = await _repository.addWallet(newWallet);
@@ -650,6 +656,7 @@ class WalletController extends CcGetController {
         createdAt: wallet.createdAt,
         updatedAt: DateTime.now(),
         categoryId: wallet.categoryId,
+        currencyCode: original.currencyCode,
       );
     } else {
       toSave = WalletEntity(
@@ -661,6 +668,7 @@ class WalletController extends CcGetController {
         createdAt: wallet.createdAt,
         updatedAt: DateTime.now(),
         categoryId: wallet.categoryId,
+        currencyCode: wallet.currencyCode,
       );
     }
 

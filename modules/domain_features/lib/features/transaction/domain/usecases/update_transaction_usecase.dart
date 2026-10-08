@@ -148,6 +148,7 @@ class UpdateTransactionUseCase {
       liabilityId: original.liabilityId,
       lat: original.lat,
       lng: original.lng,
+      currencyCode: original.currencyCode,
     );
 
     final result = await _transactionRepository.updateTransaction(updated);

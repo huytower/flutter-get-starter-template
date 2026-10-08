@@ -9,6 +9,8 @@ export 'core/util/generic_sync_datasource.dart';
 export 'data/adapters/domain_user_entity_adapter.dart';
 // Converters
 export 'data/converters/domain_user_entity_converter.dart';
+// Exchange Rates Hive Model
+export 'data/exchange_rates/exchange_rate_hive_model.dart';
 
 // Repositories (Contracts are in features, implementations are registered via DI)
 // Only export if needed outside of automated DI.

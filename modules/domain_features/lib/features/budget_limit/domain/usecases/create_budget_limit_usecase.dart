@@ -2,6 +2,7 @@ import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../entities/budget_limit_entity.dart';
 import '../repositories/budget_limit_repository.dart';
 
@@ -67,6 +68,7 @@ class CreateBudgetLimitUseCase {
       limit: params.limit,
       order: order,
       isFixedPrice: params.isFixedPrice,
+      currencyCode: CurrencyConstants.currentPrimaryCurrency,
     );
 
     final result = await _repository.createBudget(budget);

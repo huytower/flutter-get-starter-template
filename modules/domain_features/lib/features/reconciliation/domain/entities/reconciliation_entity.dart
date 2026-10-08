@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import 'reconciliation_allocation_entity.dart';
 
 /// A reconciliation record ("Đối soát / Kiểm toán") — a periodic audit that
@@ -29,6 +30,7 @@ class ReconciliationEntity extends Equatable {
   final List<String> adjustmentTransactionIds;
 
   final DateTime date;
+  final String currencyCode;
 
   const ReconciliationEntity({
     required this.id,
@@ -40,6 +42,7 @@ class ReconciliationEntity extends Equatable {
     required this.allocations,
     required this.adjustmentTransactionIds,
     required this.date,
+    this.currencyCode = CurrencyConstants.defaultCurrencyCode,
   });
 
   /// True when book matched reality (no adjustment needed).
@@ -47,5 +50,5 @@ class ReconciliationEntity extends Equatable {
   bool get isBalanced => difference == 0;
 
   @override
-  List<Object?> get props => [id, year, week, difference, date];
+  List<Object?> get props => [id, year, week, difference, date, currencyCode];
 }

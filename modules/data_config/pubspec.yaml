@@ -12,6 +12,8 @@ resolution: workspace
 dependencies:
   app_config:
     path: ../app_config
+  domain_features:
+    path: ../domain_features
   cc_sdk:
     path: ../../shared/cc_core_sdk/cc_sdk
   cc_sdk_ui:
@@ -37,6 +39,7 @@ dependencies:
     sdk: flutter
 
   get_it: ^9.2.1
+  hive_ce: ^2.19.3
   injectable: ^3.0.0
   internet_connection_checker_plus: ^3.0.0
   json_annotation: ^4.12.0
@@ -53,6 +56,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  hive_ce_generator: ^1.11.2
   injectable_generator: ^3.1.3
   json_serializable: ^6.14.1
   build_runner: ^2.15.1

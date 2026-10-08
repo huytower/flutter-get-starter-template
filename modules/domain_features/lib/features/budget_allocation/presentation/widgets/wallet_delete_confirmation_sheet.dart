@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 
 /// Delete confirmation dialog for wallet deletion.
-class WalletDeleteConfirmationDialog extends StatelessWidget {
-  const WalletDeleteConfirmationDialog({
+class WalletDeleteConfirmationSheet extends StatelessWidget {
+  const WalletDeleteConfirmationSheet({
     required this.wallet,
     required this.onConfirm,
     super.key,
@@ -27,7 +27,7 @@ class WalletDeleteConfirmationDialog extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) =>
-          WalletDeleteConfirmationDialog(wallet: wallet, onConfirm: onConfirm),
+          WalletDeleteConfirmationSheet(wallet: wallet, onConfirm: onConfirm),
     );
   }
 

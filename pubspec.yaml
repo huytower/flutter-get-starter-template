@@ -1,7 +1,7 @@
 name: mobile_flutter_template
 description: Mobile Flutter Template's Overview
 publish_to: none
-version: 1.0.0+2
+version: 1.0.0+4
 
 environment:
   sdk: '^3.12.0'

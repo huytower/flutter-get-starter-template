@@ -40,7 +40,8 @@ class MoneyFormatter {
     final symbol = getSymbol(code);
     if (code == CurrencyConstants.usd ||
         code == CurrencyConstants.eur ||
-        code == CurrencyConstants.gbp ||
+        code == CurrencyConstants.krw ||
+        code == CurrencyConstants.cny ||
         code == CurrencyConstants.jpy) {
       return '$symbol$formattedNum';
     }

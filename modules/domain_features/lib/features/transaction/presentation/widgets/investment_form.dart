@@ -65,10 +65,6 @@ class _InvestmentFormState extends State<InvestmentForm> {
 
   @override
   Widget build(BuildContext context) {
-    // Pre-registered by TransactionController.onInit() — see that call
-    // site's comment for why this must be Get.find, not Get.put (this form
-    // has no tagged/edit-mode variant, so there's never a second instance
-    // to create here).
     return Obx(() {
       final accentColor = _accentColor(context, controller.direction.value);
       final guideline = Get.find<GuidelineController>();
@@ -136,10 +132,12 @@ class _InvestmentFormState extends State<InvestmentForm> {
       clipBehavior: Clip.none,
       alignment: Alignment.center,
       children: [
-        InvestmentDirectionToggle(
-          value: controller.direction.value,
-          activeColor: accentColor,
-          onChanged: controller.setDirection,
+        Obx(
+          () => InvestmentDirectionToggle(
+            value: controller.direction.value,
+            activeColor: accentColor,
+            onChanged: controller.setDirection,
+          ),
         ),
         Obx(() {
           final txCtrl = Get.find<TransactionController>();
@@ -188,32 +186,37 @@ class _InvestmentFormState extends State<InvestmentForm> {
             }
             return const SizedBox.shrink();
           }),
-          TransactionAdditionalDetailsSection(
-            isExpanded: controller.showMoreDetails.value,
-            onToggle: controller.toggleMoreDetails,
-            selectedDate: controller.date.value,
-            onDateSelected: controller.setDate,
-            onCalendarTap: () => controller.pickDate(context),
-            noteController: controller.noteController,
-            activeColor: accentColor,
-            hideDate: true,
+          Obx(
+            () => TransactionAdditionalDetailsSection(
+              isExpanded: controller.showMoreDetails.value,
+              onToggle: controller.toggleMoreDetails,
+              selectedDate: controller.date.value,
+              onDateSelected: controller.setDate,
+              onCalendarTap: () => controller.pickDate(context),
+              noteController: controller.noteController,
+              activeColor: accentColor,
+              hideDate: true,
+            ),
           ),
           const CcSpaceSM(),
-          TransactionSubmitButton(
-            text: el.tr(
-              controller.direction.value == InvestmentDirectionForm.contribute
-                  ? CcLocaleKeys.transaction_record_investment
-                  : CcLocaleKeys.transaction_record_investment_return,
-            ),
-            isSubmitting: controller.isSubmitting.value,
-            isEnabled: controller.canSubmit,
-            onTap: () => controller.submitForm(context),
-            activeColor: accentColor,
-            leadingIcon:
+          Obx(
+            () => TransactionSubmitButton(
+              text: el.tr(
                 controller.direction.value == InvestmentDirectionForm.contribute
-                ? Icons.arrow_circle_down
-                : Icons.arrow_circle_up,
-            leadingIconSize: 18,
+                    ? CcLocaleKeys.transaction_record_investment
+                    : CcLocaleKeys.transaction_record_investment_return,
+              ),
+              isSubmitting: controller.isSubmitting.value,
+              isEnabled: controller.canSubmit,
+              onTap: () => controller.submitForm(context),
+              activeColor: accentColor,
+              leadingIcon:
+                  controller.direction.value ==
+                      InvestmentDirectionForm.contribute
+                  ? Icons.arrow_circle_down
+                  : Icons.arrow_circle_up,
+              leadingIconSize: 18,
+            ),
           ),
           const CcSpaceXS(),
         ],

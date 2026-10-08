@@ -1,19 +1,20 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:message/cc_locale_keys.dart';
 
-class WeeklyAuditDayDialogContent extends StatefulWidget {
+class WeeklyAuditDaySheetContent extends StatefulWidget {
   final int currentDay;
 
-  const WeeklyAuditDayDialogContent({super.key, required this.currentDay});
+  const WeeklyAuditDaySheetContent({super.key, required this.currentDay});
 
   @override
-  State<WeeklyAuditDayDialogContent> createState() =>
-      _WeeklyAuditDayDialogContentState();
+  State<WeeklyAuditDaySheetContent> createState() =>
+      _WeeklyAuditDaySheetContentState();
 }
 
-class _WeeklyAuditDayDialogContentState
-    extends State<WeeklyAuditDayDialogContent> {
+class _WeeklyAuditDaySheetContentState
+    extends State<WeeklyAuditDaySheetContent> {
   late int _selectedDay;
 
   @override

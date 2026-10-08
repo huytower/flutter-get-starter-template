@@ -63,7 +63,7 @@ class TransactionSmartSuggestionChip extends StatelessWidget {
   }
 
   String _formatSuggestionLabel(TransactionEntity match) =>
-      '${match.category} · ${MoneyFormatter.formatShort(match.amount)} ${MoneyFormatter.getSymbol(CurrencyConstants.defaultCurrencyCode)}';
+      '${match.category} · ${MoneyFormatter.formatShort(match.amount, currencyCode: match.currencyCode)} ${MoneyFormatter.getSymbol(match.currencyCode)}';
 
   void _applySuggestion(ExpenseFormController controller) {
     final merchantMatch = controller.merchantMatchSuggestion.value;

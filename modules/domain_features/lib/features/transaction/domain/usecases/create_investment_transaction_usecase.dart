@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import 'package:domain_features/core/constant/currency_constants.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
@@ -145,11 +146,13 @@ class CreateInvestmentTransactionUseCase {
       walletId: liquidWalletId,
       transferId: linkId,
       investmentWalletId: investmentWallet.id,
+      currencyCode: investmentWallet.currencyCode,
     );
     final legIn = legOut.copyWith(
       id: '${linkId}_in',
       walletId: investmentWallet.id,
       type: TransactionType.investmentIn,
+      currencyCode: investmentWallet.currencyCode,
     );
 
     final outResult = await _transactionRepository.createTransaction(legOut);
@@ -184,6 +187,7 @@ class CreateInvestmentTransactionUseCase {
       date: params.date,
       walletId: liquidWalletId,
       investmentWalletId: investmentWallet.id,
+      currencyCode: investmentWallet.currencyCode,
     );
 
     final result = await _transactionRepository.createTransaction(txn);
@@ -209,6 +213,7 @@ class CreateInvestmentTransactionUseCase {
       categoryId: params.categoryId,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
+      currencyCode: CurrencyConstants.currentPrimaryCurrency,
     );
     final addResult = await _walletRepository.addWallet(newWallet);
     if (addResult.isError()) {

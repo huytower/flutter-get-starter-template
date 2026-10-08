@@ -4,11 +4,12 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
-import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
+import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/entities/ai_advice_entity.dart';
@@ -47,6 +48,12 @@ class ReportController extends CcGetController {
   final WalletRepository _walletRepository;
   final GenerateAiFinancialAdviceUseCase _generateAiAdvice;
   final UserLevelController userLevel;
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(CurrencyConstants.onCurrencyChanged, (_) => load());
+  }
 
   final RxList<WalletEntity> wallets = <WalletEntity>[].obs;
 

@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
+
 /// A perpetual monthly spending budget for a category ("Ngân sách").
 ///
 /// Adapted from the web `NganSach` model, but the category is split out:
@@ -27,6 +29,8 @@ class BudgetLimitEntity extends Equatable {
   /// True if the budget has a fixed price/cost.
   final bool isFixedPrice;
 
+  final String currencyCode;
+
   const BudgetLimitEntity({
     required this.id,
     required this.categoryId,
@@ -35,6 +39,7 @@ class BudgetLimitEntity extends Equatable {
     this.order = 0,
     this.isClosed = false,
     this.isFixedPrice = false,
+    this.currencyCode = CurrencyConstants.defaultCurrencyCode,
   });
 
   BudgetLimitEntity copyWith({
@@ -45,6 +50,7 @@ class BudgetLimitEntity extends Equatable {
     int? order,
     bool? isClosed,
     bool? isFixedPrice,
+    String? currencyCode,
   }) {
     return BudgetLimitEntity(
       id: id ?? this.id,
@@ -54,6 +60,7 @@ class BudgetLimitEntity extends Equatable {
       order: order ?? this.order,
       isClosed: isClosed ?? this.isClosed,
       isFixedPrice: isFixedPrice ?? this.isFixedPrice,
+      currencyCode: currencyCode ?? this.currencyCode,
     );
   }
 
@@ -66,5 +73,6 @@ class BudgetLimitEntity extends Equatable {
     order,
     isClosed,
     isFixedPrice,
+    currencyCode,
   ];
 }

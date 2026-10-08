@@ -12,7 +12,7 @@ import '../../domain/entities/reconciliation_entity.dart';
 import '../../domain/usecases/get_reconciliation_history_usecase.dart';
 import '../../domain/usecases/perform_reconciliation_usecase.dart';
 import '../../domain/usecases/undo_reconciliation_usecase.dart';
-import '../widgets/reconciliation_dialogs.dart';
+import '../widgets/reconciliation_sheet.dart';
 
 @injectable
 class ReconciliationController extends CcGetController {
@@ -173,7 +173,7 @@ class ReconciliationController extends CcGetController {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (_) => ReconciliationSuccessDialog(
+        builder: (_) => ReconciliationSuccessSheet(
           onDismiss: () => Navigator.of(context).pop(),
         ),
       );

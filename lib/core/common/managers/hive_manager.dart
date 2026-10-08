@@ -12,6 +12,7 @@ class HiveManager {
       CcHiveBox.APP_BOX_NAME,
       CcHiveBox.DEVICE_BOX_NAME,
       CcHiveBox.TRACK_LOG_BOX_NAME,
+      CcHiveBox.EXCHANGE_RATE_BOX_NAME,
     ];
 
     final closeFutures = boxNames

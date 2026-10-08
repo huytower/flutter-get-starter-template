@@ -10,7 +10,16 @@ import 'package:data_config/core/di/di.dart' as _i177;
 import 'package:data_config/core/di/module/data_module.dart' as _i291;
 import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
 import 'package:data_config/core/util/generic_sync_datasource.dart' as _i312;
+import 'package:data_config/data/exchange_rates/exchange_rate_local_datasource.dart'
+    as _i25;
+import 'package:data_config/data/exchange_rates/exchange_rate_repository_impl.dart'
+    as _i626;
+import 'package:data_config/data/exchange_rates/frankfurter_remote.dart'
+    as _i1048;
+import 'package:data_config/data/exchange_rates/rate_freshness.dart' as _i221;
 import 'package:dio/dio.dart' as _i361;
+import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart'
+    as _i686;
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
@@ -25,6 +34,10 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
     gh.lazySingleton<_i116.GoogleSignIn>(() => firebaseModule.googleSignIn);
     gh.lazySingleton<_i954.FirestoreSyncService>(
         () => _i954.FirestoreSyncService());
+    gh.lazySingleton<_i25.ExchangeRateLocalDataSource>(
+        () => _i25.ExchangeRateLocalDataSource());
+    gh.lazySingleton<_i221.RateFreshness>(
+        () => _i221.RateFreshness.defaultPolicy());
     gh.lazySingleton<_i361.Interceptor>(
       () => dataModule.cacheInterceptor,
       instanceName: 'cacheInterceptor',
@@ -70,6 +83,14 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
       ),
       instanceName: 'baseDio',
     );
+    gh.lazySingleton<_i1048.FrankfurterRemote>(
+        () => _i1048.FrankfurterRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+    gh.lazySingleton<_i686.ExchangeRateRepository>(
+        () => _i626.ExchangeRateRepositoryImpl(
+              gh<_i1048.FrankfurterRemote>(),
+              gh<_i25.ExchangeRateLocalDataSource>(),
+              gh<_i221.RateFreshness>(),
+            ));
   }
 }
 

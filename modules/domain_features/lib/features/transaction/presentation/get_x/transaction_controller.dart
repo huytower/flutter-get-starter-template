@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
@@ -13,8 +14,8 @@ import '../../../budget_allocation/presentation/get_x/budget_allocation_controll
 import '../../../guideline/guideline_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
-import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
+import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
@@ -215,6 +216,7 @@ class TransactionController extends CcGetController {
   @override
   void onInit() {
     super.onInit();
+    ever(CurrencyConstants.onCurrencyChanged, (_) => loadWallets());
 
     // Load persisted interaction state
     hasInteractedWithCardStack.value =

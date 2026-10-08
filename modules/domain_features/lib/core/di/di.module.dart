@@ -10,6 +10,10 @@ import 'package:cc_micro_features/features/auth/domain/usecases/delete_account_u
     as _i308;
 import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
 import 'package:dio/dio.dart' as _i361;
+import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart'
+    as _i195;
+import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart'
+    as _i686;
 import 'package:domain_features/core/helper/ai_fallback_preference_datasource.dart'
     as _i967;
 import 'package:domain_features/core/helper/money_format_helper.dart' as _i645;
@@ -146,6 +150,8 @@ import 'package:domain_features/features/profile/domain/usecases/get_profile_set
     as _i569;
 import 'package:domain_features/features/profile/domain/usecases/update_profile_settings_usecase.dart'
     as _i220;
+import 'package:domain_features/features/profile/presentation/get_x/currency_selection_controller.dart'
+    as _i429;
 import 'package:domain_features/features/profile/presentation/get_x/profile_controller.dart'
     as _i920;
 import 'package:domain_features/features/profile/user_level/domain/usecases/get_user_level_status_usecase.dart'
@@ -165,7 +171,7 @@ import 'package:domain_features/features/reconciliation/domain/usecases/get_reco
 import 'package:domain_features/features/reconciliation/domain/usecases/perform_reconciliation_usecase.dart'
     as _i804;
 import 'package:domain_features/features/reconciliation/domain/usecases/undo_reconciliation_usecase.dart'
-    as _i195;
+    as _i196;
 import 'package:domain_features/features/reconciliation/presentation/get_x/reconciliation_controller.dart'
     as _i1051;
 import 'package:domain_features/features/report/domain/usecases/generate_ai_financial_advice_usecase.dart'
@@ -286,6 +292,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.lazySingleton<_i934.ScheduleLiabilityRemindersUseCase>(() =>
         _i934.ScheduleLiabilityRemindersUseCase(
             gh<_i483.NotificationService>()));
+    gh.lazySingleton<_i195.CurrencyConversionService>(() =>
+        _i195.CurrencyConversionService(gh<_i686.ExchangeRateRepository>()));
     gh.factory<_i540.BudgetLimitSyncDataSource>(
         () => _i540.BudgetLimitSyncDataSource(
               gh<_i954.FirestoreSyncService>(),
@@ -316,6 +324,9 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         ));
     gh.lazySingleton<_i130.CommentRemote>(
         () => _i130.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+    gh.factory<_i429.CurrencySelectionController>(() =>
+        _i429.CurrencySelectionController(
+            gh<_i195.CurrencyConversionService>()));
     gh.lazySingleton<_i402.SimpleCubitInterface>(
       () => _i691.SimpleCubit(),
       dispose: (i) => i.close(),
@@ -401,8 +412,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         _i110.ToggleCategoryEnabledUseCase(gh<_i1059.CategoryRepository>()));
     gh.lazySingleton<_i989.UpdateCategoryUseCase>(
         () => _i989.UpdateCategoryUseCase(gh<_i1059.CategoryRepository>()));
-    gh.lazySingleton<_i195.UndoReconciliationUseCase>(
-        () => _i195.UndoReconciliationUseCase(
+    gh.lazySingleton<_i196.UndoReconciliationUseCase>(
+        () => _i196.UndoReconciliationUseCase(
               gh<_i944.ReconciliationRepository>(),
               gh<_i1027.TransactionRepository>(),
             ));
@@ -643,7 +654,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i1051.ReconciliationController(
               gh<_i167.GetWalletBalancesUseCase>(),
               gh<_i804.PerformReconciliationUseCase>(),
-              gh<_i195.UndoReconciliationUseCase>(),
+              gh<_i196.UndoReconciliationUseCase>(),
               gh<_i446.GetReconciliationHistoryUseCase>(),
               gh<_i811.UserLevelController>(),
             ));
