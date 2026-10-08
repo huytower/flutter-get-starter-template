@@ -24,7 +24,7 @@ class TransactionTile extends StatelessWidget {
     final isInflow = computeIsInflow(transaction);
     final amountColor = computeAmountColor(context, transaction);
     final amountText =
-        "${isInflow ? '+' : '-'}${TransactionFormHelpers.formatShort(transaction.amount)}";
+        "${isInflow ? '+' : '-'}${TransactionFormHelpers.formatShortWithSymbol(transaction.amount, currencyCode: transaction.currencyCode)}";
 
     Widget getIcon() {
       if (transaction.categoryIconCode != null) {

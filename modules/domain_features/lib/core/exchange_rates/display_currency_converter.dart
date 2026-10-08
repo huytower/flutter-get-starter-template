@@ -12,24 +12,24 @@ class DisplayCurrencyConverter {
   ) async {
     if (transactions.isEmpty) return transactions;
 
-    final converted = await Future.wait(
-      transactions.map(
-        (transaction) => _service.convertAmount(
-          amount: transaction.amount,
-          fromCurrency: transaction.currencyCode,
-          toCurrency: targetCurrency,
-        ),
-      ),
+    final converted = await _service.convertAmounts(
+      amounts: [
+        for (final transaction in transactions)
+          CurrencyAmount(
+            amount: transaction.amount,
+            currencyCode: transaction.currencyCode,
+          ),
+      ],
+      targetCurrency: targetCurrency,
     );
+    if (converted.isError()) return transactions;
+    final convertedAmounts = converted.tryGetSuccess()!;
 
     return [
       for (var index = 0; index < transactions.length; index++)
-        converted[index].when(
-          (amount) => transactions[index].copyWith(
-            amount: amount,
-            currencyCode: targetCurrency,
-          ),
-          (_) => transactions[index],
+        transactions[index].copyWith(
+          amount: convertedAmounts[index],
+          currencyCode: targetCurrency,
         ),
     ];
   }

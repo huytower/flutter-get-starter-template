@@ -1,3 +1,6 @@
+import '../../core/di/di.dart';
+import '../../core/exchange_rates/currency_conversion_service.dart';
+
 abstract class MoneyConstants {
   /// standard quick amounts for transaction entries (Expense/Income/Transfer)
   static const List<int> quickAmounts = [
@@ -226,5 +229,29 @@ abstract class MoneyConstants {
     if (age < 20) return liabilityUnder20;
     if (age < 30) return liability20To30;
     return liabilityAbove30;
+  }
+
+  static Future<List<int>> getConvertedQuickAmounts(
+    List<int> baseVndAmounts,
+    String targetCurrency,
+  ) async {
+    final normalized = targetCurrency.trim().toUpperCase();
+    if (normalized == 'VND' || normalized.isEmpty) return baseVndAmounts;
+
+    try {
+      final conversionService = getIt<CurrencyConversionService>();
+      final converted = <int>[];
+      for (final amount in baseVndAmounts) {
+        final result = await conversionService.convertAmount(
+          amount: amount,
+          fromCurrency: 'VND',
+          toCurrency: normalized,
+        );
+        converted.add(result.tryGetSuccess() ?? amount);
+      }
+      return converted;
+    } catch (_) {
+      return baseVndAmounts;
+    }
   }
 }

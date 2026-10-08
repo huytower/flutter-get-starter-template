@@ -62,4 +62,17 @@ class TransactionFormHelpers {
       currencyCode: currencyCode,
     );
   }
+
+  /// Format amount to short representation with symbol ($ 100K vs 100K đ)
+  static String formatShortWithSymbol(
+    num amount, {
+    bool useFullSuffix = false,
+    String currencyCode = CurrencyConstants.defaultCurrencyCode,
+  }) {
+    return formatShortCurrencyWithSymbol(
+      amount,
+      useFullSuffix: useFullSuffix,
+      currencyCode: currencyCode,
+    );
+  }
 }

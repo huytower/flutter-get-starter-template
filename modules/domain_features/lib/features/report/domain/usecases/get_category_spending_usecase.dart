@@ -63,8 +63,7 @@ class GetCategorySpendingUseCase {
           await _conversionService.convertTotal(
                 amountsByCurrency: entry.value,
                 targetCurrency: targetCurrency,
-              )
-              as Result<int, CcFailure>;
+              );
       convertedTotals[entry.key] = result.when(
         (success) => success,
         (_) => entry.value.values.fold<int>(0, (sum, amount) => sum + amount),

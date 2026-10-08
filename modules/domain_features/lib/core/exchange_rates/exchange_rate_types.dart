@@ -43,6 +43,13 @@ class ConvertedMoney {
       provenance == RateProvenance.offlineFallback;
 }
 
+class CurrencyAmount {
+  const CurrencyAmount({required this.amount, required this.currencyCode});
+
+  final int amount;
+  final String currencyCode;
+}
+
 /// Domain contract for exchange rate tables, repositories, and failures.
 /// Independent of [CurrencyCatalog] (metadata vs dated rates).
 class ExchangeRateTable {

@@ -96,10 +96,15 @@ class LiquidWalletListItem extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     return Obx(() {
-      final balance = controller.bookBalanceOf(wallet.id);
+      final balance = controller.displayBookBalanceOf(wallet.id);
       final visible = controller.isBalanceVisible.value;
       return CcText(
-        visible ? TransactionFormHelpers.formatShort(balance) : '*****',
+        visible
+            ? TransactionFormHelpers.formatShortWithSymbol(
+                balance,
+                currencyCode: controller.currencyCode.value,
+              )
+            : '*****',
         textStyle: context.ccTextTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
           color: balance >= 0 ? scheme.onSurface : scheme.error,

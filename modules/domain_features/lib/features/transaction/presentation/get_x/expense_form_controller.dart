@@ -72,9 +72,12 @@ class ExpenseFormController extends TransactionFormController
 
   Future<void> loadSuggestions() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
-    quickAmounts.assignAll(
-      MoneyConstants.getExpenseSuggestions(settings.birthYear),
+    final baseVnd = MoneyConstants.getExpenseSuggestions(settings.birthYear);
+    final converted = await MoneyConstants.getConvertedQuickAmounts(
+      baseVnd,
+      currencyCode.value,
     );
+    quickAmounts.assignAll(converted);
   }
 
   String? _lastSelectedCategoryId;

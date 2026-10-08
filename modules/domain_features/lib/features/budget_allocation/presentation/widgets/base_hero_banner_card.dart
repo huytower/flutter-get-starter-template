@@ -133,7 +133,7 @@ class BaseHeroBannerCard extends StatelessWidget {
         Obx(
           () => CcText(
             walletController.isBalanceVisible.value
-                ? TransactionFormHelpers.formatShort(
+                ? TransactionFormHelpers.formatShortWithSymbol(
                     balance,
                     currencyCode: walletController.currencyCode.value,
                   )

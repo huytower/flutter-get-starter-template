@@ -127,6 +127,28 @@ class MoneyFormatter {
       return '$sign${abs.toStringAsFixed(0)}';
     }
   }
+
+  /// Formats amount into a short, human-readable form with currency symbol positioned correctly
+  /// (before for non-VND currencies like $ 100K, after for VND like 100K đ).
+  static String formatShortWithSymbol(
+    num value, {
+    String? currencyCode,
+    bool useFullSuffix = false,
+  }) {
+    final code = _resolveCurrencyCode(currencyCode).toUpperCase();
+    final shortText = formatShort(
+      value,
+      currencyCode: code,
+      useFullSuffix: useFullSuffix,
+    );
+    final symbol = getSymbol(code);
+
+    if (code == CurrencyConstants.vnd) {
+      return '$shortText $symbol';
+    } else {
+      return '$symbol$shortText';
+    }
+  }
 }
 
 // Neutral top-level helper functions
@@ -138,6 +160,16 @@ String formatShortCurrency(
   bool useFullSuffix = false,
   String? currencyCode,
 }) => MoneyFormatter.formatShort(
+  value,
+  currencyCode: currencyCode,
+  useFullSuffix: useFullSuffix,
+);
+
+String formatShortCurrencyWithSymbol(
+  num value, {
+  bool useFullSuffix = false,
+  String? currencyCode,
+}) => MoneyFormatter.formatShortWithSymbol(
   value,
   currencyCode: currencyCode,
   useFullSuffix: useFullSuffix,

@@ -50,7 +50,7 @@ class CcQuickAmountChips extends StatelessWidget {
                     borderRadius: context.brLg,
                   ),
                   child: CcText(
-                    TransactionFormHelpers.formatShort(
+                    TransactionFormHelpers.formatShortWithSymbol(
                       amount,
                       currencyCode:
                           currencyCode ??

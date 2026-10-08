@@ -272,7 +272,7 @@ class CurrencyConversionService {
     return Success(converted);
   }
 
-  Future<Object> convertTotal({
+  Future<Result<int, CcFailure>> convertTotal({
     required Map<String, int> amountsByCurrency,
     required String targetCurrency,
     DateTime? date,
@@ -318,5 +318,46 @@ class CurrencyConversionService {
         (sum, amount) => sum + amount,
       ),
     );
+  }
+
+  Future<Result<List<int>, CcFailure>> convertAmounts({
+    required List<CurrencyAmount> amounts,
+    required String targetCurrency,
+    DateTime? date,
+    ConversionUse use = ConversionUse.display,
+  }) async {
+    if (amounts.isEmpty) return const Success([]);
+
+    final totals = <String, int>{};
+    for (final item in amounts) {
+      final code = CurrencyCatalog.tryGetDefinition(item.currencyCode)?.code;
+      if (code == null) {
+        return Error(ValidationFailure('Unsupported currency code: ${item.currencyCode}'));
+      }
+      totals.update(code, (value) => value + item.amount, ifAbsent: () => item.amount);
+    }
+
+    final converted = await convertBatch(
+      amountsByCurrency: totals,
+      targetCurrency: targetCurrency,
+      date: date,
+      use: use,
+    );
+    if (converted.isError()) return Error(converted.tryGetError()!);
+
+    final convertedTotals = converted.tryGetSuccess()!;
+    return Success([
+      for (final item in amounts)
+        _scaleConvertedAmount(
+          item.amount,
+          totals[item.currencyCode.toUpperCase()]!,
+          convertedTotals[item.currencyCode.toUpperCase()]!,
+        ),
+    ]);
+  }
+
+  int _scaleConvertedAmount(int amount, int sourceTotal, int convertedTotal) {
+    if (sourceTotal == 0) return 0;
+    return (amount * convertedTotal / sourceTotal).round();
   }
 }

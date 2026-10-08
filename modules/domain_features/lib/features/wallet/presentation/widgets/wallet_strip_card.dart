@@ -99,7 +99,7 @@ class WalletStripCard extends StatelessWidget {
         defaultBgColor: defaultBgColor,
         onTap: () => _handleWalletTap(context, wallet.id),
         balanceText: balance != null
-            ? TransactionFormHelpers.formatShort(
+            ? TransactionFormHelpers.formatShortWithSymbol(
                 balance,
                 currencyCode: controller.currencyCode.value,
               )

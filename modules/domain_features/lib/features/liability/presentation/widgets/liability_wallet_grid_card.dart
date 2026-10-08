@@ -133,7 +133,10 @@ class LiabilityWalletGridCard extends StatelessWidget {
           ),
         ),
         CcText(
-          TransactionFormHelpers.formatShort(repaid),
+          TransactionFormHelpers.formatShortWithSymbol(
+            repaid,
+            currencyCode: balance.liability.currencyCode,
+          ),
           textStyle: context.ccTextTheme.labelSmall?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: context.ccColorScheme.onSurface,
@@ -163,7 +166,10 @@ class LiabilityWalletGridCard extends StatelessWidget {
           ),
         ),
         CcText(
-          TransactionFormHelpers.formatShort(balance.outstandingBalance),
+          TransactionFormHelpers.formatShortWithSymbol(
+            balance.outstandingBalance,
+            currencyCode: balance.liability.currencyCode,
+          ),
           textStyle: context.ccTextTheme.labelSmall?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: PrjColors.liability,
@@ -195,7 +201,10 @@ class LiabilityWalletGridCard extends StatelessWidget {
           ),
         ),
         CcText(
-          TransactionFormHelpers.formatShort(liability.principalAmount),
+          TransactionFormHelpers.formatShortWithSymbol(
+            liability.principalAmount,
+            currencyCode: liability.currencyCode,
+          ),
           textStyle: context.ccTextTheme.labelSmall?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: PrjColors.liability,
