@@ -140,7 +140,10 @@ class BudgetLimitGridCard extends StatelessWidget {
                   ),
                 ),
                 CcText(
-                  TransactionFormHelpers.formatShort(stats.budget.limit),
+                  TransactionFormHelpers.formatShort(
+                    stats.budget.limit,
+                    currencyCode: stats.budget.currencyCode,
+                  ),
                   textStyle: context.ccTextTheme.labelSmall?.copyWith(
                     color: scheme.onSurfaceVariant.withOpacity(0.6),
                   ),

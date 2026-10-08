@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:data_config/core/util/sync_trace.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -238,9 +237,6 @@ class BudgetAllocationController extends CcGetController {
     if (showLoading) {
       layoutStatus.value = CcLayoutStatus.loading;
     }
-    SyncTrace.log(
-      'UI     BudgetAllocation.loadAll() ENTER showLoading=$showLoading',
-    );
 
     try {
       // Parallelize loading to satisfy Law 5 (Clean Bootstrap Integrity - parallelize)
@@ -263,18 +259,12 @@ class BudgetAllocationController extends CcGetController {
       } else {
         layoutStatus.value = CcLayoutStatus.success;
       }
-      SyncTrace.log(
-        'UI     BudgetAllocation.loadAll() EXIT status=${layoutStatus.value} '
-        'wallets=${walletController.wallets.length} '
-        'liquidBalance=${walletController.liquidBalance}',
-      );
     } catch (e) {
       if (kDebugMode) {
         'Error loading budget allocation: $e'.Log();
       }
       errorMessage.value = e.toString();
       layoutStatus.value = CcLayoutStatus.error;
-      SyncTrace.log('UI     BudgetAllocation.loadAll() FAILED error=$e');
     }
   }
 
@@ -292,7 +282,7 @@ class BudgetAllocationController extends CcGetController {
   /// fetch error shouldn't blank out the wallets/budgets sections too.
   Future<void> loadLiabilities() async {
     final result = await _getLiabilityBalances();
-    result.when((balances) {
+    result.when((balances) async {
       debugPrint(
         '[BUDGET_ALLOC_CTRL] loadLiabilities: fetched ${balances.length} items',
       );
@@ -306,16 +296,32 @@ class BudgetAllocationController extends CcGetController {
         );
       liabilityBalances.assignAll(sorted);
 
-      // Calculate separate balances for borrow and lend
-      borrowBalance.value = sorted
-          .where((b) => b.liability.isBorrow && !b.isSettled)
-          .fold(0, (sum, b) => sum + b.outstandingBalance);
-      lendBalance.value = sorted
-          .where((b) => !b.liability.isBorrow && !b.isSettled)
-          .fold(0, (sum, b) => sum + b.outstandingBalance);
+      final targetCurrency = walletController.currencyCode.value;
+      int newBorrow = 0;
+      int newLend = 0;
 
-      // Net liability (borrow - lend)
-      liabilityBalance.value = borrowBalance.value - lendBalance.value;
+      for (final b in sorted) {
+        final rawBalance = b.outstandingBalance;
+        if (rawBalance == 0 || b.isSettled) continue;
+
+        final conversionResult = await walletController.conversionService
+            .convertAmount(
+              amount: rawBalance,
+              fromCurrency: b.liability.currencyCode,
+              toCurrency: targetCurrency,
+            );
+        final convertedBalance = conversionResult.tryGetSuccess() ?? rawBalance;
+
+        if (b.liability.isBorrow) {
+          newBorrow += convertedBalance;
+        } else {
+          newLend += convertedBalance;
+        }
+      }
+
+      borrowBalance.value = newBorrow;
+      lendBalance.value = newLend;
+      liabilityBalance.value = newBorrow - newLend;
 
       // Refresh transaction form if it's already active
       if (Get.isRegistered<LiabilityFormController>()) {

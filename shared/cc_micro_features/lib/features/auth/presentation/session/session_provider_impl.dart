@@ -31,21 +31,20 @@ class SessionProviderImpl implements SessionContract {
   Future<void> _init() async {
     // Initial load
     final result = await _getCurrentUserUseCase();
-    result.when((userEntity) {
-      if (userEntity != null) {
-        _userSubject.add(_mapToBridge(userEntity));
-      }
-      'SYNC_TRACE session seeded user=${userEntity?.id}'.Log('SYNC_TRACE');
-    }, (failure) {
-      _userSubject.add(null);
-      'SYNC_TRACE session seed FAILED ${failure.message}'.Log('SYNC_TRACE');
-    });
+    result.when(
+      (userEntity) {
+        if (userEntity != null) {
+          _userSubject.add(_mapToBridge(userEntity));
+        }
+      },
+      (failure) {
+        _userSubject.add(null);
+      },
+    );
 
     // Listen to changes
     _authStateChangesUseCase().listen((userEntity) {
       _userSubject.add(userEntity != null ? _mapToBridge(userEntity) : null);
-      'SYNC_TRACE authStateChanges -> user=${userEntity?.id}'
-          .Log('SYNC_TRACE');
     });
   }
 

@@ -15,7 +15,7 @@ class CurrencySelectionSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      isDismissible: true,
+      isDismissible: false,
       builder: (context) =>
           CurrencySelectionSheet(initialCurrencyCode: initialCurrencyCode),
     );

@@ -97,6 +97,8 @@ class LiquidHeroBanner extends StatelessWidget {
                             walletController.isBalanceVisible.value
                                 ? TransactionFormHelpers.formatShort(
                                     balance.value,
+                                    currencyCode:
+                                        walletController.currencyCode.value,
                                   )
                                 : '*********',
                             textStyle: context.ccTextTheme.headlineMedium

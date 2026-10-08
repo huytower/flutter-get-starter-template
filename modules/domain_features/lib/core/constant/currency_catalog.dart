@@ -33,7 +33,7 @@ class CurrencyCatalog {
   static const List<CurrencyDefinition> definitions = [
     CurrencyDefinition(
       code: CurrencyConstants.vnd,
-      nameKey: 'currency.vnd',
+      nameKey: 'profile.currency_vnd',
       symbol: 'đ',
       sampleAmount: 2500000,
       locale: 'vi_VN',
@@ -43,7 +43,7 @@ class CurrencyCatalog {
     ),
     CurrencyDefinition(
       code: CurrencyConstants.usd,
-      nameKey: 'currency.usd',
+      nameKey: 'profile.currency_usd',
       symbol: '\$',
       sampleAmount: 100,
       locale: 'en_US',
@@ -53,7 +53,7 @@ class CurrencyCatalog {
     ),
     CurrencyDefinition(
       code: CurrencyConstants.eur,
-      nameKey: 'currency.eur',
+      nameKey: 'profile.currency_eur',
       symbol: '€',
       sampleAmount: 85,
       locale: 'en_US',
@@ -63,7 +63,7 @@ class CurrencyCatalog {
     ),
     CurrencyDefinition(
       code: CurrencyConstants.jpy,
-      nameKey: 'currency.jpy',
+      nameKey: 'profile.currency_jpy',
       symbol: '¥',
       sampleAmount: 11347,
       locale: 'ja_JP',
@@ -73,7 +73,7 @@ class CurrencyCatalog {
     ),
     CurrencyDefinition(
       code: CurrencyConstants.krw,
-      nameKey: 'currency.krw',
+      nameKey: 'profile.currency_krw',
       symbol: '₩',
       sampleAmount: 135000,
       locale: 'ko_KR',
@@ -83,7 +83,7 @@ class CurrencyCatalog {
     ),
     CurrencyDefinition(
       code: CurrencyConstants.cny,
-      nameKey: 'currency.cny',
+      nameKey: 'profile.currency_cny',
       symbol: '¥',
       sampleAmount: 639,
       locale: 'zh_CN',

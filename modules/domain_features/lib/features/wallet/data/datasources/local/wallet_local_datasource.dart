@@ -1,12 +1,11 @@
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
-import 'package:data_config/core/util/sync_trace.dart';
+import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 
-import 'package:domain_features/core/constant/currency_constants.dart';
 import '../../../domain/entities/wallet_entity.dart';
 import '../../models/wallet_hive_model.dart';
 
@@ -53,9 +52,6 @@ class WalletLocalDataSource {
           currencyCode: CurrencyConstants.defaultCurrencyCode,
         ),
       });
-      SyncTrace.log(
-        'HIVE   WALLET box was EMPTY -> seeded default cash+bank (0 balance)',
-      );
       return box;
     }
 
@@ -75,7 +71,8 @@ class WalletLocalDataSource {
             iconCode: Icons.account_balance.codePoint,
             type: WalletType.bank,
             createdAt: m.createdAt,
-            currencyCode: m.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
+            currencyCode:
+                m.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
           ),
     };
     if (!box.values.any((m) => m.type == WalletType.cash)) {
@@ -87,10 +84,6 @@ class WalletLocalDataSource {
 
   Future<List<WalletEntity>> getWallets() async {
     final box = await _box;
-    SyncTrace.log(
-      'HIVE   WALLET getWallets() reads ${box.length} record(s) '
-      'ids=${box.keys.toList()}',
-    );
     return box.values.map((m) => m.toEntity()).toList();
   }
 

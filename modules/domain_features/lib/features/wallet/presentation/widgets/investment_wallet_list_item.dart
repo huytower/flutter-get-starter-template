@@ -54,6 +54,7 @@ class InvestmentWalletListItem extends StatelessWidget {
           value: returned,
           color: PrjColors.success,
           icon: const Icon(Icons.auto_graph_rounded),
+          currencyCode: wallet.currencyCode,
         ),
         const CcSpaceXS(),
         Divider(
@@ -66,6 +67,7 @@ class InvestmentWalletListItem extends StatelessWidget {
           value: contributed,
           color: context.ccColorScheme.onSurfaceVariant,
           icon: const Icon(Icons.eco),
+          currencyCode: wallet.currencyCode,
         ),
       ],
     );

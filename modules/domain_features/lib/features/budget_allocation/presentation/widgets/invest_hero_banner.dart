@@ -79,6 +79,8 @@ class InvestHeroBanner extends StatelessWidget {
                               walletController.isBalanceVisible.value
                                   ? TransactionFormHelpers.formatShort(
                                       walletController.allTimeInvested.value,
+                                      currencyCode:
+                                          walletController.currencyCode.value,
                                     )
                                   : '*********',
                               textStyle: context.ccTextTheme.headlineSmall
@@ -99,6 +101,8 @@ class InvestHeroBanner extends StatelessWidget {
                               walletController.isBalanceVisible.value
                                   ? TransactionFormHelpers.formatShort(
                                       walletController.allTimeReturned.value,
+                                      currencyCode:
+                                          walletController.currencyCode.value,
                                     )
                                   : '*********',
                               textStyle: context.ccTextTheme.headlineSmall

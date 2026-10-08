@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/constant/currency_catalog.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/getx/cc_get_controller.dart';
@@ -51,48 +49,41 @@ class CurrencySelectionController extends CcGetController {
     final requestId = Object();
     _activeRequest = requestId;
     final baseCurrency = requestCurrency;
-    final baseDef =
-        CurrencyCatalog.tryGetDefinition(baseCurrency) ??
-        CurrencyCatalog.definitions.first;
 
     final bool isBaseVnd = baseCurrency.toUpperCase() == 'VND';
+    final otherCodes = CurrencyConstants.supportedCurrencyCodes
+        .where((c) => c.toUpperCase() != baseCurrency.toUpperCase())
+        .toList();
 
-    for (final code in CurrencyConstants.supportedCurrencyCodes) {
-      if (code.toUpperCase() == baseCurrency.toUpperCase()) continue;
-
+    for (final code in otherCodes) {
       isLoadingRates[code] = true;
-      final codeDef = CurrencyCatalog.tryGetDefinition(code);
-      if (codeDef == null) continue;
-
-      // If base is VND, convert 1 unit of row 'code' to VND (e.g. 1 USD -> VND).
-      // If base is major currency (USD/EUR...), convert 1 unit of base to row 'code' (e.g. 1 USD -> CNY).
-      final fromCur = isBaseVnd ? code : baseCurrency;
-      final toCur = isBaseVnd ? baseCurrency : code;
-      final fromDef = isBaseVnd ? codeDef : baseDef;
-
-      final unitAmount = pow(10, fromDef.decimalDigits).round();
-
-      final result = await _conversionService.convertAmount(
-        amount: unitAmount,
-        fromCurrency: fromCur,
-        toCurrency: toCur,
-      );
-
-      if (!identical(_activeRequest, requestId)) return;
-
-      isLoadingRates[code] = false;
-      result.when(
-        (converted) {
-          convertedAmounts[code] = converted;
-        },
-        (error) {
-          convertedAmounts[code] = 0;
-          debugPrint(
-            '[CurrencySelectionController] Rate conversion failed for $fromCur -> $toCur: $error',
-          );
-        },
-      );
     }
+
+    final result = await _conversionService.convertAll(
+      baseCurrency: baseCurrency,
+      targetCurrencies: otherCodes,
+      isBaseVnd: isBaseVnd,
+    );
+
+    if (!identical(_activeRequest, requestId)) return;
+
+    for (final code in otherCodes) {
+      isLoadingRates[code] = false;
+    }
+
+    result.when(
+      (map) {
+        convertedAmounts.assignAll(map);
+      },
+      (error) {
+        for (final code in otherCodes) {
+          convertedAmounts[code] = 0;
+        }
+        debugPrint(
+          '[CurrencySelectionController] Batch rate conversion failed for base $baseCurrency: $error',
+        );
+      },
+    );
   }
 
   Object? _activeRequest;

@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:injectable/injectable.dart';
 
-import 'sync_trace.dart';
-
 /// Base service for synchronizing data between Hive and Firestore.
 ///
 /// This service provides offline-first synchronization with automatic conflict resolution
@@ -29,9 +27,6 @@ class FirestoreSyncService {
   }) async {
     try {
       final collectionPath = getUserCollectionPath(userId, collectionName);
-      SyncTrace.log(
-        'PUSH  start path=$collectionPath localId=$localId remoteId=$remoteId',
-      );
       final collection = _firestore.collection(collectionPath);
 
       // Add sync metadata to the data
@@ -54,27 +49,16 @@ class FirestoreSyncService {
             final remoteTime = DateTime.parse(remoteModifiedAt);
             if (remoteTime.isAfter(lastSyncedAt)) {
               // Remote is newer, don't overwrite
-              SyncTrace.log(
-                'PUSH  SKIPPED (remote newer) collection=$collectionName '
-                'remoteModifiedAt=$remoteModifiedAt lastSyncedAt=$lastSyncedAt',
-              );
               return remoteId;
             }
           }
 
           await collection.doc(remoteId).update(syncData);
-          SyncTrace.log(
-            'PUSH  updated doc=$remoteId collection=$collectionName',
-          );
           return remoteId;
         } else {
           // Document doesn't exist remotely, recreate it under the same id so
           // that repeat pushes stay idempotent instead of duplicating.
           await collection.doc(remoteId).set(syncData);
-          SyncTrace.log(
-            'PUSH  remoteId pointed at a deleted doc -> recreated '
-            'doc=$remoteId collection=$collectionName localId=$localId',
-          );
           return remoteId;
         }
       } else {
@@ -82,14 +66,9 @@ class FirestoreSyncService {
         // `collection.add()` here would allocate a random auto-id, so every
         // repeated push of the same local record spawned a new duplicate.
         await collection.doc(localId).set(syncData);
-        SyncTrace.log(
-          'PUSH  created doc=$localId collection=$collectionName '
-          'localId=$localId',
-        );
         return localId;
       }
     } catch (e) {
-      SyncTrace.log('PUSH  FAILED collection=$collectionName error=$e');
       throw SyncException('Failed to sync to Firestore: $e');
     }
   }
@@ -109,13 +88,8 @@ class FirestoreSyncService {
         return data;
       }).toList();
 
-      SyncTrace.log(
-        'PULL  network-returned docs=${docs.length} path=$collectionPath '
-        'localIds=${docs.map((d) => d['localId']).toList()}',
-      );
       return docs;
     } catch (e) {
-      SyncTrace.log('PULL  FAILED collection=$collectionName error=$e');
       throw SyncException('Failed to fetch from Firestore: $e');
     }
   }

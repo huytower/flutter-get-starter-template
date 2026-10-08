@@ -4,7 +4,6 @@ import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:data_config/core/util/firestore_sync_service.dart';
-import 'package:data_config/core/util/sync_trace.dart';
 import 'package:get/get.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
@@ -138,10 +137,6 @@ class FinancialDataSyncService {
         }
       }),
     );
-    SyncTrace.log(
-      'WATCH  startWatching() online=${isOnline.value} '
-      'pendingCount=${pendingCount.value} authed=${_isAuthenticated}',
-    );
   }
 
   /// Asks the connectivity checker for the real current state and mirrors it
@@ -200,11 +195,6 @@ class FinancialDataSyncService {
         // Signed out without a verified sync — forget the live user, keep the
         // records so they can still be pushed if the same user returns.
         _observedUserId = null;
-        SyncTrace.log(
-          'SESSION signed out — cache kept '
-          'owner=${CcAppStorage.instance.financialDataOwnerId} '
-          'pending=${pendingCount.value}',
-        );
         await _releaseLoadedControllers();
         return;
       }
@@ -229,12 +219,6 @@ class FinancialDataSyncService {
       // repopulates from Firestore. Log loudly rather than letting a guest's
       // work disappear with no trace.
       final orphaned = previousOwner == null ? _countPending() : 0;
-      if (orphaned > 0) {
-        SyncTrace.log(
-          'CACHE  discarding $orphaned guest record(s) created while signed '
-          'out — no owner to sync them to before $userId signs in',
-        );
-      }
       await _clearFinancialCache();
     }
     CcAppStorage.instance.financialDataOwnerId = userId;
@@ -448,16 +432,11 @@ class FinancialDataSyncService {
       // cache clear would silently destroy a guest's local records — they
       // belong to no account, so there is nothing to protect them from and
       // nowhere to push them to. They stay put until an account signs in.
-      SyncTrace.log(
-        'LOGOUT no-op — already signed out '
-        'pending=${_countPending()} left untouched',
-      );
       return LogoutResult.success;
     }
 
     // Always trust the probe over the cached Rx value.
     if (!await _probeOnline()) {
-      SyncTrace.log('LOGOUT blocked — offline');
       return LogoutResult.offline;
     }
 
@@ -467,7 +446,6 @@ class FinancialDataSyncService {
 
     if (_countPending() > 0) {
       final remaining = _countPending();
-      SyncTrace.log('LOGOUT blocked — $remaining record(s) still unsynced');
       return LogoutResult.pendingSync;
     }
 
@@ -480,7 +458,6 @@ class FinancialDataSyncService {
     // previous user's balances.
     final owner = CcAppStorage.instance.financialDataOwnerId;
     await _enqueueTransition(_resetAfterLogout);
-    SyncTrace.log('LOGOUT completed — cache cleared (previous owner=$owner)');
     return LogoutResult.success;
   }
 
@@ -545,7 +522,6 @@ class FinancialDataSyncService {
       'syncAll failed: $e'.Log('FinancialDataSyncService');
     } finally {
       pendingCount.value = _countPending();
-      SyncTrace.log('PUSH  syncAll() done pendingCount=${pendingCount.value}');
     }
   }
 
@@ -608,15 +584,11 @@ class FinancialDataSyncService {
     try {
       final userId = _userId;
       if (userId == null) {
-        SyncTrace.log('PULL  ABORTED — no authenticated userId');
         return;
       }
       if (!await _connection.hasInternetAccess) {
-        SyncTrace.log('PULL  ABORTED — no internet');
         return;
       }
-
-      SyncTrace.log('PULL  ===== begin pullFromFirestore userId=$userId =====');
 
       await _pullWallets(userId);
       await _pullTransactions(userId);
@@ -624,8 +596,6 @@ class FinancialDataSyncService {
       await _pullReconciliations(userId);
       await _pullCategories(userId);
       await _pullLiabilities(userId);
-
-      SyncTrace.log('PULL  ===== end pullFromFirestore userId=$userId =====');
 
       // The pull mutated the Hive boxes, so anything already rendered from
       // them is now stale. Refreshing here (rather than at each call site)
@@ -636,7 +606,6 @@ class FinancialDataSyncService {
       await _refreshLoadedControllers();
     } catch (e) {
       'pullFromFirestore failed: $e'.Log('FinancialDataSyncService');
-      SyncTrace.log('PULL  FAILED error=$e');
     }
   }
 
@@ -922,7 +891,6 @@ class FinancialDataSyncService {
       if (key != null) {
         await box.put(key, _withSyncStatus(model, SyncStatus.failed));
       }
-      SyncTrace.log('PUSH  marked FAILED localId=$key error=$e');
     }
   }
 
@@ -939,11 +907,6 @@ class FinancialDataSyncService {
         collectionName: collectionName,
       );
 
-      SyncTrace.log(
-        'MERGE $collectionName: ${remoteData.length} remote doc(s), '
-        '${box.length} local record(s)',
-      );
-
       for (final data in remoteData) {
         final localId = data['localId'] as String;
         final existing = box.get(localId);
@@ -951,7 +914,6 @@ class FinancialDataSyncService {
         if (existing == null) {
           final model = fromFirestore(data, localId);
           await box.put(localId, model);
-          SyncTrace.log('MERGE $collectionName: INSERTED localId=$localId');
         } else {
           final remoteModifiedAt = data['lastModifiedAt'] as String?;
           final parsedRemote = remoteModifiedAt != null
@@ -964,21 +926,11 @@ class FinancialDataSyncService {
               (parsedRemote != null && parsedRemote.isAfter(localModifiedAt))) {
             final model = fromFirestore(data, localId);
             await box.put(localId, model);
-            SyncTrace.log(
-              'MERGE $collectionName: OVERWROTE localId=$localId '
-              '(localModAt=$localModifiedAt remoteModAt=$parsedRemote)',
-            );
-          } else {
-            SyncTrace.log(
-              'MERGE $collectionName: KEPT LOCAL localId=$localId '
-              '(localModAt=$localModifiedAt remoteModAt=$parsedRemote)',
-            );
           }
         }
       }
     } catch (e) {
       'Pull failed for $collectionName: $e'.Log('FinancialDataSyncService');
-      SyncTrace.log('MERGE $collectionName: FAILED error=$e');
     }
   }
 

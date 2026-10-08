@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
+import '../../constant/currency_constants.dart';
 import '../../helper/transaction_form_helpers.dart';
 
 class AssetStatItem extends StatelessWidget {
@@ -8,6 +9,7 @@ class AssetStatItem extends StatelessWidget {
   final int value;
   final Color color;
   final Widget icon;
+  final String? currencyCode;
 
   const AssetStatItem({
     super.key,
@@ -15,6 +17,7 @@ class AssetStatItem extends StatelessWidget {
     required this.value,
     required this.color,
     required this.icon,
+    this.currencyCode,
   });
 
   @override
@@ -36,7 +39,11 @@ class AssetStatItem extends StatelessWidget {
         ),
         const Spacer(),
         CcText(
-          TransactionFormHelpers.formatShort(value),
+          TransactionFormHelpers.formatShort(
+            value,
+            currencyCode:
+                currencyCode ?? CurrencyConstants.currentPrimaryCurrency,
+          ),
           align: Alignment.center,
           textAlign: TextAlign.center,
           textStyle: context.ccTextTheme.labelLarge?.copyWith(

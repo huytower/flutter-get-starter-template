@@ -82,6 +82,99 @@ class CurrencyConversionService {
     return Success(convertedMinor);
   }
 
+  /// Batch fetch and convert 1 unit of multiple target currencies to/from a base currency in a single repository call.
+  Future<Result<Map<String, int>, CcFailure>> convertAll({
+    required String baseCurrency,
+    required List<String> targetCurrencies,
+    bool isBaseVnd = false,
+    DateTime? date,
+    ConversionUse use = ConversionUse.display,
+  }) async {
+    final baseDef = CurrencyCatalog.tryGetDefinition(baseCurrency);
+    if (baseDef == null) {
+      return const Error(ValidationFailure('Unsupported base currency'));
+    }
+
+    final uniqueTargets = targetCurrencies
+        .where((c) => c.toUpperCase() != baseDef.code.toUpperCase())
+        .toList();
+
+    if (uniqueTargets.isEmpty) {
+      return const Success({});
+    }
+
+    // If base is VND, fetch rates with USD base and convert quote-to-VND in batch
+    final effectiveBase = isBaseVnd ? 'USD' : baseDef.code;
+    final effectiveQuotes = isBaseVnd
+        ? [...uniqueTargets, 'VND'].map((s) => s.toUpperCase()).toSet().toList()
+        : uniqueTargets;
+
+    final result = await _repository.getExchangeRates(
+      baseCurrency: effectiveBase,
+      quoteCurrencies: effectiveQuotes,
+      date: date,
+    );
+
+    if (result.isError()) {
+      final failure = result.tryGetError()!;
+      return Error(
+        failure is NetworkExchangeRateFailure
+            ? ServerFailure(failure.message ?? 'Failed to fetch exchange rates')
+            : CacheFailure('Exchange rate error'),
+      );
+    }
+
+    final rateResult = result.tryGetSuccess()!;
+    final allowed = switch (use) {
+      ConversionUse.display => rateResult.isUsableForDisplay,
+      ConversionUse.persist => rateResult.isSafeForPersistedConversion,
+    };
+    if (!allowed) {
+      return const Error(
+        CacheFailure('No sufficiently fresh exchange rate is available'),
+      );
+    }
+
+    final table = rateResult.table;
+    final converted = <String, int>{};
+
+    if (isBaseVnd) {
+      final vndRateAgainstBase = table.rates['VND'] ?? 25982.50;
+      for (final target in uniqueTargets) {
+        final toDef = CurrencyCatalog.tryGetDefinition(target);
+        if (toDef == null) continue;
+
+        final targetRateAgainstBase = table.rates[toDef.code] ?? 1.0;
+        // Rate from target to VND = vndRateAgainstBase / targetRateAgainstBase
+        final rateToVnd = vndRateAgainstBase / targetRateAgainstBase;
+
+        final unitAmount = pow(10, toDef.decimalDigits).round();
+        final double fromScale = pow(10, toDef.decimalDigits).toDouble();
+        final majorAmount = unitAmount / fromScale;
+        final convertedMajor = majorAmount * rateToVnd;
+        converted[target.toUpperCase()] = convertedMajor.round();
+      }
+    } else {
+      final unitAmount = pow(10, baseDef.decimalDigits).round();
+      final double fromScale = pow(10, baseDef.decimalDigits).toDouble();
+      final majorAmount = unitAmount / fromScale;
+
+      for (final target in uniqueTargets) {
+        final toDef = CurrencyCatalog.tryGetDefinition(target);
+        if (toDef == null) continue;
+
+        final rate = table.rates[toDef.code];
+        if (rate != null) {
+          final double toScale = pow(10, toDef.decimalDigits).toDouble();
+          final convertedMajor = majorAmount * rate;
+          converted[target.toUpperCase()] = (convertedMajor * toScale).round();
+        }
+      }
+    }
+
+    return Success(converted);
+  }
+
   /// Batch convert multiple amounts to a single target currency.
   Future<Result<Map<String, int>, CcFailure>> convertBatch({
     required Map<String, int> amountsByCurrency,
@@ -179,7 +272,7 @@ class CurrencyConversionService {
     return Success(converted);
   }
 
-  Future<Result<int, CcFailure>> convertTotal({
+  Future<Object> convertTotal({
     required Map<String, int> amountsByCurrency,
     required String targetCurrency,
     DateTime? date,

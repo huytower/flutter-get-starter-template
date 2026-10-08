@@ -1,5 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:data_config/core/util/sync_trace.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -49,6 +48,8 @@ class WalletController extends CcGetController {
   final GetProfileSettingsUseCase _getProfileSettings;
   final CurrencyConversionService _conversionService;
   final CategoryRepository _categoryRepository;
+
+  CurrencyConversionService get conversionService => _conversionService;
 
   final RxInt currentNavIndex = 1.obs;
   final RxBool isBalanceVisible = true.obs;
@@ -390,7 +391,6 @@ class WalletController extends CcGetController {
     if (showLoading) {
       layoutStatus.value = CcLayoutStatus.loading;
     }
-    SyncTrace.log('UI     loadWallets() ENTER showLoading=$showLoading');
 
     final settings = await _getProfileSettings();
     isVip.value = settings.isVip;
@@ -401,9 +401,6 @@ class WalletController extends CcGetController {
     if (result.isError()) {
       errorMessage.value = result.tryGetError()!.message;
       layoutStatus.value = CcLayoutStatus.error;
-      SyncTrace.log(
-        'UI     loadWallets() ERROR ${result.tryGetError()!.message}',
-      );
       return;
     }
 
@@ -430,10 +427,6 @@ class WalletController extends CcGetController {
     _calculateTotalBalance();
 
     layoutStatus.value = CcLayoutStatus.success;
-    SyncTrace.log(
-      'UI     loadWallets() EXIT -> assigned ${list.length} wallet(s) '
-      'liquidBalance=$liquidBalance',
-    );
   }
 
   /// Fetches transactions once and derives, per wallet, both the activity flag
@@ -441,6 +434,7 @@ class WalletController extends CcGetController {
   Future<void> _rebuildDerivedBalances(List<WalletEntity> list) async {
     final result = await _transactionRepository.getListTransactions();
     final txns = result.when((t) => t, (_) => <TransactionEntity>[]);
+    final targetCurrency = currencyCode.value;
 
     _walletsWithTxns
       ..clear()
@@ -461,7 +455,7 @@ class WalletController extends CcGetController {
       );
 
       if (wallet.type == WalletType.investment) {
-        final allTimeContributed =
+        final rawAllTimeContributed =
             txns
                 .where(
                   (t) =>
@@ -471,7 +465,7 @@ class WalletController extends CcGetController {
                 .fold(0, (sum, t) => sum + t.amount) +
             wallet.balance;
 
-        final allTimeReturned = txns
+        final rawAllTimeReturned = txns
             .where(
               (t) =>
                   t.investmentWalletId == wallet.id &&
@@ -479,12 +473,7 @@ class WalletController extends CcGetController {
             )
             .fold(0, (sum, t) => sum + t.amount);
 
-        newStats[wallet.id] = (
-          contributed: allTimeContributed,
-          returned: allTimeReturned,
-        );
-
-        final monthlyContributed = txns
+        final rawMonthlyContributed = txns
             .where(
               (t) =>
                   t.investmentWalletId == wallet.id &&
@@ -493,7 +482,7 @@ class WalletController extends CcGetController {
             )
             .fold(0, (sum, t) => sum + t.amount);
 
-        final monthlyReturned = txns
+        final rawMonthlyReturned = txns
             .where(
               (t) =>
                   t.investmentWalletId == wallet.id &&
@@ -502,9 +491,35 @@ class WalletController extends CcGetController {
             )
             .fold(0, (sum, t) => sum + t.amount);
 
+        final resAC = await _conversionService.convertAmount(
+          amount: rawAllTimeContributed,
+          fromCurrency: wallet.currencyCode,
+          toCurrency: targetCurrency,
+        );
+        final resAR = await _conversionService.convertAmount(
+          amount: rawAllTimeReturned,
+          fromCurrency: wallet.currencyCode,
+          toCurrency: targetCurrency,
+        );
+        final resMC = await _conversionService.convertAmount(
+          amount: rawMonthlyContributed,
+          fromCurrency: wallet.currencyCode,
+          toCurrency: targetCurrency,
+        );
+        final resMR = await _conversionService.convertAmount(
+          amount: rawMonthlyReturned,
+          fromCurrency: wallet.currencyCode,
+          toCurrency: targetCurrency,
+        );
+
+        newStats[wallet.id] = (
+          contributed: resAC.tryGetSuccess() ?? rawAllTimeContributed,
+          returned: resAR.tryGetSuccess() ?? rawAllTimeReturned,
+        );
+
         monthlyStatsMap[wallet.id] = (
-          contributed: monthlyContributed,
-          returned: monthlyReturned,
+          contributed: resMC.tryGetSuccess() ?? rawMonthlyContributed,
+          returned: resMR.tryGetSuccess() ?? rawMonthlyReturned,
         );
       }
     }

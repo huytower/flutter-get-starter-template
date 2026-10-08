@@ -106,6 +106,7 @@ class CurrencySelectionContentSheet
           const CcSpaceXS(),
           _buildHiddenTagsSection(context, scheme),
           _buildActions(context, scheme),
+          const CcSpaceXS(),
         ],
       ),
     );

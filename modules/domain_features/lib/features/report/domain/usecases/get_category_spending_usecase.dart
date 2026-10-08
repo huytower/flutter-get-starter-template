@@ -59,13 +59,16 @@ class GetCategorySpendingUseCase {
 
     final convertedTotals = <String, int>{};
     for (final entry in totals.entries) {
-      final result = await _conversionService.convertTotal(
-        amountsByCurrency: entry.value,
-        targetCurrency: targetCurrency,
+      final result =
+          await _conversionService.convertTotal(
+                amountsByCurrency: entry.value,
+                targetCurrency: targetCurrency,
+              )
+              as Result<int, CcFailure>;
+      convertedTotals[entry.key] = result.when(
+        (success) => success,
+        (_) => entry.value.values.fold<int>(0, (sum, amount) => sum + amount),
       );
-      convertedTotals[entry.key] =
-          result.tryGetSuccess() ??
-          entry.value.values.fold<int>(0, (sum, amount) => sum + amount);
     }
 
     final grandTotal = convertedTotals.values.fold<double>(
