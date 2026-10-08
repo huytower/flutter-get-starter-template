@@ -159,6 +159,7 @@ class CcAmountInputSection extends StatelessWidget {
       amounts: quickAmounts,
       onSelected: onQuickAmountSelected,
       activeColor: accent,
+      currencyCode: currencyCode,
     );
   }
 }

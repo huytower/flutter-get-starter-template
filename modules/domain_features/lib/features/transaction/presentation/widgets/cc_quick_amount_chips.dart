@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 
 /// A horizontal scrollable strip of chip-like buttons for selecting
@@ -12,12 +13,14 @@ class CcQuickAmountChips extends StatelessWidget {
     required this.onSelected,
     required this.activeColor,
     this.padding,
+    this.currencyCode,
   });
 
   final List<int> amounts;
   final void Function(int) onSelected;
   final Color activeColor;
   final EdgeInsetsGeometry? padding;
+  final String? currencyCode;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +50,12 @@ class CcQuickAmountChips extends StatelessWidget {
                     borderRadius: context.brLg,
                   ),
                   child: CcText(
-                    TransactionFormHelpers.formatShort(amount),
+                    TransactionFormHelpers.formatShort(
+                      amount,
+                      currencyCode:
+                          currencyCode ??
+                          CurrencyConstants.currentPrimaryCurrency,
+                    ),
                     textStyle: context.ccTextTheme.labelMedium?.copyWith(
                       color: activeColor,
                       fontWeight: CcTypographyParams.semiBold,

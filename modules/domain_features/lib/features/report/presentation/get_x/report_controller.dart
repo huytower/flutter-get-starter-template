@@ -6,8 +6,10 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
+import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
+import '../../../../core/exchange_rates/display_currency_converter.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
@@ -38,6 +40,7 @@ class ReportController extends CcGetController {
     this._walletRepository,
     this.userLevel,
     this._generateAiAdvice,
+    this._conversionService,
   );
 
   final GetCategorySpendingUseCase _getCategorySpending;
@@ -48,6 +51,7 @@ class ReportController extends CcGetController {
   final WalletRepository _walletRepository;
   final GenerateAiFinancialAdviceUseCase _generateAiAdvice;
   final UserLevelController userLevel;
+  final CurrencyConversionService _conversionService;
 
   @override
   void onInit() {
@@ -262,6 +266,7 @@ class ReportController extends CcGetController {
         start: bounds.start,
         end: bounds.end,
         walletId: walletId,
+        targetCurrency: CurrencyConstants.currentPrimaryCurrency,
       ),
       _getTrendData.call(
         range: range.value,
@@ -295,11 +300,21 @@ class ReportController extends CcGetController {
       return;
     }
 
+    final targetCurrency = CurrencyConstants.currentPrimaryCurrency;
     spending.assignAll(spendingResult.tryGetSuccess()!);
-    trendData.value = trendResult.tryGetSuccess();
+    trendData.value = await _convertTrend(
+      trendResult.tryGetSuccess(),
+      targetCurrency,
+    );
     runway.value = runwayResult.tryGetSuccess();
-    investmentTrend.value = investmentTrendResult.tryGetSuccess();
-    liabilityTrend.value = liabilityTrendResult.tryGetSuccess();
+    investmentTrend.value = await _convertTrend(
+      investmentTrendResult.tryGetSuccess(),
+      targetCurrency,
+    );
+    liabilityTrend.value = await _convertTrend(
+      liabilityTrendResult.tryGetSuccess(),
+      targetCurrency,
+    );
 
     layoutStatus.value = CcLayoutStatus.success;
 
@@ -322,5 +337,54 @@ class ReportController extends CcGetController {
         _scrollToDailyDetail(attemptsLeft - 1);
       }
     });
+  }
+
+  Future<TrendDataEntity?> _convertTrend(
+    TrendDataEntity? data,
+    String targetCurrency,
+  ) async {
+    if (data == null) return null;
+    final transactions = await DisplayCurrencyConverter(
+      _conversionService,
+    ).convertTransactions(data.transactions, targetCurrency);
+    final conversion = <TrendPoint>[];
+    for (final point in data.points) {
+      final pointTransactions = transactions.where((transaction) {
+        final pointStart = point.date;
+        final pointEnd = range.value == ReportRange.weekly
+            ? pointStart.add(
+                const Duration(days: 6, hours: 23, minutes: 59, seconds: 59),
+              )
+            : DateTime(pointStart.year, pointStart.month + 1, 0, 23, 59, 59);
+        return !transaction.date.isBefore(pointStart) &&
+            !transaction.date.isAfter(pointEnd);
+      });
+      var income = 0.0;
+      var expense = 0.0;
+      for (final transaction in pointTransactions) {
+        if (transaction.type == TransactionType.income ||
+            transaction.type == TransactionType.investmentReturn ||
+            transaction.type == TransactionType.debtBorrow ||
+            transaction.type == TransactionType.debtCollect) {
+          income += transaction.amount;
+        } else {
+          expense += transaction.amount;
+        }
+      }
+      conversion.add(
+        TrendPoint(
+          label: point.label,
+          income: income,
+          expense: expense,
+          date: point.date,
+        ),
+      );
+    }
+    return TrendDataEntity(
+      points: conversion,
+      totalIncome: conversion.fold(0, (sum, point) => sum + point.income),
+      totalExpense: conversion.fold(0, (sum, point) => sum + point.expense),
+      transactions: transactions,
+    );
   }
 }

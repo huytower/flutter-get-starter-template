@@ -395,6 +395,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i169.GetCategorySpendingUseCase(
               gh<_i1027.TransactionRepository>(),
               gh<_i1059.CategoryRepository>(),
+              gh<_i195.CurrencyConversionService>(),
             ));
     gh.lazySingleton<_i951.GetTrendDataUseCase>(() => _i951.GetTrendDataUseCase(
           gh<_i1027.TransactionRepository>(),
@@ -524,6 +525,14 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
             ));
+    gh.lazySingleton<_i231.WalletController>(() => _i231.WalletController(
+          gh<_i572.WalletRepository>(),
+          gh<_i1027.TransactionRepository>(),
+          gh<_i105.GetWalletBookBalanceUseCase>(),
+          gh<_i845.GetInvestmentRoiUseCase>(),
+          gh<_i569.GetProfileSettingsUseCase>(),
+          gh<_i195.CurrencyConversionService>(),
+        ));
     gh.factory<_i174.CategorySettingsController>(
         () => _i174.CategorySettingsController(
               gh<_i397.GetCategoryGroupsUseCase>(),
@@ -538,13 +547,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i569.GetProfileSettingsUseCase>(),
               gh<_i240.CreateInvestmentTransactionUseCase>(),
             ));
-    gh.lazySingleton<_i231.WalletController>(() => _i231.WalletController(
-          gh<_i572.WalletRepository>(),
-          gh<_i1027.TransactionRepository>(),
-          gh<_i105.GetWalletBookBalanceUseCase>(),
-          gh<_i845.GetInvestmentRoiUseCase>(),
-          gh<_i569.GetProfileSettingsUseCase>(),
-        ));
     gh.lazySingleton<_i701.GetFinancialRunwayUseCase>(
         () => _i701.GetFinancialRunwayUseCase(
               gh<_i572.WalletRepository>(),
@@ -680,6 +682,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i572.WalletRepository>(),
           gh<_i811.UserLevelController>(),
           gh<_i436.GenerateAiFinancialAdviceUseCase>(),
+          gh<_i195.CurrencyConversionService>(),
         ));
   }
 }

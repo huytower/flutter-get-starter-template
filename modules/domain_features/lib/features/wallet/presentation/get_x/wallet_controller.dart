@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
+import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../category/domain/entities/category_entity.dart';
@@ -38,6 +39,7 @@ class WalletController extends CcGetController {
     this._getWalletBookBalance,
     this._getInvestmentRoi,
     this._getProfileSettings,
+    this._conversionService,
   ) : _categoryRepository = getIt<CategoryRepository>();
 
   final WalletRepository _repository;
@@ -45,6 +47,7 @@ class WalletController extends CcGetController {
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
   final GetInvestmentRoiUseCase _getInvestmentRoi;
   final GetProfileSettingsUseCase _getProfileSettings;
+  final CurrencyConversionService _conversionService;
   final CategoryRepository _categoryRepository;
 
   final RxInt currentNavIndex = 1.obs;
@@ -55,6 +58,7 @@ class WalletController extends CcGetController {
 
   final RxBool isVip = false.obs;
   final RxString currencyCode = CurrencyConstants.defaultCurrencyCode.obs;
+  final RxMap<String, int> displayBalances = <String, int>{}.obs;
 
   @override
   void onInit() {
@@ -202,6 +206,9 @@ class WalletController extends CcGetController {
   final RxMap<String, int> _bookBalances = <String, int>{}.obs;
 
   int bookBalanceOf(String id) => _bookBalances[id] ?? 0;
+
+  int displayBookBalanceOf(String id) =>
+      displayBalances[id] ?? bookBalanceOf(id);
 
   /// Performance stats for investment wallets: (capital contributed, profit returned).
   final RxMap<String, ({int contributed, int returned})> _investmentStats =
@@ -419,6 +426,7 @@ class WalletController extends CcGetController {
 
     await _rebuildDerivedBalances(list);
     wallets.assignAll(list);
+    await _rebuildDisplayBalances(list);
     _calculateTotalBalance();
 
     layoutStatus.value = CcLayoutStatus.success;
@@ -513,10 +521,30 @@ class WalletController extends CcGetController {
         .fold(0, (sum, t) => sum + t.amount);
   }
 
+  Future<void> _rebuildDisplayBalances(List<WalletEntity> list) async {
+    final targetCurrency = currencyCode.value;
+    final converted = <String, int>{};
+    for (final wallet in list) {
+      final raw = bookBalanceOf(wallet.id);
+      '[WalletController] Rebuilding display balance: walletId=${wallet.id}, from=${wallet.currencyCode}, to=$targetCurrency, rawAmount=$raw'
+          .Log();
+      final result = await _conversionService.convertAmount(
+        amount: raw,
+        fromCurrency: wallet.currencyCode,
+        toCurrency: targetCurrency,
+      );
+      final convertedVal = result.tryGetSuccess() ?? raw;
+      '[WalletController] Converted balance result: raw=$raw -> converted=$convertedVal ($targetCurrency)'
+          .Log();
+      converted[wallet.id] = convertedVal;
+    }
+    displayBalances.assignAll(converted);
+  }
+
   void _calculateTotalBalance() {
     totalBalance.value = wallets.fold(
       0,
-      (sum, item) => sum + bookBalanceOf(item.id),
+      (sum, item) => sum + displayBookBalanceOf(item.id),
     );
 
     liquidBalance.value = wallets
@@ -526,7 +554,7 @@ class WalletController extends CcGetController {
               w.type == WalletType.bank ||
               w.type == WalletType.ewallet,
         )
-        .fold(0, (sum, item) => sum + bookBalanceOf(item.id));
+        .fold(0, (sum, item) => sum + displayBookBalanceOf(item.id));
 
     int totalInvestedValue = 0;
     int totalReturnedValue = 0;
@@ -579,7 +607,7 @@ class WalletController extends CcGetController {
 
     emergencyFundBalance.value = wallets
         .where((w) => w.type == WalletType.emergencyFund)
-        .fold(0, (sum, item) => sum + bookBalanceOf(item.id));
+        .fold(0, (sum, item) => sum + displayBookBalanceOf(item.id));
 
     liabilityBalance.value = 0;
   }

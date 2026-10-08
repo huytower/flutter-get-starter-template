@@ -178,4 +178,52 @@ class CurrencyConversionService {
 
     return Success(converted);
   }
+
+  Future<Result<int, CcFailure>> convertTotal({
+    required Map<String, int> amountsByCurrency,
+    required String targetCurrency,
+    DateTime? date,
+    ConversionUse use = ConversionUse.display,
+  }) async {
+    if (amountsByCurrency.isEmpty) return const Success(0);
+
+    final targetDef = CurrencyCatalog.tryGetDefinition(targetCurrency);
+    if (targetDef == null) {
+      return const Error(
+        ValidationFailure('Unsupported target currency code for conversion'),
+      );
+    }
+
+    final grouped = <String, int>{};
+    for (final entry in amountsByCurrency.entries) {
+      final definition = CurrencyCatalog.tryGetDefinition(entry.key);
+      if (definition == null) {
+        return Error(
+          ValidationFailure('Unsupported currency code: ${entry.key}'),
+        );
+      }
+      grouped.update(
+        definition.code,
+        (value) => value + entry.value,
+        ifAbsent: () => entry.value,
+      );
+    }
+
+    final convertedGroups = await convertBatch(
+      amountsByCurrency: grouped,
+      targetCurrency: targetDef.code,
+      date: date,
+      use: use,
+    );
+    if (convertedGroups.isError()) {
+      return Error(convertedGroups.tryGetError()!);
+    }
+
+    return Success(
+      convertedGroups.tryGetSuccess()!.values.fold<int>(
+        0,
+        (sum, amount) => sum + amount,
+      ),
+    );
+  }
 }

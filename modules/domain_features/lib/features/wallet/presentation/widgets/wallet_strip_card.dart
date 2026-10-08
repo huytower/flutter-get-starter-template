@@ -88,7 +88,7 @@ class WalletStripCard extends StatelessWidget {
       controller.totalBalance.value;
 
       final balance = controller.isBalanceVisible.value
-          ? controller.bookBalanceOf(wallet.id)
+          ? controller.displayBookBalanceOf(wallet.id)
           : null;
 
       return CcWalletItem(
@@ -99,7 +99,10 @@ class WalletStripCard extends StatelessWidget {
         defaultBgColor: defaultBgColor,
         onTap: () => _handleWalletTap(context, wallet.id),
         balanceText: balance != null
-            ? TransactionFormHelpers.formatShort(balance)
+            ? TransactionFormHelpers.formatShort(
+                balance,
+                currencyCode: controller.currencyCode.value,
+              )
             : el.tr(CcLocaleKeys.wallet_balance_hidden),
       );
     });

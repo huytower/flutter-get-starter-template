@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -19,15 +20,24 @@ class CurrencySelectionController extends CcGetController {
   final RxBool showHiddenTags = false.obs;
   final RxMap<String, int> convertedAmounts = <String, int>{}.obs;
   final RxMap<String, bool> isLoadingRates = <String, bool>{}.obs;
+  bool _initialized = false;
+
+  bool get isInitialized => _initialized;
 
   void init(String initialCurrencyCode) {
-    primaryCurrencyCode.value = initialCurrencyCode;
-    loadConvertedRates();
+    if (_initialized) return;
+    _initialized = true;
+    primaryCurrencyCode.value = CurrencyConstants.validateCurrencyCode(
+      initialCurrencyCode,
+    );
+    unawaited(loadConvertedRates());
   }
 
   void setPrimaryCurrency(String code) {
-    primaryCurrencyCode.value = code;
-    loadConvertedRates();
+    final normalized = CurrencyConstants.validateCurrencyCode(code);
+    if (primaryCurrencyCode.value.toUpperCase() == normalized) return;
+    primaryCurrencyCode.value = normalized;
+    unawaited(loadConvertedRates());
   }
 
   void toggleHiddenTags() {
@@ -35,7 +45,12 @@ class CurrencySelectionController extends CcGetController {
   }
 
   Future<void> loadConvertedRates() async {
-    final baseCurrency = primaryCurrencyCode.value;
+    final requestCurrency = primaryCurrencyCode.value;
+    convertedAmounts.clear();
+    isLoadingRates.clear();
+    final requestId = Object();
+    _activeRequest = requestId;
+    final baseCurrency = requestCurrency;
     final baseDef =
         CurrencyCatalog.tryGetDefinition(baseCurrency) ??
         CurrencyCatalog.definitions.first;
@@ -63,6 +78,8 @@ class CurrencySelectionController extends CcGetController {
         toCurrency: toCur,
       );
 
+      if (!identical(_activeRequest, requestId)) return;
+
       isLoadingRates[code] = false;
       result.when(
         (converted) {
@@ -77,4 +94,6 @@ class CurrencySelectionController extends CcGetController {
       );
     }
   }
+
+  Object? _activeRequest;
 }

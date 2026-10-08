@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
+import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:intl/intl.dart';
 
+import '../constant/currency_catalog.dart';
 import '../constant/currency_constants.dart';
 
 /// Consolidated money formatting helper supporting multiple currencies
@@ -63,9 +67,16 @@ class MoneyFormatter {
     bool useFullSuffix = false,
   }) {
     final code = _resolveCurrencyCode(currencyCode).toUpperCase();
-    final amount = value.toDouble();
-    final sign = amount < 0 ? '-' : '';
-    final abs = amount.abs();
+    final def = CurrencyCatalog.tryGetDefinition(code);
+    final scale = def != null ? pow(10, def.decimalDigits).toDouble() : 1.0;
+
+    // Scale minor units to major units for formatting (e.g. cents -> dollars)
+    final double adjustedValue = (value / scale).toDouble();
+    '[MoneyFormatter] formatShort: rawValue=$value, code=$code, decimalDigits=${def?.decimalDigits}, scale=$scale, adjustedValue=$adjustedValue'
+        .Log();
+
+    final sign = adjustedValue < 0 ? '-' : '';
+    final abs = adjustedValue.abs();
 
     // Detect language code (vi vs en)
     String lang = 'vi';

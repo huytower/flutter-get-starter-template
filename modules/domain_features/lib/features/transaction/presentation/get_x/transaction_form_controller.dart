@@ -48,6 +48,7 @@ abstract class TransactionFormController extends CcGetController {
     super.onInit();
     _loadWallets();
     _loadCurrency();
+    ever(CurrencyConstants.onCurrencyChanged, (_) => _loadCurrency());
     noteController.addListener(_updateNoteState);
     layoutStatus.value = CcLayoutStatus.success;
   }
