@@ -144,7 +144,7 @@ class MoneyFormatter {
     final symbol = getSymbol(code);
 
     if (code == CurrencyConstants.vnd) {
-      return '$shortText $symbol';
+      return '$shortText';
     } else {
       return '$symbol$shortText';
     }

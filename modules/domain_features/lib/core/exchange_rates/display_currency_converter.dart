@@ -1,5 +1,6 @@
 import '../../features/transaction/domain/entities/transaction_entity.dart';
 import 'currency_conversion_service.dart';
+import 'exchange_rate_types.dart';
 
 class DisplayCurrencyConverter {
   const DisplayCurrencyConverter(this._service);
