@@ -2,6 +2,7 @@ import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:message/cc_locale_keys.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../firestore/financial_data_sync_service.dart';

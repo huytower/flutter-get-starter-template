@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/currency_constants.dart';
-
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/budget_name_helper.dart';
@@ -56,6 +55,12 @@ class WalletController extends CcGetController {
 
   final RxBool isVip = false.obs;
   final RxString currencyCode = CurrencyConstants.defaultCurrencyCode.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(CurrencyConstants.onCurrencyChanged, (_) => loadWallets());
+  }
 
   void toggleEditMode() {
     isEditMode.toggle();

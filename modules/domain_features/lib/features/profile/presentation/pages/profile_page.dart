@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:message/cc_locale_keys.dart';
 
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../../guideline/export_guideline.dart';

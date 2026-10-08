@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:theme/export_theme.dart';
+import 'package:message/cc_locale_keys.dart';
 
 import '../../../../../core/constant/currency_catalog.dart';
 import '../../../../../core/constant/currency_constants.dart';

@@ -2,6 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:message/cc_locale_keys.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 @RoutePage()

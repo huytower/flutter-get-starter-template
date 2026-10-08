@@ -15,6 +15,7 @@ class CurrencySelectionSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      isDismissible: true,
       builder: (context) =>
           CurrencySelectionSheet(initialCurrencyCode: initialCurrencyCode),
     );
@@ -23,9 +24,9 @@ class CurrencySelectionSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: Theme.of(context).copyWith(
-        scaffoldBackgroundColor: Colors.transparent,
-      ),
+      data: Theme.of(
+        context,
+      ).copyWith(scaffoldBackgroundColor: Colors.transparent),
       child: CurrencySelectionContentSheet(
         initialCurrencyCode: initialCurrencyCode,
       ),

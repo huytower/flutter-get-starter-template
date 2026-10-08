@@ -7,13 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
 import '../../../budget_limit/domain/usecases/get_budget_insights_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
-import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../../liability/domain/entities/liability_balance_entity.dart';
 import '../../../liability/domain/usecases/get_liability_balances_usecase.dart';
@@ -215,7 +215,7 @@ class BudgetAllocationController extends CcGetController {
     if (!Get.isRegistered<BudgetLimitController>()) {
       Get.put(budgetLimitController);
     }
-    ever(CategorySettingsController.onCategoriesChanged, (_) => loadAll());
+    ever(CurrencyConstants.onCurrencyChanged, (_) => loadAll());
   }
 
   @override

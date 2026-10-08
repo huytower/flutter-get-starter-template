@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
+import 'package:message/cc_locale_keys.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';
 
 import '../../../../core/constant/currency_constants.dart';
@@ -377,7 +378,7 @@ class ProfileController extends CcGetController {
       settings.value = updated;
       await _updateSettings(updated);
       await _load();
-      CategorySettingsController.onCategoriesChanged.value++;
+      CurrencyConstants.onCurrencyChanged.value++;
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:message/cc_locale_keys.dart';
 
 import '../../user_level/domain/entities/user_level_status_entity.dart';
 
