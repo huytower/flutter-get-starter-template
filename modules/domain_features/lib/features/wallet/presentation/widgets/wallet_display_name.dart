@@ -7,6 +7,13 @@ import '../../domain/entities/wallet_entity.dart';
 
 extension WalletDisplayName on WalletEntity {
   String displayName(BuildContext context) {
+    if (name.isNotEmpty &&
+        name != 'Tiền mặt' &&
+        name != 'Ngân hàng' &&
+        name != el.tr(CcLocaleKeys.wallet_cash) &&
+        name != el.tr(CcLocaleKeys.wallet_bank)) {
+      return name;
+    }
     if (type == WalletType.cash) {
       return el.tr(CcLocaleKeys.wallet_cash);
     }

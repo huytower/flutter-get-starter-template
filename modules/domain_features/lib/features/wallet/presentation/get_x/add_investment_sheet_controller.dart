@@ -154,21 +154,15 @@ class AddInvestmentSheetController extends CcGetController {
     // The categoryNameKey this wallet belongs to:
     // - editing: use the wallet's existing key
     // - creating: use the selected category's key
-    final targetCategoryKey = wallet?.categoryNameKey ??
-        selectedInvestmentCategory.value?.nameKey;
+    final targetCategoryKey =
+        wallet?.categoryNameKey ?? selectedInvestmentCategory.value?.nameKey;
 
     // Check for duplicate name OR duplicate category type
     // (excluding the wallet currently being edited).
-    final isDuplicate = _walletController.wallets.any(
-      (w) {
-        if (w.id == wallet?.id) return false;
-        final sameName =
-            w.name.trim().toLowerCase() == name.toLowerCase();
-        final sameCategory = targetCategoryKey != null &&
-            w.categoryNameKey == targetCategoryKey;
-        return sameName || sameCategory;
-      },
-    );
+    final isDuplicate = _walletController.wallets.any((w) {
+      if (w.id == wallet?.id) return false;
+      return w.name.trim().toLowerCase() == name.toLowerCase();
+    });
 
     if (isDuplicate) {
       nameError.value = el.tr(CcLocaleKeys.wallet_name_duplicate_error);
