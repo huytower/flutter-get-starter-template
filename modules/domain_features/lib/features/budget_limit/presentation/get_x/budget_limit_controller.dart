@@ -3,8 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../category/presentation/get_x/category_settings_controller.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 import '../../domain/usecases/create_budget_limit_usecase.dart';
 import '../../domain/usecases/delete_budget_limit_usecase.dart';
@@ -41,10 +44,8 @@ class BudgetLimitController extends CcGetController {
   @override
   void onInit() {
     super.onInit();
-    ever(
-      CategorySettingsController.onCategoriesChanged,
-      (_) => loadBudgets(),
-    );
+    ever(CategorySettingsController.onCategoriesChanged, (_) => loadBudgets());
+    ever(CurrencyConstants.onCurrencyChanged, (_) => loadBudgets());
   }
 
   @override
@@ -62,8 +63,41 @@ class BudgetLimitController extends CcGetController {
 
     final result = await _getBudgetStats.call();
     result.when(
-      (success) {
-        budgets.assignAll(success);
+      (success) async {
+        final walletController = Get.isRegistered<WalletController>()
+            ? Get.find<WalletController>()
+            : Get.put(getIt<WalletController>());
+        final targetCurrency = walletController.currencyCode.value;
+
+        final convertedStats = <BudgetLimitStatsEntity>[];
+        for (final stat in success) {
+          final convLimit = await walletController.conversionService
+              .convertAmount(
+                amount: stat.budget.limit,
+                fromCurrency: stat.budget.currencyCode,
+                toCurrency: targetCurrency,
+              );
+          final convertedLimit = convLimit.tryGetSuccess() ?? stat.budget.limit;
+
+          final convSpent = await walletController.conversionService
+              .convertAmount(
+                amount: stat.spent,
+                fromCurrency: stat.budget.currencyCode,
+                toCurrency: targetCurrency,
+              );
+          final convertedSpent = convSpent.tryGetSuccess() ?? stat.spent;
+
+          final updatedBudget = stat.budget.copyWith(
+            limit: convertedLimit,
+            currencyCode: targetCurrency,
+          );
+
+          convertedStats.add(
+            stat.copyWith(budget: updatedBudget, spent: convertedSpent),
+          );
+        }
+
+        budgets.assignAll(convertedStats);
         layoutStatus.value = CcLayoutStatus.success;
       },
       (error) {

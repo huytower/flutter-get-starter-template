@@ -1,8 +1,11 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/reconciliation_entity.dart';
 
 /// Summary card for a past reconciliation in the history list.
@@ -13,73 +16,90 @@ class ReconciliationHistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final walletController = Get.isRegistered<WalletController>()
+        ? Get.find<WalletController>()
+        : Get.put(getIt<WalletController>());
     final scheme = context.ccColorScheme;
     final balanced = reconciliation.isBalanced;
     final diff = reconciliation.difference;
 
-    return Container(
-      margin: EdgeInsets.only(bottom: context.respDim(12)),
-      padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
-      decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: context.brLg,
-        border: Border.all(color: scheme.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CcText(
-                el.tr(
-                  CcLocaleKeys.reconciliation_week,
-                  namedArgs: {
-                    'week': reconciliation.week.toString(),
-                    'year': reconciliation.year.toString(),
-                  },
-                ),
-                textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                  fontWeight: CcTypographyParams.bold,
-                ),
-              ),
-              CcText(
-                '${reconciliation.date.day}/${reconciliation.date.month}/${reconciliation.date.year}',
-                textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-          const CcSpaceSM(),
-          _row(
-            context,
-            el.tr(CcLocaleKeys.reconciliation_book),
-            formatVndWithSymbol(reconciliation.systemTotal),
-          ),
-          _row(
-            context,
-            el.tr(CcLocaleKeys.reconciliation_actual),
-            formatVndWithSymbol(reconciliation.actualTotal),
-          ),
-          const CcSpaceXS(),
-          CcText(
-            balanced
-                ? el.tr(CcLocaleKeys.reconciliation_balanced)
-                : el.tr(
-                    diff > 0
-                        ? CcLocaleKeys.reconciliation_surplus
-                        : CcLocaleKeys.reconciliation_deficit,
-                    namedArgs: {'amount': formatVndWithSymbol(diff.abs())},
+    return Obx(() {
+      final currencyCode = walletController.currencyCode.value;
+      return Container(
+        margin: EdgeInsets.only(bottom: context.respDim(12)),
+        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: context.brLg,
+          border: Border.all(color: scheme.outlineVariant),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CcText(
+                  el.tr(
+                    CcLocaleKeys.reconciliation_week,
+                    namedArgs: {
+                      'week': reconciliation.week.toString(),
+                      'year': reconciliation.year.toString(),
+                    },
                   ),
-            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-              color: balanced ? scheme.primary : scheme.error,
-              fontWeight: CcTypographyParams.bold,
+                  textStyle: context.ccTextTheme.titleSmall?.copyWith(
+                    fontWeight: CcTypographyParams.bold,
+                  ),
+                ),
+                CcText(
+                  '${reconciliation.date.day}/${reconciliation.date.month}/${reconciliation.date.year}',
+                  textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
-    );
+            const CcSpaceSM(),
+            _row(
+              context,
+              el.tr(CcLocaleKeys.reconciliation_book),
+              formatShortCurrencyWithSymbol(
+                reconciliation.systemTotal,
+                currencyCode: currencyCode,
+              ),
+            ),
+            _row(
+              context,
+              el.tr(CcLocaleKeys.reconciliation_actual),
+              formatShortCurrencyWithSymbol(
+                reconciliation.actualTotal,
+                currencyCode: currencyCode,
+              ),
+            ),
+            const CcSpaceXS(),
+            CcText(
+              balanced
+                  ? el.tr(CcLocaleKeys.reconciliation_balanced)
+                  : el.tr(
+                      diff > 0
+                          ? CcLocaleKeys.reconciliation_surplus
+                          : CcLocaleKeys.reconciliation_deficit,
+                      namedArgs: {
+                        'amount': formatShortCurrencyWithSymbol(
+                          diff.abs(),
+                          currencyCode: currencyCode,
+                        ),
+                      },
+                    ),
+              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                color: balanced ? scheme.primary : scheme.error,
+                fontWeight: CcTypographyParams.bold,
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _row(BuildContext context, String label, String value) {

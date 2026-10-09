@@ -38,6 +38,24 @@ class BudgetLimitStatsEntity extends Equatable {
     this.categoryNameKey,
   });
 
+  BudgetLimitStatsEntity copyWith({
+    BudgetLimitEntity? budget,
+    int? spent,
+    int? iconCode,
+    String? iconFamily,
+    Color? color,
+    String? categoryNameKey,
+  }) {
+    return BudgetLimitStatsEntity(
+      budget: budget ?? this.budget,
+      spent: spent ?? this.spent,
+      iconCode: iconCode ?? this.iconCode,
+      iconFamily: iconFamily ?? this.iconFamily,
+      color: color ?? this.color,
+      categoryNameKey: categoryNameKey ?? this.categoryNameKey,
+    );
+  }
+
   /// Amount still available ("còn X"); negative when over the limit.
   int get remaining => budget.limit - spent;
 

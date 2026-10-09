@@ -24,13 +24,13 @@ class ReconciliationSummary extends StatelessWidget {
       final diff = controller.difference;
       final diffText = diff == 0
           ? el.tr(CcLocaleKeys.reconciliation_balanced)
-          : '${diff < 0 ? '-' : '+'}${formatCurrencyWithSymbol(diff.abs(), currencyCode: currencyCode)}';
+          : '${diff < 0 ? '-' : '+'}${formatShortCurrencyWithSymbol(diff.abs(), currencyCode: currencyCode)}';
       return Column(
         children: [
           _summaryRow(
             context,
             el.tr(CcLocaleKeys.reconciliation_book_total),
-            formatCurrencyWithSymbol(
+            formatShortCurrencyWithSymbol(
               controller.systemTotal.value,
               currencyCode: currencyCode,
             ),
@@ -38,7 +38,7 @@ class ReconciliationSummary extends StatelessWidget {
           _summaryRow(
             context,
             el.tr(CcLocaleKeys.reconciliation_actual_total),
-            formatCurrencyWithSymbol(
+            formatShortCurrencyWithSymbol(
               controller.actualTotal.value,
               currencyCode: currencyCode,
             ),

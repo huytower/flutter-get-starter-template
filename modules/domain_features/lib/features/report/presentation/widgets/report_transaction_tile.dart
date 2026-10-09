@@ -90,6 +90,7 @@ class TransactionTile extends StatelessWidget {
                   if (transaction.note != null)
                     CcText(
                       transaction.note!,
+                      maxLines: 2,
                       textStyle: context.ccTextTheme.bodySmall,
                       color: context.ccColorScheme.onSurfaceVariant,
                     ),

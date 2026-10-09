@@ -71,7 +71,7 @@ class WalletReconcileTile extends StatelessWidget {
                       el.tr(
                         CcLocaleKeys.reconciliation_book_balance,
                         namedArgs: {
-                          'amount': formatCurrencyWithSymbol(
+                          'amount': formatShortCurrencyWithSymbol(
                             balance.bookBalance,
                             currencyCode: currencyCode,
                           ),
@@ -169,7 +169,10 @@ class WalletActualBalanceInput extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CcText(
-                  formatCurrencyWithSymbol(actual, currencyCode: currencyCode),
+                  formatShortCurrencyWithSymbol(
+                    actual,
+                    currencyCode: currencyCode,
+                  ),
                   textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isEditing ? scheme.primary : null,
@@ -251,7 +254,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
                 CcLocaleKeys.reconciliation_lech,
                 namedArgs: {
                   'amount':
-                      '${diff > 0 ? '+' : ''}${diff < 0 ? '-' : ''}${formatCurrencyWithSymbol(diff.abs(), currencyCode: currencyCode)}',
+                      '${diff > 0 ? '+' : ''}${diff < 0 ? '-' : ''}${formatShortCurrencyWithSymbol(diff.abs(), currencyCode: currencyCode)}',
                 },
               ),
               textStyle: context.ccTextTheme.bodySmall?.copyWith(
