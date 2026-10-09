@@ -12,6 +12,25 @@ import '../../../../../core/getx/cc_get_view.dart';
 import '../../../../../core/helper/money_format_helper.dart';
 import '../get_x/currency_selection_controller.dart';
 
+String getCurrencyFlag(String code) {
+  switch (code.toUpperCase()) {
+    case 'VND':
+      return '🇻🇳';
+    case 'USD':
+      return '🇺🇸';
+    case 'EUR':
+      return '🇪🇺';
+    case 'JPY':
+      return '🇯🇵';
+    case 'KRW':
+      return '🇰🇷';
+    case 'CNY':
+      return '🇨🇳';
+    default:
+      return '🏳️';
+  }
+}
+
 class CurrencySelectionContentSheet
     extends CcGetView<CurrencySelectionController> {
   const CurrencySelectionContentSheet({
@@ -106,7 +125,7 @@ class CurrencySelectionContentSheet
           const CcSpaceXS(),
           _buildHiddenTagsSection(context, scheme),
           _buildActions(context, scheme),
-          const CcSpaceXS(),
+          const CcSpaceXL(),
         ],
       ),
     );
@@ -316,59 +335,84 @@ class CurrencySelectionContentSheet
       padding: EdgeInsets.only(bottom: context.respDim(8)),
       child: CcBouncing(
         onTap: () {
-          '[CurrencySelectionContentSheet] Tile selected base currency: $code'
-              .Log();
           controller.setPrimaryCurrency(code);
         },
         borderRadius: context.brMd,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          height: context.respDim(60),
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-          ),
-          alignment: Alignment.centerLeft,
-          decoration: BoxDecoration(
-            color: isSelected
-                ? scheme.primary.withOpacity(0.15)
-                : scheme.surface,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            const Positioned.fill(child: CcGlassyGradientBackground()),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              height: context.respDim(60),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.respPadding(CcPaddingParams.PAGE_XS),
+              ),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? scheme.primary.withValues(alpha: 0.15)
+                    : scheme.primaryContainer.withValues(alpha: 0.1),
+              ),
+              child: Row(
                 children: [
-                  CcText(
-                    code,
-                    textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: scheme.onSurfaceVariant.withOpacity(0.7),
-                      letterSpacing: 0.5,
+                  Container(
+                    width: context.respDim(32),
+                    height: context.respDim(32),
+                    decoration: BoxDecoration(
+                      color: scheme.primary.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: CcText(
+                      getCurrencyFlag(code),
+                      textAlign: TextAlign.center,
+                      align: Alignment.center,
+                      textStyle: TextStyle(fontSize: context.respFontSize(16)),
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const CcSpaceSM(),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CcText(
+                          code,
+                          textStyle: context.ccTextTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: scheme.onSurfaceVariant.withOpacity(0.7),
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        CcText(
+                          el.tr(definition.nameKey),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                            fontWeight: isSelected
+                                ? CcTypographyParams.bold
+                                : CcTypographyParams.regular,
+                            color: isSelected
+                                ? scheme.primary
+                                : scheme.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const CcSpaceSM(),
                   CcText(
-                    el.tr(definition.nameKey),
-                    textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                      fontWeight: isSelected
-                          ? CcTypographyParams.bold
-                          : CcTypographyParams.regular,
-                      color: isSelected ? scheme.primary : scheme.onSurface,
+                    displayAmount,
+                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? scheme.primary : PrjColors.success,
                     ),
                   ),
                 ],
               ),
-              CcText(
-                displayAmount,
-                textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isSelected ? scheme.primary : PrjColors.success,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
