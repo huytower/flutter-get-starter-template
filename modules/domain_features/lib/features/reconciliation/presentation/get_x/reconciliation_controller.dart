@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/reconciliation_entity.dart';
 import '../../domain/usecases/get_reconciliation_history_usecase.dart';
 import '../../domain/usecases/perform_reconciliation_usecase.dart';
@@ -67,6 +70,12 @@ class ReconciliationController extends CcGetController {
   }
 
   @override
+  void onInit() {
+    super.onInit();
+    ever(CurrencyConstants.onCurrencyChanged, (_) => loadBalances());
+  }
+
+  @override
   void onReady() {
     super.onReady();
     loadBalances();
@@ -77,7 +86,12 @@ class ReconciliationController extends CcGetController {
     layoutStatus.value = CcLayoutStatus.loading;
     final result = await _getWalletBalances.call();
     result.when(
-      (success) {
+      (success) async {
+        final walletController = Get.isRegistered<WalletController>()
+            ? Get.find<WalletController>()
+            : Get.put(getIt<WalletController>());
+        final targetCurrency = walletController.currencyCode.value;
+
         // Investment positions are excluded — "Thu vào" now credits a real
         // liquid wallet directly, so an investment wallet's own balance is
         // just cumulative contributed capital, nothing real to count here.
@@ -85,16 +99,32 @@ class ReconciliationController extends CcGetController {
         final liquid = success
             .where((b) => b.wallet.type != WalletType.investment)
             .toList();
-        balances.assignAll(liquid);
+
+        final convertedLiquid = <WalletBalanceEntity>[];
+        for (final b in liquid) {
+          final convResult = await walletController.conversionService
+              .convertAmount(
+                amount: b.bookBalance,
+                fromCurrency: b.wallet.currencyCode,
+                toCurrency: targetCurrency,
+              );
+          final convertedBalance = convResult.tryGetSuccess() ?? b.bookBalance;
+          convertedLiquid.add(b.copyWith(bookBalance: convertedBalance));
+        }
+
+        balances.assignAll(convertedLiquid);
         _actuals
           ..clear()
-          ..addEntries(liquid.map((b) => MapEntry(b.wallet.id, 0)));
+          ..addEntries(convertedLiquid.map((b) => MapEntry(b.wallet.id, 0)));
         _acknowledged.clear();
-        systemTotal.value = liquid.fold(0, (sum, b) => sum + b.bookBalance);
+        systemTotal.value = convertedLiquid.fold(
+          0,
+          (sum, b) => sum + b.bookBalance,
+        );
         actualTotal.value = 0;
         unhandledCount.value = 0;
         _updateUnhandledCount();
-        layoutStatus.value = liquid.isEmpty
+        layoutStatus.value = convertedLiquid.isEmpty
             ? CcLayoutStatus.empty
             : CcLayoutStatus.success;
       },

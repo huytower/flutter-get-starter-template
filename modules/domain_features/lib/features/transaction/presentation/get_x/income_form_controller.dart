@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
@@ -76,6 +77,7 @@ class IncomeFormController extends TransactionFormController
     super.onInit();
     _loadAll();
     initQuickEntry();
+    ever(CurrencyConstants.onCurrencyChanged, (_) => loadSuggestions());
 
     ever(
       CategorySettingsController.onCategoriesChanged,
@@ -268,9 +270,12 @@ class IncomeFormController extends TransactionFormController
 
   Future<void> loadSuggestions() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
-    quickAmounts.assignAll(
-      MoneyConstants.getIncomeSuggestions(settings.birthYear),
+    final baseVnd = MoneyConstants.getIncomeSuggestions(settings.birthYear);
+    final converted = await MoneyConstants.getConvertedQuickAmounts(
+      baseVnd,
+      currencyCode.value,
     );
+    quickAmounts.assignAll(converted);
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
@@ -39,9 +40,12 @@ class LiabilityFormController extends LiabilityBaseFormController {
 
   Future<void> loadSuggestions() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
-    quickAmounts.assignAll(
-      MoneyConstants.getLiabilitySuggestions(settings.birthYear),
+    final baseVnd = MoneyConstants.getLiabilitySuggestions(settings.birthYear);
+    final converted = await MoneyConstants.getConvertedQuickAmounts(
+      baseVnd,
+      currencyCode.value,
     );
+    quickAmounts.assignAll(converted);
   }
 
   final String direction = LiabilityDirection.borrow;
@@ -83,6 +87,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
   void onInit() {
     super.onInit();
     _loadAll();
+    ever(CurrencyConstants.onCurrencyChanged, (_) => loadSuggestions());
 
     // Listen to liability list changes to sync with deletions from list page
     if (Get.isRegistered<LiabilityListController>()) {

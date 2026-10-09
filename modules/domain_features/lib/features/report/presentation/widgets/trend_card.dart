@@ -87,7 +87,7 @@ class TrendCard extends StatelessWidget {
         ),
         const Spacer(),
         CcText(
-          formatVndShort(amount),
+          formatShortCurrencyWithSymbol(amount),
           textStyle: context.ccTextTheme.titleMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: context.ccColorScheme.onSurface,

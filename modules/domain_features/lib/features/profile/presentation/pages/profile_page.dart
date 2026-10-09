@@ -5,7 +5,6 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:message/cc_locale_keys.dart';
 
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../../guideline/export_guideline.dart';
@@ -88,15 +87,16 @@ class ProfilePage extends CcGetView<ProfileController> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     _buildDeleteAccountText(context),
-                                    const CcSpaceSM(),
+                                    const CcSpaceMD(),
                                     _buildLogoutButton(context),
                                     const CcSpaceMD(),
                                   ],
                                 )
                               : const SizedBox.shrink(),
                         ),
+                        const CcSpaceSM(),
                         _buildFooter(context),
-                        const CcSpaceXS(),
+                        const CcSpaceSM(),
                       ],
                     ),
                   ),

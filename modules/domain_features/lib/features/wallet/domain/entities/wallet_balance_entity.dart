@@ -9,6 +9,13 @@ class WalletBalanceEntity extends Equatable {
 
   const WalletBalanceEntity({required this.wallet, required this.bookBalance});
 
+  WalletBalanceEntity copyWith({WalletEntity? wallet, int? bookBalance}) {
+    return WalletBalanceEntity(
+      wallet: wallet ?? this.wallet,
+      bookBalance: bookBalance ?? this.bookBalance,
+    );
+  }
+
   @override
   List<Object?> get props => [wallet.id, bookBalance];
 }

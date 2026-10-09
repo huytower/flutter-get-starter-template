@@ -62,7 +62,7 @@ class _DailyGroupState extends State<DailyGroup> {
     final isNegative = totalDaily < 0;
     final amountPrefix = isPositive ? '+' : (isNegative ? '-' : '');
     final amountText =
-        "$amountPrefix${TransactionFormHelpers.formatShort(totalDaily.abs())}";
+        "$amountPrefix${TransactionFormHelpers.formatShortWithSymbol(totalDaily.abs())}";
 
     return Container(
       margin: EdgeInsets.only(bottom: context.respDim(16)),

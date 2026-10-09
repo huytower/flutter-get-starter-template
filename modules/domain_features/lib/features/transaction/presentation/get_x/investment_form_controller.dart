@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/money_format_helper.dart';
@@ -109,9 +110,12 @@ class InvestmentFormController extends TransactionFormController
 
   Future<void> loadSuggestions() async {
     final settings = await _getProfileSettings();
-    quickAmounts.assignAll(
-      MoneyConstants.getInvestmentSuggestions(settings.birthYear),
+    final baseVnd = MoneyConstants.getInvestmentSuggestions(settings.birthYear);
+    final converted = await MoneyConstants.getConvertedQuickAmounts(
+      baseVnd,
+      currencyCode.value,
     );
+    quickAmounts.assignAll(converted);
   }
 
   final Rx<InvestmentDirectionForm> direction =
@@ -211,6 +215,7 @@ class InvestmentFormController extends TransactionFormController
       _revealSelectedAsset();
     });
     initQuickEntry();
+    ever(CurrencyConstants.onCurrencyChanged, (_) => loadSuggestions());
   }
 
   /// Centers the selected asset card in the asset row.

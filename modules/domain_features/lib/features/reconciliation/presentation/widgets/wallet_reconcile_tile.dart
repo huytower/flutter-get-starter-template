@@ -1,10 +1,12 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../get_x/reconciliation_controller.dart';
 
 class WalletReconcileTile extends StatelessWidget {
@@ -24,8 +26,12 @@ class WalletReconcileTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ReconciliationController>();
+    final walletController = Get.isRegistered<WalletController>()
+        ? Get.find<WalletController>()
+        : Get.put(getIt<WalletController>());
 
     return Obx(() {
+      final currencyCode = walletController.currencyCode.value;
       final actual = controller.actualOf(balance.wallet.id);
       final diff = actual - balance.bookBalance;
       final isBalanced = diff == 0;
@@ -65,7 +71,10 @@ class WalletReconcileTile extends StatelessWidget {
                       el.tr(
                         CcLocaleKeys.reconciliation_book_balance,
                         namedArgs: {
-                          'amount': formatVndWithSymbol(balance.bookBalance),
+                          'amount': formatCurrencyWithSymbol(
+                            balance.bookBalance,
+                            currencyCode: currencyCode,
+                          ),
                         },
                       ),
                       textStyle: context.ccTextTheme.bodySmall?.copyWith(
@@ -78,6 +87,7 @@ class WalletReconcileTile extends StatelessWidget {
                 WalletActualBalanceInput(
                   actual: actual,
                   isEditing: isEditing,
+                  currencyCode: currencyCode,
                   onTap: () => controller.startEditing(balance.wallet.id),
                   onClear: () {
                     if (isEditing) {
@@ -92,6 +102,7 @@ class WalletReconcileTile extends StatelessWidget {
                   isBalanced: isBalanced,
                   isAcknowledged: isAcknowledged,
                   diff: diff,
+                  currencyCode: currencyCode,
                   statusColor: statusColor,
                   onAcknowledge: onAcknowledge,
                   onReview: onReview,
@@ -113,6 +124,7 @@ class WalletReconcileTile extends StatelessWidget {
 class WalletActualBalanceInput extends StatelessWidget {
   final int actual;
   final bool isEditing;
+  final String currencyCode;
   final VoidCallback onTap;
   final VoidCallback onClear;
 
@@ -120,6 +132,7 @@ class WalletActualBalanceInput extends StatelessWidget {
     super.key,
     required this.actual,
     required this.isEditing,
+    required this.currencyCode,
     required this.onTap,
     required this.onClear,
   });
@@ -156,7 +169,7 @@ class WalletActualBalanceInput extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CcText(
-                  MoneyFormatter.formatWithSymbol(actual),
+                  formatCurrencyWithSymbol(actual, currencyCode: currencyCode),
                   textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isEditing ? scheme.primary : null,
@@ -186,6 +199,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
   final bool isBalanced;
   final bool isAcknowledged;
   final int diff;
+  final String currencyCode;
   final Color statusColor;
   final VoidCallback onAcknowledge;
   final VoidCallback onReview;
@@ -195,6 +209,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
     required this.isBalanced,
     required this.isAcknowledged,
     required this.diff,
+    required this.currencyCode,
     required this.statusColor,
     required this.onAcknowledge,
     required this.onReview,
@@ -236,7 +251,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
                 CcLocaleKeys.reconciliation_lech,
                 namedArgs: {
                   'amount':
-                      '${diff > 0 ? '+' : ''}${diff < 0 ? '-' : ''}${formatVndWithSymbol(diff.abs())}',
+                      '${diff > 0 ? '+' : ''}${diff < 0 ? '-' : ''}${formatCurrencyWithSymbol(diff.abs(), currencyCode: currencyCode)}',
                 },
               ),
               textStyle: context.ccTextTheme.bodySmall?.copyWith(

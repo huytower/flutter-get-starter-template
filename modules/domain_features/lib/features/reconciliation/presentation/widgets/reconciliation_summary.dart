@@ -1,9 +1,11 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../get_x/reconciliation_controller.dart';
 
 class ReconciliationSummary extends StatelessWidget {
@@ -12,23 +14,34 @@ class ReconciliationSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ReconciliationController>();
+    final walletController = Get.isRegistered<WalletController>()
+        ? Get.find<WalletController>()
+        : Get.put(getIt<WalletController>());
     final scheme = context.ccColorScheme;
+
     return Obx(() {
+      final currencyCode = walletController.currencyCode.value;
       final diff = controller.difference;
       final diffText = diff == 0
           ? el.tr(CcLocaleKeys.reconciliation_balanced)
-          : '${diff < 0 ? '-' : '+'}${formatVndWithSymbol(diff.abs())}';
+          : '${diff < 0 ? '-' : '+'}${formatCurrencyWithSymbol(diff.abs(), currencyCode: currencyCode)}';
       return Column(
         children: [
           _summaryRow(
             context,
             el.tr(CcLocaleKeys.reconciliation_book_total),
-            formatVndWithSymbol(controller.systemTotal.value),
+            formatCurrencyWithSymbol(
+              controller.systemTotal.value,
+              currencyCode: currencyCode,
+            ),
           ),
           _summaryRow(
             context,
             el.tr(CcLocaleKeys.reconciliation_actual_total),
-            formatVndWithSymbol(controller.actualTotal.value),
+            formatCurrencyWithSymbol(
+              controller.actualTotal.value,
+              currencyCode: currencyCode,
+            ),
           ),
           const CcSpaceXS(),
           _summaryRow(
