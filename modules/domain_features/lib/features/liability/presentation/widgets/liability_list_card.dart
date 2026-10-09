@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 
 class LiabilityListCard extends StatelessWidget {
@@ -15,10 +15,9 @@ class LiabilityListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final liability = balance.liability;
-    final directionColor =
-        liability.isBorrow
-            ? PrjColors.warning
-            : context.ccColorScheme.secondary;
+    final directionColor = liability.isBorrow
+        ? PrjColors.warning
+        : context.ccColorScheme.secondary;
 
     return CcBouncing(
       onTap: onTap ?? () {},
@@ -47,15 +46,15 @@ class LiabilityListCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   CcText(
-                    MoneyFormatter.formatWithSymbol(
+                    TransactionFormHelpers.formatShortWithSymbol(
                       balance.outstandingBalance,
+                      currencyCode: balance.liability.currencyCode,
                     ),
                     textStyle: context.ccTextTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color:
-                          balance.isSettled
-                              ? context.ccColorScheme.onSurfaceVariant
-                              : context.ccColorScheme.onSurface,
+                      color: balance.isSettled
+                          ? context.ccColorScheme.onSurfaceVariant
+                          : context.ccColorScheme.onSurface,
                     ),
                   ),
                   CcText(

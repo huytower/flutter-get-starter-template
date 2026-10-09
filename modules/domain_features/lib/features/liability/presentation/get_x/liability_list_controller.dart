@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/repositories/liability_repository.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
@@ -37,17 +40,49 @@ class LiabilityListController extends CcGetController {
   void onInit() {
     super.onInit();
     load();
+    ever(CurrencyConstants.onCurrencyChanged, (_) => load());
   }
 
   Future<void> load() async {
     layoutStatus.value = CcLayoutStatus.loading;
     final result = await _getLiabilityBalances();
     result.when(
-      (balances) {
+      (balances) async {
+        final walletController = Get.isRegistered<WalletController>()
+            ? Get.find<WalletController>()
+            : Get.put(getIt<WalletController>());
+        final targetCurrency = walletController.currencyCode.value;
+
         // Deduplicate by liability ID, not category label
         final unique = <String, LiabilityBalanceEntity>{};
         for (final b in balances) {
-          unique[b.liability.id] = b;
+          final convPrincipal = await walletController.conversionService
+              .convertAmount(
+                amount: b.liability.principalAmount,
+                fromCurrency: b.liability.currencyCode,
+                toCurrency: targetCurrency,
+              );
+          final convertedPrincipal =
+              convPrincipal.tryGetSuccess() ?? b.liability.principalAmount;
+
+          final convOutstanding = await walletController.conversionService
+              .convertAmount(
+                amount: b.outstandingBalance,
+                fromCurrency: b.liability.currencyCode,
+                toCurrency: targetCurrency,
+              );
+          final convertedOutstanding =
+              convOutstanding.tryGetSuccess() ?? b.outstandingBalance;
+
+          final updatedLiability = b.liability.copyWith(
+            principalAmount: convertedPrincipal,
+            currencyCode: targetCurrency,
+          );
+
+          unique[b.liability.id] = LiabilityBalanceEntity(
+            liability: updatedLiability,
+            outstandingBalance: convertedOutstanding,
+          );
         }
         final sorted = unique.values.toList()
           ..sort(

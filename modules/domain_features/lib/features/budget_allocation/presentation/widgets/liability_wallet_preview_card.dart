@@ -128,7 +128,10 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
         Obx(
           () => CcText(
             controller.isBalanceVisible.value
-                ? TransactionFormHelpers.formatShort(value)
+                ? TransactionFormHelpers.formatShortWithSymbol(
+                    value,
+                    currencyCode: balance.liability.currencyCode,
+                  )
                 : '*****',
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: color.withOpacity(0.8),

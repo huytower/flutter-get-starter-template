@@ -3,12 +3,13 @@ import 'dart:math';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../../core/constant/currency_catalog.dart';
 import '../../../../../core/constant/currency_constants.dart';
-import '../../../../../core/getx/cc_get_view.dart';
+import '../../../../../core/di/di.dart';
 import '../../../../../core/helper/money_format_helper.dart';
 import '../get_x/currency_selection_controller.dart';
 
@@ -31,8 +32,7 @@ String getCurrencyFlag(String code) {
   }
 }
 
-class CurrencySelectionContentSheet
-    extends CcGetView<CurrencySelectionController> {
+class CurrencySelectionContentSheet extends StatelessWidget {
   const CurrencySelectionContentSheet({
     super.key,
     required this.initialCurrencyCode,
@@ -41,27 +41,11 @@ class CurrencySelectionContentSheet
   final String initialCurrencyCode;
 
   @override
-  bool get enableAppBar => false;
+  Widget build(BuildContext context) {
+    final controller = Get.isRegistered<CurrencySelectionController>()
+        ? Get.find<CurrencySelectionController>()
+        : Get.put(getIt<CurrencySelectionController>());
 
-  @override
-  bool get enableBottomNavigationBar => false;
-
-  @override
-  bool get useSafeArea => false;
-
-  @override
-  bool get enableLoading => false;
-
-  @override
-  CcLayoutStatus get layoutStatus => CcLayoutStatus.success;
-
-  @override
-  Widget onPageBodyWrapper(BuildContext context, Widget body) {
-    return Align(alignment: Alignment.bottomCenter, child: body);
-  }
-
-  @override
-  Widget? buildContent(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!controller.isInitialized) {
         controller.init(initialCurrencyCode);
@@ -70,9 +54,14 @@ class CurrencySelectionContentSheet
 
     final scheme = context.ccColorScheme;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [_buildHeader(context, scheme), _buildBody(context, scheme)],
+    return Obx(
+      () => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildHeader(context, scheme),
+          _buildBody(context, scheme, controller),
+        ],
+      ),
     );
   }
 
@@ -105,7 +94,11 @@ class CurrencySelectionContentSheet
     );
   }
 
-  Widget _buildBody(BuildContext context, ColorScheme scheme) {
+  Widget _buildBody(
+    BuildContext context,
+    ColorScheme scheme,
+    CurrencySelectionController controller,
+  ) {
     final currencies = CurrencyConstants.supportedCurrencyCodes
         .where(
           (code) =>
@@ -119,19 +112,23 @@ class CurrencySelectionContentSheet
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildCurrencyList(context, scheme, currencies),
-          _buildDefaultCurrencyNotice(context, scheme),
+          _buildCurrencyList(context, scheme, currencies, controller),
+          _buildDefaultCurrencyNotice(context, scheme, controller),
           _buildProviderAttribution(context, scheme),
           const CcSpaceXS(),
-          _buildHiddenTagsSection(context, scheme),
-          _buildActions(context, scheme),
+          _buildHiddenTagsSection(context, scheme, controller),
+          _buildActions(context, scheme, controller),
           const CcSpaceXL(),
         ],
       ),
     );
   }
 
-  Widget _buildDefaultCurrencyNotice(BuildContext context, ColorScheme scheme) {
+  Widget _buildDefaultCurrencyNotice(
+    BuildContext context,
+    ColorScheme scheme,
+    CurrencySelectionController controller,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
@@ -180,7 +177,11 @@ class CurrencySelectionContentSheet
     );
   }
 
-  Widget _buildHiddenTagsSection(BuildContext context, ColorScheme scheme) {
+  Widget _buildHiddenTagsSection(
+    BuildContext context,
+    ColorScheme scheme,
+    CurrencySelectionController controller,
+  ) {
     if (!controller.showHiddenTags.value) return const SizedBox.shrink();
 
     final currencies = CurrencyConstants.supportedCurrencyCodes
@@ -275,13 +276,16 @@ class CurrencySelectionContentSheet
     BuildContext context,
     ColorScheme scheme,
     List<String> currencies,
+    CurrencySelectionController controller,
   ) {
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_MD,
       vertical: CcPaddingParams.SPACE_SM,
       child: Column(
         children: currencies
-            .map((code) => _buildCurrencyTile(context, scheme, code))
+            .map(
+              (code) => _buildCurrencyTile(context, scheme, code, controller),
+            )
             .toList(),
       ),
     );
@@ -291,6 +295,7 @@ class CurrencySelectionContentSheet
     BuildContext context,
     ColorScheme scheme,
     String code,
+    CurrencySelectionController controller,
   ) {
     final definition = CurrencyCatalog.getDefinition(code);
 
@@ -418,7 +423,11 @@ class CurrencySelectionContentSheet
     );
   }
 
-  Widget _buildActions(BuildContext context, ColorScheme scheme) {
+  Widget _buildActions(
+    BuildContext context,
+    ColorScheme scheme,
+    CurrencySelectionController controller,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
