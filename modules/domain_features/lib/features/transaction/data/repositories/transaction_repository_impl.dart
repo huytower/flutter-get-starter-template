@@ -9,6 +9,7 @@ import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../datasources/local/transaction_local_datasource.dart';
+import '../datasources/transaction_sync_datasource.dart';
 
 @LazySingleton(as: TransactionRepository)
 class TransactionRepositoryImpl
@@ -17,11 +18,14 @@ class TransactionRepositoryImpl
   @factoryMethod
   TransactionRepositoryImpl({
     required TransactionLocalDataSource local,
+    required TransactionSyncDataSource syncDataSource,
     required FinancialDataSyncService syncService,
   }) : _local = local,
+       _syncDataSource = syncDataSource,
        _syncService = syncService;
 
   final TransactionLocalDataSource _local;
+  final TransactionSyncDataSource _syncDataSource;
   final FinancialDataSyncService _syncService;
 
   Future<List<TransactionEntity>> _allSortedDesc() async {
@@ -90,7 +94,18 @@ class TransactionRepositoryImpl
   @override
   Future<Result<void, CcFailure>> deleteTransaction(String id) {
     return safeRequest(() async {
+      final model = await _local.getById(id);
       await _local.delete(id);
+
+      final remoteId = model?.syncMetadata.remoteId ?? model?.id ?? id;
+      if (remoteId.isNotEmpty) {
+        try {
+          await _syncDataSource.deleteTransaction(remoteId);
+        } catch (_) {
+          // Ignore offline errors during remote delete
+        }
+      }
+
       _syncService.syncAll();
     });
   }

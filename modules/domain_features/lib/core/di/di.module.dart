@@ -366,21 +366,37 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.lazySingleton<_i857.CommentRepository>(
         () => _i536.CommentRepositoryImpl(remote: gh<_i130.CommentRemote>()));
+    gh.lazySingleton<_i857.TransactionRepository>(
+        () => _i1032.TransactionRepositoryImpl(
+              local: gh<_i648.TransactionLocalDataSource>(),
+              syncDataSource: gh<_i784.TransactionSyncDataSource>(),
+              syncService: gh<_i857.FinancialDataSyncService>(),
+            ));
     gh.factory<_i730.CommentController>(
         () => _i730.CommentController(gh<_i670.CommentRepository>()));
     gh.lazySingleton<_i580.CrashLogRemote>(
         () => _i580.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+    gh.lazySingleton<_i663.GetLiabilityBalancesUseCase>(
+        () => _i663.GetLiabilityBalancesUseCase(
+              gh<_i813.LiabilityRepository>(),
+              gh<_i1027.TransactionRepository>(),
+            ));
+    gh.lazySingleton<_i834.GetLiabilityOutstandingBalanceUseCase>(
+        () => _i834.GetLiabilityOutstandingBalanceUseCase(
+              gh<_i813.LiabilityRepository>(),
+              gh<_i1027.TransactionRepository>(),
+            ));
+    gh.lazySingleton<_i467.GetBudgetOverLimitCountUseCase>(
+        () => _i467.GetBudgetOverLimitCountUseCase(
+              gh<_i544.BudgetLimitRepository>(),
+              gh<_i1027.TransactionRepository>(),
+            ));
     gh.lazySingleton<_i270.ProfileRepository>(() =>
         _i609.ProfileRepositoryImpl(local: gh<_i755.ProfileLocalDataSource>()));
     gh.lazySingleton<_i572.WalletRepository>(() => _i590.WalletRepositoryImpl(
           local: gh<_i1058.WalletLocalDataSource>(),
           sync: gh<_i156.WalletSyncDataSource>(),
         ));
-    gh.lazySingleton<_i857.TransactionRepository>(
-        () => _i1032.TransactionRepositoryImpl(
-              local: gh<_i648.TransactionLocalDataSource>(),
-              syncService: gh<_i857.FinancialDataSyncService>(),
-            ));
     gh.lazySingleton<_i944.ReconciliationRepository>(
         () => _i513.ReconciliationRepositoryImpl(
               local: gh<_i896.ReconciliationLocalDataSource>(),
@@ -448,6 +464,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i572.WalletRepository>(),
               gh<_i1027.TransactionRepository>(),
             ));
+    gh.lazySingleton<_i971.LiabilityListController>(
+        () => _i971.LiabilityListController(
+              gh<_i663.GetLiabilityBalancesUseCase>(),
+              gh<_i813.LiabilityRepository>(),
+            ));
     gh.lazySingleton<_i393.GetCategoryAverageMonthlySpendUseCase>(() =>
         _i393.GetCategoryAverageMonthlySpendUseCase(
             gh<_i1027.TransactionRepository>()));
@@ -489,21 +510,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i1039.ParseBillImageUseCase(gh<_i224.GetCategoriesUseCase>()));
     gh.lazySingleton<_i121.ParseQuickEntryUseCase>(
         () => _i121.ParseQuickEntryUseCase(gh<_i224.GetCategoriesUseCase>()));
-    gh.lazySingleton<_i663.GetLiabilityBalancesUseCase>(
-        () => _i663.GetLiabilityBalancesUseCase(
-              gh<_i813.LiabilityRepository>(),
-              gh<_i1027.TransactionRepository>(),
-            ));
-    gh.lazySingleton<_i834.GetLiabilityOutstandingBalanceUseCase>(
-        () => _i834.GetLiabilityOutstandingBalanceUseCase(
-              gh<_i813.LiabilityRepository>(),
-              gh<_i1027.TransactionRepository>(),
-            ));
-    gh.lazySingleton<_i467.GetBudgetOverLimitCountUseCase>(
-        () => _i467.GetBudgetOverLimitCountUseCase(
-              gh<_i544.BudgetLimitRepository>(),
-              gh<_i1027.TransactionRepository>(),
-            ));
     gh.factory<_i754.ExpenseFormController>(() => _i754.ExpenseFormController(
           gh<_i1027.TransactionRepository>(),
           gh<_i1041.GetCategoriesUseCase>(),
@@ -573,11 +579,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i544.BudgetLimitRepository>(),
               gh<_i1027.TransactionRepository>(),
               gh<_i270.ProfileRepository>(),
-            ));
-    gh.lazySingleton<_i971.LiabilityListController>(
-        () => _i971.LiabilityListController(
-              gh<_i663.GetLiabilityBalancesUseCase>(),
-              gh<_i813.LiabilityRepository>(),
             ));
     gh.lazySingleton<_i811.UserLevelController>(
         () => _i811.UserLevelController(gh<_i973.GetUserLevelStatusUseCase>()));

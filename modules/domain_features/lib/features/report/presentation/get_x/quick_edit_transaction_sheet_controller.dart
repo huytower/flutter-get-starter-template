@@ -9,11 +9,14 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/budget_name_helper.dart';
-import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
+import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/usecases/update_transaction_usecase.dart';
 import '../../../transaction/presentation/get_x/investment_form_controller.dart';
+import '../../../transaction/presentation/get_x/transaction_controller.dart';
+import '../../../wallet/presentation/get_x/wallet_controller.dart';
+import 'report_controller.dart';
 
 @injectable
 class QuickEditTransactionSheetController extends CcGetController {
@@ -85,10 +88,7 @@ class QuickEditTransactionSheetController extends CcGetController {
         });
       }
     } else if (isBorrow) {
-      liabilityController = Get.put(
-        getIt<LiabilityFormController>(),
-        tag: tag,
-      );
+      liabilityController = Get.put(getIt<LiabilityFormController>(), tag: tag);
       if (tx.liabilityId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (liabilityController != null) {
@@ -97,10 +97,7 @@ class QuickEditTransactionSheetController extends CcGetController {
         });
       }
     } else if (isLend) {
-      lendController = Get.put(
-        getIt<LendFormController>(),
-        tag: tag,
-      );
+      lendController = Get.put(getIt<LendFormController>(), tag: tag);
       if (tx.liabilityId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (lendController != null) {
@@ -153,8 +150,7 @@ class QuickEditTransactionSheetController extends CcGetController {
         final balance = liabilityController!.mergedItems.firstWhereOrNull(
           (b) => b.liability.id == selectedLiabilityId,
         );
-        categoryId =
-            balance?.liability.categoryId ?? transaction.categoryId;
+        categoryId = balance?.liability.categoryId ?? transaction.categoryId;
         categoryLabel = balance != null
             ? BudgetNameHelper.getDisplayName(
                 name: balance.liability.categoryLabel,
@@ -162,8 +158,7 @@ class QuickEditTransactionSheetController extends CcGetController {
               )
             : transaction.category;
         categoryIconCode =
-            balance?.liability.categoryIconCode ??
-            transaction.categoryIconCode;
+            balance?.liability.categoryIconCode ?? transaction.categoryIconCode;
         categoryIconFamily =
             balance?.liability.categoryIconFamily ??
             transaction.categoryIconFamily;
@@ -172,8 +167,7 @@ class QuickEditTransactionSheetController extends CcGetController {
         final balance = lendController!.mergedItems.firstWhereOrNull(
           (b) => b.liability.id == selectedLiabilityId,
         );
-        categoryId =
-            balance?.liability.categoryId ?? transaction.categoryId;
+        categoryId = balance?.liability.categoryId ?? transaction.categoryId;
         categoryLabel = balance != null
             ? BudgetNameHelper.getDisplayName(
                 name: balance.liability.categoryLabel,
@@ -181,21 +175,16 @@ class QuickEditTransactionSheetController extends CcGetController {
               )
             : transaction.category;
         categoryIconCode =
-            balance?.liability.categoryIconCode ??
-            transaction.categoryIconCode;
+            balance?.liability.categoryIconCode ?? transaction.categoryIconCode;
         categoryIconFamily =
             balance?.liability.categoryIconFamily ??
             transaction.categoryIconFamily;
       } else {
         final cat = selectedCategory.value;
         categoryId = cat?.id ?? transaction.categoryId;
-        categoryLabel = cat != null
-            ? el.tr(cat.nameKey)
-            : transaction.category;
-        categoryIconCode =
-            cat?.iconCode ?? transaction.categoryIconCode;
-        categoryIconFamily =
-            cat?.iconFamily ?? transaction.categoryIconFamily;
+        categoryLabel = cat != null ? el.tr(cat.nameKey) : transaction.category;
+        categoryIconCode = cat?.iconCode ?? transaction.categoryIconCode;
+        categoryIconFamily = cat?.iconFamily ?? transaction.categoryIconFamily;
       }
 
       final result = await updateUseCase.call(
@@ -219,6 +208,15 @@ class QuickEditTransactionSheetController extends CcGetController {
           context: context,
           message: el.tr(CcLocaleKeys.common_save),
         );
+        if (Get.isRegistered<TransactionController>()) {
+          await Get.find<TransactionController>().refreshData();
+        }
+        if (Get.isRegistered<WalletController>()) {
+          await Get.find<WalletController>().loadWallets();
+        }
+        if (Get.isRegistered<ReportController>()) {
+          await Get.find<ReportController>().load(showLoading: false);
+        }
         _onCloseSheet();
       } else {
         CcSnackBarHelper.showErrorSnackBar(

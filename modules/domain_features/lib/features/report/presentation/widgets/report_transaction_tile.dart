@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/presentation/widgets/edit_transaction_sheet.dart';
+import '../../../wallet/export_wallet.dart';
 import '../get_x/report_controller.dart';
 import 'delete_transaction_sheet.dart';
 import 'quick_edit_transaction_sheet.dart';
@@ -50,6 +51,9 @@ class TransactionTile extends StatelessWidget {
       onTap: editable
           ? () async {
               await EditTransactionSheet.show(context, transaction);
+              if (Get.isRegistered<WalletController>()) {
+                await Get.find<WalletController>().loadWallets();
+              }
               if (Get.isRegistered<ReportController>()) {
                 await Get.find<ReportController>().load(showLoading: false);
               }
@@ -160,6 +164,9 @@ class TransactionTile extends StatelessWidget {
                     await EditTransactionSheet.show(context, transaction);
                   } else {
                     await QuickEditTransactionSheet.show(context, transaction);
+                  }
+                  if (Get.isRegistered<WalletController>()) {
+                    await Get.find<WalletController>().loadWallets();
                   }
                   if (Get.isRegistered<ReportController>()) {
                     await Get.find<ReportController>().load(showLoading: false);

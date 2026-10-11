@@ -43,29 +43,31 @@ class WalletStripCard extends StatelessWidget {
         ? Get.find<WalletController>()
         : Get.put(getIt<WalletController>());
 
-    if (wallets.isEmpty && onAddNew == null) {
-      return _buildEmptyState(context);
-    }
+    return Obx(() {
+      if (wallets.isEmpty && onAddNew == null) {
+        return _buildEmptyState(context);
+      }
 
-    final itemCount = wallets.length + (onAddNew != null ? 1 : 0);
+      final itemCount = wallets.length + (onAddNew != null ? 1 : 0);
 
-    return HorizontalFadeScrollView(
-      height: context.respDim(60),
-      builder: (scrollController) => ListView.separated(
-        scrollDirection: Axis.horizontal,
-        controller: scrollController,
-        itemCount: itemCount,
-        separatorBuilder: (_, _) => const CcSpaceSM(),
-        itemBuilder: (context, index) {
-          if (onAddNew != null && index == wallets.length) {
-            return _buildAddNewItem(context);
-          }
+      return HorizontalFadeScrollView(
+        height: context.respDim(60),
+        builder: (scrollController) => ListView.separated(
+          scrollDirection: Axis.horizontal,
+          controller: scrollController,
+          itemCount: itemCount,
+          separatorBuilder: (_, _) => const CcSpaceSM(),
+          itemBuilder: (context, index) {
+            if (onAddNew != null && index == wallets.length) {
+              return _buildAddNewItem(context);
+            }
 
-          final wallet = wallets[index];
-          return _buildReactiveWalletItem(context, wallet, controller);
-        },
-      ),
-    );
+            final wallet = wallets[index];
+            return _buildReactiveWalletItem(context, wallet, controller);
+          },
+        ),
+      );
+    });
   }
 
   Widget _buildEmptyState(BuildContext context) {

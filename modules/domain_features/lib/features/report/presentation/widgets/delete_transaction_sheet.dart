@@ -1,5 +1,6 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/features/wallet/export_wallet.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
+import '../../../transaction/presentation/get_x/transaction_controller.dart';
 import '../get_x/report_controller.dart';
 
 class DeleteTransactionSheet extends StatelessWidget {
@@ -122,6 +124,12 @@ class DeleteTransactionSheet extends StatelessWidget {
         context: context,
         message: el.tr(CcLocaleKeys.common_delete),
       );
+      if (Get.isRegistered<TransactionController>()) {
+        await Get.find<TransactionController>().refreshData();
+      }
+      if (Get.isRegistered<WalletController>()) {
+        await Get.find<WalletController>().loadWallets();
+      }
       if (Get.isRegistered<ReportController>()) {
         await Get.find<ReportController>().load(showLoading: false);
       }
