@@ -282,6 +282,7 @@ abstract class  LocaleKeys {
   static const transaction_more_details = 'transaction.more_details';
   static const transaction_merchant_match_hint = 'transaction.merchant_match_hint';
   static const transaction_location_match_hint = 'transaction.location_match_hint';
+  static const transaction_bill_match_hint = 'transaction.bill_match_hint';
   static const transaction_auto_save_countdown = 'transaction.auto_save_countdown';
   static const transaction_quick_entry_hint = 'transaction.quick_entry_hint';
   static const transaction_quick_entry_parsed_result = 'transaction.quick_entry_parsed_result';
@@ -467,6 +468,7 @@ abstract class  LocaleKeys {
   static const report_ai_advice_generated_days_ago = 'report.ai_advice_generated_days_ago';
   static const report = 'report';
   static const category_settings_title = 'category.settings_title';
+  static const category_settings_subtitle = 'category.settings_subtitle';
   static const category_group_daily = 'category.group_daily';
   static const category_group_personal = 'category.group_personal';
   static const category_group_food_drink = 'category.group_food_drink';

@@ -329,6 +329,7 @@ class CodegenLoader extends AssetLoader {
       "more_details": "More details",
       "merchant_match_hint": "Like last time: {label}",
       "location_match_hint": "You're nearby: {label}",
+      "bill_match_hint": "Monthly bill: {label}",
       "auto_save_countdown": "Auto-save in {countdown}s...",
       "quick_entry_hint": "spend phone 50,000 by cash",
       "quick_entry_parsed_result": "Got it: {label}",
@@ -551,6 +552,7 @@ class CodegenLoader extends AssetLoader {
     },
     "category": {
       "settings_title": "Category Settings",
+      "settings_subtitle": "Manage custom categories and groups",
       "group_daily": "Daily",
       "group_personal": "Personal",
       "group_food_drink": "Dining & Coffee",
@@ -1057,8 +1059,6 @@ class CodegenLoader extends AssetLoader {
       "source_debt": "Nguồn vay nợ",
       "record_debt": "Ghi chép vay nợ",
       "debt_saved": "Đã lưu khoản vay nợ {amount} thành công!",
-      "borrow": "Đi vay",
-      "lend": "Cho mượn",
       "record_liability": "Ghi nhận khoản nợ/vay",
       "liability_direction_borrow": "Đi vay",
       "liability_direction_lend": "Cho mượn",
@@ -1196,7 +1196,6 @@ class CodegenLoader extends AssetLoader {
     },
     "reconciliation": {
       "title": "Đối soát số dư",
-      "cycle_title": "Chu kỳ đối soát",
       "week": "Tuần {week}/{year}",
       "book": "Sổ sách",
       "actual": "Thực tế",
@@ -1430,6 +1429,7 @@ class CodegenLoader extends AssetLoader {
     },
     "category": {
       "settings_title": "Cài đặt danh mục",
+      "settings_subtitle": "Quản lý danh mục và nhóm tùy chỉnh",
       "group_daily": "Hàng ngày",
       "group_personal": "Cá nhân",
       "group_food_drink": "Ăn uống & Cà phê",
@@ -1595,6 +1595,7 @@ class CcLocaleKeys {
   static const app_slogan = 'app.slogan';
   static const app_copyright = 'app.copyright';
   static const app_copied_email = 'app.copied_email';
+  static const app_author = 'app.author';
   static const app_role_tech = 'app.role_tech';
   static const app_role_hr = 'app.role_hr';
   static const app_author_hr_name = 'app.author_hr_name';
@@ -1997,8 +1998,8 @@ class CcLocaleKeys {
       'transaction.validation.schedule_required';
   static const transaction_validation_amount_exceeds_outstanding =
       'transaction.validation.amount_exceeds_outstanding';
-  static const transaction_validation_loan_settled =
-      'transaction.validation.loan_settled';
+  static const transaction_validation_liability_settled =
+      'transaction.validation.liability_settled';
   static const transaction_validation_not_editable =
       'transaction.validation.not_editable';
   static const transaction_validation_edit_window =
@@ -2019,6 +2020,9 @@ class CcLocaleKeys {
   static const liability_delete_confirm_msg = 'liability.delete_confirm_msg';
   static const liability_borrow = 'liability.borrow';
   static const liability_lend = 'liability.lend';
+  static const liability_borrow_type_personal =
+      'liability.borrow_type_personal';
+  static const liability_lend_type_personal = 'liability.lend_type_personal';
 
   static const notification = 'notification';
   static const notification_channel_name = 'notification.channel_name';
@@ -2255,8 +2259,6 @@ class CcLocaleKeys {
   static const category_baby_toys = 'category.baby_toys';
   static const category_settings_title = 'category.settings_title';
   static const category_settings_subtitle = 'category.settings_subtitle';
-  static const category_settings_save = 'category.settings_save';
-  static const category_settings_saved = 'category.settings_saved';
   static const category_income_settings_title =
       'category.income_settings_title';
   static const category_income_group_active = 'category.income_group_active';
@@ -2343,9 +2345,12 @@ class CcLocaleKeys {
   static const profile_birth_year = 'profile.birth_year';
   static const profile_birth_year_subtitle = 'profile.birth_year_subtitle';
   static const profile_birth_year_hint = 'profile.birth_year_hint';
+  static const profile_birth_year_task_desc = 'profile.birth_year_task_desc';
   static const profile_weekly_audit = 'profile.weekly_audit';
   static const profile_weekly_audit_day_hint = 'profile.weekly_audit_day_hint';
   static const profile_days_left = 'profile.days_left';
+  static const profile_debt_loan = 'profile.debt_loan';
+  static const profile_unlock_at_lv = 'profile.unlock_at_lv';
   static const profile_vip = 'profile.vip';
   static const profile_vip_subtitle = 'profile.vip_subtitle';
   static const profile_force_full_access = 'profile.force_full_access';
@@ -2372,6 +2377,8 @@ class CcLocaleKeys {
       'profile.view_tutorial_subtitle';
   static const profile_terms = 'profile.terms';
   static const profile_terms_subtitle = 'profile.terms_subtitle';
+  static const profile_about = 'profile.about';
+  static const profile_about_subtitle = 'profile.about_subtitle';
   static const profile_delete_account = 'profile.delete_account';
   static const profile_delete_confirm = 'profile.delete_confirm';
   static const profile_delete_confirm_desc = 'profile.delete_confirm_desc';
@@ -2386,6 +2393,10 @@ class CcLocaleKeys {
   static const profile_level_intermediate = 'profile.level_intermediate';
   static const profile_level_novice = 'profile.level_novice';
   static const profile_progress_steps = 'profile.progress_steps';
+  static const profile_reconciliation_streak_title =
+      'profile.reconciliation_streak_title';
+  static const profile_reconciliation_streak_desc =
+      'profile.reconciliation_streak_desc';
   static const profile_unlocked = 'profile.unlocked';
 
   static const guideline = 'guideline';
@@ -2424,6 +2435,7 @@ class CcLocaleKeys {
 
   static const level_lock = 'level_lock';
   static const level_lock_unlock_at_lv = 'level_lock.unlock_at_lv';
+  static const level_lock_unlock_free_at_lv3 = 'level_lock.unlock_free_at_lv3';
   static const level_lock_remaining_percent = 'level_lock.remaining_percent';
   static const level_lock_investment_title = 'level_lock.investment_title';
   static const level_lock_investment_desc = 'level_lock.investment_desc';

@@ -246,8 +246,6 @@
         "source_debt": "Nguồn vay nợ",
         "record_debt": "Ghi chép vay nợ",
         "debt_saved": "Đã lưu khoản vay nợ {amount} thành công!",
-        "borrow": "Đi vay",
-        "lend": "Cho mượn",
         "record_liability": "Ghi nhận khoản nợ/vay",
         "liability_direction_borrow": "Đi vay",
         "liability_direction_lend": "Cho mượn",
@@ -372,7 +370,6 @@
     },
     "reconciliation": {
         "title": "Đối soát số dư",
-        "cycle_title": "Chu kỳ đối soát",
         "week": "Tuần {week}/{year}",
         "book": "Sổ sách",
         "actual": "Thực tế",

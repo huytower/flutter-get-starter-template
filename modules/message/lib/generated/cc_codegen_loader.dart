@@ -1,6 +1,6 @@
 // DO NOT EDIT. This is code generated via package:easy_localization/generate.dart
 
-// ignore_for_file: prefer_single_quotes, avoid_renaming_method_parameters, constant_identifier_names
+// ignore_for_file: prefer_single_quotes, avoid_renaming_method_parameters, constant_identifier_names, avoid_escaping_inner_quotes
 
 import 'dart:ui';
 
@@ -329,6 +329,7 @@ class CodegenLoader extends AssetLoader {
       "more_details": "More details",
       "merchant_match_hint": "Like last time: {label}",
       "location_match_hint": "You're nearby: {label}",
+      "bill_match_hint": "Monthly bill: {label}",
       "auto_save_countdown": "Auto-save in {countdown}s...",
       "quick_entry_hint": "spend phone 50,000 by cash",
       "quick_entry_parsed_result": "Got it: {label}",
@@ -551,6 +552,7 @@ class CodegenLoader extends AssetLoader {
     },
     "category": {
       "settings_title": "Category Settings",
+      "settings_subtitle": "Manage custom categories and groups",
       "group_daily": "Daily",
       "group_personal": "Personal",
       "group_food_drink": "Dining & Coffee",
@@ -1056,8 +1058,6 @@ class CodegenLoader extends AssetLoader {
       "source_debt": "Nguồn vay nợ",
       "record_debt": "Ghi chép vay nợ",
       "debt_saved": "Đã lưu khoản vay nợ {amount} thành công!",
-      "borrow": "Đi vay",
-      "lend": "Cho mượn",
       "record_liability": "Ghi nhận khoản nợ/vay",
       "liability_direction_borrow": "Đi vay",
       "liability_direction_lend": "Cho mượn",
@@ -1195,7 +1195,6 @@ class CodegenLoader extends AssetLoader {
     },
     "reconciliation": {
       "title": "Đối soát số dư",
-      "cycle_title": "Chu kỳ đối soát",
       "week": "Tuần {week}/{year}",
       "book": "Sổ sách",
       "actual": "Thực tế",
@@ -1429,6 +1428,7 @@ class CodegenLoader extends AssetLoader {
     },
     "category": {
       "settings_title": "Cài đặt danh mục",
+      "settings_subtitle": "Quản lý danh mục và nhóm tùy chỉnh",
       "group_daily": "Hàng ngày",
       "group_personal": "Cá nhân",
       "group_food_drink": "Ăn uống & Cà phê",
