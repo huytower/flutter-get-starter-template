@@ -62,17 +62,15 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
       () => dataModule.responseInterceptor,
       instanceName: 'responseInterceptor',
     );
-    gh.lazySingleton<List<_i361.Interceptor>>(() => dataModule.interceptors(
-          gh<_i361.Interceptor>(instanceName: 'requestInterceptor'),
-          gh<_i361.Interceptor>(instanceName: 'responseInterceptor'),
-          gh<_i361.Interceptor>(instanceName: 'curlLoggerInterceptor'),
-          gh<_i361.Interceptor>(instanceName: 'talkerDioLogger'),
-          gh<_i361.Interceptor>(instanceName: 'cacheInterceptor'),
-        ));
     gh.factory<_i312.GenericSyncDataSource>(() => _i312.GenericSyncDataSource(
           gh<_i954.FirestoreSyncService>(),
           gh<_i727.SessionContract>(),
           gh<String>(),
+        ));
+    gh.lazySingleton<List<_i361.Interceptor>>(() => dataModule.interceptors(
+          gh<_i361.Interceptor>(instanceName: 'requestInterceptor'),
+          gh<_i361.Interceptor>(instanceName: 'responseInterceptor'),
+          gh<_i361.Interceptor>(instanceName: 'cacheInterceptor'),
         ));
     gh.lazySingleton<_i361.BaseOptions>(
         () => dataModule.baseOptions(gh<String>(instanceName: 'baseUrl')));

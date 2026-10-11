@@ -5,8 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
+import '../../../../core/constant/money_constants.dart';
+import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../guideline/guideline_controller.dart';
+import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../../domain/usecases/create_budget_limit_usecase.dart';
 import '../../domain/usecases/get_category_average_monthly_spend_usecase.dart';
@@ -31,6 +35,11 @@ class AddBudgetLimitSheetController extends CcGetController {
   final RxBool showKeypad = false.obs;
   final RxBool isSubmitting = false.obs;
 
+  final RxString currencyCode = CurrencyConstants.defaultCurrencyCode.obs;
+  final RxList<int> quickAmounts = RxList<int>(
+    MoneyConstants.budgetQuickAmounts,
+  );
+
   final RxList<CategoryEntity> categories = <CategoryEntity>[].obs;
   final RxnString selectedCategoryId = RxnString();
   final GlobalKey amountFieldKey = GlobalKey();
@@ -53,10 +62,31 @@ class AddBudgetLimitSheetController extends CcGetController {
     return limit > 0;
   }
 
+  Future<void> _loadCurrency() async {
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    currencyCode.value = settings.currencyCode;
+    await _loadQuickAmounts();
+  }
+
+  Future<void> _loadQuickAmounts() async {
+    final converted = await MoneyConstants.getConvertedQuickAmounts(
+      MoneyConstants.budgetQuickAmounts,
+      currencyCode.value,
+    );
+    quickAmounts.assignAll(converted);
+  }
+
   void init(BudgetLimitEntity? editTarget) {
     _editTarget = editTarget;
     nameController = TextEditingController(text: editTarget?.name ?? '');
     nameController.addListener(_onNameChanged);
+
+    _loadCurrency();
+    ever(CurrencyConstants.onCurrencyChanged, (_) async {
+      final settings = await getIt<GetProfileSettingsUseCase>().call();
+      currencyCode.value = settings.currencyCode;
+      await _loadQuickAmounts();
+    });
 
     if (editTarget != null) {
       selectedCategoryId.value = editTarget.categoryId;

@@ -24,8 +24,6 @@ class RequestInterceptor extends Interceptor {
       );
     }
 
-    'onRequest() : ${options.uri}'.Log();
-
     /// Handle token logic or specific header cleanup
     ccWhen(
       conditions: {

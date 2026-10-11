@@ -1,8 +1,5 @@
-import 'dart:math';
-
-import '../../core/constant/currency_catalog.dart';
-import '../../core/di/di.dart';
-import '../../core/exchange_rates/currency_conversion_service.dart';
+import '../di/di.dart';
+import '../exchange_rates/currency_conversion_service.dart';
 
 abstract class MoneyConstants {
   /// standard quick amounts for transaction entries (Expense/Income/Transfer)
@@ -243,11 +240,6 @@ abstract class MoneyConstants {
 
     try {
       final conversionService = getIt<CurrencyConversionService>();
-      final toDef = CurrencyCatalog.tryGetDefinition(normalized);
-      final scale = toDef != null
-          ? pow(10, toDef.decimalDigits).toDouble()
-          : 1.0;
-
       final converted = <int>[];
       for (final amount in baseVndAmounts) {
         final result = await conversionService.convertAmount(
@@ -256,8 +248,7 @@ abstract class MoneyConstants {
           toCurrency: normalized,
         );
         final minorUnits = result.tryGetSuccess() ?? amount;
-        final majorUnits = (minorUnits / scale).round();
-        converted.add(majorUnits);
+        converted.add(minorUnits > 0 ? minorUnits : 1);
       }
       return converted;
     } catch (_) {

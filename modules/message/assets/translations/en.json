@@ -489,6 +489,7 @@
     },
     "category": {
         "settings_title": "Category Settings",
+        "settings_subtitle": "Manage custom categories and groups",
         "group_daily": "Daily",
         "group_personal": "Personal",
         "group_food_drink": "Dining & Coffee",

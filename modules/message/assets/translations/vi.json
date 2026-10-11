@@ -577,6 +577,7 @@
     },
     "category": {
         "settings_title": "Cài đặt danh mục",
+        "settings_subtitle": "Quản lý danh mục và nhóm tùy chỉnh",
         "group_daily": "Hàng ngày",
         "group_personal": "Cá nhân",
         "group_food_drink": "Ăn uống & Cà phê",

@@ -1,5 +1,4 @@
 import 'package:app_config/core/config/http/http_client/http_client_config.dart';
-import 'package:cc_sdk/core/config/cc_feature_flags.dart';
 import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
@@ -49,17 +48,9 @@ abstract class DataModule {
   List<Interceptor> interceptors(
     @Named("requestInterceptor") Interceptor requestInterceptor,
     @Named("responseInterceptor") Interceptor responseInterceptor,
-    @Named("curlLoggerInterceptor") Interceptor curlLoggerInterceptor,
-    @Named("talkerDioLogger") Interceptor talkerDioLogger,
     @Named("cacheInterceptor") Interceptor cacheInterceptor,
   ) {
-    return [
-      requestInterceptor,
-      responseInterceptor,
-      if (CcFeatureFlags.isEnableLoggerDio) curlLoggerInterceptor,
-      if (CcFeatureFlags.isEnableLoggerDio) talkerDioLogger,
-      cacheInterceptor,
-    ];
+    return [requestInterceptor, responseInterceptor, cacheInterceptor];
   }
 
   @lazySingleton

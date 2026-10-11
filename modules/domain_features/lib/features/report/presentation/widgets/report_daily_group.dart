@@ -67,7 +67,7 @@ class _DailyGroupState extends State<DailyGroup> {
         includeInvestmentAndLiability: widget.includeInvestmentAndLiability,
       );
 
-      final amountText = formatCurrencyWithSymbol(
+      final amountText = formatShortCurrencyWithSymbol(
         totalDaily,
         currencyCode: currencyCode,
       );

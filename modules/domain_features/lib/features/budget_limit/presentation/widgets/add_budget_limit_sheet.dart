@@ -55,7 +55,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
                   onKeyPress: controller.onKeyPress,
                   onDelete: controller.onDeleteKey,
                   onClear: () => controller.limitStr.value = '0',
-                  suggestions: MoneyConstants.budgetQuickAmounts,
+                  suggestions: controller.quickAmounts,
                   onSuggestion: (value) =>
                       controller.limitStr.value = value.toString(),
                   onDone: controller.hideKeypad,
@@ -114,31 +114,34 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
         if (controller.limitLocked)
           const BudgetLimitLockNotice()
         else
-          CcAmountInputSection(
-            label: el.tr(CcLocaleKeys.budget_limit),
-            amountStr: controller.limitStr.value,
-            quickAmounts: MoneyConstants.budgetQuickAmounts,
-            isKeypadVisible: controller.showKeypad.value,
-            fieldKey: controller.amountFieldKey,
-            onTap: () {
-              controller.showKeypad.value = true;
-              FocusScope.of(context).unfocus();
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                final ctx = controller.amountFieldKey.currentContext;
-                if (ctx != null) {
-                  Scrollable.ensureVisible(
-                    ctx,
-                    duration: const Duration(milliseconds: 250),
-                    curve: Curves.easeOut,
-                  );
-                }
-              });
-            },
-            onQuickAmountSelected: (amount) =>
-                controller.limitStr.value = amount.toString(),
-            onClear: () => controller.limitStr.value = '0',
-            onCopy: () =>
-                CcStringHelper.copyToClipboard(controller.limitStr.value),
+          Obx(
+            () => CcAmountInputSection(
+              label: el.tr(CcLocaleKeys.budget_limit),
+              amountStr: controller.limitStr.value,
+              quickAmounts: controller.quickAmounts,
+              currencyCode: controller.currencyCode.value,
+              isKeypadVisible: controller.showKeypad.value,
+              fieldKey: controller.amountFieldKey,
+              onTap: () {
+                controller.showKeypad.value = true;
+                FocusScope.of(context).unfocus();
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  final ctx = controller.amountFieldKey.currentContext;
+                  if (ctx != null) {
+                    Scrollable.ensureVisible(
+                      ctx,
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeOut,
+                    );
+                  }
+                });
+              },
+              onQuickAmountSelected: (amount) =>
+                  controller.limitStr.value = amount.toString(),
+              onClear: () => controller.limitStr.value = '0',
+              onCopy: () =>
+                  CcStringHelper.copyToClipboard(controller.limitStr.value),
+            ),
           ),
         const CcSpaceSM(),
         Obx(

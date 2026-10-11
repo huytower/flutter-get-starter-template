@@ -39,7 +39,7 @@ class AssetStatItem extends StatelessWidget {
         ),
         const Spacer(),
         CcText(
-          TransactionFormHelpers.formatShort(
+          TransactionFormHelpers.formatShortWithSymbol(
             value,
             currencyCode:
                 currencyCode ?? CurrencyConstants.currentPrimaryCurrency,

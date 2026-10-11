@@ -17,18 +17,6 @@ class ResponseInterceptor extends Interceptor {
     // 1. Logging Logic
     'onResponse() : status = ${response.statusCode}'.Log();
 
-    if (CcFeatureFlags.isEnableLoggerDio) {
-      final curl = await CurlUtils.instance.representation(
-        response.requestOptions,
-      );
-      final url =
-          "[Dio Interceptor]\n[Request: ${response.requestOptions.method}] : ${response.requestOptions.uri}\n";
-      final message =
-          "$url[Curl]:\n$curl\n[Response: ${response.statusCode}]:\n";
-
-      message.Log("", true, "logger:###/");
-    }
-
     // 2. Normalization Logic
     var rawData = response.data;
     final statusKey = CcRestApiParams.status.name;

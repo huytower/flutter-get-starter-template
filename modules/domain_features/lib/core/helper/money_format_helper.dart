@@ -32,9 +32,28 @@ class MoneyFormatter {
   /// Formats a numeric amount with proper grouping separator according to currencyCode.
   static String formatAmount(num value, {String? currencyCode}) {
     final code = _resolveCurrencyCode(currencyCode).toUpperCase();
-    final locale = CurrencyConstants.getLocale(code);
-    final formatter = NumberFormat.decimalPattern(locale);
-    return formatter.format(value);
+    final def = CurrencyCatalog.tryGetDefinition(code);
+    final scale = def != null ? pow(10, def.decimalDigits).toDouble() : 1.0;
+    final double majorValue = value / scale;
+
+    String locale = CurrencyConstants.getLocale(code);
+    try {
+      final current = Intl.getCurrentLocale();
+      if (current.isNotEmpty) {
+        locale = current;
+      }
+    } catch (_) {}
+
+    if (def != null && def.decimalDigits > 0) {
+      final formatter = NumberFormat(
+        '#,##0.${'0' * def.decimalDigits}',
+        locale,
+      );
+      return formatter.format(majorValue);
+    } else {
+      final formatter = NumberFormat.decimalPattern(locale);
+      return formatter.format(majorValue.toInt());
+    }
   }
 
   /// Formats a numeric amount with the currency symbol.
@@ -124,6 +143,12 @@ class MoneyFormatter {
       if (abs >= 1e3) {
         return '$sign${format(abs / 1e3, useFullSuffix ? ' thousands' : 'K', useComma: false)}';
       }
+      if (abs < 100 && abs != abs.toInt()) {
+        String s = abs.toStringAsFixed(2);
+        if (s.endsWith('0')) s = s.substring(0, s.length - 1);
+        if (s.endsWith('0')) s = s.substring(0, s.length - 2);
+        return '$sign$s';
+      }
       return '$sign${abs.toStringAsFixed(0)}';
     }
   }
@@ -178,22 +203,18 @@ String formatShortCurrencyWithSymbol(
 String formatCurrencyWithSymbol(num value, {String? currencyCode}) =>
     MoneyFormatter.formatWithSymbol(value, currencyCode: currencyCode);
 
-// Backward-compatible compatibility wrappers
-@Deprecated('Use formatShortCurrency instead')
 String formatVndShort(
   num value, {
   bool useFullSuffix = false,
   String? currencyCode,
-}) => MoneyFormatter.formatShort(
+}) => formatShortCurrency(
   value,
-  currencyCode: currencyCode,
   useFullSuffix: useFullSuffix,
+  currencyCode: currencyCode,
 );
 
-@Deprecated('Use formatCurrency instead')
 String formatVnd(num value, {String? currencyCode}) =>
-    MoneyFormatter.formatAmount(value, currencyCode: currencyCode);
+    formatCurrency(value, currencyCode: currencyCode);
 
-@Deprecated('Use formatCurrencyWithSymbol instead')
 String formatVndWithSymbol(num value, {String? currencyCode}) =>
-    MoneyFormatter.formatWithSymbol(value, currencyCode: currencyCode);
+    formatCurrencyWithSymbol(value, currencyCode: currencyCode);

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/budget_name_helper.dart';
@@ -137,6 +138,7 @@ class ExpenseFormController extends TransactionFormController
 
     noteController.addListener(_onNoteChanged);
     initQuickEntry();
+    ever(CurrencyConstants.onCurrencyChanged, (_) => loadSuggestions());
 
     // Handle AI category suggestions by resolving to a budget or category
     ever(pendingPrefillCategoryId, (String? categoryId) {

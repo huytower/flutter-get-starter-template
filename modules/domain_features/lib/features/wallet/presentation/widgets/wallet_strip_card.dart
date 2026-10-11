@@ -84,8 +84,9 @@ class WalletStripCard extends StatelessWidget {
     final isSelected = wallet.id == selectedWalletId;
 
     return Obx(() {
-      // Observe totalBalance to trigger rebuild when balances change
+      // Observe totalBalance and displayBookBalanceOf to trigger rebuild when balances change
       controller.totalBalance.value;
+      controller.displayBookBalanceOf(wallet.id);
 
       final balance = controller.isBalanceVisible.value
           ? controller.displayBookBalanceOf(wallet.id)
