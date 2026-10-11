@@ -3,19 +3,15 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../../core/navigation/domain_router.gr.dart';
-import '../../domain/entities/trend_data_entity.dart';
 import '../get_x/report_controller.dart';
+import '../widgets/report_daily_detail_shortcut.dart';
+import '../widgets/report_investment_section.dart';
+import '../widgets/report_liability_section.dart';
 import '../widgets/report_page_header.dart';
 import '../widgets/report_tab_bar.dart';
-import '../widgets/trend_card.dart';
-
-/// Shared shade alpha for the Investment/Debt-Liability trend card fills — mirrors
-/// [report_daily_list]'s constant of the same name/value for the same rows.
-const double _inflowShadeAlpha = 0.5;
+import '../widgets/report_trend_section.dart';
 
 @RoutePage()
 class ReportPage extends StatefulWidget {
@@ -94,14 +90,6 @@ class _ReportView extends CcGetView<ReportController> {
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       height: hidden ? 0 : headerHeight,
-                      // ReportPageHeader's internal Spacer/Flexible layout is
-                      // only correct at the full headerHeight — feeding it the
-                      // shrinking height directly (as this AnimatedContainer
-                      // animates toward 0) squeezes that layout mid-animation
-                      // and throws a transient RenderFlex overflow. Pin the
-                      // header's own constraints to headerHeight via OverflowBox
-                      // and let ClipRect clip the paint instead, so the content
-                      // never sees a too-small height.
                       child: ClipRect(
                         child: OverflowBox(
                           alignment: Alignment.topCenter,
@@ -179,11 +167,12 @@ class _ReportView extends CcGetView<ReportController> {
                       tabBarHeight,
                     ),
                     children: [
-                      _buildTrendCards(context, data),
-                      _buildInvestmentSection(context),
-                      _buildLiabilitySection(context),
+                      const CcSpaceXS(),
+                      const ReportDailyDetailShortcut(),
                       const CcSpaceSM(),
-                      _buildDailyDetailEntry(context),
+                      ReportTrendSection(controller: controller, data: data),
+                      ReportInvestmentSection(controller: controller),
+                      ReportLiabilitySection(controller: controller),
                     ],
                   ),
                 ),
@@ -197,182 +186,6 @@ class _ReportView extends CcGetView<ReportController> {
 
   Widget _buildLoading() {
     return const CcProgressIndicator(paddingTop: 0);
-  }
-
-  Widget _buildDailyDetailEntry(BuildContext context) {
-    return CcBouncing(
-      onTap: () => context.router.push(const ReportDailyDetailRoute()),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CcText(
-            el.tr(CcLocaleKeys.report_daily_detail),
-            textStyle: context.ccTextTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const CcSpaceXS(),
-          Icon(
-            Icons.chevron_right_rounded,
-            size: context.respIconSize(baseSize: 20),
-            color: context.ccColorScheme.primary,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTrendCards(BuildContext context, TrendDataEntity data) {
-    if (data.points.isEmpty) return const SizedBox.shrink();
-
-    final filter = controller.filterType.value;
-    if (filter != ReportFilterType.all &&
-        filter != ReportFilterType.expense &&
-        filter != ReportFilterType.income) {
-      return const SizedBox.shrink();
-    }
-
-    final children = <Widget>[];
-    if (filter == ReportFilterType.all || filter == ReportFilterType.expense) {
-      children.add(
-        TrendCard(
-          title: el.tr(CcLocaleKeys.common_expense),
-          amount: data.totalExpense,
-          points: data.points,
-          color: context.ccColorScheme.error,
-          range: controller.range.value,
-          isIncome: false,
-        ),
-      );
-    }
-
-    if (filter == ReportFilterType.all && children.isNotEmpty) {
-      children.add(const CcSpaceLG());
-    }
-
-    if (filter == ReportFilterType.all || filter == ReportFilterType.income) {
-      children.add(
-        TrendCard(
-          title: el.tr(CcLocaleKeys.common_income),
-          amount: data.totalIncome,
-          points: data.points,
-          color: PrjColors.success,
-          range: controller.range.value,
-          isIncome: true,
-        ),
-      );
-    }
-
-    return Column(children: children);
-  }
-
-  Widget _buildInvestmentSection(BuildContext context) {
-    final data = controller.investmentTrend.value;
-    if (!controller.userLevel.status.value.canUseInvestment ||
-        data == null ||
-        (data.totalIncome == 0 && data.totalExpense == 0)) {
-      return const SizedBox.shrink();
-    }
-
-    final filter = controller.filterType.value;
-    if (filter != ReportFilterType.all &&
-        filter != ReportFilterType.investment) {
-      return const SizedBox.shrink();
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const CcSpaceLG(),
-        TrendCard(
-          title: el.tr(CcLocaleKeys.report_investment_contributed),
-          amount: data.totalExpense,
-          points: data.points,
-          color: context.ccColorScheme.investment,
-          range: controller.range.value,
-          isIncome: false,
-          icon: Icons.eco,
-        ),
-        const CcSpaceLG(),
-        TrendCard(
-          title: el.tr(CcLocaleKeys.report_investment_returned),
-          amount: data.totalIncome,
-          points: data.points,
-          color: context.ccColorScheme.investmentSecondary,
-          range: controller.range.value,
-          isIncome: true,
-          icon: Icons.auto_graph_rounded,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLiabilitySection(BuildContext context) {
-    final data = controller.liabilityTrend.value;
-    if (!controller.userLevel.status.value.canUseLiability ||
-        data == null ||
-        (data.totalIncome == 0 && data.totalExpense == 0)) {
-      return const SizedBox.shrink();
-    }
-
-    final filter = controller.filterType.value;
-    if (filter != ReportFilterType.all &&
-        filter != ReportFilterType.liability &&
-        filter != ReportFilterType.lend) {
-      return const SizedBox.shrink();
-    }
-
-    final children = <Widget>[];
-    // Show "Liability Out" (Borrow settlement / Lend principal)
-    // Actually liabilityTrend.totalExpense is outflows.
-    // In GetLiabilityTrendUseCase:
-    // inflowAmount: (t) => isCashIn(t) ? t.amount.toDouble() : 0,
-    // outflowAmount: (t) => !isCashIn(t) ? t.amount.toDouble() : 0,
-    // isCashIn: debtBorrow || debtCollect
-    // !isCashIn: debtLend || debtRepay
-
-    // If filter is Liability, we want debtBorrow (+) and debtRepay (-)
-    // If filter is Lend, we want debtLend (-) and debtCollect (+)
-
-    // This is a bit tricky because liabilityTrend combines them.
-    // For now, I'll show both if filter matches either Liability or Lend.
-
-    if (data.totalExpense > 0) {
-      children.add(
-        TrendCard(
-          title: el.tr(CcLocaleKeys.report_liability_out),
-          amount: data.totalExpense,
-          points: data.points,
-          color: context.ccColorScheme.liabilitySecondary,
-          range: controller.range.value,
-          isIncome: false,
-        ),
-      );
-    }
-    if (data.totalIncome > 0) {
-      final index = children.length;
-      children.add(
-        TrendCard(
-          title: el.tr(CcLocaleKeys.report_liability_in),
-          amount: data.totalIncome,
-          points: data.points,
-          color: context.ccColorScheme.liability,
-          range: controller.range.value,
-          isIncome: true,
-        ),
-      );
-      if (index > 0) {
-        children.insert(index, const CcSpaceLG());
-      }
-    }
-
-    if (children.isEmpty) return const SizedBox.shrink();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [const CcSpaceLG(), ...children, const CcSpaceSM()],
-    );
   }
 
   @override
