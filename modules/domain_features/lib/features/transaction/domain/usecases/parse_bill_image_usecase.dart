@@ -8,6 +8,7 @@ import 'package:injectable/injectable.dart';
 import 'package:path/path.dart' as p;
 import 'package:string_similarity/string_similarity.dart';
 
+import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/merchant_match_helper.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../category/domain/entities/category_entity.dart';
@@ -118,6 +119,10 @@ class ParseBillImageUseCase {
       '[AI_PARSING] 🖼️ Gemini Bill Prompt: \n$prompt'.Log(
         'ParseBillImageUseCase',
       );
+
+      if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
+        return null;
+      }
 
       final response = await CcGeminiHelper.generateFromImage(
         imageBytes: imageBytes,

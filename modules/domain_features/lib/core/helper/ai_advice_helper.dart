@@ -88,6 +88,10 @@ String buildAiFinancialAdvicePrompt({
     ..writeln()
     ..writeln('Tổng độ dài toàn bộ các phần khoảng 120-200 từ.')
     ..writeln()
+    ..writeln(
+      'Đơn vị tiền tệ của người dùng: $currencyCode. Mọi số tiền bên dưới đã '
+      'được định dạng theo đơn vị này, hãy giữ nguyên ký hiệu khi trích dẫn.',
+    )
     ..writeln('Dữ liệu tháng này:');
 
   if (cashFlow != null) {

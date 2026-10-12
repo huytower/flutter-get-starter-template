@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/helper/ai_advice_helper.dart';
+import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
 import '../../../budget_limit/domain/usecases/get_budget_anomalies_usecase.dart';
 import '../../../budget_limit/domain/usecases/get_budget_insights_usecase.dart';
@@ -43,6 +44,9 @@ class GenerateAiFinancialAdviceUseCase {
   /// local data source degrades to null/empty for that one input rather
   /// than blocking advice generation entirely.
   Future<AiAdviceEntity?> call() async {
+    if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
+      return null;
+    }
     final settings = await getIt<GetProfileSettingsUseCase>().call();
     final results = await Future.wait([
       _getInsights.call(),

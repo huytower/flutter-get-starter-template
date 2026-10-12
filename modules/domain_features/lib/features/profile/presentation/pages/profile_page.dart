@@ -179,6 +179,26 @@ class ProfilePage extends CcGetView<ProfileController> {
       ),
       Obx(
         () => ProfileSettingsTile(
+          icon: Icons.auto_awesome_rounded,
+          label: el.tr(CcLocaleKeys.profile_gemini_ai),
+          subtitle: el.tr(CcLocaleKeys.profile_gemini_ai_subtitle),
+          showChevron: false,
+          trailingWidget: SizedBox(
+            height: context.respIconSize(baseSize: 20),
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: Switch(
+                value: controller.geminiEnabled.value,
+                onChanged: controller.setGeminiEnabled,
+                activeColor: context.ccColorScheme.primary,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          ),
+        ),
+      ),
+      Obx(
+        () => ProfileSettingsTile(
           icon: Icons.notifications_rounded,
           label: el.tr(CcLocaleKeys.profile_reminder),
           subtitle: el.tr(CcLocaleKeys.profile_reminder_subtitle),

@@ -349,6 +349,11 @@ mixin QuickEntryMixin on TransactionFormController
       return;
     }
 
+    if (await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
+      quickEntrySuggestion.value = null;
+      return;
+    }
+
     '[AI_PARSING] [LOCAL] 🔍 Reactive parse started | tab=$quickEntryCategoryType | text="$text"'
         .Log('QuickEntryMixin');
 
@@ -496,6 +501,13 @@ mixin QuickEntryMixin on TransactionFormController
   }) async {
     final prefs = getIt<AiFallbackPreferenceDataSource>();
 
+    if (!await prefs.isGeminiEnabled()) {
+      if (!isCurrentGeneration()) return false;
+      resetParsingIfCurrent();
+      quickEntryErrorKey.value = CcLocaleKeys.report_ai_advice_gemini_disabled;
+      return false;
+    }
+
     // Automatically admit and continue without prompt
     if (!await prefs.isConsentGiven()) {
       await prefs.setConsentGiven(true);
@@ -516,6 +528,9 @@ mixin QuickEntryMixin on TransactionFormController
   /// is still mid-typing.
   Future<void> submitQuickEntry(BuildContext context) async {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+    final prefs = getIt<AiFallbackPreferenceDataSource>();
+    final geminiEnabled = await prefs.isGeminiEnabled();
+    final cloudAllowed = geminiEnabled && await prefs.isUnderDailyLimit();
     // Guards a fast double-submit from firing two concurrent cloud calls.
     if (isParsingQuickEntry.value) return;
     final text = quickEntryController.text.trim();
@@ -573,6 +588,9 @@ mixin QuickEntryMixin on TransactionFormController
             targetController.quickEntryController.text = text;
             targetController.quickEntryController.selection =
                 TextSelection.collapsed(offset: text.length);
+            if (geminiEnabled && targetController is QuickEntryMixin) {
+              targetController.submitQuickEntry(context);
+            }
           }
         });
         return;
@@ -597,13 +615,7 @@ mixin QuickEntryMixin on TransactionFormController
     '[AI_PARSING] [LOCAL] 📍 Local fallback ready | result=${local.toJson()}'
         .Log('QuickEntryMixin');
 
-    // SHORT-CIRCUIT: If local parsing already resolved the mandatory fields,
-    // skip cloud escalation to save cost, latency, and avoid the consent popup.
-    // NOTE: If an amount is found, we show the suggestion chip immediately
-    // even if category is missing (local logic will handle the UI label).
-    // This prioritizes the locally recognized data (Case 1 or Case 2) over
-    // escalating to Gemini.
-    if (local.amount != null) {
+    if (!cloudAllowed && local.amount != null) {
       '[AI_PARSING] [LOCAL] ✅ Local parse found amount | applying to form and starting auto-save'
           .Log('QuickEntryMixin');
       resetParsingIfCurrent();
@@ -749,16 +761,12 @@ mixin QuickEntryMixin on TransactionFormController
     '[AI_PARSING] 📍 OCR-based local fallback ready | result=${local.toJson()}'
         .Log('QuickEntryMixin');
 
-    // SHORT-CIRCUIT: If OCR + Local parsing resolved the image perfectly, skip cloud.
-    // A "perfect" resolve must have a plausible amount (avoiding phone numbers)
-    // AND a valid category.
-    final bool isPerfect =
-        local.amount != null &&
-        local.categoryId != null &&
-        _isAmountPlausible(local.amount);
-
-    if (isPerfect) {
-      '[AI_PARSING] ✅ OCR parse was complete and plausible | skipping cloud escalation'
+    final prefs = getIt<AiFallbackPreferenceDataSource>();
+    final cloudAllowed =
+        await prefs.isGeminiEnabled() && await prefs.isUnderDailyLimit();
+    if (!isCurrentGeneration()) return;
+    if (!cloudAllowed && _isAmountPlausible(local.amount)) {
+      '[AI_PARSING] ✅ OCR parse found a plausible amount | cloud unavailable, using local result'
           .Log('QuickEntryMixin');
       resetParsingIfCurrent();
       quickEntrySuggestion.value = local;
