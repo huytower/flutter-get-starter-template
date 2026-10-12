@@ -43,31 +43,36 @@ class WalletStripCard extends StatelessWidget {
         ? Get.find<WalletController>()
         : Get.put(getIt<WalletController>());
 
-    return Obx(() {
-      if (wallets.isEmpty && onAddNew == null) {
-        return _buildEmptyState(context);
-      }
+    if (wallets is RxList<WalletEntity>) {
+      return Obx(() => _buildStrip(context, controller));
+    }
+    return _buildStrip(context, controller);
+  }
 
-      final itemCount = wallets.length + (onAddNew != null ? 1 : 0);
+  Widget _buildStrip(BuildContext context, WalletController controller) {
+    if (wallets.isEmpty && onAddNew == null) {
+      return _buildEmptyState(context);
+    }
 
-      return HorizontalFadeScrollView(
-        height: context.respDim(60),
-        builder: (scrollController) => ListView.separated(
-          scrollDirection: Axis.horizontal,
-          controller: scrollController,
-          itemCount: itemCount,
-          separatorBuilder: (_, _) => const CcSpaceSM(),
-          itemBuilder: (context, index) {
-            if (onAddNew != null && index == wallets.length) {
-              return _buildAddNewItem(context);
-            }
+    final itemCount = wallets.length + (onAddNew != null ? 1 : 0);
 
-            final wallet = wallets[index];
-            return _buildReactiveWalletItem(context, wallet, controller);
-          },
-        ),
-      );
-    });
+    return HorizontalFadeScrollView(
+      height: context.respDim(60),
+      builder: (scrollController) => ListView.separated(
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        itemCount: itemCount,
+        separatorBuilder: (_, _) => const CcSpaceSM(),
+        itemBuilder: (context, index) {
+          if (onAddNew != null && index == wallets.length) {
+            return _buildAddNewItem(context);
+          }
+
+          final wallet = wallets[index];
+          return _buildReactiveWalletItem(context, wallet, controller);
+        },
+      ),
+    );
   }
 
   Widget _buildEmptyState(BuildContext context) {
