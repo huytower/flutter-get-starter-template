@@ -10,6 +10,7 @@ class AiFallbackPreferenceDataSource {
   static const String _keyConsentGiven = 'ai_fallback_consent_given';
   static const String _keyCallCountDate = 'ai_fallback_call_count_date';
   static const String _keyCallCount = 'ai_fallback_call_count';
+  static const String _keyGeminiEnabled = 'ai_gemini_enabled';
 
   /// Default daily cap on cloud-LLM fallback calls, kept low enough to bound
   /// cost/abuse while comfortably covering normal quick-entry usage.
@@ -23,6 +24,16 @@ class AiFallbackPreferenceDataSource {
   Future<void> setConsentGiven(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_keyConsentGiven, value);
+  }
+
+  Future<bool> isGeminiEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_keyGeminiEnabled) ?? true;
+  }
+
+  Future<void> setGeminiEnabled(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyGeminiEnabled, value);
   }
 
   String _todayKey() {

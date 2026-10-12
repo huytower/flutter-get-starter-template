@@ -198,6 +198,12 @@ class ReportController extends CcGetController {
     aiAdviceErrorKey.value = null;
 
     final prefs = getIt<AiFallbackPreferenceDataSource>();
+    if (!await prefs.isGeminiEnabled()) {
+      if (isClosed) return;
+      isGeneratingAdvice.value = false;
+      aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_gemini_disabled;
+      return;
+    }
     if (!await prefs.tryConsumeDailyCall()) {
       if (isClosed) return;
       isGeneratingAdvice.value = false;

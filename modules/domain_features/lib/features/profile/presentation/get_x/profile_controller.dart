@@ -16,6 +16,7 @@ import 'package:theme/presentation/provider/theme_provider.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../category/export_category.dart';
 import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../../firestore/financial_data_sync_service.dart';
@@ -60,6 +61,7 @@ class ProfileController extends CcGetController {
   final Rx<ProfileSettingsEntity> settings = const ProfileSettingsEntity().obs;
   final RxString appVersion = ''.obs;
   final RxBool openBirthYearPicker = false.obs;
+  final RxBool geminiEnabled = true.obs;
 
   @override
   void onInit() {
@@ -93,6 +95,8 @@ class ProfileController extends CcGetController {
       final s = await _getSettings();
       settings.value = s;
       appVersion.value = await _deviceInfo.getAppVersion();
+      geminiEnabled.value = await getIt<AiFallbackPreferenceDataSource>()
+          .isGeminiEnabled();
       unawaited(userLevel.refresh());
 
       final systemBrightness =
@@ -221,6 +225,11 @@ class ProfileController extends CcGetController {
     if (Get.isRegistered<CategorySettingsController>()) {
       unawaited(Get.find<CategorySettingsController>().load());
     }
+  }
+
+  Future<void> setGeminiEnabled(bool value) async {
+    geminiEnabled.value = value;
+    await getIt<AiFallbackPreferenceDataSource>().setGeminiEnabled(value);
   }
 
   Future<void> setThemeMode(bool isDarkMode) async {
