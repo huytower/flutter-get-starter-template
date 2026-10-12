@@ -450,6 +450,10 @@ class CodegenLoader extends AssetLoader {
       "penalty_warning": "{name} exceeded {percent}%!",
       "deficit_warning":
           "Spending more than income this month (deficit {amount})",
+      "debt_inflow_warning":
+          "{percent}% of this month's inflow ({amount}) comes from debt, not income",
+      "debt_outflow_warning":
+          "{percent}% of this month's outflow ({amount}) is debt lent or repaid, not spending",
       "anomaly_hint":
           "{count} unusual expense(s) vs. the last 3 months' average",
       "insights_title": "Insights & warnings",
@@ -1193,6 +1197,10 @@ class CodegenLoader extends AssetLoader {
       "penalty_warning": "{name} đã vượt quá {percent}%!",
       "deficit_warning":
           "Chi tiêu nhiều hơn thu nhập trong tháng này (thâm hụt {amount})",
+      "debt_inflow_warning":
+          "{percent}% dòng tiền vào tháng này ({amount}) đến từ nợ, không phải thu nhập",
+      "debt_outflow_warning":
+          "{percent}% dòng tiền ra tháng này ({amount}) là tiền cho vay hoặc trả nợ, không phải chi tiêu",
       "anomaly_hint":
           "{count} chi tiêu bất thường so với trung bình 3 tháng trước",
       "insights_title": "Thông tin & cảnh báo",
@@ -2099,6 +2107,8 @@ class CcLocaleKeys {
   static const budget_pacing_hint = 'budget.pacing_hint';
   static const budget_penalty_warning = 'budget.penalty_warning';
   static const budget_deficit_warning = 'budget.deficit_warning';
+  static const budget_debt_inflow_warning = 'budget.debt_inflow_warning';
+  static const budget_debt_outflow_warning = 'budget.debt_outflow_warning';
   static const budget_anomaly_hint = 'budget.anomaly_hint';
   static const budget_insights_title = 'budget.insights_title';
   static const budget_insights_action_review = 'budget.insights_action_review';

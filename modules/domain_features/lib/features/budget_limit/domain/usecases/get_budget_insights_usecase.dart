@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/helper/budget_pacing_helper.dart';
-import '../../../transaction/domain/usecases/get_month_to_date_cash_flow_usecase.dart';
+import '../../../transaction/domain/usecases/get_monthly_cash_flow_usecase.dart';
 import '../entities/budget_insights_entity.dart';
 import '../entities/budget_limit_stats_entity.dart';
 import 'get_budget_anomalies_usecase.dart';
@@ -21,7 +21,7 @@ class GetBudgetInsightsUseCase {
   );
 
   final GetBudgetLimitStatsUseCase _getBudgetStats;
-  final GetMonthToDateCashFlowUseCase _getCashFlow;
+  final GetMonthlyCashFlowUseCase _getCashFlow;
   final GetBudgetAnomaliesUseCase _getAnomalies;
 
   Future<Result<BudgetInsightsEntity, CcFailure>> call() async {
@@ -67,8 +67,14 @@ class GetBudgetInsightsUseCase {
         pacingWarnings: pacingWarnings,
         penaltyWarnings: penaltyWarnings,
         isDeficit: cashFlow?.isDeficit ?? false,
-        deficitAmount: cashFlow != null ? -cashFlow.net : 0,
+        deficitAmount: cashFlow != null ? -cashFlow.operatingNet : 0,
         anomalyCount: anomalyCount,
+        isInflowDebtDriven: cashFlow?.isInflowDebtDriven ?? false,
+        debtInflowAmount: cashFlow?.debtInflow ?? 0,
+        debtInflowPercent: cashFlow?.debtInflowPercent ?? 0,
+        isOutflowDebtDriven: cashFlow?.isOutflowDebtDriven ?? false,
+        debtOutflowAmount: cashFlow?.debtOutflow ?? 0,
+        debtOutflowPercent: cashFlow?.debtOutflowPercent ?? 0,
       ),
     );
   }

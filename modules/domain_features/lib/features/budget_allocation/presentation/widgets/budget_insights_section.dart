@@ -43,6 +43,34 @@ class BudgetInsightsSection extends StatelessWidget {
                 color: context.ccColorScheme.error,
                 onTap: () => context.router.push(const ReportRoute()),
               ),
+            if (insights.isInflowDebtDriven)
+              _InsightCard(
+                title: el.tr(CcLocaleKeys.budget_insights_title),
+                description: el.tr(
+                  CcLocaleKeys.budget_debt_inflow_warning,
+                  namedArgs: {
+                    'percent': '${insights.debtInflowPercent}',
+                    'amount': formatVndWithSymbol(insights.debtInflowAmount),
+                  },
+                ),
+                icon: Icons.account_balance_outlined,
+                color: context.ccColorScheme.error,
+                onTap: () => context.router.push(const ReportRoute()),
+              ),
+            if (insights.isOutflowDebtDriven)
+              _InsightCard(
+                title: el.tr(CcLocaleKeys.budget_insights_title),
+                description: el.tr(
+                  CcLocaleKeys.budget_debt_outflow_warning,
+                  namedArgs: {
+                    'percent': '${insights.debtOutflowPercent}',
+                    'amount': formatVndWithSymbol(insights.debtOutflowAmount),
+                  },
+                ),
+                icon: Icons.account_balance_outlined,
+                color: PrjColors.info,
+                onTap: () => context.router.push(const ReportRoute()),
+              ),
             for (final warning in insights.penaltyWarnings)
               Builder(
                 builder: (context) {

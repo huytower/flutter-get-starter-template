@@ -363,6 +363,8 @@
         "pacing_hint": "{name}: còn {days} ngày · Đề xuất ≤{amount}/ngày",
         "penalty_warning": "{name} đã vượt quá {percent}%!",
         "deficit_warning": "Chi tiêu nhiều hơn thu nhập trong tháng này (thâm hụt {amount})",
+        "debt_inflow_warning": "{percent}% dòng tiền vào tháng này ({amount}) đến từ nợ, không phải thu nhập",
+        "debt_outflow_warning": "{percent}% dòng tiền ra tháng này ({amount}) là tiền cho vay hoặc trả nợ, không phải chi tiêu",
         "anomaly_hint": "{count} chi tiêu bất thường so với trung bình 3 tháng trước",
         "insights_title": "Thông tin & cảnh báo",
         "insights_action_review": "Xem báo cáo",
