@@ -9,14 +9,14 @@ import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
 import '../../../budget_limit/domain/usecases/get_budget_anomalies_usecase.dart';
 import '../../../budget_limit/domain/usecases/get_budget_insights_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import '../../../transaction/domain/usecases/get_month_to_date_cash_flow_usecase.dart';
+import '../../../transaction/domain/usecases/get_monthly_cash_flow_usecase.dart';
 import '../entities/ai_advice_entity.dart';
 import '../entities/financial_runway_entity.dart';
 import 'get_financial_runway_usecase.dart';
 
 /// Generates the AI financial-advice narrative for the Report page.
 ///
-/// Reads [GetMonthToDateCashFlowUseCase] and [GetBudgetAnomaliesUseCase]
+/// Reads [GetMonthlyCashFlowUseCase] and [GetBudgetAnomaliesUseCase]
 /// directly rather than only through [GetBudgetInsightsUseCase] — that
 /// entity only exposes a deficit amount/anomaly count, but the prompt needs
 /// real income/expense figures and per-category anomaly detail.
@@ -35,7 +35,7 @@ class GenerateAiFinancialAdviceUseCase {
   final GetBudgetInsightsUseCase _getInsights;
   final GetBudgetAnomaliesUseCase _getAnomalies;
   final GetFinancialRunwayUseCase _getRunway;
-  final GetMonthToDateCashFlowUseCase _getCashFlow;
+  final GetMonthlyCashFlowUseCase _getCashFlow;
 
   static const int _maxHighlightsPerSection = 3;
 

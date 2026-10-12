@@ -57,6 +57,12 @@ class BudgetInsightsEntity extends Equatable {
   final bool isDeficit;
   final int deficitAmount;
   final int anomalyCount;
+  final bool isInflowDebtDriven;
+  final int debtInflowAmount;
+  final int debtInflowPercent;
+  final bool isOutflowDebtDriven;
+  final int debtOutflowAmount;
+  final int debtOutflowPercent;
 
   const BudgetInsightsEntity({
     required this.pacingWarnings,
@@ -64,12 +70,20 @@ class BudgetInsightsEntity extends Equatable {
     required this.isDeficit,
     required this.deficitAmount,
     required this.anomalyCount,
+    this.isInflowDebtDriven = false,
+    this.debtInflowAmount = 0,
+    this.debtInflowPercent = 0,
+    this.isOutflowDebtDriven = false,
+    this.debtOutflowAmount = 0,
+    this.debtOutflowPercent = 0,
   });
 
   bool get hasAnything =>
       pacingWarnings.isNotEmpty ||
       penaltyWarnings.isNotEmpty ||
       isDeficit ||
+      isInflowDebtDriven ||
+      isOutflowDebtDriven ||
       anomalyCount > 0;
 
   @override
@@ -79,5 +93,11 @@ class BudgetInsightsEntity extends Equatable {
     isDeficit,
     deficitAmount,
     anomalyCount,
+    isInflowDebtDriven,
+    debtInflowAmount,
+    debtInflowPercent,
+    isOutflowDebtDriven,
+    debtOutflowAmount,
+    debtOutflowPercent,
   ];
 }

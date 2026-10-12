@@ -401,6 +401,8 @@
         "pacing_hint": "{name}: {days} days left · Suggested ≤{amount}/day",
         "penalty_warning": "{name} exceeded {percent}%!",
         "deficit_warning": "Spending more than income this month (deficit {amount})",
+        "debt_inflow_warning": "{percent}% of this month's inflow ({amount}) comes from debt, not income",
+        "debt_outflow_warning": "{percent}% of this month's outflow ({amount}) is debt lent or repaid, not spending",
         "anomaly_hint": "{count} unusual expense(s) vs. the last 3 months' average",
         "insights_title": "Insights & warnings",
         "insights_action_review": "View report",

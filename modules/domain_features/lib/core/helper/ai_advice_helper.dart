@@ -2,7 +2,7 @@ import '../../features/budget_limit/domain/entities/budget_insights_entity.dart'
 import '../../features/budget_limit/domain/entities/budget_limit_stats_entity.dart';
 import '../../features/budget_limit/domain/usecases/get_budget_anomalies_usecase.dart';
 import '../../features/report/domain/entities/financial_runway_entity.dart';
-import '../../features/transaction/domain/usecases/get_month_to_date_cash_flow_usecase.dart';
+import '../../features/transaction/domain/usecases/get_monthly_cash_flow_usecase.dart';
 import '../constant/currency_constants.dart';
 import 'money_format_helper.dart';
 
@@ -91,12 +91,30 @@ String buildAiFinancialAdvicePrompt({
     ..writeln('Dữ liệu tháng này:');
 
   if (cashFlow != null) {
+    String money(int v) => formatVndWithSymbol(v, currencyCode: currencyCode);
     buffer.writeln(
-      '- Thu nhập: ${formatVndWithSymbol(cashFlow.income, currencyCode: currencyCode)}. '
-      'Chi tiêu: ${formatVndWithSymbol(cashFlow.expense, currencyCode: currencyCode)}. '
-      'Chênh lệch: ${formatVndWithSymbol(cashFlow.net, currencyCode: currencyCode)} '
-      '(${cashFlow.isDeficit ? "thâm hụt" : "dương"}).',
+      '- Thu nhập: ${money(cashFlow.income)}. '
+      'Chi tiêu: ${money(cashFlow.expense)}. '
+      'Tiền vay/thu nợ vào: ${money(cashFlow.debtInflow)}. '
+      'Tiền cho vay/trả nợ ra: ${money(cashFlow.debtOutflow)}. '
+      'Lợi nhuận đầu tư vào: ${money(cashFlow.investmentInflow)}. '
+      'Vốn đầu tư ra: ${money(cashFlow.investmentOutflow)}. '
+      'Chênh lệch thu - chi: ${money(cashFlow.operatingNet)} '
+      '(${cashFlow.isDeficit ? "thâm hụt" : "dương"}). '
+      'Chênh lệch dòng tiền tổng: ${money(cashFlow.net)}.',
     );
+    if (cashFlow.isInflowDebtDriven) {
+      buffer.writeln(
+        '- Lưu ý: ${cashFlow.debtInflowPercent}% tiền vào tháng này đến từ '
+        'nợ (vay hoặc thu nợ), không phải thu nhập thực.',
+      );
+    }
+    if (cashFlow.isOutflowDebtDriven) {
+      buffer.writeln(
+        '- Lưu ý: ${cashFlow.debtOutflowPercent}% tiền ra tháng này là cho '
+        'vay hoặc trả nợ, không phải chi tiêu thông thường.',
+      );
+    }
   } else {
     buffer.writeln('- Không có dữ liệu thu chi tháng này.');
   }

@@ -382,6 +382,8 @@ abstract class  LocaleKeys {
   static const budget_pacing_hint = 'budget.pacing_hint';
   static const budget_penalty_warning = 'budget.penalty_warning';
   static const budget_deficit_warning = 'budget.deficit_warning';
+  static const budget_debt_inflow_warning = 'budget.debt_inflow_warning';
+  static const budget_debt_outflow_warning = 'budget.debt_outflow_warning';
   static const budget_anomaly_hint = 'budget.anomaly_hint';
   static const budget_insights_title = 'budget.insights_title';
   static const budget_insights_action_review = 'budget.insights_action_review';

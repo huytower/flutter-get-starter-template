@@ -206,8 +206,8 @@ import 'package:domain_features/features/transaction/domain/usecases/create_inve
     as _i240;
 import 'package:domain_features/features/transaction/domain/usecases/create_transaction_usecase.dart'
     as _i28;
-import 'package:domain_features/features/transaction/domain/usecases/get_month_to_date_cash_flow_usecase.dart'
-    as _i774;
+import 'package:domain_features/features/transaction/domain/usecases/get_monthly_cash_flow_usecase.dart'
+    as _i895;
 import 'package:domain_features/features/transaction/domain/usecases/parse_bill_image_usecase.dart'
     as _i1039;
 import 'package:domain_features/features/transaction/domain/usecases/parse_quick_entry_usecase.dart'
@@ -480,9 +480,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i225.GetLoanTrendUseCase(gh<_i1027.TransactionRepository>()));
     gh.lazySingleton<_i850.GetMonthlySummaryUseCase>(() =>
         _i850.GetMonthlySummaryUseCase(gh<_i1027.TransactionRepository>()));
-    gh.lazySingleton<_i774.GetMonthToDateCashFlowUseCase>(() =>
-        _i774.GetMonthToDateCashFlowUseCase(
-            gh<_i1027.TransactionRepository>()));
+    gh.lazySingleton<_i895.GetMonthlyCashFlowUseCase>(() =>
+        _i895.GetMonthlyCashFlowUseCase(gh<_i1027.TransactionRepository>()));
     gh.lazySingleton<_i845.GetInvestmentRoiUseCase>(() =>
         _i845.GetInvestmentRoiUseCase(gh<_i1027.TransactionRepository>()));
     gh.lazySingleton<_i240.CreateInvestmentTransactionUseCase>(
@@ -587,6 +586,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i743.GetBudgetLimitStatsUseCase>(),
               gh<_i1027.TransactionRepository>(),
             ));
+    gh.lazySingleton<_i206.GetBudgetInsightsUseCase>(
+        () => _i206.GetBudgetInsightsUseCase(
+              gh<_i743.GetBudgetLimitStatsUseCase>(),
+              gh<_i895.GetMonthlyCashFlowUseCase>(),
+              gh<_i463.GetBudgetAnomaliesUseCase>(),
+            ));
     gh.lazySingleton<_i390.CheckBudgetThresholdUseCase>(
         () => _i390.CheckBudgetThresholdUseCase(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
@@ -609,12 +614,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i805.CreateLiabilityUseCase>(),
               gh<_i231.WalletController>(),
               gh<_i663.GetLiabilityBalancesUseCase>(),
-            ));
-    gh.lazySingleton<_i206.GetBudgetInsightsUseCase>(
-        () => _i206.GetBudgetInsightsUseCase(
-              gh<_i743.GetBudgetLimitStatsUseCase>(),
-              gh<_i774.GetMonthToDateCashFlowUseCase>(),
-              gh<_i463.GetBudgetAnomaliesUseCase>(),
             ));
     gh.factory<_i797.AddInvestmentSheetController>(
         () => _i797.AddInvestmentSheetController(
@@ -661,18 +660,18 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i446.GetReconciliationHistoryUseCase>(),
               gh<_i811.UserLevelController>(),
             ));
-    gh.factory<_i752.AddBudgetLimitSheetController>(
-        () => _i752.AddBudgetLimitSheetController(
-              gh<_i1041.GetCategoriesUseCase>(),
-              gh<_i393.GetCategoryAverageMonthlySpendUseCase>(),
-              gh<_i1003.BudgetLimitController>(),
-            ));
     gh.lazySingleton<_i436.GenerateAiFinancialAdviceUseCase>(
         () => _i436.GenerateAiFinancialAdviceUseCase(
               gh<_i206.GetBudgetInsightsUseCase>(),
               gh<_i463.GetBudgetAnomaliesUseCase>(),
               gh<_i701.GetFinancialRunwayUseCase>(),
-              gh<_i774.GetMonthToDateCashFlowUseCase>(),
+              gh<_i895.GetMonthlyCashFlowUseCase>(),
+            ));
+    gh.factory<_i752.AddBudgetLimitSheetController>(
+        () => _i752.AddBudgetLimitSheetController(
+              gh<_i1041.GetCategoriesUseCase>(),
+              gh<_i393.GetCategoryAverageMonthlySpendUseCase>(),
+              gh<_i1003.BudgetLimitController>(),
             ));
     gh.factory<_i353.ReportController>(() => _i353.ReportController(
           gh<_i169.GetCategorySpendingUseCase>(),
