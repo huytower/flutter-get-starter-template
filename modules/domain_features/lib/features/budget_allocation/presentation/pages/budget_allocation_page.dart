@@ -200,7 +200,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   Widget _buildLiquidWalletsSection(BuildContext context) {
     return Obx(() {
-      controller.walletController.wallets.length;
+      final walletCount = controller.walletController.wallets.length;
+      final totalBal = controller.walletController.totalBalance.value;
+      assert(walletCount >= 0 && totalBal >= 0);
       return LiquidWalletsSection(
         wallets: controller.walletController.recentLiquidWallets,
         onAddWallet: () => controller.openAddWallet(context),

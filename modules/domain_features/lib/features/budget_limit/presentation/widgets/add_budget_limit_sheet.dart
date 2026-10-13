@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../guideline/export_guideline.dart';
@@ -218,6 +217,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
           ),
         ),
         Obx(() {
+          guideline.bounceTrigger.value;
           if (!guideline.isTaskActive('min_living')) {
             return const SizedBox.shrink();
           }

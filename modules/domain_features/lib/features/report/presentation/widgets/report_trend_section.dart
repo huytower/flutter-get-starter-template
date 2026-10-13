@@ -21,9 +21,9 @@ class ReportTrendSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      final filter = controller.filterType.value;
       if (data.points.isEmpty) return const SizedBox.shrink();
 
-      final filter = controller.filterType.value;
       if (filter != ReportFilterType.all &&
           filter != ReportFilterType.expense &&
           filter != ReportFilterType.income) {
