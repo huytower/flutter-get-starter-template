@@ -450,6 +450,10 @@ class CodegenLoader extends AssetLoader {
       "penalty_warning": "{name} exceeded {percent}%!",
       "deficit_warning":
           "Spending more than income this month (deficit {amount})",
+      "debt_inflow_warning":
+          "{percent}% of this month's inflow ({amount}) comes from debt, not income",
+      "debt_outflow_warning":
+          "{percent}% of this month's outflow ({amount}) is debt lent or repaid, not spending",
       "anomaly_hint":
           "{count} unusual expense(s) vs. the last 3 months' average",
       "insights_title": "Insights & warnings",
@@ -545,6 +549,8 @@ class CodegenLoader extends AssetLoader {
           "Couldn't generate advice right now, please try again.",
       "ai_advice_daily_limit_reached":
           "You've reached today's AI advice limit. Please try again tomorrow.",
+      "ai_advice_gemini_disabled":
+          "Gemini AI is turned off in Profile settings.",
       "ai_advice_generated_just_now": "Generated just now",
       "ai_advice_generated_minutes_ago": "Generated {count} minutes ago",
       "ai_advice_generated_hours_ago": "Generated {count} hours ago",
@@ -708,6 +714,9 @@ class CodegenLoader extends AssetLoader {
       "force_full_access": "Unlock all features",
       "force_full_access_subtitle":
           "Debug/QA override — instantly unlocks Investment + Debt/Loan (LV3), regardless of your actual progress",
+      "gemini_ai": "Gemini AI features",
+      "gemini_ai_subtitle":
+          "Debug/QA — on: text, voice and receipt entries are parsed by Gemini first (local as fallback). Off: nothing is sent to Gemini, only local parsing runs",
       "weekly_audit_day": "Weekly audit day",
       "weekly_audit_day_subtitle": "The day you review your weekly balance",
       "weekly_audit_day_hint":
@@ -1188,6 +1197,10 @@ class CodegenLoader extends AssetLoader {
       "penalty_warning": "{name} đã vượt quá {percent}%!",
       "deficit_warning":
           "Chi tiêu nhiều hơn thu nhập trong tháng này (thâm hụt {amount})",
+      "debt_inflow_warning":
+          "{percent}% dòng tiền vào tháng này ({amount}) đến từ nợ, không phải thu nhập",
+      "debt_outflow_warning":
+          "{percent}% dòng tiền ra tháng này ({amount}) là tiền cho vay hoặc trả nợ, không phải chi tiêu",
       "anomaly_hint":
           "{count} chi tiêu bất thường so với trung bình 3 tháng trước",
       "insights_title": "Thông tin & cảnh báo",
@@ -1282,6 +1295,7 @@ class CodegenLoader extends AssetLoader {
           "Không thể tạo gợi ý lúc này, vui lòng thử lại.",
       "ai_advice_daily_limit_reached":
           "Bạn đã đạt giới hạn gợi ý AI hôm nay. Vui lòng thử lại vào ngày mai.",
+      "ai_advice_gemini_disabled": "Gemini AI đang tắt trong cài đặt Hồ sơ.",
       "ai_advice_generated_just_now": "Vừa tạo xong",
       "ai_advice_generated_minutes_ago": "Tạo {count} phút trước",
       "ai_advice_generated_hours_ago": "Tạo {count} giờ trước",
@@ -1340,6 +1354,9 @@ class CodegenLoader extends AssetLoader {
       "force_full_access": "Mở khóa tất cả tính năng",
       "force_full_access_subtitle":
           "Ghi đè Debug/QA — mở khóa ngay lập tức Đầu tư + Nợ/Vay (LV3), bất kể tiến độ thực tế của bạn",
+      "gemini_ai": "Tính năng Gemini AI",
+      "gemini_ai_subtitle":
+          "Debug/QA — bật: nhập văn bản, giọng nói và hóa đơn được Gemini phân tích trước (cục bộ làm dự phòng). Tắt: không gửi gì tới Gemini, chỉ phân tích cục bộ",
       "weekly_audit_day": "Ngày kiểm tra hàng tuần",
       "weekly_audit_day_subtitle": "Ngày bạn xem xét số dư hàng tuần",
       "weekly_audit_day_hint":
@@ -2090,6 +2107,8 @@ class CcLocaleKeys {
   static const budget_pacing_hint = 'budget.pacing_hint';
   static const budget_penalty_warning = 'budget.penalty_warning';
   static const budget_deficit_warning = 'budget.deficit_warning';
+  static const budget_debt_inflow_warning = 'budget.debt_inflow_warning';
+  static const budget_debt_outflow_warning = 'budget.debt_outflow_warning';
   static const budget_anomaly_hint = 'budget.anomaly_hint';
   static const budget_insights_title = 'budget.insights_title';
   static const budget_insights_action_review = 'budget.insights_action_review';
@@ -2182,6 +2201,8 @@ class CcLocaleKeys {
       'report.ai_advice_generate_failed';
   static const report_ai_advice_daily_limit_reached =
       'report.ai_advice_daily_limit_reached';
+  static const report_ai_advice_gemini_disabled =
+      'report.ai_advice_gemini_disabled';
   static const report_ai_advice_generated_just_now =
       'report.ai_advice_generated_just_now';
   static const report_ai_advice_generated_minutes_ago =
@@ -2356,6 +2377,8 @@ class CcLocaleKeys {
   static const profile_force_full_access = 'profile.force_full_access';
   static const profile_force_full_access_subtitle =
       'profile.force_full_access_subtitle';
+  static const profile_gemini_ai = 'profile.gemini_ai';
+  static const profile_gemini_ai_subtitle = 'profile.gemini_ai_subtitle';
   static const profile_weekly_audit_day = 'profile.weekly_audit_day';
   static const profile_weekly_audit_day_subtitle =
       'profile.weekly_audit_day_subtitle';

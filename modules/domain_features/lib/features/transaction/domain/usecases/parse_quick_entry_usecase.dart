@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/constant/currency_catalog.dart';
+import '../../../../core/constant/currency_constants.dart';
+import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
@@ -58,18 +62,23 @@ class ParseQuickEntryUseCase {
     String categoryType = CategoryType.expense,
     List<String>? groupIds,
   }) async {
+    if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
+      return null;
+    }
     final categories = await _loadCategories(categoryType, groupIds);
     if (categories.isEmpty) return null;
 
     final walletsResult = await _walletRepository.getWallets();
     final wallets = walletsResult.tryGetSuccess() ?? [];
+    final currency = _primaryCurrency();
 
     final prompt =
-        'You extract a Vietnamese ${_amountKindPhrase(categoryType)} '
-        'amount in VND, a category id, a wallet id, a transaction date, and a short note '
+        'You extract a ${_amountKindPhrase(categoryType)} '
+        'amount, a category id, a wallet id, a transaction date, and a short note '
         '(merchant/item) from a short free-text or dictated quick-entry '
-        'string. '
+        'string in any language (Vietnamese is the most common). '
         'Text: "$text". '
+        '${_currencyPromptSentence(currency)} '
         '${_todayReferenceSentence()} '
         'IMPORTANT: If the text contains relative dates like "hôm qua" (yesterday), '
         '"hôm kia" (the day before yesterday), or specific dates, resolve them '
@@ -83,7 +92,7 @@ class ParseQuickEntryUseCase {
 
     final response = await CcGeminiHelper.generateText(
       prompt: prompt,
-      responseSchema: _buildResponseSchema(categories, wallets),
+      responseSchema: _buildResponseSchema(categories, wallets, currency),
     );
 
     if (response == null) {
@@ -101,6 +110,7 @@ class ParseQuickEntryUseCase {
       categories: categories,
       wallets: wallets,
       localResult: localResult,
+      currency: currency,
     );
   }
 
@@ -114,19 +124,24 @@ class ParseQuickEntryUseCase {
     String categoryType = CategoryType.expense,
     List<String>? groupIds,
   }) async {
+    if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
+      return null;
+    }
     final categories = await _loadCategories(categoryType, groupIds);
     if (categories.isEmpty) return null;
 
     final walletsResult = await _walletRepository.getWallets();
     final wallets = walletsResult.tryGetSuccess() ?? [];
+    final currency = _primaryCurrency();
 
     final prompt =
-        'This image is a Vietnamese ${_receiptKindPhrase(categoryType)}. '
-        'Extract the total amount in VND, the best-matching category id, '
+        'This image is a ${_receiptKindPhrase(categoryType)}. '
+        'Extract the total amount, the best-matching category id, '
         'the wallet id, '
         'the transaction date if one is shown, and a short note. '
         'If this is a receipt, the note should be the merchant name. '
         'If there are line items, list them concisely in the note like: "Item1, Item2...". '
+        '${_currencyPromptSentence(currency)} '
         '${_todayReferenceSentence()} '
         '${_buildCategoryOptionsPrompt(categories)} '
         '${_buildWalletOptionsPrompt(wallets)}';
@@ -139,7 +154,7 @@ class ParseQuickEntryUseCase {
       imageBytes: imageBytes,
       mimeType: mimeType,
       prompt: prompt,
-      responseSchema: _buildResponseSchema(categories, wallets),
+      responseSchema: _buildResponseSchema(categories, wallets, currency),
     );
 
     if (response == null) {
@@ -157,6 +172,7 @@ class ParseQuickEntryUseCase {
       categories: categories,
       wallets: wallets,
       localResult: localResult,
+      currency: currency,
     );
   }
 
@@ -198,18 +214,41 @@ class ParseQuickEntryUseCase {
     return "Today's date is $iso.";
   }
 
+  CurrencyDefinition _primaryCurrency() =>
+      CurrencyCatalog.getDefinition(CurrencyConstants.currentPrimaryCurrency);
+
+  String _currencyPromptSentence(CurrencyDefinition currency) =>
+      "The user's primary currency is ${currency.code} (${currency.symbol}). "
+      'Return "amount" as the number in whole ${currency.code} units, '
+      'keeping any decimals (e.g. 12.5 for 12 and a half), never converted to '
+      'cents or another currency. Amounts with no explicit currency are in '
+      '${currency.code}, including when only an ambiguous symbol such as \$ '
+      'or ¥ is shown. Return "currencyCode" only when a different currency is '
+      'explicitly written or shown. Expand shorthand such as 50k, 50 nghìn, '
+      '1,5 triệu / 1.5tr (1,500,000), 万 (10,000), 만 / 천 (10,000 / 1,000). '
+      'A "." or "," followed by exactly three digits is a thousands '
+      'separator, otherwise it is a decimal separator.';
+
   Schema _buildResponseSchema(
     List<CategoryEntity> categories,
     List<WalletEntity> wallets,
+    CurrencyDefinition currency,
   ) {
     return Schema.object(
       properties: {
-        'amount': Schema.integer(
+        'amount': Schema.number(
           description:
-              'Total transaction amount in VND, or null if not '
-              'determinable.',
+              'Total transaction amount in whole ${currency.code} units '
+              '(decimals allowed), or null if not determinable.',
           nullable: true,
-          minimum: 1,
+          minimum: 0.01,
+        ),
+        'currencyCode': Schema.enumString(
+          enumValues: CurrencyConstants.supportedCurrencyCodes,
+          description:
+              'ISO code of the currency explicitly written or shown in the '
+              'input, or null if none is stated.',
+          nullable: true,
         ),
         'categoryId': Schema.enumString(
           enumValues: categories.map((c) => c.id).toList(),
@@ -246,30 +285,36 @@ class ParseQuickEntryUseCase {
     required List<CategoryEntity> categories,
     required List<WalletEntity> wallets,
     required QuickEntryParseResult localResult,
+    required CurrencyDefinition currency,
   }) {
     final validCatIds = categories.map((c) => c.id).toSet();
     final validWalletIds = wallets.map((w) => w.id).toSet();
-    final cloudResult = _parseJsonResponse(
+    final parsed = _parseJsonResponse(
       response,
       validCatIds: validCatIds,
       validWalletIds: validWalletIds,
+      currency: currency,
     );
-    if (cloudResult == null) return null;
+    if (parsed == null) return null;
+    final cloudResult = parsed.result;
 
     final merged = QuickEntryParseResult(
-      amount: localResult.amount ?? cloudResult.amount,
-      categoryId: localResult.categoryId ?? cloudResult.categoryId,
-      walletId: localResult.walletId ?? cloudResult.walletId,
+      amount: parsed.foreignCurrency
+          ? null
+          : cloudResult.amount ?? localResult.amount,
+      categoryId: cloudResult.categoryId ?? localResult.categoryId,
+      walletId: cloudResult.walletId ?? localResult.walletId,
       date: cloudResult.date ?? localResult.date,
-      note: localResult.note ?? cloudResult.note,
+      note: cloudResult.note ?? localResult.note,
     );
     return merged.isEmpty ? null : merged;
   }
 
-  QuickEntryParseResult? _parseJsonResponse(
+  ({QuickEntryParseResult result, bool foreignCurrency})? _parseJsonResponse(
     String raw, {
     required Set<String> validCatIds,
     required Set<String> validWalletIds,
+    required CurrencyDefinition currency,
   }) {
     try {
       final cleaned = raw.replaceAll(RegExp(r'```json|```'), '').trim();
@@ -277,8 +322,13 @@ class ParseQuickEntryUseCase {
       if (decoded is! Map) return null;
 
       final amountValue = decoded['amount'];
-      final amount = amountValue is num && amountValue > 0
-          ? amountValue.round()
+      final statedCurrency = decoded['currencyCode'];
+      final isForeignCurrency =
+          statedCurrency is String &&
+          statedCurrency.isNotEmpty &&
+          statedCurrency.toUpperCase() != currency.code;
+      final amount = !isForeignCurrency && amountValue is num && amountValue > 0
+          ? (amountValue * math.pow(10, currency.decimalDigits)).round()
           : null;
 
       final categoryIdValue = decoded['categoryId'];
@@ -309,12 +359,15 @@ class ParseQuickEntryUseCase {
           ? noteValue.trim()
           : null;
 
-      return QuickEntryParseResult(
-        amount: amount,
-        categoryId: categoryId,
-        walletId: walletId,
-        date: date,
-        note: note,
+      return (
+        result: QuickEntryParseResult(
+          amount: amount,
+          categoryId: categoryId,
+          walletId: walletId,
+          date: date,
+          note: note,
+        ),
+        foreignCurrency: isForeignCurrency,
       );
     } catch (_) {
       return null;

@@ -75,7 +75,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       child: Builder(
         builder: (context) => buildPullToRefresh(
           context: context,
-            onRefresh: controller.refreshFromCloud,
+          onRefresh: controller.refreshFromCloud,
           child: ListView(
             padding: EdgeInsets.symmetric(
               vertical: context.respPadding(CcPaddingParams.SPACE_MD),
@@ -199,8 +199,9 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   }
 
   Widget _buildLiquidWalletsSection(BuildContext context) {
-    return Obx(
-      () => LiquidWalletsSection(
+    return Obx(() {
+      controller.walletController.wallets.length;
+      return LiquidWalletsSection(
         wallets: controller.walletController.recentLiquidWallets,
         onAddWallet: () => controller.openAddWallet(context),
         showGuidelineBadge: Get.isRegistered<GuidelineController>()
@@ -209,7 +210,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
         badgeColor: Get.isRegistered<GuidelineController>()
             ? Get.find<GuidelineController>().currentColor
             : null,
-      ),
-    );
+      );
+    });
   }
 }
