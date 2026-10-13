@@ -1,6 +1,6 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=C:\Users\Admin\fvm\versions\3.41.9"
+export "FLUTTER_ROOT=C:\Users\Admin\fvm\default"
 export "FLUTTER_APPLICATION_PATH=C:\Users\Admin\repository\flutter-get-starter-template"
 export "FLUTTER_FRAMEWORK_SWIFT_PACKAGE_PATH=C:\Users\Admin\repository\flutter-get-starter-template\macos\Flutter\ephemeral\Packages\.packages\FlutterFramework"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
