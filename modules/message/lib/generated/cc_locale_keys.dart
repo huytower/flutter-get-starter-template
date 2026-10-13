@@ -464,6 +464,7 @@ abstract class  LocaleKeys {
   static const report_ai_advice_loading = 'report.ai_advice_loading';
   static const report_ai_advice_generate_failed = 'report.ai_advice_generate_failed';
   static const report_ai_advice_daily_limit_reached = 'report.ai_advice_daily_limit_reached';
+  static const report_ai_advice_gemini_disabled = 'report.ai_advice_gemini_disabled';
   static const report_ai_advice_generated_just_now = 'report.ai_advice_generated_just_now';
   static const report_ai_advice_generated_minutes_ago = 'report.ai_advice_generated_minutes_ago';
   static const report_ai_advice_generated_hours_ago = 'report.ai_advice_generated_hours_ago';
@@ -617,6 +618,8 @@ abstract class  LocaleKeys {
   static const profile_vip_subtitle = 'profile.vip_subtitle';
   static const profile_force_full_access = 'profile.force_full_access';
   static const profile_force_full_access_subtitle = 'profile.force_full_access_subtitle';
+  static const profile_gemini_ai = 'profile.gemini_ai';
+  static const profile_gemini_ai_subtitle = 'profile.gemini_ai_subtitle';
   static const profile_weekly_audit_day = 'profile.weekly_audit_day';
   static const profile_weekly_audit_day_subtitle = 'profile.weekly_audit_day_subtitle';
   static const profile_weekly_audit_day_hint = 'profile.weekly_audit_day_hint';
