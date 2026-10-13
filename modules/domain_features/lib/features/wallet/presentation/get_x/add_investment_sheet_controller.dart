@@ -29,7 +29,7 @@ class AddInvestmentSheetController extends CcGetController {
   final GetProfileSettingsUseCase _getProfileSettings;
 
   WalletEntity? _wallet;
-  late final TextEditingController nameController;
+  final TextEditingController nameController = TextEditingController();
 
   final RxString amountStr = '0'.obs;
   final RxBool showKeypad = false.obs;
@@ -51,7 +51,8 @@ class AddInvestmentSheetController extends CcGetController {
 
   void init(WalletEntity? wallet, {CategoryEntity? category}) {
     _wallet = wallet;
-    nameController = TextEditingController(text: wallet?.name ?? '');
+    nameController.text = wallet?.name ?? '';
+    nameController.removeListener(_onNameChanged);
     nameController.addListener(_onNameChanged);
     _onNameChanged();
 

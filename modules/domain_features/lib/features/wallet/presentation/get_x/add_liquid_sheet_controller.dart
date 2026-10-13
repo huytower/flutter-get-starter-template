@@ -36,7 +36,7 @@ class AddLiquidSheetController extends CcGetController {
   final UserLevelController userLevel;
 
   WalletEntity? _wallet;
-  late final TextEditingController nameController;
+  final TextEditingController nameController = TextEditingController();
 
   final RxString amountStr = '0'.obs;
   final RxBool showKeypad = false.obs;
@@ -62,11 +62,10 @@ class AddLiquidSheetController extends CcGetController {
   bool get balanceLocked =>
       isEditing && _walletController.walletHasTransactions(_wallet!.id);
 
-  void init(WalletEntity? wallet) async {
+  void init(WalletEntity? wallet) {
     _wallet = wallet;
-    final settings = await getIt<GetProfileSettingsUseCase>().call();
-    currencyCode.value = settings.currencyCode;
-    nameController = TextEditingController(text: wallet?.name ?? '');
+    nameController.text = wallet?.name ?? '';
+    nameController.removeListener(_onNameChanged);
     nameController.addListener(_onNameChanged);
     _onNameChanged();
     if (isEditing) {
@@ -75,8 +74,14 @@ class AddLiquidSheetController extends CcGetController {
     }
     amountStr.listen((_) => _validateAmount());
     _validateAmount();
-    _loadEmergencyFundGate();
-    _loadInvestmentCategories();
+    _loadAsyncData();
+  }
+
+  Future<void> _loadAsyncData() async {
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    currencyCode.value = settings.currencyCode;
+    await _loadEmergencyFundGate();
+    await _loadInvestmentCategories();
   }
 
   Future<void> _loadInvestmentCategories() async {

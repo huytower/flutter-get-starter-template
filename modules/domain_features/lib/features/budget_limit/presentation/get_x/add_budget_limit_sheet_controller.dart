@@ -29,7 +29,7 @@ class AddBudgetLimitSheetController extends CcGetController {
   final GetCategoryAverageMonthlySpendUseCase _getAverageSpend;
   final BudgetLimitController _budgetLimitController;
 
-  late final TextEditingController nameController;
+  final TextEditingController nameController = TextEditingController();
   final RxString limitStr = '0'.obs;
   final RxnString nameError = RxnString();
   final RxBool showKeypad = false.obs;
@@ -78,7 +78,8 @@ class AddBudgetLimitSheetController extends CcGetController {
 
   void init(BudgetLimitEntity? editTarget) {
     _editTarget = editTarget;
-    nameController = TextEditingController(text: editTarget?.name ?? '');
+    nameController.text = editTarget?.name ?? '';
+    nameController.removeListener(_onNameChanged);
     nameController.addListener(_onNameChanged);
 
     _loadCurrency();

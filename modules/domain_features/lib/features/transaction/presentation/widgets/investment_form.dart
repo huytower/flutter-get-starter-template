@@ -14,6 +14,7 @@ import 'cc_amount_input_section.dart';
 import 'investment_asset_selector.dart';
 import 'investment_direction_toggle.dart';
 import 'money_keypad_panel.dart';
+import 'quick_date_row.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_form_container.dart';
 import 'transaction_submit_button.dart';
@@ -186,6 +187,15 @@ class _InvestmentFormState extends State<InvestmentForm> {
             }
             return const SizedBox.shrink();
           }),
+          Obx(
+            () => QuickDateRow(
+              selectedDate: controller.date.value,
+              onDateSelected: controller.setDate,
+              onCalendarTap: () => controller.pickDate(context),
+              activeColor: accentColor,
+            ),
+          ),
+          const CcSpaceSM(),
           Obx(
             () => TransactionAdditionalDetailsSection(
               isExpanded: controller.showMoreDetails.value,

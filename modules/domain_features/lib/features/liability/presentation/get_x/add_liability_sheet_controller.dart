@@ -33,7 +33,7 @@ class AddLiabilitySheetController extends CcGetController {
   final WalletController _walletController;
   final GetLiabilityBalancesUseCase _getLiabilityBalances;
 
-  late final TextEditingController nameController;
+  final TextEditingController nameController = TextEditingController();
   final RxString direction = LiabilityDirection.borrow.obs;
 
   final RxList<CategoryEntity> liabilityCategories = <CategoryEntity>[].obs;
@@ -44,7 +44,8 @@ class AddLiabilitySheetController extends CcGetController {
   final RxBool isSubmitting = false.obs;
 
   void init() {
-    nameController = TextEditingController();
+    nameController.text = '';
+    nameController.removeListener(_onNameChanged);
     nameController.addListener(_onNameChanged);
     nameController.addListener(() {
       if (nameError.value != null) {
