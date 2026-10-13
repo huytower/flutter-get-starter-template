@@ -1,5 +1,8 @@
 import 'dart:ui';
 
+import 'package:cc_sdk/export_cc_sdk.dart';
+import 'package:geocoding/geocoding.dart';
+
 import 'currency_constants.dart';
 
 class CurrencyDefinition {
@@ -159,6 +162,36 @@ class CurrencyCatalog {
   /// Detects the suggested currency code based on device regional settings.
   static String detectSuggestedCurrency() {
     return detectSuggestedCurrencyWithDetails().currencyCode;
+  }
+
+  /// Asynchronously detects suggested currency code based on GPS location first,
+  /// falling back to device regional locale settings if GPS is unavailable.
+  static Future<({String currencyCode, String? countryCode})>
+  detectSuggestedCurrencyFromGpsWithDetails() async {
+    try {
+      final position = await CcLocationHelper.getLastKnownPosition() ??
+          await CcLocationHelper.getCurrentPosition();
+
+      if (position != null) {
+        final placemarks = await Geocoding().placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+        if (placemarks.isNotEmpty) {
+          final isoCountryCode = placemarks.first.isoCountryCode?.toUpperCase();
+          if (isoCountryCode != null &&
+              countryCodeToCurrency.containsKey(isoCountryCode)) {
+            return (
+              currencyCode: countryCodeToCurrency[isoCountryCode]!,
+              countryCode: isoCountryCode,
+            );
+          }
+        }
+      }
+    } catch (_) {}
+
+    // Fallback to locale / region detection if GPS detection fails or is unavailable
+    return detectSuggestedCurrencyWithDetails();
   }
 
   /// Tries to get the definition for a given currency code strictly.

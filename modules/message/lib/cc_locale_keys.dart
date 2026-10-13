@@ -1414,8 +1414,7 @@ class CodegenLoader extends AssetLoader {
           "Xác định mức chi phí sinh hoạt tối thiểu hàng tháng",
       "banner_desc_first_transaction": "Ghi chép giao dịch chi tiêu đầu tiên",
       "banner_desc_investment": "Tạo khoản đầu tư đầu tiên để gia tăng tài sản",
-      "banner_desc_liability":
-          "Ghi chép khoản nợ đầu tiên (Vay/Trả) để quản lý nợ",
+      "banner_desc_liability": "Ghi chép khoản nợ đầu tiên để quản lý nợ",
       "banner_desc_lend":
           "Ghi chép khoản cho mượn đầu tiên (Cho mượn/Thu hồi) để quản lý cho mượn",
       "banner_desc_default": "Bạn đã sẵn sàng quản lý tài chính!",

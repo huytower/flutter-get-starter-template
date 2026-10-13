@@ -40,7 +40,8 @@ class ProfileLocalDataSource {
     );
 
     if (s.currencyCode == null) {
-      final suggestion = CurrencyCatalog.detectSuggestedCurrencyWithDetails();
+      final suggestion =
+          await CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails();
       s.currencyCode = CurrencyConstants.validateCurrencyCode(
         suggestion.currencyCode,
       );

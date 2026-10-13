@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:domain_features/features/transaction/presentation/widgets/transaction_header_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -8,7 +9,6 @@ import '../get_x/expense_form_controller.dart';
 import '../get_x/quick_entry_mixin.dart';
 import '../get_x/transaction_controller.dart';
 import 'transaction_header_actions.dart';
-import 'transaction_header_banner.dart';
 import 'transaction_header_title.dart';
 
 class TransactionPageHeader extends StatelessWidget {
