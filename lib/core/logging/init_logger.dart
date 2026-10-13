@@ -30,7 +30,14 @@ Future<void> initEnv() async {
       envFile = '.env.prod';
       break;
   }
-  await dotenv.load(fileName: 'env/$envFile');
+  try {
+    await dotenv.load(fileName: 'env/$envFile');
+    '✅ Environment loaded: env/$envFile'.Log('EnvConfig');
+  } catch (e, stackTrace) {
+    '❌ Failed to load environment file env/$envFile: $e'.Log('EnvConfig');
+    stackTrace.Log('EnvConfig');
+    rethrow;
+  }
 }
 
 Future<void> logEnv() async {
@@ -42,12 +49,9 @@ Future<void> logEnv() async {
       await initEnv();
     }
 
-    // Log only essential env info
-    assert(() {
-      final appName = dotenv.env['APP_NAME'] ?? 'Unknown';
-      'Env: $env - $appName'.Log('EnvConfig');
-      return true;
-    }());
+    // Log essential env info (removed from assert to run in release mode)
+    final appName = dotenv.env['APP_NAME'] ?? 'Unknown';
+    'Env: $env - $appName'.Log('EnvConfig');
   } catch (e, stackTrace) {
     '❌ Failed to load env variables: $e'.Log('EnvConfig');
     stackTrace.Log('EnvConfig');
