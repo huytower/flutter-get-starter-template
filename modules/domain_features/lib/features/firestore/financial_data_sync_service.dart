@@ -121,8 +121,6 @@ class FinancialDataSyncService {
       final online = status == InternetStatus.connected;
       isOnline.value = online;
       if (online && pendingCount.value > 0) {
-        '[LOGOUT_DEBUG] Connectivity restored — auto-triggering syncAll() for ${pendingCount.value} pending records'
-            .Log('FinancialDataSyncService');
         unawaited(syncAll());
       }
     });
@@ -131,8 +129,6 @@ class FinancialDataSyncService {
     unawaited(
       _probeOnline().then((online) {
         if (online && pendingCount.value > 0) {
-          '[LOGOUT_DEBUG] Initial online probe succeeded — auto-triggering syncAll() for ${pendingCount.value} pending records'
-              .Log('FinancialDataSyncService');
           unawaited(syncAll());
         }
       }),
@@ -146,9 +142,6 @@ class FinancialDataSyncService {
     try {
       final online = await _connection.hasInternetAccess;
       isOnline.value = online;
-      '[LOGOUT_DEBUG] _probeOnline result=$online'.Log(
-        'FinancialDataSyncService',
-      );
       return online;
     } catch (e) {
       isOnline.value = false;
@@ -557,8 +550,6 @@ class FinancialDataSyncService {
         reconPending +
         catPending +
         liabilityPending;
-    '[LOGOUT_DEBUG] _countPending() evaluated -> total=$total (wallet=$walletPending, tx=$txPending, budget=$budgetPending, recon=$reconPending, cat=$catPending, liability=$liabilityPending)'
-        .Log('FinancialDataSyncService');
     return total;
   }
 

@@ -1,7 +1,4 @@
-import 'package:cc_sdk/core/config/cc_feature_flags.dart';
 import 'package:cc_sdk/core/error/cc_exceptions.dart';
-import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
-import 'package:cc_sdk/core/network/curl/curl_utils.dart';
 import 'package:dio/dio.dart';
 
 import '../params/cc_rest_api_params.dart';
@@ -14,9 +11,6 @@ import '../response/header/res_header_model.dart';
 class ResponseInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
-    // 1. Logging Logic
-    'onResponse() : status = ${response.statusCode}'.Log();
-
     // 2. Normalization Logic
     var rawData = response.data;
     final statusKey = CcRestApiParams.status.name;

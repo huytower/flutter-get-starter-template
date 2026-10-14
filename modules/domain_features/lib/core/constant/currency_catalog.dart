@@ -126,33 +126,43 @@ class CurrencyCatalog {
     try {
       final locale = PlatformDispatcher.instance.locale;
       final countryCode = locale.countryCode?.toUpperCase();
-      '[CurrencyCatalog] Detecting currency from locale: $locale (country: $countryCode)'
-          .Log('CurrencyCatalog');
+      'Detecting currency from locale: $locale (country: $countryCode)'.Log(
+        'CurrencyCatalog',
+      );
       if (countryCode != null &&
           countryCodeToCurrency.containsKey(countryCode)) {
         final currency = countryCodeToCurrency[countryCode]!;
-        '[CurrencyCatalog] Locale country code matched: country=$countryCode -> currency=$currency'
+        'Locale country code matched: country=$countryCode -> currency=$currency'
             .Log('CurrencyCatalog');
         return (currencyCode: currency, countryCode: countryCode);
       }
 
       // Language fallback
       final languageCode = locale.languageCode.toLowerCase();
+      '[CurrencyCatalog] No country code match. Trying language fallback: language=$languageCode'
+          .Log('CurrencyCatalog');
       if (languageCode == 'vi') {
+        '[CurrencyCatalog] Language matched: vi -> VND'.Log('CurrencyCatalog');
         return (currencyCode: CurrencyConstants.vnd, countryCode: 'VN');
       }
       if (languageCode == 'ja') {
+        '[CurrencyCatalog] Language matched: ja -> JPY'.Log('CurrencyCatalog');
         return (currencyCode: CurrencyConstants.jpy, countryCode: 'JP');
       }
       if (languageCode == 'ko') {
+        '[CurrencyCatalog] Language matched: ko -> KRW'.Log('CurrencyCatalog');
         return (currencyCode: CurrencyConstants.krw, countryCode: 'KR');
       }
       if (languageCode == 'zh') {
+        '[CurrencyCatalog] Language matched: zh -> CNY'.Log('CurrencyCatalog');
         return (currencyCode: CurrencyConstants.cny, countryCode: 'CN');
       }
       if (languageCode == 'en') {
+        '[CurrencyCatalog] Language matched: en -> USD'.Log('CurrencyCatalog');
         return (currencyCode: CurrencyConstants.usd, countryCode: 'US');
       }
+      '[CurrencyCatalog] Language code $languageCode not in supported fallback list'
+          .Log('CurrencyCatalog');
     } catch (e) {
       '[CurrencyCatalog] Error detecting currency from locale: $e'.Log(
         'CurrencyCatalog',
@@ -176,15 +186,19 @@ class CurrencyCatalog {
   /// falling back to device regional locale settings if GPS is unavailable.
   static Future<({String currencyCode, String? countryCode})>
   detectSuggestedCurrencyFromGpsWithDetails() async {
-    '[CurrencyCatalog] Starting GPS-based currency detection...'.Log(
-      'CurrencyCatalog',
-    );
     try {
+      final lastKnownPosition = await CcLocationHelper.getLastKnownPosition();
       final position =
-          await CcLocationHelper.getLastKnownPosition() ??
-          await CcLocationHelper.getCurrentPosition();
+          lastKnownPosition ?? await CcLocationHelper.getCurrentPosition();
 
       if (position != null) {
+        if (lastKnownPosition != null) {
+          '[CurrencyCatalog] Using cached last-known GPS position (fast path)'
+              .Log('CurrencyCatalog');
+        } else {
+          '[CurrencyCatalog] Using fresh GPS position (requested current location)'
+              .Log('CurrencyCatalog');
+        }
         '[CurrencyCatalog] GPS Position found (lat=${position.latitude}, lng=${position.longitude}). Performing geocoding...'
             .Log('CurrencyCatalog');
         final placemarks = await Geocoding().placemarkFromCoordinates(
@@ -205,6 +219,9 @@ class CurrencyCatalog {
             '[CurrencyCatalog] Country code $isoCountryCode not in supported countryCodeToCurrency map. Falling back to locale...'
                 .Log('CurrencyCatalog');
           }
+        } else {
+          '[CurrencyCatalog] Geocoding returned empty placemarks. Falling back to locale...'
+              .Log('CurrencyCatalog');
         }
       } else {
         '[CurrencyCatalog] GPS position is null (permission denied or unavailable). Falling back to locale...'

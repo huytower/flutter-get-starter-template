@@ -35,12 +35,6 @@ class ExpenseCategorySelectionSection extends StatelessWidget {
       final selectedBudget = controller.selectedBudget.value;
       final selectedCategory = controller.selectedCategory.value;
 
-      'state | items=${items.length} '
-              'selectedCategoryId=${selectedCategory?.id} '
-              'selectedBudgetId=${selectedBudget?.id} '
-              'selectedCount=${items.where((i) => _isItemSelected(i, selectedCategory, selectedBudget)).length}'
-          .Log(_debugTag);
-
       return CategorySelectionLayout(
         items: items,
         scrollController: controller.categoryScrollController,

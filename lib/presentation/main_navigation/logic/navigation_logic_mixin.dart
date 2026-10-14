@@ -47,7 +47,6 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
       CcAppCheckHelper.initialize();
       FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
       logEnv();
-      logVersionInfo();
 
       // Local notifications & sync
       try {

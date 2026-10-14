@@ -41,8 +41,6 @@ class ProfileLocalDataSource {
     );
 
     if (s.currencyCode == null) {
-      '[ProfileLocalDataSource] First launch detected (s.currencyCode is null). Initiating GPS currency auto-detection...'
-          .Log('ProfileLocalDataSource');
       final suggestion =
           await CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails();
       s.currencyCode = CurrencyConstants.validateCurrencyCode(
@@ -53,11 +51,17 @@ class ProfileLocalDataSource {
       await s.save();
       '[ProfileLocalDataSource] Currency auto-detection saved: currencyCode=${s.currencyCode}, countryCode=${s.currencyDetectionCountryCode}, source=${s.currencySelectionSource}'
           .Log('ProfileLocalDataSource');
-    } else if (s.currencyCode != validatedCurrencyCode ||
-        s.currencySelectionSource != validatedSource) {
-      s.currencyCode = validatedCurrencyCode;
-      s.currencySelectionSource = validatedSource;
-      await s.save();
+    } else {
+      '[ProfileLocalDataSource] Existing currency found: currencyCode=${s.currencyCode}, source=${s.currencySelectionSource}'
+          .Log('ProfileLocalDataSource');
+      if (s.currencyCode != validatedCurrencyCode ||
+          s.currencySelectionSource != validatedSource) {
+        '[ProfileLocalDataSource] Currency validation correction: from (${s.currencyCode}, ${s.currencySelectionSource}) to ($validatedCurrencyCode, $validatedSource)'
+            .Log('ProfileLocalDataSource');
+        s.currencyCode = validatedCurrencyCode;
+        s.currencySelectionSource = validatedSource;
+        await s.save();
+      }
     }
 
     // Don't default isDarkMode to false - keep it null if not set

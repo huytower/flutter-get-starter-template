@@ -1,22 +1,7 @@
 import 'package:app_config/core/config/http/http_client/http_client_config.dart';
 import 'package:app_config/core/enum/environment.dart';
-import 'package:app_config/data/datasource/remote/app_version_api.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-/// Logs the current app version and build information
-Future<void> logVersionInfo() async {
-  try {
-    final versionService = AppVersionAPI();
-    final version = await versionService.getCurrentVersion();
-    final buildNumber = await versionService.getBuildNumber();
-
-    'App v$version (build $buildNumber)'.Log('AppVersion');
-  } catch (e, stackTrace) {
-    '❌ Failed to get version info: $e'.Log('AppVersion');
-    stackTrace.Log('AppVersion');
-  }
-}
 
 /// Initializes environment variables without logging
 Future<void> initEnv() async {
@@ -32,7 +17,6 @@ Future<void> initEnv() async {
   }
   try {
     await dotenv.load(fileName: 'env/$envFile');
-    '✅ Environment loaded: env/$envFile'.Log('EnvConfig');
   } catch (e, stackTrace) {
     '❌ Failed to load environment file env/$envFile: $e'.Log('EnvConfig');
     stackTrace.Log('EnvConfig');
@@ -51,7 +35,6 @@ Future<void> logEnv() async {
 
     // Log essential env info (removed from assert to run in release mode)
     final appName = dotenv.env['APP_NAME'] ?? 'Unknown';
-    'Env: $env - $appName'.Log('EnvConfig');
   } catch (e, stackTrace) {
     '❌ Failed to load env variables: $e'.Log('EnvConfig');
     stackTrace.Log('EnvConfig');

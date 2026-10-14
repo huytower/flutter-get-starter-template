@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
-import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:intl/intl.dart';
 
 import '../constant/currency_catalog.dart';
@@ -91,8 +90,6 @@ class MoneyFormatter {
 
     // Scale minor units to major units for formatting (e.g. cents -> dollars)
     final double adjustedValue = (value / scale).toDouble();
-    '[MoneyFormatter] formatShort: rawValue=$value, code=$code, decimalDigits=${def?.decimalDigits}, scale=$scale, adjustedValue=$adjustedValue'
-        .Log();
 
     final sign = adjustedValue < 0 ? '-' : '';
     final abs = adjustedValue.abs();
