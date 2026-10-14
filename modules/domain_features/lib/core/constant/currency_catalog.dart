@@ -126,12 +126,14 @@ class CurrencyCatalog {
     try {
       final locale = PlatformDispatcher.instance.locale;
       final countryCode = locale.countryCode?.toUpperCase();
+      '[CurrencyCatalog] Detecting currency from locale: $locale (country: $countryCode)'
+          .Log('CurrencyCatalog');
       if (countryCode != null &&
           countryCodeToCurrency.containsKey(countryCode)) {
-        return (
-          currencyCode: countryCodeToCurrency[countryCode]!,
-          countryCode: countryCode,
-        );
+        final currency = countryCodeToCurrency[countryCode]!;
+        '[CurrencyCatalog] Locale country code matched: country=$countryCode -> currency=$currency'
+            .Log('CurrencyCatalog');
+        return (currencyCode: currency, countryCode: countryCode);
       }
 
       // Language fallback
@@ -151,8 +153,14 @@ class CurrencyCatalog {
       if (languageCode == 'en') {
         return (currencyCode: CurrencyConstants.usd, countryCode: 'US');
       }
-    } catch (_) {}
+    } catch (e) {
+      '[CurrencyCatalog] Error detecting currency from locale: $e'.Log(
+        'CurrencyCatalog',
+      );
+    }
 
+    '[CurrencyCatalog] Defaulting currency to ${CurrencyConstants.defaultCurrencyCode}'
+        .Log('CurrencyCatalog');
     return (
       currencyCode: CurrencyConstants.defaultCurrencyCode,
       countryCode: null,
@@ -168,30 +176,50 @@ class CurrencyCatalog {
   /// falling back to device regional locale settings if GPS is unavailable.
   static Future<({String currencyCode, String? countryCode})>
   detectSuggestedCurrencyFromGpsWithDetails() async {
+    '[CurrencyCatalog] Starting GPS-based currency detection...'.Log(
+      'CurrencyCatalog',
+    );
     try {
-      final position = await CcLocationHelper.getLastKnownPosition() ??
+      final position =
+          await CcLocationHelper.getLastKnownPosition() ??
           await CcLocationHelper.getCurrentPosition();
 
       if (position != null) {
+        '[CurrencyCatalog] GPS Position found (lat=${position.latitude}, lng=${position.longitude}). Performing geocoding...'
+            .Log('CurrencyCatalog');
         final placemarks = await Geocoding().placemarkFromCoordinates(
           position.latitude,
           position.longitude,
         );
         if (placemarks.isNotEmpty) {
           final isoCountryCode = placemarks.first.isoCountryCode?.toUpperCase();
+          '[CurrencyCatalog] Geocoding resolved country code: $isoCountryCode'
+              .Log('CurrencyCatalog');
           if (isoCountryCode != null &&
               countryCodeToCurrency.containsKey(isoCountryCode)) {
-            return (
-              currencyCode: countryCodeToCurrency[isoCountryCode]!,
-              countryCode: isoCountryCode,
-            );
+            final currency = countryCodeToCurrency[isoCountryCode]!;
+            '[CurrencyCatalog] GPS Currency detection successful: country=$isoCountryCode -> currency=$currency'
+                .Log('CurrencyCatalog');
+            return (currencyCode: currency, countryCode: isoCountryCode);
+          } else {
+            '[CurrencyCatalog] Country code $isoCountryCode not in supported countryCodeToCurrency map. Falling back to locale...'
+                .Log('CurrencyCatalog');
           }
         }
+      } else {
+        '[CurrencyCatalog] GPS position is null (permission denied or unavailable). Falling back to locale...'
+            .Log('CurrencyCatalog');
       }
-    } catch (_) {}
+    } catch (e) {
+      '[CurrencyCatalog] Error during GPS currency detection: $e. Falling back to locale...'
+          .Log('CurrencyCatalog');
+    }
 
     // Fallback to locale / region detection if GPS detection fails or is unavailable
-    return detectSuggestedCurrencyWithDetails();
+    final fallback = detectSuggestedCurrencyWithDetails();
+    '[CurrencyCatalog] Fallback currency detection result: currency=${fallback.currencyCode}, country=${fallback.countryCode}'
+        .Log('CurrencyCatalog');
+    return fallback;
   }
 
   /// Tries to get the definition for a given currency code strictly.

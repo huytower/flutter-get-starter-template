@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
-import 'package:message/cc_locale_keys.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';
 
 import '../../../../core/constant/currency_constants.dart';
@@ -375,11 +374,16 @@ class ProfileController extends CcGetController {
   }
 
   Future<void> pickCurrency(BuildContext context) async {
+    '[ProfileController] Opening primary currency selection sheet (current: ${settings.value.currencyCode})...'
+        .Log('ProfileController');
     final picked = await CurrencySelectionSheet.show(
       context,
       settings.value.currencyCode,
     );
     if (picked != null && picked != settings.value.currencyCode) {
+      '[ProfileController] User selected new primary currency: $picked'.Log(
+        'ProfileController',
+      );
       final updated = settings.value.copyWith(
         currencyCode: picked,
         currencySelectionSource: CurrencySelectionSources.userSelected,
@@ -388,6 +392,11 @@ class ProfileController extends CcGetController {
       await _updateSettings(updated);
       await _load();
       CurrencyConstants.onCurrencyChanged.value++;
+      '[ProfileController] Primary currency updated to $picked and broadcasted onCurrencyChanged'
+          .Log('ProfileController');
+    } else {
+      '[ProfileController] Primary currency selection canceled or unchanged'
+          .Log('ProfileController');
     }
   }
 

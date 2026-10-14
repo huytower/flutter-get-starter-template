@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
@@ -79,8 +80,8 @@ class CurrencySelectionController extends CcGetController {
         for (final code in otherCodes) {
           convertedAmounts[code] = 0;
         }
-        debugPrint(
-          '[CurrencySelectionController] Batch rate conversion failed for base $baseCurrency: $error',
+        'Batch rate conversion failed for base $baseCurrency: $error'.Log(
+          'CurrencySelectionController',
         );
       },
     );

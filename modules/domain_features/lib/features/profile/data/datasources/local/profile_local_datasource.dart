@@ -41,6 +41,8 @@ class ProfileLocalDataSource {
     );
 
     if (s.currencyCode == null) {
+      '[ProfileLocalDataSource] First launch detected (s.currencyCode is null). Initiating GPS currency auto-detection...'
+          .Log('ProfileLocalDataSource');
       final suggestion =
           await CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails();
       s.currencyCode = CurrencyConstants.validateCurrencyCode(
@@ -49,6 +51,8 @@ class ProfileLocalDataSource {
       s.currencyDetectionCountryCode = suggestion.countryCode;
       s.currencySelectionSource = CurrencySelectionSources.detected;
       await s.save();
+      '[ProfileLocalDataSource] Currency auto-detection saved: currencyCode=${s.currencyCode}, countryCode=${s.currencyDetectionCountryCode}, source=${s.currencySelectionSource}'
+          .Log('ProfileLocalDataSource');
     } else if (s.currencyCode != validatedCurrencyCode ||
         s.currencySelectionSource != validatedSource) {
       s.currencyCode = validatedCurrencyCode;
