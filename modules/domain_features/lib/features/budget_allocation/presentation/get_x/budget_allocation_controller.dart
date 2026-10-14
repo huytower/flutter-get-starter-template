@@ -283,9 +283,6 @@ class BudgetAllocationController extends CcGetController {
   Future<void> loadLiabilities() async {
     final result = await _getLiabilityBalances();
     result.when((balances) async {
-      debugPrint(
-        '[BUDGET_ALLOC_CTRL] loadLiabilities: fetched ${balances.length} items',
-      );
       final unique = <String, LiabilityBalanceEntity>{};
       for (final b in balances) {
         unique[b.liability.id] = b;

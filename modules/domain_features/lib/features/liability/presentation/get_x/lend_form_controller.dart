@@ -191,10 +191,6 @@ class LendFormController extends LiabilityBaseFormController {
       amountStr.value = '0';
     }
 
-    debugPrint(
-      '[LEND_FORM] selectLiability: id=${balance.liability.id}, walletId=${balance.liability.walletId}, amount=${amountStr.value}',
-    );
-
     _loadCategoryForLoan(balance.liability.categoryId);
 
     if (balance.liability.principalAmount > 0) {

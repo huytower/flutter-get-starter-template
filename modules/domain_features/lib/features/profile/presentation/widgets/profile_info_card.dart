@@ -2,7 +2,6 @@ import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:message/cc_locale_keys.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../firestore/financial_data_sync_service.dart';
@@ -416,31 +415,32 @@ class ProfileInfoCard extends StatelessWidget {
     required String email,
     VoidCallback? onLink,
   }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        CcText(
-          email.isEmpty ? el.tr(CcLocaleKeys.auth_email) : email,
-          textStyle: context.ccTextTheme.bodySmall?.copyWith(
-            color: context.ccColorScheme.onPrimary.withOpacity(
-              email.isEmpty ? 0.5 : 0.85,
+    final isEmpty = email.isEmpty;
+    return CcBouncing(
+      onTap: isEmpty ? onLink : null,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CcText(
+            isEmpty ? 'Email' : email,
+            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+              color: context.ccColorScheme.onPrimary.withOpacity(
+                isEmpty ? 0.5 : 0.85,
+              ),
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        if (onLink != null && email.isEmpty) ...[
-          const CcSpaceXS(),
-          CcBouncing(
-            onTap: onLink,
-            child: Icon(
+          if (onLink != null && isEmpty) ...[
+            const CcSpaceXS(),
+            Icon(
               Icons.link_rounded,
               size: context.respIconSize(baseSize: 20),
               color: context.ccColorScheme.onPrimary.withOpacity(0.85),
             ),
-          ),
+          ],
         ],
-      ],
+      ),
     );
   }
 
@@ -449,33 +449,34 @@ class ProfileInfoCard extends StatelessWidget {
     required String phoneNumber,
     VoidCallback? onLink,
   }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        CcText(
-          phoneNumber.isEmpty
-              ? el.tr(CcLocaleKeys.auth_phone_number)
-              : phoneNumber,
-          textStyle: context.ccTextTheme.bodySmall?.copyWith(
-            color: context.ccColorScheme.onPrimary.withOpacity(
-              phoneNumber.isEmpty ? 0.5 : 0.85,
+    final isEmpty = phoneNumber.isEmpty;
+    return CcBouncing(
+      onTap: isEmpty ? onLink : null,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CcText(
+            isEmpty
+                ? 'Số điện thoại'
+                : phoneNumber,
+            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+              color: context.ccColorScheme.onPrimary.withOpacity(
+                isEmpty ? 0.5 : 0.85,
+              ),
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        if (onLink != null && phoneNumber.isEmpty) ...[
-          const CcSpaceXS(),
-          CcBouncing(
-            onTap: onLink,
-            child: Icon(
+          if (onLink != null && isEmpty) ...[
+            const CcSpaceXS(),
+            Icon(
               Icons.link_rounded,
               size: context.respIconSize(baseSize: 20),
               color: context.ccColorScheme.onPrimary.withOpacity(0.85),
             ),
-          ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

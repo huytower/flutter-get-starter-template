@@ -406,10 +406,12 @@ class ProfileController extends CcGetController {
     _authCoordinator.navigateToLogin(context);
   }
 
-  /// Handle avatar tap - navigate to login page
+  /// Handle avatar tap - navigate to login page only if not logged in
   void handleAvatarTap(BuildContext context) {
     'handleAvatarTap triggered'.Log('ProfileController');
-    _authCoordinator.navigateToLogin(context);
+    if (!isLoggedIn) {
+      _authCoordinator.navigateToLogin(context);
+    }
   }
 
   /// Handle phone number link tap - navigate to login page

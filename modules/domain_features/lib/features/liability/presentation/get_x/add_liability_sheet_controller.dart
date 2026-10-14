@@ -172,9 +172,6 @@ class AddLiabilitySheetController extends CcGetController {
       result.when(
         (liability) {
           if (context.mounted) {
-            debugPrint(
-              '[ADD_LIABILITY_SHEET] Save success, triggering refreshes',
-            );
             nameError.value = null;
 
             // Refresh related lists immediately

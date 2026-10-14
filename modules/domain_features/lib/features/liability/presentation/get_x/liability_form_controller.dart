@@ -168,10 +168,6 @@ class LiabilityFormController extends LiabilityBaseFormController {
       amountStr.value = '0';
     }
 
-    debugPrint(
-      '[LIABILITY_FORM] selectLiability: id=${balance.liability.id}, walletId=${balance.liability.walletId}, amount=${amountStr.value}',
-    );
-
     _loadCategoryForLiability(balance.liability.categoryId);
 
     if (balance.liability.principalAmount > 0) {

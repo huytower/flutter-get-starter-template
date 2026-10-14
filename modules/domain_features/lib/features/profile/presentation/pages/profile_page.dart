@@ -67,7 +67,9 @@ class ProfilePage extends CcGetView<ProfileController> {
                         onEditName: () => controller.pickDisplayName(context),
                         onLinkAccount: () =>
                             controller.handleLinkAccountTap(context),
-                        onAvatarTap: () => controller.handleAvatarTap(context),
+                        onAvatarTap: controller.isLoggedIn
+                            ? null
+                            : () => controller.handleAvatarTap(context),
                         onLinkPhone: () =>
                             controller.handlePhoneLinkTap(context),
                       ),
@@ -218,7 +220,9 @@ class ProfilePage extends CcGetView<ProfileController> {
         ),
       ),
       Obx(() {
-        final isDarkMode = controller.settings.value.isDarkMode ?? false;
+        final isDarkModeSetting = controller.settings.value.isDarkMode;
+        final systemBrightness = MediaQuery.platformBrightnessOf(context);
+        final isDarkMode = isDarkModeSetting ?? (systemBrightness == Brightness.dark);
         return ProfileSettingsTile(
           icon: Icons.palette_rounded,
           label: isDarkMode
