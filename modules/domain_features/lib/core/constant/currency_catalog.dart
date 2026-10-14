@@ -126,43 +126,36 @@ class CurrencyCatalog {
     try {
       final locale = PlatformDispatcher.instance.locale;
       final countryCode = locale.countryCode?.toUpperCase();
-      'Detecting currency from locale: $locale (country: $countryCode)'.Log(
-        'CurrencyCatalog',
-      );
       if (countryCode != null &&
           countryCodeToCurrency.containsKey(countryCode)) {
         final currency = countryCodeToCurrency[countryCode]!;
-        'Locale country code matched: country=$countryCode -> currency=$currency'
+        '[CurrencyCatalog] Currency detected from locale: country=$countryCode -> currency=$currency'
             .Log('CurrencyCatalog');
         return (currencyCode: currency, countryCode: countryCode);
       }
 
       // Language fallback
       final languageCode = locale.languageCode.toLowerCase();
-      '[CurrencyCatalog] No country code match. Trying language fallback: language=$languageCode'
-          .Log('CurrencyCatalog');
       if (languageCode == 'vi') {
-        '[CurrencyCatalog] Language matched: vi -> VND'.Log('CurrencyCatalog');
+        '[CurrencyCatalog] Currency detected from language: vi -> VND'.Log('CurrencyCatalog');
         return (currencyCode: CurrencyConstants.vnd, countryCode: 'VN');
       }
       if (languageCode == 'ja') {
-        '[CurrencyCatalog] Language matched: ja -> JPY'.Log('CurrencyCatalog');
+        '[CurrencyCatalog] Currency detected from language: ja -> JPY'.Log('CurrencyCatalog');
         return (currencyCode: CurrencyConstants.jpy, countryCode: 'JP');
       }
       if (languageCode == 'ko') {
-        '[CurrencyCatalog] Language matched: ko -> KRW'.Log('CurrencyCatalog');
+        '[CurrencyCatalog] Currency detected from language: ko -> KRW'.Log('CurrencyCatalog');
         return (currencyCode: CurrencyConstants.krw, countryCode: 'KR');
       }
       if (languageCode == 'zh') {
-        '[CurrencyCatalog] Language matched: zh -> CNY'.Log('CurrencyCatalog');
+        '[CurrencyCatalog] Currency detected from language: zh -> CNY'.Log('CurrencyCatalog');
         return (currencyCode: CurrencyConstants.cny, countryCode: 'CN');
       }
       if (languageCode == 'en') {
-        '[CurrencyCatalog] Language matched: en -> USD'.Log('CurrencyCatalog');
+        '[CurrencyCatalog] Currency detected from language: en -> USD'.Log('CurrencyCatalog');
         return (currencyCode: CurrencyConstants.usd, countryCode: 'US');
       }
-      '[CurrencyCatalog] Language code $languageCode not in supported fallback list'
-          .Log('CurrencyCatalog');
     } catch (e) {
       '[CurrencyCatalog] Error detecting currency from locale: $e'.Log(
         'CurrencyCatalog',
@@ -186,56 +179,38 @@ class CurrencyCatalog {
   /// falling back to device regional locale settings if GPS is unavailable.
   static Future<({String currencyCode, String? countryCode})>
   detectSuggestedCurrencyFromGpsWithDetails() async {
+    '[CurrencyCatalog] Starting GPS-based currency detection...'.Log(
+      'CurrencyCatalog',
+    );
     try {
       final lastKnownPosition = await CcLocationHelper.getLastKnownPosition();
       final position =
           lastKnownPosition ?? await CcLocationHelper.getCurrentPosition();
 
       if (position != null) {
-        if (lastKnownPosition != null) {
-          '[CurrencyCatalog] Using cached last-known GPS position (fast path)'
-              .Log('CurrencyCatalog');
-        } else {
-          '[CurrencyCatalog] Using fresh GPS position (requested current location)'
-              .Log('CurrencyCatalog');
-        }
-        '[CurrencyCatalog] GPS Position found (lat=${position.latitude}, lng=${position.longitude}). Performing geocoding...'
-            .Log('CurrencyCatalog');
         final placemarks = await Geocoding().placemarkFromCoordinates(
           position.latitude,
           position.longitude,
         );
         if (placemarks.isNotEmpty) {
           final isoCountryCode = placemarks.first.isoCountryCode?.toUpperCase();
-          '[CurrencyCatalog] Geocoding resolved country code: $isoCountryCode'
-              .Log('CurrencyCatalog');
           if (isoCountryCode != null &&
               countryCodeToCurrency.containsKey(isoCountryCode)) {
             final currency = countryCodeToCurrency[isoCountryCode]!;
-            '[CurrencyCatalog] GPS Currency detection successful: country=$isoCountryCode -> currency=$currency'
+            '[CurrencyCatalog] GPS detection successful: country=$isoCountryCode -> currency=$currency'
                 .Log('CurrencyCatalog');
             return (currencyCode: currency, countryCode: isoCountryCode);
-          } else {
-            '[CurrencyCatalog] Country code $isoCountryCode not in supported countryCodeToCurrency map. Falling back to locale...'
-                .Log('CurrencyCatalog');
           }
-        } else {
-          '[CurrencyCatalog] Geocoding returned empty placemarks. Falling back to locale...'
-              .Log('CurrencyCatalog');
         }
-      } else {
-        '[CurrencyCatalog] GPS position is null (permission denied or unavailable). Falling back to locale...'
-            .Log('CurrencyCatalog');
       }
     } catch (e) {
-      '[CurrencyCatalog] Error during GPS currency detection: $e. Falling back to locale...'
-          .Log('CurrencyCatalog');
+      '[CurrencyCatalog] GPS detection failed, falling back to locale: $e'.Log(
+        'CurrencyCatalog',
+      );
     }
 
     // Fallback to locale / region detection if GPS detection fails or is unavailable
     final fallback = detectSuggestedCurrencyWithDetails();
-    '[CurrencyCatalog] Fallback currency detection result: currency=${fallback.currencyCode}, country=${fallback.countryCode}'
-        .Log('CurrencyCatalog');
     return fallback;
   }
 

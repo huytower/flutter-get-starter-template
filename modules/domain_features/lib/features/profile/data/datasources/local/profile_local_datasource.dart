@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:injectable/injectable.dart';
@@ -9,6 +11,8 @@ import '../../../domain/entities/profile_settings_entity.dart';
 
 @lazySingleton
 class ProfileLocalDataSource {
+  static Completer<void>? _currencyDetectionLock;
+
   Future<ProfileSettingsEntity> getSettings() async {
     final s = CcAppStorage.instance;
 
@@ -32,32 +36,43 @@ class ProfileLocalDataSource {
       await s.save();
     }
 
-    // Initialize/validate currency and normalized selection source
-    final validatedCurrencyCode = CurrencyConstants.validateCurrencyCode(
-      s.currencyCode,
-    );
-    final validatedSource = CurrencySelectionSources.validate(
-      s.currencySelectionSource,
-    );
-
     if (s.currencyCode == null) {
-      final suggestion =
-          await CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails();
-      s.currencyCode = CurrencyConstants.validateCurrencyCode(
-        suggestion.currencyCode,
-      );
-      s.currencyDetectionCountryCode = suggestion.countryCode;
-      s.currencySelectionSource = CurrencySelectionSources.detected;
-      await s.save();
-      '[ProfileLocalDataSource] Currency auto-detection saved: currencyCode=${s.currencyCode}, countryCode=${s.currencyDetectionCountryCode}, source=${s.currencySelectionSource}'
-          .Log('ProfileLocalDataSource');
+      // Guard against concurrent currency detection on first launch
+      if (_currencyDetectionLock != null) {
+        await _currencyDetectionLock!.future;
+      }
+
+      // Double-check after waiting - another thread may have completed it
+      if (s.currencyCode == null) {
+        '[ProfileLocalDataSource] First launch detected. Initiating GPS currency auto-detection...'
+            .Log('ProfileLocalDataSource');
+        _currencyDetectionLock = Completer<void>();
+        try {
+          final suggestion =
+              await CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails();
+          s.currencyCode = CurrencyConstants.validateCurrencyCode(
+            suggestion.currencyCode,
+          );
+          s.currencyDetectionCountryCode = suggestion.countryCode;
+          s.currencySelectionSource = CurrencySelectionSources.detected;
+          await s.save();
+          '[ProfileLocalDataSource] Currency auto-detection saved: currencyCode=${s.currencyCode}, countryCode=${s.currencyDetectionCountryCode}, source=${s.currencySelectionSource}'
+              .Log('ProfileLocalDataSource');
+        } finally {
+          _currencyDetectionLock?.complete();
+          _currencyDetectionLock = null;
+        }
+      }
     } else {
-      '[ProfileLocalDataSource] Existing currency found: currencyCode=${s.currencyCode}, source=${s.currencySelectionSource}'
-          .Log('ProfileLocalDataSource');
+      // Validate existing currency code and source
+      final validatedCurrencyCode = CurrencyConstants.validateCurrencyCode(
+        s.currencyCode,
+      );
+      final validatedSource = CurrencySelectionSources.validate(
+        s.currencySelectionSource,
+      );
       if (s.currencyCode != validatedCurrencyCode ||
           s.currencySelectionSource != validatedSource) {
-        '[ProfileLocalDataSource] Currency validation correction: from (${s.currencyCode}, ${s.currencySelectionSource}) to ($validatedCurrencyCode, $validatedSource)'
-            .Log('ProfileLocalDataSource');
         s.currencyCode = validatedCurrencyCode;
         s.currencySelectionSource = validatedSource;
         await s.save();
