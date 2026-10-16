@@ -69,7 +69,9 @@ class AddLiquidSheetController extends CcGetController {
     nameController.addListener(_onNameChanged);
     _onNameChanged();
     if (isEditing) {
-      amountStr.value = _walletController.bookBalanceOf(wallet!.id).toString();
+      amountStr.value = _walletController
+          .displayBookBalanceOf(wallet!.id)
+          .toString();
       newType.value = wallet.type;
     }
     amountStr.listen((_) => _validateAmount());
@@ -80,6 +82,20 @@ class AddLiquidSheetController extends CcGetController {
   Future<void> _loadAsyncData() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
     currencyCode.value = settings.currencyCode;
+
+    if (isEditing && _wallet != null) {
+      final rawBook = _walletController.bookBalanceOf(_wallet!.id);
+      final result = await _walletController.conversionService.convertAmount(
+        amount: rawBook,
+        fromCurrency: _wallet!.currencyCode,
+        toCurrency: settings.currencyCode,
+      );
+      final convertedVal = result.tryGetSuccess() ?? rawBook;
+      amountStr.value = convertedVal.toString();
+      '[AddLiquidSheetController] Converted balance for edit: raw=$rawBook (${_wallet!.currencyCode}) -> converted=$convertedVal (${settings.currencyCode})'
+          .Log('AddLiquidSheetController');
+    }
+
     await _loadEmergencyFundGate();
     await _loadInvestmentCategories();
   }
@@ -232,7 +248,24 @@ class AddLiquidSheetController extends CcGetController {
 
     try {
       if (wallet != null) {
-        final targetBalance = balanceLocked ? wallet.balance : balance;
+        final int targetBalance;
+        if (balanceLocked) {
+          if (wallet.currencyCode.toUpperCase() ==
+              currencyCode.value.toUpperCase()) {
+            targetBalance = wallet.balance;
+          } else {
+            final conv = await _walletController.conversionService
+                .convertAmount(
+                  amount: wallet.balance,
+                  fromCurrency: wallet.currencyCode,
+                  toCurrency: currencyCode.value,
+                );
+            targetBalance = conv.tryGetSuccess() ?? wallet.balance;
+          }
+        } else {
+          targetBalance = balance;
+        }
+
         await _walletController.updateWallet(
           WalletEntity(
             id: wallet.id,
@@ -249,6 +282,7 @@ class AddLiquidSheetController extends CcGetController {
             categoryId: newType.value == WalletType.investment
                 ? selectedInvestmentCategory.value?.id
                 : wallet.categoryId,
+            currencyCode: currencyCode.value,
           ),
         );
       } else {

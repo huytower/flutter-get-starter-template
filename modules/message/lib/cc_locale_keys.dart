@@ -1410,8 +1410,7 @@ class CodegenLoader extends AssetLoader {
       "banner_desc_modify_cash": "Điều chỉnh số dư trong ví tiền mặt",
       "banner_desc_budget_limit":
           "Thiết lập hạn mức chi tiêu cho từng danh mục",
-      "banner_desc_min_living":
-          "Xác định mức chi phí sinh hoạt tối thiểu hàng tháng",
+      "banner_desc_min_living": "Xác định mức sinh hoạt tối thiểu hàng tháng",
       "banner_desc_first_transaction": "Ghi chép giao dịch chi tiêu đầu tiên",
       "banner_desc_investment": "Tạo khoản đầu tư đầu tiên để gia tăng tài sản",
       "banner_desc_liability": "Ghi chép khoản nợ đầu tiên để quản lý nợ",

@@ -1,6 +1,6 @@
+import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
-import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -178,16 +178,16 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
           retention: const Duration(days: 90),
         );
       } catch (e) {
-        debugPrint('[ExchangeRateRepository] Cache cleanup failed: $e');
+        '[ExchangeRateRepository] Cache cleanup failed: $e'.Log('ExchangeRateRepository');
       }
 
       return Success(
         ExchangeRateResult(table: table, provenance: RateProvenance.network),
       );
     } catch (e) {
-      debugPrint(
-        '[ExchangeRateRepository] API fetch failed for base $validatedBase: $e (using baseline pivot fallback)',
-      );
+      '[ExchangeRateRepository] API fetch failed for base $validatedBase: $e (using baseline pivot fallback)'
+          .Log('ExchangeRateRepository');
+
       if (cached != null && hasValidCachedQuotes) {
         return Success(
           ExchangeRateResult(
@@ -201,6 +201,7 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
         validatedBase,
         validatedQuotes,
       );
+
       return Success(
         ExchangeRateResult(
           table: baselineTable,

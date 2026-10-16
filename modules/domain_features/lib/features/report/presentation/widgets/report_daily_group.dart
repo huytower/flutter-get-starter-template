@@ -71,6 +71,8 @@ class _DailyGroupState extends State<DailyGroup> {
         totalDaily,
         currencyCode: currencyCode,
       );
+      '[DailyGroup] date=${widget.date} totalDaily=$totalDaily currencyCode=$currencyCode formatted=$amountText'
+          .Log('DailyGroup');
 
       return Container(
         margin: EdgeInsets.only(bottom: context.respDim(16)),
