@@ -6,8 +6,10 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/helper/ai_advice_helper.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
+import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
-import '../../../budget_limit/domain/usecases/get_budget_anomalies_usecase.dart';
+import '../../../budget_limit/domain/usecases/get_budget_anomalies_usecase.dart'
+    show BudgetAnomalyEntity;
 import '../../../budget_limit/domain/usecases/get_budget_insights_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../transaction/domain/usecases/get_monthly_cash_flow_usecase.dart';
@@ -43,7 +45,10 @@ class GenerateAiFinancialAdviceUseCase {
   /// Never throws; returns null on a failed/empty cloud call. A failed
   /// local data source degrades to null/empty for that one input rather
   /// than blocking advice generation entirely.
-  Future<AiAdviceEntity?> call() async {
+  Future<AiAdviceEntity?> call({
+    required String targetCurrency,
+    required CurrencyConversionService conversionService,
+  }) async {
     if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
       return null;
     }
@@ -64,32 +69,38 @@ class GenerateAiFinancialAdviceUseCase {
     final cashFlow = (results[3] as Result<CashFlowEntity, dynamic>)
         .tryGetSuccess();
 
+    final convertedCashFlow = await _convertCashFlow(
+      cashFlow,
+      targetCurrency,
+      conversionService,
+    );
+    final convertedAnomalies = await _convertAnomalies(
+      anomalies ?? const [],
+      targetCurrency,
+      conversionService,
+    );
+    final convertedInsights = await _convertInsights(
+      insights,
+      targetCurrency,
+      conversionService,
+    );
+    final convertedRunway = await _convertRunway(
+      runway,
+      targetCurrency,
+      conversionService,
+    );
+
     final prompt = await buildAiFinancialAdvicePrompt(
-      cashFlow: cashFlow,
-      insights: insights,
-      anomalies: anomalies ?? const [],
-      runway: runway,
-      currencyCode: settings.currencyCode,
-      formatMoney: (int vndAmount) async {
-        if (settings.currencyCode.toUpperCase() == 'VND' || vndAmount == 0) {
-          return MoneyFormatter.formatWithSymbol(
-            vndAmount,
-            currencyCode: settings.currencyCode,
-          );
-        }
-        final conv = await getIt<CurrencyConversionService>().convertAmount(
-          amount: vndAmount.abs(),
-          fromCurrency: 'VND',
-          toCurrency: settings.currencyCode,
+      cashFlow: convertedCashFlow,
+      insights: convertedInsights,
+      anomalies: convertedAnomalies,
+      runway: convertedRunway,
+      currencyCode: targetCurrency,
+      formatMoney: (int vndAmount) {
+        return MoneyFormatter.formatWithSymbol(
+          vndAmount,
+          currencyCode: targetCurrency,
         );
-        final convertedVal =
-            conv.tryGetSuccess() ?? (vndAmount.abs() / 25982.5).round();
-        final sign = vndAmount < 0 ? '-' : '';
-        final formatted = MoneyFormatter.formatWithSymbol(
-          convertedVal,
-          currencyCode: settings.currencyCode,
-        );
-        return '$sign$formatted';
       },
     );
 
@@ -195,5 +206,186 @@ class GenerateAiFinancialAdviceUseCase {
       default:
         return AiAdviceSectionStatus.normal;
     }
+  }
+
+  Future<CashFlowEntity?> _convertCashFlow(
+    CashFlowEntity? cashFlow,
+    String targetCurrency,
+    CurrencyConversionService conversionService,
+  ) async {
+    if (cashFlow == null) return null;
+
+    if (targetCurrency.toUpperCase() == 'VND') {
+      return cashFlow;
+    }
+
+    final incomeResult = await conversionService.convertAmount(
+      amount: cashFlow.income,
+      fromCurrency: 'VND',
+      toCurrency: targetCurrency,
+    );
+    final expenseResult = await conversionService.convertAmount(
+      amount: cashFlow.expense,
+      fromCurrency: 'VND',
+      toCurrency: targetCurrency,
+    );
+    final debtInflowResult = await conversionService.convertAmount(
+      amount: cashFlow.debtInflow,
+      fromCurrency: 'VND',
+      toCurrency: targetCurrency,
+    );
+    final debtOutflowResult = await conversionService.convertAmount(
+      amount: cashFlow.debtOutflow,
+      fromCurrency: 'VND',
+      toCurrency: targetCurrency,
+    );
+    final investmentInflowResult = await conversionService.convertAmount(
+      amount: cashFlow.investmentInflow,
+      fromCurrency: 'VND',
+      toCurrency: targetCurrency,
+    );
+    final investmentOutflowResult = await conversionService.convertAmount(
+      amount: cashFlow.investmentOutflow,
+      fromCurrency: 'VND',
+      toCurrency: targetCurrency,
+    );
+
+    return CashFlowEntity(
+      income: incomeResult.tryGetSuccess() ?? cashFlow.income,
+      expense: expenseResult.tryGetSuccess() ?? cashFlow.expense,
+      debtInflow: debtInflowResult.tryGetSuccess() ?? cashFlow.debtInflow,
+      debtOutflow: debtOutflowResult.tryGetSuccess() ?? cashFlow.debtOutflow,
+      investmentInflow:
+          investmentInflowResult.tryGetSuccess() ?? cashFlow.investmentInflow,
+      investmentOutflow:
+          investmentOutflowResult.tryGetSuccess() ?? cashFlow.investmentOutflow,
+    );
+  }
+
+  Future<List<BudgetAnomalyEntity>> _convertAnomalies(
+    List<BudgetAnomalyEntity> anomalies,
+    String targetCurrency,
+    CurrencyConversionService conversionService,
+  ) async {
+    if (anomalies.isEmpty || targetCurrency.toUpperCase() == 'VND') {
+      return anomalies;
+    }
+
+    final converted = <BudgetAnomalyEntity>[];
+    for (final anomaly in anomalies) {
+      final thisMonthResult = await conversionService.convertAmount(
+        amount: anomaly.thisMonthSpend,
+        fromCurrency: 'VND',
+        toCurrency: targetCurrency,
+      );
+      final avgResult = await conversionService.convertAmount(
+        amount: anomaly.avgPrevMonths.round(),
+        fromCurrency: 'VND',
+        toCurrency: targetCurrency,
+      );
+
+      converted.add(
+        BudgetAnomalyEntity(
+          budgetName: anomaly.budgetName,
+          thisMonthSpend:
+              thisMonthResult.tryGetSuccess() ?? anomaly.thisMonthSpend,
+          avgPrevMonths: avgResult.tryGetSuccess()?.toDouble() ??
+              anomaly.avgPrevMonths,
+        ),
+      );
+    }
+    return converted;
+  }
+
+  Future<BudgetInsightsEntity?> _convertInsights(
+    BudgetInsightsEntity? insights,
+    String targetCurrency,
+    CurrencyConversionService conversionService,
+  ) async {
+    if (insights == null) return null;
+
+    if (targetCurrency.toUpperCase() == 'VND') {
+      return insights;
+    }
+
+    final deficitAmountResult = await conversionService.convertAmount(
+      amount: insights.deficitAmount,
+      fromCurrency: 'VND',
+      toCurrency: targetCurrency,
+    );
+    final debtInflowAmountResult = await conversionService.convertAmount(
+      amount: insights.debtInflowAmount,
+      fromCurrency: 'VND',
+      toCurrency: targetCurrency,
+    );
+    final debtOutflowAmountResult = await conversionService.convertAmount(
+      amount: insights.debtOutflowAmount,
+      fromCurrency: 'VND',
+      toCurrency: targetCurrency,
+    );
+
+    final convertedPacingWarnings = <BudgetPacingWarning>[];
+    for (final warning in insights.pacingWarnings) {
+      final suggestedResult = await conversionService.convertAmount(
+        amount: warning.suggestedDailySpend,
+        fromCurrency: 'VND',
+        toCurrency: targetCurrency,
+      );
+      convertedPacingWarnings.add(
+        BudgetPacingWarning(
+          budgetName: warning.budgetName,
+          categoryNameKey: warning.categoryNameKey,
+          status: warning.status,
+          daysRemaining: warning.daysRemaining,
+          suggestedDailySpend:
+              suggestedResult.tryGetSuccess() ?? warning.suggestedDailySpend,
+        ),
+      );
+    }
+
+    return BudgetInsightsEntity(
+      pacingWarnings: convertedPacingWarnings,
+      penaltyWarnings: insights.penaltyWarnings,
+      isDeficit: insights.isDeficit,
+      deficitAmount:
+          deficitAmountResult.tryGetSuccess() ?? insights.deficitAmount,
+      anomalyCount: insights.anomalyCount,
+      isInflowDebtDriven: insights.isInflowDebtDriven,
+      debtInflowAmount:
+          debtInflowAmountResult.tryGetSuccess() ?? insights.debtInflowAmount,
+      debtInflowPercent: insights.debtInflowPercent,
+      isOutflowDebtDriven: insights.isOutflowDebtDriven,
+      debtOutflowAmount:
+          debtOutflowAmountResult.tryGetSuccess() ?? insights.debtOutflowAmount,
+      debtOutflowPercent: insights.debtOutflowPercent,
+    );
+  }
+
+  Future<FinancialRunwayEntity?> _convertRunway(
+    FinancialRunwayEntity? runway,
+    String targetCurrency,
+    CurrencyConversionService conversionService,
+  ) async {
+    if (runway == null) return null;
+
+    if (targetCurrency.toUpperCase() == 'VND') {
+      return runway;
+    }
+
+    final monthlyBurnResult = await conversionService.convertAmount(
+      amount: runway.monthlyBurn.round(),
+      fromCurrency: 'VND',
+      toCurrency: targetCurrency,
+    );
+
+    return FinancialRunwayEntity(
+      months: runway.months,
+      days: runway.days,
+      message: runway.message,
+      totalBalance: runway.totalBalance,
+      averageMonthlyExpense: runway.averageMonthlyExpense,
+      fixedMonthlyCost: runway.fixedMonthlyCost,
+      status: runway.status,
+    );
   }
 }

@@ -212,7 +212,11 @@ class ReportController extends CcGetController {
       return;
     }
 
-    final result = await _generateAiAdvice.call();
+    final targetCurrency = CurrencyConstants.currentPrimaryCurrency;
+    final result = await _generateAiAdvice.call(
+      targetCurrency: targetCurrency,
+      conversionService: _conversionService,
+    );
     if (isClosed) return;
     isGeneratingAdvice.value = false;
 

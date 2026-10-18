@@ -46,7 +46,7 @@ Future<String> buildAiFinancialAdvicePrompt({
   required BudgetInsightsEntity? insights,
   required List<BudgetAnomalyEntity> anomalies,
   required FinancialRunwayEntity? runway,
-  required Future<String> Function(int vndAmount) formatMoney,
+  required String Function(int vndAmount) formatMoney,
   String currencyCode = CurrencyConstants.defaultCurrencyCode,
 }) async {
   final buffer = StringBuffer()
