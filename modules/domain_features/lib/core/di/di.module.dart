@@ -474,12 +474,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i944.ReconciliationRepository>(),
               gh<_i483.NotificationService>(),
             ));
-    gh.lazySingleton<_i941.RecordLiabilityPaymentUseCase>(
-        () => _i941.RecordLiabilityPaymentUseCase(
-              gh<_i813.LiabilityRepository>(),
-              gh<_i1027.TransactionRepository>(),
-              gh<_i105.GetWalletBookBalanceUseCase>(),
-            ));
     gh.lazySingleton<_i971.LiabilityListController>(
         () => _i971.LiabilityListController(
               gh<_i663.GetLiabilityBalancesUseCase>(),
@@ -552,6 +546,14 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         _i615.CategorySelectionController(gh<_i224.GetCategoriesUseCase>()));
     gh.lazySingleton<_i805.CreateLiabilityUseCase>(
         () => _i805.CreateLiabilityUseCase(
+              gh<_i813.LiabilityRepository>(),
+              gh<_i1027.TransactionRepository>(),
+              gh<_i572.WalletRepository>(),
+              gh<_i105.GetWalletBookBalanceUseCase>(),
+              gh<_i195.CurrencyConversionService>(),
+            ));
+    gh.lazySingleton<_i941.RecordLiabilityPaymentUseCase>(
+        () => _i941.RecordLiabilityPaymentUseCase(
               gh<_i813.LiabilityRepository>(),
               gh<_i1027.TransactionRepository>(),
               gh<_i572.WalletRepository>(),

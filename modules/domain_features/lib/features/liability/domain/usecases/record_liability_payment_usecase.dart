@@ -1,9 +1,12 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:domain_features/features/wallet/domain/repositories/wallet_repository.dart';
 import 'package:domain_features/features/wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import 'package:domain_features/core/constant/currency_constants.dart';
+import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/liability_entity.dart';
@@ -35,20 +38,21 @@ class RecordLiabilityPaymentParams {
 
 /// Records a payment leg: Repayment / Collection (decrease) or Borrowing / Lending (increase)
 /// against a selected liability category (e.g., "Nợ thẻ tín dụng", "Vay thế chấp").
-///
-/// Users manage their debts freely without restrictive settlement guards
-/// (no limits on repayments or borrowings, allowing revolving credit management).
 @lazySingleton
 class RecordLiabilityPaymentUseCase {
   RecordLiabilityPaymentUseCase(
     this._LiabilityRepository,
     this._transactionRepository,
+    this._walletRepository,
     this._getWalletBookBalance,
+    this._conversionService,
   );
 
   final LiabilityRepository _LiabilityRepository;
   final TransactionRepository _transactionRepository;
+  final WalletRepository _walletRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
+  final CurrencyConversionService _conversionService;
 
   Future<Result<LiabilityEntity, CcFailure>> call(
     RecordLiabilityPaymentParams params,
@@ -77,6 +81,27 @@ class RecordLiabilityPaymentUseCase {
     }
     final liability = liabilityResult.tryGetSuccess()!;
 
+    final walletResult = await _walletRepository.getWallet(params.walletId);
+    if (walletResult.isError()) {
+      return Error(walletResult.tryGetError()!);
+    }
+    final wallet = walletResult.tryGetSuccess()!;
+
+    final inputCurrency = CurrencyConstants.currentPrimaryCurrency;
+    int finalAmount = params.amount;
+    String finalCurrency = wallet.currencyCode;
+
+    if (inputCurrency.toUpperCase() != wallet.currencyCode.toUpperCase()) {
+      final convResult = await _conversionService.convertAmount(
+        amount: params.amount,
+        fromCurrency: inputCurrency,
+        toCurrency: wallet.currencyCode,
+      );
+      if (convResult.isSuccess()) {
+        finalAmount = convResult.tryGetSuccess()!;
+      }
+    }
+
     final String txnType;
     if (liability.isBorrow) {
       txnType = params.isSettlement
@@ -99,7 +124,7 @@ class RecordLiabilityPaymentUseCase {
         return Error(balanceResult.tryGetError()!);
       }
       final availableBalance = balanceResult.tryGetSuccess()!;
-      if (params.amount > availableBalance) {
+      if (finalAmount > availableBalance) {
         return const Error(
           ValidationFailure(
             CcLocaleKeys.transaction_validation_insufficient_balance,
@@ -111,7 +136,7 @@ class RecordLiabilityPaymentUseCase {
     final txn = TransactionEntity(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       type: txnType,
-      amount: params.amount,
+      amount: finalAmount,
       category: liability.categoryLabel,
       categoryId: liability.categoryId,
       categoryIconCode: liability.categoryIconCode,
@@ -120,7 +145,7 @@ class RecordLiabilityPaymentUseCase {
       date: params.date,
       walletId: params.walletId,
       liabilityId: liability.id,
-      currencyCode: liability.currencyCode,
+      currencyCode: finalCurrency,
     );
 
     final txnResult = await _transactionRepository.createTransaction(txn);
