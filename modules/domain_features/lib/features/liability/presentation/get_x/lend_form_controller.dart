@@ -38,12 +38,11 @@ class LendFormController extends LiabilityBaseFormController {
 
   Future<void> loadSuggestions() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
-    final baseVnd = MoneyConstants.getLiabilitySuggestions(settings.birthYear);
-    final converted = await MoneyConstants.getConvertedQuickAmounts(
-      baseVnd,
-      currencyCode.value,
+    final suggestions = MoneyConstants.getLiabilitySuggestions(
+      settings.birthYear,
+      currencyCode: currencyCode.value,
     );
-    quickAmounts.assignAll(converted);
+    quickAmounts.assignAll(suggestions);
   }
 
   final String direction = LiabilityDirection.lend;

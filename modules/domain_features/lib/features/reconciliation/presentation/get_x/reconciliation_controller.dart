@@ -50,6 +50,13 @@ class ReconciliationController extends CcGetController {
   final RxnString editingWalletId = RxnString();
   final RxString amountStr = '0'.obs;
 
+  String get currencyCode {
+    if (Get.isRegistered<WalletController>()) {
+      return Get.find<WalletController>().currencyCode.value;
+    }
+    return CurrencyConstants.defaultCurrencyCode;
+  }
+
   int get difference => actualTotal.value - systemTotal.value;
 
   bool isAcknowledged(String walletId) => _acknowledged.contains(walletId);

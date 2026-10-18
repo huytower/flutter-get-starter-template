@@ -69,11 +69,10 @@ class AddBudgetLimitSheetController extends CcGetController {
   }
 
   Future<void> _loadQuickAmounts() async {
-    final converted = await MoneyConstants.getConvertedQuickAmounts(
-      MoneyConstants.budgetQuickAmounts,
-      currencyCode.value,
+    final amounts = MoneyConstants.getBudgetQuickAmounts(
+      currencyCode: currencyCode.value,
     );
-    quickAmounts.assignAll(converted);
+    quickAmounts.assignAll(amounts);
   }
 
   void init(BudgetLimitEntity? editTarget) {

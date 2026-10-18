@@ -110,12 +110,11 @@ class InvestmentFormController extends TransactionFormController
 
   Future<void> loadSuggestions() async {
     final settings = await _getProfileSettings();
-    final baseVnd = MoneyConstants.getInvestmentSuggestions(settings.birthYear);
-    final converted = await MoneyConstants.getConvertedQuickAmounts(
-      baseVnd,
-      currencyCode.value,
+    final suggestions = MoneyConstants.getInvestmentSuggestions(
+      settings.birthYear,
+      currencyCode: currencyCode.value,
     );
-    quickAmounts.assignAll(converted);
+    quickAmounts.assignAll(suggestions);
   }
 
   final Rx<InvestmentDirectionForm> direction =

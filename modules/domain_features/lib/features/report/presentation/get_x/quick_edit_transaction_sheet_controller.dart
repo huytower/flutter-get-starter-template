@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/budget_name_helper.dart';
@@ -31,6 +32,14 @@ class QuickEditTransactionSheetController extends CcGetController {
   InvestmentFormController? investmentController;
   LiabilityFormController? liabilityController;
   LendFormController? lendController;
+
+  String get currencyCode {
+    try {
+      return transaction.currencyCode;
+    } catch (_) {
+      return CurrencyConstants.defaultCurrencyCode;
+    }
+  }
 
   bool get isInvestment => transaction.isInvestmentActivity;
   bool get isDebt => transaction.isDebtActivity;

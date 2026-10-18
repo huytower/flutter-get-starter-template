@@ -52,7 +52,9 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                     onKeyPress: controller.handleKeyPress,
                     onDelete: controller.handleDelete,
                     onClear: controller.onClearAmount,
-                    suggestions: MoneyConstants.walletQuickAmounts,
+                    suggestions: MoneyConstants.getWalletQuickAmounts(
+                      currencyCode: controller.currencyCode.value,
+                    ),
                     onSuggestion: controller.onQuickAmountSelected,
                     onDone: controller.hideKeypad,
                     activeColor: context.ccColorScheme.primary,
@@ -157,7 +159,9 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
             key: const Key('wallet_balance'),
             label: el.tr(CcLocaleKeys.wallet_initial_balance),
             amountStr: controller.amountStr.value,
-            quickAmounts: MoneyConstants.walletQuickAmounts,
+            quickAmounts: MoneyConstants.getWalletQuickAmounts(
+              currencyCode: controller.currencyCode.value,
+            ),
             isKeypadVisible: controller.showKeypad.value,
             activeColor: context.ccColorScheme.primary,
             currencyCode: controller.currencyCode.value,

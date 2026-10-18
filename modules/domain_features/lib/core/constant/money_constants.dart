@@ -2,7 +2,7 @@ import '../di/di.dart';
 import '../exchange_rates/currency_conversion_service.dart';
 
 abstract class MoneyConstants {
-  /// standard quick amounts for transaction entries (Expense/Income/Transfer)
+  /// standard quick amounts for transaction entries (Expense/Income/Transfer) - VND
   static const List<int> quickAmounts = [
     10000,
     20000,
@@ -16,7 +16,10 @@ abstract class MoneyConstants {
     2000000,
   ];
 
-  /// quick amounts for setting budget limits (larger range)
+  /// standard quick amounts for transaction entries - USD
+  static const List<int> quickAmountsUsd = [1, 2, 4, 6, 8, 12, 20, 50, 100];
+
+  /// quick amounts for setting budget limits (larger range) - VND
   static const List<int> budgetQuickAmounts = [
     100000,
     200000,
@@ -27,7 +30,18 @@ abstract class MoneyConstants {
     10000000,
   ];
 
-  /// quick amounts for wallet opening balances (wide range)
+  /// quick amounts for setting budget limits - USD
+  static const List<int> budgetQuickAmountsUsd = [
+    10,
+    20,
+    50,
+    100,
+    200,
+    500,
+    1000,
+  ];
+
+  /// quick amounts for wallet opening balances (wide range) - VND
   static const List<int> walletQuickAmounts = [
     100000,
     500000,
@@ -39,7 +53,19 @@ abstract class MoneyConstants {
     50000000,
   ];
 
-  /// quick amounts for reconciliation actual balance keypad suggestions
+  /// quick amounts for wallet opening balances - USD
+  static const List<int> walletQuickAmountsUsd = [
+    10,
+    50,
+    100,
+    200,
+    500,
+    1000,
+    2000,
+    5000,
+  ];
+
+  /// quick amounts for reconciliation actual balance keypad suggestions - VND
   static const List<int> reconciliationQuickAmounts = [
     100000,
     200000,
@@ -47,6 +73,16 @@ abstract class MoneyConstants {
     1000000,
     2000000,
     5000000,
+  ];
+
+  /// quick amounts for reconciliation actual balance keypad suggestions - USD
+  static const List<int> reconciliationQuickAmountsUsd = [
+    10,
+    20,
+    50,
+    100,
+    200,
+    500,
   ];
 
   /// Dynamic income suggestions (Age-based)
@@ -199,7 +235,32 @@ abstract class MoneyConstants {
     200000000,
   ];
 
-  static List<int> getIncomeSuggestions(int? birthYear) {
+  static List<int> getQuickAmounts({String? currencyCode}) {
+    if (currencyCode?.toUpperCase() == 'USD') return quickAmountsUsd;
+    return quickAmounts;
+  }
+
+  static List<int> getBudgetQuickAmounts({String? currencyCode}) {
+    if (currencyCode?.toUpperCase() == 'USD') return budgetQuickAmountsUsd;
+    return budgetQuickAmounts;
+  }
+
+  static List<int> getWalletQuickAmounts({String? currencyCode}) {
+    if (currencyCode?.toUpperCase() == 'USD') return walletQuickAmountsUsd;
+    return walletQuickAmounts;
+  }
+
+  static List<int> getReconciliationQuickAmounts({String? currencyCode}) {
+    if (currencyCode?.toUpperCase() == 'USD')
+      return reconciliationQuickAmountsUsd;
+    return reconciliationQuickAmounts;
+  }
+
+  static List<int> getIncomeSuggestions(
+    int? birthYear, {
+    String? currencyCode,
+  }) {
+    if (currencyCode?.toUpperCase() == 'USD') return quickAmountsUsd;
     if (birthYear == null) return quickAmounts;
     final age = DateTime.now().year - birthYear;
     if (age < 20) return incomeUnder20;
@@ -207,7 +268,11 @@ abstract class MoneyConstants {
     return incomeAbove30;
   }
 
-  static List<int> getExpenseSuggestions(int? birthYear) {
+  static List<int> getExpenseSuggestions(
+    int? birthYear, {
+    String? currencyCode,
+  }) {
+    if (currencyCode?.toUpperCase() == 'USD') return quickAmountsUsd;
     if (birthYear == null) return quickAmounts;
     final age = DateTime.now().year - birthYear;
     if (age < 20) return expenseUnder20;
@@ -215,7 +280,11 @@ abstract class MoneyConstants {
     return expenseAbove30;
   }
 
-  static List<int> getInvestmentSuggestions(int? birthYear) {
+  static List<int> getInvestmentSuggestions(
+    int? birthYear, {
+    String? currencyCode,
+  }) {
+    if (currencyCode?.toUpperCase() == 'USD') return budgetQuickAmountsUsd;
     if (birthYear == null) return budgetQuickAmounts;
     final age = DateTime.now().year - birthYear;
     if (age < 20) return investmentUnder20;
@@ -223,7 +292,11 @@ abstract class MoneyConstants {
     return investmentAbove30;
   }
 
-  static List<int> getLiabilitySuggestions(int? birthYear) {
+  static List<int> getLiabilitySuggestions(
+    int? birthYear, {
+    String? currencyCode,
+  }) {
+    if (currencyCode?.toUpperCase() == 'USD') return budgetQuickAmountsUsd;
     if (birthYear == null) return budgetQuickAmounts;
     final age = DateTime.now().year - birthYear;
     if (age < 20) return liabilityUnder20;
@@ -236,6 +309,7 @@ abstract class MoneyConstants {
     String targetCurrency,
   ) async {
     final normalized = targetCurrency.trim().toUpperCase();
+    if (normalized == 'USD') return quickAmountsUsd;
     if (normalized == 'VND' || normalized.isEmpty) return baseVndAmounts;
 
     try {

@@ -261,7 +261,9 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
           onKeyPress: controller.updateAmount,
           onDelete: controller.deleteChar,
           onClear: controller.clearAmount,
-          suggestions: MoneyConstants.reconciliationQuickAmounts,
+          suggestions: MoneyConstants.getReconciliationQuickAmounts(
+            currencyCode: controller.currencyCode,
+          ),
           onSuggestion: (value) => controller.setAmount(value),
           onDone: controller.stopEditing,
           activeColor: context.ccColorScheme.primary,

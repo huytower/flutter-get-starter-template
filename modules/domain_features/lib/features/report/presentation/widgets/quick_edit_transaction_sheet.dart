@@ -165,7 +165,9 @@ class QuickEditTransactionSheet
         () => CcAmountInputSection(
           label: el.tr(CcLocaleKeys.transaction_amount),
           amountStr: controller.amountStr.value,
-          quickAmounts: MoneyConstants.quickAmounts,
+          quickAmounts: MoneyConstants.getQuickAmounts(
+            currencyCode: controller.currencyCode,
+          ),
           isKeypadVisible: false,
           activeColor: accentColor,
           onTap: () {},
