@@ -13,6 +13,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
+import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/budget_over_limit_helper.dart';
 import '../../../../core/helper/location_suggestion_helper.dart';
@@ -621,8 +622,29 @@ class ExpenseFormController extends TransactionFormController
 
   /// Pre-fills category/amount/wallet from the fuzzy-matched past expense —
   /// same "prefill, user still confirms" contract as [applyTemplate].
-  void applyMerchantMatch(TransactionEntity match) {
-    amountStr.value = match.amount.toString();
+  Future<void> applyMerchantMatch(TransactionEntity match) async {
+    final targetCurrency = currencyCode.value;
+    final rawAmount = match.amount;
+    final sourceCurrency = match.currencyCode;
+    final targetAmount = rawAmount;
+
+    'applyMerchantMatch: rawAmount=$rawAmount, sourceCurrency=$sourceCurrency, targetCurrency=$targetCurrency'
+        .Log('ExpenseFormController');
+
+    if (sourceCurrency.toUpperCase() != targetCurrency.toUpperCase()) {
+      final result = await getIt<CurrencyConversionService>().convertAmount(
+        amount: rawAmount,
+        fromCurrency: sourceCurrency,
+        toCurrency: targetCurrency,
+      );
+      final converted = result.tryGetSuccess() ?? rawAmount;
+      amountStr.value = converted.toString();
+      'applyMerchantMatch: convertedAmount=$converted'.Log(
+        'ExpenseFormController',
+      );
+    } else {
+      amountStr.value = rawAmount.toString();
+    }
     if (wallets.any((w) => w.id == match.walletId)) {
       selectedWalletId.value = match.walletId;
     }
@@ -757,8 +779,28 @@ class ExpenseFormController extends TransactionFormController
     billMatchSuggestion.value = null;
   }
 
-  void applyLocationMatch(TransactionEntity match) {
-    amountStr.value = match.amount.toString();
+  Future<void> applyLocationMatch(TransactionEntity match) async {
+    final targetCurrency = currencyCode.value;
+    final rawAmount = match.amount;
+    final sourceCurrency = match.currencyCode;
+
+    'applyLocationMatch: rawAmount=$rawAmount, sourceCurrency=$sourceCurrency, targetCurrency=$targetCurrency'
+        .Log('ExpenseFormController');
+
+    if (sourceCurrency.toUpperCase() != targetCurrency.toUpperCase()) {
+      final result = await getIt<CurrencyConversionService>().convertAmount(
+        amount: rawAmount,
+        fromCurrency: sourceCurrency,
+        toCurrency: targetCurrency,
+      );
+      final converted = result.tryGetSuccess() ?? rawAmount;
+      amountStr.value = converted.toString();
+      'applyLocationMatch: convertedAmount=$converted'.Log(
+        'ExpenseFormController',
+      );
+    } else {
+      amountStr.value = rawAmount.toString();
+    }
     if (wallets.any((w) => w.id == match.walletId)) {
       selectedWalletId.value = match.walletId;
     }
@@ -769,8 +811,26 @@ class ExpenseFormController extends TransactionFormController
     _dismissedLocationMatchId = null;
   }
 
-  void applyBillMatch(TransactionEntity match) {
-    amountStr.value = match.amount.toString();
+  Future<void> applyBillMatch(TransactionEntity match) async {
+    final targetCurrency = currencyCode.value;
+    final rawAmount = match.amount;
+    final sourceCurrency = match.currencyCode;
+
+    'applyBillMatch: rawAmount=$rawAmount, sourceCurrency=$sourceCurrency, targetCurrency=$targetCurrency'
+        .Log('ExpenseFormController');
+
+    if (sourceCurrency.toUpperCase() != targetCurrency.toUpperCase()) {
+      final result = await getIt<CurrencyConversionService>().convertAmount(
+        amount: rawAmount,
+        fromCurrency: sourceCurrency,
+        toCurrency: targetCurrency,
+      );
+      final converted = result.tryGetSuccess() ?? rawAmount;
+      amountStr.value = converted.toString();
+      'applyBillMatch: convertedAmount=$converted'.Log('ExpenseFormController');
+    } else {
+      amountStr.value = rawAmount.toString();
+    }
     if (wallets.any((w) => w.id == match.walletId)) {
       selectedWalletId.value = match.walletId;
     }

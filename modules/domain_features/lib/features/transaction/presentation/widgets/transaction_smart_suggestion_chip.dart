@@ -23,11 +23,9 @@ class TransactionSmartSuggestionChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final merchantMatch =
-          expenseFormController.merchantMatchSuggestion.value;
+      final merchantMatch = expenseFormController.merchantMatchSuggestion.value;
       final billMatch = expenseFormController.billMatchSuggestion.value;
-      final locationMatch =
-          expenseFormController.locationMatchSuggestion.value;
+      final locationMatch = expenseFormController.locationMatchSuggestion.value;
 
       final match = merchantMatch ?? billMatch ?? locationMatch;
       if (match == null) return const SizedBox.shrink();
@@ -60,7 +58,7 @@ class TransactionSmartSuggestionChip extends StatelessWidget {
           label: label,
           accentColor: accentColor,
           icon: icon,
-          onTap: () => _applySuggestion(expenseFormController),
+          onTap: () async => await _applySuggestion(expenseFormController),
           onDismiss: () => _dismissSuggestion(expenseFormController),
         );
       }
@@ -87,7 +85,7 @@ class TransactionSmartSuggestionChip extends StatelessWidget {
             label: label,
             accentColor: accentColor,
             icon: icon,
-            onTap: () => _applySuggestion(expenseFormController),
+            onTap: () async => await _applySuggestion(expenseFormController),
             onDismiss: () => _dismissSuggestion(expenseFormController),
           );
         },
@@ -95,19 +93,20 @@ class TransactionSmartSuggestionChip extends StatelessWidget {
     });
   }
 
-  void _applySuggestion(ExpenseFormController controller) {
+  Future<void> _applySuggestion(ExpenseFormController controller) async {
     final merchantMatch = controller.merchantMatchSuggestion.value;
     if (merchantMatch != null) {
-      controller.applyMerchantMatch(merchantMatch);
+      await controller.applyMerchantMatch(merchantMatch);
       return;
     }
     final billMatch = controller.billMatchSuggestion.value;
     if (billMatch != null) {
-      controller.applyBillMatch(billMatch);
+      await controller.applyBillMatch(billMatch);
       return;
     }
     final locationMatch = controller.locationMatchSuggestion.value;
-    if (locationMatch != null) controller.applyLocationMatch(locationMatch);
+    if (locationMatch != null)
+      await controller.applyLocationMatch(locationMatch);
   }
 
   void _dismissSuggestion(ExpenseFormController controller) {
