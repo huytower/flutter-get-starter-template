@@ -4,6 +4,7 @@ import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/constant/currency_constants.dart';
+import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../entities/transaction_entity.dart';
@@ -61,11 +62,13 @@ class CreateTransactionUseCase {
     this._transactionRepository,
     this._walletRepository,
     this._getWalletBookBalance,
+    this._conversionService,
   );
 
   final TransactionRepository _transactionRepository;
   final WalletRepository _walletRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
+  final CurrencyConversionService _conversionService;
 
   Future<Result<TransactionEntity, CcFailure>> call(
     CreateTransactionParams params,
@@ -95,6 +98,27 @@ class CreateTransactionUseCase {
       );
     }
 
+    final walletResult = await _walletRepository.getWallet(params.walletId);
+    if (walletResult.isError()) {
+      return Error(walletResult.tryGetError()!);
+    }
+    final wallet = walletResult.tryGetSuccess()!;
+
+    final inputCurrency = CurrencyConstants.currentPrimaryCurrency;
+    int finalAmount = params.amount;
+    String finalCurrency = wallet.currencyCode;
+
+    if (inputCurrency.toUpperCase() != wallet.currencyCode.toUpperCase()) {
+      final convResult = await _conversionService.convertAmount(
+        amount: params.amount,
+        fromCurrency: inputCurrency,
+        toCurrency: wallet.currencyCode,
+      );
+      if (convResult.isSuccess()) {
+        finalAmount = convResult.tryGetSuccess()!;
+      }
+    }
+
     // Block overspending: an expense can't exceed the wallet's book balance
     // (no negative balances). Income is unrestricted.
     if (params.type == 'expense') {
@@ -103,7 +127,7 @@ class CreateTransactionUseCase {
         return Error(balanceResult.tryGetError()!);
       }
       final availableBalance = balanceResult.tryGetSuccess()!;
-      if (params.amount > availableBalance) {
+      if (finalAmount > availableBalance) {
         return const Error(
           ValidationFailure(
             CcLocaleKeys.transaction_validation_insufficient_balance,
@@ -115,7 +139,7 @@ class CreateTransactionUseCase {
     final transaction = TransactionEntity(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       type: params.type,
-      amount: params.amount,
+      amount: finalAmount,
       category: params.categoryLabel,
       categoryId: params.categoryId,
       categoryIconCode: params.categoryIconCode,
@@ -126,7 +150,7 @@ class CreateTransactionUseCase {
       walletId: params.walletId,
       lat: params.lat,
       lng: params.lng,
-      currencyCode: CurrencyConstants.currentPrimaryCurrency,
+      currencyCode: finalCurrency,
     );
 
     final result = await _transactionRepository.createTransaction(transaction);
@@ -136,13 +160,9 @@ class CreateTransactionUseCase {
 
     // High Priority Logic: Update updatedAt so this wallet jumps to the front
     // of the horizontal strip on the dashboard.
-    final walletResult = await _walletRepository.getWallet(params.walletId);
-    if (walletResult.isSuccess()) {
-      final wallet = walletResult.tryGetSuccess()!;
-      await _walletRepository.updateWallet(
-        wallet.copyWith(updatedAt: DateTime.now()),
-      );
-    }
+    await _walletRepository.updateWallet(
+      wallet.copyWith(updatedAt: DateTime.now()),
+    );
 
     return Success(transaction);
   }

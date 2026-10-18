@@ -449,10 +449,38 @@ class WalletController extends CcGetController {
 
     for (final wallet in list) {
       final walletTxns = txns.where((t) => t.walletId == wallet.id).toList();
-      newBalances[wallet.id] = bookBalanceFromTransactions(
-        wallet.balance,
-        walletTxns,
-      );
+      var walletBookBal = wallet.balance;
+      for (final txn in walletTxns) {
+        int amountInWalletCurrency = txn.amount;
+        if (txn.currencyCode.toUpperCase() !=
+            wallet.currencyCode.toUpperCase()) {
+          final converted = await _conversionService.convertAmount(
+            amount: txn.amount,
+            fromCurrency: txn.currencyCode,
+            toCurrency: wallet.currencyCode,
+          );
+          amountInWalletCurrency = converted.tryGetSuccess() ?? txn.amount;
+        }
+
+        switch (txn.type) {
+          case TransactionType.income:
+          case TransactionType.transferIn:
+          case TransactionType.investmentIn:
+          case TransactionType.investmentReturn:
+          case TransactionType.debtBorrow:
+          case TransactionType.debtCollect:
+            walletBookBal += amountInWalletCurrency;
+            break;
+          case TransactionType.expense:
+          case TransactionType.transferOut:
+          case TransactionType.investmentOut:
+          case TransactionType.debtLend:
+          case TransactionType.debtRepay:
+            walletBookBal -= amountInWalletCurrency;
+            break;
+        }
+      }
+      newBalances[wallet.id] = walletBookBal;
 
       if (wallet.type == WalletType.investment) {
         final rawAllTimeContributed =

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:intl/intl.dart';
 
@@ -31,9 +29,7 @@ class MoneyFormatter {
   /// Formats a numeric amount with proper grouping separator according to currencyCode.
   static String formatAmount(num value, {String? currencyCode}) {
     final code = _resolveCurrencyCode(currencyCode).toUpperCase();
-    final def = CurrencyCatalog.tryGetDefinition(code);
-    final scale = def != null ? pow(10, def.decimalDigits).toDouble() : 1.0;
-    final double majorValue = value / scale;
+    final double majorValue = value.toDouble();
 
     String locale = CurrencyConstants.getLocale(code);
     try {
@@ -43,15 +39,12 @@ class MoneyFormatter {
       }
     } catch (_) {}
 
-    if (def != null && def.decimalDigits > 0) {
-      final formatter = NumberFormat(
-        '#,##0.${'0' * def.decimalDigits}',
-        locale,
-      );
-      return formatter.format(majorValue);
-    } else {
+    if (majorValue == majorValue.toInt().toDouble()) {
       final formatter = NumberFormat.decimalPattern(locale);
       return formatter.format(majorValue.toInt());
+    } else {
+      final decimalFormatter = NumberFormat('#,##0.##', locale);
+      return decimalFormatter.format(majorValue);
     }
   }
 
@@ -85,11 +78,7 @@ class MoneyFormatter {
     bool useFullSuffix = false,
   }) {
     final code = _resolveCurrencyCode(currencyCode).toUpperCase();
-    final def = CurrencyCatalog.tryGetDefinition(code);
-    final scale = def != null ? pow(10, def.decimalDigits).toDouble() : 1.0;
-
-    // Scale minor units to major units for formatting (e.g. cents -> dollars)
-    final double adjustedValue = (value / scale).toDouble();
+    final double adjustedValue = value.toDouble();
 
     final sign = adjustedValue < 0 ? '-' : '';
     final abs = adjustedValue.abs();

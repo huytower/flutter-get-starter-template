@@ -29,12 +29,12 @@ enum ConversionUse { display, persist }
 
 class ConvertedMoney {
   const ConvertedMoney({
-    required this.amountMinorUnits,
+    required this.amount,
     required this.currencyCode,
     required this.provenance,
   });
 
-  final int amountMinorUnits;
+  final int amount;
   final String currencyCode;
   final RateProvenance provenance;
 

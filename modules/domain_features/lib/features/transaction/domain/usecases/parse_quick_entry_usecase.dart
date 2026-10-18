@@ -328,7 +328,7 @@ class ParseQuickEntryUseCase {
           statedCurrency.isNotEmpty &&
           statedCurrency.toUpperCase() != currency.code;
       final amount = !isForeignCurrency && amountValue is num && amountValue > 0
-          ? (amountValue * math.pow(10, currency.decimalDigits)).round()
+          ? amountValue.round()
           : null;
 
       final categoryIdValue = decoded['categoryId'];

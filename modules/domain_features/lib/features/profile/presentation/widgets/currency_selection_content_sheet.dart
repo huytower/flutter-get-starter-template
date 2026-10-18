@@ -314,24 +314,10 @@ class CurrencySelectionContentSheet extends StatelessWidget {
     if (isLoading && convertedAmount == null) {
       displayAmount = '...';
     } else if (convertedAmount != null) {
-      final scale = pow(10, formatDefinition.decimalDigits).toDouble();
-      final majorValue = convertedAmount / scale;
-
-      if (formatDefinition.decimalDigits > 0) {
-        final formatter = NumberFormat(
-          '#,##0.${'0' * formatDefinition.decimalDigits}',
-          CurrencyConstants.getLocale(formatCurrencyCode),
-        );
-        final formattedNum = formatter.format(majorValue);
-        displayAmount = formatDefinition.isPrefixSymbol
-            ? '${formatDefinition.symbol}$formattedNum'
-            : '$formattedNum ${formatDefinition.symbol}';
-      } else {
-        displayAmount = MoneyFormatter.formatWithSymbol(
-          convertedAmount,
-          currencyCode: formatCurrencyCode,
-        );
-      }
+      displayAmount = MoneyFormatter.formatWithSymbol(
+        convertedAmount,
+        currencyCode: formatCurrencyCode,
+      );
     } else {
       displayAmount = 'N/A';
     }

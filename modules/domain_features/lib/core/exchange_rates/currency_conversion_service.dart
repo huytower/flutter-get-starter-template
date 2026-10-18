@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -7,15 +5,14 @@ import 'package:multiple_result/multiple_result.dart';
 import '../../core/constant/currency_catalog.dart';
 import 'exchange_rate_types.dart';
 
-/// Service for converting amounts between currencies using exchange rates
-/// with precise minor-unit / decimal-scale handling and policy checks.
+/// Service for converting amounts between currencies using exchange rates.
 @lazySingleton
 class CurrencyConversionService {
   CurrencyConversionService(this._repository);
 
   final ExchangeRateRepository _repository;
 
-  /// Convert an amount from one currency to another.
+  /// Convert an amount from one currency to another directly.
   Future<Result<int, CcFailure>> convertAmount({
     required int amount,
     required String fromCurrency,
@@ -72,14 +69,8 @@ class CurrencyConversionService {
       );
     }
 
-    final double fromScale = pow(10, fromDef.decimalDigits).toDouble();
-    final double toScale = pow(10, toDef.decimalDigits).toDouble();
-
-    final majorAmount = amount / fromScale;
-    final convertedMajor = majorAmount * rate;
-    final convertedMinor = (convertedMajor * toScale).round();
-
-    return Success(convertedMinor);
+    final convertedAmount = (amount * rate).round();
+    return Success(convertedAmount);
   }
 
   /// Batch fetch and convert 1 unit of multiple target currencies to/from a base currency in a single repository call.
@@ -145,29 +136,17 @@ class CurrencyConversionService {
         if (toDef == null) continue;
 
         final targetRateAgainstBase = table.rates[toDef.code] ?? 1.0;
-        // Rate from target to VND = vndRateAgainstBase / targetRateAgainstBase
         final rateToVnd = vndRateAgainstBase / targetRateAgainstBase;
-
-        final unitAmount = pow(10, toDef.decimalDigits).round();
-        final double fromScale = pow(10, toDef.decimalDigits).toDouble();
-        final majorAmount = unitAmount / fromScale;
-        final convertedMajor = majorAmount * rateToVnd;
-        converted[target.toUpperCase()] = convertedMajor.round();
+        converted[target.toUpperCase()] = rateToVnd.round();
       }
     } else {
-      final unitAmount = pow(10, baseDef.decimalDigits).round();
-      final double fromScale = pow(10, baseDef.decimalDigits).toDouble();
-      final majorAmount = unitAmount / fromScale;
-
       for (final target in uniqueTargets) {
         final toDef = CurrencyCatalog.tryGetDefinition(target);
         if (toDef == null) continue;
 
         final rate = table.rates[toDef.code];
         if (rate != null) {
-          final double toScale = pow(10, toDef.decimalDigits).toDouble();
-          final convertedMajor = majorAmount * rate;
-          converted[target.toUpperCase()] = (convertedMajor * toScale).round();
+          converted[target.toUpperCase()] = rate.round();
         }
       }
     }
@@ -242,7 +221,6 @@ class CurrencyConversionService {
 
     final table = rateResult.table;
     final converted = <String, int>{};
-    final double targetScale = pow(10, targetDef.decimalDigits).toDouble();
 
     for (final entry in amountsByCurrency.entries) {
       final currency = entry.key;
@@ -261,12 +239,8 @@ class CurrencyConversionService {
         );
       }
 
-      final double currScale = pow(10, currDef.decimalDigits).toDouble();
-      final majorAmount = amount / currScale;
-      // Note: Frankfurter rates are base-to-quote, so converting from quote to base requires inverse
       final invertedRate = 1.0 / rate;
-      final convertedMajor = majorAmount * invertedRate;
-      converted[currency] = (convertedMajor * targetScale).round();
+      converted[currency] = (amount * invertedRate).round();
     }
 
     return Success(converted);
@@ -332,9 +306,15 @@ class CurrencyConversionService {
     for (final item in amounts) {
       final code = CurrencyCatalog.tryGetDefinition(item.currencyCode)?.code;
       if (code == null) {
-        return Error(ValidationFailure('Unsupported currency code: ${item.currencyCode}'));
+        return Error(
+          ValidationFailure('Unsupported currency code: ${item.currencyCode}'),
+        );
       }
-      totals.update(code, (value) => value + item.amount, ifAbsent: () => item.amount);
+      totals.update(
+        code,
+        (value) => value + item.amount,
+        ifAbsent: () => item.amount,
+      );
     }
 
     final converted = await convertBatch(

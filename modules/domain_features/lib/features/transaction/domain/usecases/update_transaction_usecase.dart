@@ -3,6 +3,9 @@ import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../../core/constant/currency_constants.dart';
+import '../../../../core/exchange_rates/currency_conversion_service.dart';
+import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../entities/transaction_entity.dart';
 import '../repositories/transaction_repository.dart';
@@ -55,11 +58,15 @@ class UpdateTransactionParams {
 class UpdateTransactionUseCase {
   UpdateTransactionUseCase(
     this._transactionRepository,
+    this._walletRepository,
     this._getWalletBookBalance,
+    this._conversionService,
   );
 
   final TransactionRepository _transactionRepository;
+  final WalletRepository _walletRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
+  final CurrencyConversionService _conversionService;
 
   static const _editableTypes = <String>{
     TransactionType.income,
@@ -112,6 +119,27 @@ class UpdateTransactionUseCase {
       );
     }
 
+    final walletResult = await _walletRepository.getWallet(params.walletId);
+    if (walletResult.isError()) {
+      return Error(walletResult.tryGetError()!);
+    }
+    final wallet = walletResult.tryGetSuccess()!;
+
+    final inputCurrency = CurrencyConstants.currentPrimaryCurrency;
+    int finalAmount = params.amount;
+    String finalCurrency = wallet.currencyCode;
+
+    if (inputCurrency.toUpperCase() != wallet.currencyCode.toUpperCase()) {
+      final convResult = await _conversionService.convertAmount(
+        amount: params.amount,
+        fromCurrency: inputCurrency,
+        toCurrency: wallet.currencyCode,
+      );
+      if (convResult.isSuccess()) {
+        finalAmount = convResult.tryGetSuccess()!;
+      }
+    }
+
     if (original.type == TransactionType.expense) {
       final balanceResult = await _getWalletBookBalance(params.walletId);
       if (balanceResult.isError()) {
@@ -121,7 +149,7 @@ class UpdateTransactionUseCase {
       if (original.walletId == params.walletId) {
         availableBalance += original.amount;
       }
-      if (params.amount > availableBalance) {
+      if (finalAmount > availableBalance) {
         return const Error(
           ValidationFailure(
             CcLocaleKeys.transaction_validation_insufficient_balance,
@@ -135,7 +163,7 @@ class UpdateTransactionUseCase {
     final updated = TransactionEntity(
       id: original.id,
       type: original.type,
-      amount: params.amount,
+      amount: finalAmount,
       category: params.categoryLabel,
       categoryId: params.categoryId,
       budgetId: params.budgetId,
@@ -148,7 +176,7 @@ class UpdateTransactionUseCase {
       liabilityId: original.liabilityId,
       lat: original.lat,
       lng: original.lng,
-      currencyCode: original.currencyCode,
+      currencyCode: finalCurrency,
     );
 
     final result = await _transactionRepository.updateTransaction(updated);

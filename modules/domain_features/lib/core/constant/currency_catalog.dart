@@ -50,7 +50,7 @@ class CurrencyCatalog {
       symbol: '\$',
       sampleAmount: 100,
       locale: 'en_US',
-      decimalDigits: 2,
+      decimalDigits: 0,
       isPrefixSymbol: true,
       aliases: ['usd', 'dollar', 'dollars', '\$'],
     ),
@@ -60,7 +60,7 @@ class CurrencyCatalog {
       symbol: '€',
       sampleAmount: 85,
       locale: 'en_US',
-      decimalDigits: 2,
+      decimalDigits: 0,
       isPrefixSymbol: true,
       aliases: ['eur', 'euro', 'euros', '€'],
     ),
@@ -90,7 +90,7 @@ class CurrencyCatalog {
       symbol: '¥',
       sampleAmount: 639,
       locale: 'zh_CN',
-      decimalDigits: 2,
+      decimalDigits: 0,
       isPrefixSymbol: true,
       aliases: ['cny', 'rmb', 'yuan', '¥'],
     ),
@@ -137,23 +137,33 @@ class CurrencyCatalog {
       // Language fallback
       final languageCode = locale.languageCode.toLowerCase();
       if (languageCode == 'vi') {
-        '[CurrencyCatalog] Currency detected from language: vi -> VND'.Log('CurrencyCatalog');
+        '[CurrencyCatalog] Currency detected from language: vi -> VND'.Log(
+          'CurrencyCatalog',
+        );
         return (currencyCode: CurrencyConstants.vnd, countryCode: 'VN');
       }
       if (languageCode == 'ja') {
-        '[CurrencyCatalog] Currency detected from language: ja -> JPY'.Log('CurrencyCatalog');
+        '[CurrencyCatalog] Currency detected from language: ja -> JPY'.Log(
+          'CurrencyCatalog',
+        );
         return (currencyCode: CurrencyConstants.jpy, countryCode: 'JP');
       }
       if (languageCode == 'ko') {
-        '[CurrencyCatalog] Currency detected from language: ko -> KRW'.Log('CurrencyCatalog');
+        '[CurrencyCatalog] Currency detected from language: ko -> KRW'.Log(
+          'CurrencyCatalog',
+        );
         return (currencyCode: CurrencyConstants.krw, countryCode: 'KR');
       }
       if (languageCode == 'zh') {
-        '[CurrencyCatalog] Currency detected from language: zh -> CNY'.Log('CurrencyCatalog');
+        '[CurrencyCatalog] Currency detected from language: zh -> CNY'.Log(
+          'CurrencyCatalog',
+        );
         return (currencyCode: CurrencyConstants.cny, countryCode: 'CN');
       }
       if (languageCode == 'en') {
-        '[CurrencyCatalog] Currency detected from language: en -> USD'.Log('CurrencyCatalog');
+        '[CurrencyCatalog] Currency detected from language: en -> USD'.Log(
+          'CurrencyCatalog',
+        );
         return (currencyCode: CurrencyConstants.usd, countryCode: 'US');
       }
     } catch (e) {

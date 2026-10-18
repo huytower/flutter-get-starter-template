@@ -247,8 +247,8 @@ abstract class MoneyConstants {
           fromCurrency: 'VND',
           toCurrency: normalized,
         );
-        final minorUnits = result.tryGetSuccess() ?? amount;
-        converted.add(minorUnits > 0 ? minorUnits : 1);
+        final convertedVal = result.tryGetSuccess() ?? amount;
+        converted.add(convertedVal > 0 ? convertedVal : 1);
       }
       return converted;
     } catch (_) {
