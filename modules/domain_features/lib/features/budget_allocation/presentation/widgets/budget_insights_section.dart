@@ -1,13 +1,14 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:multiple_result/multiple_result.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/money_format_helper.dart';
-import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../get_x/budget_allocation_controller.dart';
 
@@ -30,27 +31,28 @@ class BudgetInsightsSection extends StatelessWidget {
         child: Column(
           children: [
             if (insights.isDeficit)
-              _InsightCard(
+              _buildConvertedInsightCard(
+                context,
                 title: el.tr(CcLocaleKeys.budget_insights_title),
-                description: el.tr(
+                rawVndAmount: insights.deficitAmount,
+                descriptionBuilder: (formattedAmount) => el.tr(
                   CcLocaleKeys.budget_deficit_warning,
-                  namedArgs: {
-                    'amount':
-                        '${TransactionFormHelpers.formatShort(insights.deficitAmount)} đồng',
-                  },
+                  namedArgs: {'amount': formattedAmount},
                 ),
                 icon: Icons.error_outline_rounded,
                 color: context.ccColorScheme.error,
                 onTap: () => context.router.push(const ReportRoute()),
               ),
             if (insights.isInflowDebtDriven)
-              _InsightCard(
+              _buildConvertedInsightCard(
+                context,
                 title: el.tr(CcLocaleKeys.budget_insights_title),
-                description: el.tr(
+                rawVndAmount: insights.debtInflowAmount,
+                descriptionBuilder: (formattedAmount) => el.tr(
                   CcLocaleKeys.budget_debt_inflow_warning,
                   namedArgs: {
                     'percent': '${insights.debtInflowPercent}',
-                    'amount': formatVndWithSymbol(insights.debtInflowAmount),
+                    'amount': formattedAmount,
                   },
                 ),
                 icon: Icons.account_balance_outlined,
@@ -58,13 +60,15 @@ class BudgetInsightsSection extends StatelessWidget {
                 onTap: () => context.router.push(const ReportRoute()),
               ),
             if (insights.isOutflowDebtDriven)
-              _InsightCard(
+              _buildConvertedInsightCard(
+                context,
                 title: el.tr(CcLocaleKeys.budget_insights_title),
-                description: el.tr(
+                rawVndAmount: insights.debtOutflowAmount,
+                descriptionBuilder: (formattedAmount) => el.tr(
                   CcLocaleKeys.budget_debt_outflow_warning,
                   namedArgs: {
                     'percent': '${insights.debtOutflowPercent}',
-                    'amount': formatVndWithSymbol(insights.debtOutflowAmount),
+                    'amount': formattedAmount,
                   },
                 ),
                 icon: Icons.account_balance_outlined,
@@ -100,16 +104,16 @@ class BudgetInsightsSection extends StatelessWidget {
                     name: warning.budgetName,
                     categoryNameKey: warning.categoryNameKey,
                   );
-                  return _InsightCard(
+                  return _buildConvertedInsightCard(
+                    context,
                     title: name,
-                    description: el.tr(
+                    rawVndAmount: warning.suggestedDailySpend,
+                    descriptionBuilder: (formattedAmount) => el.tr(
                       CcLocaleKeys.budget_pacing_hint,
                       namedArgs: {
                         'name': name,
                         'days': '${warning.daysRemaining}',
-                        'amount': formatVndWithSymbol(
-                          warning.suggestedDailySpend,
-                        ),
+                        'amount': formattedAmount,
                       },
                     ),
                     icon: Icons.info_outline_rounded,
@@ -133,6 +137,55 @@ class BudgetInsightsSection extends StatelessWidget {
         ),
       );
     });
+  }
+
+  Widget _buildConvertedInsightCard(
+    BuildContext context, {
+    required String title,
+    required int rawVndAmount,
+    required String Function(String formattedAmount) descriptionBuilder,
+    required IconData icon,
+    required Color color,
+    VoidCallback? onTap,
+  }) {
+    final targetCurrency = controller.walletController.currencyCode.value;
+
+    if (targetCurrency.toUpperCase() == 'VND' || rawVndAmount == 0) {
+      final formatted = MoneyFormatter.formatWithSymbol(
+        rawVndAmount,
+        currencyCode: targetCurrency,
+      );
+      return _InsightCard(
+        title: title,
+        description: descriptionBuilder(formatted),
+        icon: icon,
+        color: color,
+        onTap: onTap,
+      );
+    }
+
+    return FutureBuilder<Result<int, CcFailure>>(
+      future: controller.walletController.conversionService.convertAmount(
+        amount: rawVndAmount,
+        fromCurrency: 'VND',
+        toCurrency: targetCurrency,
+      ),
+      builder: (context, snapshot) {
+        final converted =
+            snapshot.data?.tryGetSuccess() ?? (rawVndAmount / 25982.5).round();
+        final formatted = MoneyFormatter.formatWithSymbol(
+          converted,
+          currencyCode: targetCurrency,
+        );
+        return _InsightCard(
+          title: title,
+          description: descriptionBuilder(formatted),
+          icon: icon,
+          color: color,
+          onTap: onTap,
+        );
+      },
+    );
   }
 }
 
@@ -242,8 +295,6 @@ class _GridPatternPainter extends CustomPainter {
 
     for (int r = 0; r < rows; r++) {
       for (int c = 0; c < cols; c++) {
-        // Create a pattern similar to the one in the image:
-        // A grid where squares have very low, varying opacities
         final bool shouldPaint = (r + c).isEven;
         if (!shouldPaint) continue;
 
@@ -254,7 +305,7 @@ class _GridPatternPainter extends CustomPainter {
           Rect.fromLTWH(
             size.width - (c + 1) * squareSize,
             r * squareSize,
-            squareSize - 2, // 2px gap between squares
+            squareSize - 2,
             squareSize - 2,
           ),
           paint,

@@ -283,38 +283,56 @@ class BudgetAllocationController extends CcGetController {
   Future<void> loadLiabilities() async {
     final result = await _getLiabilityBalances();
     result.when((balances) async {
+      final targetCurrency = walletController.currencyCode.value;
       final unique = <String, LiabilityBalanceEntity>{};
+      int newBorrow = 0;
+      int newLend = 0;
+
       for (final b in balances) {
-        unique[b.liability.id] = b;
+        final convPrincipal = await walletController.conversionService
+            .convertAmount(
+              amount: b.liability.principalAmount,
+              fromCurrency: b.liability.currencyCode,
+              toCurrency: targetCurrency,
+            );
+        final convertedPrincipal =
+            convPrincipal.tryGetSuccess() ?? b.liability.principalAmount;
+
+        final convOutstanding = await walletController.conversionService
+            .convertAmount(
+              amount: b.outstandingBalance,
+              fromCurrency: b.liability.currencyCode,
+              toCurrency: targetCurrency,
+            );
+        final convertedOutstanding =
+            convOutstanding.tryGetSuccess() ?? b.outstandingBalance;
+
+        final updatedLiability = b.liability.copyWith(
+          principalAmount: convertedPrincipal,
+          currencyCode: targetCurrency,
+        );
+
+        final convertedBalanceEntity = LiabilityBalanceEntity(
+          liability: updatedLiability,
+          outstandingBalance: convertedOutstanding,
+        );
+
+        unique[b.liability.id] = convertedBalanceEntity;
+
+        if (convertedOutstanding != 0 && !b.isSettled) {
+          if (b.liability.isBorrow) {
+            newBorrow += convertedOutstanding;
+          } else {
+            newLend += convertedOutstanding;
+          }
+        }
       }
+
       final sorted = unique.values.toList()
         ..sort(
           (a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt),
         );
       liabilityBalances.assignAll(sorted);
-
-      final targetCurrency = walletController.currencyCode.value;
-      int newBorrow = 0;
-      int newLend = 0;
-
-      for (final b in sorted) {
-        final rawBalance = b.outstandingBalance;
-        if (rawBalance == 0 || b.isSettled) continue;
-
-        final conversionResult = await walletController.conversionService
-            .convertAmount(
-              amount: rawBalance,
-              fromCurrency: b.liability.currencyCode,
-              toCurrency: targetCurrency,
-            );
-        final convertedBalance = conversionResult.tryGetSuccess() ?? rawBalance;
-
-        if (b.liability.isBorrow) {
-          newBorrow += convertedBalance;
-        } else {
-          newLend += convertedBalance;
-        }
-      }
 
       borrowBalance.value = newBorrow;
       lendBalance.value = newLend;
