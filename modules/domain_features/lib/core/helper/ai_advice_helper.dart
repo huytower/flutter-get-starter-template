@@ -4,7 +4,6 @@ import '../../features/budget_limit/domain/usecases/get_budget_anomalies_usecase
 import '../../features/report/domain/entities/financial_runway_entity.dart';
 import '../../features/transaction/domain/usecases/get_monthly_cash_flow_usecase.dart';
 import '../constant/currency_constants.dart';
-import 'money_format_helper.dart';
 
 String _penaltyTierLabel(BudgetPenaltyTier tier) {
   switch (tier) {
@@ -42,13 +41,14 @@ String _runwayStatusLabel(FinancialRunwayStatus? status) {
 /// `{status, text}`) is enforced separately via the `responseSchema` passed
 /// to `CcGeminiHelper.generateText` — this prompt only needs to explain what
 /// each section should contain and how to pick its `status`.
-String buildAiFinancialAdvicePrompt({
+Future<String> buildAiFinancialAdvicePrompt({
   required CashFlowEntity? cashFlow,
   required BudgetInsightsEntity? insights,
   required List<BudgetAnomalyEntity> anomalies,
   required FinancialRunwayEntity? runway,
+  required Future<String> Function(int vndAmount) formatMoney,
   String currencyCode = CurrencyConstants.defaultCurrencyCode,
-}) {
+}) async {
   final buffer = StringBuffer()
     ..writeln(
       'Bạn là một cố vấn tài chính cá nhân cho ứng dụng quản lý chi tiêu. '
@@ -90,22 +90,30 @@ String buildAiFinancialAdvicePrompt({
     ..writeln()
     ..writeln(
       'Đơn vị tiền tệ của người dùng: $currencyCode. Mọi số tiền bên dưới đã '
-      'được định dạng theo đơn vị này, hãy giữ nguyên ký hiệu khi trích dẫn.',
+      'được định dạng theo đơn vị này, hãy giữ nguyên ký hiệu và định dạng khi trích dẫn.',
     )
     ..writeln('Dữ liệu tháng này:');
 
   if (cashFlow != null) {
-    String money(int v) => formatVndWithSymbol(v, currencyCode: currencyCode);
+    final incomeStr = await formatMoney(cashFlow.income);
+    final expenseStr = await formatMoney(cashFlow.expense);
+    final debtInflowStr = await formatMoney(cashFlow.debtInflow);
+    final debtOutflowStr = await formatMoney(cashFlow.debtOutflow);
+    final investInflowStr = await formatMoney(cashFlow.investmentInflow);
+    final investOutflowStr = await formatMoney(cashFlow.investmentOutflow);
+    final opNetStr = await formatMoney(cashFlow.operatingNet);
+    final netStr = await formatMoney(cashFlow.net);
+
     buffer.writeln(
-      '- Thu nhập: ${money(cashFlow.income)}. '
-      'Chi tiêu: ${money(cashFlow.expense)}. '
-      'Tiền vay/thu nợ vào: ${money(cashFlow.debtInflow)}. '
-      'Tiền cho vay/trả nợ ra: ${money(cashFlow.debtOutflow)}. '
-      'Lợi nhuận đầu tư vào: ${money(cashFlow.investmentInflow)}. '
-      'Vốn đầu tư ra: ${money(cashFlow.investmentOutflow)}. '
-      'Chênh lệch thu - chi: ${money(cashFlow.operatingNet)} '
+      '- Thu nhập: $incomeStr. '
+      'Chi tiêu: $expenseStr. '
+      'Tiền vay/thu nợ vào: $debtInflowStr. '
+      'Tiền cho vay/trả nợ ra: $debtOutflowStr. '
+      'Lợi nhuận đầu tư vào: $investInflowStr. '
+      'Vốn đầu tư ra: $investOutflowStr. '
+      'Chênh lệch thu - chi: $opNetStr '
       '(${cashFlow.isDeficit ? "thâm hụt" : "dương"}). '
-      'Chênh lệch dòng tiền tổng: ${money(cashFlow.net)}.',
+      'Chênh lệch dòng tiền tổng: $netStr.',
     );
     if (cashFlow.isInflowDebtDriven) {
       buffer.writeln(
@@ -130,9 +138,10 @@ String buildAiFinancialAdvicePrompt({
   } else {
     buffer.writeln('- Cảnh báo ngân sách:');
     for (final w in pacingWarnings) {
+      final spendStr = await formatMoney(w.suggestedDailySpend);
       buffer.writeln(
         '  + ${w.budgetName}: còn ${w.daysRemaining} ngày, nên chi '
-        '≤ ${formatVndWithSymbol(w.suggestedDailySpend, currencyCode: currencyCode)}/ngày.',
+        '≤ $spendStr/ngày.',
       );
     }
     for (final w in penaltyWarnings) {
@@ -148,20 +157,23 @@ String buildAiFinancialAdvicePrompt({
   } else {
     buffer.writeln('- Khoản chi bất thường:');
     for (final a in anomalies) {
+      final spendStr = await formatMoney(a.thisMonthSpend);
+      final avgStr = await formatMoney(a.avgPrevMonths.round());
       buffer.writeln(
-        '  + ${a.budgetName}: ${formatVndWithSymbol(a.thisMonthSpend, currencyCode: currencyCode)} '
+        '  + ${a.budgetName}: $spendStr '
         'tháng này so với trung bình '
-        '${formatVndWithSymbol(a.avgPrevMonths.round(), currencyCode: currencyCode)} 3 tháng trước.',
+        '$avgStr 3 tháng trước.',
       );
     }
   }
 
   if (runway != null) {
+    final burnStr = await formatMoney(runway.monthlyBurn.round());
     buffer.writeln(
       '- Chỉ số an toàn tài chính (runway): ${runway.months} tháng '
       '${runway.days} ngày (${_runwayStatusLabel(runway.status)}), chi '
       'tiêu trung bình/bắt buộc hàng tháng: '
-      '${formatVndWithSymbol(runway.monthlyBurn.round(), currencyCode: currencyCode)}.',
+      '$burnStr.',
     );
   } else {
     buffer.writeln('- Không có dữ liệu chỉ số an toàn tài chính.');

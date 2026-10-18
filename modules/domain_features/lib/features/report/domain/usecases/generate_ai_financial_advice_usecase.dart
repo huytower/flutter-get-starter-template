@@ -64,12 +64,33 @@ class GenerateAiFinancialAdviceUseCase {
     final cashFlow = (results[3] as Result<CashFlowEntity, dynamic>)
         .tryGetSuccess();
 
-    final prompt = buildAiFinancialAdvicePrompt(
+    final prompt = await buildAiFinancialAdvicePrompt(
       cashFlow: cashFlow,
       insights: insights,
       anomalies: anomalies ?? const [],
       runway: runway,
       currencyCode: settings.currencyCode,
+      formatMoney: (int vndAmount) async {
+        if (settings.currencyCode.toUpperCase() == 'VND' || vndAmount == 0) {
+          return MoneyFormatter.formatWithSymbol(
+            vndAmount,
+            currencyCode: settings.currencyCode,
+          );
+        }
+        final conv = await getIt<CurrencyConversionService>().convertAmount(
+          amount: vndAmount.abs(),
+          fromCurrency: 'VND',
+          toCurrency: settings.currencyCode,
+        );
+        final convertedVal =
+            conv.tryGetSuccess() ?? (vndAmount.abs() / 25982.5).round();
+        final sign = vndAmount < 0 ? '-' : '';
+        final formatted = MoneyFormatter.formatWithSymbol(
+          convertedVal,
+          currencyCode: settings.currencyCode,
+        );
+        return '$sign$formatted';
+      },
     );
 
     final raw = await CcGeminiHelper.generateText(
