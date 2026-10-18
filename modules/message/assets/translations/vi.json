@@ -296,6 +296,7 @@
         "more_details": "Thêm chi tiết",
         "merchant_match_hint": "Giống lần trước: {label}",
         "bill_match_hint": "Hóa đơn hàng tháng: {label}",
+        "monthly_income_match_hint": "Thu nhập hàng tháng: {label}",
         "location_match_hint": "Bạn đang ở gần đây: {label}",
         "auto_save_countdown": "Tự động lưu trong {countdown}s...",
         "quick_entry_hint": "chi điện thoại 50.000 từ tiền mặt",

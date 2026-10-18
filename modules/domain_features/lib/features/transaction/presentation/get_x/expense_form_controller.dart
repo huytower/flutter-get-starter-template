@@ -13,13 +13,11 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/budget_over_limit_helper.dart';
 import '../../../../core/helper/location_suggestion_helper.dart';
-import '../../../../core/helper/merchant_match_helper.dart';
+import '../../../../core/helper/merchant_matcher.dart';
 import '../../../../core/helper/money_format_helper.dart';
-import '../../../../core/helper/monthly_bill_suggestion_helper.dart';
 import '../../../../core/helper/time_based_suggestion_helper.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
@@ -28,18 +26,22 @@ import '../../../profile/user_level/presentation/get_x/user_level_controller.dar
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
+import '../../domain/usecases/get_monthly_recurring_match_usecase.dart';
 import '../../domain/usecases/update_transaction_usecase.dart';
 import '../helper/horizontal_row_reveal.dart';
 import '../models/unified_category_item.dart';
 import '../widgets/base/category_selection_layout.dart';
 import 'quick_entry_mixin.dart';
+import 'smart_suggestion_source.dart';
+import 'suggestion_prefill_mixin.dart';
 import 'transaction_form_controller.dart';
 
 const String _debugTag = 'ExpenseFormCategoryScroll';
 
 @injectable
 class ExpenseFormController extends TransactionFormController
-    with QuickEntryMixin {
+    with QuickEntryMixin, SuggestionPrefillMixin
+    implements SmartSuggestionSource {
   ExpenseFormController(this._transactionRepository, this._getCategories);
 
   final TransactionRepository _transactionRepository;
@@ -120,6 +122,7 @@ class ExpenseFormController extends TransactionFormController
   String? _dismissedLocationMatchId;
 
   List<TransactionEntity> _recentExpenses = [];
+  MerchantMatcher _merchantMatcher = MerchantMatcher(const []);
   Timer? _merchantMatchDebounce;
   final Map<String, DateTime> _lastRecordedCatTime = {};
   final Map<String, DateTime> _lastRecordedBudgetTime = {};
@@ -584,11 +587,11 @@ class ExpenseFormController extends TransactionFormController
   Future<void> _loadRecentExpenses() async {
     final result = await _transactionRepository.getTransactions(
       const PaginationRequest(page: 1, itemsPerPage: 100),
+      type: TransactionType.expense,
     );
     result.when((transactions) {
-      _recentExpenses = transactions
-          .where((t) => t.type == TransactionType.expense)
-          .toList();
+      _recentExpenses = transactions;
+      _merchantMatcher = MerchantMatcher(transactions);
     }, (_) {});
   }
 
@@ -604,14 +607,9 @@ class ExpenseFormController extends TransactionFormController
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) {
       return;
     }
-    final candidates = _recentExpenses
-        .where((t) => (t.note ?? '').trim().isNotEmpty)
-        .toList();
-    final match = findBestMerchantMatch(
-      query: noteController.text,
-      candidates: candidates,
+    merchantMatchSuggestion.value = _merchantMatcher.findBest(
+      noteController.text,
     );
-    merchantMatchSuggestion.value = match;
     _publishFallbackSuggestions();
   }
 
@@ -623,36 +621,16 @@ class ExpenseFormController extends TransactionFormController
   /// Pre-fills category/amount/wallet from the fuzzy-matched past expense —
   /// same "prefill, user still confirms" contract as [applyTemplate].
   Future<void> applyMerchantMatch(TransactionEntity match) async {
-    final targetCurrency = currencyCode.value;
-    final rawAmount = match.amount;
-    final sourceCurrency = match.currencyCode;
-    final targetAmount = rawAmount;
-
-    'applyMerchantMatch: rawAmount=$rawAmount, sourceCurrency=$sourceCurrency, targetCurrency=$targetCurrency'
-        .Log('ExpenseFormController');
-
-    if (sourceCurrency.toUpperCase() != targetCurrency.toUpperCase()) {
-      final result = await getIt<CurrencyConversionService>().convertAmount(
-        amount: rawAmount,
-        fromCurrency: sourceCurrency,
-        toCurrency: targetCurrency,
-      );
-      final converted = result.tryGetSuccess() ?? rawAmount;
-      amountStr.value = converted.toString();
-      'applyMerchantMatch: convertedAmount=$converted'.Log(
-        'ExpenseFormController',
-      );
-    } else {
-      amountStr.value = rawAmount.toString();
-    }
-    if (wallets.any((w) => w.id == match.walletId)) {
-      selectedWalletId.value = match.walletId;
-    }
-    pendingPrefillCategoryId.value = match.categoryId;
-    categoryKey.value++;
+    await prefillFromTransaction(match);
     merchantMatchSuggestion.value = null;
     locationMatchSuggestion.value = null;
     billMatchSuggestion.value = null;
+  }
+
+  @override
+  void applySuggestedCategory(String categoryId) {
+    pendingPrefillCategoryId.value = categoryId;
+    categoryKey.value++;
   }
 
   @override
@@ -673,9 +651,10 @@ class ExpenseFormController extends TransactionFormController
     _currentLng = null;
     billMatchSuggestion.value = null;
     _lastBillMatch = null;
+    final billLoad = _loadMonthlyBillSuggestion();
     await _loadRecentExpenses();
     await _loadLocationSuggestion();
-    _loadMonthlyBillSuggestion();
+    await billLoad;
   }
 
   Future<void> _refreshLocationSuggestionIfMoved() async {
@@ -738,15 +717,15 @@ class ExpenseFormController extends TransactionFormController
     _publishFallbackSuggestions();
   }
 
-  void _loadMonthlyBillSuggestion() {
+  Future<void> _loadMonthlyBillSuggestion() async {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) {
       return;
     }
 
-    _lastBillMatch = findMonthlyBillMatch(
-      now: DateTime.now(),
-      candidates: _recentExpenses,
+    final result = await getIt<GetMonthlyRecurringMatchUseCase>().call(
+      type: TransactionType.expense,
     );
+    _lastBillMatch = result.tryGetSuccess();
     _publishFallbackSuggestions();
   }
 
@@ -779,63 +758,75 @@ class ExpenseFormController extends TransactionFormController
     billMatchSuggestion.value = null;
   }
 
-  Future<void> applyLocationMatch(TransactionEntity match) async {
-    final targetCurrency = currencyCode.value;
-    final rawAmount = match.amount;
-    final sourceCurrency = match.currencyCode;
+  @override
+  SmartSuggestion? get activeSuggestion {
+    final merchantMatch = merchantMatchSuggestion.value;
+    final billMatch = billMatchSuggestion.value;
+    final locationMatch = locationMatchSuggestion.value;
 
-    'applyLocationMatch: rawAmount=$rawAmount, sourceCurrency=$sourceCurrency, targetCurrency=$targetCurrency'
-        .Log('ExpenseFormController');
+    if (merchantMatch != null) {
+      return SmartSuggestion(
+        match: merchantMatch,
+        icon: Icons.auto_awesome,
+        hintKey: CcLocaleKeys.transaction_merchant_match_hint,
+      );
+    }
+    if (billMatch != null) {
+      return SmartSuggestion(
+        match: billMatch,
+        icon: Icons.event_repeat,
+        hintKey: CcLocaleKeys.transaction_bill_match_hint,
+      );
+    }
+    if (locationMatch != null) {
+      return SmartSuggestion(
+        match: locationMatch,
+        icon: Icons.place,
+        hintKey: CcLocaleKeys.transaction_location_match_hint,
+      );
+    }
+    return null;
+  }
 
-    if (sourceCurrency.toUpperCase() != targetCurrency.toUpperCase()) {
-      final result = await getIt<CurrencyConversionService>().convertAmount(
-        amount: rawAmount,
-        fromCurrency: sourceCurrency,
-        toCurrency: targetCurrency,
-      );
-      final converted = result.tryGetSuccess() ?? rawAmount;
-      amountStr.value = converted.toString();
-      'applyLocationMatch: convertedAmount=$converted'.Log(
-        'ExpenseFormController',
-      );
+  @override
+  String get suggestionCurrencyCode => currencyCode.value;
+
+  @override
+  Future<void> applyActiveSuggestion() async {
+    final merchantMatch = merchantMatchSuggestion.value;
+    if (merchantMatch != null) {
+      await applyMerchantMatch(merchantMatch);
+      return;
+    }
+    final billMatch = billMatchSuggestion.value;
+    if (billMatch != null) {
+      await applyBillMatch(billMatch);
+      return;
+    }
+    final locationMatch = locationMatchSuggestion.value;
+    if (locationMatch != null) await applyLocationMatch(locationMatch);
+  }
+
+  @override
+  void dismissActiveSuggestion() {
+    if (merchantMatchSuggestion.value != null) {
+      dismissMerchantMatch();
+    } else if (billMatchSuggestion.value != null) {
+      dismissBillMatch();
     } else {
-      amountStr.value = rawAmount.toString();
+      dismissLocationMatch();
     }
-    if (wallets.any((w) => w.id == match.walletId)) {
-      selectedWalletId.value = match.walletId;
-    }
-    pendingPrefillCategoryId.value = match.categoryId;
-    categoryKey.value++;
+  }
+
+  Future<void> applyLocationMatch(TransactionEntity match) async {
+    await prefillFromTransaction(match);
     locationMatchSuggestion.value = null;
     _lastLocationMatch = null;
     _dismissedLocationMatchId = null;
   }
 
   Future<void> applyBillMatch(TransactionEntity match) async {
-    final targetCurrency = currencyCode.value;
-    final rawAmount = match.amount;
-    final sourceCurrency = match.currencyCode;
-
-    'applyBillMatch: rawAmount=$rawAmount, sourceCurrency=$sourceCurrency, targetCurrency=$targetCurrency'
-        .Log('ExpenseFormController');
-
-    if (sourceCurrency.toUpperCase() != targetCurrency.toUpperCase()) {
-      final result = await getIt<CurrencyConversionService>().convertAmount(
-        amount: rawAmount,
-        fromCurrency: sourceCurrency,
-        toCurrency: targetCurrency,
-      );
-      final converted = result.tryGetSuccess() ?? rawAmount;
-      amountStr.value = converted.toString();
-      'applyBillMatch: convertedAmount=$converted'.Log('ExpenseFormController');
-    } else {
-      amountStr.value = rawAmount.toString();
-    }
-    if (wallets.any((w) => w.id == match.walletId)) {
-      selectedWalletId.value = match.walletId;
-    }
-    pendingPrefillCategoryId.value = match.categoryId;
-    categoryKey.value++;
+    await prefillFromTransaction(match);
     billMatchSuggestion.value = null;
     _lastBillMatch = null;
   }

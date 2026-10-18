@@ -8,8 +8,9 @@ abstract class TransactionRepository {
   Future<Result<List<TransactionEntity>, CcFailure>> getListTransactions();
 
   Future<Result<List<TransactionEntity>, CcFailure>> getTransactions(
-    PaginationRequest request,
-  );
+    PaginationRequest request, {
+    String? type,
+  });
 
   Future<Result<void, CcFailure>> createTransaction(
     TransactionEntity transaction,

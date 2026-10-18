@@ -10,6 +10,7 @@ import '../../../guideline/export_guideline.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../get_x/expense_form_controller.dart';
 import '../get_x/quick_entry_mixin.dart';
+import '../get_x/smart_suggestion_source.dart';
 import '../get_x/transaction_controller.dart';
 import 'quick_entry_section.dart';
 import 'receipt_source_sheet.dart';
@@ -63,6 +64,11 @@ class TransactionHeaderBanner extends StatelessWidget {
         : controller.getQuickEntryControllerForTab(tab);
   }
 
+  SmartSuggestionSource? _suggestionSourceFor(TransactionTabKind tab) {
+    final Object? source = _quickEntryControllerFor(tab);
+    return source is SmartSuggestionSource ? source : null;
+  }
+
   Widget _buildAiComponents(
     BuildContext context,
     TransactionTabKind activeTab,
@@ -70,6 +76,8 @@ class TransactionHeaderBanner extends StatelessWidget {
     final quickEntry = _quickEntryControllerFor(activeTab);
 
     if (quickEntry == null) return const SizedBox.shrink();
+
+    final suggestionSource = _suggestionSourceFor(activeTab);
 
     final canUseAiSmartEntry =
         getIt<UserLevelController>().status.value.canUseAiSmartEntry;
@@ -92,9 +100,10 @@ class TransactionHeaderBanner extends StatelessWidget {
               if (isLocked) _buildLockOverlay(context),
             ],
           ),
-          if (canUseAiSmartEntry && expenseFormController != null)
+          if (canUseAiSmartEntry && suggestionSource != null)
             TransactionSmartSuggestionChip(
-              expenseFormController: expenseFormController!,
+              key: ObjectKey(suggestionSource),
+              source: suggestionSource,
               accentColor: accentColor,
             ),
         ],

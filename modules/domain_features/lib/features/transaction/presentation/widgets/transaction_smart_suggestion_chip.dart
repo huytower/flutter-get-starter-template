@@ -8,59 +8,30 @@ import 'package:multiple_result/multiple_result.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/helper/money_format_helper.dart';
-import '../get_x/expense_form_controller.dart';
+import '../get_x/smart_suggestion_source.dart';
 
 class TransactionSmartSuggestionChip extends StatelessWidget {
   const TransactionSmartSuggestionChip({
     super.key,
-    required this.expenseFormController,
+    required this.source,
     required this.accentColor,
   });
 
-  final ExpenseFormController expenseFormController;
+  final SmartSuggestionSource source;
   final Color accentColor;
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final merchantMatch = expenseFormController.merchantMatchSuggestion.value;
-      final billMatch = expenseFormController.billMatchSuggestion.value;
-      final locationMatch = expenseFormController.locationMatchSuggestion.value;
+      final suggestion = source.activeSuggestion;
+      if (suggestion == null) return const SizedBox.shrink();
 
-      final match = merchantMatch ?? billMatch ?? locationMatch;
-      if (match == null) return const SizedBox.shrink();
-
-      final IconData icon = merchantMatch != null
-          ? Icons.auto_awesome
-          : billMatch != null
-          ? Icons.event_repeat
-          : Icons.place;
-
-      final String hintKey = merchantMatch != null
-          ? CcLocaleKeys.transaction_merchant_match_hint
-          : billMatch != null
-          ? CcLocaleKeys.transaction_bill_match_hint
-          : CcLocaleKeys.transaction_location_match_hint;
-
-      final targetCurrency = expenseFormController.currencyCode.value;
+      final match = suggestion.match;
+      final targetCurrency = source.suggestionCurrencyCode;
 
       if (match.currencyCode.toUpperCase() == targetCurrency.toUpperCase() ||
           match.amount == 0) {
-        final formattedAmount = MoneyFormatter.formatShortWithSymbol(
-          match.amount,
-          currencyCode: targetCurrency,
-        );
-        final label = el.tr(
-          hintKey,
-          namedArgs: {'label': '${match.category} · $formattedAmount'},
-        );
-        return CcSuggestionChip(
-          label: label,
-          accentColor: accentColor,
-          icon: icon,
-          onTap: () async => await _applySuggestion(expenseFormController),
-          onDismiss: () => _dismissSuggestion(expenseFormController),
-        );
+        return _buildChip(suggestion, match.amount, targetCurrency);
       }
 
       return FutureBuilder<Result<int, CcFailure>>(
@@ -72,50 +43,28 @@ class TransactionSmartSuggestionChip extends StatelessWidget {
         builder: (context, snapshot) {
           final convertedAmount =
               snapshot.data?.tryGetSuccess() ?? match.amount;
-          final formattedAmount = MoneyFormatter.formatShortWithSymbol(
-            convertedAmount,
-            currencyCode: targetCurrency,
-          );
-          final label = el.tr(
-            hintKey,
-            namedArgs: {'label': '${match.category} · $formattedAmount'},
-          );
-
-          return CcSuggestionChip(
-            label: label,
-            accentColor: accentColor,
-            icon: icon,
-            onTap: () async => await _applySuggestion(expenseFormController),
-            onDismiss: () => _dismissSuggestion(expenseFormController),
-          );
+          return _buildChip(suggestion, convertedAmount, targetCurrency);
         },
       );
     });
   }
 
-  Future<void> _applySuggestion(ExpenseFormController controller) async {
-    final merchantMatch = controller.merchantMatchSuggestion.value;
-    if (merchantMatch != null) {
-      await controller.applyMerchantMatch(merchantMatch);
-      return;
-    }
-    final billMatch = controller.billMatchSuggestion.value;
-    if (billMatch != null) {
-      await controller.applyBillMatch(billMatch);
-      return;
-    }
-    final locationMatch = controller.locationMatchSuggestion.value;
-    if (locationMatch != null)
-      await controller.applyLocationMatch(locationMatch);
-  }
+  Widget _buildChip(SmartSuggestion suggestion, int amount, String currency) {
+    final formattedAmount = MoneyFormatter.formatShortWithSymbol(
+      amount,
+      currencyCode: currency,
+    );
+    final label = el.tr(
+      suggestion.hintKey,
+      namedArgs: {'label': '${suggestion.match.category} · $formattedAmount'},
+    );
 
-  void _dismissSuggestion(ExpenseFormController controller) {
-    if (controller.merchantMatchSuggestion.value != null) {
-      controller.dismissMerchantMatch();
-    } else if (controller.billMatchSuggestion.value != null) {
-      controller.dismissBillMatch();
-    } else {
-      controller.dismissLocationMatch();
-    }
+    return CcSuggestionChip(
+      label: label,
+      accentColor: accentColor,
+      icon: suggestion.icon,
+      onTap: () async => await source.applyActiveSuggestion(),
+      onDismiss: source.dismissActiveSuggestion,
+    );
   }
 }
