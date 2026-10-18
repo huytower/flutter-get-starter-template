@@ -1,9 +1,10 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:domain_features/core/constant/currency_constants.dart';
+import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import 'package:domain_features/core/constant/currency_constants.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
@@ -58,27 +59,19 @@ class CreateInvestmentTransactionParams {
 /// Records a Chi ra/Thu vào move against an investment position
 /// (`WalletType.investment`), creating the wallet on first contribute when
 /// [CreateInvestmentTransactionParams.investmentWalletId] is null.
-///
-/// Chi ra (contribute) is two linked [TransactionEntity] legs sharing a
-/// `transferId`, like a wallet-to-wallet transfer: capital leaves the liquid
-/// wallet and arrives at the investment wallet. Thu vào (returnProfit) is a
-/// single leg credited to the chosen liquid wallet — real profit lands in
-/// real spendable cash, mirroring how `debtCollect` credits a real wallet
-/// rather than the abstract `LoanEntity`. Both directions tag every leg with
-/// `investmentWalletId` (mirrors `loanId`) so which position a leg belongs
-/// to can still be recovered even though its `walletId` now points at a
-/// real wallet, not the position.
 @lazySingleton
 class CreateInvestmentTransactionUseCase {
   CreateInvestmentTransactionUseCase(
     this._transactionRepository,
     this._walletRepository,
     this._getWalletBookBalance,
+    this._conversionService,
   );
 
   final TransactionRepository _transactionRepository;
   final WalletRepository _walletRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
+  final CurrencyConversionService _conversionService;
 
   Future<Result<WalletEntity, CcFailure>> call(
     CreateInvestmentTransactionParams params,
@@ -100,8 +93,6 @@ class CreateInvestmentTransactionUseCase {
     }
     final investmentWallet = walletResult.tryGetSuccess()!;
 
-    // High Priority Logic: Update updatedAt so this asset jumps to the front
-    // of the Transaction page picker next time.
     if (params.investmentWalletId != null) {
       await _walletRepository.updateWallet(
         investmentWallet.copyWith(updatedAt: DateTime.now()),
@@ -119,12 +110,33 @@ class CreateInvestmentTransactionUseCase {
     WalletEntity investmentWallet,
   ) async {
     final liquidWalletId = params.liquidWalletId!;
+    final liquidWalletResult = await _walletRepository.getWallet(
+      liquidWalletId,
+    );
+    if (liquidWalletResult.isError()) {
+      return Error(liquidWalletResult.tryGetError()!);
+    }
+    final liquidWallet = liquidWalletResult.tryGetSuccess()!;
+
+    final inputCurrency = CurrencyConstants.currentPrimaryCurrency;
+    int finalLiquidAmount = params.amount;
+    if (inputCurrency.toUpperCase() !=
+        liquidWallet.currencyCode.toUpperCase()) {
+      final convResult = await _conversionService.convertAmount(
+        amount: params.amount,
+        fromCurrency: inputCurrency,
+        toCurrency: liquidWallet.currencyCode,
+      );
+      if (convResult.isSuccess()) {
+        finalLiquidAmount = convResult.tryGetSuccess()!;
+      }
+    }
 
     final balanceResult = await _getWalletBookBalance(liquidWalletId);
     if (balanceResult.isError()) {
       return Error(balanceResult.tryGetError()!);
     }
-    if (params.amount > balanceResult.tryGetSuccess()!) {
+    if (finalLiquidAmount > balanceResult.tryGetSuccess()!) {
       return const Error(
         ValidationFailure(
           CcLocaleKeys.transaction_validation_insufficient_balance,
@@ -132,11 +144,24 @@ class CreateInvestmentTransactionUseCase {
       );
     }
 
+    int finalInvestmentAmount = params.amount;
+    if (inputCurrency.toUpperCase() !=
+        investmentWallet.currencyCode.toUpperCase()) {
+      final convResult = await _conversionService.convertAmount(
+        amount: params.amount,
+        fromCurrency: inputCurrency,
+        toCurrency: investmentWallet.currencyCode,
+      );
+      if (convResult.isSuccess()) {
+        finalInvestmentAmount = convResult.tryGetSuccess()!;
+      }
+    }
+
     final linkId = DateTime.now().microsecondsSinceEpoch.toString();
     final legOut = TransactionEntity(
       id: '${linkId}_out',
       type: TransactionType.investmentOut,
-      amount: params.amount,
+      amount: finalLiquidAmount,
       category: params.categoryLabel,
       categoryId: params.categoryId,
       categoryIconCode: params.categoryIconCode,
@@ -146,10 +171,11 @@ class CreateInvestmentTransactionUseCase {
       walletId: liquidWalletId,
       transferId: linkId,
       investmentWalletId: investmentWallet.id,
-      currencyCode: investmentWallet.currencyCode,
+      currencyCode: liquidWallet.currencyCode,
     );
     final legIn = legOut.copyWith(
       id: '${linkId}_in',
+      amount: finalInvestmentAmount,
       walletId: investmentWallet.id,
       type: TransactionType.investmentIn,
       currencyCode: investmentWallet.currencyCode,
@@ -174,11 +200,32 @@ class CreateInvestmentTransactionUseCase {
     WalletEntity investmentWallet,
   ) async {
     final liquidWalletId = params.liquidWalletId!;
+    final liquidWalletResult = await _walletRepository.getWallet(
+      liquidWalletId,
+    );
+    if (liquidWalletResult.isError()) {
+      return Error(liquidWalletResult.tryGetError()!);
+    }
+    final liquidWallet = liquidWalletResult.tryGetSuccess()!;
+
+    final inputCurrency = CurrencyConstants.currentPrimaryCurrency;
+    int finalLiquidAmount = params.amount;
+    if (inputCurrency.toUpperCase() !=
+        liquidWallet.currencyCode.toUpperCase()) {
+      final convResult = await _conversionService.convertAmount(
+        amount: params.amount,
+        fromCurrency: inputCurrency,
+        toCurrency: liquidWallet.currencyCode,
+      );
+      if (convResult.isSuccess()) {
+        finalLiquidAmount = convResult.tryGetSuccess()!;
+      }
+    }
 
     final txn = TransactionEntity(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       type: TransactionType.investmentReturn,
-      amount: params.amount,
+      amount: finalLiquidAmount,
       category: params.categoryLabel,
       categoryId: params.categoryId,
       categoryIconCode: params.categoryIconCode,
@@ -187,7 +234,7 @@ class CreateInvestmentTransactionUseCase {
       date: params.date,
       walletId: liquidWalletId,
       investmentWalletId: investmentWallet.id,
-      currencyCode: investmentWallet.currencyCode,
+      currencyCode: liquidWallet.currencyCode,
     );
 
     final result = await _transactionRepository.createTransaction(txn);

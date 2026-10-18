@@ -4,8 +4,10 @@ import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/constant/currency_constants.dart';
+import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
+import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../entities/liability_entity.dart';
 import '../repositories/liability_repository.dart';
@@ -51,12 +53,16 @@ class CreateLiabilityUseCase {
   CreateLiabilityUseCase(
     this._LiabilityRepository,
     this._transactionRepository,
+    this._walletRepository,
     this._getWalletBookBalance,
+    this._conversionService,
   );
 
   final LiabilityRepository _LiabilityRepository;
   final TransactionRepository _transactionRepository;
+  final WalletRepository _walletRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
+  final CurrencyConversionService _conversionService;
 
   Future<Result<LiabilityEntity, CcFailure>> call(
     CreateLiabilityParams params,
@@ -79,16 +85,36 @@ class CreateLiabilityUseCase {
       );
     }
 
+    final walletResult = await _walletRepository.getWallet(params.walletId);
+    if (walletResult.isError()) {
+      return Error(walletResult.tryGetError()!);
+    }
+    final wallet = walletResult.tryGetSuccess()!;
+
+    final inputCurrency = CurrencyConstants.currentPrimaryCurrency;
+    int finalAmount = params.principalAmount;
+    String finalCurrency = wallet.currencyCode;
+
+    if (inputCurrency.toUpperCase() != wallet.currencyCode.toUpperCase()) {
+      final convResult = await _conversionService.convertAmount(
+        amount: params.principalAmount,
+        fromCurrency: inputCurrency,
+        toCurrency: wallet.currencyCode,
+      );
+      if (convResult.isSuccess()) {
+        finalAmount = convResult.tryGetSuccess()!;
+      }
+    }
+
     // For borrow, money flows in (unrestricted balance).
     // For lend, money flows out — block overspending.
-    if (params.direction == LiabilityDirection.lend &&
-        params.principalAmount > 0) {
+    if (params.direction == LiabilityDirection.lend && finalAmount > 0) {
       final balanceResult = await _getWalletBookBalance(params.walletId);
       if (balanceResult.isError()) {
         return Error(balanceResult.tryGetError()!);
       }
       final availableBalance = balanceResult.tryGetSuccess()!;
-      if (params.principalAmount > availableBalance) {
+      if (finalAmount > availableBalance) {
         return const Error(
           ValidationFailure(
             CcLocaleKeys.transaction_validation_insufficient_balance,
@@ -98,7 +124,7 @@ class CreateLiabilityUseCase {
     }
 
     var targetId = params.liabilityId ?? '';
-    var updatedPrincipal = params.principalAmount;
+    var updatedPrincipal = finalAmount;
     var isUpdate = false;
 
     if (targetId.isNotEmpty) {
@@ -133,7 +159,7 @@ class CreateLiabilityUseCase {
       createdAt: params.date,
       updatedAt: DateTime.now(),
       reminderBeforeDueDate: params.reminderBeforeDueDate,
-      currencyCode: CurrencyConstants.currentPrimaryCurrency,
+      currencyCode: finalCurrency,
     );
 
     final createResult = isUpdate
@@ -143,13 +169,13 @@ class CreateLiabilityUseCase {
       return Error(createResult.tryGetError()!);
     }
 
-    if (params.principalAmount > 0) {
+    if (finalAmount > 0) {
       final txn = TransactionEntity(
         id: '${liability.id}_init',
         type: params.direction == LiabilityDirection.borrow
             ? TransactionType.debtBorrow
             : TransactionType.debtLend,
-        amount: params.principalAmount,
+        amount: finalAmount,
         category: params.categoryLabel,
         categoryId: params.categoryId,
         categoryIconCode: params.categoryIconCode,
@@ -158,7 +184,7 @@ class CreateLiabilityUseCase {
         date: params.date,
         walletId: params.walletId,
         liabilityId: liability.id,
-        currencyCode: CurrencyConstants.currentPrimaryCurrency,
+        currencyCode: finalCurrency,
       );
 
       final txnResult = await _transactionRepository.createTransaction(txn);

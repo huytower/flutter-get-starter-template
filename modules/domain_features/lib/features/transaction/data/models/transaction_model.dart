@@ -176,6 +176,7 @@ class TransactionModel {
         deletedAt: entity.deletedAt?.toIso8601String(),
         lat: entity.lat,
         lng: entity.lng,
+        currencyCode: entity.currencyCode,
       );
 
   TransactionEntity toEntity() => TransactionEntity(
@@ -198,6 +199,7 @@ class TransactionModel {
     deletedAt: deletedAt != null ? DateTime.tryParse(deletedAt!) : null,
     lat: lat,
     lng: lng,
+    currencyCode: currencyCode ?? 'VND',
   );
 
   SyncMetadata get syncMetadata => SyncMetadata(

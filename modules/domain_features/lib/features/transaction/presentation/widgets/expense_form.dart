@@ -78,10 +78,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
     return Obx(
       () => Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Flexible(
-            fit: controller.isEditing ? FlexFit.loose : FlexFit.tight,
+          Expanded(
             child: _buildScrollableContent(
               context,
               controller,
@@ -110,6 +108,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
       },
       child: SingleChildScrollView(
         controller: controller.scrollController,
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -119,6 +120,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
             ),
             const CcSpaceSM(),
             _buildFormFields(context, controller, guideline, accentColor),
+            const CcSpaceMD(),
           ],
         ),
       ),

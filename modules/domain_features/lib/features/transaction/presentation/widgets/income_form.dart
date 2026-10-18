@@ -72,6 +72,7 @@ class _IncomeFormState extends State<IncomeForm> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     // See ExpenseForm.build() for why untagged vs. tagged resolve
     // differently: the untagged instance is pre-registered by
@@ -82,10 +83,8 @@ class _IncomeFormState extends State<IncomeForm> {
 
     return Obx(
       () => Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Flexible(
-            fit: controller.isEditing ? FlexFit.loose : FlexFit.tight,
+          Expanded(
             child: _buildScrollableContent(
               context,
               controller,
@@ -114,6 +113,9 @@ class _IncomeFormState extends State<IncomeForm> {
       },
       child: SingleChildScrollView(
         controller: controller.scrollController,
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -123,6 +125,7 @@ class _IncomeFormState extends State<IncomeForm> {
             ),
             const CcSpaceSM(),
             _buildFormFields(context, controller, guideline, accentColor),
+            const CcSpaceMD(),
           ],
         ),
       ),
