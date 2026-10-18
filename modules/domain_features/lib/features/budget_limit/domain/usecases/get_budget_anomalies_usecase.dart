@@ -1,27 +1,12 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
-import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/helper/spend_anomaly_helper.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
+import '../entities/budget_anomaly_entity.dart';
 import 'get_budget_limit_stats_usecase.dart';
-
-class BudgetAnomalyEntity extends Equatable {
-  final String budgetName;
-  final int thisMonthSpend;
-  final double avgPrevMonths;
-
-  const BudgetAnomalyEntity({
-    required this.budgetName,
-    required this.thisMonthSpend,
-    required this.avgPrevMonths,
-  });
-
-  @override
-  List<Object?> get props => [budgetName, thisMonthSpend, avgPrevMonths];
-}
 
 /// Phase 3.4 "AI Actions for Budget Issues" — flags budgets whose spend this
 /// month is a sudden spike vs the preceding 3 months' average for that same
@@ -52,13 +37,9 @@ class GetBudgetAnomaliesUseCase {
     );
     if (txnResult.isError()) return Error(txnResult.tryGetError()!);
 
-    final prevExpenses = txnResult
-        .tryGetSuccess()!
-        .where(
-          (t) =>
-              t.type == TransactionType.expense &&
-              t.date.isBefore(startOfMonth),
-        );
+    final prevExpenses = txnResult.tryGetSuccess()!.where(
+      (t) => t.type == TransactionType.expense && t.date.isBefore(startOfMonth),
+    );
 
     final anomalies = <BudgetAnomalyEntity>[];
     for (final stat in stats) {

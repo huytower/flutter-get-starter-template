@@ -1,6 +1,6 @@
+import '../../features/budget_limit/domain/entities/budget_anomaly_entity.dart';
 import '../../features/budget_limit/domain/entities/budget_insights_entity.dart';
 import '../../features/budget_limit/domain/entities/budget_limit_stats_entity.dart';
-import '../../features/budget_limit/domain/usecases/get_budget_anomalies_usecase.dart';
 import '../../features/report/domain/entities/financial_runway_entity.dart';
 import '../../features/transaction/domain/usecases/get_monthly_cash_flow_usecase.dart';
 import '../constant/currency_constants.dart';
@@ -41,14 +41,14 @@ String _runwayStatusLabel(FinancialRunwayStatus? status) {
 /// `{status, text}`) is enforced separately via the `responseSchema` passed
 /// to `CcGeminiHelper.generateText` — this prompt only needs to explain what
 /// each section should contain and how to pick its `status`.
-Future<String> buildAiFinancialAdvicePrompt({
+String buildAiFinancialAdvicePrompt({
   required CashFlowEntity? cashFlow,
   required BudgetInsightsEntity? insights,
   required List<BudgetAnomalyEntity> anomalies,
   required FinancialRunwayEntity? runway,
   required String Function(int vndAmount) formatMoney,
   String currencyCode = CurrencyConstants.defaultCurrencyCode,
-}) async {
+}) {
   final buffer = StringBuffer()
     ..writeln(
       'Bạn là một cố vấn tài chính cá nhân cho ứng dụng quản lý chi tiêu. '
@@ -95,14 +95,14 @@ Future<String> buildAiFinancialAdvicePrompt({
     ..writeln('Dữ liệu tháng này:');
 
   if (cashFlow != null) {
-    final incomeStr = await formatMoney(cashFlow.income);
-    final expenseStr = await formatMoney(cashFlow.expense);
-    final debtInflowStr = await formatMoney(cashFlow.debtInflow);
-    final debtOutflowStr = await formatMoney(cashFlow.debtOutflow);
-    final investInflowStr = await formatMoney(cashFlow.investmentInflow);
-    final investOutflowStr = await formatMoney(cashFlow.investmentOutflow);
-    final opNetStr = await formatMoney(cashFlow.operatingNet);
-    final netStr = await formatMoney(cashFlow.net);
+    final incomeStr = formatMoney(cashFlow.income);
+    final expenseStr = formatMoney(cashFlow.expense);
+    final debtInflowStr = formatMoney(cashFlow.debtInflow);
+    final debtOutflowStr = formatMoney(cashFlow.debtOutflow);
+    final investInflowStr = formatMoney(cashFlow.investmentInflow);
+    final investOutflowStr = formatMoney(cashFlow.investmentOutflow);
+    final opNetStr = formatMoney(cashFlow.operatingNet);
+    final netStr = formatMoney(cashFlow.net);
 
     buffer.writeln(
       '- Thu nhập: $incomeStr. '
@@ -138,7 +138,7 @@ Future<String> buildAiFinancialAdvicePrompt({
   } else {
     buffer.writeln('- Cảnh báo ngân sách:');
     for (final w in pacingWarnings) {
-      final spendStr = await formatMoney(w.suggestedDailySpend);
+      final spendStr = formatMoney(w.suggestedDailySpend);
       buffer.writeln(
         '  + ${w.budgetName}: còn ${w.daysRemaining} ngày, nên chi '
         '≤ $spendStr/ngày.',
@@ -157,8 +157,8 @@ Future<String> buildAiFinancialAdvicePrompt({
   } else {
     buffer.writeln('- Khoản chi bất thường:');
     for (final a in anomalies) {
-      final spendStr = await formatMoney(a.thisMonthSpend);
-      final avgStr = await formatMoney(a.avgPrevMonths.round());
+      final spendStr = formatMoney(a.thisMonthSpend);
+      final avgStr = formatMoney(a.avgPrevMonths.round());
       buffer.writeln(
         '  + ${a.budgetName}: $spendStr '
         'tháng này so với trung bình '
@@ -168,7 +168,7 @@ Future<String> buildAiFinancialAdvicePrompt({
   }
 
   if (runway != null) {
-    final burnStr = await formatMoney(runway.monthlyBurn.round());
+    final burnStr = formatMoney(runway.monthlyBurn.round());
     buffer.writeln(
       '- Chỉ số an toàn tài chính (runway): ${runway.months} tháng '
       '${runway.days} ngày (${_runwayStatusLabel(runway.status)}), chi '

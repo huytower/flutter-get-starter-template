@@ -7,11 +7,11 @@ import 'package:multiple_result/multiple_result.dart';
 import '../../../../core/helper/ai_advice_helper.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
+import '../../../../core/helper/money_format_helper.dart';
+import '../../../budget_limit/domain/entities/budget_anomaly_entity.dart';
 import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
-import '../../../budget_limit/domain/usecases/get_budget_anomalies_usecase.dart'
-    show BudgetAnomalyEntity;
+import '../../../budget_limit/domain/usecases/get_budget_anomalies_usecase.dart';
 import '../../../budget_limit/domain/usecases/get_budget_insights_usecase.dart';
-import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../transaction/domain/usecases/get_monthly_cash_flow_usecase.dart';
 import '../entities/ai_advice_entity.dart';
 import '../entities/financial_runway_entity.dart';
@@ -52,7 +52,6 @@ class GenerateAiFinancialAdviceUseCase {
     if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
       return null;
     }
-    final settings = await getIt<GetProfileSettingsUseCase>().call();
     final results = await Future.wait([
       _getInsights.call(),
       _getAnomalies.call(),
@@ -90,7 +89,7 @@ class GenerateAiFinancialAdviceUseCase {
       conversionService,
     );
 
-    final prompt = await buildAiFinancialAdvicePrompt(
+    final prompt = buildAiFinancialAdvicePrompt(
       cashFlow: convertedCashFlow,
       insights: convertedInsights,
       anomalies: convertedAnomalies,
@@ -284,15 +283,14 @@ class GenerateAiFinancialAdviceUseCase {
         toCurrency: targetCurrency,
       );
 
-      converted.add(
-        BudgetAnomalyEntity(
-          budgetName: anomaly.budgetName,
-          thisMonthSpend:
-              thisMonthResult.tryGetSuccess() ?? anomaly.thisMonthSpend,
-          avgPrevMonths: avgResult.tryGetSuccess()?.toDouble() ??
-              anomaly.avgPrevMonths,
-        ),
+      final convertedAnomaly = BudgetAnomalyEntity(
+        budgetName: anomaly.budgetName,
+        thisMonthSpend:
+            thisMonthResult.tryGetSuccess() ?? anomaly.thisMonthSpend,
+        avgPrevMonths:
+            avgResult.tryGetSuccess()?.toDouble() ?? anomaly.avgPrevMonths,
       );
+      converted.add(convertedAnomaly);
     }
     return converted;
   }
@@ -372,8 +370,13 @@ class GenerateAiFinancialAdviceUseCase {
       return runway;
     }
 
-    final monthlyBurnResult = await conversionService.convertAmount(
-      amount: runway.monthlyBurn.round(),
+    final averageExpenseResult = await conversionService.convertAmount(
+      amount: runway.averageMonthlyExpense.round(),
+      fromCurrency: 'VND',
+      toCurrency: targetCurrency,
+    );
+    final fixedCostResult = await conversionService.convertAmount(
+      amount: runway.fixedMonthlyCost.round(),
       fromCurrency: 'VND',
       toCurrency: targetCurrency,
     );
@@ -383,8 +386,12 @@ class GenerateAiFinancialAdviceUseCase {
       days: runway.days,
       message: runway.message,
       totalBalance: runway.totalBalance,
-      averageMonthlyExpense: runway.averageMonthlyExpense,
-      fixedMonthlyCost: runway.fixedMonthlyCost,
+      averageMonthlyExpense:
+          averageExpenseResult.tryGetSuccess()?.toDouble() ??
+          runway.averageMonthlyExpense,
+      fixedMonthlyCost:
+          fixedCostResult.tryGetSuccess()?.toDouble() ??
+          runway.fixedMonthlyCost,
       status: runway.status,
     );
   }
