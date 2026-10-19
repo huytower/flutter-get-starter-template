@@ -283,6 +283,7 @@ abstract class  LocaleKeys {
   static const transaction_merchant_match_hint = 'transaction.merchant_match_hint';
   static const transaction_location_match_hint = 'transaction.location_match_hint';
   static const transaction_bill_match_hint = 'transaction.bill_match_hint';
+  static const transaction_monthly_income_match_hint = 'transaction.monthly_income_match_hint';
   static const transaction_auto_save_countdown = 'transaction.auto_save_countdown';
   static const transaction_quick_entry_hint = 'transaction.quick_entry_hint';
   static const transaction_quick_entry_parsed_result = 'transaction.quick_entry_parsed_result';
@@ -291,6 +292,11 @@ abstract class  LocaleKeys {
   static const transaction_quick_entry_daily_limit_reached = 'transaction.quick_entry_daily_limit_reached';
   static const transaction_quick_entry_mic_permission_denied = 'transaction.quick_entry_mic_permission_denied';
   static const transaction_quick_entry_photo_permission_denied = 'transaction.quick_entry_photo_permission_denied';
+  static const transaction_quick_entry_batch_label = 'transaction.quick_entry_batch_label';
+  static const transaction_quick_entry_batch_failed = 'transaction.quick_entry_batch_failed';
+  static const transaction_quick_entry_batch_saved = 'transaction.quick_entry_batch_saved';
+  static const transaction_quick_entry_batch_save_failed = 'transaction.quick_entry_batch_save_failed';
+  static const transaction_quick_entry_batch_partial = 'transaction.quick_entry_batch_partial';
   static const transaction_quick_entry_scan_receipt = 'transaction.quick_entry_scan_receipt';
   static const transaction_quick_entry_take_photo = 'transaction.quick_entry_take_photo';
   static const transaction_quick_entry_choose_gallery = 'transaction.quick_entry_choose_gallery';

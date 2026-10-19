@@ -49,10 +49,14 @@ class TransactionRepositoryImpl
 
   @override
   Future<Result<List<TransactionEntity>, CcFailure>> getTransactions(
-    PaginationRequest request,
-  ) {
+    PaginationRequest request, {
+    String? type,
+  }) {
     return safeRequest(() async {
-      final all = await _allSortedDesc();
+      final sorted = await _allSortedDesc();
+      final all = type == null
+          ? sorted
+          : sorted.where((t) => t.type == type).toList();
       final start = (request.page - 1) * request.itemsPerPage;
       if (start >= all.length) return <TransactionEntity>[];
       return all.skip(start).take(request.itemsPerPage).toList();

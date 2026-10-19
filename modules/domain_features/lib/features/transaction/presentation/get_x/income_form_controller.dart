@@ -12,21 +12,27 @@ import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
+import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
+import '../../domain/usecases/get_monthly_recurring_match_usecase.dart';
 import '../../domain/usecases/update_transaction_usecase.dart';
 import '../helper/horizontal_row_reveal.dart';
 import '../models/unified_category_item.dart';
 import '../widgets/base/category_selection_layout.dart';
+import 'quick_entry_batch_mixin.dart';
 import 'quick_entry_mixin.dart';
+import 'smart_suggestion_source.dart';
+import 'suggestion_prefill_mixin.dart';
 import 'transaction_form_controller.dart';
 
 const String _debugTag = 'IncomeCategoryScroll';
 
 @injectable
 class IncomeFormController extends TransactionFormController
-    with QuickEntryMixin {
+    with QuickEntryMixin, QuickEntryBatchMixin, SuggestionPrefillMixin
+    implements SmartSuggestionSource {
   IncomeFormController(this._transactionRepository, this._getCategories);
 
   final TransactionRepository _transactionRepository;
@@ -71,6 +77,10 @@ class IncomeFormController extends TransactionFormController
   final Rx<String?> pendingPrefillCategoryId = Rx<String?>(null);
 
   final RxList<int> quickAmounts = RxList<int>(MoneyConstants.quickAmounts);
+
+  final Rx<TransactionEntity?> billMatchSuggestion = Rx<TransactionEntity?>(
+    null,
+  );
 
   @override
   void onInit() {
@@ -130,16 +140,70 @@ class IncomeFormController extends TransactionFormController
   Future<void> _loadRecentIncomes() async {
     final result = await _transactionRepository.getTransactions(
       const PaginationRequest(page: 1, itemsPerPage: 100),
+      type: TransactionType.income,
     );
     result.when((transactions) {
-      _recentIncomes = transactions
-          .where((t) => t.type == TransactionType.income)
-          .toList();
+      _recentIncomes = transactions;
     }, (_) {});
   }
 
   List<TransactionEntity> _recentIncomes = [];
   final Map<String, DateTime> _lastRecordedCatTime = {};
+
+  bool _monthlySuggestionLoaded = false;
+
+  Future<void> refreshMonthlySuggestion() async {
+    if (_monthlySuggestionLoaded) return;
+    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+    _monthlySuggestionLoaded = true;
+
+    final result = await getIt<GetMonthlyRecurringMatchUseCase>().call(
+      type: TransactionType.income,
+    );
+    billMatchSuggestion.value = result.tryGetSuccess();
+  }
+
+  Future<void> applyBillMatch(TransactionEntity match) async {
+    await prefillFromTransaction(match);
+    billMatchSuggestion.value = null;
+  }
+
+  @override
+  void applySuggestedCategory(String categoryId) {
+    final category = getCachedCategoryById(categoryId);
+    if (category != null && category.isEnabled) {
+      setCategory(category);
+    } else {
+      clearCategorySelection();
+    }
+  }
+
+  void dismissBillMatch() {
+    billMatchSuggestion.value = null;
+  }
+
+  @override
+  SmartSuggestion? get activeSuggestion {
+    final billMatch = billMatchSuggestion.value;
+    if (billMatch == null) return null;
+    return SmartSuggestion(
+      match: billMatch,
+      icon: Icons.event_repeat,
+      hintKey: CcLocaleKeys.transaction_monthly_income_match_hint,
+    );
+  }
+
+  @override
+  String get suggestionCurrencyCode => currencyCode.value;
+
+  @override
+  Future<void> applyActiveSuggestion() async {
+    final billMatch = billMatchSuggestion.value;
+    if (billMatch != null) await applyBillMatch(billMatch);
+  }
+
+  @override
+  void dismissActiveSuggestion() => dismissBillMatch();
 
   Future<void> _rebuildUnifiedItems() async {
     // Track selected category before rebuild to preserve scroll position
@@ -292,6 +356,7 @@ class IncomeFormController extends TransactionFormController
   @override
   Future<void> onReset() async {
     selectedCategory.value = null;
+    billMatchSuggestion.value = null;
     categoryKey.value++;
     resetQuickEntry();
     await _rebuildUnifiedItems();

@@ -38,7 +38,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
       if (!mounted) return;
       controller.loadSuggestions();
       controller.refreshTimeBasedSuggestion();
-      controller.refreshLocationSuggestion();
+      if (widget.tag == null) controller.refreshLocationSuggestion();
     });
 
     if (Get.isRegistered<TransactionController>()) {
@@ -55,7 +55,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
         if (isExpenseActive) {
           controller.loadSuggestions();
           controller.refreshTimeBasedSuggestion();
-          controller.refreshLocationSuggestion();
+          if (widget.tag == null) controller.refreshLocationSuggestion();
           controller.restoreActiveTabSuggestions();
         } else {
           controller.hideSuggestionsWhileInactive();

@@ -1,6 +1,3 @@
-import 'package:string_similarity/string_similarity.dart';
-
-import '../../features/transaction/domain/entities/transaction_entity.dart';
 import 'quick_entry_regex_dataset.dart';
 
 const Map<String, String> _vietnameseDiacriticsMap = {
@@ -96,37 +93,4 @@ String normalizeMerchantText(String input) {
       .replaceAll(QuickEntryRegexDataset.nonAlphanumeric, ' ')
       .replaceAll(QuickEntryRegexDataset.extraWhitespace, ' ')
       .trim();
-}
-
-/// Shortest normalized query worth fuzzy-matching — Dice's-coefficient
-/// bigram matching is unreliable below this length (see
-/// [StringSimilarity.compareTwoStrings]'s own 2-char cutoff).
-const int minMerchantQueryLength = 3;
-
-/// Phase 3.3 "AI Autofill" (see `docs/BUSINESS_REQUIREMENT.md`'s Phúc Long
-/// example): finds the most similar past expense note to [query] among
-/// [candidates], so its category/amount/wallet can be offered as a one-tap
-/// suggestion. Returns null when nothing scores at or above [threshold], or
-/// when [query] normalizes to fewer than [minMerchantQueryLength] chars.
-TransactionEntity? findBestMerchantMatch({
-  required String query,
-  required List<TransactionEntity> candidates,
-  double threshold = 0.5,
-}) {
-  final normalizedQuery = normalizeMerchantText(query);
-  if (normalizedQuery.length < minMerchantQueryLength) return null;
-  if (candidates.isEmpty) return null;
-
-  final normalizedNotes = candidates
-      .map((c) => normalizeMerchantText(c.note ?? ''))
-      .toList();
-
-  final result = StringSimilarity.findBestMatch(
-    normalizedQuery,
-    normalizedNotes,
-  );
-  if (result.bestMatch.rating == null || result.bestMatch.rating! < threshold) {
-    return null;
-  }
-  return candidates[result.bestMatchIndex];
 }
