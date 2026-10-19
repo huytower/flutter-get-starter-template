@@ -456,9 +456,7 @@ class ProfileInfoCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           CcText(
-            isEmpty
-                ? 'Số điện thoại'
-                : phoneNumber,
+            isEmpty ? el.tr(CcLocaleKeys.auth_phone_number) : phoneNumber,
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
               color: context.ccColorScheme.onPrimary.withOpacity(
                 isEmpty ? 0.5 : 0.85,

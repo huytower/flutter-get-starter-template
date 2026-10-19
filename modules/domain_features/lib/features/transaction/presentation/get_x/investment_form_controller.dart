@@ -237,9 +237,6 @@ class InvestmentFormController extends TransactionFormController
     }
     if (index == -1) return;
 
-    'investmentReveal | index=$index walletId=$walletId categoryId=$categoryId'
-        .Log(_debugTag);
-
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => revealRowCard(
         scrollController: assetRowScrollController,

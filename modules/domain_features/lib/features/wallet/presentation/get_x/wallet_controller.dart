@@ -22,7 +22,6 @@ import '../../domain/entities/wallet_entity.dart';
 import '../../domain/repositories/wallet_repository.dart';
 import '../../domain/usecases/get_investment_roi_usecase.dart';
 import '../../domain/usecases/get_wallet_book_balance_usecase.dart';
-import '../../domain/usecases/wallet_balance_calculator.dart';
 import '../widgets/add_liquid_sheet.dart';
 import '../widgets/investment_delete_confirm_sheet.dart';
 import '../widgets/wallet_delete_confirm_sheet.dart';
@@ -569,16 +568,16 @@ class WalletController extends CcGetController {
     final converted = <String, int>{};
     for (final wallet in list) {
       final raw = bookBalanceOf(wallet.id);
-      '[WalletController] Rebuilding display balance: walletId=${wallet.id}, from=${wallet.currencyCode}, to=$targetCurrency, rawAmount=$raw'
-          .Log();
       final result = await _conversionService.convertAmount(
         amount: raw,
         fromCurrency: wallet.currencyCode,
         toCurrency: targetCurrency,
       );
       final convertedVal = result.tryGetSuccess() ?? raw;
-      '[WalletController] Converted balance result: raw=$raw -> converted=$convertedVal ($targetCurrency)'
-          .Log();
+      if (wallet.currencyCode.toUpperCase() != targetCurrency.toUpperCase()) {
+        '[WalletController] Balance (${wallet.id}): raw=$raw ${wallet.currencyCode} -> $convertedVal $targetCurrency'
+            .Log();
+      }
       converted[wallet.id] = convertedVal;
     }
     displayBalances.assignAll(converted);

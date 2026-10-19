@@ -821,6 +821,10 @@ mixin QuickEntryMixin on TransactionFormController
     if (isListeningQuickEntry.value) {
       await CcSpeechHelper.stopListening();
       isListeningQuickEntry.value = false;
+      final text = quickEntryController.text.trim();
+      if (text.isNotEmpty) {
+        submitQuickEntry(context);
+      }
       return;
     }
 

@@ -108,6 +108,7 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
                 ),
                 CcTextButton(
                   text: el.tr(CcLocaleKeys.common_done),
+                  textColor: context.ccColorScheme.onPrimary,
                   onTap: () => Navigator.of(
                     context,
                   ).pop((type: _currentType, walletId: _currentWalletId)),
