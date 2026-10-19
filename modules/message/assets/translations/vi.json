@@ -111,7 +111,8 @@
         "email": "Vui lòng nhập địa chỉ email hợp lệ",
         "password_length": "Mật khẩu phải có ít nhất {length} ký tự",
         "password_match": "Mật khẩu không khớp",
-        "phone": "Số điện thoại không hợp lệ"
+        "phone": "Số điện thoại không hợp lệ",
+        "max_length_reached": "Đã đạt tối đa {count} ký tự"
     },
     "home": {
         "title": "Trang chủ",

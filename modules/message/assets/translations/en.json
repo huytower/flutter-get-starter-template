@@ -111,7 +111,8 @@
         "email": "Please enter a valid email",
         "password_length": "Password must be at least {length} characters",
         "password_match": "Passwords do not match",
-        "phone": "Invalid phone number format"
+        "phone": "Invalid phone number format",
+        "max_length_reached": "Maximum {count} characters reached"
     },
     "home": {
         "title": "Home",

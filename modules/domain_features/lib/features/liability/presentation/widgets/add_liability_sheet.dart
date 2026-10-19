@@ -214,36 +214,19 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     BuildContext context,
     AddLiabilitySheetController controller,
   ) {
-    return Column(
-      children: [
-        CcNameInputField(
-          controller: controller.nameController,
-          labelText: el.tr(CcLocaleKeys.transaction_liability_name_label),
-          hintText: el.tr(CcLocaleKeys.transaction_liability_name_hint),
-          onClear: () {
-            controller.isNameValid.value = false;
-            controller.selectedLiabilityCategory.value = null;
-            controller.nameError.value = null;
-          },
-        ),
-        Obx(() {
-          if (controller.nameError.value == null) {
-            return const SizedBox.shrink();
-          }
-          return Padding(
-            padding: EdgeInsets.only(
-              left: context.respPadding(CcPaddingParams.DESC_XS),
-              top: context.respPadding(CcPaddingParams.DESC_XS),
-            ),
-            child: CcText(
-              controller.nameError.value!,
-              textStyle: context.ccTextTheme.labelSmall?.copyWith(
-                color: context.ccColorScheme.error,
-              ),
-            ),
-          );
-        }),
-      ],
+    return Obx(
+      () => CcNameInputField(
+        controller: controller.nameController,
+        labelText: el.tr(CcLocaleKeys.transaction_liability_name_label),
+        hintText: el.tr(CcLocaleKeys.transaction_liability_name_hint),
+        errorText: controller.nameError.value,
+        maxLength: 20,
+        onClear: () {
+          controller.isNameValid.value = false;
+          controller.selectedLiabilityCategory.value = null;
+          controller.nameError.value = null;
+        },
+      ),
     );
   }
 

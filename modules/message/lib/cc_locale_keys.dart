@@ -1725,6 +1725,7 @@ class CcLocaleKeys {
   static const validation_password_length = 'validation.password_length';
   static const validation_password_match = 'validation.password_match';
   static const validation_phone = 'validation.phone';
+  static const validation_max_length_reached = 'validation.max_length_reached';
 
   static const home = 'home';
   static const home_title = 'home.title';
