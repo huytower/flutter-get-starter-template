@@ -31,6 +31,7 @@ import '../../domain/usecases/update_transaction_usecase.dart';
 import '../helper/horizontal_row_reveal.dart';
 import '../models/unified_category_item.dart';
 import '../widgets/base/category_selection_layout.dart';
+import 'quick_entry_batch_mixin.dart';
 import 'quick_entry_mixin.dart';
 import 'smart_suggestion_source.dart';
 import 'suggestion_prefill_mixin.dart';
@@ -40,7 +41,7 @@ const String _debugTag = 'ExpenseFormCategoryScroll';
 
 @injectable
 class ExpenseFormController extends TransactionFormController
-    with QuickEntryMixin, SuggestionPrefillMixin
+    with QuickEntryMixin, QuickEntryBatchMixin, SuggestionPrefillMixin
     implements SmartSuggestionSource {
   ExpenseFormController(this._transactionRepository, this._getCategories);
 
