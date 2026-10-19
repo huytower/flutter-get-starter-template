@@ -176,7 +176,7 @@
         "add_title": "Add New Wallet",
         "edit_title": "Edit Wallet",
         "name": "Wallet Name",
-        "name_hint": "e.g. Cash, Techcombank...",
+        "name_hint": "e.g. Techcombank, tcb777, vcb789",
         "name_duplicate_error": "This wallet name already exists",
         "initial_balance": "Opening Balance",
         "initial_balance_hint": "e.g. 1000000",

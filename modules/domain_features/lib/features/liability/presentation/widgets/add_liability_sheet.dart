@@ -220,7 +220,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
         labelText: el.tr(CcLocaleKeys.transaction_liability_name_label),
         hintText: el.tr(CcLocaleKeys.transaction_liability_name_hint),
         errorText: controller.nameError.value,
-        maxLength: 20,
+        maxLength: 25,
         onClear: () {
           controller.isNameValid.value = false;
           controller.selectedLiabilityCategory.value = null;
