@@ -16,10 +16,52 @@ abstract class MoneyConstants {
     2000000,
   ];
 
-  /// standard quick amounts for transaction entries - USD
+  /// standard quick amounts - USD
   static const List<int> quickAmountsUsd = [1, 2, 4, 6, 8, 12, 20, 50, 100];
 
-  /// quick amounts for setting budget limits (larger range) - VND
+  /// standard quick amounts - EUR
+  static const List<int> quickAmountsEur = [1, 2, 4, 6, 8, 12, 20, 50, 100];
+
+  /// standard quick amounts - JPY
+  static const List<int> quickAmountsJpy = [
+    100,
+    200,
+    300,
+    500,
+    1000,
+    2000,
+    3000,
+    5000,
+    10000,
+  ];
+
+  /// standard quick amounts - KRW
+  static const List<int> quickAmountsKrw = [
+    1000,
+    2000,
+    3000,
+    5000,
+    10000,
+    20000,
+    30000,
+    50000,
+    100000,
+  ];
+
+  /// standard quick amounts - CNY
+  static const List<int> quickAmountsCny = [
+    5,
+    10,
+    20,
+    30,
+    50,
+    100,
+    200,
+    500,
+    1000,
+  ];
+
+  /// quick amounts for setting budget limits - VND
   static const List<int> budgetQuickAmounts = [
     100000,
     200000,
@@ -41,7 +83,51 @@ abstract class MoneyConstants {
     1000,
   ];
 
-  /// quick amounts for wallet opening balances (wide range) - VND
+  /// quick amounts for setting budget limits - EUR
+  static const List<int> budgetQuickAmountsEur = [
+    10,
+    20,
+    50,
+    100,
+    200,
+    500,
+    1000,
+  ];
+
+  /// quick amounts for setting budget limits - JPY
+  static const List<int> budgetQuickAmountsJpy = [
+    1000,
+    2000,
+    5000,
+    10000,
+    20000,
+    50000,
+    100000,
+  ];
+
+  /// quick amounts for setting budget limits - KRW
+  static const List<int> budgetQuickAmountsKrw = [
+    10000,
+    20000,
+    50000,
+    100000,
+    200000,
+    500000,
+    1000000,
+  ];
+
+  /// quick amounts for setting budget limits - CNY
+  static const List<int> budgetQuickAmountsCny = [
+    50,
+    100,
+    200,
+    500,
+    1000,
+    2000,
+    5000,
+  ];
+
+  /// quick amounts for wallet opening balances - VND
   static const List<int> walletQuickAmounts = [
     100000,
     500000,
@@ -65,7 +151,55 @@ abstract class MoneyConstants {
     5000,
   ];
 
-  /// quick amounts for reconciliation actual balance keypad suggestions - VND
+  /// quick amounts for wallet opening balances - EUR
+  static const List<int> walletQuickAmountsEur = [
+    10,
+    50,
+    100,
+    200,
+    500,
+    1000,
+    2000,
+    5000,
+  ];
+
+  /// quick amounts for wallet opening balances - JPY
+  static const List<int> walletQuickAmountsJpy = [
+    1000,
+    5000,
+    10000,
+    20000,
+    50000,
+    100000,
+    200000,
+    500000,
+  ];
+
+  /// quick amounts for wallet opening balances - KRW
+  static const List<int> walletQuickAmountsKrw = [
+    10000,
+    50000,
+    100000,
+    200000,
+    500000,
+    1000000,
+    2000000,
+    5000000,
+  ];
+
+  /// quick amounts for wallet opening balances - CNY
+  static const List<int> walletQuickAmountsCny = [
+    100,
+    500,
+    1000,
+    2000,
+    5000,
+    10000,
+    20000,
+    50000,
+  ];
+
+  /// quick amounts for reconciliation actual balance - VND
   static const List<int> reconciliationQuickAmounts = [
     100000,
     200000,
@@ -75,7 +209,7 @@ abstract class MoneyConstants {
     5000000,
   ];
 
-  /// quick amounts for reconciliation actual balance keypad suggestions - USD
+  /// quick amounts for reconciliation actual balance - USD
   static const List<int> reconciliationQuickAmountsUsd = [
     10,
     20,
@@ -83,6 +217,46 @@ abstract class MoneyConstants {
     100,
     200,
     500,
+  ];
+
+  /// quick amounts for reconciliation actual balance - EUR
+  static const List<int> reconciliationQuickAmountsEur = [
+    10,
+    20,
+    50,
+    100,
+    200,
+    500,
+  ];
+
+  /// quick amounts for reconciliation actual balance - JPY
+  static const List<int> reconciliationQuickAmountsJpy = [
+    1000,
+    2000,
+    5000,
+    10000,
+    20000,
+    50000,
+  ];
+
+  /// quick amounts for reconciliation actual balance - KRW
+  static const List<int> reconciliationQuickAmountsKrw = [
+    10000,
+    20000,
+    50000,
+    100000,
+    200000,
+    500000,
+  ];
+
+  /// quick amounts for reconciliation actual balance - CNY
+  static const List<int> reconciliationQuickAmountsCny = [
+    50,
+    100,
+    200,
+    500,
+    1000,
+    2000,
   ];
 
   /// Dynamic income suggestions (Age-based)
@@ -236,23 +410,42 @@ abstract class MoneyConstants {
   ];
 
   static List<int> getQuickAmounts({String? currencyCode}) {
-    if (currencyCode?.toUpperCase() == 'USD') return quickAmountsUsd;
+    final code = currencyCode?.toUpperCase();
+    if (code == 'USD') return quickAmountsUsd;
+    if (code == 'EUR') return quickAmountsEur;
+    if (code == 'JPY') return quickAmountsJpy;
+    if (code == 'KRW') return quickAmountsKrw;
+    if (code == 'CNY') return quickAmountsCny;
     return quickAmounts;
   }
 
   static List<int> getBudgetQuickAmounts({String? currencyCode}) {
-    if (currencyCode?.toUpperCase() == 'USD') return budgetQuickAmountsUsd;
+    final code = currencyCode?.toUpperCase();
+    if (code == 'USD') return budgetQuickAmountsUsd;
+    if (code == 'EUR') return budgetQuickAmountsEur;
+    if (code == 'JPY') return budgetQuickAmountsJpy;
+    if (code == 'KRW') return budgetQuickAmountsKrw;
+    if (code == 'CNY') return budgetQuickAmountsCny;
     return budgetQuickAmounts;
   }
 
   static List<int> getWalletQuickAmounts({String? currencyCode}) {
-    if (currencyCode?.toUpperCase() == 'USD') return walletQuickAmountsUsd;
+    final code = currencyCode?.toUpperCase();
+    if (code == 'USD') return walletQuickAmountsUsd;
+    if (code == 'EUR') return walletQuickAmountsEur;
+    if (code == 'JPY') return walletQuickAmountsJpy;
+    if (code == 'KRW') return walletQuickAmountsKrw;
+    if (code == 'CNY') return walletQuickAmountsCny;
     return walletQuickAmounts;
   }
 
   static List<int> getReconciliationQuickAmounts({String? currencyCode}) {
-    if (currencyCode?.toUpperCase() == 'USD')
-      return reconciliationQuickAmountsUsd;
+    final code = currencyCode?.toUpperCase();
+    if (code == 'USD') return reconciliationQuickAmountsUsd;
+    if (code == 'EUR') return reconciliationQuickAmountsEur;
+    if (code == 'JPY') return reconciliationQuickAmountsJpy;
+    if (code == 'KRW') return reconciliationQuickAmountsKrw;
+    if (code == 'CNY') return reconciliationQuickAmountsCny;
     return reconciliationQuickAmounts;
   }
 
@@ -260,7 +453,12 @@ abstract class MoneyConstants {
     int? birthYear, {
     String? currencyCode,
   }) {
-    if (currencyCode?.toUpperCase() == 'USD') return quickAmountsUsd;
+    final code = currencyCode?.toUpperCase();
+    if (code == 'USD') return quickAmountsUsd;
+    if (code == 'EUR') return quickAmountsEur;
+    if (code == 'JPY') return quickAmountsJpy;
+    if (code == 'KRW') return quickAmountsKrw;
+    if (code == 'CNY') return quickAmountsCny;
     if (birthYear == null) return quickAmounts;
     final age = DateTime.now().year - birthYear;
     if (age < 20) return incomeUnder20;
@@ -272,7 +470,12 @@ abstract class MoneyConstants {
     int? birthYear, {
     String? currencyCode,
   }) {
-    if (currencyCode?.toUpperCase() == 'USD') return quickAmountsUsd;
+    final code = currencyCode?.toUpperCase();
+    if (code == 'USD') return quickAmountsUsd;
+    if (code == 'EUR') return quickAmountsEur;
+    if (code == 'JPY') return quickAmountsJpy;
+    if (code == 'KRW') return quickAmountsKrw;
+    if (code == 'CNY') return quickAmountsCny;
     if (birthYear == null) return quickAmounts;
     final age = DateTime.now().year - birthYear;
     if (age < 20) return expenseUnder20;
@@ -284,7 +487,12 @@ abstract class MoneyConstants {
     int? birthYear, {
     String? currencyCode,
   }) {
-    if (currencyCode?.toUpperCase() == 'USD') return budgetQuickAmountsUsd;
+    final code = currencyCode?.toUpperCase();
+    if (code == 'USD') return budgetQuickAmountsUsd;
+    if (code == 'EUR') return budgetQuickAmountsEur;
+    if (code == 'JPY') return budgetQuickAmountsJpy;
+    if (code == 'KRW') return budgetQuickAmountsKrw;
+    if (code == 'CNY') return budgetQuickAmountsCny;
     if (birthYear == null) return budgetQuickAmounts;
     final age = DateTime.now().year - birthYear;
     if (age < 20) return investmentUnder20;
@@ -296,7 +504,12 @@ abstract class MoneyConstants {
     int? birthYear, {
     String? currencyCode,
   }) {
-    if (currencyCode?.toUpperCase() == 'USD') return budgetQuickAmountsUsd;
+    final code = currencyCode?.toUpperCase();
+    if (code == 'USD') return budgetQuickAmountsUsd;
+    if (code == 'EUR') return budgetQuickAmountsEur;
+    if (code == 'JPY') return budgetQuickAmountsJpy;
+    if (code == 'KRW') return budgetQuickAmountsKrw;
+    if (code == 'CNY') return budgetQuickAmountsCny;
     if (birthYear == null) return budgetQuickAmounts;
     final age = DateTime.now().year - birthYear;
     if (age < 20) return liabilityUnder20;
@@ -310,6 +523,10 @@ abstract class MoneyConstants {
   ) async {
     final normalized = targetCurrency.trim().toUpperCase();
     if (normalized == 'USD') return quickAmountsUsd;
+    if (normalized == 'EUR') return quickAmountsEur;
+    if (normalized == 'JPY') return quickAmountsJpy;
+    if (normalized == 'KRW') return quickAmountsKrw;
+    if (normalized == 'CNY') return quickAmountsCny;
     if (normalized == 'VND' || normalized.isEmpty) return baseVndAmounts;
 
     try {
