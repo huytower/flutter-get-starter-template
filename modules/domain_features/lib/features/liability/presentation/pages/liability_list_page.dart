@@ -132,7 +132,7 @@ class _LiabilityListView extends CcGetView<LiabilityListController> {
           padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_XS)),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            mainAxisExtent: context.respDim(165),
+            mainAxisExtent: context.respDim(180),
             crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
             mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
           ),

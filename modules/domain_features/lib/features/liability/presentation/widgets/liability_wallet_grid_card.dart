@@ -27,7 +27,8 @@ class LiabilityWalletGridCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final liability = balance.liability;
-    final repaid = liability.principalAmount - balance.outstandingBalance;
+    final rawRepaid = liability.principalAmount - balance.outstandingBalance;
+    final repaid = rawRepaid < 0 ? 0 : rawRepaid;
 
     return Stack(
       clipBehavior: Clip.none,
@@ -46,6 +47,8 @@ class LiabilityWalletGridCard extends StatelessWidget {
     final scheme = context.ccColorScheme;
 
     return Container(
+      width: double.infinity,
+      height: double.infinity,
       padding: EdgeInsets.all(context.respDim(12)),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
@@ -54,7 +57,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
         gradient: context.surfaceGradient,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildHeader(context, liability),
@@ -99,7 +102,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            textStyle: context.ccTextTheme.labelMedium?.copyWith(
+            textStyle: context.ccTextTheme.labelLarge?.copyWith(
               fontWeight: CcTypographyParams.bold,
               color: scheme.onSurface,
             ),
@@ -115,28 +118,34 @@ class LiabilityWalletGridCard extends StatelessWidget {
   ) {
     final scheme = context.ccColorScheme;
 
-    return Center(
+    return SizedBox(
+      width: double.infinity,
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           CcText(
             TransactionFormHelpers.formatShortWithSymbol(
-              balance.outstandingBalance,
+              balance.outstandingBalance.abs(),
               currencyCode: liability.currencyCode,
             ),
+            align: Alignment.center,
+            textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.headlineMedium?.copyWith(
               fontWeight: CcTypographyParams.bold,
               color: scheme.onSurface,
-              fontSize: context.respDim(26),
+              fontSize: context.respDim(30),
             ),
           ),
-          const CcSpaceXS(),
+          const SizedBox(height: 2),
           CcText(
             liability.isBorrow
                 ? el.tr(CcLocaleKeys.liability_remaining_balance)
                 : 'Cần thu',
+            align: Alignment.center,
+            textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
-              color: scheme.onSurfaceVariant.withOpacity(0.7),
+              color: scheme.onSurfaceVariant.withOpacity(0.75),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -161,25 +170,21 @@ class LiabilityWalletGridCard extends StatelessWidget {
           height: context.respIconSize(baseSize: 18),
         ),
         const CcSpaceXS(),
-        CcText(
-          liability.isBorrow ? 'Đã trả:' : 'Đã nhận:',
-          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            color: scheme.onSurface,
-          ),
-        ),
-        const CcSpaceXS(),
-        Expanded(
-          child: CcText(
-            TransactionFormHelpers.formatShortWithSymbol(
-              repaid,
-              currencyCode: liability.currencyCode,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textStyle: context.ccTextTheme.labelSmall?.copyWith(
-              fontWeight: CcTypographyParams.bold,
+        RichText(
+          text: TextSpan(
+            style: context.ccTextTheme.labelSmall?.copyWith(
               color: scheme.onSurface,
             ),
+            children: [
+              TextSpan(text: liability.isBorrow ? 'Đã trả: ' : 'Đã nhận: '),
+              TextSpan(
+                text: TransactionFormHelpers.formatShortWithSymbol(
+                  repaid,
+                  currencyCode: liability.currencyCode,
+                ),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
         ),
       ],
@@ -198,25 +203,21 @@ class LiabilityWalletGridCard extends StatelessWidget {
           height: context.respIconSize(baseSize: 18),
         ),
         const CcSpaceXS(),
-        CcText(
-          liability.isBorrow ? 'Đi vay:' : 'Tổng mượn:',
-          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            color: scheme.onSurface,
-          ),
-        ),
-        const CcSpaceXS(),
-        Expanded(
-          child: CcText(
-            TransactionFormHelpers.formatShortWithSymbol(
-              liability.principalAmount,
-              currencyCode: liability.currencyCode,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textStyle: context.ccTextTheme.labelSmall?.copyWith(
-              fontWeight: CcTypographyParams.bold,
+        RichText(
+          text: TextSpan(
+            style: context.ccTextTheme.labelSmall?.copyWith(
               color: scheme.onSurface,
             ),
+            children: [
+              TextSpan(text: liability.isBorrow ? 'Đi vay: ' : 'Tổng mượn: '),
+              TextSpan(
+                text: TransactionFormHelpers.formatShortWithSymbol(
+                  liability.principalAmount,
+                  currencyCode: liability.currencyCode,
+                ),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
         ),
       ],
