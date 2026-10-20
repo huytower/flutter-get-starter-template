@@ -128,10 +128,15 @@ class _LiabilityListView extends CcGetView<LiabilityListController> {
             controller.isEditMode.value = false;
           }
         },
-        child: ListView.separated(
-          padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_SM)),
+        child: GridView.builder(
+          padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_XS)),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisExtent: context.respDim(165),
+            crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
+            mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
+          ),
           itemCount: balances.length,
-          separatorBuilder: (context, index) => const CcSpaceSM(),
           itemBuilder: (context, index) {
             final balance = balances[index];
             return LiabilityWalletGridCard(

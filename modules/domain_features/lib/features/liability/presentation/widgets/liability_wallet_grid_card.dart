@@ -7,7 +7,7 @@ import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
 
-/// Full-width card for a liability / lending item on list pages.
+/// Compact 2-column grid card for a liability / lending item.
 class LiabilityWalletGridCard extends StatelessWidget {
   final LiabilityBalanceEntity balance;
   final bool isEditMode;
@@ -43,9 +43,10 @@ class LiabilityWalletGridCard extends StatelessWidget {
     LiabilityEntity liability,
     int repaid,
   ) {
+    final scheme = context.ccColorScheme;
+
     return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(context.respDim(16)),
+      padding: EdgeInsets.all(context.respDim(12)),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: context.brLg,
@@ -54,18 +55,12 @@ class LiabilityWalletGridCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildHeader(context, liability),
-          const CcSpaceSM(),
           _buildRemainingSection(context, liability),
-          const CcSpaceSM(),
-          CcDividerLine(
-            color: context.ccColorScheme.onSurface.withOpacity(0.08),
-          ),
-          const CcSpaceSM(),
+          CcDividerLine(color: scheme.onSurface.withOpacity(0.08)),
           _buildRepaidRow(context, liability, repaid),
-          const CcSpaceXS(),
           _buildPrincipalRow(context, liability),
         ],
       ),
@@ -78,8 +73,8 @@ class LiabilityWalletGridCard extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: context.respDim(32),
-          height: context.respDim(32),
+          width: context.respDim(28),
+          height: context.respDim(28),
           decoration: BoxDecoration(
             color: scheme.primaryContainer.withOpacity(0.4),
             shape: BoxShape.circle,
@@ -90,12 +85,12 @@ class LiabilityWalletGridCard extends StatelessWidget {
                 liability.categoryIconCode ?? 0,
                 fontFamily: liability.categoryIconFamily,
               ),
-              size: context.respIconSize(baseSize: 18),
+              size: context.respIconSize(baseSize: 14),
               color: scheme.primary,
             ),
           ),
         ),
-        const CcSpaceSM(),
+        const CcSpaceXS(),
         Expanded(
           child: CcText(
             BudgetNameHelper.getDisplayName(
@@ -104,7 +99,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            textStyle: context.ccTextTheme.titleSmall?.copyWith(
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
               fontWeight: CcTypographyParams.bold,
               color: scheme.onSurface,
             ),
@@ -129,16 +124,18 @@ class LiabilityWalletGridCard extends StatelessWidget {
               balance.outstandingBalance,
               currencyCode: liability.currencyCode,
             ),
-            textStyle: context.ccTextTheme.headlineLarge?.copyWith(
+            textStyle: context.ccTextTheme.headlineMedium?.copyWith(
               fontWeight: CcTypographyParams.bold,
               color: scheme.onSurface,
-              fontSize: context.respDim(32),
+              fontSize: context.respDim(26),
             ),
           ),
           const CcSpaceXS(),
           CcText(
-            el.tr(CcLocaleKeys.liability_remaining_balance),
-            textStyle: context.ccTextTheme.labelMedium?.copyWith(
+            liability.isBorrow
+                ? el.tr(CcLocaleKeys.liability_remaining_balance)
+                : 'Cần thu',
+            textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: scheme.onSurfaceVariant.withOpacity(0.7),
               fontWeight: FontWeight.w500,
             ),
@@ -160,27 +157,29 @@ class LiabilityWalletGridCard extends StatelessWidget {
         Image.asset(
           'assets/icon/${liability.isBorrow ? 'ic_repay.webp' : 'ic_collect.webp'}',
           color: scheme.primary,
-          width: context.respIconSize(baseSize: 22),
-          height: context.respIconSize(baseSize: 22),
+          width: context.respIconSize(baseSize: 18),
+          height: context.respIconSize(baseSize: 18),
         ),
-        const CcSpaceSM(),
+        const CcSpaceXS(),
         CcText(
-          liability.isBorrow
-              ? '${el.tr(CcLocaleKeys.transaction_record_repay)}:'
-              : '${el.tr(CcLocaleKeys.transaction_record_collect)}:',
-          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+          liability.isBorrow ? 'Đã trả:' : 'Đã nhận:',
+          textStyle: context.ccTextTheme.labelSmall?.copyWith(
             color: scheme.onSurface,
           ),
         ),
         const CcSpaceXS(),
-        CcText(
-          TransactionFormHelpers.formatShortWithSymbol(
-            repaid,
-            currencyCode: liability.currencyCode,
-          ),
-          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-            fontWeight: CcTypographyParams.bold,
-            color: scheme.onSurface,
+        Expanded(
+          child: CcText(
+            TransactionFormHelpers.formatShortWithSymbol(
+              repaid,
+              currencyCode: liability.currencyCode,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textStyle: context.ccTextTheme.labelSmall?.copyWith(
+              fontWeight: CcTypographyParams.bold,
+              color: scheme.onSurface,
+            ),
           ),
         ),
       ],
@@ -195,27 +194,29 @@ class LiabilityWalletGridCard extends StatelessWidget {
         Image.asset(
           'assets/icon/${liability.isBorrow ? 'ic_borrow.webp' : 'ic_lend.webp'}',
           color: scheme.primary,
-          width: context.respIconSize(baseSize: 22),
-          height: context.respIconSize(baseSize: 22),
+          width: context.respIconSize(baseSize: 18),
+          height: context.respIconSize(baseSize: 18),
         ),
-        const CcSpaceSM(),
+        const CcSpaceXS(),
         CcText(
-          liability.isBorrow
-              ? '${el.tr(CcLocaleKeys.liability_borrow)}:'
-              : '${el.tr(CcLocaleKeys.liability_lend)}:',
-          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+          liability.isBorrow ? 'Đi vay:' : 'Tổng mượn:',
+          textStyle: context.ccTextTheme.labelSmall?.copyWith(
             color: scheme.onSurface,
           ),
         ),
         const CcSpaceXS(),
-        CcText(
-          TransactionFormHelpers.formatShortWithSymbol(
-            liability.principalAmount,
-            currencyCode: liability.currencyCode,
-          ),
-          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-            fontWeight: CcTypographyParams.bold,
-            color: scheme.onSurface,
+        Expanded(
+          child: CcText(
+            TransactionFormHelpers.formatShortWithSymbol(
+              liability.principalAmount,
+              currencyCode: liability.currencyCode,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textStyle: context.ccTextTheme.labelSmall?.copyWith(
+              fontWeight: CcTypographyParams.bold,
+              color: scheme.onSurface,
+            ),
           ),
         ),
       ],
