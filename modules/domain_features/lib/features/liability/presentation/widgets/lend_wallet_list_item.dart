@@ -1,15 +1,13 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
-import '../../../../core/presentation/widgets/asset_stat_item.dart';
-import '../../../../core/presentation/widgets/base_asset_list_item.dart';
+import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
 
-/// List item for a lending balance card.
+/// Card item for a lending item shown in [LendListPage]'s list view.
 class LendWalletListItem extends StatelessWidget {
   final LiabilityBalanceEntity balance;
   final bool isEditMode;
@@ -32,51 +30,43 @@ class LendWalletListItem extends StatelessWidget {
     final rawRepaid = liability.principalAmount - balance.outstandingBalance;
     final repaid = rawRepaid < 0 ? 0 : rawRepaid;
 
-    return BaseAssetListItem(
-      isEditMode: isEditMode,
-      canDelete: canDelete,
-      onEdit: onEdit ?? () {},
-      onDelete: onDelete ?? () {},
-      header: _buildHeader(context, liability),
-      stats: [
-        AssetStatItem(
-          label: el.tr(CcLocaleKeys.liability_received),
-          value: repaid,
-          color: context.ccColorScheme.onSurfaceVariant,
-          currencyCode: liability.currencyCode,
-          icon: Image.asset(
-            'assets/icon/ic_collect.webp',
-            color: context.ccColorScheme.primary,
-            width: context.respIconSize(baseSize: 18),
-            height: context.respIconSize(baseSize: 18),
-          ),
-        ),
-        CcDividerLine(color: context.ccColorScheme.onSurface.withOpacity(0.06)),
-        AssetStatItem(
-          label: el.tr(CcLocaleKeys.liability_to_collect),
-          value: balance.outstandingBalance.abs(),
-          color: PrjColors.liability,
-          currencyCode: liability.currencyCode,
-          icon: Image.asset(
-            'assets/icon/ic_remain.webp',
-            width: context.respIconSize(baseSize: 18),
-            height: context.respIconSize(baseSize: 18),
-          ),
-        ),
-        CcDividerLine(color: context.ccColorScheme.onSurface.withOpacity(0.06)),
-        AssetStatItem(
-          label: el.tr(CcLocaleKeys.liability_total_lend),
-          value: liability.principalAmount,
-          color: PrjColors.liability,
-          currencyCode: liability.currencyCode,
-          icon: Image.asset(
-            'assets/icon/ic_lend.webp',
-            color: context.ccColorScheme.primary,
-            width: context.respIconSize(baseSize: 18),
-            height: context.respIconSize(baseSize: 18),
-          ),
-        ),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        _buildMainCard(context, liability, repaid),
+        if (isEditMode) ..._buildEditBadges(context),
       ],
+    );
+  }
+
+  Widget _buildMainCard(
+    BuildContext context,
+    LiabilityEntity liability,
+    int repaid,
+  ) {
+    final scheme = context.ccColorScheme;
+
+    return Container(
+      width: double.infinity,
+      height: context.respDim(180),
+      padding: EdgeInsets.all(context.respDim(12)),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: context.brLg,
+        border: context.borderSubtle,
+        gradient: context.surfaceGradient,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildHeader(context, liability),
+          _buildRemainingSection(context, liability),
+          CcDividerLine(color: scheme.onSurface.withOpacity(0.08)),
+          _buildReceivedRow(context, liability, repaid),
+          _buildPrincipalRow(context, liability),
+        ],
+      ),
     );
   }
 
@@ -86,8 +76,8 @@ class LendWalletListItem extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: context.respDim(30),
-          height: context.respDim(30),
+          width: context.respDim(28),
+          height: context.respDim(28),
           decoration: BoxDecoration(
             color: scheme.primaryContainer.withOpacity(0.4),
             shape: BoxShape.circle,
@@ -110,7 +100,7 @@ class LendWalletListItem extends StatelessWidget {
               name: liability.categoryLabel,
               categoryNameKey: liability.categoryNameKey,
             ),
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             textStyle: context.ccTextTheme.labelLarge?.copyWith(
               fontWeight: CcTypographyParams.bold,
@@ -120,5 +110,142 @@ class LendWalletListItem extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _buildRemainingSection(
+    BuildContext context,
+    LiabilityEntity liability,
+  ) {
+    final scheme = context.ccColorScheme;
+
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          CcText(
+            TransactionFormHelpers.formatShortWithSymbol(
+              balance.outstandingBalance.abs(),
+              currencyCode: liability.currencyCode,
+            ),
+            align: Alignment.center,
+            textAlign: TextAlign.center,
+            textStyle: context.ccTextTheme.headlineMedium?.copyWith(
+              fontWeight: CcTypographyParams.bold,
+              color: scheme.onSurface,
+              fontSize: context.respDim(30),
+            ),
+          ),
+          const SizedBox(height: 2),
+          CcText(
+            el.tr(CcLocaleKeys.liability_to_collect),
+            align: Alignment.center,
+            textAlign: TextAlign.center,
+            textStyle: context.ccTextTheme.labelSmall?.copyWith(
+              color: scheme.onSurfaceVariant.withOpacity(0.75),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReceivedRow(
+    BuildContext context,
+    LiabilityEntity liability,
+    int repaid,
+  ) {
+    final scheme = context.ccColorScheme;
+
+    return Row(
+      children: [
+        Image.asset(
+          'assets/icon/ic_collect.webp',
+          color: scheme.primary,
+          width: context.respIconSize(baseSize: 18),
+          height: context.respIconSize(baseSize: 18),
+        ),
+        const CcSpaceXS(),
+        RichText(
+          text: TextSpan(
+            style: context.ccTextTheme.labelSmall?.copyWith(
+              color: scheme.onSurface,
+            ),
+            children: [
+              TextSpan(text: '${el.tr(CcLocaleKeys.liability_received)}: '),
+              TextSpan(
+                text: TransactionFormHelpers.formatShortWithSymbol(
+                  repaid,
+                  currencyCode: liability.currencyCode,
+                ),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPrincipalRow(BuildContext context, LiabilityEntity liability) {
+    final scheme = context.ccColorScheme;
+
+    return Row(
+      children: [
+        Image.asset(
+          'assets/icon/ic_lend.webp',
+          color: scheme.primary,
+          width: context.respIconSize(baseSize: 18),
+          height: context.respIconSize(baseSize: 18),
+        ),
+        const CcSpaceXS(),
+        RichText(
+          text: TextSpan(
+            style: context.ccTextTheme.labelSmall?.copyWith(
+              color: scheme.onSurface,
+            ),
+            children: [
+              TextSpan(text: '${el.tr(CcLocaleKeys.liability_total_lend)}: '),
+              TextSpan(
+                text: TransactionFormHelpers.formatShortWithSymbol(
+                  liability.principalAmount,
+                  currencyCode: liability.currencyCode,
+                ),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildEditBadges(BuildContext context) {
+    final scheme = context.ccColorScheme;
+    return [
+      if (canDelete)
+        Positioned(
+          top: context.respDim(-4),
+          left: context.respDim(-4),
+          child: CcEditBadge(
+            icon: Icons.remove,
+            color: scheme.error,
+            foregroundColor: scheme.onError,
+            onTap: onDelete,
+          ),
+        ),
+      Positioned(
+        top: context.respDim(-4),
+        right: context.respDim(-4),
+        child: CcEditBadge(
+          icon: Icons.edit,
+          color: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+          onTap: onEdit,
+        ),
+      ),
+    ];
   }
 }
