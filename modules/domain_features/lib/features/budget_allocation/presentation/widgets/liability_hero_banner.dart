@@ -36,14 +36,14 @@ class LiabilityHeroBanner extends StatelessWidget {
         walletController: walletController,
         balance: borrowBalance.value,
         isFront: !isLendFront,
-        onTap: onTap,
+        onTap: () => controller.navigateToLiabilityList(context),
       );
 
       final lendCard = LendHeroCard(
         walletController: walletController,
         balance: lendBalance.value,
         isFront: isLendFront,
-        onTap: onTap,
+        onTap: () => controller.navigateToLendList(context),
       );
 
       return SizedBox(

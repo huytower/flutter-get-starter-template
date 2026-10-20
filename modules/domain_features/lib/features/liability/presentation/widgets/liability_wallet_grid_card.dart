@@ -1,14 +1,13 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
 
-/// Compact grid card for a liability item in a 2-column grid.
+/// Full-width card for a liability / lending item on list pages.
 class LiabilityWalletGridCard extends StatelessWidget {
   final LiabilityBalanceEntity balance;
   final bool isEditMode;
@@ -44,10 +43,9 @@ class LiabilityWalletGridCard extends StatelessWidget {
     LiabilityEntity liability,
     int repaid,
   ) {
-    final scheme = context.ccColorScheme;
-
     return Container(
-      padding: EdgeInsets.all(context.respDim(10)),
+      width: double.infinity,
+      padding: EdgeInsets.all(context.respDim(16)),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: context.brLg,
@@ -59,13 +57,16 @@ class LiabilityWalletGridCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildHeader(context, liability),
-          CcDividerLine(color: scheme.onSurface.withOpacity(0.06)),
+          const CcSpaceSM(),
+          _buildRemainingSection(context, liability),
+          const CcSpaceSM(),
+          CcDividerLine(
+            color: context.ccColorScheme.onSurface.withOpacity(0.08),
+          ),
+          const CcSpaceSM(),
+          _buildRepaidRow(context, liability, repaid),
           const CcSpaceXS(),
-          _buildRepaid(context, repaid),
-          const CcSpaceXS(),
-          _buildRemaining(context),
-          const CcSpaceXS(),
-          _buildPrincipal(context, liability),
+          _buildPrincipalRow(context, liability),
         ],
       ),
     );
@@ -77,24 +78,24 @@ class LiabilityWalletGridCard extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: context.respDim(24),
-          height: context.respDim(24),
-          decoration: BoxDecoration(borderRadius: context.brSm),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              const Positioned.fill(child: CcGlassyGradientIcon()),
-              CcIconToken(
-                iconDataFromCode(
-                  liability.categoryIconCode ?? 0,
-                  fontFamily: liability.categoryIconFamily,
-                ),
-                size: context.respIconSize(baseSize: 12),
+          width: context.respDim(32),
+          height: context.respDim(32),
+          decoration: BoxDecoration(
+            color: scheme.primaryContainer.withOpacity(0.4),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: CcIconToken(
+              iconDataFromCode(
+                liability.categoryIconCode ?? 0,
+                fontFamily: liability.categoryIconFamily,
               ),
-            ],
+              size: context.respIconSize(baseSize: 18),
+              color: scheme.primary,
+            ),
           ),
         ),
-        const CcSpaceXS(),
+        const CcSpaceSM(),
         Expanded(
           child: CcText(
             BudgetNameHelper.getDisplayName(
@@ -103,7 +104,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            textStyle: context.ccTextTheme.labelSmall?.copyWith(
+            textStyle: context.ccTextTheme.titleSmall?.copyWith(
               fontWeight: CcTypographyParams.bold,
               color: scheme.onSurface,
             ),
@@ -113,101 +114,108 @@ class LiabilityWalletGridCard extends StatelessWidget {
     );
   }
 
-  Widget _buildRepaid(BuildContext context, int repaid) {
+  Widget _buildRemainingSection(
+    BuildContext context,
+    LiabilityEntity liability,
+  ) {
+    final scheme = context.ccColorScheme;
+
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CcText(
+            TransactionFormHelpers.formatShortWithSymbol(
+              balance.outstandingBalance,
+              currencyCode: liability.currencyCode,
+            ),
+            textStyle: context.ccTextTheme.headlineLarge?.copyWith(
+              fontWeight: CcTypographyParams.bold,
+              color: scheme.onSurface,
+              fontSize: context.respDim(32),
+            ),
+          ),
+          const CcSpaceXS(),
+          CcText(
+            el.tr(CcLocaleKeys.liability_remaining_balance),
+            textStyle: context.ccTextTheme.labelMedium?.copyWith(
+              color: scheme.onSurfaceVariant.withOpacity(0.7),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRepaidRow(
+    BuildContext context,
+    LiabilityEntity liability,
+    int repaid,
+  ) {
+    final scheme = context.ccColorScheme;
+
     return Row(
       children: [
         Image.asset(
-          'assets/icon/${balance.liability.isBorrow ? 'ic_repay.webp' : 'ic_collect.webp'}',
-          color: context.ccColorScheme.primary,
-          width: context.respIconSize(baseSize: 24),
-          height: context.respIconSize(baseSize: 24),
+          'assets/icon/${liability.isBorrow ? 'ic_repay.webp' : 'ic_collect.webp'}',
+          color: scheme.primary,
+          width: context.respIconSize(baseSize: 22),
+          height: context.respIconSize(baseSize: 22),
         ),
-        const CcSpaceXS(),
-        Expanded(
-          child: CcText(
-            el.tr(CcLocaleKeys.transaction_record_repay),
-            maxLines: 1,
-            textStyle: context.ccTextTheme.labelSmall?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.8),
-            ),
+        const CcSpaceSM(),
+        CcText(
+          liability.isBorrow
+              ? '${el.tr(CcLocaleKeys.transaction_record_repay)}:'
+              : '${el.tr(CcLocaleKeys.transaction_record_collect)}:',
+          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+            color: scheme.onSurface,
           ),
         ),
+        const CcSpaceXS(),
         CcText(
           TransactionFormHelpers.formatShortWithSymbol(
             repaid,
-            currencyCode: balance.liability.currencyCode,
+            currencyCode: liability.currencyCode,
           ),
-          textStyle: context.ccTextTheme.labelSmall?.copyWith(
+          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
-            color: context.ccColorScheme.onSurface,
+            color: scheme.onSurface,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildRemaining(BuildContext context) {
-    return Row(
-      children: [
-        Image.asset(
-          'assets/icon/ic_remain.webp',
-          color: context.ccColorScheme.primary,
-          width: context.respIconSize(baseSize: 24),
-          height: context.respIconSize(baseSize: 24),
-        ),
-        const CcSpaceXS(),
-        Expanded(
-          child: CcText(
-            el.tr(CcLocaleKeys.liability_remaining_balance),
-            maxLines: 1,
-            textStyle: context.ccTextTheme.labelSmall?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.8),
-            ),
-          ),
-        ),
-        CcText(
-          TransactionFormHelpers.formatShortWithSymbol(
-            balance.outstandingBalance,
-            currencyCode: balance.liability.currencyCode,
-          ),
-          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            fontWeight: CcTypographyParams.bold,
-            color: PrjColors.liability,
-          ),
-        ),
-      ],
-    );
-  }
+  Widget _buildPrincipalRow(BuildContext context, LiabilityEntity liability) {
+    final scheme = context.ccColorScheme;
 
-  Widget _buildPrincipal(BuildContext context, LiabilityEntity liability) {
     return Row(
       children: [
         Image.asset(
           'assets/icon/${liability.isBorrow ? 'ic_borrow.webp' : 'ic_lend.webp'}',
-          color: context.ccColorScheme.primary,
-          width: context.respIconSize(baseSize: 24),
-          height: context.respIconSize(baseSize: 24),
+          color: scheme.primary,
+          width: context.respIconSize(baseSize: 22),
+          height: context.respIconSize(baseSize: 22),
         ),
-        const CcSpaceXS(),
-        Expanded(
-          child: CcText(
-            liability.isBorrow
-                ? el.tr(CcLocaleKeys.liability_borrow)
-                : el.tr(CcLocaleKeys.liability_lend),
-            maxLines: 1,
-            textStyle: context.ccTextTheme.labelSmall?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant.withOpacity(0.8),
-            ),
+        const CcSpaceSM(),
+        CcText(
+          liability.isBorrow
+              ? '${el.tr(CcLocaleKeys.liability_borrow)}:'
+              : '${el.tr(CcLocaleKeys.liability_lend)}:',
+          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+            color: scheme.onSurface,
           ),
         ),
+        const CcSpaceXS(),
         CcText(
           TransactionFormHelpers.formatShortWithSymbol(
             liability.principalAmount,
             currencyCode: liability.currencyCode,
           ),
-          textStyle: context.ccTextTheme.labelSmall?.copyWith(
+          textStyle: context.ccTextTheme.bodyMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
-            color: PrjColors.liability,
+            color: scheme.onSurface,
           ),
         ),
       ],

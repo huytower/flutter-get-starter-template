@@ -39,8 +39,14 @@ class LiabilityWalletsSection extends StatelessWidget {
     final isBothEmpty = borrowBalances.isEmpty && lendBalances.isEmpty;
 
     final Widget activeCard = isLendFront
-        ? LendWalletsCard(balances: lendBalances, onSeeAll: onSeeAll)
-        : BorrowWalletsCard(balances: borrowBalances, onSeeAll: onSeeAll);
+        ? LendWalletsCard(
+            balances: lendBalances,
+            onSeeAll: () => controller.navigateToLendList(context),
+          )
+        : BorrowWalletsCard(
+            balances: borrowBalances,
+            onSeeAll: () => controller.navigateToLiabilityList(context),
+          );
 
     final double sectionHeight = isBothEmpty ? 35 : 95;
 
@@ -80,7 +86,9 @@ class LiabilityWalletsSection extends StatelessWidget {
   ) {
     return CcPadding(
       CcSectionHeader(
-        title: el.tr(CcLocaleKeys.liability_list_title),
+        title: isLendFront
+            ? el.tr(CcLocaleKeys.liability_lend)
+            : el.tr(CcLocaleKeys.liability_list_title),
         icon: Icons.warning_amber_outlined,
         actions: [
           CcBouncing(
@@ -93,7 +101,13 @@ class LiabilityWalletsSection extends StatelessWidget {
           const CcSpaceSM(),
           CcTextButton(
             text: el.tr(CcLocaleKeys.wallet_see_all),
-            onTap: onSeeAll,
+            onTap: () {
+              if (isLendFront) {
+                controller.navigateToLendList(context);
+              } else {
+                controller.navigateToLiabilityList(context);
+              }
+            },
           ),
         ],
       ),

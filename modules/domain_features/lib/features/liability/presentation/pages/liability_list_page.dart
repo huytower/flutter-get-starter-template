@@ -103,7 +103,7 @@ class _LiabilityListView extends CcGetView<LiabilityListController> {
   @override
   Widget buildContent(BuildContext context) {
     return Obx(() {
-      final balances = controller.liabilities.toList();
+      final balances = controller.borrowBalances;
       final isEdit = controller.isEditMode.value;
 
       if (balances.isEmpty) {
@@ -128,15 +128,10 @@ class _LiabilityListView extends CcGetView<LiabilityListController> {
             controller.isEditMode.value = false;
           }
         },
-        child: GridView.builder(
-          padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_XS)),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisExtent: context.respDim(145),
-            crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
-            mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
-          ),
+        child: ListView.separated(
+          padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_SM)),
           itemCount: balances.length,
+          separatorBuilder: (context, index) => const CcSpaceSM(),
           itemBuilder: (context, index) {
             final balance = balances[index];
             return LiabilityWalletGridCard(
