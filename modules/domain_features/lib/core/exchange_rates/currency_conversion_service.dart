@@ -14,14 +14,14 @@ class CurrencyConversionService {
 
   /// Convert an amount from one currency to another directly.
   Future<Result<int, CcFailure>> convertAmount({
-    required int amount,
+    required num amount,
     required String fromCurrency,
     required String toCurrency,
     DateTime? date,
     ConversionUse use = ConversionUse.display,
   }) async {
     if (fromCurrency.toUpperCase() == toCurrency.toUpperCase()) {
-      return Success(amount);
+      return Success(amount.round());
     }
 
     final fromDef = CurrencyCatalog.tryGetDefinition(fromCurrency);

@@ -53,6 +53,9 @@ mixin QuickEntryMixin on TransactionFormController
   final RxBool isParsingQuickEntry = false.obs;
   final RxBool isListeningQuickEntry = false.obs;
 
+  final RxList<QuickEntryParseResult> quickEntryBatch =
+      <QuickEntryParseResult>[].obs;
+
   /// Remaining seconds until auto-save triggers. VIP only.
   final RxInt autoSaveCountdown = 0.obs;
   final RxBool isVip = false.obs;
@@ -64,6 +67,7 @@ mixin QuickEntryMixin on TransactionFormController
   List<CategoryEntity> _quickEntryCategories = [];
   Timer? _quickEntryDebounce;
   bool _quickEntryDisposed = false;
+  String _lastQuickEntryText = '';
 
   /// Bumped by [resetQuickEntry] to invalidate any submission still in
   /// flight, so a stale cloud response can't overwrite a newer entry.
@@ -81,6 +85,8 @@ mixin QuickEntryMixin on TransactionFormController
     WidgetsBinding.instance.removeObserver(this);
     _quickEntryDisposed = true;
     _quickEntryDebounce?.cancel();
+    _cancelAutoSave();
+    quickEntryBatch.clear();
     quickEntryController
       ..removeListener(_onQuickEntryTextChanged)
       ..dispose();
@@ -153,6 +159,7 @@ mixin QuickEntryMixin on TransactionFormController
     _cancelAutoSave();
     pendingPrefillCategoryId.value = null;
     quickEntrySuggestion.value = null;
+    quickEntryBatch.clear();
     quickEntryErrorKey.value = null;
     quickEntryController.clear();
     _quickEntryGeneration++;
@@ -165,13 +172,36 @@ mixin QuickEntryMixin on TransactionFormController
     autoSaveCountdown.value = 0;
   }
 
+  @protected
+  void cancelAutoSaveCountdown() => _cancelAutoSave();
+
   void cancelAutoSaveManually() {
     _cancelAutoSave();
     // Also clear the suggestion so it doesn't linger after a manual cancel
     quickEntrySuggestion.value = null;
+    quickEntryBatch.clear();
   }
 
   Future<void> startAutoSaveTimer(BuildContext context) async {
+    startAutoSaveCountdown(() {
+      final suggestion = quickEntrySuggestion.value;
+      if (suggestion != null) {
+        // Last-line guard: the asset row can be emptied (e.g. the record the
+        // entry targeted was deleted) while the countdown is running.
+        if (!quickEntryHasSelectableCategory) {
+          '[AI_PARSING] ⛔ Auto-save aborted at countdown end | '
+                  'no category/asset defined for this tab'
+              .Log('QuickEntryMixin');
+          return;
+        }
+        applyQuickEntryParse(suggestion);
+        submitForm(context);
+      }
+    });
+  }
+
+  @protected
+  void startAutoSaveCountdown(VoidCallback onElapsed) {
     _cancelAutoSave();
 
     // Auto-save is a core productivity feature available to all users.
@@ -181,19 +211,7 @@ mixin QuickEntryMixin on TransactionFormController
         autoSaveCountdown.value--;
       } else {
         _cancelAutoSave();
-        final suggestion = quickEntrySuggestion.value;
-        if (suggestion != null) {
-          // Last-line guard: the asset row can be emptied (e.g. the record the
-          // entry targeted was deleted) while the countdown is running.
-          if (!quickEntryHasSelectableCategory) {
-            '[AI_PARSING] ⛔ Auto-save aborted at countdown end | '
-                    'no category/asset defined for this tab'
-                .Log('QuickEntryMixin');
-            return;
-          }
-          applyQuickEntryParse(suggestion);
-          submitForm(context);
-        }
+        onElapsed();
       }
     });
   }
@@ -232,7 +250,8 @@ mixin QuickEntryMixin on TransactionFormController
     );
   }
 
-  CategoryEntity? _findQuickEntryCategory(String id) {
+  @protected
+  CategoryEntity? findQuickEntryCategory(String id) {
     for (final category in _quickEntryCategories) {
       if (category.id == id) return category;
     }
@@ -251,7 +270,7 @@ mixin QuickEntryMixin on TransactionFormController
       parts.add(formatVndShort(result.amount!));
     }
     if (result.categoryId != null && quickEntryShowsCategoryInLabel) {
-      final category = _findQuickEntryCategory(result.categoryId!);
+      final category = findQuickEntryCategory(result.categoryId!);
       if (category != null) parts.add(el.tr(category.nameKey));
     }
     if (result.date != null) {
@@ -261,6 +280,20 @@ mixin QuickEntryMixin on TransactionFormController
       parts.add(result.note!);
     }
     return parts.join(' · ');
+  }
+
+  String get quickEntryBatchLabel {
+    final total = quickEntryBatch.fold<int>(
+      0,
+      (sum, result) => sum + (result.amount ?? 0),
+    );
+    return el.tr(
+      CcLocaleKeys.quick_entry_batch_label,
+      namedArgs: {
+        'count': '${quickEntryBatch.length}',
+        'total': formatVndShort(total),
+      },
+    );
   }
 
   /// Reports whether the current suggestion's category is considered
@@ -333,6 +366,11 @@ mixin QuickEntryMixin on TransactionFormController
 
   void _onQuickEntryTextChanged() {
     _cancelAutoSave();
+    final text = quickEntryController.text;
+    if (text != _lastQuickEntryText) {
+      _lastQuickEntryText = text;
+      quickEntryBatch.clear();
+    }
     quickEntryErrorKey.value = null;
     _quickEntryDebounce?.cancel();
     _quickEntryDebounce = Timer(
@@ -480,7 +518,8 @@ mixin QuickEntryMixin on TransactionFormController
   /// One submission's generation token: `isCurrent` reports whether
   /// [resetQuickEntry] has since invalidated it; `resetIfCurrent` clears
   /// [isParsingQuickEntry] only if it's still the active one.
-  (bool Function(), VoidCallback) _trackGeneration() {
+  @protected
+  (bool Function(), VoidCallback) trackQuickEntryGeneration() {
     final generation = _quickEntryGeneration;
     bool isCurrent() =>
         !_quickEntryDisposed && generation == _quickEntryGeneration;
@@ -494,7 +533,8 @@ mixin QuickEntryMixin on TransactionFormController
   /// Consent-then-daily-cap gate shared by every cloud escalation path.
   /// Returns false — with [quickEntryErrorKey] already set — on an exhausted
   /// cap, or a stale generation.
-  Future<bool> _passCloudGate({
+  @protected
+  Future<bool> passQuickEntryCloudGate({
     required BuildContext context,
     required bool Function() isCurrentGeneration,
     required VoidCallback resetParsingIfCurrent,
@@ -528,6 +568,7 @@ mixin QuickEntryMixin on TransactionFormController
   /// is still mid-typing.
   Future<void> submitQuickEntry(BuildContext context) async {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+    final languageCode = el.EasyLocalization.of(context)?.locale.languageCode;
     final prefs = getIt<AiFallbackPreferenceDataSource>();
     final geminiEnabled = await prefs.isGeminiEnabled();
     final cloudAllowed = geminiEnabled && await prefs.isUnderDailyLimit();
@@ -603,7 +644,8 @@ mixin QuickEntryMixin on TransactionFormController
     _quickEntryDebounce?.cancel();
     quickEntryErrorKey.value = null;
     isParsingQuickEntry.value = true;
-    final (isCurrentGeneration, resetParsingIfCurrent) = _trackGeneration();
+    final (isCurrentGeneration, resetParsingIfCurrent) =
+        trackQuickEntryGeneration();
 
     final parseUseCase = getIt<ParseQuickEntryUseCase>();
     final local = await parseUseCase.parseLocally(
@@ -636,7 +678,7 @@ mixin QuickEntryMixin on TransactionFormController
       return;
     }
 
-    if (!await _passCloudGate(
+    if (!await passQuickEntryCloudGate(
       context: context,
       isCurrentGeneration: isCurrentGeneration,
       resetParsingIfCurrent: resetParsingIfCurrent,
@@ -653,6 +695,7 @@ mixin QuickEntryMixin on TransactionFormController
       localResult: local,
       categoryType: quickEntryCategoryType,
       groupIds: quickEntryCategoryGroupIds,
+      languageCode: languageCode,
     );
     resetParsingIfCurrent();
     // The field stays editable during the round trip — re-check the text
@@ -723,7 +766,8 @@ mixin QuickEntryMixin on TransactionFormController
     BuildContext context, {
     required bool fromCamera,
   }) async {
-    final (isCurrentGeneration, resetParsingIfCurrent) = _trackGeneration();
+    final (isCurrentGeneration, resetParsingIfCurrent) =
+        trackQuickEntryGeneration();
 
     '[AI_PARSING] 📸 Image picker started | fromCamera=$fromCamera'.Log(
       'QuickEntryMixin',
@@ -743,6 +787,22 @@ mixin QuickEntryMixin on TransactionFormController
       }
       return;
     }
+
+    if (!context.mounted) {
+      resetParsingIfCurrent();
+      return;
+    }
+    await resolvePickedReceipt(context, picked);
+  }
+
+  @protected
+  Future<void> resolvePickedReceipt(
+    BuildContext context,
+    PickedReceiptImage picked,
+  ) async {
+    final (isCurrentGeneration, resetParsingIfCurrent) =
+        trackQuickEntryGeneration();
+    final languageCode = el.EasyLocalization.of(context)?.locale.languageCode;
 
     '[AI_PARSING] 🔍 Running OCR...'.Log('QuickEntryMixin');
     final ocrText = await CcReceiptScanHelper.recognizeText(picked.path);
@@ -773,7 +833,7 @@ mixin QuickEntryMixin on TransactionFormController
       return;
     }
 
-    if (!await _passCloudGate(
+    if (!await passQuickEntryCloudGate(
       context: context,
       isCurrentGeneration: isCurrentGeneration,
       resetParsingIfCurrent: resetParsingIfCurrent,
@@ -791,6 +851,7 @@ mixin QuickEntryMixin on TransactionFormController
       localResult: local,
       categoryType: quickEntryCategoryType,
       groupIds: quickEntryCategoryGroupIds,
+      languageCode: languageCode,
     );
     resetParsingIfCurrent();
     if (!isCurrentGeneration()) return;
@@ -883,7 +944,7 @@ mixin QuickEntryMixin on TransactionFormController
     // local cache, tell the host controller to select it immediately.
     // This ensures the form is valid (canSubmit = true) for auto-save
     // without waiting for the UI selection-grid to remount.
-    final category = _findQuickEntryCategory(categoryId);
+    final category = findQuickEntryCategory(categoryId);
     if (category != null) {
       applyResolvedCategory(category);
     }
@@ -920,6 +981,7 @@ mixin QuickEntryMixin on TransactionFormController
 
   void dismissQuickEntrySuggestion() {
     quickEntrySuggestion.value = null;
+    quickEntryBatch.clear();
   }
 
   /// Sanity check for parsed amounts to avoid misidentifying phone numbers

@@ -45,6 +45,7 @@ class _IncomeFormState extends State<IncomeForm> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       controller.loadSuggestions();
+      if (widget.tag == null) controller.refreshMonthlySuggestion();
     });
 
     if (Get.isRegistered<TransactionController>()) {
@@ -60,6 +61,7 @@ class _IncomeFormState extends State<IncomeForm> {
             tabs[index] == TransactionTabKind.income;
         if (isIncomeActive) {
           controller.loadSuggestions();
+          if (widget.tag == null) controller.refreshMonthlySuggestion();
         }
       });
     }

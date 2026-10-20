@@ -9,7 +9,9 @@ import '../../../../core/di/di.dart';
 import '../../../guideline/export_guideline.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../get_x/expense_form_controller.dart';
+import '../get_x/quick_entry_batch_mixin.dart';
 import '../get_x/quick_entry_mixin.dart';
+import '../get_x/smart_suggestion_source.dart';
 import '../get_x/transaction_controller.dart';
 import 'quick_entry_section.dart';
 import 'receipt_source_sheet.dart';
@@ -63,6 +65,11 @@ class TransactionHeaderBanner extends StatelessWidget {
         : controller.getQuickEntryControllerForTab(tab);
   }
 
+  SmartSuggestionSource? _suggestionSourceFor(TransactionTabKind tab) {
+    final Object? source = _quickEntryControllerFor(tab);
+    return source is SmartSuggestionSource ? source : null;
+  }
+
   Widget _buildAiComponents(
     BuildContext context,
     TransactionTabKind activeTab,
@@ -70,6 +77,8 @@ class TransactionHeaderBanner extends StatelessWidget {
     final quickEntry = _quickEntryControllerFor(activeTab);
 
     if (quickEntry == null) return const SizedBox.shrink();
+
+    final suggestionSource = _suggestionSourceFor(activeTab);
 
     final canUseAiSmartEntry =
         getIt<UserLevelController>().status.value.canUseAiSmartEntry;
@@ -92,9 +101,10 @@ class TransactionHeaderBanner extends StatelessWidget {
               if (isLocked) _buildLockOverlay(context),
             ],
           ),
-          if (canUseAiSmartEntry && expenseFormController != null)
+          if (canUseAiSmartEntry && suggestionSource != null)
             TransactionSmartSuggestionChip(
-              expenseFormController: expenseFormController!,
+              key: ObjectKey(suggestionSource),
+              source: suggestionSource,
               accentColor: accentColor,
             ),
         ],
@@ -110,21 +120,28 @@ class TransactionHeaderBanner extends StatelessWidget {
   ) {
     final suggestion = controller.quickEntrySuggestion.value;
     final errorKey = controller.quickEntryErrorKey.value;
+    final hasBatch = controller.quickEntryBatch.isNotEmpty;
     return QuickEntrySection(
       controller: controller.quickEntryController,
       isParsing: controller.isParsingQuickEntry.value,
       isListening: controller.isListeningQuickEntry.value,
-      suggestionLabel: suggestion != null
+      suggestionLabel: hasBatch
+          ? controller.quickEntryBatchLabel
+          : suggestion != null
           ? controller.quickEntryResultLabel(suggestion)
           : null,
-      isCategoryMissing: controller.isQuickEntryCategoryInvalid,
+      isCategoryMissing: !hasBatch && controller.isQuickEntryCategoryInvalid,
       errorText: errorKey != null ? el.tr(errorKey) : null,
       activeColor: accentColor,
       onSubmitted: (_) => controller.submitQuickEntry(context),
       onMicTap: () => controller.toggleVoiceQuickEntry(context),
       onScanTap: () => _pickReceiptSource(context, controller),
       onApplySuggestion: () {
-        if (suggestion != null) controller.applyQuickEntryParse(suggestion);
+        if (hasBatch && controller is QuickEntryBatchMixin) {
+          controller.saveQuickEntryBatch(context);
+        } else if (suggestion != null) {
+          controller.applyQuickEntryParse(suggestion);
+        }
       },
       onDismissSuggestion: controller.dismissQuickEntrySuggestion,
       onClear: () {
@@ -183,6 +200,10 @@ class TransactionHeaderBanner extends StatelessWidget {
       return;
     }
     if (!context.mounted) return;
+    if (!fromCamera && controller is QuickEntryBatchMixin) {
+      controller.submitQuickEntryFromGallery(context);
+      return;
+    }
     controller.submitQuickEntryFromImage(context, fromCamera: fromCamera);
   }
 

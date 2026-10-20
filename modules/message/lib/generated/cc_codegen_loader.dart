@@ -331,6 +331,7 @@ class CodegenLoader extends AssetLoader {
       "merchant_match_hint": "Like last time: {label}",
       "location_match_hint": "You're nearby: {label}",
       "bill_match_hint": "Monthly bill: {label}",
+      "monthly_income_match_hint": "Monthly income: {label}",
       "auto_save_countdown": "Auto-save in {countdown}s...",
       "quick_entry_hint": "spend phone 50,000 by cash",
       "quick_entry_parsed_result": "Got it: {label}",
@@ -343,6 +344,14 @@ class CodegenLoader extends AssetLoader {
           "Microphone access is needed for voice entry",
       "quick_entry_photo_permission_denied":
           "Camera/photo access is needed to scan a receipt",
+      "quick_entry_batch_label": "{count} transactions · {total}",
+      "quick_entry_batch_failed":
+          "Couldn't read receipt(s) {indexes} — nothing was saved",
+      "quick_entry_batch_saved": "Saved {count} transactions · {total}",
+      "quick_entry_batch_save_failed":
+          "Couldn't save receipt {index}: {reason} — nothing was saved",
+      "quick_entry_batch_partial":
+          "Saved {saved} of {total} — receipt {index} failed: {reason}",
       "quick_entry_scan_receipt": "Scan a receipt",
       "quick_entry_take_photo": "Take photo",
       "quick_entry_choose_gallery": "Choose from gallery",
@@ -1121,6 +1130,7 @@ class CodegenLoader extends AssetLoader {
       "more_details": "Thêm chi tiết",
       "merchant_match_hint": "Giống lần trước: {label}",
       "bill_match_hint": "Hóa đơn hàng tháng: {label}",
+      "monthly_income_match_hint": "Thu nhập hàng tháng: {label}",
       "location_match_hint": "Bạn đang ở gần đây: {label}",
       "auto_save_countdown": "Tự động lưu trong {countdown}s...",
       "quick_entry_hint": "chi điện thoại 50.000 từ tiền mặt",
@@ -1134,6 +1144,14 @@ class CodegenLoader extends AssetLoader {
           "Cần quyền truy cập micro để nhập bằng giọng nói",
       "quick_entry_photo_permission_denied":
           "Cần quyền truy cập máy ảnh/thư viện ảnh để quét hóa đơn",
+      "quick_entry_batch_label": "{count} giao dịch · {total}",
+      "quick_entry_batch_failed":
+          "Không đọc được hóa đơn {indexes} — chưa lưu giao dịch nào",
+      "quick_entry_batch_saved": "Đã lưu {count} giao dịch · {total}",
+      "quick_entry_batch_save_failed":
+          "Không lưu được hóa đơn {index}: {reason} — chưa lưu giao dịch nào",
+      "quick_entry_batch_partial":
+          "Đã lưu {saved}/{total} — hóa đơn {index} bị lỗi: {reason}",
       "quick_entry_scan_receipt": "Quét hóa đơn",
       "quick_entry_take_photo": "Chụp ảnh",
       "quick_entry_choose_gallery": "Chọn từ thư viện",

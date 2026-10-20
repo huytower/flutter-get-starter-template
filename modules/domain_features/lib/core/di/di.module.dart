@@ -204,10 +204,14 @@ import 'package:domain_features/features/transaction/domain/repositories/transac
     as _i1027;
 import 'package:domain_features/features/transaction/domain/usecases/create_investment_transaction_usecase.dart'
     as _i240;
+import 'package:domain_features/features/transaction/domain/usecases/create_transaction_batch_usecase.dart'
+    as _i109;
 import 'package:domain_features/features/transaction/domain/usecases/create_transaction_usecase.dart'
     as _i28;
 import 'package:domain_features/features/transaction/domain/usecases/get_monthly_cash_flow_usecase.dart'
     as _i895;
+import 'package:domain_features/features/transaction/domain/usecases/get_monthly_recurring_match_usecase.dart'
+    as _i419;
 import 'package:domain_features/features/transaction/domain/usecases/parse_bill_image_usecase.dart'
     as _i1039;
 import 'package:domain_features/features/transaction/domain/usecases/parse_quick_entry_usecase.dart'
@@ -492,6 +496,9 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         _i850.GetMonthlySummaryUseCase(gh<_i1027.TransactionRepository>()));
     gh.lazySingleton<_i895.GetMonthlyCashFlowUseCase>(() =>
         _i895.GetMonthlyCashFlowUseCase(gh<_i1027.TransactionRepository>()));
+    gh.lazySingleton<_i419.GetMonthlyRecurringMatchUseCase>(() =>
+        _i419.GetMonthlyRecurringMatchUseCase(
+            gh<_i1027.TransactionRepository>()));
     gh.lazySingleton<_i845.GetInvestmentRoiUseCase>(() =>
         _i845.GetInvestmentRoiUseCase(gh<_i1027.TransactionRepository>()));
     gh.lazySingleton<_i446.GetReconciliationHistoryUseCase>(() =>
@@ -505,8 +512,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.lazySingleton<_i1039.ParseBillImageUseCase>(
         () => _i1039.ParseBillImageUseCase(gh<_i224.GetCategoriesUseCase>()));
-    gh.lazySingleton<_i121.ParseQuickEntryUseCase>(
-        () => _i121.ParseQuickEntryUseCase(gh<_i224.GetCategoriesUseCase>()));
     gh.factory<_i754.ExpenseFormController>(() => _i754.ExpenseFormController(
           gh<_i1027.TransactionRepository>(),
           gh<_i1041.GetCategoriesUseCase>(),
@@ -515,6 +520,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i1027.TransactionRepository>(),
           gh<_i1041.GetCategoriesUseCase>(),
         ));
+    gh.lazySingleton<_i121.ParseQuickEntryUseCase>(
+        () => _i121.ParseQuickEntryUseCase(
+              gh<_i224.GetCategoriesUseCase>(),
+              gh<_i195.CurrencyConversionService>(),
+            ));
     gh.lazySingleton<_i743.GetBudgetLimitStatsUseCase>(
         () => _i743.GetBudgetLimitStatsUseCase(
               gh<_i544.BudgetLimitRepository>(),
@@ -559,6 +569,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i572.WalletRepository>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),
               gh<_i195.CurrencyConversionService>(),
+            ));
+    gh.lazySingleton<_i109.CreateTransactionBatchUseCase>(
+        () => _i109.CreateTransactionBatchUseCase(
+              gh<_i28.CreateTransactionUseCase>(),
+              gh<_i572.WalletRepository>(),
+              gh<_i105.GetWalletBookBalanceUseCase>(),
             ));
     gh.lazySingleton<_i231.WalletController>(() => _i231.WalletController(
           gh<_i572.WalletRepository>(),
