@@ -86,18 +86,16 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                 _buildCompactStat(
                   context,
                   color: directionColor,
-                  iconAsset: liability.isBorrow
-                      ? 'assets/icon/ic_borrow.webp'
-                      : 'assets/icon/ic_lend.webp',
-                  value: liability.principalAmount,
+                  iconAsset: 'assets/icon/ic_remain.webp',
+                  value: balance.outstandingBalance.abs(),
                 ),
                 _buildCompactStat(
                   context,
                   iconAsset: liability.isBorrow
-                      ? 'assets/icon/ic_repay.webp'
-                      : 'assets/icon/ic_collect.webp',
+                      ? 'assets/icon/ic_borrow.webp'
+                      : 'assets/icon/ic_lend.webp',
                   color: context.ccColorScheme.onSurface,
-                  value: liability.principalAmount - balance.outstandingBalance,
+                  value: liability.principalAmount,
                 ),
               ],
             ),

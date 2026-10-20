@@ -15,7 +15,7 @@ export 'presentation/get_x/liability_form_controller.dart';
 // Presentation
 export 'presentation/get_x/liability_installment_draft.dart';
 export 'presentation/get_x/liability_list_controller.dart';
-export 'presentation/pages/liability_list_page.dart';
+export 'presentation/pages/liability_grid_page.dart';
 export 'presentation/widgets/add_liability_sheet.dart';
 export 'presentation/widgets/lend_asset_selector.dart';
 export 'presentation/widgets/lend_direction_toggle.dart';

@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
@@ -27,8 +28,12 @@ class LiabilityWalletGridCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final liability = balance.liability;
-    final rawRepaid = liability.principalAmount - balance.outstandingBalance;
-    final repaid = rawRepaid < 0 ? 0 : rawRepaid;
+    final repaid = balance.effectiveRepaidAmount;
+
+    Get.log(
+      '[LiabilityWalletGridCard] "${liability.categoryLabel}": '
+      'principal=${liability.principalAmount}, outstanding=${balance.outstandingBalance}, repaid=$repaid',
+    );
 
     return Stack(
       clipBehavior: Clip.none,

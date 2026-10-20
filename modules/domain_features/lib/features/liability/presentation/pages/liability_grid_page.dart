@@ -11,14 +11,14 @@ import '../widgets/liability_delete_confirm_sheet.dart';
 import '../widgets/liability_wallet_grid_card.dart';
 
 @RoutePage()
-class LiabilityListPage extends StatefulWidget {
-  const LiabilityListPage({super.key});
+class LiabilityGridPage extends StatefulWidget {
+  const LiabilityGridPage({super.key});
 
   @override
-  State<LiabilityListPage> createState() => _LiabilityListPageState();
+  State<LiabilityGridPage> createState() => _LiabilityGridPageState();
 }
 
-class _LiabilityListPageState extends State<LiabilityListPage> {
+class _LiabilityGridPageState extends State<LiabilityGridPage> {
   late final LiabilityListController controller;
 
   @override
@@ -34,12 +34,12 @@ class _LiabilityListPageState extends State<LiabilityListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return _LiabilityListView(controller: controller);
+    return _LiabilityGridView(controller: controller);
   }
 }
 
-class _LiabilityListView extends CcGetView<LiabilityListController> {
-  const _LiabilityListView({required this.controller});
+class _LiabilityGridView extends CcGetView<LiabilityListController> {
+  const _LiabilityGridView({required this.controller});
 
   @override
   final LiabilityListController controller;
