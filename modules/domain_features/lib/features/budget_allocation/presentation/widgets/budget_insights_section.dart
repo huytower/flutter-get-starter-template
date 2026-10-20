@@ -10,7 +10,10 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
 import '../get_x/budget_allocation_controller.dart';
+import 'budget_insight_card.dart';
+import 'budget_insights_see_more_shortcut.dart';
 
 /// Phase 3.4 "AI Actions" panel — pacing/penalty/deficit/anomaly warnings.
 /// Applied design pattern: Toast-style banners with grid background.
@@ -25,118 +28,159 @@ class BudgetInsightsSection extends StatelessWidget {
       final insights = controller.insights.value;
       if (insights == null || !insights.hasAnything) return const SizedBox();
 
+      final cards = _buildInsightCards(context, insights);
+      if (cards.isEmpty) return const SizedBox();
+
+      final hasMore = cards.length > 4;
+      final visibleCards = hasMore ? cards.take(4).toList() : cards;
+
       return CcSymmetricPadding(
         horizontal: CcPaddingParams.PAGE_SM,
         vertical: CcPaddingParams.SPACE_XS,
         child: Column(
           children: [
-            if (insights.isDeficit)
-              _buildConvertedInsightCard(
-                context,
-                title: el.tr(CcLocaleKeys.budget_insights_title),
-                rawVndAmount: insights.deficitAmount,
-                descriptionBuilder: (formattedAmount) => el.tr(
-                  CcLocaleKeys.budget_deficit_warning,
-                  namedArgs: {'amount': formattedAmount},
-                ),
-                icon: Icons.error_outline_rounded,
-                color: context.ccColorScheme.error,
-                onTap: () => context.router.push(const ReportRoute()),
-              ),
-            if (insights.isInflowDebtDriven)
-              _buildConvertedInsightCard(
-                context,
-                title: el.tr(CcLocaleKeys.budget_insights_title),
-                rawVndAmount: insights.debtInflowAmount,
-                descriptionBuilder: (formattedAmount) => el.tr(
-                  CcLocaleKeys.budget_debt_inflow_warning,
-                  namedArgs: {
-                    'percent': '${insights.debtInflowPercent}',
-                    'amount': formattedAmount,
-                  },
-                ),
-                icon: Icons.account_balance_outlined,
-                color: context.ccColorScheme.error,
-                onTap: () => context.router.push(const ReportRoute()),
-              ),
-            if (insights.isOutflowDebtDriven)
-              _buildConvertedInsightCard(
-                context,
-                title: el.tr(CcLocaleKeys.budget_insights_title),
-                rawVndAmount: insights.debtOutflowAmount,
-                descriptionBuilder: (formattedAmount) => el.tr(
-                  CcLocaleKeys.budget_debt_outflow_warning,
-                  namedArgs: {
-                    'percent': '${insights.debtOutflowPercent}',
-                    'amount': formattedAmount,
-                  },
-                ),
-                icon: Icons.account_balance_outlined,
-                color: PrjColors.info,
-                onTap: () => context.router.push(const ReportRoute()),
-              ),
-            for (final warning in insights.penaltyWarnings)
-              Builder(
-                builder: (context) {
-                  final name = BudgetNameHelper.getDisplayName(
-                    name: warning.budgetName,
-                    categoryNameKey: warning.categoryNameKey,
-                  );
-                  return _InsightCard(
-                    title: name,
-                    description: el.tr(
-                      CcLocaleKeys.budget_penalty_warning,
-                      namedArgs: {
-                        'name': name,
-                        'percent': '${warning.percentUsed}',
-                      },
-                    ),
-                    icon: Icons.warning_amber_rounded,
-                    color: context.ccColorScheme.error,
-                    onTap: () => context.router.push(const ReportRoute()),
-                  );
-                },
-              ),
-            for (final warning in insights.pacingWarnings)
-              Builder(
-                builder: (context) {
-                  final name = BudgetNameHelper.getDisplayName(
-                    name: warning.budgetName,
-                    categoryNameKey: warning.categoryNameKey,
-                  );
-                  return _buildConvertedInsightCard(
-                    context,
-                    title: name,
-                    rawVndAmount: warning.suggestedDailySpend,
-                    descriptionBuilder: (formattedAmount) => el.tr(
-                      CcLocaleKeys.budget_pacing_hint,
-                      namedArgs: {
-                        'name': name,
-                        'days': '${warning.daysRemaining}',
-                        'amount': formattedAmount,
-                      },
-                    ),
-                    icon: Icons.info_outline_rounded,
-                    color: PrjColors.info,
-                    onTap: () => context.router.push(const ReportRoute()),
-                  );
-                },
-              ),
-            if (insights.anomalyCount > 0)
-              _InsightCard(
-                title: el.tr(CcLocaleKeys.budget_insights_title),
-                description: el.tr(
-                  CcLocaleKeys.budget_anomaly_hint,
-                  namedArgs: {'count': '${insights.anomalyCount}'},
-                ),
-                icon: Icons.auto_awesome_outlined,
-                color: PrjColors.info,
-                onTap: () => context.router.push(const ReportRoute()),
-              ),
+            ...visibleCards,
+            if (hasMore) ...[
+              const CcSpaceXS(),
+              const BudgetInsightsSeeMoreShortcut(),
+            ],
           ],
         ),
       );
     });
+  }
+
+  List<Widget> _buildInsightCards(
+    BuildContext context,
+    BudgetInsightsEntity insights,
+  ) {
+    final cards = <Widget>[];
+
+    if (insights.isDeficit) {
+      cards.add(
+        _buildConvertedInsightCard(
+          context,
+          title: el.tr(CcLocaleKeys.budget_insights_title),
+          rawVndAmount: insights.deficitAmount,
+          descriptionBuilder: (formattedAmount) => el.tr(
+            CcLocaleKeys.budget_deficit_warning,
+            namedArgs: {'amount': formattedAmount},
+          ),
+          icon: Icons.error_outline_rounded,
+          color: context.ccColorScheme.error,
+          onTap: () => context.router.push(const ReportRoute()),
+        ),
+      );
+    }
+
+    if (insights.isInflowDebtDriven) {
+      cards.add(
+        _buildConvertedInsightCard(
+          context,
+          title: el.tr(CcLocaleKeys.budget_insights_title),
+          rawVndAmount: insights.debtInflowAmount,
+          descriptionBuilder: (formattedAmount) => el.tr(
+            CcLocaleKeys.budget_debt_inflow_warning,
+            namedArgs: {
+              'percent': '${insights.debtInflowPercent}',
+              'amount': formattedAmount,
+            },
+          ),
+          icon: Icons.account_balance_outlined,
+          color: context.ccColorScheme.error,
+          onTap: () => context.router.push(const ReportRoute()),
+        ),
+      );
+    }
+
+    if (insights.isOutflowDebtDriven) {
+      cards.add(
+        _buildConvertedInsightCard(
+          context,
+          title: el.tr(CcLocaleKeys.budget_insights_title),
+          rawVndAmount: insights.debtOutflowAmount,
+          descriptionBuilder: (formattedAmount) => el.tr(
+            CcLocaleKeys.budget_debt_outflow_warning,
+            namedArgs: {
+              'percent': '${insights.debtOutflowPercent}',
+              'amount': formattedAmount,
+            },
+          ),
+          icon: Icons.account_balance_outlined,
+          color: PrjColors.info,
+          onTap: () => context.router.push(const ReportRoute()),
+        ),
+      );
+    }
+
+    for (final warning in insights.penaltyWarnings) {
+      cards.add(
+        Builder(
+          builder: (context) {
+            final name = BudgetNameHelper.getDisplayName(
+              name: warning.budgetName,
+              categoryNameKey: warning.categoryNameKey,
+            );
+            return BudgetInsightCard(
+              title: name,
+              description: el.tr(
+                CcLocaleKeys.budget_penalty_warning,
+                namedArgs: {'name': name, 'percent': '${warning.percentUsed}'},
+              ),
+              icon: Icons.warning_amber_rounded,
+              color: context.ccColorScheme.error,
+              onTap: () => context.router.push(const ReportRoute()),
+            );
+          },
+        ),
+      );
+    }
+
+    for (final warning in insights.pacingWarnings) {
+      cards.add(
+        Builder(
+          builder: (context) {
+            final name = BudgetNameHelper.getDisplayName(
+              name: warning.budgetName,
+              categoryNameKey: warning.categoryNameKey,
+            );
+            return _buildConvertedInsightCard(
+              context,
+              title: name,
+              rawVndAmount: warning.suggestedDailySpend,
+              descriptionBuilder: (formattedAmount) => el.tr(
+                CcLocaleKeys.budget_pacing_hint,
+                namedArgs: {
+                  'name': name,
+                  'days': '${warning.daysRemaining}',
+                  'amount': formattedAmount,
+                },
+              ),
+              icon: Icons.info_outline_rounded,
+              color: PrjColors.info,
+              onTap: () => context.router.push(const ReportRoute()),
+            );
+          },
+        ),
+      );
+    }
+
+    if (insights.anomalyCount > 0) {
+      cards.add(
+        BudgetInsightCard(
+          title: el.tr(CcLocaleKeys.budget_insights_title),
+          description: el.tr(
+            CcLocaleKeys.budget_anomaly_hint,
+            namedArgs: {'count': '${insights.anomalyCount}'},
+          ),
+          icon: Icons.auto_awesome_outlined,
+          color: PrjColors.info,
+          onTap: () => context.router.push(const ReportRoute()),
+        ),
+      );
+    }
+
+    return cards;
   }
 
   Widget _buildConvertedInsightCard(
@@ -155,7 +199,7 @@ class BudgetInsightsSection extends StatelessWidget {
         rawVndAmount,
         currencyCode: targetCurrency,
       );
-      return _InsightCard(
+      return BudgetInsightCard(
         title: title,
         description: descriptionBuilder(formatted),
         icon: icon,
@@ -177,7 +221,7 @@ class BudgetInsightsSection extends StatelessWidget {
           converted,
           currencyCode: targetCurrency,
         );
-        return _InsightCard(
+        return BudgetInsightCard(
           title: title,
           description: descriptionBuilder(formatted),
           icon: icon,
@@ -187,133 +231,4 @@ class BudgetInsightsSection extends StatelessWidget {
       },
     );
   }
-}
-
-class _InsightCard extends StatelessWidget {
-  final String title;
-  final String description;
-  final IconData icon;
-  final Color color;
-  final VoidCallback? onTap;
-
-  const _InsightCard({
-    required this.title,
-    required this.description,
-    required this.icon,
-    required this.color,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
-
-    return Padding(
-      padding: EdgeInsets.only(bottom: context.respDim(12)),
-      child: CcBouncing(
-        onTap: onTap,
-        borderRadius: context.brLg,
-        child: Container(
-          width: double.infinity,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.05),
-            borderRadius: context.brLg,
-            border: Border.all(color: color.withOpacity(0.1)),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                right: 0,
-                top: 0,
-                bottom: 0,
-                width: context.respDim(80),
-                child: CustomPaint(painter: _GridPatternPainter(color: color)),
-              ),
-              Padding(
-                padding: EdgeInsets.all(context.respDim(16)),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(context.respDim(8)),
-                      decoration: BoxDecoration(
-                        color: color.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        icon,
-                        color: color,
-                        size: context.respIconSize(baseSize: 20),
-                      ),
-                    ),
-                    const CcSpaceMD(),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CcText(
-                            title,
-                            textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                              fontWeight: CcTypographyParams.bold,
-                              color: scheme.onSurface,
-                            ),
-                          ),
-                          const CcSpaceXS(),
-                          CcText(
-                            description,
-                            maxLines: 2,
-                            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                              color: scheme.onSurfaceVariant.withOpacity(0.7),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _GridPatternPainter extends CustomPainter {
-  final Color color;
-
-  _GridPatternPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..style = PaintingStyle.fill;
-
-    final double squareSize = size.height / 6;
-    const int rows = 6;
-    const int cols = 5;
-
-    for (int r = 0; r < rows; r++) {
-      for (int c = 0; c < cols; c++) {
-        final bool shouldPaint = (r + c).isEven;
-        if (!shouldPaint) continue;
-
-        final double opacity = ((r * c) % 3 == 0) ? 0.04 : 0.015;
-
-        paint.color = color.withOpacity(opacity);
-        canvas.drawRect(
-          Rect.fromLTWH(
-            size.width - (c + 1) * squareSize,
-            r * squareSize,
-            squareSize - 2,
-            squareSize - 2,
-          ),
-          paint,
-        );
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

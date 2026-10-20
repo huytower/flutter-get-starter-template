@@ -86,7 +86,6 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
               _buildLiabilityGroup(context),
               _buildBudgetLimitGroup(context),
               _buildInsightsGroup(context),
-              const CcSpaceXL(), // Bottom safety margin
             ],
           ),
         ),
