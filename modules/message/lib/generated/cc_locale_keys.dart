@@ -332,6 +332,11 @@ abstract class  LocaleKeys {
   static const liability_lend = 'liability.lend';
   static const liability_borrow_type_personal = 'liability.borrow_type_personal';
   static const liability_lend_type_personal = 'liability.lend_type_personal';
+  static const liability_repaid_prefix = 'liability.repaid_prefix';
+  static const liability_borrow_prefix = 'liability.borrow_prefix';
+  static const liability_received = 'liability.received';
+  static const liability_to_collect = 'liability.to_collect';
+  static const liability_total_lend = 'liability.total_lend';
   static const liability = 'liability';
   static const notification_channel_name = 'notification.channel_name';
   static const notification_channel_description = 'notification.channel_description';

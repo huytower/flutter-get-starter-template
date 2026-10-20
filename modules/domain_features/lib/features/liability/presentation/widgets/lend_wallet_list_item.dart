@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
@@ -9,14 +10,14 @@ import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
 
 /// List item for a lending balance card.
-class LendingWalletListItem extends StatelessWidget {
+class LendWalletListItem extends StatelessWidget {
   final LiabilityBalanceEntity balance;
   final bool isEditMode;
   final bool canDelete;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
-  const LendingWalletListItem({
+  const LendWalletListItem({
     super.key,
     required this.balance,
     this.isEditMode = false,
@@ -39,7 +40,7 @@ class LendingWalletListItem extends StatelessWidget {
       header: _buildHeader(context, liability),
       stats: [
         AssetStatItem(
-          label: 'Đã nhận',
+          label: el.tr(CcLocaleKeys.liability_received),
           value: repaid,
           color: context.ccColorScheme.onSurfaceVariant,
           currencyCode: liability.currencyCode,
@@ -52,7 +53,7 @@ class LendingWalletListItem extends StatelessWidget {
         ),
         CcDividerLine(color: context.ccColorScheme.onSurface.withOpacity(0.06)),
         AssetStatItem(
-          label: 'Cần thu',
+          label: el.tr(CcLocaleKeys.liability_to_collect),
           value: balance.outstandingBalance.abs(),
           color: PrjColors.liability,
           currencyCode: liability.currencyCode,
@@ -64,7 +65,7 @@ class LendingWalletListItem extends StatelessWidget {
         ),
         CcDividerLine(color: context.ccColorScheme.onSurface.withOpacity(0.06)),
         AssetStatItem(
-          label: 'Tổng mượn',
+          label: el.tr(CcLocaleKeys.liability_total_lend),
           value: liability.principalAmount,
           color: PrjColors.liability,
           currencyCode: liability.currencyCode,

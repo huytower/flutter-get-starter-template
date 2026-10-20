@@ -347,7 +347,12 @@
         "borrow": "Borrowed from",
         "lend": "Lend",
         "borrow_type_personal": "Personal",
-        "lend_type_personal": "Personal"
+        "lend_type_personal": "Personal",
+        "repaid_prefix": "Repaid: ",
+        "borrow_prefix": "Borrowed: ",
+        "received": "Received",
+        "to_collect": "To collect",
+        "total_lend": "Total lent"
     },
     "notification": {
         "channel_name": "Reminders",

@@ -476,7 +476,12 @@
         "borrow": "Đi vay từ",
         "lend": "Cho mượn",
         "borrow_type_personal": "Cá nhân",
-        "lend_type_personal": "Cá nhân"
+        "lend_type_personal": "Cá nhân",
+        "repaid_prefix": "Đã trả: ",
+        "borrow_prefix": "Đi vay: ",
+        "received": "Đã nhận",
+        "to_collect": "Cần thu",
+        "total_lend": "Tổng mượn"
     },
     "profile": {
         "guest": "Khách",

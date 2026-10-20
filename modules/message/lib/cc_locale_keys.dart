@@ -389,6 +389,11 @@ class CodegenLoader extends AssetLoader {
       "lend": "Lend",
       "borrow_type_personal": "Personal",
       "lend_type_personal": "Personal",
+      "repaid_prefix": "Repaid: ",
+      "borrow_prefix": "Borrowed: ",
+      "received": "Received",
+      "to_collect": "To collect",
+      "total_lend": "Total lent",
     },
     "notification": {
       "channel_name": "Reminders",
@@ -1339,6 +1344,11 @@ class CodegenLoader extends AssetLoader {
       "lend": "Cho mượn",
       "borrow_type_personal": "Cá nhân",
       "lend_type_personal": "Cá nhân",
+      "repaid_prefix": "Đã trả: ",
+      "borrow_prefix": "Đi vay: ",
+      "received": "Đã nhận",
+      "to_collect": "Cần thu",
+      "total_lend": "Tổng mượn",
     },
     "profile": {
       "guest": "Khách",
@@ -2078,6 +2088,11 @@ class CcLocaleKeys {
   static const liability_lend = 'liability.lend';
   static const liability_borrow_type_personal =
       'liability.borrow_type_personal';
+  static const liability_repaid_prefix = 'liability.repaid_prefix';
+  static const liability_borrow_prefix = 'liability.borrow_prefix';
+  static const liability_received = 'liability.received';
+  static const liability_to_collect = 'liability.to_collect';
+  static const liability_total_lend = 'liability.total_lend';
   static const liability_lend_type_personal = 'liability.lend_type_personal';
 
   static const notification = 'notification';

@@ -20,7 +20,7 @@ export 'presentation/widgets/add_liability_sheet.dart';
 export 'presentation/widgets/lend_asset_selector.dart';
 export 'presentation/widgets/lend_direction_toggle.dart';
 export 'presentation/widgets/lend_form.dart';
-export 'presentation/widgets/lending_wallet_list_item.dart';
+export 'presentation/widgets/lend_wallet_list_item.dart';
 export 'presentation/widgets/liability_balance_list.dart';
 export 'presentation/widgets/liability_delete_confirm_sheet.dart';
 export 'presentation/widgets/liability_direction_toggle.dart';

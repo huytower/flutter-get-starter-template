@@ -174,7 +174,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
               color: scheme.onSurface,
             ),
             children: [
-              const TextSpan(text: 'Đã trả: '),
+              TextSpan(text: el.tr(CcLocaleKeys.liability_repaid_prefix)),
               TextSpan(
                 text: TransactionFormHelpers.formatShortWithSymbol(
                   repaid,
@@ -207,7 +207,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
               color: scheme.onSurface,
             ),
             children: [
-              const TextSpan(text: 'Đi vay: '),
+              TextSpan(text: el.tr(CcLocaleKeys.liability_borrow_prefix)),
               TextSpan(
                 text: TransactionFormHelpers.formatShortWithSymbol(
                   liability.principalAmount,
