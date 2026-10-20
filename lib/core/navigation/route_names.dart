@@ -28,6 +28,7 @@ enum AppRoute {
   budgetLimit,
   reconcile,
   liabilityList,
+  lendList,
   report,
   reportDailyDetail,
   termsOfService,
