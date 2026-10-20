@@ -100,7 +100,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
               name: liability.categoryLabel,
               categoryNameKey: liability.categoryNameKey,
             ),
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             textStyle: context.ccTextTheme.labelLarge?.copyWith(
               fontWeight: CcTypographyParams.bold,
