@@ -7,7 +7,7 @@ import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
 
-/// Compact 2-column grid card for a liability / lending item.
+/// Compact 2-column grid card for a liability (borrowing) item.
 class LiabilityWalletGridCard extends StatelessWidget {
   final LiabilityBalanceEntity balance;
   final bool isEditMode;
@@ -139,9 +139,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           CcText(
-            liability.isBorrow
-                ? el.tr(CcLocaleKeys.liability_remaining_balance)
-                : 'Cần thu',
+            el.tr(CcLocaleKeys.liability_remaining_balance),
             align: Alignment.center,
             textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
@@ -164,7 +162,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
     return Row(
       children: [
         Image.asset(
-          'assets/icon/${liability.isBorrow ? 'ic_repay.webp' : 'ic_collect.webp'}',
+          'assets/icon/ic_repay.webp',
           color: scheme.primary,
           width: context.respIconSize(baseSize: 18),
           height: context.respIconSize(baseSize: 18),
@@ -176,7 +174,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
               color: scheme.onSurface,
             ),
             children: [
-              TextSpan(text: liability.isBorrow ? 'Đã trả: ' : 'Đã nhận: '),
+              const TextSpan(text: 'Đã trả: '),
               TextSpan(
                 text: TransactionFormHelpers.formatShortWithSymbol(
                   repaid,
@@ -197,7 +195,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
     return Row(
       children: [
         Image.asset(
-          'assets/icon/${liability.isBorrow ? 'ic_borrow.webp' : 'ic_lend.webp'}',
+          'assets/icon/ic_borrow.webp',
           color: scheme.primary,
           width: context.respIconSize(baseSize: 18),
           height: context.respIconSize(baseSize: 18),
@@ -209,7 +207,7 @@ class LiabilityWalletGridCard extends StatelessWidget {
               color: scheme.onSurface,
             ),
             children: [
-              TextSpan(text: liability.isBorrow ? 'Đi vay: ' : 'Tổng mượn: '),
+              const TextSpan(text: 'Đi vay: '),
               TextSpan(
                 text: TransactionFormHelpers.formatShortWithSymbol(
                   liability.principalAmount,

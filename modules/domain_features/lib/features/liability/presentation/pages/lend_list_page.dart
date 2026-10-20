@@ -7,8 +7,8 @@ import 'package:get/get.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../get_x/liability_list_controller.dart';
 import '../widgets/add_liability_sheet.dart';
+import '../widgets/lending_wallet_list_item.dart';
 import '../widgets/liability_delete_confirm_sheet.dart';
-import '../widgets/liability_wallet_grid_card.dart';
 
 @RoutePage()
 class LendListPage extends StatefulWidget {
@@ -133,7 +133,7 @@ class _LendListView extends CcGetView<LiabilityListController> {
           separatorBuilder: (context, index) => const CcSpaceSM(),
           itemBuilder: (context, index) {
             final balance = balances[index];
-            return LiabilityWalletGridCard(
+            return LendingWalletListItem(
               key: ValueKey(balance.liability.id),
               balance: balance,
               isEditMode: isEdit,
