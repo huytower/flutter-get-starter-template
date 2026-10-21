@@ -347,7 +347,6 @@ class WalletController extends CcGetController {
 
   /// Reloads wallets and their derived book balances.
   Future<void> loadWallets({bool showLoading = true}) async {
-    final stopwatch = Stopwatch()..start();
     if (showLoading) {
       layoutStatus.value = CcLayoutStatus.loading;
     }
@@ -381,23 +380,12 @@ class WalletController extends CcGetController {
         .toList()
         .cast<WalletEntity>();
 
-    final tDerived = Stopwatch()..start();
     await _rebuildDerivedBalances(list);
-    tDerived.stop();
-
     wallets.assignAll(list);
-
-    final tDisplay = Stopwatch()..start();
     await _rebuildDisplayBalances(list);
-    tDisplay.stop();
-
     _calculateTotalBalance();
 
     layoutStatus.value = CcLayoutStatus.success;
-    stopwatch.stop();
-
-    '[WalletController] loadWallets complete in ${stopwatch.elapsedMilliseconds}ms (derived: ${tDerived.elapsedMilliseconds}ms, display: ${tDisplay.elapsedMilliseconds}ms)'
-        .Log();
   }
 
   /// Fetches transactions once and derives, per wallet, both the activity flag
@@ -597,10 +585,6 @@ class WalletController extends CcGetController {
           toCurrency: targetCurrency,
         );
         final convertedVal = result.tryGetSuccess() ?? raw;
-        if (wallet.currencyCode.toUpperCase() != targetCurrency.toUpperCase()) {
-          '[WalletController] Balance (${wallet.id}): raw=$raw ${wallet.currencyCode} -> $convertedVal $targetCurrency'
-              .Log();
-        }
         return MapEntry(wallet.id, convertedVal);
       }),
     );

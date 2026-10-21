@@ -19,8 +19,13 @@ import 'budget_insights_see_more_shortcut.dart';
 /// Applied design pattern: Toast-style banners with grid background.
 class BudgetInsightsSection extends StatelessWidget {
   final BudgetAllocationController controller;
+  final bool showAll;
 
-  const BudgetInsightsSection({super.key, required this.controller});
+  const BudgetInsightsSection({
+    super.key,
+    required this.controller,
+    this.showAll = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +36,10 @@ class BudgetInsightsSection extends StatelessWidget {
       final cards = _buildInsightCards(context, insights);
       if (cards.isEmpty) return const SizedBox();
 
-      final hasMore = cards.length > 4;
-      final visibleCards = hasMore ? cards.take(4).toList() : cards;
+      final hasMore = !showAll && cards.length > 4;
+      final visibleCards = (!showAll && hasMore)
+          ? cards.take(4).toList()
+          : cards;
 
       return CcSymmetricPadding(
         horizontal: CcPaddingParams.PAGE_SM,

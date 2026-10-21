@@ -1,4 +1,3 @@
-import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -92,12 +91,6 @@ class BudgetLimitController extends CcGetController {
             limit: convertedLimit,
             currencyCode: targetCurrency,
           );
-
-          final pct = (convertedLimit > 0)
-              ? (convertedSpent / convertedLimit * 100).toStringAsFixed(1)
-              : '0';
-          '[BudgetLimitController] Budget "${stat.budget.name}": spent=$convertedSpent $targetCurrency / limit=$convertedLimit $targetCurrency ($pct%)'
-              .Log();
 
           convertedStats.add(
             stat.copyWith(budget: updatedBudget, spent: convertedSpent),

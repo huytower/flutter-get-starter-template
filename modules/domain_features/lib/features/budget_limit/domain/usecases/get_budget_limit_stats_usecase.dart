@@ -93,11 +93,6 @@ class GetBudgetLimitStatsUseCase {
       final catIdx = categories.indexWhere((c) => c.id == budget.categoryId);
       final cat = catIdx >= 0 ? categories[catIdx] : null;
 
-      Get.log(
-        '[GetBudgetLimitStatsUseCase] Budget "${budget.name}": '
-        'rawSpentTxns=${matchingTxns.length}, spent=$spentInBudgetCurrency ${budget.currencyCode}, limit=${budget.limit} ${budget.currencyCode}',
-      );
-
       stats.add(
         BudgetLimitStatsEntity(
           budget: budget,

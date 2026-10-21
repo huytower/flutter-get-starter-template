@@ -41,11 +41,6 @@ class GetLiabilityBalancesUseCase {
     final rawLiabilities = liabilitiesResult.tryGetSuccess()!;
     final transactions = txnResult.tryGetSuccess()!;
 
-    Get.log(
-      '[GetLiabilityBalancesUseCase] Start computing liability balances. '
-      'rawLiabilities count: ${rawLiabilities.length}, total txns count: ${transactions.length}',
-    );
-
     // Group liabilities by direction + categoryLabel (unique liability name)
     final grouped = <String, List<LiabilityEntity>>{};
     for (final l in rawLiabilities) {
@@ -134,13 +129,6 @@ class GetLiabilityBalancesUseCase {
           ? totalRepaid
           : (derivedRepaid > 0 ? derivedRepaid : 0);
 
-      Get.log(
-        '[GetLiabilityBalancesUseCase] Group "${entry.key}": '
-        'basePrincipal=$basePrincipal, additionalPrincipal=$additionalPrincipal, '
-        'totalPrincipal=$totalPrincipal, totalRepaid=$totalRepaid, finalRepaid=$finalRepaid, '
-        'outstandingBalance=$outstandingBalance, matchedTxns=${groupTxns.length}',
-      );
-
       final cat = categories.firstWhereOrNull(
         (c) => c.id == primary.categoryId,
       );
@@ -166,10 +154,6 @@ class GetLiabilityBalancesUseCase {
     }).toList();
 
     if (unmatchedDebtTxns.isNotEmpty) {
-      Get.log(
-        '[GetLiabilityBalancesUseCase] Found ${unmatchedDebtTxns.length} unmatched debt transactions. Creating synthetic liability groups.',
-      );
-
       final orphanGrouped = <String, List<TransactionEntity>>{};
       for (final t in unmatchedDebtTxns) {
         final direction =
@@ -212,12 +196,6 @@ class GetLiabilityBalancesUseCase {
             ? totalRepaid
             : (derivedRepaid > 0 ? derivedRepaid : 0);
 
-        Get.log(
-          '[GetLiabilityBalancesUseCase] Synthetic Group "${entry.key}": '
-          'totalPrincipal=$totalPrincipal, totalRepaid=$totalRepaid, finalRepaid=$finalRepaid, '
-          'outstandingBalance=$outstandingBalance, txnsCount=${txns.length}',
-        );
-
         final cat = categories.firstWhereOrNull(
           (c) => c.id == firstTxn.categoryId || c.nameKey == firstTxn.category,
         );
@@ -250,10 +228,6 @@ class GetLiabilityBalancesUseCase {
 
     balances.sort(
       (a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt),
-    );
-
-    Get.log(
-      '[GetLiabilityBalancesUseCase] Computed total ${balances.length} liability balance entries.',
     );
 
     return Success(balances);

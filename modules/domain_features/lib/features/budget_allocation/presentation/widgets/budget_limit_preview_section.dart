@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -66,10 +65,6 @@ class BudgetLimitPreviewSection extends StatelessWidget {
                 Get.find<BudgetLimitController>().budgets,
                 limit: 4,
               );
-              for (final b in budgets) {
-                '[BudgetLimitPreviewSection] "${b.budget.name}": spent=${b.spent} ${b.budget.currencyCode} / limit=${b.budget.limit} ${b.budget.currencyCode} (${(b.percentUsed * 100).toStringAsFixed(1)}%)'
-                    .Log();
-              }
               if (budgets.isEmpty) {
                 return CcSectionEmptyState(
                   message: el.tr(CcLocaleKeys.budget_empty),

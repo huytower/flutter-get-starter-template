@@ -33,6 +33,7 @@ enum AppRoute {
   reportDailyDetail,
   termsOfService,
   investmentList,
+  budgetInsightsList,
 }
 
 extension AppRoutePath on AppRoute {

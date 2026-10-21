@@ -55,6 +55,10 @@ class AppRouter extends RootStackRouter {
       page: InvestmentListRoute.page,
       path: AppRoute.investmentList.path,
     ),
+    AutoRoute(
+      page: BudgetInsightsListRoute.page,
+      path: AppRoute.budgetInsightsList.path,
+    ),
 
     // --- Bloc Examples ---
     AutoRoute(page: SimpleCubitRoute.page, path: ExampleRoute.blocSimple.path),

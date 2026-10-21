@@ -14,7 +14,8 @@ class BudgetInsightsSeeMoreShortcut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final handleTap = onTap ?? () => context.router.push(const ReportRoute());
+    final handleTap =
+        onTap ?? () => context.router.push(const BudgetInsightsListRoute());
 
     return Padding(
       padding: EdgeInsets.only(
