@@ -365,6 +365,8 @@
         "drag_reorder_hint": "Giữ và kéo để sắp xếp lại",
         "customize_category": "Tùy chỉnh danh mục",
         "percent_used": "{percent}% đã dùng",
+        "spent_prefix": "Đã chi",
+        "limit_prefix": "Hạn mức",
         "fixed_price": "Chi phí cố định",
         "fixed_price_description": "Chi phí hàng tháng cố định (chi phí sinh tồn tối thiểu), ảnh hưởng đến chỉ số an toàn trong phần báo cáo.",
         "pacing_hint": "{name}: còn {days} ngày · Đề xuất ≤{amount}/ngày",

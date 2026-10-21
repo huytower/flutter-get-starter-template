@@ -408,6 +408,8 @@
         "drag_reorder_hint": "Hold and drag to reorder",
         "customize_category": "Customize category",
         "percent_used": "{percent}% used",
+        "spent_prefix": "Spent",
+        "limit_prefix": "Limit",
         "fixed_price": "Fixed Price",
         "fixed_price_description": "Fixed monthly costs (minimum survival cost), affecting your safety index in the report section.",
         "pacing_hint": "{name}: {days} days left · Suggested ≤{amount}/day",

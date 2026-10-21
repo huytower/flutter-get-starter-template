@@ -21,3 +21,4 @@ export 'presentation/get_x/budget_limit_controller.dart';
 export 'presentation/pages/budget_limit_list_page.dart';
 export 'presentation/widgets/add_budget_limit_sheet.dart';
 export 'presentation/widgets/budget_limit_grid_card.dart';
+export 'presentation/widgets/budget_limit_grid_card_detail.dart';

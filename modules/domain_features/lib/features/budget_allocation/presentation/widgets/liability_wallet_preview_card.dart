@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../liability/domain/entities/liability_balance_entity.dart';
@@ -126,10 +127,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
         Obx(
           () => CcText(
             controller.isBalanceVisible.value
-                ? TransactionFormHelpers.formatShortWithSymbol(
-                    value,
-                    currencyCode: balance.liability.currencyCode,
-                  )
+                ? _formatStatValue(value, balance.liability.currencyCode)
                 : '*****',
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: color.withOpacity(0.8),
@@ -140,5 +138,20 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _formatStatValue(int value, String currencyCode) {
+    final formatted = TransactionFormHelpers.formatShortWithSymbol(
+      value,
+      currencyCode: currencyCode,
+    );
+
+    final upperCode = currencyCode.toUpperCase();
+    if (upperCode == CurrencyConstants.vnd ||
+        upperCode == CurrencyConstants.krw) {
+      return formatted.replaceAll(RegExp(r'[,.]\d+'), '');
+    }
+
+    return formatted;
   }
 }

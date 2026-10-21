@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
@@ -136,10 +137,7 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
           const SizedBox(width: 4),
           CcText(
             controller.isBalanceVisible.value
-                ? TransactionFormHelpers.formatShortWithSymbol(
-                    value,
-                    currencyCode: controller.currencyCode.value,
-                  )
+                ? _formatStatValue(value, controller.currencyCode.value)
                 : '*****',
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: color.withOpacity(0.8),
@@ -150,5 +148,20 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatStatValue(int value, String currencyCode) {
+    final formatted = TransactionFormHelpers.formatShortWithSymbol(
+      value,
+      currencyCode: currencyCode,
+    );
+
+    final upperCode = currencyCode.toUpperCase();
+    if (upperCode == CurrencyConstants.vnd ||
+        upperCode == CurrencyConstants.krw) {
+      return formatted.replaceAll(RegExp(r'[,.]\d+'), '');
+    }
+
+    return formatted;
   }
 }

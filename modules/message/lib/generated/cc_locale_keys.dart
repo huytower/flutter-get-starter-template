@@ -2,7 +2,7 @@
 
 // ignore_for_file: constant_identifier_names
 
-abstract class  LocaleKeys {
+abstract class LocaleKeys {
   static const app_name = 'app.name';
   static const app_version = 'app.version';
   static const app_description = 'app.description';
@@ -23,9 +23,12 @@ abstract class  LocaleKeys {
   static const app_error_network = 'app.error.network';
   static const app_error_server = 'app.error.server';
   static const app_error = 'app.error';
-  static const app_app_check_initialization_failed = 'app.app_check.initialization_failed';
-  static const app_app_check_token_refresh_failed = 'app.app_check.token_refresh_failed';
-  static const app_app_check_device_not_verified = 'app.app_check.device_not_verified';
+  static const app_app_check_initialization_failed =
+      'app.app_check.initialization_failed';
+  static const app_app_check_token_refresh_failed =
+      'app.app_check.token_refresh_failed';
+  static const app_app_check_device_not_verified =
+      'app.app_check.device_not_verified';
   static const app_app_check = 'app.app_check';
   static const app = 'app';
   static const common_ok = 'common.ok';
@@ -48,7 +51,8 @@ abstract class  LocaleKeys {
   static const common_income = 'common.income';
   static const common_expense = 'common.expense';
   static const common_common_weekday_names = 'common.common_weekday_names';
-  static const common_press_back_again_to_exit = 'common.press_back_again_to_exit';
+  static const common_press_back_again_to_exit =
+      'common.press_back_again_to_exit';
   static const common_add_source = 'common.add_source';
   static const common_add = 'common.add';
   static const common_copy = 'common.copy';
@@ -84,16 +88,25 @@ abstract class  LocaleKeys {
   static const auth_terms_and_privacy = 'auth.terms_and_privacy';
   static const auth_biometric_reason = 'auth.biometric.reason';
   static const auth_biometric_fallback = 'auth.biometric.fallback';
-  static const auth_biometric_not_available_log = 'auth.biometric.not_available_log';
+  static const auth_biometric_not_available_log =
+      'auth.biometric.not_available_log';
   static const auth_biometric_init_error = 'auth.biometric.init_error';
-  static const auth_biometric_error_not_available = 'auth.biometric.error.not_available';
-  static const auth_biometric_error_not_enrolled = 'auth.biometric.error.not_enrolled';
-  static const auth_biometric_error_locked_out = 'auth.biometric.error.locked_out';
-  static const auth_biometric_error_permanently_locked_out = 'auth.biometric.error.permanently_locked_out';
-  static const auth_biometric_error_passcode_not_set = 'auth.biometric.error.passcode_not_set';
-  static const auth_biometric_error_user_canceled = 'auth.biometric.error.user_canceled';
-  static const auth_biometric_error_app_canceled = 'auth.biometric.error.app_canceled';
-  static const auth_biometric_error_system_canceled = 'auth.biometric.error.system_canceled';
+  static const auth_biometric_error_not_available =
+      'auth.biometric.error.not_available';
+  static const auth_biometric_error_not_enrolled =
+      'auth.biometric.error.not_enrolled';
+  static const auth_biometric_error_locked_out =
+      'auth.biometric.error.locked_out';
+  static const auth_biometric_error_permanently_locked_out =
+      'auth.biometric.error.permanently_locked_out';
+  static const auth_biometric_error_passcode_not_set =
+      'auth.biometric.error.passcode_not_set';
+  static const auth_biometric_error_user_canceled =
+      'auth.biometric.error.user_canceled';
+  static const auth_biometric_error_app_canceled =
+      'auth.biometric.error.app_canceled';
+  static const auth_biometric_error_system_canceled =
+      'auth.biometric.error.system_canceled';
   static const auth_biometric_error_generic = 'auth.biometric.error.generic';
   static const auth_biometric_error = 'auth.biometric.error';
   static const auth_biometric = 'auth.biometric';
@@ -159,8 +172,10 @@ abstract class  LocaleKeys {
   static const wallet_investment_empty = 'wallet.investment_empty';
   static const wallet_investment_name = 'wallet.investment_name';
   static const wallet_investment_name_hint = 'wallet.investment_name_hint';
-  static const wallet_investment_delete_title = 'wallet.investment_delete_title';
-  static const wallet_investment_delete_confirm = 'wallet.investment_delete_confirm';
+  static const wallet_investment_delete_title =
+      'wallet.investment_delete_title';
+  static const wallet_investment_delete_confirm =
+      'wallet.investment_delete_confirm';
   static const wallet_investment_edit_title = 'wallet.investment_edit_title';
   static const wallet_add_title = 'wallet.add_title';
   static const wallet_edit_title = 'wallet.edit_title';
@@ -177,8 +192,10 @@ abstract class  LocaleKeys {
   static const wallet_ewallet = 'wallet.ewallet';
   static const wallet_emergency_fund = 'wallet.emergency_fund';
   static const wallet_emergency_fund_desc = 'wallet.emergency_fund_desc';
-  static const wallet_emergency_fund_locked_hint = 'wallet.emergency_fund_locked_hint';
-  static const wallet_emergency_fund_view_ebook = 'wallet.emergency_fund_view_ebook';
+  static const wallet_emergency_fund_locked_hint =
+      'wallet.emergency_fund_locked_hint';
+  static const wallet_emergency_fund_view_ebook =
+      'wallet.emergency_fund_view_ebook';
   static const wallet_added_success = 'wallet.added_success';
   static const wallet_updated_success = 'wallet.updated_success';
   static const wallet_delete_title = 'wallet.delete_title';
@@ -221,58 +238,93 @@ abstract class  LocaleKeys {
   static const transaction_income_updated = 'transaction.income_updated';
   static const transaction_edit_title = 'transaction.edit_title';
   static const transaction_delete_title = 'transaction.delete_title';
-  static const transaction_delete_confirm_desc = 'transaction.delete_confirm_desc';
-  static const transaction_liability_payment_saved = 'transaction.liability_payment_saved';
+  static const transaction_delete_confirm_desc =
+      'transaction.delete_confirm_desc';
+  static const transaction_liability_payment_saved =
+      'transaction.liability_payment_saved';
   static const transaction_source_income = 'transaction.source_income';
   static const transaction_reason_income = 'transaction.reason_income';
   static const transaction_recipient = 'transaction.recipient';
   static const transaction_record_income = 'transaction.record_income';
   static const transaction_source_investment = 'transaction.source_investment';
-  static const transaction_destination_investment = 'transaction.destination_investment';
+  static const transaction_destination_investment =
+      'transaction.destination_investment';
   static const transaction_record_investment = 'transaction.record_investment';
   static const transaction_investment_saved = 'transaction.investment_saved';
   static const transaction_source_debt = 'transaction.source_debt';
   static const transaction_record_debt = 'transaction.record_debt';
   static const transaction_debt_saved = 'transaction.debt_saved';
-  static const transaction_liability_direction_borrow = 'transaction.liability_direction_borrow';
-  static const transaction_liability_direction_lend = 'transaction.liability_direction_lend';
-  static const transaction_liability_name_label = 'transaction.liability_name_label';
-  static const transaction_liability_name_hint = 'transaction.liability_name_hint';
+  static const transaction_liability_direction_borrow =
+      'transaction.liability_direction_borrow';
+  static const transaction_liability_direction_lend =
+      'transaction.liability_direction_lend';
+  static const transaction_liability_name_label =
+      'transaction.liability_name_label';
+  static const transaction_liability_name_hint =
+      'transaction.liability_name_hint';
   static const transaction_record_liability = 'transaction.record_liability';
-  static const transaction_liability_amount_borrow_label = 'transaction.liability_amount_borrow_label';
-  static const transaction_liability_amount_lend_label = 'transaction.liability_amount_lend_label';
-  static const transaction_liability_wallet_borrow_label = 'transaction.liability_wallet_borrow_label';
-  static const transaction_liability_wallet_lend_label = 'transaction.liability_wallet_lend_label';
+  static const transaction_liability_amount_borrow_label =
+      'transaction.liability_amount_borrow_label';
+  static const transaction_liability_amount_lend_label =
+      'transaction.liability_amount_lend_label';
+  static const transaction_liability_wallet_borrow_label =
+      'transaction.liability_wallet_borrow_label';
+  static const transaction_liability_wallet_lend_label =
+      'transaction.liability_wallet_lend_label';
   static const transaction_liability_saved = 'transaction.liability_saved';
-  static const transaction_liability_name_duplicate_error = 'transaction.liability_name_duplicate_error';
-  static const transaction_liability_category_borrow_label = 'transaction.liability_category_borrow_label';
-  static const transaction_liability_category_lend_label = 'transaction.liability_category_lend_label';
-  static const transaction_liability_borrower_label = 'transaction.liability_borrower_label';
-  static const transaction_liability_borrower_hint = 'transaction.liability_borrower_hint';
-  static const transaction_liability_collection_method_label = 'transaction.liability_collection_method_label';
-  static const transaction_liability_method_installment_lend = 'transaction.liability_method_installment_lend';
-  static const transaction_liability_method_lump_sum_lend = 'transaction.liability_method_lump_sum_lend';
-  static const transaction_liability_schedule_lend_label = 'transaction.liability_schedule_lend_label';
-  static const transaction_liability_reminder_once_label = 'transaction.liability_reminder_once_label';
-  static const transaction_liability_reminder_recurring_label = 'transaction.liability_reminder_recurring_label';
-  static const transaction_liability_counterparty_vip_locked = 'transaction.liability_counterparty_vip_locked';
-  static const transaction_liability_repayment_method_label = 'transaction.liability_repayment_method_label';
-  static const transaction_liability_method_installment = 'transaction.liability_method_installment';
-  static const transaction_liability_method_lump_sum = 'transaction.liability_method_lump_sum';
-  static const transaction_liability_final_due_date_label = 'transaction.liability_final_due_date_label';
-  static const transaction_liability_schedule_label = 'transaction.liability_schedule_label';
-  static const transaction_liability_add_period = 'transaction.liability_add_period';
+  static const transaction_liability_name_duplicate_error =
+      'transaction.liability_name_duplicate_error';
+  static const transaction_liability_category_borrow_label =
+      'transaction.liability_category_borrow_label';
+  static const transaction_liability_category_lend_label =
+      'transaction.liability_category_lend_label';
+  static const transaction_liability_borrower_label =
+      'transaction.liability_borrower_label';
+  static const transaction_liability_borrower_hint =
+      'transaction.liability_borrower_hint';
+  static const transaction_liability_collection_method_label =
+      'transaction.liability_collection_method_label';
+  static const transaction_liability_method_installment_lend =
+      'transaction.liability_method_installment_lend';
+  static const transaction_liability_method_lump_sum_lend =
+      'transaction.liability_method_lump_sum_lend';
+  static const transaction_liability_schedule_lend_label =
+      'transaction.liability_schedule_lend_label';
+  static const transaction_liability_reminder_once_label =
+      'transaction.liability_reminder_once_label';
+  static const transaction_liability_reminder_recurring_label =
+      'transaction.liability_reminder_recurring_label';
+  static const transaction_liability_counterparty_vip_locked =
+      'transaction.liability_counterparty_vip_locked';
+  static const transaction_liability_repayment_method_label =
+      'transaction.liability_repayment_method_label';
+  static const transaction_liability_method_installment =
+      'transaction.liability_method_installment';
+  static const transaction_liability_method_lump_sum =
+      'transaction.liability_method_lump_sum';
+  static const transaction_liability_final_due_date_label =
+      'transaction.liability_final_due_date_label';
+  static const transaction_liability_schedule_label =
+      'transaction.liability_schedule_label';
+  static const transaction_liability_add_period =
+      'transaction.liability_add_period';
   static const transaction_record_repay = 'transaction.record_repay';
   static const transaction_record_collect = 'transaction.record_collect';
-  static const transaction_investment_contribution = 'transaction.investment_contribution';
+  static const transaction_investment_contribution =
+      'transaction.investment_contribution';
   static const transaction_investment_return = 'transaction.investment_return';
   static const transaction_dest_investment = 'transaction.dest_investment';
-  static const transaction_record_investment_return = 'transaction.record_investment_return';
+  static const transaction_record_investment_return =
+      'transaction.record_investment_return';
   static const transaction_investment_item = 'transaction.investment_item';
-  static const transaction_add_new_investment_item = 'transaction.add_new_investment_item';
-  static const transaction_new_investment_item_hint = 'transaction.new_investment_item_hint';
-  static const transaction_no_investment_items_hint = 'transaction.no_investment_items_hint';
-  static const transaction_investment_item_vip_locked = 'transaction.investment_item_vip_locked';
+  static const transaction_add_new_investment_item =
+      'transaction.add_new_investment_item';
+  static const transaction_new_investment_item_hint =
+      'transaction.new_investment_item_hint';
+  static const transaction_no_investment_items_hint =
+      'transaction.no_investment_items_hint';
+  static const transaction_investment_item_vip_locked =
+      'transaction.investment_item_vip_locked';
   static const transaction_expense_slip = 'transaction.expense_slip';
   static const transaction_income_slip = 'transaction.income_slip';
   static const transaction_category_sub = 'transaction.category_sub';
@@ -281,39 +333,70 @@ abstract class  LocaleKeys {
   static const transaction_note = 'transaction.note';
   static const transaction_note_hint = 'transaction.note_hint';
   static const transaction_more_details = 'transaction.more_details';
-  static const transaction_merchant_match_hint = 'transaction.merchant_match_hint';
-  static const transaction_location_match_hint = 'transaction.location_match_hint';
+  static const transaction_merchant_match_hint =
+      'transaction.merchant_match_hint';
+  static const transaction_location_match_hint =
+      'transaction.location_match_hint';
   static const transaction_bill_match_hint = 'transaction.bill_match_hint';
-  static const transaction_monthly_income_match_hint = 'transaction.monthly_income_match_hint';
-  static const transaction_auto_save_countdown = 'transaction.auto_save_countdown';
+  static const transaction_monthly_income_match_hint =
+      'transaction.monthly_income_match_hint';
+  static const transaction_auto_save_countdown =
+      'transaction.auto_save_countdown';
   static const transaction_quick_entry_hint = 'transaction.quick_entry_hint';
-  static const transaction_quick_entry_parsed_result = 'transaction.quick_entry_parsed_result';
-  static const transaction_quick_entry_category_missing = 'transaction.quick_entry_category_missing';
-  static const transaction_quick_entry_could_not_parse = 'transaction.quick_entry_could_not_parse';
-  static const transaction_quick_entry_daily_limit_reached = 'transaction.quick_entry_daily_limit_reached';
-  static const transaction_quick_entry_mic_permission_denied = 'transaction.quick_entry_mic_permission_denied';
-  static const transaction_quick_entry_photo_permission_denied = 'transaction.quick_entry_photo_permission_denied';
-  static const transaction_quick_entry_batch_label = 'transaction.quick_entry_batch_label';
-  static const transaction_quick_entry_batch_failed = 'transaction.quick_entry_batch_failed';
-  static const transaction_quick_entry_batch_saved = 'transaction.quick_entry_batch_saved';
-  static const transaction_quick_entry_batch_save_failed = 'transaction.quick_entry_batch_save_failed';
-  static const transaction_quick_entry_batch_partial = 'transaction.quick_entry_batch_partial';
-  static const transaction_quick_entry_scan_receipt = 'transaction.quick_entry_scan_receipt';
-  static const transaction_quick_entry_take_photo = 'transaction.quick_entry_take_photo';
-  static const transaction_quick_entry_choose_gallery = 'transaction.quick_entry_choose_gallery';
-  static const transaction_quick_entry_camera_not_available = 'transaction.quick_entry_camera_not_available';
-  static const transaction_claims_in_progress = 'transaction.claims_in_progress';
-  static const transaction_validation_amount_required = 'transaction.validation.amount_required';
-  static const transaction_validation_wallet_required = 'transaction.validation.wallet_required';
-  static const transaction_validation_category_required = 'transaction.validation.category_required';
-  static const transaction_validation_future_date = 'transaction.validation.future_date';
-  static const transaction_validation_insufficient_balance = 'transaction.validation.insufficient_balance';
-  static const transaction_validation_counterparty_required = 'transaction.validation.counterparty_required';
-  static const transaction_validation_schedule_required = 'transaction.validation.schedule_required';
-  static const transaction_validation_amount_exceeds_outstanding = 'transaction.validation.amount_exceeds_outstanding';
-  static const transaction_validation_liability_settled = 'transaction.validation.liability_settled';
-  static const transaction_validation_not_editable = 'transaction.validation.not_editable';
-  static const transaction_validation_edit_window = 'transaction.validation.edit_window';
+  static const transaction_quick_entry_parsed_result =
+      'transaction.quick_entry_parsed_result';
+  static const transaction_quick_entry_category_missing =
+      'transaction.quick_entry_category_missing';
+  static const transaction_quick_entry_could_not_parse =
+      'transaction.quick_entry_could_not_parse';
+  static const transaction_quick_entry_daily_limit_reached =
+      'transaction.quick_entry_daily_limit_reached';
+  static const transaction_quick_entry_mic_permission_denied =
+      'transaction.quick_entry_mic_permission_denied';
+  static const transaction_quick_entry_photo_permission_denied =
+      'transaction.quick_entry_photo_permission_denied';
+  static const transaction_quick_entry_batch_label =
+      'transaction.quick_entry_batch_label';
+  static const transaction_quick_entry_batch_failed =
+      'transaction.quick_entry_batch_failed';
+  static const transaction_quick_entry_batch_saved =
+      'transaction.quick_entry_batch_saved';
+  static const transaction_quick_entry_batch_save_failed =
+      'transaction.quick_entry_batch_save_failed';
+  static const transaction_quick_entry_batch_partial =
+      'transaction.quick_entry_batch_partial';
+  static const transaction_quick_entry_scan_receipt =
+      'transaction.quick_entry_scan_receipt';
+  static const transaction_quick_entry_take_photo =
+      'transaction.quick_entry_take_photo';
+  static const transaction_quick_entry_choose_gallery =
+      'transaction.quick_entry_choose_gallery';
+  static const transaction_quick_entry_camera_not_available =
+      'transaction.quick_entry_camera_not_available';
+  static const transaction_claims_in_progress =
+      'transaction.claims_in_progress';
+  static const transaction_validation_amount_required =
+      'transaction.validation.amount_required';
+  static const transaction_validation_wallet_required =
+      'transaction.validation.wallet_required';
+  static const transaction_validation_category_required =
+      'transaction.validation.category_required';
+  static const transaction_validation_future_date =
+      'transaction.validation.future_date';
+  static const transaction_validation_insufficient_balance =
+      'transaction.validation.insufficient_balance';
+  static const transaction_validation_counterparty_required =
+      'transaction.validation.counterparty_required';
+  static const transaction_validation_schedule_required =
+      'transaction.validation.schedule_required';
+  static const transaction_validation_amount_exceeds_outstanding =
+      'transaction.validation.amount_exceeds_outstanding';
+  static const transaction_validation_liability_settled =
+      'transaction.validation.liability_settled';
+  static const transaction_validation_not_editable =
+      'transaction.validation.not_editable';
+  static const transaction_validation_edit_window =
+      'transaction.validation.edit_window';
   static const transaction_validation = 'transaction.validation';
   static const transaction = 'transaction';
   static const liability_title = 'liability.title';
@@ -330,7 +413,8 @@ abstract class  LocaleKeys {
   static const liability_delete_confirm_msg = 'liability.delete_confirm_msg';
   static const liability_borrow = 'liability.borrow';
   static const liability_lend = 'liability.lend';
-  static const liability_borrow_type_personal = 'liability.borrow_type_personal';
+  static const liability_borrow_type_personal =
+      'liability.borrow_type_personal';
   static const liability_lend_type_personal = 'liability.lend_type_personal';
   static const liability_repaid_prefix = 'liability.repaid_prefix';
   static const liability_borrow_prefix = 'liability.borrow_prefix';
@@ -339,16 +423,22 @@ abstract class  LocaleKeys {
   static const liability_total_lend = 'liability.total_lend';
   static const liability = 'liability';
   static const notification_channel_name = 'notification.channel_name';
-  static const notification_channel_description = 'notification.channel_description';
-  static const notification_audit_approaching_title = 'notification.audit_approaching_title';
-  static const notification_audit_approaching_body = 'notification.audit_approaching_body';
+  static const notification_channel_description =
+      'notification.channel_description';
+  static const notification_audit_approaching_title =
+      'notification.audit_approaching_title';
+  static const notification_audit_approaching_body =
+      'notification.audit_approaching_body';
   static const notification_audit_due_title = 'notification.audit_due_title';
   static const notification_audit_due_body = 'notification.audit_due_body';
-  static const notification_cloud_backup_title = 'notification.cloud_backup_title';
-  static const notification_cloud_backup_body = 'notification.cloud_backup_body';
+  static const notification_cloud_backup_title =
+      'notification.cloud_backup_title';
+  static const notification_cloud_backup_body =
+      'notification.cloud_backup_body';
   static const notification_loan_due_title = 'notification.loan_due_title';
   static const notification_loan_due_body = 'notification.loan_due_body';
-  static const notification_budget_near_limit_body = 'notification.budget_near_limit_body';
+  static const notification_budget_near_limit_body =
+      'notification.budget_near_limit_body';
   static const notification_budget_over_body = 'notification.budget_over_body';
   static const notification = 'notification';
   static const tutorial_nav_title = 'tutorial.nav_title';
@@ -389,8 +479,11 @@ abstract class  LocaleKeys {
   static const budget_drag_reorder_hint = 'budget.drag_reorder_hint';
   static const budget_customize_category = 'budget.customize_category';
   static const budget_percent_used = 'budget.percent_used';
+  static const budget_spent_prefix = 'budget.spent_prefix';
+  static const budget_limit_prefix = 'budget.limit_prefix';
   static const budget_fixed_price = 'budget.fixed_price';
-  static const budget_fixed_price_description = 'budget.fixed_price_description';
+  static const budget_fixed_price_description =
+      'budget.fixed_price_description';
   static const budget_pacing_hint = 'budget.pacing_hint';
   static const budget_penalty_warning = 'budget.penalty_warning';
   static const budget_deficit_warning = 'budget.deficit_warning';
@@ -412,7 +505,8 @@ abstract class  LocaleKeys {
   static const reconciliation_deficit = 'reconciliation.deficit';
   static const reconciliation_confirm = 'reconciliation.confirm';
   static const reconciliation_success = 'reconciliation.success';
-  static const reconciliation_success_message = 'reconciliation.success_message';
+  static const reconciliation_success_message =
+      'reconciliation.success_message';
   static const reconciliation_history = 'reconciliation.history';
   static const reconciliation_undo = 'reconciliation.undo';
   static const reconciliation_undo_title = 'reconciliation.undo_title';
@@ -422,13 +516,18 @@ abstract class  LocaleKeys {
   static const reconciliation_actual = 'reconciliation.actual';
   static const reconciliation_book_balance = 'reconciliation.book_balance';
   static const reconciliation_cycle_subtitle = 'reconciliation.cycle_subtitle';
-  static const reconciliation_description_line_1 = 'reconciliation.description_line_1';
-  static const reconciliation_description_line_2 = 'reconciliation.description_line_2';
-  static const reconciliation_mismatch_warning = 'reconciliation.mismatch_warning';
-  static const reconciliation_create_adjustment = 'reconciliation.create_adjustment';
+  static const reconciliation_description_line_1 =
+      'reconciliation.description_line_1';
+  static const reconciliation_description_line_2 =
+      'reconciliation.description_line_2';
+  static const reconciliation_mismatch_warning =
+      'reconciliation.mismatch_warning';
+  static const reconciliation_create_adjustment =
+      'reconciliation.create_adjustment';
   static const reconciliation_matched = 'reconciliation.matched';
   static const reconciliation_lech = 'reconciliation.lech';
-  static const reconciliation_review_transactions = 'reconciliation.review_transactions';
+  static const reconciliation_review_transactions =
+      'reconciliation.review_transactions';
   static const reconciliation = 'reconciliation';
   static const report_title = 'report.title';
   static const report_spending_proportion = 'report.spending_proportion';
@@ -445,8 +544,10 @@ abstract class  LocaleKeys {
   static const report_safety_index = 'report.safety_index';
   static const report_runway_desc_2 = 'report.runway_desc_2';
   static const report_runway_message = 'report.runway_message';
-  static const report_runway_fixed_price_desc = 'report.runway_fixed_price_desc';
-  static const report_runway_no_fixed_price_desc = 'report.runway_no_fixed_price_desc';
+  static const report_runway_fixed_price_desc =
+      'report.runway_fixed_price_desc';
+  static const report_runway_no_fixed_price_desc =
+      'report.runway_no_fixed_price_desc';
   static const report_runway_perfect = 'report.runway_perfect';
   static const report_runway_very_good = 'report.runway_very_good';
   static const report_runway_good = 'report.runway_good';
@@ -474,13 +575,20 @@ abstract class  LocaleKeys {
   static const report_ai_advice_empty_body = 'report.ai_advice_empty_body';
   static const report_ai_advice_generate_cta = 'report.ai_advice_generate_cta';
   static const report_ai_advice_loading = 'report.ai_advice_loading';
-  static const report_ai_advice_generate_failed = 'report.ai_advice_generate_failed';
-  static const report_ai_advice_daily_limit_reached = 'report.ai_advice_daily_limit_reached';
-  static const report_ai_advice_gemini_disabled = 'report.ai_advice_gemini_disabled';
-  static const report_ai_advice_generated_just_now = 'report.ai_advice_generated_just_now';
-  static const report_ai_advice_generated_minutes_ago = 'report.ai_advice_generated_minutes_ago';
-  static const report_ai_advice_generated_hours_ago = 'report.ai_advice_generated_hours_ago';
-  static const report_ai_advice_generated_days_ago = 'report.ai_advice_generated_days_ago';
+  static const report_ai_advice_generate_failed =
+      'report.ai_advice_generate_failed';
+  static const report_ai_advice_daily_limit_reached =
+      'report.ai_advice_daily_limit_reached';
+  static const report_ai_advice_gemini_disabled =
+      'report.ai_advice_gemini_disabled';
+  static const report_ai_advice_generated_just_now =
+      'report.ai_advice_generated_just_now';
+  static const report_ai_advice_generated_minutes_ago =
+      'report.ai_advice_generated_minutes_ago';
+  static const report_ai_advice_generated_hours_ago =
+      'report.ai_advice_generated_hours_ago';
+  static const report_ai_advice_generated_days_ago =
+      'report.ai_advice_generated_days_ago';
   static const report = 'report';
   static const category_settings_title = 'category.settings_title';
   static const category_settings_subtitle = 'category.settings_subtitle';
@@ -542,26 +650,30 @@ abstract class  LocaleKeys {
   static const category_charity = 'category.charity';
   static const category_haircut = 'category.haircut';
   static const category_spa = 'category.spa';
-  static const category_personal_care_product = 'category.personal_care_product';
+  static const category_personal_care_product =
+      'category.personal_care_product';
   static const category_bank_fee = 'category.bank_fee';
   static const category_card_fee = 'category.card_fee';
   static const category_milk_formula = 'category.milk_formula';
   static const category_diapers = 'category.diapers';
   static const category_baby_toys = 'category.baby_toys';
-  static const category_income_settings_title = 'category.income_settings_title';
+  static const category_income_settings_title =
+      'category.income_settings_title';
   static const category_income_group_active = 'category.income_group_active';
   static const category_income_group_invest = 'category.income_group_invest';
   static const category_income_group_other = 'category.income_group_other';
   static const category_income_salary = 'category.income_salary';
   static const category_income_freelance = 'category.income_freelance';
   static const category_income_allowance = 'category.income_allowance';
-  static const category_income_savings_interest = 'category.income_savings_interest';
+  static const category_income_savings_interest =
+      'category.income_savings_interest';
   static const category_income_dividends = 'category.income_dividends';
   static const category_income_rental = 'category.income_rental';
   static const category_income_bonus = 'category.income_bonus';
   static const category_income_gift = 'category.income_gift';
   static const category_income_cashback = 'category.income_cashback';
-  static const category_debt_loan_settings_title = 'category.debt_loan_settings_title';
+  static const category_debt_loan_settings_title =
+      'category.debt_loan_settings_title';
   static const category_debt_group_borrow = 'category.debt_group_borrow';
   static const category_debt_group_lend = 'category.debt_group_lend';
   static const category_debt_personal_borrow = 'category.debt_personal_borrow';
@@ -577,17 +689,23 @@ abstract class  LocaleKeys {
   static const category_investment_crypto = 'category.investment_crypto';
   static const category_investment_fund = 'category.investment_fund';
   static const category_investment_gold = 'category.investment_gold';
-  static const category_investment_group_default = 'category.investment_group_default';
-  static const category_investment_linked_insurance = 'category.investment_linked_insurance';
+  static const category_investment_group_default =
+      'category.investment_group_default';
+  static const category_investment_linked_insurance =
+      'category.investment_linked_insurance';
   static const category_investment_other = 'category.investment_other';
-  static const category_investment_real_estate = 'category.investment_real_estate';
-  static const category_investment_settings_title = 'category.investment_settings_title';
+  static const category_investment_real_estate =
+      'category.investment_real_estate';
+  static const category_investment_settings_title =
+      'category.investment_settings_title';
   static const category_investment_stock = 'category.investment_stock';
-  static const category_investment_term_deposit = 'category.investment_term_deposit';
+  static const category_investment_term_deposit =
+      'category.investment_term_deposit';
   static const category_market_supermarket = 'category.market_supermarket';
   static const category_religious = 'category.religious';
   static const category_leisure = 'category.leisure';
-  static const category_expense_settings_title = 'category.expense_settings_title';
+  static const category_expense_settings_title =
+      'category.expense_settings_title';
   static const category = 'category';
   static const sync_offline_tooltip = 'sync.offline_tooltip';
   static const sync_syncing_tooltip = 'sync.syncing_tooltip';
@@ -614,9 +732,12 @@ abstract class  LocaleKeys {
   static const profile_link_account_linked = 'profile.link_account_linked';
   static const profile_link_account_action = 'profile.link_account_action';
   static const profile_link_account_success = 'profile.link_account_success';
-  static const profile_link_account_phone_hint = 'profile.link_account_phone_hint';
-  static const profile_link_account_send_code = 'profile.link_account_send_code';
-  static const profile_link_account_verify_code = 'profile.link_account_verify_code';
+  static const profile_link_account_phone_hint =
+      'profile.link_account_phone_hint';
+  static const profile_link_account_send_code =
+      'profile.link_account_send_code';
+  static const profile_link_account_verify_code =
+      'profile.link_account_verify_code';
   static const profile_birth_year = 'profile.birth_year';
   static const profile_birth_year_subtitle = 'profile.birth_year_subtitle';
   static const profile_birth_year_hint = 'profile.birth_year_hint';
@@ -629,11 +750,13 @@ abstract class  LocaleKeys {
   static const profile_vip = 'profile.vip';
   static const profile_vip_subtitle = 'profile.vip_subtitle';
   static const profile_force_full_access = 'profile.force_full_access';
-  static const profile_force_full_access_subtitle = 'profile.force_full_access_subtitle';
+  static const profile_force_full_access_subtitle =
+      'profile.force_full_access_subtitle';
   static const profile_gemini_ai = 'profile.gemini_ai';
   static const profile_gemini_ai_subtitle = 'profile.gemini_ai_subtitle';
   static const profile_weekly_audit_day = 'profile.weekly_audit_day';
-  static const profile_weekly_audit_day_subtitle = 'profile.weekly_audit_day_subtitle';
+  static const profile_weekly_audit_day_subtitle =
+      'profile.weekly_audit_day_subtitle';
   static const profile_weekly_audit_day_hint = 'profile.weekly_audit_day_hint';
   static const profile_reminder = 'profile.reminder';
   static const profile_reminder_subtitle = 'profile.reminder_subtitle';
@@ -649,7 +772,8 @@ abstract class  LocaleKeys {
   static const profile_currency_krw = 'profile.currency_krw';
   static const profile_currency_cny = 'profile.currency_cny';
   static const profile_view_tutorial = 'profile.view_tutorial';
-  static const profile_view_tutorial_subtitle = 'profile.view_tutorial_subtitle';
+  static const profile_view_tutorial_subtitle =
+      'profile.view_tutorial_subtitle';
   static const profile_terms = 'profile.terms';
   static const profile_terms_subtitle = 'profile.terms_subtitle';
   static const profile_about = 'profile.about';
@@ -657,8 +781,10 @@ abstract class  LocaleKeys {
   static const profile_delete_account = 'profile.delete_account';
   static const profile_delete_confirm = 'profile.delete_confirm';
   static const profile_delete_confirm_desc = 'profile.delete_confirm_desc';
-  static const profile_young_children_message = 'profile.young_children_message';
-  static const profile_experience_level_progress = 'profile.experience_level_progress';
+  static const profile_young_children_message =
+      'profile.young_children_message';
+  static const profile_experience_level_progress =
+      'profile.experience_level_progress';
   static const profile_level_title = 'profile.level_title';
   static const profile_tap_to_return = 'profile.tap_to_return';
   static const profile_streak_weeks = 'profile.streak_weeks';
@@ -666,27 +792,43 @@ abstract class  LocaleKeys {
   static const profile_level_intermediate = 'profile.level_intermediate';
   static const profile_level_novice = 'profile.level_novice';
   static const profile_progress_steps = 'profile.progress_steps';
-  static const profile_reconciliation_streak_title = 'profile.reconciliation_streak_title';
-  static const profile_reconciliation_streak_desc = 'profile.reconciliation_streak_desc';
+  static const profile_reconciliation_streak_title =
+      'profile.reconciliation_streak_title';
+  static const profile_reconciliation_streak_desc =
+      'profile.reconciliation_streak_desc';
   static const profile = 'profile';
-  static const guideline_banner_title_completed = 'guideline.banner_title_completed';
-  static const guideline_banner_title_in_progress = 'guideline.banner_title_in_progress';
-  static const guideline_banner_desc_completed = 'guideline.banner_desc_completed';
-  static const guideline_banner_desc_birth_year = 'guideline.banner_desc_birth_year';
-  static const guideline_banner_desc_categories = 'guideline.banner_desc_categories';
-  static const guideline_banner_desc_wallet_balance = 'guideline.banner_desc_wallet_balance';
-  static const guideline_banner_desc_modify_cash = 'guideline.banner_desc_modify_cash';
-  static const guideline_banner_desc_budget_limit = 'guideline.banner_desc_budget_limit';
-  static const guideline_banner_desc_min_living = 'guideline.banner_desc_min_living';
-  static const guideline_banner_desc_first_transaction = 'guideline.banner_desc_first_transaction';
-  static const guideline_banner_desc_investment = 'guideline.banner_desc_investment';
-  static const guideline_banner_desc_liability = 'guideline.banner_desc_liability';
+  static const guideline_banner_title_completed =
+      'guideline.banner_title_completed';
+  static const guideline_banner_title_in_progress =
+      'guideline.banner_title_in_progress';
+  static const guideline_banner_desc_completed =
+      'guideline.banner_desc_completed';
+  static const guideline_banner_desc_birth_year =
+      'guideline.banner_desc_birth_year';
+  static const guideline_banner_desc_categories =
+      'guideline.banner_desc_categories';
+  static const guideline_banner_desc_wallet_balance =
+      'guideline.banner_desc_wallet_balance';
+  static const guideline_banner_desc_modify_cash =
+      'guideline.banner_desc_modify_cash';
+  static const guideline_banner_desc_budget_limit =
+      'guideline.banner_desc_budget_limit';
+  static const guideline_banner_desc_min_living =
+      'guideline.banner_desc_min_living';
+  static const guideline_banner_desc_first_transaction =
+      'guideline.banner_desc_first_transaction';
+  static const guideline_banner_desc_investment =
+      'guideline.banner_desc_investment';
+  static const guideline_banner_desc_liability =
+      'guideline.banner_desc_liability';
   static const guideline_banner_desc_lend = 'guideline.banner_desc_lend';
   static const guideline_banner_desc_default = 'guideline.banner_desc_default';
-  static const guideline_success_dialog_message = 'guideline.success_dialog_message';
+  static const guideline_success_dialog_message =
+      'guideline.success_dialog_message';
   static const guideline_reset_confirm_desc = 'guideline.reset_confirm_desc';
   static const guideline_reset_confirm_agree = 'guideline.reset_confirm_agree';
-  static const guideline_reset_confirm_cancel = 'guideline.reset_confirm_cancel';
+  static const guideline_reset_confirm_cancel =
+      'guideline.reset_confirm_cancel';
   static const guideline = 'guideline';
   static const level_lock_unlock_at_lv = 'level_lock.unlock_at_lv';
   static const level_lock_unlock_free_at_lv3 = 'level_lock.unlock_free_at_lv3';
@@ -696,12 +838,15 @@ abstract class  LocaleKeys {
   static const level_lock_liability_title = 'level_lock.liability_title';
   static const level_lock_liability_desc = 'level_lock.liability_desc';
   static const level_lock_task_setup_budget = 'level_lock.task_setup_budget';
-  static const level_lock_task_record_transactions = 'level_lock.task_record_transactions';
-  static const level_lock_task_setup_birth_year = 'level_lock.task_setup_birth_year';
-  static const level_lock_task_reconciliation_streak = 'level_lock.task_reconciliation_streak';
+  static const level_lock_task_record_transactions =
+      'level_lock.task_record_transactions';
+  static const level_lock_task_setup_birth_year =
+      'level_lock.task_setup_birth_year';
+  static const level_lock_task_reconciliation_streak =
+      'level_lock.task_reconciliation_streak';
   static const level_lock_task_fixed_budgets = 'level_lock.task_fixed_budgets';
-  static const level_lock_task_positive_cash_flow = 'level_lock.task_positive_cash_flow';
+  static const level_lock_task_positive_cash_flow =
+      'level_lock.task_positive_cash_flow';
   static const level_lock_progress_archived = 'level_lock.progress_archived';
   static const level_lock = 'level_lock';
-
 }

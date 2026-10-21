@@ -458,6 +458,8 @@ class CodegenLoader extends AssetLoader {
       "drag_reorder_hint": "Hold and drag to reorder",
       "customize_category": "Customize category",
       "percent_used": "{percent}% used",
+      "spent_prefix": "Spent",
+      "limit_prefix": "Limit",
       "fixed_price": "Fixed Price",
       "fixed_price_description":
           "Fixed monthly costs (minimum survival cost), affecting your safety index in the report section.",
@@ -1215,6 +1217,8 @@ class CodegenLoader extends AssetLoader {
       "drag_reorder_hint": "Giữ và kéo để sắp xếp lại",
       "customize_category": "Tùy chỉnh danh mục",
       "percent_used": "{percent}% đã dùng",
+      "spent_prefix": "Đã chi",
+      "limit_prefix": "Hạn mức",
       "fixed_price": "Chi phí cố định",
       "fixed_price_description":
           "Chi phí hàng tháng cố định (chi phí sinh tồn tối thiểu), ảnh hưởng đến chỉ số an toàn trong phần báo cáo.",
@@ -2155,6 +2159,8 @@ class CcLocaleKeys {
   static const budget_drag_reorder_hint = 'budget.drag_reorder_hint';
   static const budget_customize_category = 'budget.customize_category';
   static const budget_percent_used = 'budget.percent_used';
+  static const budget_spent_prefix = 'budget.spent_prefix';
+  static const budget_limit_prefix = 'budget.limit_prefix';
   static const budget_fixed_price = 'budget.fixed_price';
   static const budget_fixed_price_description =
       'budget.fixed_price_description';
