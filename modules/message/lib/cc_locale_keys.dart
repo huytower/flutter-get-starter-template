@@ -1773,6 +1773,9 @@ class CcLocaleKeys {
   static const settings_language = 'settings.language';
   static const settings_language_vietnamese = 'settings.language_vietnamese';
   static const settings_language_english = 'settings.language_english';
+  static const settings_language_korean = 'settings.language_korean';
+  static const settings_language_japanese = 'settings.language_japanese';
+  static const settings_language_chinese = 'settings.language_chinese';
   static const settings_theme = 'settings.theme';
   static const settings_theme_static = 'settings.theme_static';
   static const settings_theme_light = 'settings.theme_light';
