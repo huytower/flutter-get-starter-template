@@ -53,37 +53,46 @@ class LiabilityListController extends CcGetController {
             : Get.put(getIt<WalletController>());
         final targetCurrency = walletController.currencyCode.value;
 
-        // Deduplicate by liability ID, not category label
+        final entries = await Future.wait(
+          balances.map((b) async {
+            final convPrincipal = await walletController.conversionService
+                .convertAmount(
+                  amount: b.liability.principalAmount,
+                  fromCurrency: b.liability.currencyCode,
+                  toCurrency: targetCurrency,
+                );
+            final convertedPrincipal =
+                convPrincipal.tryGetSuccess() ?? b.liability.principalAmount;
+
+            final convOutstanding = await walletController.conversionService
+                .convertAmount(
+                  amount: b.outstandingBalance,
+                  fromCurrency: b.liability.currencyCode,
+                  toCurrency: targetCurrency,
+                );
+            final convertedOutstanding =
+                convOutstanding.tryGetSuccess() ?? b.outstandingBalance;
+
+            final updatedLiability = b.liability.copyWith(
+              principalAmount: convertedPrincipal,
+              currencyCode: targetCurrency,
+            );
+
+            return MapEntry(
+              b.liability.id,
+              LiabilityBalanceEntity(
+                liability: updatedLiability,
+                outstandingBalance: convertedOutstanding,
+              ),
+            );
+          }),
+        );
+
         final unique = <String, LiabilityBalanceEntity>{};
-        for (final b in balances) {
-          final convPrincipal = await walletController.conversionService
-              .convertAmount(
-                amount: b.liability.principalAmount,
-                fromCurrency: b.liability.currencyCode,
-                toCurrency: targetCurrency,
-              );
-          final convertedPrincipal =
-              convPrincipal.tryGetSuccess() ?? b.liability.principalAmount;
-
-          final convOutstanding = await walletController.conversionService
-              .convertAmount(
-                amount: b.outstandingBalance,
-                fromCurrency: b.liability.currencyCode,
-                toCurrency: targetCurrency,
-              );
-          final convertedOutstanding =
-              convOutstanding.tryGetSuccess() ?? b.outstandingBalance;
-
-          final updatedLiability = b.liability.copyWith(
-            principalAmount: convertedPrincipal,
-            currencyCode: targetCurrency,
-          );
-
-          unique[b.liability.id] = LiabilityBalanceEntity(
-            liability: updatedLiability,
-            outstandingBalance: convertedOutstanding,
-          );
+        for (final entry in entries) {
+          unique[entry.key] = entry.value;
         }
+
         final sorted = unique.values.toList()
           ..sort(
             (a, b) => b.liability.updatedAt.compareTo(a.liability.updatedAt),

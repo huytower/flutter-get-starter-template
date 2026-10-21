@@ -8,6 +8,8 @@ import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
+import '../../../liability/presentation/get_x/liability_list_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
@@ -181,10 +183,6 @@ abstract class TransactionFormController extends CcGetController {
   }
 
   void setWalletId(String id) {
-    // Only allow selecting wallets that are present in the controller's
-    // enabled list (which is typically filtered to liquid wallets only).
-    // This prevents AI from incorrectly picking an investment position
-    // or loan record as the source/destination wallet.
     if (wallets.any((w) => w.id == id)) {
       selectedWalletId.value = id;
     }
@@ -204,22 +202,37 @@ abstract class TransactionFormController extends CcGetController {
     );
   }
 
-  /// Refreshes the parent [TransactionController] data after a successful transaction.
+  /// Refreshes all parent controllers concurrently using [Future.wait].
   Future<void> refreshParent() async {
+    final futures = <Future<void>>[];
+
     if (Get.isRegistered<TransactionController>()) {
       final parent = Get.find<TransactionController>();
-      await parent.refreshData();
-      parent.flashWalletSummary();
-      _loadWallets();
+      futures.add(
+        parent.refreshData().then((_) {
+          parent.flashWalletSummary();
+          _loadWallets();
+        }),
+      );
     }
 
     if (Get.isRegistered<WalletController>()) {
-      unawaited(Get.find<WalletController>().loadWallets());
+      futures.add(Get.find<WalletController>().loadWallets(showLoading: false));
     }
 
     if (Get.isRegistered<ReportController>()) {
-      await Get.find<ReportController>().load(showLoading: false);
+      futures.add(Get.find<ReportController>().load(showLoading: false));
     }
+
+    if (Get.isRegistered<BudgetLimitController>()) {
+      futures.add(Get.find<BudgetLimitController>().loadBudgets());
+    }
+
+    if (Get.isRegistered<LiabilityListController>()) {
+      futures.add(Get.find<LiabilityListController>().load());
+    }
+
+    await Future.wait(futures);
   }
 
   bool get canSubmit;
