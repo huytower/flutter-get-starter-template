@@ -1,4 +1,3 @@
-import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -464,78 +463,109 @@ class WalletController extends CcGetController {
         newBalances[wallet.id] = walletBookBal;
 
         if (wallet.type == WalletType.investment) {
-          final rawAllTimeContributed =
-              txns
-                  .where(
-                    (t) =>
-                        t.investmentWalletId == wallet.id &&
-                        t.type == TransactionType.investmentIn,
-                  )
-                  .fold(0, (sum, t) => sum + t.amount) +
-              wallet.balance;
+          final invInTxns = txns
+              .where(
+                (t) =>
+                    t.investmentWalletId == wallet.id &&
+                    t.type == TransactionType.investmentIn,
+              )
+              .toList();
 
-          final rawAllTimeReturned = txns
+          final invReturnTxns = txns
               .where(
                 (t) =>
                     t.investmentWalletId == wallet.id &&
                     t.type == TransactionType.investmentReturn,
               )
-              .fold(0, (sum, t) => sum + t.amount);
+              .toList();
 
-          final rawMonthlyContributed = txns
-              .where(
-                (t) =>
-                    t.investmentWalletId == wallet.id &&
-                    t.type == TransactionType.investmentIn &&
-                    t.date.isAfter(monthStart),
-              )
-              .fold(0, (sum, t) => sum + t.amount);
+          final monthlyInvInTxns = invInTxns
+              .where((t) => t.date.isAfter(monthStart))
+              .toList();
 
-          final rawMonthlyReturned = txns
-              .where(
-                (t) =>
-                    t.investmentWalletId == wallet.id &&
-                    t.type == TransactionType.investmentReturn &&
-                    t.date.isAfter(monthStart),
-              )
-              .fold(0, (sum, t) => sum + t.amount);
+          final monthlyInvReturnTxns = invReturnTxns
+              .where((t) => t.date.isAfter(monthStart))
+              .toList();
 
-          final conversionResults = await Future.wait([
-            _conversionService.convertAmount(
-              amount: rawAllTimeContributed,
-              fromCurrency: wallet.currencyCode,
-              toCurrency: targetCurrency,
-            ),
-            _conversionService.convertAmount(
-              amount: rawAllTimeReturned,
-              fromCurrency: wallet.currencyCode,
-              toCurrency: targetCurrency,
-            ),
-            _conversionService.convertAmount(
-              amount: rawMonthlyContributed,
-              fromCurrency: wallet.currencyCode,
-              toCurrency: targetCurrency,
-            ),
-            _conversionService.convertAmount(
-              amount: rawMonthlyReturned,
-              fromCurrency: wallet.currencyCode,
-              toCurrency: targetCurrency,
-            ),
-          ]);
+          final convertedAllIn = await Future.wait(
+            invInTxns.map((t) async {
+              final conv = await _conversionService.convertAmount(
+                amount: t.amount,
+                fromCurrency: t.currencyCode,
+                toCurrency: targetCurrency,
+              );
+              return conv.tryGetSuccess() ?? t.amount;
+            }),
+          );
 
-          final resAC = conversionResults[0];
-          final resAR = conversionResults[1];
-          final resMC = conversionResults[2];
-          final resMR = conversionResults[3];
+          final convertedAllReturn = await Future.wait(
+            invReturnTxns.map((t) async {
+              final conv = await _conversionService.convertAmount(
+                amount: t.amount,
+                fromCurrency: t.currencyCode,
+                toCurrency: targetCurrency,
+              );
+              return conv.tryGetSuccess() ?? t.amount;
+            }),
+          );
+
+          final convertedMonthlyIn = await Future.wait(
+            monthlyInvInTxns.map((t) async {
+              final conv = await _conversionService.convertAmount(
+                amount: t.amount,
+                fromCurrency: t.currencyCode,
+                toCurrency: targetCurrency,
+              );
+              return conv.tryGetSuccess() ?? t.amount;
+            }),
+          );
+
+          final convertedMonthlyReturn = await Future.wait(
+            monthlyInvReturnTxns.map((t) async {
+              final conv = await _conversionService.convertAmount(
+                amount: t.amount,
+                fromCurrency: t.currencyCode,
+                toCurrency: targetCurrency,
+              );
+              return conv.tryGetSuccess() ?? t.amount;
+            }),
+          );
+
+          final convWalletBalance = await _conversionService.convertAmount(
+            amount: wallet.balance,
+            fromCurrency: wallet.currencyCode,
+            toCurrency: targetCurrency,
+          );
+          final baseBalance =
+              convWalletBalance.tryGetSuccess() ?? wallet.balance;
+
+          final allTimeContributed =
+              convertedAllIn.fold<int>(0, (sum, amt) => sum + amt) +
+              baseBalance;
+
+          final allTimeReturned = convertedAllReturn.fold<int>(
+            0,
+            (sum, amt) => sum + amt,
+          );
+
+          final monthlyContributed = convertedMonthlyIn.fold<int>(
+            0,
+            (sum, amt) => sum + amt,
+          );
+
+          final monthlyReturned = convertedMonthlyReturn.fold<int>(
+            0,
+            (sum, amt) => sum + amt,
+          );
 
           newStats[wallet.id] = (
-            contributed: resAC.tryGetSuccess() ?? rawAllTimeContributed,
-            returned: resAR.tryGetSuccess() ?? rawAllTimeReturned,
+            contributed: allTimeContributed,
+            returned: allTimeReturned,
           );
 
           monthlyStatsMap[wallet.id] = (
-            contributed: resMC.tryGetSuccess() ?? rawMonthlyContributed,
-            returned: resMR.tryGetSuccess() ?? rawMonthlyReturned,
+            contributed: monthlyContributed,
+            returned: monthlyReturned,
           );
         }
       }),

@@ -1,11 +1,13 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/presentation/widgets/asset_stat_item.dart';
 import '../../../../core/presentation/widgets/base_asset_list_item.dart';
 import '../../domain/entities/wallet_entity.dart';
+import '../get_x/wallet_controller.dart';
 import 'wallet_display_name.dart';
 
 class InvestmentWalletListItem extends StatelessWidget {
@@ -54,7 +56,9 @@ class InvestmentWalletListItem extends StatelessWidget {
           value: returned,
           color: PrjColors.success,
           icon: const Icon(Icons.auto_graph_rounded),
-          currencyCode: wallet.currencyCode,
+          currencyCode: Get.isRegistered<WalletController>()
+              ? Get.find<WalletController>().currencyCode.value
+              : wallet.currencyCode,
         ),
         const CcSpaceXS(),
         Divider(
@@ -67,7 +71,9 @@ class InvestmentWalletListItem extends StatelessWidget {
           value: contributed,
           color: context.ccColorScheme.onSurfaceVariant,
           icon: const Icon(Icons.eco),
-          currencyCode: wallet.currencyCode,
+          currencyCode: Get.isRegistered<WalletController>()
+              ? Get.find<WalletController>().currencyCode.value
+              : wallet.currencyCode,
         ),
       ],
     );
