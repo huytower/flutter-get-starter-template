@@ -105,7 +105,17 @@ class InvestmentWalletsSection extends StatelessWidget {
           final wallet = wallets[index];
           return Padding(
             padding: EdgeInsets.only(right: context.respDim(12)),
-            child: InvestmentWalletPreviewCard(wallet: wallet, onTap: onSeeAll),
+            child: Builder(
+              builder: (context) {
+                '[InvestmentWalletsSection] wallet=${wallet.id}'.Log(
+                  'Investment',
+                );
+                return InvestmentWalletPreviewCard(
+                  wallet: wallet,
+                  onTap: onSeeAll,
+                );
+              },
+            ),
           );
         },
       ),

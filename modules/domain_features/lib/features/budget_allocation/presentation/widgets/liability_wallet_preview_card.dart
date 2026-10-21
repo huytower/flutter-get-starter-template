@@ -141,17 +141,9 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
   }
 
   String _formatStatValue(int value, String currencyCode) {
-    final formatted = TransactionFormHelpers.formatShortWithSymbol(
+    return TransactionFormHelpers.formatShortWithSymbol(
       value,
       currencyCode: currencyCode,
     );
-
-    final upperCode = currencyCode.toUpperCase();
-    if (upperCode == CurrencyConstants.vnd ||
-        upperCode == CurrencyConstants.krw) {
-      return formatted.replaceAll(RegExp(r'[,.]\d+'), '');
-    }
-
-    return formatted;
   }
 }

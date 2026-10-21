@@ -527,9 +527,13 @@ class WalletController extends CcGetController {
           final baseBalance =
               convWalletBalance.tryGetSuccess() ?? wallet.balance;
 
-          final allTimeContributed =
-              convertedAllIn.fold<int>(0, (sum, amt) => sum + amt) +
-              baseBalance;
+          final allTimeContributed = convertedAllIn.fold<int>(
+            0,
+            (sum, amt) => sum + amt,
+          );
+
+          '[WalletController] _rebuildDerivedBalances wallet=${wallet.id} allInTxns=${invInTxns.length} sum=$allTimeContributed baseBalance=$baseBalance txnsLength=${txns.length}'
+              .Log('WalletController');
 
           final allTimeReturned = convertedAllReturn.fold<int>(
             0,

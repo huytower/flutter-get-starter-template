@@ -63,8 +63,6 @@ abstract class LiabilityBaseFormController extends TransactionFormController
     final index = mergedItems.indexWhere((b) => b.liability.id == id);
     if (index == -1) return;
 
-    'liabilityReveal | index=$index id=$id'.Log(_debugTag);
-
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => revealRowCard(
         scrollController: assetRowScrollController,

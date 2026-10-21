@@ -244,10 +244,6 @@ mixin QuickEntryMixin on TransactionFormController
             .toList() ??
         [];
     _quickEntryCategories = list;
-
-    'Categories: $quickEntryCategoryType (${list.length})'.Log(
-      'QuickEntryMixin',
-    );
   }
 
   @protected

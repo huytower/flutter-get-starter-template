@@ -24,7 +24,6 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
     final controller = Get.find<WalletController>();
-    final stats = controller.investmentStatsOf(wallet.id);
 
     return CcBouncing(
       onTap: onTap,
@@ -92,23 +91,26 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
                   ],
                 ),
                 CcDividerLine(color: scheme.onSurface.withOpacity(0.06)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildCompactStat(
-                      context,
-                      icon: Icons.auto_graph_rounded,
-                      color: PrjColors.success,
-                      value: stats.returned,
-                    ),
-                    _buildCompactStat(
-                      context,
-                      icon: Icons.eco_outlined,
-                      color: scheme.onSurfaceVariant,
-                      value: stats.contributed,
-                    ),
-                  ],
-                ),
+                Obx(() {
+                  final stats = controller.investmentStatsOf(wallet.id);
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildCompactStat(
+                        context,
+                        icon: Icons.auto_graph_rounded,
+                        color: PrjColors.success,
+                        value: stats.returned,
+                      ),
+                      _buildCompactStat(
+                        context,
+                        icon: Icons.eco_outlined,
+                        color: scheme.onSurfaceVariant,
+                        value: stats.contributed,
+                      ),
+                    ],
+                  );
+                }),
               ],
             ),
           ),
@@ -151,17 +153,9 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
   }
 
   String _formatStatValue(int value, String currencyCode) {
-    final formatted = TransactionFormHelpers.formatShortWithSymbol(
+    return TransactionFormHelpers.formatShortWithSymbol(
       value,
       currencyCode: currencyCode,
     );
-
-    final upperCode = currencyCode.toUpperCase();
-    if (upperCode == CurrencyConstants.vnd ||
-        upperCode == CurrencyConstants.krw) {
-      return formatted.replaceAll(RegExp(r'[,.]\d+'), '');
-    }
-
-    return formatted;
   }
 }

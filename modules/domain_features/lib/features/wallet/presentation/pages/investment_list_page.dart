@@ -142,26 +142,34 @@ class _InvestmentListView extends CcGetView<WalletController> {
           itemCount: wallets.length,
           itemBuilder: (context, index) {
             final wallet = wallets[index];
-            final stats = controller.investmentStatsOf(wallet.id);
-            return InvestmentWalletListItem(
+            return SizedBox(
               key: ValueKey(wallet.id),
-              wallet: wallet,
-              contributed: stats.contributed,
-              returned: stats.returned,
-              isEditMode: isEdit,
-              canDelete: controller.canDeleteWallet(wallet),
-              onEdit: () => _openAddInvestment(context, wallet: wallet),
-              onDelete: () => controller.confirmDelete(context, wallet),
-              dragHandle: isEdit
-                  ? ReorderableDragStartListener(
-                      index: index,
-                      child: CcEditBadge(
-                        icon: Icons.drag_indicator,
-                        color: context.ccColorScheme.surfaceContainerHighest,
-                        foregroundColor: context.ccColorScheme.onSurfaceVariant,
-                      ),
-                    )
-                  : null,
+              child: Obx(() {
+                final stats = controller.investmentStatsOf(wallet.id);
+                '[InvestmentListPage] wallet=${wallet.id} contributed=${stats.contributed}'
+                    .Log('Investment');
+                return InvestmentWalletListItem(
+                  wallet: wallet,
+                  contributed: stats.contributed,
+                  returned: stats.returned,
+                  isEditMode: isEdit,
+                  canDelete: controller.canDeleteWallet(wallet),
+                  onEdit: () => _openAddInvestment(context, wallet: wallet),
+                  onDelete: () => controller.confirmDelete(context, wallet),
+                  dragHandle: isEdit
+                      ? ReorderableDragStartListener(
+                          index: index,
+                          child: CcEditBadge(
+                            icon: Icons.drag_indicator,
+                            color:
+                                context.ccColorScheme.surfaceContainerHighest,
+                            foregroundColor:
+                                context.ccColorScheme.onSurfaceVariant,
+                          ),
+                        )
+                      : null,
+                );
+              }),
             );
           },
         ),
