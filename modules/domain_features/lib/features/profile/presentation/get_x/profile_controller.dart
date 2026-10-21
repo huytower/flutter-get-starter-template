@@ -148,9 +148,20 @@ class ProfileController extends CcGetController {
   }
 
   String currentLanguageName(BuildContext context) {
-    return context.locale.languageCode == 'vi'
-        ? el.tr(CcLocaleKeys.settings_language_vietnamese)
-        : el.tr(CcLocaleKeys.settings_language_english);
+    final languageCode = context.locale.languageCode;
+    switch (languageCode) {
+      case 'vi':
+        return el.tr(CcLocaleKeys.settings_language_vietnamese);
+      case 'ko':
+        return el.tr(CcLocaleKeys.settings_language_korean);
+      case 'ja':
+        return el.tr(CcLocaleKeys.settings_language_japanese);
+      case 'zh':
+        return el.tr(CcLocaleKeys.settings_language_chinese);
+      case 'en':
+      default:
+        return el.tr(CcLocaleKeys.settings_language_english);
+    }
   }
 
   // ===========================================================================

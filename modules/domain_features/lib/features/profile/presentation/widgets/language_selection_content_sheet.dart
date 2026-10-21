@@ -125,7 +125,7 @@ class _LanguageSelectionContentSheetState
     List<Locale> locales,
   ) {
     final bool isSelected = locale.languageCode == _selectedLocale.languageCode;
-    final String label = locale.languageCode.toUpperCase();
+    final String label = _getLanguageLabel(locale);
 
     return Expanded(
       child: CcBouncing(
@@ -134,7 +134,7 @@ class _LanguageSelectionContentSheetState
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           margin: EdgeInsets.only(
-            right: locale == locales.last ? 0.0 : context.respDim(8),
+            right: locale == locales.last ? 0.0 : context.respDim(6),
           ),
           height: context.respDim(40),
           alignment: Alignment.center,
@@ -150,7 +150,7 @@ class _LanguageSelectionContentSheetState
           child: CcText(
             label,
             align: Alignment.center,
-            textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+            textStyle: context.ccTextTheme.bodySmall?.copyWith(
               fontWeight: isSelected
                   ? CcTypographyParams.bold
                   : CcTypographyParams.regular,
@@ -160,6 +160,22 @@ class _LanguageSelectionContentSheetState
         ),
       ),
     );
+  }
+
+  String _getLanguageLabel(Locale locale) {
+    switch (locale.languageCode) {
+      case 'vi':
+        return tr(CcLocaleKeys.settings_language_vietnamese);
+      case 'ko':
+        return tr(CcLocaleKeys.settings_language_korean);
+      case 'ja':
+        return tr(CcLocaleKeys.settings_language_japanese);
+      case 'zh':
+        return tr(CcLocaleKeys.settings_language_chinese);
+      case 'en':
+      default:
+        return tr(CcLocaleKeys.settings_language_english);
+    }
   }
 
   Widget _buildActions(BuildContext context, ColorScheme scheme) {

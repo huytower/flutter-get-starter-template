@@ -21,6 +21,9 @@ class CcLocalization {
   static const List<Locale> supportedLocales = [
     Locale('vi'), // Vietnamese
     Locale('en'), // English
+    Locale('ko'), // Korean
+    Locale('ja'), // Japanese
+    Locale('zh'), // Chinese
     // Add more locales as needed
   ];
 
@@ -89,6 +92,12 @@ class CcLocalization {
         return 'English';
       case 'vi':
         return 'Tiếng Việt';
+      case 'ko':
+        return '한국어';
+      case 'ja':
+        return '日本語';
+      case 'zh':
+        return '中文';
       default:
         return locale.languageCode.toUpperCase();
     }
@@ -113,8 +122,11 @@ class CcLocalization {
   /// Gets all available locales with their display names.
   static Map<Locale, String> getAvailableLocales() {
     return {
-      const Locale('en'): 'English',
       const Locale('vi'): 'Tiếng Việt',
+      const Locale('en'): 'English',
+      const Locale('ko'): '한국어',
+      const Locale('ja'): '日本語',
+      const Locale('zh'): '中文',
       // Add more locales as needed
     };
   }
