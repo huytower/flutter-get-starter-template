@@ -366,6 +366,10 @@ mixin QuickEntryMixin on TransactionFormController
 
   void _onQuickEntryTextChanged() {
     _cancelAutoSave();
+    if (isListeningQuickEntry.value) {
+      // While dictating voice, ignore text change events to avoid launching duplicate parse timers
+      return;
+    }
     final text = quickEntryController.text;
     if (text != _lastQuickEntryText) {
       _lastQuickEntryText = text;
@@ -879,19 +883,38 @@ mixin QuickEntryMixin on TransactionFormController
 
   Future<void> toggleVoiceQuickEntry(BuildContext context) async {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
-    if (isListeningQuickEntry.value) {
-      await CcSpeechHelper.stopListening();
+
+    '[VoiceWorkflow] 🟢 toggleVoiceQuickEntry triggered | isListening=${isListeningQuickEntry.value}'
+        .Log('QuickEntryMixin');
+
+    bool voiceSubmitted = false;
+
+    void triggerVoiceSubmit(String rawText, String source) {
+      if (voiceSubmitted || _quickEntryDisposed) return;
+      voiceSubmitted = true;
       isListeningQuickEntry.value = false;
-      final text = quickEntryController.text.trim();
-      if (text.isNotEmpty) {
+      _cancelAutoSave();
+
+      final text = rawText.trim();
+      if (text.isNotEmpty && !isParsingQuickEntry.value) {
+        '[VoiceWorkflow] 🚀 Submitting voice result via $source | text="$text"'
+            .Log('QuickEntryMixin');
         submitQuickEntry(context);
       }
+    }
+
+    if (isListeningQuickEntry.value) {
+      '[VoiceWorkflow] 🛑 Manual stop requested'.Log('QuickEntryMixin');
+      await CcSpeechHelper.stopListening();
+      triggerVoiceSubmit(quickEntryController.text, 'manualStop');
       return;
     }
 
-    // Explicitly check and request microphone permission before showing the
-    // "listening" state or starting the speech engine.
     final status = await Permission.microphone.request();
+    '[VoiceWorkflow] 🔒 Microphone permission status: $status'.Log(
+      'QuickEntryMixin',
+    );
+
     if (!status.isGranted) {
       quickEntryErrorKey.value = CcLocaleKeys.quick_entry_mic_permission_denied;
       return;
@@ -900,33 +923,38 @@ mixin QuickEntryMixin on TransactionFormController
     hideKeypad();
     quickEntryErrorKey.value = null;
     isListeningQuickEntry.value = true;
+
     final started = await CcSpeechHelper.startListening(
       onResult: (recognizedWords, isFinal) {
         if (_quickEntryDisposed) return;
+        '[VoiceWorkflow] 🗣️ Voice recognized words: "$recognizedWords" | isFinal=$isFinal'
+            .Log('QuickEntryMixin');
+
         quickEntryController.text = recognizedWords;
         quickEntryController.selection = TextSelection.collapsed(
           offset: recognizedWords.length,
         );
+
         if (isFinal) {
-          isListeningQuickEntry.value = false;
-          submitQuickEntry(context);
+          triggerVoiceSubmit(recognizedWords, 'isFinal');
         }
       },
-      // The recognizer can stop itself (e.g. a silence timeout) without a
-      // final result — reset here too, or the mic icon stays stuck "listening".
       onListeningStopped: () {
         if (_quickEntryDisposed) return;
-        isListeningQuickEntry.value = false;
+        '[VoiceWorkflow] 🏁 Voice listening session completed'.Log(
+          'QuickEntryMixin',
+        );
+        triggerVoiceSubmit(quickEntryController.text, 'onListeningStopped');
       },
     );
 
     if (_quickEntryDisposed) return;
 
     if (!started) {
-      // If start failed, we must reset the local UI state.
-      // But we only show the error message if we are CERTAIN it was a
-      // failure, not just a double-tap race condition.
       if (!CcSpeechHelper.isListening) {
+        '[VoiceWorkflow] ❌ Failed to start speech recognizer'.Log(
+          'QuickEntryMixin',
+        );
         isListeningQuickEntry.value = false;
         quickEntryErrorKey.value =
             CcLocaleKeys.quick_entry_mic_permission_denied;

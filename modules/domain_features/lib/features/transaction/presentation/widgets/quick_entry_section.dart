@@ -175,10 +175,16 @@ class QuickEntrySection extends StatelessWidget {
     final scheme = context.ccColorScheme;
     final buttonSize = context.respDim(30);
 
+    void handleMicTap() {
+      '[VoiceWorkflow] 🎤 Mic button tapped | isListening=$isListening | text="${controller.text}"'
+          .Log('QuickEntrySection');
+      onMicTap();
+    }
+
     if (isListening) {
       return _VoiceRippleAnimationWidget(
         activeColor: activeColor,
-        onTap: onMicTap,
+        onTap: handleMicTap,
         size: buttonSize,
       );
     }
@@ -189,7 +195,7 @@ class QuickEntrySection extends StatelessWidget {
         color: scheme.onSurface.withOpacity(0.45),
         size: context.respDim(20),
       ),
-      onTap: onMicTap,
+      onTap: handleMicTap,
       width: buttonSize,
       height: buttonSize,
     );
