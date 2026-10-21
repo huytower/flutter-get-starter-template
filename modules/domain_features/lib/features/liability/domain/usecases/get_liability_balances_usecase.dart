@@ -1,5 +1,4 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
-import 'package:collection/collection.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -85,16 +84,16 @@ class GetLiabilityBalancesUseCase {
           }
         }
 
-        if (t.liabilityId != null && groupIds.contains(t.liabilityId)) {
-          return true;
+        // If transaction has an explicit liabilityId, ONLY match if it belongs to this group's IDs
+        if (t.liabilityId != null && t.liabilityId!.isNotEmpty) {
+          return groupIds.contains(t.liabilityId);
         }
-        if (primary.categoryId.isNotEmpty &&
-            t.categoryId == primary.categoryId) {
-          return true;
-        }
+
+        // Fallback for transactions without liabilityId (match by category label name)
         if (t.category.trim().toLowerCase() == labelKey) {
           return true;
         }
+
         return false;
       }).toList();
 

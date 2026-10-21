@@ -136,20 +136,19 @@ class LendWalletListItem extends StatelessWidget {
             ),
             align: Alignment.center,
             textAlign: TextAlign.center,
-            textStyle: context.ccTextTheme.headlineMedium?.copyWith(
+            textStyle: context.ccTextTheme.headlineLarge?.copyWith(
               fontWeight: CcTypographyParams.bold,
-              color: scheme.onSurface,
-              fontSize: context.respDim(30),
+              color: scheme.primary,
             ),
           ),
-          const SizedBox(height: 2),
+          const CcSpaceXS(),
           CcText(
             el.tr(CcLocaleKeys.liability_to_collect),
             align: Alignment.center,
             textAlign: TextAlign.center,
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: scheme.onSurfaceVariant.withOpacity(0.75),
-              fontWeight: FontWeight.w500,
+              fontWeight: CcTypographyParams.medium,
             ),
           ),
         ],
@@ -185,7 +184,10 @@ class LendWalletListItem extends StatelessWidget {
                   repaid,
                   currencyCode: liability.currencyCode,
                 ),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: context.ccTextTheme.labelSmall?.copyWith(
+                  color: scheme.onSurface,
+                  fontWeight: CcTypographyParams.bold,
+                ),
               ),
             ],
           ),
@@ -218,7 +220,10 @@ class LendWalletListItem extends StatelessWidget {
                   liability.principalAmount,
                   currencyCode: liability.currencyCode,
                 ),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: context.ccTextTheme.labelSmall?.copyWith(
+                  color: scheme.onSurface,
+                  fontWeight: CcTypographyParams.bold,
+                ),
               ),
             ],
           ),
