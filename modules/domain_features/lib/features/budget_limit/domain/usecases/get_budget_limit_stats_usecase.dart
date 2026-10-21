@@ -1,7 +1,10 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../../core/di/di.dart';
+import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/repositories/category_repository.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
@@ -19,11 +22,12 @@ class GetBudgetLimitStatsUseCase {
     this._budgetLimitRepository,
     this._transactionRepository,
     this._categoryRepository,
-  );
+  ) : _conversionService = getIt<CurrencyConversionService>();
 
   final BudgetLimitRepository _budgetLimitRepository;
   final TransactionRepository _transactionRepository;
   final CategoryRepository _categoryRepository;
+  final CurrencyConversionService _conversionService;
 
   Future<Result<List<BudgetLimitStatsEntity>, CcFailure>> call() async {
     final budgetsResult = await _budgetLimitRepository.getBudgets(
@@ -53,8 +57,10 @@ class GetBudgetLimitStatsUseCase {
     }
 
     final transactions = txnResult.tryGetSuccess()!;
-    final stats = uniqueBudgets.values.map((budget) {
-      final spent = transactions
+    final stats = <BudgetLimitStatsEntity>[];
+
+    for (final budget in uniqueBudgets.values) {
+      final matchingTxns = transactions
           .where(
             (t) =>
                 t.type == 'expense' &&
@@ -62,20 +68,47 @@ class GetBudgetLimitStatsUseCase {
                 !t.date.isBefore(monthStart) &&
                 t.date.isBefore(nextMonthStart),
           )
-          .fold<int>(0, (sum, t) => sum + t.amount);
+          .toList();
+
+      final convertedAmounts = await Future.wait(
+        matchingTxns.map((t) async {
+          if (t.currencyCode.toUpperCase() !=
+              budget.currencyCode.toUpperCase()) {
+            final conv = await _conversionService.convertAmount(
+              amount: t.amount,
+              fromCurrency: t.currencyCode,
+              toCurrency: budget.currencyCode,
+            );
+            return conv.tryGetSuccess() ?? t.amount;
+          }
+          return t.amount;
+        }),
+      );
+
+      final spentInBudgetCurrency = convertedAmounts.fold<int>(
+        0,
+        (sum, amt) => sum + amt,
+      );
 
       final catIdx = categories.indexWhere((c) => c.id == budget.categoryId);
       final cat = catIdx >= 0 ? categories[catIdx] : null;
 
-      return BudgetLimitStatsEntity(
-        budget: budget,
-        spent: spent,
-        iconCode: cat?.iconCode ?? 0,
-        iconFamily: cat?.iconFamily,
-        color: cat?.color,
-        categoryNameKey: cat?.nameKey,
+      Get.log(
+        '[GetBudgetLimitStatsUseCase] Budget "${budget.name}": '
+        'rawSpentTxns=${matchingTxns.length}, spent=$spentInBudgetCurrency ${budget.currencyCode}, limit=${budget.limit} ${budget.currencyCode}',
       );
-    }).toList();
+
+      stats.add(
+        BudgetLimitStatsEntity(
+          budget: budget,
+          spent: spentInBudgetCurrency,
+          iconCode: cat?.iconCode ?? 0,
+          iconFamily: cat?.iconFamily,
+          color: cat?.color,
+          categoryNameKey: cat?.nameKey,
+        ),
+      );
+    }
 
     return Success(stats);
   }

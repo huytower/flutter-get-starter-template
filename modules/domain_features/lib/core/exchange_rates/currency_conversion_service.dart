@@ -12,6 +12,9 @@ class CurrencyConversionService {
 
   final ExchangeRateRepository _repository;
 
+  /// Fast in-memory cache of effective exchange rates: baseCurrency -> (quoteCurrency -> rate)
+  final Map<String, Map<String, double>> _memoryRateCache = {};
+
   /// Convert an amount from one currency to another directly.
   Future<Result<int, CcFailure>> convertAmount({
     required num amount,
@@ -20,16 +23,27 @@ class CurrencyConversionService {
     DateTime? date,
     ConversionUse use = ConversionUse.display,
   }) async {
-    if (fromCurrency.toUpperCase() == toCurrency.toUpperCase()) {
+    final fromUpper = fromCurrency.toUpperCase();
+    final toUpper = toCurrency.toUpperCase();
+
+    if (fromUpper == toUpper) {
       return Success(amount.round());
     }
 
-    final fromDef = CurrencyCatalog.tryGetDefinition(fromCurrency);
-    final toDef = CurrencyCatalog.tryGetDefinition(toCurrency);
+    final fromDef = CurrencyCatalog.tryGetDefinition(fromUpper);
+    final toDef = CurrencyCatalog.tryGetDefinition(toUpper);
     if (fromDef == null || toDef == null) {
       return const Error(
         ValidationFailure('Unsupported currency code for conversion'),
       );
+    }
+
+    // Fast path: check in-memory rate cache for current rates (date == null)
+    if (date == null &&
+        _memoryRateCache.containsKey(fromDef.code) &&
+        _memoryRateCache[fromDef.code]!.containsKey(toDef.code)) {
+      final cachedRate = _memoryRateCache[fromDef.code]![toDef.code]!;
+      return Success((amount * cachedRate).round());
     }
 
     final result = await _repository.getExchangeRates(
@@ -67,6 +81,10 @@ class CurrencyConversionService {
       return Error(
         ValidationFailure('Exchange rate not available for ${toDef.code}'),
       );
+    }
+
+    if (date == null) {
+      _memoryRateCache.putIfAbsent(fromDef.code, () => {})[toDef.code] = rate;
     }
 
     final convertedAmount = (amount * rate).round();
@@ -111,7 +129,7 @@ class CurrencyConversionService {
       return Error(
         failure is NetworkExchangeRateFailure
             ? ServerFailure(failure.message ?? 'Failed to fetch exchange rates')
-            : CacheFailure('Exchange rate error'),
+            : const CacheFailure('Exchange rate error'),
       );
     }
 

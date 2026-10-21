@@ -1,3 +1,4 @@
+import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -185,14 +186,6 @@ class WalletController extends CcGetController {
   /// Σ Thu vào ÷ Σ Chi ra across every investment position (Recovery rate).
   final RxDouble investmentBreakevenPercent = 0.0.obs;
 
-  /// Σ realized Thu vào not already reflected in any wallet's own book
-  /// balance — added on top of [investmentBalance] so that card still reads
-  /// as "capital + profit" even though profit now lands in a liquid wallet.
-  /// Only counts new-style records (`investmentWalletId != null`); older
-  /// records (written before this field existed) still have `walletId`
-  /// pointing at the investment wallet itself, so they're already counted
-  /// once via that wallet's own book balance — counting them here too would
-  /// double them up.
   int _investmentReturnsTotal = 0;
 
   /// Ids of wallets that have at least one (non-deleted) transaction. Used to
@@ -223,11 +216,6 @@ class WalletController extends CcGetController {
   ({int contributed, int returned}) monthlyInvestmentStatsOf(String id) =>
       _monthlyInvestmentStats[id] ?? (contributed: 0, returned: 0);
 
-  /// Type order for the Budget Allocation screen's "Ví của bạn" strip: cash
-  /// → bank → e-wallet → emergency fund. (Credit-card wallets aren't a
-  /// [WalletType] yet; add them here, between bank and e-wallet, if that
-  /// type is introduced.) Investment wallets are excluded; they get their
-  /// own hero banner instead.
   static const List<String> _liquidTypeOrder = [
     WalletType.cash,
     WalletType.bank,
@@ -235,19 +223,14 @@ class WalletController extends CcGetController {
     WalletType.emergencyFund,
   ];
 
-  /// Liquid wallets for the Budget Allocation screen's "Ví của bạn" strip,
-  /// ordered per [_liquidTypeOrder]; wallets of the same type sort by name
-  /// A-Z/0-9.
   List<WalletEntity> get liquidWallets {
     final liquid = wallets
         .where((w) => _liquidTypeOrder.contains(w.type))
         .toList();
     liquid.sort((a, b) {
-      // Special handling: ensure Cash wallet is always first
       if (a.type == WalletType.cash && b.type != WalletType.cash) return -1;
       if (b.type == WalletType.cash && a.type != WalletType.cash) return 1;
 
-      // Special handling: ensure default Bank wallet (using localized name) is always second (after Cash)
       final defaultBankName = el.tr(CcLocaleKeys.wallet_bank);
       if (a.type == WalletType.bank &&
           a.name == defaultBankName &&
@@ -262,7 +245,6 @@ class WalletController extends CcGetController {
         return 1;
       }
 
-      // Standard sorting by type order
       final typeCompare = _liquidTypeOrder
           .indexOf(a.type)
           .compareTo(_liquidTypeOrder.indexOf(b.type));
@@ -272,8 +254,6 @@ class WalletController extends CcGetController {
     return liquid;
   }
 
-  /// Liquid wallets for the dashboard. Pins "Cash" to index 0 and keeps the
-  /// rest in their original order (no strict sorting by name or date).
   List<WalletEntity> get recentLiquidWallets {
     final liquid = wallets
         .where((w) => _liquidTypeOrder.contains(w.type))
@@ -281,12 +261,11 @@ class WalletController extends CcGetController {
     liquid.sort((a, b) {
       if (a.type == WalletType.cash) return -1;
       if (b.type == WalletType.cash) return 1;
-      return 0; // Stable sort: preserves relative order of other items
+      return 0;
     });
     return liquid;
   }
 
-  /// Investment wallets for the Budget Allocation screen.
   List<WalletEntity> get investmentWallets {
     final investment = wallets
         .where((w) => w.type == WalletType.investment)
@@ -318,11 +297,6 @@ class WalletController extends CcGetController {
     return _dedupByDisplayName(result);
   }
 
-  /// Deduplicates investment wallets by their resolved display name.
-  ///
-  /// Multiple wallets may share the same resolved display name
-  /// (e.g. "Stock" from both Vietnamese "Cổ phiếu" and English "Stock"
-  /// via [BudgetNameHelper]). Keeps only the first occurrence.
   List<WalletEntity> _dedupByDisplayName(List<WalletEntity> wallets) {
     final seen = <String, WalletEntity>{};
     for (final w in wallets) {
@@ -335,7 +309,6 @@ class WalletController extends CcGetController {
     return seen.values.toList();
   }
 
-  /// Manually reorders investment assets (drag-and-drop).
   Future<void> reorderInvestments(int oldIndex, int newIndex) async {
     final items = investmentWallets;
     if (newIndex > oldIndex) newIndex -= 1;
@@ -344,7 +317,6 @@ class WalletController extends CcGetController {
     final item = items.removeAt(oldIndex);
     items.insert(newIndex, item);
 
-    // Persist new orders
     for (int i = 0; i < items.length; i++) {
       final updated = items[i].copyWith(
         displayOrder: i,
@@ -352,7 +324,6 @@ class WalletController extends CcGetController {
       );
       await _repository.updateWallet(updated);
 
-      // Update local 'wallets' list
       final localIdx = wallets.indexWhere((w) => w.id == updated.id);
       if (localIdx != -1) wallets[localIdx] = updated;
     }
@@ -360,18 +331,12 @@ class WalletController extends CcGetController {
     _calculateTotalBalance();
   }
 
-  /// Protected wallets can be renamed but never deleted:
-  /// - the `cash` wallet is a fixed singleton, and
-  /// - the default `bank` wallet (using localized name) is a fixed singleton.
-  /// All other liquid wallets can be deleted when they have no transactions.
   bool canDeleteWallet(WalletEntity wallet) {
     if (wallet.type == WalletType.cash) return false;
     if (wallet.type == WalletType.bank) {
       final defaultBankName = el.tr(CcLocaleKeys.wallet_bank);
       if (wallet.name == defaultBankName) return false;
     }
-    // All other wallet types (other bank accounts, e-wallets, emergency funds)
-    // can be considered for deletion; the actual transaction check happens in deleteWallet()
     return true;
   }
 
@@ -382,11 +347,8 @@ class WalletController extends CcGetController {
   }
 
   /// Reloads wallets and their derived book balances.
-  ///
-  /// Pass [showLoading] false for background refreshes (e.g. re-opening the
-  /// Wallet tab after adding a transaction elsewhere) so the list isn't
-  /// replaced by a full-screen loader.
   Future<void> loadWallets({bool showLoading = true}) async {
+    final stopwatch = Stopwatch()..start();
     if (showLoading) {
       layoutStatus.value = CcLayoutStatus.loading;
     }
@@ -420,16 +382,27 @@ class WalletController extends CcGetController {
         .toList()
         .cast<WalletEntity>();
 
+    final tDerived = Stopwatch()..start();
     await _rebuildDerivedBalances(list);
+    tDerived.stop();
+
     wallets.assignAll(list);
+
+    final tDisplay = Stopwatch()..start();
     await _rebuildDisplayBalances(list);
+    tDisplay.stop();
+
     _calculateTotalBalance();
 
     layoutStatus.value = CcLayoutStatus.success;
+    stopwatch.stop();
+
+    '[WalletController] loadWallets complete in ${stopwatch.elapsedMilliseconds}ms (derived: ${tDerived.elapsedMilliseconds}ms, display: ${tDisplay.elapsedMilliseconds}ms)'
+        .Log();
   }
 
   /// Fetches transactions once and derives, per wallet, both the activity flag
-  /// (rule 1) and the current book balance shown in the UI.
+  /// and current book balance concurrently using [Future.wait].
   Future<void> _rebuildDerivedBalances(List<WalletEntity> list) async {
     final result = await _transactionRepository.getListTransactions();
     final txns = result.when((t) => t, (_) => <TransactionEntity>[]);
@@ -446,110 +419,128 @@ class WalletController extends CcGetController {
     final now = DateTime.now();
     final monthStart = DateTime(now.year, now.month, 1);
 
-    for (final wallet in list) {
-      final walletTxns = txns.where((t) => t.walletId == wallet.id).toList();
-      var walletBookBal = wallet.balance;
-      for (final txn in walletTxns) {
-        int amountInWalletCurrency = txn.amount;
-        if (txn.currencyCode.toUpperCase() !=
-            wallet.currencyCode.toUpperCase()) {
-          final converted = await _conversionService.convertAmount(
-            amount: txn.amount,
-            fromCurrency: txn.currencyCode,
-            toCurrency: wallet.currencyCode,
+    await Future.wait(
+      list.map((wallet) async {
+        final walletTxns = txns.where((t) => t.walletId == wallet.id).toList();
+        var walletBookBal = wallet.balance;
+
+        final txnConvertedAmounts = await Future.wait(
+          walletTxns.map((txn) async {
+            if (txn.currencyCode.toUpperCase() !=
+                wallet.currencyCode.toUpperCase()) {
+              final converted = await _conversionService.convertAmount(
+                amount: txn.amount,
+                fromCurrency: txn.currencyCode,
+                toCurrency: wallet.currencyCode,
+              );
+              return converted.tryGetSuccess() ?? txn.amount;
+            }
+            return txn.amount;
+          }),
+        );
+
+        for (int i = 0; i < walletTxns.length; i++) {
+          final txn = walletTxns[i];
+          final amountInWalletCurrency = txnConvertedAmounts[i];
+
+          switch (txn.type) {
+            case TransactionType.income:
+            case TransactionType.transferIn:
+            case TransactionType.investmentIn:
+            case TransactionType.investmentReturn:
+            case TransactionType.debtBorrow:
+            case TransactionType.debtCollect:
+              walletBookBal += amountInWalletCurrency;
+              break;
+            case TransactionType.expense:
+            case TransactionType.transferOut:
+            case TransactionType.investmentOut:
+            case TransactionType.debtLend:
+            case TransactionType.debtRepay:
+              walletBookBal -= amountInWalletCurrency;
+              break;
+          }
+        }
+        newBalances[wallet.id] = walletBookBal;
+
+        if (wallet.type == WalletType.investment) {
+          final rawAllTimeContributed =
+              txns
+                  .where(
+                    (t) =>
+                        t.investmentWalletId == wallet.id &&
+                        t.type == TransactionType.investmentIn,
+                  )
+                  .fold(0, (sum, t) => sum + t.amount) +
+              wallet.balance;
+
+          final rawAllTimeReturned = txns
+              .where(
+                (t) =>
+                    t.investmentWalletId == wallet.id &&
+                    t.type == TransactionType.investmentReturn,
+              )
+              .fold(0, (sum, t) => sum + t.amount);
+
+          final rawMonthlyContributed = txns
+              .where(
+                (t) =>
+                    t.investmentWalletId == wallet.id &&
+                    t.type == TransactionType.investmentIn &&
+                    t.date.isAfter(monthStart),
+              )
+              .fold(0, (sum, t) => sum + t.amount);
+
+          final rawMonthlyReturned = txns
+              .where(
+                (t) =>
+                    t.investmentWalletId == wallet.id &&
+                    t.type == TransactionType.investmentReturn &&
+                    t.date.isAfter(monthStart),
+              )
+              .fold(0, (sum, t) => sum + t.amount);
+
+          final conversionResults = await Future.wait([
+            _conversionService.convertAmount(
+              amount: rawAllTimeContributed,
+              fromCurrency: wallet.currencyCode,
+              toCurrency: targetCurrency,
+            ),
+            _conversionService.convertAmount(
+              amount: rawAllTimeReturned,
+              fromCurrency: wallet.currencyCode,
+              toCurrency: targetCurrency,
+            ),
+            _conversionService.convertAmount(
+              amount: rawMonthlyContributed,
+              fromCurrency: wallet.currencyCode,
+              toCurrency: targetCurrency,
+            ),
+            _conversionService.convertAmount(
+              amount: rawMonthlyReturned,
+              fromCurrency: wallet.currencyCode,
+              toCurrency: targetCurrency,
+            ),
+          ]);
+
+          final resAC = conversionResults[0];
+          final resAR = conversionResults[1];
+          final resMC = conversionResults[2];
+          final resMR = conversionResults[3];
+
+          newStats[wallet.id] = (
+            contributed: resAC.tryGetSuccess() ?? rawAllTimeContributed,
+            returned: resAR.tryGetSuccess() ?? rawAllTimeReturned,
           );
-          amountInWalletCurrency = converted.tryGetSuccess() ?? txn.amount;
+
+          monthlyStatsMap[wallet.id] = (
+            contributed: resMC.tryGetSuccess() ?? rawMonthlyContributed,
+            returned: resMR.tryGetSuccess() ?? rawMonthlyReturned,
+          );
         }
+      }),
+    );
 
-        switch (txn.type) {
-          case TransactionType.income:
-          case TransactionType.transferIn:
-          case TransactionType.investmentIn:
-          case TransactionType.investmentReturn:
-          case TransactionType.debtBorrow:
-          case TransactionType.debtCollect:
-            walletBookBal += amountInWalletCurrency;
-            break;
-          case TransactionType.expense:
-          case TransactionType.transferOut:
-          case TransactionType.investmentOut:
-          case TransactionType.debtLend:
-          case TransactionType.debtRepay:
-            walletBookBal -= amountInWalletCurrency;
-            break;
-        }
-      }
-      newBalances[wallet.id] = walletBookBal;
-
-      if (wallet.type == WalletType.investment) {
-        final rawAllTimeContributed =
-            txns
-                .where(
-                  (t) =>
-                      t.investmentWalletId == wallet.id &&
-                      t.type == TransactionType.investmentIn,
-                )
-                .fold(0, (sum, t) => sum + t.amount) +
-            wallet.balance;
-
-        final rawAllTimeReturned = txns
-            .where(
-              (t) =>
-                  t.investmentWalletId == wallet.id &&
-                  t.type == TransactionType.investmentReturn,
-            )
-            .fold(0, (sum, t) => sum + t.amount);
-
-        final rawMonthlyContributed = txns
-            .where(
-              (t) =>
-                  t.investmentWalletId == wallet.id &&
-                  t.type == TransactionType.investmentIn &&
-                  t.date.isAfter(monthStart),
-            )
-            .fold(0, (sum, t) => sum + t.amount);
-
-        final rawMonthlyReturned = txns
-            .where(
-              (t) =>
-                  t.investmentWalletId == wallet.id &&
-                  t.type == TransactionType.investmentReturn &&
-                  t.date.isAfter(monthStart),
-            )
-            .fold(0, (sum, t) => sum + t.amount);
-
-        final resAC = await _conversionService.convertAmount(
-          amount: rawAllTimeContributed,
-          fromCurrency: wallet.currencyCode,
-          toCurrency: targetCurrency,
-        );
-        final resAR = await _conversionService.convertAmount(
-          amount: rawAllTimeReturned,
-          fromCurrency: wallet.currencyCode,
-          toCurrency: targetCurrency,
-        );
-        final resMC = await _conversionService.convertAmount(
-          amount: rawMonthlyContributed,
-          fromCurrency: wallet.currencyCode,
-          toCurrency: targetCurrency,
-        );
-        final resMR = await _conversionService.convertAmount(
-          amount: rawMonthlyReturned,
-          fromCurrency: wallet.currencyCode,
-          toCurrency: targetCurrency,
-        );
-
-        newStats[wallet.id] = (
-          contributed: resAC.tryGetSuccess() ?? rawAllTimeContributed,
-          returned: resAR.tryGetSuccess() ?? rawAllTimeReturned,
-        );
-
-        monthlyStatsMap[wallet.id] = (
-          contributed: resMC.tryGetSuccess() ?? rawMonthlyContributed,
-          returned: resMR.tryGetSuccess() ?? rawMonthlyReturned,
-        );
-      }
-    }
     _bookBalances.assignAll(newBalances);
     _investmentStats.assignAll(newStats);
     _monthlyInvestmentStats.assignAll(monthlyStatsMap);
@@ -563,24 +554,28 @@ class WalletController extends CcGetController {
         .fold(0, (sum, t) => sum + t.amount);
   }
 
+  /// Rebuilds display balances concurrently using [Future.wait].
   Future<void> _rebuildDisplayBalances(List<WalletEntity> list) async {
     final targetCurrency = currencyCode.value;
-    final converted = <String, int>{};
-    for (final wallet in list) {
-      final raw = bookBalanceOf(wallet.id);
-      final result = await _conversionService.convertAmount(
-        amount: raw,
-        fromCurrency: wallet.currencyCode,
-        toCurrency: targetCurrency,
-      );
-      final convertedVal = result.tryGetSuccess() ?? raw;
-      if (wallet.currencyCode.toUpperCase() != targetCurrency.toUpperCase()) {
-        '[WalletController] Balance (${wallet.id}): raw=$raw ${wallet.currencyCode} -> $convertedVal $targetCurrency'
-            .Log();
-      }
-      converted[wallet.id] = convertedVal;
-    }
-    displayBalances.assignAll(converted);
+
+    final entries = await Future.wait(
+      list.map((wallet) async {
+        final raw = bookBalanceOf(wallet.id);
+        final result = await _conversionService.convertAmount(
+          amount: raw,
+          fromCurrency: wallet.currencyCode,
+          toCurrency: targetCurrency,
+        );
+        final convertedVal = result.tryGetSuccess() ?? raw;
+        if (wallet.currencyCode.toUpperCase() != targetCurrency.toUpperCase()) {
+          '[WalletController] Balance (${wallet.id}): raw=$raw ${wallet.currencyCode} -> $convertedVal $targetCurrency'
+              .Log();
+        }
+        return MapEntry(wallet.id, convertedVal);
+      }),
+    );
+
+    displayBalances.assignAll(Map.fromEntries(entries));
   }
 
   void _calculateTotalBalance() {
@@ -708,9 +703,6 @@ class WalletController extends CcGetController {
   }
 
   Future<void> updateWallet(WalletEntity wallet) async {
-    // Rule 1: the opening balance may only change while the wallet has no
-    // transactions. Once it has activity, preserve the original balance so the
-    // book balance stays consistent — the name is still updatable.
     var toSave = wallet;
     final index = wallets.indexWhere((e) => e.id == wallet.id);
     final original = index != -1 ? wallets[index] : null;
@@ -747,8 +739,6 @@ class WalletController extends CcGetController {
     result.when(
       (success) {
         if (original != null) {
-          // Shifting the opening balance shifts the book balance by the same
-          // delta (0 when the balance was locked/unchanged).
           _bookBalances[wallet.id] =
               bookBalanceOf(wallet.id) + (toSave.balance - original.balance);
           wallets[index] = toSave;
@@ -770,12 +760,7 @@ class WalletController extends CcGetController {
     );
   }
 
-  /// Investment wallets can always be deleted (in edit mode) — their
-  /// transactions are soft-deleted alongside the wallet. Other wallet types
-  /// can be deleted only when they have no transactions.
-  /// On deletion every income/expense record of the wallet is soft-deleted.
   Future<WalletDeleteOutcome> deleteWallet(String id) async {
-    // Guard: cash and the default bank wallet are mandatory.
     final index = wallets.indexWhere((w) => w.id == id);
     if (index == -1) return WalletDeleteOutcome.error;
     final wallet = wallets[index];
@@ -785,13 +770,8 @@ class WalletController extends CcGetController {
     }
 
     if (wallet.type == WalletType.investment) {
-      // Investment wallets can always be deleted in edit mode, regardless of
-      // contributed/returned activity — their transactions are soft-deleted
-      // alongside the wallet below.
+      // Deletable
     } else {
-      // For all other liquid wallets (bank, e-wallet, emergency fund), check if there are any transactions recorded.
-      // This allows deletion when the wallet has an initial amount but no transactions.
-      // Cash and default Bank wallets are already protected by canDeleteWallet().
       if (_walletsWithTxns.contains(id)) {
         return WalletDeleteOutcome.notEmpty;
       }

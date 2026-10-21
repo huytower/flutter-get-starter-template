@@ -1,3 +1,4 @@
+import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -42,6 +43,9 @@ class BudgetLimitGridCard extends StatelessWidget {
       BudgetLimitStatus.safe => iconColor,
     };
     final pct = (stats.percentUsed * 100).round();
+
+    '[BudgetLimitGridCard] "${stats.budget.name}": spent=${stats.spent} ${stats.budget.currencyCode} / limit=${stats.budget.limit} ${stats.budget.currencyCode} ($pct%)'
+        .Log();
 
     final iconData = stats.iconCode > 0
         ? iconDataFromCode(stats.iconCode, fontFamily: stats.iconFamily)
@@ -195,8 +199,6 @@ class BudgetLimitGridCard extends StatelessWidget {
     BuildContext context, {
     required bool isEditMode,
   }) {
-    // In edit mode the top-right corner is occupied by the edit (pencil)
-    // badge, so the fixed-price bolt is shifted left to stay visible.
     final rightOffset = isEditMode
         ? context.respDim(8) + context.respDim(24) + context.respDim(2)
         : context.respDim(8);
