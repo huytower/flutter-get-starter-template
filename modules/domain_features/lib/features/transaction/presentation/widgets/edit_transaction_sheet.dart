@@ -69,25 +69,21 @@ class EditTransactionSheet extends GetView<EditTransactionSheetController> {
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.85,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildHeader(context, accentColor),
-                Expanded(
-                  child: isExpense
-                      ? const ExpenseForm(
-                          tag: EditTransactionSheetController.editTag,
-                        )
-                      : const IncomeForm(
-                          tag: EditTransactionSheetController.editTag,
-                        ),
-                ),
-              ],
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildHeader(context, accentColor),
+              Flexible(
+                fit: FlexFit.loose,
+                child: isExpense
+                    ? const ExpenseForm(
+                        tag: EditTransactionSheetController.editTag,
+                      )
+                    : const IncomeForm(
+                        tag: EditTransactionSheetController.editTag,
+                      ),
+              ),
+            ],
           ),
         ),
       );

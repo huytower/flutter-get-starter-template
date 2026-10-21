@@ -78,8 +78,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
     return Obx(
       () => Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
+          Flexible(
+            fit: FlexFit.loose,
             child: _buildScrollableContent(
               context,
               controller,

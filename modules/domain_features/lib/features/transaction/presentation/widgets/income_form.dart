@@ -85,8 +85,10 @@ class _IncomeFormState extends State<IncomeForm> {
 
     return Obx(
       () => Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
+          Flexible(
+            fit: FlexFit.loose,
             child: _buildScrollableContent(
               context,
               controller,

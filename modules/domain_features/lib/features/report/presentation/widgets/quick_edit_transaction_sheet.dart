@@ -170,6 +170,7 @@ class QuickEditTransactionSheet
           ),
           isKeypadVisible: false,
           activeColor: accentColor,
+          currencyCode: controller.currencyCode,
           onTap: () {},
           onQuickAmountSelected: controller.onQuickAmountSelected,
           onClear: controller.onClearAmount,

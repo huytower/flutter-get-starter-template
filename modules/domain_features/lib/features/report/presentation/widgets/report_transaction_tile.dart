@@ -48,17 +48,7 @@ class TransactionTile extends StatelessWidget {
     final editable = isEditableTransaction(transaction);
 
     return CcBouncing(
-      onTap: editable
-          ? () async {
-              await EditTransactionSheet.show(context, transaction);
-              if (Get.isRegistered<WalletController>()) {
-                await Get.find<WalletController>().loadWallets();
-              }
-              if (Get.isRegistered<ReportController>()) {
-                await Get.find<ReportController>().load(showLoading: false);
-              }
-            }
-          : null,
+      onTap: null,
       child: CcSymmetricPadding(
         horizontal: CcPaddingParams.SPACE_SM,
         vertical: CcPaddingParams.SPACE_SM,

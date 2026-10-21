@@ -1438,7 +1438,7 @@ class CodegenLoader extends AssetLoader {
       "banner_title_in_progress": "Thử thách: còn {remaining} bước",
       "banner_desc_completed":
           "Bây giờ bạn có thể bắt đầu quản lý tài chính một cách kỷ luật.",
-      "banner_desc_birth_year": "Thiết lập năm sinh để nhận các gợi ý phù hợp",
+      "banner_desc_birth_year": "Thiết lập năm sinh để nhận gợi ý phù hợp",
       "banner_desc_categories": "Chọn các hạng mục thu chi của bạn",
       "banner_desc_wallet_balance": "Thiết lập số dư hiện tại cho ví của bạn",
       "banner_desc_modify_cash": "Điều chỉnh số dư trong ví tiền mặt",
