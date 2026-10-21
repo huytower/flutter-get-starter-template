@@ -2,9 +2,9 @@ default_platform(:android)
 
 platform :android do
   desc "Build AAB and distribute to Firebase App Distribution"
-  # Usage: fastlane distribute_firebase flavor:uat
+  # Usage: fastlane distribute_firebase flavor:prod
   lane :distribute_firebase do |options|
-    flavor = options[:flavor] || "uat"
+    flavor = options[:flavor] || "prod"
 
     # 1. Generate code (run from root directory)
     # Use direct Flutter command instead of melos to avoid PATH issues

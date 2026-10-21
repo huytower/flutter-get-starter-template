@@ -8,9 +8,6 @@ Future<void> initEnv() async {
   final env = HttpClientConfig.environment;
   String envFile;
   switch (env) {
-    case Environment.UAT:
-      envFile = '.env.uat';
-      break;
     case Environment.PROD:
       envFile = '.env.prod';
       break;

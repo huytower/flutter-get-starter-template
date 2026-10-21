@@ -1,7 +1,7 @@
 name: mobile_flutter_template
 description: Mobile Flutter Template's Overview
 publish_to: none
-version: 1.0.0+15
+version: 1.0.0+16
 
 environment:
   sdk: '^3.12.0'
@@ -132,7 +132,6 @@ flutter:
 
   # Environment files
   assets:
-    - env/.env.uat
     - env/.env.prod
     - assets/icon/
     - assets/lottie/
@@ -187,16 +186,16 @@ melos:
       run: bash scripts/setup_firebase_configs.sh
       description: Generate local config files from templates.
 
-    run:uat:
-      run: bash scripts/run_uat.sh
+    run:prod:
+      run: bash scripts/run_prod.sh
       description: >-
-        Clean, pub get, codegen, then flutter run --flavor uat on a device.
+        Clean, pub get, codegen, then flutter run --flavor prod on a device.
         Pass a device id as an extra arg, else uses $DEVICE_ID or the
         script's default UDID.
 
     run:release:
-      run: bash scripts/run_uat_release.sh
+      run: bash scripts/run_prod_release.sh
       description: >-
         Clean, pub get, codegen, then flutter run --release on a device
-        (uat entry point). Same device resolution as run:uat (CLI arg, then
+        (prod entry point). Same device resolution as run:prod (CLI arg, then
         $DEVICE_ID, then the script's default UDID).

@@ -80,7 +80,7 @@ final needsUpdate = await appVersionService.isUpdateRequired('1.2.0');
 Environment variables are loaded from `.env` files in the `env/` directory:
 
 - `.env` - Development environment
-- `.env.uat` - UAT environment
+- `.env.``uat` - UAT environment
 - `.env.production` - Production environment
 
 ## Dependency Injection

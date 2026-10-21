@@ -3,7 +3,7 @@ default_platform(:ios)
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do |options|
-    flavor = options[:flavor] || "uat"
+    flavor = options[:flavor] || "prod"
 
     # 1. Generate code (run from root directory)
     # Use direct Flutter command instead of melos to avoid PATH issues
@@ -23,7 +23,7 @@ platform :ios do
 
     # 4. Build App (Gym)
     build_app(
-      scheme: flavor == "uat" ? "uat" : "prod",
+      scheme: flavor,
       workspace: "Runner.xcworkspace",
       include_bitcode: false,
       export_method: "app-store",

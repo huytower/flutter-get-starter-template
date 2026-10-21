@@ -20,7 +20,6 @@ export 'core/config/app/cc_app_config.dart';
 
 export 'core/config/http/env/base.dart';
 export 'core/config/http/env/prod.dart';
-export 'core/config/http/env/uat.dart';
 // =================================
 // HTTP CLIENT CONFIGURATION
 // =================================
