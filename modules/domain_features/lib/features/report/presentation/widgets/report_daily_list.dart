@@ -20,9 +20,6 @@ class ReportDailyList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final filtered = transactions.where((tx) {
-      '[ReportDailyList] filtering tx=${tx.id} amount=${tx.amount}'.Log(
-        'Report',
-      );
       return tx.amount != 0;
     }).toList();
     if (filtered.isEmpty) {

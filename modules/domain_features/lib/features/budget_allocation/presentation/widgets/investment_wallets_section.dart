@@ -107,9 +107,6 @@ class InvestmentWalletsSection extends StatelessWidget {
             padding: EdgeInsets.only(right: context.respDim(12)),
             child: Builder(
               builder: (context) {
-                '[InvestmentWalletsSection] wallet=${wallet.id}'.Log(
-                  'Investment',
-                );
                 return InvestmentWalletPreviewCard(
                   wallet: wallet,
                   onTap: onSeeAll,

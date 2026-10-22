@@ -146,8 +146,6 @@ class _InvestmentListView extends CcGetView<WalletController> {
               key: ValueKey(wallet.id),
               child: Obx(() {
                 final stats = controller.investmentStatsOf(wallet.id);
-                '[InvestmentListPage] wallet=${wallet.id} contributed=${stats.contributed}'
-                    .Log('Investment');
                 return InvestmentWalletListItem(
                   wallet: wallet,
                   contributed: stats.contributed,

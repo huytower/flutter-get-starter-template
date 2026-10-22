@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../../guideline/export_guideline.dart';
 import '../get_x/profile_controller.dart';
@@ -222,7 +223,8 @@ class ProfilePage extends CcGetView<ProfileController> {
       Obx(() {
         final isDarkModeSetting = controller.settings.value.isDarkMode;
         final systemBrightness = MediaQuery.platformBrightnessOf(context);
-        final isDarkMode = isDarkModeSetting ?? (systemBrightness == Brightness.dark);
+        final isDarkMode =
+            isDarkModeSetting ?? (systemBrightness == Brightness.dark);
         return ProfileSettingsTile(
           icon: Icons.palette_rounded,
           label: isDarkMode
@@ -248,8 +250,8 @@ class ProfilePage extends CcGetView<ProfileController> {
         icon: Icons.language_rounded,
         label: el.tr(CcLocaleKeys.settings_language),
         subtitle: el.tr(CcLocaleKeys.profile_language_subtitle),
-        trailingLabel: controller.currentLanguageName(context),
-        onTap: () => controller.pickLanguage(context),
+        showChevron: false,
+        bottomWidget: _buildLanguageButtons(context),
       ),
       Obx(
         () => ProfileSettingsTile(
@@ -285,6 +287,82 @@ class ProfilePage extends CcGetView<ProfileController> {
         onTap: () => controller.navigateToTerms(context),
       ),
     ];
+  }
+
+  Widget _buildLanguageButtons(BuildContext context) {
+    final scheme = context.ccColorScheme;
+    final currentLocale = context.locale;
+
+    // Use a hardcoded order or filter from CcLocalization.supportedLocales
+    // The user requested: en, vi, ko, ja, zh
+    final locales = const [
+      Locale('vi'),
+      Locale('en'),
+      Locale('ko'),
+      Locale('ja'),
+      Locale('zh'),
+    ];
+
+    return Wrap(
+      spacing: context.respDim(8),
+      runSpacing: context.respDim(8),
+      children: locales.map((locale) {
+        final isSelected = locale.languageCode == currentLocale.languageCode;
+        final label = _getLanguageLabelShort(locale);
+        return CcBouncing(
+          onTap: () async {
+            if (!isSelected) {
+              await el.EasyLocalization.of(context)!.setLocale(locale);
+              CategorySettingsController.onCategoriesChanged.value++;
+            }
+          },
+          borderRadius: context.brMd,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.respDim(12),
+              vertical: context.respDim(8),
+            ),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? scheme.primary
+                  : scheme.surfaceContainerHighest,
+              borderRadius: context.brMd,
+              border: Border.all(
+                color: isSelected
+                    ? scheme.primary
+                    : scheme.outline.withOpacity(0.1),
+              ),
+            ),
+            child: CcText(
+              label,
+              textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                fontWeight: isSelected
+                    ? CcTypographyParams.bold
+                    : CcTypographyParams.medium,
+                color: isSelected ? scheme.onPrimary : scheme.onSurface,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  String _getLanguageLabelShort(Locale locale) {
+    switch (locale.languageCode) {
+      case 'vi':
+        return 'Tiếng Việt';
+      case 'ko':
+        return '한국어';
+      case 'ja':
+        return '日本語';
+      case 'zh':
+        return '中文';
+      case 'en':
+      default:
+        return 'English';
+    }
   }
 
   Widget _buildLogoutButton(BuildContext context) {

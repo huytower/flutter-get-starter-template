@@ -751,7 +751,7 @@ class CodegenLoader extends AssetLoader{
     "progress_archived": "{percent}% exp archived"
   }
 };
-static const Map<String,dynamic> _jp = {
+static const Map<String,dynamic> _ja = {
   "app": {
     "name": "So Sach Xin",
     "version": "バージョン {version}",
@@ -1488,7 +1488,7 @@ static const Map<String,dynamic> _jp = {
     "progress_archived": "{progress}%経験がアーカイブされました"
   }
 };
-static const Map<String,dynamic> _kr = {
+static const Map<String,dynamic> _ko = {
   "app": {
     "name": "So Sach Xin",
     "version": "버전 {version}",
@@ -3699,5 +3699,5 @@ static const Map<String,dynamic> _zh = {
     "progress_archived": "{progress}% 经验已归档"
   }
 };
-static const Map<String, Map<String,dynamic>> mapLocales = {"en": _en, "jp": _jp, "kr": _kr, "vi": _vi, "zh": _zh};
+static const Map<String, Map<String,dynamic>> mapLocales = {"en": _en, "ja": _ja, "ko": _ko, "vi": _vi, "zh": _zh};
 }

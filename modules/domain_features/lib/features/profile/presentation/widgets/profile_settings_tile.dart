@@ -12,6 +12,7 @@ class ProfileSettingsTile extends StatelessWidget {
     this.trailingWidget,
     this.showChevron = true,
     this.badge,
+    this.bottomWidget,
   });
 
   final IconData icon;
@@ -22,6 +23,7 @@ class ProfileSettingsTile extends StatelessWidget {
   final Widget? trailingWidget;
   final bool showChevron;
   final Widget? badge;
+  final Widget? bottomWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +69,10 @@ class ProfileSettingsTile extends StatelessWidget {
                           ),
                           maxLines: 2,
                         ),
+                      ],
+                      if (bottomWidget != null) ...[
+                        const CcSpaceSM(),
+                        bottomWidget!,
                       ],
                     ],
                   ),
