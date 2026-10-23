@@ -37,11 +37,15 @@ class _LanguageSelectionContentSheetState
     final scheme = context.ccColorScheme;
     const locales = CcLocalization.supportedLocales;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
       children: [
-        _buildHeader(context, scheme),
-        _buildBody(context, scheme, locales),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildHeader(context, scheme),
+            _buildBody(context, scheme, locales),
+          ],
+        ),
       ],
     );
   }
@@ -81,14 +85,23 @@ class _LanguageSelectionContentSheetState
     List<Locale> locales,
   ) {
     return DecoratedBox(
-      decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildLanguageGrid(context, scheme, locales),
-          _buildActions(context, scheme),
-          SizedBox(height: MediaQuery.of(context).padding.bottom),
-        ],
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(context.respDim(24)),
+          bottomRight: Radius.circular(context.respDim(24)),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildLanguageGrid(context, scheme, locales),
+            _buildActions(context, scheme),
+            const CcSpaceMD(),
+          ],
+        ),
       ),
     );
   }
@@ -160,8 +173,6 @@ class _LanguageSelectionContentSheetState
                 ),
               ),
             ),
-            if (isSelected)
-              Icon(Icons.check_circle_rounded, color: scheme.primary, size: 16),
           ],
         ),
       ),
@@ -201,31 +212,36 @@ class _LanguageSelectionContentSheetState
   }
 
   Widget _buildActions(BuildContext context, ColorScheme scheme) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(null),
-          child: CcText(
-            tr(CcLocaleKeys.common_cancel),
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-              color: scheme.primary,
-              fontWeight: CcTypographyParams.semiBold,
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(null),
+            child: CcText(
+              tr(CcLocaleKeys.common_cancel),
+              textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                color: scheme.primary,
+                fontWeight: CcTypographyParams.semiBold,
+              ),
             ),
           ),
-        ),
-        const CcSpaceSM(),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(_selectedLocale),
-          child: CcText(
-            tr(CcLocaleKeys.common_ok),
-            textStyle: context.ccTextTheme.titleMedium?.copyWith(
-              color: scheme.primary,
-              fontWeight: CcTypographyParams.semiBold,
+          const CcSpaceSM(),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(_selectedLocale),
+            child: CcText(
+              tr(CcLocaleKeys.common_ok),
+              textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                color: scheme.primary,
+                fontWeight: CcTypographyParams.semiBold,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

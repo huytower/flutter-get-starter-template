@@ -1,14 +1,21 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:cc_sdk_ui/core/config/tokens/cc_padding_params.dart';
+import 'package:cc_sdk_ui/core/extensions/cc_context_extension.dart';
+import 'package:cc_sdk_ui/core/extensions/common/cc_responsive_extension.dart';
+import 'package:cc_sdk_ui/widgets/anim/fade_page_wrapper.dart';
+import 'package:cc_sdk_ui/widgets/space/cc_space.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:message/cc_locale_keys.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../guideline/export_guideline.dart';
 import '../get_x/budget_allocation_controller.dart';
+import '../widgets/budget_allocation_header.dart';
 import '../widgets/budget_insights_section.dart';
 import '../widgets/budget_limit_preview_section.dart';
 import '../widgets/invest_hero_banner.dart';
@@ -28,41 +35,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return buildDomainGradientAppBar(
-      context,
-      title: CcText(
-        el.tr(CcLocaleKeys.nav_budget_allocation),
-        textStyle: context.ccTextTheme.titleMedium?.copyWith(
-          color: context.ccColorScheme.onPrimary,
-          fontWeight: CcTypographyParams.bold,
-        ),
-      ),
-      actions: [
-        Obx(
-          () => CcIconButton.bouncing(
-            onTap: controller.walletController.toggleBalanceVisibility,
-            icon: CcIconToken(
-              controller.walletController.isBalanceVisible.value
-                  ? Icons.visibility_outlined
-                  : Icons.visibility_off_outlined,
-              size: 18,
-              color: context.ccColorScheme.onPrimary,
-            ),
-          ),
-        ),
-        const CcSpaceMD(),
-        CcIconButton.bouncing(
-          icon: Icon(
-            Icons.fact_check_outlined,
-            color: context.ccColorScheme.onPrimary,
-            size: context.respIconSize(baseSize: 24),
-          ),
-          tooltip: el.tr(CcLocaleKeys.reconciliation_title),
-          onTap: () => controller.navigateToReconcile(context),
-        ),
-        SizedBox(width: context.respPadding(CcPaddingParams.SPACE_SM)),
-      ],
-    );
+    return const BudgetAllocationHeader();
   }
 
   @override

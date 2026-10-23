@@ -469,7 +469,8 @@ class CodegenLoader extends AssetLoader{
     "create_adjustment": "Create adjustment",
     "matched": "Balanced",
     "lech": "Off by {amount}",
-    "review_transactions": "Review transactions"
+    "review_transactions": "Review transactions",
+    "audit_shortcut": "Audit"
   },
   "report": {
     "title": "Report",
@@ -1206,7 +1207,8 @@ static const Map<String,dynamic> _ja = {
     "create_adjustment": "調整を作成",
     "matched": "一致",
     "lech": "{amount}の差",
-    "review_transactions": "取引を確認"
+    "review_transactions": "取引を確認",
+    "audit_shortcut": "監査"
   },
   "report": {
     "title": "レポート",
@@ -1943,7 +1945,8 @@ static const Map<String,dynamic> _ko = {
     "create_adjustment": "조정 생성",
     "matched": "일치함",
     "lech": "{amount} 차이",
-    "review_transactions": "거래 검토"
+    "review_transactions": "거래 검토",
+    "audit_shortcut": "감사"
   },
   "report": {
     "title": "보고서",
@@ -2637,7 +2640,8 @@ static const Map<String,dynamic> _vi = {
     "history": "Lịch sử đối soát",
     "undo": "Hoàn tác",
     "undo_title": "Hoàn tác đối soát",
-    "undo_confirm": "Hoàn tác đối soát mới nhất và xóa các bút toán điều chỉnh?"
+    "undo_confirm": "Hoàn tác đối soát mới nhất và xóa các bút toán điều chỉnh?",
+    "audit_shortcut": "Kiểm toán"
   },
   "report": {
     "title": "Báo cáo",
@@ -2674,7 +2678,7 @@ static const Map<String,dynamic> _vi = {
     "liability_title": "Vay nợ",
     "liability_in": "Đi vay từ",
     "liability_out": "Cho mượn",
-    "daily_detail": "Chi tiết theo ngày",
+    "daily_detail": "B�o c�o ng�y",
     "income_short": "Thu",
     "expense_short": "Chi",
     "uncategorized": "Chưa phân loại",
@@ -3417,7 +3421,8 @@ static const Map<String,dynamic> _zh = {
     "create_adjustment": "创建调整",
     "matched": "已匹配",
     "lech": "差额 {amount}",
-    "review_transactions": "查看交易"
+    "review_transactions": "查看交易",
+    "audit_shortcut": "审计"
   },
   "report": {
     "title": "报告",

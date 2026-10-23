@@ -6,10 +6,15 @@ import 'package:flutter/material.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 
 class ReportDailyDetailShortcut extends StatelessWidget {
-  const ReportDailyDetailShortcut({super.key});
+  const ReportDailyDetailShortcut({super.key, this.color});
+
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final textColor = color ?? context.ccTextTheme.titleSmall?.color;
+    final iconColor = color ?? context.ccColorScheme.primary;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
@@ -20,6 +25,7 @@ class ReportDailyDetailShortcut extends StatelessWidget {
             el.tr(CcLocaleKeys.report_daily_detail),
             textStyle: context.ccTextTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
+              color: textColor,
             ),
           ),
         ),
@@ -27,7 +33,7 @@ class ReportDailyDetailShortcut extends StatelessWidget {
         Icon(
           Icons.chevron_right_rounded,
           size: context.respIconSize(baseSize: 20),
-          color: context.ccColorScheme.primary,
+          color: iconColor,
         ),
       ],
     );

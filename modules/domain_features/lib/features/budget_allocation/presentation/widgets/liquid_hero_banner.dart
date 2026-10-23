@@ -74,6 +74,26 @@ class LiquidHeroBanner extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Obx(
+                () => CcBouncing(
+                  onTap: walletController.toggleBalanceVisibility,
+                  child: Container(
+                    padding: EdgeInsets.all(context.respDim(6)),
+                    decoration: BoxDecoration(
+                      color: scheme.onPrimary.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      walletController.isBalanceVisible.value
+                          ? Icons.visibility_rounded
+                          : Icons.visibility_off_rounded,
+                      color: scheme.onPrimary,
+                      size: context.respIconSize(baseSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+              const CcSpaceMD(),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,19 +144,6 @@ class LiquidHeroBanner extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
-              ),
-              const CcSpaceLG(),
-              Container(
-                padding: EdgeInsets.all(context.respDim(6)),
-                decoration: BoxDecoration(
-                  color: scheme.onPrimary.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: CcIconToken(
-                  icon,
-                  color: scheme.onPrimary,
-                  size: context.respIconSize(baseSize: 16),
                 ),
               ),
             ],
