@@ -434,6 +434,7 @@ abstract class  LocaleKeys {
   static const reconciliation_matched = 'reconciliation.matched';
   static const reconciliation_lech = 'reconciliation.lech';
   static const reconciliation_review_transactions = 'reconciliation.review_transactions';
+  static const reconciliation_audit_shortcut = 'reconciliation.audit_shortcut';
   static const reconciliation = 'reconciliation';
   static const report_title = 'report.title';
   static const report_spending_proportion = 'report.spending_proportion';

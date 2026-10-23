@@ -741,6 +741,7 @@ class CodegenLoader extends AssetLoader {
       "weekly_audit_day_subtitle": "The day you review your weekly balance",
       "weekly_audit_day_hint":
           "Select your weekly audit day, usually at the end of your spending cycle",
+      "audit_shortcut": "Audit",
       "reminder": "Reminders",
       "reminder_subtitle": "Get notified to record your reconcile",
       "theme_subtitle": "Switch between light and dark mode",
@@ -1315,7 +1316,7 @@ class CodegenLoader extends AssetLoader {
       "liability_title": "Vay nợ",
       "liability_in": "Đi vay từ",
       "liability_out": "Cho mượn",
-      "daily_detail": "Chi tiết theo ngày",
+      "daily_detail": "Báo cáo ngày",
       "income_short": "Thu",
       "expense_short": "Chi",
       "uncategorized": "Chưa phân loại",
@@ -1401,6 +1402,7 @@ class CodegenLoader extends AssetLoader {
       "weekly_audit_day_subtitle": "Ngày bạn xem xét số dư hàng tuần",
       "weekly_audit_day_hint":
           "Chọn ngày kiểm tra hàng tuần, thường là vào cuối chu kỳ chi tiêu của bạn",
+      "audit_shortcut": "Kiểm toán",
       "reminder": "Nhắc nhở",
       "reminder_subtitle": "Nhận thông báo để ghi nhận đối soát",
       "theme_subtitle": "Chuyển đổi giữa chế độ sáng và tối",
@@ -2321,6 +2323,7 @@ class CodegenLoader extends AssetLoader {
       "weekly_audit_day": "주간 감사일",
       "weekly_audit_day_subtitle": "주간 잔액을 검토하는 날",
       "weekly_audit_day_hint": "주간 감사일을 선택하세요. 일반적으로 지출 주기의 끝",
+      "audit_shortcut": "감사",
       "reminder": "알림",
       "reminder_subtitle": "조정 기록 알림 수신",
       "theme_subtitle": "라이트 및 다크 모드 전환",
@@ -3072,6 +3075,7 @@ class CodegenLoader extends AssetLoader {
       "weekly_audit_day": "週次監査日",
       "weekly_audit_day_subtitle": "週次残高を確認する日",
       "weekly_audit_day_hint": "週次監査日を選択してください。通常、支出サイクルの終わり",
+      "audit_shortcut": "監査",
       "reminder": "通知",
       "reminder_subtitle": "調整記録の通知を受信",
       "theme_subtitle": "ライトモードとダークモードの切り替え",
@@ -3814,6 +3818,7 @@ class CodegenLoader extends AssetLoader {
       "weekly_audit_day": "每周对账日",
       "weekly_audit_day_subtitle": "您查看每周余额的日期",
       "weekly_audit_day_hint": "选择您的每周对账日，通常在支出周期的末尾",
+      "audit_shortcut": "审计",
       "reminder": "提醒",
       "reminder_subtitle": "收到记录对账的通知",
       "theme_subtitle": "在浅色和深色模式之间切换",
@@ -4693,6 +4698,7 @@ class CcLocaleKeys {
   static const profile_birth_year_task_desc = 'profile.birth_year_task_desc';
   static const profile_weekly_audit = 'profile.weekly_audit';
   static const profile_weekly_audit_day_hint = 'profile.weekly_audit_day_hint';
+  static const profile_audit_shortcut = 'profile.audit_shortcut';
   static const profile_days_left = 'profile.days_left';
   static const profile_debt_loan = 'profile.debt_loan';
   static const profile_unlock_at_lv = 'profile.unlock_at_lv';

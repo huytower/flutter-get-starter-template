@@ -8,8 +8,6 @@ import '../../../../core/getx/cc_get_view.dart';
 import '../get_x/report_controller.dart';
 import '../widgets/report_daily_detail_section.dart';
 
-/// Detail page hosting [ReportDailyDetailSection] — pushed from the report
-/// page's "Chi tiết theo ngày" row.
 @RoutePage()
 class ReportDailyDetailPage extends StatelessWidget {
   const ReportDailyDetailPage({super.key});
