@@ -1,7 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:message/cc_locale_keys.dart';
 
 class LanguageSelectionContentSheet extends StatefulWidget {
   const LanguageSelectionContentSheet({super.key});
@@ -82,38 +81,38 @@ class _LanguageSelectionContentSheetState
     List<Locale> locales,
   ) {
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(context.respDim(24)),
-          bottomRight: Radius.circular(context.respDim(24)),
-        ),
-      ),
+      decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildLanguageRow(context, scheme, locales),
+          _buildLanguageGrid(context, scheme, locales),
           _buildActions(context, scheme),
-          SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
+          SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
       ),
     );
   }
 
-  Widget _buildLanguageRow(
+  Widget _buildLanguageGrid(
     BuildContext context,
     ColorScheme scheme,
     List<Locale> locales,
   ) {
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.PAGE_MD,
-      vertical: CcPaddingParams.PAGE_SM,
-      child: Row(
-        children: locales
-            .map(
-              (locale) => _buildLanguageChip(context, scheme, locale, locales),
-            )
-            .toList(),
+    return Padding(
+      padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_MD)),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisExtent: context.respDim(50),
+          crossAxisSpacing: context.respDim(12),
+          mainAxisSpacing: context.respDim(12),
+        ),
+        itemCount: locales.length,
+        itemBuilder: (context, index) {
+          return _buildLanguageChip(context, scheme, locales[index], locales);
+        },
       ),
     );
   }
@@ -126,40 +125,63 @@ class _LanguageSelectionContentSheetState
   ) {
     final bool isSelected = locale.languageCode == _selectedLocale.languageCode;
     final String label = _getLanguageLabel(locale);
+    final String flag = _getLanguageFlag(locale);
 
-    return Expanded(
-      child: CcBouncing(
-        onTap: () => _onLocaleTap(locale),
-        borderRadius: context.brMd,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          margin: EdgeInsets.only(
-            right: locale == locales.last ? 0.0 : context.respDim(6),
+    return CcBouncing(
+      onTap: () => _onLocaleTap(locale),
+      borderRadius: context.brMd,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: EdgeInsets.symmetric(horizontal: context.respDim(12)),
+        alignment: Alignment.centerLeft,
+        decoration: BoxDecoration(
+          color: isSelected ? scheme.primary.withOpacity(0.1) : scheme.surface,
+          borderRadius: context.brMd,
+          border: Border.all(
+            color: isSelected
+                ? scheme.primary
+                : scheme.outline.withOpacity(0.1),
           ),
-          height: context.respDim(40),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: isSelected ? scheme.primary : Colors.transparent,
-            borderRadius: context.brMd,
-            border: Border.all(
-              color: isSelected
-                  ? scheme.primary
-                  : scheme.outline.withOpacity(0.1),
+        ),
+        child: Row(
+          children: [
+            Text(flag, style: TextStyle(fontSize: context.respFontSize(16))),
+            const CcSpaceSM(),
+            Expanded(
+              child: CcText(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                  fontWeight: isSelected
+                      ? CcTypographyParams.bold
+                      : CcTypographyParams.medium,
+                  color: isSelected ? scheme.primary : scheme.onSurface,
+                ),
+              ),
             ),
-          ),
-          child: CcText(
-            label,
-            align: Alignment.center,
-            textStyle: context.ccTextTheme.bodySmall?.copyWith(
-              fontWeight: isSelected
-                  ? CcTypographyParams.bold
-                  : CcTypographyParams.regular,
-              color: isSelected ? scheme.onPrimary : scheme.onSurface,
-            ),
-          ),
+            if (isSelected)
+              Icon(Icons.check_circle_rounded, color: scheme.primary, size: 16),
+          ],
         ),
       ),
     );
+  }
+
+  String _getLanguageFlag(Locale locale) {
+    switch (locale.languageCode) {
+      case 'vi':
+        return '🇻🇳';
+      case 'ko':
+        return '🇰🇷';
+      case 'ja':
+        return '🇯🇵';
+      case 'zh':
+        return '🇨🇳';
+      case 'en':
+      default:
+        return '🇺🇸';
+    }
   }
 
   String _getLanguageLabel(Locale locale) {
@@ -179,39 +201,31 @@ class _LanguageSelectionContentSheetState
   }
 
   Widget _buildActions(BuildContext context, ColorScheme scheme) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        context.respPadding(CcPaddingParams.PAGE_MD),
-        0,
-        context.respPadding(CcPaddingParams.PAGE_MD),
-        context.respPadding(CcPaddingParams.PAGE_XS),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(null),
-            child: CcText(
-              tr(CcLocaleKeys.common_cancel),
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                color: scheme.primary,
-                fontWeight: CcTypographyParams.semiBold,
-              ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(null),
+          child: CcText(
+            tr(CcLocaleKeys.common_cancel),
+            textStyle: context.ccTextTheme.titleMedium?.copyWith(
+              color: scheme.primary,
+              fontWeight: CcTypographyParams.semiBold,
             ),
           ),
-          const CcSpaceSM(),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(_selectedLocale),
-            child: CcText(
-              tr(CcLocaleKeys.common_ok),
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                color: scheme.primary,
-                fontWeight: CcTypographyParams.semiBold,
-              ),
+        ),
+        const CcSpaceSM(),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(_selectedLocale),
+          child: CcText(
+            tr(CcLocaleKeys.common_ok),
+            textStyle: context.ccTextTheme.titleMedium?.copyWith(
+              color: scheme.primary,
+              fontWeight: CcTypographyParams.semiBold,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
