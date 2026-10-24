@@ -373,6 +373,11 @@ class CodegenLoader extends AssetLoader {
         "not_editable": "This transaction can't be edited",
         "edit_window": "You can only edit transactions from the last 30 days",
       },
+      "transfer_money": "Transfer money",
+      "transfer_from": "From wallet",
+      "transfer_to": "To wallet",
+      "transfer_swap": "Swap wallets",
+      "transfer_saved": "Transfer saved successfully",
     },
     "liability": {
       "title": "Liabilities",
@@ -784,6 +789,32 @@ class CodegenLoader extends AssetLoader {
       "calculate_ratings_info": "How do we calculate ratings?",
       "out_of_5": "{rating} out of 5",
       "star_count": "{count} star",
+      "feedback_praise_title": "Praise",
+      "feedback_criticism_title": "Criticism",
+      "feedback_hint": "Tell us more (optional)",
+      "feedback_send": "Send feedback",
+      "feedback_required": "Choose a tag or write a message",
+      "feedback_sent": "Thanks for your feedback",
+      "feedback_praise_fast": "Lightning-fast entry ✓",
+      "feedback_praise_offline": "Works great offline ✓",
+      "feedback_praise_runway": "Real Runway calculation +",
+      "feedback_praise_reconciliation": "Accurate reconciliation ✓",
+      "feedback_praise_lending": "Clear lending/borrowing ✓",
+      "feedback_praise_suggestions": "Precise money suggestions ✓",
+      "feedback_praise_interface": "Minimalist interface ✓",
+      "feedback_praise_scanning": "Sensitive bill scanning ✨",
+      "feedback_praise_alerts": "Accurate alerts +",
+      "feedback_praise_leveling": "Fun leveling up +",
+      "feedback_criticism_sync": "Sync error ✕",
+      "feedback_criticism_balance": "Balance mismatch ✕",
+      "feedback_criticism_unlock": "Unlock takes too long ✕",
+      "feedback_criticism_scanning": "Scanned bill is incorrect ✕",
+      "feedback_criticism_amount": "Hard to enter amount ✕",
+      "feedback_criticism_categories": "Missing categories ✕",
+      "feedback_criticism_limits": "Hard to edit limit ✕",
+      "feedback_criticism_notifications": "No notifications ✕",
+      "feedback_criticism_charts": "Charts are hard to view +",
+      "feedback_criticism_speed": "App is slow +",
     },
     "guideline": {
       "banner_title_completed": "Congrats! All setup steps completed",
@@ -1193,6 +1224,11 @@ class CodegenLoader extends AssetLoader {
         "not_editable": "Không thể sửa giao dịch này!",
         "edit_window": "Chỉ có thể sửa giao dịch trong 30 ngày gần nhất!",
       },
+      "transfer_money": "Chuyển tiền",
+      "transfer_from": "Ví nguồn",
+      "transfer_to": "Ví nhận",
+      "transfer_swap": "Đổi ví",
+      "transfer_saved": "Đã lưu chuyển tiền thành công",
     },
     "budget": {
       "title": "Ngân sách",
@@ -1453,6 +1489,32 @@ class CodegenLoader extends AssetLoader {
       "calculate_ratings_info": "Cách chúng tôi tính toán đánh giá",
       "out_of_5": "{rating} trên 5",
       "star_count": "{count} sao",
+      "feedback_praise_title": "Điểm tốt",
+      "feedback_criticism_title": "Góp ý",
+      "feedback_hint": "Chia sẻ thêm (không bắt buộc)",
+      "feedback_send": "Gửi góp ý",
+      "feedback_required": "Hãy chọn thẻ hoặc viết nội dung",
+      "feedback_sent": "Cảm ơn góp ý của bạn",
+      "feedback_praise_fast": "Nhập liệu rất nhanh ✓",
+      "feedback_praise_offline": "Hoạt động tốt khi ngoại tuyến ✓",
+      "feedback_praise_runway": "Tính Runway thực tế +",
+      "feedback_praise_reconciliation": "Đối soát chính xác ✓",
+      "feedback_praise_lending": "Quản lý vay/cho mượn rõ ràng ✓",
+      "feedback_praise_suggestions": "Gợi ý tiền chính xác ✓",
+      "feedback_praise_interface": "Giao diện tối giản ✓",
+      "feedback_praise_scanning": "Quét hóa đơn nhạy ✨",
+      "feedback_praise_alerts": "Thông báo chính xác +",
+      "feedback_praise_leveling": "Tăng cấp thú vị +",
+      "feedback_criticism_sync": "Lỗi đồng bộ ✕",
+      "feedback_criticism_balance": "Số dư không khớp ✕",
+      "feedback_criticism_unlock": "Mở khóa quá lâu ✕",
+      "feedback_criticism_scanning": "Quét hóa đơn sai ✕",
+      "feedback_criticism_amount": "Khó nhập số tiền ✕",
+      "feedback_criticism_categories": "Thiếu danh mục ✕",
+      "feedback_criticism_limits": "Khó sửa hạn mức ✕",
+      "feedback_criticism_notifications": "Không có thông báo ✕",
+      "feedback_criticism_charts": "Biểu đồ khó xem +",
+      "feedback_criticism_speed": "Ứng dụng chậm +",
     },
     "guideline": {
       "banner_title_completed":
@@ -1993,6 +2055,11 @@ class CodegenLoader extends AssetLoader {
         "not_editable": "이 거래는 편집할 수 없습니다",
         "edit_window": "최근 30일 이내의 거래만 편집할 수 있습니다",
       },
+      "transfer_money": "송금",
+      "transfer_from": "출금 지갑",
+      "transfer_to": "입금 지갑",
+      "transfer_swap": "지갑 바꾸기",
+      "transfer_saved": "송금이 저장되었습니다",
     },
     "liability": {
       "title": "부채",
@@ -2379,6 +2446,32 @@ class CodegenLoader extends AssetLoader {
       "calculate_ratings_info": "평가는 어떻게 계산되나요?",
       "out_of_5": "5점 만점에 {rating}점",
       "star_count": "{count}점",
+      "feedback_praise_title": "좋았던 점",
+      "feedback_criticism_title": "개선할 점",
+      "feedback_hint": "더 자세히 알려주세요 (선택 사항)",
+      "feedback_send": "피드백 보내기",
+      "feedback_required": "태그를 선택하거나 내용을 입력하세요",
+      "feedback_sent": "피드백 감사합니다",
+      "feedback_praise_fast": "빠른 입력 ✓",
+      "feedback_praise_offline": "오프라인에서도 잘 작동 ✓",
+      "feedback_praise_runway": "정확한 런웨이 계산 +",
+      "feedback_praise_reconciliation": "정확한 조정 ✓",
+      "feedback_praise_lending": "명확한 대여/차용 관리 ✓",
+      "feedback_praise_suggestions": "정확한 금액 제안 ✓",
+      "feedback_praise_interface": "미니멀한 인터페이스 ✓",
+      "feedback_praise_scanning": "똑똑한 영수증 스캔 ✨",
+      "feedback_praise_alerts": "정확한 알림 +",
+      "feedback_praise_leveling": "재미있는 레벨업 +",
+      "feedback_criticism_sync": "동기화 오류 ✕",
+      "feedback_criticism_balance": "잔액 불일치 ✕",
+      "feedback_criticism_unlock": "잠금 해제가 너무 느림 ✕",
+      "feedback_criticism_scanning": "영수증 스캔 오류 ✕",
+      "feedback_criticism_amount": "금액 입력이 어려움 ✕",
+      "feedback_criticism_categories": "카테고리 부족 ✕",
+      "feedback_criticism_limits": "한도 수정이 어려움 ✕",
+      "feedback_criticism_notifications": "알림 없음 ✕",
+      "feedback_criticism_charts": "차트를 보기 어려움 +",
+      "feedback_criticism_speed": "앱이 느림 +",
     },
     "guideline": {
       "banner_title_completed": "축하합니다! 모든 설정 단계가 완료되었습니다",
@@ -2759,6 +2852,11 @@ class CodegenLoader extends AssetLoader {
         "not_editable": "この取引は編集できません",
         "edit_window": "過去30日以内の取引のみ編集できます",
       },
+      "transfer_money": "送金",
+      "transfer_from": "送金元ウォレット",
+      "transfer_to": "送金先ウォレット",
+      "transfer_swap": "ウォレットを入れ替え",
+      "transfer_saved": "送金を保存しました",
     },
     "liability": {
       "title": "負債",
@@ -3137,6 +3235,32 @@ class CodegenLoader extends AssetLoader {
       "calculate_ratings_info": "評価の計算方法について",
       "out_of_5": "5段階中{rating}",
       "star_count": "{count}つ星",
+      "feedback_praise_title": "良かった点",
+      "feedback_criticism_title": "改善点",
+      "feedback_hint": "詳しく教えてください（任意）",
+      "feedback_send": "フィードバックを送信",
+      "feedback_required": "タグを選択するか内容を入力してください",
+      "feedback_sent": "フィードバックありがとうございます",
+      "feedback_praise_fast": "入力が速い ✓",
+      "feedback_praise_offline": "オフラインでも快適 ✓",
+      "feedback_praise_runway": "正確なランウェイ計算 +",
+      "feedback_praise_reconciliation": "正確な調整 ✓",
+      "feedback_praise_lending": "貸し借りが明確 ✓",
+      "feedback_praise_suggestions": "正確な金額提案 ✓",
+      "feedback_praise_interface": "ミニマルな画面 ✓",
+      "feedback_praise_scanning": "高精度なレシートスキャン ✨",
+      "feedback_praise_alerts": "正確な通知 +",
+      "feedback_praise_leveling": "楽しいレベルアップ +",
+      "feedback_criticism_sync": "同期エラー ✕",
+      "feedback_criticism_balance": "残高が一致しない ✕",
+      "feedback_criticism_unlock": "解除に時間がかかる ✕",
+      "feedback_criticism_scanning": "レシートの読み取りが不正確 ✕",
+      "feedback_criticism_amount": "金額入力が難しい ✕",
+      "feedback_criticism_categories": "カテゴリが足りない ✕",
+      "feedback_criticism_limits": "上限の編集が難しい ✕",
+      "feedback_criticism_notifications": "通知がない ✕",
+      "feedback_criticism_charts": "グラフが見づらい +",
+      "feedback_criticism_speed": "アプリが遅い +",
     },
     "guideline": {
       "banner_title_completed": "おめでとうございます！すべての設定ステップが完了しました",
@@ -3513,6 +3637,11 @@ class CodegenLoader extends AssetLoader {
         "not_editable": "此交易无法编辑",
         "edit_window": "您只能编辑过去 30 天内的交易",
       },
+      "transfer_money": "转账",
+      "transfer_from": "转出钱包",
+      "transfer_to": "转入钱包",
+      "transfer_swap": "交换钱包",
+      "transfer_saved": "转账已成功保存",
     },
     "liability": {
       "title": "负债",
@@ -3887,6 +4016,32 @@ class CodegenLoader extends AssetLoader {
       "calculate_ratings_info": "我们如何计算评分？",
       "out_of_5": "满分 5 分，得分为 {rating}",
       "star_count": "{count}星",
+      "feedback_praise_title": "好评",
+      "feedback_criticism_title": "改进建议",
+      "feedback_hint": "告诉我们更多（可选）",
+      "feedback_send": "发送反馈",
+      "feedback_required": "选择标签或写下内容",
+      "feedback_sent": "感谢您的反馈",
+      "feedback_praise_fast": "输入快速 ✓",
+      "feedback_praise_offline": "离线也能正常使用 ✓",
+      "feedback_praise_runway": "真实 Runway 计算 +",
+      "feedback_praise_reconciliation": "对账准确 ✓",
+      "feedback_praise_lending": "借贷管理清晰 ✓",
+      "feedback_praise_suggestions": "资金建议精确 ✓",
+      "feedback_praise_interface": "界面极简 ✓",
+      "feedback_praise_scanning": "账单扫描敏锐 ✨",
+      "feedback_praise_alerts": "通知准确 +",
+      "feedback_praise_leveling": "升级有趣 +",
+      "feedback_criticism_sync": "同步错误 ✕",
+      "feedback_criticism_balance": "余额不符 ✕",
+      "feedback_criticism_unlock": "解锁太慢 ✕",
+      "feedback_criticism_scanning": "扫描账单不准确 ✕",
+      "feedback_criticism_amount": "金额输入困难 ✕",
+      "feedback_criticism_categories": "类别缺失 ✕",
+      "feedback_criticism_limits": "限额编辑困难 ✕",
+      "feedback_criticism_notifications": "没有通知 ✕",
+      "feedback_criticism_charts": "图表难以查看 +",
+      "feedback_criticism_speed": "应用程序缓慢 +",
     },
     "guideline": {
       "banner_title_completed": "恭喜！所有设置步骤已完成",
@@ -4378,6 +4533,11 @@ class CcLocaleKeys {
       'transaction.validation.not_editable';
   static const transaction_validation_edit_window =
       'transaction.validation.edit_window';
+  static const transaction_transfer_money = 'transaction.transfer_money';
+  static const transaction_transfer_from = 'transaction.transfer_from';
+  static const transaction_transfer_to = 'transaction.transfer_to';
+  static const transaction_transfer_swap = 'transaction.transfer_swap';
+  static const transaction_transfer_saved = 'transaction.transfer_saved';
 
   static const liability = 'liability';
   static const liability_title = 'liability.title';
@@ -4777,6 +4937,32 @@ class CcLocaleKeys {
   static const profile_calculate_ratings_info = 'profile.calculate_ratings_info';
   static const profile_out_of_5 = 'profile.out_of_5';
   static const profile_star_count = 'profile.star_count';
+  static const profile_feedback_praise_title = 'profile.feedback_praise_title';
+  static const profile_feedback_criticism_title = 'profile.feedback_criticism_title';
+  static const profile_feedback_hint = 'profile.feedback_hint';
+  static const profile_feedback_send = 'profile.feedback_send';
+  static const profile_feedback_required = 'profile.feedback_required';
+  static const profile_feedback_sent = 'profile.feedback_sent';
+  static const profile_feedback_praise_fast = 'profile.feedback_praise_fast';
+  static const profile_feedback_praise_offline = 'profile.feedback_praise_offline';
+  static const profile_feedback_praise_runway = 'profile.feedback_praise_runway';
+  static const profile_feedback_praise_reconciliation = 'profile.feedback_praise_reconciliation';
+  static const profile_feedback_praise_lending = 'profile.feedback_praise_lending';
+  static const profile_feedback_praise_suggestions = 'profile.feedback_praise_suggestions';
+  static const profile_feedback_praise_interface = 'profile.feedback_praise_interface';
+  static const profile_feedback_praise_scanning = 'profile.feedback_praise_scanning';
+  static const profile_feedback_praise_alerts = 'profile.feedback_praise_alerts';
+  static const profile_feedback_praise_leveling = 'profile.feedback_praise_leveling';
+  static const profile_feedback_criticism_sync = 'profile.feedback_criticism_sync';
+  static const profile_feedback_criticism_balance = 'profile.feedback_criticism_balance';
+  static const profile_feedback_criticism_unlock = 'profile.feedback_criticism_unlock';
+  static const profile_feedback_criticism_scanning = 'profile.feedback_criticism_scanning';
+  static const profile_feedback_criticism_amount = 'profile.feedback_criticism_amount';
+  static const profile_feedback_criticism_categories = 'profile.feedback_criticism_categories';
+  static const profile_feedback_criticism_limits = 'profile.feedback_criticism_limits';
+  static const profile_feedback_criticism_notifications = 'profile.feedback_criticism_notifications';
+  static const profile_feedback_criticism_charts = 'profile.feedback_criticism_charts';
+  static const profile_feedback_criticism_speed = 'profile.feedback_criticism_speed';
   static const profile_young_children_message =
       'profile.young_children_message';
   static const profile_experience_level_progress =

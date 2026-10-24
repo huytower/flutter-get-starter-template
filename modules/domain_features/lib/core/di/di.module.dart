@@ -208,6 +208,8 @@ import 'package:domain_features/features/transaction/domain/usecases/create_tran
     as _i109;
 import 'package:domain_features/features/transaction/domain/usecases/create_transaction_usecase.dart'
     as _i28;
+import 'package:domain_features/features/transaction/domain/usecases/create_wallet_transfer_usecase.dart'
+    as _i955;
 import 'package:domain_features/features/transaction/domain/usecases/get_monthly_cash_flow_usecase.dart'
     as _i895;
 import 'package:domain_features/features/transaction/domain/usecases/get_monthly_recurring_match_usecase.dart'
@@ -540,6 +542,13 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.lazySingleton<_i28.CreateTransactionUseCase>(
         () => _i28.CreateTransactionUseCase(
+              gh<_i1027.TransactionRepository>(),
+              gh<_i572.WalletRepository>(),
+              gh<_i105.GetWalletBookBalanceUseCase>(),
+              gh<_i195.CurrencyConversionService>(),
+            ));
+    gh.lazySingleton<_i955.CreateWalletTransferUseCase>(
+        () => _i955.CreateWalletTransferUseCase(
               gh<_i1027.TransactionRepository>(),
               gh<_i572.WalletRepository>(),
               gh<_i105.GetWalletBookBalanceUseCase>(),

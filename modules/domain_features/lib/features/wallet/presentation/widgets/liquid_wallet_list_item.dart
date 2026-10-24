@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,6 +15,7 @@ class LiquidWalletListItem extends StatelessWidget {
   final bool canDelete;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final VoidCallback? onTransfer;
 
   const LiquidWalletListItem({
     super.key,
@@ -22,6 +24,7 @@ class LiquidWalletListItem extends StatelessWidget {
     this.canDelete = true,
     this.onEdit,
     this.onDelete,
+    this.onTransfer,
   });
 
   @override
@@ -57,6 +60,16 @@ class LiquidWalletListItem extends StatelessWidget {
           const CcSpaceMD(),
           _buildName(context),
           _buildBalance(context),
+          const CcSpaceSM(),
+          CcIconButton.bouncing(
+            icon: Icon(
+              Icons.swap_vert_rounded,
+              color: scheme.primary,
+              size: context.respIconSize(baseSize: 20),
+            ),
+            onTap: onTransfer ?? () {},
+            tooltip: el.tr('transaction.transfer_money'),
+          ),
         ],
       ),
     );

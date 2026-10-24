@@ -1,12 +1,10 @@
 import 'dart:io' show Platform;
 
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:message/export_message.dart';
 
 /// Customer reviews summary card with overall score, star ratings breakdown,
 /// and direct store rating deep-link support.
@@ -68,7 +66,10 @@ class ReviewsSummaryCard extends StatelessWidget {
       }
 
       if (!kIsWeb && Platform.isAndroid && androidPackageName != null) {
-        final uri = Uri.parse('market://details?id=$androidPackageName');
+        final uri = Uri.parse(
+          'market://details?id=com.google.android.apps.bard',
+        );
+        // final uri = Uri.parse('market://details?id=$androidPackageName');
         final fallback = Uri.parse(
           'https://play.google.com/store/apps/details?id=$androidPackageName',
         );
