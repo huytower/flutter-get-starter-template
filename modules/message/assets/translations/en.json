@@ -697,7 +697,14 @@
     "level_novice": "Novice",
     "progress_steps": "Progress steps",
     "reconciliation_streak_title": "{count} week streak",
-    "reconciliation_streak_desc": "Audit day: {day}"
+    "reconciliation_streak_desc": "Audit day: {day}",
+    "rate_app": "Rate app",
+    "rate_app_subtitle": "Help us improve So Sach Xin",
+    "customer_reviews": "Customer reviews",
+    "customer_ratings_count": "{count} customer ratings",
+    "calculate_ratings_info": "How do we calculate ratings?",
+    "out_of_5": "{rating} out of 5",
+    "star_count": "{count} star"
   },
   "guideline": {
     "banner_title_completed": "Congrats! All setup steps completed",

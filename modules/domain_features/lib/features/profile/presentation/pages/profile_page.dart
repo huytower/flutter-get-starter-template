@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../../guideline/export_guideline.dart';
 import '../get_x/profile_controller.dart';
+import '../widgets/app_rating_sheet.dart';
 import '../widgets/guideline_reset_bottom_sheet.dart';
 import '../widgets/profile_delete_confirm_sheet.dart';
 import '../widgets/profile_menu_group.dart';
@@ -285,6 +285,12 @@ class ProfilePage extends CcGetView<ProfileController> {
         label: el.tr(CcLocaleKeys.profile_terms),
         subtitle: el.tr(CcLocaleKeys.profile_terms_subtitle),
         onTap: () => controller.navigateToTerms(context),
+      ),
+      ProfileSettingsTile(
+        icon: Icons.star_rate_rounded,
+        label: el.tr(CcLocaleKeys.profile_rate_app),
+        subtitle: el.tr(CcLocaleKeys.profile_rate_app_subtitle),
+        onTap: () => AppRatingSheet.show(context),
       ),
     ];
   }

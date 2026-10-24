@@ -697,7 +697,14 @@
     "level_novice": "初級",
     "progress_steps": "進行ステップ",
     "reconciliation_streak_title": "{count}週連続",
-    "reconciliation_streak_desc": "監査日: {day}"
+    "reconciliation_streak_desc": "監査日: {day}",
+    "rate_app": "アプリを評価",
+    "rate_app_subtitle": "So Sach Xinの改善にご協力ください",
+    "customer_reviews": "カスタマーレビュー",
+    "customer_ratings_count": "{count}件のカスタマー評価",
+    "calculate_ratings_info": "評価の計算方法について",
+    "out_of_5": "5段階中{rating}",
+    "star_count": "{count}つ星"
   },
   "guideline": {
     "banner_title_completed": "おめでとうございます！すべての設定ステップが完了しました",

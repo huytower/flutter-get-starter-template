@@ -777,6 +777,13 @@ class CodegenLoader extends AssetLoader {
       "progress_steps": "Progress steps",
       "reconciliation_streak_title": "{count} week streak",
       "reconciliation_streak_desc": "Audit day: {day}",
+      "rate_app": "Rate app",
+      "rate_app_subtitle": "Help us improve So Sach Xin",
+      "customer_reviews": "Customer reviews",
+      "customer_ratings_count": "{count} customer ratings",
+      "calculate_ratings_info": "How do we calculate ratings?",
+      "out_of_5": "{rating} out of 5",
+      "star_count": "{count} star",
     },
     "guideline": {
       "banner_title_completed": "Congrats! All setup steps completed",
@@ -1439,6 +1446,13 @@ class CodegenLoader extends AssetLoader {
       "progress_steps": "Các bước tiến độ",
       "reconciliation_streak_title": "{count} tuần chuỗi",
       "reconciliation_streak_desc": "Ngày kiểm tra: {day}",
+      "rate_app": "Đánh giá ứng dụng",
+      "rate_app_subtitle": "Giúp chúng tôi cải thiện Sổ Sách Xịn",
+      "customer_reviews": "Khách hàng đánh giá",
+      "customer_ratings_count": "{count} lượt đánh giá",
+      "calculate_ratings_info": "Cách chúng tôi tính toán đánh giá",
+      "out_of_5": "{rating} trên 5",
+      "star_count": "{count} sao",
     },
     "guideline": {
       "banner_title_completed":
@@ -2358,6 +2372,13 @@ class CodegenLoader extends AssetLoader {
       "progress_steps": "진행 단계",
       "reconciliation_streak_title": "{count}주 연속",
       "reconciliation_streak_desc": "감사일: {day}",
+      "rate_app": "앱 평가",
+      "rate_app_subtitle": "So Sach Xin 개선에 도움을 주세요",
+      "customer_reviews": "고객 리뷰",
+      "customer_ratings_count": "{count}개의 고객 평가",
+      "calculate_ratings_info": "평가는 어떻게 계산되나요?",
+      "out_of_5": "5점 만점에 {rating}점",
+      "star_count": "{count}점",
     },
     "guideline": {
       "banner_title_completed": "축하합니다! 모든 설정 단계가 완료되었습니다",
@@ -3109,6 +3130,13 @@ class CodegenLoader extends AssetLoader {
       "progress_steps": "進行ステップ",
       "reconciliation_streak_title": "{count}週連続",
       "reconciliation_streak_desc": "監査日: {day}",
+      "rate_app": "アプリを評価",
+      "rate_app_subtitle": "So Sach Xinの改善にご協力ください",
+      "customer_reviews": "カスタマーレビュー",
+      "customer_ratings_count": "{count}件のカスタマー評価",
+      "calculate_ratings_info": "評価の計算方法について",
+      "out_of_5": "5段階中{rating}",
+      "star_count": "{count}つ星",
     },
     "guideline": {
       "banner_title_completed": "おめでとうございます！すべての設定ステップが完了しました",
@@ -3852,6 +3880,13 @@ class CodegenLoader extends AssetLoader {
       "progress_steps": "进度步骤",
       "reconciliation_streak_title": "{count} 周连续",
       "reconciliation_streak_desc": "对账日: {day}",
+      "rate_app": "评价应用",
+      "rate_app_subtitle": "帮助我们改进 So Sach Xin",
+      "customer_reviews": "客户评价",
+      "customer_ratings_count": "{count} 条客户评分",
+      "calculate_ratings_info": "我们如何计算评分？",
+      "out_of_5": "满分 5 分，得分为 {rating}",
+      "star_count": "{count}星",
     },
     "guideline": {
       "banner_title_completed": "恭喜！所有设置步骤已完成",
@@ -4735,6 +4770,13 @@ class CcLocaleKeys {
   static const profile_delete_account = 'profile.delete_account';
   static const profile_delete_confirm = 'profile.delete_confirm';
   static const profile_delete_confirm_desc = 'profile.delete_confirm_desc';
+  static const profile_rate_app = 'profile.rate_app';
+  static const profile_rate_app_subtitle = 'profile.rate_app_subtitle';
+  static const profile_customer_reviews = 'profile.customer_reviews';
+  static const profile_customer_ratings_count = 'profile.customer_ratings_count';
+  static const profile_calculate_ratings_info = 'profile.calculate_ratings_info';
+  static const profile_out_of_5 = 'profile.out_of_5';
+  static const profile_star_count = 'profile.star_count';
   static const profile_young_children_message =
       'profile.young_children_message';
   static const profile_experience_level_progress =

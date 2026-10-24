@@ -697,7 +697,14 @@
     "level_novice": "新手",
     "progress_steps": "进度步骤",
     "reconciliation_streak_title": "{count} 周连续",
-    "reconciliation_streak_desc": "对账日: {day}"
+    "reconciliation_streak_desc": "对账日: {day}",
+    "rate_app": "评价应用",
+    "rate_app_subtitle": "帮助我们改进 So Sach Xin",
+    "customer_reviews": "客户评价",
+    "customer_ratings_count": "{count} 条客户评分",
+    "calculate_ratings_info": "我们如何计算评分？",
+    "out_of_5": "满分 5 分，得分为 {rating}",
+    "star_count": "{count}星"
   },
   "guideline": {
     "banner_title_completed": "恭喜！所有设置步骤已完成",
