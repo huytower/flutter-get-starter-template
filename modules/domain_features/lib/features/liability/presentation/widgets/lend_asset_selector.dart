@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
@@ -35,11 +35,7 @@ class LendAssetSelector extends StatelessWidget {
         const CcSpaceXS(),
         Obx(() {
           if (controller.isLoadingMerged.value) {
-            return CcCategoryShimmerList(
-              height: context.respDim(95),
-              verticalPadding: context.respDim(4),
-              separator: const CcSpaceMD(),
-            );
+            return const CcCategoryShimmerList(itemPadding: EdgeInsets.zero);
           }
 
           final items = controller.mergedItems;
@@ -74,7 +70,7 @@ class LendAssetSelector extends StatelessWidget {
                 vertical: context.respDim(4),
               ),
               itemCount: items.length,
-              separatorBuilder: (context, index) => const CcSpaceMD(),
+              separatorBuilder: (context, index) => const CcSpaceSM(),
               itemBuilder: (context, index) {
                 final balance = items[index];
                 final liability = balance.liability;

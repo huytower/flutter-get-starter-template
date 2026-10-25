@@ -78,7 +78,7 @@ class InvestmentAssetSelector extends StatelessWidget {
                 vertical: context.respDim(4),
               ),
               itemCount: items.length,
-              separatorBuilder: (context, index) => const CcSpaceMD(),
+              separatorBuilder: (context, index) => const CcSpaceSM(),
               itemBuilder: (context, index) {
                 final item = items[index];
                 return Obx(() {
