@@ -1,10 +1,8 @@
 import 'dart:developer' as developer;
-import 'dart:ui';
 
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_ce/hive_ce.dart';
@@ -44,16 +42,7 @@ void main() async {
       _bootLocalization(),
     ]);
 
-    // 3. Setup error handling immediately after core systems are ready
-    FlutterError.onError = (errorDetails) {
-      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-    };
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return true;
-    };
-
-    // 4. UI Launch
+    // 3. UI Launch
     _runApplication();
   } catch (error, stackTrace) {
     developer.log(

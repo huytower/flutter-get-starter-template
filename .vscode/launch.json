@@ -2,16 +2,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Uat App",
-      "request": "launch",
-      "type": "dart",
-      "program": "lib/main_uat.dart",
-      "args": [
-        "--flavor",
-        "uat"
-      ]
-    },
-    {
       "name": "Prod App",
       "request": "launch",
       "type": "dart",

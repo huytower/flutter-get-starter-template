@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'reviews/rating_bar_row.dart';
 import 'reviews/rating_pill.dart';
 
 /// Customer reviews summary card with overall score, star ratings breakdown,
@@ -86,19 +85,13 @@ class ReviewsSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sortedLevels = breakdown.keys.toList()
-      ..sort((a, b) => b.compareTo(a)); // 5 -> 1
-
     return Container(
-      padding: EdgeInsets.fromLTRB(
-        context.respPadding(24),
-        context.respPadding(28),
-        context.respPadding(24),
-        context.respPadding(24),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+        vertical: context.respPadding(CcPaddingParams.PAGE_XS),
       ),
       decoration: BoxDecoration(
-        color: context.ccColorScheme.surface,
-        borderRadius: context.brXl,
+        color: context.ccColorScheme.primary.withAlpha(50),
         boxShadow: [
           BoxShadow(
             color: context.ccColorScheme.shadow.withValues(alpha: 0.05),
@@ -115,7 +108,6 @@ class ReviewsSummaryCard extends StatelessWidget {
           const CcSpaceXS(),
           _buildRatingPill(context),
           const CcSpaceSM(),
-          _buildBreakdown(context, sortedLevels),
           if (onCalculateInfoTap != null) ...[
             const CcSpaceLG(),
             _buildCalculateInfoLink(context),
@@ -157,21 +149,6 @@ class ReviewsSummaryCard extends StatelessWidget {
       textStyle: context.ccTextTheme.bodyMedium?.copyWith(
         color: context.ccColorScheme.onSurfaceVariant,
       ),
-    );
-  }
-
-  Widget _buildBreakdown(BuildContext context, List<int> sortedLevels) {
-    return Column(
-      children: [
-        for (var i = 0; i < sortedLevels.length; i++) ...[
-          RatingBarRow(
-            level: sortedLevels[i],
-            percent: breakdown[sortedLevels[i]]!.toDouble(),
-            delay: Duration(milliseconds: 80 * i),
-          ),
-          if (i != sortedLevels.length - 1) const CcSpaceMD(),
-        ],
-      ],
     );
   }
 

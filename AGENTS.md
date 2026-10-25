@@ -44,8 +44,7 @@ melos run test                # flutter test, across all packages
 - To run/generate for a single package, `cd` into it and run the plain `flutter`/`dart` command (e.g.
   `cd modules/domain_features && flutter analyze`) rather than melos, when you only touched that package.
 - Run a single test file: `flutter test path/to/foo_test.dart` (from the package root that owns it).
-- Run the app: `flutter run -d <device> --flavor uat -t lib/main_uat.dart` (flavors: `uat`, `prod`; entry points
-  `lib/main_uat.dart`, `lib/main_prod.dart`, both delegating to `lib/main.dart` via `EnvironmentRunner`).
+- Run the app: `flutter run -d <device> --flavor prod -t lib/main_prod.dart` (flavor: `prod`; entry point `lib/main_prod.dart` delegating to `lib/main.dart` via `EnvironmentRunner`).
 - Firebase config is git-ignored; `melos run setup:firebase` copies `.template` files into
   `android/app/src/{flavor}/google-services.json` and `ios/Firebase/{flavor}/GoogleService-Info.plist`.
 - CI (`.github/workflows/firebase-app-distribution.yml`) is currently fully disabled (`if: false` on every job,

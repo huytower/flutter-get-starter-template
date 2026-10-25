@@ -46,7 +46,6 @@ runs:
       run: |
         mkdir -p env
         [ -f env/.env.development ] || cp env/.env.example env/.env.development
-        [ -f env/.env.uat ] || cp env/.env.example env/.env.uat
         [ -f env/.env.prod ] || cp env/.env.example env/.env.prod
         
         # Initialize native config files from templates to avoid "file not found" errors in CI
