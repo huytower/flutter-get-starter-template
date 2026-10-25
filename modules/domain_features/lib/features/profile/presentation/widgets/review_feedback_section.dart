@@ -63,6 +63,12 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
       );
       return;
     }
+    final isPraise = _selected.any((key) => _praiseKeys.contains(key));
+    CcSlackFeedbackHelper.sendUserFeedback(
+      feedbackText: _feedbackController.text.trim(),
+      selectedKeys: _selected.toList(),
+      isPraise: isPraise,
+    );
     CcSnackBarHelper.showSuccessSnackBar(
       context: context,
       message: el.tr('profile.feedback_sent'),
