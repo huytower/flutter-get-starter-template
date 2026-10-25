@@ -1,3 +1,5 @@
+import 'reviews/rating_pill.dart';
+import 'reviews/rating_bar_row.dart';
 import 'dart:io' show Platform;
 
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
@@ -66,10 +68,7 @@ class ReviewsSummaryCard extends StatelessWidget {
       }
 
       if (!kIsWeb && Platform.isAndroid && androidPackageName != null) {
-        final uri = Uri.parse(
-          'market://details?id=com.google.android.apps.bard',
-        );
-        // final uri = Uri.parse('market://details?id=$androidPackageName');
+        final uri = Uri.parse('market://details?id=$androidPackageName');
         final fallback = Uri.parse(
           'https://play.google.com/store/apps/details?id=$androidPackageName',
         );
@@ -128,10 +127,11 @@ class ReviewsSummaryCard extends StatelessWidget {
   }
 
   Widget _buildTitle(BuildContext context) {
-    return Text(
+    return CcText(
       title ?? el.tr(CcLocaleKeys.profile_customer_reviews),
+      align: Alignment.center,
       textAlign: TextAlign.center,
-      style: context.ccTextTheme.headlineSmall?.copyWith(
+      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
         fontWeight: FontWeight.w800,
         color: context.ccColorScheme.onSurface,
       ),
@@ -140,7 +140,7 @@ class ReviewsSummaryCard extends StatelessWidget {
 
   Widget _buildRatingPill(BuildContext context) {
     return Center(
-      child: _RatingPill(
+      child: RatingPill(
         averageRating: averageRating,
         onTap: onRateTap ?? _openStoreForRating,
       ),
@@ -148,13 +148,14 @@ class ReviewsSummaryCard extends StatelessWidget {
   }
 
   Widget _buildTotalRatings(BuildContext context) {
-    return Text(
+    return CcText(
       el.tr(
         CcLocaleKeys.profile_customer_ratings_count,
         namedArgs: {'count': '$totalRatings'},
       ),
+      align: Alignment.center,
       textAlign: TextAlign.center,
-      style: context.ccTextTheme.bodyMedium?.copyWith(
+      textStyle: context.ccTextTheme.bodyMedium?.copyWith(
         color: context.ccColorScheme.onSurfaceVariant,
       ),
     );
@@ -164,7 +165,7 @@ class ReviewsSummaryCard extends StatelessWidget {
     return Column(
       children: [
         for (var i = 0; i < sortedLevels.length; i++) ...[
-          _RatingBarRow(
+          RatingBarRow(
             level: sortedLevels[i],
             percent: breakdown[sortedLevels[i]]!.toDouble(),
             delay: Duration(milliseconds: 80 * i),
@@ -185,175 +186,16 @@ class ReviewsSummaryCard extends StatelessWidget {
             horizontal: context.respPadding(8),
             vertical: context.respPadding(4),
           ),
-          child: Text(
+          child: CcText(
             el.tr(CcLocaleKeys.profile_calculate_ratings_info),
             textAlign: TextAlign.center,
-            style: context.ccTextTheme.bodySmall?.copyWith(
+            textStyle: context.ccTextTheme.bodySmall?.copyWith(
               color: context.ccColorScheme.primary,
               fontWeight: FontWeight.w600,
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class _RatingPill extends StatelessWidget {
-  const _RatingPill({required this.averageRating, required this.onTap});
-
-  final double averageRating;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final fullStars = averageRating.floor();
-    final hasHalfStar = averageRating - fullStars >= 0.5;
-
-    return Material(
-      color: context.ccColorScheme.surfaceContainerHighest,
-      borderRadius: context.brPill,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: context.brPill,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: context.respPadding(20),
-            vertical: context.respPadding(12),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (var i = 0; i < 5; i++) ...[
-                Icon(
-                  i < fullStars
-                      ? Icons.star_rounded
-                      : (i == fullStars && hasHalfStar)
-                      ? Icons.star_half_rounded
-                      : Icons.star_border_rounded,
-                  color: context.ccColorScheme.primary,
-                  size: context.respDim(22),
-                ),
-                if (i != 4) const CcSpaceXS(),
-              ],
-              const CcSpaceSM(),
-              Text(
-                el.tr(
-                  CcLocaleKeys.profile_out_of_5,
-                  namedArgs: {'rating': averageRating.toStringAsFixed(1)},
-                ),
-                style: context.ccTextTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: context.ccColorScheme.onSurface,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RatingBarRow extends StatelessWidget {
-  const _RatingBarRow({
-    required this.level,
-    required this.percent,
-    required this.delay,
-  });
-
-  final int level;
-  final double percent;
-  final Duration delay;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: context.respDim(56),
-          child: Text(
-            el.tr(
-              CcLocaleKeys.profile_star_count,
-              namedArgs: {'count': '$level'},
-            ),
-            style: context.ccTextTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: context.ccColorScheme.primary,
-            ),
-          ),
-        ),
-        const CcSpaceMD(),
-        Expanded(
-          child: ClipRRect(
-            borderRadius: context.brPill,
-            child: Container(
-              height: context.respDim(8),
-              color: context.ccColorScheme.surfaceContainer,
-              alignment: Alignment.centerLeft,
-              child: _DelayedFill(
-                targetFraction: (percent.clamp(0, 100)) / 100,
-                delay: delay,
-              ),
-            ),
-          ),
-        ),
-        const CcSpaceMD(),
-        SizedBox(
-          width: context.respDim(42),
-          child: Text(
-            '${percent.round()}%',
-            textAlign: TextAlign.right,
-            style: context.ccTextTheme.bodyMedium?.copyWith(
-              color: context.ccColorScheme.onSurface,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _DelayedFill extends StatefulWidget {
-  const _DelayedFill({required this.targetFraction, required this.delay});
-
-  final double targetFraction;
-  final Duration delay;
-
-  @override
-  State<_DelayedFill> createState() => _DelayedFillState();
-}
-
-class _DelayedFillState extends State<_DelayedFill> {
-  double _fraction = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(widget.delay, () {
-      if (mounted) setState(() => _fraction = widget.targetFraction);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 600),
-          curve: Curves.easeOutCubic,
-          width: constraints.maxWidth * _fraction,
-          height: context.respDim(8),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                context.ccColorScheme.primaryContainer,
-                context.ccColorScheme.primary,
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }
