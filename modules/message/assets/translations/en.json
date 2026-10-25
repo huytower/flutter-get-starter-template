@@ -147,7 +147,9 @@
     "quick_test_page": "Quick Testing Page",
     "notification": "Notification",
     "profile": "Profile",
-    "profile_info": "Personal Information"
+    "profile_info": "Personal Information",
+    "nav_reconcile": "Reconcile",
+    "reconciliation.title": "Reconcile"
   },
   "dashboard": {
     "item_count": "Item Count",

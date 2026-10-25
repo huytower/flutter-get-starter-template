@@ -78,6 +78,9 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
     );
     _feedbackController.clear();
     setState(() => _selected.clear());
+    if (context.mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   @override

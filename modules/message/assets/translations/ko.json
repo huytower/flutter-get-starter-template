@@ -147,7 +147,9 @@
     "quick_test_page": "빠른 테스트 페이지",
     "notification": "알림",
     "profile": "프로필",
-    "profile_info": "개인 정보"
+    "profile_info": "개인 정보",
+    "nav_reconcile": "대조",
+    "reconciliation.title": "대조"
   },
   "dashboard": {
     "item_count": "항목 수",

@@ -147,7 +147,9 @@
     "quick_test_page": "クイックテストページ",
     "notification": "通知",
     "profile": "プロフィール",
-    "profile_info": "個人情報"
+    "profile_info": "個人情報",
+    "nav_reconcile": "照合",
+    "reconciliation.title": "照合"
   },
   "dashboard": {
     "item_count": "アイテム数",

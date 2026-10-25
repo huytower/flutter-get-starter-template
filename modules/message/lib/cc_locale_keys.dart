@@ -171,6 +171,8 @@ class CodegenLoader extends AssetLoader {
       "notification": "Notification",
       "profile": "Profile",
       "profile_info": "Personal Information",
+      "nav_reconcile": "Reconcile",
+      "reconciliation.title": "Reconcile",
     },
     "dashboard": {
       "item_count": "Item Count",
@@ -1020,6 +1022,8 @@ class CodegenLoader extends AssetLoader {
       "notification": "Thông báo",
       "profile": "Hồ sơ",
       "profile_info": "Thông tin cá nhân",
+      "nav_reconcile": "Kiểm toán",
+      "reconciliation.title": "Kiểm toán",
     },
     "dashboard": {
       "item_count": "Số lượng mục",
@@ -4241,6 +4245,7 @@ class CcLocaleKeys {
   static const nav_notification = 'nav.notification';
   static const nav_profile = 'nav.profile';
   static const nav_profile_info = 'nav.profile_info';
+  static const nav_reconcile = 'nav.reconcile';
 
   static const dashboard = 'dashboard';
   static const dashboard_item_count = 'dashboard.item_count';

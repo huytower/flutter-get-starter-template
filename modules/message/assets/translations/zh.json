@@ -147,7 +147,9 @@
     "quick_test_page": "快速测试页面",
     "notification": "通知",
     "profile": "个人资料",
-    "profile_info": "个人信息"
+    "profile_info": "个人信息",
+    "nav_reconcile": "对账",
+    "reconciliation.title": "对账"
   },
   "dashboard": {
     "item_count": "项目数量",
