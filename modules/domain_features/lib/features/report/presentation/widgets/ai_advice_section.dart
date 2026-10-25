@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/helper/ai_advice_helper.dart';
 import '../../../../core/helper/ai_advice_highlight_helper.dart';
 import '../../domain/entities/ai_advice_entity.dart';
 import '../get_x/report_controller.dart';
@@ -34,7 +33,7 @@ class AiAdviceSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTitleRow(context, advice, isGenerating),
+            _buildTitleRow(context),
             const CcSpaceSM(),
             if (isGenerating)
               _buildLoadingBody(context)
@@ -57,40 +56,22 @@ class AiAdviceSection extends StatelessWidget {
     });
   }
 
-  Widget _buildTitleRow(
-    BuildContext context,
-    AiAdviceEntity? advice,
-    bool isGenerating,
-  ) {
+  Widget _buildTitleRow(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            Icon(
-              Icons.auto_awesome,
-              size: context.respIconSize(baseSize: 16),
-              color: PrjColors.info,
-            ),
-            const CcSpaceXS(),
-            CcText(
-              el.tr(CcLocaleKeys.report_ai_advice_title),
-              textStyle: context.ccTextTheme.titleSmall?.copyWith(
-                fontWeight: CcTypographyParams.bold,
-                color: PrjColors.info,
-              ),
-            ),
-          ],
+        Icon(
+          Icons.auto_awesome,
+          size: context.respIconSize(baseSize: 16),
+          color: PrjColors.info,
         ),
-        if (advice != null && !isGenerating)
-          IconButton(
-            icon: Icon(
-              Icons.refresh,
-              size: context.respIconSize(baseSize: 20),
-              color: context.ccColorScheme.onSurfaceVariant,
-            ),
-            onPressed: () => controller.generateAiAdvice(context),
+        const CcSpaceXS(),
+        CcText(
+          el.tr(CcLocaleKeys.report_ai_advice_title),
+          textStyle: context.ccTextTheme.titleSmall?.copyWith(
+            fontWeight: CcTypographyParams.bold,
+            color: PrjColors.info,
           ),
+        ),
       ],
     );
   }
@@ -154,19 +135,14 @@ class AiAdviceSection extends StatelessWidget {
   }
 
   Widget _buildAdviceBody(BuildContext context, AiAdviceEntity advice) {
+    final sections = advice.sections;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (final section in advice.sections) ...[
-          _buildSectionCard(context, section),
-          const CcSpaceXS(),
+        for (var i = 0; i < sections.length; i++) ...[
+          _buildSectionCard(context, sections[i]),
+          if (i < sections.length - 1) const CcSpaceXS(),
         ],
-        CcText(
-          _generatedAtLabel(advice.generatedAt),
-          textStyle: context.ccTextTheme.labelSmall?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant,
-          ),
-        ),
       ],
     );
   }
@@ -242,28 +218,5 @@ class AiAdviceSection extends StatelessWidget {
       case AiAdviceSectionStatus.bad:
         return Icons.warning_amber_rounded;
     }
-  }
-
-  String _generatedAtLabel(DateTime generatedAt) {
-    final elapsed = timeSinceGenerated(generatedAt);
-    if (elapsed.inMinutes < 1) {
-      return el.tr(CcLocaleKeys.report_ai_advice_generated_just_now);
-    }
-    if (elapsed.inHours < 1) {
-      return el.tr(
-        CcLocaleKeys.report_ai_advice_generated_minutes_ago,
-        namedArgs: {'count': '${elapsed.inMinutes}'},
-      );
-    }
-    if (elapsed.inDays < 1) {
-      return el.tr(
-        CcLocaleKeys.report_ai_advice_generated_hours_ago,
-        namedArgs: {'count': '${elapsed.inHours}'},
-      );
-    }
-    return el.tr(
-      CcLocaleKeys.report_ai_advice_generated_days_ago,
-      namedArgs: {'count': '${elapsed.inDays}'},
-    );
   }
 }
