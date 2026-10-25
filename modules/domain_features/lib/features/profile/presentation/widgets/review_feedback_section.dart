@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 
 class ReviewFeedbackSection extends StatefulWidget {
-  const ReviewFeedbackSection({super.key});
+  const ReviewFeedbackSection({super.key, this.averageRating});
+
+  final double? averageRating;
 
   @override
   State<ReviewFeedbackSection> createState() => _ReviewFeedbackSectionState();
@@ -68,6 +70,7 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
       feedbackText: _feedbackController.text.trim(),
       selectedKeys: _selected.toList(),
       isPraise: isPraise,
+      averageRating: widget.averageRating,
     );
     CcSnackBarHelper.showSuccessSnackBar(
       context: context,

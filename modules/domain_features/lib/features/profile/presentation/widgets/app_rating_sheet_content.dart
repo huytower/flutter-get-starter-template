@@ -38,7 +38,7 @@ class AppRatingSheetContent extends StatelessWidget {
                   iosAppId: '6738361005',
                   androidPackageName: 'vn.sosachxin.finance',
                 ),
-                ReviewFeedbackSection(),
+                ReviewFeedbackSection(averageRating: 5.0),
               ],
             ),
           ),
