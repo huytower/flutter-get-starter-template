@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'core/di/di.dart';
 import 'core/di/hive_registrar.dart';
+import 'core/crash_reporting/crash_log_startup.dart';
 import 'core/logging/init_logger.dart';
 import 'core/runner/app_runner.dart';
 
@@ -42,7 +43,11 @@ void main() async {
       _bootLocalization(),
     ]);
 
-    // 3. UI Launch
+    // 3. Setup error handling immediately after core systems are ready
+    // Non-critical, non-blocking: upload any pending crash log from a previous session.
+    uploadPendingCrashLogsOnStartup();
+
+    // 4. UI Launch
     _runApplication();
   } catch (error, stackTrace) {
     developer.log(
