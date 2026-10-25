@@ -1,7 +1,8 @@
-import 'reviews/feedback_tag.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+
+import 'reviews/feedback_tag.dart';
 
 class ReviewFeedbackSection extends StatefulWidget {
   const ReviewFeedbackSection({super.key});
@@ -125,25 +126,50 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
         CcFormLabel(text: title, color: context.ccColorScheme.onSurface),
         const CcSpaceXS(),
         HorizontalFadeScrollView(
-          height: context.respDim(30),
-          builder: (scrollController) => SingleChildScrollView(
-            controller: scrollController,
-            scrollDirection: Axis.horizontal,
-            child: Wrap(
-              direction: Axis.vertical,
-              spacing: context.respDim(8),
-              runSpacing: context.respDim(8),
-              children: [
-                for (final key in keys)
-                  FeedbackTag(
-                    label: el.tr(key),
-                    selected: _selected.contains(key),
-                    activeColor: activeColor,
-                    onTap: () => _toggle(key),
+          height: context.respDim(55),
+          builder: (scrollController) {
+            final half = (keys.length / 2).ceil();
+            final topKeys = keys.sublist(0, half);
+            final bottomKeys = keys.sublist(half);
+
+            return SingleChildScrollView(
+              controller: scrollController,
+              scrollDirection: Axis.horizontal,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      for (var i = 0; i < topKeys.length; i++) ...[
+                        FeedbackTag(
+                          label: el.tr(topKeys[i]),
+                          selected: _selected.contains(topKeys[i]),
+                          activeColor: activeColor,
+                          onTap: () => _toggle(topKeys[i]),
+                        ),
+                        if (i < topKeys.length - 1) const CcSpaceSM(),
+                      ],
+                    ],
                   ),
-              ],
-            ),
-          ),
+                  const CcSpaceSM(),
+                  Row(
+                    children: [
+                      for (var i = 0; i < bottomKeys.length; i++) ...[
+                        FeedbackTag(
+                          label: el.tr(bottomKeys[i]),
+                          selected: _selected.contains(bottomKeys[i]),
+                          activeColor: activeColor,
+                          onTap: () => _toggle(bottomKeys[i]),
+                        ),
+                        if (i < bottomKeys.length - 1) const CcSpaceSM(),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ],
     );
