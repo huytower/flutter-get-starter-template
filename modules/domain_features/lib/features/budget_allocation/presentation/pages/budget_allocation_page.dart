@@ -35,7 +35,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   @override
   PreferredSizeWidget? buildAppBar(BuildContext context) {
-    return const BudgetAllocationHeader();
+    return buildBudgetAllocationHeader(context);
   }
 
   @override
