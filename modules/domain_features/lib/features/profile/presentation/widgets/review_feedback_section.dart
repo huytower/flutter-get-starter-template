@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:cc_sdk_ui/widgets/background/cc_watermark_background.dart';
 import 'package:cc_sdk_ui/widgets/chip/cc_feedback_tag.dart';
+import 'package:domain_features/features/transaction/presentation/widgets/transaction_submit_button.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
@@ -87,19 +88,29 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
           watermarkIcon: Icons.thumb_down_alt_rounded,
         ),
         const CcSpaceMD(),
-        CcTextField(
-          controller: _feedbackController,
-          hintText: el.tr('profile.feedback_hint'),
-          maxLines: 1,
-          height: context.respDim(50),
-          textAlign: TextAlign.start,
-          color: context.ccColorScheme.surfaceContainerHighest,
-          borderColor: context.ccColorScheme.outlineVariant,
+        CcPadding(
+          CcTextField(
+            controller: _feedbackController,
+            hintText: el.tr('profile.feedback_hint'),
+            maxLines: 1,
+            height: context.respDim(50),
+            textAlign: TextAlign.start,
+            color: context.ccColorScheme.surfaceContainerHighest,
+            borderColor: context.ccColorScheme.outlineVariant,
+          ),
+          0,
+          CcPaddingParams.PAGE_SM,
+          CcPaddingParams.PAGE_SM,
+          0,
         ),
-        const CcSpaceXS(),
-        CcBaseBtn.bouncing(
-          title: el.tr('profile.feedback_send'),
+        TransactionSubmitButton(
+          text: el.tr('profile.feedback_send'),
+          isSubmitting: false,
+          isEnabled: true,
+          activeColor: context.ccColorScheme.primary,
           onTap: () => _send(context),
+          widthFactor: 0.5,
+          leadingIcon: Icons.send_rounded,
         ),
       ],
     );
