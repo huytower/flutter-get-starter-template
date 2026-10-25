@@ -247,7 +247,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
           style: context.ccTextTheme.bodyLarge,
           decoration: InputDecoration(
             hintText: el.tr(CcLocaleKeys.transaction_new_investment_item_hint),
-            border: OutlineInputBorder(borderRadius: context.brMd),
+            border: context.inputBorderTextField,
             contentPadding: EdgeInsets.symmetric(
               horizontal: context.respDim(12),
               vertical: context.respDim(10),

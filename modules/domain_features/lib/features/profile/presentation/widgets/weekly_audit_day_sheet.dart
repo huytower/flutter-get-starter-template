@@ -18,6 +18,6 @@ class WeeklyAuditDaySheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WeeklyAuditDaySheetContent(currentDay: currentDay);
+    return WeeklyAuditDayContentSheet(currentDay: currentDay);
   }
 }

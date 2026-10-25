@@ -1,20 +1,19 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:message/cc_locale_keys.dart';
 
-class WeeklyAuditDaySheetContent extends StatefulWidget {
+class WeeklyAuditDayContentSheet extends StatefulWidget {
   final int currentDay;
 
-  const WeeklyAuditDaySheetContent({super.key, required this.currentDay});
+  const WeeklyAuditDayContentSheet({super.key, required this.currentDay});
 
   @override
-  State<WeeklyAuditDaySheetContent> createState() =>
-      _WeeklyAuditDaySheetContentState();
+  State<WeeklyAuditDayContentSheet> createState() =>
+      _WeeklyAuditDayContentSheetState();
 }
 
-class _WeeklyAuditDaySheetContentState
-    extends State<WeeklyAuditDaySheetContent> {
+class _WeeklyAuditDayContentSheetState
+    extends State<WeeklyAuditDayContentSheet> {
   late int _selectedDay;
 
   @override
@@ -124,22 +123,17 @@ class _WeeklyAuditDaySheetContentState
         borderRadius: context.brLg,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          width: context.respDim(64),
-          height: context.respDim(32),
+          width: context.respDim(80),
+          height: context.respDim(40),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isSelected ? scheme.primary : Colors.transparent,
             borderRadius: context.brLg,
-            border: Border.all(
-              color: isSelected
-                  ? scheme.primary
-                  : scheme.outline.withOpacity(0.1),
-            ),
           ),
           child: CcText(
             _getDayName(day),
             align: Alignment.center,
-            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+            textStyle: context.ccTextTheme.bodyLarge?.copyWith(
               fontWeight: isSelected
                   ? CcTypographyParams.bold
                   : CcTypographyParams.regular,
