@@ -7,9 +7,10 @@ import 'package:multiple_result/multiple_result.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
-import '../../../../core/getx/cc_get_controller.dart';
-import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/exchange_rates/display_currency_converter.dart';
+import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/helper/ai_advice_cache_datasource.dart';
+import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
@@ -197,6 +198,21 @@ class ReportController extends CcGetController {
     isGeneratingAdvice.value = true;
     aiAdviceErrorKey.value = null;
 
+    final targetCurrency = CurrencyConstants.currentPrimaryCurrency;
+    final cacheDs = getIt<AiAdviceCacheDataSource>();
+    final fingerprint = cacheDs.computeFingerprint(dailyListTransactions);
+
+    final cachedResult = await cacheDs.getCachedAdvice(
+      fingerprint: fingerprint,
+      targetCurrency: targetCurrency,
+    );
+    if (cachedResult != null) {
+      if (isClosed) return;
+      isGeneratingAdvice.value = false;
+      aiAdvice.value = cachedResult;
+      return;
+    }
+
     final prefs = getIt<AiFallbackPreferenceDataSource>();
     if (!await prefs.isGeminiEnabled()) {
       if (isClosed) return;
@@ -212,7 +228,6 @@ class ReportController extends CcGetController {
       return;
     }
 
-    final targetCurrency = CurrencyConstants.currentPrimaryCurrency;
     final result = await _generateAiAdvice.call(
       targetCurrency: targetCurrency,
       conversionService: _conversionService,
@@ -224,7 +239,13 @@ class ReportController extends CcGetController {
       aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_generate_failed;
       return;
     }
+
     aiAdvice.value = result;
+    await cacheDs.saveAdvice(
+      advice: result,
+      fingerprint: fingerprint,
+      targetCurrency: targetCurrency,
+    );
   }
 
   void setWalletFilter(String walletId, String walletName) {
@@ -328,9 +349,25 @@ class ReportController extends CcGetController {
 
     layoutStatus.value = CcLayoutStatus.success;
 
+    _loadCachedAdviceIfAvailable();
+
     if (_pendingScrollToDaily) {
       _pendingScrollToDaily = false;
       _scrollToDailyDetail();
+    }
+  }
+
+  Future<void> _loadCachedAdviceIfAvailable() async {
+    if (!userLevel.status.value.isVip) return;
+    final cacheDs = getIt<AiAdviceCacheDataSource>();
+    final fingerprint = cacheDs.computeFingerprint(dailyListTransactions);
+    final targetCurrency = CurrencyConstants.currentPrimaryCurrency;
+    final cached = await cacheDs.getCachedAdvice(
+      fingerprint: fingerprint,
+      targetCurrency: targetCurrency,
+    );
+    if (cached != null && !isClosed) {
+      aiAdvice.value = cached;
     }
   }
 

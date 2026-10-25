@@ -18,6 +18,24 @@ class AiAdviceSectionItem extends Equatable {
     this.highlights = const [],
   });
 
+  Map<String, dynamic> toJson() => {
+    'status': status.name,
+    'text': text,
+    'highlights': highlights,
+  };
+
+  factory AiAdviceSectionItem.fromJson(Map<String, dynamic> json) =>
+      AiAdviceSectionItem(
+        status: AiAdviceSectionStatus.values.firstWhere(
+          (e) => e.name == json['status'],
+          orElse: () => AiAdviceSectionStatus.normal,
+        ),
+        text: json['text'] as String? ?? '',
+        highlights:
+            (json['highlights'] as List?)?.map((e) => '$e').toList() ??
+            const [],
+      );
+
   @override
   List<Object?> get props => [status, text, highlights];
 }
@@ -26,14 +44,31 @@ class AiAdviceSectionItem extends Equatable {
 /// Budget Issues" (income-increase suggestions, anomaly review) and
 /// "Spending Optimization" (habit warnings, saving encouragement), broken
 /// into discrete, status-tagged [sections] rather than one flat paragraph.
-/// Unlike [BudgetInsightsEntity], this is never auto-computed — it's only
-/// ever produced by an explicit user-triggered cloud call, held in memory
-/// for the current app session only (no disk persistence).
 class AiAdviceEntity extends Equatable {
   final List<AiAdviceSectionItem> sections;
   final DateTime generatedAt;
 
   const AiAdviceEntity({required this.sections, required this.generatedAt});
+
+  Map<String, dynamic> toJson() => {
+    'sections': sections.map((s) => s.toJson()).toList(),
+    'generatedAt': generatedAt.toIso8601String(),
+  };
+
+  factory AiAdviceEntity.fromJson(Map<String, dynamic> json) => AiAdviceEntity(
+    sections:
+        (json['sections'] as List?)
+            ?.map(
+              (s) => AiAdviceSectionItem.fromJson(
+                Map<String, dynamic>.from(s as Map),
+              ),
+            )
+            .toList() ??
+        const [],
+    generatedAt:
+        DateTime.tryParse(json['generatedAt'] as String? ?? '') ??
+        DateTime.now(),
+  );
 
   @override
   List<Object?> get props => [sections, generatedAt];
