@@ -7,6 +7,7 @@ import '../../../category/domain/entities/category_entity.dart';
 import '../get_x/expense_form_controller.dart';
 import '../models/unified_category_item.dart';
 import 'base/category_selection_layout.dart';
+import 'base/unified_category_item_widget.dart';
 
 const String _debugTag = 'ExpenseCategorySelection';
 

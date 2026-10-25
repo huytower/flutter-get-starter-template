@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../get_x/income_form_controller.dart';
 import 'base/category_selection_layout.dart';
+import 'base/unified_category_item_widget.dart';
 
 /// Specialized category selector for the Income tab.
 ///
