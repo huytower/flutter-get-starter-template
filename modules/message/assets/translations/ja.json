@@ -712,8 +712,6 @@
     "calculate_ratings_info": "評価の計算方法について",
     "out_of_5": "5段階中{rating}",
     "star_count": "{count}つ星",
-    "feedback_praise_title": "良かった点",
-    "feedback_criticism_title": "改善点",
     "feedback_hint": "詳しく教えてください（任意）",
     "feedback_send": "フィードバックを送信",
     "feedback_required": "タグを選択するか内容を入力してください",

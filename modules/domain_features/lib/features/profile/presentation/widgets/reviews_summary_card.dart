@@ -1,5 +1,3 @@
-import 'reviews/rating_pill.dart';
-import 'reviews/rating_bar_row.dart';
 import 'dart:io' show Platform;
 
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
@@ -7,6 +5,9 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'reviews/rating_bar_row.dart';
+import 'reviews/rating_pill.dart';
 
 /// Customer reviews summary card with overall score, star ratings breakdown,
 /// and direct store rating deep-link support.
@@ -110,12 +111,10 @@ class ReviewsSummaryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildTitle(context),
-          const CcSpaceXL(),
+          _buildTotalRatings(context),
+          const CcSpaceXS(),
           _buildRatingPill(context),
           const CcSpaceSM(),
-          _buildTotalRatings(context),
-          const CcSpaceXL(),
           _buildBreakdown(context, sortedLevels),
           if (onCalculateInfoTap != null) ...[
             const CcSpaceLG(),

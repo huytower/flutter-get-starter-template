@@ -712,8 +712,6 @@
     "calculate_ratings_info": "我们如何计算评分？",
     "out_of_5": "满分 5 分，得分为 {rating}",
     "star_count": "{count}星",
-    "feedback_praise_title": "优点",
-    "feedback_criticism_title": "问题与建议",
     "feedback_hint": "告诉我们更多（可选）",
     "feedback_send": "发送反馈",
     "feedback_required": "请选择标签或填写内容",

@@ -712,8 +712,6 @@
     "calculate_ratings_info": "How do we calculate ratings?",
     "out_of_5": "{rating} out of 5",
     "star_count": "{count} star",
-    "feedback_praise_title": "Praise",
-    "feedback_criticism_title": "Criticism",
     "feedback_hint": "Tell us more (optional)",
     "feedback_send": "Send feedback",
     "feedback_required": "Choose a tag or write a message",

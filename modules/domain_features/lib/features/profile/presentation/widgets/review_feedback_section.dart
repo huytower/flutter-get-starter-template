@@ -1,8 +1,8 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/widgets/background/cc_watermark_background.dart';
+import 'package:cc_sdk_ui/widgets/chip/cc_feedback_tag.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-
-import 'reviews/feedback_tag.dart';
 
 class ReviewFeedbackSection extends StatefulWidget {
   const ReviewFeedbackSection({super.key});
@@ -71,107 +71,106 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        context.respPadding(24),
-        context.respPadding(8),
-        context.respPadding(24),
-        context.respPadding(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildGroup(
-            context,
-            title: el.tr('profile.feedback_praise_title'),
-            keys: _praiseKeys,
-            activeColor: context.ccColorScheme.primary,
-          ),
-          const CcSpaceMD(),
-          _buildGroup(
-            context,
-            title: el.tr('profile.feedback_criticism_title'),
-            keys: _criticismKeys,
-            activeColor: context.ccColorScheme.error,
-          ),
-          const CcSpaceMD(),
-          CcTextField(
-            controller: _feedbackController,
-            hintText: el.tr('profile.feedback_hint'),
-            maxLines: 5,
-            height: context.respDim(90),
-            textAlign: TextAlign.start,
-            color: context.ccColorScheme.surfaceContainerHighest,
-            borderColor: context.ccColorScheme.outlineVariant,
-          ),
-          const CcSpaceXS(),
-          CcBaseBtn.bouncing(
-            title: el.tr('profile.feedback_send'),
-            onTap: () => _send(context),
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildGroup(
+          context,
+          keys: _praiseKeys,
+          activeColor: context.ccColorScheme.primary,
+          watermarkIcon: Icons.thumb_up_alt_rounded,
+        ),
+        _buildGroup(
+          context,
+          keys: _criticismKeys,
+          activeColor: context.ccColorScheme.error,
+          watermarkIcon: Icons.thumb_down_alt_rounded,
+        ),
+        const CcSpaceMD(),
+        CcTextField(
+          controller: _feedbackController,
+          hintText: el.tr('profile.feedback_hint'),
+          maxLines: 1,
+          height: context.respDim(50),
+          textAlign: TextAlign.start,
+          color: context.ccColorScheme.surfaceContainerHighest,
+          borderColor: context.ccColorScheme.outlineVariant,
+        ),
+        const CcSpaceXS(),
+        CcBaseBtn.bouncing(
+          title: el.tr('profile.feedback_send'),
+          onTap: () => _send(context),
+        ),
+      ],
     );
   }
 
   Widget _buildGroup(
     BuildContext context, {
-    required String title,
     required List<String> keys,
     required Color activeColor,
+    required IconData watermarkIcon,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcFormLabel(text: title, color: context.ccColorScheme.onSurface),
-        const CcSpaceXS(),
-        HorizontalFadeScrollView(
-          height: context.respDim(55),
-          builder: (scrollController) {
-            final half = (keys.length / 2).ceil();
-            final topKeys = keys.sublist(0, half);
-            final bottomKeys = keys.sublist(half);
+    return ClipRRect(
+      borderRadius: BorderRadius.horizontal(left: context.brMd.topLeft),
+      child: CcWatermarkBackground(
+        icon: watermarkIcon,
+        activeColor: activeColor,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: context.respDim(8)),
+          child: HorizontalFadeScrollView(
+            height: context.respDim(75),
+            builder: (scrollController) {
+              final half = (keys.length / 2).ceil();
+              final topKeys = keys.sublist(0, half);
+              final bottomKeys = keys.sublist(half);
 
-            return SingleChildScrollView(
-              controller: scrollController,
-              scrollDirection: Axis.horizontal,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
+              return SingleChildScrollView(
+                controller: scrollController,
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      for (var i = 0; i < topKeys.length; i++) ...[
-                        FeedbackTag(
-                          label: el.tr(topKeys[i]),
-                          selected: _selected.contains(topKeys[i]),
-                          activeColor: activeColor,
-                          onTap: () => _toggle(topKeys[i]),
-                        ),
-                        if (i < topKeys.length - 1) const CcSpaceSM(),
-                      ],
+                      Row(
+                        children: [
+                          for (var i = 0; i < topKeys.length; i++) ...[
+                            CcFeedbackTag(
+                              label: el.tr(topKeys[i]),
+                              selected: _selected.contains(topKeys[i]),
+                              activeColor: activeColor,
+                              onTap: () => _toggle(topKeys[i]),
+                            ),
+                            if (i < topKeys.length - 1) const CcSpaceSM(),
+                          ],
+                        ],
+                      ),
+                      const CcSpaceSM(),
+                      Row(
+                        children: [
+                          for (var i = 0; i < bottomKeys.length; i++) ...[
+                            CcFeedbackTag(
+                              label: el.tr(bottomKeys[i]),
+                              selected: _selected.contains(bottomKeys[i]),
+                              activeColor: activeColor,
+                              onTap: () => _toggle(bottomKeys[i]),
+                            ),
+                            if (i < bottomKeys.length - 1) const CcSpaceSM(),
+                          ],
+                        ],
+                      ),
                     ],
                   ),
-                  const CcSpaceSM(),
-                  Row(
-                    children: [
-                      for (var i = 0; i < bottomKeys.length; i++) ...[
-                        FeedbackTag(
-                          label: el.tr(bottomKeys[i]),
-                          selected: _selected.contains(bottomKeys[i]),
-                          activeColor: activeColor,
-                          onTap: () => _toggle(bottomKeys[i]),
-                        ),
-                        if (i < bottomKeys.length - 1) const CcSpaceSM(),
-                      ],
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
+                ),
+              );
+            },
+          ),
         ),
-      ],
+      ),
     );
   }
 }

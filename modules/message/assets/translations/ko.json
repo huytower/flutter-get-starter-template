@@ -712,8 +712,6 @@
     "calculate_ratings_info": "평가는 어떻게 계산되나요?",
     "out_of_5": "5점 만점에 {rating}점",
     "star_count": "{count}점",
-    "feedback_praise_title": "좋았던 점",
-    "feedback_criticism_title": "개선할 점",
     "feedback_hint": "더 자세히 알려주세요 (선택 사항)",
     "feedback_send": "피드백 보내기",
     "feedback_required": "태그를 선택하거나 내용을 입력하세요",

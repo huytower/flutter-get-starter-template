@@ -789,8 +789,6 @@ class CodegenLoader extends AssetLoader {
       "calculate_ratings_info": "How do we calculate ratings?",
       "out_of_5": "{rating} out of 5",
       "star_count": "{count} star",
-      "feedback_praise_title": "Praise",
-      "feedback_criticism_title": "Criticism",
       "feedback_hint": "Tell us more (optional)",
       "feedback_send": "Send feedback",
       "feedback_required": "Choose a tag or write a message",
@@ -1489,8 +1487,6 @@ class CodegenLoader extends AssetLoader {
       "calculate_ratings_info": "Cách chúng tôi tính toán đánh giá",
       "out_of_5": "{rating} trên 5",
       "star_count": "{count} sao",
-      "feedback_praise_title": "Điểm tốt",
-      "feedback_criticism_title": "Góp ý",
       "feedback_hint": "Chia sẻ thêm (không bắt buộc)",
       "feedback_send": "Gửi góp ý",
       "feedback_required": "Hãy chọn thẻ hoặc viết nội dung",
@@ -2446,8 +2442,6 @@ class CodegenLoader extends AssetLoader {
       "calculate_ratings_info": "평가는 어떻게 계산되나요?",
       "out_of_5": "5점 만점에 {rating}점",
       "star_count": "{count}점",
-      "feedback_praise_title": "좋았던 점",
-      "feedback_criticism_title": "개선할 점",
       "feedback_hint": "더 자세히 알려주세요 (선택 사항)",
       "feedback_send": "피드백 보내기",
       "feedback_required": "태그를 선택하거나 내용을 입력하세요",
@@ -3235,8 +3229,6 @@ class CodegenLoader extends AssetLoader {
       "calculate_ratings_info": "評価の計算方法について",
       "out_of_5": "5段階中{rating}",
       "star_count": "{count}つ星",
-      "feedback_praise_title": "良かった点",
-      "feedback_criticism_title": "改善点",
       "feedback_hint": "詳しく教えてください（任意）",
       "feedback_send": "フィードバックを送信",
       "feedback_required": "タグを選択するか内容を入力してください",
@@ -4016,8 +4008,6 @@ class CodegenLoader extends AssetLoader {
       "calculate_ratings_info": "我们如何计算评分？",
       "out_of_5": "满分 5 分，得分为 {rating}",
       "star_count": "{count}星",
-      "feedback_praise_title": "好评",
-      "feedback_criticism_title": "改进建议",
       "feedback_hint": "告诉我们更多（可选）",
       "feedback_send": "发送反馈",
       "feedback_required": "选择标签或写下内容",
@@ -4933,36 +4923,55 @@ class CcLocaleKeys {
   static const profile_rate_app = 'profile.rate_app';
   static const profile_rate_app_subtitle = 'profile.rate_app_subtitle';
   static const profile_customer_reviews = 'profile.customer_reviews';
-  static const profile_customer_ratings_count = 'profile.customer_ratings_count';
-  static const profile_calculate_ratings_info = 'profile.calculate_ratings_info';
+  static const profile_customer_ratings_count =
+      'profile.customer_ratings_count';
+  static const profile_calculate_ratings_info =
+      'profile.calculate_ratings_info';
   static const profile_out_of_5 = 'profile.out_of_5';
   static const profile_star_count = 'profile.star_count';
-  static const profile_feedback_praise_title = 'profile.feedback_praise_title';
-  static const profile_feedback_criticism_title = 'profile.feedback_criticism_title';
   static const profile_feedback_hint = 'profile.feedback_hint';
   static const profile_feedback_send = 'profile.feedback_send';
   static const profile_feedback_required = 'profile.feedback_required';
   static const profile_feedback_sent = 'profile.feedback_sent';
   static const profile_feedback_praise_fast = 'profile.feedback_praise_fast';
-  static const profile_feedback_praise_offline = 'profile.feedback_praise_offline';
-  static const profile_feedback_praise_runway = 'profile.feedback_praise_runway';
-  static const profile_feedback_praise_reconciliation = 'profile.feedback_praise_reconciliation';
-  static const profile_feedback_praise_lending = 'profile.feedback_praise_lending';
-  static const profile_feedback_praise_suggestions = 'profile.feedback_praise_suggestions';
-  static const profile_feedback_praise_interface = 'profile.feedback_praise_interface';
-  static const profile_feedback_praise_scanning = 'profile.feedback_praise_scanning';
-  static const profile_feedback_praise_alerts = 'profile.feedback_praise_alerts';
-  static const profile_feedback_praise_leveling = 'profile.feedback_praise_leveling';
-  static const profile_feedback_criticism_sync = 'profile.feedback_criticism_sync';
-  static const profile_feedback_criticism_balance = 'profile.feedback_criticism_balance';
-  static const profile_feedback_criticism_unlock = 'profile.feedback_criticism_unlock';
-  static const profile_feedback_criticism_scanning = 'profile.feedback_criticism_scanning';
-  static const profile_feedback_criticism_amount = 'profile.feedback_criticism_amount';
-  static const profile_feedback_criticism_categories = 'profile.feedback_criticism_categories';
-  static const profile_feedback_criticism_limits = 'profile.feedback_criticism_limits';
-  static const profile_feedback_criticism_notifications = 'profile.feedback_criticism_notifications';
-  static const profile_feedback_criticism_charts = 'profile.feedback_criticism_charts';
-  static const profile_feedback_criticism_speed = 'profile.feedback_criticism_speed';
+  static const profile_feedback_praise_offline =
+      'profile.feedback_praise_offline';
+  static const profile_feedback_praise_runway =
+      'profile.feedback_praise_runway';
+  static const profile_feedback_praise_reconciliation =
+      'profile.feedback_praise_reconciliation';
+  static const profile_feedback_praise_lending =
+      'profile.feedback_praise_lending';
+  static const profile_feedback_praise_suggestions =
+      'profile.feedback_praise_suggestions';
+  static const profile_feedback_praise_interface =
+      'profile.feedback_praise_interface';
+  static const profile_feedback_praise_scanning =
+      'profile.feedback_praise_scanning';
+  static const profile_feedback_praise_alerts =
+      'profile.feedback_praise_alerts';
+  static const profile_feedback_praise_leveling =
+      'profile.feedback_praise_leveling';
+  static const profile_feedback_criticism_sync =
+      'profile.feedback_criticism_sync';
+  static const profile_feedback_criticism_balance =
+      'profile.feedback_criticism_balance';
+  static const profile_feedback_criticism_unlock =
+      'profile.feedback_criticism_unlock';
+  static const profile_feedback_criticism_scanning =
+      'profile.feedback_criticism_scanning';
+  static const profile_feedback_criticism_amount =
+      'profile.feedback_criticism_amount';
+  static const profile_feedback_criticism_categories =
+      'profile.feedback_criticism_categories';
+  static const profile_feedback_criticism_limits =
+      'profile.feedback_criticism_limits';
+  static const profile_feedback_criticism_notifications =
+      'profile.feedback_criticism_notifications';
+  static const profile_feedback_criticism_charts =
+      'profile.feedback_criticism_charts';
+  static const profile_feedback_criticism_speed =
+      'profile.feedback_criticism_speed';
   static const profile_young_children_message =
       'profile.young_children_message';
   static const profile_experience_level_progress =
