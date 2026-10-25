@@ -18,6 +18,7 @@ class ReviewFeedbackSection extends StatefulWidget {
 class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
   final TextEditingController _feedbackController = TextEditingController();
   final Set<String> _selected = <String>{};
+  bool _isSubmitting = false;
 
   static const _praiseKeys = [
     'profile.feedback_praise_fast',
@@ -57,7 +58,9 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
     });
   }
 
-  void _send(BuildContext context) {
+  Future<void> _send(BuildContext context) async {
+    if (_isSubmitting) return;
+
     if (_selected.isEmpty && _feedbackController.text.trim().isEmpty) {
       CcSnackBarHelper.showErrorSnackBar(
         context: context,
@@ -65,21 +68,46 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
       );
       return;
     }
-    final isPraise = _selected.any((key) => _praiseKeys.contains(key));
-    CcSlackFeedbackHelper.sendUserFeedback(
-      feedbackText: _feedbackController.text.trim(),
-      selectedKeys: _selected.toList(),
-      isPraise: isPraise,
-      averageRating: widget.averageRating,
-    );
-    CcSnackBarHelper.showSuccessSnackBar(
-      context: context,
-      message: el.tr('profile.feedback_sent'),
-    );
-    _feedbackController.clear();
-    setState(() => _selected.clear());
-    if (context.mounted) {
+
+    setState(() => _isSubmitting = true);
+
+    final praiseLabels = _selected
+        .where((key) => _praiseKeys.contains(key))
+        .map((key) => el.tr(key))
+        .toList();
+
+    final criticismLabels = _selected
+        .where((key) => _criticismKeys.contains(key))
+        .map((key) => el.tr(key))
+        .toList();
+
+    '[ReviewFeedbackSection] 📩 User submitted rating & feedback: rating=${widget.averageRating}, praise=$praiseLabels, criticism=$criticismLabels, text="${_feedbackController.text.trim()}"'
+        .Log('ReviewFeedbackSection');
+
+    try {
+      final languageCode = context.locale.languageCode;
+
+      await CcSlackFeedbackHelper.sendUserFeedback(
+        feedbackText: _feedbackController.text.trim(),
+        praiseLabels: praiseLabels,
+        criticismLabels: criticismLabels,
+        averageRating: widget.averageRating,
+        languageCode: languageCode,
+      );
+
+      if (!context.mounted) return;
+
+      CcSnackBarHelper.showSuccessSnackBar(
+        context: context,
+        message: el.tr('profile.feedback_sent'),
+      );
+      _feedbackController.clear();
+      setState(() => _selected.clear());
       Navigator.of(context).pop();
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
@@ -121,8 +149,8 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
         CcPadding(
           TransactionSubmitButton(
             text: el.tr('profile.feedback_send'),
-            isSubmitting: false,
-            isEnabled: true,
+            isSubmitting: _isSubmitting,
+            isEnabled: !_isSubmitting,
             activeColor: context.ccColorScheme.primary,
             onTap: () => _send(context),
             widthFactor: 1.0,

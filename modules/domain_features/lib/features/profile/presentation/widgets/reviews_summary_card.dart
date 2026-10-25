@@ -8,8 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'reviews/rating_pill.dart';
 
-/// Customer reviews summary card with overall score, star ratings breakdown,
-/// and direct store rating deep-link support.
+/// Customer reviews summary card with interactive 1-5 star selection
+/// and a top-right store icon button for store redirects.
 class ReviewsSummaryCard extends StatelessWidget {
   const ReviewsSummaryCard({
     super.key,
@@ -21,6 +21,8 @@ class ReviewsSummaryCard extends StatelessWidget {
     this.title,
     this.onCalculateInfoTap,
     this.onRateTap,
+    this.onRatingSelected,
+    this.onStoreTap,
   });
 
   /// e.g. 4.7
@@ -46,9 +48,14 @@ class ReviewsSummaryCard extends StatelessWidget {
   /// Called when the "How do we calculate ratings?" link is tapped.
   final VoidCallback? onCalculateInfoTap;
 
-  /// Overrides the default store-deep-link behavior when the rating pill
-  /// is tapped. Leave null to use the built-in platform store launcher.
+  /// Callback when a rating level is selected.
   final VoidCallback? onRateTap;
+
+  /// Called when the user taps on 1-5 stars.
+  final ValueChanged<int>? onRatingSelected;
+
+  /// Called when the top-right store button is tapped. Leave null to use default store deep-link.
+  final VoidCallback? onStoreTap;
 
   Future<void> _openStoreForRating() async {
     try {
@@ -100,31 +107,38 @@ class ReviewsSummaryCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
         children: [
-          _buildTotalRatings(context),
-          const CcSpaceXS(),
-          _buildRatingPill(context),
-          const CcSpaceSM(),
-          if (onCalculateInfoTap != null) ...[
-            const CcSpaceLG(),
-            _buildCalculateInfoLink(context),
-          ],
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildTotalRatings(context),
+              const CcSpaceXS(),
+              _buildRatingPill(context),
+              const CcSpaceSM(),
+              if (onCalculateInfoTap != null) ...[
+                const CcSpaceLG(),
+                _buildCalculateInfoLink(context),
+              ],
+            ],
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: CcIconButton.bouncing(
+              onTap: onStoreTap ?? _openStoreForRating,
+              tooltip: el.tr(CcLocaleKeys.profile_rate_app),
+              icon: Icon(
+                Icons.storefront_rounded,
+                color: context.ccColorScheme.primary,
+                size: context.respIconSize(baseSize: 22),
+              ),
+              width: context.respDim(32),
+              height: context.respDim(32),
+            ),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTitle(BuildContext context) {
-    return CcText(
-      title ?? el.tr(CcLocaleKeys.profile_customer_reviews),
-      align: Alignment.center,
-      textAlign: TextAlign.center,
-      textStyle: context.ccTextTheme.headlineSmall?.copyWith(
-        fontWeight: FontWeight.w800,
-        color: context.ccColorScheme.onSurface,
       ),
     );
   }
@@ -133,7 +147,10 @@ class ReviewsSummaryCard extends StatelessWidget {
     return Center(
       child: RatingPill(
         averageRating: averageRating,
-        onTap: onRateTap ?? _openStoreForRating,
+        onRatingSelected: (rating) {
+          onRatingSelected?.call(rating);
+          onRateTap?.call();
+        },
       ),
     );
   }
