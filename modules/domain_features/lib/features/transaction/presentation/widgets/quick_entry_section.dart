@@ -202,8 +202,6 @@ class QuickEntrySection extends StatelessWidget {
   }
 
   Widget _buildTrailingIcons(BuildContext context) {
-    final scheme = context.ccColorScheme;
-
     if (isParsing) {
       return SizedBox(
         width: context.respDim(30),
@@ -221,16 +219,8 @@ class QuickEntrySection extends StatelessWidget {
       );
     }
 
-    return CcIconButton.bouncing(
-      icon: Icon(
-        Icons.camera_alt,
-        color: scheme.onSurface.withOpacity(0.45),
-        size: context.respDim(20),
-      ),
-      onTap: onScanTap,
-      width: context.respDim(30),
-      height: context.respDim(30),
-    );
+    // Temporarily disabled camera icon due to crashes.
+    return const SizedBox.shrink();
   }
 }
 

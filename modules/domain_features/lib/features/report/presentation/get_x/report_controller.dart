@@ -168,6 +168,9 @@ class ReportController extends CcGetController {
     return combined;
   }
 
+  bool get hasDailyTransactions =>
+      dailyListTransactions.any((tx) => tx.amount != 0);
+
   bool get canNext => navigationOffset.value > 0;
 
   bool get canPrevious {
@@ -223,8 +226,10 @@ class ReportController extends CcGetController {
     if (!await prefs.tryConsumeDailyCall()) {
       if (isClosed) return;
       isGeneratingAdvice.value = false;
-      aiAdviceErrorKey.value =
-          CcLocaleKeys.report_ai_advice_daily_limit_reached;
+      final previousCached = await cacheDs.getLastCachedAdvice();
+      if (previousCached != null) {
+        aiAdvice.value = previousCached;
+      }
       return;
     }
 
@@ -236,7 +241,12 @@ class ReportController extends CcGetController {
     isGeneratingAdvice.value = false;
 
     if (result == null) {
-      aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_generate_failed;
+      final previousCached = await cacheDs.getLastCachedAdvice();
+      if (previousCached != null) {
+        aiAdvice.value = previousCached;
+      } else {
+        aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_generate_failed;
+      }
       return;
     }
 

@@ -12,9 +12,8 @@ class AiFallbackPreferenceDataSource {
   static const String _keyCallCount = 'ai_fallback_call_count';
   static const String _keyGeminiEnabled = 'ai_gemini_enabled';
 
-  /// Default daily cap on cloud-LLM fallback calls, kept low enough to bound
-  /// cost/abuse while comfortably covering normal quick-entry usage.
-  static const int dailyCallLimit = 10;
+  /// Default daily cap on cloud-LLM fallback calls (3 calls/day).
+  static const int dailyCallLimit = 3;
 
   Future<bool> isConsentGiven() async {
     final prefs = await SharedPreferences.getInstance();

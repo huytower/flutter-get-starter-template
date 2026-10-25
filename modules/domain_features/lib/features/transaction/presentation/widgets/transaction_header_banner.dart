@@ -135,6 +135,7 @@ class TransactionHeaderBanner extends StatelessWidget {
       activeColor: accentColor,
       onSubmitted: (_) => controller.submitQuickEntry(context),
       onMicTap: () => controller.toggleVoiceQuickEntry(context),
+      // Camera icon temporarily disabled in QuickEntrySection due to crashes.
       onScanTap: () => _pickReceiptSource(context, controller),
       onApplySuggestion: () {
         if (hasBatch && controller is QuickEntryBatchMixin) {

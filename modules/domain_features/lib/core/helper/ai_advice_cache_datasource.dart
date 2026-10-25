@@ -55,6 +55,22 @@ class AiAdviceCacheDataSource {
     }
   }
 
+  /// Returns the most recently saved [AiAdviceEntity] regardless of fingerprint.
+  Future<AiAdviceEntity?> getLastCachedAdvice() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString(_keyCachedAdviceJson);
+      if (jsonString == null || jsonString.isEmpty) return null;
+
+      final decoded = jsonDecode(jsonString);
+      if (decoded is! Map) return null;
+
+      return AiAdviceEntity.fromJson(Map<String, dynamic>.from(decoded));
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Saves the [AiAdviceEntity] along with its transaction fingerprint
   /// and target currency into local persistent storage.
   Future<void> saveAdvice({
