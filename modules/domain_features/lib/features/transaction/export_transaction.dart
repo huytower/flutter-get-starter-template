@@ -11,6 +11,10 @@ export 'domain/usecases/parse_quick_entry_usecase.dart';
 export 'domain/usecases/update_transaction_usecase.dart';
 // Presentation
 export 'presentation/get_x/edit_transaction_sheet_controller.dart';
+export 'presentation/get_x/quick_audio_entry_mixin.dart';
+export 'presentation/get_x/quick_camera_entry_mixin.dart';
+export 'presentation/get_x/quick_gallery_entry_mixin.dart';
+export 'presentation/get_x/quick_entry_mixin.dart';
 export 'presentation/get_x/transaction_controller.dart';
 export 'presentation/pages/transaction_page.dart';
 export 'presentation/widgets/edit_transaction_sheet.dart';

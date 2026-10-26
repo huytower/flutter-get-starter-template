@@ -67,6 +67,8 @@ mixin QuickEntryMixin on TransactionFormController
   List<CategoryEntity> _quickEntryCategories = [];
   Timer? _quickEntryDebounce;
   bool _quickEntryDisposed = false;
+
+  bool get isQuickEntryDisposed => _quickEntryDisposed;
   String _lastQuickEntryText = '';
 
   /// Bumped by [resetQuickEntry] to invalidate any submission still in
@@ -359,6 +361,9 @@ mixin QuickEntryMixin on TransactionFormController
         .Log('QuickEntryMixin');
     return true;
   }
+
+  bool blockAutoSaveWhenNoCategory(String stage) =>
+      _blockAutoSaveWhenNoCategory(stage);
 
   void _onQuickEntryTextChanged() {
     _cancelAutoSave();
@@ -672,11 +677,13 @@ mixin QuickEntryMixin on TransactionFormController
       // wording even when auto-save is blocked.
       quickEntrySuggestion.value = local;
       if (_blockAutoSaveWhenNoCategory('local')) return;
-      if (!isQuickEntryCategoryMissing) {
+      if (!isQuickEntryCategoryMissing && context.mounted) {
         startAutoSaveTimer(context);
       }
       return;
     }
+
+    if (!context.mounted) return;
 
     if (!await passQuickEntryCloudGate(
       context: context,
@@ -732,7 +739,7 @@ mixin QuickEntryMixin on TransactionFormController
     // wording even when auto-save is blocked.
     quickEntrySuggestion.value = suggestion;
     if (_blockAutoSaveWhenNoCategory('cloud')) return;
-    if (!isQuickEntryCategoryMissing) {
+    if (!isQuickEntryCategoryMissing && context.mounted) {
       startAutoSaveTimer(context);
     }
   }
@@ -833,6 +840,8 @@ mixin QuickEntryMixin on TransactionFormController
       return;
     }
 
+    if (!context.mounted) return;
+
     if (!await passQuickEntryCloudGate(
       context: context,
       isCurrentGeneration: isCurrentGeneration,
@@ -872,7 +881,7 @@ mixin QuickEntryMixin on TransactionFormController
 
     quickEntrySuggestion.value = suggestion;
     if (_blockAutoSaveWhenNoCategory('image')) return;
-    if (!isQuickEntryCategoryMissing) {
+    if (!isQuickEntryCategoryMissing && context.mounted) {
       startAutoSaveTimer(context);
     }
   }
