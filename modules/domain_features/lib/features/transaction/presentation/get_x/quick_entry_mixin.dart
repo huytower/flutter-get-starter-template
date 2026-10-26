@@ -18,6 +18,7 @@ import '../../../profile/user_level/presentation/get_x/user_level_controller.dar
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
+import 'quick_entry_auto_save_helper.dart';
 
 /// Shared "AI Smart Entry" quick-entry capability: a free-text field with
 /// mic dictation and receipt-photo scan, parsed locally then always
@@ -56,10 +57,11 @@ mixin QuickEntryMixin on TransactionFormController
   final RxList<QuickEntryParseResult> quickEntryBatch =
       <QuickEntryParseResult>[].obs;
 
+  final QuickEntryAutoSaveHelper _autoSaveHelper = QuickEntryAutoSaveHelper();
+
   /// Remaining seconds until auto-save triggers. VIP only.
-  final RxInt autoSaveCountdown = 0.obs;
+  RxInt get autoSaveCountdown => _autoSaveHelper.autoSaveCountdown;
   final RxBool isVip = false.obs;
-  Timer? _autoSaveTimer;
 
   /// Locale key for an inline status message; null means nothing to show.
   final Rx<String?> quickEntryErrorKey = Rx<String?>(null);
@@ -169,9 +171,7 @@ mixin QuickEntryMixin on TransactionFormController
   }
 
   void _cancelAutoSave() {
-    _autoSaveTimer?.cancel();
-    _autoSaveTimer = null;
-    autoSaveCountdown.value = 0;
+    _autoSaveHelper.cancelAutoSave();
   }
 
   @protected
@@ -185,37 +185,22 @@ mixin QuickEntryMixin on TransactionFormController
   }
 
   Future<void> startAutoSaveTimer(BuildContext context) async {
-    startAutoSaveCountdown(() {
-      final suggestion = quickEntrySuggestion.value;
-      if (suggestion != null) {
-        // Last-line guard: the asset row can be emptied (e.g. the record the
-        // entry targeted was deleted) while the countdown is running.
-        if (!quickEntryHasSelectableCategory) {
-          '[AI_PARSING] ⛔ Auto-save aborted at countdown end | '
-                  'no category/asset defined for this tab'
-              .Log('QuickEntryMixin');
-          return;
+    _autoSaveHelper.startAutoSaveTimer(
+      context: context,
+      hasSelectableCategory: quickEntryHasSelectableCategory,
+      onSave: () {
+        final suggestion = quickEntrySuggestion.value;
+        if (suggestion != null) {
+          applyQuickEntryParse(suggestion);
+          submitForm(context);
         }
-        applyQuickEntryParse(suggestion);
-        submitForm(context);
-      }
-    });
+      },
+    );
   }
 
   @protected
   void startAutoSaveCountdown(VoidCallback onElapsed) {
-    _cancelAutoSave();
-
-    // Auto-save is a core productivity feature available to all users.
-    autoSaveCountdown.value = 2;
-    _autoSaveTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (autoSaveCountdown.value > 1) {
-        autoSaveCountdown.value--;
-      } else {
-        _cancelAutoSave();
-        onElapsed();
-      }
-    });
+    _autoSaveHelper.startAutoSaveCountdown(onElapsed);
   }
 
   /// Direction string (e.g. 'borrow'/'lend') for dual-direction forms like
