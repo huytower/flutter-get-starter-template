@@ -941,7 +941,9 @@ static const Map<String,dynamic> _ja = {
     "quick_test_page": "クイックテストページ",
     "notification": "通知",
     "profile": "プロフィール",
-    "profile_info": "個人情報"
+    "profile_info": "個人情報",
+    "nav_reconcile": "照合",
+    "reconciliation.title": "照合"
   },
   "dashboard": {
     "item_count": "アイテム数",
@@ -1717,7 +1719,9 @@ static const Map<String,dynamic> _ko = {
     "quick_test_page": "빠른 테스트 페이지",
     "notification": "알림",
     "profile": "프로필",
-    "profile_info": "개인 정보"
+    "profile_info": "개인 정보",
+    "nav_reconcile": "대조",
+    "reconciliation.title": "대조"
   },
   "dashboard": {
     "item_count": "항목 수",
@@ -3271,7 +3275,9 @@ static const Map<String,dynamic> _zh = {
     "quick_test_page": "快速测试页面",
     "notification": "通知",
     "profile": "个人资料",
-    "profile_info": "个人信息"
+    "profile_info": "个人信息",
+    "nav_reconcile": "对账",
+    "reconciliation.title": "对账"
   },
   "dashboard": {
     "item_count": "项目数量",

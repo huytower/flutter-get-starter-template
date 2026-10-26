@@ -140,7 +140,8 @@ abstract class  LocaleKeys {
   static const nav_notification = 'nav.notification';
   static const nav_profile = 'nav.profile';
   static const nav_profile_info = 'nav.profile_info';
-  static const nav_reconcile = 'nav.reconcile';
+  static const nav_nav_reconcile = 'nav.nav_reconcile';
+  static const nav_reconciliation_title = 'nav.reconciliation.title';
   static const nav = 'nav';
   static const dashboard_item_count = 'dashboard.item_count';
   static const dashboard_last_updated = 'dashboard.last_updated';
