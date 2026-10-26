@@ -50,13 +50,13 @@ mixin QuickEntryMixin on TransactionFormController
   Rx<String?> get pendingPrefillCategoryId;
 
   final TextEditingController quickEntryController = TextEditingController();
-  final Rx<QuickEntryParseResult?> quickEntrySuggestion =
-      Rx<QuickEntryParseResult?>(null);
+  final Rx<ParsedTransactionEntity?> quickEntrySuggestion =
+      Rx<ParsedTransactionEntity?>(null);
   final RxBool isParsingQuickEntry = false.obs;
   final RxBool isListeningQuickEntry = false.obs;
 
-  final RxList<QuickEntryParseResult> quickEntryBatch =
-      <QuickEntryParseResult>[].obs;
+  final RxList<ParsedTransactionEntity> quickEntryBatch =
+      <ParsedTransactionEntity>[].obs;
 
   final QuickEntryAutoSaveHelper _autoSaveHelper = QuickEntryAutoSaveHelper();
 
@@ -251,7 +251,7 @@ mixin QuickEntryMixin on TransactionFormController
 
   /// Display label for a suggestion, e.g. "50.00k · Cà phê · 12/08" — lists
   /// only whatever actually resolved.
-  String quickEntryResultLabel(QuickEntryParseResult result) {
+  String quickEntryResultLabel(ParsedTransactionEntity result) {
     final parts = <String>[];
     if (result.amount != null) {
       parts.add(formatVndShort(result.amount!));
@@ -298,7 +298,7 @@ mixin QuickEntryMixin on TransactionFormController
   /// Prefer this over the [isQuickEntryCategoryMissing] getter when validating a
   /// parse that hasn't been published to [quickEntrySuggestion] yet: the getter
   /// reads that Rx and would score the *previous* keystroke's result.
-  bool isCategoryMissingFor(QuickEntryParseResult result) {
+  bool isCategoryMissingFor(ParsedTransactionEntity result) {
     // Nothing to record against at all, whatever the parse resolved.
     if (!quickEntryHasSelectableCategory) return true;
 
@@ -974,7 +974,7 @@ mixin QuickEntryMixin on TransactionFormController
 
   /// Pre-fills whichever fields [result] resolved; a null field is left at
   /// the form's existing default for the user to fill in by hand.
-  void applyQuickEntryParse(QuickEntryParseResult result) {
+  void applyQuickEntryParse(ParsedTransactionEntity result) {
     _cancelAutoSave();
     '[AI_PARSING] 📥 Applying parse result | result=${result.toJson()}'.Log(
       'QuickEntryMixin',

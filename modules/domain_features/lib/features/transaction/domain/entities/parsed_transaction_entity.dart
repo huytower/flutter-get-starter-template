@@ -1,6 +1,8 @@
-/// A simple data class to hold the result of parsing a quick entry string.
-class QuickEntryParseResult {
-  const QuickEntryParseResult({
+import 'package:equatable/equatable.dart';
+
+class ParsedTransactionEntity extends Equatable {
+  const ParsedTransactionEntity({
+    this.type,
     this.amount,
     this.categoryId,
     this.walletId,
@@ -8,6 +10,7 @@ class QuickEntryParseResult {
     this.note,
   });
 
+  final String? type;
   final int? amount;
   final String? categoryId;
   final String? walletId;
@@ -18,14 +21,16 @@ class QuickEntryParseResult {
 
   bool get isEmpty => amount == null && categoryId == null;
 
-  QuickEntryParseResult copyWith({
+  ParsedTransactionEntity copyWith({
+    String? type,
     int? amount,
     String? categoryId,
     String? walletId,
     DateTime? date,
     String? note,
   }) {
-    return QuickEntryParseResult(
+    return ParsedTransactionEntity(
+      type: type ?? this.type,
       amount: amount ?? this.amount,
       categoryId: categoryId ?? this.categoryId,
       walletId: walletId ?? this.walletId,
@@ -35,6 +40,7 @@ class QuickEntryParseResult {
   }
 
   Map<String, dynamic> toJson() => {
+    'type': type,
     'amount': amount,
     'categoryId': categoryId,
     'walletId': walletId,
@@ -42,6 +48,9 @@ class QuickEntryParseResult {
     'note': note,
     'isComplete': isComplete,
   };
+
+  @override
+  List<Object?> get props => [type, amount, categoryId, walletId, date, note];
 
   @override
   String toString() => toJson().toString();

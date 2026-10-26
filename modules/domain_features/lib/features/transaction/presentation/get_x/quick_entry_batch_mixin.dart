@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
-import '../../../../core/helper/quick_entry_parse_result.dart';
+import '../../domain/entities/parsed_transaction_entity.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../domain/entities/transaction_entity.dart';
@@ -106,14 +106,14 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     }
 
     quickEntrySuggestion.value = null;
-    quickEntryBatch.assignAll(results.whereType<QuickEntryParseResult>());
+    quickEntryBatch.assignAll(results.whereType<ParsedTransactionEntity>());
     '[AI_PARSING] ✨ Batch ready | count=${quickEntryBatch.length}'.Log(
       'QuickEntryBatchMixin',
     );
     startAutoSaveCountdown(() => saveQuickEntryBatch(context));
   }
 
-  bool _isBatchItemUsable(QuickEntryParseResult? result) {
+  bool _isBatchItemUsable(ParsedTransactionEntity? result) {
     if (result == null) return false;
     final amount = result.amount;
     return amount != null && amount > 0 && !isCategoryMissingFor(result);
@@ -176,7 +176,7 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
   }
 
   CreateTransactionParams _toParams(
-    QuickEntryParseResult item, {
+    ParsedTransactionEntity item, {
     required bool isExpense,
     required DateTime now,
   }) {

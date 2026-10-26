@@ -4,7 +4,7 @@ import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../../core/helper/ai_advice_helper.dart';
+import '../../../../core/ai/ai_prompts.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/helper/money_format_helper.dart';
@@ -89,7 +89,7 @@ class GenerateAiFinancialAdviceUseCase {
       conversionService,
     );
 
-    final prompt = buildAiFinancialAdvicePrompt(
+    final prompt = AiPrompts.financialAdvice(
       cashFlow: convertedCashFlow,
       insights: convertedInsights,
       anomalies: convertedAnomalies,
@@ -153,8 +153,7 @@ class GenerateAiFinancialAdviceUseCase {
     );
   }
 
-  /// Defensive JSON parsing, same pattern as `ParseBillImageUseCase`'s
-  /// `_parseJsonResponse` — `responseSchema` constrains the shape but the
+  /// Defensive JSON parsing — `responseSchema` constrains the shape but the
   /// raw string is still untrusted model output, so every field is
   /// validated before use and malformed entries are skipped rather than
   /// failing the whole response.
