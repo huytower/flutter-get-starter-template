@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_micro_features/export_micro_features.dart';
 import 'package:domain_features/core/navigation/domain_router.gr.dart';
+import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../route_names.dart';
@@ -13,6 +14,8 @@ import 'app_router.gr.dart';
 @lazySingleton
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
+  AppRouter() : super(navigatorKey: Get.key);
+
   @override
   List<AutoRoute> get routes => [
     // --- Main App Shell & Core ---

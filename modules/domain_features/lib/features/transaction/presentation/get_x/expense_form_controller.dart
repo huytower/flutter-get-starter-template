@@ -206,24 +206,36 @@ class ExpenseFormController extends TransactionFormController
     return -1;
   }
 
+  int? _pendingScrollIndex;
+
   void _scrollToSelected() {
     if (unifiedItems.isEmpty) return;
 
     final index = _selectedItemIndex();
     if (index == -1) return;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => _revealItem(index));
+    _pendingScrollIndex = index;
+    final key = getItemKey(index);
+    '[AutoScroll] 🎯 Expense _scrollToSelected triggered | index=$index | itemId=${unifiedItems[index].id} | catId=${selectedCategory.value?.id}'
+        .Log(_debugTag);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_pendingScrollIndex == index) {
+        _revealItem(index, key);
+      }
+    });
   }
 
   /// Brings the selected card into view by animating the category row to that
   /// card's offset.
-  void _revealItem(int index, [int attemptsLeft = 4]) {
+  void _revealItem(int index, GlobalKey itemKey, [int attemptsLeft = 6]) {
     revealRowCard(
       scrollController: categoryScrollController,
       index: index,
       itemWidth: categoryItemWidth,
       itemGap: categoryItemGap,
       leadingPadding: CcPaddingParams.PAGE_SM,
+      itemKey: itemKey,
       tag: _debugTag,
       attemptsLeft: attemptsLeft,
     );
@@ -518,16 +530,22 @@ class ExpenseFormController extends TransactionFormController
 
   @override
   void applyResolvedCategory(CategoryEntity category) {
-    selectedCategory.value = category;
-    selectedBudget.value = null; // Clear existing budget selection first
-
-    // Try to auto-resolve to a budget if possible.
-    // In the unified list, we prefer a budget if one exists for this category.
+    // Determine budget match first before updating Rx values so _scrollToSelected evaluates correctly
     final budgetMatch = unifiedItems.firstWhereOrNull(
       (item) => item.isBudget && item.categoryId == category.id,
     );
-    if (budgetMatch != null) {
-      selectedBudget.value = _findBudgetById(budgetMatch.budgetId!);
+    final targetBudget = budgetMatch != null
+        ? _findBudgetById(budgetMatch.budgetId!)
+        : null;
+    final isCategorySame = selectedCategory.value?.id == category.id;
+    final isBudgetSame = selectedBudget.value?.id == targetBudget?.id;
+
+    selectedBudget.value = targetBudget;
+    selectedCategory.value = category;
+
+    // If both values were already identical, everAll will not fire; ensure card visibility
+    if (isCategorySame && isBudgetSame) {
+      _scrollToSelected();
     }
   }
 
@@ -554,6 +572,7 @@ class ExpenseFormController extends TransactionFormController
   }
 
   void setCategory(CategoryEntity category) {
+    final isCategorySame = selectedCategory.value?.id == category.id;
     selectedCategory.value = category;
     selectedBudget.value = null;
 
@@ -566,9 +585,13 @@ class ExpenseFormController extends TransactionFormController
     }
 
     pendingPrefillCategoryId.value = null;
+    if (isCategorySame && selectedBudget.value == null) {
+      _scrollToSelected();
+    }
   }
 
   void setBudget(BudgetLimitEntity budget) {
+    final isBudgetSame = selectedBudget.value?.id == budget.id;
     selectedBudget.value = budget;
     // When a budget is picked, its category is automatically selected
     final category = getCachedCategoryById(budget.categoryId);
@@ -577,6 +600,9 @@ class ExpenseFormController extends TransactionFormController
     }
     pendingPrefillCategoryId.value = null;
     categoryKey.value++;
+    if (isBudgetSame) {
+      _scrollToSelected();
+    }
   }
 
   void refreshTimeBasedSuggestion() {

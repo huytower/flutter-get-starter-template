@@ -5,9 +5,10 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../core/di/di.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import 'quick_entry_mixin.dart';
+import 'transaction_form_controller.dart';
 
 /// Sub-mixin handling audio & speech dictation capabilities for quick transaction entry.
-mixin QuickAudioEntryMixin on QuickEntryMixin {
+mixin QuickAudioEntryMixin on QuickEntryMixin, TransactionFormController {
   Future<void> toggleVoiceQuickEntry(BuildContext context) async {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
 
@@ -61,10 +62,6 @@ mixin QuickAudioEntryMixin on QuickEntryMixin {
         quickEntryController.selection = TextSelection.collapsed(
           offset: recognizedWords.length,
         );
-
-        if (isFinal) {
-          triggerVoiceSubmit(recognizedWords, 'isFinal');
-        }
       },
       onListeningStopped: () {
         if (isQuickEntryDisposed) return;

@@ -292,6 +292,8 @@ class IncomeFormController extends TransactionFormController
     }
   }
 
+  int? _pendingScrollIndex;
+
   void _scrollToSelected() {
     if (unifiedItems.isEmpty) return;
     final category = selectedCategory.value;
@@ -302,15 +304,23 @@ class IncomeFormController extends TransactionFormController
     );
     if (index == -1) return;
 
+    _pendingScrollIndex = index;
+    final key = getItemKey(index);
+    '[AutoScroll] 🎯 Income _scrollToSelected triggered | index=$index | catId=${category.id}'
+        .Log(_debugTag);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      revealRowCard(
-        scrollController: categoryScrollController,
-        index: index,
-        itemWidth: categoryItemWidth,
-        itemGap: categoryItemGap,
-        leadingPadding: CcPaddingParams.PAGE_SM,
-        tag: _debugTag,
-      );
+      if (_pendingScrollIndex == index) {
+        revealRowCard(
+          scrollController: categoryScrollController,
+          index: index,
+          itemWidth: categoryItemWidth,
+          itemGap: categoryItemGap,
+          leadingPadding: CcPaddingParams.PAGE_SM,
+          itemKey: key,
+          tag: _debugTag,
+        );
+      }
     });
   }
 
@@ -350,7 +360,11 @@ class IncomeFormController extends TransactionFormController
 
   @override
   void applyResolvedCategory(CategoryEntity category) {
+    final isCategorySame = selectedCategory.value?.id == category.id;
     selectedCategory.value = category;
+    if (isCategorySame) {
+      _scrollToSelected();
+    }
   }
 
   @override
@@ -368,10 +382,14 @@ class IncomeFormController extends TransactionFormController
   }
 
   void setCategory(CategoryEntity category) {
+    final isCategorySame = selectedCategory.value?.id == category.id;
     selectedCategory.value = category;
     // Manual selection clears any pending prefill from AI suggestions so it
     // doesn't clobber the user's choice on the next rebuild.
     pendingPrefillCategoryId.value = null;
+    if (isCategorySame) {
+      _scrollToSelected();
+    }
   }
 
   @override
@@ -416,25 +434,29 @@ class IncomeFormController extends TransactionFormController
               date: date.value,
             ),
           );
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
     isSubmitting.value = false;
+    if (!context.mounted) return;
+
+    final savedAmount = MoneyFormatter.formatWithSymbol(
+      amount,
+      currencyCode: settings.currencyCode,
+    );
+    final messageText = el.tr(
+      isEditing
+          ? CcLocaleKeys.transaction_income_updated
+          : CcLocaleKeys.transaction_income_saved,
+      namedArgs: {'amount': savedAmount},
+    );
 
     result.when(
       (_) async {
-        final settings = await getIt<GetProfileSettingsUseCase>().call();
-        final amount = int.tryParse(amountStr.value) ?? 0;
-        final savedAmount = MoneyFormatter.formatWithSymbol(
-          amount,
-          currencyCode: settings.currencyCode,
-        );
-        CcSnackBarHelper.showSuccessSnackBar(
-          context: context,
-          message: el.tr(
-            isEditing
-                ? CcLocaleKeys.transaction_income_updated
-                : CcLocaleKeys.transaction_income_saved,
-            namedArgs: {'amount': savedAmount},
-          ),
-        );
+        if (context.mounted) {
+          CcSnackBarHelper.showSuccessSnackBar(
+            context: context,
+            message: messageText,
+          );
+        }
         if (isEditing) {
           onEditSaved?.call();
         } else {
@@ -451,10 +473,14 @@ class IncomeFormController extends TransactionFormController
         }
         await refreshParent();
       },
-      (error) => CcSnackBarHelper.showErrorSnackBar(
-        context: context,
-        message: el.tr(error.message),
-      ),
+      (error) {
+        if (context.mounted) {
+          CcSnackBarHelper.showErrorSnackBar(
+            context: context,
+            message: el.tr(error.message),
+          );
+        }
+      },
     );
   }
 }

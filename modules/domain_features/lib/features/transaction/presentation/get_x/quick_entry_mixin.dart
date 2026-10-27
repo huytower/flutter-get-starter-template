@@ -16,9 +16,9 @@ import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../liability/domain/entities/liability_entity.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
+import 'quick_entry_auto_save_helper.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
-import 'quick_entry_auto_save_helper.dart';
 
 /// Shared "AI Smart Entry" quick-entry capability: a free-text field with
 /// mic dictation and receipt-photo scan, parsed locally then always
@@ -99,6 +99,9 @@ mixin QuickEntryMixin on TransactionFormController
       CcSpeechHelper.stopListening();
     }
   }
+
+  @override
+  void hideKeypad() => super.hideKeypad();
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -924,10 +927,6 @@ mixin QuickEntryMixin on TransactionFormController
         quickEntryController.selection = TextSelection.collapsed(
           offset: recognizedWords.length,
         );
-
-        if (isFinal) {
-          triggerVoiceSubmit(recognizedWords, 'isFinal');
-        }
       },
       onListeningStopped: () {
         if (_quickEntryDisposed) return;
