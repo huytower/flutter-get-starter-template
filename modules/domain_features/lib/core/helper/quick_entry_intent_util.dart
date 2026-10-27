@@ -26,12 +26,24 @@ class QuickEntryIntentUtil {
     // Inflow (+) -> Income
     'nhan': QuickEntryIntent.income,
     'duoc': QuickEntryIntent.income,
+    'nhan qua': QuickEntryIntent.income,
+    'nhanqua': QuickEntryIntent.income,
+    'nhan qua tang': QuickEntryIntent.income,
+    'nhanquatang': QuickEntryIntent.income,
+    'duoc tang qua': QuickEntryIntent.income,
+    'duoctangqua': QuickEntryIntent.income,
     'thu vao': QuickEntryIntent.income,
     'received': QuickEntryIntent.income,
     'got': QuickEntryIntent.income,
     'bonus': QuickEntryIntent.income,
 
     // Outflow (-) -> Expense
+    'tang qua': QuickEntryIntent.expense,
+    'tangqua': QuickEntryIntent.expense,
+    'tang qua tang': QuickEntryIntent.expense,
+    'tangquatang': QuickEntryIntent.expense,
+    'bieu tang': QuickEntryIntent.expense,
+    'bieutang': QuickEntryIntent.expense,
     'chi': QuickEntryIntent.expense,
     'tra tien': QuickEntryIntent.expense,
     'pay': QuickEntryIntent.expense,
@@ -84,6 +96,21 @@ class QuickEntryIntentUtil {
   /// Categories that are ambiguous and need a directional verb to decide.
   /// If no directional verb is found, the 'default' intent is used.
   static const Map<String, Map<String, QuickEntryIntent>> ambiguousContexts = {
+    'qua tang': {
+      'inflow': QuickEntryIntent.income,
+      'outflow': QuickEntryIntent.expense,
+      'default': QuickEntryIntent.expense,
+    },
+    'quatang': {
+      'inflow': QuickEntryIntent.income,
+      'outflow': QuickEntryIntent.expense,
+      'default': QuickEntryIntent.expense,
+    },
+    'qua': {
+      'inflow': QuickEntryIntent.income,
+      'outflow': QuickEntryIntent.expense,
+      'default': QuickEntryIntent.expense,
+    },
     'li xi': {
       'inflow': QuickEntryIntent.income,
       'outflow': QuickEntryIntent.expense,
