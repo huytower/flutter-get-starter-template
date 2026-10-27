@@ -210,6 +210,7 @@ class ExpenseFormController extends TransactionFormController
 
   void _scrollToSelected() {
     if (unifiedItems.isEmpty) return;
+    if (!categoryScrollController.hasClients) return;
 
     final index = _selectedItemIndex();
     if (index == -1) return;

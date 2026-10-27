@@ -1,6 +1,7 @@
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:domain_features/features/wallet/export_wallet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
@@ -15,10 +16,6 @@ import '../../../guideline/guideline_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
-import '../../../wallet/domain/repositories/wallet_repository.dart';
-import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
-import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import 'expense_form_controller.dart';
 import 'income_form_controller.dart';
@@ -275,7 +272,9 @@ class TransactionController extends CcGetController {
     await Future.wait([refreshWalletTotal(), loadWallets()]);
 
     if (Get.isRegistered<WalletController>()) {
-      await Get.find<WalletController>().loadWallets();
+      final dynamic wc = Get.find<WalletController>();
+      wc.markDirty();
+      await wc.loadWallets(forceRefresh: true);
     }
 
     if (Get.isRegistered<BudgetAllocationController>()) {

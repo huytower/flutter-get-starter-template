@@ -296,6 +296,8 @@ class IncomeFormController extends TransactionFormController
 
   void _scrollToSelected() {
     if (unifiedItems.isEmpty) return;
+    if (!categoryScrollController.hasClients) return;
+
     final category = selectedCategory.value;
     if (category == null) return;
 

@@ -95,7 +95,7 @@ class WalletController extends CcGetController {
       final stats = investmentStatsOf(wallet.id);
       if (stats.contributed == 0 && stats.returned == 0) {
         deleteWallet(wallet.id).then((outcome) {
-          _handleDeleteOutcome(context, outcome);
+          _handleDeleteOutcome(null, outcome);
         });
         return;
       }
@@ -124,32 +124,36 @@ class WalletController extends CcGetController {
     );
   }
 
-  void _handleDeleteOutcome(BuildContext context, WalletDeleteOutcome outcome) {
+  void _handleDeleteOutcome(BuildContext? context, WalletDeleteOutcome outcome) {
+    final activeContext =
+        (context != null && context.mounted) ? context : Get.context;
+    if (activeContext == null) return;
+
     switch (outcome) {
       case WalletDeleteOutcome.success:
         if (Get.isRegistered<ReconciliationController>()) {
           Get.find<ReconciliationController>().loadBalances();
         }
         CcSnackBarHelper.showSuccessSnackBar(
-          context: context,
+          context: activeContext,
           message: el.tr(CcLocaleKeys.common_done),
         );
         break;
       case WalletDeleteOutcome.notEmpty:
         CcSnackBarHelper.showErrorSnackBar(
-          context: context,
+          context: activeContext,
           message: el.tr(CcLocaleKeys.wallet_delete_error_not_empty),
         );
         break;
       case WalletDeleteOutcome.protected:
         CcSnackBarHelper.showErrorSnackBar(
-          context: context,
+          context: activeContext,
           message: el.tr(CcLocaleKeys.wallet_delete_error_protected),
         );
         break;
       case WalletDeleteOutcome.error:
         CcSnackBarHelper.showErrorSnackBar(
-          context: context,
+          context: activeContext,
           message: errorMessage.value.isNotEmpty
               ? errorMessage.value
               : el.tr(CcLocaleKeys.app_error_general),
@@ -345,8 +349,19 @@ class WalletController extends CcGetController {
     loadWallets();
   }
 
+  bool _isTransactionDataDirty = true;
+
+  /// Marks the transaction data dirty so the next [loadWallets] will recompute derived balances.
+  void markDirty() {
+    '[WalletController] 🧹 Wallet transaction data marked dirty'.Log('WalletController');
+    _isTransactionDataDirty = true;
+  }
+
   /// Reloads wallets and their derived book balances.
-  Future<void> loadWallets({bool showLoading = true}) async {
+  Future<void> loadWallets({
+    bool showLoading = true,
+    bool forceRefresh = false,
+  }) async {
     if (showLoading) {
       layoutStatus.value = CcLayoutStatus.loading;
     }
@@ -380,7 +395,15 @@ class WalletController extends CcGetController {
         .toList()
         .cast<WalletEntity>();
 
-    await _rebuildDerivedBalances(list);
+    if (_isTransactionDataDirty || forceRefresh || wallets.isEmpty) {
+      '[WalletController] 🔄 Rebuilding derived balances | dirty=$_isTransactionDataDirty | force=$forceRefresh | empty=${wallets.isEmpty}'
+          .Log('WalletController');
+      await _rebuildDerivedBalances(list);
+      _isTransactionDataDirty = false;
+    } else {
+      '[WalletController] ⚡ Serving cached wallet balances (0ms DB skip) | dirty=$_isTransactionDataDirty'
+          .Log('WalletController');
+    }
     wallets.assignAll(list);
     await _rebuildDisplayBalances(list);
     _calculateTotalBalance();
@@ -393,6 +416,8 @@ class WalletController extends CcGetController {
   Future<void> _rebuildDerivedBalances(List<WalletEntity> list) async {
     final result = await _transactionRepository.getListTransactions();
     final txns = result.when((t) => t, (_) => <TransactionEntity>[]);
+    '[WalletController] 📊 _rebuildDerivedBalances executed for ${list.length} wallets | txnsLength=${txns.length}'
+        .Log('WalletController');
     final targetCurrency = currencyCode.value;
 
     _walletsWithTxns
@@ -518,14 +543,6 @@ class WalletController extends CcGetController {
               return conv.tryGetSuccess() ?? t.amount;
             }),
           );
-
-          final convWalletBalance = await _conversionService.convertAmount(
-            amount: wallet.balance,
-            fromCurrency: wallet.currencyCode,
-            toCurrency: targetCurrency,
-          );
-          final baseBalance =
-              convWalletBalance.tryGetSuccess() ?? wallet.balance;
 
           final allTimeContributed = convertedAllIn.fold<int>(
             0,
