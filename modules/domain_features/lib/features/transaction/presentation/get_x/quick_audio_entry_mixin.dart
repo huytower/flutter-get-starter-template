@@ -18,7 +18,8 @@ mixin QuickAudioEntryMixin on QuickEntryMixin, TransactionFormController {
       context,
     )?.locale.languageCode.toLowerCase();
     final currencyCode = CurrencyConstants.currentPrimaryCurrency.toUpperCase();
-    final isSupported = languageCode == 'vi' && currencyCode == 'VND';
+    final isSupported =
+        (languageCode == 'vi' || languageCode == 'en') && currencyCode == 'VND';
 
     if (!isSupported) {
       '[VoiceWorkflow] ⛔ Voice dictation skipped | unsupported language/currency: lang=$languageCode currency=$currencyCode'

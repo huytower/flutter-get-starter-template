@@ -63,7 +63,8 @@ class QuickEntrySection extends StatelessWidget {
       context,
     )?.locale.languageCode.toLowerCase();
     final currencyCode = CurrencyConstants.currentPrimaryCurrency.toUpperCase();
-    return languageCode == 'vi' && currencyCode == 'VND';
+    return (languageCode == 'vi' || languageCode == 'en') &&
+        currencyCode == 'VND';
   }
 
   @override
