@@ -240,12 +240,46 @@ void main() {
         anomalies: const [],
         runway: null,
         formatMoney: _money,
+        language: 'English',
       );
 
-      expect(prompt, contains('Không có dữ liệu thu chi tháng này.'));
-      expect(prompt, contains('Cảnh báo ngân sách: không có.'));
-      expect(prompt, contains('Khoản chi bất thường: không có.'));
-      expect(prompt, contains('Không có dữ liệu chỉ số an toàn tài chính.'));
+      expect(prompt, contains('No income or spending data this month.'));
+      expect(prompt, contains('Budget warnings: none.'));
+      expect(prompt, contains('Unusual spending: none.'));
+      expect(prompt, contains('No financial safety (runway) data.'));
+    });
+
+    test('asks for the advice text in the injected language', () {
+      final prompt = AiPrompts.financialAdvice(
+        cashFlow: null,
+        insights: null,
+        anomalies: const [],
+        runway: null,
+        formatMoney: _money,
+        language: 'Vietnamese',
+      );
+
+      expect(prompt, contains('written in Vietnamese'));
+      expect(prompt, contains('Write every "text" in Vietnamese'));
+      expect(
+        AiPrompts.fieldAdviceText('Vietnamese'),
+        contains('in Vietnamese'),
+      );
+    });
+
+    test('is written in English regardless of the injected language', () {
+      final prompt = AiPrompts.financialAdvice(
+        cashFlow: const CashFlowEntity(income: 20, expense: 30),
+        insights: null,
+        anomalies: const [],
+        runway: null,
+        formatMoney: _money,
+        language: 'English',
+      );
+
+      expect(prompt, startsWith('You are a personal financial advisor'));
+      expect(prompt, isNot(contains('Bạn là')));
+      expect(prompt, isNot(contains('tiếng Việt')));
     });
 
     test('quotes the currency and the formatted figures it was given', () {
@@ -287,20 +321,21 @@ void main() {
           status: FinancialRunwayStatus.caution,
         ),
         formatMoney: _money,
+        language: 'English',
         currencyCode: 'USD',
       );
 
-      expect(prompt, contains('Đơn vị tiền tệ của người dùng: USD.'));
-      expect(prompt, contains('Thu nhập: 20@. Chi tiêu: 30@.'));
-      expect(prompt, contains('(thâm hụt)'));
-      expect(prompt, contains('Cà phê: còn 12 ngày, nên chi ≤ 15@/ngày.'));
+      expect(prompt, contains("The user's currency: USD."));
+      expect(prompt, contains('Income: 20@. Spending: 30@.'));
+      expect(prompt, contains('(deficit)'));
+      expect(prompt, contains('Cà phê: 12 days left, should spend ≤ 15@/day.'));
       expect(
         prompt,
-        contains('Ăn ngoài: đã vượt 150% hạn mức (155% đã dùng).'),
+        contains('Ăn ngoài: exceeded 150% of the limit (155% used).'),
       );
-      expect(prompt, contains('Mua sắm: 7@ tháng này'));
-      expect(prompt, contains('trung bình 3@ 3 tháng trước'));
-      expect(prompt, contains('3 tháng 14 ngày (cần thận trọng)'));
+      expect(prompt, contains('Mua sắm: 7@ this month'));
+      expect(prompt, contains('average of 3@ over the previous 3 months'));
+      expect(prompt, contains('3 months 14 days (caution)'));
     });
   });
 }

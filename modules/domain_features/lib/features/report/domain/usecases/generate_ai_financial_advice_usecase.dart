@@ -4,6 +4,7 @@ import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../../core/ai/ai_language.dart';
 import '../../../../core/ai/ai_prompts.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
@@ -48,6 +49,7 @@ class GenerateAiFinancialAdviceUseCase {
   Future<AiAdviceEntity?> call({
     required String targetCurrency,
     required CurrencyConversionService conversionService,
+    String? languageCode,
   }) async {
     if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
       return null;
@@ -89,12 +91,14 @@ class GenerateAiFinancialAdviceUseCase {
       conversionService,
     );
 
+    final language = AiLanguage.nameOf(languageCode);
     final prompt = AiPrompts.financialAdvice(
       cashFlow: convertedCashFlow,
       insights: convertedInsights,
       anomalies: convertedAnomalies,
       runway: convertedRunway,
       currencyCode: targetCurrency,
+      language: language,
       formatMoney: (int vndAmount) {
         return MoneyFormatter.formatWithSymbol(
           vndAmount,
@@ -105,7 +109,7 @@ class GenerateAiFinancialAdviceUseCase {
 
     final raw = await CcGeminiHelper.generateText(
       prompt: prompt,
-      responseSchema: _buildResponseSchema(),
+      responseSchema: _buildResponseSchema(language),
     );
     if (raw == null || raw.trim().isEmpty) return null;
 
@@ -115,7 +119,7 @@ class GenerateAiFinancialAdviceUseCase {
     return AiAdviceEntity(sections: sections, generatedAt: DateTime.now());
   }
 
-  Schema _buildResponseSchema() {
+  Schema _buildResponseSchema(String language) {
     return Schema.object(
       properties: {
         'sections': Schema.array(
@@ -129,9 +133,7 @@ class GenerateAiFinancialAdviceUseCase {
                     'attention).',
               ),
               'text': Schema.string(
-                description:
-                    'Short Vietnamese advice text for this section '
-                    '(1-3 sentences), plain prose, no markdown.',
+                description: AiPrompts.fieldAdviceText(language),
               ),
               'highlights': Schema.array(
                 items: Schema.string(),

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../../core/ai/ai_language.dart';
 import '../../../../core/ai/ai_prompts.dart';
 import '../../../../core/ai/smart_entry_context.dart';
 import '../../../../core/ai/smart_entry_response_parser.dart';
@@ -29,11 +30,6 @@ class ParseSmartEntryUseCase {
 
   static const String geminiDisabledReason = 'gemini_disabled';
   static const String dailyLimitReachedReason = 'daily_limit_reached';
-
-  static const Map<String, String> _languageNames = {
-    'vi': 'Vietnamese',
-    'en': 'English',
-  };
 
   final GetCategoriesUseCase _getCategories;
   final CurrencyConversionService _conversionService;
@@ -251,9 +247,6 @@ class ParseSmartEntryUseCase {
       CurrencyCatalog.getDefinition(CurrencyConstants.currentPrimaryCurrency);
 
   @visibleForTesting
-  String resolveLanguageName(String? languageCode) {
-    final code = (languageCode ?? CcLocalization.fallbackLocale.languageCode)
-        .toLowerCase();
-    return _languageNames[code] ?? code;
-  }
+  String resolveLanguageName(String? languageCode) =>
+      AiLanguage.nameOf(languageCode);
 }

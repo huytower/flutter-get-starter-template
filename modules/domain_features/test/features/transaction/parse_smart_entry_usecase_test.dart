@@ -150,6 +150,9 @@ void main() {
       expect(useCase.resolveLanguageName('vi'), 'Vietnamese');
       expect(useCase.resolveLanguageName('en'), 'English');
       expect(useCase.resolveLanguageName('EN'), 'English');
+      expect(useCase.resolveLanguageName('ko'), 'Korean');
+      expect(useCase.resolveLanguageName('ja'), 'Japanese');
+      expect(useCase.resolveLanguageName('zh'), 'Chinese');
     });
 
     test('falls back to the app default language when none is given', () {
@@ -157,7 +160,7 @@ void main() {
     });
 
     test('keeps an unmapped language code as is', () {
-      expect(useCase.resolveLanguageName('ja'), 'ja');
+      expect(useCase.resolveLanguageName('fr'), 'fr');
     });
   });
 

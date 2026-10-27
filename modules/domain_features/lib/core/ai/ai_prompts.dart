@@ -198,52 +198,56 @@ abstract final class AiPrompts {
     required List<BudgetAnomalyEntity> anomalies,
     required FinancialRunwayEntity? runway,
     required String Function(int vndAmount) formatMoney,
+    required String language,
     String currencyCode = CurrencyConstants.defaultCurrencyCode,
   }) {
     final buffer = StringBuffer()
       ..writeln(
-        'Bạn là một cố vấn tài chính cá nhân cho ứng dụng quản lý chi tiêu. '
-        'Dựa trên dữ liệu tháng này của người dùng bên dưới, hãy trả về các '
-        'phần tư vấn (sections) riêng biệt, mỗi phần có "status" là good, '
-        'normal hoặc bad, và "text" là nội dung ngắn gọn (1-3 câu) bằng '
-        'tiếng Việt cho phần đó, văn xuôi thuần túy (KHÔNG dùng markdown, '
-        'KHÔNG dùng gạch đầu dòng, KHÔNG dùng ký hiệu *).',
+        'You are a personal financial advisor for an expense-tracking app. '
+        "Based on the user's data for this month below, return separate "
+        'advice sections, each with a "status" of good, normal or bad, and a '
+        '"text" of brief content (1-3 sentences) written in $language, in '
+        'plain prose (NO markdown, NO bullet points, NO * symbols). Write '
+        'every "text" in $language whatever language the data below is in, '
+        'but keep budget and category names as written.',
       )
       ..writeln(
-        'Mỗi phần cũng có "highlights" là 1-3 từ hoặc cụm từ quan trọng nhất '
-        'trong "text" cần nhấn mạnh cho người dùng (số tiền, tỷ lệ %, tên '
-        'danh mục, hành động chính). Phải sao chép CHÍNH XÁC từng ký tự từ '
-        '"text" (cùng chính tả, cùng chữ hoa/thường), mỗi cụm tối đa 6 từ, '
-        'không trùng nhau. Dùng mảng rỗng nếu không có gì đáng nhấn mạnh.',
+        'Each section also has "highlights": the 1-3 most important words or '
+        'phrases in its "text" to emphasize for the user (amounts, % rates, '
+        'category names, key actions). Each must be copied EXACTLY, character '
+        'for character, from "text" (same spelling, same letter case), at '
+        'most 6 words each, with no duplicates. Use an empty array if nothing '
+        'stands out.',
       )
       ..writeln()
       ..writeln(
-        'Chọn 2-4 phần phù hợp nhất với dữ liệu trong các loại sau (bỏ qua '
-        'loại không áp dụng):',
+        'Choose the 2-4 sections that best fit the data from the types below '
+        '(skip types that do not apply):',
       )
       ..writeln(
-        '- Nhận xét về các khoản chi bất thường so với 3 tháng gần nhất: '
-        'status="bad" nếu phát hiện bất thường, status="good" nếu không có.',
+        '- A remark on unusual spending compared with the last 3 months: '
+        'status="bad" if an anomaly is found, status="good" if there is none.',
       )
       ..writeln(
-        '- Nếu thu không đủ chi (thâm hụt): 1-2 chiến lược tăng thu nhập cụ '
-        'thể, thực tế để bù đắp phần thâm hụt, status="bad".',
+        '- If income does not cover spending (deficit): 1-2 specific, '
+        'realistic strategies to increase income to cover the deficit, '
+        'status="bad".',
       )
       ..writeln(
-        '- Gợi ý tối ưu chi tiêu và khuyến khích hành vi tài chính tích cực '
-        '(tiết kiệm, chi tiêu có kế hoạch): status="normal" nếu là lời '
-        'khuyên trung lập, status="good" nếu tình hình đang tốt và đây là '
-        'lời khen — không tạo cảm giác lo lắng không cần thiết khi không có '
-        'vấn đề gì.',
+        '- Tips to optimize spending and encourage positive financial '
+        'behavior (saving, planned spending): status="normal" for neutral '
+        'advice, status="good" if the situation is healthy and this is praise '
+        '- do not create needless worry when nothing is wrong.',
       )
       ..writeln()
-      ..writeln('Tổng độ dài toàn bộ các phần khoảng 120-200 từ.')
+      ..writeln('The total length of all sections is about 120-200 words.')
       ..writeln()
       ..writeln(
-        'Đơn vị tiền tệ của người dùng: $currencyCode. Mọi số tiền bên dưới đã '
-        'được định dạng theo đơn vị này, hãy giữ nguyên ký hiệu và định dạng khi trích dẫn.',
+        "The user's currency: $currencyCode. Every amount below is already "
+        'formatted in this currency; keep the symbol and format as written '
+        'when quoting.',
       )
-      ..writeln('Dữ liệu tháng này:');
+      ..writeln("This month's data:");
 
     if (cashFlow != null) {
       final incomeStr = formatMoney(cashFlow.income);
@@ -256,64 +260,64 @@ abstract final class AiPrompts {
       final netStr = formatMoney(cashFlow.net);
 
       buffer.writeln(
-        '- Thu nhập: $incomeStr. '
-        'Chi tiêu: $expenseStr. '
-        'Tiền vay/thu nợ vào: $debtInflowStr. '
-        'Tiền cho vay/trả nợ ra: $debtOutflowStr. '
-        'Lợi nhuận đầu tư vào: $investInflowStr. '
-        'Vốn đầu tư ra: $investOutflowStr. '
-        'Chênh lệch thu - chi: $opNetStr '
-        '(${cashFlow.isDeficit ? "thâm hụt" : "dương"}). '
-        'Chênh lệch dòng tiền tổng: $netStr.',
+        '- Income: $incomeStr. '
+        'Spending: $expenseStr. '
+        'Borrowed/debt collected (inflow): $debtInflowStr. '
+        'Lent/debt repaid (outflow): $debtOutflowStr. '
+        'Investment returns (inflow): $investInflowStr. '
+        'Investment capital (outflow): $investOutflowStr. '
+        'Income minus spending: $opNetStr '
+        '(${cashFlow.isDeficit ? "deficit" : "surplus"}). '
+        'Total net cash flow: $netStr.',
       );
       if (cashFlow.isInflowDebtDriven) {
         buffer.writeln(
-          '- Lưu ý: ${cashFlow.debtInflowPercent}% tiền vào tháng này đến từ '
-          'nợ (vay hoặc thu nợ), không phải thu nhập thực.',
+          '- Note: ${cashFlow.debtInflowPercent}% of the money received this '
+          'month comes from debt (borrowing or debt collection), not real income.',
         );
       }
       if (cashFlow.isOutflowDebtDriven) {
         buffer.writeln(
-          '- Lưu ý: ${cashFlow.debtOutflowPercent}% tiền ra tháng này là cho '
-          'vay hoặc trả nợ, không phải chi tiêu thông thường.',
+          '- Note: ${cashFlow.debtOutflowPercent}% of the money paid out this '
+          'month is lending or debt repayment, not regular spending.',
         );
       }
     } else {
-      buffer.writeln('- Không có dữ liệu thu chi tháng này.');
+      buffer.writeln('- No income or spending data this month.');
     }
 
     final pacingWarnings = insights?.pacingWarnings ?? const [];
     final penaltyWarnings = insights?.penaltyWarnings ?? const [];
     if (pacingWarnings.isEmpty && penaltyWarnings.isEmpty) {
-      buffer.writeln('- Cảnh báo ngân sách: không có.');
+      buffer.writeln('- Budget warnings: none.');
     } else {
-      buffer.writeln('- Cảnh báo ngân sách:');
+      buffer.writeln('- Budget warnings:');
       for (final w in pacingWarnings) {
         final spendStr = formatMoney(w.suggestedDailySpend);
         buffer.writeln(
-          '  + ${w.budgetName}: còn ${w.daysRemaining} ngày, nên chi '
-          '≤ $spendStr/ngày.',
+          '  + ${w.budgetName}: ${w.daysRemaining} days left, should spend '
+          '≤ $spendStr/day.',
         );
       }
       for (final w in penaltyWarnings) {
         buffer.writeln(
-          '  + ${w.budgetName}: đã vượt ${_penaltyTierLabel(w.tier)} hạn mức '
-          '(${w.percentUsed}% đã dùng).',
+          '  + ${w.budgetName}: exceeded ${_penaltyTierLabel(w.tier)} of the '
+          'limit (${w.percentUsed}% used).',
         );
       }
     }
 
     if (anomalies.isEmpty) {
-      buffer.writeln('- Khoản chi bất thường: không có.');
+      buffer.writeln('- Unusual spending: none.');
     } else {
-      buffer.writeln('- Khoản chi bất thường:');
+      buffer.writeln('- Unusual spending:');
       for (final a in anomalies) {
         final spendStr = formatMoney(a.thisMonthSpend);
         final avgStr = formatMoney(a.avgPrevMonths.round());
         buffer.writeln(
           '  + ${a.budgetName}: $spendStr '
-          'tháng này so với trung bình '
-          '$avgStr 3 tháng trước.',
+          'this month vs an average of '
+          '$avgStr over the previous 3 months.',
         );
       }
     }
@@ -321,17 +325,21 @@ abstract final class AiPrompts {
     if (runway != null) {
       final burnStr = formatMoney(runway.monthlyBurn.round());
       buffer.writeln(
-        '- Chỉ số an toàn tài chính (runway): ${runway.months} tháng '
-        '${runway.days} ngày (${_runwayStatusLabel(runway.status)}), chi '
-        'tiêu trung bình/bắt buộc hàng tháng: '
+        '- Financial safety (runway): ${runway.months} months '
+        '${runway.days} days (${_runwayStatusLabel(runway.status)}), average '
+        'or fixed monthly spending: '
         '$burnStr.',
       );
     } else {
-      buffer.writeln('- Không có dữ liệu chỉ số an toàn tài chính.');
+      buffer.writeln('- No financial safety (runway) data.');
     }
 
     return buffer.toString();
   }
+
+  static String fieldAdviceText(String language) =>
+      'Short advice text for this section (1-3 sentences) in $language, '
+      'plain prose, no markdown.';
 
   static String _penaltyTierLabel(BudgetPenaltyTier tier) {
     switch (tier) {
@@ -349,17 +357,17 @@ abstract final class AiPrompts {
   static String _runwayStatusLabel(FinancialRunwayStatus? status) {
     switch (status) {
       case FinancialRunwayStatus.excellent:
-        return 'rất tốt';
+        return 'excellent';
       case FinancialRunwayStatus.good:
-        return 'tốt';
+        return 'good';
       case FinancialRunwayStatus.safe:
-        return 'an toàn';
+        return 'safe';
       case FinancialRunwayStatus.caution:
-        return 'cần thận trọng';
+        return 'caution';
       case FinancialRunwayStatus.insufficient:
-        return 'chưa đủ dữ liệu';
+        return 'insufficient data';
       case null:
-        return 'chưa xác định';
+        return 'unknown';
     }
   }
 }
