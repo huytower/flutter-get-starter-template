@@ -6,25 +6,29 @@ import '../../features/category/domain/entities/category_entity.dart';
 import '../../features/wallet/domain/entities/wallet_entity.dart';
 import 'merchant_match_helper.dart';
 import 'quick_entry_alias_dataset.dart';
-import 'quick_entry_intent_util.dart';
+import 'quick_entry_intent.dart';
+import 'quick_entry_locale_pack.dart';
+import 'quick_entry_locale_registry.dart';
 import 'quick_entry_parse_result.dart';
 import 'quick_entry_regex_dataset.dart';
 
 export 'quick_entry_parse_result.dart';
 
-const Map<String, int> _amountUnitMultipliers =
-    QuickEntryAliasDataset.amountUnitMultipliers;
+QuickEntryLocalePack get _localePack => QuickEntryLocaleRegistry.current;
 
-final RegExp _amountPattern = QuickEntryRegexDataset.amountPattern;
+Map<String, int> get _amountUnitMultipliers =>
+    _localePack.amountUnitMultipliers;
+
+RegExp get _amountPattern => _localePack.regex.amountPattern;
 
 /// Matches common Vietnamese invoice/serial number prefixes followed by digits.
-final RegExp invoiceNumberPattern = QuickEntryRegexDataset.invoiceNumberPattern;
+RegExp get invoiceNumberPattern => _localePack.regex.invoiceNumberPattern;
 
 /// Strips Vietnamese phone numbers from [text].
 /// Optimized for "0..." and "+84..." patterns.
 String stripPhoneNumbers(String text) {
   var result = text;
-  final phoneRegex = QuickEntryRegexDataset.phoneRegex;
+  final phoneRegex = _localePack.regex.phoneRegex;
   final matches = phoneRegex.allMatches(text);
 
   for (final match in matches) {
@@ -59,7 +63,7 @@ int? parseVietnameseAmount(String text) {
   final normalized = stripVietnameseDiacritics(text.toLowerCase());
 
   // 1. Identify and temporarily mask potential address/non-amount numbers
-  final addressRegex = QuickEntryRegexDataset.addressRegex;
+  final addressRegex = _localePack.regex.addressRegex;
 
   // Mask address numbers with spaces to avoid them being grouped into amounts
   // e.g., "quan 1 100k" -> "       100k"
@@ -96,7 +100,7 @@ int? parseVietnameseAmount(String text) {
   if (amounts.isEmpty) return null;
 
   // 3. Check for explicit "Total" keywords in the text
-  final totalKeywords = QuickEntryRegexDataset.totalKeywords;
+  final totalKeywords = _localePack.regex.totalKeywords;
 
   final hasTotalKeyword = totalKeywords.hasMatch(normalized);
 
@@ -160,7 +164,7 @@ List<({String name, int price})> extractItemsFromText(String text) {
       .toList();
 
   final items = <({String name, int price})>[];
-  final amountPattern = QuickEntryRegexDataset.lineItemAmountPattern;
+  final amountPattern = _localePack.regex.lineItemAmountPattern;
 
   for (int i = 0; i < lines.length; i++) {
     final line = lines[i];
@@ -199,7 +203,7 @@ List<({String name, int price})> extractItemsFromText(String text) {
     // Ignore items that are just punctuation or repeated zeros (OCR artifacts)
     final isNoise =
         name.isEmpty ||
-        QuickEntryRegexDataset.ocrNoisePattern.hasMatch(name) ||
+        _localePack.regex.ocrNoisePattern.hasMatch(name) ||
         name.length < 2;
 
     if (!isNoise && !_isStopWord(name)) {
@@ -212,7 +216,7 @@ List<({String name, int price})> extractItemsFromText(String text) {
 
 bool _isStopWord(String text) {
   final lower = stripVietnameseDiacritics(text.toLowerCase());
-  return QuickEntryAliasDataset.billStopWords.any(
+  return _localePack.billStopWords.any(
     (s) => lower.startsWith(s) || lower.endsWith(s),
   );
 }
@@ -228,17 +232,13 @@ String summarizeBillItems(List<({String name, int price})> items) {
       .join(', ');
 }
 
-const Map<String, String> _categoryKeywordAliases =
-    QuickEntryAliasDataset.categoryKeywords;
-
-/// High-level intent categories based on Vietnamese keywords.
-enum QuickEntryIntent { expense, income, investment, debt, lend }
+Map<String, String> get _categoryKeywordAliases => _localePack.categoryKeywords;
 
 QuickEntryIntent? detectQuickEntryIntent(String text) {
   final normalized = stripVietnameseDiacritics(text.toLowerCase());
 
   // 1. Check for high-priority root intents (e.g., "đầu tư", "income")
-  for (final entry in QuickEntryIntentUtil.intentRoots.entries) {
+  for (final entry in _localePack.intentRoots.entries) {
     for (final keyword in entry.value) {
       if (normalized.contains(keyword)) {
         '[AI_PARSING] [LOCAL] 🎯 Intent root matched: "$keyword" -> ${entry.key}'
@@ -251,7 +251,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
   // 2. Identify the primary direction of the action (Inflow vs. Outflow)
   QuickEntryIntent? detectedDirection;
   String? matchedVerb;
-  for (final verbEntry in QuickEntryIntentUtil.directionalVerbs.entries) {
+  for (final verbEntry in _localePack.directionalVerbs.entries) {
     if (normalized.contains(verbEntry.key)) {
       detectedDirection = verbEntry.value;
       matchedVerb = verbEntry.key;
@@ -301,7 +301,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
   // it's likely an investment contribution, not a personal expense.
   if (detectedDirection == QuickEntryIntent.expense &&
       normalized.contains('mua')) {
-    for (final keyword in QuickEntryAliasDataset.categoryKeywords.entries) {
+    for (final keyword in _localePack.categoryKeywords.entries) {
       if (normalized.contains(keyword.key) && keyword.value.startsWith('inv')) {
         '[AI_PARSING] [LOCAL] 🔄 Smart override: "mua" + investment category -> investment'
             .Log('QuickEntryParserHelper');
@@ -313,7 +313,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
   // 4b. Smart Intent Override (Inflow): If an inflow verb (income) is detected
   // alongside an investment or lend category, it's likely a return/collection.
   if (detectedDirection == QuickEntryIntent.income) {
-    for (final keyword in QuickEntryAliasDataset.categoryKeywords.entries) {
+    for (final keyword in _localePack.categoryKeywords.entries) {
       if (normalized.contains(keyword.key)) {
         if (keyword.value.startsWith('inv')) {
           '[AI_PARSING] [LOCAL] 🔄 Smart override: "inflow" + investment category -> investment'
@@ -329,7 +329,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
   }
 
   // 5. Resolve ambiguous contexts (like "lì xì" or "vay")
-  for (final contextEntry in QuickEntryIntentUtil.ambiguousContexts.entries) {
+  for (final contextEntry in _localePack.ambiguousContexts.entries) {
     final pattern = contextEntry.key.length <= 2
         ? RegExp('\\b${RegExp.escape(contextEntry.key)}\\b')
         : RegExp(RegExp.escape(contextEntry.key));
@@ -362,7 +362,7 @@ QuickEntryIntent? detectQuickEntryIntent(String text) {
 
 const int _minCategoryQueryLength = 2;
 
-final List<MapEntry<String, String>> _sortedCategoryKeywordAliases =
+List<MapEntry<String, String>> get _sortedCategoryKeywordAliases =>
     _categoryKeywordAliases.entries.toList()
       ..sort((a, b) => b.key.length.compareTo(a.key.length));
 
@@ -528,7 +528,7 @@ QuickEntryParseResult parseQuickEntryTextLocally({
       residual = residual.replaceFirst(vnDateMatch.group(0)!, '');
     } else {
       // 2c. Relative date offsets: "hom qua", "today", etc.
-      const dateOffsets = QuickEntryAliasDataset.dateRelativeOffsets;
+      final dateOffsets = _localePack.dateRelativeOffsets;
       for (final offsetEntry in dateOffsets.entries) {
         if (normalized.contains(offsetEntry.key)) {
           date = date.subtract(Duration(days: offsetEntry.value));
@@ -569,7 +569,7 @@ QuickEntryParseResult parseQuickEntryTextLocally({
   String? matchedWalletId;
   if (wallets != null && wallets.isNotEmpty) {
     for (final wallet in wallets) {
-      final keywords = QuickEntryAliasDataset.walletKeywords[wallet.type];
+      final keywords = _localePack.walletKeywords[wallet.type];
       if (keywords != null) {
         for (final keyword in keywords) {
           if (normalized.contains(keyword)) {
@@ -590,12 +590,12 @@ QuickEntryParseResult parseQuickEntryTextLocally({
   }
 
   // 5. Remove Intent roots and directional verbs from residual
-  for (final rootKeywords in QuickEntryIntentUtil.intentRoots.values) {
+  for (final rootKeywords in _localePack.intentRoots.values) {
     for (final keyword in rootKeywords) {
       residual = residual.replaceFirst(keyword, '');
     }
   }
-  for (final verb in QuickEntryIntentUtil.directionalVerbs.keys) {
+  for (final verb in _localePack.directionalVerbs.keys) {
     residual = residual.replaceFirst(verb, '');
   }
 
@@ -608,18 +608,18 @@ QuickEntryParseResult parseQuickEntryTextLocally({
         (s) =>
             s.isNotEmpty &&
             (s.length > 1 || RegExp(r'\d').hasMatch(s)) &&
-            !QuickEntryAliasDataset.noteFillerWords.contains(s),
+            !_localePack.noteFillerWords.contains(s),
       )
       .join(' ')
       .trim();
 
   String? finalNote = isOcrText
-      ? _extractLabeledFieldValue(text, QuickEntryAliasDataset.noteFieldLabels)
+      ? _extractLabeledFieldValue(text, _localePack.noteFieldLabels)
       : (residualNote.isEmpty ? null : residualNote);
   if (isOcrText) {
     final labeledCategoryText = _extractLabeledFieldValue(
       text,
-      QuickEntryAliasDataset.categoryFieldLabels,
+      _localePack.categoryFieldLabels,
     );
     if (labeledCategoryText != null) {
       matchedCategoryId = matchCategoryIdFromText(

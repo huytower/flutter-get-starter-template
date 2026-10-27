@@ -12,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../liability/domain/entities/liability_entity.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';

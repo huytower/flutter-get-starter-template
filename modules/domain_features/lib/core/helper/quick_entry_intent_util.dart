@@ -1,5 +1,5 @@
 import 'merchant_match_helper.dart';
-import 'quick_entry_parser_helper.dart';
+import 'quick_entry_intent.dart';
 
 /// Centralized helper for detecting intent sub-segments and directions
 /// (e.g. Return vs Contribute, Repay vs Borrow) across all transaction forms.

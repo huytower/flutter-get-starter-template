@@ -8,7 +8,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
-import '../../../../core/helper/quick_entry_parser_helper.dart';
+import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../guideline/guideline_controller.dart';

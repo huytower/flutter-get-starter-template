@@ -325,8 +325,6 @@ class QuickEntryAliasDataset {
     'nhan tien': 'i8',
     'duoc tang': 'i8',
     'nhan tien li xi': 'i8',
-    'qua tang': 'i5',
-    'quatang': 'i5',
     'qua': 'i5',
     'lai tiet kiem': 'i4',
     'hoan tien': 'i9',
