@@ -1,3 +1,18 @@
+import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
+import 'package:cc_sdk_ui/core/config/tokens/cc_typography_params.dart';
+import 'package:cc_sdk_ui/core/extensions/cc_context_extension.dart';
+import 'package:cc_sdk_ui/core/extensions/common/cc_responsive_extension.dart';
+import 'package:cc_sdk_ui/widgets/button/cc_clear_btn.dart';
+import 'package:cc_sdk_ui/widgets/button/cc_icon_button.dart';
+import 'package:cc_sdk_ui/widgets/chip/cc_suggestion_chip.dart';
+import 'package:cc_sdk_ui/widgets/input/cc_glassy_input_bar.dart';
+import 'package:cc_sdk_ui/widgets/input/cc_input_bar_layout.dart';
+import 'package:cc_sdk_ui/widgets/space/cc_space.dart';
+import 'package:cc_sdk_ui/widgets/text/cc_text.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
+import 'package:flutter/material.dart';
+import 'package:message/cc_locale_keys.dart';
+
 import '../../../../core/constant/currency_constants.dart';
 import 'voice_ripple_animation_widget.dart';
 

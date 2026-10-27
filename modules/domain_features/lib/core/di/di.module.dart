@@ -232,6 +232,8 @@ import 'package:domain_features/features/transaction/presentation/get_x/income_f
     as _i594;
 import 'package:domain_features/features/transaction/presentation/get_x/investment_form_controller.dart'
     as _i135;
+import 'package:domain_features/features/transaction/presentation/get_x/quick_entry_auto_save_helper.dart'
+    as _i84;
 import 'package:domain_features/features/transaction/presentation/get_x/transaction_controller.dart'
     as _i700;
 import 'package:domain_features/features/wallet/data/datasources/local/wallet_local_datasource.dart'
@@ -267,6 +269,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i917.QuickEditTransactionSheetController());
     gh.factory<_i94.EditTransactionSheetController>(
         () => _i94.EditTransactionSheetController());
+    gh.factory<_i84.QuickEntryAutoSaveHelper>(
+        () => _i84.QuickEntryAutoSaveHelper());
     gh.lazySingleton<_i994.AiAdviceCacheDataSource>(
         () => _i994.AiAdviceCacheDataSource());
     gh.lazySingleton<_i967.AiFallbackPreferenceDataSource>(
