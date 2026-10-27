@@ -1,7 +1,9 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import 'quick_entry_mixin.dart';
@@ -11,6 +13,18 @@ import 'transaction_form_controller.dart';
 mixin QuickAudioEntryMixin on QuickEntryMixin, TransactionFormController {
   Future<void> toggleVoiceQuickEntry(BuildContext context) async {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+
+    final languageCode = el.EasyLocalization.of(
+      context,
+    )?.locale.languageCode.toLowerCase();
+    final currencyCode = CurrencyConstants.currentPrimaryCurrency.toUpperCase();
+    final isSupported = languageCode == 'vi' && currencyCode == 'VND';
+
+    if (!isSupported) {
+      '[VoiceWorkflow] ⛔ Voice dictation skipped | unsupported language/currency: lang=$languageCode currency=$currencyCode'
+          .Log('QuickAudioEntryMixin');
+      return;
+    }
 
     '[VoiceWorkflow] 🟢 toggleVoiceQuickEntry triggered | isListening=${isListeningQuickEntry.value}'
         .Log('QuickAudioEntryMixin');

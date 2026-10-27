@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../guideline/export_guideline.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
@@ -28,9 +29,20 @@ class TransactionHeaderBanner extends StatelessWidget {
   final GuidelineController guideline;
   final ExpenseFormController? expenseFormController;
 
+  bool _isSupportedLanguageAndCurrency(BuildContext context) {
+    final languageCode = el.EasyLocalization.of(
+      context,
+    )?.locale.languageCode.toLowerCase();
+    final currencyCode = CurrencyConstants.currentPrimaryCurrency.toUpperCase();
+    return languageCode == 'vi' && currencyCode == 'VND';
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Obx(() => _buildContent(context));
+    return Obx(() {
+      final _ = CurrencyConstants.onCurrencyChanged.value;
+      return _buildContent(context);
+    });
   }
 
   Widget _buildContent(BuildContext context) {
@@ -74,6 +86,10 @@ class TransactionHeaderBanner extends StatelessWidget {
     BuildContext context,
     TransactionTabKind activeTab,
   ) {
+    if (!_isSupportedLanguageAndCurrency(context)) {
+      return const SizedBox.shrink();
+    }
+
     final quickEntry = _quickEntryControllerFor(activeTab);
 
     if (quickEntry == null) return const SizedBox.shrink();

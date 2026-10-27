@@ -1,7 +1,4 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
-import 'package:flutter/material.dart';
-
+import '../../../../core/constant/currency_constants.dart';
 import 'voice_ripple_animation_widget.dart';
 
 /// Phase 3.6 "NLP Simple" quick entry — a free-text field ("50k cafe") with
@@ -46,8 +43,19 @@ class QuickEntrySection extends StatelessWidget {
   final VoidCallback? onClear;
   final bool isLocked;
 
+  bool _isSupportedLanguageAndCurrency(BuildContext context) {
+    final languageCode = el.EasyLocalization.of(
+      context,
+    )?.locale.languageCode.toLowerCase();
+    final currencyCode = CurrencyConstants.currentPrimaryCurrency.toUpperCase();
+    return languageCode == 'vi' && currencyCode == 'VND';
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!_isSupportedLanguageAndCurrency(context)) {
+      return const SizedBox.shrink();
+    }
     return Opacity(
       opacity: isLocked ? 0.5 : 1.0,
       child: Column(
