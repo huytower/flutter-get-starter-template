@@ -27,6 +27,9 @@ class ParseSmartEntryUseCase {
 
   static const int defaultMaxTransactions = 20;
 
+  static const String geminiDisabledReason = 'gemini_disabled';
+  static const String dailyLimitReachedReason = 'daily_limit_reached';
+
   static const Map<String, String> _languageNames = {
     'vi': 'Vietnamese',
     'en': 'English',
@@ -44,8 +47,9 @@ class ParseSmartEntryUseCase {
     int maxTransactions = defaultMaxTransactions,
     ParsedTransactionEntity? localResult,
   }) async {
-    if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
-      return const Error(ValidationFailure('gemini_disabled'));
+    final prefs = getIt<AiFallbackPreferenceDataSource>();
+    if (!await prefs.isGeminiEnabled()) {
+      return const Error(ValidationFailure(geminiDisabledReason));
     }
     if (input is SmartEntryImagesInput && input.images.isEmpty) {
       return const Error(ValidationFailure('no_input'));
@@ -70,6 +74,10 @@ class ParseSmartEntryUseCase {
       language: resolveLanguageName(languageCode),
       today: DateTime.now(),
     );
+
+    if (!await prefs.tryConsumeDailyCall()) {
+      return const Error(ValidationFailure(dailyLimitReachedReason));
+    }
 
     final response = await _generate(input, context, maxTransactions);
     if (response == null) {
