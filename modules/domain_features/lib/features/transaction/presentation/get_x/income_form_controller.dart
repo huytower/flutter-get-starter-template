@@ -306,8 +306,6 @@ class IncomeFormController extends TransactionFormController
 
     _pendingScrollIndex = index;
     final key = getItemKey(index);
-    '[AutoScroll] 🎯 Income _scrollToSelected triggered | index=$index | catId=${category.id}'
-        .Log(_debugTag);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_pendingScrollIndex == index) {

@@ -532,9 +532,6 @@ class WalletController extends CcGetController {
             (sum, amt) => sum + amt,
           );
 
-          '[WalletController] _rebuildDerivedBalances wallet=${wallet.id} allInTxns=${invInTxns.length} sum=$allTimeContributed baseBalance=$baseBalance txnsLength=${txns.length}'
-              .Log('WalletController');
-
           final allTimeReturned = convertedAllReturn.fold<int>(
             0,
             (sum, amt) => sum + amt,

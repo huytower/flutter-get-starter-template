@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../liability/presentation/get_x/liability_base_form_controller.dart';
+import '../../../liability/presentation/get_x/liability_form_controller.dart';
+import '../../../liability/presentation/get_x/lend_form_controller.dart';
+import '../../domain/usecases/create_investment_transaction_usecase.dart';
+import '../get_x/investment_form_controller.dart';
 import '../get_x/transaction_controller.dart';
 
 class TransactionHeaderActions extends StatelessWidget {
@@ -39,6 +44,7 @@ class TransactionHeaderActions extends StatelessWidget {
       }
       final tabKind = tabs[selectedIndex];
       final activeColor = _getTabColor(context, tabKind);
+      final icon = _getTabIcon(tabKind);
 
       return CcIconButton.bouncing(
         onTap: onSubmit ?? () {},
@@ -46,7 +52,7 @@ class TransactionHeaderActions extends StatelessWidget {
         height: context.respDim(30),
         width: context.respDim(30),
         icon: Icon(
-          Icons.check_rounded,
+          icon,
           size: context.respIconSize(baseSize: 22),
           color: activeColor,
         ),
@@ -74,5 +80,38 @@ class TransactionHeaderActions extends StatelessWidget {
       TransactionTabKind.liability => context.ccColorScheme.liability,
       TransactionTabKind.lend => context.ccColorScheme.liability,
     };
+  }
+
+  static IconData _getTabIcon(TransactionTabKind tab) {
+    switch (tab) {
+      case TransactionTabKind.expense:
+        return Icons.arrow_circle_down;
+      case TransactionTabKind.income:
+        return Icons.arrow_circle_up;
+      case TransactionTabKind.investment:
+        if (Get.isRegistered<InvestmentFormController>()) {
+          final c = Get.find<InvestmentFormController>();
+          return c.direction.value == InvestmentDirectionForm.contribute
+              ? Icons.arrow_circle_down
+              : Icons.arrow_circle_up;
+        }
+        return Icons.arrow_circle_down;
+      case TransactionTabKind.liability:
+        if (Get.isRegistered<LiabilityFormController>()) {
+          final c = Get.find<LiabilityFormController>();
+          return c.action.value == LiabilityDirectionForm.decrease
+              ? Icons.arrow_circle_down
+              : Icons.arrow_circle_up;
+        }
+        return Icons.arrow_circle_up;
+      case TransactionTabKind.lend:
+        if (Get.isRegistered<LendFormController>()) {
+          final c = Get.find<LendFormController>();
+          return c.action.value == LiabilityDirectionForm.decrease
+              ? Icons.arrow_circle_up
+              : Icons.arrow_circle_down;
+        }
+        return Icons.arrow_circle_down;
+    }
   }
 }

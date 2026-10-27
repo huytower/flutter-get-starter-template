@@ -216,8 +216,6 @@ class ExpenseFormController extends TransactionFormController
 
     _pendingScrollIndex = index;
     final key = getItemKey(index);
-    '[AutoScroll] 🎯 Expense _scrollToSelected triggered | index=$index | itemId=${unifiedItems[index].id} | catId=${selectedCategory.value?.id}'
-        .Log(_debugTag);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_pendingScrollIndex == index) {

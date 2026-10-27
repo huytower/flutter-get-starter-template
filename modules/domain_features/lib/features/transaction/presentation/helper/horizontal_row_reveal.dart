@@ -1,7 +1,6 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 
 /// Base width of an asset card in a horizontal asset row, and the gap between
 /// two cards (those rows separate items with [CcSpaceMD], also 12pt).
@@ -29,13 +28,8 @@ void revealRowCard({
 }) {
   if (index < 0) return;
 
-  '[AutoScroll] 🔍 revealRowCard requested | index=$index | tag=$tag | hasKeyContext=${itemKey?.currentContext != null} | attemptsLeft=$attemptsLeft'
-      .Log(tag);
-
   // Approach 1: Direct GlobalKey ensureVisible if the widget is already rendered
   if (itemKey?.currentContext != null) {
-    '[AutoScroll] ✨ Using Scrollable.ensureVisible via GlobalKey for index=$index'
-        .Log(tag);
     Scrollable.ensureVisible(
       itemKey!.currentContext!,
       alignment: 0.5,
@@ -59,10 +53,6 @@ void revealRowCard({
           tag: tag,
           attemptsLeft: attemptsLeft - 1,
         ),
-      );
-    } else {
-      '[AutoScroll] ❌ revealRowCard | row not attached for index=$index'.Log(
-        tag,
       );
     }
     return;
@@ -88,7 +78,8 @@ void revealRowCard({
     return;
   }
 
-  final effectiveContext = context ??
+  final effectiveContext =
+      context ??
       itemKey?.currentContext ??
       (scrollController.hasClients
           ? scrollController.position.context.notificationContext
@@ -98,10 +89,9 @@ void revealRowCard({
   final width = effectiveContext != null
       ? effectiveContext.respDim(itemWidth)
       : itemWidth;
-  final extent = width +
-      (effectiveContext != null
-          ? effectiveContext.respDim(itemGap)
-          : itemGap);
+  final extent =
+      width +
+      (effectiveContext != null ? effectiveContext.respDim(itemGap) : itemGap);
   final leading = effectiveContext != null
       ? effectiveContext.respPadding(leadingPadding)
       : leadingPadding;
@@ -110,9 +100,6 @@ void revealRowCard({
   final rawTarget =
       leading + index * extent - (position.viewportDimension - width) / 2;
   final target = rawTarget.clamp(0.0, double.infinity);
-
-  '[AutoScroll] 🚀 Animating scrollController to target=$target | index=$index | viewport=${position.viewportDimension} | max=${position.maxScrollExtent}'
-      .Log(tag);
 
   if (scrollController.hasClients) {
     scrollController.animateTo(
@@ -125,8 +112,6 @@ void revealRowCard({
     if (itemKey != null) {
       Future.delayed(const Duration(milliseconds: 450), () {
         if (itemKey.currentContext != null) {
-          '[AutoScroll] 🎯 Post-scroll alignment via Scrollable.ensureVisible for index=$index'
-              .Log(tag);
           Scrollable.ensureVisible(
             itemKey.currentContext!,
             alignment: 0.5,
@@ -136,8 +121,6 @@ void revealRowCard({
         } else {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (itemKey.currentContext != null) {
-              '[AutoScroll] 🎯 Post-scroll deferred alignment via Scrollable.ensureVisible for index=$index'
-                  .Log(tag);
               Scrollable.ensureVisible(
                 itemKey.currentContext!,
                 alignment: 0.5,
@@ -151,4 +134,3 @@ void revealRowCard({
     }
   }
 }
-
