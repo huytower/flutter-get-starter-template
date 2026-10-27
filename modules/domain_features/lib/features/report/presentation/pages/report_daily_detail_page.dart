@@ -64,8 +64,11 @@ class _ReportDailyDetailView extends CcGetView<ReportController> {
           );
         }),
         const CcSpaceXS(),
-        Obx(
-          () => CcIconButton.bouncing(
+        Obx(() {
+          if (!controller.hasDailyTransactions) {
+            return const SizedBox.shrink();
+          }
+          return CcIconButton.bouncing(
             onTap: controller.toggleEditMode,
             tooltip: controller.isEditMode.value
                 ? el.tr(CcLocaleKeys.common_done)
@@ -81,8 +84,8 @@ class _ReportDailyDetailView extends CcGetView<ReportController> {
                 size: context.respIconSize(baseSize: 20),
               ),
             ),
-          ),
-        ),
+          );
+        }),
       ],
     );
   }
