@@ -23,15 +23,9 @@ Future<void> initEnv() async {
 
 Future<void> logEnv() async {
   try {
-    // Use the environment defined in HttpClientConfig as the source of truth
-    final env = HttpClientConfig.environment;
-
     if (!dotenv.isInitialized) {
       await initEnv();
     }
-
-    // Log essential env info (removed from assert to run in release mode)
-    final appName = dotenv.env['APP_NAME'] ?? 'Unknown';
   } catch (e, stackTrace) {
     '❌ Failed to load env variables: $e'.Log('EnvConfig');
     stackTrace.Log('EnvConfig');

@@ -211,7 +211,6 @@ class FinancialDataSyncService {
       // they cannot be adopted by [userId] — they are cleared and the pull
       // repopulates from Firestore. Log loudly rather than letting a guest's
       // work disappear with no trace.
-      final orphaned = previousOwner == null ? _countPending() : 0;
       await _clearFinancialCache();
     }
     CcAppStorage.instance.financialDataOwnerId = userId;
@@ -438,7 +437,6 @@ class FinancialDataSyncService {
     }
 
     if (_countPending() > 0) {
-      final remaining = _countPending();
       return LogoutResult.pendingSync;
     }
 

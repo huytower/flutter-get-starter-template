@@ -101,7 +101,7 @@ class ParseQuickEntryUseCase {
         '${_todayReferenceSentence()} '
         'IMPORTANT: If the text contains relative dates like "hôm qua" (yesterday), '
         '"hôm kia" (the day before yesterday), or specific dates, resolve them '
-        'relative to the provided today\'s date. '
+        "relative to the provided today's date. "
         '${_buildCategoryOptionsPrompt(categories)} '
         '${_buildWalletOptionsPrompt(wallets)}';
 

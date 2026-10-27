@@ -1,10 +1,7 @@
-import 'dart:math';
-
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../../core/constant/currency_catalog.dart';

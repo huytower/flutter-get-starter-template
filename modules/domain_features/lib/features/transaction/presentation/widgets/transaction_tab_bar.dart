@@ -258,7 +258,6 @@ class TransactionTabBar extends StatelessWidget {
   }
 
   Widget _buildBadge(BuildContext context) {
-    final guideline = Get.find<GuidelineController>();
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: PrjGuidelineBadge(size: context.respDim(6), label: null),

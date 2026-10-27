@@ -1,7 +1,6 @@
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:intl/intl.dart';
 
-import '../constant/currency_catalog.dart';
 import '../constant/currency_constants.dart';
 
 /// Consolidated money formatting helper supporting multiple currencies

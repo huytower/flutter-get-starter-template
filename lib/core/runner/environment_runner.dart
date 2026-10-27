@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:app_config/core/config/http/http_client/http_client_config.dart';

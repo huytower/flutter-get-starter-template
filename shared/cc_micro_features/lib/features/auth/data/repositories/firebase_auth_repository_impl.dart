@@ -367,17 +367,10 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       );
       final googleUser = await _googleSignIn.authenticate();
 
-      if (googleUser == null) {
-        '[GOOGLE_SIGN_IN] ❌ User cancelled or failed to authenticate'.Log(
-          'FirebaseAuthRepository',
-        );
-        return const Error(UnauthorizedFailure('Authentication cancelled'));
-      }
-
       '[GOOGLE_SIGN_IN] 3. Fetching authentication details'.Log(
         'FirebaseAuthRepository',
       );
-      final googleAuth = await googleUser.authentication;
+      final googleAuth = googleUser.authentication;
       '[GOOGLE_SIGN_IN] 4. Details received | idToken present: ${googleAuth.idToken != null}'
           .Log('FirebaseAuthRepository');
 

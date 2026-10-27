@@ -18,7 +18,6 @@ class BorrowWalletsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
     final cardHeight = balances.isEmpty ? 35.0 : 95.0;
 
     return SizedBox(

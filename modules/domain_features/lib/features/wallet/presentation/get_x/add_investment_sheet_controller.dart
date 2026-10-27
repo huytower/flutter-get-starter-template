@@ -152,12 +152,6 @@ class AddInvestmentSheetController extends CcGetController {
     final name = nameController.text.trim();
     final wallet = _wallet;
 
-    // The categoryNameKey this wallet belongs to:
-    // - editing: use the wallet's existing key
-    // - creating: use the selected category's key
-    final targetCategoryKey =
-        wallet?.categoryNameKey ?? selectedInvestmentCategory.value?.nameKey;
-
     // Check for duplicate name OR duplicate category type
     // (excluding the wallet currently being edited).
     final isDuplicate = _walletController.wallets.any((w) {
