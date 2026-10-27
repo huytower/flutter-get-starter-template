@@ -23,6 +23,19 @@ class ProfilePage extends CcGetView<ProfileController> {
   bool get enableAppBar => false;
 
   @override
+  bool get useSafeArea => false;
+
+  @override
+  Widget onPageBodyWrapper(BuildContext context, Widget body) {
+    return Stack(
+      children: [
+        const BgGradientWidget(topAlpha: 25),
+        body,
+      ],
+    );
+  }
+
+  @override
   Widget buildContent(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (controller.openBirthYearPicker.value) {
@@ -33,6 +46,7 @@ class ProfilePage extends CcGetView<ProfileController> {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final scheme = context.ccColorScheme;
+    final topPadding = MediaQuery.of(context).padding.top;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
@@ -43,39 +57,34 @@ class ProfilePage extends CcGetView<ProfileController> {
                 ? Brightness.light
                 : Brightness.dark,
           ),
-      child: Scaffold(
-        backgroundColor: context.ccColorScheme.background,
-        body: Stack(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const BgGradientWidget(),
-            SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const CcSpaceMD(),
-                  Obx(() {
-                    return Hero(
-                      tag: 'profile_hero_banner',
-                      child: ProfilePageHeader(
-                        user: controller.user.value,
-                        displayName: controller.displayName,
-                        level: controller.userLevel.status.value.level,
-                        daysToNextAudit: controller.daysToNextAudit,
-                        levelStatus: controller.userLevel.status.value,
-                        initialFlipped:
-                            controller.settings.value.isHeaderFlipped,
-                        onFlip: controller.setHeaderFlipped,
-                        onEditName: () => controller.pickDisplayName(context),
-                        onLinkAccount: () =>
-                            controller.handleLinkAccountTap(context),
-                        onAvatarTap: controller.isLoggedIn
-                            ? null
-                            : () => controller.handleAvatarTap(context),
-                        onLinkPhone: () =>
-                            controller.handlePhoneLinkTap(context),
-                      ),
-                    );
-                  }),
+            SizedBox(height: topPadding + context.respDim(12)),
+            Obx(() {
+              return Hero(
+                tag: 'profile_hero_banner',
+                child: ProfilePageHeader(
+                  user: controller.user.value,
+                  displayName: controller.displayName,
+                  level: controller.userLevel.status.value.level,
+                  daysToNextAudit: controller.daysToNextAudit,
+                  levelStatus: controller.userLevel.status.value,
+                  initialFlipped:
+                      controller.settings.value.isHeaderFlipped,
+                  onFlip: controller.setHeaderFlipped,
+                  onEditName: () => controller.pickDisplayName(context),
+                  onLinkAccount: () =>
+                      controller.handleLinkAccountTap(context),
+                  onAvatarTap: controller.isLoggedIn
+                      ? null
+                      : () => controller.handleAvatarTap(context),
+                  onLinkPhone: () =>
+                      controller.handlePhoneLinkTap(context),
+                ),
+              );
+            }),
                   CcSymmetricPadding(
                     horizontal: CcPaddingParams.PAGE_SM,
                     child: Column(
@@ -106,9 +115,6 @@ class ProfilePage extends CcGetView<ProfileController> {
                 ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
