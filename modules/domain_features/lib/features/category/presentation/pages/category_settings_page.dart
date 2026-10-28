@@ -93,7 +93,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       return FadePageWrapper(
         child: Column(
           children: [
-            const CcSpaceSM(),
+            const CcSpaceMD(),
             _buildSubtitle(context),
             Expanded(
               child: ShaderMask(
