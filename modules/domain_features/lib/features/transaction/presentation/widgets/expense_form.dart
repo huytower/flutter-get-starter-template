@@ -78,10 +78,8 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
     return Obx(
       () => Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Flexible(
-            fit: FlexFit.loose,
+          Expanded(
             child: _buildScrollableContent(
               context,
               controller,
@@ -176,7 +174,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
             onTap: () => controller.submitForm(context),
             activeColor: accentColor,
             leadingIcon: Icons.arrow_circle_down,
-            leadingIconSize: 18,
+            leadingIconSize: 28,
             badge: guideline.isTaskActive('first_transaction')
                 ? PrjGuidelineBadge(
                     size: context.respDim(6),

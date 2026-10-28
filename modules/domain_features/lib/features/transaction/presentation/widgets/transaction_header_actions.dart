@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_base_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
-import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
 import '../get_x/transaction_controller.dart';
@@ -53,8 +53,8 @@ class TransactionHeaderActions extends StatelessWidget {
         width: context.respDim(30),
         icon: Icon(
           icon,
-          size: context.respIconSize(baseSize: 22),
-          color: activeColor,
+          size: context.respIconSize(baseSize: 28),
+          color: activeColor.withValues(alpha: 85),
         ),
       );
     });
@@ -66,7 +66,7 @@ class TransactionHeaderActions extends StatelessWidget {
       icon: Icon(
         Icons.bar_chart_rounded,
         size: context.respIconSize(baseSize: 28),
-        color: context.ccColorScheme.onPrimary,
+        color: context.ccColorScheme.primary.withValues(alpha: 85),
       ),
       tooltip: el.tr(CcLocaleKeys.report_title),
     );

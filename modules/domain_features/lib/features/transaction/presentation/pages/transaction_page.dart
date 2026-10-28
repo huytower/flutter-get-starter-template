@@ -123,11 +123,19 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   height: hidden ? 0 : headerHeight,
-                  child: TransactionPageHeader(
-                    controller: controller,
-                    onOpenReport: () => controller.openReport(context),
-                    onSubmit: () => controller.submitCurrentForm(context),
-                    expenseFormController: Get.find<ExpenseFormController>(),
+                  child: ClipRect(
+                    child: OverflowBox(
+                      alignment: Alignment.topCenter,
+                      minHeight: headerHeight,
+                      maxHeight: headerHeight,
+                      child: TransactionPageHeader(
+                        controller: controller,
+                        onOpenReport: () => controller.openReport(context),
+                        onSubmit: () => controller.submitCurrentForm(context),
+                        expenseFormController:
+                            Get.find<ExpenseFormController>(),
+                      ),
+                    ),
                   ),
                 ),
               );

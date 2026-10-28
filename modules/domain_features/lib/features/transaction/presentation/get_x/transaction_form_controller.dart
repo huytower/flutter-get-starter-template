@@ -159,9 +159,15 @@ abstract class TransactionFormController extends CcGetController {
     FocusScope.of(context).unfocus();
     showKeypad.value = true;
     _notifyParentKeypad(true);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    '[KeypadScroll] ⌨️ Keypad opened | showKeypad=true'.Log(
+      runtimeType.toString(),
+    );
+    // Wait for the 200ms header collapse animation to complete before scrolling
+    Future.delayed(const Duration(milliseconds: 220), () {
       final ctx = amountFieldKey.currentContext;
       if (ctx != null) {
+        '[KeypadScroll] 📜 Scrollable.ensureVisible called for amount field'
+            .Log(runtimeType.toString());
         Scrollable.ensureVisible(
           ctx,
           duration: const Duration(milliseconds: 250),
@@ -172,6 +178,9 @@ abstract class TransactionFormController extends CcGetController {
   }
 
   void hideKeypad() {
+    '[KeypadScroll] ⌨️ Keypad hidden | showKeypad=false'.Log(
+      runtimeType.toString(),
+    );
     showKeypad.value = false;
     _notifyParentKeypad(false);
   }
