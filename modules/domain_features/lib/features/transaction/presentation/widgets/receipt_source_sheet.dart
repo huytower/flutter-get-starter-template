@@ -54,13 +54,7 @@ class ReceiptSourceSheet extends StatelessWidget {
             ),
           ),
           DecoratedBox(
-            decoration: BoxDecoration(
-              color: scheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(context.respDim(16)),
-                bottomRight: Radius.circular(context.respDim(16)),
-              ),
-            ),
+            decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
             child: Padding(
               padding: EdgeInsets.symmetric(
                 vertical: context.respPadding(CcPaddingParams.SPACE_SM),

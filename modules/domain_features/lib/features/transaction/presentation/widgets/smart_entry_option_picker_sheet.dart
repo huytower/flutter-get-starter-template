@@ -46,13 +46,7 @@ class SmartEntryOptionPickerSheet extends StatelessWidget {
         children: [
           SmartEntrySheetHeader(title: title),
           DecoratedBox(
-            decoration: BoxDecoration(
-              color: scheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(context.respDim(16)),
-                bottomRight: Radius.circular(context.respDim(16)),
-              ),
-            ),
+            decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.sizeOf(context).height * 0.6,

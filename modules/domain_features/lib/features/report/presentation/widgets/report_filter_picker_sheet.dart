@@ -117,13 +117,7 @@ class _ReportFilterPickerSheetState extends State<ReportFilterPickerSheet> {
             ),
           ),
           DecoratedBox(
-            decoration: BoxDecoration(
-              color: scheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(context.respDim(16)),
-                bottomRight: Radius.circular(context.respDim(16)),
-              ),
-            ),
+            decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.7,

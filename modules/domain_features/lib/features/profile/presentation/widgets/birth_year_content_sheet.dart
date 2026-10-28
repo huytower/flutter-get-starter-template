@@ -117,13 +117,7 @@ class _BirthYearContentSheetState extends State<BirthYearContentSheet> {
 
   Widget _buildBody(BuildContext context, ColorScheme scheme, int totalYears) {
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(context.respDim(12)),
-          bottomRight: Radius.circular(context.respDim(12)),
-        ),
-      ),
+      decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

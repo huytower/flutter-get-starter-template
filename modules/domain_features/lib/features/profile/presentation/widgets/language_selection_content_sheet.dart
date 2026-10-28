@@ -85,13 +85,7 @@ class _LanguageSelectionContentSheetState
     List<Locale> locales,
   ) {
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(context.respDim(24)),
-          bottomRight: Radius.circular(context.respDim(24)),
-        ),
-      ),
+      decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
       child: SafeArea(
         top: false,
         child: Column(

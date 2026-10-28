@@ -58,10 +58,6 @@ class SmartEntryPreviewSheet extends StatelessWidget {
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: scheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(context.respDim(16)),
-                          bottomRight: Radius.circular(context.respDim(16)),
-                        ),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,

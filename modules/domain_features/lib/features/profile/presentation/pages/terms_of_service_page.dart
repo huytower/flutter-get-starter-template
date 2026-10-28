@@ -2,6 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 @RoutePage()
@@ -47,15 +48,25 @@ class _TermsOfServicePageState extends State<TermsOfServicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.ccColorScheme.surface,
-      appBar: AppBar(
-        title: CcText(
-          el.tr(CcLocaleKeys.profile_terms),
-          textStyle: context.ccTextTheme.titleMedium,
+      appBar: buildDomainGradientAppBar(
+        context,
+        leading: CcIconButton.bouncing(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: context.ccColorScheme.onPrimary,
+            size: context.respIconSize(baseSize: 24),
+          ),
+          onTap: () => Navigator.of(context).pop(),
         ),
-        centerTitle: true,
-        backgroundColor: context.ccColorScheme.surface,
-        elevation: 0,
-        leading: CcBackBtn(onTap: () => Navigator.of(context).pop()),
+        title: Center(
+          child: CcText(
+            el.tr(CcLocaleKeys.profile_terms),
+            textStyle: context.ccTextTheme.titleMedium?.copyWith(
+              fontWeight: CcTypographyParams.bold,
+              color: context.ccColorScheme.onPrimary,
+            ),
+          ),
+        ),
       ),
       body: Stack(
         children: [

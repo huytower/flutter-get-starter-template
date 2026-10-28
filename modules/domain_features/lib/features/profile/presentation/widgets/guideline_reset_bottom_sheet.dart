@@ -86,13 +86,7 @@ class GuidelineResetBottomSheet extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, ColorScheme scheme) {
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(context.respDim(24)),
-          bottomRight: Radius.circular(context.respDim(24)),
-        ),
-      ),
+      decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
