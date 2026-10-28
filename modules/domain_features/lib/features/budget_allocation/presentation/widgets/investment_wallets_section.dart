@@ -47,11 +47,13 @@ class InvestmentWalletsSection extends StatelessWidget {
                       size: 20,
                     ),
                   ),
-                  const CcSpaceSM(),
-                  CcTextButton(
-                    text: el.tr(CcLocaleKeys.wallet_see_all),
-                    onTap: onSeeAll,
-                  ),
+                  if (wallets.isNotEmpty) ...[
+                    const CcSpaceSM(),
+                    CcTextButton(
+                      text: el.tr(CcLocaleKeys.wallet_see_all),
+                      onTap: onSeeAll,
+                    ),
+                  ],
                 ],
               ),
               0, // bottom

@@ -95,10 +95,10 @@ class BudgetLimitRepositoryImpl
       if (target != null) {
         final all = await _local.getAll();
         for (final m in all) {
-          final sameCategory = target.categoryId.isNotEmpty &&
-              m.categoryId == target.categoryId;
-          final sameName = m.name.trim().toLowerCase() ==
-              target.name.trim().toLowerCase();
+          final sameCategory =
+              target.categoryId.isNotEmpty && m.categoryId == target.categoryId;
+          final sameName =
+              m.name.trim().toLowerCase() == target.name.trim().toLowerCase();
           if (m.id == id || sameCategory || sameName) {
             await _local.delete(m.id);
           }

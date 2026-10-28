@@ -1,9 +1,9 @@
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
+import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
 import 'package:domain_features/features/firestore/model/sync_metadata.dart';
 import 'package:hive_ce/hive_ce.dart';
 
-import 'package:domain_features/core/constant/currency_constants.dart';
 import '../../domain/entities/wallet_entity.dart';
 
 part 'wallet_hive_model.g.dart';

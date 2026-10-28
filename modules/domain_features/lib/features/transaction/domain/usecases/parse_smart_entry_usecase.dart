@@ -33,6 +33,7 @@ class ParseSmartEntryUseCase {
 
   final GetCategoriesUseCase _getCategories;
   final CurrencyConversionService _conversionService;
+
   WalletRepository get _walletRepository => getIt<WalletRepository>();
 
   Future<Result<List<ParsedTransactionEntity>, CcFailure>> call({

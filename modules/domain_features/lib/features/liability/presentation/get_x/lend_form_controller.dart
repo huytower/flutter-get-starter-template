@@ -46,6 +46,7 @@ class LendFormController extends LiabilityBaseFormController {
   }
 
   final String direction = LiabilityDirection.lend;
+
   @override
   String get quickEntryDirection => direction;
 

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+
 import 'domain_router.gr.dart';
 
 @AutoRouterConfig()

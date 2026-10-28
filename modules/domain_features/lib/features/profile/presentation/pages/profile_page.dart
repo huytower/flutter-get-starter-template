@@ -27,12 +27,7 @@ class ProfilePage extends CcGetView<ProfileController> {
 
   @override
   Widget onPageBodyWrapper(BuildContext context, Widget body) {
-    return Stack(
-      children: [
-        const BgGradientWidget(topAlpha: 25),
-        body,
-      ],
-    );
+    return Stack(children: [const BgGradientWidget(topAlpha: 25), body]);
   }
 
   @override
@@ -71,50 +66,47 @@ class ProfilePage extends CcGetView<ProfileController> {
                   level: controller.userLevel.status.value.level,
                   daysToNextAudit: controller.daysToNextAudit,
                   levelStatus: controller.userLevel.status.value,
-                  initialFlipped:
-                      controller.settings.value.isHeaderFlipped,
+                  initialFlipped: controller.settings.value.isHeaderFlipped,
                   onFlip: controller.setHeaderFlipped,
                   onEditName: () => controller.pickDisplayName(context),
-                  onLinkAccount: () =>
-                      controller.handleLinkAccountTap(context),
+                  onLinkAccount: () => controller.handleLinkAccountTap(context),
                   onAvatarTap: controller.isLoggedIn
                       ? null
                       : () => controller.handleAvatarTap(context),
-                  onLinkPhone: () =>
-                      controller.handlePhoneLinkTap(context),
+                  onLinkPhone: () => controller.handlePhoneLinkTap(context),
                 ),
               );
             }),
-                  CcSymmetricPadding(
-                    horizontal: CcPaddingParams.PAGE_SM,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const CcSpaceMD(),
-                        ProfileMenuGroup(items: _buildMenuItems(context)),
-                        const CcSpaceXL(),
-                        Obx(
-                          () => controller.isLoggedIn
-                              ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    _buildDeleteAccountText(context),
-                                    const CcSpaceMD(),
-                                    _buildLogoutButton(context),
-                                    const CcSpaceMD(),
-                                  ],
-                                )
-                              : const SizedBox.shrink(),
-                        ),
-                        const CcSpaceSM(),
-                        _buildFooter(context),
-                        const CcSpaceSM(),
-                      ],
-                    ),
+            CcSymmetricPadding(
+              horizontal: CcPaddingParams.PAGE_SM,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const CcSpaceMD(),
+                  ProfileMenuGroup(items: _buildMenuItems(context)),
+                  const CcSpaceXL(),
+                  Obx(
+                    () => controller.isLoggedIn
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              _buildDeleteAccountText(context),
+                              const CcSpaceMD(),
+                              _buildLogoutButton(context),
+                              const CcSpaceMD(),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
                   ),
+                  const CcSpaceSM(),
+                  _buildFooter(context),
+                  const CcSpaceSM(),
                 ],
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 

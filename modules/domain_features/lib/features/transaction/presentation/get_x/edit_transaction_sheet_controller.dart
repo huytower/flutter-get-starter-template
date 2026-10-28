@@ -21,8 +21,11 @@ class EditTransactionSheetController extends CcGetController {
   final RxBool _isIncome = false.obs;
 
   bool get isExpense => _isExpense.value;
+
   bool get isIncome => _isIncome.value;
+
   bool get isInvestment => transaction.isInvestmentActivity;
+
   bool get isDebt => transaction.isDebtActivity;
 
   Color accentColor(BuildContext context) {

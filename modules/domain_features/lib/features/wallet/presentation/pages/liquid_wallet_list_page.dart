@@ -7,8 +7,8 @@ import 'package:get/get.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../guideline/export_guideline.dart';
 import '../get_x/wallet_controller.dart';
-import '../widgets/transfer_money_sheet.dart';
 import '../widgets/liquid_wallet_list_item.dart';
+import '../widgets/transfer_money_sheet.dart';
 
 @RoutePage()
 class LiquidWalletListPage extends StatefulWidget {

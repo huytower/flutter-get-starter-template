@@ -124,9 +124,13 @@ class WalletController extends CcGetController {
     );
   }
 
-  void _handleDeleteOutcome(BuildContext? context, WalletDeleteOutcome outcome) {
-    final activeContext =
-        (context != null && context.mounted) ? context : Get.context;
+  void _handleDeleteOutcome(
+    BuildContext? context,
+    WalletDeleteOutcome outcome,
+  ) {
+    final activeContext = (context != null && context.mounted)
+        ? context
+        : Get.context;
     if (activeContext == null) return;
 
     switch (outcome) {
@@ -353,7 +357,9 @@ class WalletController extends CcGetController {
 
   /// Marks the transaction data dirty so the next [loadWallets] will recompute derived balances.
   void markDirty() {
-    '[WalletController] 🧹 Wallet transaction data marked dirty'.Log('WalletController');
+    '[WalletController] 🧹 Wallet transaction data marked dirty'.Log(
+      'WalletController',
+    );
     _isTransactionDataDirty = true;
   }
 

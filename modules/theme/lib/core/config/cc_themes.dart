@@ -1,12 +1,12 @@
 library theme;
 
+import 'package:cc_sdk_ui/core/config/tokens/cc_gradient_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../data/data_source/color/prj_color.dart';
 import '../../presentation/style/cc_text_style.dart';
-import 'package:cc_sdk_ui/core/config/tokens/cc_gradient_colors.dart';
 
 /// Colors from Tailwind CSS :
 /// https://tailwindcss.com/docs/customizing-colors

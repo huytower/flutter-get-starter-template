@@ -25,7 +25,7 @@ import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
 
 class DataConfigPackageModule extends _i526.MicroPackageModule {
-// initializes the registration of main-scope dependencies inside of GetIt
+  // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
     final firebaseModule = _$FirebaseModule();
@@ -33,19 +33,19 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
     gh.lazySingleton<_i59.FirebaseAuth>(() => firebaseModule.firebaseAuth);
     gh.lazySingleton<_i116.GoogleSignIn>(() => firebaseModule.googleSignIn);
     gh.lazySingleton<_i954.FirestoreSyncService>(
-        () => _i954.FirestoreSyncService());
+      () => _i954.FirestoreSyncService(),
+    );
     gh.lazySingleton<_i25.ExchangeRateLocalDataSource>(
-        () => _i25.ExchangeRateLocalDataSource());
+      () => _i25.ExchangeRateLocalDataSource(),
+    );
     gh.lazySingleton<_i221.RateFreshness>(
-        () => _i221.RateFreshness.defaultPolicy());
+      () => _i221.RateFreshness.defaultPolicy(),
+    );
     gh.lazySingleton<_i361.Interceptor>(
       () => dataModule.cacheInterceptor,
       instanceName: 'cacheInterceptor',
     );
-    gh.factory<String>(
-      () => dataModule.baseUrl,
-      instanceName: 'baseUrl',
-    );
+    gh.factory<String>(() => dataModule.baseUrl, instanceName: 'baseUrl');
     gh.lazySingleton<_i361.Interceptor>(
       () => dataModule.talkerDioLogger,
       instanceName: 'talkerDioLogger',
@@ -62,18 +62,23 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
       () => dataModule.responseInterceptor,
       instanceName: 'responseInterceptor',
     );
-    gh.factory<_i312.GenericSyncDataSource>(() => _i312.GenericSyncDataSource(
-          gh<_i954.FirestoreSyncService>(),
-          gh<_i727.SessionContract>(),
-          gh<String>(),
-        ));
-    gh.lazySingleton<List<_i361.Interceptor>>(() => dataModule.interceptors(
-          gh<_i361.Interceptor>(instanceName: 'requestInterceptor'),
-          gh<_i361.Interceptor>(instanceName: 'responseInterceptor'),
-          gh<_i361.Interceptor>(instanceName: 'cacheInterceptor'),
-        ));
+    gh.factory<_i312.GenericSyncDataSource>(
+      () => _i312.GenericSyncDataSource(
+        gh<_i954.FirestoreSyncService>(),
+        gh<_i727.SessionContract>(),
+        gh<String>(),
+      ),
+    );
+    gh.lazySingleton<List<_i361.Interceptor>>(
+      () => dataModule.interceptors(
+        gh<_i361.Interceptor>(instanceName: 'requestInterceptor'),
+        gh<_i361.Interceptor>(instanceName: 'responseInterceptor'),
+        gh<_i361.Interceptor>(instanceName: 'cacheInterceptor'),
+      ),
+    );
     gh.lazySingleton<_i361.BaseOptions>(
-        () => dataModule.baseOptions(gh<String>(instanceName: 'baseUrl')));
+      () => dataModule.baseOptions(gh<String>(instanceName: 'baseUrl')),
+    );
     gh.lazySingleton<_i361.Dio>(
       () => dataModule.dio(
         gh<_i361.BaseOptions>(),
@@ -82,13 +87,15 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
       instanceName: 'baseDio',
     );
     gh.lazySingleton<_i1048.FrankfurterRemote>(
-        () => _i1048.FrankfurterRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
+      () => _i1048.FrankfurterRemote(gh<_i361.Dio>(instanceName: 'baseDio')),
+    );
     gh.lazySingleton<_i686.ExchangeRateRepository>(
-        () => _i626.ExchangeRateRepositoryImpl(
-              gh<_i1048.FrankfurterRemote>(),
-              gh<_i25.ExchangeRateLocalDataSource>(),
-              gh<_i221.RateFreshness>(),
-            ));
+      () => _i626.ExchangeRateRepositoryImpl(
+        gh<_i1048.FrankfurterRemote>(),
+        gh<_i25.ExchangeRateLocalDataSource>(),
+        gh<_i221.RateFreshness>(),
+      ),
+    );
   }
 }
 

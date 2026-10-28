@@ -178,7 +178,9 @@ class ExchangeRateRepositoryImpl implements ExchangeRateRepository {
           retention: const Duration(days: 90),
         );
       } catch (e) {
-        '[ExchangeRateRepository] Cache cleanup failed: $e'.Log('ExchangeRateRepository');
+        '[ExchangeRateRepository] Cache cleanup failed: $e'.Log(
+          'ExchangeRateRepository',
+        );
       }
 
       return Success(

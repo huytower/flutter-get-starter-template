@@ -20,14 +20,22 @@ class GuidelineController extends GetxController {
   final UserLevelController _userLevelController;
 
   final List<String> taskSequence = [
-    'birth_year', // Profile -> _pickBirthYear
-    'categories', // Profile -> CategorySettingsPage
-    'wallet_balance', // Liquid Wallet List -> Edit Cash Wallet
-    'budget_limit', // Budget Allocation -> BudgetLimitListPage
-    'min_living', // Budget Allocation -> AddBudgetLimitSheet (storm icon)
-    'first_transaction', // Transaction -> ExpenseForm
-    'investment', // Budget Allocation -> Add Investment + Transaction -> Investment tab
-    'liability', // Budget Allocation -> Add Liability + Transaction -> Debt/Loan tab
+    'birth_year',
+    // Profile -> _pickBirthYear
+    'categories',
+    // Profile -> CategorySettingsPage
+    'wallet_balance',
+    // Liquid Wallet List -> Edit Cash Wallet
+    'budget_limit',
+    // Budget Allocation -> BudgetLimitListPage
+    'min_living',
+    // Budget Allocation -> AddBudgetLimitSheet (storm icon)
+    'first_transaction',
+    // Transaction -> ExpenseForm
+    'investment',
+    // Budget Allocation -> Add Investment + Transaction -> Investment tab
+    'liability',
+    // Budget Allocation -> Add Liability + Transaction -> Debt/Loan tab
   ];
 
   final Map<String, Color> taskColors = {

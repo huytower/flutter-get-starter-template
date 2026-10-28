@@ -15,19 +15,31 @@ const String _debugTag = 'LiabilityAssetRow';
 abstract class LiabilityBaseFormController extends TransactionFormController
     with QuickEntryMixin {
   RxList<LiabilityBalanceEntity> get mergedItems;
+
   RxBool get isLoadingMerged;
+
   RxnString get selectedLiabilityId;
+
   RxList<LiabilityInstallmentDraft> get installmentDrafts;
+
   RxnInt get editingInstallmentIndex;
+
   RxBool get reminderBeforeDueDate;
+
   RxString get repaymentMethod;
+
   Rx<DateTime?> get finalDueDate;
+
   int get principalAmount;
+
   int get installmentsTotal;
+
   bool get canAddInstallment;
+
   String get direction;
 
   Rx<LiabilityDirectionForm> get action;
+
   void setAction(LiabilityDirectionForm value);
 
   /// Drives the asset row in the liability/lend asset selector so the selected
@@ -39,12 +51,19 @@ abstract class LiabilityBaseFormController extends TransactionFormController
     bool resetAmount = true,
     String? amount,
   });
+
   void setRepaymentMethod(String value);
+
   void setReminderBeforeDueDate(bool value);
+
   Future<void> pickFinalDueDate(BuildContext context);
+
   Future<void> pickInstallmentDueDate(BuildContext context, int index);
+
   void addInstallmentPeriod();
+
   void removeInstallmentPeriod(int index);
+
   void showKeypadForInstallment(BuildContext context, int index);
 
   @override

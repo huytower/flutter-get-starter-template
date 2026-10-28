@@ -48,32 +48,32 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
-              child: CcBouncing(
-                onTap: () => controller.pickInstallmentDueDate(context, index),
-                borderRadius: context.brMd,
-                child: Container(
-                  height: context.respDim(45),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
-                    vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+            child: CcBouncing(
+              onTap: () => controller.pickInstallmentDueDate(context, index),
+              borderRadius: context.brMd,
+              child: Container(
+                height: context.respDim(45),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
+                  vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+                ),
+                decoration: BoxDecoration(
+                  color: context.ccColorScheme.surfaceVariant.withAlpha(80),
+                  borderRadius: context.brMd,
+                  border: Border.all(
+                    color: context.ccColorScheme.outlineVariant.withAlpha(10),
+                    width: 0.4,
                   ),
-                  decoration: BoxDecoration(
-                    color: context.ccColorScheme.surfaceVariant.withAlpha(80),
-                    borderRadius: context.brMd,
-                    border: Border.all(
-                      color: context.ccColorScheme.outlineVariant.withAlpha(10),
-                      width: 0.4,
-                    ),
-                  ),
-                  child: Obx(
-                    () => LiabilityDateRow(
-                      date: draft.dueDate.value,
-                      icon: Icons.calendar_today_outlined,
-                      iconColor: activeColor,
-                    ),
+                ),
+                child: Obx(
+                  () => LiabilityDateRow(
+                    date: draft.dueDate.value,
+                    icon: Icons.calendar_today_outlined,
+                    iconColor: activeColor,
                   ),
                 ),
               ),
+            ),
           ),
           const CcSpaceXS(),
           Expanded(
@@ -104,7 +104,8 @@ class LiabilityInstallmentScheduleEditor extends StatelessWidget {
                             width: 1.5,
                           )
                         : Border.all(
-                            color: context.ccColorScheme.outlineVariant.withAlpha(10),
+                            color: context.ccColorScheme.outlineVariant
+                                .withAlpha(10),
                             width: 0.4,
                           ),
                   ),

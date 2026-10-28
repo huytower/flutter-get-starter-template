@@ -103,8 +103,6 @@ class _LendDirectionToggleState extends State<LendDirectionToggle>
   }
 
   Widget _buildTab(BuildContext context, String text) {
-    return Tab(
-      child: Text(text),
-    );
+    return Tab(child: Text(text));
   }
 }

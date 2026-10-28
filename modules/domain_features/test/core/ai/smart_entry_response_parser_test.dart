@@ -43,10 +43,7 @@ Map<String, Object?> _row({
 };
 
 String _json(List<Map<String, Object?>> rows, {String? documentKind}) =>
-    jsonEncode({
-      'documentKind': ?documentKind,
-      'transactions': rows,
-    });
+    jsonEncode({'documentKind': ?documentKind, 'transactions': rows});
 
 List<RawParsedTransaction>? _parse(
   String raw, {

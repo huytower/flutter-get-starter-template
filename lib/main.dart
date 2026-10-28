@@ -8,9 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'core/crash_reporting/crash_log_startup.dart';
 import 'core/di/di.dart';
 import 'core/di/hive_registrar.dart';
-import 'core/crash_reporting/crash_log_startup.dart';
 import 'core/logging/init_logger.dart';
 import 'core/runner/app_runner.dart';
 

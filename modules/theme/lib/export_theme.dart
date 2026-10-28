@@ -5,10 +5,10 @@
 // Core
 export 'core/config/cc_themes.dart';
 export 'core/helper/theme_helper.dart';
-// Data (semantic color mappings)
-export 'data/data_source/color/prj_color.dart';
 // Assets
 export 'data/data_source/asset/assets_data_source.dart';
+// Data (semantic color mappings)
+export 'data/data_source/color/prj_color.dart';
 // Presentation
 export 'presentation/provider/theme_provider.dart';
 export 'presentation/style/cc_text_style.dart';

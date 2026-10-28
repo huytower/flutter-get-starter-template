@@ -42,10 +42,13 @@ class QuickEditTransactionSheetController extends CcGetController {
   }
 
   bool get isInvestment => transaction.isInvestmentActivity;
+
   bool get isDebt => transaction.isDebtActivity;
+
   bool get isLend =>
       transaction.type == TransactionType.debtLend ||
       transaction.type == TransactionType.debtCollect;
+
   bool get isBorrow =>
       transaction.type == TransactionType.debtBorrow ||
       transaction.type == TransactionType.debtRepay;

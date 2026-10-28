@@ -103,7 +103,9 @@ class LiabilityEntity extends Equatable {
   });
 
   bool get isBorrow => direction == LiabilityDirection.borrow;
+
   bool get isLend => direction == LiabilityDirection.lend;
+
   bool get isInstallment =>
       repaymentMethod == LiabilityRepaymentMethod.installment;
 

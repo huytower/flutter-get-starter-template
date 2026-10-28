@@ -169,7 +169,8 @@ class AddInvestmentSheetController extends CcGetController {
         WalletEntity(
           id: wallet.id,
           name: name,
-          balance: wallet.balance, // Preserve existing opening balance
+          balance: wallet.balance,
+          // Preserve existing opening balance
           iconCode:
               selectedInvestmentCategory.value?.iconCode ?? wallet.iconCode,
           type: WalletType.investment,
@@ -182,7 +183,8 @@ class AddInvestmentSheetController extends CcGetController {
     } else {
       await _walletController.addWallet(
         name: name,
-        initialBalance: 0, // Default to 0 for new investments
+        initialBalance: 0,
+        // Default to 0 for new investments
         iconCode:
             selectedInvestmentCategory.value?.iconCode ??
             walletIconFor(WalletType.investment).codePoint,

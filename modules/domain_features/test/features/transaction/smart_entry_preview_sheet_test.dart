@@ -46,11 +46,14 @@ String _confirmMany(int count) => el.tr(
   CcLocaleKeys.smart_entry_preview_confirm_many,
   namedArgs: {'count': '$count'},
 );
+
 String _titleMany(int count) => el.tr(
   CcLocaleKeys.smart_entry_preview_title_many,
   namedArgs: {'count': '$count'},
 );
+
 String get _confirmOne => el.tr(CcLocaleKeys.smart_entry_preview_confirm_one);
+
 String get _income => el.tr(CcLocaleKeys.common_income);
 
 Finder _text(String value) => find.text(value, findRichText: true);

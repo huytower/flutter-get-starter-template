@@ -53,7 +53,9 @@ class CheckBudgetThresholdUseCase {
     await _notificationService.showNow(
       id: ReminderIds.budgetThreshold(stat.budget.id, tier),
       title: el.tr(
-        isOver ? CcLocaleKeys.budget_over_limit : CcLocaleKeys.budget_near_limit,
+        isOver
+            ? CcLocaleKeys.budget_over_limit
+            : CcLocaleKeys.budget_near_limit,
       ),
       body: el.tr(
         isOver

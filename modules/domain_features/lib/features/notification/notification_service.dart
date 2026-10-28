@@ -14,6 +14,7 @@ import 'package:timezone/timezone.dart' as tz;
 @lazySingleton
 class NotificationService {
   static const String _channelId = 'reminders_channel';
+
   // Channel name/description are OS-level metadata (Android Settings ->
   // Apps -> Notifications), not in-app UI, but still user-facing text, so
   // still routed through el.tr() rather than hardcoded. Safe to call here:
@@ -21,6 +22,7 @@ class NotificationService {
   // parallel boot barrier that includes CcLocalization.initialize().
   static String get _channelName =>
       el.tr(CcLocaleKeys.notification_channel_name);
+
   static String get _channelDescription =>
       el.tr(CcLocaleKeys.notification_channel_description);
 

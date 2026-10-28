@@ -16,5 +16,3 @@ abstract class LiabilityRepository {
   /// fails (see `CreateLiabilityUseCase`) — this feature has no edit/delete UI.
   Future<Result<void, CcFailure>> deleteLiability(String id);
 }
-
-

@@ -2,5 +2,4 @@
 /// available. Points to a generic, publicly available emergency-fund
 /// explainer so the "view guide" flow is genuinely functional in the
 /// meantime rather than a dead link.
-const String emergencyFundEbookUrl =
-    'https://example.com/terms-of-service';
+const String emergencyFundEbookUrl = 'https://example.com/terms-of-service';

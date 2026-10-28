@@ -12,6 +12,7 @@ class ParseQuickEntryUseCase {
   ParseQuickEntryUseCase(this._getCategories);
 
   final GetCategoriesUseCase _getCategories;
+
   WalletRepository get _walletRepository => getIt<WalletRepository>();
 
   Future<List<CategoryEntity>> _loadCategories(

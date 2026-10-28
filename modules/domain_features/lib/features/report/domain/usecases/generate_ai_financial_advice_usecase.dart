@@ -6,8 +6,8 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/ai/ai_language.dart';
 import '../../../../core/ai/ai_prompts.dart';
-import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
+import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../budget_limit/domain/entities/budget_anomaly_entity.dart';
 import '../../../budget_limit/domain/entities/budget_insights_entity.dart';

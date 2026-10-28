@@ -37,7 +37,9 @@ class CheckAuditReminderUseCase {
     }
 
     final latestResult = await _reconciliationRepository.getLatest();
-    final latest = latestResult.isSuccess() ? latestResult.tryGetSuccess() : null;
+    final latest = latestResult.isSuccess()
+        ? latestResult.tryGetSuccess()
+        : null;
     final now = DateTime.now();
     if (latest != null && isoWeekOf(latest.date) == isoWeekOf(now)) {
       // Already reconciled this week — nothing to remind about.

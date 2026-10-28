@@ -84,6 +84,8 @@ class LiabilityWalletsSection extends StatelessWidget {
     BudgetAllocationController controller,
     BuildContext context,
   ) {
+    final activeBalances = isLendFront ? lendBalances : borrowBalances;
+
     return CcPadding(
       CcSectionHeader(
         title: isLendFront
@@ -98,17 +100,19 @@ class LiabilityWalletsSection extends StatelessWidget {
               size: 20,
             ),
           ),
-          const CcSpaceSM(),
-          CcTextButton(
-            text: el.tr(CcLocaleKeys.wallet_see_all),
-            onTap: () {
-              if (isLendFront) {
-                controller.navigateToLendList(context);
-              } else {
-                controller.navigateToLiabilityList(context);
-              }
-            },
-          ),
+          if (activeBalances.isNotEmpty) ...[
+            const CcSpaceSM(),
+            CcTextButton(
+              text: el.tr(CcLocaleKeys.wallet_see_all),
+              onTap: () {
+                if (isLendFront) {
+                  controller.navigateToLendList(context);
+                } else {
+                  controller.navigateToLiabilityList(context);
+                }
+              },
+            ),
+          ],
         ],
       ),
       0, // bottom

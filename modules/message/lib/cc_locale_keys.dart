@@ -3682,8 +3682,7 @@ class CodegenLoader extends AssetLoader {
       "smart_entry_preview_apply_form": "应用到表单",
       "smart_entry_preview_pick_category": "选择类别",
       "smart_entry_preview_pick_wallet": "选择钱包",
-      "smart_entry_preview_save_failed":
-          "无法保存交易 {index}: {reason} — 未保存任何内容",
+      "smart_entry_preview_save_failed": "无法保存交易 {index}: {reason} — 未保存任何内容",
       "smart_entry_preview_save_partial":
           "已保存 {saved}/{total} — 交易 {index} 失败: {reason}",
       "smart_entry_preview_saved_one": "交易已保存",

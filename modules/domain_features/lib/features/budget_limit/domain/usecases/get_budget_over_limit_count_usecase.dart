@@ -66,6 +66,8 @@ class GetBudgetOverLimitCountUseCase {
     }
 
     if (count == 0) return const Success(null);
-    return Success(BudgetOverLimitEntity(budgetName: budget.name, count: count));
+    return Success(
+      BudgetOverLimitEntity(budgetName: budget.name, count: count),
+    );
   }
 }

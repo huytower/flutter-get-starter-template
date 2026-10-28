@@ -7,7 +7,6 @@ import 'package:theme/presentation/provider/theme_provider.dart';
 abstract class Dependencies {
   /// Single [ThemeProvider] instance shared across all routing strategies.
   @lazySingleton
-  ThemeProvider provideThemeProvider() => ThemeProvider(
-    initialDarkMode: CcAppStorage.instance.isDarkMode,
-  );
+  ThemeProvider provideThemeProvider() =>
+      ThemeProvider(initialDarkMode: CcAppStorage.instance.isDarkMode);
 }

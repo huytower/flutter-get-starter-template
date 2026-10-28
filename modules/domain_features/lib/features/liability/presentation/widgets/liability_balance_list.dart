@@ -64,5 +64,3 @@ class LiabilityBalanceList extends StatelessWidget {
     );
   }
 }
-
-

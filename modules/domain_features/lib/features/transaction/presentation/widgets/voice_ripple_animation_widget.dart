@@ -20,8 +20,7 @@ class VoiceRippleAnimationWidget extends StatefulWidget {
       _VoiceRippleAnimationWidgetState();
 }
 
-class _VoiceRippleAnimationWidgetState
-    extends State<VoiceRippleAnimationWidget>
+class _VoiceRippleAnimationWidgetState extends State<VoiceRippleAnimationWidget>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 

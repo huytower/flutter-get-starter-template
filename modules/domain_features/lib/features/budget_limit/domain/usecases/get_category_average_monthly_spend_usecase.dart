@@ -31,7 +31,8 @@ class GetCategoryAverageMonthlySpendUseCase {
     final relevant = result
         .tryGetSuccess()!
         .where(
-          (t) => t.type == TransactionType.expense && t.categoryId == categoryId,
+          (t) =>
+              t.type == TransactionType.expense && t.categoryId == categoryId,
         )
         .toList();
     if (relevant.isEmpty) return const Success(0);

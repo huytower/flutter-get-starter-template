@@ -33,7 +33,7 @@ class BaseAssetListItem extends StatelessWidget {
           padding: EdgeInsets.all(context.respDim(12)),
           decoration: BoxDecoration(
             borderRadius: context.brLg,
-              border: context.borderSubtle,
+            border: context.borderSubtle,
             boxShadow: [
               BoxShadow(
                 color: scheme.onSurface.withOpacity(0.04),

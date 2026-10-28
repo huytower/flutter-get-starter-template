@@ -17,4 +17,3 @@ class RateFreshness {
     return DateTime.now().difference(fetchedAt) < maxAge;
   }
 }
-
