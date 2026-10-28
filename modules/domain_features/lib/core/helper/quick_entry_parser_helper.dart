@@ -3,16 +3,16 @@ import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:string_similarity/string_similarity.dart';
 
 import '../../features/category/domain/entities/category_entity.dart';
+import '../../features/transaction/domain/entities/parsed_transaction_entity.dart';
 import '../../features/wallet/domain/entities/wallet_entity.dart';
 import 'merchant_match_helper.dart';
 import 'quick_entry_alias_dataset.dart';
 import 'quick_entry_intent.dart';
 import 'quick_entry_locale_pack.dart';
 import 'quick_entry_locale_registry.dart';
-import 'quick_entry_parse_result.dart';
 import 'quick_entry_regex_dataset.dart';
 
-export 'quick_entry_parse_result.dart';
+export '../../features/transaction/domain/entities/parsed_transaction_entity.dart';
 
 QuickEntryLocalePack get _localePack => QuickEntryLocaleRegistry.current;
 
@@ -453,7 +453,7 @@ String? _extractLabeledFieldValue(String text, List<String> labels) {
   return null;
 }
 
-QuickEntryParseResult parseQuickEntryTextLocally({
+ParsedTransactionEntity parseQuickEntryTextLocally({
   required String text,
   required List<CategoryEntity> categories,
   required String Function(CategoryEntity) categoryLabels,
@@ -630,7 +630,7 @@ QuickEntryParseResult parseQuickEntryTextLocally({
     }
   }
 
-  return QuickEntryParseResult(
+  return ParsedTransactionEntity(
     amount: parseVietnameseAmount(cleaned),
     categoryId: matchedCategoryId,
     walletId: matchedWalletId,

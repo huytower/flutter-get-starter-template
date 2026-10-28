@@ -3,27 +3,16 @@ import 'dart:async';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Persists the cloud-LLM fallback's consent flag and per-day call counter
+/// Persists the cloud-LLM fallback's enabled flag and per-day call counter
 /// (auto-resets when the stored date is no longer today).
 @lazySingleton
 class AiFallbackPreferenceDataSource {
-  static const String _keyConsentGiven = 'ai_fallback_consent_given';
   static const String _keyCallCountDate = 'ai_fallback_call_count_date';
   static const String _keyCallCount = 'ai_fallback_call_count';
   static const String _keyGeminiEnabled = 'ai_gemini_enabled';
 
   /// Default daily cap on cloud-LLM fallback calls (3 calls/day).
   static const int dailyCallLimit = 3;
-
-  Future<bool> isConsentGiven() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_keyConsentGiven) ?? false;
-  }
-
-  Future<void> setConsentGiven(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keyConsentGiven, value);
-  }
 
   Future<bool> isGeminiEnabled() async {
     final prefs = await SharedPreferences.getInstance();

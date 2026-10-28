@@ -216,10 +216,10 @@ import 'package:domain_features/features/transaction/domain/usecases/get_monthly
     as _i895;
 import 'package:domain_features/features/transaction/domain/usecases/get_monthly_recurring_match_usecase.dart'
     as _i419;
-import 'package:domain_features/features/transaction/domain/usecases/parse_bill_image_usecase.dart'
-    as _i1039;
 import 'package:domain_features/features/transaction/domain/usecases/parse_quick_entry_usecase.dart'
     as _i121;
+import 'package:domain_features/features/transaction/domain/usecases/parse_smart_entry_usecase.dart'
+    as _i263;
 import 'package:domain_features/features/transaction/domain/usecases/update_transaction_usecase.dart'
     as _i756;
 import 'package:domain_features/features/transaction/presentation/get_x/category_selection_controller.dart'
@@ -520,8 +520,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i944.ReconciliationRepository>(),
             ));
-    gh.lazySingleton<_i1039.ParseBillImageUseCase>(
-        () => _i1039.ParseBillImageUseCase(gh<_i224.GetCategoriesUseCase>()));
+    gh.lazySingleton<_i121.ParseQuickEntryUseCase>(
+        () => _i121.ParseQuickEntryUseCase(gh<_i224.GetCategoriesUseCase>()));
     gh.factory<_i754.ExpenseFormController>(() => _i754.ExpenseFormController(
           gh<_i1027.TransactionRepository>(),
           gh<_i1041.GetCategoriesUseCase>(),
@@ -530,8 +530,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i1027.TransactionRepository>(),
           gh<_i1041.GetCategoriesUseCase>(),
         ));
-    gh.lazySingleton<_i121.ParseQuickEntryUseCase>(
-        () => _i121.ParseQuickEntryUseCase(
+    gh.lazySingleton<_i263.ParseSmartEntryUseCase>(
+        () => _i263.ParseSmartEntryUseCase(
               gh<_i224.GetCategoriesUseCase>(),
               gh<_i195.CurrencyConversionService>(),
             ));

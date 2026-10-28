@@ -12,6 +12,7 @@ class AiAdviceCacheDataSource {
   static const String _keyCachedAdviceJson = 'ai_advice_cached_json';
   static const String _keyCachedFingerprint = 'ai_advice_cached_fingerprint';
   static const String _keyCachedCurrency = 'ai_advice_cached_currency';
+  static const String _keyCachedLanguage = 'ai_advice_cached_language';
 
   /// Computes a deterministic fingerprint for a list of transactions.
   String computeFingerprint(List<TransactionEntity> transactions) {
@@ -27,19 +28,23 @@ class AiAdviceCacheDataSource {
     return buffer.toString();
   }
 
-  /// Returns cached [AiAdviceEntity] if the stored transaction fingerprint
-  /// and target currency match the given parameters. Returns null otherwise.
+  /// Returns cached [AiAdviceEntity] if the stored transaction fingerprint,
+  /// target currency and language match the given parameters. Returns null
+  /// otherwise.
   Future<AiAdviceEntity?> getCachedAdvice({
     required String fingerprint,
     required String targetCurrency,
+    required String languageCode,
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final storedFingerprint = prefs.getString(_keyCachedFingerprint);
       final storedCurrency = prefs.getString(_keyCachedCurrency);
+      final storedLanguage = prefs.getString(_keyCachedLanguage);
 
       if (storedFingerprint != fingerprint ||
-          storedCurrency != targetCurrency) {
+          storedCurrency != targetCurrency ||
+          storedLanguage != languageCode) {
         return null;
       }
 
@@ -55,10 +60,14 @@ class AiAdviceCacheDataSource {
     }
   }
 
-  /// Returns the most recently saved [AiAdviceEntity] regardless of fingerprint.
-  Future<AiAdviceEntity?> getLastCachedAdvice() async {
+  /// Returns the most recently saved [AiAdviceEntity] regardless of fingerprint,
+  /// as long as it was generated in [languageCode].
+  Future<AiAdviceEntity?> getLastCachedAdvice({
+    required String languageCode,
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
+      if (prefs.getString(_keyCachedLanguage) != languageCode) return null;
       final jsonString = prefs.getString(_keyCachedAdviceJson);
       if (jsonString == null || jsonString.isEmpty) return null;
 
@@ -71,18 +80,20 @@ class AiAdviceCacheDataSource {
     }
   }
 
-  /// Saves the [AiAdviceEntity] along with its transaction fingerprint
-  /// and target currency into local persistent storage.
+  /// Saves the [AiAdviceEntity] along with its transaction fingerprint,
+  /// target currency and language into local persistent storage.
   Future<void> saveAdvice({
     required AiAdviceEntity advice,
     required String fingerprint,
     required String targetCurrency,
+    required String languageCode,
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_keyCachedAdviceJson, jsonEncode(advice.toJson()));
       await prefs.setString(_keyCachedFingerprint, fingerprint);
       await prefs.setString(_keyCachedCurrency, targetCurrency);
+      await prefs.setString(_keyCachedLanguage, languageCode);
     } catch (_) {}
   }
 
@@ -93,6 +104,7 @@ class AiAdviceCacheDataSource {
       await prefs.remove(_keyCachedAdviceJson);
       await prefs.remove(_keyCachedFingerprint);
       await prefs.remove(_keyCachedCurrency);
+      await prefs.remove(_keyCachedLanguage);
     } catch (_) {}
   }
 }

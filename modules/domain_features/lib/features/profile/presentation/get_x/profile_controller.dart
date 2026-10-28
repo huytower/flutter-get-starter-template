@@ -85,7 +85,18 @@ class ProfileController extends CcGetController {
       if (u != null) {
       } else {}
     });
+    ever(CurrencyConstants.onCurrencyChanged, (_) => _syncStoredCurrency());
     _load();
+  }
+
+  Future<void> _syncStoredCurrency() async {
+    final stored = await _getSettings();
+    if (stored.currencyCode == settings.value.currencyCode) return;
+    settings.value = settings.value.copyWith(
+      currencyCode: stored.currencyCode,
+      currencySelectionSource: stored.currencySelectionSource,
+      currencyDetectionCountryCode: stored.currencyDetectionCountryCode,
+    );
   }
 
   Future<void> _load() async {

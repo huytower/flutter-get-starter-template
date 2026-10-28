@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:injectable/injectable.dart';
 
 import '../../../../../core/constant/currency_catalog.dart';
@@ -9,9 +10,26 @@ import '../../../../../core/constant/currency_constants.dart';
 import '../../../../../core/migration/financial_schema_migration.dart';
 import '../../../domain/entities/profile_settings_entity.dart';
 
+typedef GpsCurrencyDetector =
+    Future<({String currencyCode, String? countryCode})> Function();
+
 @lazySingleton
 class ProfileLocalDataSource {
-  static Completer<void>? _currencyDetectionLock;
+  ProfileLocalDataSource()
+    : _detectFromGps =
+          CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails,
+      _gpsTimeout = gpsDetectionTimeout;
+
+  @visibleForTesting
+  ProfileLocalDataSource.withGpsDetector(
+    this._detectFromGps, {
+    Duration timeout = gpsDetectionTimeout,
+  }) : _gpsTimeout = timeout;
+
+  static const Duration gpsDetectionTimeout = Duration(seconds: 2);
+
+  final GpsCurrencyDetector _detectFromGps;
+  final Duration _gpsTimeout;
 
   Future<ProfileSettingsEntity> getSettings() async {
     final s = CcAppStorage.instance;
@@ -37,32 +55,16 @@ class ProfileLocalDataSource {
     }
 
     if (s.currencyCode == null) {
-      // Guard against concurrent currency detection on first launch
-      if (_currencyDetectionLock != null) {
-        await _currencyDetectionLock!.future;
-      }
-
-      // Double-check after waiting - another thread may have completed it
-      if (s.currencyCode == null) {
-        '[ProfileLocalDataSource] First launch detected. Initiating GPS currency auto-detection...'
-            .Log('ProfileLocalDataSource');
-        _currencyDetectionLock = Completer<void>();
-        try {
-          final suggestion =
-              await CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails();
-          s.currencyCode = CurrencyConstants.validateCurrencyCode(
-            suggestion.currencyCode,
-          );
-          s.currencyDetectionCountryCode = suggestion.countryCode;
-          s.currencySelectionSource = CurrencySelectionSources.detected;
-          await s.save();
-          '[ProfileLocalDataSource] Currency auto-detection saved: currencyCode=${s.currencyCode}, countryCode=${s.currencyDetectionCountryCode}, source=${s.currencySelectionSource}'
-              .Log('ProfileLocalDataSource');
-        } finally {
-          _currencyDetectionLock?.complete();
-          _currencyDetectionLock = null;
-        }
-      }
+      final fallback = CurrencyCatalog.detectSuggestedCurrencyWithDetails();
+      s.currencyCode = CurrencyConstants.validateCurrencyCode(
+        fallback.currencyCode,
+      );
+      s.currencyDetectionCountryCode = fallback.countryCode;
+      s.currencySelectionSource = CurrencySelectionSources.detected;
+      await s.save();
+      '[ProfileLocalDataSource] First launch detected. Locale currency=${s.currencyCode} saved | refining via GPS in background'
+          .Log('ProfileLocalDataSource');
+      unawaited(_refineCurrencyFromGps());
     } else {
       // Validate existing currency code and source
       final validatedCurrencyCode = CurrencyConstants.validateCurrencyCode(
@@ -101,6 +103,38 @@ class ProfileLocalDataSource {
       hasCustomizedCategories: s.hasCustomizedCategories ?? false,
       completedGuidelineTaskIds: s.completedGuidelineTaskIds ?? const [],
     );
+  }
+
+  Future<void> _refineCurrencyFromGps() async {
+    try {
+      final suggestion = await _detectFromGps().timeout(_gpsTimeout);
+      final s = CcAppStorage.instance;
+      if (s.currencySelectionSource != CurrencySelectionSources.detected) {
+        return;
+      }
+
+      final code = CurrencyConstants.validateCurrencyCode(
+        suggestion.currencyCode,
+      );
+      final currencyChanged = code != s.currencyCode;
+      if (!currencyChanged &&
+          suggestion.countryCode == s.currencyDetectionCountryCode) {
+        return;
+      }
+
+      s.currencyCode = code;
+      s.currencyDetectionCountryCode = suggestion.countryCode;
+      await s.save();
+      '[ProfileLocalDataSource] GPS refined currency: currencyCode=$code, countryCode=${suggestion.countryCode}'
+          .Log('ProfileLocalDataSource');
+      if (currencyChanged) CurrencyConstants.onCurrencyChanged.value++;
+    } on TimeoutException {
+      '[ProfileLocalDataSource] GPS currency detection timed out after ${_gpsTimeout.inMilliseconds}ms | keeping locale currency'
+          .Log('ProfileLocalDataSource');
+    } catch (e) {
+      '[ProfileLocalDataSource] GPS currency detection failed | keeping locale currency | $e'
+          .Log('ProfileLocalDataSource');
+    }
   }
 
   Future<void> saveSettings(ProfileSettingsEntity entity) async {

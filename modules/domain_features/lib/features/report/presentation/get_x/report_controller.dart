@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
@@ -202,12 +203,14 @@ class ReportController extends CcGetController {
     aiAdviceErrorKey.value = null;
 
     final targetCurrency = CurrencyConstants.currentPrimaryCurrency;
+    final languageCode = _currentLanguageCode(context);
     final cacheDs = getIt<AiAdviceCacheDataSource>();
     final fingerprint = cacheDs.computeFingerprint(dailyListTransactions);
 
     final cachedResult = await cacheDs.getCachedAdvice(
       fingerprint: fingerprint,
       targetCurrency: targetCurrency,
+      languageCode: languageCode,
     );
     if (cachedResult != null) {
       if (isClosed) return;
@@ -226,7 +229,11 @@ class ReportController extends CcGetController {
     if (!await prefs.tryConsumeDailyCall()) {
       if (isClosed) return;
       isGeneratingAdvice.value = false;
-      final previousCached = await cacheDs.getLastCachedAdvice();
+      aiAdviceErrorKey.value =
+          CcLocaleKeys.report_ai_advice_daily_limit_reached;
+      final previousCached = await cacheDs.getLastCachedAdvice(
+        languageCode: languageCode,
+      );
       if (previousCached != null) {
         aiAdvice.value = previousCached;
       }
@@ -236,12 +243,15 @@ class ReportController extends CcGetController {
     final result = await _generateAiAdvice.call(
       targetCurrency: targetCurrency,
       conversionService: _conversionService,
+      languageCode: languageCode,
     );
     if (isClosed) return;
     isGeneratingAdvice.value = false;
 
     if (result == null) {
-      final previousCached = await cacheDs.getLastCachedAdvice();
+      final previousCached = await cacheDs.getLastCachedAdvice(
+        languageCode: languageCode,
+      );
       if (previousCached != null) {
         aiAdvice.value = previousCached;
       } else {
@@ -255,6 +265,7 @@ class ReportController extends CcGetController {
       advice: result,
       fingerprint: fingerprint,
       targetCurrency: targetCurrency,
+      languageCode: languageCode,
     );
   }
 
@@ -367,6 +378,14 @@ class ReportController extends CcGetController {
     }
   }
 
+  String _currentLanguageCode([BuildContext? context]) {
+    final resolved = context ?? Get.context;
+    final code = resolved == null
+        ? null
+        : el.EasyLocalization.of(resolved)?.locale.languageCode;
+    return (code ?? CcLocalization.fallbackLocale.languageCode).toLowerCase();
+  }
+
   Future<void> _loadCachedAdviceIfAvailable() async {
     if (!userLevel.status.value.isVip) return;
     final cacheDs = getIt<AiAdviceCacheDataSource>();
@@ -375,6 +394,7 @@ class ReportController extends CcGetController {
     final cached = await cacheDs.getCachedAdvice(
       fingerprint: fingerprint,
       targetCurrency: targetCurrency,
+      languageCode: _currentLanguageCode(),
     );
     if (cached != null && !isClosed) {
       aiAdvice.value = cached;

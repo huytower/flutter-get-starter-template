@@ -16,15 +16,24 @@ import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../liability/domain/entities/liability_entity.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
+import '../../domain/entities/smart_entry_input.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
+import '../../domain/usecases/parse_smart_entry_usecase.dart';
+import '../widgets/smart_entry_preview_sheet.dart';
 import 'quick_entry_auto_save_helper.dart';
+import 'smart_entry_preview_state.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
 
+typedef QuickEntryCloudResult = ({
+  List<ParsedTransactionEntity> rows,
+  String? errorKey,
+});
+
 /// Shared "AI Smart Entry" quick-entry capability: a free-text field with
 /// mic dictation and receipt-photo scan, parsed locally then always
-/// escalated to Gemini (see [ParseQuickEntryUseCase]) behind a consent +
-/// daily-cap gate.
+/// escalated to Gemini (see [ParseSmartEntryUseCase], which enforces the
+/// daily cap).
 ///
 /// Hosts must `extend TransactionFormController`, provide
 /// [quickEntryCategoryType], and expose their own `categoryKey`/
@@ -50,13 +59,10 @@ mixin QuickEntryMixin on TransactionFormController
   Rx<String?> get pendingPrefillCategoryId;
 
   final TextEditingController quickEntryController = TextEditingController();
-  final Rx<QuickEntryParseResult?> quickEntrySuggestion =
-      Rx<QuickEntryParseResult?>(null);
+  final Rx<ParsedTransactionEntity?> quickEntrySuggestion =
+      Rx<ParsedTransactionEntity?>(null);
   final RxBool isParsingQuickEntry = false.obs;
   final RxBool isListeningQuickEntry = false.obs;
-
-  final RxList<QuickEntryParseResult> quickEntryBatch =
-      <QuickEntryParseResult>[].obs;
 
   final QuickEntryAutoSaveHelper _autoSaveHelper = QuickEntryAutoSaveHelper();
 
@@ -72,7 +78,6 @@ mixin QuickEntryMixin on TransactionFormController
   bool _quickEntryDisposed = false;
 
   bool get isQuickEntryDisposed => _quickEntryDisposed;
-  String _lastQuickEntryText = '';
 
   /// Bumped by [resetQuickEntry] to invalidate any submission still in
   /// flight, so a stale cloud response can't overwrite a newer entry.
@@ -91,7 +96,6 @@ mixin QuickEntryMixin on TransactionFormController
     _quickEntryDisposed = true;
     _quickEntryDebounce?.cancel();
     _cancelAutoSave();
-    quickEntryBatch.clear();
     quickEntryController
       ..removeListener(_onQuickEntryTextChanged)
       ..dispose();
@@ -167,7 +171,6 @@ mixin QuickEntryMixin on TransactionFormController
     _cancelAutoSave();
     pendingPrefillCategoryId.value = null;
     quickEntrySuggestion.value = null;
-    quickEntryBatch.clear();
     quickEntryErrorKey.value = null;
     quickEntryController.clear();
     _quickEntryGeneration++;
@@ -185,7 +188,6 @@ mixin QuickEntryMixin on TransactionFormController
     _cancelAutoSave();
     // Also clear the suggestion so it doesn't linger after a manual cancel
     quickEntrySuggestion.value = null;
-    quickEntryBatch.clear();
   }
 
   Future<void> startAutoSaveTimer(BuildContext context) async {
@@ -251,7 +253,7 @@ mixin QuickEntryMixin on TransactionFormController
 
   /// Display label for a suggestion, e.g. "50.00k · Cà phê · 12/08" — lists
   /// only whatever actually resolved.
-  String quickEntryResultLabel(QuickEntryParseResult result) {
+  String quickEntryResultLabel(ParsedTransactionEntity result) {
     final parts = <String>[];
     if (result.amount != null) {
       parts.add(formatVndShort(result.amount!));
@@ -269,20 +271,6 @@ mixin QuickEntryMixin on TransactionFormController
     return parts.join(' · ');
   }
 
-  String get quickEntryBatchLabel {
-    final total = quickEntryBatch.fold<int>(
-      0,
-      (sum, result) => sum + (result.amount ?? 0),
-    );
-    return el.tr(
-      CcLocaleKeys.quick_entry_batch_label,
-      namedArgs: {
-        'count': '${quickEntryBatch.length}',
-        'total': formatVndShort(total),
-      },
-    );
-  }
-
   /// Reports whether the current suggestion's category is considered
   /// "missing" (was either never resolved, or resolved to an ID this form can't
   /// record against).
@@ -298,7 +286,7 @@ mixin QuickEntryMixin on TransactionFormController
   /// Prefer this over the [isQuickEntryCategoryMissing] getter when validating a
   /// parse that hasn't been published to [quickEntrySuggestion] yet: the getter
   /// reads that Rx and would score the *previous* keystroke's result.
-  bool isCategoryMissingFor(QuickEntryParseResult result) {
+  bool isCategoryMissingFor(ParsedTransactionEntity result) {
     // Nothing to record against at all, whatever the parse resolved.
     if (!quickEntryHasSelectableCategory) return true;
 
@@ -359,11 +347,6 @@ mixin QuickEntryMixin on TransactionFormController
     if (isListeningQuickEntry.value) {
       // While dictating voice, ignore text change events to avoid launching duplicate parse timers
       return;
-    }
-    final text = quickEntryController.text;
-    if (text != _lastQuickEntryText) {
-      _lastQuickEntryText = text;
-      quickEntryBatch.clear();
     }
     quickEntryErrorKey.value = null;
     _quickEntryDebounce?.cancel();
@@ -524,39 +507,6 @@ mixin QuickEntryMixin on TransactionFormController
     return (isCurrent, resetIfCurrent);
   }
 
-  /// Consent-then-daily-cap gate shared by every cloud escalation path.
-  /// Returns false — with [quickEntryErrorKey] already set — on an exhausted
-  /// cap, or a stale generation.
-  @protected
-  Future<bool> passQuickEntryCloudGate({
-    required BuildContext context,
-    required bool Function() isCurrentGeneration,
-    required VoidCallback resetParsingIfCurrent,
-  }) async {
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
-
-    if (!await prefs.isGeminiEnabled()) {
-      if (!isCurrentGeneration()) return false;
-      resetParsingIfCurrent();
-      quickEntryErrorKey.value = CcLocaleKeys.report_ai_advice_gemini_disabled;
-      return false;
-    }
-
-    // Automatically admit and continue without prompt
-    if (!await prefs.isConsentGiven()) {
-      await prefs.setConsentGiven(true);
-    }
-
-    if (!await prefs.tryConsumeDailyCall()) {
-      if (!isCurrentGeneration()) return false;
-      resetParsingIfCurrent();
-      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_daily_limit_reached;
-      return false;
-    }
-
-    return true;
-  }
-
   /// Explicit "done" trigger (submit / finished voice dictation) — the only
   /// path that calls Gemini, so a network call never fires while someone
   /// is still mid-typing.
@@ -674,23 +624,10 @@ mixin QuickEntryMixin on TransactionFormController
 
     if (!context.mounted) return;
 
-    if (!await passQuickEntryCloudGate(
-      context: context,
-      isCurrentGeneration: isCurrentGeneration,
-      resetParsingIfCurrent: resetParsingIfCurrent,
-    )) {
-      '[AI_PARSING] [GEMINI] ⛔ Cloud gate blocked escalation'.Log(
-        'QuickEntryMixin',
-      );
-      return;
-    }
-
     '[AI_PARSING] [GEMINI] ☁️ Escalating to Gemini...'.Log('QuickEntryMixin');
-    final cloudResult = await parseUseCase.parseWithCloud(
-      text: text,
-      localResult: local,
-      categoryType: quickEntryCategoryType,
-      groupIds: quickEntryCategoryGroupIds,
+    final cloud = await runSmartEntry(
+      input: SmartEntryTextInput(text),
+      local: local,
       languageCode: languageCode,
     );
     resetParsingIfCurrent();
@@ -702,13 +639,18 @@ mixin QuickEntryMixin on TransactionFormController
       return;
     }
 
-    // Cloud failing outright (offline, API disabled) shouldn't throw away a
-    // local result that was already good enough to be worth escalating.
-    final suggestion = (cloudResult != null && !cloudResult.isEmpty)
-        ? cloudResult
-        : local;
+    if (cloud.errorKey != null) {
+      quickEntryErrorKey.value = cloud.errorKey;
+      return;
+    }
+    if (cloud.rows.isNotEmpty) {
+      if (context.mounted) await presentQuickEntryPreview(context, cloud.rows);
+      return;
+    }
 
-    '[AI_PARSING] [GEMINI] ✨ Final suggestion resolved | cloudSuccess=${cloudResult != null} | result=${suggestion.toJson()}'
+    final suggestion = local;
+
+    '[AI_PARSING] [GEMINI] ↩️ Cloud returned nothing, using local result | result=${suggestion.toJson()}'
         .Log('QuickEntryMixin');
 
     if (suggestion.isEmpty) {
@@ -831,36 +773,29 @@ mixin QuickEntryMixin on TransactionFormController
 
     if (!context.mounted) return;
 
-    if (!await passQuickEntryCloudGate(
-      context: context,
-      isCurrentGeneration: isCurrentGeneration,
-      resetParsingIfCurrent: resetParsingIfCurrent,
-    )) {
-      '[AI_PARSING] ⛔ Cloud gate blocked image escalation'.Log(
-        'QuickEntryMixin',
-      );
-      return;
-    }
-
     '[AI_PARSING] ☁️ Escalating image to Gemini...'.Log('QuickEntryMixin');
-    final cloudResult = await parseUseCase.parseImageWithCloud(
-      imageBytes: picked.bytes,
-      mimeType: picked.mimeType,
-      localResult: local,
-      categoryType: quickEntryCategoryType,
-      groupIds: quickEntryCategoryGroupIds,
+    final cloud = await runSmartEntry(
+      input: SmartEntryImagesInput([
+        (bytes: picked.bytes, mimeType: picked.mimeType),
+      ]),
+      local: local,
       languageCode: languageCode,
     );
     resetParsingIfCurrent();
     if (!isCurrentGeneration()) return;
 
-    // Cloud failing outright shouldn't throw away a local (OCR-text) result
-    // that was already good enough to be worth escalating.
-    final suggestion = (cloudResult != null && !cloudResult.isEmpty)
-        ? cloudResult
-        : local;
+    if (cloud.errorKey != null) {
+      quickEntryErrorKey.value = cloud.errorKey;
+      return;
+    }
+    if (cloud.rows.isNotEmpty) {
+      if (context.mounted) await presentQuickEntryPreview(context, cloud.rows);
+      return;
+    }
 
-    '[AI_PARSING] ✨ Final image suggestion resolved | cloudSuccess=${cloudResult != null} | result=${suggestion.toJson()}'
+    final suggestion = local;
+
+    '[AI_PARSING] ↩️ Cloud returned nothing, using local OCR result | result=${suggestion.toJson()}'
         .Log('QuickEntryMixin');
 
     if (suggestion.isEmpty) {
@@ -974,7 +909,7 @@ mixin QuickEntryMixin on TransactionFormController
 
   /// Pre-fills whichever fields [result] resolved; a null field is left at
   /// the form's existing default for the user to fill in by hand.
-  void applyQuickEntryParse(QuickEntryParseResult result) {
+  void applyQuickEntryParse(ParsedTransactionEntity result) {
     _cancelAutoSave();
     '[AI_PARSING] 📥 Applying parse result | result=${result.toJson()}'.Log(
       'QuickEntryMixin',
@@ -999,7 +934,93 @@ mixin QuickEntryMixin on TransactionFormController
 
   void dismissQuickEntrySuggestion() {
     quickEntrySuggestion.value = null;
-    quickEntryBatch.clear();
+  }
+
+  List<String> get quickEntryCloudCategoryTypes => [quickEntryCategoryType];
+
+  int get quickEntryCloudMaxTransactions => 1;
+
+  bool get quickEntryCommitsDirectly => false;
+
+  @protected
+  Future<QuickEntryCloudResult> runSmartEntry({
+    required SmartEntryInput input,
+    required ParsedTransactionEntity local,
+    String? languageCode,
+  }) async {
+    final result = await getIt<ParseSmartEntryUseCase>().call(
+      input: input,
+      categoryTypes: quickEntryCloudCategoryTypes,
+      groupIds: quickEntryCategoryGroupIds,
+      languageCode: languageCode,
+      maxTransactions: quickEntryCloudMaxTransactions,
+      localResult: local,
+    );
+    final failure = result.tryGetError();
+    if (failure != null) {
+      '[AI_PARSING] [GEMINI] ❌ Smart entry failed | ${failure.message}'.Log(
+        'QuickEntryMixin',
+      );
+    }
+    return (
+      rows: result.tryGetSuccess() ?? const [],
+      errorKey: switch (failure?.message) {
+        ParseSmartEntryUseCase.geminiDisabledReason =>
+          CcLocaleKeys.report_ai_advice_gemini_disabled,
+        ParseSmartEntryUseCase.dailyLimitReachedReason =>
+          CcLocaleKeys.quick_entry_daily_limit_reached,
+        _ => null,
+      },
+    );
+  }
+
+  @protected
+  Future<void> presentQuickEntryPreview(
+    BuildContext context,
+    List<ParsedTransactionEntity> rows,
+  ) async {
+    quickEntrySuggestion.value = null;
+    final types = quickEntryCloudCategoryTypes;
+    final groupIds = quickEntryCategoryGroupIds;
+    final categories =
+        (await getIt<GetCategoriesUseCase>().call()).tryGetSuccess() ??
+        const <CategoryEntity>[];
+    if (!context.mounted || _quickEntryDisposed) return;
+
+    final state = SmartEntryPreviewState(
+      parsed: rows,
+      categories: [
+        for (final category in categories)
+          if (category.isEnabled &&
+              types.contains(category.type) &&
+              (groupIds == null || groupIds.contains(category.groupId)))
+            category,
+      ],
+      wallets: wallets.toList(),
+      config: SmartEntryPreviewConfig(
+        types: types,
+        currencyCode: currencyCode.value,
+        showCategory: quickEntryShowsCategoryInLabel,
+        appliesToForm: !quickEntryCommitsDirectly,
+      ),
+      defaultWalletId: selectedWalletId.value ?? '',
+    );
+    final committed = await SmartEntryPreviewSheet.show(
+      context,
+      state: state,
+      onConfirm: (edited) => commitQuickEntryRows(context, edited),
+    );
+    if (committed == true && !_quickEntryDisposed) {
+      quickEntryController.clear();
+    }
+  }
+
+  Future<SmartEntryCommitResult> commitQuickEntryRows(
+    BuildContext context,
+    List<ParsedTransactionEntity> rows,
+  ) async {
+    applyQuickEntryParse(rows.first);
+    return SmartEntryCommitResult(saved: rows.length);
   }
 
   /// Sanity check for parsed amounts to avoid misidentifying phone numbers
