@@ -141,7 +141,7 @@ abstract class  LocaleKeys {
   static const nav_profile = 'nav.profile';
   static const nav_profile_info = 'nav.profile_info';
   static const nav_nav_reconcile = 'nav.nav_reconcile';
-  static const nav_reconciliation_title = 'nav.reconciliation.title';
+  static const nav_reconciliation_title = 'nav.reconciliation_title';
   static const nav = 'nav';
   static const dashboard_item_count = 'dashboard.item_count';
   static const dashboard_last_updated = 'dashboard.last_updated';
@@ -312,6 +312,18 @@ abstract class  LocaleKeys {
   static const transaction_quick_entry_take_photo = 'transaction.quick_entry_take_photo';
   static const transaction_quick_entry_choose_gallery = 'transaction.quick_entry_choose_gallery';
   static const transaction_quick_entry_camera_not_available = 'transaction.quick_entry_camera_not_available';
+  static const transaction_smart_entry_preview_title_one = 'transaction.smart_entry_preview_title_one';
+  static const transaction_smart_entry_preview_title_many = 'transaction.smart_entry_preview_title_many';
+  static const transaction_smart_entry_preview_subtitle = 'transaction.smart_entry_preview_subtitle';
+  static const transaction_smart_entry_preview_confirm_one = 'transaction.smart_entry_preview_confirm_one';
+  static const transaction_smart_entry_preview_confirm_many = 'transaction.smart_entry_preview_confirm_many';
+  static const transaction_smart_entry_preview_apply_form = 'transaction.smart_entry_preview_apply_form';
+  static const transaction_smart_entry_preview_pick_category = 'transaction.smart_entry_preview_pick_category';
+  static const transaction_smart_entry_preview_pick_wallet = 'transaction.smart_entry_preview_pick_wallet';
+  static const transaction_smart_entry_preview_save_failed = 'transaction.smart_entry_preview_save_failed';
+  static const transaction_smart_entry_preview_save_partial = 'transaction.smart_entry_preview_save_partial';
+  static const transaction_smart_entry_preview_saved_one = 'transaction.smart_entry_preview_saved_one';
+  static const transaction_smart_entry_preview_saved_many = 'transaction.smart_entry_preview_saved_many';
   static const transaction_claims_in_progress = 'transaction.claims_in_progress';
   static const transaction_validation_amount_required = 'transaction.validation.amount_required';
   static const transaction_validation_wallet_required = 'transaction.validation.wallet_required';

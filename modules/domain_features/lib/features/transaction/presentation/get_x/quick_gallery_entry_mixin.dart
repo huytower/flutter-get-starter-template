@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
+import '../../domain/entities/smart_entry_input.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import 'quick_entry_mixin.dart';
 
@@ -48,36 +49,31 @@ mixin QuickGalleryEntryMixin on QuickEntryMixin {
 
     if (!context.mounted) return;
 
-    if (!await passQuickEntryCloudGate(
-      context: context,
-      isCurrentGeneration: isCurrentGeneration,
-      resetParsingIfCurrent: resetParsingIfCurrent,
-    )) {
-      '[AI_PARSING] ⛔ Cloud gate blocked image escalation'.Log(
-        'QuickGalleryEntryMixin',
-      );
-      return;
-    }
-
     '[AI_PARSING] ☁️ Escalating image to Gemini...'.Log(
       'QuickGalleryEntryMixin',
     );
-    final cloudResult = await parseUseCase.parseImageWithCloud(
-      imageBytes: picked.bytes,
-      mimeType: picked.mimeType,
-      localResult: local,
-      categoryType: quickEntryCategoryType,
-      groupIds: quickEntryCategoryGroupIds,
+    final cloud = await runSmartEntry(
+      input: SmartEntryImagesInput([
+        (bytes: picked.bytes, mimeType: picked.mimeType),
+      ]),
+      local: local,
       languageCode: languageCode,
     );
     resetParsingIfCurrent();
     if (!isCurrentGeneration()) return;
 
-    final suggestion = (cloudResult != null && !cloudResult.isEmpty)
-        ? cloudResult
-        : local;
+    if (cloud.errorKey != null) {
+      quickEntryErrorKey.value = cloud.errorKey;
+      return;
+    }
+    if (cloud.rows.isNotEmpty) {
+      if (context.mounted) await presentQuickEntryPreview(context, cloud.rows);
+      return;
+    }
 
-    '[AI_PARSING] ✨ Final image suggestion resolved | cloudSuccess=${cloudResult != null} | result=${suggestion.toJson()}'
+    final suggestion = local;
+
+    '[AI_PARSING] ↩️ Cloud returned nothing, using local OCR result | result=${suggestion.toJson()}'
         .Log('QuickGalleryEntryMixin');
 
     if (suggestion.isEmpty) {

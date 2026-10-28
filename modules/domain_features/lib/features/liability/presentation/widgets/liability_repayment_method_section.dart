@@ -1,13 +1,10 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/features/liability/export_liability.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../domain/entities/liability_entity.dart';
 import '../get_x/liability_base_form_controller.dart';
-import 'liability_final_due_date_section.dart';
-import 'liability_installment_schedule_section.dart';
-import 'liability_pill_toggle.dart';
 
 class LiabilityRepaymentMethodSection extends StatelessWidget {
   final LiabilityBaseFormController controller;

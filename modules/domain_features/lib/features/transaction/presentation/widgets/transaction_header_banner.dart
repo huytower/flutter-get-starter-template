@@ -137,17 +137,14 @@ class TransactionHeaderBanner extends StatelessWidget {
   ) {
     final suggestion = controller.quickEntrySuggestion.value;
     final errorKey = controller.quickEntryErrorKey.value;
-    final hasBatch = controller.quickEntryBatch.isNotEmpty;
     return QuickEntrySection(
       controller: controller.quickEntryController,
       isParsing: controller.isParsingQuickEntry.value,
       isListening: controller.isListeningQuickEntry.value,
-      suggestionLabel: hasBatch
-          ? controller.quickEntryBatchLabel
-          : suggestion != null
+      suggestionLabel: suggestion != null
           ? controller.quickEntryResultLabel(suggestion)
           : null,
-      isCategoryMissing: !hasBatch && controller.isQuickEntryCategoryInvalid,
+      isCategoryMissing: controller.isQuickEntryCategoryInvalid,
       errorText: errorKey != null ? el.tr(errorKey) : null,
       activeColor: accentColor,
       onSubmitted: (_) => controller.submitQuickEntry(context),
@@ -155,11 +152,7 @@ class TransactionHeaderBanner extends StatelessWidget {
       // Camera icon temporarily disabled in QuickEntrySection due to crashes.
       onScanTap: () => _pickReceiptSource(context, controller),
       onApplySuggestion: () {
-        if (hasBatch && controller is QuickEntryBatchMixin) {
-          controller.saveQuickEntryBatch(context);
-        } else if (suggestion != null) {
-          controller.applyQuickEntryParse(suggestion);
-        }
+        if (suggestion != null) controller.applyQuickEntryParse(suggestion);
       },
       onDismissSuggestion: controller.dismissQuickEntrySuggestion,
       onClear: () {

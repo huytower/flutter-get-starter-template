@@ -149,7 +149,7 @@
     "profile": "プロフィール",
     "profile_info": "個人情報",
     "nav_reconcile": "照合",
-    "reconciliation.title": "照合"
+    "reconciliation_title": "照合"
   },
   "dashboard": {
     "item_count": "アイテム数",
@@ -326,6 +326,18 @@
     "quick_entry_take_photo": "写真を撮影",
     "quick_entry_choose_gallery": "ギャラリーから選択",
     "quick_entry_camera_not_available": "カメラ機能はまだ利用できません",
+    "smart_entry_preview_title_one": "取引を確認",
+    "smart_entry_preview_title_many": "{count}件の取引を確認",
+    "smart_entry_preview_subtitle": "保存する前に確認・編集してください",
+    "smart_entry_preview_confirm_one": "確定",
+    "smart_entry_preview_confirm_many": "すべて確定（{count}）",
+    "smart_entry_preview_apply_form": "フォームに反映",
+    "smart_entry_preview_pick_category": "カテゴリを選択",
+    "smart_entry_preview_pick_wallet": "ウォレットを選択",
+    "smart_entry_preview_save_failed": "取引{index}を保存できませんでした: {reason} — 何も保存されませんでした",
+    "smart_entry_preview_save_partial": "{saved}/{total}保存済み — 取引{index}失敗: {reason}",
+    "smart_entry_preview_saved_one": "取引を保存しました",
+    "smart_entry_preview_saved_many": "{count}件の取引を保存しました",
     "claims_in_progress": "{count}件のリクエストが進行中です",
     "validation": {
       "amount_required": "金額は0より大きくなければなりません",

@@ -172,12 +172,8 @@ class CurrencyCatalog {
       );
     }
 
-    '[CurrencyCatalog] Defaulting currency to ${CurrencyConstants.defaultCurrencyCode}'
-        .Log('CurrencyCatalog');
-    return (
-      currencyCode: CurrencyConstants.defaultCurrencyCode,
-      countryCode: null,
-    );
+    '[CurrencyCatalog] Defaulting currency to USD (US)'.Log('CurrencyCatalog');
+    return (currencyCode: CurrencyConstants.usd, countryCode: 'US');
   }
 
   /// Detects the suggested currency code based on device regional settings.

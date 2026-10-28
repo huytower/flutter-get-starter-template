@@ -7,18 +7,32 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/money_format_helper.dart';
-import '../../../../core/helper/quick_entry_parse_result.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
+import '../../domain/entities/parsed_transaction_entity.dart';
+import '../../domain/entities/smart_entry_input.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/usecases/create_transaction_batch_usecase.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
-import '../../domain/usecases/parse_quick_entry_usecase.dart';
+import '../../domain/usecases/parse_smart_entry_usecase.dart';
 import 'quick_entry_mixin.dart';
+import 'smart_entry_preview_state.dart';
 
 mixin QuickEntryBatchMixin on QuickEntryMixin {
   static const int quickEntryBatchLimit = 5;
+
+  @override
+  List<String> get quickEntryCloudCategoryTypes =>
+      quickEntryCategoryType == CategoryType.income
+      ? const [CategoryType.income, CategoryType.expense]
+      : const [CategoryType.expense, CategoryType.income];
+
+  @override
+  int get quickEntryCloudMaxTransactions =>
+      ParseSmartEntryUseCase.defaultMaxTransactions;
+
+  @override
+  bool get quickEntryCommitsDirectly => true;
 
   Future<void> submitQuickEntryFromGallery(BuildContext context) async {
     final (isCurrentGeneration, resetParsingIfCurrent) =
@@ -51,93 +65,54 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
       return;
     }
 
-    if (!await passQuickEntryCloudGate(
-      context: context,
-      isCurrentGeneration: isCurrentGeneration,
-      resetParsingIfCurrent: resetParsingIfCurrent,
-    )) {
-      '[AI_PARSING] ⛔ Cloud gate blocked batch escalation'.Log(
-        'QuickEntryBatchMixin',
-      );
-      return;
-    }
-
     '[AI_PARSING] ☁️ Escalating ${images.length} images to Gemini...'.Log(
       'QuickEntryBatchMixin',
     );
-    final results = await getIt<ParseQuickEntryUseCase>().parseImagesWithCloud(
-      images: [
+    final cloud = await runSmartEntry(
+      input: SmartEntryImagesInput([
         for (final image in images)
           (bytes: image.bytes, mimeType: image.mimeType),
-      ],
-      categoryType: quickEntryCategoryType,
-      groupIds: quickEntryCategoryGroupIds,
+      ]),
+      local: const ParsedTransactionEntity(),
       languageCode: languageCode,
     );
-    if (results != null && quickEntryAvailableCategoryIds.isEmpty) {
-      await refreshQuickEntryCategories();
-    }
     resetParsingIfCurrent();
     if (!isCurrentGeneration()) return;
 
-    if (results == null) {
+    if (cloud.errorKey != null) {
+      quickEntryErrorKey.value = cloud.errorKey;
+      return;
+    }
+    if (cloud.rows.isEmpty) {
       quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
       return;
     }
-
-    final failedImages = [
-      for (var i = 0; i < results.length; i++)
-        if (!_isBatchItemUsable(results[i])) i + 1,
-    ];
-    if (failedImages.isNotEmpty) {
-      '[AI_PARSING] ⛔ Batch rejected | failedImages=$failedImages'.Log(
-        'QuickEntryBatchMixin',
-      );
-      if (context.mounted) {
-        CcSnackBarHelper.showErrorSnackBar(
-          context: context,
-          message: el.tr(
-            CcLocaleKeys.quick_entry_batch_failed,
-            namedArgs: {'indexes': failedImages.join(', ')},
-          ),
-        );
-      }
-      return;
-    }
-
-    quickEntrySuggestion.value = null;
-    quickEntryBatch.assignAll(results.whereType<QuickEntryParseResult>());
-    '[AI_PARSING] ✨ Batch ready | count=${quickEntryBatch.length}'.Log(
-      'QuickEntryBatchMixin',
-    );
-    startAutoSaveCountdown(() => saveQuickEntryBatch(context));
+    if (context.mounted) await presentQuickEntryPreview(context, cloud.rows);
   }
 
-  bool _isBatchItemUsable(QuickEntryParseResult? result) {
-    if (result == null) return false;
-    final amount = result.amount;
-    return amount != null && amount > 0 && !isCategoryMissingFor(result);
-  }
+  @override
+  Future<SmartEntryCommitResult> commitQuickEntryRows(
+    BuildContext context,
+    List<ParsedTransactionEntity> rows,
+  ) async {
+    if (isSubmitting.value) return const SmartEntryCommitResult(saved: 0);
 
-  Future<void> saveQuickEntryBatch(BuildContext context) async {
-    if (isSubmitting.value || quickEntryBatch.isEmpty) return;
-    cancelAutoSaveCountdown();
-
-    final isExpense = quickEntryCategoryType != CategoryType.income;
+    final categories = {
+      for (final category
+          in (await getIt<GetCategoriesUseCase>().call()).tryGetSuccess() ??
+              const <CategoryEntity>[])
+        category.id: category,
+    };
     final now = DateTime.now();
-    final params = [
-      for (final item in quickEntryBatch)
-        _toParams(item, isExpense: isExpense, now: now),
-    ];
-    quickEntryBatch.clear();
-    isSubmitting.value = true;
+    final params = [for (final row in rows) _toParams(row, categories, now)];
 
+    isSubmitting.value = true;
     final result = await getIt<CreateTransactionBatchUseCase>().call(params);
     isSubmitting.value = false;
 
     final savedParams = params.take(result.saved).toList();
     if (savedParams.isNotEmpty) {
-      if (isExpense) _checkBudgetThresholds(savedParams);
+      _checkBudgetThresholds(savedParams);
       await refreshParent();
       if (Get.isRegistered<GuidelineController>()) {
         unawaited(
@@ -146,13 +121,31 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
       }
     }
 
-    if (!context.mounted) return;
-    _showBatchSaveNotice(context, result, params.length, savedParams);
+    final failure = result.failure;
+    if (failure == null) {
+      if (context.mounted) _showSavedNotice(context, params.length);
+      return SmartEntryCommitResult(saved: params.length);
+    }
+    return SmartEntryCommitResult(
+      saved: result.saved,
+      error: el.tr(
+        result.saved == 0
+            ? CcLocaleKeys.smart_entry_preview_save_failed
+            : CcLocaleKeys.smart_entry_preview_save_partial,
+        namedArgs: {
+          'saved': '${result.saved}',
+          'total': '${params.length}',
+          'index': '${(result.failedAt ?? 0) + 1}',
+          'reason': el.tr(failure.message),
+        },
+      ),
+    );
   }
 
   void _checkBudgetThresholds(List<CreateTransactionParams> saved) {
     final spentByCategory = <String, int>{};
     for (final params in saved) {
+      if (params.type != TransactionType.expense) continue;
       spentByCategory.update(
         params.categoryId,
         (sum) => sum + params.amount,
@@ -169,71 +162,39 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     });
   }
 
-  String _resolveWalletId(String? suggested) {
-    final isSelectable =
-        suggested != null && wallets.any((w) => w.id == suggested);
-    return isSelectable ? suggested : selectedWalletId.value ?? '';
-  }
-
   CreateTransactionParams _toParams(
-    QuickEntryParseResult item, {
-    required bool isExpense,
-    required DateTime now,
-  }) {
-    final category = findQuickEntryCategory(item.categoryId!);
-    final date = item.date;
+    ParsedTransactionEntity row,
+    Map<String, CategoryEntity> categories,
+    DateTime now,
+  ) {
+    final category = categories[row.categoryId];
+    final date = row.date;
     return CreateTransactionParams(
-      type: isExpense ? TransactionType.expense : TransactionType.income,
-      amount: item.amount!,
-      categoryId: item.categoryId!,
+      type: (row.type ?? quickEntryCategoryType) == CategoryType.income
+          ? TransactionType.income
+          : TransactionType.expense,
+      amount: row.amount ?? 0,
+      categoryId: row.categoryId ?? '',
       categoryLabel: category != null ? el.tr(category.nameKey) : '',
       categoryIconCode: category?.iconCode,
       categoryIconFamily: category?.iconFamily,
-      walletId: _resolveWalletId(item.walletId),
-      note: item.note,
+      walletId: row.walletId ?? selectedWalletId.value ?? '',
+      note: row.note,
       date: date == null
           ? now
           : DateTime(date.year, date.month, date.day, now.hour, now.minute),
     );
   }
 
-  void _showBatchSaveNotice(
-    BuildContext context,
-    BatchSaveResult result,
-    int total,
-    List<CreateTransactionParams> savedParams,
-  ) {
-    final failure = result.failure;
-    if (failure == null) {
-      CcSnackBarHelper.showSuccessSnackBar(
-        context: context,
-        message: el.tr(
-          CcLocaleKeys.quick_entry_batch_saved,
-          namedArgs: {
-            'count': '${savedParams.length}',
-            'total': MoneyFormatter.formatWithSymbol(
-              savedParams.fold<int>(0, (sum, p) => sum + p.amount),
-              currencyCode: currencyCode.value,
-            ),
-          },
-        ),
-      );
-      return;
-    }
-
-    CcSnackBarHelper.showErrorSnackBar(
+  void _showSavedNotice(BuildContext context, int count) {
+    CcSnackBarHelper.showSuccessSnackBar(
       context: context,
-      message: el.tr(
-        result.saved == 0
-            ? CcLocaleKeys.quick_entry_batch_save_failed
-            : CcLocaleKeys.quick_entry_batch_partial,
-        namedArgs: {
-          'saved': '${result.saved}',
-          'total': '$total',
-          'index': '${(result.failedAt ?? 0) + 1}',
-          'reason': el.tr(failure.message),
-        },
-      ),
+      message: count > 1
+          ? el.tr(
+              CcLocaleKeys.smart_entry_preview_saved_many,
+              namedArgs: {'count': '$count'},
+            )
+          : el.tr(CcLocaleKeys.smart_entry_preview_saved_one),
     );
   }
 }

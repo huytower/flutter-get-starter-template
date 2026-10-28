@@ -361,6 +361,20 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_take_photo": "Take photo",
       "quick_entry_choose_gallery": "Choose from gallery",
       "quick_entry_camera_not_available": "Camera feature is not available yet",
+      "smart_entry_preview_title_one": "Review transaction",
+      "smart_entry_preview_title_many": "Review {count} transactions",
+      "smart_entry_preview_subtitle": "Check and edit before saving",
+      "smart_entry_preview_confirm_one": "Confirm",
+      "smart_entry_preview_confirm_many": "Confirm all ({count})",
+      "smart_entry_preview_apply_form": "Apply to form",
+      "smart_entry_preview_pick_category": "Choose category",
+      "smart_entry_preview_pick_wallet": "Choose wallet",
+      "smart_entry_preview_save_failed":
+          "Couldn't save transaction {index}: {reason} — nothing was saved",
+      "smart_entry_preview_save_partial":
+          "Saved {saved} of {total} — transaction {index} failed: {reason}",
+      "smart_entry_preview_saved_one": "Transaction saved",
+      "smart_entry_preview_saved_many": "Saved {count} transactions",
       "claims_in_progress": "You have {count} claims in progress",
       "validation": {
         "amount_required": "Amount must be greater than 0",
@@ -1212,6 +1226,20 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_choose_gallery": "Chọn từ thư viện",
       "quick_entry_camera_not_available":
           "Tính năng chụp/quét ảnh chưa khả dụng",
+      "smart_entry_preview_title_one": "Xem lại giao dịch",
+      "smart_entry_preview_title_many": "Xem lại {count} giao dịch",
+      "smart_entry_preview_subtitle": "Kiểm tra và chỉnh sửa trước khi lưu",
+      "smart_entry_preview_confirm_one": "Xác nhận",
+      "smart_entry_preview_confirm_many": "Xác nhận tất cả ({count})",
+      "smart_entry_preview_apply_form": "Áp dụng vào biểu mẫu",
+      "smart_entry_preview_pick_category": "Chọn danh mục",
+      "smart_entry_preview_pick_wallet": "Chọn ví",
+      "smart_entry_preview_save_failed":
+          "Không lưu được giao dịch {index}: {reason} — chưa lưu gì cả",
+      "smart_entry_preview_save_partial":
+          "Đã lưu {saved}/{total} — giao dịch {index} bị lỗi: {reason}",
+      "smart_entry_preview_saved_one": "Đã lưu giao dịch",
+      "smart_entry_preview_saved_many": "Đã lưu {count} giao dịch",
       "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
       "validation": {
         "amount_required": "Số tiền phải lớn hơn 0!",
@@ -2040,6 +2068,20 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_take_photo": "사진 촬영",
       "quick_entry_choose_gallery": "갤러리에서 선택",
       "quick_entry_camera_not_available": "카메라 기능을 아직 사용할 수 없습니다",
+      "smart_entry_preview_title_one": "거래 확인",
+      "smart_entry_preview_title_many": "거래 {count}건 확인",
+      "smart_entry_preview_subtitle": "저장하기 전에 확인하고 수정하세요",
+      "smart_entry_preview_confirm_one": "확인",
+      "smart_entry_preview_confirm_many": "모두 확인 ({count})",
+      "smart_entry_preview_apply_form": "양식에 적용",
+      "smart_entry_preview_pick_category": "카테고리 선택",
+      "smart_entry_preview_pick_wallet": "지갑 선택",
+      "smart_entry_preview_save_failed":
+          "거래 {index}을(를) 저장하지 못했습니다: {reason} — 아무것도 저장되지 않았습니다",
+      "smart_entry_preview_save_partial":
+          "{saved}/{total} 저장됨 — 거래 {index} 실패: {reason}",
+      "smart_entry_preview_saved_one": "거래가 저장되었습니다",
+      "smart_entry_preview_saved_many": "거래 {count}건이 저장되었습니다",
       "claims_in_progress": "{count} 요청이 진행 중입니다",
       "validation": {
         "amount_required": "금액은 0보다 커야 합니다",
@@ -2835,6 +2877,20 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_take_photo": "写真を撮影",
       "quick_entry_choose_gallery": "ギャラリーから選択",
       "quick_entry_camera_not_available": "カメラ機能はまだ利用できません",
+      "smart_entry_preview_title_one": "取引を確認",
+      "smart_entry_preview_title_many": "{count}件の取引を確認",
+      "smart_entry_preview_subtitle": "保存する前に確認・編集してください",
+      "smart_entry_preview_confirm_one": "確定",
+      "smart_entry_preview_confirm_many": "すべて確定（{count}）",
+      "smart_entry_preview_apply_form": "フォームに反映",
+      "smart_entry_preview_pick_category": "カテゴリを選択",
+      "smart_entry_preview_pick_wallet": "ウォレットを選択",
+      "smart_entry_preview_save_failed":
+          "取引{index}を保存できませんでした: {reason} — 何も保存されませんでした",
+      "smart_entry_preview_save_partial":
+          "{saved}/{total}保存済み — 取引{index}失敗: {reason}",
+      "smart_entry_preview_saved_one": "取引を保存しました",
+      "smart_entry_preview_saved_many": "{count}件の取引を保存しました",
       "claims_in_progress": "{count}件のリクエストが進行中です",
       "validation": {
         "amount_required": "金額は0より大きくなければなりません",
@@ -3618,6 +3674,20 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_take_photo": "拍照",
       "quick_entry_choose_gallery": "从图库选择",
       "quick_entry_camera_not_available": "相机功能尚不可用",
+      "smart_entry_preview_title_one": "确认交易",
+      "smart_entry_preview_title_many": "确认 {count} 笔交易",
+      "smart_entry_preview_subtitle": "保存前请检查并编辑",
+      "smart_entry_preview_confirm_one": "确认",
+      "smart_entry_preview_confirm_many": "全部确认（{count}）",
+      "smart_entry_preview_apply_form": "应用到表单",
+      "smart_entry_preview_pick_category": "选择类别",
+      "smart_entry_preview_pick_wallet": "选择钱包",
+      "smart_entry_preview_save_failed":
+          "无法保存交易 {index}: {reason} — 未保存任何内容",
+      "smart_entry_preview_save_partial":
+          "已保存 {saved}/{total} — 交易 {index} 失败: {reason}",
+      "smart_entry_preview_saved_one": "交易已保存",
+      "smart_entry_preview_saved_many": "已保存 {count} 笔交易",
       "claims_in_progress": "您有 {count} 个请求正在进行中",
       "validation": {
         "amount_required": "金额必须大于 0",
@@ -4470,6 +4540,30 @@ class CcLocaleKeys {
       'transaction.quick_entry_choose_gallery';
   static const transaction_quick_entry_camera_not_available =
       'transaction.quick_entry_camera_not_available';
+  static const transaction_smart_entry_preview_title_one =
+      'transaction.smart_entry_preview_title_one';
+  static const transaction_smart_entry_preview_title_many =
+      'transaction.smart_entry_preview_title_many';
+  static const transaction_smart_entry_preview_subtitle =
+      'transaction.smart_entry_preview_subtitle';
+  static const transaction_smart_entry_preview_confirm_one =
+      'transaction.smart_entry_preview_confirm_one';
+  static const transaction_smart_entry_preview_confirm_many =
+      'transaction.smart_entry_preview_confirm_many';
+  static const transaction_smart_entry_preview_apply_form =
+      'transaction.smart_entry_preview_apply_form';
+  static const transaction_smart_entry_preview_pick_category =
+      'transaction.smart_entry_preview_pick_category';
+  static const transaction_smart_entry_preview_pick_wallet =
+      'transaction.smart_entry_preview_pick_wallet';
+  static const transaction_smart_entry_preview_save_failed =
+      'transaction.smart_entry_preview_save_failed';
+  static const transaction_smart_entry_preview_save_partial =
+      'transaction.smart_entry_preview_save_partial';
+  static const transaction_smart_entry_preview_saved_one =
+      'transaction.smart_entry_preview_saved_one';
+  static const transaction_smart_entry_preview_saved_many =
+      'transaction.smart_entry_preview_saved_many';
 
   // Aliases for quick_entry keys (for convenience)
   static const quick_entry_hint = 'transaction.quick_entry_hint';
@@ -4500,6 +4594,30 @@ class CcLocaleKeys {
       'transaction.quick_entry_choose_gallery';
   static const quick_entry_camera_not_available =
       'transaction.quick_entry_camera_not_available';
+  static const smart_entry_preview_title_one =
+      'transaction.smart_entry_preview_title_one';
+  static const smart_entry_preview_title_many =
+      'transaction.smart_entry_preview_title_many';
+  static const smart_entry_preview_subtitle =
+      'transaction.smart_entry_preview_subtitle';
+  static const smart_entry_preview_confirm_one =
+      'transaction.smart_entry_preview_confirm_one';
+  static const smart_entry_preview_confirm_many =
+      'transaction.smart_entry_preview_confirm_many';
+  static const smart_entry_preview_apply_form =
+      'transaction.smart_entry_preview_apply_form';
+  static const smart_entry_preview_pick_category =
+      'transaction.smart_entry_preview_pick_category';
+  static const smart_entry_preview_pick_wallet =
+      'transaction.smart_entry_preview_pick_wallet';
+  static const smart_entry_preview_save_failed =
+      'transaction.smart_entry_preview_save_failed';
+  static const smart_entry_preview_save_partial =
+      'transaction.smart_entry_preview_save_partial';
+  static const smart_entry_preview_saved_one =
+      'transaction.smart_entry_preview_saved_one';
+  static const smart_entry_preview_saved_many =
+      'transaction.smart_entry_preview_saved_many';
   static const transaction_claims_in_progress =
       'transaction.claims_in_progress';
   static const transaction_auto_save_countdown =

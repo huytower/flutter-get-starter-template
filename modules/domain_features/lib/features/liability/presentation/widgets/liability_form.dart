@@ -175,19 +175,10 @@ class _LiabilityFormState extends State<LiabilityForm> {
               Obx(() => _buildWalletSection(context, controller, accentColor)),
               const CcSpaceSM(),
               Obx(() {
-                final liability = controller.mergedItems
-                    .firstWhereOrNull(
-                      (b) =>
-                          b.liability.id ==
-                          controller.selectedLiabilityId.value,
-                    )
-                    ?.liability;
-
                 final isRepay =
                     controller.action.value == LiabilityDirectionForm.decrease;
 
-                if (isRepay ||
-                    (liability != null && liability.principalAmount > 0)) {
+                if (isRepay) {
                   return const SizedBox.shrink();
                 }
 

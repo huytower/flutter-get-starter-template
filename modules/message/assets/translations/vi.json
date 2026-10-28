@@ -149,7 +149,7 @@
     "profile": "Hồ sơ",
     "profile_info": "Thông tin cá nhân",
     "nav_reconcile": "Kiểm toán",
-    "reconciliation.title": "Kiểm toán"
+    "reconciliation_title": "Kiểm toán"
   },
   "dashboard": {
     "item_count": "Số lượng mục",
@@ -326,6 +326,18 @@
     "quick_entry_take_photo": "Chụp ảnh",
     "quick_entry_choose_gallery": "Chọn từ thư viện",
     "quick_entry_camera_not_available": "Tính năng chụp/quét ảnh chưa khả dụng",
+    "smart_entry_preview_title_one": "Xem lại giao dịch",
+    "smart_entry_preview_title_many": "Xem lại {count} giao dịch",
+    "smart_entry_preview_subtitle": "Kiểm tra và chỉnh sửa trước khi lưu",
+    "smart_entry_preview_confirm_one": "Xác nhận",
+    "smart_entry_preview_confirm_many": "Xác nhận tất cả ({count})",
+    "smart_entry_preview_apply_form": "Áp dụng vào biểu mẫu",
+    "smart_entry_preview_pick_category": "Chọn danh mục",
+    "smart_entry_preview_pick_wallet": "Chọn ví",
+    "smart_entry_preview_save_failed": "Không lưu được giao dịch {index}: {reason} — chưa lưu gì cả",
+    "smart_entry_preview_save_partial": "Đã lưu {saved}/{total} — giao dịch {index} bị lỗi: {reason}",
+    "smart_entry_preview_saved_one": "Đã lưu giao dịch",
+    "smart_entry_preview_saved_many": "Đã lưu {count} giao dịch",
     "claims_in_progress": "Bạn có {count} yêu cầu đang xử lý",
     "validation": {
       "amount_required": "Số tiền phải lớn hơn 0!",
