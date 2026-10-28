@@ -164,7 +164,10 @@ class _TransactionDatePickerContentSheetState
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CcText(
-                    el.DateFormat('MMMM yyyy', languageCode).format(_viewedMonth),
+                    el.DateFormat(
+                      'MMMM yyyy',
+                      languageCode,
+                    ).format(_viewedMonth),
                     maxLines: 1,
                     align: Alignment.center,
                     textStyle: context.ccTextTheme.labelLarge?.copyWith(
@@ -246,8 +249,17 @@ class _TransactionDatePickerContentSheetState
 
           return CcBouncing(
             onTap: () {
+              var newMonth = _viewedMonth.month;
+              if (year == widget.lastDate.year &&
+                  newMonth > widget.lastDate.month) {
+                newMonth = widget.lastDate.month;
+              }
+              if (year == widget.firstDate.year &&
+                  newMonth < widget.firstDate.month) {
+                newMonth = widget.firstDate.month;
+              }
               setState(() {
-                _viewedMonth = DateTime(year, _viewedMonth.month);
+                _viewedMonth = DateTime(year, newMonth);
                 _isYearPickerOpen = false;
               });
             },

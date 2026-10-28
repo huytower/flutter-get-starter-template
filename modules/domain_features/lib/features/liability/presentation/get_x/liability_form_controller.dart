@@ -239,7 +239,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
       context,
       initial.isBefore(today) ? today : initial,
       firstDate: today,
-      lastDate: DateTime(now.year + 30),
+      lastDate: DateTime(now.year + 30, 12, 31),
     );
   }
 
