@@ -54,9 +54,23 @@ class QuickEditTransactionSheetController extends CcGetController {
       transaction.type == TransactionType.debtRepay;
 
   Color accentColor(BuildContext context) {
-    if (isInvestment) return PrjColors.investment;
-    if (isDebt) return PrjColors.liability;
-    return context.ccColorScheme.primary;
+    switch (transaction.type) {
+      case TransactionType.expense:
+        return context.ccColorScheme.error;
+      case TransactionType.income:
+        return PrjColors.success;
+      case TransactionType.debtBorrow:
+      case TransactionType.debtLend:
+      case TransactionType.debtRepay:
+      case TransactionType.debtCollect:
+        return context.ccColorScheme.liability;
+      case TransactionType.investmentOut:
+      case TransactionType.investmentIn:
+      case TransactionType.investmentReturn:
+        return context.ccColorScheme.investment;
+      default:
+        return context.ccColorScheme.error;
+    }
   }
 
   String? get categoryType {
@@ -117,6 +131,37 @@ class QuickEditTransactionSheetController extends CcGetController {
           }
         });
       }
+    }
+  }
+
+  final RxBool showKeypad = false.obs;
+
+  void toggleKeypad() {
+    showKeypad.toggle();
+  }
+
+  void hideKeypad() {
+    showKeypad.value = false;
+  }
+
+  void handleKeyPress(String key) {
+    if (amountStr.value == '0') {
+      if (key != '0' && key != '000') {
+        amountStr.value = key;
+      }
+    } else {
+      amountStr.value += key;
+    }
+  }
+
+  void handleDelete() {
+    if (amountStr.value.length > 1) {
+      amountStr.value = amountStr.value.substring(
+        0,
+        amountStr.value.length - 1,
+      );
+    } else {
+      amountStr.value = '0';
     }
   }
 

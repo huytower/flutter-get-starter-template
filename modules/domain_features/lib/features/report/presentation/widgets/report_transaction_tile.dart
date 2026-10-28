@@ -147,14 +147,7 @@ class TransactionTile extends StatelessWidget {
                   color: context.ccColorScheme.primary,
                 ),
                 onTap: () async {
-                  final isPlainEntry =
-                      transaction.type == TransactionType.income ||
-                      transaction.type == TransactionType.expense;
-                  if (isPlainEntry) {
-                    await EditTransactionSheet.show(context, transaction);
-                  } else {
-                    await QuickEditTransactionSheet.show(context, transaction);
-                  }
+                  await QuickEditTransactionSheet.show(context, transaction);
                   if (Get.isRegistered<WalletController>()) {
                     await Get.find<WalletController>().loadWallets();
                   }

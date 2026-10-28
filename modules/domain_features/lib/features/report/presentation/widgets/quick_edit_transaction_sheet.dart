@@ -11,6 +11,7 @@ import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/investment_asset_selector.dart';
+import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../get_x/quick_edit_transaction_sheet_controller.dart';
@@ -49,23 +50,23 @@ class QuickEditTransactionSheet
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildHeader(context),
-            Flexible(
-              fit: FlexFit.loose,
-              child: SingleChildScrollView(
-                child: Obx(() {
-                  final accentColor = controller.accentColor(context);
+    return Obx(() {
+      final accentColor = controller.accentColor(context);
 
-                  return Column(
+      return SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildHeader(context),
+              Flexible(
+                fit: FlexFit.loose,
+                child: SingleChildScrollView(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildCategorySelectionSection(context, accentColor),
@@ -88,14 +89,27 @@ class QuickEditTransactionSheet
                       ),
                       const CcSpaceXS(),
                     ],
-                  );
-                }),
+                  ),
+                ),
               ),
-            ),
-          ],
+              if (controller.showKeypad.value)
+                MoneyKeypadPanel(
+                  onKeyPress: controller.handleKeyPress,
+                  onDelete: controller.handleDelete,
+                  onClear: controller.onClearAmount,
+                  suggestions: MoneyConstants.getQuickAmounts(
+                    currencyCode: controller.currencyCode,
+                  ),
+                  onSuggestion: (value) =>
+                      controller.amountStr.value = value.toString(),
+                  onDone: controller.hideKeypad,
+                  activeColor: accentColor,
+                ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildCategorySelectionSection(
@@ -123,13 +137,17 @@ class QuickEditTransactionSheet
       );
     }
 
-    return CategorySelectionSection(
-      type: controller.categoryType!,
-      activeColor: accentColor,
-      autoSelectFirst: false,
-      initialSelectedCategoryId: controller.transaction.categoryId,
-      onCategorySelected: controller.setCategory,
-    );
+    return Obx(() {
+      final selectedCat = controller.selectedCategory.value;
+      return CategorySelectionSection(
+        type: controller.categoryType!,
+        activeColor: accentColor,
+        autoSelectFirst: false,
+        initialSelectedCategoryId:
+            selectedCat?.id ?? controller.transaction.categoryId,
+        onCategorySelected: controller.setCategory,
+      );
+    });
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -168,10 +186,10 @@ class QuickEditTransactionSheet
           quickAmounts: MoneyConstants.getQuickAmounts(
             currencyCode: controller.currencyCode,
           ),
-          isKeypadVisible: false,
+          isKeypadVisible: controller.showKeypad.value,
           activeColor: accentColor,
           currencyCode: controller.currencyCode,
-          onTap: () {},
+          onTap: controller.toggleKeypad,
           onQuickAmountSelected: controller.onQuickAmountSelected,
           onClear: controller.onClearAmount,
         ),
