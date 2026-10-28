@@ -23,6 +23,7 @@ class _TransactionDatePickerContentSheetState
     extends State<TransactionDatePickerContentSheet> {
   late DateTime _selectedDate;
   late DateTime _viewedMonth;
+  bool _isYearPickerOpen = false;
 
   @override
   void initState() {
@@ -152,13 +153,34 @@ class _TransactionDatePickerContentSheetState
             constraints: const BoxConstraints(),
           ),
           Expanded(
-            child: CcText(
-              el.DateFormat('MMMM yyyy', languageCode).format(_viewedMonth),
-              maxLines: 1,
-              align: Alignment.center,
-              textStyle: context.ccTextTheme.labelLarge?.copyWith(
-                color: scheme.onPrimary,
-                fontWeight: CcTypographyParams.bold,
+            child: CcBouncing(
+              onTap: () {
+                setState(() {
+                  _isYearPickerOpen = !_isYearPickerOpen;
+                });
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CcText(
+                    el.DateFormat('MMMM yyyy', languageCode).format(_viewedMonth),
+                    maxLines: 1,
+                    align: Alignment.center,
+                    textStyle: context.ccTextTheme.labelLarge?.copyWith(
+                      color: scheme.onPrimary,
+                      fontWeight: CcTypographyParams.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    _isYearPickerOpen
+                        ? Icons.arrow_drop_up_rounded
+                        : Icons.arrow_drop_down_rounded,
+                    color: scheme.onPrimary,
+                    size: context.respIconSize(baseSize: 20),
+                  ),
+                ],
               ),
             ),
           ),
@@ -189,11 +211,74 @@ class _TransactionDatePickerContentSheetState
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildWeekdayLabels(context, scheme, languageCode),
-          _buildCalendarGrid(context, scheme, calendarDays, today),
+          if (_isYearPickerOpen)
+            _buildYearGrid(context, scheme)
+          else ...[
+            _buildWeekdayLabels(context, scheme, languageCode),
+            _buildCalendarGrid(context, scheme, calendarDays, today),
+          ],
           _buildActions(context, scheme),
           SizedBox(height: MediaQuery.of(context).padding.bottom + 4),
         ],
+      ),
+    );
+  }
+
+  Widget _buildYearGrid(BuildContext context, ColorScheme scheme) {
+    final startYear = widget.firstDate.year;
+    final endYear = widget.lastDate.year;
+    final years = List.generate(endYear - startYear + 1, (i) => startYear + i);
+
+    return Container(
+      height: context.respDim(230),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4,
+          mainAxisExtent: 40,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+        ),
+        itemCount: years.length,
+        itemBuilder: (context, index) {
+          final year = years[index];
+          final isSelected = year == _viewedMonth.year;
+
+          return CcBouncing(
+            onTap: () {
+              setState(() {
+                _viewedMonth = DateTime(year, _viewedMonth.month);
+                _isYearPickerOpen = false;
+              });
+            },
+            borderRadius: context.brLg,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              decoration: BoxDecoration(
+                color: isSelected ? scheme.primary : Colors.transparent,
+                borderRadius: context.brLg,
+                border: Border.all(
+                  color: isSelected
+                      ? scheme.primary
+                      : scheme.primary.withOpacity(0.2),
+                  width: isSelected ? 1.5 : 1.0,
+                ),
+              ),
+              child: Center(
+                child: CcText(
+                  '$year',
+                  align: Alignment.center,
+                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                    fontWeight: isSelected
+                        ? CcTypographyParams.bold
+                        : CcTypographyParams.regular,
+                    color: isSelected ? scheme.onPrimary : scheme.onSurface,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -43,10 +43,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
       actions: [
         Builder(
           builder: (context) => Obx(() {
-            final enabled =
-                !controller.isSubmitting.value &&
-                controller.unhandledCount.value == 0 &&
-                controller.balances.isNotEmpty;
+            final enabled = controller.canReconcile;
             return CcIconButton.bouncing(
               icon: Icon(
                 Icons.handshake_outlined,

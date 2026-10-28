@@ -1,4 +1,3 @@
-import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
@@ -97,12 +96,7 @@ class CreateWalletTransferUseCase {
     if (balanceResult.isError()) return Error(balanceResult.tryGetError()!);
     final currentBookBal = balanceResult.tryGetSuccess()!;
 
-    '[CreateWalletTransferUseCase] 🔍 Transfer params: inputAmount=${params.amount} | primaryCurrency=${CurrencyConstants.currentPrimaryCurrency} | source=${source.name} (code=${source.currencyCode}, sourceAmount=$sourceAmount, bookBal=$currentBookBal) | dest=${destination.name} (code=${destination.currencyCode}, destAmount=$destinationAmount)'
-        .Log('CreateWalletTransferUseCase');
-
     if (sourceAmount > currentBookBal) {
-      '[CreateWalletTransferUseCase] ❌ Insufficient balance failure: sourceAmount=$sourceAmount > bookBal=$currentBookBal'
-          .Log('CreateWalletTransferUseCase');
       return const Error(
         ValidationFailure('transaction.validation.insufficient_balance'),
       );

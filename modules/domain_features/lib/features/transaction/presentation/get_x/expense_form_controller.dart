@@ -252,38 +252,18 @@ class ExpenseFormController extends TransactionFormController
   }
 
   Future<void> _loadAll() async {
-    '[ExpenseForm] 🚀 _loadAll START | isEditing=$isEditing'.Log(
-      'ExpenseFormController',
-    );
     isLoadingCategories.value = true;
     isLoadingUnified.value = true;
 
     try {
-      '[ExpenseForm] 📦 Step 1: Loading categories...'.Log(
-        'ExpenseFormController',
-      );
       await _loadCategories();
-      '[ExpenseForm] 💡 Step 2: Loading suggestions...'.Log(
-        'ExpenseFormController',
-      );
       await loadSuggestions();
-      '[ExpenseForm] 📜 Step 3: Loading recent expenses...'.Log(
-        'ExpenseFormController',
-      );
       await _loadRecentExpenses();
-      '[ExpenseForm] 🧩 Step 4: Rebuilding unified items...'.Log(
-        'ExpenseFormController',
-      );
       await _rebuildUnifiedItems();
-    } catch (e, stack) {
-      '[ExpenseForm] ❌ Error during _loadAll: $e\n$stack'.Log(
-        'ExpenseFormController',
-      );
+    } catch (_) {
     } finally {
       isLoadingCategories.value = false;
       isLoadingUnified.value = false;
-      '[ExpenseForm] ✅ _loadAll DONE | unifiedItems=${unifiedItems.length} | cachedCategories=${_cachedCategories.length}'
-          .Log('ExpenseFormController');
     }
 
     refreshTimeBasedSuggestion();
@@ -496,8 +476,6 @@ class ExpenseFormController extends TransactionFormController
     });
 
     unifiedItems.assignAll(items);
-    '[ExpenseForm] 🧩 Unified items rebuilt | count=${items.length} (expenseCats=${expenseCats.length}, budgets=${currentBudgets.length})'
-        .Log('ExpenseFormController');
 
     // A rebuild can drop the resolved budget (e.g. the shared
     // BudgetLimitController had not loaded its list yet) while keeping the

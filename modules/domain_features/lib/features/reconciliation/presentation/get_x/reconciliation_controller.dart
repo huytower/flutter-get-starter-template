@@ -59,6 +59,16 @@ class ReconciliationController extends CcGetController {
 
   int get difference => actualTotal.value - systemTotal.value;
 
+  /// Reconciliation is only permitted when there is non-zero wallet activity/amount
+  /// (system total > 0 or actual total > 0), no unacknowledged mismatches, and active balances exist.
+  bool get canReconcile {
+    final hasAmount = systemTotal.value > 0 || actualTotal.value > 0;
+    return hasAmount &&
+        unhandledCount.value == 0 &&
+        balances.isNotEmpty &&
+        !isSubmitting.value;
+  }
+
   bool isAcknowledged(String walletId) => _acknowledged.contains(walletId);
 
   int actualOf(String walletId) => _actuals[walletId] ?? 0;

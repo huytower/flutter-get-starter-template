@@ -782,6 +782,18 @@ class WalletController extends CcGetController {
           wallets[index] = toSave;
           _calculateTotalBalance();
 
+          if (Get.isRegistered<TransactionController>()) {
+            final txController = Get.find<TransactionController>();
+            final txIdx = txController.wallets.indexWhere(
+              (e) => e.id == toSave.id,
+            );
+            if (txIdx != -1) {
+              txController.wallets[txIdx] = toSave;
+            } else {
+              txController.loadWallets();
+            }
+          }
+
           if (toSave.balance > 0) {
             Get.find<GuidelineController>().completeTask('wallet_balance');
           }

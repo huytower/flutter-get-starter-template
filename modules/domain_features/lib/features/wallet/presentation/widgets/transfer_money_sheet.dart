@@ -90,9 +90,6 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
     final amount = int.tryParse(_amount) ?? 0;
     if (amount <= 0) return;
 
-    '[TransferMoneySheet] 🚀 Submit transfer requested | amount=$amount | source=${_sourceWallet.name} (${_sourceWallet.id}, currency=${_sourceWallet.currencyCode}) | dest=${_destinationWallet.name} (${_destinationWallet.id}, currency=${_destinationWallet.currencyCode})'
-        .Log('TransferMoneySheet');
-
     setState(() => _isSubmitting = true);
     final result = await getIt<CreateWalletTransferUseCase>().call(
       CreateWalletTransferParams(
@@ -107,9 +104,6 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
     if (!mounted) return;
     final failure = result.tryGetError();
     if (failure != null) {
-      '[TransferMoneySheet] ❌ Transfer failed: failure=${failure.message}'.Log(
-        'TransferMoneySheet',
-      );
       setState(() => _isSubmitting = false);
       CcSnackBarHelper.showErrorSnackBar(
         context: context,
@@ -118,8 +112,6 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
       return;
     }
 
-    '[TransferMoneySheet] ✅ Transfer saved in DB! Marking wallet dirty and refreshing...'
-        .Log('TransferMoneySheet');
     _walletController.markDirty();
     await _walletController.loadWallets(showLoading: false, forceRefresh: true);
     if (!mounted) return;
@@ -136,6 +128,14 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
     final destinations = _availableWallets(_sourceWallet);
     final currencyCode = _walletController.currencyCode.value;
     final amount = int.tryParse(_amount) ?? 0;
+    final sourceBalance = _walletController.displayBookBalanceOf(
+      _sourceWallet.id,
+    );
+    final bool canSubmit =
+        amount > 0 &&
+        sourceBalance > 0 &&
+        amount <= sourceBalance &&
+        destinations.isNotEmpty;
 
     return SafeArea(
       top: false,
@@ -223,7 +223,7 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
                     TransactionSubmitButton(
                       text: el.tr('transaction.transfer_money'),
                       isSubmitting: _isSubmitting,
-                      isEnabled: amount > 0 && destinations.isNotEmpty,
+                      isEnabled: canSubmit,
                       onTap: _submit,
                       activeColor: scheme.primary,
                       widthFactor: 1,

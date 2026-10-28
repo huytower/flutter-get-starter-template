@@ -14,13 +14,11 @@ class ReconciliationConfirmButton extends StatelessWidget {
     final controller = Get.find<ReconciliationController>();
     return Obx(() {
       final busy = controller.isSubmitting.value;
-      final hasWarning = controller.unhandledCount.value > 0;
-      final isEmpty = controller.balances.isEmpty;
 
       return TransactionSubmitButton(
         text: el.tr(CcLocaleKeys.reconciliation_confirm),
         isSubmitting: busy,
-        isEnabled: !hasWarning && !isEmpty,
+        isEnabled: controller.canReconcile,
         onTap: () => controller.confirmReconciliation(context),
         activeColor: context.ccColorScheme.primary,
         widthFactor: 0.5,

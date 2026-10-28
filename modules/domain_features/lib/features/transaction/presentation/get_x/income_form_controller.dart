@@ -99,38 +99,18 @@ class IncomeFormController extends TransactionFormController
   }
 
   Future<void> _loadAll() async {
-    '[IncomeForm] 🚀 _loadAll START | isEditing=$isEditing'.Log(
-      'IncomeFormController',
-    );
     isLoadingCategories.value = true;
     isLoadingUnified.value = true;
 
     try {
-      '[IncomeForm] 📦 Step 1: Loading categories...'.Log(
-        'IncomeFormController',
-      );
       await _loadCategories();
-      '[IncomeForm] 💡 Step 2: Loading suggestions...'.Log(
-        'IncomeFormController',
-      );
       await loadSuggestions();
-      '[IncomeForm] 📜 Step 3: Loading recent incomes...'.Log(
-        'IncomeFormController',
-      );
       await _loadRecentIncomes();
-      '[IncomeForm] 🧩 Step 4: Rebuilding unified items...'.Log(
-        'IncomeFormController',
-      );
       await _rebuildUnifiedItems();
-    } catch (e, stack) {
-      '[IncomeForm] ❌ Error during _loadAll: $e\n$stack'.Log(
-        'IncomeFormController',
-      );
+    } catch (_) {
     } finally {
       isLoadingCategories.value = false;
       isLoadingUnified.value = false;
-      '[IncomeForm] ✅ _loadAll DONE | unifiedItems=${unifiedItems.length} | cachedCategories=${_cachedCategories.length}'
-          .Log('IncomeFormController');
     }
 
     if (isEditing && editingTransaction != null) {
