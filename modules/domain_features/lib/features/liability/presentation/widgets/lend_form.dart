@@ -10,11 +10,10 @@ import '../../../transaction/presentation/widgets/transaction_additional_details
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
-import '../get_x/lend_form_controller.dart';
 import '../get_x/liability_base_form_controller.dart';
+import '../get_x/lend_form_controller.dart';
 import 'lend_asset_selector.dart';
 import 'lend_direction_toggle.dart';
-import 'liability_repayment_method_section.dart';
 
 class LendForm extends StatefulWidget {
   const LendForm({super.key});
@@ -121,24 +120,6 @@ class _LendFormState extends State<LendForm> {
               const CcSpaceSM(),
               Obx(() => _buildWalletSection(context, controller, accentColor)),
               const CcSpaceSM(),
-              Obx(() {
-                final isCollect =
-                    controller.action.value == LiabilityDirectionForm.decrease;
-
-                if (isCollect) {
-                  return const SizedBox.shrink();
-                }
-
-                return Column(
-                  children: [
-                    LiabilityRepaymentMethodSection(
-                      controller: controller,
-                      accentColor: accentColor,
-                    ),
-                    const CcSpaceSM(),
-                  ],
-                );
-              }),
               TransactionAdditionalDetailsSection(
                 isExpanded: controller.showMoreDetails.value,
                 onToggle: controller.toggleMoreDetails,
