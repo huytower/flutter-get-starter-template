@@ -8,12 +8,42 @@ import '../../domain/entities/liability_entity.dart';
 import '../get_x/add_liability_sheet_controller.dart';
 
 class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
-  const AddLiabilitySheet({super.key});
+  const AddLiabilitySheet({
+    super.key,
+    this.initialDirection = LiabilityDirection.borrow,
+    this.showDirectionToggle = false,
+  });
+
+  final String initialDirection;
+  final bool showDirectionToggle;
+
+  static Future<bool?> show(
+    BuildContext context, {
+    String initialDirection = LiabilityDirection.borrow,
+    bool showDirectionToggle = false,
+  }) {
+    return showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.ccColorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => AddLiabilitySheet(
+        initialDirection: initialDirection,
+        showDirectionToggle: showDirectionToggle,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AddLiabilitySheetController>(
-      init: getIt<AddLiabilitySheetController>()..init(),
+      init: getIt<AddLiabilitySheetController>()
+        ..init(
+          initialDirection: initialDirection,
+          showDirectionToggle: showDirectionToggle,
+        ),
       dispose: (_) => Get.delete<AddLiabilitySheetController>(),
       builder: (controller) {
         return SafeArea(
@@ -57,8 +87,10 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
       children: [
         _buildTitle(context, controller),
         const CcSpaceMD(),
-        _buildDirectionPicker(context, controller),
-        const CcSpaceMD(),
+        if (controller.showDirectionToggle.value) ...[
+          _buildDirectionPicker(context, controller),
+          const CcSpaceMD(),
+        ],
         _buildLiabilityCategoryPicker(context, controller),
         const CcSpaceMD(),
         _buildNameField(context, controller),
@@ -72,8 +104,12 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     BuildContext context,
     AddLiabilitySheetController controller,
   ) {
+    final titleKey = controller.direction.value == LiabilityDirection.lend
+        ? CcLocaleKeys.transaction_liability_direction_lend
+        : CcLocaleKeys.transaction_record_debt;
+
     return CcFormLabel(
-      text: el.tr(CcLocaleKeys.transaction_record_debt),
+      text: el.tr(titleKey),
       color: context.ccColorScheme.primary,
     );
   }

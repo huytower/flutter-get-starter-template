@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../domain/entities/liability_entity.dart';
 import '../get_x/liability_list_controller.dart';
 import '../widgets/add_liability_sheet.dart';
 import '../widgets/lend_wallet_list_item.dart';
@@ -148,14 +149,10 @@ class _LendListView extends CcGetView<LiabilityListController> {
   }
 
   Future<void> _openAddLend(BuildContext context) async {
-    final created = await showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => const AddLiabilitySheet(),
+    final created = await AddLiabilitySheet.show(
+      context,
+      initialDirection: LiabilityDirection.lend,
+      showDirectionToggle: false,
     );
     if (created == true) {
       controller.load();

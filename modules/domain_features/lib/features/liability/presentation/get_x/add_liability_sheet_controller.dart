@@ -43,7 +43,14 @@ class AddLiabilitySheetController extends CcGetController {
   final Rxn<String> nameError = Rxn<String>();
   final RxBool isSubmitting = false.obs;
 
-  void init() {
+  final RxBool showDirectionToggle = false.obs;
+
+  void init({
+    String initialDirection = LiabilityDirection.borrow,
+    bool showDirectionToggle = false,
+  }) {
+    this.showDirectionToggle.value = showDirectionToggle;
+    direction.value = initialDirection;
     nameController.text = '';
     nameController.removeListener(_onNameChanged);
     nameController.addListener(_onNameChanged);

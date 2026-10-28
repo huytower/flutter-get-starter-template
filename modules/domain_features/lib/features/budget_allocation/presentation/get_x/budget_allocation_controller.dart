@@ -15,6 +15,7 @@ import '../../../budget_limit/domain/usecases/get_budget_insights_usecase.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../../liability/domain/entities/liability_balance_entity.dart';
+import '../../../liability/domain/entities/liability_entity.dart';
 import '../../../liability/domain/usecases/get_liability_balances_usecase.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../liability/presentation/widgets/add_liability_sheet.dart';
@@ -107,14 +108,10 @@ class BudgetAllocationController extends CcGetController {
   }
 
   void openAddLiability(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => const AddLiabilitySheet(),
+    AddLiabilitySheet.show(
+      context,
+      initialDirection: LiabilityDirection.borrow,
+      showDirectionToggle: false,
     );
   }
 

@@ -245,7 +245,17 @@ class QuickEntrySection extends StatelessWidget {
       );
     }
 
-    // Temporarily disabled camera icon due to crashes.
-    return const SizedBox.shrink();
+    final buttonSize = context.respDim(30);
+
+    return CcIconButton.bouncing(
+      icon: Icon(
+        Icons.camera_alt_outlined,
+        color: context.ccColorScheme.onSurface.withOpacity(0.45),
+        size: context.respDim(20),
+      ),
+      onTap: onScanTap,
+      width: buttonSize,
+      height: buttonSize,
+    );
   }
 }
