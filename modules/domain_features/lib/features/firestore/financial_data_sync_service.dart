@@ -195,10 +195,37 @@ class FinancialDataSyncService {
       if (_observedUserId != null && _observedUserId != nextUserId) {
         await _clearFinancialCache();
       }
+      final previousOwner = CcAppStorage.instance.financialDataOwnerId;
       await _ensureCacheOwner(nextUserId);
       _observedUserId = nextUserId;
+      // A returning account may have local writes that were made while the
+      // auth stream was unavailable. Push those records before pulling so a
+      // stale cloud snapshot cannot win the merge.
+      if (previousOwner == nextUserId) {
+        await syncAll();
+      }
       // `pullFromFirestore()` refreshes the loaded controllers itself once the
       // merge completes, so the UI is updated from the post-pull Hive state.
+      await pullFromFirestore();
+    });
+  }
+
+  /// Completes the authenticated account handshake in a deterministic order.
+  ///
+  /// Guest-owned records are discarded by [_ensureCacheOwner] and are never
+  /// uploaded. Records already owned by this Firebase UID are pushed first,
+  /// then the cloud state is merged into Hive.
+  Future<void> syncAuthenticatedData() {
+    return _enqueueTransition(() async {
+      final userId = _userId;
+      if (userId == null) return;
+
+      final previousOwner = CcAppStorage.instance.financialDataOwnerId;
+      await _ensureCacheOwner(userId);
+      _observedUserId = userId;
+      if (previousOwner == userId) {
+        await syncAll();
+      }
       await pullFromFirestore();
     });
   }

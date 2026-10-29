@@ -29,9 +29,9 @@ class NavigationBridgeServiceImpl implements NavigationBridgeService {
 
     if (session.isAuthenticated) {
       try {
-        await getIt<FinancialDataSyncService>().pullFromFirestore();
+        await getIt<FinancialDataSyncService>().syncAuthenticatedData();
       } catch (e) {
-        'SYNC_TRACE BRIDGE pullFromFirestore() THREW error=$e'.Log(
+        'SYNC_TRACE BRIDGE syncAuthenticatedData() THREW error=$e'.Log(
           'SYNC_TRACE',
         );
       }
