@@ -23,6 +23,7 @@ class ExpenseForm extends StatefulWidget {
 
 class _ExpenseFormState extends State<ExpenseForm> {
   late final ExpenseFormController controller;
+  final GlobalKey _amountFieldKey = GlobalKey();
   Worker? _tabRevisitWorker;
 
   @override
@@ -76,21 +77,22 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
     final accentColor = context.ccColorScheme.error;
 
-    return Obx(
-      () => Column(
-        children: [
-          Expanded(
-            child: _buildScrollableContent(
-              context,
-              controller,
-              guideline,
-              accentColor,
-            ),
+    return Column(
+      children: [
+        Expanded(
+          child: _buildScrollableContent(
+            context,
+            controller,
+            guideline,
+            accentColor,
           ),
-          if (controller.showKeypad.value)
-            _buildMoneyKeypadPanel(context, controller, accentColor),
-        ],
-      ),
+        ),
+        Obx(
+          () => controller.showKeypad.value
+              ? _buildMoneyKeypadPanel(context, controller, accentColor)
+              : const SizedBox.shrink(),
+        ),
+      ],
     );
   }
 
@@ -119,7 +121,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
               activeColor: accentColor,
             ),
             const CcSpaceSM(),
-            _buildFormFields(context, controller, guideline, accentColor),
+            Obx(
+              () =>
+                  _buildFormFields(context, controller, guideline, accentColor),
+            ),
             const CcSpaceMD(),
           ],
         ),
@@ -203,8 +208,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
         isKeypadVisible: controller.showKeypad.value,
         activeColor: accentColor,
         currencyCode: controller.currencyCode.value,
-        fieldKey: controller.amountFieldKey,
-        onTap: () => controller.showKeypadAndScroll(context),
+        fieldKey: _amountFieldKey,
+        onTap: () =>
+            controller.showKeypadAndScroll(context, fieldKey: _amountFieldKey),
         onQuickAmountSelected: (amount) =>
             controller.amountStr.value = amount.toString(),
         onClear: () => controller.amountStr.value = '0',

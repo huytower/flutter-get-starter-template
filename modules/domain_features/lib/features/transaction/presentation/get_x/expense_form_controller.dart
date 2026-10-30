@@ -84,8 +84,6 @@ class ExpenseFormController extends TransactionFormController
       currencyCode: currencyCode.value,
     );
     quickAmounts.assignAll(suggestions);
-    '[ExpenseFormController] 💡 loadSuggestions() | settings.currencyCode=${settings.currencyCode} -> quickAmounts=$suggestions'
-        .Log('ExpenseFormController');
   }
 
   String? _lastSelectedCategoryId;
@@ -93,14 +91,13 @@ class ExpenseFormController extends TransactionFormController
   final Map<String, GlobalKey> _itemKeys = {};
 
   GlobalKey getItemKey(int index) {
-    // Create a stable key for each item based on its unique ID
     if (index < 0 || index >= unifiedItems.length) {
-      return GlobalKey(debugLabel: 'category_item_invalid');
+      return GlobalKey(debugLabel: 'expense_item_invalid');
     }
     final itemId = unifiedItems[index].id;
     return _itemKeys.putIfAbsent(
-      itemId,
-      () => GlobalKey(debugLabel: 'category_item_$itemId'),
+      'expense_$itemId',
+      () => GlobalKey(debugLabel: 'expense_item_$itemId'),
     );
   }
 
@@ -505,7 +502,8 @@ class ExpenseFormController extends TransactionFormController
     } else if (!selectedStillExists) {
       // Reset scroll to start if selected item no longer exists
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (categoryScrollController.hasClients) {
+        if (categoryScrollController.hasClients &&
+            categoryScrollController.positions.isNotEmpty) {
           categoryScrollController.animateTo(
             0,
             duration: const Duration(milliseconds: 300),
@@ -981,7 +979,8 @@ class ExpenseFormController extends TransactionFormController
           }
           // Reset scroll to start since the selected item is now at index 0
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (categoryScrollController.hasClients) {
+            if (categoryScrollController.hasClients &&
+                categoryScrollController.positions.isNotEmpty) {
               categoryScrollController.jumpTo(0);
             }
           });

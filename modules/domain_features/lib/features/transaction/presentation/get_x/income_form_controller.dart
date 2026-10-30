@@ -58,14 +58,13 @@ class IncomeFormController extends TransactionFormController
   final Map<String, GlobalKey> _itemKeys = {};
 
   GlobalKey getItemKey(int index) {
-    // Create a stable key for each item based on its unique ID
     if (index < 0 || index >= unifiedItems.length) {
-      return GlobalKey(debugLabel: 'category_item_invalid');
+      return GlobalKey(debugLabel: 'income_item_invalid');
     }
     final itemId = unifiedItems[index].id;
     return _itemKeys.putIfAbsent(
-      itemId,
-      () => GlobalKey(debugLabel: 'category_item_$itemId'),
+      'income_$itemId',
+      () => GlobalKey(debugLabel: 'income_item_$itemId'),
     );
   }
 

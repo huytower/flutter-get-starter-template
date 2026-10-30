@@ -68,8 +68,6 @@ class ProfileLocalDataSource {
       s.currencyDetectionCountryCode = fallback.countryCode;
       s.currencySelectionSource = CurrencySelectionSources.detected;
       await s.save();
-      '[ProfileLocalDataSource] First launch detected. Locale currency=${s.currencyCode} saved | refining via GPS in background'
-          .Log('ProfileLocalDataSource');
       unawaited(_refineCurrencyFromGps());
     } else {
       // Validate existing currency code and source
@@ -88,8 +86,6 @@ class ProfileLocalDataSource {
 
       // If currency was auto-detected (not manually selected by user), refine via GPS in background
       if (s.currencySelectionSource == CurrencySelectionSources.detected) {
-        '[ProfileLocalDataSource] Currency is auto-detected (${s.currencyCode}). Refining via GPS in background'
-            .Log('ProfileLocalDataSource');
         unawaited(_refineCurrencyFromGps());
       }
     }
@@ -122,8 +118,6 @@ class ProfileLocalDataSource {
 
   Future<void> _refineCurrencyFromGps() {
     if (_refineCurrencyFuture != null) {
-      '[ProfileLocalDataSource] ℹ️ _refineCurrencyFromGps() already in flight. Reusing active request.'
-          .Log('ProfileLocalDataSource');
       return _refineCurrencyFuture!;
     }
     _refineCurrencyFuture = _doRefineCurrencyFromGps().whenComplete(() {
@@ -134,16 +128,10 @@ class ProfileLocalDataSource {
 
   Future<void> _doRefineCurrencyFromGps() async {
     final s = CcAppStorage.instance;
-    '[ProfileLocalDataSource] 🚀 Starting _doRefineCurrencyFromGps() | current s.currencyCode=${s.currencyCode}, source=${s.currencySelectionSource}'
-        .Log('ProfileLocalDataSource');
     try {
       final suggestion = await _detectFromGps().timeout(_gpsTimeout);
-      '[ProfileLocalDataSource] 📍 GPS detection returned: currencyCode=${suggestion.currencyCode}, countryCode=${suggestion.countryCode}'
-          .Log('ProfileLocalDataSource');
 
       if (s.currencySelectionSource != CurrencySelectionSources.detected) {
-        '[ProfileLocalDataSource] ⚠️ User has manually selected currency (${s.currencyCode}). Skipping GPS override.'
-            .Log('ProfileLocalDataSource');
         return;
       }
 
@@ -151,46 +139,30 @@ class ProfileLocalDataSource {
         suggestion.currencyCode,
       );
       final currencyChanged = code != s.currencyCode;
-      '[ProfileLocalDataSource] 🔄 Currency change check: old=${s.currencyCode} -> new=$code | currencyChanged=$currencyChanged'
-          .Log('ProfileLocalDataSource');
 
       if (!currencyChanged &&
           suggestion.countryCode == s.currencyDetectionCountryCode) {
-        '[ProfileLocalDataSource] ℹ️ Currency and country code unchanged. No update needed.'
-            .Log('ProfileLocalDataSource');
         return;
       }
 
       s.currencyCode = code;
       s.currencyDetectionCountryCode = suggestion.countryCode;
       await s.save();
-      '[ProfileLocalDataSource] ✅ GPS refined currency saved: currencyCode=$code, countryCode=${suggestion.countryCode}'
-          .Log('ProfileLocalDataSource');
 
       if (currencyChanged) {
         await _updateDefaultWalletsCurrency(code);
-        '[ProfileLocalDataSource] 🔔 Triggering CurrencyConstants.onCurrencyChanged broadcast'
-            .Log('ProfileLocalDataSource');
         CurrencyConstants.onCurrencyChanged.value++;
       }
       CurrencyConstants.onRegionalSettingsChanged.value++;
     } on TimeoutException {
-      '[ProfileLocalDataSource] ⏱️ GPS currency detection timed out after ${_gpsTimeout.inMilliseconds}ms | keeping locale currency (${s.currencyCode})'
-          .Log('ProfileLocalDataSource');
-    } catch (e) {
-      '[ProfileLocalDataSource] ❌ GPS currency detection failed | keeping locale currency (${s.currencyCode}) | $e'
-          .Log('ProfileLocalDataSource');
-    }
+    } catch (_) {}
   }
 
   Future<void> _updateDefaultWalletsCurrency(String newCurrencyCode) async {
     try {
       final walletDataSource = getIt<WalletLocalDataSource>();
       await walletDataSource.updateDefaultWalletsCurrency(newCurrencyCode);
-    } catch (e) {
-      '[ProfileLocalDataSource] Failed to update default wallets currency: $e'
-          .Log('ProfileLocalDataSource');
-    }
+    } catch (_) {}
   }
 
   Future<void> _onGpsPositionUpdated() async {
@@ -224,24 +196,16 @@ class ProfileLocalDataSource {
         return;
       }
 
-      '[ProfileLocalDataSource] ⚡ Reactive GPS position update received: lat=${pos.latitude}, lng=${pos.longitude} -> country=$isoCountryCode, currency=$code (old=${s.currencyCode})'
-          .Log('ProfileLocalDataSource');
-
       s.currencyCode = code;
       s.currencyDetectionCountryCode = isoCountryCode;
       await s.save();
 
       if (currencyChanged) {
         await _updateDefaultWalletsCurrency(code);
-        '[ProfileLocalDataSource] 🔔 Broadcasting CurrencyConstants.onCurrencyChanged event from reactive position update'
-            .Log('ProfileLocalDataSource');
         CurrencyConstants.onCurrencyChanged.value++;
       }
       CurrencyConstants.onRegionalSettingsChanged.value++;
-    } catch (e) {
-      '[ProfileLocalDataSource] ❌ Error processing reactive GPS position update: $e'
-          .Log('ProfileLocalDataSource');
-    }
+    } catch (_) {}
   }
 
   Future<void> saveSettings(ProfileSettingsEntity entity) async {

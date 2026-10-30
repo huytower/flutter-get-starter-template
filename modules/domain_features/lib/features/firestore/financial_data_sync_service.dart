@@ -355,6 +355,15 @@ class FinancialDataSyncService {
   /// own `RxList` and no loading flag, so it is always refreshed alongside
   /// [TransactionController.refreshWalletTotal].
   Future<void> _refreshLoadedControllers() async {
+    if (Get.isRegistered<WalletController>()) {
+      final walletController = Get.find<WalletController>();
+      walletController.markDirty();
+      await walletController.loadWallets(
+        showLoading: false,
+        forceRefresh: true,
+      );
+    }
+
     if (Get.isRegistered<TransactionController>()) {
       final transaction = Get.find<TransactionController>();
       await Future.wait([
@@ -362,10 +371,9 @@ class FinancialDataSyncService {
         transaction.loadWallets(),
       ]);
     }
+
     if (Get.isRegistered<BudgetAllocationController>()) {
       await Get.find<BudgetAllocationController>().loadAll(showLoading: false);
-    } else if (Get.isRegistered<WalletController>()) {
-      await Get.find<WalletController>().loadWallets(showLoading: false);
     }
   }
 
@@ -399,10 +407,7 @@ class FinancialDataSyncService {
   /// Whether the user is currently allowed to sign out.
   bool canLogout() {
     final block = logoutBlock;
-    final allowed = block == null;
-    '[LOGOUT_DEBUG] canLogout() called -> allowed=$allowed (block=$block) | isOnline=${isOnline.value} | pendingCount=${pendingCount.value}'
-        .Log('FinancialDataSyncService');
-    return allowed;
+    return block == null;
   }
 
   /// Null when sign-out is allowed, otherwise the reason it is blocked.
@@ -419,19 +424,15 @@ class FinancialDataSyncService {
   LogoutBlock? get logoutBlock {
     final online = isOnline.value;
     final pending = pendingCount.value;
-    LogoutBlock? block;
     if (!_isAuthenticated) {
-      block = null;
+      return null;
     } else if (!online) {
-      block = LogoutBlock.offline;
+      return LogoutBlock.offline;
     } else if (pending > 0) {
-      block = LogoutBlock.pendingSync;
+      return LogoutBlock.pendingSync;
     } else {
-      block = null;
+      return null;
     }
-    '[LOGOUT_DEBUG] logoutBlock getter evaluated -> block=$block | authed=$_isAuthenticated | isOnline=$online | pendingCount=$pending'
-        .Log('FinancialDataSyncService');
-    return block;
   }
 
   /// Runs the full sign-out handshake.

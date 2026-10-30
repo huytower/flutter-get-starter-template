@@ -48,7 +48,7 @@ class LiabilityWalletsSection extends StatelessWidget {
             onSeeAll: () => controller.navigateToLiabilityList(context),
           );
 
-    final double sectionHeight = isBothEmpty ? 35 : 95;
+    final double sectionHeight = isBothEmpty ? 45 : 95;
 
     return Stack(
       children: [

@@ -95,8 +95,6 @@ class AddLiquidSheetController extends CcGetController {
       );
       final convertedVal = result.tryGetSuccess() ?? rawBook;
       amountStr.value = convertedVal.toString();
-      '[AddLiquidSheetController] Converted balance for edit: raw=$rawBook (${_wallet!.currencyCode}) -> converted=$convertedVal (${settings.currencyCode})'
-          .Log('AddLiquidSheetController');
     }
 
     await _loadEmergencyFundGate();

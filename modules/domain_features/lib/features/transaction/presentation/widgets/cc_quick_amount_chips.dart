@@ -37,6 +37,7 @@ class CcQuickAmountChips extends StatelessWidget {
             return Padding(
               padding: EdgeInsets.only(right: context.respDim(8)),
               child: CcBouncing(
+                key: ValueKey('chip_$amount'),
                 onTap: () => onSelected(amount),
                 borderRadius: context.brLg,
                 child: Container(

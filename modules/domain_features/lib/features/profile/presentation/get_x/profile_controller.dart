@@ -108,12 +108,6 @@ class ProfileController extends CcGetController {
       geminiEnabled.value = await getIt<AiFallbackPreferenceDataSource>()
           .isGeminiEnabled();
       unawaited(userLevel.refresh());
-
-      final systemBrightness =
-          WidgetsBinding.instance.platformDispatcher.platformBrightness;
-      '[THEME] Settings loaded | isDarkMode=${s.isDarkMode} | systemBrightness=$systemBrightness'
-          .Log('ProfileController');
-
       layoutStatus.value = CcLayoutStatus.success;
     } catch (e) {
       Catcher2.reportCheckedError(e, StackTrace.current);
@@ -254,9 +248,6 @@ class ProfileController extends CcGetController {
   }
 
   Future<void> setThemeMode(bool isDarkMode) async {
-    '[THEME] Switching theme mode | isDarkMode=$isDarkMode'.Log(
-      'ProfileController',
-    );
     final updated = settings.value.copyWith(isDarkMode: isDarkMode);
     settings.value = updated;
     if (getIt.isRegistered<ThemeProvider>()) {
@@ -396,16 +387,11 @@ class ProfileController extends CcGetController {
   }
 
   Future<void> pickCurrency(BuildContext context) async {
-    '[ProfileController] Opening primary currency selection sheet (current: ${settings.value.currencyCode})...'
-        .Log('ProfileController');
     final picked = await CurrencySelectionSheet.show(
       context,
       settings.value.currencyCode,
     );
     if (picked != null && picked != settings.value.currencyCode) {
-      '[ProfileController] User selected new primary currency: $picked'.Log(
-        'ProfileController',
-      );
       final updated = settings.value.copyWith(
         currencyCode: picked,
         currencySelectionSource: CurrencySelectionSources.userSelected,
@@ -414,23 +400,16 @@ class ProfileController extends CcGetController {
       await _updateSettings(updated);
       await _load();
       CurrencyConstants.onCurrencyChanged.value++;
-      '[ProfileController] Primary currency updated to $picked and broadcasted onCurrencyChanged'
-          .Log('ProfileController');
-    } else {
-      '[ProfileController] Primary currency selection canceled or unchanged'
-          .Log('ProfileController');
     }
   }
 
   /// Handle link account tap - navigate to login page for account linking
   void handleLinkAccountTap(BuildContext context) {
-    'handleLinkAccountTap triggered'.Log('ProfileController');
     _authCoordinator.navigateToLogin(context);
   }
 
   /// Handle avatar tap - navigate to login page only if not logged in
   void handleAvatarTap(BuildContext context) {
-    'handleAvatarTap triggered'.Log('ProfileController');
     if (!isLoggedIn) {
       _authCoordinator.navigateToLogin(context);
     }
@@ -438,7 +417,6 @@ class ProfileController extends CcGetController {
 
   /// Handle phone number link tap - navigate to login page
   void handlePhoneLinkTap(BuildContext context) {
-    'handlePhoneLinkTap triggered'.Log('ProfileController');
     _authCoordinator.navigateToLogin(context);
   }
 

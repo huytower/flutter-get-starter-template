@@ -41,7 +41,7 @@ class ExpenseCategorySelectionSection extends StatelessWidget {
         scrollController: controller.categoryScrollController,
         itemBuilder: (context, index) {
           final item = items[index];
-          final key = controller.getItemKey(index);
+          final key = ValueKey('expense_${item.id}');
 
           final isSelected = _isItemSelected(
             item,
@@ -55,32 +55,19 @@ class ExpenseCategorySelectionSection extends StatelessWidget {
             isSelected: isSelected,
             activeColor: activeColor,
             onTap: () {
-              'tap | itemId=${item.id} isBudget=${item.isBudget} '
-                      'categoryId=${item.categoryId} budgetId=${item.budgetId} '
-                      'wasSelected=$isSelected'
-                  .Log(_debugTag);
               if (item.isBudget) {
                 final realBudget = controller.budgets
                     .firstWhereOrNull((b) => b.budget.id == item.budgetId)
                     ?.budget;
                 if (realBudget != null) {
                   controller.setBudget(realBudget);
-                } else {
-                  'tap | budget not found for itemId=${item.id} budgetId=${item.budgetId}'
-                      .Log(_debugTag);
                 }
               } else {
                 final cat = controller.getCachedCategoryById(item.categoryId);
                 if (cat != null) {
                   controller.setCategory(cat);
-                } else {
-                  'tap | category not cached for itemId=${item.id} categoryId=${item.categoryId}'
-                      .Log(_debugTag);
                 }
               }
-              'afterTap | selectedCategoryId=${controller.selectedCategory.value?.id} '
-                      'selectedBudgetId=${controller.selectedBudget.value?.id}'
-                  .Log(_debugTag);
             },
           );
         },

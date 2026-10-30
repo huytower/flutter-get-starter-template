@@ -94,6 +94,7 @@ class GuestLoginPromptSheet extends StatelessWidget {
                     : CcLocaleKeys.profile_guest_login_title,
               ),
               align: Alignment.center,
+              maxLines: 3,
               textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.titleLarge?.copyWith(
                 fontWeight: CcTypographyParams.bold,

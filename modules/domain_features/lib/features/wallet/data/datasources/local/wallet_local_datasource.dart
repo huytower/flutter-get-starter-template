@@ -128,15 +128,9 @@ class WalletLocalDataSource {
   /// if they have a balance of 0 (initial unpopulated state).
   Future<void> updateDefaultWalletsCurrency(String newCurrencyCode) async {
     final box = await _box;
-    '[WalletLocalDataSource] 🏦 updateDefaultWalletsCurrency($newCurrencyCode) called | total wallets in box: ${box.length}'
-        .Log('WalletLocalDataSource');
     final updates = <String, WalletHiveModel>{};
     for (final m in box.values) {
-      '[WalletLocalDataSource] 🔍 Inspecting wallet ${m.id} (${m.name}) | balance=${m.balance} | currencyCode=${m.currencyCode}'
-          .Log('WalletLocalDataSource');
       if ((m.id == cashWalletId || m.id == bankWalletId) && m.balance == 0) {
-        '[WalletLocalDataSource] 🛠️ Updating wallet ${m.id} (${m.name}) currency from ${m.currencyCode} to $newCurrencyCode'
-            .Log('WalletLocalDataSource');
         updates[m.id] = WalletHiveModel(
           id: m.id,
           name: m.name,
@@ -150,11 +144,6 @@ class WalletLocalDataSource {
     }
     if (updates.isNotEmpty) {
       await box.putAll(updates);
-      '[WalletLocalDataSource] ✅ Default wallets updated to $newCurrencyCode in Hive'
-          .Log('WalletLocalDataSource');
-    } else {
-      '[WalletLocalDataSource] ℹ️ No default wallets needed currency update.'
-          .Log('WalletLocalDataSource');
     }
   }
 }

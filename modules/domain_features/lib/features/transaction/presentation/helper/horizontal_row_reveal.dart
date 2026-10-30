@@ -39,7 +39,7 @@ void revealRowCard({
     return;
   }
 
-  if (!scrollController.hasClients) {
+  if (!scrollController.hasClients || scrollController.positions.isEmpty) {
     if (attemptsLeft > 0) {
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => revealRowCard(
@@ -58,7 +58,7 @@ void revealRowCard({
     return;
   }
 
-  final position = scrollController.position;
+  final position = scrollController.positions.last;
   if (position.viewportDimension == 0.0) {
     if (attemptsLeft > 0) {
       WidgetsBinding.instance.addPostFrameCallback(
@@ -81,9 +81,7 @@ void revealRowCard({
   final effectiveContext =
       context ??
       itemKey?.currentContext ??
-      (scrollController.hasClients
-          ? scrollController.position.context.notificationContext
-          : null) ??
+      position.context.notificationContext ??
       Get.context;
 
   final width = effectiveContext != null

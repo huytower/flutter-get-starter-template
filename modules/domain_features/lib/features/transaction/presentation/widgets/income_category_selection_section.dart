@@ -36,7 +36,7 @@ class IncomeCategorySelectionSection extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = items[index];
           final isSelected = selectedCategory?.id == item.categoryId;
-          final key = controller.getItemKey(index);
+          final key = ValueKey('income_${item.id}');
 
           return UnifiedCategoryItemWidget(
             key: key,

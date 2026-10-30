@@ -155,14 +155,14 @@ abstract class TransactionFormController extends CcGetController {
 
   Future<void> onReset();
 
-  void showKeypadAndScroll(BuildContext context) {
+  void showKeypadAndScroll(BuildContext context, {GlobalKey? fieldKey}) {
     FocusScope.of(context).unfocus();
     showKeypad.value = true;
     _notifyParentKeypad(true);
     // Wait for the 200ms header collapse animation to complete before scrolling
     Future.delayed(const Duration(milliseconds: 220), () {
-      final ctx = amountFieldKey.currentContext;
-      if (ctx != null) {
+      final ctx = (fieldKey ?? amountFieldKey).currentContext;
+      if (ctx != null && ctx.mounted) {
         Scrollable.ensureVisible(
           ctx,
           duration: const Duration(milliseconds: 250),

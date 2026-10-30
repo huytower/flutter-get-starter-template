@@ -205,10 +205,20 @@ class WalletController extends CcGetController {
   /// This is what the UI shows, not [WalletEntity.balance] (the opening amount).
   final RxMap<String, int> _bookBalances = <String, int>{}.obs;
 
-  int bookBalanceOf(String id) => _bookBalances[id] ?? 0;
+  int bookBalanceOf(String id) {
+    if (_bookBalances.containsKey(id)) {
+      return _bookBalances[id]!;
+    }
+    final wallet = wallets.firstWhereOrNull((w) => w.id == id);
+    return wallet?.balance ?? 0;
+  }
 
-  int displayBookBalanceOf(String id) =>
-      displayBalances[id] ?? bookBalanceOf(id);
+  int displayBookBalanceOf(String id) {
+    if (displayBalances.containsKey(id)) {
+      return displayBalances[id]!;
+    }
+    return bookBalanceOf(id);
+  }
 
   /// Performance stats for investment wallets: (capital contributed, profit returned).
   final RxMap<String, ({int contributed, int returned})> _investmentStats =
@@ -482,6 +492,8 @@ class WalletController extends CcGetController {
           }
         }
         newBalances[wallet.id] = walletBookBal;
+        '[WalletController] 💰 Derived balance for wallet ${wallet.id} (${wallet.name}): opening=${wallet.balance} -> derived=$walletBookBal (txns=${walletTxns.length})'
+            .Log('WalletController');
 
         if (wallet.type == WalletType.investment) {
           final invInTxns = txns

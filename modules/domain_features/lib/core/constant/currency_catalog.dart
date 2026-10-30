@@ -143,50 +143,28 @@ class CurrencyCatalog {
       if (countryCode != null &&
           countryCodeToCurrency.containsKey(countryCode)) {
         final currency = countryCodeToCurrency[countryCode]!;
-        '[CurrencyCatalog] Currency detected from locale: country=$countryCode -> currency=$currency'
-            .Log('CurrencyCatalog');
         return (currencyCode: currency, countryCode: countryCode);
       }
 
       // Language fallback
       final languageCode = locale.languageCode.toLowerCase();
       if (languageCode == 'vi') {
-        '[CurrencyCatalog] Currency detected from language: vi -> VND'.Log(
-          'CurrencyCatalog',
-        );
         return (currencyCode: CurrencyConstants.vnd, countryCode: 'VN');
       }
       if (languageCode == 'ja') {
-        '[CurrencyCatalog] Currency detected from language: ja -> JPY'.Log(
-          'CurrencyCatalog',
-        );
         return (currencyCode: CurrencyConstants.jpy, countryCode: 'JP');
       }
       if (languageCode == 'ko') {
-        '[CurrencyCatalog] Currency detected from language: ko -> KRW'.Log(
-          'CurrencyCatalog',
-        );
         return (currencyCode: CurrencyConstants.krw, countryCode: 'KR');
       }
       if (languageCode == 'zh') {
-        '[CurrencyCatalog] Currency detected from language: zh -> CNY'.Log(
-          'CurrencyCatalog',
-        );
         return (currencyCode: CurrencyConstants.cny, countryCode: 'CN');
       }
       if (languageCode == 'en') {
-        '[CurrencyCatalog] Currency detected from language: en -> USD'.Log(
-          'CurrencyCatalog',
-        );
         return (currencyCode: CurrencyConstants.usd, countryCode: 'US');
       }
-    } catch (e) {
-      '[CurrencyCatalog] Error detecting currency from locale: $e'.Log(
-        'CurrencyCatalog',
-      );
-    }
+    } catch (_) {}
 
-    '[CurrencyCatalog] Defaulting currency to USD (US)'.Log('CurrencyCatalog');
     return (currencyCode: CurrencyConstants.usd, countryCode: 'US');
   }
 
@@ -199,9 +177,6 @@ class CurrencyCatalog {
   /// falling back to device regional locale settings if GPS is unavailable.
   static Future<({String currencyCode, String? countryCode})>
   detectSuggestedCurrencyFromGpsWithDetails() async {
-    '[CurrencyCatalog] Starting GPS-based currency detection...'.Log(
-      'CurrencyCatalog',
-    );
     try {
       final lastKnownPosition = await CcLocationHelper.getLastKnownPosition();
       final position =
@@ -217,17 +192,11 @@ class CurrencyCatalog {
           if (isoCountryCode != null &&
               countryCodeToCurrency.containsKey(isoCountryCode)) {
             final currency = countryCodeToCurrency[isoCountryCode]!;
-            '[CurrencyCatalog] GPS detection successful: country=$isoCountryCode -> currency=$currency'
-                .Log('CurrencyCatalog');
             return (currencyCode: currency, countryCode: isoCountryCode);
           }
         }
       }
-    } catch (e) {
-      '[CurrencyCatalog] GPS detection failed, falling back to locale: $e'.Log(
-        'CurrencyCatalog',
-      );
-    }
+    } catch (_) {}
 
     // Fallback to locale / region detection if GPS detection fails or is unavailable
     final fallback = detectSuggestedCurrencyWithDetails();

@@ -205,8 +205,6 @@ class CurrencySelectionContentSheet extends StatelessWidget {
           final symbol = MoneyFormatter.getSymbol(code);
           return InkWell(
             onTap: () {
-              '[CurrencySelectionContentSheet] Tag selected base currency: $code'
-                  .Log();
               controller.setPrimaryCurrency(code);
             },
             borderRadius: context.brMd,
@@ -234,8 +232,6 @@ class CurrencySelectionContentSheet extends StatelessWidget {
                     child: Checkbox(
                       value: isSelected,
                       onChanged: (_) {
-                        '[CurrencySelectionContentSheet] Tag checkbox selected base currency: $code'
-                            .Log();
                         controller.setPrimaryCurrency(code);
                       },
                       activeColor: scheme.primary,
@@ -421,7 +417,6 @@ class CurrencySelectionContentSheet extends StatelessWidget {
         children: [
           TextButton(
             onPressed: () {
-              '[CurrencySelectionContentSheet] Cancel currency selection'.Log();
               Navigator.of(context).pop(null);
             },
             child: CcText(
@@ -436,8 +431,6 @@ class CurrencySelectionContentSheet extends StatelessWidget {
           TextButton(
             onPressed: () {
               final selectedCode = controller.primaryCurrencyCode.value;
-              '[CurrencySelectionContentSheet] Confirmed base currency: $selectedCode'
-                  .Log();
               Navigator.of(context).pop(selectedCode);
             },
             child: CcText(
