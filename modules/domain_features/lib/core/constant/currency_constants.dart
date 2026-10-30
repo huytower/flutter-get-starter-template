@@ -45,7 +45,7 @@ enum CurrencySelectionSourceType {
 class CurrencyConstants {
   CurrencyConstants._();
 
-  static const String defaultCurrencyCode = 'VND';
+  static const String defaultCurrencyCode = 'USD';
 
   static const String vnd = 'VND';
   static const String usd = 'USD';
@@ -56,6 +56,9 @@ class CurrencyConstants {
 
   /// Global reactive broadcast for when the primary currency changes.
   static final RxInt onCurrencyChanged = 0.obs;
+
+  /// Global reactive broadcast for when GPS resolves a new country/region.
+  static final RxInt onRegionalSettingsChanged = 0.obs;
 
   static List<String> get supportedCurrencyCodes =>
       CurrencyCatalog.definitions.map((d) => d.code).toList();

@@ -120,6 +120,20 @@ class CurrencyCatalog {
     'CN': CurrencyConstants.cny,
   };
 
+  static const Map<String, String> countryCodeToLanguageCode = {
+    'VN': 'vi',
+    'US': 'en',
+    'JP': 'ja',
+    'KR': 'ko',
+    'CN': 'zh',
+  };
+
+  static String? languageCodeForCountry(String? countryCode) {
+    final normalized = countryCode?.trim().toUpperCase();
+    if (normalized == null) return null;
+    return countryCodeToLanguageCode[normalized];
+  }
+
   /// Detects suggested currency code along with detected country code.
   static ({String currencyCode, String? countryCode})
   detectSuggestedCurrencyWithDetails() {

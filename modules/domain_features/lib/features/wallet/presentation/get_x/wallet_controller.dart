@@ -375,6 +375,8 @@ class WalletController extends CcGetController {
     final settings = await _getProfileSettings();
     isVip.value = settings.isVip;
     currencyCode.value = settings.currencyCode;
+    '[WalletController] 🔄 loadWallets() | settings.currencyCode=${settings.currencyCode} | controller.currencyCode=${currencyCode.value}'
+        .Log('WalletController');
 
     final result = await _repository.getWallets();
 

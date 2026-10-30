@@ -26,7 +26,7 @@ import '../widgets/liquid_hero_banner.dart';
 import '../widgets/liquid_wallets_section.dart';
 
 @RoutePage()
-class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
+class  BudgetAllocationPage extends CcGetView<BudgetAllocationController>
     with CcPullRefreshMixin {
   const BudgetAllocationPage({super.key});
 

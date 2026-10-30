@@ -5,6 +5,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt, el;
 import 'package:domain_features/features/budget_limit/export_budget_limit.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart';
+import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,7 +20,6 @@ import '../../../../core/helper/location_suggestion_helper.dart';
 import '../../../../core/helper/merchant_matcher.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/time_based_suggestion_helper.dart';
-import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
@@ -78,11 +78,14 @@ class ExpenseFormController extends TransactionFormController
 
   Future<void> loadSuggestions() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
+    currencyCode.value = settings.currencyCode;
     final suggestions = MoneyConstants.getExpenseSuggestions(
       settings.birthYear,
       currencyCode: currencyCode.value,
     );
     quickAmounts.assignAll(suggestions);
+    '[ExpenseFormController] 💡 loadSuggestions() | settings.currencyCode=${settings.currencyCode} -> quickAmounts=$suggestions'
+        .Log('ExpenseFormController');
   }
 
   String? _lastSelectedCategoryId;

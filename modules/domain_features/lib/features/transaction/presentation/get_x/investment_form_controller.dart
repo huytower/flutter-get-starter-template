@@ -114,6 +114,7 @@ class InvestmentFormController extends TransactionFormController
 
   Future<void> loadSuggestions() async {
     final settings = await _getProfileSettings();
+    currencyCode.value = settings.currencyCode;
     final suggestions = MoneyConstants.getInvestmentSuggestions(
       settings.birthYear,
       currencyCode: currencyCode.value,

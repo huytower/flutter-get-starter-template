@@ -57,6 +57,7 @@ abstract class  LocaleKeys {
   static const common_unit_million = 'common.unit_million';
   static const common_unit_thousand = 'common.unit_thousand';
   static const common_guest_login_action = 'common.guest_login_action';
+  static const common_guest_login_continue_local = 'common.guest_login_continue_local';
   static const common_later = 'common.later';
   static const common = 'common';
   static const auth_login = 'auth.login';
@@ -633,9 +634,13 @@ abstract class  LocaleKeys {
   static const profile_not_logged_in = 'profile.not_logged_in';
   static const profile_register_login = 'profile.register_login';
   static const profile_guest_login_title = 'profile.guest_login_title';
-  static const profile_guest_login_body = 'profile.guest_login_body';
+  static const profile_guest_login_bullet1 = 'profile.guest_login_bullet1';
+  static const profile_guest_login_bullet2 = 'profile.guest_login_bullet2';
+  static const profile_guest_login_bullet3 = 'profile.guest_login_bullet3';
   static const profile_guest_login_final_title = 'profile.guest_login_final_title';
-  static const profile_guest_login_final_body = 'profile.guest_login_final_body';
+  static const profile_guest_login_final_bullet1 = 'profile.guest_login_final_bullet1';
+  static const profile_guest_login_final_bullet2 = 'profile.guest_login_final_bullet2';
+  static const profile_guest_login_final_bullet3 = 'profile.guest_login_final_bullet3';
   static const profile_display_name_title = 'profile.display_name_title';
   static const profile_display_name_hint = 'profile.display_name_hint';
   static const profile_display_name_save = 'profile.display_name_save';

@@ -1,7 +1,9 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 
+import '../../../budget_allocation/presentation/widgets/budget_insight_card.dart';
 import '../../../firestore/guest_login_prompt_service.dart';
 
 /// Bottom sheet widget prompting guests to log in with an account.
@@ -45,6 +47,16 @@ class GuestLoginPromptSheet extends StatelessWidget {
     final isFinal = prompt == GuestLoginPrompt.finalWarning;
     final scheme = context.ccColorScheme;
 
+    final bullet1Key = isFinal
+        ? CcLocaleKeys.profile_guest_login_final_bullet1
+        : CcLocaleKeys.profile_guest_login_bullet1;
+    final bullet2Key = isFinal
+        ? CcLocaleKeys.profile_guest_login_final_bullet2
+        : CcLocaleKeys.profile_guest_login_bullet2;
+    final bullet3Key = isFinal
+        ? CcLocaleKeys.profile_guest_login_final_bullet3
+        : CcLocaleKeys.profile_guest_login_bullet3;
+
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.fromLTRB(
@@ -62,17 +74,15 @@ class GuestLoginPromptSheet extends StatelessWidget {
                 width: context.respDim(64),
                 height: context.respDim(64),
                 decoration: BoxDecoration(
-                  color: (isFinal ? scheme.error : scheme.primary).withOpacity(
-                    0.12,
-                  ),
+                  color: scheme.primary.withOpacity(0.12),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   isFinal
-                      ? Icons.warning_amber_rounded
-                      : Icons.cloud_sync_outlined,
+                      ? Icons.workspace_premium_outlined
+                      : Icons.cloud_outlined,
                   size: context.respIconSize(baseSize: 32),
-                  color: isFinal ? scheme.error : scheme.primary,
+                  color: scheme.primary,
                 ),
               ),
             ),
@@ -84,27 +94,41 @@ class GuestLoginPromptSheet extends StatelessWidget {
                     : CcLocaleKeys.profile_guest_login_title,
               ),
               align: Alignment.center,
+              textAlign: TextAlign.center,
               textStyle: context.ccTextTheme.titleLarge?.copyWith(
                 fontWeight: CcTypographyParams.bold,
                 color: scheme.onSurface,
               ),
             ),
-            const CcSpaceSM(),
-            CcText(
-              el.tr(
-                isFinal
-                    ? CcLocaleKeys.profile_guest_login_final_body
-                    : CcLocaleKeys.profile_guest_login_body,
-              ),
-              align: Alignment.center,
-              textAlign: TextAlign.center,
-              maxLines: 5,
-              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                color: scheme.onSurfaceVariant,
-                height: 1.4,
-              ),
+            const CcSpaceLG(),
+            Column(
+              children: [
+                _buildInsightCard(
+                  context: context,
+                  textKey: bullet1Key,
+                  icon: isFinal
+                      ? Icons.stars_outlined
+                      : Icons.thumb_up_alt_outlined,
+                  color: PrjColors.info,
+                  scheme: scheme,
+                ),
+                _buildInsightCard(
+                  context: context,
+                  textKey: bullet2Key,
+                  icon: Icons.warning_amber_rounded,
+                  color: scheme.error,
+                  scheme: scheme,
+                ),
+                _buildInsightCard(
+                  context: context,
+                  textKey: bullet3Key,
+                  icon: Icons.info_outline_rounded,
+                  color: PrjColors.info,
+                  scheme: scheme,
+                ),
+              ],
             ),
-            const CcSpaceXL(),
+            const CcSpaceMD(),
             Row(
               children: [
                 Expanded(
@@ -121,10 +145,15 @@ class GuestLoginPromptSheet extends StatelessWidget {
                         ),
                       ),
                       child: CcText(
-                        el.tr(CcLocaleKeys.common_later),
+                        el.tr(
+                          isFinal
+                              ? CcLocaleKeys.common_guest_login_continue_local
+                              : CcLocaleKeys.common_later,
+                        ),
                         align: Alignment.center,
                         textAlign: TextAlign.center,
-                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                        maxLines: 2,
+                        textStyle: context.ccTextTheme.labelLarge?.copyWith(
                           fontWeight: CcTypographyParams.bold,
                           color: scheme.onSurface,
                         ),
@@ -150,7 +179,7 @@ class GuestLoginPromptSheet extends StatelessWidget {
                         el.tr(CcLocaleKeys.common_guest_login_action),
                         align: Alignment.center,
                         textAlign: TextAlign.center,
-                        textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                        textStyle: context.ccTextTheme.labelLarge?.copyWith(
                           fontWeight: CcTypographyParams.bold,
                           color: scheme.onPrimary,
                         ),
@@ -162,6 +191,67 @@ class GuestLoginPromptSheet extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildInsightCard({
+    required BuildContext context,
+    required String textKey,
+    required IconData icon,
+    required Color color,
+    required ColorScheme scheme,
+  }) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.only(bottom: context.respDim(10)),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.05),
+        borderRadius: context.brLg,
+        border: Border.all(color: color.withOpacity(0.12)),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: context.respDim(80),
+            child: CustomPaint(painter: GridPatternPainter(color: color)),
+          ),
+          Padding(
+            padding: EdgeInsets.all(context.respDim(12)),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(context.respDim(8)),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: context.respIconSize(baseSize: 18),
+                  ),
+                ),
+                const CcSpaceMD(),
+                Expanded(
+                  child: CcText(
+                    el.tr(textKey),
+                    maxLines: 4,
+                    textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                      color: scheme.onSurface,
+                      height: 1.4,
+                      fontWeight: CcTypographyParams.medium,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

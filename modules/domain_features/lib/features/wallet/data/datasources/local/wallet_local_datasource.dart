@@ -1,10 +1,10 @@
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
-import 'package:message/export_message.dart';
 
 import '../../../domain/entities/wallet_entity.dart';
 import '../../models/wallet_hive_model.dart';
@@ -22,14 +22,14 @@ class WalletLocalDataSource {
   /// Runs the seed/migration only once per app session.
   bool _initialized = false;
 
-  WalletHiveModel _defaultCashWallet() => WalletHiveModel(
+  WalletHiveModel _defaultCashWallet({String? currencyCode}) => WalletHiveModel(
     id: cashWalletId,
     name: el.tr(CcLocaleKeys.wallet_cash),
     balance: 0,
     iconCode: Icons.payments.codePoint,
     type: WalletType.cash,
     createdAt: DateTime.now(),
-    currencyCode: CurrencyConstants.defaultCurrencyCode,
+    currencyCode: currencyCode ?? CurrencyConstants.currentPrimaryCurrency,
   );
 
   Future<Box<WalletHiveModel>> get _box async {
@@ -39,9 +39,11 @@ class WalletLocalDataSource {
     if (_initialized && box.isNotEmpty) return box;
     _initialized = true;
 
+    final primaryCurrency = CurrencyConstants.currentPrimaryCurrency;
+
     if (box.isEmpty) {
       await box.putAll({
-        cashWalletId: _defaultCashWallet(),
+        cashWalletId: _defaultCashWallet(currencyCode: primaryCurrency),
         bankWalletId: WalletHiveModel(
           id: bankWalletId,
           name: el.tr(CcLocaleKeys.wallet_bank),
@@ -49,7 +51,7 @@ class WalletLocalDataSource {
           iconCode: Icons.account_balance.codePoint,
           type: WalletType.bank,
           createdAt: DateTime.now(),
-          currencyCode: CurrencyConstants.defaultCurrencyCode,
+          currencyCode: primaryCurrency,
         ),
       });
       return box;
@@ -120,5 +122,39 @@ class WalletLocalDataSource {
   Future<void> updateWalletModel(WalletHiveModel wallet) async {
     final box = await _box;
     await box.put(wallet.id, wallet);
+  }
+
+  /// Updates default seeded wallets (`wallet_cash`, `wallet_bank`) to [newCurrencyCode]
+  /// if they have a balance of 0 (initial unpopulated state).
+  Future<void> updateDefaultWalletsCurrency(String newCurrencyCode) async {
+    final box = await _box;
+    '[WalletLocalDataSource] 🏦 updateDefaultWalletsCurrency($newCurrencyCode) called | total wallets in box: ${box.length}'
+        .Log('WalletLocalDataSource');
+    final updates = <String, WalletHiveModel>{};
+    for (final m in box.values) {
+      '[WalletLocalDataSource] 🔍 Inspecting wallet ${m.id} (${m.name}) | balance=${m.balance} | currencyCode=${m.currencyCode}'
+          .Log('WalletLocalDataSource');
+      if ((m.id == cashWalletId || m.id == bankWalletId) && m.balance == 0) {
+        '[WalletLocalDataSource] 🛠️ Updating wallet ${m.id} (${m.name}) currency from ${m.currencyCode} to $newCurrencyCode'
+            .Log('WalletLocalDataSource');
+        updates[m.id] = WalletHiveModel(
+          id: m.id,
+          name: m.name,
+          balance: m.balance,
+          iconCode: m.iconCode,
+          type: m.type,
+          createdAt: m.createdAt,
+          currencyCode: newCurrencyCode,
+        );
+      }
+    }
+    if (updates.isNotEmpty) {
+      await box.putAll(updates);
+      '[WalletLocalDataSource] ✅ Default wallets updated to $newCurrencyCode in Hive'
+          .Log('WalletLocalDataSource');
+    } else {
+      '[WalletLocalDataSource] ℹ️ No default wallets needed currency update.'
+          .Log('WalletLocalDataSource');
+    }
   }
 }

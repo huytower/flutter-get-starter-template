@@ -57,6 +57,7 @@
     "unit_million": "百万",
     "unit_thousand": "千",
     "guest_login_action": "ログイン / 登録",
+    "guest_login_continue_local": "ローカル体験を続ける",
     "later": "後で"
   },
   "auth": {
@@ -654,10 +655,14 @@
   },
   "profile": {
     "guest": "ゲスト",
-    "guest_login_title": "財務記録を保存する",
-    "guest_login_body": "現在ゲストアカウントを使用しています。クラウドに安全に保存するために、ログインしてください。",
-    "guest_login_final_title": "警告：ゲストデータは消去されます",
-    "guest_login_final_body": "ゲストとして15件以上の記録を作成しました。アカウントにログインすると、このデバイス上のローカルゲストデータはすべて消去され、クラウドデータに置き換わります。",
+    "guest_login_title": "データはこのデバイスにのみ保存されています",
+    "guest_login_bullet1": "8件の取引を記録しました — 素晴らしいスタートです！",
+    "guest_login_bullet2": "ゲストデータはバックアップされていません。ログインまたはアカウント作成時、このデバイスのデータは保持されません。",
+    "guest_login_bullet3": "記録が途切れないよう、今すぐアカウントで始めましょう。",
+    "guest_login_final_title": "15件の取引達成 — 素晴らしい習慣です！",
+    "guest_login_final_bullet1": "初日から自主的に定期的な記録を続けています。これは多くの人ができないことです。",
+    "guest_login_final_bullet2": "ログイン時、このゲストデバイス上のデータは保持されません。",
+    "guest_login_final_bullet3": "今すぐアカウントを作成し、これからの記録を保存・同期して中断なく続けましょう。",
     "not_logged_in": "ログインしていません",
     "register_login": "登録 / ログイン",
     "display_name_title": "名前を編集",

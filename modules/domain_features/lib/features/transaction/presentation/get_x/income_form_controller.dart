@@ -352,6 +352,7 @@ class IncomeFormController extends TransactionFormController
 
   Future<void> loadSuggestions() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
+    currencyCode.value = settings.currencyCode;
     final suggestions = MoneyConstants.getIncomeSuggestions(
       settings.birthYear,
       currencyCode: currencyCode.value,
