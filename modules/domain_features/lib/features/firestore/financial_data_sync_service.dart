@@ -4,6 +4,10 @@ import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:data_config/core/util/firestore_sync_service.dart';
+import 'package:domain_features/features/firestore/enum/logout_block.dart';
+import 'package:domain_features/features/firestore/enum/logout_result.dart';
+import 'package:domain_features/features/firestore/enum/sync_status.dart';
+import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:get/get.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
@@ -28,10 +32,6 @@ import '../liability/presentation/get_x/liability_form_controller.dart';
 import '../liability/presentation/get_x/liability_list_controller.dart';
 import '../transaction/presentation/get_x/transaction_controller.dart';
 import '../wallet/presentation/get_x/wallet_controller.dart';
-import 'package:domain_features/features/firestore/enum/logout_block.dart';
-import 'package:domain_features/features/firestore/enum/logout_result.dart';
-import 'package:domain_features/features/firestore/enum/sync_status.dart';
-import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 
 export 'enum/logout_block.dart';
 export 'enum/logout_result.dart';
@@ -500,6 +500,12 @@ class FinancialDataSyncService {
     final owner = CcAppStorage.instance.financialDataOwnerId;
     await _enqueueTransition(_resetAfterLogout);
     return LogoutResult.success;
+  }
+
+  /// Clears local financial data, wipes Hive boxes, and resets all in-memory
+  /// state after account deletion, matching the post-logout reset behavior.
+  Future<void> handleAccountDeleted() async {
+    await _enqueueTransition(_resetAfterLogout);
   }
 
   /// Blanks the device's financial state after a completed sign-out.

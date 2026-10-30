@@ -447,6 +447,8 @@ class ProfileController extends CcGetController {
     try {
       final result = await _performDeleteAccount();
       if (result.isSuccess()) {
+        final syncService = getIt<FinancialDataSyncService>();
+        await syncService.handleAccountDeleted();
         await _session.clearSession();
       }
       return result;
