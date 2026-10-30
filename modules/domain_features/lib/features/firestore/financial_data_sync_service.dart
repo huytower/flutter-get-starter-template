@@ -21,8 +21,10 @@ import '../../../features/transaction/data/datasources/transaction_sync_datasour
 import '../../../features/transaction/data/models/transaction_model.dart';
 import '../../../features/wallet/data/datasources/wallet_sync_datasource.dart';
 import '../../../features/wallet/data/models/wallet_hive_model.dart';
+import '../../core/di/di.dart';
 import '../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../transaction/presentation/get_x/transaction_controller.dart';
+import 'guest_login_prompt_service.dart';
 import '../wallet/presentation/get_x/wallet_controller.dart';
 import 'enum/logout_block.dart';
 import 'enum/logout_result.dart';
@@ -489,6 +491,7 @@ class FinancialDataSyncService {
   Future<void> _resetAfterLogout() async {
     await _releaseLoadedControllers();
     await _clearFinancialCache();
+    await getIt<GuestLoginPromptService>().resetPromptFlags();
     await _refreshLoadedControllers();
   }
 

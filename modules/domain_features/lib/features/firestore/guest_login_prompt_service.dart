@@ -80,7 +80,8 @@ class GuestLoginPromptService {
       result = GuestLoginPrompt.atSeven;
     }
 
-    '[GuestLoginPrompt] 🔍 Evaluated prompt condition | uid=$uid | isAnonymous=$isAnon | count=$count | prompt10Shown=${storage.guestLoginPromptAtTimes7Shown} | prompt20Dismissed=${storage.guestLoginPrompt15Dismissed} -> result=$result'
+    '[GuestLoginPrompt] 🔍 Evaluated prompt condition | uid=$uid | isAnonymous=$isAnon | count=$count | '
+            'prompt8Shown=${storage.guestLoginPromptAtTimes7Shown} | prompt15Dismissed=${storage.guestLoginPrompt15Dismissed} -> result=$result'
         .Log('GuestLoginPromptService');
 
     return result;
@@ -97,11 +98,17 @@ class GuestLoginPromptService {
   }
 
   Future<void> dismissFinalWarning() async {
-    '[GuestLoginPrompt] 🚫 Final warning permanently dismissed by user'.Log(
-      'GuestLoginPromptService',
-    );
     CcAppStorage.instance.guestLoginPrompt15Dismissed = true;
     await CcAppStorage.instance.save();
+  }
+
+  /// Resets prompt flags when user logs out from a logged-in user status to guest status.
+  Future<void> resetPromptFlags() async {
+    final storage = CcAppStorage.instance;
+    storage.guestLoginPromptAtTimes7Shown = false;
+    storage.guestLoginPrompt15Dismissed = false;
+    storage.guestLoginPromptSessionUid = null;
+    await storage.save();
   }
 
   Future<void> maybeShow(BuildContext context) async {
