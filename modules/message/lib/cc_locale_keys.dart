@@ -76,7 +76,7 @@ class CodegenLoader extends AssetLoader {
       "unit_billion": "B",
       "unit_million": "M",
       "unit_thousand": "k",
-      "guest_import_action": "Link Account",
+      "guest_login_action": "Log In / Register",
       "later": "Later",
     },
     "auth": {
@@ -725,12 +725,12 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "Guest",
-      "guest_import_title": "Keep your records",
-      "guest_import_body":
-          "Link an account to preserve your guest records across devices.",
-      "guest_import_final_title": "Protect your financial records",
-      "guest_import_final_body":
-          "You have 20 or more guest records. If you do not import them now, a new login will start a clean account.",
+      "guest_login_title": "Save your financial records",
+      "guest_login_body":
+          "You are currently using a guest account. Sign in with Google, Apple, or Phone to save your records securely in the cloud.",
+      "guest_login_final_title": "Warning: Guest data will be erased",
+      "guest_login_final_body":
+          "You have recorded 15 or more entries as a guest. When you log in with an account, all local guest records on this device will be erased and replaced with your cloud account data.",
       "not_logged_in": "Not logged in",
       "register_login": "Register / Login",
       "display_name_title": "Edit name",
@@ -947,7 +947,7 @@ class CodegenLoader extends AssetLoader {
       "unit_billion": "tỷ",
       "unit_million": "tr",
       "unit_thousand": "k",
-      "guest_import_action": "Liên kết tài khoản",
+      "guest_login_action": "Đăng nhập / Đăng ký",
       "later": "Để sau",
     },
     "auth": {
@@ -1446,12 +1446,12 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "Khách",
-      "guest_import_title": "Giữ lại dữ liệu của bạn",
-      "guest_import_body":
-          "Liên kết tài khoản để bảo toàn dữ liệu khách trên các thiết bị.",
-      "guest_import_final_title": "Bảo vệ dữ liệu tài chính",
-      "guest_import_final_body":
-          "Bạn đã có từ 20 bản ghi khách trở lên. Nếu không nhập ngay, tài khoản đăng nhập mới sẽ bắt đầu lại từ đầu.",
+      "guest_login_title": "Lưu trữ dữ liệu tài chính",
+      "guest_login_body":
+          "Bạn đang dùng tài khoản khách. Đăng nhập bằng Google, Apple hoặc Số điện thoại để lưu trữ dữ liệu an toàn trên đám mây.",
+      "guest_login_final_title": "Cảnh báo: Dữ liệu khách sẽ bị xóa",
+      "guest_login_final_body":
+          "Bạn đã tạo 15 giao dịch/bản ghi dưới danh nghĩa khách. Khi bạn đăng nhập tài khoản, toàn bộ dữ liệu khách trên máy này sẽ bị xóa và thay thế bằng dữ liệu đám mây của tài khoản.",
       "not_logged_in": "Chưa đăng nhập",
       "register_login": "Đăng ký / Đăng nhập",
       "display_name_title": "Sửa tên",
@@ -1813,7 +1813,7 @@ class CodegenLoader extends AssetLoader {
       "unit_billion": "조",
       "unit_million": "백만",
       "unit_thousand": "천",
-      "guest_import_action": "계정 연결",
+      "guest_login_action": "로그인 / 회원가입",
       "later": "나중에",
     },
     "auth": {
@@ -2427,11 +2427,11 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "게스트",
-      "guest_import_title": "기록 보존하기",
-      "guest_import_body": "계정을 연결하여 여러 기기에서 게스트 기록을 안전하게 보존하세요.",
-      "guest_import_final_title": "금융 기록 보호",
-      "guest_import_final_body":
-          "20개 이상의 게스트 기록이 있습니다. 지금 가져오지 않으면 새 로그인 시 클린 계정으로 시작됩니다.",
+      "guest_login_title": "금융 기록 저장",
+      "guest_login_body": "현재 게스트 계정을 사용 중입니다. 기록을 클라우드에 안전하게 저장하려면 로그인하세요.",
+      "guest_login_final_title": "경고: 게스트 데이터가 삭제됩니다",
+      "guest_login_final_body":
+          "게스트 상태로 15개 이상의 기록을 작성하셨습니다. 계정으로 로그인하면 이 기기의 로컬 게스트 데이터는 모두 삭제되고 클라우드 데이터로 교체됩니다.",
       "not_logged_in": "로그인되지 않음",
       "register_login": "등록 / 로그인",
       "display_name_title": "이름 편집",
@@ -2631,7 +2631,7 @@ class CodegenLoader extends AssetLoader {
       "unit_billion": "億",
       "unit_million": "百万",
       "unit_thousand": "千",
-      "guest_import_action": "アカウントを連携",
+      "guest_login_action": "ログイン / 登録",
       "later": "後で",
     },
     "auth": {
@@ -3236,11 +3236,11 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "ゲスト",
-      "guest_import_title": "記録を保存する",
-      "guest_import_body": "アカウントを連携して、デバイス間でゲスト記録を保存します。",
-      "guest_import_final_title": "財務記録を保護する",
-      "guest_import_final_body":
-          "20件以上のゲスト記録があります。今すぐインポートしない場合、新規ログインでクリーンなアカウントが開始されます",
+      "guest_login_title": "財務記録を保存する",
+      "guest_login_body": "現在ゲストアカウントを使用しています。クラウドに安全に保存するために、ログインしてください。",
+      "guest_login_final_title": "警告：ゲストデータは消去されます",
+      "guest_login_final_body":
+          "ゲストとして15件以上の記録を作成しました。アカウントにログインすると、このデバイス上のローカルゲストデータはすべて消去され、クラウドデータに置き換わります。",
       "not_logged_in": "ログインしていません",
       "register_login": "登録 / ログイン",
       "display_name_title": "名前を編集",
@@ -3438,7 +3438,7 @@ class CodegenLoader extends AssetLoader {
       "unit_billion": "十亿",
       "unit_million": "百万",
       "unit_thousand": "千",
-      "guest_import_action": "关联账户",
+      "guest_login_action": "登录 / 注册",
       "later": "以后再说",
     },
     "auth": {
@@ -4036,10 +4036,11 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "访客",
-      "guest_import_title": "保留您的记录",
-      "guest_import_body": "关联账号以在多台设备间保存您的访客记录。",
-      "guest_import_final_title": "保护您的财务记录",
-      "guest_import_final_body": "您已有 20 条或更多访客记录。如果现在不导入，新登录将开启全新账号。",
+      "guest_login_title": "保存您的财务记录",
+      "guest_login_body": "您当前使用的是访客账号。登录账号以将数据安全保存到云端。",
+      "guest_login_final_title": "警告：访客数据将被清除",
+      "guest_login_final_body":
+          "您已作为访客记录了 15 条或更多数据。当您登录账号时，此设备上的所有本地访客数据都将被清除，并替换为您的云端账号数据。",
       "not_logged_in": "未登录",
       "register_login": "注册 / 登录",
       "display_name_title": "编辑姓名",

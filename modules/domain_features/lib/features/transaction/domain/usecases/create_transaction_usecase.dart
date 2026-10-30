@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -63,12 +66,14 @@ class CreateTransactionUseCase {
     this._walletRepository,
     this._getWalletBookBalance,
     this._conversionService,
+    this._guestLoginPromptService,
   );
 
   final TransactionRepository _transactionRepository;
   final WalletRepository _walletRepository;
   final GetWalletBookBalanceUseCase _getWalletBookBalance;
   final CurrencyConversionService _conversionService;
+  final GuestLoginPromptService _guestLoginPromptService;
 
   Future<Result<TransactionEntity, CcFailure>> call(
     CreateTransactionParams params,
@@ -163,6 +168,8 @@ class CreateTransactionUseCase {
     await _walletRepository.updateWallet(
       wallet.copyWith(updatedAt: DateTime.now()),
     );
+
+    _guestLoginPromptService.maybeShowFromCurrentContext();
 
     return Success(transaction);
   }

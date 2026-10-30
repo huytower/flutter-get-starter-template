@@ -18,11 +18,11 @@ import '../reconciliation/data/models/reconciliation_model.dart';
 import '../transaction/data/models/transaction_model.dart';
 import '../wallet/data/models/wallet_hive_model.dart';
 
-enum GuestLoginPrompt { atEight, finalWarning }
+enum GuestLoginPrompt { atSeven, finalWarning }
 
 @lazySingleton
 class GuestLoginPromptService {
-  static const int _firstPromptThreshold = 8;
+  static const int _firstPromptThreshold = 7;
   static const int _finalPromptThreshold = 15;
 
   final SessionContract _session;
@@ -47,29 +47,40 @@ class GuestLoginPromptService {
 
   Future<GuestLoginPrompt?> evaluate() async {
     if (_promptInFlight) return null;
-    if (!_session.isAnonymous) return null;
-    final uid = _session.currentUser?.id;
-    if (uid == null) return null;
+    final isAuth = _session.isAuthenticated;
+    final isAnon = _session.isAnonymous;
+    if (isAuth && !isAnon) {
+      '[GuestLoginPrompt] ℹ️ User is logged in with real account. Skipping guest login prompt.'
+          .Log('GuestLoginPromptService');
+      return null;
+    }
+
+    final uid = _session.currentUser?.id ?? 'guest_local_user';
 
     final storage = CcAppStorage.instance;
     if (storage.guestLoginPromptSessionUid != uid) {
       storage.guestLoginPromptSessionUid = uid;
-      storage.guestLoginPrompt10Shown = false;
-      storage.guestLoginPrompt20Dismissed = false;
+      storage.guestLoginPromptAtTimes7Shown = false;
+      storage.guestLoginPrompt15Dismissed = false;
       await storage.save();
     }
 
-    if (storage.guestLoginPrompt20Dismissed == true) return null;
+    if (storage.guestLoginPrompt15Dismissed == true) {
+      '[GuestLoginPrompt] ℹ️ Final warning permanently dismissed for uid=$uid. Skipping prompt.'
+          .Log('GuestLoginPromptService');
+      return null;
+    }
+
     final count = await countFinancialRecords();
     GuestLoginPrompt? result;
     if (count >= _finalPromptThreshold) {
       result = GuestLoginPrompt.finalWarning;
     } else if (count >= _firstPromptThreshold &&
-        storage.guestLoginPrompt10Shown != true) {
-      result = GuestLoginPrompt.atEight;
+        storage.guestLoginPromptAtTimes7Shown != true) {
+      result = GuestLoginPrompt.atSeven;
     }
 
-    '[GuestLoginPrompt] 🔍 Evaluated prompt condition | uid=$uid | isAnonymous=${_session.isAnonymous} | count=$count | prompt10Shown=${storage.guestLoginPrompt10Shown} | prompt20Dismissed=${storage.guestLoginPrompt20Dismissed} -> result=$result'
+    '[GuestLoginPrompt] 🔍 Evaluated prompt condition | uid=$uid | isAnonymous=$isAnon | count=$count | prompt10Shown=${storage.guestLoginPromptAtTimes7Shown} | prompt20Dismissed=${storage.guestLoginPrompt15Dismissed} -> result=$result'
         .Log('GuestLoginPromptService');
 
     return result;
@@ -79,8 +90,8 @@ class GuestLoginPromptService {
     '[GuestLoginPrompt] 📌 Marking prompt as shown: $prompt'.Log(
       'GuestLoginPromptService',
     );
-    if (prompt == GuestLoginPrompt.atEight) {
-      CcAppStorage.instance.guestLoginPrompt10Shown = true;
+    if (prompt == GuestLoginPrompt.atSeven) {
+      CcAppStorage.instance.guestLoginPromptAtTimes7Shown = true;
     }
     await CcAppStorage.instance.save();
   }
@@ -89,34 +100,43 @@ class GuestLoginPromptService {
     '[GuestLoginPrompt] 🚫 Final warning permanently dismissed by user'.Log(
       'GuestLoginPromptService',
     );
-    CcAppStorage.instance.guestLoginPrompt20Dismissed = true;
+    CcAppStorage.instance.guestLoginPrompt15Dismissed = true;
     await CcAppStorage.instance.save();
   }
 
   Future<void> maybeShow(BuildContext context) async {
-    if (_promptInFlight || !context.mounted) return;
+    if (_promptInFlight) return;
+    final targetContext = context.mounted ? context : Get.context;
+    if (targetContext == null) return;
+
     final prompt = await evaluate();
-    if (prompt == null || !context.mounted) return;
+    if (prompt == null) return;
+
+    final activeContext = targetContext.mounted ? targetContext : Get.context;
+    if (activeContext == null) return;
+
     _promptInFlight = true;
     '[GuestLoginPrompt] 🚀 Presenting guest login bottom sheet | prompt=$prompt'
         .Log('GuestLoginPromptService');
-    if (prompt == GuestLoginPrompt.atEight) {
+    if (prompt == GuestLoginPrompt.atSeven) {
       await markShown(prompt);
     }
-    if (!context.mounted) return;
+
     final choseLogin = await GuestLoginPromptSheet.show(
-      context,
+      activeContext,
       prompt: prompt,
     );
     _promptInFlight = false;
+
     if (choseLogin != true && prompt == GuestLoginPrompt.finalWarning) {
       await dismissFinalWarning();
     }
-    if (choseLogin == true && context.mounted) {
+    if (choseLogin == true) {
       '[GuestLoginPrompt] 🔗 User chose Login -> Navigating to Auth flow'.Log(
         'GuestLoginPromptService',
       );
-      getIt<AuthCoordinator>().navigateToLogin(context);
+      final navContext = Get.context ?? activeContext;
+      getIt<AuthCoordinator>().navigateToLogin(navContext);
     }
   }
 
@@ -124,6 +144,9 @@ class GuestLoginPromptService {
     final context = Get.context;
     if (context != null) {
       unawaited(maybeShow(context));
+    } else {
+      '[GuestLoginPrompt] ⚠️ Get.context was null when calling maybeShowFromCurrentContext'
+          .Log('GuestLoginPromptService');
     }
   }
 

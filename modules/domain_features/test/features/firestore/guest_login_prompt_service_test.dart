@@ -72,5 +72,18 @@ void main() {
       expect(session.isAnonymous, isTrue);
       expect(session.currentUser?.id, equals('guest_123'));
     });
+
+    test(
+      'defines prompt thresholds as 7 (first warning) and 15 (final warning)',
+      () {
+        expect(
+          GuestLoginPrompt.values,
+          containsAll([
+            GuestLoginPrompt.atSeven,
+            GuestLoginPrompt.finalWarning,
+          ]),
+        );
+      },
+    );
   });
 }

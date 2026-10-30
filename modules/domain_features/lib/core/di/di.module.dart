@@ -553,13 +553,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i105.GetWalletBookBalanceUseCase>(),
               gh<_i195.CurrencyConversionService>(),
             ));
-    gh.lazySingleton<_i28.CreateTransactionUseCase>(
-        () => _i28.CreateTransactionUseCase(
-              gh<_i1027.TransactionRepository>(),
-              gh<_i572.WalletRepository>(),
-              gh<_i105.GetWalletBookBalanceUseCase>(),
-              gh<_i195.CurrencyConversionService>(),
-            ));
     gh.lazySingleton<_i955.CreateWalletTransferUseCase>(
         () => _i955.CreateWalletTransferUseCase(
               gh<_i1027.TransactionRepository>(),
@@ -576,6 +569,14 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.factory<_i615.CategorySelectionController>(() =>
         _i615.CategorySelectionController(gh<_i224.GetCategoriesUseCase>()));
+    gh.lazySingleton<_i28.CreateTransactionUseCase>(
+        () => _i28.CreateTransactionUseCase(
+              gh<_i1027.TransactionRepository>(),
+              gh<_i572.WalletRepository>(),
+              gh<_i105.GetWalletBookBalanceUseCase>(),
+              gh<_i195.CurrencyConversionService>(),
+              gh<_i232.GuestLoginPromptService>(),
+            ));
     gh.lazySingleton<_i231.WalletController>(() => _i231.WalletController(
           gh<_i572.WalletRepository>(),
           gh<_i1027.TransactionRepository>(),
