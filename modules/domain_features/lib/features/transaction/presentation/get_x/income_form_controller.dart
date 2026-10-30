@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:cc_sdk_data/data/models/pagination_request.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart';
+import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -477,6 +480,9 @@ class IncomeFormController extends TransactionFormController
           }
         }
         await refreshParent();
+        if (!isEditing && context.mounted) {
+          unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
+        }
       },
       (error) {
         if (context.mounted) {

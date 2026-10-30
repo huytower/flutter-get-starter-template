@@ -26,7 +26,7 @@ class TransactionWalletSummary extends StatelessWidget {
           // Use a fixed width or let the parent Expanded handle overflow
           // Avoid using Flexible here if it's placed inside AnimatedSwitcher/Stack
           CcText(
-            '${el.tr(CcLocaleKeys.transaction_wallet)}  ${formatVndShort(controller.walletTotal.value)}',
+            '${el.tr(CcLocaleKeys.transaction_wallet)}  ${formatShortCurrencyWithSymbol(controller.walletTotal.value)}',
             textStyle: context.ccTextTheme.bodyMedium?.copyWith(
               color: context.ccColorScheme.onPrimary.withOpacity(0.9),
               fontWeight: CcTypographyParams.semiBold,

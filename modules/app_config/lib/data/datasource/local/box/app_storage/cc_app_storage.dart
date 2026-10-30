@@ -155,6 +155,15 @@ class CcAppStorage extends HiveObject {
   @HiveField(27)
   int? financialSchemaVersion;
 
+  @HiveField(28)
+  bool? guestLoginPrompt10Shown;
+
+  @HiveField(29)
+  bool? guestLoginPrompt20Dismissed;
+
+  @HiveField(30)
+  String? guestLoginPromptSessionUid;
+
   CcAppStorage({
     this.accessToken,
     this.fcmToken,
@@ -183,5 +192,8 @@ class CcAppStorage extends HiveObject {
     this.currencySelectionSource,
     this.currencyDetectionCountryCode,
     this.financialSchemaVersion,
+    this.guestLoginPrompt10Shown,
+    this.guestLoginPrompt20Dismissed,
+    this.guestLoginPromptSessionUid,
   });
 }

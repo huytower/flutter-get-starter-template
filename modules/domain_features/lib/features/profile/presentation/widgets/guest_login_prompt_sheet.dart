@@ -2,25 +2,27 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../firestore/guest_import_prompt_service.dart';
+import '../../../firestore/guest_login_prompt_service.dart';
 
-/// Independent bottom sheet widget for prompting guests to link their account
-/// and preserve their local records across devices.
-class GuestImportPromptSheet extends StatelessWidget {
-  const GuestImportPromptSheet({
+/// Bottom sheet widget prompting guests to log in with an account.
+///
+/// Reminds guest users that guest data is stored on this device only and will be
+/// replaced when logging in to a cloud account.
+class GuestLoginPromptSheet extends StatelessWidget {
+  const GuestLoginPromptSheet({
     super.key,
     required this.prompt,
     required this.onCancel,
-    required this.onImport,
+    required this.onLogin,
   });
 
-  final GuestImportPrompt prompt;
+  final GuestLoginPrompt prompt;
   final VoidCallback onCancel;
-  final VoidCallback onImport;
+  final VoidCallback onLogin;
 
   static Future<bool?> show(
     BuildContext context, {
-    required GuestImportPrompt prompt,
+    required GuestLoginPrompt prompt,
   }) {
     return showModalBottomSheet<bool>(
       context: context,
@@ -30,17 +32,17 @@ class GuestImportPromptSheet extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (sheetContext) => GuestImportPromptSheet(
+      builder: (sheetContext) => GuestLoginPromptSheet(
         prompt: prompt,
         onCancel: () => Navigator.of(sheetContext).pop(false),
-        onImport: () => Navigator.of(sheetContext).pop(true),
+        onLogin: () => Navigator.of(sheetContext).pop(true),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final isFinal = prompt == GuestImportPrompt.finalWarning;
+    final isFinal = prompt == GuestLoginPrompt.finalWarning;
     final scheme = context.ccColorScheme;
 
     return SafeArea(
@@ -60,13 +62,17 @@ class GuestImportPromptSheet extends StatelessWidget {
                 width: context.respDim(64),
                 height: context.respDim(64),
                 decoration: BoxDecoration(
-                  color: scheme.primary.withOpacity(0.12),
+                  color: (isFinal ? scheme.error : scheme.primary).withOpacity(
+                    0.12,
+                  ),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.cloud_sync_outlined,
+                  isFinal
+                      ? Icons.warning_amber_rounded
+                      : Icons.cloud_sync_outlined,
                   size: context.respIconSize(baseSize: 32),
-                  color: scheme.primary,
+                  color: isFinal ? scheme.error : scheme.primary,
                 ),
               ),
             ),
@@ -74,8 +80,8 @@ class GuestImportPromptSheet extends StatelessWidget {
             CcText(
               el.tr(
                 isFinal
-                    ? CcLocaleKeys.profile_guest_import_final_title
-                    : CcLocaleKeys.profile_guest_import_title,
+                    ? CcLocaleKeys.profile_guest_login_final_title
+                    : CcLocaleKeys.profile_guest_login_title,
               ),
               align: Alignment.center,
               textStyle: context.ccTextTheme.titleLarge?.copyWith(
@@ -87,8 +93,8 @@ class GuestImportPromptSheet extends StatelessWidget {
             CcText(
               el.tr(
                 isFinal
-                    ? CcLocaleKeys.profile_guest_import_final_body
-                    : CcLocaleKeys.profile_guest_import_body,
+                    ? CcLocaleKeys.profile_guest_login_final_body
+                    : CcLocaleKeys.profile_guest_login_body,
               ),
               align: Alignment.center,
               textAlign: TextAlign.center,
@@ -129,7 +135,7 @@ class GuestImportPromptSheet extends StatelessWidget {
                 const CcSpaceMD(),
                 Expanded(
                   child: CcBouncing(
-                    onTap: onImport,
+                    onTap: onLogin,
                     borderRadius: BorderRadius.circular(context.respDim(12)),
                     child: Container(
                       height: context.respDim(48),
@@ -141,7 +147,7 @@ class GuestImportPromptSheet extends StatelessWidget {
                         ),
                       ),
                       child: CcText(
-                        el.tr(CcLocaleKeys.common_guest_import_action),
+                        el.tr(CcLocaleKeys.common_guest_login_action),
                         align: Alignment.center,
                         textAlign: TextAlign.center,
                         textStyle: context.ccTextTheme.titleMedium?.copyWith(

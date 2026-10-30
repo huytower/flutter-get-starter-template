@@ -8,6 +8,9 @@ abstract class SessionContract {
   /// Whether the user is currently authenticated.
   bool get isAuthenticated;
 
+  /// Whether the current session is an anonymous guest user.
+  bool get isAnonymous;
+
   /// Returns the current user information, or null if not logged in.
   CcUserEntity? get currentUser;
 

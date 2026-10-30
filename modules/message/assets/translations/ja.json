@@ -56,7 +56,7 @@
     "unit_billion": "億",
     "unit_million": "百万",
     "unit_thousand": "千",
-    "guest_import_action": "アカウントを連携",
+    "guest_login_action": "ログイン / 登録",
     "later": "後で"
   },
   "auth": {
@@ -654,10 +654,10 @@
   },
   "profile": {
     "guest": "ゲスト",
-    "guest_import_title": "データを失わないようにする",
-    "guest_import_body": "データは現在このデバイスにのみ保存されています。機種変更やアプリ削除時にも失われないよう、アカウントを連携してください。",
-    "guest_import_final_title": "データを失わないようにする",
-    "guest_import_final_body": "20件以上の取引が記録されています。アカウントを連携せずに機種変更、アプリ削除、または新規ログインを行った場合、これらのデータはすべて失われ、復元できなくなります。",
+    "guest_login_title": "財務記録を保存する",
+    "guest_login_body": "現在ゲストアカウントを使用しています。クラウドに安全に保存するために、ログインしてください。",
+    "guest_login_final_title": "警告：ゲストデータは消去されます",
+    "guest_login_final_body": "ゲストとして15件以上の記録を作成しました。アカウントにログインすると、このデバイス上のローカルゲストデータはすべて消去され、クラウドデータに置き換わります。",
     "not_logged_in": "ログインしていません",
     "register_login": "登録 / ログイン",
     "display_name_title": "名前を編集",

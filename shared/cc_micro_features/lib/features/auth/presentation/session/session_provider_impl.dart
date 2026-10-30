@@ -52,6 +52,11 @@ class SessionProviderImpl implements SessionContract {
   bool get isAuthenticated => _userSubject.value != null;
 
   @override
+  bool get isAnonymous =>
+      _userSubject.value == null ||
+      _userSubject.value!.linkedProviderIds.isEmpty;
+
+  @override
   CcUserEntity? get currentUser => _userSubject.value;
 
   @override

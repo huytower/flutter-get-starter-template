@@ -106,6 +106,8 @@ import 'package:domain_features/features/examples/bloc_simple_page/origin/advanc
     as _i1004;
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart'
     as _i963;
+import 'package:domain_features/features/firestore/guest_login_prompt_service.dart'
+    as _i232;
 import 'package:domain_features/features/guideline/guideline_controller.dart'
     as _i128;
 import 'package:domain_features/features/liability/data/datasources/liability_sync_datasource.dart'
@@ -412,6 +414,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           local: gh<_i1058.WalletLocalDataSource>(),
           sync: gh<_i156.WalletSyncDataSource>(),
         ));
+    gh.lazySingleton<_i232.GuestLoginPromptService>(
+        () => _i232.GuestLoginPromptService(gh<_i727.SessionContract>()));
     gh.lazySingleton<_i944.ReconciliationRepository>(
         () => _i513.ReconciliationRepositoryImpl(
               local: gh<_i896.ReconciliationLocalDataSource>(),

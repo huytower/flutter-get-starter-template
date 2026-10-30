@@ -256,7 +256,7 @@ mixin QuickEntryMixin on TransactionFormController
   String quickEntryResultLabel(ParsedTransactionEntity result) {
     final parts = <String>[];
     if (result.amount != null) {
-      parts.add(formatVndShort(result.amount!));
+      parts.add(formatShortCurrencyWithSymbol(result.amount!));
     }
     if (result.categoryId != null && quickEntryShowsCategoryInLabel) {
       final category = findQuickEntryCategory(result.categoryId!);

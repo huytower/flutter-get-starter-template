@@ -19,6 +19,7 @@ import '../../../../core/helper/location_suggestion_helper.dart';
 import '../../../../core/helper/merchant_matcher.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/time_based_suggestion_helper.dart';
+import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
@@ -985,6 +986,9 @@ class ExpenseFormController extends TransactionFormController
         await refreshParent();
         // Guideline: first_transaction completed
         Get.find<GuidelineController>().completeTask('first_transaction');
+        if (!isEditing && context.mounted) {
+          unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
+        }
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
         context: context,

@@ -44,7 +44,7 @@ class CategoryLegendTile extends StatelessWidget {
           ),
           const CcSpaceMD(),
           CcText(
-            formatVndShort(slice.amount),
+            formatShortCurrencyWithSymbol(slice.amount),
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),

@@ -56,7 +56,7 @@
     "unit_billion": "tỷ",
     "unit_million": "tr",
     "unit_thousand": "k",
-    "guest_import_action": "Liên kết tài khoản",
+    "guest_login_action": "Đăng nhập / Đăng ký",
     "later": "Để sau"
   },
   "auth": {
@@ -516,10 +516,10 @@
     "guest": "Khách",
     "not_logged_in": "Chưa đăng nhập",
     "register_login": "Đăng ký / Đăng nhập",
-    "guest_import_title": "Đừng để mất dữ liệu của bạn",
-    "guest_import_body": "Dữ liệu hiện chỉ lưu trên máy này. Liên kết tài khoản để không mất khi đổi điện thoại hoặc lỡ xoá app",
-    "guest_import_final_title": "Đừng để mất dữ liệu của bạn",
-    "guest_import_final_body": "Bạn đã ghi hơn 20 giao dịch. Nếu đổi điện thoại, xoá app, hoặc đăng nhập tài khoản mới mà chưa liên kết, toàn bộ dữ liệu này sẽ mất và không thể khôi phục.",
+    "guest_login_title": "Lưu trữ dữ liệu tài chính",
+    "guest_login_body": "Bạn đang dùng tài khoản khách. Đăng nhập bằng Google, Apple hoặc Số điện thoại để lưu trữ dữ liệu an toàn trên đám mây.",
+    "guest_login_final_title": "Cảnh báo: Dữ liệu khách sẽ bị xóa",
+    "guest_login_final_body": "Bạn đã tạo 15 giao dịch/bản ghi dưới danh nghĩa khách. Khi bạn đăng nhập tài khoản, toàn bộ dữ liệu khách trên máy này sẽ bị xóa và thay thế bằng dữ liệu đám mây của tài khoản.",
     "display_name_title": "Sửa tên",
     "display_name_hint": "Nhập tên hiển thị của bạn",
     "display_name_save": "Lưu",

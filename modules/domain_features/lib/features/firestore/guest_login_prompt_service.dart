@@ -13,22 +13,22 @@ import '../budget_limit/data/models/budget_limit_model.dart';
 import '../category/data/datasources/local/category_seed.dart';
 import '../category/data/models/category_model.dart';
 import '../liability/data/models/liability_model.dart';
-import '../profile/presentation/widgets/guest_import_prompt_sheet.dart';
+import '../profile/presentation/widgets/guest_login_prompt_sheet.dart';
 import '../reconciliation/data/models/reconciliation_model.dart';
 import '../transaction/data/models/transaction_model.dart';
 import '../wallet/data/models/wallet_hive_model.dart';
 
-enum GuestImportPrompt { atTen, finalWarning }
+enum GuestLoginPrompt { atEight, finalWarning }
 
 @lazySingleton
-class GuestImportPromptService {
-  static const int _firstPromptThreshold = 7;
+class GuestLoginPromptService {
+  static const int _firstPromptThreshold = 8;
   static const int _finalPromptThreshold = 15;
 
   final SessionContract _session;
   bool _promptInFlight = false;
 
-  GuestImportPromptService(this._session);
+  GuestLoginPromptService(this._session);
 
   Future<int> countFinancialRecords() async {
     final counts = await Future.wait([
@@ -40,55 +40,56 @@ class GuestImportPromptService {
       _count<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME),
     ]);
     final total = counts.fold<int>(0, (int total, int count) => total + count);
-    '[GuestImportPrompt] 📊 Financial records counted: total=$total (wallets=${counts[0]}, txns=${counts[1]}, budgets=${counts[2]}, liabilities=${counts[3]}, categories=${counts[4]}, reconciliations=${counts[5]})'
-        .Log('GuestImportPromptService');
+    '[GuestLoginPrompt] 📊 Financial records counted: total=$total (wallets=${counts[0]}, txns=${counts[1]}, budgets=${counts[2]}, liabilities=${counts[3]}, categories=${counts[4]}, reconciliations=${counts[5]})'
+        .Log('GuestLoginPromptService');
     return total;
   }
 
-  Future<GuestImportPrompt?> evaluate() async {
+  Future<GuestLoginPrompt?> evaluate() async {
     if (_promptInFlight) return null;
+    if (!_session.isAnonymous) return null;
     final uid = _session.currentUser?.id;
     if (uid == null) return null;
 
     final storage = CcAppStorage.instance;
-    if (storage.guestImportPromptSessionUid != uid) {
-      storage.guestImportPromptSessionUid = uid;
-      storage.guestImportPrompt10Shown = false;
-      storage.guestImportPrompt20Dismissed = false;
+    if (storage.guestLoginPromptSessionUid != uid) {
+      storage.guestLoginPromptSessionUid = uid;
+      storage.guestLoginPrompt10Shown = false;
+      storage.guestLoginPrompt20Dismissed = false;
       await storage.save();
     }
 
-    if (storage.guestImportPrompt20Dismissed == true) return null;
+    if (storage.guestLoginPrompt20Dismissed == true) return null;
     final count = await countFinancialRecords();
-    GuestImportPrompt? result;
+    GuestLoginPrompt? result;
     if (count >= _finalPromptThreshold) {
-      result = GuestImportPrompt.finalWarning;
+      result = GuestLoginPrompt.finalWarning;
     } else if (count >= _firstPromptThreshold &&
-        storage.guestImportPrompt10Shown != true) {
-      result = GuestImportPrompt.atTen;
+        storage.guestLoginPrompt10Shown != true) {
+      result = GuestLoginPrompt.atEight;
     }
 
-    '[GuestImportPrompt] 🔍 Evaluated prompt condition | uid=$uid | isAnonymous=${_session.isAnonymous} | count=$count | prompt10Shown=${storage.guestImportPrompt10Shown} | prompt20Dismissed=${storage.guestImportPrompt20Dismissed} -> result=$result'
-        .Log('GuestImportPromptService');
+    '[GuestLoginPrompt] 🔍 Evaluated prompt condition | uid=$uid | isAnonymous=${_session.isAnonymous} | count=$count | prompt10Shown=${storage.guestLoginPrompt10Shown} | prompt20Dismissed=${storage.guestLoginPrompt20Dismissed} -> result=$result'
+        .Log('GuestLoginPromptService');
 
     return result;
   }
 
-  Future<void> markShown(GuestImportPrompt prompt) async {
-    '[GuestImportPrompt] 📌 Marking prompt as shown: $prompt'.Log(
-      'GuestImportPromptService',
+  Future<void> markShown(GuestLoginPrompt prompt) async {
+    '[GuestLoginPrompt] 📌 Marking prompt as shown: $prompt'.Log(
+      'GuestLoginPromptService',
     );
-    if (prompt == GuestImportPrompt.atTen) {
-      CcAppStorage.instance.guestImportPrompt10Shown = true;
+    if (prompt == GuestLoginPrompt.atEight) {
+      CcAppStorage.instance.guestLoginPrompt10Shown = true;
     }
     await CcAppStorage.instance.save();
   }
 
   Future<void> dismissFinalWarning() async {
-    '[GuestImportPrompt] 🚫 Final warning permanently dismissed by user'.Log(
-      'GuestImportPromptService',
+    '[GuestLoginPrompt] 🚫 Final warning permanently dismissed by user'.Log(
+      'GuestLoginPromptService',
     );
-    CcAppStorage.instance.guestImportPrompt20Dismissed = true;
+    CcAppStorage.instance.guestLoginPrompt20Dismissed = true;
     await CcAppStorage.instance.save();
   }
 
@@ -97,20 +98,23 @@ class GuestImportPromptService {
     final prompt = await evaluate();
     if (prompt == null || !context.mounted) return;
     _promptInFlight = true;
-    '[GuestImportPrompt] 🚀 Presenting guest import bottom sheet | prompt=$prompt'
-        .Log('GuestImportPromptService');
-    if (prompt == GuestImportPrompt.atTen) {
+    '[GuestLoginPrompt] 🚀 Presenting guest login bottom sheet | prompt=$prompt'
+        .Log('GuestLoginPromptService');
+    if (prompt == GuestLoginPrompt.atEight) {
       await markShown(prompt);
     }
     if (!context.mounted) return;
-    final import = await GuestImportPromptSheet.show(context, prompt: prompt);
+    final choseLogin = await GuestLoginPromptSheet.show(
+      context,
+      prompt: prompt,
+    );
     _promptInFlight = false;
-    if (import != true && prompt == GuestImportPrompt.finalWarning) {
+    if (choseLogin != true && prompt == GuestLoginPrompt.finalWarning) {
       await dismissFinalWarning();
     }
-    if (import == true && context.mounted) {
-      '[GuestImportPrompt] 🔗 User chose Import -> Navigating to Auth flow'.Log(
-        'GuestImportPromptService',
+    if (choseLogin == true && context.mounted) {
+      '[GuestLoginPrompt] 🔗 User chose Login -> Navigating to Auth flow'.Log(
+        'GuestLoginPromptService',
       );
       getIt<AuthCoordinator>().navigateToLogin(context);
     }

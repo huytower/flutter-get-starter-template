@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:cc_micro_features/features/web/export_web.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -334,6 +337,9 @@ class AddLiquidSheetController extends CcGetController {
               ? el.tr(CcLocaleKeys.wallet_updated_success)
               : el.tr(CcLocaleKeys.wallet_added_success),
         );
+        if (!isEditing && context.mounted) {
+          unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
+        }
       }
     } catch (e) {
       if (context.mounted) {

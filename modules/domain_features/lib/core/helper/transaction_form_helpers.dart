@@ -54,9 +54,9 @@ class TransactionFormHelpers {
   static String formatShort(
     num amount, {
     bool useFullSuffix = false,
-    String currencyCode = CurrencyConstants.defaultCurrencyCode,
+    String? currencyCode,
   }) {
-    return formatVndShort(
+    return formatShortCurrency(
       amount,
       useFullSuffix: useFullSuffix,
       currencyCode: currencyCode,

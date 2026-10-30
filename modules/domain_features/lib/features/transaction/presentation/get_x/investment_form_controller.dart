@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:collection/collection.dart' hide IterableFirstOrNull;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart';
+import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +12,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/money_constants.dart';
+import '../../../../core/di/di.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_intent.dart';
@@ -535,6 +539,9 @@ class InvestmentFormController extends TransactionFormController
         // Complete the investment guideline task
         if (Get.isRegistered<GuidelineController>()) {
           Get.find<GuidelineController>().completeTask('investment');
+        }
+        if (context.mounted) {
+          unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
         }
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(
