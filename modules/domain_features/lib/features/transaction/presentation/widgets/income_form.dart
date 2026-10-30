@@ -32,6 +32,7 @@ class IncomeForm extends StatefulWidget {
 class _IncomeFormState extends State<IncomeForm> {
   late final IncomeFormController controller;
   Worker? _tabRevisitWorker;
+  final GlobalKey _amountFieldKey = GlobalKey();
 
   @override
   void initState() {
@@ -73,7 +74,6 @@ class _IncomeFormState extends State<IncomeForm> {
     super.dispose();
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     // See ExpenseForm.build() for why untagged vs. tagged resolve
@@ -209,8 +209,9 @@ class _IncomeFormState extends State<IncomeForm> {
         isKeypadVisible: controller.showKeypad.value,
         activeColor: accentColor,
         currencyCode: controller.currencyCode.value,
-        fieldKey: controller.amountFieldKey,
-        onTap: () => controller.showKeypadAndScroll(context),
+        fieldKey: _amountFieldKey,
+        onTap: () =>
+            controller.showKeypadAndScroll(context, fieldKey: _amountFieldKey),
         onQuickAmountSelected: (amount) =>
             controller.amountStr.value = amount.toString(),
         onClear: () => controller.amountStr.value = '0',

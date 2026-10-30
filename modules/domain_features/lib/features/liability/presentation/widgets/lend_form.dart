@@ -10,8 +10,8 @@ import '../../../transaction/presentation/widgets/transaction_additional_details
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
-import '../get_x/liability_base_form_controller.dart';
 import '../get_x/lend_form_controller.dart';
+import '../get_x/liability_base_form_controller.dart';
 import 'lend_asset_selector.dart';
 import 'lend_direction_toggle.dart';
 
@@ -25,6 +25,7 @@ class LendForm extends StatefulWidget {
 class _LendFormState extends State<LendForm> {
   late final LendFormController controller;
   Worker? _tabRevisitWorker;
+  final GlobalKey _amountFieldKey = GlobalKey();
 
   @override
   void initState() {
@@ -166,8 +167,9 @@ class _LendFormState extends State<LendForm> {
         isKeypadVisible: controller.showKeypad.value,
         activeColor: accentColor,
         currencyCode: controller.currencyCode.value,
-        fieldKey: controller.amountFieldKey,
-        onTap: () => controller.showKeypadAndScroll(context),
+        fieldKey: _amountFieldKey,
+        onTap: () =>
+            controller.showKeypadAndScroll(context, fieldKey: _amountFieldKey),
         onQuickAmountSelected: (amount) =>
             controller.amountStr.value = amount.toString(),
         onClear: controller.handleClear,

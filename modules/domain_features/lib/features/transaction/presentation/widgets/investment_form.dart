@@ -28,6 +28,7 @@ class InvestmentForm extends StatefulWidget {
 class _InvestmentFormState extends State<InvestmentForm> {
   late final InvestmentFormController controller;
   Worker? _tabRevisitWorker;
+  final GlobalKey _amountFieldKey = GlobalKey();
 
   @override
   void initState() {
@@ -284,8 +285,9 @@ class _InvestmentFormState extends State<InvestmentForm> {
         isKeypadVisible: controller.showKeypad.value,
         activeColor: accentColor,
         currencyCode: controller.currencyCode.value,
-        fieldKey: controller.amountFieldKey,
-        onTap: () => controller.showKeypadAndScroll(context),
+        fieldKey: _amountFieldKey,
+        onTap: () =>
+            controller.showKeypadAndScroll(context, fieldKey: _amountFieldKey),
         onQuickAmountSelected: (amount) =>
             controller.amountStr.value = amount.toString(),
         onClear: () => controller.amountStr.value = '0',

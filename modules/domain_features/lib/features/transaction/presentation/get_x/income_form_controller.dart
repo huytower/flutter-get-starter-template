@@ -288,7 +288,8 @@ class IncomeFormController extends TransactionFormController
     } else if (!selectedCategoryStillExists) {
       // Reset scroll to start if selected category no longer exists
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (categoryScrollController.hasClients) {
+        if (categoryScrollController.hasClients &&
+            categoryScrollController.positions.isNotEmpty) {
           categoryScrollController.animateTo(
             0,
             duration: const Duration(milliseconds: 300),
@@ -303,7 +304,9 @@ class IncomeFormController extends TransactionFormController
 
   void _scrollToSelected() {
     if (unifiedItems.isEmpty) return;
-    if (!categoryScrollController.hasClients) return;
+    if (!categoryScrollController.hasClients ||
+        categoryScrollController.positions.isEmpty)
+      return;
 
     final category = selectedCategory.value;
     if (category == null) return;
@@ -473,7 +476,8 @@ class IncomeFormController extends TransactionFormController
             setCategory(lastCategory);
             // Reset scroll to start since the category is now at index 0
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (categoryScrollController.hasClients) {
+              if (categoryScrollController.hasClients &&
+                  categoryScrollController.positions.isNotEmpty) {
                 categoryScrollController.jumpTo(0);
               }
             });

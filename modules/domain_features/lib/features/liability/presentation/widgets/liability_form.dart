@@ -28,6 +28,7 @@ class LiabilityForm extends StatefulWidget {
 class _LiabilityFormState extends State<LiabilityForm> {
   late final LiabilityFormController controller;
   Worker? _tabRevisitWorker;
+  final GlobalKey _amountFieldKey = GlobalKey();
 
   @override
   void initState() {
@@ -237,8 +238,9 @@ class _LiabilityFormState extends State<LiabilityForm> {
         isKeypadVisible: controller.showKeypad.value,
         activeColor: accentColor,
         currencyCode: controller.currencyCode.value,
-        fieldKey: controller.amountFieldKey,
-        onTap: () => controller.showKeypadAndScroll(context),
+        fieldKey: _amountFieldKey,
+        onTap: () =>
+            controller.showKeypadAndScroll(context, fieldKey: _amountFieldKey),
         onQuickAmountSelected: (amount) =>
             controller.amountStr.value = amount.toString(),
         onClear: controller.handleClear,
