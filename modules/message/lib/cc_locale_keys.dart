@@ -77,6 +77,7 @@ class CodegenLoader extends AssetLoader {
       "unit_million": "M",
       "unit_thousand": "k",
       "guest_login_action": "Log In / Register",
+      "guest_login_continue_local": "Continue local experience",
       "later": "Later",
     },
     "auth": {
@@ -725,12 +726,19 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "Guest",
-      "guest_login_title": "Save your financial records",
-      "guest_login_body":
-          "You are currently using a guest account. Sign in with Google, Apple, or Phone to save your records securely in the cloud.",
-      "guest_login_final_title": "Warning: Guest data will be erased",
-      "guest_login_final_body":
-          "You have recorded 15 or more entries as a guest. When you log in with an account, all local guest records on this device will be erased and replaced with your cloud account data.",
+      "guest_login_title": "Your data is stored on this device only",
+      "guest_login_bullet1": "You have recorded 8 transactions — great start!",
+      "guest_login_bullet2":
+          "Guest data is currently not backed up. If you log in or create an account, data on this device will not be kept.",
+      "guest_login_bullet3":
+          "Start with an account now so your record-keeping remains uninterrupted.",
+      "guest_login_final_title": "15 transactions already — commendable habit!",
+      "guest_login_final_bullet1":
+          "You've actively kept regular records from day one, something few people manage to do.",
+      "guest_login_final_bullet2":
+          "Data on this guest device will not be kept when you log in.",
+      "guest_login_final_bullet3":
+          "Create an account now so your records are saved, synced, and uninterrupted from now on.",
       "not_logged_in": "Not logged in",
       "register_login": "Register / Login",
       "display_name_title": "Edit name",
@@ -948,6 +956,7 @@ class CodegenLoader extends AssetLoader {
       "unit_million": "tr",
       "unit_thousand": "k",
       "guest_login_action": "Đăng nhập / Đăng ký",
+      "guest_login_continue_local": "Tiếp tục trải nghiệm local",
       "later": "Để sau",
     },
     "auth": {
@@ -1446,12 +1455,19 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "Khách",
-      "guest_login_title": "Lưu trữ dữ liệu tài chính",
-      "guest_login_body":
-          "Bạn đang dùng tài khoản khách. Đăng nhập bằng Google, Apple hoặc Số điện thoại để lưu trữ dữ liệu an toàn trên đám mây.",
-      "guest_login_final_title": "Cảnh báo: Dữ liệu khách sẽ bị xóa",
-      "guest_login_final_body":
-          "Bạn đã tạo 15 giao dịch/bản ghi dưới danh nghĩa khách. Khi bạn đăng nhập tài khoản, toàn bộ dữ liệu khách trên máy này sẽ bị xóa và thay thế bằng dữ liệu đám mây của tài khoản.",
+      "guest_login_title": "Dữ liệu của bạn đang chỉ lưu trên máy này",
+      "guest_login_bullet1": "Bạn đã ghi 8 giao dịch — khởi đầu tốt!",
+      "guest_login_bullet2":
+          "Dữ liệu khách hiện chưa được sao lưu. Nếu đăng nhập hoặc tạo tài khoản, dữ liệu trên máy này sẽ không được giữ lại.",
+      "guest_login_bullet3":
+          "Bắt đầu với tài khoản ngay để việc ghi chép không bị gián đoạn.",
+      "guest_login_final_title": "15 giao dịch rồi — thói quen rất đáng khen!",
+      "guest_login_final_bullet1":
+          "Bạn đã chủ động ghi chép đều đặn ngay từ ngày đầu, đây là điều không nhiều người làm được.",
+      "guest_login_final_bullet2":
+          "Dữ liệu trên máy khách sẽ không được giữ lại khi bạn đăng nhập.",
+      "guest_login_final_bullet3":
+          "Tạo tài khoản ngay để việc ghi chép của bạn được lưu trữ, đồng bộ và không bị gián đoạn từ bây giờ.",
       "not_logged_in": "Chưa đăng nhập",
       "register_login": "Đăng ký / Đăng nhập",
       "display_name_title": "Sửa tên",
@@ -1814,6 +1830,7 @@ class CodegenLoader extends AssetLoader {
       "unit_million": "백만",
       "unit_thousand": "천",
       "guest_login_action": "로그인 / 회원가입",
+      "guest_login_continue_local": "로컬 체험 계속하기",
       "later": "나중에",
     },
     "auth": {
@@ -2427,11 +2444,15 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "게스트",
-      "guest_login_title": "금융 기록 저장",
-      "guest_login_body": "현재 게스트 계정을 사용 중입니다. 기록을 클라우드에 안전하게 저장하려면 로그인하세요.",
-      "guest_login_final_title": "경고: 게스트 데이터가 삭제됩니다",
-      "guest_login_final_body":
-          "게스트 상태로 15개 이상의 기록을 작성하셨습니다. 계정으로 로그인하면 이 기기의 로컬 게스트 데이터는 모두 삭제되고 클라우드 데이터로 교체됩니다.",
+      "guest_login_title": "데이터가 이 기기에만 저장되어 있습니다",
+      "guest_login_bullet1": "8개의 거래를 기록하셨습니다 — 좋은 출발입니다!",
+      "guest_login_bullet2":
+          "게스트 데이터는 현재 백업되지 않습니다. 로그인하거나 계정을 생성하면 이 기기의 데이터는 유지되지 않습니다.",
+      "guest_login_bullet3": "기록이 중단되지 않도록 지금 계정으로 시작하세요.",
+      "guest_login_final_title": "15개 거래 달성 — 훌륭한 습관입니다!",
+      "guest_login_final_bullet1": "첫날부터 꾸준히 기록해오셨습니다. 이는 많은 사람이 하지 못하는 일입니다.",
+      "guest_login_final_bullet2": "로그인 시 이 게스트 기기의 데이터는 유지되지 않습니다.",
+      "guest_login_final_bullet3": "지금 계정을 생성하여 앞으로의 기록이 안전하게 저장되고 동기화되도록 하세요.",
       "not_logged_in": "로그인되지 않음",
       "register_login": "등록 / 로그인",
       "display_name_title": "이름 편집",
@@ -2632,6 +2653,7 @@ class CodegenLoader extends AssetLoader {
       "unit_million": "百万",
       "unit_thousand": "千",
       "guest_login_action": "ログイン / 登録",
+      "guest_login_continue_local": "ローカル体験を続ける",
       "later": "後で",
     },
     "auth": {
@@ -3236,11 +3258,15 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "ゲスト",
-      "guest_login_title": "財務記録を保存する",
-      "guest_login_body": "現在ゲストアカウントを使用しています。クラウドに安全に保存するために、ログインしてください。",
-      "guest_login_final_title": "警告：ゲストデータは消去されます",
-      "guest_login_final_body":
-          "ゲストとして15件以上の記録を作成しました。アカウントにログインすると、このデバイス上のローカルゲストデータはすべて消去され、クラウドデータに置き換わります。",
+      "guest_login_title": "データはこのデバイスにのみ保存されています",
+      "guest_login_bullet1": "8件の取引を記録しました — 素晴らしいスタートです！",
+      "guest_login_bullet2":
+          "ゲストデータはバックアップされていません。ログインまたはアカウント作成時、このデバイスのデータは保持されません。",
+      "guest_login_bullet3": "記録が途切れないよう、今すぐアカウントで始めましょう。",
+      "guest_login_final_title": "15件の取引達成 — 素晴らしい習慣です！",
+      "guest_login_final_bullet1": "初日から自主的に定期的な記録を続けています。これは多くの人ができないことです。",
+      "guest_login_final_bullet2": "ログイン時、このゲストデバイス上のデータは保持されません。",
+      "guest_login_final_bullet3": "今すぐアカウントを作成し、これからの記録を保存・同期して中断なく続けましょう。",
       "not_logged_in": "ログインしていません",
       "register_login": "登録 / ログイン",
       "display_name_title": "名前を編集",
@@ -3439,6 +3465,7 @@ class CodegenLoader extends AssetLoader {
       "unit_million": "百万",
       "unit_thousand": "千",
       "guest_login_action": "登录 / 注册",
+      "guest_login_continue_local": "继续本地体验",
       "later": "以后再说",
     },
     "auth": {
@@ -4036,11 +4063,14 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "访客",
-      "guest_login_title": "保存您的财务记录",
-      "guest_login_body": "您当前使用的是访客账号。登录账号以将数据安全保存到云端。",
-      "guest_login_final_title": "警告：访客数据将被清除",
-      "guest_login_final_body":
-          "您已作为访客记录了 15 条或更多数据。当您登录账号时，此设备上的所有本地访客数据都将被清除，并替换为您的云端账号数据。",
+      "guest_login_title": "您的数据仅保存在此设备上",
+      "guest_login_bullet1": "您已记录 8 笔交易 — 良好的开端！",
+      "guest_login_bullet2": "访客数据目前未备份。如果登录或创建账号，此设备上的数据将不会保留。",
+      "guest_login_bullet3": "立即使用账号开始，让您的记账不中断。",
+      "guest_login_final_title": "已记录 15 笔交易 — 值得赞赏的习惯！",
+      "guest_login_final_bullet1": "您从第一天起就主动坚持记账，这是很多人做不到的。",
+      "guest_login_final_bullet2": "登录时，此访客设备上的数据将不会保留。",
+      "guest_login_final_bullet3": "立即创建账号，让您的财务记录从现在起安全保存、同步且不中断。",
       "not_logged_in": "未登录",
       "register_login": "注册 / 登录",
       "display_name_title": "编辑姓名",
