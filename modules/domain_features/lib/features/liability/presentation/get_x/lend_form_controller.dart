@@ -224,6 +224,13 @@ class LendFormController extends LiabilityBaseFormController {
     selectedLiabilityId.value = null;
   }
 
+  @override
+  void clearFormOnLogout() {
+    super.clearFormOnLogout();
+    liabilityBalances.clear();
+    selectedCategory.value = null;
+  }
+
   void setCategory(CategoryEntity category) {
     selectedCategory.value = category;
     pendingPrefillCategoryId.value = null;

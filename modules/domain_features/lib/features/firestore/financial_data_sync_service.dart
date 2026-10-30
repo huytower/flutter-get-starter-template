@@ -23,12 +23,15 @@ import '../../../features/wallet/data/datasources/wallet_sync_datasource.dart';
 import '../../../features/wallet/data/models/wallet_hive_model.dart';
 import '../../core/di/di.dart';
 import '../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
+import '../liability/presentation/get_x/lend_form_controller.dart';
+import '../liability/presentation/get_x/liability_form_controller.dart';
+import '../liability/presentation/get_x/liability_list_controller.dart';
 import '../transaction/presentation/get_x/transaction_controller.dart';
-import 'guest_login_prompt_service.dart';
 import '../wallet/presentation/get_x/wallet_controller.dart';
-import 'enum/logout_block.dart';
-import 'enum/logout_result.dart';
-import 'enum/sync_status.dart';
+import 'package:domain_features/features/firestore/enum/logout_block.dart';
+import 'package:domain_features/features/firestore/enum/logout_result.dart';
+import 'package:domain_features/features/firestore/enum/sync_status.dart';
+import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 
 export 'enum/logout_block.dart';
 export 'enum/logout_result.dart';
@@ -377,6 +380,18 @@ class FinancialDataSyncService {
     if (Get.isRegistered<BudgetAllocationController>()) {
       await Get.find<BudgetAllocationController>().loadAll(showLoading: false);
     }
+
+    if (Get.isRegistered<LendFormController>()) {
+      await Get.find<LendFormController>().loadLiabilities();
+    }
+
+    if (Get.isRegistered<LiabilityFormController>()) {
+      await Get.find<LiabilityFormController>().loadLiabilities();
+    }
+
+    if (Get.isRegistered<LiabilityListController>()) {
+      await Get.find<LiabilityListController>().load();
+    }
   }
 
   /// Blanks the in-memory financial state on sign-out.
@@ -399,11 +414,16 @@ class FinancialDataSyncService {
       if (Get.isRegistered<BudgetAllocationController>()) {
         Get.find<BudgetAllocationController>().liabilityBalances.clear();
       }
-    } catch (e) {
-      'Failed to release in-memory controllers: $e'.Log(
-        'FinancialDataSyncService',
-      );
-    }
+      if (Get.isRegistered<LendFormController>()) {
+        Get.find<LendFormController>().clearFormOnLogout();
+      }
+      if (Get.isRegistered<LiabilityFormController>()) {
+        Get.find<LiabilityFormController>().clearFormOnLogout();
+      }
+      if (Get.isRegistered<LiabilityListController>()) {
+        Get.find<LiabilityListController>().liabilities.clear();
+      }
+    } catch (_) {}
   }
 
   /// Whether the user is currently allowed to sign out.

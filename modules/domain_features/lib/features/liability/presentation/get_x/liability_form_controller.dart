@@ -345,6 +345,13 @@ class LiabilityFormController extends LiabilityBaseFormController {
   }
 
   @override
+  void clearFormOnLogout() {
+    super.clearFormOnLogout();
+    liabilityBalances.clear();
+    selectedCategory.value = null;
+  }
+
+  @override
   final Rx<LiabilityDirectionForm> action = LiabilityDirectionForm.increase.obs;
 
   @override

@@ -141,4 +141,13 @@ abstract class LiabilityBaseFormController extends TransactionFormController
     // and resolving the CategoryEntity.
     super.applyQuickEntryCategory(categoryId);
   }
+
+  void clearFormOnLogout() {
+    mergedItems.clear();
+    selectedLiabilityId.value = null;
+    amountStr.value = '0';
+    noteController.clear();
+    showKeypad.value = false;
+    selectedWalletId.value = null;
+  }
 }
