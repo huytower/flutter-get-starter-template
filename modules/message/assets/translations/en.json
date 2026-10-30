@@ -55,7 +55,9 @@
     "clear": "Clear",
     "unit_billion": "B",
     "unit_million": "M",
-    "unit_thousand": "k"
+    "unit_thousand": "k",
+    "guest_import_action": "Link Account",
+    "later": "Later"
   },
   "auth": {
     "login": "Login",
@@ -654,6 +656,10 @@
     "guest": "Guest",
     "not_logged_in": "Not logged in",
     "register_login": "Register / Login",
+    "guest_import_title": "Don't lose your data",
+    "guest_import_body": "Data is currently stored only on this device. Link an account so you don't lose it when changing phones or deleting the app.",
+    "guest_import_final_title": "Don't lose your data",
+    "guest_import_final_body": "You have recorded over 20 transactions. If you change phones, delete the app, or sign in to a new account without linking, all of this data will be lost and cannot be recovered.",
     "display_name_title": "Edit name",
     "display_name_hint": "Enter your display name",
     "display_name_save": "Save",

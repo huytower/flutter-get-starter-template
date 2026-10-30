@@ -76,6 +76,8 @@ class CodegenLoader extends AssetLoader {
       "unit_billion": "B",
       "unit_million": "M",
       "unit_thousand": "k",
+      "guest_import_action": "Link Account",
+      "later": "Later",
     },
     "auth": {
       "login": "Login",
@@ -723,6 +725,12 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "Guest",
+      "guest_import_title": "Keep your records",
+      "guest_import_body":
+          "Link an account to preserve your guest records across devices.",
+      "guest_import_final_title": "Protect your financial records",
+      "guest_import_final_body":
+          "You have 20 or more guest records. If you do not import them now, a new login will start a clean account.",
       "not_logged_in": "Not logged in",
       "register_login": "Register / Login",
       "display_name_title": "Edit name",
@@ -939,6 +947,8 @@ class CodegenLoader extends AssetLoader {
       "unit_billion": "tỷ",
       "unit_million": "tr",
       "unit_thousand": "k",
+      "guest_import_action": "Liên kết tài khoản",
+      "later": "Để sau",
     },
     "auth": {
       "login": "Đăng nhập",
@@ -1436,6 +1446,12 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "Khách",
+      "guest_import_title": "Giữ lại dữ liệu của bạn",
+      "guest_import_body":
+          "Liên kết tài khoản để bảo toàn dữ liệu khách trên các thiết bị.",
+      "guest_import_final_title": "Bảo vệ dữ liệu tài chính",
+      "guest_import_final_body":
+          "Bạn đã có từ 20 bản ghi khách trở lên. Nếu không nhập ngay, tài khoản đăng nhập mới sẽ bắt đầu lại từ đầu.",
       "not_logged_in": "Chưa đăng nhập",
       "register_login": "Đăng ký / Đăng nhập",
       "display_name_title": "Sửa tên",
@@ -1797,6 +1813,8 @@ class CodegenLoader extends AssetLoader {
       "unit_billion": "조",
       "unit_million": "백만",
       "unit_thousand": "천",
+      "guest_import_action": "계정 연결",
+      "later": "나중에",
     },
     "auth": {
       "login": "로그인",
@@ -2409,6 +2427,11 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "게스트",
+      "guest_import_title": "기록 보존하기",
+      "guest_import_body": "계정을 연결하여 여러 기기에서 게스트 기록을 안전하게 보존하세요.",
+      "guest_import_final_title": "금융 기록 보호",
+      "guest_import_final_body":
+          "20개 이상의 게스트 기록이 있습니다. 지금 가져오지 않으면 새 로그인 시 클린 계정으로 시작됩니다.",
       "not_logged_in": "로그인되지 않음",
       "register_login": "등록 / 로그인",
       "display_name_title": "이름 편집",
@@ -2608,6 +2631,8 @@ class CodegenLoader extends AssetLoader {
       "unit_billion": "億",
       "unit_million": "百万",
       "unit_thousand": "千",
+      "guest_import_action": "アカウントを連携",
+      "later": "後で",
     },
     "auth": {
       "login": "ログイン",
@@ -3211,6 +3236,11 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "ゲスト",
+      "guest_import_title": "記録を保存する",
+      "guest_import_body": "アカウントを連携して、デバイス間でゲスト記録を保存します。",
+      "guest_import_final_title": "財務記録を保護する",
+      "guest_import_final_body":
+          "20件以上のゲスト記録があります。今すぐインポートしない場合、新規ログインでクリーンなアカウントが開始されます",
       "not_logged_in": "ログインしていません",
       "register_login": "登録 / ログイン",
       "display_name_title": "名前を編集",
@@ -3408,6 +3438,8 @@ class CodegenLoader extends AssetLoader {
       "unit_billion": "十亿",
       "unit_million": "百万",
       "unit_thousand": "千",
+      "guest_import_action": "关联账户",
+      "later": "以后再说",
     },
     "auth": {
       "login": "登录",
@@ -4004,6 +4036,10 @@ class CodegenLoader extends AssetLoader {
     },
     "profile": {
       "guest": "访客",
+      "guest_import_title": "保留您的记录",
+      "guest_import_body": "关联账号以在多台设备间保存您的访客记录。",
+      "guest_import_final_title": "保护您的财务记录",
+      "guest_import_final_body": "您已有 20 条或更多访客记录。如果现在不导入，新登录将开启全新账号。",
       "not_logged_in": "未登录",
       "register_login": "注册 / 登录",
       "display_name_title": "编辑姓名",
@@ -4215,6 +4251,8 @@ class CcLocaleKeys {
   static const common_unit_billion = 'common.unit_billion';
   static const common_unit_million = 'common.unit_million';
   static const common_unit_thousand = 'common.unit_thousand';
+  static const common_guest_import_action = 'common.guest_import_action';
+  static const common_later = 'common.later';
 
   static const auth = 'auth';
   static const auth_login = 'auth.login';
@@ -4979,6 +5017,12 @@ class CcLocaleKeys {
 
   static const profile = 'profile';
   static const profile_guest = 'profile.guest';
+  static const profile_guest_import_title = 'profile.guest_import_title';
+  static const profile_guest_import_body = 'profile.guest_import_body';
+  static const profile_guest_import_final_title =
+      'profile.guest_import_final_title';
+  static const profile_guest_import_final_body =
+      'profile.guest_import_final_body';
   static const profile_not_logged_in = 'profile.not_logged_in';
   static const profile_register_login = 'profile.register_login';
   static const profile_display_name_title = 'profile.display_name_title';

@@ -131,7 +131,6 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
             textStyle: context.ccTextTheme.labelSmall?.copyWith(
               color: color.withOpacity(0.8),
               fontWeight: CcTypographyParams.semiBold,
-              fontSize: context.respFontSize(10),
             ),
           ),
         ),

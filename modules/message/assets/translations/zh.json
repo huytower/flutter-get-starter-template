@@ -55,7 +55,9 @@
     "clear": "清除",
     "unit_billion": "十亿",
     "unit_million": "百万",
-    "unit_thousand": "千"
+    "unit_thousand": "千",
+    "guest_import_action": "关联账户",
+    "later": "以后再说"
   },
   "auth": {
     "login": "登录",
@@ -652,6 +654,10 @@
   },
   "profile": {
     "guest": "访客",
+    "guest_import_title": "不要丢失您的数据",
+    "guest_import_body": "数据目前仅保存在此设备上。关联账号以便在更换手机或误删应用时不丢失数据。",
+    "guest_import_final_title": "不要丢失您的数据",
+    "guest_import_final_body": "您已记录超过 20 笔交易。如果在未关联账号的情况下更换手机、删除应用或登录新账号，所有这些数据都将丢失且无法恢复。",
     "not_logged_in": "未登录",
     "register_login": "注册 / 登录",
     "display_name_title": "编辑姓名",
