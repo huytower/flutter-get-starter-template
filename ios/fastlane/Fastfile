@@ -12,19 +12,42 @@ platform :ios do
     # 2. Setup API Key (to bypass 2FA)
     raw_content = (ENV["APP_STORE_CONNECT_KEY_CONTENT"] || "").strip
     key_id = (ENV["APP_STORE_CONNECT_KEY_ID"] || "").strip
+    issuer_id = (ENV["APP_STORE_CONNECT_ISSUER_ID"] || "").strip
 
-    if raw_content.start_with?("-----BEGIN")
-      pem_content = raw_content
-    else
+    UI.user_error!("APP_STORE_CONNECT_KEY_ID is missing or empty!") if key_id.empty?
+    UI.user_error!("APP_STORE_CONNECT_ISSUER_ID is missing or empty!") if issuer_id.empty?
+    UI.user_error!("APP_STORE_CONNECT_KEY_CONTENT is missing or empty! Please configure the secret in GitHub.") if raw_content.empty?
+
+    # Strip surrounding quotes if the secret was wrapped in quotes
+    raw_content = raw_content.sub(/\A['"]/, "").sub(/['"]\z/, "").strip
+
+    # If the content doesn't have the PEM header, it may be base64-encoded
+    if !raw_content.include?("BEGIN")
       require "base64"
       begin
-        pem_content = Base64.decode64(raw_content)
+        decoded = Base64.decode64(raw_content).strip
+        if decoded.include?("BEGIN")
+          raw_content = decoded
+        else
+          # In case the secret only contains the raw base64 DER body
+          raw_content = "-----BEGIN PRIVATE KEY-----\n#{raw_content}\n-----END PRIVATE KEY-----"
+        end
       rescue => e
-        pem_content = raw_content
+        # Fall back to raw_content if decoding fails
       end
     end
 
-    pem_content = pem_content.gsub("\r", "").gsub("\\n", "\n").strip
+    # Normalize carriage returns and literal escaped newlines
+    normalized = raw_content.gsub("\r", "").gsub("\\n", "\n").strip
+
+    # Extract base64 body and format into RFC-compliant 64-character lines
+    if normalized =~ /-----BEGIN[^-]+-----\s*([\s\S]+?)\s*-----END[^-]+-----/
+      body = $1.gsub(/\s+/, "") # Remove all whitespace/newlines from body
+      wrapped_body = body.scan(/.{1,64}/).join("\n")
+      pem_content = "-----BEGIN PRIVATE KEY-----\n#{wrapped_body}\n-----END PRIVATE KEY-----\n"
+    else
+      pem_content = "#{normalized}\n"
+    end
 
     # Write key to temporary .p8 file for Fastlane key_filepath
     require "tmpdir"
@@ -33,7 +56,7 @@ platform :ios do
 
     api_key = app_store_connect_api_key(
       key_id: key_id,
-      issuer_id: (ENV["APP_STORE_CONNECT_ISSUER_ID"] || "").strip,
+      issuer_id: issuer_id,
       key_filepath: key_file
     )
 
