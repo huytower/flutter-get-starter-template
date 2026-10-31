@@ -19,6 +19,12 @@ inputs:
   firebase-project-id:
     description: 'Firebase Project ID'
     required: false
+  slack-crash-webhook-url:
+    description: 'Slack Webhook URL for Crash Reports'
+    required: false
+  slack-feedback-webhook-url:
+    description: 'Slack Webhook URL for User Feedback'
+    required: false
 
 runs:
   using: "composite"
@@ -38,7 +44,7 @@ runs:
     - name: Setup Melos
       shell: bash
       run: |
-        dart pub global activate melos
+        dart pub global activate melos 7.8.1
         echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
 
     - name: Ensure Environment Files Exist
@@ -63,7 +69,7 @@ runs:
       shell: bash
       run: |
         # Inject secrets into .env files and native templates
-        # We use perl for cross-platform compatibility (Linux/macOS)
+        # Uses Perl with environment variables + \Q...\E to handle special characters safely
         
         inject_secret() {
           local key=$1
@@ -72,16 +78,18 @@ runs:
         
           if [ -n "$val" ]; then
             echo "Injecting $key..."
-            # Replace in .env files (handles the text placeholders)
-            find env -type f -name ".env.*" -exec perl -pi -e "s/$placeholder_env/$val/g" {} +
+            # Replace in .env files
+            SEARCH="$placeholder_env" REPLACE="$val" find env -type f -name ".env.*" -exec perl -pi -e 's/\Q$ENV{SEARCH}\E/$ENV{REPLACE}/g' {} +
             # Replace {{KEY}} style placeholders in all files
-            find . -type f -not -path '*/.*' -exec perl -pi -e "s/\{\{$key\}\}/$val/g" {} +
+            SEARCH="{{$key}}" REPLACE="$val" find . -type f -not -path '*/.*' -exec perl -pi -e 's/\Q$ENV{SEARCH}\E/$ENV{REPLACE}/g' {} +
           fi
         }
 
         inject_secret "GOOGLE_API_KEY_ANDROID" "${{ inputs.google-api-key-android }}" "YOUR_ANDROID_KEY_HERE"
         inject_secret "GOOGLE_API_KEY_IOS" "${{ inputs.google-api-key-ios }}" "YOUR_IOS_KEY_HERE"
         inject_secret "FIREBASE_PROJECT_ID" "${{ inputs.firebase-project-id }}" "your-project-id"
+        inject_secret "SLACK_CRASH_WEBHOOK_URL" "${{ inputs.slack-crash-webhook-url }}" "YOUR_SLACK_CRASH_WEBHOOK_URL_HERE"
+        inject_secret "SLACK_FEEDBACK_WEBHOOK_URL" "${{ inputs.slack-feedback-webhook-url }}" "YOUR_SLACK_FEEDBACK_WEBHOOK_URL_HERE"
 
     - name: Bootstrap Workspace
       shell: bash

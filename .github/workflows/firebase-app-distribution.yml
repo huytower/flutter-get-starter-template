@@ -1,8 +1,10 @@
 name: CI/CD Pipeline
 
-# DEACTIVATED: Automated triggers (push, pull_request) have been removed.
-# To re-enable, add the desired triggers back to the 'on' section.
 on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
     inputs:
       flavor:
@@ -17,9 +19,8 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  # 1. Quality Gate: Runs for everything.
+  # 1. Quality Gate: Runs for all pushes, PRs, and workflow dispatches.
   quality-check:
-    if: false # MANUALLY DISABLED
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -31,15 +32,17 @@ jobs:
           google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
           google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
           firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
+          slack-crash-webhook-url: ${{ secrets.SLACK_CRASH_WEBHOOK_URL }}
+          slack-feedback-webhook-url: ${{ secrets.SLACK_FEEDBACK_WEBHOOK_URL }}
       - name: Lint & Test
         run: |
           melos run gen
           melos run analyze
           melos run test
 
-  # 2. Android Deployment: Only on Main or Dispatch.
-  android-distribute:
-    if: false # MANUALLY DISABLED
+  # 2. PR Smoke Test: Ensures the app still compiles on pull requests.
+  pr-build-test:
+    if: github.event_name == 'pull_request'
     needs: quality-check
     runs-on: ubuntu-latest
     steps:
@@ -52,6 +55,31 @@ jobs:
           google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
           google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
           firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
+          slack-crash-webhook-url: ${{ secrets.SLACK_CRASH_WEBHOOK_URL }}
+          slack-feedback-webhook-url: ${{ secrets.SLACK_FEEDBACK_WEBHOOK_URL }}
+          setup-java: 'true'
+      - name: Generate Code
+        run: melos run gen
+      - name: Compile Check
+        run: flutter build appbundle --release --flavor prod
+
+  # 3. Android Deployment: Runs on push to main or workflow_dispatch.
+  android-distribute:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs: quality-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+      - uses: ./.github/actions/flutter-setup
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
+          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
+          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
+          slack-crash-webhook-url: ${{ secrets.SLACK_CRASH_WEBHOOK_URL }}
+          slack-feedback-webhook-url: ${{ secrets.SLACK_FEEDBACK_WEBHOOK_URL }}
           setup-java: 'true'
           ruby-dir: 'android'
       
@@ -76,9 +104,9 @@ jobs:
           FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_SERVICE_CREDENTIALS_PATH: ../firebase_credentials.json
 
-  # 3. iOS Deployment: Only on Main or Dispatch.
+  # 4. iOS Deployment: Runs on push to main or workflow_dispatch.
   ios-distribute:
-    if: false # MANUALLY DISABLED
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     needs: quality-check
     runs-on: macos-latest
     steps:
@@ -91,6 +119,8 @@ jobs:
           google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
           google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
           firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
+          slack-crash-webhook-url: ${{ secrets.SLACK_CRASH_WEBHOOK_URL }}
+          slack-feedback-webhook-url: ${{ secrets.SLACK_FEEDBACK_WEBHOOK_URL }}
           ruby-dir: 'ios'
 
       - name: Generate Code
@@ -102,24 +132,3 @@ jobs:
           APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_KEY_CONTENT }}
-
-  # 4. PR Smoke Test: Ensures the app still compiles.
-  pr-build-test:
-    if: false # MANUALLY DISABLED
-    needs: quality-check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          submodules: recursive
-      - uses: ./.github/actions/flutter-setup
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          google-api-key-android: ${{ secrets.GOOGLE_API_KEY_ANDROID }}
-          google-api-key-ios: ${{ secrets.GOOGLE_API_KEY_IOS }}
-          firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
-          setup-java: 'true'
-      - name: Generate Code
-        run: melos run gen
-      - name: Compile Check
-        run: flutter build appbundle --release --flavor prod

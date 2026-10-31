@@ -1,7 +1,7 @@
 app_identifier("vn.sosachxin.finance") # The bundle identifier of your app
-apple_id("your-apple-id@example.com") # Your Apple ID
-itc_team_id("your-itc-team-id") # App Store Connect Team ID
-team_id("your-team-id") # Developer Portal Team ID
+apple_id(ENV["APPLE_ID"] || "huytd46.fpt@gmail.com") # Your Apple ID
+itc_team_id(ENV["ITC_TEAM_ID"] || "46KM345YTJ") # App Store Connect Team ID
+team_id(ENV["TEAM_ID"] || "46KM345YTJ") # Developer Portal Team ID
 
 # For more information about the Appfile, see:
 # https://docs.fastlane.tools/advanced/#appfile
