@@ -51,11 +51,18 @@ platform :ios do
 
     # Convert PKCS#8 (BEGIN PRIVATE KEY) to SEC1 (BEGIN EC PRIVATE KEY)
     # In Ruby 3.2+ / OpenSSL 3.x, OpenSSL::PKey::EC.new (used by Fastlane Spaceship) strictly
-    # requires the SEC1 format to avoid 'invalid curve name (OpenSSL::PKey::ECError)'.
+    # requires the SEC1 format (BEGIN EC PRIVATE KEY) to avoid 'invalid curve name (OpenSSL::PKey::ECError)'.
     require "openssl"
     begin
       pkey = OpenSSL::PKey.read(pem_content)
-      pem_content = pkey.to_pem
+      begin
+        ec = OpenSSL::PKey::EC.new(pkey.to_der)
+        pem_content = ec.to_pem
+      rescue => e
+        require "open3"
+        stdout, stderr, status = Open3.capture3("openssl ec", stdin_data: pem_content)
+        pem_content = stdout if status.success? && !stdout.to_s.strip.empty?
+      end
     rescue => e
       require "open3"
       stdout, stderr, status = Open3.capture3("openssl ec", stdin_data: pem_content)
