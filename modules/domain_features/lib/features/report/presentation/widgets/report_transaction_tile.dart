@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
-import '../../../transaction/presentation/widgets/edit_transaction_sheet.dart';
 import '../../../wallet/export_wallet.dart';
 import '../get_x/report_controller.dart';
 import 'delete_transaction_sheet.dart';
@@ -44,8 +43,6 @@ class TransactionTile extends StatelessWidget {
         color: amountColor,
       );
     }
-
-    final editable = isEditableTransaction(transaction);
 
     return CcBouncing(
       onTap: null,

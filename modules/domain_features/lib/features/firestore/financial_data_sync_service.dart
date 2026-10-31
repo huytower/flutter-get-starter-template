@@ -497,7 +497,6 @@ class FinancialDataSyncService {
     // the refresh leaves the mounted controllers showing a fresh, empty state
     // (WalletLocalDataSource re-seeds Cash + Bank at 0) instead of the
     // previous user's balances.
-    final owner = CcAppStorage.instance.financialDataOwnerId;
     await _enqueueTransition(_resetAfterLogout);
     return LogoutResult.success;
   }

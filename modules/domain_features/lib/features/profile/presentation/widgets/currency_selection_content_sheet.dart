@@ -302,7 +302,6 @@ class CurrencySelectionContentSheet extends StatelessWidget {
     final baseCurrency = controller.primaryCurrencyCode.value;
     final bool isBaseVnd = baseCurrency.toUpperCase() == 'VND';
     final formatCurrencyCode = isBaseVnd ? baseCurrency : code;
-    final formatDefinition = CurrencyCatalog.getDefinition(formatCurrencyCode);
 
     if (isLoading && convertedAmount == null) {
       displayAmount = '...';

@@ -25,6 +25,9 @@ inputs:
   slack-feedback-webhook-url:
     description: 'Slack Webhook URL for User Feedback'
     required: false
+  gemini-model-name:
+    description: 'Gemini Model Name'
+    required: false
 
 runs:
   using: "composite"
@@ -90,6 +93,7 @@ runs:
         inject_secret "FIREBASE_PROJECT_ID" "${{ inputs.firebase-project-id }}" "your-project-id"
         inject_secret "SLACK_CRASH_WEBHOOK_URL" "${{ inputs.slack-crash-webhook-url }}" "YOUR_SLACK_CRASH_WEBHOOK_URL_HERE"
         inject_secret "SLACK_FEEDBACK_WEBHOOK_URL" "${{ inputs.slack-feedback-webhook-url }}" "YOUR_SLACK_FEEDBACK_WEBHOOK_URL_HERE"
+        inject_secret "GEMINI_MODEL_NAME" "${{ inputs.gemini-model-name }}" "gemini-3.8-flash"
 
     - name: Bootstrap Workspace
       shell: bash

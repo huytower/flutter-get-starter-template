@@ -34,6 +34,7 @@ jobs:
           firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
           slack-crash-webhook-url: ${{ secrets.SLACK_CRASH_WEBHOOK_URL }}
           slack-feedback-webhook-url: ${{ secrets.SLACK_FEEDBACK_WEBHOOK_URL }}
+          gemini-model-name: ${{ secrets.GEMINI_MODEL_NAME || vars.GEMINI_MODEL_NAME }}
       - name: Lint & Test
         run: |
           melos run gen
@@ -57,6 +58,7 @@ jobs:
           firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
           slack-crash-webhook-url: ${{ secrets.SLACK_CRASH_WEBHOOK_URL }}
           slack-feedback-webhook-url: ${{ secrets.SLACK_FEEDBACK_WEBHOOK_URL }}
+          gemini-model-name: ${{ secrets.GEMINI_MODEL_NAME || vars.GEMINI_MODEL_NAME }}
           setup-java: 'true'
       - name: Generate Code
         run: melos run gen
@@ -80,6 +82,7 @@ jobs:
           firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
           slack-crash-webhook-url: ${{ secrets.SLACK_CRASH_WEBHOOK_URL }}
           slack-feedback-webhook-url: ${{ secrets.SLACK_FEEDBACK_WEBHOOK_URL }}
+          gemini-model-name: ${{ secrets.GEMINI_MODEL_NAME || vars.GEMINI_MODEL_NAME }}
           setup-java: 'true'
           ruby-dir: 'android'
       
