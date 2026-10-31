@@ -289,11 +289,13 @@ class ReportController extends CcGetController {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (scrollController.hasClients &&
           scrollController.positions.isNotEmpty) {
-        scrollController.animateTo(
-          scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeOutCubic,
-        );
+        for (final position in scrollController.positions) {
+          position.animateTo(
+            position.maxScrollExtent,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeOutCubic,
+          );
+        }
       }
     });
   }

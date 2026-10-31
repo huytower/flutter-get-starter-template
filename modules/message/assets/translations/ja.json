@@ -86,6 +86,10 @@
     "didnt_receive_code": "コードを受け取りませんでしたか？",
     "resend": "後で再送信",
     "terms_and_privacy": "続行することで、利用規約とプライバシーポリシーに同意します",
+    "terms_of_service": "利用規約",
+    "link_account": "アカウント連携",
+    "link_phone": "電話番号連携",
+    "agree_prefix": "同意する ",
     "biometric": {
       "reason": "認証が必要です",
       "fallback": "設定でこのアプリの生体認証を有効にしてください。",
@@ -107,7 +111,11 @@
       "invalid": "無効なOTPコード",
       "expired": "OTPコードの有効期限が切れました",
       "too_many_attempts": "試行回数が多すぎます。後でもう一度お試しください"
-    }
+    },
+    "security_warning_title": "正規品のセキュリティが統合されています。正規のデバイスのみ使用可能です：",
+    "security_warning_bullet_sms": "SMS/OTP認証",
+    "security_warning_bullet_ai": "AI生成コンテンツ",
+    "security_warning_other_login": "その他のログイン方法"
   },
   "validation": {
     "required": "このフィールドは必須です",

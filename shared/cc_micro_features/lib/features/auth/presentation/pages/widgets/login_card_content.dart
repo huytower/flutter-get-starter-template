@@ -1,4 +1,5 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -59,8 +60,8 @@ class _LoginCardContentState extends State<LoginCardContent> {
         const CcSpaceLG(),
         CcText(
           widget.isLinking
-              ? (widget.loginTitle ?? 'Link Account')
-              : (widget.loginTitle ?? 'Login'),
+              ? (widget.loginTitle ?? el.tr(CcLocaleKeys.auth_link_account))
+              : (widget.loginTitle ?? el.tr(CcLocaleKeys.auth_login)),
           textStyle: context.ccTextTheme.headlineMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: context.ccColorScheme.onSurface,
@@ -76,15 +77,17 @@ class _LoginCardContentState extends State<LoginCardContent> {
           ),
         ),
         const CcSpaceXL(),
-        const LoginOrDivider(),
+        LoginOrDivider(orText: el.tr(CcLocaleKeys.common_or)),
         const CcSpaceXL(),
         Opacity(
           opacity: opacity,
           child: CcBaseBtn(
             onTap: (isDisabled || !_isAgreed) ? null : widget.onPhoneLogin,
             title: widget.isLinking
-                ? (widget.phoneLoginTitle ?? 'Link Phone Number')
-                : (widget.phoneLoginTitle ?? 'Login with Phone Number'),
+                ? (widget.phoneLoginTitle ??
+                      el.tr(CcLocaleKeys.auth_link_phone))
+                : (widget.phoneLoginTitle ??
+                      el.tr(CcLocaleKeys.auth_login_phone)),
             bgColor: [
               context.ccColorScheme.primary,
               context.ccColorScheme.primary,
@@ -113,11 +116,13 @@ class _LoginCardContentState extends State<LoginCardContent> {
         Expanded(
           child: Text.rich(
             TextSpan(
-              text: widget.agreeText ?? 'I agree with ',
+              text: widget.agreeText ?? el.tr(CcLocaleKeys.auth_agree_prefix),
               style: context.ccTextTheme.bodySmall,
               children: [
                 TextSpan(
-                  text: widget.termsText ?? 'Term of Services',
+                  text:
+                      widget.termsText ??
+                      el.tr(CcLocaleKeys.auth_terms_of_service),
                   style: context.ccTextTheme.bodySmall?.copyWith(
                     color: context.ccColorScheme.primary,
                     fontWeight: CcTypographyParams.bold,

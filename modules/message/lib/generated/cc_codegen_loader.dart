@@ -107,6 +107,10 @@ class CodegenLoader extends AssetLoader {
       "resend": "Resend after",
       "terms_and_privacy":
           "By continuing, you agree to our Terms of Service and Privacy Policy",
+      "terms_of_service": "Terms of Service",
+      "link_account": "Link Account",
+      "link_phone": "Link Phone Number",
+      "agree_prefix": "I agree with ",
       "biometric": {
         "reason": "Authentication required",
         "fallback": "Please enable biometrics for this app in Settings.",
@@ -987,6 +991,10 @@ class CodegenLoader extends AssetLoader {
       "didnt_receive_code": "コードを受け取りませんでしたか？",
       "resend": "後で再送信",
       "terms_and_privacy": "続行することで、利用規約とプライバシーポリシーに同意します",
+      "terms_of_service": "利用規約",
+      "link_account": "アカウント連携",
+      "link_phone": "電話番号連携",
+      "agree_prefix": "同意する ",
       "biometric": {
         "reason": "認証が必要です",
         "fallback": "設定でこのアプリの生体認証を有効にしてください。",
@@ -1009,6 +1017,10 @@ class CodegenLoader extends AssetLoader {
         "expired": "OTPコードの有効期限が切れました",
         "too_many_attempts": "試行回数が多すぎます。後でもう一度お試しください",
       },
+      "security_warning_title": "正規品のセキュリティが統合されています。正規のデバイスのみ使用可能です：",
+      "security_warning_bullet_sms": "SMS/OTP認証",
+      "security_warning_bullet_ai": "AI生成コンテンツ",
+      "security_warning_other_login": "その他のログイン方法",
     },
     "validation": {
       "required": "このフィールドは必須です",
@@ -1803,6 +1815,10 @@ class CodegenLoader extends AssetLoader {
       "didnt_receive_code": "코드를 받지 못하셨나요?",
       "resend": "후에 재전송",
       "terms_and_privacy": "계속하면 서비스 약관 및 개인정보 보호정책에 동의합니다",
+      "terms_of_service": "서비스 이용약관",
+      "link_account": "계정 연동",
+      "link_phone": "휴대폰 번호 연동",
+      "agree_prefix": "동의합니다 ",
       "biometric": {
         "reason": "인증 필요",
         "fallback": "설정에서 이 앱의 생체 인식을 활성화하세요.",
@@ -1825,6 +1841,10 @@ class CodegenLoader extends AssetLoader {
         "expired": "OTP 코드가 만료되었습니다",
         "too_many_attempts": "시도 횟수 초과. 나중에 다시 시도하세요",
       },
+      "security_warning_title": "정품 보안이 통합되어 정품 기기만 사용할 수 있습니다:",
+      "security_warning_bullet_sms": "SMS/OTP 인증",
+      "security_warning_bullet_ai": "AI 생성 콘텐츠",
+      "security_warning_other_login": "다른 로그인 방법",
     },
     "validation": {
       "required": "이 필드는 필수입니다",
@@ -2637,6 +2657,10 @@ class CodegenLoader extends AssetLoader {
       "resend": "Gửi lại sau",
       "terms_and_privacy":
           "Bằng cách tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi",
+      "terms_of_service": "Điều khoản dịch vụ",
+      "link_account": "Liên kết tài khoản",
+      "link_phone": "Liên kết số điện thoại",
+      "agree_prefix": "Tôi đồng ý với ",
       "biometric": {
         "reason": "Yêu cầu xác thực",
         "fallback":
@@ -3516,6 +3540,10 @@ class CodegenLoader extends AssetLoader {
       "didnt_receive_code": "没有收到代码？",
       "resend": "后重发",
       "terms_and_privacy": "继续即表示您同意我们的服务条款和隐私政策",
+      "terms_of_service": "服务条款",
+      "link_account": "关联账号",
+      "link_phone": "关联手机号码",
+      "agree_prefix": "我同意 ",
       "biometric": {
         "reason": "需要身份验证",
         "fallback": "请在设置中为此应用启用生物识别。",
@@ -3538,6 +3566,10 @@ class CodegenLoader extends AssetLoader {
         "expired": "OTP 代码已过期",
         "too_many_attempts": "尝试次数过多。请稍后再试",
       },
+      "security_warning_title": "已集成正品安全防护，仅正品设备可以使用：",
+      "security_warning_bullet_sms": "SMS/OTP 验证",
+      "security_warning_bullet_ai": "AI 生成内容",
+      "security_warning_other_login": "其他登录方式",
     },
     "validation": {
       "required": "此字段为必填项",

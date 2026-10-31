@@ -90,6 +90,10 @@ abstract class LocaleKeys {
   static const auth_didnt_receive_code = 'auth.didnt_receive_code';
   static const auth_resend = 'auth.resend';
   static const auth_terms_and_privacy = 'auth.terms_and_privacy';
+  static const auth_terms_of_service = 'auth.terms_of_service';
+  static const auth_link_account = 'auth.link_account';
+  static const auth_link_phone = 'auth.link_phone';
+  static const auth_agree_prefix = 'auth.agree_prefix';
   static const auth_biometric_reason = 'auth.biometric.reason';
   static const auth_biometric_fallback = 'auth.biometric.fallback';
   static const auth_biometric_not_available_log =

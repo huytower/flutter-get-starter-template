@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -7,13 +8,6 @@ import '../bloc/phone_auth_event.dart';
 import '../bloc/phone_auth_state.dart';
 import 'widgets/auth_security_warning_card.dart';
 import 'widgets/phone_auth_gradient_container.dart';
-
-/// Semantic text tokens for this project-blind page.
-/// Defaults to plain English so the page never imports the `message` module.
-const String _enterPhoneNumber = 'Log in with \n Phone Number';
-const String _phoneNumberHint = 'Enter phone number';
-const String _validationPhone = 'Invalid phone number format';
-const String _continueText = 'Continue';
 
 class PhoneInputPage extends StatefulWidget {
   const PhoneInputPage({super.key});
@@ -57,7 +51,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
     // Validate the parsed phone number
     if (!CcPhoneNumberHelper.isValidPhoneNumber(parsedPhoneNumber)) {
       setState(() {
-        _validationError = _validationPhone;
+        _validationError = el.tr(CcLocaleKeys.validation_phone);
       });
       return;
     }
@@ -78,7 +72,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
       children: [
         const CcSpeechBubbleIcon(),
         CcText(
-          _enterPhoneNumber,
+          el.tr(CcLocaleKeys.auth_enter_phone_number),
           maxLines: 2,
           align: Alignment.center,
           textStyle: context.ccTextTheme.headlineMedium?.copyWith(
@@ -92,7 +86,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
           countryCode: _countryCode,
           onCountryCodeTap: () {},
           controller: _phoneController,
-          hintText: _phoneNumberHint,
+          hintText: el.tr(CcLocaleKeys.auth_phone_number_hint),
         ),
         // Validation error display
         if (_validationError != null)
@@ -141,7 +135,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                 return CcNextBtn.bouncing(
                   onTap: _handleContinue,
                   isEnable: isEnabled,
-                  title: _continueText,
+                  title: el.tr(CcLocaleKeys.common_continue),
                 );
               },
             );

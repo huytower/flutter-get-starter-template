@@ -86,6 +86,10 @@
     "didnt_receive_code": "Không nhận được mã?",
     "resend": "Gửi lại sau",
     "terms_and_privacy": "Bằng cách tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi",
+    "terms_of_service": "Điều khoản dịch vụ",
+    "link_account": "Liên kết tài khoản",
+    "link_phone": "Liên kết số điện thoại",
+    "agree_prefix": "Tôi đồng ý với ",
     "biometric": {
       "reason": "Yêu cầu xác thực",
       "fallback": "Vui lòng bật sinh trắc học cho ứng dụng này trong Cài đặt.",
@@ -107,7 +111,11 @@
       "invalid": "Mã OTP không hợp lệ",
       "expired": "Mã OTP đã hết hạn",
       "too_many_attempts": "Quá nhiều lần thử. Vui lòng thử lại sau"
-    }
+    },
+    "security_warning_title": "Tích hợp bảo mật chính hãng, chỉ có thể sử dụng thiết bị chính hãng:",
+    "security_warning_bullet_sms": "Xác minh SMS/OTP",
+    "security_warning_bullet_ai": "Nội dung tạo bởi AI",
+    "security_warning_other_login": "Đăng nhập khác"
   },
   "validation": {
     "required": "Trường này là bắt buộc",

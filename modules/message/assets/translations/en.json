@@ -86,6 +86,10 @@
     "didnt_receive_code": "Didn't receive code?",
     "resend": "Resend after",
     "terms_and_privacy": "By continuing, you agree to our Terms of Service and Privacy Policy",
+    "terms_of_service": "Terms of Service",
+    "link_account": "Link Account",
+    "link_phone": "Link Phone Number",
+    "agree_prefix": "I agree with ",
     "biometric": {
       "reason": "Authentication required",
       "fallback": "Please enable biometrics for this app in Settings.",
@@ -107,7 +111,11 @@
       "invalid": "Invalid OTP code",
       "expired": "OTP code has expired",
       "too_many_attempts": "Too many attempts. Please try again later"
-    }
+    },
+    "security_warning_title": "Integrated genuine security protection, only genuine devices can be used:",
+    "security_warning_bullet_sms": "SMS/OTP Verification",
+    "security_warning_bullet_ai": "AI-Generated Content",
+    "security_warning_other_login": "Other Sign In Methods"
   },
   "validation": {
     "required": "This field is required",

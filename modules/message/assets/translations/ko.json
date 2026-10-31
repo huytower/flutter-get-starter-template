@@ -86,6 +86,10 @@
     "didnt_receive_code": "코드를 받지 못하셨나요?",
     "resend": "후에 재전송",
     "terms_and_privacy": "계속하면 서비스 약관 및 개인정보 보호정책에 동의합니다",
+    "terms_of_service": "서비스 이용약관",
+    "link_account": "계정 연동",
+    "link_phone": "휴대폰 번호 연동",
+    "agree_prefix": "동의합니다 ",
     "biometric": {
       "reason": "인증 필요",
       "fallback": "설정에서 이 앱의 생체 인식을 활성화하세요.",
@@ -107,7 +111,11 @@
       "invalid": "잘못된 OTP 코드",
       "expired": "OTP 코드가 만료되었습니다",
       "too_many_attempts": "시도 횟수 초과. 나중에 다시 시도하세요"
-    }
+    },
+    "security_warning_title": "정품 보안이 통합되어 정품 기기만 사용할 수 있습니다:",
+    "security_warning_bullet_sms": "SMS/OTP 인증",
+    "security_warning_bullet_ai": "AI 생성 콘텐츠",
+    "security_warning_other_login": "다른 로그인 방법"
   },
   "validation": {
     "required": "이 필드는 필수입니다",

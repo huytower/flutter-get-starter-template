@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -12,14 +13,6 @@ import '../bloc/phone_auth_state.dart';
 import 'widgets/auth_security_warning_card.dart';
 import 'widgets/phone_auth_gradient_container.dart';
 import 'widgets/phone_otp_input.dart';
-
-/// Semantic text tokens for this project-blind page.
-/// Defaults to plain English so the page never imports the `message` module.
-const String _weJustSentSms = 'We just sent an SMS';
-const String _enterSecurityCode = 'Enter the security code we sent to';
-const String _verifyText = 'Verify';
-const String _didntReceiveCode = "Didn't receive code?";
-const String _resendText = 'Resend after';
 
 @RoutePage()
 class OtpVerificationPage extends StatefulWidget {
@@ -129,7 +122,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
   Widget _buildTitle(BuildContext context) {
     return CcText(
-      _weJustSentSms,
+      el.tr(CcLocaleKeys.auth_we_just_sent_sms),
       maxLines: 2,
       align: Alignment.center,
       textStyle: context.ccTextTheme.headlineMedium?.copyWith(
@@ -145,7 +138,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CcText(
-          _enterSecurityCode,
+          el.tr(CcLocaleKeys.auth_enter_security_code),
           align: Alignment.center,
           textAlign: TextAlign.center,
           textStyle: context.ccTextTheme.bodyMedium?.copyWith(
@@ -232,7 +225,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
             return CcNextBtn(
               onTap: _handleVerify,
               isEnable: isEnabled,
-              title: _verifyText,
+              title: el.tr(CcLocaleKeys.auth_verify),
             );
           },
         );
@@ -244,7 +237,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     return Column(
       children: [
         CcText(
-          _didntReceiveCode,
+          el.tr(CcLocaleKeys.auth_didnt_receive_code),
           align: Alignment.center,
           textAlign: TextAlign.center,
           textStyle: context.ccTextTheme.bodyMedium?.copyWith(
@@ -263,7 +256,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               CcText(
-                _resendText,
+                el.tr(CcLocaleKeys.auth_resend),
                 textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                   color: _canResend
                       ? context.ccColorScheme.primary

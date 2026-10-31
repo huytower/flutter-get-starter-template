@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,6 +26,7 @@ class LoginSocialButtons extends StatelessWidget {
           children: [
             CcSocialLoginBtn(
               type: SocialLoginType.google,
+              label: el.tr(CcLocaleKeys.auth_login_google),
               onTap: () {
                 context.read<LoginBloc>().add(
                   isLinking
@@ -38,11 +40,12 @@ class LoginSocialButtons extends StatelessWidget {
               const CcSpaceMD(),
               CcSocialLoginBtn(
                 type: SocialLoginType.apple,
+                label: el.tr(CcLocaleKeys.auth_login_apple),
                 onTap: () {
                   context.read<LoginBloc>().add(
                     isLinking
                         ? const LinkWithAppleStarted()
-                        : const LoginWithAppleStarted(),
+                        : const LinkWithAppleStarted(),
                   );
                 },
               ),

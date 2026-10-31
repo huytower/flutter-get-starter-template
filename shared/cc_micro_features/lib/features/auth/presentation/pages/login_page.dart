@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
-import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,8 +39,6 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    final isVietnamese = context.locale.languageCode == 'vi';
-
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
@@ -78,20 +76,14 @@ class _LoginViewState extends State<LoginView> {
                 child: LoginCardContent(
                   onPhoneLogin: () =>
                       getIt<AuthCoordinator>().navigateToPhoneAuth(context),
-                  loginTitle: isVietnamese
-                      ? (_isLinking ? 'Liên kết tài khoản' : 'Đăng nhập')
-                      : (_isLinking ? 'Link Account' : 'Login'),
-                  phoneLoginTitle: isVietnamese
-                      ? (_isLinking
-                            ? 'Liên kết số điện thoại'
-                            : 'Đăng nhập bằng số điện thoại')
-                      : (_isLinking
-                            ? 'Link Phone Number'
-                            : 'Login with Phone Number'),
-                  agreeText: isVietnamese ? 'Tôi đồng ý với ' : 'I agree with ',
-                  termsText: isVietnamese
-                      ? 'Điều khoản dịch vụ'
-                      : 'Term of Services',
+                  loginTitle: _isLinking
+                      ? el.tr(CcLocaleKeys.auth_link_account)
+                      : el.tr(CcLocaleKeys.auth_login),
+                  phoneLoginTitle: _isLinking
+                      ? el.tr(CcLocaleKeys.auth_link_phone)
+                      : el.tr(CcLocaleKeys.auth_login_phone),
+                  agreeText: el.tr(CcLocaleKeys.auth_agree_prefix),
+                  termsText: el.tr(CcLocaleKeys.auth_terms_and_privacy),
                   isLinking: _isLinking,
                 ),
               );

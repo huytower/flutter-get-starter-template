@@ -86,6 +86,10 @@
     "didnt_receive_code": "没有收到代码？",
     "resend": "后重发",
     "terms_and_privacy": "继续即表示您同意我们的服务条款和隐私政策",
+    "terms_of_service": "服务条款",
+    "link_account": "关联账号",
+    "link_phone": "关联手机号码",
+    "agree_prefix": "我同意 ",
     "biometric": {
       "reason": "需要身份验证",
       "fallback": "请在设置中为此应用启用生物识别。",
@@ -107,7 +111,11 @@
       "invalid": "无效的 OTP 代码",
       "expired": "OTP 代码已过期",
       "too_many_attempts": "尝试次数过多。请稍后再试"
-    }
+    },
+    "security_warning_title": "已集成正品安全防护，仅正品设备可以使用：",
+    "security_warning_bullet_sms": "SMS/OTP 验证",
+    "security_warning_bullet_ai": "AI 生成内容",
+    "security_warning_other_login": "其他登录方式"
   },
   "validation": {
     "required": "此字段为必填项",
