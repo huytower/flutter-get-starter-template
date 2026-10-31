@@ -19,7 +19,7 @@ void main() {
     });
 
     test('falls back to the app default language when none is given', () {
-      expect(AiLanguage.nameOf(null), 'Vietnamese');
+      expect(AiLanguage.nameOf(null), 'English');
     });
 
     test('keeps an unmapped language code as is', () {

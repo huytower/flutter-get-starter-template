@@ -156,7 +156,7 @@ void main() {
     });
 
     test('falls back to the app default language when none is given', () {
-      expect(useCase.resolveLanguageName(null), 'Vietnamese');
+      expect(useCase.resolveLanguageName(null), 'English');
     });
 
     test('keeps an unmapped language code as is', () {
