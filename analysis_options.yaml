@@ -6,6 +6,8 @@ analyzer:
     - "**/*.gr.dart"
     - "**/*.config.dart"
     - "**/*.freezed.dart"
+    - "**/generated/**"
+    - "**/cc_codegen_loader.dart"
     - module/ui/lib/extension/logger.dart
   errors:
     unused_field: ignore

@@ -154,7 +154,8 @@ class ProfileLocalDataSource {
         CurrencyConstants.onCurrencyChanged.value++;
       }
       CurrencyConstants.onRegionalSettingsChanged.value++;
-    } on TimeoutException {
+    } on TimeoutException catch (e) {
+      'Regional settings save timed out: $e'.Log('ProfileLocalDataSource');
     } catch (_) {}
   }
 
