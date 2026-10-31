@@ -54,8 +54,6 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     _phoneNumber = event.phoneNumber;
     emit(const PhoneAuthLoading());
 
-    'Verifying phone number: ${event.phoneNumber}'.Log('PhoneAuthBloc');
-
     try {
       final verificationStream = _verifyPhoneNumberUseCase(
         phoneNumber: event.phoneNumber,
@@ -64,24 +62,17 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
       await emit.forEach<PhoneAuthStatus>(
         verificationStream,
         onData: (status) {
-          'Phone Auth Status: $status'.Log('PhoneAuthBloc');
           // If we already reached success, don't let background statuses overwrite it.
           if (state is PhoneAuthSuccess) {
             return state;
           }
 
           if (status is PhoneAuthStatusCodeSent) {
-            'Code sent: ${status.verificationId}'.Log('PhoneAuthBloc');
             _verificationId = status.verificationId;
             return PhoneAuthCodeSent(status.verificationId, status.resendToken);
           } else if (status is PhoneAuthStatusCompleted) {
-            'Phone Auth completed automatically: ${status.user.id}'.Log(
-              'PhoneAuthBloc',
-            );
             return PhoneAuthSuccess(status.user);
           } else if (status is PhoneAuthStatusFailed) {
-            'Phone Auth failed in background stream: ${status.failure.message}'
-                .Log('PhoneAuthBloc');
             // If we already have a verificationId, we are likely on the OTP screen.
             // A failure here is often a non-fatal auto-retrieval error.
             if (_verificationId != null) {
@@ -89,9 +80,6 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
             }
             return PhoneAuthError(status.failure.message);
           } else if (status is PhoneAuthStatusAutoRetrievalTimeout) {
-            'Phone Auth auto retrieval timeout: ${status.verificationId}'.Log(
-              'PhoneAuthBloc',
-            );
             if (status.verificationId.isNotEmpty) {
               _verificationId = status.verificationId;
             }
@@ -100,7 +88,6 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
           return state;
         },
         onError: (error, stackTrace) {
-          'Phone Auth error in stream: $error'.Log('PhoneAuthBloc');
           if (state is PhoneAuthSuccess || _verificationId != null) {
             return state;
           }
@@ -113,7 +100,6 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
         },
       );
     } catch (e) {
-      'Phone Auth exception: $e'.Log('PhoneAuthBloc');
       final msg = e is Exception
           ? e.toString().replaceAll('Exception: ', '')
           : e.toString();
@@ -135,7 +121,6 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     }
 
     if (_verificationId == null || _verificationId!.isEmpty) {
-      'Cannot sign in: verificationId is null or empty'.Log('PhoneAuthBloc');
       emit(
         const PhoneAuthError(
           'Verification session expired or missing. Please resend code.',

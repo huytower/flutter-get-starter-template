@@ -104,14 +104,16 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     BuildContext context,
     AddLiabilitySheetController controller,
   ) {
-    final titleKey = controller.direction.value == LiabilityDirection.lend
-        ? CcLocaleKeys.transaction_liability_direction_lend
-        : CcLocaleKeys.transaction_record_debt;
+    return Obx(() {
+      final titleKey = controller.direction.value == LiabilityDirection.lend
+          ? CcLocaleKeys.transaction_liability_direction_lend
+          : CcLocaleKeys.transaction_record_debt;
 
-    return CcFormLabel(
-      text: el.tr(titleKey),
-      color: context.ccColorScheme.primary,
-    );
+      return CcFormLabel(
+        text: el.tr(titleKey),
+        color: context.ccColorScheme.primary,
+      );
+    });
   }
 
   Widget _buildDirectionPicker(

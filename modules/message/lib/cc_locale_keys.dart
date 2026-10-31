@@ -4341,6 +4341,13 @@ class CcLocaleKeys {
   static const auth_otp_invalid = 'auth.otp.invalid';
   static const auth_otp_expired = 'auth.otp.expired';
   static const auth_otp_too_many_attempts = 'auth.otp.too_many_attempts';
+  static const auth_security_warning_title = 'auth.security_warning_title';
+  static const auth_security_warning_bullet_sms =
+      'auth.security_warning_bullet_sms';
+  static const auth_security_warning_bullet_ai =
+      'auth.security_warning_bullet_ai';
+  static const auth_security_warning_other_login =
+      'auth.security_warning_other_login';
 
   static const validation = 'validation';
   static const validation_required = 'validation.required';

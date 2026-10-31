@@ -55,6 +55,7 @@ class AddLiabilitySheetController extends CcGetController {
   }) {
     this.showDirectionToggle.value = showDirectionToggle;
     direction.value = initialDirection;
+    selectedLiabilityCategory.value = null;
     nameController.text = '';
     nameController.removeListener(_onNameChanged);
     nameController.addListener(_onNameChanged);
@@ -111,6 +112,13 @@ class AddLiabilitySheetController extends CcGetController {
       });
 
       liabilityCategories.assignAll(filtered);
+
+      // Automatically pre-select the first category for the active direction
+      if (filtered.isNotEmpty &&
+          (selectedLiabilityCategory.value == null ||
+              selectedLiabilityCategory.value!.groupId != groupId)) {
+        selectLiabilityCategory(filtered.first);
+      }
     }, (_) {});
   }
 

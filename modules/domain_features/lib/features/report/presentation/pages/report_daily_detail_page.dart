@@ -101,6 +101,7 @@ class _ReportDailyDetailView extends CcGetView<ReportController> {
           }
         },
         child: ListView(
+          controller: controller.scrollController,
           padding: EdgeInsets.symmetric(
             horizontal: context.respPadding(CcPaddingParams.PAGE_XS),
           ),

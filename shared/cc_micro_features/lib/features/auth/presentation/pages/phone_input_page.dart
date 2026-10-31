@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/phone_auth_bloc.dart';
 import '../bloc/phone_auth_event.dart';
 import '../bloc/phone_auth_state.dart';
+import 'widgets/auth_security_warning_card.dart';
 import 'widgets/phone_auth_gradient_container.dart';
 
 /// Semantic text tokens for this project-blind page.
@@ -146,7 +147,11 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
             );
           },
         ),
-        const CcSpaceLG(),
+        const CcSpaceSM(),
+        AuthSecurityWarningCard(
+          onOtherLoginTap: () => Navigator.of(context).pop(),
+        ),
+        const CcSpaceMD(),
       ],
     );
   }

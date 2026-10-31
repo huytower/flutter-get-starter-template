@@ -43,17 +43,11 @@ class _LoginViewState extends State<LoginView> {
 
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
-        'LoginState received: $state'.Log('LoginPage');
         if (state is LoginSuccess) {
-          'Login success, navigating to dashboard'.Log('LoginPage');
           getIt<AuthCoordinator>().navigateToDashboard(context);
         } else if (state is LoginLoading) {
-          'Login loading, showing dialog'.Log('LoginPage');
           CcDialogHelper.showLoadingBottomSheet(context);
         } else {
-          'Login state is not Success or Loading, closing dialog if open'.Log(
-            'LoginPage',
-          );
           // Dismiss the loading bottom sheet if it's on top
           Navigator.of(context, rootNavigator: true).popUntil(
             (route) => route.isFirst || route is! ModalBottomSheetRoute,

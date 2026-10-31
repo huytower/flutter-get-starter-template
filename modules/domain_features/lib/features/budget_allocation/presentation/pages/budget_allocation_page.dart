@@ -14,6 +14,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../guideline/export_guideline.dart';
+import '../../../liability/export_liability.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_allocation_header.dart';
 import '../widgets/budget_insights_section.dart';
@@ -26,7 +27,7 @@ import '../widgets/liquid_hero_banner.dart';
 import '../widgets/liquid_wallets_section.dart';
 
 @RoutePage()
-class  BudgetAllocationPage extends CcGetView<BudgetAllocationController>
+class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
     with CcPullRefreshMixin {
   const BudgetAllocationPage({super.key});
 
@@ -126,7 +127,12 @@ class  BudgetAllocationPage extends CcGetView<BudgetAllocationController>
           LiabilityWalletsSection(
             borrowBalances: controller.borrowBalances,
             lendBalances: controller.lendBalances,
-            onAddLiability: () => controller.openAddLiability(context),
+            onAddLiability: () => controller.openAddLiability(
+              context,
+              initialDirection: controller.isLendSectionFront.value
+                  ? LiabilityDirection.lend
+                  : LiabilityDirection.borrow,
+            ),
             onSeeAll: () => controller.navigateToLiabilityList(context),
             isLendFront: controller.isLendSectionFront.value,
             showGuidelineBadge: Get.isRegistered<GuidelineController>()

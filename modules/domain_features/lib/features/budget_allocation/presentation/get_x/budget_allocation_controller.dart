@@ -107,10 +107,15 @@ class BudgetAllocationController extends CcGetController {
     );
   }
 
-  void openAddLiability(BuildContext context) {
+  void openAddLiability(BuildContext context, {String? initialDirection}) {
+    final direction =
+        initialDirection ??
+        (isLendSectionFront.value
+            ? LiabilityDirection.lend
+            : LiabilityDirection.borrow);
     AddLiabilitySheet.show(
       context,
-      initialDirection: LiabilityDirection.borrow,
+      initialDirection: direction,
       showDirectionToggle: false,
     );
   }

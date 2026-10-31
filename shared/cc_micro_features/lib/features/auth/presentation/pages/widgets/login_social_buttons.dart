@@ -26,9 +26,6 @@ class LoginSocialButtons extends StatelessWidget {
             CcSocialLoginBtn(
               type: SocialLoginType.google,
               onTap: () {
-                'Google Login button tapped (isLinking: $isLinking)'.Log(
-                  'LoginSocialButtons',
-                );
                 context.read<LoginBloc>().add(
                   isLinking
                       ? const LinkWithGoogleStarted()
@@ -42,9 +39,6 @@ class LoginSocialButtons extends StatelessWidget {
               CcSocialLoginBtn(
                 type: SocialLoginType.apple,
                 onTap: () {
-                  'Apple Login button tapped (isLinking: $isLinking)'.Log(
-                    'LoginSocialButtons',
-                  );
                   context.read<LoginBloc>().add(
                     isLinking
                         ? const LinkWithAppleStarted()

@@ -222,6 +222,7 @@ class ReportController extends CcGetController {
       if (isClosed) return;
       isGeneratingAdvice.value = false;
       aiAdvice.value = cachedResult;
+      scrollToAiAdvice();
       return;
     }
 
@@ -257,8 +258,9 @@ class ReportController extends CcGetController {
     isGeneratingAdvice.value = false;
 
     if (result == null) {
-      '[ReportController] ❌ AI advice generation returned null'
-          .Log('ReportController');
+      '[ReportController] ❌ AI advice generation returned null'.Log(
+        'ReportController',
+      );
       final previousCached = await cacheDs.getLastCachedAdvice(
         languageCode: languageCode,
       );
@@ -274,12 +276,26 @@ class ReportController extends CcGetController {
         .Log('ReportController');
 
     aiAdvice.value = result;
+    scrollToAiAdvice();
     await cacheDs.saveAdvice(
       advice: result,
       fingerprint: fingerprint,
       targetCurrency: targetCurrency,
       languageCode: languageCode,
     );
+  }
+
+  void scrollToAiAdvice() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scrollController.hasClients &&
+          scrollController.positions.isNotEmpty) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOutCubic,
+        );
+      }
+    });
   }
 
   void setWalletFilter(String walletId, String walletName) {

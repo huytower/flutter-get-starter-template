@@ -9,6 +9,7 @@ import '../../../../core/di/di.dart';
 import '../bloc/phone_auth_bloc.dart';
 import '../bloc/phone_auth_event.dart';
 import '../bloc/phone_auth_state.dart';
+import 'widgets/auth_security_warning_card.dart';
 import 'widgets/phone_auth_gradient_container.dart';
 import 'widgets/phone_otp_input.dart';
 
@@ -118,6 +119,10 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
         _buildActionBtn(),
         const CcSpaceLG(),
         _buildResendSection(context),
+        const CcSpaceSM(),
+        AuthSecurityWarningCard(
+          onOtherLoginTap: () => Navigator.of(context).pop(),
+        ),
       ],
     );
   }
