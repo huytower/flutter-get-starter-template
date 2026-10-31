@@ -113,7 +113,9 @@ class FinancialDataSyncService {
     }
   }
 
+  // ignore: cancel_subscriptions
   StreamSubscription<InternetStatus>? _connectivitySubscription;
+  // ignore: cancel_subscriptions
   StreamSubscription<CcUserEntity?>? _sessionSubscription;
   Future<void>? _accountTransition;
   String? _observedUserId;

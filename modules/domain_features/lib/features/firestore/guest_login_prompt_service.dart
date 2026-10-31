@@ -127,7 +127,8 @@ class GuestLoginPromptService {
         final navContext = (activeContext.mounted
             ? activeContext
             : Get.context);
-        if (navContext != null) {
+        if (navContext != null && navContext.mounted) {
+          // ignore: use_build_context_synchronously
           getIt<AuthCoordinator>().navigateToLogin(navContext);
         }
       }

@@ -51,7 +51,7 @@ class _SplashPageState extends State<SplashPage>
             _controller.duration = composition.duration;
             _controller.forward();
             Future.delayed(const Duration(milliseconds: 2000), () {
-              if (!mounted) return;
+              if (!context.mounted) return;
               navigateFromSplash(context);
             });
           },

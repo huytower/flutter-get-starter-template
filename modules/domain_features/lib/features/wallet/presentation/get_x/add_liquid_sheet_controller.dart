@@ -328,6 +328,7 @@ class AddLiquidSheetController extends CcGetController {
           }
         }
 
+        if (!context.mounted) return;
         Navigator.pop(context);
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,

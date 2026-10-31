@@ -175,11 +175,11 @@ melos:
       description: Clean and rebuild all packages.
 
     analyze:
-      run: melos exec -- "flutter analyze --no-fatal-infos"
+      run: melos exec --concurrency=1 -- "flutter analyze --no-fatal-infos"
       description: Run analysis for all packages.
 
     test:
-      run: melos exec -- "flutter test"
+      run: melos exec --dir-exists="test" --concurrency=1 -- "flutter test"
       description: Run tests for all packages.
 
     setup:firebase:

@@ -441,6 +441,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
           amount,
           currencyCode: settings.currencyCode,
         );
+        if (!context.mounted) return;
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(
