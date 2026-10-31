@@ -196,6 +196,8 @@ class ReportController extends CcGetController {
   }
 
   Future<void> generateAiAdvice(BuildContext context) async {
+    '[ReportController] 🤖 generateAiAdvice() requested | isVip=${userLevel.status.value.isVip}'
+        .Log('ReportController');
     if (!userLevel.status.value.isVip) return;
 
     if (isGeneratingAdvice.value) return;
@@ -207,12 +209,16 @@ class ReportController extends CcGetController {
     final cacheDs = getIt<AiAdviceCacheDataSource>();
     final fingerprint = cacheDs.computeFingerprint(dailyListTransactions);
 
+    '[ReportController] 🔍 Checking cache for fingerprint=$fingerprint | currency=$targetCurrency | lang=$languageCode'
+        .Log('ReportController');
+
     final cachedResult = await cacheDs.getCachedAdvice(
       fingerprint: fingerprint,
       targetCurrency: targetCurrency,
       languageCode: languageCode,
     );
     if (cachedResult != null) {
+      '[ReportController] ⚡ Loaded cached AI advice'.Log('ReportController');
       if (isClosed) return;
       isGeneratingAdvice.value = false;
       aiAdvice.value = cachedResult;
@@ -221,12 +227,14 @@ class ReportController extends CcGetController {
 
     final prefs = getIt<AiFallbackPreferenceDataSource>();
     if (!await prefs.isGeminiEnabled()) {
+      '[ReportController] 🚫 Gemini disabled in prefs'.Log('ReportController');
       if (isClosed) return;
       isGeneratingAdvice.value = false;
       aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_gemini_disabled;
       return;
     }
     if (!await prefs.tryConsumeDailyCall()) {
+      '[ReportController] ⚠️ Daily call limit reached'.Log('ReportController');
       if (isClosed) return;
       isGeneratingAdvice.value = false;
       aiAdviceErrorKey.value =
@@ -249,6 +257,8 @@ class ReportController extends CcGetController {
     isGeneratingAdvice.value = false;
 
     if (result == null) {
+      '[ReportController] ❌ AI advice generation returned null'
+          .Log('ReportController');
       final previousCached = await cacheDs.getLastCachedAdvice(
         languageCode: languageCode,
       );
@@ -259,6 +269,9 @@ class ReportController extends CcGetController {
       }
       return;
     }
+
+    '[ReportController] ✅ AI advice generated successfully with ${result.sections.length} sections'
+        .Log('ReportController');
 
     aiAdvice.value = result;
     await cacheDs.saveAdvice(

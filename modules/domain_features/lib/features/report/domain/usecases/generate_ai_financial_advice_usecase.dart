@@ -51,7 +51,12 @@ class GenerateAiFinancialAdviceUseCase {
     required CurrencyConversionService conversionService,
     String? languageCode,
   }) async {
+    '[AI_ADVICE] 🚀 GenerateAiFinancialAdviceUseCase called | targetCurrency=$targetCurrency | languageCode=$languageCode'
+        .Log('GenerateAiFinancialAdviceUseCase');
     if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
+      '[AI_ADVICE] 🚫 Gemini is disabled in preferences'.Log(
+        'GenerateAiFinancialAdviceUseCase',
+      );
       return null;
     }
     final results = await Future.wait([
@@ -111,9 +116,20 @@ class GenerateAiFinancialAdviceUseCase {
       prompt: prompt,
       responseSchema: _buildResponseSchema(language),
     );
-    if (raw == null || raw.trim().isEmpty) return null;
+    '[AI_ADVICE] 📥 Raw response from Gemini: $raw'.Log(
+      'GenerateAiFinancialAdviceUseCase',
+    );
+    if (raw == null || raw.trim().isEmpty) {
+      '[AI_ADVICE] ❌ Gemini returned null or empty string'.Log(
+        'GenerateAiFinancialAdviceUseCase',
+      );
+      return null;
+    }
 
     final sections = _parseSections(raw);
+    '[AI_ADVICE] 📊 Parsed ${sections.length} advice sections'.Log(
+      'GenerateAiFinancialAdviceUseCase',
+    );
     if (sections.isEmpty) return null;
 
     return AiAdviceEntity(sections: sections, generatedAt: DateTime.now());

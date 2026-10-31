@@ -73,17 +73,8 @@ void main() {
       expect(session.currentUser?.id, equals('guest_123'));
     });
 
-    test(
-      'defines prompt thresholds as 7 (first warning) and 15 (final warning)',
-      () {
-        expect(
-          GuestLoginPrompt.values,
-          containsAll([
-            GuestLoginPrompt.atSeven,
-            GuestLoginPrompt.finalWarning,
-          ]),
-        );
-      },
-    );
+    test('defines prompt threshold as 15 (final warning)', () {
+      expect(GuestLoginPrompt.values, contains(GuestLoginPrompt.finalWarning));
+    });
   });
 }

@@ -18,11 +18,11 @@ import '../reconciliation/data/models/reconciliation_model.dart';
 import '../transaction/data/models/transaction_model.dart';
 import '../wallet/data/models/wallet_hive_model.dart';
 
-enum GuestLoginPrompt { atSeven, finalWarning }
+enum GuestLoginPrompt { atEight, finalWarning }
 
 @lazySingleton
 class GuestLoginPromptService {
-  static const int _firstPromptThreshold = 7;
+  static const int _firstPromptThreshold = 8;
   static const int _finalPromptThreshold = 15;
 
   final SessionContract _session;
@@ -39,10 +39,7 @@ class GuestLoginPromptService {
       _count<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME),
       _count<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME),
     ]);
-    final total = counts.fold<int>(0, (int total, int count) => total + count);
-    '[GuestLoginPrompt] 📊 Financial records counted: total=$total (wallets=${counts[0]}, txns=${counts[1]}, budgets=${counts[2]}, liabilities=${counts[3]}, categories=${counts[4]}, reconciliations=${counts[5]})'
-        .Log('GuestLoginPromptService');
-    return total;
+    return counts.fold<int>(0, (int total, int count) => total + count);
   }
 
   Future<GuestLoginPrompt?> evaluate() async {
@@ -50,8 +47,6 @@ class GuestLoginPromptService {
     final isAuth = _session.isAuthenticated;
     final isAnon = _session.isAnonymous;
     if (isAuth && !isAnon) {
-      '[GuestLoginPrompt] ℹ️ User is logged in with real account. Skipping guest login prompt.'
-          .Log('GuestLoginPromptService');
       return null;
     }
 
@@ -66,32 +61,19 @@ class GuestLoginPromptService {
     }
 
     if (storage.guestLoginPrompt15Dismissed == true) {
-      '[GuestLoginPrompt] ℹ️ Final warning permanently dismissed for uid=$uid. Skipping prompt.'
-          .Log('GuestLoginPromptService');
       return null;
     }
 
     final count = await countFinancialRecords();
-    GuestLoginPrompt? result;
     if (count >= _finalPromptThreshold) {
-      result = GuestLoginPrompt.finalWarning;
-    } else if (count >= _firstPromptThreshold &&
-        storage.guestLoginPromptAtTimes7Shown != true) {
-      result = GuestLoginPrompt.atSeven;
+      return GuestLoginPrompt.finalWarning;
     }
 
-    '[GuestLoginPrompt] 🔍 Evaluated prompt condition | uid=$uid | isAnonymous=$isAnon | count=$count | '
-            'prompt8Shown=${storage.guestLoginPromptAtTimes7Shown} | prompt15Dismissed=${storage.guestLoginPrompt15Dismissed} -> result=$result'
-        .Log('GuestLoginPromptService');
-
-    return result;
+    return null;
   }
 
   Future<void> markShown(GuestLoginPrompt prompt) async {
-    '[GuestLoginPrompt] 📌 Marking prompt as shown: $prompt'.Log(
-      'GuestLoginPromptService',
-    );
-    if (prompt == GuestLoginPrompt.atSeven) {
+    if (prompt == GuestLoginPrompt.atEight) {
       CcAppStorage.instance.guestLoginPromptAtTimes7Shown = true;
     }
     await CcAppStorage.instance.save();
@@ -123,11 +105,6 @@ class GuestLoginPromptService {
     if (activeContext == null) return;
 
     _promptInFlight = true;
-    '[GuestLoginPrompt] 🚀 Presenting guest login bottom sheet | prompt=$prompt'
-        .Log('GuestLoginPromptService');
-    if (prompt == GuestLoginPrompt.atSeven) {
-      await markShown(prompt);
-    }
 
     final choseLogin = await GuestLoginPromptSheet.show(
       activeContext,
@@ -139,9 +116,6 @@ class GuestLoginPromptService {
       await dismissFinalWarning();
     }
     if (choseLogin == true) {
-      '[GuestLoginPrompt] 🔗 User chose Login -> Navigating to Auth flow'.Log(
-        'GuestLoginPromptService',
-      );
       final navContext = Get.context ?? activeContext;
       getIt<AuthCoordinator>().navigateToLogin(navContext);
     }
@@ -151,9 +125,6 @@ class GuestLoginPromptService {
     final context = Get.context;
     if (context != null) {
       unawaited(maybeShow(context));
-    } else {
-      '[GuestLoginPrompt] ⚠️ Get.context was null when calling maybeShowFromCurrentContext'
-          .Log('GuestLoginPromptService');
     }
   }
 
