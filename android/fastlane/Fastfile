@@ -12,7 +12,7 @@ platform :android do
 
     # 2. Build the Flutter App Bundle
     # We move up to the root to run flutter commands
-    sh("cd ../.. && flutter build appbundle --release --flavor #{flavor}")
+    sh("cd ../.. && flutter build appbundle --release --flavor #{flavor} --no-tree-shake-icons")
 
     # 3. Upload to Firebase
     # Assumes FIREBASE_APP_ID is in your environment variables
@@ -34,6 +34,6 @@ platform :android do
     sh("cd ../.. && melos run gen")
     
     # 2. Build the Flutter App Bundle
-    sh("cd ../.. && flutter build appbundle --release --flavor prod")
+    sh("cd ../.. && flutter build appbundle --release --flavor prod --no-tree-shake-icons")
   end
 end

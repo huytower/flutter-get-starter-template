@@ -21,24 +21,26 @@ platform :ios do
     # Strip surrounding quotes if the secret was wrapped in quotes
     raw_content = raw_content.sub(/\A['"]/, "").sub(/['"]\z/, "").strip
 
-    # If the content doesn't have the PEM header, it may be base64-encoded
-    if !raw_content.include?("BEGIN")
-      require "base64"
-      begin
-        decoded = Base64.decode64(raw_content).strip
-        if decoded.include?("BEGIN")
-          raw_content = decoded
-        else
-          # In case the secret only contains the raw base64 DER body
-          raw_content = "-----BEGIN PRIVATE KEY-----\n#{raw_content}\n-----END PRIVATE KEY-----"
-        end
-      rescue => e
-        # Fall back to raw_content if decoding fails
-      end
-    end
-
     # Normalize carriage returns and literal escaped newlines
     normalized = raw_content.gsub("\r", "").gsub("\\n", "\n").strip
+
+    # Accept PEM, base64-encoded PEM, or base64-encoded DER without ever
+    # wrapping the encoded text itself as a private key.
+    unless normalized.include?("BEGIN")
+      require "base64"
+      encoded_content = normalized.gsub(/\s+/, "")
+      begin
+        decoded_content = Base64.strict_decode64(encoded_content)
+        normalized = if decoded_content.include?("BEGIN")
+          decoded_content.strip
+        else
+          der_body = Base64.strict_encode64(decoded_content).scan(/.{1,64}/).join("\n")
+          "-----BEGIN PRIVATE KEY-----\n#{der_body}\n-----END PRIVATE KEY-----"
+        end
+      rescue ArgumentError
+        UI.user_error!("APP_STORE_CONNECT_KEY_CONTENT must be PEM or valid base64-encoded PEM/DER")
+      end
+    end
 
     # Format into clean PEM string while preserving the key type header.
     if normalized =~ /-----BEGIN ([^-]+)-----\s*([\s\S]+?)\s*-----END \1-----/
@@ -56,7 +58,7 @@ platform :ios do
     if pem_content.include?("BEGIN PRIVATE KEY")
       require "open3"
       converted_key, conversion_error, conversion_status = Open3.capture3(
-        "openssl", "pkcs8", "-traditional", "-nocrypt",
+        "openssl", "pkcs8", "-inform", "PEM", "-outform", "PEM", "-traditional", "-nocrypt",
         stdin_data: pem_content
       )
       UI.user_error!("Unable to convert the App Store Connect key: #{conversion_error.strip}") unless conversion_status.success?
@@ -76,7 +78,7 @@ platform :ios do
 
     # 3. Prepare Flutter artifacts
     # Prepares the ios/ folder and compiled Dart code
-    sh("cd ../.. && flutter build ios --release --flavor #{flavor} --no-codesign")
+    sh("cd ../.. && flutter build ios --release --flavor #{flavor} --no-codesign --no-tree-shake-icons")
 
     # 4. Build App (Gym)
     build_app(

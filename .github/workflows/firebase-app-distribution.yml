@@ -65,7 +65,7 @@ jobs:
       - name: Generate Code
         run: melos run gen
       - name: Compile Check
-        run: flutter build appbundle --release --flavor prod
+        run: flutter build appbundle --release --flavor prod --no-tree-shake-icons
 
   # 3. Android Deployment: Runs on push to main or workflow_dispatch.
   android-distribute:
