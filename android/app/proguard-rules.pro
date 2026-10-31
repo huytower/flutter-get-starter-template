@@ -21,6 +21,13 @@
 -dontwarn com.google.firebase.**
 -dontwarn com.google.android.gms.**
 
+# Play Core Keep & Suppress Rules (Flutter Engine deferred components / Play feature delivery)
+-dontwarn com.google.android.play.core.**
+
+# ML Kit Text Recognition Keep & Suppress Rules (optional script recognizers)
+-keep class com.google.mlkit.vision.text.** { *; }
+-dontwarn com.google.mlkit.vision.text.**
+
 # Preserve annotations and line numbers for Crashlytics
 -keepattributes Signature
 -keepattributes *Annotation*
