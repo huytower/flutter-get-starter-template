@@ -40,7 +40,7 @@ platform :ios do
     # Normalize carriage returns and literal escaped newlines
     normalized = raw_content.gsub("\r", "").gsub("\\n", "\n").strip
 
-    # Extract base64 body and format into RFC-compliant 64-character lines
+    # Format into clean PEM string
     if normalized =~ /-----BEGIN[^-]+-----\s*([\s\S]+?)\s*-----END[^-]+-----/
       body = $1.gsub(/\s+/, "") # Remove all whitespace/newlines from body
       wrapped_body = body.scan(/.{1,64}/).join("\n")
@@ -49,38 +49,11 @@ platform :ios do
       pem_content = "#{normalized}\n"
     end
 
-    # Convert PKCS#8 (BEGIN PRIVATE KEY) to SEC1 (BEGIN EC PRIVATE KEY)
-    # In Ruby 3.2+ / OpenSSL 3.x, OpenSSL::PKey::EC.new (used by Fastlane Spaceship) strictly
-    # requires the SEC1 format (BEGIN EC PRIVATE KEY) to avoid 'invalid curve name (OpenSSL::PKey::ECError)'.
-    require "openssl"
-    begin
-      pkey = OpenSSL::PKey.read(pem_content)
-      begin
-        ec = OpenSSL::PKey::EC.new(pkey.to_der)
-        pem_content = ec.to_pem
-      rescue => e
-        require "open3"
-        stdout, stderr, status = Open3.capture3("openssl ec", stdin_data: pem_content)
-        pem_content = stdout if status.success? && !stdout.to_s.strip.empty?
-      end
-    rescue => e
-      require "open3"
-      stdout, stderr, status = Open3.capture3("openssl ec", stdin_data: pem_content)
-      pem_content = stdout if status.success? && !stdout.to_s.strip.empty?
-    end
-
-    # Ensure trailing newline
-    pem_content = "#{pem_content.strip}\n"
-
-    # Write key to temporary .p8 file for Fastlane key_filepath
-    require "tmpdir"
-    key_file = File.join(Dir.tmpdir, "AuthKey_#{key_id}.p8")
-    File.write(key_file, pem_content)
-
     api_key = app_store_connect_api_key(
       key_id: key_id,
       issuer_id: issuer_id,
-      key_filepath: key_file
+      key_content: pem_content,
+      is_key_content_base64: false
     )
 
     # 3. Prepare Flutter artifacts
