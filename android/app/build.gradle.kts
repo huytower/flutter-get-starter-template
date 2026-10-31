@@ -42,7 +42,8 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "vn.sosachxin.finance"
-    compileSdk = 37
+    compileSdk = 35
+    buildToolsVersion = "35.0.0"
     ndkVersion = "28.2.13676358"
 
     compileOptions {
@@ -63,7 +64,7 @@ android {
     defaultConfig {
         applicationId = "vn.sosachxin.finance"
         minSdk = 28
-        targetSdk = 37
+        targetSdk = 35
         versionCode = pubspecVersionCode.toInt()
         versionName = pubspecVersionName
         // Enabling multidex support.

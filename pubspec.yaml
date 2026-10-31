@@ -161,8 +161,9 @@ melos:
     gen:
       run: >
         melos exec -- "dart run build_runner build --delete-conflicting-outputs" &&
+        dart run build_runner build --delete-conflicting-outputs &&
         melos run gen:translations
-      description: Generate all code, including translation keys and loaders.
+      description: Generate all code for all packages and root app, including translation keys and loaders.
 
     gen:translations:
       run: >
@@ -171,8 +172,10 @@ melos:
       description: Generate translation keys and the asset loader for the message module.
 
     rebuild:
-      run: melos exec -- "flutter clean && flutter pub get && dart run build_runner build --delete-conflicting-outputs"
-      description: Clean and rebuild all packages.
+      run: >
+        melos exec -- "flutter clean && flutter pub get && dart run build_runner build --delete-conflicting-outputs" &&
+        dart run build_runner build --delete-conflicting-outputs
+      description: Clean and rebuild all packages and root app.
 
     analyze:
       run: melos exec --concurrency=1 -- "flutter analyze --no-fatal-infos"
