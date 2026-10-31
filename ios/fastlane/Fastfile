@@ -40,20 +40,38 @@ platform :ios do
     # Normalize carriage returns and literal escaped newlines
     normalized = raw_content.gsub("\r", "").gsub("\\n", "\n").strip
 
-    # Format into clean PEM string
-    if normalized =~ /-----BEGIN[^-]+-----\s*([\s\S]+?)\s*-----END[^-]+-----/
-      body = $1.gsub(/\s+/, "") # Remove all whitespace/newlines from body
+    # Format into clean PEM string while preserving the key type header.
+    if normalized =~ /-----BEGIN ([^-]+)-----\s*([\s\S]+?)\s*-----END \1-----/
+      pem_type = $1
+      body = $2.gsub(/\s+/, "")
       wrapped_body = body.scan(/.{1,64}/).join("\n")
-      pem_content = "-----BEGIN PRIVATE KEY-----\n#{wrapped_body}\n-----END PRIVATE KEY-----\n"
+      pem_content = "-----BEGIN #{pem_type}-----\n#{wrapped_body}\n-----END #{pem_type}-----\n"
     else
       pem_content = "#{normalized}\n"
+    end
+
+    # Fastlane 2.241.x parses App Store Connect keys as SEC1 EC keys. Apple
+    # downloads PKCS#8 keys, so convert that format before handing it to
+    # Spaceship. Keep SEC1 keys unchanged.
+    if pem_content.include?("BEGIN PRIVATE KEY")
+      require "open3"
+      converted_key, conversion_error, conversion_status = Open3.capture3(
+        "openssl", "pkcs8", "-traditional", "-nocrypt",
+        stdin_data: pem_content
+      )
+      UI.user_error!("Unable to convert the App Store Connect key: #{conversion_error.strip}") unless conversion_status.success?
+      pem_content = converted_key
     end
 
     api_key = app_store_connect_api_key(
       key_id: key_id,
       issuer_id: issuer_id,
-      key_content: pem_content,
-      is_key_content_base64: false
+      key_filepath: begin
+        require "tmpdir"
+        key_file = File.join(Dir.tmpdir, "AuthKey_#{key_id}.p8")
+        File.write(key_file, pem_content)
+        key_file
+      end
     )
 
     # 3. Prepare Flutter artifacts
