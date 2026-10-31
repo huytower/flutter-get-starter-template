@@ -9,12 +9,25 @@ platform :ios do
     # Use direct Flutter command instead of melos to avoid PATH issues
     sh("cd ../.. && melos run gen")
 
-    # 2. Setup API Key (to bypass 2FA)
+    # 2. Setup API Key (handles raw .p8 text or base64, normalizes \r\n to \n)
+    raw_content = ENV["APP_STORE_CONNECT_KEY_CONTENT"] || ""
+    if raw_content.include?("BEGIN PRIVATE KEY")
+      decoded_key = raw_content
+    else
+      require "base64"
+      begin
+        decoded_key = Base64.decode64(raw_content)
+      rescue => e
+        decoded_key = raw_content
+      end
+    end
+    normalized_key = decoded_key.gsub("\r\n", "\n")
+
     api_key = app_store_connect_api_key(
       key_id: ENV["APP_STORE_CONNECT_KEY_ID"],
       issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
-      key_content: ENV["APP_STORE_CONNECT_KEY_CONTENT"],
-      is_key_content_base64: true
+      key_content: normalized_key,
+      is_key_content_base64: false
     )
 
     # 3. Prepare Flutter artifacts
