@@ -91,7 +91,7 @@ jobs:
       
       - name: Prep Keystore
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
+          printf "%s" "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/keystore.jks
           cat > android/key.properties << EOF
           storePassword=${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword=${{ secrets.KEY_PASSWORD }}

@@ -57,11 +57,29 @@ platform :ios do
     # Spaceship. Keep SEC1 keys unchanged.
     if pem_content.include?("BEGIN PRIVATE KEY")
       require "open3"
-      converted_key, conversion_error, conversion_status = Open3.capture3(
-        "openssl", "pkcs8", "-inform", "PEM", "-outform", "PEM", "-traditional", "-nocrypt",
-        stdin_data: pem_content
-      )
-      UI.user_error!("Unable to convert the App Store Connect key: #{conversion_error.strip}") unless conversion_status.success?
+      conversion_commands = [
+        ["openssl", "pkcs8", "-inform", "PEM", "-outform", "PEM", "-traditional", "-nocrypt"],
+        ["openssl", "pkey", "-inform", "PEM", "-outform", "PEM", "-traditional"]
+      ]
+      converted_key = nil
+      conversion_error = nil
+
+      conversion_commands.each do |command|
+        output, error, status = Open3.capture3(*command, stdin_data: pem_content)
+        if status.success? && output.include?("BEGIN EC PRIVATE KEY")
+          converted_key = output
+          break
+        end
+        conversion_error = error
+      end
+
+      if converted_key.nil?
+        UI.user_error!(
+          "Unable to parse APP_STORE_CONNECT_KEY_CONTENT as an Apple App Store Connect EC key. " \
+          "Regenerate the App Store Connect .p8 key and store its original PEM or base64 content. " \
+          "OpenSSL: #{conversion_error.to_s.strip}"
+        )
+      end
       pem_content = converted_key
     end
 
