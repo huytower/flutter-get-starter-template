@@ -79,7 +79,7 @@ backs those breakpoints:
 - **State management**: no lock-in. `cc_sdk`, `cc_sdk_ui`, `cc_mixin`, `cc_micro_features` domain/data layers
   stay agnostic; `presentation/` layers choose Bloc or GetX per feature, via abstract interfaces implemented
   with either.
-- **Melos workspace**: scripts are defined once, in root `pubspec.yaml`'s `melos.scripts` — melos 7.8.1 reads
+- **Melos workspace**: scripts are defined once, in root `pubspec.yaml`'s `melos.scripts` — melos 8.10.0 reads
   scripts from `pubspec.yaml`, not `melos.yaml`. Keep `melos.yaml` free of a `scripts:` section to avoid drift
   between two divergent script definitions.
 

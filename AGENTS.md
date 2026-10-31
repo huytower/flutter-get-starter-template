@@ -39,7 +39,7 @@ melos run analyze            # flutter analyze, across all packages
 melos run test                # flutter test, across all packages
 ```
 
-- **Workspace scripts are defined once**, in root `pubspec.yaml` under `melos.scripts` — melos 7.8.1 reads
+- **Workspace scripts are defined once**, in root `pubspec.yaml` under `melos.scripts` — melos 8.10.0 reads
   scripts from `pubspec.yaml`, not `melos.yaml`. Never add a duplicate `scripts:` block to `melos.yaml`.
 - To run/generate for a single package, `cd` into it and run the plain `flutter`/`dart` command (e.g.
   `cd modules/domain_features && flutter analyze`) rather than melos, when you only touched that package.

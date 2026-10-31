@@ -14,5 +14,5 @@ packages:
 
 # NOTE: Workspace scripts (bootstrap, gen, rebuild, analyze, test, setup:firebase,
 # check:imports) are defined ONCE in the root `pubspec.yaml` `melos.scripts`
-# block. melos 7.8.1 reads scripts from pubspec.yaml, not from this file, so
+# block. melos 8.10.0 reads scripts from pubspec.yaml, not from this file, so
 # scripts are intentionally NOT duplicated here to avoid drift.
