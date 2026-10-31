@@ -9,24 +9,24 @@ platform :ios do
     # Use direct Flutter command instead of melos to avoid PATH issues
     sh("cd ../.. && melos run gen")
 
-    # 2. Setup API Key (handles raw .p8 text or base64, normalizes \r\n to \n)
-    raw_content = ENV["APP_STORE_CONNECT_KEY_CONTENT"] || ""
-    if raw_content.include?("BEGIN PRIVATE KEY")
-      decoded_key = raw_content
+    # 2. Setup API Key (handles raw .p8 text or base64, normalizes escapes & linebreaks)
+    raw_content = (ENV["APP_STORE_CONNECT_KEY_CONTENT"] || "").strip
+    if raw_content.start_with?("-----BEGIN")
+      key_pem = raw_content
     else
       require "base64"
       begin
-        decoded_key = Base64.decode64(raw_content)
+        key_pem = Base64.decode64(raw_content)
       rescue => e
-        decoded_key = raw_content
+        key_pem = raw_content
       end
     end
-    normalized_key = decoded_key.gsub("\r\n", "\n")
+    key_pem = key_pem.gsub("\r", "").gsub("\\n", "\n").strip
 
     api_key = app_store_connect_api_key(
       key_id: ENV["APP_STORE_CONNECT_KEY_ID"],
       issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
-      key_content: normalized_key,
+      key_content: key_pem,
       is_key_content_base64: false
     )
 

@@ -1,3 +1,7 @@
+buildscript {
+    extra.set("kotlin_version", "2.1.20")
+}
+
 allprojects {
     repositories {
         google()
@@ -9,6 +13,13 @@ rootProject.layout.buildDirectory.set(rootProject.projectDir.resolve("../build")
 
 subprojects {
     project.layout.buildDirectory.set(rootProject.layout.buildDirectory.get().asFile.resolve(project.name))
+    project.configurations.all {
+        resolutionStrategy {
+            force("org.jetbrains.kotlin:kotlin-stdlib:2.1.20")
+            force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.20")
+            force("org.jetbrains.kotlin:kotlin-reflect:2.1.20")
+        }
+    }
 }
 
 subprojects {
