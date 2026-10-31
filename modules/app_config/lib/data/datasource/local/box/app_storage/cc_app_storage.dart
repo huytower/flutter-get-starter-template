@@ -156,7 +156,7 @@ class CcAppStorage extends HiveObject {
   int? financialSchemaVersion;
 
   @HiveField(28)
-  bool? guestLoginPromptAtTimes7Shown;
+  bool? guestLoginPromptAtTimes8Shown;
 
   @HiveField(29)
   bool? guestLoginPrompt15Dismissed;
@@ -192,7 +192,7 @@ class CcAppStorage extends HiveObject {
     this.currencySelectionSource,
     this.currencyDetectionCountryCode,
     this.financialSchemaVersion,
-    this.guestLoginPromptAtTimes7Shown,
+    this.guestLoginPromptAtTimes8Shown,
     this.guestLoginPrompt15Dismissed,
     this.guestLoginPromptSessionUid,
   });

@@ -44,7 +44,7 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       currencySelectionSource: fields[25] as String?,
       currencyDetectionCountryCode: fields[26] as String?,
       financialSchemaVersion: (fields[27] as num?)?.toInt(),
-      guestLoginPromptAtTimes7Shown: fields[28] as bool?,
+      guestLoginPromptAtTimes8Shown: fields[28] as bool?,
       guestLoginPrompt15Dismissed: fields[29] as bool?,
       guestLoginPromptSessionUid: fields[30] as String?,
     );
@@ -109,7 +109,7 @@ class CcAppStorageAdapter extends TypeAdapter<CcAppStorage> {
       ..writeByte(27)
       ..write(obj.financialSchemaVersion)
       ..writeByte(28)
-      ..write(obj.guestLoginPromptAtTimes7Shown)
+      ..write(obj.guestLoginPromptAtTimes8Shown)
       ..writeByte(29)
       ..write(obj.guestLoginPrompt15Dismissed)
       ..writeByte(30)
@@ -173,7 +173,7 @@ CcAppStorage _$CcAppStorageFromJson(Map<String, dynamic> json) => CcAppStorage(
   currencySelectionSource: json['currencySelectionSource'] as String?,
   currencyDetectionCountryCode: json['currencyDetectionCountryCode'] as String?,
   financialSchemaVersion: (json['financialSchemaVersion'] as num?)?.toInt(),
-  guestLoginPromptAtTimes7Shown: json['guestLoginPromptAtTimes7Shown'] as bool?,
+  guestLoginPromptAtTimes8Shown: json['guestLoginPromptAtTimes8Shown'] as bool?,
   guestLoginPrompt15Dismissed: json['guestLoginPrompt15Dismissed'] as bool?,
   guestLoginPromptSessionUid: json['guestLoginPromptSessionUid'] as String?,
 );
@@ -210,7 +210,7 @@ Map<String, dynamic> _$CcAppStorageToJson(CcAppStorage instance) =>
       'currencySelectionSource': instance.currencySelectionSource,
       'currencyDetectionCountryCode': instance.currencyDetectionCountryCode,
       'financialSchemaVersion': instance.financialSchemaVersion,
-      'guestLoginPromptAtTimes7Shown': instance.guestLoginPromptAtTimes7Shown,
+      'guestLoginPromptAtTimes8Shown': instance.guestLoginPromptAtTimes8Shown,
       'guestLoginPrompt15Dismissed': instance.guestLoginPrompt15Dismissed,
       'guestLoginPromptSessionUid': instance.guestLoginPromptSessionUid,
     };

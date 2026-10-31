@@ -63,7 +63,10 @@ class WalletController extends CcGetController {
   @override
   void onInit() {
     super.onInit();
-    ever(CurrencyConstants.onCurrencyChanged, (_) => loadWallets());
+    ever(
+      CurrencyConstants.onCurrencyChanged,
+      (_) => loadWallets(forceRefresh: true),
+    );
   }
 
   void toggleEditMode() {
@@ -384,6 +387,7 @@ class WalletController extends CcGetController {
 
     final settings = await _getProfileSettings();
     isVip.value = settings.isVip;
+    final currencyChanged = currencyCode.value != settings.currencyCode;
     currencyCode.value = settings.currencyCode;
     '[WalletController] 🔄 loadWallets() | settings.currencyCode=${settings.currencyCode} | controller.currencyCode=${currencyCode.value}'
         .Log('WalletController');
@@ -413,8 +417,11 @@ class WalletController extends CcGetController {
         .toList()
         .cast<WalletEntity>();
 
-    if (_isTransactionDataDirty || forceRefresh || wallets.isEmpty) {
-      '[WalletController] 🔄 Rebuilding derived balances | dirty=$_isTransactionDataDirty | force=$forceRefresh | empty=${wallets.isEmpty}'
+    if (_isTransactionDataDirty ||
+        forceRefresh ||
+        currencyChanged ||
+        wallets.isEmpty) {
+      '[WalletController] 🔄 Rebuilding derived balances | dirty=$_isTransactionDataDirty | force=$forceRefresh | currencyChanged=$currencyChanged | empty=${wallets.isEmpty}'
           .Log('WalletController');
       await _rebuildDerivedBalances(list);
       _isTransactionDataDirty = false;
@@ -564,10 +571,21 @@ class WalletController extends CcGetController {
             }),
           );
 
-          final allTimeContributed = convertedAllIn.fold<int>(
-            0,
-            (sum, amt) => sum + amt,
-          );
+          int initialContributed = 0;
+          if (invInTxns.isEmpty && wallet.balance > 0) {
+            final conv = await _conversionService.convertAmount(
+              amount: wallet.balance,
+              fromCurrency: wallet.currencyCode,
+              toCurrency: targetCurrency,
+            );
+            initialContributed = conv.tryGetSuccess() ?? wallet.balance;
+          }
+
+          final allTimeContributed = initialContributed +
+              convertedAllIn.fold<int>(
+                0,
+                (sum, amt) => sum + amt,
+              );
 
           final allTimeReturned = convertedAllReturn.fold<int>(
             0,

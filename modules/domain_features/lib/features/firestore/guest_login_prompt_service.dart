@@ -43,7 +43,6 @@ class GuestLoginPromptService {
   }
 
   Future<GuestLoginPrompt?> evaluate() async {
-    if (_promptInFlight) return null;
     final isAuth = _session.isAuthenticated;
     final isAnon = _session.isAnonymous;
     if (isAuth && !isAnon) {
@@ -55,7 +54,7 @@ class GuestLoginPromptService {
     final storage = CcAppStorage.instance;
     if (storage.guestLoginPromptSessionUid != uid) {
       storage.guestLoginPromptSessionUid = uid;
-      storage.guestLoginPromptAtTimes7Shown = false;
+      storage.guestLoginPromptAtTimes8Shown = false;
       storage.guestLoginPrompt15Dismissed = false;
       await storage.save();
     }
@@ -69,17 +68,23 @@ class GuestLoginPromptService {
       return GuestLoginPrompt.finalWarning;
     }
 
+    if (count >= _firstPromptThreshold &&
+        storage.guestLoginPromptAtTimes8Shown != true) {
+      return GuestLoginPrompt.atEight;
+    }
+
     return null;
   }
 
   Future<void> markShown(GuestLoginPrompt prompt) async {
     if (prompt == GuestLoginPrompt.atEight) {
-      CcAppStorage.instance.guestLoginPromptAtTimes7Shown = true;
+      CcAppStorage.instance.guestLoginPromptAtTimes8Shown = true;
     }
     await CcAppStorage.instance.save();
   }
 
   Future<void> dismissFinalWarning() async {
+    CcAppStorage.instance.guestLoginPromptAtTimes8Shown = true;
     CcAppStorage.instance.guestLoginPrompt15Dismissed = true;
     await CcAppStorage.instance.save();
   }
@@ -87,7 +92,7 @@ class GuestLoginPromptService {
   /// Resets prompt flags when user logs out from a logged-in user status to guest status.
   Future<void> resetPromptFlags() async {
     final storage = CcAppStorage.instance;
-    storage.guestLoginPromptAtTimes7Shown = false;
+    storage.guestLoginPromptAtTimes8Shown = false;
     storage.guestLoginPrompt15Dismissed = false;
     storage.guestLoginPromptSessionUid = null;
     await storage.save();
@@ -95,29 +100,39 @@ class GuestLoginPromptService {
 
   Future<void> maybeShow(BuildContext context) async {
     if (_promptInFlight) return;
-    final targetContext = context.mounted ? context : Get.context;
-    if (targetContext == null) return;
-
-    final prompt = await evaluate();
-    if (prompt == null) return;
-
-    final activeContext = targetContext.mounted ? targetContext : Get.context;
-    if (activeContext == null) return;
-
     _promptInFlight = true;
 
-    final choseLogin = await GuestLoginPromptSheet.show(
-      activeContext,
-      prompt: prompt,
-    );
-    _promptInFlight = false;
+    try {
+      final targetContext = context.mounted ? context : Get.context;
+      if (targetContext == null) return;
 
-    if (choseLogin != true && prompt == GuestLoginPrompt.finalWarning) {
-      await dismissFinalWarning();
-    }
-    if (choseLogin == true) {
-      final navContext = Get.context ?? activeContext;
-      getIt<AuthCoordinator>().navigateToLogin(navContext);
+      final prompt = await evaluate();
+      if (prompt == null) return;
+
+      final activeContext = targetContext.mounted ? targetContext : Get.context;
+      if (activeContext == null || !activeContext.mounted) return;
+
+      final choseLogin = await GuestLoginPromptSheet.show(
+        activeContext,
+        prompt: prompt,
+      );
+
+      if (prompt == GuestLoginPrompt.atEight) {
+        await markShown(prompt);
+      } else if (prompt == GuestLoginPrompt.finalWarning) {
+        await dismissFinalWarning();
+      }
+
+      if (choseLogin == true) {
+        final navContext = (activeContext.mounted
+            ? activeContext
+            : Get.context);
+        if (navContext != null) {
+          getIt<AuthCoordinator>().navigateToLogin(navContext);
+        }
+      }
+    } finally {
+      _promptInFlight = false;
     }
   }
 
