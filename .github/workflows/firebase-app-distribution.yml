@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ qltc ]
   pull_request:
-    branches: [ main ]
+    branches: [ qltc ]
   workflow_dispatch:
     inputs:
       flavor:
@@ -67,7 +67,7 @@ jobs:
 
   # 3. Android Deployment: Runs on push to main or workflow_dispatch.
   android-distribute:
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/qltc')
     needs: quality-check
     runs-on: ubuntu-latest
     steps:
@@ -109,7 +109,7 @@ jobs:
 
   # 4. iOS Deployment: Runs on push to main or workflow_dispatch.
   ios-distribute:
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/qltc')
     needs: quality-check
     runs-on: macos-latest
     steps:
