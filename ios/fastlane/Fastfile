@@ -96,7 +96,7 @@ platform :ios do
 
     # 3. Prepare Flutter artifacts
     # Prepares the ios/ folder and compiled Dart code
-    sh("flutter config --no-enable-swift-package-manager && cd ../.. && flutter build ios --release --flavor #{flavor} --no-codesign --no-tree-shake-icons")
+    sh("flutter config --no-enable-swift-package-manager && cd ../.. && flutter pub get && cd ios && bundle exec pod install && cd .. && flutter build ios --release --flavor #{flavor} --no-codesign --no-tree-shake-icons")
 
     # 4. Build App (Gym)
     build_app(
