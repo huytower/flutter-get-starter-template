@@ -96,7 +96,7 @@ platform :ios do
 
     # 3. Prepare Flutter artifacts
     # Prepares the ios/ folder and compiled Dart code
-    sh("cd ../.. && flutter build ios --release --no-codesign --no-tree-shake-icons")
+    sh("cd ../.. && flutter build ios --release --no-codesign --no-tree-shake-icons --no-swift-package-manager")
 
     # 4. Build App (Gym)
     build_app(
