@@ -96,11 +96,11 @@ platform :ios do
 
     # 3. Prepare Flutter artifacts
     # Prepares the ios/ folder and compiled Dart code
-    sh("cd ../.. && flutter build ios --release --flavor #{flavor} --no-codesign --no-tree-shake-icons")
+    sh("cd ../.. && flutter build ios --release --no-codesign --no-tree-shake-icons")
 
     # 4. Build App (Gym)
     build_app(
-      scheme: flavor,
+      scheme: "Runner",
       workspace: "Runner.xcworkspace",
       include_bitcode: false,
       export_method: "app-store",

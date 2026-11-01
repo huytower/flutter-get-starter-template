@@ -90,8 +90,10 @@ jobs:
           ruby-dir: 'android'
       
       - name: Prep Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-          printf "%s" "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/keystore.jks
+          python3 -c "import base64, os; open('android/app/keystore.jks', 'wb').write(base64.b64decode(os.environ['KEYSTORE_BASE64']))"
           cat > android/key.properties << EOF
           storePassword=${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword=${{ secrets.KEY_PASSWORD }}
