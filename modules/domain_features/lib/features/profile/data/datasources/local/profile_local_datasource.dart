@@ -114,15 +114,15 @@ class ProfileLocalDataSource {
     );
   }
 
+  bool _hasRefinedGps = false;
   Future<void>? _refineCurrencyFuture;
 
   Future<void> _refineCurrencyFromGps() {
-    if (_refineCurrencyFuture != null) {
-      return _refineCurrencyFuture!;
+    if (_hasRefinedGps) {
+      return _refineCurrencyFuture ?? Future.value();
     }
-    _refineCurrencyFuture = _doRefineCurrencyFromGps().whenComplete(() {
-      _refineCurrencyFuture = null;
-    });
+    _hasRefinedGps = true;
+    _refineCurrencyFuture = _doRefineCurrencyFromGps();
     return _refineCurrencyFuture!;
   }
 
