@@ -104,10 +104,11 @@ platform :ios do
       workspace: "Runner.xcworkspace",
       include_bitcode: false,
       export_method: "app-store",
-      xcargs: "-allowProvisioningUpdates",
+      xcargs: "CODE_SIGNING_ALLOWED=NO",
       export_options: {
         method: "app-store",
-        signingStyle: "automatic"
+        signingStyle: "automatic",
+        teamID: "46KM345YTJ"
       },
       output_directory: "../../build/ios/ipa",
       output_name: "Runner.ipa"

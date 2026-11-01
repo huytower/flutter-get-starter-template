@@ -40,6 +40,18 @@ Configure these secrets in `Settings > Secrets and variables > Actions`:
 | `GOOGLE_API_KEY_ANDROID`       | Google API Key for Android services           |
 | `GOOGLE_API_KEY_IOS`           | Google API Key for iOS services               |
 
+`KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_PASSWORD`, and `KEY_ALIAS` must come
+from the same keystore. The workflow validates the decoded file with `keytool`
+before compiling, so a password from a different keystore fails immediately.
+Create the secret from the original binary file without wrapping or re-encoding
+it first:
+
+```bash
+base64 -i android/app/release.jks | tr -d '\n'
+```
+
+Use the matching alias and passwords when creating `key.properties` locally.
+
 ### 2. iOS & TestFlight (App Store Connect API)
 
 | Secret Name                     | Description              | How to Get                       |

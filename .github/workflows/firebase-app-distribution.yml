@@ -97,7 +97,22 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
-          python3 -c "import base64, os; s = os.environ['KEYSTORE_BASE64'].strip().replace('\r','').replace('\n','').replace(' ',''); s += '=' * (-len(s) % 4); open('android/app/keystore.jks', 'wb').write(base64.b64decode(s))"
+          python3 - << 'EOF'
+          import base64
+          import os
+
+          encoded = os.environ['KEYSTORE_BASE64'].strip()
+          encoded = ''.join(encoded.split())
+          encoded += '=' * (-len(encoded) % 4)
+          try:
+              keystore = base64.b64decode(encoded, validate=True)
+          except Exception as error:
+              raise SystemExit(f"KEYSTORE_BASE64 is not valid base64: {error}")
+          if not keystore:
+              raise SystemExit("KEYSTORE_BASE64 decoded to an empty file")
+          with open('android/app/keystore.jks', 'wb') as keystore_file:
+              keystore_file.write(keystore)
+          EOF
           python3 - << 'EOF'
           import os
           lines = [
@@ -109,6 +124,16 @@ jobs:
           with open('android/key.properties', 'w') as f:
               f.write('\n'.join(lines) + '\n')
           EOF
+          keytool -list \
+            -keystore android/app/keystore.jks \
+            -alias "$KEY_ALIAS" \
+            -storepass "$STORE_PASSWORD" \
+            -keypass "$KEY_PASSWORD" \
+            >/dev/null || {
+              echo "The Android keystore was decoded, but KEYSTORE_PASSWORD, KEY_PASSWORD, or KEY_ALIAS does not match it." >&2
+              echo "Replace the four Android signing secrets from one original keystore/key entry." >&2
+              exit 1
+            }
 
       - name: Generate Code
         run: melos run gen
