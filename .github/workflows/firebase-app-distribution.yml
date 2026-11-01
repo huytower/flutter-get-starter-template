@@ -92,14 +92,12 @@ jobs:
       - name: Prep Keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
           python3 -c "import base64, os; s = os.environ['KEYSTORE_BASE64'].strip().replace('\r','').replace('\n','').replace(' ',''); s += '=' * (-len(s) % 4); open('android/app/keystore.jks', 'wb').write(base64.b64decode(s))"
-          cat > android/key.properties << EOF
-          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword=${{ secrets.KEY_PASSWORD }}
-          keyAlias=${{ secrets.KEY_ALIAS }}
-          storeFile=keystore.jks
-          EOF
+          python3 -c "import os; open('android/key.properties', 'w').write(f\"storePassword={os.environ['STORE_PASSWORD']}\nkeyPassword={os.environ['KEY_PASSWORD']}\nkeyAlias={os.environ['KEY_ALIAS']}\nstoreFile=keystore.jks\n\")"
 
       - name: Generate Code
         run: melos run gen

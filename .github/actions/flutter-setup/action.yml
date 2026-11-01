@@ -44,6 +44,10 @@ runs:
         flutter-version: ${{ inputs.flutter-version }}
         cache: true
 
+    - name: Disable Swift Package Manager
+      shell: bash
+      run: flutter config --no-enable-swift-package-manager
+
     - name: Setup Melos
       shell: bash
       run: |
