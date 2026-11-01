@@ -17,6 +17,7 @@ on:
 env:
   FLUTTER_VERSION: '3.44.3'
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+UseG1GC"'
 
 jobs:
   # 1. Quality Gate: Runs for all pushes, PRs, and workflow dispatches.

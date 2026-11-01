@@ -68,5 +68,7 @@ post_install do |installer|
      end
   end
 
-  mlkit_apple_silicon_simulator_patch(installer)
+  if respond_to?(:mlkit_apple_silicon_simulator_patch)
+    mlkit_apple_silicon_simulator_patch(installer)
+  end
 end
