@@ -98,7 +98,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
           python3 -c "import base64, os; s = os.environ['KEYSTORE_BASE64'].strip().replace('\r','').replace('\n','').replace(' ',''); s += '=' * (-len(s) % 4); open('android/app/keystore.jks', 'wb').write(base64.b64decode(s))"
-          python3 -c "import os; open('android/key.properties', 'w').write(f\"storePassword={os.environ['STORE_PASSWORD']}\nkeyPassword={os.environ['KEY_PASSWORD']}\nkeyAlias={os.environ['KEY_ALIAS']}\nstoreFile=keystore.jks\n\")"
+          python3 -c "import os; content = '\n'.join([f'storePassword={os.environ[\"STORE_PASSWORD\"]}', f'keyPassword={os.environ[\"KEY_PASSWORD\"]}', f'keyAlias={os.environ[\"KEY_ALIAS\"]}', 'storeFile=keystore.jks']); open('android/key.properties', 'w').write(content + '\n')"
 
       - name: Generate Code
         run: melos run gen

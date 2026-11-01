@@ -104,7 +104,6 @@ platform :ios do
       workspace: "Runner.xcworkspace",
       include_bitcode: false,
       export_method: "app-store",
-      api_key: api_key,
       output_directory: "../../build/ios/ipa",
       output_name: "Runner.ipa"
     )
