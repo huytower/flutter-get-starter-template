@@ -32,10 +32,11 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 # 3.7 receipt OCR) build and run on Apple Silicon iOS 26+ simulators, which
 # Google does not ship an arm64-iphonesimulator slice for. See
 # google_mlkit_commons README "Apple Silicon iOS Simulator (iOS 26+)".
-require File.expand_path(
-  '.symlinks/plugins/google_mlkit_commons/ios/scripts/apple_silicon_simulator',
+mlkit_sim_script = File.expand_path(
+  '.symlinks/plugins/google_mlkit_commons/ios/scripts/apple_silicon_simulator.rb',
   __dir__,
 )
+require mlkit_sim_script if File.exist?(mlkit_sim_script)
 
 flutter_ios_podfile_setup
 
