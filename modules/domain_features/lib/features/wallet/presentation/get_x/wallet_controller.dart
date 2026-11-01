@@ -581,11 +581,9 @@ class WalletController extends CcGetController {
             initialContributed = conv.tryGetSuccess() ?? wallet.balance;
           }
 
-          final allTimeContributed = initialContributed +
-              convertedAllIn.fold<int>(
-                0,
-                (sum, amt) => sum + amt,
-              );
+          final allTimeContributed =
+              initialContributed +
+              convertedAllIn.fold<int>(0, (sum, amt) => sum + amt);
 
           final allTimeReturned = convertedAllReturn.fold<int>(
             0,
