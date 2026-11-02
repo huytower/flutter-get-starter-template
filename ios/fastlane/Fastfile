@@ -128,8 +128,7 @@ platform :ios do
     get_provisioning_profile(
       app_identifier: "vn.sosachxin.finance",
       api_key: api_key,
-      readonly: true,
-      ignore_profiles_with_missing_certs: false
+      readonly: true
     )
 
     # 4. Build App (Gym)
