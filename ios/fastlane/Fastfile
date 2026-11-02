@@ -98,6 +98,39 @@ platform :ios do
     # Prepares the ios/ folder and compiled Dart code
     sh("flutter config --no-enable-swift-package-manager && cd ../.. && flutter pub get && cd ios && bundle exec pod install && cd .. && flutter build ios --release --flavor #{flavor} --no-codesign --no-tree-shake-icons")
 
+    # 3.1 Import Certificate if provided in environment
+    if ENV["APPLE_CERTIFICATE_BASE64"] && !ENV["APPLE_CERTIFICATE_BASE64"].empty?
+      keychain_name = "build.keychain"
+      keychain_password = "keychain_password"
+      p12_path = File.join(Dir.tmpdir, "dist_cert.p12")
+
+      require "base64"
+      File.binwrite(p12_path, Base64.decode64(ENV["APPLE_CERTIFICATE_BASE64"].strip))
+
+      create_keychain(
+        name: keychain_name,
+        password: keychain_password,
+        default_keychain: true,
+        unlock: true,
+        timeout: 3600,
+        lock_when_sleeps: false
+      )
+
+      import_certificate(
+        certificate_path: p12_path,
+        certificate_password: ENV["APPLE_CERTIFICATE_PASSWORD"] || "",
+        keychain_name: keychain_name,
+        keychain_password: keychain_password
+      )
+    end
+
+    # 3.2 Download App Store Provisioning Profile
+    get_provisioning_profile(
+      app_identifier: "vn.sosachxin.finance",
+      api_key: api_key,
+      readonly: true
+    )
+
     # 4. Build App (Gym)
     build_app(
       scheme: flavor,
