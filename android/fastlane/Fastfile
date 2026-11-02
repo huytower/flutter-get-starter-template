@@ -31,12 +31,27 @@ platform :android do
     )
   end
 
-  desc "Build and sign the release AAB for Play Store"
-  lane :build_release do
+  desc "Build AAB and upload to Google Play Console Alpha track"
+  lane :build_release do |options|
+    flavor = options[:flavor] || "prod"
+
     # 1. Generate code (run from root directory)
     sh("cd ../.. && melos run gen")
-    
+
     # 2. Build the Flutter App Bundle
-    sh("cd ../.. && flutter build appbundle --release --flavor prod --no-tree-shake-icons")
+    sh("cd ../.. && flutter build appbundle --release --flavor #{flavor} --no-tree-shake-icons")
+
+    # 3. Upload AAB to Google Play Console
+    if ENV["FIREBASE_SERVICE_CREDENTIALS"] && !ENV["FIREBASE_SERVICE_CREDENTIALS"].empty?
+      upload_to_play_store(
+        track: "alpha",
+        package_name: "vn.sosachxin.finance",
+        aab: File.expand_path("../../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab", __dir__),
+        json_key_data: ENV["FIREBASE_SERVICE_CREDENTIALS"],
+        skip_upload_changelogs: true,
+        skip_upload_images: true,
+        skip_upload_screenshots: true
+      )
+    end
   end
 end
