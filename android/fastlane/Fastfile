@@ -10,9 +10,8 @@ platform :android do
     # Use direct Flutter command instead of melos to avoid PATH issues
     sh("cd ../.. && melos run gen")
 
-    # 2. Build the Flutter App Bundle
-    # We move up to the root to run flutter commands
-    sh("cd ../.. && flutter build appbundle --release --flavor #{flavor} --no-tree-shake-icons")
+    # 2. Build the Flutter APK
+    sh("cd ../.. && flutter build apk --release --flavor #{flavor} --no-tree-shake-icons")
 
     # 3. Upload to Firebase
     # Assumes FIREBASE_APP_ID is in your environment variables
@@ -21,8 +20,8 @@ platform :android do
       app: ENV["FIREBASE_APP_ID_ANDROID"],
       groups: ENV["FIREBASE_GROUPS"] || "testers",
       release_notes: "Built with Fastlane from CI",
-      android_artifact_type: "AAB",
-      android_artifact_path: File.expand_path("../../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab", __dir__),
+      android_artifact_type: "APK",
+      android_artifact_path: File.expand_path("../../build/app/outputs/flutter-apk/app-#{flavor}-release.apk", __dir__),
       service_credentials_file: ENV["FIREBASE_SERVICE_CREDENTIALS_PATH"]
     )
   end
