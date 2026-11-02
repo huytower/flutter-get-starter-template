@@ -149,12 +149,16 @@ class QuickEntryAliasDataset {
     'vexebus': 'c5',
     've may bay': 'c25', // Du lịch
     'vemaybay': 'c25',
-    // ===== EXPENSE — Hoá đơn tiện ích (c9, c10, c11) =====
+    // ===== EXPENSE — Hoá đơn tiện ích (c9, c10, c11, c50) =====
     'dien': 'c9',
     'tien dien': 'c9',
     'tiendien': 'c9',
     'hoa don dien': 'c9',
     'evn': 'c9',
+    'nuoc sinh hoat': 'c50',
+    'tien nuoc': 'c50',
+    'tiennuoc': 'c50',
+    'hoa don nuoc': 'c50',
     'wifi': 'c10',
     'internet': 'c10',
     'mang': 'c10',
@@ -167,7 +171,6 @@ class QuickEntryAliasDataset {
     'sim': 'c11',
     '4g': 'c11',
     'nap tien dt': 'c11',
-    'tien nuoc': 'c9',
 
     // ===== EXPENSE — Nhà ở (c12, c13, c14, c16) =====
     'thue nha': 'c12',

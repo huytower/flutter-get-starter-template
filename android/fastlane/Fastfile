@@ -16,13 +16,18 @@ platform :android do
     # 3. Upload to Firebase
     # Assumes FIREBASE_APP_ID is in your environment variables
     # You need the 'fastlane-plugin-firebase_app_distribution' plugin
+    extra_options = {}
+    extra_options[:groups] = ENV["FIREBASE_GROUPS"] if ENV["FIREBASE_GROUPS"] && !ENV["FIREBASE_GROUPS"].empty?
+    extra_options[:testers] = ENV["FIREBASE_TESTERS"] if ENV["FIREBASE_TESTERS"] && !ENV["FIREBASE_TESTERS"].empty?
+
     firebase_app_distribution(
-      app: ENV["FIREBASE_APP_ID_ANDROID"],
-      groups: ENV["FIREBASE_GROUPS"] || "testers",
-      release_notes: "Built with Fastlane from CI",
-      android_artifact_type: "APK",
-      android_artifact_path: File.expand_path("../../build/app/outputs/flutter-apk/app-#{flavor}-release.apk", __dir__),
-      service_credentials_file: ENV["FIREBASE_SERVICE_CREDENTIALS_PATH"]
+      {
+        app: ENV["FIREBASE_APP_ID_ANDROID"],
+        release_notes: "Built with Fastlane from CI",
+        android_artifact_type: "APK",
+        android_artifact_path: File.expand_path("../../build/app/outputs/flutter-apk/app-#{flavor}-release.apk", __dir__),
+        service_credentials_file: ENV["FIREBASE_SERVICE_CREDENTIALS_PATH"]
+      }.merge(extra_options)
     )
   end
 
