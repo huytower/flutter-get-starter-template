@@ -22,7 +22,7 @@ platform :android do
       groups: ENV["FIREBASE_GROUPS"] || "testers",
       release_notes: "Built with Fastlane from CI",
       android_artifact_type: "AAB",
-      android_artifact_path: "../../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab",
+      android_artifact_path: File.expand_path("../../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab", __dir__),
       service_credentials_file: ENV["FIREBASE_SERVICE_CREDENTIALS_PATH"]
     )
   end
