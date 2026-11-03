@@ -11,6 +11,7 @@ platform :android do
     sh("cd ../.. && melos run gen")
 
     build_num = [25 + (ENV["BUILD_NUMBER"] || "1").to_i, 26].max
+    ENV["BUILD_NUMBER"] = build_num.to_s
 
     # 2. Build the Flutter APK
     sh("cd ../.. && flutter build apk --release --flavor #{flavor} --build-number=#{build_num} --no-tree-shake-icons")
@@ -41,6 +42,7 @@ platform :android do
     sh("cd ../.. && melos run gen")
 
     build_num = [25 + (ENV["BUILD_NUMBER"] || "1").to_i, 26].max
+    ENV["BUILD_NUMBER"] = build_num.to_s
 
     # 2. Build the Flutter App Bundle
     sh("cd ../.. && flutter build appbundle --release --flavor #{flavor} --build-number=#{build_num} --no-tree-shake-icons")

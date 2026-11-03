@@ -33,6 +33,15 @@ fun readPubspecVersion(): Pair<String, String> {
 
 val (pubspecVersionName, pubspecVersionCode) = readPubspecVersion()
 
+val effectiveVersionCode = System.getenv("BUILD_NUMBER")?.toIntOrNull()
+    ?: (project.findProperty("flutter-version-code") as String?)?.toIntOrNull()
+    ?: (project.findProperty("flutterVersionCode") as String?)?.toIntOrNull()
+    ?: pubspecVersionCode.toInt()
+
+val effectiveVersionName = (project.findProperty("flutter-version-name") as String?)
+    ?: (project.findProperty("flutterVersionName") as String?)
+    ?: pubspecVersionName
+
 // Load keystore properties
 val keystorePropertiesFile = rootProject.file("key.properties")
 val keystoreProperties = Properties()
@@ -64,8 +73,8 @@ android {
         applicationId = "vn.sosachxin.finance"
         minSdk = 28
         targetSdk = 37
-        versionCode = pubspecVersionCode.toInt()
-        versionName = pubspecVersionName
+        versionCode = effectiveVersionCode
+        versionName = effectiveVersionName
         // Enabling multidex support.
         multiDexEnabled = true
     }

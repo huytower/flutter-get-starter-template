@@ -1,64 +1,62 @@
 # CI/CD Setup Guide (Pro Version)
 
-This guide explains how to set up the automated CI/CD pipeline for this modular Flutter project using **Melos**, *
-*Fastlane**, and **GitHub Actions**.
+This guide explains how to set up the automated CI/CD pipeline for this modular Flutter project using **Melos 8.10.0**, **Fastlane**, and **GitHub Actions**.
 
 ## Overview
 
 The CI/CD pipeline automatically:
 
-- **Validates**: Runs Linting and Tests across all modules using **Melos**.
-- **Android**: Builds AAB and distributes to **Firebase App Distribution**.
-- **iOS**: Builds IPA (Gym) and distributes to **TestFlight** (Pilot) using App Store Connect API Keys.
+- **Validates**: Runs Linting (`melos run analyze`) and Unit Tests (`melos run test`) across all 12 modules using **Melos 8.10.0**.
+- **Android**:
+  - Builds Release APK and distributes to **Firebase App Distribution** (for internal testers/QA).
+  - Builds Release AAB and uploads directly to **Google Play Console (Alpha / Closed Testing track)** via Fastlane `upload_to_play_store`.
+  - Automatically auto-increments build numbers (`25 + github.run_number`).
+- **iOS**:
+  - Fetches the latest build number from TestFlight via `latest_testflight_build_number` and auto-increments dynamically (`latest + 1`).
+  - Auto-imports the `.p12` Distribution Certificate and downloads the App Store Provisioning Profile.
+  - Builds Release IPA (Gym) with automatic signing (`signingStyle: "automatic"`, `teamID: "46KM345YTJ"`) and uploads directly to **TestFlight** (Pilot).
 
 ## Prerequisites
 
 1. **GitHub Repository** with Actions enabled.
-2. **Firebase Project** for Android testing.
-3. **Apple Developer Program** membership for TestFlight.
-4. **Melos** installed locally for management (`dart pub global activate melos`).
-5. **Submodules**: This project uses submodules (e.g., `cc_core_sdk`). Ensure they are initialized locally (
-   `git submodule update --init --recursive`).
-``````
+2. **Firebase Project** for Android testing and Firebase App Distribution.
+3. **Google Play Console Account** with Service Account access for Alpha track distribution.
+4. **Apple Developer Program Membership** with App Store Connect API Key and Distribution Certificate (`.p12`).
+5. **Melos 8.10.0** installed locally (`dart pub global activate melos ^8.10.0`).
+6. **Submodules**: This project uses submodules (e.g., `shared/cc_core_sdk`). Ensure they are initialized (`git submodule update --init --recursive`).
+
 ---
 
 ## Required GitHub Secrets
 
 Configure these secrets in `Settings > Secrets and variables > Actions`:
 
-### 1. Android Signing & Firebase
+### 1. Android Signing & Firebase / Google Play
 
-| Secret Name                    | Description                                   |
-|:-------------------------------|:----------------------------------------------|
-| `KEYSTORE_BASE64`              | Base64-encoded `.jks` file                    |
-| `KEYSTORE_PASSWORD`            | Password for the keystore                     |
-| `KEY_PASSWORD`                 | Password for the key                          |
-| `KEY_ALIAS`                    | Alias of the key in keystore                  |
-| `FIREBASE_APP_ID`              | Android App ID from Firebase                  |
-| `FIREBASE_SERVICE_CREDENTIALS` | Full Service Account JSON string for Firebase |
-| `FIREBASE_PROJECT_ID`          | Project ID (e.g., `mobile-flutter-template`)  |
-| `GOOGLE_API_KEY_ANDROID`       | Google API Key for Android services           |
-| `GOOGLE_API_KEY_IOS`           | Google API Key for iOS services               |
+| Secret Name                    | Description                                   | How to Get / Format                                    |
+|:-------------------------------|:----------------------------------------------|:-------------------------------------------------------|
+| `KEYSTORE_BASE64`              | Base64-encoded `.jks` file                    | `[Convert]::ToBase64String([IO.File]::ReadAllBytes("release.jks")) \| Set-Clipboard` |
+| `KEYSTORE_PASSWORD`            | Password for the keystore                     | e.g., `!Cc121212`                                      |
+| `KEY_PASSWORD`                 | Password for the key                          | e.g., `!Cc121212`                                      |
+| `KEY_ALIAS`                    | Alias of the key in keystore                  | e.g., `release`                                        |
+| `FIREBASE_APP_ID`              | Android App ID from Firebase                  | Firebase Console > Project Settings                   |
+| `FIREBASE_SERVICE_CREDENTIALS` | Full Service Account JSON string for GCP      | Firebase Console > Service Accounts > Generate Key     |
+| `FIREBASE_PROJECT_ID`          | Project ID (e.g., `sosachxin`)                | Firebase Console > Project Settings                   |
+| `GOOGLE_API_KEY_ANDROID`       | Google API Key for Android services           | Google Cloud Console / Firebase                       |
+| `GOOGLE_API_KEY_IOS`           | Google API Key for iOS services               | Google Cloud Console / Firebase                       |
 
-`KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_PASSWORD`, and `KEY_ALIAS` must come
-from the same keystore. The workflow validates the decoded file with `keytool`
-before compiling, so a password from a different keystore fails immediately.
-Create the secret from the original binary file without wrapping or re-encoding
-it first:
+> [!NOTE]
+> `FIREBASE_SERVICE_CREDENTIALS` is also used by Fastlane `upload_to_play_store` to upload AABs to Google Play Console (Alpha track). Ensure the Service Account email is invited to Google Play Console under **Users and permissions** with **Release to testing tracks** permissions.
 
-```bash
-base64 -i android/app/release.jks | tr -d '\n'
-```
+### 2. iOS & TestFlight (App Store Connect & Signing Certificate)
 
-Use the matching alias and passwords when creating `key.properties` locally.
-
-### 2. iOS & TestFlight (App Store Connect API)
-
-| Secret Name                     | Description              | How to Get                       |
-|:--------------------------------|:-------------------------|:---------------------------------|
-| `APP_STORE_CONNECT_KEY_ID`      | 10-char Key ID           | App Store Connect > Users > Keys |
-| `APP_STORE_CONNECT_ISSUER_ID`   | Issuer ID UUID           | App Store Connect > Users > Keys |
-| `APP_STORE_CONNECT_KEY_CONTENT` | Base64 encoded `.p8` key | `base64 AuthKey_XXX.p8`          |
+| Secret Name                     | Description                                    | How to Get / Format                                    |
+|:--------------------------------|:-----------------------------------------------|:-------------------------------------------------------|
+| `APP_STORE_CONNECT_KEY_ID`      | 10-char Key ID                                 | App Store Connect > Users > Keys                       |
+| `APP_STORE_CONNECT_ISSUER_ID`   | Issuer ID UUID                                 | App Store Connect > Users > Keys                       |
+| `APP_STORE_CONNECT_KEY_CONTENT` | Raw or Base64 encoded `.p8` key                | Original `.p8` key content                             |
+| `APPLE_CERTIFICATE_BASE64`      | Base64-encoded `.p12` Distribution Certificate | Export `.p12` from Mac Keychain > Convert to Base64    |
+| `APPLE_CERTIFICATE_PASSWORD`    | Password for the `.p12` certificate            | Password set during `.p12` export from Mac Keychain   |
 
 ---
 
@@ -66,119 +64,84 @@ Use the matching alias and passwords when creating `key.properties` locally.
 
 ### 1. Workspace Management (Melos)
 
-This project is modular and uses **Flutter Workspaces**. Melos scripts are defined in `pubspec.yaml`.
-Locally, always run:
+This project is a monorepo managed with **Melos 8.10.0**. Workspace scripts are defined in the root `pubspec.yaml` under `melos.scripts`.
+Locally, run:
 
 ```bash
+flutter pub get
 melos bootstrap
 ```
 
-This links all packages (`cc_sdk`, `message`, `data`, etc.) and runs `pub get` everywhere.
+### 2. Android Keystore & Credentials
 
-### 2. Android Keystore
-
-Generate a keystore and encode it for GitHub:
+Generate or convert your release keystore to Base64 for GitHub Secrets:
 
 ```powershell
 # Windows PowerShell
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("your-keystore.jks")) | Set-Clipboard
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("android/app/release.jks")) | Set-Clipboard
 ```
 
-Paste this into the `KEYSTORE_BASE64` secret.
+Paste the clipboard output into the `KEYSTORE_BASE64` secret.
 
-### 3. iOS Fastlane Setup
+### 3. iOS Certificates & Provisioning
 
 1. Go to [App Store Connect > Users and Access > Integrations](https://appstoreconnect.apple.com/access/api).
-2. Generate an **App Store Connect API Key** (Admin or App Manager access).
-3. Download the `.p8` file, encode it to base64, and add to GitHub Secrets.
-4. Update `ios/fastlane/Appfile` with your `team_id` and `itc_team_id`.
+2. Generate an **App Store Connect API Key** (Admin or App Manager access) and paste its content into `APP_STORE_CONNECT_KEY_CONTENT`.
+3. Open **Keychain Access** on Mac > Certificates > Export `Apple Distribution: Huy Tran Duc` as `dist_cert.p12`.
+4. Convert `dist_cert.p12` to Base64:
+   ```bash
+   # macOS Terminal
+   base64 -i dist_cert.p12 | pbcopy
+   ```
+   Or in PowerShell on Windows:
+   ```powershell
+   [Convert]::ToBase64String([IO.File]::ReadAllBytes("dist_cert.p12")) | Set-Clipboard
+   ```
+5. Paste the result into `APPLE_CERTIFICATE_BASE64` and set `APPLE_CERTIFICATE_PASSWORD`.
 
 ---
 
-## Environment & Secret Injection
+## Workflow Structure & Automation
 
-To prevent sensitive keys from leaking in public repositories, this project uses an automated injection system.
+The pipeline is defined in `.github/workflows/firebase-app-distribution.yml`.
 
-### How it works:
+### Jobs & Auto-versioning:
 
-1. **Templates**: Native config files (`google-services.json`, `GoogleService-Info.plist`) are stored as `.template`
-   files with placeholders like `{{GOOGLE_API_KEY_ANDROID}}`.
-2. **Environment Files**: `.env` files in `env/` use placeholders like `YOUR_ANDROID_KEY_HERE`.
-3. **CI Injection**: The GitHub Action (`flutter-setup`) automatically:
-    - Creates missing `.env` and native files from their templates.
-    - Uses `perl` to swap placeholders with real values from **GitHub Secrets**.
-4. **Local Development**: Run `melos run setup:firebase` to generate local config files from templates. You can then
-   manually fill in your local `.env` files (which are ignored by Git).
-
----
-
-## Workflow Structure
-
-The pipeline is defined in `.github/workflows/firebase-app-distribution.yml` and uses a composite action for speed.
-
-### Jobs:
-
-1. **Quality Check**: Runs `melos run analyze` and `melos run test`. **Must pass** for any build to start.
-2. **Android Distribute**: Triggered on push to `main` or manual dispatch. Uses Fastlane `distribute_firebase`.
-3. **iOS Distribute**: Triggered on push to `main` or manual dispatch. Uses Fastlane `beta` (Gym + Pilot).
-4. **PR Smoke Test**: Runs on Pull Requests to ensure the app compiles (`uat` flavor).
-
-### Manual Deployment
-
-1. Go to **Actions** tab.
-2. Select **CI/CD Pipeline**.
-3. Click **Run workflow**, choose your branch and **Flavor** (uat, prod).
+1. **Quality Check**: Runs `melos run analyze` and `melos run test`. Must pass clean before deployments start.
+2. **Android Distribute**:
+   - Auto-calculates build number: `25 + github.run_number`.
+   - Builds Release APK and uploads to **Firebase App Distribution**.
+   - Builds Release AAB and uploads directly to **Google Play Console (Alpha track)** via `upload_to_play_store`.
+3. **iOS Distribute**:
+   - Queries App Store Connect for the latest TestFlight build number and auto-increments (`latest + 1`).
+   - Imports `.p12` certificate into a temporary Keychain (`build.keychain`).
+   - Downloads App Store Provisioning Profile (`get_provisioning_profile`).
+   - Archives and exports IPA (Gym) with `signingStyle: "automatic"` and `teamID: "46KM345YTJ"`.
+   - Uploads IPA directly to **TestFlight** (Pilot).
 
 ---
 
 ## Troubleshooting
 
-### Submodule Issues
+### Android Build & Memory
 
-- **Pulling Latest SDK**: To get the latest changes from the remote SDK repository and merge them into your local submodule:
-  ```bash
-  git submodule update --remote --merge
-  ```
-- **Missing/Deleted Files**: If files inside `shared/cc_core_sdk` appear as "deleted" or are missing after a pull, run:
-  ```bash
-  git submodule update --init --recursive --force
-  ```
-- **"Embedded Repository" Warning**: If `git status` shows individual files inside a submodule, the boundary is broken. Fix it with:
-  ```bash
-  git rm -r --cached shared/cc_core_sdk
-  git add shared/cc_core_sdk
-  ```
-- **Out of Sync CI**: If the CI fails with "not our ref", ensure all local commits in `cc_core_sdk` have been pushed to its remote BEFORE pushing the main project.
+- **Java Heap Space Error**: `org.gradle.jvmargs=-Xmx4096m` and `kotlin.daemon.jvmargs=-Xmx2048m` are configured in `android/gradle.properties`. In CI, `GRADLE_OPTS` is passed automatically.
+- **`25.0.2` Local JDK Error**: If local Android Studio shows `java.lang.IllegalArgumentException: 25.0.2`, set **Gradle JDK** in Android Studio Settings to **JDK 21** (`corretto-21`), or set system `JAVA_HOME=C:\Users\Admin\.jdks\corretto-21.0.12.1` (without trailing `\bin`).
 
-### Melos Issues
+### iOS TestFlight & Signing
 
-- If scripts aren't found, check the `melos:` section in the root `pubspec.yaml`.
-- To run code gen everywhere: `melos run gen`.
+- **Duplicate Build Version Error**: Solved automatically by `latest_testflight_build_number` in `Fastfile` which auto-increments the build version past any previously uploaded version on TestFlight.
+- **Export Compliance**: `<key>ITSAppUsesNonExemptEncryption</key><false/>` is set in `ios/Runner/Info.plist` to automatically bypass export compliance prompts on App Store Connect.
 
-### Fastlane Errors
-
-- **Android**: Ensure `FIREBASE_SERVICE_CREDENTIALS` is the full JSON string. The CI converts this to a file
-  automatically.
-- **iOS**: If upload fails, check if the `APP_STORE_CONNECT_KEY_CONTENT` base64 string includes the "BEGIN/END"
-  headers (it should).
-
-### Local Testing
-
-You can run the exact same logic as the CI locally:
+### Local Command Testing
 
 ```bash
-# Android
-cd android && bundle exec fastlane distribute_firebase flavor:uat
+# Android - Firebase App Distribution
+cd android && bundle exec fastlane distribute_firebase flavor:prod
 
-# iOS
-cd ios && bundle exec fastlane beta flavor:uat
+# Android - Google Play Console Alpha Track
+cd android && bundle exec fastlane build_release flavor:prod
+
+# iOS - TestFlight
+cd ios && bundle exec fastlane beta flavor:prod
 ```
-
----
-
-## Maintenance
-
-- **Flutter Version**: Update `FLUTTER_VERSION` in the `.yml` file.
-- **Tools**: The setup logic is shared in `.github/actions/flutter-setup/action.yml`.
-- **Linting**: Static analysis rules are managed in the root `analysis_options.yaml`. Generated files are excluded by
-  default to avoid CI noise.
