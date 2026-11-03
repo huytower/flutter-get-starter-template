@@ -68,7 +68,7 @@ platform :ios do
       0
     end
 
-    next_build_number = [latest_build + 1, (ENV["BUILD_NUMBER"] || 1).to_i].max
+    next_build_number = latest_build > 0 ? latest_build + 1 : (ENV["BUILD_NUMBER"] || 1).to_i
 
     # 3. Prepare Flutter artifacts
     # Prepares the ios/ folder and compiled Dart code
