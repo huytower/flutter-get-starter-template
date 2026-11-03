@@ -10,8 +10,10 @@ platform :android do
     # Use direct Flutter command instead of melos to avoid PATH issues
     sh("cd ../.. && melos run gen")
 
+    build_num = [25 + (ENV["BUILD_NUMBER"] || "1").to_i, 26].max
+
     # 2. Build the Flutter APK
-    sh("cd ../.. && flutter build apk --release --flavor #{flavor} --no-tree-shake-icons")
+    sh("cd ../.. && flutter build apk --release --flavor #{flavor} --build-number=#{build_num} --no-tree-shake-icons")
 
     # 3. Upload to Firebase
     # Assumes FIREBASE_APP_ID is in your environment variables
@@ -38,8 +40,10 @@ platform :android do
     # 1. Generate code (run from root directory)
     sh("cd ../.. && melos run gen")
 
+    build_num = [25 + (ENV["BUILD_NUMBER"] || "1").to_i, 26].max
+
     # 2. Build the Flutter App Bundle
-    sh("cd ../.. && flutter build appbundle --release --flavor #{flavor} --no-tree-shake-icons")
+    sh("cd ../.. && flutter build appbundle --release --flavor #{flavor} --build-number=#{build_num} --no-tree-shake-icons")
 
     # 3. Upload AAB to Google Play Console
     if ENV["FIREBASE_SERVICE_CREDENTIALS"] && !ENV["FIREBASE_SERVICE_CREDENTIALS"].empty?

@@ -58,9 +58,21 @@ platform :ios do
       key_content: pem_content
     )
 
+    # 3. Fetch latest build number from TestFlight to increment automatically
+    latest_build = begin
+      latest_testflight_build_number(
+        api_key: api_key,
+        app_identifier: "vn.sosachxin.finance"
+      ) || 0
+    rescue => e
+      0
+    end
+
+    next_build_number = [latest_build + 1, (ENV["BUILD_NUMBER"] || 1).to_i].max
+
     # 3. Prepare Flutter artifacts
     # Prepares the ios/ folder and compiled Dart code
-    sh("flutter config --no-enable-swift-package-manager && cd ../.. && flutter pub get && cd ios && bundle exec pod install && cd .. && flutter build ios --release --flavor #{flavor} --no-codesign --no-tree-shake-icons")
+    sh("flutter config --no-enable-swift-package-manager && cd ../.. && flutter pub get && cd ios && bundle exec pod install && cd .. && flutter build ios --release --flavor #{flavor} --build-number=#{next_build_number} --no-codesign --no-tree-shake-icons")
 
     # 3.1 Import Certificate if provided in environment
     if ENV["APPLE_CERTIFICATE_BASE64"] && !ENV["APPLE_CERTIFICATE_BASE64"].empty?
