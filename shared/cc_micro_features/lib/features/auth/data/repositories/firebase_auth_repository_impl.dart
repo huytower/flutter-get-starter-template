@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:cc_micro_features/features/auth/domain/phone_auth_status.dart';
 import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -80,13 +81,21 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
 
   @override
   Future<Result<CcUserEntity, CcFailure>> signInWithApple() async {
+    'signInWithApple started'.Log('FirebaseAuthRepositoryImpl');
     final credResult = await _getAppleCredential();
 
     return credResult.when(
       (credential) async {
+        'Apple credential acquired successfully, signing in with Firebase credential'
+            .Log('FirebaseAuthRepositoryImpl');
         return _signInWithCredential(credential);
       },
-      (failure) => Error(failure),
+      (failure) {
+        'signInWithApple failed at credential stage: ${failure.message}'.Log(
+          'FirebaseAuthRepositoryImpl',
+        );
+        return Error(failure);
+      },
     );
   }
 
@@ -95,6 +104,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   Future<Result<firebase_auth.AuthCredential, CcFailure>>
   _getAppleCredential() async {
     try {
+      'Getting Apple ID credential...'.Log('FirebaseAuthRepositoryImpl');
       final rawNonce = _generateNonce();
       final nonce = _sha256ofString(rawNonce);
 
@@ -107,8 +117,13 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       );
 
       if (appleCredential.identityToken == null) {
+        'Apple identityToken is null'.Log('FirebaseAuthRepositoryImpl');
         return const Error(UnknownFailure('Apple identity token missing'));
       }
+
+      'Apple ID credential received successfully'.Log(
+        'FirebaseAuthRepositoryImpl',
+      );
 
       final credential = firebase_auth.OAuthProvider(
         'apple.com',
@@ -116,13 +131,18 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
 
       return Success(credential);
     } on SignInWithAppleAuthorizationException catch (e) {
+      'SignInWithAppleAuthorizationException: code=${e.code}, message=${e.message}'
+          .Log('FirebaseAuthRepositoryImpl');
       if (e.code == AuthorizationErrorCode.canceled) {
         return const Error(UnauthorizedFailure('Authentication cancelled'));
       }
-      return Error(ServerFailure(e.toString()));
-    } catch (_) {
-      return const Error(
-        UnknownFailure('An error occurred during Apple authentication'),
+      return Error(ServerFailure('Apple Sign-In failed: ${e.message}'));
+    } catch (e, stack) {
+      'Unexpected error in _getAppleCredential: $e\n$stack'.Log(
+        'FirebaseAuthRepositoryImpl',
+      );
+      return Error(
+        UnknownFailure('An error occurred during Apple authentication: $e'),
       );
     }
   }
@@ -248,24 +268,18 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   Future<Result<CcUserEntity, CcFailure>> linkWithGoogle() async {
     final credResult = await _getGoogleCredential();
 
-    return credResult.when(
-      (credential) async {
-        return _linkWithCredential(credential);
-      },
-      (failure) => Error(failure),
-    );
+    return credResult.when((credential) async {
+      return _linkWithCredential(credential);
+    }, (failure) => Error(failure));
   }
 
   @override
   Future<Result<CcUserEntity, CcFailure>> linkWithApple() async {
     final credResult = await _getAppleCredential();
 
-    return credResult.when(
-      (credential) async {
-        return _linkWithCredential(credential);
-      },
-      (failure) => Error(failure),
-    );
+    return credResult.when((credential) async {
+      return _linkWithCredential(credential);
+    }, (failure) => Error(failure));
   }
 
   /// Shared helper to handle the Google Sign-In "dance" and return a Firebase

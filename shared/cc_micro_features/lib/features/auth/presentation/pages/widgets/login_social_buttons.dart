@@ -45,7 +45,7 @@ class LoginSocialButtons extends StatelessWidget {
                   context.read<LoginBloc>().add(
                     isLinking
                         ? const LinkWithAppleStarted()
-                        : const LinkWithAppleStarted(),
+                        : const LoginWithAppleStarted(),
                   );
                 },
               ),
