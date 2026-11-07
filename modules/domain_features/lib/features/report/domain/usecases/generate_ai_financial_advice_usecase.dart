@@ -114,9 +114,13 @@ class GenerateAiFinancialAdviceUseCase {
         responseSchema: _buildResponseSchema(language),
       );
       if (raw == null || raw.trim().isEmpty) {
+        final lastErr = CcGeminiHelper.lastError;
+        final errDetail = lastErr != null
+            ? ' | Underlying Error: $lastErr'
+            : '';
         Catcher2.reportCheckedError(
           Exception(
-            'Gemini AI Financial Advice returned null or empty response',
+            'Gemini AI Financial Advice returned null or empty response$errDetail',
           ),
           StackTrace.current,
         );
