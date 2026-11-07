@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_micro_features/features/auth/domain/phone_auth_status.dart';
 import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
@@ -88,7 +89,18 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       (credential) async {
         'Apple credential acquired successfully, signing in with Firebase credential'
             .Log('FirebaseAuthRepositoryImpl');
-        return _signInWithCredential(credential);
+        final signInResult = await _signInWithCredential(credential);
+        if (signInResult.isError()) {
+          final failure = signInResult.tryGetError()!;
+          'signInWithCredential error: ${failure.message}'.Log(
+            'FirebaseAuthRepositoryImpl',
+          );
+          Catcher2.reportCheckedError(
+            Exception('Apple Sign-In Firebase Auth error: ${failure.message}'),
+            StackTrace.current,
+          );
+        }
+        return signInResult;
       },
       (failure) {
         'signInWithApple failed at credential stage: ${failure.message}'.Log(
@@ -118,6 +130,8 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
 
       if (appleCredential.identityToken == null) {
         'Apple identityToken is null'.Log('FirebaseAuthRepositoryImpl');
+        final err = Exception('Apple identity token missing');
+        Catcher2.reportCheckedError(err, StackTrace.current);
         return const Error(UnknownFailure('Apple identity token missing'));
       }
 
@@ -130,17 +144,19 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       ).credential(idToken: appleCredential.identityToken, rawNonce: rawNonce);
 
       return Success(credential);
-    } on SignInWithAppleAuthorizationException catch (e) {
+    } on SignInWithAppleAuthorizationException catch (e, stack) {
       'SignInWithAppleAuthorizationException: code=${e.code}, message=${e.message}'
           .Log('FirebaseAuthRepositoryImpl');
       if (e.code == AuthorizationErrorCode.canceled) {
         return const Error(UnauthorizedFailure('Authentication cancelled'));
       }
+      Catcher2.reportCheckedError(e, stack);
       return Error(ServerFailure('Apple Sign-In failed: ${e.message}'));
     } catch (e, stack) {
       'Unexpected error in _getAppleCredential: $e\n$stack'.Log(
         'FirebaseAuthRepositoryImpl',
       );
+      Catcher2.reportCheckedError(e, stack);
       return Error(
         UnknownFailure('An error occurred during Apple authentication: $e'),
       );

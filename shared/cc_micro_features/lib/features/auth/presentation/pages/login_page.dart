@@ -45,10 +45,15 @@ class _LoginViewState extends State<LoginView> {
           getIt<AuthCoordinator>().navigateToDashboard(context);
         } else if (state is LoginLoading) {
           CcDialogHelper.showLoadingBottomSheet(context);
-        } else {
+        } else if (state is LoginError) {
           // Dismiss the loading bottom sheet if it's on top
           Navigator.of(context, rootNavigator: true).popUntil(
             (route) => route.isFirst || route is! ModalBottomSheetRoute,
+          );
+          CcDialogHelper.showMessageBottomSheet(
+            context: context,
+            content: state.message,
+            isOnlyConfirm: true,
           );
         }
       },
