@@ -150,6 +150,14 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       if (e.code == AuthorizationErrorCode.canceled) {
         return const Error(UnauthorizedFailure('Authentication cancelled'));
       }
+      if (e.code == AuthorizationErrorCode.unknown) {
+        Catcher2.reportCheckedError(e, stack);
+        return const Error(
+          UnauthorizedFailure(
+            'Không thể xác thực Apple ID. Vui lòng kiểm tra tài khoản Apple ID trong Cài đặt iPhone của bạn và thử lại.',
+          ),
+        );
+      }
       Catcher2.reportCheckedError(e, stack);
       return Error(ServerFailure('Apple Sign-In failed: ${e.message}'));
     } catch (e, stack) {

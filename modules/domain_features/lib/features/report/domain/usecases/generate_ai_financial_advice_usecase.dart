@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -112,27 +113,49 @@ class GenerateAiFinancialAdviceUseCase {
       },
     );
 
-    final raw = await CcGeminiHelper.generateText(
-      prompt: prompt,
-      responseSchema: _buildResponseSchema(language),
-    );
-    '[AI_ADVICE] 📥 Raw response from Gemini: $raw'.Log(
-      'GenerateAiFinancialAdviceUseCase',
-    );
-    if (raw == null || raw.trim().isEmpty) {
-      '[AI_ADVICE] ❌ Gemini returned null or empty string'.Log(
+    try {
+      final raw = await CcGeminiHelper.generateText(
+        prompt: prompt,
+        responseSchema: _buildResponseSchema(language),
+      );
+      '[AI_ADVICE] 📥 Raw response from Gemini: $raw'.Log(
         'GenerateAiFinancialAdviceUseCase',
       );
+      if (raw == null || raw.trim().isEmpty) {
+        '[AI_ADVICE] ❌ Gemini returned null or empty string'.Log(
+          'GenerateAiFinancialAdviceUseCase',
+        );
+        Catcher2.reportCheckedError(
+          Exception(
+            'Gemini AI Financial Advice returned null or empty response',
+          ),
+          StackTrace.current,
+        );
+        return null;
+      }
+
+      final sections = _parseSections(raw);
+      '[AI_ADVICE] 📊 Parsed ${sections.length} advice sections'.Log(
+        'GenerateAiFinancialAdviceUseCase',
+      );
+      if (sections.isEmpty) {
+        Catcher2.reportCheckedError(
+          Exception(
+            'Gemini AI Financial Advice parsing resulted in empty sections. Raw: $raw',
+          ),
+          StackTrace.current,
+        );
+        return null;
+      }
+
+      return AiAdviceEntity(sections: sections, generatedAt: DateTime.now());
+    } catch (e, stack) {
+      '[AI_ADVICE] 💥 Exception during AI advice generation: $e'.Log(
+        'GenerateAiFinancialAdviceUseCase',
+      );
+      Catcher2.reportCheckedError(e, stack);
       return null;
     }
-
-    final sections = _parseSections(raw);
-    '[AI_ADVICE] 📊 Parsed ${sections.length} advice sections'.Log(
-      'GenerateAiFinancialAdviceUseCase',
-    );
-    if (sections.isEmpty) return null;
-
-    return AiAdviceEntity(sections: sections, generatedAt: DateTime.now());
   }
 
   Schema _buildResponseSchema(String language) {
@@ -195,10 +218,11 @@ class GenerateAiFinancialAdviceUseCase {
         );
       }
       return sections;
-    } catch (e) {
+    } catch (e, stack) {
       'Failed to parse AI advice response: $e'.Log(
         'GenerateAiFinancialAdviceUseCase',
       );
+      Catcher2.reportCheckedError(e, stack);
       return const [];
     }
   }
