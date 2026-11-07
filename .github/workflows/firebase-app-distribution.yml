@@ -175,6 +175,7 @@ jobs:
           firebase-project-id: ${{ secrets.FIREBASE_PROJECT_ID }}
           slack-crash-webhook-url: ${{ secrets.SLACK_CRASH_WEBHOOK_URL }}
           slack-feedback-webhook-url: ${{ secrets.SLACK_FEEDBACK_WEBHOOK_URL }}
+          gemini-model-name: ${{ secrets.GEMINI_MODEL_NAME || vars.GEMINI_MODEL_NAME }}
           ruby-dir: 'ios'
 
       - name: Generate Code

@@ -122,9 +122,6 @@ class GenerateAiFinancialAdviceUseCase {
         'GenerateAiFinancialAdviceUseCase',
       );
       if (raw == null || raw.trim().isEmpty) {
-        '[AI_ADVICE] ❌ Gemini returned null or empty string'.Log(
-          'GenerateAiFinancialAdviceUseCase',
-        );
         Catcher2.reportCheckedError(
           Exception(
             'Gemini AI Financial Advice returned null or empty response',
@@ -135,9 +132,6 @@ class GenerateAiFinancialAdviceUseCase {
       }
 
       final sections = _parseSections(raw);
-      '[AI_ADVICE] 📊 Parsed ${sections.length} advice sections'.Log(
-        'GenerateAiFinancialAdviceUseCase',
-      );
       if (sections.isEmpty) {
         Catcher2.reportCheckedError(
           Exception(
@@ -150,9 +144,6 @@ class GenerateAiFinancialAdviceUseCase {
 
       return AiAdviceEntity(sections: sections, generatedAt: DateTime.now());
     } catch (e, stack) {
-      '[AI_ADVICE] 💥 Exception during AI advice generation: $e'.Log(
-        'GenerateAiFinancialAdviceUseCase',
-      );
       Catcher2.reportCheckedError(e, stack);
       return null;
     }
@@ -219,9 +210,6 @@ class GenerateAiFinancialAdviceUseCase {
       }
       return sections;
     } catch (e, stack) {
-      'Failed to parse AI advice response: $e'.Log(
-        'GenerateAiFinancialAdviceUseCase',
-      );
       Catcher2.reportCheckedError(e, stack);
       return const [];
     }

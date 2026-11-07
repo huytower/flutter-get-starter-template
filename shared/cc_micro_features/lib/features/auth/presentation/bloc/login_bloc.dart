@@ -119,7 +119,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     LoginWithAppleStarted event,
     Emitter<LoginState> emit,
   ) async {
-    emit(const LoginLoading());
     'Logging in with Apple'.Log('LoginBloc');
     final result = await _loginWithAppleUseCase();
     'LoginWithAppleUseCase result: ${result.isSuccess() ? "Success" : "Failure"}'
@@ -134,7 +133,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       },
       (failure) {
         'LoginWithApple Failure: ${failure.message}'.Log('LoginBloc');
-        emit(LoginError(failure.message));
+        if (failure.message != 'Authentication cancelled') {
+          emit(LoginError(failure.message));
+        }
       },
     );
   }
@@ -143,7 +144,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     LinkWithAppleStarted event,
     Emitter<LoginState> emit,
   ) async {
-    emit(const LoginLoading());
     'Linking Apple account'.Log('LoginBloc');
     final result = await _linkWithAppleUseCaseInstance();
     'LinkWithAppleUseCase result: ${result.isSuccess() ? "Success" : "Failure"}'
@@ -158,7 +158,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       },
       (failure) {
         'LinkWithApple Failure: ${failure.message}'.Log('LoginBloc');
-        emit(LoginError(failure.message));
+        if (failure.message != 'Authentication cancelled') {
+          emit(LoginError(failure.message));
+        }
       },
     );
   }
