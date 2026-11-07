@@ -7,7 +7,7 @@
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.787010067332-5cnkd35mdrfa2hrnhh1qma9therr7ed6</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>787010067332-tsutc793k7k6j3m7hjq1gk2hekcddmdh.apps.googleusercontent.com</string>
+	<string>787010067332-1dr4c7rpuu4as30jc38q5jb0hna0tdoj.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>{{GOOGLE_API_KEY_IOS}}</string>
 	<key>GCM_SENDER_ID</key>
