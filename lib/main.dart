@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:catcher_2/catcher_2.dart';
@@ -46,6 +47,7 @@ void main() async {
     // 3. Setup error handling immediately after core systems are ready
     // Non-critical, non-blocking: upload any pending crash log from a previous session.
     uploadPendingCrashLogsOnStartup();
+    unawaited(CcAppCheckHelper.initialize());
 
     // 4. UI Launch
     _runApplication();
