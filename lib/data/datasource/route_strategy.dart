@@ -64,7 +64,9 @@ class AutoRouteStrategy extends RoutingStrategy {
         theme: createLightTheme(),
         darkTheme: createDarkTheme(),
         themeMode: themeProvider.themeMode,
-        routerConfig: _appRouter.config(),
+        routerConfig: _appRouter.config(
+          navigatorObservers: () => [CcAnalyticsHelper.observer],
+        ),
         locale: CcLocalization.getCurrentLocale(context),
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,

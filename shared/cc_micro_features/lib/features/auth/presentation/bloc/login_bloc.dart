@@ -82,6 +82,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     result.when(
       (user) {
         'LoginWithGoogle Success: ${user.id}'.Log('LoginBloc');
+        CcAnalyticsHelper.logLogin(method: 'google');
+        CcAnalyticsHelper.setUserId(user.id);
         emit(LoginSuccess(user));
       },
       (failure) {
@@ -106,6 +108,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     result.when(
       (user) {
         'LinkWithGoogle Success: ${user.id}'.Log('LoginBloc');
+        CcAnalyticsHelper.logLogin(method: 'google');
+        CcAnalyticsHelper.setUserId(user.id);
         emit(LoginSuccess(user));
       },
       (failure) {
@@ -129,6 +133,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     result.when(
       (user) {
         'LoginWithApple Success: ${user.id}'.Log('LoginBloc');
+        CcAnalyticsHelper.logLogin(method: 'apple');
+        CcAnalyticsHelper.setUserId(user.id);
         emit(LoginSuccess(user));
       },
       (failure) {

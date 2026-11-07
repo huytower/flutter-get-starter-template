@@ -52,12 +52,7 @@ class GenerateAiFinancialAdviceUseCase {
     required CurrencyConversionService conversionService,
     String? languageCode,
   }) async {
-    '[AI_ADVICE] 🚀 GenerateAiFinancialAdviceUseCase called | targetCurrency=$targetCurrency | languageCode=$languageCode'
-        .Log('GenerateAiFinancialAdviceUseCase');
     if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
-      '[AI_ADVICE] 🚫 Gemini is disabled in preferences'.Log(
-        'GenerateAiFinancialAdviceUseCase',
-      );
       return null;
     }
     final results = await Future.wait([
@@ -117,9 +112,6 @@ class GenerateAiFinancialAdviceUseCase {
       final raw = await CcGeminiHelper.generateText(
         prompt: prompt,
         responseSchema: _buildResponseSchema(language),
-      );
-      '[AI_ADVICE] 📥 Raw response from Gemini: $raw'.Log(
-        'GenerateAiFinancialAdviceUseCase',
       );
       if (raw == null || raw.trim().isEmpty) {
         Catcher2.reportCheckedError(

@@ -1,20 +1,44 @@
 {
   "project_info": {
-    "project_number": "525600752173",
+    "project_number": "787010067332",
     "project_id": "{{FIREBASE_PROJECT_ID}}",
     "storage_bucket": "{{FIREBASE_PROJECT_ID}}.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:525600752173:android:6569207724e76bbddfeea4",
+        "mobilesdk_app_id": "1:787010067332:android:7248810de5887080d2dbd1",
         "android_client_info": {
           "package_name": "vn.sosachxin.finance"
         }
       },
       "oauth_client": [
         {
-          "client_id": "525600752173-maktnkrk89hovv8k6ejknab2ntuivll6.apps.googleusercontent.com",
+          "client_id": "787010067332-1dr4c7rpuu4as30jc38q5jb0hna0tdoj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.sosachxin.finance",
+            "certificate_hash": "7673b3e86becc7c949dee6628199491976718882"
+          }
+        },
+        {
+          "client_id": "787010067332-bg55uql58btb584ba78p3fvhalbkjg5o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.sosachxin.finance",
+            "certificate_hash": "7abb61acbb15b024859fe269f7db3dec58de6f84"
+          }
+        },
+        {
+          "client_id": "787010067332-tsutc793k7k6j3m7hjq1gk2hekcddmdh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.sosachxin.finance",
+            "certificate_hash": "2a71634712763252391efaca296f72a8a763e3ec"
+          }
+        },
+        {
+          "client_id": "787010067332-8fvhu7bcn0562c5epi1mern211h8d2td.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,86 +51,15 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "525600752173-maktnkrk89hovv8k6ejknab2ntuivll6.apps.googleusercontent.com",
+              "client_id": "787010067332-8fvhu7bcn0562c5epi1mern211h8d2td.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "525600752173-68tckhdq99mt25bcpn2p29igjgmcb8jq.apps.googleusercontent.com",
+              "client_id": "787010067332-5cnkd35mdrfa2hrnhh1qma9therr7ed6.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "vn.sosachxin.finance"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:525600752173:android:ff7edaabb98e7939dfeea4",
-        "android_client_info": {
-          "package_name": "mobile.template.free"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "525600752173-maktnkrk89hovv8k6ejknab2ntuivll6.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "{{GOOGLE_API_KEY_ANDROID}}"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "525600752173-maktnkrk89hovv8k6ejknab2ntuivll6.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "525600752173-68tckhdq99mt25bcpn2p29igjgmcb8jq.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "vn.sosachxin.finance"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:525600752173:android:a7426aa18e8d132cdfeea4",
-        "android_client_info": {
-          "package_name": "vn.sosachxin.finance.uat"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "525600752173-maktnkrk89hovv8k6ejknab2ntuivll6.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "{{GOOGLE_API_KEY_ANDROID}}"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "525600752173-maktnkrk89hovv8k6ejknab2ntuivll6.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "525600752173-68tckhdq99mt25bcpn2p29igjgmcb8jq.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "vn.sosachxin.finance"
+                "bundle_id": "vn.sosachxin.finance",
+                "app_store_id": "6807356840"
               }
             }
           ]
