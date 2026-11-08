@@ -116,7 +116,17 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   Future<Result<firebase_auth.AuthCredential, CcFailure>>
   _getAppleCredential() async {
     try {
-      'Getting Apple ID credential...'.Log('FirebaseAuthRepositoryImpl');
+      final isAvailable = await SignInWithApple.isAvailable();
+      if (!isAvailable) {
+        final err = Exception(
+          '[AppleSignInTrace] Step 1: SignInWithApple.isAvailable() returned FALSE on this device',
+        );
+        Catcher2.reportCheckedError(err, StackTrace.current);
+        return const Error(
+          UnauthorizedFailure('Apple Sign-In is not supported on this device'),
+        );
+      }
+
       final rawNonce = _generateNonce();
       final nonce = _sha256ofString(rawNonce);
 
@@ -129,15 +139,12 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       );
 
       if (appleCredential.identityToken == null) {
-        'Apple identityToken is null'.Log('FirebaseAuthRepositoryImpl');
-        final err = Exception('Apple identity token missing');
+        final err = Exception(
+          '[AppleSignInTrace] Step 2: Apple identityToken is NULL in response',
+        );
         Catcher2.reportCheckedError(err, StackTrace.current);
         return const Error(UnknownFailure('Apple identity token missing'));
       }
-
-      'Apple ID credential received successfully'.Log(
-        'FirebaseAuthRepositoryImpl',
-      );
 
       final credential = firebase_auth.OAuthProvider(
         'apple.com',
@@ -145,26 +152,24 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
 
       return Success(credential);
     } on SignInWithAppleAuthorizationException catch (e, stack) {
-      'SignInWithAppleAuthorizationException: code=${e.code}, message=${e.message}'
-          .Log('FirebaseAuthRepositoryImpl');
       if (e.code == AuthorizationErrorCode.canceled) {
         return const Error(UnauthorizedFailure('Authentication cancelled'));
       }
+      final traceErr = Exception(
+        '[AppleSignInTrace] Authorization Failed | Code: ${e.code} | Message: ${e.message}',
+      );
+      Catcher2.reportCheckedError(traceErr, stack);
       if (e.code == AuthorizationErrorCode.unknown) {
-        Catcher2.reportCheckedError(e, stack);
         return const Error(
           UnauthorizedFailure(
             'Không thể xác thực Apple ID. Vui lòng kiểm tra tài khoản Apple ID trong Cài đặt iPhone của bạn và thử lại.',
           ),
         );
       }
-      Catcher2.reportCheckedError(e, stack);
       return Error(ServerFailure('Apple Sign-In failed: ${e.message}'));
     } catch (e, stack) {
-      'Unexpected error in _getAppleCredential: $e\n$stack'.Log(
-        'FirebaseAuthRepositoryImpl',
-      );
-      Catcher2.reportCheckedError(e, stack);
+      final traceErr = Exception('[AppleSignInTrace] Unexpected Error: $e');
+      Catcher2.reportCheckedError(traceErr, stack);
       return Error(
         UnknownFailure('An error occurred during Apple authentication: $e'),
       );
