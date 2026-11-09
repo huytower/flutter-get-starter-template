@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import 'quick_entry_mixin.dart';
 
@@ -11,6 +12,8 @@ mixin QuickCameraEntryMixin on QuickEntryMixin {
   /// source-picker sheet (not after) so the lock covers that whole round trip.
   bool beginQuickEntryImage() {
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) {
+      '[AI_PARSING] [GEMINI] ⛔ Quick entry image blocked | VIP/Level requirement not met'
+          .Log('QuickCameraEntryMixin');
       return false;
     }
     if (isParsingQuickEntry.value) return false;
@@ -34,16 +37,26 @@ mixin QuickCameraEntryMixin on QuickEntryMixin {
     final (isCurrentGeneration, resetParsingIfCurrent) =
         trackQuickEntryGeneration();
 
-    '[AI_PARSING] 📸 Image picker started | fromCamera=$fromCamera'.Log(
-      'QuickCameraEntryMixin',
-    );
+    final prefs = getIt<AiFallbackPreferenceDataSource>();
+    final isGeminiEnabled = await prefs.isGeminiEnabled();
+    if (!isGeminiEnabled) {
+      '[AI_PARSING] [GEMINI] ⛔ Gemini AI disabled/offline | hiding camera button and aborting'
+          .Log('QuickCameraEntryMixin');
+      resetParsingIfCurrent();
+      quickEntryErrorKey.value = CcLocaleKeys.report_ai_advice_gemini_disabled;
+      return;
+    }
+
+    '[AI_PARSING] [GEMINI] 📸 Image picker started for Gemini AI | fromCamera=$fromCamera'
+        .Log('QuickCameraEntryMixin');
     final pickResult = await CcReceiptScanHelper.pickReceiptImage(
       fromCamera: fromCamera,
     );
     if (!isCurrentGeneration()) return;
     final picked = pickResult.image;
     if (picked == null) {
-      '[AI_PARSING] ❌ No image picked'.Log('QuickCameraEntryMixin');
+      '[AI_PARSING] [GEMINI] ❌ Image pick cancelled or failed | permissionDenied=${pickResult.permissionDenied}'
+          .Log('QuickCameraEntryMixin');
       resetParsingIfCurrent();
       if (pickResult.permissionDenied) {
         quickEntryErrorKey.value =

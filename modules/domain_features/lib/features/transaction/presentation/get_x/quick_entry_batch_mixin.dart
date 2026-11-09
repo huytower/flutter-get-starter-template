@@ -66,9 +66,8 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
       return;
     }
 
-    '[AI_PARSING] ☁️ Escalating ${images.length} images to Gemini...'.Log(
-      'QuickEntryBatchMixin',
-    );
+    '[AI_PARSING] [GEMINI] ☁️ Escalating ${images.length} images to Gemini AI...'
+        .Log('QuickEntryBatchMixin');
     final cloud = await runSmartEntry(
       input: SmartEntryImagesInput([
         for (final image in images)
@@ -81,13 +80,20 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     if (!isCurrentGeneration()) return;
 
     if (cloud.errorKey != null) {
+      '[AI_PARSING] [GEMINI] ❌ Gemini AI batch parsing failed | errorKey=${cloud.errorKey}'
+          .Log('QuickEntryBatchMixin');
       quickEntryErrorKey.value = cloud.errorKey;
       return;
     }
     if (cloud.rows.isEmpty) {
+      '[AI_PARSING] [GEMINI] ⚠️ Gemini AI batch parsing returned 0 rows'.Log(
+        'QuickEntryBatchMixin',
+      );
       quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
       return;
     }
+    '[AI_PARSING] [GEMINI] ✅ Gemini AI batch parsing succeeded | rowsCount=${cloud.rows.length} rows=${cloud.rows.map((r) => r.toJson()).toList()}'
+        .Log('QuickEntryBatchMixin');
     if (context.mounted) await presentQuickEntryPreview(context, cloud.rows);
   }
 

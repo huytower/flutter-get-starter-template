@@ -707,16 +707,26 @@ mixin QuickEntryMixin on TransactionFormController
     final (isCurrentGeneration, resetParsingIfCurrent) =
         trackQuickEntryGeneration();
 
-    '[AI_PARSING] 📸 Image picker started | fromCamera=$fromCamera'.Log(
-      'QuickEntryMixin',
-    );
+    final prefs = getIt<AiFallbackPreferenceDataSource>();
+    final isGeminiEnabled = await prefs.isGeminiEnabled();
+    if (!isGeminiEnabled) {
+      '[AI_PARSING] [GEMINI] ⛔ Gemini AI disabled/offline | hiding camera button and aborting'
+          .Log('QuickEntryMixin');
+      resetParsingIfCurrent();
+      quickEntryErrorKey.value = CcLocaleKeys.report_ai_advice_gemini_disabled;
+      return;
+    }
+
+    '[AI_PARSING] [GEMINI] 📸 Image picker started for Gemini AI | fromCamera=$fromCamera'
+        .Log('QuickEntryMixin');
     final pickResult = await CcReceiptScanHelper.pickReceiptImage(
       fromCamera: fromCamera,
     );
     if (!isCurrentGeneration()) return;
     final picked = pickResult.image;
     if (picked == null) {
-      '[AI_PARSING] ❌ No image picked'.Log('QuickEntryMixin');
+      '[AI_PARSING] [GEMINI] ❌ Image pick cancelled or failed | permissionDenied=${pickResult.permissionDenied}'
+          .Log('QuickEntryMixin');
       resetParsingIfCurrent();
       // A denied permission gets explicit feedback; a plain cancel stays silent.
       if (pickResult.permissionDenied) {
@@ -742,72 +752,40 @@ mixin QuickEntryMixin on TransactionFormController
         trackQuickEntryGeneration();
     final languageCode = el.EasyLocalization.of(context)?.locale.languageCode;
 
-    '[AI_PARSING] 🔍 Running OCR...'.Log('QuickEntryMixin');
-    final ocrText = await CcReceiptScanHelper.recognizeText(picked.path);
-    if (!isCurrentGeneration()) return;
-    '[AI_PARSING] 📝 OCR completed | textLength=${ocrText.length}'.Log(
-      'QuickEntryMixin',
-    );
-
-    final parseUseCase = getIt<ParseQuickEntryUseCase>();
-    final local = await parseUseCase.parseLocally(
-      ocrText,
-      categoryType: quickEntryCategoryType,
-      groupIds: quickEntryCategoryGroupIds,
-    );
-    if (!isCurrentGeneration()) return;
-    '[AI_PARSING] 📍 OCR-based local fallback ready | result=${local.toJson()}'
-        .Log('QuickEntryMixin');
-
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
-    final cloudAllowed =
-        await prefs.isGeminiEnabled() && await prefs.isUnderDailyLimit();
-    if (!isCurrentGeneration()) return;
-    if (!cloudAllowed && _isAmountPlausible(local.amount)) {
-      '[AI_PARSING] ✅ OCR parse found a plausible amount | cloud unavailable, using local result'
-          .Log('QuickEntryMixin');
+    if (!context.mounted) {
       resetParsingIfCurrent();
-      quickEntrySuggestion.value = local;
       return;
     }
 
-    if (!context.mounted) return;
-
-    '[AI_PARSING] ☁️ Escalating image to Gemini...'.Log('QuickEntryMixin');
+    '[AI_PARSING] [GEMINI] ☁️ Direct image sending to Gemini AI parsing (No OCR) | bytes=${picked.bytes.length} mimeType=${picked.mimeType} lang=$languageCode'
+        .Log('QuickEntryMixin');
     final cloud = await runSmartEntry(
       input: SmartEntryImagesInput([
         (bytes: picked.bytes, mimeType: picked.mimeType),
       ]),
-      local: local,
+      local: const ParsedTransactionEntity(),
       languageCode: languageCode,
     );
     resetParsingIfCurrent();
     if (!isCurrentGeneration()) return;
 
     if (cloud.errorKey != null) {
+      '[AI_PARSING] [GEMINI] ❌ Gemini AI parsing failed | errorKey=${cloud.errorKey}'
+          .Log('QuickEntryMixin');
       quickEntryErrorKey.value = cloud.errorKey;
       return;
     }
     if (cloud.rows.isNotEmpty) {
+      '[AI_PARSING] [GEMINI] ✅ Gemini AI parsing succeeded | rowsCount=${cloud.rows.length} rows=${cloud.rows.map((r) => r.toJson()).toList()}'
+          .Log('QuickEntryMixin');
       if (context.mounted) await presentQuickEntryPreview(context, cloud.rows);
       return;
     }
 
-    final suggestion = local;
-
-    '[AI_PARSING] ↩️ Cloud returned nothing, using local OCR result | result=${suggestion.toJson()}'
-        .Log('QuickEntryMixin');
-
-    if (suggestion.isEmpty) {
-      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
-      return;
-    }
-
-    quickEntrySuggestion.value = suggestion;
-    if (_blockAutoSaveWhenNoCategory('image')) return;
-    if (!isQuickEntryCategoryMissing && context.mounted) {
-      startAutoSaveTimer(context);
-    }
+    '[AI_PARSING] [GEMINI] ⚠️ Gemini AI parsing returned 0 rows'.Log(
+      'QuickEntryMixin',
+    );
+    quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
   }
 
   Future<void> toggleVoiceQuickEntry(BuildContext context) async {

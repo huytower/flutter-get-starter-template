@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:message/cc_locale_keys.dart';
 
 import '../../../../core/constant/currency_constants.dart';
+import '../../../../core/di/di.dart';
+import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import 'voice_ripple_animation_widget.dart';
 
 /// Phase 3.6 "NLP Simple" quick entry — a free-text field ("50k cafe") with
@@ -247,15 +249,24 @@ class QuickEntrySection extends StatelessWidget {
 
     final buttonSize = context.respDim(30);
 
-    return CcIconButton.bouncing(
-      icon: Icon(
-        Icons.camera_alt_outlined,
-        color: context.ccColorScheme.onSurface.withOpacity(0.45),
-        size: context.respDim(20),
-      ),
-      onTap: onScanTap,
-      width: buttonSize,
-      height: buttonSize,
+    return FutureBuilder<bool>(
+      future: getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled(),
+      builder: (context, snapshot) {
+        final isGeminiEnabled = snapshot.data ?? true;
+        if (!isGeminiEnabled) {
+          return const SizedBox.shrink();
+        }
+        return CcIconButton.bouncing(
+          icon: Icon(
+            Icons.camera_alt_outlined,
+            color: context.ccColorScheme.onSurface.withOpacity(0.45),
+            size: context.respDim(20),
+          ),
+          onTap: onScanTap,
+          width: buttonSize,
+          height: buttonSize,
+        );
+      },
     );
   }
 }

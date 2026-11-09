@@ -2,10 +2,8 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../../core/di/di.dart';
-import '../../../../core/helper/ai_fallback_preference_datasource.dart';
+import '../../domain/entities/parsed_transaction_entity.dart';
 import '../../domain/entities/smart_entry_input.dart';
-import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import 'quick_entry_mixin.dart';
 
 /// Sub-mixin handling receipt image resolution and OCR parsing for quick transaction entry.
@@ -18,74 +16,40 @@ mixin QuickGalleryEntryMixin on QuickEntryMixin {
         trackQuickEntryGeneration();
     final languageCode = el.EasyLocalization.of(context)?.locale.languageCode;
 
-    '[AI_PARSING] 🔍 Running OCR...'.Log('QuickGalleryEntryMixin');
-    final ocrText = await CcReceiptScanHelper.recognizeText(picked.path);
-    if (!isCurrentGeneration()) return;
-    '[AI_PARSING] 📝 OCR completed | textLength=${ocrText.length}'.Log(
-      'QuickGalleryEntryMixin',
-    );
-
-    final parseUseCase = getIt<ParseQuickEntryUseCase>();
-    final local = await parseUseCase.parseLocally(
-      ocrText,
-      categoryType: quickEntryCategoryType,
-      groupIds: quickEntryCategoryGroupIds,
-    );
-    if (!isCurrentGeneration()) return;
-    '[AI_PARSING] 📍 OCR-based local fallback ready | result=${local.toJson()}'
-        .Log('QuickGalleryEntryMixin');
-
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
-    final cloudAllowed =
-        await prefs.isGeminiEnabled() && await prefs.isUnderDailyLimit();
-    if (!isCurrentGeneration()) return;
-    if (!cloudAllowed && isAmountPlausible(local.amount)) {
-      '[AI_PARSING] ✅ OCR parse found a plausible amount | cloud unavailable, using local result'
-          .Log('QuickGalleryEntryMixin');
+    if (!context.mounted) {
       resetParsingIfCurrent();
-      quickEntrySuggestion.value = local;
       return;
     }
 
-    if (!context.mounted) return;
-
-    '[AI_PARSING] ☁️ Escalating image to Gemini...'.Log(
-      'QuickGalleryEntryMixin',
-    );
+    '[AI_PARSING] [GEMINI] ☁️ Direct image sending to Gemini AI parsing (No OCR) | bytes=${picked.bytes.length} mimeType=${picked.mimeType} lang=$languageCode'
+        .Log('QuickGalleryEntryMixin');
     final cloud = await runSmartEntry(
       input: SmartEntryImagesInput([
         (bytes: picked.bytes, mimeType: picked.mimeType),
       ]),
-      local: local,
+      local: const ParsedTransactionEntity(),
       languageCode: languageCode,
     );
     resetParsingIfCurrent();
     if (!isCurrentGeneration()) return;
 
     if (cloud.errorKey != null) {
+      '[AI_PARSING] [GEMINI] ❌ Gemini AI parsing failed | errorKey=${cloud.errorKey}'
+          .Log('QuickGalleryEntryMixin');
       quickEntryErrorKey.value = cloud.errorKey;
       return;
     }
     if (cloud.rows.isNotEmpty) {
+      '[AI_PARSING] [GEMINI] ✅ Gemini AI parsing succeeded | rowsCount=${cloud.rows.length} rows=${cloud.rows.map((r) => r.toJson()).toList()}'
+          .Log('QuickGalleryEntryMixin');
       if (context.mounted) await presentQuickEntryPreview(context, cloud.rows);
       return;
     }
 
-    final suggestion = local;
-
-    '[AI_PARSING] ↩️ Cloud returned nothing, using local OCR result | result=${suggestion.toJson()}'
-        .Log('QuickGalleryEntryMixin');
-
-    if (suggestion.isEmpty) {
-      quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
-      return;
-    }
-
-    quickEntrySuggestion.value = suggestion;
-    if (blockAutoSaveWhenNoCategory('image')) return;
-    if (!isQuickEntryCategoryMissing && context.mounted) {
-      startAutoSaveTimer(context);
-    }
+    '[AI_PARSING] [GEMINI] ⚠️ Gemini AI parsing returned 0 rows'.Log(
+      'QuickGalleryEntryMixin',
+    );
+    quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
   }
 
   /// Sanity check for parsed amounts to avoid misidentifying phone numbers
