@@ -61,7 +61,7 @@ class _ReportView extends CcGetView<ReportController> {
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
       mobile: 0.26,
-      tablet: 0.24,
+      tablet: 0.26,
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
@@ -119,7 +119,7 @@ class _ReportView extends CcGetView<ReportController> {
     final headerHeightFactor = CcResponsiveHelper.getValue(
       context: context,
       mobile: 0.29,
-      tablet: 0.27,
+      tablet: 0.29,
     );
     final headerHeight = screenHeight * headerHeightFactor;
 
