@@ -24,7 +24,7 @@ class WalletLocalDataSource {
 
   WalletHiveModel _defaultCashWallet({String? currencyCode}) => WalletHiveModel(
     id: cashWalletId,
-    name: el.tr(CcLocaleKeys.wallet_cash),
+    name: '', // Empty name - will be localized at display time
     balance: 0,
     iconCode: Icons.payments.codePoint,
     type: WalletType.cash,
@@ -46,7 +46,7 @@ class WalletLocalDataSource {
         cashWalletId: _defaultCashWallet(currencyCode: primaryCurrency),
         bankWalletId: WalletHiveModel(
           id: bankWalletId,
-          name: el.tr(CcLocaleKeys.wallet_bank),
+          name: '', // Empty name - will be localized at display time
           balance: 0,
           iconCode: Icons.account_balance.codePoint,
           type: WalletType.bank,
@@ -77,6 +77,31 @@ class WalletLocalDataSource {
                 m.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
           ),
     };
+    // Migration: fix default wallets that have hardcoded English names
+    for (final m in box.values) {
+      if (m.id == cashWalletId && (m.name == 'Cash' || m.name == 'Tiền mặt')) {
+        updates[cashWalletId] = WalletHiveModel(
+          id: m.id,
+          name: '', // Empty name - will be localized at display time
+          balance: m.balance,
+          iconCode: m.iconCode,
+          type: m.type,
+          createdAt: m.createdAt,
+          currencyCode: m.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
+        );
+      }
+      if (m.id == bankWalletId && (m.name == 'Bank' || m.name == 'Ngân hàng')) {
+        updates[bankWalletId] = WalletHiveModel(
+          id: m.id,
+          name: '', // Empty name - will be localized at display time
+          balance: m.balance,
+          iconCode: m.iconCode,
+          type: m.type,
+          createdAt: m.createdAt,
+          currencyCode: m.currencyCode ?? CurrencyConstants.defaultCurrencyCode,
+        );
+      }
+    }
     if (!box.values.any((m) => m.type == WalletType.cash)) {
       updates[cashWalletId] = _defaultCashWallet();
     }

@@ -251,17 +251,18 @@ class WalletController extends CcGetController {
       if (a.type == WalletType.cash && b.type != WalletType.cash) return -1;
       if (b.type == WalletType.cash && a.type != WalletType.cash) return 1;
 
-      final defaultBankName = el.tr(CcLocaleKeys.wallet_bank);
+      // Check for default bank wallet by ID instead of name
+      const defaultBankId = 'wallet_bank';
       if (a.type == WalletType.bank &&
-          a.name == defaultBankName &&
+          a.id == defaultBankId &&
           b.type != WalletType.cash) {
-        if (b.type == WalletType.bank && b.name != defaultBankName) return -1;
+        if (b.type == WalletType.bank && b.id != defaultBankId) return -1;
         return -1;
       }
       if (b.type == WalletType.bank &&
-          b.name == defaultBankName &&
+          b.id == defaultBankId &&
           a.type != WalletType.cash) {
-        if (a.type == WalletType.bank && a.name != defaultBankName) return 1;
+        if (a.type == WalletType.bank && a.id != defaultBankId) return 1;
         return 1;
       }
 
@@ -354,8 +355,8 @@ class WalletController extends CcGetController {
   bool canDeleteWallet(WalletEntity wallet) {
     if (wallet.type == WalletType.cash) return false;
     if (wallet.type == WalletType.bank) {
-      final defaultBankName = el.tr(CcLocaleKeys.wallet_bank);
-      if (wallet.name == defaultBankName) return false;
+      const defaultBankId = 'wallet_bank';
+      if (wallet.id == defaultBankId) return false;
     }
     return true;
   }

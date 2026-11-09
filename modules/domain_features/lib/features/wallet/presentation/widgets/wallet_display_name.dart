@@ -7,19 +7,14 @@ import '../../domain/entities/wallet_entity.dart';
 
 extension WalletDisplayName on WalletEntity {
   String displayName(BuildContext context) {
-    if (name.isNotEmpty &&
-        name != 'Tiền mặt' &&
-        name != 'Ngân hàng' &&
-        name != el.tr(CcLocaleKeys.wallet_cash) &&
-        name != el.tr(CcLocaleKeys.wallet_bank)) {
-      return name;
-    }
+    // For default wallets (cash/bank) with empty name or legacy names, use localized strings
     if (type == WalletType.cash) {
       return el.tr(CcLocaleKeys.wallet_cash);
     }
     if (type == WalletType.bank) {
       return el.tr(CcLocaleKeys.wallet_bank);
     }
+    // For other wallets, use the name (including for investment wallets with categoryNameKey)
     return BudgetNameHelper.getDisplayName(
       name: name,
       categoryNameKey: categoryNameKey,

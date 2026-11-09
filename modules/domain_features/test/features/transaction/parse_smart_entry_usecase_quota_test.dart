@@ -61,7 +61,7 @@ void main() {
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
-    prefs = AiFallbackPreferenceDataSource();
+    prefs = AiFallbackPreferenceDataSource()..enforceDailyLimit = true;
     await getIt.reset();
     getIt.registerSingleton<AiFallbackPreferenceDataSource>(prefs);
     getIt.registerSingleton<WalletRepository>(_StubWalletRepository());

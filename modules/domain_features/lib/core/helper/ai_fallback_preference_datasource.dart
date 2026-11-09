@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,6 +14,11 @@ class AiFallbackPreferenceDataSource {
 
   /// Default daily cap on cloud-LLM fallback calls (3 calls/day).
   static const int dailyCallLimit = 3;
+
+  /// Whether to enforce the daily limit.
+  /// Defaults to [!kDebugMode] (bypassed in debug builds, enforced in release).
+  @visibleForTesting
+  bool enforceDailyLimit = !kDebugMode;
 
   Future<bool> isGeminiEnabled() async {
     final prefs = await SharedPreferences.getInstance();
@@ -38,6 +44,7 @@ class AiFallbackPreferenceDataSource {
   }
 
   Future<bool> isUnderDailyLimit() async {
+    if (!enforceDailyLimit) return true;
     return await getTodayFallbackCount() < dailyCallLimit;
   }
 
@@ -62,6 +69,7 @@ class AiFallbackPreferenceDataSource {
   /// slip through over the cap. Returns false, count untouched, once the
   /// cap is reached for today.
   Future<bool> tryConsumeDailyCall() async {
+    if (!enforceDailyLimit) return true;
     final previous = _lock;
     final completer = Completer<void>();
     _lock = completer.future;
