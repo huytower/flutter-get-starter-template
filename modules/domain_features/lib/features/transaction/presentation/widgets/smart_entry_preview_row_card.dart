@@ -14,10 +14,12 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
     super.key,
     required this.state,
     required this.row,
+    this.index,
   });
 
   final SmartEntryPreviewState state;
   final SmartEntryPreviewRow row;
+  final int? index;
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +32,11 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (config.showType || state.rows.length > 1) _buildHeader(context),
+        const CcSpaceSM(),
         SmartEntryAmountField(
           amount: row.amount,
           currencyCode: config.currencyCode,
           hasError: row.amount <= 0,
-          onChanged: (value) =>
-              state.edit(row.id, (r) => r.copyWith(amount: value)),
         ),
         if (config.showCategory) ...[
           const CcSpaceSM(),
@@ -56,10 +57,20 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final rowNumber = (index ?? state.rows.indexOf(row)) + 1;
+    final showBadge = state.rows.length > 1;
+
     return Padding(
       padding: EdgeInsets.only(bottom: context.respDim(4)),
       child: Row(
         children: [
+          if (showBadge) ...[
+            CcBadgeCounter(
+              count: rowNumber,
+              backgroundColor: context.ccColorScheme.error,
+            ),
+            const CcSpaceSM(),
+          ],
           if (state.config.showType)
             Expanded(
               child: SmartEntryTypeToggle(
@@ -88,13 +99,7 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CcText(
-          el.tr(CcLocaleKeys.transaction_category),
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        CcFormLabel(text: el.tr(CcLocaleKeys.transaction_category)),
         const CcSpaceXS(),
         HorizontalFadeScrollView(
           height: context.respDim(80),
@@ -139,13 +144,7 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CcText(
-          el.tr(labelKey),
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        CcFormLabel(text: el.tr(labelKey)),
         const CcSpaceXS(),
         WalletStripCard(
           wallets: state.wallets,
@@ -167,13 +166,7 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
 
     return Row(
       children: [
-        CcText(
-          el.tr(CcLocaleKeys.transaction_time),
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: context.ccColorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        CcFormLabel(text: el.tr(CcLocaleKeys.transaction_time)),
         const CcSpaceSM(),
         if (isCustomDate) ...[
           _buildDatePill(

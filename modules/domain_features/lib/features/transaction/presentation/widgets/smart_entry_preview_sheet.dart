@@ -124,6 +124,7 @@ class SmartEntryPreviewSheet extends StatelessWidget {
             key: ValueKey(row.id),
             state: state,
             row: row,
+            index: index,
           ),
         );
       },
@@ -153,8 +154,8 @@ class SmartEntryPreviewSheet extends StatelessWidget {
                 color: scheme.error,
               ),
             ),
-            const CcSpaceSM(),
           ],
+          const CcSpaceSM(),
           _buildConfirmButton(context),
         ],
       ),

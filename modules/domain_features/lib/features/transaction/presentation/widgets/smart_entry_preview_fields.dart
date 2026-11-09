@@ -78,13 +78,13 @@ class SmartEntryTypeToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisSize: MainAxisSize.max,
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         for (final type in types) ...[
-          _buildOption(context, type),
-          if (type != types.last) const CcSpaceMD(),
+          Flexible(child: _buildOption(context, type)),
+          if (type != types.last) const CcSpaceSM(),
         ],
       ],
     );
@@ -100,7 +100,7 @@ class SmartEntryTypeToggle extends StatelessWidget {
       onTap: () => onChanged(type),
       borderRadius: context.brXl,
       child: Container(
-        width: context.respDim(120),
+        constraints: BoxConstraints(maxWidth: context.respDim(120)),
         padding: EdgeInsets.symmetric(
           horizontal: context.respDim(12),
           vertical: context.respDim(6),

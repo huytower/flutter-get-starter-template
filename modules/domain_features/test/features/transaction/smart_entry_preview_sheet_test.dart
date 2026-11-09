@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart'
-    show CcCancelBtn, CcLocaleKeys;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' show CcCancelBtn, CcLocaleKeys;
 import 'package:domain_features/features/category/domain/entities/category_entity.dart';
 import 'package:domain_features/features/transaction/domain/entities/parsed_transaction_entity.dart';
 import 'package:domain_features/features/transaction/presentation/get_x/smart_entry_preview_state.dart';
+import 'package:domain_features/features/transaction/presentation/widgets/smart_entry_amount_field.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/smart_entry_preview_row_card.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/smart_entry_preview_sheet.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/transaction_submit_button.dart';
@@ -194,21 +194,21 @@ void main() {
     );
   });
 
-  testWidgets('typing in the amount field edits that row', (tester) async {
+  testWidgets('displays the parsed amount in a read-only text view', (
+    tester,
+  ) async {
     final state = _state([_valid]);
     await _open(tester, state);
 
-    await tester.enterText(find.byType(TextField).first, '2500');
-    await tester.pump();
-
-    expect(state.rows.single.amount, 2500);
+    expect(find.byType(SmartEntryAmountField), findsOneWidget);
+    expect(state.rows.single.amount, 50000);
   });
 
   testWidgets('typing in the note field edits that row', (tester) async {
     final state = _state([_valid]);
     await _open(tester, state);
 
-    await tester.enterText(find.byType(TextField).last, 'Bun cha');
+    await tester.enterText(find.byType(TextField).first, 'Bun cha');
     await tester.pump();
 
     expect(state.rows.single.note, 'Bun cha');
@@ -233,13 +233,6 @@ void main() {
     await _tapConfirm(tester);
     expect(calls, 0);
     expect(find.byType(SmartEntryPreviewSheet), findsOneWidget);
-
-    await tester.enterText(find.byType(TextField).first, '2500');
-    await tester.pump();
-    await _tapConfirm(tester);
-
-    expect(calls, 1);
-    expect(sent!.saved, 1);
   });
 
   testWidgets('confirming hands over the edited rows and closes the sheet', (
@@ -254,12 +247,12 @@ void main() {
         return SmartEntryCommitResult(saved: rows.length);
       },
     );
-    await tester.enterText(find.byType(TextField).first, '70000');
+    await tester.enterText(find.byType(TextField).first, 'Updated Note');
     await tester.pump();
 
     await _tapConfirm(tester);
 
-    expect(received!.map((e) => e.amount), [70000, 50000]);
+    expect(received!.first.note, 'Updated Note');
     expect(find.byType(SmartEntryPreviewSheet), findsNothing);
   });
 
