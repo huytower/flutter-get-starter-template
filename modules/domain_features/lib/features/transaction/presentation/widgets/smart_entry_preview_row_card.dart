@@ -5,6 +5,7 @@ import 'package:theme/data/data_source/color/prj_color.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../category/domain/entities/category_entity.dart';
+import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/smart_entry_preview_state.dart';
 import 'smart_entry_amount_field.dart';
 import 'smart_entry_preview_fields.dart';
@@ -22,49 +23,36 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final isValid = state.isValid(row);
     final config = state.config;
     final isIncome = row.type == CategoryType.income;
     final activeColor = isIncome ? PrjColors.success : scheme.error;
 
-    return Container(
-      padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
-      decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: context.brLg,
-        border: Border.all(
-          color: isValid
-              ? scheme.outlineVariant.withValues(alpha: 0.4)
-              : scheme.error.withValues(alpha: 0.6),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (config.showType || state.rows.length > 1) _buildHeader(context),
+        SmartEntryAmountField(
+          amount: row.amount,
+          currencyCode: config.currencyCode,
+          hasError: row.amount <= 0,
+          onChanged: (value) =>
+              state.edit(row.id, (r) => r.copyWith(amount: value)),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (config.showType || state.rows.length > 1) _buildHeader(context),
-          SmartEntryAmountField(
-            amount: row.amount,
-            currencyCode: config.currencyCode,
-            hasError: row.amount <= 0,
-            onChanged: (value) =>
-                state.edit(row.id, (r) => r.copyWith(amount: value)),
-          ),
-          if (config.showCategory) ...[
-            const CcSpaceSM(),
-            _buildCategorySelectionSection(context, activeColor),
-          ],
+        if (config.showCategory) ...[
           const CcSpaceSM(),
-          _buildWalletSelectionSection(context, activeColor),
-          const CcSpaceSM(),
-          _buildDateSelectionSection(context, activeColor),
-          const CcSpaceSM(),
-          SmartEntryNoteField(
-            note: row.note,
-            onChanged: (value) =>
-                state.edit(row.id, (r) => r.copyWith(note: value)),
-          ),
+          _buildCategorySelectionSection(context, activeColor),
         ],
-      ),
+        const CcSpaceSM(),
+        _buildWalletSelectionSection(context, activeColor),
+        const CcSpaceSM(),
+        _buildDateSelectionSection(context, activeColor),
+        const CcSpaceSM(),
+        SmartEntryNoteField(
+          note: row.note,
+          onChanged: (value) =>
+              state.edit(row.id, (r) => r.copyWith(note: value)),
+        ),
+      ],
     );
   }
 
@@ -159,32 +147,13 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
           ),
         ),
         const CcSpaceXS(),
-        HorizontalFadeScrollView(
-          height: context.respDim(60),
-          builder: (scrollController) => ListView.separated(
-            scrollDirection: Axis.horizontal,
-            controller: scrollController,
-            padding: EdgeInsets.zero,
-            itemCount: state.wallets.length,
-            separatorBuilder: (_, _) => const CcSpaceSM(),
-            itemBuilder: (context, index) {
-              final wallet = state.wallets[index];
-              final isSelected = row.walletId == wallet.id;
-
-              return CcWalletItem(
-                key: ValueKey('smart_preview_wallet_${row.id}_${wallet.id}'),
-                name: wallet.name,
-                iconCode: wallet.iconCode,
-                isSelected: isSelected,
-                activeColor: activeColor,
-                defaultBgColor: context.verticalGradient(activeColor),
-                onTap: () {
-                  state.edit(row.id, (r) => r.copyWith(walletId: wallet.id));
-                },
-                balanceText: '',
-              );
-            },
-          ),
+        WalletStripCard(
+          wallets: state.wallets,
+          selectedWalletId: row.walletId,
+          activeColor: activeColor,
+          defaultBgColor: context.verticalGradient(activeColor),
+          onWalletSelected: (id) =>
+              state.edit(row.id, (r) => r.copyWith(walletId: id)),
         ),
       ],
     );
@@ -209,9 +178,8 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
         Expanded(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            reverse: true,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 if (isCustomDate) ...[
                   _buildDatePill(

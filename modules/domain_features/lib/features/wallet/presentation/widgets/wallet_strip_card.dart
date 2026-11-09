@@ -41,7 +41,9 @@ class WalletStripCard extends StatelessWidget {
     // Standard singleton pattern for this project's shared controllers.
     final controller = Get.isRegistered<WalletController>()
         ? Get.find<WalletController>()
-        : Get.put(getIt<WalletController>());
+        : (getIt.isRegistered<WalletController>()
+              ? Get.put(getIt<WalletController>())
+              : null);
 
     if (wallets is RxList<WalletEntity>) {
       return Obx(() {
@@ -52,7 +54,7 @@ class WalletStripCard extends StatelessWidget {
     return _buildStrip(context, controller);
   }
 
-  Widget _buildStrip(BuildContext context, WalletController controller) {
+  Widget _buildStrip(BuildContext context, WalletController? controller) {
     if (wallets.isEmpty && onAddNew == null) {
       return _buildEmptyState(context);
     }
@@ -89,9 +91,24 @@ class WalletStripCard extends StatelessWidget {
   Widget _buildReactiveWalletItem(
     BuildContext context,
     WalletEntity wallet,
-    WalletController controller,
+    WalletController? controller,
   ) {
     final isSelected = wallet.id == selectedWalletId;
+
+    if (controller == null) {
+      return CcWalletItem(
+        name: wallet.displayName(context),
+        iconCode: wallet.iconCode,
+        isSelected: isSelected,
+        activeColor: activeColor,
+        defaultBgColor: defaultBgColor,
+        onTap: () => _handleWalletTap(context, wallet.id),
+        balanceText: TransactionFormHelpers.formatShortWithSymbol(
+          wallet.balance,
+          currencyCode: wallet.currencyCode,
+        ),
+      );
+    }
 
     return Obx(() {
       // Observe totalBalance and displayBookBalanceOf to trigger rebuild when balances change

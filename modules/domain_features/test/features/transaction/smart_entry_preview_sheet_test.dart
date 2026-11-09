@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart'
-    show CcBaseBtn, CcCancelBtn, CcLocaleKeys;
+    show CcCancelBtn, CcLocaleKeys;
 import 'package:domain_features/features/category/domain/entities/category_entity.dart';
 import 'package:domain_features/features/transaction/domain/entities/parsed_transaction_entity.dart';
 import 'package:domain_features/features/transaction/presentation/get_x/smart_entry_preview_state.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/smart_entry_preview_row_card.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/smart_entry_preview_sheet.dart';
+import 'package:domain_features/features/transaction/presentation/widgets/transaction_submit_button.dart';
 import 'package:domain_features/features/wallet/domain/entities/wallet_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 // ignore: implementation_imports
@@ -142,7 +143,7 @@ Future<void> _flushDebounce(WidgetTester tester) =>
     tester.pump(const Duration(seconds: 1));
 
 Future<void> _tapConfirm(WidgetTester tester) async {
-  await tester.tap(find.byType(CcBaseBtn));
+  await tester.tap(find.byType(TransactionSubmitButton));
   await tester.pumpAndSettle();
   await _flushDebounce(tester);
 }
@@ -320,7 +321,7 @@ void main() {
 
       expect(tester.takeException(), isNull);
       expect(find.byType(SmartEntryPreviewRowCard), findsWidgets);
-      expect(find.byType(CcBaseBtn), findsOneWidget);
+      expect(find.byType(TransactionSubmitButton), findsOneWidget);
     });
   }
 
@@ -333,7 +334,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(CcBaseBtn), findsOneWidget);
+    expect(find.byType(TransactionSubmitButton), findsOneWidget);
   });
 
   testWidgets('the type toggle only exists for a mixed scope', (tester) async {
