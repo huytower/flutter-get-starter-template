@@ -126,7 +126,7 @@ The pipeline is defined in `.github/workflows/firebase-app-distribution.yml`.
 ### Android Build & Memory
 
 - **Java Heap Space Error**: `org.gradle.jvmargs=-Xmx4096m` and `kotlin.daemon.jvmargs=-Xmx2048m` are configured in `android/gradle.properties`. In CI, `GRADLE_OPTS` is passed automatically.
-- **`25.0.2` Local JDK Error**: If local Android Studio shows `java.lang.IllegalArgumentException: 25.0.2`, set **Gradle JDK** in Android Studio Settings to **JDK 21** (`corretto-21`), or set system `JAVA_HOME=C:\Users\Admin\.jdks\corretto-21.0.12.1` (without trailing `\bin`).
+- **`25.0.2` Local JDK Error**: `android/gradle/gradle-daemon-jvm.properties` pins the Gradle daemon to Java 21, so Android Studio should use the JDK 21 toolchain automatically. If Android Studio still reports `java.lang.IllegalArgumentException: 25.0.2`, set **Gradle JDK** to **JDK 21** (`corretto-21`) and restart the Gradle daemon.
 
 ### iOS TestFlight & Signing
 
