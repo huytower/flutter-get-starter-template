@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:theme/data/data_source/color/prj_color.dart';
 
-import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/smart_entry_preview_state.dart';
@@ -175,65 +174,15 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
           ),
         ),
         const CcSpaceSM(),
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                if (isCustomDate) ...[
-                  _buildDatePill(
-                    context,
-                    el.DateFormat('dd/MM/yyyy').format(row.date),
-                    row.date,
-                    activeColor,
-                    isSelected: true,
-                  ),
-                  const CcSpaceSM(),
-                ],
-                _buildDatePill(
-                  context,
-                  el.tr(CcLocaleKeys.transaction_today),
-                  now,
-                  activeColor,
-                  isSelected: _isSameDay(row.date, now),
-                ),
-                const CcSpaceSM(),
-                _buildDatePill(
-                  context,
-                  el.tr(CcLocaleKeys.transaction_yesterday),
-                  yesterday,
-                  activeColor,
-                  isSelected: _isSameDay(row.date, yesterday),
-                ),
-                const CcSpaceSM(),
-                CcBouncing(
-                  onTap: () async {
-                    final picked = await TransactionFormHelpers.pickDate(
-                      context,
-                      row.date,
-                    );
-                    if (picked == null) return;
-                    state.edit(
-                      row.id,
-                      (r) => r.copyWith(
-                        date: TransactionFormHelpers.updateDatePreserveTime(
-                          r.date,
-                          picked,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Icon(
-                    Icons.calendar_month,
-                    size: context.respIconSize(baseSize: 18),
-                    color: activeColor,
-                  ),
-                ),
-              ],
-            ),
+        if (isCustomDate) ...[
+          _buildDatePill(
+            context,
+            el.DateFormat('dd/MM/yyyy').format(row.date),
+            row.date,
+            activeColor,
+            isSelected: false,
           ),
-        ),
+        ],
       ],
     );
   }
@@ -246,39 +195,12 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
     required bool isSelected,
   }) {
     final scheme = context.ccColorScheme;
-    return CcBouncing(
-      onTap: () {
-        state.edit(
-          row.id,
-          (r) => r.copyWith(
-            date: TransactionFormHelpers.updateDatePreserveTime(r.date, date),
-          ),
-        );
-      },
-      borderRadius: context.brLg,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
-          vertical: context.respPadding(CcPaddingParams.SPACE_XS),
-        ),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? activeColor.withValues(alpha: 0.15)
-              : Colors.transparent,
-          borderRadius: context.brLg,
-          border: Border.all(
-            color: isSelected ? activeColor : scheme.outlineVariant,
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-        child: CcText(
-          label,
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
-            color: isSelected ? activeColor : scheme.onSurfaceVariant,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
+
+    return CcText(
+      label,
+      textStyle: context.ccTextTheme.labelMedium?.copyWith(
+        color: isSelected ? activeColor : scheme.onSurfaceVariant,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
     );
   }
