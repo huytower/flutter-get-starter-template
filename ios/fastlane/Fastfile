@@ -100,11 +100,15 @@ platform :ios do
       )
     end
 
-    # 3.2 Download App Store Provisioning Profile
+    # 3.2 Clear old provisioning profile cache and download fresh profile from Apple
+    sh("rm -rf ~/Library/MobileDevice/Provisioning\\ Profiles/* || true")
+    sh("rm -rf ~/Library/Developer/Xcode/DerivedData/* || true")
+
     get_provisioning_profile(
       app_identifier: "vn.sosachxin.finance",
       api_key: api_key,
-      readonly: true,
+      force: true,
+      readonly: false,
       skip_certificate_verification: true
     )
 
