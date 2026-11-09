@@ -142,12 +142,32 @@ class SmartEntryNoteField extends StatefulWidget {
 }
 
 class _SmartEntryNoteFieldState extends State<SmartEntryNoteField> {
-  late final TextEditingController _controller = TextEditingController(
-    text: widget.note,
-  );
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.note);
+    _controller.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    if (_controller.text != widget.note) {
+      widget.onChanged(_controller.text);
+    }
+  }
+
+  @override
+  void didUpdateWidget(SmartEntryNoteField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.note != widget.note && _controller.text != widget.note) {
+      _controller.text = widget.note;
+    }
+  }
 
   @override
   void dispose() {
+    _controller.removeListener(_onTextChanged);
     _controller.dispose();
     super.dispose();
   }
@@ -155,31 +175,19 @@ class _SmartEntryNoteFieldState extends State<SmartEntryNoteField> {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final textTheme = context.ccTextTheme;
 
-    return TextField(
+    return CcNoteInputField(
       controller: _controller,
-      onChanged: widget.onChanged,
-      maxLines: 1,
-      textInputAction: TextInputAction.done,
-      style: textTheme.bodyMedium?.copyWith(color: scheme.onSurface),
-      decoration: InputDecoration(
-        isDense: true,
-        filled: true,
-        fillColor: scheme.surfaceContainerHighest,
-        hintText: el.tr(CcLocaleKeys.transaction_note_hint),
-        hintStyle: textTheme.bodyMedium?.copyWith(
-          color: scheme.onSurface.withValues(alpha: 0.4),
-        ),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: context.respDim(12),
-          vertical: context.respDim(10),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: context.brMd,
-          borderSide: BorderSide.none,
-        ),
-      ),
+      hintText: el.tr(CcLocaleKeys.transaction_note_hint),
+      maxLines: 2,
+      color: scheme.surfaceContainerHighest,
+      borderColor: scheme.outlineVariant.withValues(alpha: 0.2),
+      height: context.respDim(45),
+      margin: EdgeInsets.zero,
+      onClear: () {
+        _controller.clear();
+        widget.onChanged('');
+      },
     );
   }
 }

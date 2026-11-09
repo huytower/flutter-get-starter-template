@@ -1,11 +1,12 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:theme/data/data_source/color/prj_color.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../category/domain/entities/category_entity.dart';
 import '../get_x/smart_entry_preview_state.dart';
 import 'smart_entry_amount_field.dart';
-import 'smart_entry_option_picker_sheet.dart';
 import 'smart_entry_preview_fields.dart';
 
 class SmartEntryPreviewRowCard extends StatelessWidget {
@@ -23,6 +24,8 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
     final scheme = context.ccColorScheme;
     final isValid = state.isValid(row);
     final config = state.config;
+    final isIncome = row.type == CategoryType.income;
+    final activeColor = isIncome ? PrjColors.success : scheme.error;
 
     return Container(
       padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_MD)),
@@ -46,16 +49,14 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
             onChanged: (value) =>
                 state.edit(row.id, (r) => r.copyWith(amount: value)),
           ),
+          if (config.showCategory) ...[
+            const CcSpaceSM(),
+            _buildCategorySelectionSection(context, activeColor),
+          ],
           const CcSpaceSM(),
-          Wrap(
-            spacing: context.respDim(8),
-            runSpacing: context.respDim(8),
-            children: [
-              if (config.showCategory) _buildCategoryChip(context),
-              _buildWalletChip(context),
-              _buildDateChip(context),
-            ],
-          ),
+          _buildWalletSelectionSection(context, activeColor),
+          const CcSpaceSM(),
+          _buildDateSelectionSection(context, activeColor),
           const CcSpaceSM(),
           SmartEntryNoteField(
             note: row.note,
@@ -89,86 +90,232 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryChip(BuildContext context) {
-    final category = state.categoryById(row.categoryId);
-    final title = el.tr(CcLocaleKeys.smart_entry_preview_pick_category);
+  Widget _buildCategorySelectionSection(
+    BuildContext context,
+    Color activeColor,
+  ) {
+    final categories = state.categoriesFor(row.type);
+    if (categories.isEmpty) return const SizedBox.shrink();
 
-    return SmartEntryFieldChip(
-      icon: category == null
-          ? Icons.category_outlined
-          : iconDataFromCode(
-              category.iconCode,
-              fontFamily: category.iconFamily,
-            ),
-      label: category == null ? title : el.tr(category.nameKey),
-      hasError: category == null,
-      onTap: () async {
-        final picked = await SmartEntryOptionPickerSheet.show(
-          context,
-          title: title,
-          selectedId: row.categoryId,
-          options: [
-            for (final item in state.categoriesFor(row.type))
-              (
-                id: item.id,
-                label: el.tr(item.nameKey),
-                icon: iconDataFromCode(
-                  item.iconCode,
-                  fontFamily: item.iconFamily,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcText(
+          el.tr(CcLocaleKeys.transaction_category),
+          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+            color: context.ccColorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const CcSpaceXS(),
+        HorizontalFadeScrollView(
+          height: context.respDim(80),
+          builder: (scrollController) => ListView.separated(
+            scrollDirection: Axis.horizontal,
+            controller: scrollController,
+            padding: EdgeInsets.zero,
+            itemCount: categories.length,
+            separatorBuilder: (context, index) => const CcSpaceSM(),
+            itemBuilder: (context, index) {
+              final category = categories[index];
+              final isSelected = row.categoryId == category.id;
+
+              return CcCategoryItem(
+                key: ValueKey('smart_preview_cat_${row.id}_${category.id}'),
+                iconCode: category.iconCode,
+                iconFamily: category.iconFamily,
+                nameKey: category.nameKey,
+                isSelected: isSelected,
+                activeColor: activeColor,
+                onTap: () {
+                  state.edit(
+                    row.id,
+                    (r) => r.copyWith(categoryId: category.id),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWalletSelectionSection(BuildContext context, Color activeColor) {
+    if (state.wallets.isEmpty) return const SizedBox.shrink();
+
+    final labelKey = row.type == CategoryType.income
+        ? CcLocaleKeys.transaction_source_income
+        : CcLocaleKeys.transaction_source_expense;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CcText(
+          el.tr(labelKey),
+          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+            color: context.ccColorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const CcSpaceXS(),
+        HorizontalFadeScrollView(
+          height: context.respDim(60),
+          builder: (scrollController) => ListView.separated(
+            scrollDirection: Axis.horizontal,
+            controller: scrollController,
+            padding: EdgeInsets.zero,
+            itemCount: state.wallets.length,
+            separatorBuilder: (_, _) => const CcSpaceSM(),
+            itemBuilder: (context, index) {
+              final wallet = state.wallets[index];
+              final isSelected = row.walletId == wallet.id;
+
+              return CcWalletItem(
+                key: ValueKey('smart_preview_wallet_${row.id}_${wallet.id}'),
+                name: wallet.name,
+                iconCode: wallet.iconCode,
+                isSelected: isSelected,
+                activeColor: activeColor,
+                defaultBgColor: context.verticalGradient(activeColor),
+                onTap: () {
+                  state.edit(row.id, (r) => r.copyWith(walletId: wallet.id));
+                },
+                balanceText: '',
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateSelectionSection(BuildContext context, Color activeColor) {
+    final now = DateTime.now();
+    final yesterday = now.subtract(const Duration(days: 1));
+    final isCustomDate =
+        !_isSameDay(row.date, now) && !_isSameDay(row.date, yesterday);
+
+    return Row(
+      children: [
+        CcText(
+          el.tr(CcLocaleKeys.transaction_time),
+          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+            color: context.ccColorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const CcSpaceSM(),
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            reverse: true,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (isCustomDate) ...[
+                  _buildDatePill(
+                    context,
+                    el.DateFormat('dd/MM/yyyy').format(row.date),
+                    row.date,
+                    activeColor,
+                    isSelected: true,
+                  ),
+                  const CcSpaceSM(),
+                ],
+                _buildDatePill(
+                  context,
+                  el.tr(CcLocaleKeys.transaction_today),
+                  now,
+                  activeColor,
+                  isSelected: _isSameDay(row.date, now),
                 ),
-              ),
-          ],
-        );
-        if (picked == null) return;
-        state.edit(row.id, (r) => r.copyWith(categoryId: picked));
-      },
+                const CcSpaceSM(),
+                _buildDatePill(
+                  context,
+                  el.tr(CcLocaleKeys.transaction_yesterday),
+                  yesterday,
+                  activeColor,
+                  isSelected: _isSameDay(row.date, yesterday),
+                ),
+                const CcSpaceSM(),
+                CcBouncing(
+                  onTap: () async {
+                    final picked = await TransactionFormHelpers.pickDate(
+                      context,
+                      row.date,
+                    );
+                    if (picked == null) return;
+                    state.edit(
+                      row.id,
+                      (r) => r.copyWith(
+                        date: TransactionFormHelpers.updateDatePreserveTime(
+                          r.date,
+                          picked,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Icon(
+                    Icons.calendar_month,
+                    size: context.respIconSize(baseSize: 18),
+                    color: activeColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildWalletChip(BuildContext context) {
-    final wallet = state.walletById(row.walletId);
-    final title = el.tr(CcLocaleKeys.smart_entry_preview_pick_wallet);
-
-    return SmartEntryFieldChip(
-      icon: wallet == null
-          ? Icons.account_balance_wallet_outlined
-          : iconDataFromCode(wallet.iconCode),
-      label: wallet?.name ?? title,
-      hasError: wallet == null,
-      onTap: () async {
-        final picked = await SmartEntryOptionPickerSheet.show(
-          context,
-          title: title,
-          selectedId: row.walletId,
-          options: [
-            for (final item in state.wallets)
-              (
-                id: item.id,
-                label: item.name,
-                icon: iconDataFromCode(item.iconCode),
-              ),
-          ],
-        );
-        if (picked == null) return;
-        state.edit(row.id, (r) => r.copyWith(walletId: picked));
-      },
-    );
-  }
-
-  Widget _buildDateChip(BuildContext context) {
-    return SmartEntryFieldChip(
-      icon: Icons.calendar_today_outlined,
-      label: el.DateFormat('dd/MM/yyyy').format(row.date),
-      onTap: () async {
-        final picked = await TransactionFormHelpers.pickDate(context, row.date);
-        if (picked == null) return;
+  Widget _buildDatePill(
+    BuildContext context,
+    String label,
+    DateTime date,
+    Color activeColor, {
+    required bool isSelected,
+  }) {
+    final scheme = context.ccColorScheme;
+    return CcBouncing(
+      onTap: () {
         state.edit(
           row.id,
           (r) => r.copyWith(
-            date: TransactionFormHelpers.updateDatePreserveTime(r.date, picked),
+            date: TransactionFormHelpers.updateDatePreserveTime(r.date, date),
           ),
         );
       },
+      borderRadius: context.brLg,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.SPACE_MD),
+          vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+        ),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? activeColor.withValues(alpha: 0.15)
+              : Colors.transparent,
+          borderRadius: context.brLg,
+          border: Border.all(
+            color: isSelected ? activeColor : scheme.outlineVariant,
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: CcText(
+          label,
+          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+            color: isSelected ? activeColor : scheme.onSurfaceVariant,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ),
     );
+  }
+
+  bool _isSameDay(DateTime d1, DateTime d2) {
+    return d1.year == d2.year && d1.month == d2.month && d1.day == d2.day;
   }
 }
