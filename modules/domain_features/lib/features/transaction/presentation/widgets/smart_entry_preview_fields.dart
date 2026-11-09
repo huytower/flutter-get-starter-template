@@ -78,11 +78,13 @@ class SmartEntryTypeToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         for (final type in types) ...[
           _buildOption(context, type),
-          if (type != types.last) const CcSpaceSM(),
+          if (type != types.last) const CcSpaceMD(),
         ],
       ],
     );
@@ -98,6 +100,7 @@ class SmartEntryTypeToggle extends StatelessWidget {
       onTap: () => onChanged(type),
       borderRadius: context.brXl,
       child: Container(
+        width: context.respDim(120),
         padding: EdgeInsets.symmetric(
           horizontal: context.respDim(12),
           vertical: context.respDim(6),
@@ -107,19 +110,16 @@ class SmartEntryTypeToggle extends StatelessWidget {
               ? accent.withValues(alpha: 0.15)
               : scheme.surfaceContainerHighest,
           borderRadius: context.brXl,
-          border: Border.all(
-            color: isSelected
-                ? accent.withValues(alpha: 0.5)
-                : Colors.transparent,
-          ),
         ),
         child: CcText(
           el.tr(
             isIncome ? CcLocaleKeys.common_income : CcLocaleKeys.common_expense,
           ),
-          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+          align: Alignment.center,
+          textAlign: TextAlign.center,
+          textStyle: context.ccTextTheme.titleSmall?.copyWith(
             color: isSelected ? accent : scheme.onSurfaceVariant,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           ),
         ),
       ),

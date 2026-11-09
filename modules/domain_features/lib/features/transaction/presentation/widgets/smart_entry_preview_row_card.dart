@@ -61,12 +61,13 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
       child: Row(
         children: [
           if (state.config.showType)
-            SmartEntryTypeToggle(
-              types: state.config.types,
-              selected: row.type,
-              onChanged: (type) => state.setType(row.id, type),
+            Expanded(
+              child: SmartEntryTypeToggle(
+                types: state.config.types,
+                selected: row.type,
+                onChanged: (type) => state.setType(row.id, type),
+              ),
             ),
-          const Spacer(),
           if (state.rows.length > 1)
             CcCancelBtn.bouncing(
               onTap: () => state.remove(row.id),
