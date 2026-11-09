@@ -1,7 +1,5 @@
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
-import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
-import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';

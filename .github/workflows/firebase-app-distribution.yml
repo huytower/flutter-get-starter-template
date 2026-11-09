@@ -181,6 +181,11 @@ jobs:
       - name: Generate Code
         run: melos run gen
 
+      - name: Clear iOS & Xcode Caches
+        run: |
+          rm -rf ~/Library/MobileDevice/Provisioning\ Profiles/* || true
+          rm -rf ~/Library/Developer/Xcode/DerivedData/* || true
+
       - name: Fastlane TestFlight
         run: cd ios && bundle exec fastlane beta flavor:${{ github.event.inputs.flavor || 'prod' }}
         env:
