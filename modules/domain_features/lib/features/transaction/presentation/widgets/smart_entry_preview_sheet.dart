@@ -35,36 +35,36 @@ class SmartEntryPreviewSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
+    final mediaQuery = MediaQuery.of(context);
+    final topInset = mediaQuery.padding.top + kToolbarHeight;
 
     return Obx(
       () => PopScope(
         canPop: !state.isCommitting.value,
         child: Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.viewInsetsOf(context).bottom,
+            top: topInset,
+            bottom: mediaQuery.viewInsets.bottom,
           ),
-          child: SafeArea(
-            top: false,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildHeader(context),
-                Flexible(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: scheme.surfaceContainerHighest,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(child: _buildRows(context)),
-                        _buildFooter(context),
-                      ],
-                    ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildHeader(context),
+              Flexible(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: scheme.surfaceContainerHighest,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(child: _buildRows(context)),
+                      _buildFooter(context),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -96,13 +96,35 @@ class SmartEntryPreviewSheet extends StatelessWidget {
       shrinkWrap: true,
       padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_XS)),
       itemCount: state.rows.length,
-      separatorBuilder: (_, _) => const CcSpaceXS(),
+      separatorBuilder: (context, _) => Column(
+        children: [
+          const CcSpaceSM(),
+          CcDividerHorizontalLine(
+            color: context.ccColorScheme.outlineVariant.withValues(alpha: 0.3),
+          ),
+          const CcSpaceSM(),
+        ],
+      ),
       itemBuilder: (context, index) {
         final row = state.rows[index];
-        return SmartEntryPreviewRowCard(
-          key: ValueKey(row.id),
-          state: state,
-          row: row,
+        final isEven = index.isEven;
+        final scheme = context.ccColorScheme;
+
+        return Container(
+          decoration: BoxDecoration(
+            color: isEven
+                ? scheme.surfaceVariant.withValues(alpha: 0.9)
+                : scheme.surfaceVariant.withValues(alpha: 0.5),
+            borderRadius: context.brLg,
+          ),
+          padding: EdgeInsets.all(
+            context.respPadding(CcPaddingParams.SPACE_MD),
+          ),
+          child: SmartEntryPreviewRowCard(
+            key: ValueKey(row.id),
+            state: state,
+            row: row,
+          ),
         );
       },
     );
