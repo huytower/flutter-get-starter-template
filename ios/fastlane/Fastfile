@@ -108,7 +108,6 @@ platform :ios do
       app_identifier: "vn.sosachxin.finance",
       api_key: api_key,
       force: true,
-      readonly: false,
       skip_certificate_verification: true
     )
 
