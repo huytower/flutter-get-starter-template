@@ -111,18 +111,30 @@ platform :ios do
       skip_certificate_verification: true
     )
 
+    profile_path = Actions.lane_context[SharedValues::SIGH_PROFILE_PATH]
+    profile_uuid = Actions.lane_context[SharedValues::SIGH_UUID]
+    profile_name = Actions.lane_context[SharedValues::SIGH_NAME]
+
+    if profile_path && profile_uuid
+      target_dir = File.expand_path("~/Library/MobileDevice/Provisioning Profiles")
+      sh("mkdir -p '#{target_dir}'")
+      sh("cp '#{profile_path}' '#{target_dir}/#{profile_uuid}.mobileprovision'")
+      UI.message("Successfully installed provisioning profile #{profile_uuid}.mobileprovision")
+    end
+
     # 4. Build App (Gym)
     build_app(
       scheme: flavor,
       workspace: "Runner.xcworkspace",
       include_bitcode: false,
       export_method: "app-store",
+      xcargs: "-allowProvisioningUpdates",
+      export_xcargs: "-allowProvisioningUpdates",
       export_options: {
         method: "app-store",
         signingStyle: "automatic",
         teamID: "46KM345YTJ"
       },
-      export_xcargs: "-allowProvisioningUpdates",
       output_directory: "../../build/ios/ipa",
       output_name: "Runner.ipa"
     )
