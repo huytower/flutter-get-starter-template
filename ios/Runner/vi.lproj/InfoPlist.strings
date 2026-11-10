@@ -7,4 +7,3 @@
 "NSPhotoLibraryAddUsageDescription" = "Sổ Sách Xịn cần quyền lưu ảnh biên lai và ảnh giao dịch vào thư viện ảnh để bạn tiện theo dõi và lưu trữ.";
 "NSPhotoLibraryUsageDescription" = "Sổ Sách Xịn cần truy cập thư viện ảnh để đính kèm ảnh biên lai vào giao dịch và nhập ảnh hóa đơn để tự động xử lý dữ liệu.";
 "NSSpeechRecognitionUsageDescription" = "Sổ Sách Xịn sử dụng tính năng nhận dạng giọng nói trên thiết bị để chuyển giọng nói của bạn thành văn bản giúp nhập liệu nhanh (tính năng tùy chọn).";
-"NSUserTrackingUsageDescription" = "Sổ Sách Xịn thu thập báo cáo lỗi và dữ liệu hiệu suất để cải thiện độ ổn định của ứng dụng và tìm lỗi. Danh tính của bạn luôn được bảo mật.";
