@@ -122,6 +122,7 @@ platform :ios do
         signingStyle: "automatic",
         teamID: "46KM345YTJ"
       },
+      export_xcargs: "-allowProvisioningUpdates",
       output_directory: "../../build/ios/ipa",
       output_name: "Runner.ipa"
     )
