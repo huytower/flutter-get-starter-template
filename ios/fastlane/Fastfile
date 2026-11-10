@@ -117,7 +117,6 @@ platform :ios do
       workspace: "Runner.xcworkspace",
       include_bitcode: false,
       export_method: "app-store",
-      xcargs: "CODE_SIGNING_ALLOWED=NO",
       export_options: {
         method: "app-store",
         signingStyle: "automatic",
