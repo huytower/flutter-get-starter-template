@@ -162,23 +162,14 @@ jobs:
       - name: Generate Code
         run: melos run gen
 
-      - name: Fastlane Distribute to Firebase
-        env:
-          FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID }}
-          FIREBASE_SERVICE_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_CREDENTIALS }}
-          FIREBASE_SERVICE_CREDENTIALS_PATH: ../firebase_credentials.json
-        run: |
-          python3 -c "import os, json; creds = os.environ.get('FIREBASE_SERVICE_CREDENTIALS', '').strip(); open('firebase_credentials.json', 'w').write(creds); json.loads(creds)" || {
-            echo "::error::FIREBASE_SERVICE_CREDENTIALS secret is missing, empty, or not a valid JSON string." >&2
-            echo "Please ensure secret FIREBASE_SERVICE_CREDENTIALS in GitHub Settings is set to your Firebase Service Account JSON key." >&2
-            exit 1
-          }
-          cd android && bundle exec fastlane distribute_firebase flavor:${{ github.event.inputs.flavor || 'prod' }}
-
       - name: Fastlane Upload to Google Play Console (Alpha)
         env:
           FIREBASE_SERVICE_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_CREDENTIALS }}
         run: |
+          python3 -c "import os, json; json.loads(os.environ.get('FIREBASE_SERVICE_CREDENTIALS', '').strip())" || {
+            echo "::error::FIREBASE_SERVICE_CREDENTIALS secret is missing, empty, or not valid JSON (needed to upload to Google Play)." >&2
+            exit 1
+          }
           cd android && bundle exec fastlane build_release flavor:${{ github.event.inputs.flavor || 'prod' }}
 
   # 4. iOS Deployment: runs on push to qltc or workflow_dispatch (same approval gate).

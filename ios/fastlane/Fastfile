@@ -76,9 +76,12 @@ platform :ios do
 
     next_build_number = latest_build > 0 ? latest_build + 1 : (ENV["BUILD_NUMBER"] || 1).to_i
 
-    # 3. Prepare Flutter artifacts
-    # Prepares the ios/ folder and compiled Dart code
-    sh("flutter config --no-enable-swift-package-manager && cd ../.. && flutter pub get && cd ios && bundle exec pod install && cd .. && flutter build ios --release --flavor #{flavor} --build-number=#{next_build_number} --no-codesign --no-tree-shake-icons")
+    # 3. Prepare the Xcode project for Flutter WITHOUT compiling.
+    # `--config-only` writes Flutter's build settings (build number, flavor,
+    # tree-shake flag) into ios/Flutter/Generated.xcconfig and stops there.
+    # The one real build is the gym archive in step 4; building here as well
+    # compiled the whole app twice (~11 extra minutes per run).
+    sh("flutter config --no-enable-swift-package-manager && cd ../.. && flutter pub get && flutter build ios --config-only --release --flavor #{flavor} --build-number=#{next_build_number} --no-codesign --no-tree-shake-icons && cd ios && bundle exec pod install")
 
     # 3.1 Import Certificate if provided in environment
     if ENV["APPLE_CERTIFICATE_BASE64"] && !ENV["APPLE_CERTIFICATE_BASE64"].empty?

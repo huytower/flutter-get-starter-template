@@ -49,7 +49,7 @@ melos run test                # flutter test, across all packages
   `android/app/src/{flavor}/google-services.json` and `ios/Firebase/{flavor}/GoogleService-Info.plist`.
 - CI (`.github/workflows/firebase-app-distribution.yml`) is **active**. It runs on push/PR to `qltc` (docs-only
   changes are ignored): quality gate (`melos run gen/analyze/test`), then — on push to `qltc` or manual dispatch —
-  **a real release**: Android APK to Firebase App Distribution, AAB to Google Play alpha, and IPA to TestFlight.
+  **a real release**: Android AAB to Google Play alpha, and IPA to TestFlight.
   Pushing to `qltc` therefore publishes builds; don't push without the user's explicit go-ahead. Details in
   `docs/CICD_SETUP.md`.
 - **Do not run `flutter build`/`flutter run`/`xcodebuild`/`adb` yourself** unless the user explicitly asks — the

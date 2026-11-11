@@ -1,39 +1,6 @@
 default_platform(:android)
 
 platform :android do
-  desc "Build AAB and distribute to Firebase App Distribution"
-  # Usage: fastlane distribute_firebase flavor:prod
-  lane :distribute_firebase do |options|
-    flavor = options[:flavor] || "prod"
-
-    # 1. Generate code (run from root directory).
-    # CI already ran `melos run gen` and sets SKIP_GEN=true to avoid repeating it.
-    sh("cd ../.. && melos run gen") unless ENV["SKIP_GEN"] == "true"
-
-    build_num = [25 + (ENV["BUILD_NUMBER"] || "1").to_i, 26].max
-    ENV["BUILD_NUMBER"] = build_num.to_s
-
-    # 2. Build the Flutter APK
-    sh("cd ../.. && flutter build apk --release --flavor #{flavor} --build-number=#{build_num} --no-tree-shake-icons")
-
-    # 3. Upload to Firebase
-    # Assumes FIREBASE_APP_ID is in your environment variables
-    # You need the 'fastlane-plugin-firebase_app_distribution' plugin
-    extra_options = {}
-    extra_options[:groups] = ENV["FIREBASE_GROUPS"] if ENV["FIREBASE_GROUPS"] && !ENV["FIREBASE_GROUPS"].empty?
-    extra_options[:testers] = ENV["FIREBASE_TESTERS"] if ENV["FIREBASE_TESTERS"] && !ENV["FIREBASE_TESTERS"].empty?
-
-    firebase_app_distribution(
-      {
-        app: ENV["FIREBASE_APP_ID_ANDROID"],
-        release_notes: "Built with Fastlane from CI",
-        android_artifact_type: "APK",
-        android_artifact_path: File.expand_path("../../build/app/outputs/flutter-apk/app-#{flavor}-release.apk", __dir__),
-        service_credentials_file: ENV["FIREBASE_SERVICE_CREDENTIALS_PATH"]
-      }.merge(extra_options)
-    )
-  end
-
   desc "Build AAB and upload to Google Play Console Alpha track"
   lane :build_release do |options|
     flavor = options[:flavor] || "prod"

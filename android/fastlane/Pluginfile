@@ -3,4 +3,3 @@
 # This file is used to manage plugins for fastlane.
 # See https://docs.fastlane.tools/plugins/using-plugins/
 
-gem 'fastlane-plugin-firebase_app_distribution'

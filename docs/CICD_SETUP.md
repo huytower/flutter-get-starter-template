@@ -8,7 +8,6 @@ The CI/CD pipeline automatically:
 
 - **Validates**: Runs Linting (`melos run analyze`) and Unit Tests (`melos run test`) across all workspace packages using **Melos 8.10.0**.
 - **Android**:
-  - Builds Release APK and distributes to **Firebase App Distribution** (for internal testers/QA).
   - Builds Release AAB and uploads directly to **Google Play Console (Alpha / Closed Testing track)** via Fastlane `upload_to_play_store`.
   - Automatically auto-increments build numbers (`25 + github.run_number`).
 - **iOS**:
@@ -19,7 +18,7 @@ The CI/CD pipeline automatically:
 ## Prerequisites
 
 1. **GitHub Repository** with Actions enabled.
-2. **Firebase Project** for Android testing and Firebase App Distribution.
+2. **Firebase Project** (Auth, Firestore, Crashlytics; its service account is also used for the Google Play upload).
 3. **Google Play Console Account** with Service Account access for Alpha track distribution.
 4. **Apple Developer Program Membership** with App Store Connect API Key and Distribution Certificate (`.p12`).
 5. **Melos 8.10.0** installed locally (`dart pub global activate melos ^8.10.0`).
@@ -39,7 +38,6 @@ Configure these secrets in `Settings > Secrets and variables > Actions`:
 | `KEYSTORE_PASSWORD`            | Password for the keystore                     | Choose a strong, unique password (never commit it)     |
 | `KEY_PASSWORD`                 | Password for the key                          | Choose a strong, unique password (never commit it)    |
 | `KEY_ALIAS`                    | Alias of the key in keystore                  | e.g., `release`                                        |
-| `FIREBASE_APP_ID`              | Android App ID from Firebase                  | Firebase Console > Project Settings                   |
 | `FIREBASE_SERVICE_CREDENTIALS` | Full Service Account JSON string for GCP      | Firebase Console > Service Accounts > Generate Key     |
 | `FIREBASE_PROJECT_ID`          | Project ID (e.g., `sosachxin`)                | Firebase Console > Project Settings                   |
 | `GOOGLE_API_KEY_ANDROID`       | Google API Key for Android services           | Google Cloud Console / Firebase                       |
@@ -122,7 +120,6 @@ The pipeline is defined in `.github/workflows/firebase-app-distribution.yml`.
 1. **Quality Check**: Runs `melos run analyze` and `melos run test`. Must pass clean before deployments start.
 2. **Android Distribute** (fails if `FIREBASE_SERVICE_CREDENTIALS` is missing; it no longer skips the Play upload silently):
    - Auto-calculates build number: `25 + github.run_number`.
-   - Builds Release APK and uploads to **Firebase App Distribution**.
    - Builds Release AAB and uploads directly to **Google Play Console (Alpha track)** via `upload_to_play_store`.
 3. **iOS Distribute**:
    - Queries App Store Connect for the latest TestFlight build number and auto-increments (`latest + 1`). If the query fails the lane stops immediately instead of guessing a number.
@@ -133,6 +130,10 @@ The pipeline is defined in `.github/workflows/firebase-app-distribution.yml`.
 
 ---
 
+> **Firebase App Distribution was removed.** Android builds are delivered only through Google Play (alpha / closed
+> testing). The `FIREBASE_APP_ID` secret is no longer used and can be deleted. Testers who are not on the Play
+> testing list no longer receive builds.
+
 ## Troubleshooting
 
 ### Android Build & Memory
@@ -141,6 +142,10 @@ The pipeline is defined in `.github/workflows/firebase-app-distribution.yml`.
 - **`25.0.2` Local JDK Error**: `android/gradle/gradle-daemon-jvm.properties` pins the Gradle daemon to Java 21, so Android Studio should use the JDK 21 toolchain automatically. If Android Studio still reports `java.lang.IllegalArgumentException: 25.0.2`, set **Gradle JDK** to **JDK 21** (`corretto-21`) and restart the Gradle daemon.
 
 ### iOS TestFlight & Signing
+
+- **Single build**: the lane runs `flutter build ios --config-only` (no compile) and lets `gym` do the only real
+  build. If an archive ever fails with missing Flutter settings, check that `ios/Flutter/Generated.xcconfig` was
+  written by that step.
 
 - **"Could not find a matching code signing identity for type 'AppStore'"** / **"No certificates for filter"**: caused by
   passing a local SHA-1 as `cert_id`. The Fastfile now lets `sigh` match profiles against the certificate imported
@@ -166,9 +171,6 @@ The pipeline is defined in `.github/workflows/firebase-app-distribution.yml`.
 ### Local Command Testing
 
 ```bash
-# Android - Firebase App Distribution
-cd android && bundle exec fastlane distribute_firebase flavor:prod
-
 # Android - Google Play Console Alpha Track
 cd android && bundle exec fastlane build_release flavor:prod
 
