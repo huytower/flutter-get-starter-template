@@ -122,18 +122,27 @@ platform :ios do
       UI.message("Successfully installed provisioning profile #{profile_uuid}.mobileprovision")
     end
 
+    update_project_provisioning(
+      xcodeproj: "Runner.xcodeproj",
+      profile: profile_path,
+      build_configuration: "Release",
+      target_filter: "Runner"
+    )
+
     # 4. Build App (Gym)
     build_app(
       scheme: flavor,
       workspace: "Runner.xcworkspace",
+      configuration: "Release",
       include_bitcode: false,
       export_method: "app-store",
-      xcargs: "-allowProvisioningUpdates",
-      export_xcargs: "-allowProvisioningUpdates",
       export_options: {
         method: "app-store",
-        signingStyle: "automatic",
-        teamID: "46KM345YTJ"
+        signingStyle: "manual",
+        teamID: "46KM345YTJ",
+        provisioningProfiles: {
+          "vn.sosachxin.finance" => profile_name
+        }
       },
       output_directory: "../../build/ios/ipa",
       output_name: "Runner.ipa"
