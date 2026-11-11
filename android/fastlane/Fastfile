@@ -6,9 +6,9 @@ platform :android do
   lane :distribute_firebase do |options|
     flavor = options[:flavor] || "prod"
 
-    # 1. Generate code (run from root directory)
-    # Use direct Flutter command instead of melos to avoid PATH issues
-    sh("cd ../.. && melos run gen")
+    # 1. Generate code (run from root directory).
+    # CI already ran `melos run gen` and sets SKIP_GEN=true to avoid repeating it.
+    sh("cd ../.. && melos run gen") unless ENV["SKIP_GEN"] == "true"
 
     build_num = [25 + (ENV["BUILD_NUMBER"] || "1").to_i, 26].max
     ENV["BUILD_NUMBER"] = build_num.to_s
@@ -38,8 +38,8 @@ platform :android do
   lane :build_release do |options|
     flavor = options[:flavor] || "prod"
 
-    # 1. Generate code (run from root directory)
-    sh("cd ../.. && melos run gen")
+    # 1. Generate code (run from root directory).
+    sh("cd ../.. && melos run gen") unless ENV["SKIP_GEN"] == "true"
 
     build_num = [25 + (ENV["BUILD_NUMBER"] || "1").to_i, 26].max
     ENV["BUILD_NUMBER"] = build_num.to_s
@@ -47,17 +47,20 @@ platform :android do
     # 2. Build the Flutter App Bundle
     sh("cd ../.. && flutter build appbundle --release --flavor #{flavor} --build-number=#{build_num} --no-tree-shake-icons")
 
-    # 3. Upload AAB to Google Play Console
-    if ENV["FIREBASE_SERVICE_CREDENTIALS"] && !ENV["FIREBASE_SERVICE_CREDENTIALS"].empty?
-      upload_to_play_store(
-        track: "alpha",
-        package_name: "vn.sosachxin.finance",
-        aab: File.expand_path("../../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab", __dir__),
-        json_key_data: ENV["FIREBASE_SERVICE_CREDENTIALS"],
-        skip_upload_changelogs: true,
-        skip_upload_images: true,
-        skip_upload_screenshots: true
-      )
-    end
+    # 3. Upload AAB to Google Play Console.
+    # Missing credentials must fail the job; silently skipping would report a
+    # green build while nothing reached Play.
+    credentials = (ENV["FIREBASE_SERVICE_CREDENTIALS"] || "").strip
+    UI.user_error!("FIREBASE_SERVICE_CREDENTIALS is missing or empty; cannot upload to Google Play.") if credentials.empty?
+
+    upload_to_play_store(
+      track: "alpha",
+      package_name: "vn.sosachxin.finance",
+      aab: File.expand_path("../../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab", __dir__),
+      json_key_data: credentials,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
   end
 end

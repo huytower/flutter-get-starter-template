@@ -6,7 +6,7 @@ This guide explains how to set up the automated CI/CD pipeline for this modular 
 
 The CI/CD pipeline automatically:
 
-- **Validates**: Runs Linting (`melos run analyze`) and Unit Tests (`melos run test`) across all 12 modules using **Melos 8.10.0**.
+- **Validates**: Runs Linting (`melos run analyze`) and Unit Tests (`melos run test`) across all workspace packages using **Melos 8.10.0**.
 - **Android**:
   - Builds Release APK and distributes to **Firebase App Distribution** (for internal testers/QA).
   - Builds Release AAB and uploads directly to **Google Play Console (Alpha / Closed Testing track)** via Fastlane `upload_to_play_store`.
@@ -14,7 +14,7 @@ The CI/CD pipeline automatically:
 - **iOS**:
   - Fetches the latest build number from TestFlight via `latest_testflight_build_number` and auto-increments dynamically (`latest + 1`).
   - Auto-imports the `.p12` Distribution Certificate and downloads the App Store Provisioning Profile.
-  - Builds Release IPA (Gym) with automatic signing (`signingStyle: "automatic"`, `teamID: "46KM345YTJ"`) and uploads directly to **TestFlight** (Pilot).
+  - Builds Release IPA (Gym) with **manual** signing using the freshly downloaded App Store profile (`signingStyle: "manual"`, `teamID: "46KM345YTJ"`) and uploads directly to **TestFlight** (Pilot).
 
 ## Prerequisites
 
@@ -36,8 +36,8 @@ Configure these secrets in `Settings > Secrets and variables > Actions`:
 | Secret Name                    | Description                                   | How to Get / Format                                    |
 |:-------------------------------|:----------------------------------------------|:-------------------------------------------------------|
 | `KEYSTORE_BASE64`              | Base64-encoded `.jks` file                    | `[Convert]::ToBase64String([IO.File]::ReadAllBytes("release.jks")) \| Set-Clipboard` |
-| `KEYSTORE_PASSWORD`            | Password for the keystore                     | e.g., `!Cc121212`                                      |
-| `KEY_PASSWORD`                 | Password for the key                          | e.g., `!Cc121212`                                      |
+| `KEYSTORE_PASSWORD`            | Password for the keystore                     | Choose a strong, unique password (never commit it)     |
+| `KEY_PASSWORD`                 | Password for the key                          | Choose a strong, unique password (never commit it)    |
 | `KEY_ALIAS`                    | Alias of the key in keystore                  | e.g., `release`                                        |
 | `FIREBASE_APP_ID`              | Android App ID from Firebase                  | Firebase Console > Project Settings                   |
 | `FIREBASE_SERVICE_CREDENTIALS` | Full Service Account JSON string for GCP      | Firebase Console > Service Accounts > Generate Key     |
@@ -105,18 +105,30 @@ Paste the clipboard output into the `KEYSTORE_BASE64` secret.
 
 The pipeline is defined in `.github/workflows/firebase-app-distribution.yml`.
 
+### Triggers and safety
+
+- Runs on push / pull request to `qltc`, or manually (`workflow_dispatch`). Changes that only touch `*.md` or
+  `docs/**` are ignored.
+- **A push to `qltc` is a release**: both distribute jobs run automatically after the quality gate. The distribute
+  jobs use `environment: production`; in GitHub go to **Settings > Environments > production** and add *Required
+  reviewers* so every release needs a manual approval.
+- `concurrency` allows one pipeline per ref (PR runs are cancelled by newer pushes, release runs queue). Jobs have
+  timeouts and the token is `contents: read`.
+- The workflow runs `melos run gen` once and sets `SKIP_GEN=true`, so the Fastlane lanes do not repeat it. Running a
+  lane locally (without `SKIP_GEN`) still generates code first.
+
 ### Jobs & Auto-versioning:
 
 1. **Quality Check**: Runs `melos run analyze` and `melos run test`. Must pass clean before deployments start.
-2. **Android Distribute**:
+2. **Android Distribute** (fails if `FIREBASE_SERVICE_CREDENTIALS` is missing; it no longer skips the Play upload silently):
    - Auto-calculates build number: `25 + github.run_number`.
    - Builds Release APK and uploads to **Firebase App Distribution**.
    - Builds Release AAB and uploads directly to **Google Play Console (Alpha track)** via `upload_to_play_store`.
 3. **iOS Distribute**:
-   - Queries App Store Connect for the latest TestFlight build number and auto-increments (`latest + 1`).
+   - Queries App Store Connect for the latest TestFlight build number and auto-increments (`latest + 1`). If the query fails the lane stops immediately instead of guessing a number.
    - Imports `.p12` certificate into a temporary Keychain (`build.keychain`).
-   - Downloads App Store Provisioning Profile (`get_provisioning_profile`).
-   - Archives and exports IPA (Gym) with `signingStyle: "automatic"` and `teamID: "46KM345YTJ"`.
+   - Downloads the App Store Provisioning Profile (`get_provisioning_profile`). Do **not** pass `cert_id` with the local keychain SHA-1: that parameter is the App Store Connect certificate ID, and a SHA-1 matches nothing ("No certificates for filter").
+   - Archives and exports IPA (Gym) with `signingStyle: "manual"` and `teamID: "46KM345YTJ"`.
    - Uploads IPA directly to **TestFlight** (Pilot).
 
 ---
@@ -129,6 +141,24 @@ The pipeline is defined in `.github/workflows/firebase-app-distribution.yml`.
 - **`25.0.2` Local JDK Error**: `android/gradle/gradle-daemon-jvm.properties` pins the Gradle daemon to Java 21, so Android Studio should use the JDK 21 toolchain automatically. If Android Studio still reports `java.lang.IllegalArgumentException: 25.0.2`, set **Gradle JDK** to **JDK 21** (`corretto-21`) and restart the Gradle daemon.
 
 ### iOS TestFlight & Signing
+
+- **"Could not find a matching code signing identity for type 'AppStore'"** / **"No certificates for filter"**: caused by
+  passing a local SHA-1 as `cert_id`. The Fastfile now lets `sigh` match profiles against the certificate imported
+  into `build.keychain`. If it still fails, the `.p12` certificate is probably not registered (or was revoked) in the
+  Apple Developer team — export a fresh Apple Distribution certificate and update `APPLE_CERTIFICATE_BASE64`.
+- **Build/upload succeeds but a capability (e.g. Sign in with Apple) does not work in the release build**: the
+  provisioning profile was generated before the capability was enabled on the App ID. A GitHub runner is a fresh
+  VM (and the lane wipes `~/Library/MobileDevice/Provisioning Profiles`), so the stale copy lives on Apple's side,
+  not in a CI cache. The `beta` lane now guards against it:
+  1. After `get_provisioning_profile` it compares every key in `ios/Runner/RunnerRelease.entitlements` with the
+     profile's `Entitlements`. If any is missing it regenerates the profile (`force: true`) from the App ID's
+     current capabilities, and fails with a clear message if the App ID still does not grant it.
+  2. After `gym` it reads the signed IPA (`codesign -d --entitlements`) and aborts **before** the TestFlight upload
+     if a required entitlement is absent.
+  If both checks pass but the feature still fails at runtime, the cause is not signing: check the iOS API key in
+  `GOOGLE_API_KEY_IOS` (must be the key from the real `GoogleService-Info.plist`, with Identity Toolkit allowed for
+  the bundle id) and the `[AppleSignInTrace]` logs.
+- Use a strong `APPLE_CERTIFICATE_PASSWORD`; do not reuse the bundle id or other guessable text.
 
 - **Duplicate Build Version Error**: Solved automatically by `latest_testflight_build_number` in `Fastfile` which auto-increments the build version past any previously uploaded version on TestFlight.
 - **Export Compliance**: `<key>ITSAppUsesNonExemptEncryption</key><false/>` is set in `ios/Runner/Info.plist` to automatically bypass export compliance prompts on App Store Connect.

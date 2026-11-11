@@ -47,8 +47,11 @@ melos run test                # flutter test, across all packages
 - Run the app: `flutter run -d <device> --flavor prod -t lib/main_prod.dart` (flavor: `prod`; entry point `lib/main_prod.dart` delegating to `lib/main.dart` via `EnvironmentRunner`).
 - Firebase config is git-ignored; `melos run setup:firebase` copies `.template` files into
   `android/app/src/{flavor}/google-services.json` and `ios/Firebase/{flavor}/GoogleService-Info.plist`.
-- CI (`.github/workflows/firebase-app-distribution.yml`) is currently fully disabled (`if: false` on every job,
-  triggers removed) — treat `melos run analyze`/`melos run test` locally as the only quality gate until re-enabled.
+- CI (`.github/workflows/firebase-app-distribution.yml`) is **active**. It runs on push/PR to `qltc` (docs-only
+  changes are ignored): quality gate (`melos run gen/analyze/test`), then — on push to `qltc` or manual dispatch —
+  **a real release**: Android APK to Firebase App Distribution, AAB to Google Play alpha, and IPA to TestFlight.
+  Pushing to `qltc` therefore publishes builds; don't push without the user's explicit go-ahead. Details in
+  `docs/CICD_SETUP.md`.
 - **Do not run `flutter build`/`flutter run`/`xcodebuild`/`adb` yourself** unless the user explicitly asks — the
   user tests changes manually. Static checks (`analyze`, `test`) plus clear manual-test steps are the deliverable.
 

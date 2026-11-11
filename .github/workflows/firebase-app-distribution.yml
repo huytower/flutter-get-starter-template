@@ -3,8 +3,16 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ qltc ]
+    # Every push to qltc ships to Firebase / Play alpha / TestFlight, so changes
+    # that cannot affect the app must not trigger a release.
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   pull_request:
     branches: [ qltc ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   workflow_dispatch:
     inputs:
       flavor:
@@ -14,21 +22,33 @@ on:
         type: choice
         options: [ prod ]
 
+# Least privilege: jobs only read the repo; deployments authenticate with their own secrets.
+permissions:
+  contents: read
+
+# One pipeline per ref. PR runs are cancelled by newer pushes; release runs are
+# queued instead (cancelling a half-finished upload could leave a bad release).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   FLUTTER_VERSION: '3.44.3'
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+UseG1GC"'
   BUILD_NUMBER: ${{ github.run_number }}
+  # The jobs run `melos run gen` once; tell the Fastlane lanes not to repeat it.
+  SKIP_GEN: 'true'
 
 jobs:
   # 1. Quality Gate: Runs for all pushes, PRs, and workflow dispatches.
   quality-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
         with:
           submodules: recursive
-          fetch-depth: 0
       - uses: ./.github/actions/flutter-setup
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -49,11 +69,11 @@ jobs:
     if: github.event_name == 'pull_request'
     needs: quality-check
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v5
         with:
           submodules: recursive
-          fetch-depth: 0
       - uses: ./.github/actions/flutter-setup
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -69,16 +89,19 @@ jobs:
       - name: Compile Check
         run: flutter build appbundle --release --flavor prod --no-tree-shake-icons
 
-  # 3. Android Deployment: Runs on push to main or workflow_dispatch.
+  # 3. Android Deployment: runs on push to qltc or workflow_dispatch.
+  # `environment: production` lets you require manual approval in
+  # Settings > Environments before anything is published.
   android-distribute:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/qltc')
     needs: quality-check
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: production
     steps:
       - uses: actions/checkout@v5
         with:
           submodules: recursive
-          fetch-depth: 0
       - uses: ./.github/actions/flutter-setup
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
@@ -158,11 +181,13 @@ jobs:
         run: |
           cd android && bundle exec fastlane build_release flavor:${{ github.event.inputs.flavor || 'prod' }}
 
-  # 4. iOS Deployment: Runs on push to main or workflow_dispatch.
+  # 4. iOS Deployment: runs on push to qltc or workflow_dispatch (same approval gate).
   ios-distribute:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/qltc')
     needs: quality-check
     runs-on: macos-latest
+    timeout-minutes: 90
+    environment: production
     steps:
       - uses: actions/checkout@v5
         with:

@@ -1,13 +1,16 @@
 default_platform(:ios)
 
+require "shellwords"
+require "tmpdir"
+
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do |options|
     flavor = options[:flavor] || "prod"
 
-    # 1. Generate code (run from root directory)
-    # Use direct Flutter command instead of melos to avoid PATH issues
-    sh("cd ../.. && melos run gen")
+    # 1. Generate code (run from root directory).
+    # CI already ran `melos run gen` and sets SKIP_GEN=true to avoid repeating it.
+    sh("cd ../.. && melos run gen") unless ENV["SKIP_GEN"] == "true"
 
     # 2. Setup API Key (to bypass 2FA)
     raw_content = (ENV["APP_STORE_CONNECT_KEY_CONTENT"] || "").strip
@@ -59,13 +62,16 @@ platform :ios do
     )
 
     # 3. Fetch latest build number from TestFlight to increment automatically
+    # Fail fast if App Store Connect cannot be queried. Falling back to the CI run
+    # number here would silently pick a number lower than what is already on
+    # TestFlight and only fail after the (long) build, at upload time.
     latest_build = begin
       latest_testflight_build_number(
         api_key: api_key,
         app_identifier: "vn.sosachxin.finance"
       ) || 0
     rescue => e
-      0
+      UI.user_error!("Could not read the latest TestFlight build number: #{e.message}")
     end
 
     next_build_number = latest_build > 0 ? latest_build + 1 : (ENV["BUILD_NUMBER"] || 1).to_i
@@ -73,8 +79,6 @@ platform :ios do
     # 3. Prepare Flutter artifacts
     # Prepares the ios/ folder and compiled Dart code
     sh("flutter config --no-enable-swift-package-manager && cd ../.. && flutter pub get && cd ios && bundle exec pod install && cd .. && flutter build ios --release --flavor #{flavor} --build-number=#{next_build_number} --no-codesign --no-tree-shake-icons")
-
-    certificate_id = nil
 
     # 3.1 Import Certificate if provided in environment
     if ENV["APPLE_CERTIFICATE_BASE64"] && !ENV["APPLE_CERTIFICATE_BASE64"].empty?
@@ -101,29 +105,81 @@ platform :ios do
         keychain_password: keychain_password
       )
 
+      # Sanity check only: the p12 must contain an Apple Distribution identity.
+      # Do NOT pass this SHA-1 to get_provisioning_profile as `cert_id` — that
+      # parameter is the App Store Connect certificate ID (e.g. "7X37QM43YW"),
+      # not the local fingerprint, so no profile would ever match. Without
+      # `cert_id`, sigh matches profiles against the identities installed locally.
       identities = `security find-identity -v -p codesigning 2>/dev/null`
-      certificate_id = identities.lines.filter_map do |identity|
-        next unless identity.include?("Apple Distribution:")
-
-        identity[/\b[A-F0-9]{40}\b/]
-      end.first
-
-      UI.user_error!("The imported certificate is not an Apple Distribution certificate") if certificate_id.nil?
+      unless identities.include?("Apple Distribution:")
+        UI.user_error!("The imported certificate is not an Apple Distribution certificate")
+      end
     end
 
     # 3.2 Clear old provisioning profile cache and download fresh profile from Apple
     sh("rm -rf ~/Library/MobileDevice/Provisioning\\ Profiles/* || true")
     sh("rm -rf ~/Library/Developer/Xcode/DerivedData/* || true")
 
-    get_provisioning_profile(
-      app_identifier: "vn.sosachxin.finance",
-      api_key: api_key,
-      force: true,
-      cert_id: certificate_id,
-      skip_certificate_verification: false
-    )
+    # Entitlements the release app declares (Sign in with Apple, push, App Attest,
+    # app groups...). Every one of them must ALSO be present in the provisioning
+    # profile, otherwise the capability silently does not work at runtime even
+    # though build, archive and TestFlight upload all succeed. This happens when the
+    # profile was generated before the capability was enabled on the App ID.
+    entitlements_file = File.expand_path("../Runner/RunnerRelease.entitlements", Dir.pwd)
+    UI.user_error!("Entitlements file not found: #{entitlements_file}") unless File.exist?(entitlements_file)
 
-    profile_path = Actions.lane_context[SharedValues::SIGH_PROFILE_PATH]
+    entitlement_gaps = lambda do |granted|
+      required = Plist.parse_xml(File.read(entitlements_file)) || {}
+      required.each_with_object([]) do |(key, value), gaps|
+        have = granted[key]
+        missing = if have.nil?
+          true
+        elsif value.is_a?(Array) && have.is_a?(Array)
+          !(value - have).empty?
+        else
+          false
+        end
+        gaps << key if missing
+      end
+    end
+
+    profile_entitlements = lambda do |path|
+      Plist.parse_xml(`security cms -D -i #{Shellwords.escape(path)}`)["Entitlements"] || {}
+    end
+
+    # `force: false` reuses a valid profile bound to the installed certificate (no
+    # pile of "AppStore <timestamp>" profiles); `force: true` creates a fresh one
+    # from the App ID's *current* capabilities.
+    fetch_profile = lambda do |force|
+      get_provisioning_profile(
+        app_identifier: "vn.sosachxin.finance",
+        api_key: api_key,
+        force: force,
+        skip_certificate_verification: false
+      )
+      Actions.lane_context[SharedValues::SIGH_PROFILE_PATH]
+    end
+
+    profile_path = fetch_profile.call(false)
+    gaps = begin
+      entitlement_gaps.call(profile_entitlements.call(profile_path))
+    rescue => e
+      UI.important("Could not inspect the profile's entitlements (#{e.message}); skipping this check.")
+      []
+    end
+
+    unless gaps.empty?
+      UI.important("Provisioning profile is missing #{gaps.join(', ')} (stale profile?). Regenerating it from the App ID.")
+      profile_path = fetch_profile.call(true)
+      gaps = entitlement_gaps.call(profile_entitlements.call(profile_path))
+      unless gaps.empty?
+        UI.user_error!(
+          "The App ID does not grant #{gaps.join(', ')} to a newly generated profile. " \
+          "Enable the capability on the App ID in the Apple Developer portal, then re-run."
+        )
+      end
+    end
+
     profile_uuid = Actions.lane_context[SharedValues::SIGH_UUID]
     profile_name = Actions.lane_context[SharedValues::SIGH_NAME]
 
@@ -162,6 +218,27 @@ platform :ios do
       output_directory: "../../build/ios/ipa",
       output_name: "Runner.ipa"
     )
+
+    # 4.1 Verify the signed IPA really carries the entitlements before uploading, so
+    # a build with a broken capability never reaches TestFlight.
+    ipa_path = Actions.lane_context[SharedValues::IPA_OUTPUT_PATH]
+    signed_entitlements = begin
+      Dir.mktmpdir do |dir|
+        system("unzip", "-q", ipa_path, "-d", dir) || raise("unzip failed")
+        app = Dir.glob(File.join(dir, "Payload", "*.app")).first || raise("no .app inside the IPA")
+        Plist.parse_xml(`codesign -d --entitlements :- #{Shellwords.escape(app)} 2>/dev/null`) ||
+          raise("no entitlements found")
+      end
+    rescue => e
+      UI.important("Could not read the IPA's signed entitlements (#{e.message}); skipping this check.")
+      nil
+    end
+
+    if signed_entitlements
+      gaps = entitlement_gaps.call(signed_entitlements)
+      UI.user_error!("The signed IPA is missing entitlements: #{gaps.join(', ')}") unless gaps.empty?
+      UI.success("Signed IPA carries all required entitlements (#{signed_entitlements.keys.join(', ')})")
+    end
 
     # 5. Upload to TestFlight (Pilot)
     upload_to_testflight(
