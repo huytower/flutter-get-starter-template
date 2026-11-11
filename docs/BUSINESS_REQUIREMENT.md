@@ -116,9 +116,16 @@ The Sổ Sách Xịn (Quản Lý Tài Chính) application is a modular personal 
 - **Scroll Snap**: `scroll_snap_list` (https://pub.dev/packages/scroll_snap_list) for horizontal lists
 
 ### Mobile App Architecture
-- **Offline First**: Local database (Isar recommended over SQLite for Flutter performance)
-- **Local Save First**: All transaction saves must execute locally first (instant success)
-- **Sync on Demand**: Sync to Server (Firebase/REST API) when user clicks Sync icon in Profile tab
+- **Offline First**: Local database is Hive (`hive_ce`); Firestore is the cloud backup
+- **Local Save First**: All saves execute locally first (instant success), then sync in the background
+- **Automatic Sync (Push)**: Every local write (transaction, wallet, budget, category, reconciliation, liability)
+  triggers `FinancialDataSyncService.syncAll()` fire-and-forget after the local save succeeds. Rapid bursts of
+  writes are coalesced into at most one extra pass. Sync only runs for signed-in users with internet access;
+  guests stay local-only and nothing is uploaded.
+- **Automatic Sync (Triggers)**: `syncAll()` also runs when connectivity returns while records are pending, and
+  on sign-in / account switch (push the account's own pending records first, then pull and merge from Firestore).
+- **Manual Sync**: The sync indicator in the Profile tab lets the user force `syncAll()` by hand. It is tappable
+  only when there are pending records and the device is online; it is a safety net, not the primary sync path.
 - **Data Caching**: Category and wallet lists must be hard-cached - no API fetch on every screen open
 - **Performance Target**: Transaction entry must be fast and easy
 
@@ -136,9 +143,12 @@ The Sổ Sách Xịn (Quản Lý Tài Chính) application is a modular personal 
 - **Multi-method Login**: Phone number OR Google account (linked to same user)
 - **Account Linkage**: Phone number linked with Google account to allow same user to login via either method
 - **Profile Editing**: Edit full name
-- **Sync Status Indicator**:
-  - Online: Sync icon button
-  - Offline: Warning badge icon button beside sync button (alerts user to sync to avoid data loss from local storage)
+- **Sync Status Indicator** (Profile tab, driven by `isOnline`, `isSyncing`, `pendingCount`):
+  - Offline: cloud-off icon with a warning badge (not tappable) — data is safe locally but not backed up yet
+  - Syncing: spinner (not tappable)
+  - Pending records while online: cloud-sync icon with a badge and the pending count in the tooltip; tap to
+    sync manually
+  - Fully synced: cloud-done icon (not tappable)
 
 ### Theme Options
 - **Light/Dark Mode**: 2 theme options

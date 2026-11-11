@@ -6,7 +6,8 @@ fast-path and doesn't restate those rules.
 
 ## What this project is
 
-A modular Flutter starter template built with:
+**Sổ Sách Xịn**, an offline-first personal finance app (product spec in `docs/BUSINESS_REQUIREMENT.md`), built as a
+modular Flutter workspace with:
 
 - Clean Architecture
 - SOLID principles
@@ -25,8 +26,7 @@ To set up Firebase for local development:
    ```bash
    melos run setup:firebase
    ```
-    This will copy the `.template` files to the required `.json` and `.plist` locations for all flavors (`prod`,
-    `uat`).
+    This will copy the `.template` files to the required `.json` and `.plist` locations for the `prod` flavor.
 
 2. **Manual Setup:**
    If you need to use your own Firebase project, manually create/update:
@@ -55,8 +55,14 @@ To set up Firebase for local development:
 5. `modules/theme/lib/core/di/di.dart`
     - Theme module DI registration and exports
 
-6. `cc_core_sdk/cc_sdk/lib/core/di/di.dart`
-    - Core SDK DI exports
+6. `shared/cc_core_sdk/cc_sdk/lib/core/di/di.dart`
+    - Core SDK DI exports (`shared/cc_core_sdk` is a git submodule — run `git submodule update --init --recursive`)
+
+7. `modules/domain_features/lib/features/firestore/financial_data_sync_service.dart`
+    - Local-first sync: repositories call `syncAll()` after every local write; Profile tab can trigger it manually
+
+8. `modules/bridge/` vs `cc_bridge/`
+    - `cc_bridge` = cross-module contracts; `modules/bridge` = app-level `NavigationBridgeService`. Different jobs.
 
 ## Current feature pattern
 
@@ -105,8 +111,8 @@ code-verified DI pattern — annotate classes in place, there's no per-feature D
 
 1. Open the issue or ticket description.
 2. Identify the related module/package.
-    - UI/UX changes often live in `lib/presentation` or `cc_core_sdk/cc_sdk_ui`
-    - Domain logic changes often live in `modules/data` or feature domain folders
+    - UI/UX changes often live in `lib/presentation` or `shared/cc_core_sdk/cc_sdk_ui`
+    - Domain logic changes often live in `modules/domain_features` feature domain folders
     - Reusable feature changes often live in `cc_micro_features`
 3. Find the DI entry points.
 4. Confirm current behavior by running the app or using existing examples.
@@ -121,7 +127,7 @@ code-verified DI pattern — annotate classes in place, there's no per-feature D
 - `flutter analyze`
 - `flutter pub run build_runner build --delete-conflicting-outputs`
 - `flutter test`
-- `flutter run -d emulator-5554 --flavor uat -t lib/main_uat.dart` - run app with emulator in terminal
+- `flutter run -d <device> --flavor prod -t lib/main_prod.dart` - run the app (only the `prod` flavor exists)
 
 ## Recommended workflow
 

@@ -1,7 +1,8 @@
-# AI Context - Flutter Get Starter Template
+# AI Context - Sổ Sách Xịn (Flutter Hybrid-Modular Super App)
 
-A modular Flutter starter built around **Clean Architecture** and **SOLID principles**, with reusable packages for core
-SDK, UI, and feature modules.
+An offline-first personal finance app (see `docs/BUSINESS_REQUIREMENT.md` for the product spec) built on a modular
+Flutter architecture: **Clean Architecture** and **SOLID principles**, with reusable packages for core SDK, UI, and
+feature modules.
 
 **The actionable rulebook lives in `/AGENTS.md`** (repo root) — read it first. This document is the deeper
 narrative/rationale layer: *why* the architecture looks this way, the full project-structure reference, and
@@ -38,7 +39,9 @@ flutter-get-starter-template/
 │   ├── presentation/             # Shell UI (NavigationBar, Root Scaffold)
 │   └── main*.dart               # Entry points
 ├── modules/domain_features/      # Business Verticals (Vertical Features)
-│   └── lib/features/            # Home, Comment, Wallet, Transaction, etc.
+│   └── lib/features/            # wallet, transaction, budget_limit, budget_allocation, reconciliation,
+│                                #   liability, report, category, profile (+ user_level), comment,
+│                                #   notification, firestore (sync), guideline, crashlog
 ├── shared/cc_micro_features/     # Global Legos (Micro-Features)
 │   └── lib/features/            # Auth, Biometric, Splash, etc.
 ├── shared/cc_core_sdk/           # Shared Core (Engine) — GIT SUBMODULE
@@ -46,9 +49,13 @@ flutter-get-starter-template/
 │   ├── cc_sdk_ui/               # UI component library (CcContextExtension)
 │   ├── cc_mixin/                # Reusable mixins
 │   └── cc_sdk_data/             # Core data entities/models
-├── cc_bridge/                   # Bridge for communication (root level)
+├── cc_bridge/                   # Bridge contracts (Coordinators, SessionContract) — root level
 ├── modules/                      # App-specific modules
 │   ├── app_config/              # Configuration, Storage
+│   ├── bridge/                  # NavigationBridgeService: app-level post-boot orchestration
+│   │                            #   (user level init, data services, authenticated sync, reminders)
+│   │                            #   Distinct from cc_bridge — not a duplicate.
+│   ├── data_config/             # App-specific data implementations, sync helpers, exchange rates
 │   ├── message/                 # i18n/localization (CcLocaleKeys)
 │   └── theme/                   # Theming system (PrjColors, CcTextStyle)
 └── docs/                        # Documentation
@@ -70,6 +77,18 @@ backs those breakpoints:
   `LayoutBuilder`/`OrientationBuilder` where a widget needs to react to orientation directly.
 - Landscape is worth deliberately designing for on data-heavy screens (dashboards, tables, charts), not just
   tolerating.
+
+## Data persistence and sync
+
+Local-first: Hive (`hive_ce`) is the source of truth on device; Firestore is the cloud copy.
+
+- Every repository write saves locally, then calls `FinancialDataSyncService.syncAll()` fire-and-forget.
+  Concurrent requests are coalesced into at most one extra pass.
+- `syncAll()` also runs when connectivity returns with pending records, and during the sign-in / account-switch
+  handshake (push the same account's pending records, then pull and merge from Firestore).
+- The Profile tab sync indicator exposes a manual `syncAll()` for when records are pending; it is a safety net,
+  not the main path.
+- Guests are local-only; guest-owned records are discarded on sign-in and never uploaded.
 
 ## Key technologies
 

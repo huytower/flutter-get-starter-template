@@ -63,6 +63,8 @@ modules/
   data_config/                    # App-specific data implementations; implements Repository interfaces
                                    # that domain_features/cc_micro_features define
   app_config/                     # Env management, storage, DI discovery
+  bridge/                         # NavigationBridgeService — app-level post-boot orchestration (user level,
+                                   # data services, authenticated sync, reminders). NOT a duplicate of cc_bridge.
   theme/                          # SSOT for colors/typography (PrjColors, CcTextStyle, CcThemes)
   message/                        # SSOT for i18n strings (CcLocaleKeys)
 shared/
@@ -74,6 +76,7 @@ shared/
     cc_mixin/                     #   reusable behavior mixins (pagination, back-button, etc.)
     cc_sdk_data/                  #   core data entities/models
 cc_bridge/                        # Root-level cross-module contracts (*Coordinator / *Contract / *Provider)
+                                   # (contracts only; the app-level service lives in modules/bridge)
 ```
 
 `shared/cc_core_sdk` is a **git submodule**; commits there don't land by editing files in this repo — they must

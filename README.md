@@ -1,85 +1,113 @@
-# Flutter Hybrid-Modular Super App Template
+# Sổ Sách Xịn — Personal Finance Super App
 
-A production-ready modular starter kit built around **Clean Architecture**, **SOLID principles**, and a **Hybrid-Modular
-Super App** vision. Designed for enterprise-scale applications where features are treated as independent, reusable "
-Micro-Features."
+**Sổ Sách Xịn** (Quản Lý Tài Chính) is an offline-first personal finance app built on a **Hybrid-Modular Super App**
+architecture (Clean Architecture + SOLID), organised as a Melos workspace of independent packages rather than one
+monolith. The philosophy: *smart, effective, and disciplined spending*.
 
-## 🚀 Architectural Vision: The Super App Ecosystem
+- Product spec: [`docs/BUSINESS_REQUIREMENT.md`](docs/BUSINESS_REQUIREMENT.md)
+- Architecture rulebook (read first): [`AGENTS.md`](AGENTS.md)
 
-This project is engineered as an ecosystem of independent Lego blocks rather than a single monolithic application. The
-architecture is split into three rigid layers:
+## What the app does
 
-1. **App Shell (Host/Container)**: The lightweight `lib/` shell responsible for startup (Turbo Parallel Boot < 2s), security checks, routing, and dynamic orchestration of sub-features.
-2. **Micro-Features (Feature-as-a-Service)**: Located in `cc_micro_features/`, these are standalone, project-blind
-   business verticals (e.g., Auth, Pay, Loyalty). They are designed to be "Global Lego Blocks" reusable across multiple
-   different enterprise projects.
-3. **Shared Core Layer (Core SDK)**: Located in `cc_core_sdk/`, this is the "Universal Logic Layer" (Auth, Network,
-   Encryption, Data Persistence). It is designed to mirror KMP (Kotlin Multiplatform) logic, making it ready for
-   cross-platform binary sharing.
+| Area | Features |
+|---|---|
+| Transactions | Expense, income, wallet transfer and investment entry; custom keypad, quick-amount chips, smart suggestions |
+| Smart Entry (AI) | Text, voice, camera and gallery receipt parsing (Gemini) into a preview the user confirms; batch save |
+| Wallets | Liquid wallets (cash, bank, e-wallet), investment wallets with ROI, emergency fund |
+| Reconciliation | Weekly audit: compare book vs. actual balance, auto-create adjustment slips, history and undo |
+| Budgets | Per-category monthly limits, threshold notifications, anomaly detection, budget insights |
+| Debts | Separate Lend and Liability flows, payments linked to wallets, repayment reminders |
+| Reports | Weekly / monthly / yearly trends, category spending, financial runway, AI financial advice |
+| Levels | LV1 → LV3 progression that unlocks Investment and Debt/Loan based on reconciliation streak, budgets and cash flow |
+| Account & data | Phone / Google / Apple sign-in, guest mode, Hive local storage with automatic Firestore sync |
 
-## 🎯 Critical Principle: State-Management Agnostic & Project-Blind
+### Data & sync model
 
-**Core libraries (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`) and `cc_micro_features` MUST be state-management agnostic and 100%
-project-blind.**
+- Every save goes to local Hive storage first, so entry is instant and works offline.
+- After each local write the repository calls `FinancialDataSyncService.syncAll()` (fire-and-forget, coalesced).
+  Sync also runs when connectivity returns and on sign-in.
+- The Profile tab shows the sync status and lets the user trigger `syncAll()` manually.
+- Guests are local-only: nothing is uploaded until they sign in.
 
-### Why This Matters
+## Architecture
 
-- **Zero Regression**: A change in the Booking flow cannot break the Payment gateway because they are isolated modules.
-- **Parallel Development**: Different teams can work on different Micro-Features simultaneously without merge conflicts.
-- **Infinite Reusability**: You can pick up `cc_micro_features/auth` and drop it into a completely different App Shell
-  tomorrow with zero modifications.
+Four rigid layers, plus a bridge:
 
-### Key Guidelines for Micro-Features
+1. **App Shell** (`lib/`) — pure orchestrator: boot sequence, DI wiring, routing. No business logic or feature UI.
+2. **Domain Features** (`modules/domain_features/`) — app-specific business verticals (transaction, wallet, budget,
+   reconciliation, report, ...). This is where most of the code lives.
+3. **Micro-Features** (`shared/cc_micro_features/`) — project-blind, reusable verticals (auth, biometric, crash log,
+   messaging, splash, web) that can be dropped into another app unchanged.
+4. **Shared Core** (`shared/cc_core_sdk/`, git submodule) — network, failures, logging, design system, mixins.
+5. **Bridge** — cross-module contracts so features never depend on each other's concrete classes:
+   - `cc_bridge/` holds the contracts (`*Coordinator`, `*Contract`, `*Provider`), e.g. `SessionContract`.
+   - `modules/bridge/` holds the app-level `NavigationBridgeService` used by the shell to run post-boot tasks
+     (user level init, data services, authenticated sync, reminders, tab refresh). The two are different
+     packages with different jobs, not duplicates.
 
-- ✅ **ALLOWED**: Imports from `cc_core_sdk` and 3rd party utilities.
-- ❌ **FORBIDDEN**: Imports from the App Shell (`lib/`) or app-specific modules (`modules/data_config`).
-- **Interface-Driven**: Micro-Features define their own `Repository` contracts. The App Shell or Data module implements
-  these and injects them via DI.
+Presentation layers may use Bloc or GetX per feature; the core SDK and bridge stay state-management agnostic.
 
-## 🛠 Project Structure
+### Dependency rules (summary)
+
+- `cc_micro_features` and `domain_features` must not import `lib/` or `modules/data_config`.
+- `cc_micro_features` must not import `domain_features`.
+- `domain/` and `data/` never import `presentation/`.
+- Each feature defines its own `Repository` interface; the implementation is injected through DI.
+
+The full, authoritative list is in [`AGENTS.md`](AGENTS.md).
+
+## Project structure
 
 ```
 flutter-get-starter-template/
-├── lib/                          # App Shell (Project-Specific)
-│   ├── core/                     # Startup, DI orchestration, Global Router
-│   ├── data/                     # Project-specific data implementations
-│   └── presentation/             # Local glue logic and UI
-├── shared/cc_micro_features/     # Global Reusable Features (Project-Blind)
-│   ├── auth/                     # Auth Micro-Feature
-│   ├── biometric/                # Biometric Micro-Feature
-│   ├── crash_log/                # Crash Log Micro-Feature
-│   ├── messaging/                # Messaging Micro-Feature
-│   ├── splash/                   # Splash Micro-Feature
-│   ├── web/                      # Web Micro-Feature
-│   └── ...                       # Other business verticals
-├── cc_core_sdk/                  # Shared Core SDK (Universal Engine)
-│   ├── cc_sdk/                  # Pure Logic, Network, Failures
-│   ├── cc_sdk_ui/               # Design System & UI Components
-│   └── cc_mixin/                # Reusable Behaviors
-├── modules/                      # App Support Modules
-│   ├── app_config/              # Env, Storage, Global DI
-  │   ├── theme/                   # Brand Design Tokens (Plus Jakarta Sans)
-│   └── message/                 # Centralized i18n
-└── docs/                        # Architecture & Onboarding Docs
+├── lib/                          # App Shell: main*.dart, DI assembly, router, navigation bar
+├── modules/
+│   ├── domain_features/          # Business verticals: wallet, transaction, budget_limit, budget_allocation,
+│   │                             #   reconciliation, liability, report, category, profile (+ user_level),
+│   │                             #   comment, notification, firestore (sync), guideline, crashlog
+│   ├── data_config/              # App-specific data implementations (network config, sync helpers, exchange rates)
+│   ├── app_config/               # Env management, storage, DI discovery
+│   ├── bridge/                   # NavigationBridgeService (app-level post-boot orchestration)
+│   ├── theme/                    # Colors and typography (PrjColors, CcTextStyle, CcThemes)
+│   └── message/                  # i18n strings (en.json, vi.json, CcLocaleKeys)
+├── shared/
+│   ├── cc_micro_features/        # auth, biometric, crash_log, messaging, splash, web
+│   └── cc_core_sdk/              # GIT SUBMODULE: cc_sdk, cc_sdk_ui, cc_mixin, cc_sdk_data
+├── cc_bridge/                    # Cross-module contracts (Coordinators, SessionContract)
+├── docs/                         # Business requirements, onboarding, contributing, AI context
+└── scripts/                      # Firebase setup, run scripts
 ```
 
-## 🏗 Naming Convention (Suffix-First)
+## Naming convention (suffix-first)
 
-To prevent name collisions in a Super App, we enforce strict suffixing:
+`*_entity.dart`, `*_usecase.dart`, `*_repository.dart` / `*_repository_impl.dart`, `*_model.dart`, `*_page.dart`,
+`*_bloc.dart` / `*_cubit.dart`, `*_state.dart` / `*_event.dart`; files are `lower_snake_case`.
 
-- **Entities**: `*_entity.dart`
-- **UseCases**: `*_usecase.dart`
-- **Repositories**: `*_repository.dart` (Interface) / `*_repository_impl.dart`
-- **Models**: `*_model.dart`
-- **Pages**: `*_page.dart`
-- **State Management**: `*_bloc.dart` / `*_state.dart`
+## Quick start
 
-## 🚦 Quick Start
+```bash
+git submodule update --init --recursive   # fetch shared/cc_core_sdk
+melos bootstrap                            # bootstrap the workspace
+melos run setup:firebase                   # generate local Firebase config from templates
+melos run gen                              # build_runner: DI and serialization code
+melos run analyze
+melos run test
+```
 
-1. Read `docs/AI_CONTEXT.md` for the full "Constitution" of this project.
-2. Run `melos bootstrap` to set up the workspace.
-3. Run `melos run setup:firebase` to initialize config templates.
-4. Run `melos run gen` to generate all DI and serialization code.
+Run the app (flavor `prod`, entry `lib/main_prod.dart`):
 
----
-**See `docs/onboarding.md` for a step-by-step developer guide.**
+```bash
+flutter run -d <device> --flavor prod -t lib/main_prod.dart
+```
+
+Copy `env/.env.example` to `env/.env.prod` (git-ignored) and fill in your own values before the first run; the app
+loads it at boot via `initEnv()`.
+
+## Documentation map
+
+- [`AGENTS.md`](AGENTS.md) — canonical architecture and workflow rules (also used by AI agents)
+- [`docs/BUSINESS_REQUIREMENT.md`](docs/BUSINESS_REQUIREMENT.md) — product requirements and roadmap
+- [`docs/onboarding.md`](docs/onboarding.md) — new-developer fast path
+- [`docs/AI_CONTEXT.md`](docs/AI_CONTEXT.md) — rationale behind the architecture
+- [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) — PR checklist and doc-sync obligations
+- [`docs/CICD_SETUP.md`](docs/CICD_SETUP.md) — build and distribution setup
