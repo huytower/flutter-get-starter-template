@@ -122,11 +122,14 @@ platform :ios do
       UI.message("Successfully installed provisioning profile #{profile_uuid}.mobileprovision")
     end
 
-    update_project_provisioning(
-      xcodeproj: "Runner.xcodeproj",
-      profile: profile_path,
-      build_configuration: "Release",
-      target_filter: "Runner"
+    update_code_signing_settings(
+      path: "Runner.xcodeproj",
+      use_automatic_signing: false,
+      team_id: "46KM345YTJ",
+      profile_name: profile_name,
+      code_sign_identity: "Apple Distribution",
+      targets: ["Runner"],
+      build_configurations: ["Release-prod"]
     )
 
     # 4. Build App (Gym)
