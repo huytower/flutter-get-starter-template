@@ -6,7 +6,7 @@ fast-path and doesn't restate those rules.
 
 ## What this project is
 
-**Sổ Sách Xịn**, an offline-first personal finance app (product spec in `docs/BUSINESS_REQUIREMENT.md`), built as a
+**Sổ Sách Xịn**, an offline-first personal finance app (product spec in `docs/BUSINESS_REQUIREMENT.md`, a local-only file that is git-ignored), built as a
 modular Flutter workspace with:
 
 - Clean Architecture

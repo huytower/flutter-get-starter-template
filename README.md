@@ -4,7 +4,7 @@
 architecture (Clean Architecture + SOLID), organised as a Melos workspace of independent packages rather than one
 monolith. The philosophy: *smart, effective, and disciplined spending*.
 
-- Product spec: [`docs/BUSINESS_REQUIREMENT.md`](docs/BUSINESS_REQUIREMENT.md)
+- Product spec: `docs/BUSINESS_REQUIREMENT.md` — kept locally only (git-ignored, not in this repository); ask the project owner for a copy
 - Architecture rulebook (read first): [`AGENTS.md`](AGENTS.md)
 
 ## What the app does
@@ -106,7 +106,7 @@ loads it at boot via `initEnv()`.
 ## Documentation map
 
 - [`AGENTS.md`](AGENTS.md) — canonical architecture and workflow rules (also used by AI agents)
-- [`docs/BUSINESS_REQUIREMENT.md`](docs/BUSINESS_REQUIREMENT.md) — product requirements and roadmap
+- `docs/BUSINESS_REQUIREMENT.md` — product requirements and roadmap (local only, git-ignored)
 - [`docs/onboarding.md`](docs/onboarding.md) — new-developer fast path
 - [`docs/AI_CONTEXT.md`](docs/AI_CONTEXT.md) — rationale behind the architecture
 - [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) — PR checklist and doc-sync obligations

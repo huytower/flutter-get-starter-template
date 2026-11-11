@@ -158,3 +158,6 @@ vendor/bundle/
 /macos/Flutter/ephemeral/flutter_export_environment.sh
 /macos/Flutter/ephemeral/flutter_native_integration.env
 /macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Product specification is kept out of version control (local only)
+docs/BUSINESS_REQUIREMENT.md

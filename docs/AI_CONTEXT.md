@@ -1,6 +1,6 @@
 # AI Context - Sổ Sách Xịn (Flutter Hybrid-Modular Super App)
 
-An offline-first personal finance app (see `docs/BUSINESS_REQUIREMENT.md` for the product spec) built on a modular
+An offline-first personal finance app (the product spec, `docs/BUSINESS_REQUIREMENT.md`, is a local-only, git-ignored file) built on a modular
 Flutter architecture: **Clean Architecture** and **SOLID principles**, with reusable packages for core SDK, UI, and
 feature modules.
 
