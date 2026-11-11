@@ -74,6 +74,8 @@ platform :ios do
     # Prepares the ios/ folder and compiled Dart code
     sh("flutter config --no-enable-swift-package-manager && cd ../.. && flutter pub get && cd ios && bundle exec pod install && cd .. && flutter build ios --release --flavor #{flavor} --build-number=#{next_build_number} --no-codesign --no-tree-shake-icons")
 
+    certificate_id = nil
+
     # 3.1 Import Certificate if provided in environment
     if ENV["APPLE_CERTIFICATE_BASE64"] && !ENV["APPLE_CERTIFICATE_BASE64"].empty?
       keychain_name = "build.keychain"
@@ -98,6 +100,15 @@ platform :ios do
         keychain_name: keychain_name,
         keychain_password: keychain_password
       )
+
+      identities = `security find-identity -v -p codesigning 2>/dev/null`
+      certificate_id = identities.lines.filter_map do |identity|
+        next unless identity.include?("Apple Distribution:")
+
+        identity[/\b[A-F0-9]{40}\b/]
+      end.first
+
+      UI.user_error!("The imported certificate is not an Apple Distribution certificate") if certificate_id.nil?
     end
 
     # 3.2 Clear old provisioning profile cache and download fresh profile from Apple
@@ -108,7 +119,8 @@ platform :ios do
       app_identifier: "vn.sosachxin.finance",
       api_key: api_key,
       force: true,
-      skip_certificate_verification: true
+      cert_id: certificate_id,
+      skip_certificate_verification: false
     )
 
     profile_path = Actions.lane_context[SharedValues::SIGH_PROFILE_PATH]
@@ -136,7 +148,7 @@ platform :ios do
     build_app(
       scheme: flavor,
       workspace: "Runner.xcworkspace",
-      configuration: "Release",
+      configuration: "Release-prod",
       include_bitcode: false,
       export_method: "app-store",
       export_options: {
