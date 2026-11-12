@@ -385,10 +385,13 @@ class ProfileInfoCard extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // No name yet (e.g. a phone-only account): show a neutral state, never a
+        // prompt. Telling a user who just signed in to "Enter your display name"
+        // reads as a required step (Sign in with Apple guideline: don't ask for
+        // information the sign-in already provided). Editing stays optional via
+        // the pencil.
         CcText(
-          fullName.isEmpty
-              ? el.tr(CcLocaleKeys.profile_display_name_hint)
-              : fullName,
+          fullName.isEmpty ? el.tr(CcLocaleKeys.common_not_set) : fullName,
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
             color: context.ccColorScheme.onPrimary.withOpacity(
               fullName.isEmpty ? 0.5 : 0.85,

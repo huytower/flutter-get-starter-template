@@ -40,14 +40,10 @@ import 'package:domain_features/features/budget_limit/domain/usecases/get_budget
     as _i206;
 import 'package:domain_features/features/budget_limit/domain/usecases/get_budget_limit_stats_usecase.dart'
     as _i743;
-import 'package:domain_features/features/budget_limit/domain/usecases/get_budget_limits_usecase.dart'
-    as _i847;
 import 'package:domain_features/features/budget_limit/domain/usecases/get_budget_over_limit_count_usecase.dart'
     as _i467;
 import 'package:domain_features/features/budget_limit/domain/usecases/get_category_average_monthly_spend_usecase.dart'
     as _i393;
-import 'package:domain_features/features/budget_limit/domain/usecases/sort_budget_limits_by_limit_usecase.dart'
-    as _i250;
 import 'package:domain_features/features/budget_limit/domain/usecases/sort_budget_limits_by_progress_usecase.dart'
     as _i37;
 import 'package:domain_features/features/budget_limit/domain/usecases/update_budget_limit_orders_usecase.dart'
@@ -66,18 +62,12 @@ import 'package:domain_features/features/category/data/repositories/category_rep
     as _i658;
 import 'package:domain_features/features/category/domain/repositories/category_repository.dart'
     as _i1059;
-import 'package:domain_features/features/category/domain/usecases/create_category_usecase.dart'
-    as _i370;
-import 'package:domain_features/features/category/domain/usecases/delete_category_usecase.dart'
-    as _i1057;
 import 'package:domain_features/features/category/domain/usecases/get_categories_usecase.dart'
     as _i224;
 import 'package:domain_features/features/category/domain/usecases/get_category_groups_usecase.dart'
     as _i397;
 import 'package:domain_features/features/category/domain/usecases/toggle_category_enabled_usecase.dart'
     as _i110;
-import 'package:domain_features/features/category/domain/usecases/update_category_usecase.dart'
-    as _i989;
 import 'package:domain_features/features/category/export_category.dart'
     as _i1041;
 import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart'
@@ -122,8 +112,6 @@ import 'package:domain_features/features/liability/domain/usecases/create_liabil
     as _i805;
 import 'package:domain_features/features/liability/domain/usecases/get_liability_balances_usecase.dart'
     as _i663;
-import 'package:domain_features/features/liability/domain/usecases/get_liability_outstanding_balance_usecase.dart'
-    as _i834;
 import 'package:domain_features/features/liability/domain/usecases/record_liability_payment_usecase.dart'
     as _i941;
 import 'package:domain_features/features/liability/domain/usecases/schedule_liability_reminders_usecase.dart'
@@ -185,13 +173,9 @@ import 'package:domain_features/features/report/domain/usecases/get_category_spe
 import 'package:domain_features/features/report/domain/usecases/get_financial_runway_usecase.dart'
     as _i701;
 import 'package:domain_features/features/report/domain/usecases/get_investment_trend_usecase.dart'
-    as _i229;
+    as _i231;
 import 'package:domain_features/features/report/domain/usecases/get_liability_trend_usecase.dart'
     as _i768;
-import 'package:domain_features/features/report/domain/usecases/get_loan_trend_usecase.dart'
-    as _i225;
-import 'package:domain_features/features/report/domain/usecases/get_monthly_summary_usecase.dart'
-    as _i850;
 import 'package:domain_features/features/report/domain/usecases/get_trend_data_usecase.dart'
     as _i951;
 import 'package:domain_features/features/report/presentation/get_x/quick_edit_transaction_sheet_controller.dart'
@@ -226,8 +210,6 @@ import 'package:domain_features/features/transaction/domain/usecases/update_tran
     as _i756;
 import 'package:domain_features/features/transaction/presentation/get_x/category_selection_controller.dart'
     as _i615;
-import 'package:domain_features/features/transaction/presentation/get_x/edit_transaction_sheet_controller.dart'
-    as _i94;
 import 'package:domain_features/features/transaction/presentation/get_x/expense_form_controller.dart'
     as _i754;
 import 'package:domain_features/features/transaction/presentation/get_x/income_form_controller.dart'
@@ -246,8 +228,6 @@ import 'package:domain_features/features/wallet/data/repositories/wallet_reposit
     as _i590;
 import 'package:domain_features/features/wallet/domain/repositories/wallet_repository.dart'
     as _i572;
-import 'package:domain_features/features/wallet/domain/usecases/get_investment_roi_usecase.dart'
-    as _i845;
 import 'package:domain_features/features/wallet/domain/usecases/get_wallet_balances_usecase.dart'
     as _i167;
 import 'package:domain_features/features/wallet/domain/usecases/get_wallet_book_balance_usecase.dart'
@@ -258,7 +238,7 @@ import 'package:domain_features/features/wallet/presentation/get_x/add_investmen
 import 'package:domain_features/features/wallet/presentation/get_x/add_liquid_sheet_controller.dart'
     as _i95;
 import 'package:domain_features/features/wallet/presentation/get_x/wallet_controller.dart'
-    as _i231;
+    as _i229;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart'
     as _i161;
@@ -270,8 +250,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.factory<_i645.MoneyFormatter>(() => const _i645.MoneyFormatter());
     gh.factory<_i917.QuickEditTransactionSheetController>(
         () => _i917.QuickEditTransactionSheetController());
-    gh.factory<_i94.EditTransactionSheetController>(
-        () => _i94.EditTransactionSheetController());
     gh.factory<_i84.QuickEntryAutoSaveHelper>(
         () => _i84.QuickEntryAutoSaveHelper());
     gh.lazySingleton<_i994.AiAdviceCacheDataSource>(
@@ -280,8 +258,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i967.AiFallbackPreferenceDataSource());
     gh.lazySingleton<_i585.BudgetLimitLocalDataSource>(
         () => _i585.BudgetLimitLocalDataSource());
-    gh.lazySingleton<_i250.SortBudgetLimitsByLimitUseCase>(
-        () => _i250.SortBudgetLimitsByLimitUseCase());
     gh.lazySingleton<_i37.SortBudgetLimitsByProgressUseCase>(
         () => _i37.SortBudgetLimitsByProgressUseCase());
     gh.lazySingleton<_i547.CategoryLocalDataSource>(
@@ -369,8 +345,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i77.CreateBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
     gh.lazySingleton<_i106.DeleteBudgetLimitUseCase>(() =>
         _i106.DeleteBudgetLimitUseCase(gh<_i544.BudgetLimitRepository>()));
-    gh.lazySingleton<_i847.GetBudgetLimitsUseCase>(
-        () => _i847.GetBudgetLimitsUseCase(gh<_i544.BudgetLimitRepository>()));
     gh.lazySingleton<_i256.UpdateBudgetLimitOrdersUseCase>(() =>
         _i256.UpdateBudgetLimitOrdersUseCase(
             gh<_i544.BudgetLimitRepository>()));
@@ -395,11 +369,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i580.CrashLogRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
     gh.lazySingleton<_i663.GetLiabilityBalancesUseCase>(
         () => _i663.GetLiabilityBalancesUseCase(
-              gh<_i813.LiabilityRepository>(),
-              gh<_i1027.TransactionRepository>(),
-            ));
-    gh.lazySingleton<_i834.GetLiabilityOutstandingBalanceUseCase>(
-        () => _i834.GetLiabilityOutstandingBalanceUseCase(
               gh<_i813.LiabilityRepository>(),
               gh<_i1027.TransactionRepository>(),
             ));
@@ -436,18 +405,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i1027.TransactionRepository>(),
           gh<_i1059.CategoryRepository>(),
         ));
-    gh.lazySingleton<_i370.CreateCategoryUseCase>(
-        () => _i370.CreateCategoryUseCase(gh<_i1059.CategoryRepository>()));
-    gh.lazySingleton<_i1057.DeleteCategoryUseCase>(
-        () => _i1057.DeleteCategoryUseCase(gh<_i1059.CategoryRepository>()));
     gh.lazySingleton<_i224.GetCategoriesUseCase>(
         () => _i224.GetCategoriesUseCase(gh<_i1059.CategoryRepository>()));
     gh.lazySingleton<_i397.GetCategoryGroupsUseCase>(
         () => _i397.GetCategoryGroupsUseCase(gh<_i1059.CategoryRepository>()));
     gh.lazySingleton<_i110.ToggleCategoryEnabledUseCase>(() =>
         _i110.ToggleCategoryEnabledUseCase(gh<_i1059.CategoryRepository>()));
-    gh.lazySingleton<_i989.UpdateCategoryUseCase>(
-        () => _i989.UpdateCategoryUseCase(gh<_i1059.CategoryRepository>()));
     gh.lazySingleton<_i167.GetWalletBalancesUseCase>(
         () => _i167.GetWalletBalancesUseCase(
               gh<_i572.WalletRepository>(),
@@ -471,14 +434,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i569.GetProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
     gh.lazySingleton<_i220.UpdateProfileSettingsUseCase>(() =>
         _i220.UpdateProfileSettingsUseCase(gh<_i270.ProfileRepository>()));
-    gh.lazySingleton<_i701.GetFinancialRunwayUseCase>(
-        () => _i701.GetFinancialRunwayUseCase(
-              gh<_i572.WalletRepository>(),
-              gh<_i1027.TransactionRepository>(),
-              gh<_i167.GetWalletBalancesUseCase>(),
-              gh<_i1059.CategoryRepository>(),
-              gh<_i544.BudgetLimitRepository>(),
-            ));
     gh.lazySingleton<_i575.CheckCloudBackupReminderUseCase>(
         () => _i575.CheckCloudBackupReminderUseCase(
               gh<_i270.ProfileRepository>(),
@@ -493,6 +448,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i944.ReconciliationRepository>(),
               gh<_i483.NotificationService>(),
             ));
+    gh.lazySingleton<_i229.WalletController>(() => _i229.WalletController(
+          gh<_i572.WalletRepository>(),
+          gh<_i1027.TransactionRepository>(),
+          gh<_i569.GetProfileSettingsUseCase>(),
+          gh<_i195.CurrencyConversionService>(),
+        ));
     gh.lazySingleton<_i971.LiabilityListController>(
         () => _i971.LiabilityListController(
               gh<_i663.GetLiabilityBalancesUseCase>(),
@@ -501,21 +462,15 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.lazySingleton<_i393.GetCategoryAverageMonthlySpendUseCase>(() =>
         _i393.GetCategoryAverageMonthlySpendUseCase(
             gh<_i1027.TransactionRepository>()));
-    gh.lazySingleton<_i229.GetInvestmentTrendUseCase>(() =>
-        _i229.GetInvestmentTrendUseCase(gh<_i1027.TransactionRepository>()));
+    gh.lazySingleton<_i231.GetInvestmentTrendUseCase>(() =>
+        _i231.GetInvestmentTrendUseCase(gh<_i1027.TransactionRepository>()));
     gh.lazySingleton<_i768.GetLiabilityTrendUseCase>(() =>
         _i768.GetLiabilityTrendUseCase(gh<_i1027.TransactionRepository>()));
-    gh.lazySingleton<_i225.GetLoanTrendUseCase>(
-        () => _i225.GetLoanTrendUseCase(gh<_i1027.TransactionRepository>()));
-    gh.lazySingleton<_i850.GetMonthlySummaryUseCase>(() =>
-        _i850.GetMonthlySummaryUseCase(gh<_i1027.TransactionRepository>()));
     gh.lazySingleton<_i895.GetMonthlyCashFlowUseCase>(() =>
         _i895.GetMonthlyCashFlowUseCase(gh<_i1027.TransactionRepository>()));
     gh.lazySingleton<_i419.GetMonthlyRecurringMatchUseCase>(() =>
         _i419.GetMonthlyRecurringMatchUseCase(
             gh<_i1027.TransactionRepository>()));
-    gh.lazySingleton<_i845.GetInvestmentRoiUseCase>(() =>
-        _i845.GetInvestmentRoiUseCase(gh<_i1027.TransactionRepository>()));
     gh.lazySingleton<_i446.GetReconciliationHistoryUseCase>(() =>
         _i446.GetReconciliationHistoryUseCase(
             gh<_i944.ReconciliationRepository>()));
@@ -535,6 +490,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i1027.TransactionRepository>(),
           gh<_i1041.GetCategoriesUseCase>(),
         ));
+    gh.factory<_i797.AddInvestmentSheetController>(
+        () => _i797.AddInvestmentSheetController(
+              gh<_i229.WalletController>(),
+              gh<_i224.GetCategoriesUseCase>(),
+              gh<_i569.GetProfileSettingsUseCase>(),
+            ));
     gh.lazySingleton<_i263.ParseSmartEntryUseCase>(
         () => _i263.ParseSmartEntryUseCase(
               gh<_i224.GetCategoriesUseCase>(),
@@ -576,14 +537,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.factory<_i615.CategorySelectionController>(() =>
         _i615.CategorySelectionController(gh<_i224.GetCategoriesUseCase>()));
-    gh.lazySingleton<_i231.WalletController>(() => _i231.WalletController(
-          gh<_i572.WalletRepository>(),
-          gh<_i1027.TransactionRepository>(),
-          gh<_i105.GetWalletBookBalanceUseCase>(),
-          gh<_i845.GetInvestmentRoiUseCase>(),
-          gh<_i569.GetProfileSettingsUseCase>(),
-          gh<_i195.CurrencyConversionService>(),
-        ));
     gh.lazySingleton<_i805.CreateLiabilityUseCase>(
         () => _i805.CreateLiabilityUseCase(
               gh<_i813.LiabilityRepository>(),
@@ -614,6 +567,13 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i569.GetProfileSettingsUseCase>(),
               gh<_i220.UpdateProfileSettingsUseCase>(),
             ));
+    gh.lazySingleton<_i701.GetFinancialRunwayUseCase>(
+        () => _i701.GetFinancialRunwayUseCase(
+              gh<_i1027.TransactionRepository>(),
+              gh<_i167.GetWalletBalancesUseCase>(),
+              gh<_i1059.CategoryRepository>(),
+              gh<_i544.BudgetLimitRepository>(),
+            ));
     gh.factory<_i135.InvestmentFormController>(
         () => _i135.InvestmentFormController(
               gh<_i1041.GetCategoriesUseCase>(),
@@ -634,12 +594,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i743.GetBudgetLimitStatsUseCase>(),
               gh<_i1027.TransactionRepository>(),
             ));
-    gh.factory<_i700.TransactionController>(() => _i700.TransactionController(
-          gh<_i1027.TransactionRepository>(),
-          gh<_i570.GetWalletBalancesUseCase>(),
-          gh<_i570.WalletRepository>(),
-          gh<_i811.UserLevelController>(),
-        ));
     gh.lazySingleton<_i206.GetBudgetInsightsUseCase>(
         () => _i206.GetBudgetInsightsUseCase(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
@@ -661,29 +615,28 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i256.UpdateBudgetLimitOrdersUseCase>(),
               gh<_i106.DeleteBudgetLimitUseCase>(),
             ));
-    gh.factory<_i797.AddInvestmentSheetController>(
-        () => _i797.AddInvestmentSheetController(
-              gh<_i231.WalletController>(),
-              gh<_i224.GetCategoriesUseCase>(),
-              gh<_i569.GetProfileSettingsUseCase>(),
-            ));
     gh.factory<_i1007.AddLiabilitySheetController>(
         () => _i1007.AddLiabilitySheetController(
               gh<_i1041.GetCategoriesUseCase>(),
               gh<_i569.GetProfileSettingsUseCase>(),
               gh<_i805.CreateLiabilityUseCase>(),
-              gh<_i231.WalletController>(),
+              gh<_i229.WalletController>(),
               gh<_i663.GetLiabilityBalancesUseCase>(),
             ));
     gh.factory<_i95.AddLiquidSheetController>(
         () => _i95.AddLiquidSheetController(
-              gh<_i231.WalletController>(),
+              gh<_i229.WalletController>(),
               gh<_i224.GetCategoriesUseCase>(),
               gh<_i811.UserLevelController>(),
             ));
+    gh.factory<_i700.TransactionController>(() => _i700.TransactionController(
+          gh<_i570.GetWalletBalancesUseCase>(),
+          gh<_i570.WalletRepository>(),
+          gh<_i811.UserLevelController>(),
+        ));
     gh.lazySingleton<_i451.BudgetAllocationController>(
         () => _i451.BudgetAllocationController(
-              gh<_i231.WalletController>(),
+              gh<_i229.WalletController>(),
               gh<_i1003.BudgetLimitController>(),
               gh<_i663.GetLiabilityBalancesUseCase>(),
               gh<_i811.UserLevelController>(),
@@ -725,7 +678,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i169.GetCategorySpendingUseCase>(),
           gh<_i701.GetFinancialRunwayUseCase>(),
           gh<_i951.GetTrendDataUseCase>(),
-          gh<_i229.GetInvestmentTrendUseCase>(),
+          gh<_i231.GetInvestmentTrendUseCase>(),
           gh<_i768.GetLiabilityTrendUseCase>(),
           gh<_i572.WalletRepository>(),
           gh<_i811.UserLevelController>(),

@@ -9,8 +9,6 @@ import '../models/unified_category_item.dart';
 import 'base/category_selection_layout.dart';
 import 'base/unified_category_item_widget.dart';
 
-const String _debugTag = 'ExpenseCategorySelection';
-
 /// Specialized category/budget selector for the Expense tab.
 ///
 /// Merges standard expense categories with user-defined budget limits in a

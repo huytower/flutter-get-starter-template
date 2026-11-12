@@ -198,12 +198,6 @@ class _TabControllerProvider extends InheritedWidget {
 
   final TabController controller;
 
-  static TabController? of(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<_TabControllerProvider>()
-        ?.controller;
-  }
-
   @override
   bool updateShouldNotify(_TabControllerProvider oldWidget) =>
       controller != oldWidget.controller;

@@ -252,7 +252,7 @@ class FinancialDataSyncService {
     await CcAppStorage.instance.save();
   }
 
-  /// Box names wired into [_clearFinancialCache] / [_forEachFinancialBox].
+  /// Box names wired into [_clearFinancialCache].
   ///
   /// `hive_ce` matches a box's registered model by **exact** `Type`
   /// equality, so those two methods cannot iterate [CcHiveBox.financialBoxes]
@@ -297,35 +297,6 @@ class FinancialDataSyncService {
     } on HiveError catch (e) {
       'Cache wipe skipped $boxName: $e'.Log('FinancialDataSyncService');
     }
-  }
-
-  /// Applies [action] to every open financial box, supplying the right model
-  /// type when fetching each one. Closed boxes are skipped, and a box that
-  /// cannot be fetched is reported rather than aborting the rest.
-  ///
-  /// The callback receives the box as `Box<dynamic>` — only the static type is
-  /// erased, the underlying object is still the correctly typed box, so
-  /// `values` and `delete` behave normally.
-  Future<void> _forEachFinancialBox(
-    Future<void> Function(String boxName, Box<dynamic> box) action,
-  ) async {
-    Future<void> run<T>(String boxName) async {
-      if (!Hive.isBoxOpen(boxName)) return;
-      try {
-        await action(boxName, Hive.box<T>(boxName));
-      } on HiveError catch (e) {
-        'Financial box task skipped $boxName: $e'.Log(
-          'FinancialDataSyncService',
-        );
-      }
-    }
-
-    await run<WalletHiveModel>(CcHiveBox.WALLET_BOX_NAME);
-    await run<CategoryModel>(CcHiveBox.CATEGORY_BOX_NAME);
-    await run<TransactionModel>(CcHiveBox.TRANSACTION_BOX_NAME);
-    await run<BudgetLimitModel>(CcHiveBox.BUDGET_BOX_NAME);
-    await run<ReconciliationModel>(CcHiveBox.RECONCILIATION_BOX_NAME);
-    await run<LiabilityModel>(CcHiveBox.LIABILITY_BOX_NAME);
   }
 
   Future<void> _clearFinancialCache() async {
@@ -990,23 +961,6 @@ class FinancialDataSyncService {
     if (model is CategoryModel) return model.id;
     if (model is LiabilityModel) return model.id;
     return null;
-  }
-
-  /// Whether this record still needs to reach the cloud. Mirrors the
-  /// `_countPendingInBox` filter so the two can never disagree.
-  bool _isUnsynced<T>(T model) {
-    SyncStatus? statusOf(T m) {
-      if (m is WalletHiveModel) return m.syncMetadata.status;
-      if (m is TransactionModel) return m.syncMetadata.status;
-      if (m is BudgetLimitModel) return m.syncMetadata.status;
-      if (m is ReconciliationModel) return m.syncMetadata.status;
-      if (m is CategoryModel) return m.syncMetadata.status;
-      if (m is LiabilityModel) return m.syncMetadata.status;
-      return null;
-    }
-
-    final status = statusOf(model);
-    return status == SyncStatus.pending || status == SyncStatus.failed;
   }
 
   /// Returns [model] with its sync status replaced. Used to persist a

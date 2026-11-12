@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../../data/data_source/color/prj_color.dart';
 import '../../presentation/style/cc_text_style.dart';
@@ -40,22 +39,6 @@ ColorScheme createColorScheme(Brightness brightness) {
     onError: PrjColors.onError,
     brightness: brightness,
   );
-}
-
-/// Returns the list of supported localization delegates
-List<LocalizationsDelegate> getLocalizationDelegates() {
-  return const [
-    GlobalMaterialLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-  ];
-}
-
-/// Returns the list of supported locales
-List<Locale> getSupportedLocales() {
-  return const [
-    Locale('en', ''), // English, no country code
-  ];
 }
 
 /// Creates a light theme configuration

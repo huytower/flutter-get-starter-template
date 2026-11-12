@@ -55,16 +55,6 @@ class _BirthYearContentSheetState extends State<BirthYearContentSheet> {
     super.dispose();
   }
 
-  String get _headerDateLabel {
-    final languageCode = Localizations.localeOf(context).languageCode;
-    return el.DateFormat('EEEE, MMM d', languageCode).format(_selectedDate);
-  }
-
-  String get _monthYearLabel {
-    final languageCode = Localizations.localeOf(context).languageCode;
-    return el.DateFormat('MMMM yyyy', languageCode).format(_selectedDate);
-  }
-
   void _onYearTap(int year) {
     setState(() {
       _selectedYear = year;

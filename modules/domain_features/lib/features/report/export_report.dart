@@ -8,7 +8,6 @@ export 'domain/usecases/generate_ai_financial_advice_usecase.dart';
 export 'domain/usecases/get_category_spending_usecase.dart';
 export 'domain/usecases/get_financial_runway_usecase.dart';
 export 'domain/usecases/get_investment_trend_usecase.dart';
-export 'domain/usecases/get_loan_trend_usecase.dart';
 export 'domain/usecases/get_trend_data_usecase.dart';
 export 'domain/usecases/trend_bucketer.dart';
 // Presentation

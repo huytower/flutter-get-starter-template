@@ -25,7 +25,6 @@ export 'core/config/http/env/prod.dart';
 // =================================
 
 export 'core/config/http/http_client/http_client_config.dart';
-export 'core/config/http/models/request_header.dart';
 // =================================
 // DI CONFIGURATION
 // =================================
@@ -45,7 +44,6 @@ export 'core/enum/environment.dart';
 // HELPERS
 // =================================
 
-export 'core/helper/logger_helper.dart';
 // =================================
 // DATA LAYER
 // =================================
@@ -56,16 +54,10 @@ export 'data/datasource/local/box/cc_hive_box.dart';
 export 'data/datasource/local/box/device_info/cc_device_info.dart';
 export 'data/datasource/local/box/register_hive_adapter.dart';
 // Remote Data Sources
-export 'data/datasource/remote/app_version_api.dart';
 // =================================
 // DOMAIN LAYER
 // =================================
 
 // Entities
-export 'domain/entities/app_config_entity.dart';
 // Repositories
-export 'domain/repositories/app_config_repository.dart';
 // Use Cases
-export 'domain/usecases/check_update_required.dart';
-export 'domain/usecases/get_app_config.dart';
-export 'domain/usecases/get_feature_flag.dart';

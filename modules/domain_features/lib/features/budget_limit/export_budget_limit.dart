@@ -10,9 +10,7 @@ export 'domain/usecases/create_budget_limit_usecase.dart';
 export 'domain/usecases/delete_budget_limit_usecase.dart';
 export 'domain/usecases/get_budget_anomalies_usecase.dart';
 export 'domain/usecases/get_budget_limit_stats_usecase.dart';
-export 'domain/usecases/get_budget_limits_usecase.dart';
 export 'domain/usecases/get_budget_over_limit_count_usecase.dart';
-export 'domain/usecases/sort_budget_limits_by_limit_usecase.dart';
 export 'domain/usecases/update_budget_limit_orders_usecase.dart';
 export 'domain/usecases/update_budget_limit_usecase.dart';
 // Presentation

@@ -8,21 +8,18 @@ import '../../../category/domain/repositories/category_repository.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
-import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../entities/financial_runway_entity.dart';
 
 @lazySingleton
 class GetFinancialRunwayUseCase {
   GetFinancialRunwayUseCase(
-    this._walletRepository,
     this._transactionRepository,
     this._getWalletBalances,
     this._categoryRepository,
     this._budgetLimitRepository,
   );
 
-  final WalletRepository _walletRepository;
   final TransactionRepository _transactionRepository;
   final GetWalletBalancesUseCase _getWalletBalances;
   final CategoryRepository _categoryRepository;

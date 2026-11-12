@@ -86,8 +86,6 @@ class ExpenseFormController extends TransactionFormController
     quickAmounts.assignAll(suggestions);
   }
 
-  String? _lastSelectedCategoryId;
-  String? _lastSelectedBudgetId;
   final Map<String, GlobalKey> _itemKeys = {};
 
   GlobalKey getItemKey(int index) {
@@ -317,8 +315,6 @@ class ExpenseFormController extends TransactionFormController
     // Track selected items before rebuild to preserve scroll position
     final selectedCategoryId = selectedCategory.value?.id;
     final selectedBudgetId = selectedBudget.value?.id;
-    _lastSelectedCategoryId = selectedCategoryId;
-    _lastSelectedBudgetId = selectedBudgetId;
 
     final result = await _getCategories();
     final allCats = result.tryGetSuccess() ?? [];

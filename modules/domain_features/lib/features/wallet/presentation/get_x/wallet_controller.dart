@@ -20,8 +20,6 @@ import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../../domain/repositories/wallet_repository.dart';
-import '../../domain/usecases/get_investment_roi_usecase.dart';
-import '../../domain/usecases/get_wallet_book_balance_usecase.dart';
 import '../widgets/add_liquid_sheet.dart';
 import '../widgets/investment_delete_confirm_sheet.dart';
 import '../widgets/wallet_delete_confirm_sheet.dart';
@@ -34,16 +32,12 @@ class WalletController extends CcGetController {
   WalletController(
     this._repository,
     this._transactionRepository,
-    this._getWalletBookBalance,
-    this._getInvestmentRoi,
     this._getProfileSettings,
     this._conversionService,
   ) : _categoryRepository = getIt<CategoryRepository>();
 
   final WalletRepository _repository;
   final TransactionRepository _transactionRepository;
-  final GetWalletBookBalanceUseCase _getWalletBookBalance;
-  final GetInvestmentRoiUseCase _getInvestmentRoi;
   final GetProfileSettingsUseCase _getProfileSettings;
   final CurrencyConversionService _conversionService;
   final CategoryRepository _categoryRepository;
@@ -196,7 +190,6 @@ class WalletController extends CcGetController {
   /// Σ Thu vào ÷ Σ Chi ra across every investment position (Recovery rate).
   final RxDouble investmentBreakevenPercent = 0.0.obs;
 
-  int _investmentReturnsTotal = 0;
 
   /// Ids of wallets that have at least one (non-deleted) transaction. Used to
   /// lock the opening balance once a wallet has activity.
@@ -617,14 +610,6 @@ class WalletController extends CcGetController {
     _bookBalances.assignAll(newBalances);
     _investmentStats.assignAll(newStats);
     _monthlyInvestmentStats.assignAll(monthlyStatsMap);
-
-    _investmentReturnsTotal = txns
-        .where(
-          (t) =>
-              t.type == TransactionType.investmentReturn &&
-              t.investmentWalletId != null,
-        )
-        .fold(0, (sum, t) => sum + t.amount);
   }
 
   /// Rebuilds display balances concurrently using [Future.wait].

@@ -2,7 +2,6 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 
@@ -70,49 +69,6 @@ class BudgetLimitGridCardDetail extends StatelessWidget {
           _buildLimitRow(context),
         ],
       ),
-    );
-  }
-
-  Widget _buildHeader(
-    BuildContext context,
-    Color iconColor,
-    IconData iconData,
-  ) {
-    final scheme = context.ccColorScheme;
-
-    return Row(
-      children: [
-        Container(
-          width: context.respDim(28),
-          height: context.respDim(28),
-          decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.12),
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: Icon(
-              iconData,
-              size: context.respIconSize(baseSize: 14),
-              color: iconColor,
-            ),
-          ),
-        ),
-        const CcSpaceXS(),
-        Expanded(
-          child: CcText(
-            BudgetNameHelper.getDisplayName(
-              name: stats.budget.name,
-              categoryNameKey: stats.categoryNameKey,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textStyle: context.ccTextTheme.labelLarge?.copyWith(
-              fontWeight: CcTypographyParams.bold,
-              color: scheme.onSurface,
-            ),
-          ),
-        ),
-      ],
     );
   }
 

@@ -54,7 +54,6 @@ class IncomeFormController extends TransactionFormController
   @override
   final RxInt categoryKey = 0.obs;
 
-  String? _lastSelectedCategoryId;
   final Map<String, GlobalKey> _itemKeys = {};
 
   GlobalKey getItemKey(int index) {
@@ -215,7 +214,6 @@ class IncomeFormController extends TransactionFormController
   Future<void> _rebuildUnifiedItems() async {
     // Track selected category before rebuild to preserve scroll position
     final selectedId = selectedCategory.value?.id;
-    _lastSelectedCategoryId = selectedId;
 
     final result = await _getCategories();
     final allCats = result.tryGetSuccess() ?? [];

@@ -1,7 +1,6 @@
 // Domain
 // Data
 export 'data/models/wallet_hive_model.dart';
-export 'data/models/wallet_model.dart';
 export 'domain/entities/wallet_balance_entity.dart';
 export 'domain/entities/wallet_entity.dart';
 export 'domain/repositories/wallet_repository.dart';

@@ -86,10 +86,10 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
     final credResult = await _getAppleCredential();
 
     return credResult.when(
-      (credential) async {
+      (apple) async {
         'Apple credential acquired successfully, signing in with Firebase credential'
             .Log('FirebaseAuthRepositoryImpl');
-        final signInResult = await _signInWithCredential(credential);
+        final signInResult = await _signInWithCredential(apple.credential);
         if (signInResult.isError()) {
           final failure = signInResult.tryGetError()!;
           'signInWithCredential error: ${failure.message}'.Log(
@@ -99,8 +99,12 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
             Exception('Apple Sign-In Firebase Auth error: ${failure.message}'),
             StackTrace.current,
           );
+          return signInResult;
         }
-        return signInResult;
+        return _applyAppleFullName(
+          signInResult.tryGetSuccess()!,
+          apple.fullName,
+        );
       },
       (failure) {
         'signInWithApple failed at credential stage: ${failure.message}'.Log(
@@ -111,9 +115,46 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
     );
   }
 
+  /// Apple only returns the user's name on the FIRST authorization of the app
+  /// and Firebase does not copy it into the profile, so it must be saved here.
+  /// Without this the profile shows an empty name and the app ends up asking
+  /// the user for information Apple already provided (App Review guideline 4,
+  /// Sign in with Apple design requirements).
+  ///
+  /// Best effort: a failure to store the name must never fail the sign-in.
+  Future<Result<CcUserEntity, CcFailure>> _applyAppleFullName(
+    CcUserEntity signedIn,
+    String? fullName,
+  ) async {
+    if (fullName == null || fullName.isEmpty) return Success(signedIn);
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user == null) return Success(signedIn);
+      if ((user.displayName ?? '').trim().isNotEmpty) return Success(signedIn);
+      await user.updateDisplayName(fullName);
+      await user.reload();
+      final refreshed = _firebaseAuth.currentUser ?? user;
+      return Success(_mapFirebaseUserToEntity(refreshed));
+    } catch (e) {
+      'Could not store the Apple full name: $e'.Log('FirebaseAuthRepositoryImpl');
+      return Success(signedIn);
+    }
+  }
+
+  /// Joins the given/family name Apple returned; null when Apple sent none.
+  String? _appleFullName(AuthorizationCredentialAppleID credential) {
+    final parts = [credential.givenName, credential.familyName]
+        .whereType<String>()
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty);
+    final name = parts.join(' ');
+    return name.isEmpty ? null : name;
+  }
+
   /// Shared helper to handle the Apple Sign-In "dance" and return a Firebase
-  /// credential.
-  Future<Result<firebase_auth.AuthCredential, CcFailure>>
+  /// credential together with the full name Apple provided (first sign-in only).
+  Future<Result<({firebase_auth.AuthCredential credential, String? fullName}),
+      CcFailure>>
   _getAppleCredential() async {
     try {
       final isAvailable = await SignInWithApple.isAvailable();
@@ -150,7 +191,10 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         'apple.com',
       ).credential(idToken: appleCredential.identityToken, rawNonce: rawNonce);
 
-      return Success(credential);
+      return Success((
+        credential: credential,
+        fullName: _appleFullName(appleCredential),
+      ));
     } on SignInWithAppleAuthorizationException catch (e, stack) {
       if (e.code == AuthorizationErrorCode.canceled) {
         return const Error(UnauthorizedFailure('Authentication cancelled'));
@@ -306,8 +350,10 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   Future<Result<CcUserEntity, CcFailure>> linkWithApple() async {
     final credResult = await _getAppleCredential();
 
-    return credResult.when((credential) async {
-      return _linkWithCredential(credential);
+    return credResult.when((apple) async {
+      final linked = await _linkWithCredential(apple.credential);
+      if (linked.isError()) return linked;
+      return _applyAppleFullName(linked.tryGetSuccess()!, apple.fullName);
     }, (failure) => Error(failure));
   }
 

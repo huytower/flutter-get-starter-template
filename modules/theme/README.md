@@ -6,7 +6,6 @@ Layer** for the Super App Hybrid-Shell, mapping design tokens to brand-specific 
 ## Architecture
 
 - `core/` — low-level theme configuration and helpers
-    - `config/cc_themes.dart` — ThemeData definitions for the App Shell
     - `utils/theme_utils.dart` — helpers that create `ColorScheme` and theme builders
 - `data/` — data sources, including color tokens that inherit from the UI SDK
     - `data_source/color/prj_color.dart` — maps semantic app colors to `cc_sdk_ui` `CcBaseColors`

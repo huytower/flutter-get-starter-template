@@ -1001,14 +1001,4 @@ mixin QuickEntryMixin on TransactionFormController
     return SmartEntryCommitResult(saved: rows.length);
   }
 
-  /// Sanity check for parsed amounts to avoid misidentifying phone numbers
-  /// or serial numbers as transaction values.
-  /// Anything over 500 million VND for a single OCR entry is escalated to Gemini.
-  bool _isAmountPlausible(int? amount) {
-    if (amount == null) return false;
-    // 500,000,000 VND (~$20k) is a safe threshold for "Automatic" local parsing.
-    // Larger amounts are legally/financially significant and worth the AI check.
-    const int threshold = 500000000;
-    return amount > 0 && amount <= threshold;
-  }
 }

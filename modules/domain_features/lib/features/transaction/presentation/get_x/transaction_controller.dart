@@ -16,7 +16,6 @@ import '../../../guideline/guideline_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
-import '../../domain/repositories/transaction_repository.dart';
 import 'expense_form_controller.dart';
 import 'income_form_controller.dart';
 import 'investment_form_controller.dart';
@@ -27,13 +26,11 @@ enum TransactionTabKind { expense, income, investment, liability, lend }
 @injectable
 class TransactionController extends CcGetController {
   TransactionController(
-    this._repository,
     this._getWalletBalances,
     this._walletRepository,
     this._userLevel,
   );
 
-  final TransactionRepository _repository;
   final GetWalletBalancesUseCase _getWalletBalances;
   final WalletRepository _walletRepository;
   final UserLevelController _userLevel;
