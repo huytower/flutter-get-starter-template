@@ -4,6 +4,13 @@
 # floor.
 platform :ios, '15.5'
 
+# The app does not track users or use the advertising identifier. Building
+# Firebase Analytics without Ad ID support keeps AdSupport /
+# AppTrackingTransparency out of the binary, so App Review does not expect an
+# App Tracking Transparency prompt (guideline 2.1 "uses the
+# AppTrackingTransparency framework but no permission request").
+$FirebaseAnalyticsWithoutAdIdSupport = true
+
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
