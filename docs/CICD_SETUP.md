@@ -143,6 +143,10 @@ The pipeline is defined in `.github/workflows/firebase-app-distribution.yml`.
 
 ### iOS TestFlight & Signing
 
+- **`pod install` fails with "could not read Username for 'https://github.com'"** (often on `BoringSSL-GRPC`): a
+  transient failure of an anonymous `git clone` from GitHub, not a credentials problem in this project. The lane
+  retries `pod install` up to 3 times and the workflow caches CocoaPods downloads. If it still fails, re-run the job.
+
 - **Single build**: the lane runs `flutter build ios --config-only` (no compile) and lets `gym` do the only real
   build. If an archive ever fails with missing Flutter settings, check that `ios/Flutter/Generated.xcconfig` was
   written by that step.

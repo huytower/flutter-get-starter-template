@@ -202,6 +202,17 @@ jobs:
           rm -rf ~/Library/MobileDevice/Provisioning\ Profiles/* || true
           rm -rf ~/Library/Developer/Xcode/DerivedData/* || true
 
+      # Reuse CocoaPods' download cache between runs so large pods are not
+      # re-cloned from GitHub every time (faster, and fewer chances to hit a
+      # transient clone failure). A cache miss is harmless.
+      - name: Cache CocoaPods downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/CocoaPods
+          key: pods-${{ runner.os }}-${{ hashFiles('**/pubspec.yaml', 'ios/Podfile') }}
+          restore-keys: |
+            pods-${{ runner.os }}-
+
       - name: Fastlane TestFlight
         run: cd ios && bundle exec fastlane beta flavor:${{ github.event.inputs.flavor || 'prod' }}
         env:

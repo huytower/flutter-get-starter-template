@@ -81,7 +81,24 @@ platform :ios do
     # tree-shake flag) into ios/Flutter/Generated.xcconfig and stops there.
     # The one real build is the gym archive in step 4; building here as well
     # compiled the whole app twice (~11 extra minutes per run).
-    sh("flutter config --no-enable-swift-package-manager && cd ../.. && flutter pub get && flutter build ios --config-only --release --flavor #{flavor} --build-number=#{next_build_number} --no-codesign --no-tree-shake-icons && cd ios && bundle exec pod install")
+    sh("flutter config --no-enable-swift-package-manager && cd ../.. && flutter pub get && flutter build ios --config-only --release --flavor #{flavor} --build-number=#{next_build_number} --no-codesign --no-tree-shake-icons")
+
+    # 3.0 Install pods, retrying on failure. Some pods (e.g. BoringSSL-GRPC) are
+    # fetched with a full anonymous `git clone` from GitHub; when GitHub throttles
+    # or hiccups, git reports "could not read Username for 'https://github.com'"
+    # and the whole release would otherwise fail on a transient network error.
+    pod_attempts = 3
+    pod_attempts.times do |attempt|
+      begin
+        sh("cd .. && bundle exec pod install")
+        break
+      rescue => e
+        raise e if attempt == pod_attempts - 1
+        wait_seconds = 30 * (attempt + 1)
+        UI.important("pod install failed (attempt #{attempt + 1}/#{pod_attempts}); retrying in #{wait_seconds}s")
+        sleep(wait_seconds)
+      end
+    end
 
     # 3.1 Import Certificate if provided in environment
     if ENV["APPLE_CERTIFICATE_BASE64"] && !ENV["APPLE_CERTIFICATE_BASE64"].empty?
