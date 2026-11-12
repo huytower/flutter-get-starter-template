@@ -1,4 +1,3 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
 
@@ -20,23 +19,24 @@ bool isEditableTransaction(TransactionEntity transaction) {
 }
 
 Color computeAmountColor(BuildContext context, TransactionEntity transaction) {
-  final scheme = context.ccColorScheme;
   switch (transaction.type) {
     case TransactionType.income:
-      return PrjColors.success;
+      return context.incomeAccent;
     case TransactionType.investmentOut:
-      return scheme.investment;
+      return context.investmentAccent;
     case TransactionType.investmentReturn:
-      return scheme.investmentSecondary;
-    case TransactionType.debtLend:
-    case TransactionType.debtRepay:
-      return scheme.liabilitySecondary;
+      return context.investmentAccent.withValues(alpha: 0.8);
     case TransactionType.debtBorrow:
+      return context.borrowAccent;
+    case TransactionType.debtRepay:
+      return context.borrowAccent.withValues(alpha: 0.8);
+    case TransactionType.debtLend:
+      return context.lendAccent;
     case TransactionType.debtCollect:
-      return scheme.liability;
+      return context.lendAccent.withValues(alpha: 0.8);
     case TransactionType.expense:
     default:
-      return PrjColors.error;
+      return context.expenseAccent;
   }
 }
 

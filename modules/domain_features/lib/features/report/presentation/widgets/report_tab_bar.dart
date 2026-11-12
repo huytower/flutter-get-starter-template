@@ -1,7 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../domain/report_range.dart';
@@ -35,13 +34,12 @@ class ReportTabBar extends StatelessWidget {
         ],
       ),
       padding: EdgeInsets.all(context.respDim(CcPaddingParams.SPACE_XS)),
-      child: Obx(() => _buildActualTabBar(context, scheme)),
+      child: _buildActualTabBar(context, scheme),
     );
   }
 
   Widget _buildActualTabBar(BuildContext context, ColorScheme scheme) {
-    final selectedIndex = controller.range.value.index;
-    final activeColor = _getTabColor(context, selectedIndex);
+    final activeColor = scheme.primary;
 
     return TabBar(
       onTap: (index) => controller.selectRange(ReportRange.values[index]),
@@ -67,13 +65,5 @@ class ReportTabBar extends StatelessWidget {
         Tab(text: el.tr(CcLocaleKeys.report_yearly)),
       ],
     );
-  }
-
-  Color _getTabColor(BuildContext context, int index) {
-    return switch (index) {
-      0 => context.ccColorScheme.error,
-      1 => context.ccColorScheme.primary,
-      _ => PrjColors.success,
-    };
   }
 }

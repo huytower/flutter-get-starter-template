@@ -113,8 +113,8 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     BuildContext context,
     AddLiquidSheetController controller,
   ) {
-    return Obx(
-      () => CcNameInputField(
+    return Obx(() {
+      final field = CcNameInputField(
         controller: controller.nameController,
         labelText: el.tr(CcLocaleKeys.wallet_name),
         hintText: el.tr(CcLocaleKeys.wallet_name_hint),
@@ -125,8 +125,14 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
           controller.selectedInvestmentCategory.value = null;
           controller.nameError.value = null;
         },
-      ),
-    );
+      );
+      if (!controller.isNameLocked) return field;
+      // Built-in Cash / Bank wallets keep their localized name.
+      return Opacity(
+        opacity: 0.6,
+        child: IgnorePointer(child: ExcludeFocus(child: field)),
+      );
+    });
   }
 
   Widget _buildAmountSection(

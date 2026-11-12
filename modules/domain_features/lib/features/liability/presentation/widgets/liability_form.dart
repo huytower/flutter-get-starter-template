@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../guideline/guideline_controller.dart';
 import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
@@ -71,8 +72,8 @@ class _LiabilityFormState extends State<LiabilityForm> {
       final isIncrease =
           controller.action.value == LiabilityDirectionForm.increase;
       final accentColor = isIncrease
-          ? context.ccColorScheme.liability
-          : context.ccColorScheme.liabilitySecondary;
+          ? context.borrowAccent
+          : context.borrowAccent.withValues(alpha: 0.8);
 
       return Column(
         children: [

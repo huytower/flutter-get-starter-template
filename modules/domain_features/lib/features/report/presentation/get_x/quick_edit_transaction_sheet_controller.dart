@@ -56,20 +56,21 @@ class QuickEditTransactionSheetController extends CcGetController {
   Color accentColor(BuildContext context) {
     switch (transaction.type) {
       case TransactionType.expense:
-        return context.ccColorScheme.error;
+        return context.expenseAccent;
       case TransactionType.income:
-        return PrjColors.success;
+        return context.incomeAccent;
       case TransactionType.debtBorrow:
-      case TransactionType.debtLend:
       case TransactionType.debtRepay:
+        return context.borrowAccent;
+      case TransactionType.debtLend:
       case TransactionType.debtCollect:
-        return context.ccColorScheme.liability;
+        return context.lendAccent;
       case TransactionType.investmentOut:
       case TransactionType.investmentIn:
       case TransactionType.investmentReturn:
-        return context.ccColorScheme.investment;
+        return context.investmentAccent;
       default:
-        return context.ccColorScheme.error;
+        return context.expenseAccent;
     }
   }
 

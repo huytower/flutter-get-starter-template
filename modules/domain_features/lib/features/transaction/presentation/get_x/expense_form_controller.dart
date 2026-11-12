@@ -20,6 +20,7 @@ import '../../../../core/helper/location_suggestion_helper.dart';
 import '../../../../core/helper/merchant_matcher.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/time_based_suggestion_helper.dart';
+import '../../../category/data/datasources/local/category_age_order.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
@@ -394,10 +395,18 @@ class ExpenseFormController extends TransactionFormController
     final items = <UnifiedCategoryItem>[];
     final budgetCategoryIds = <String>{};
 
-    // Pre-map category seed index for stable tie-breaking when lastActivityAt is same
+    // Tie-breaking order when lastActivityAt is the same (i.e. no history yet):
+    // the life-stage order for the user's birth year, so a first-time user sees
+    // the categories people of their age actually record first. Categories not
+    // in that list (e.g. custom ones) follow in seed order.
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    final ageOrder = CategoryAgeOrder.expenseOrder(settings.birthYear);
     final seedIndexMap = <String, int>{};
     for (int i = 0; i < expenseCats.length; i++) {
-      seedIndexMap[expenseCats[i].id] = i;
+      final ageIndex = ageOrder.indexOf(expenseCats[i].nameKey);
+      seedIndexMap[expenseCats[i].id] = ageIndex >= 0
+          ? ageIndex
+          : ageOrder.length + i;
     }
 
     // Add Budgets (deduplicated by categoryId so each category appears at most ONCE)
@@ -465,7 +474,7 @@ class ExpenseFormController extends TransactionFormController
 
     // Sort strategy:
     // 1. Primary: Most recently used (lastActivityAt descending)
-    // 2. Secondary: Original seed order (initialOrder ascending) for stable first launch
+    // 2. Secondary: life-stage order (initialOrder ascending) for a stable first launch
     items.sort((a, b) {
       final activityCompare = b.lastActivityAt.compareTo(a.lastActivityAt);
       if (activityCompare != 0) return activityCompare;

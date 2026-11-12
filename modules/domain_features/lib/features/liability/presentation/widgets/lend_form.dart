@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
 import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
@@ -68,8 +69,8 @@ class _LendFormState extends State<LendForm> {
       final isIncrease =
           controller.action.value == LiabilityDirectionForm.increase;
       final accentColor = isIncrease
-          ? context.ccColorScheme.liability
-          : context.ccColorScheme.liabilitySecondary;
+          ? context.lendAccent
+          : context.lendAccent.withValues(alpha: 0.8);
 
       return Column(
         children: [

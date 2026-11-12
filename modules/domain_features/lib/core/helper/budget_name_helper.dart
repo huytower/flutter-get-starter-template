@@ -37,7 +37,17 @@ abstract final class BudgetNameHelper {
     'category.gas': ['gas', 'xăng', 'xang', 'xăng xe', 'xang xe'],
     'category.water': ['water', 'nước', 'nuoc', 'tiền nước', 'tien nuoc'],
     'category.rent': ['rent', 'thuê nhà', 'thue nha', 'tiền nhà', 'tien nha'],
-    'category.taxi': ['taxi', 'xe ôm', 'xe cong nghe'],
+    // The category label was renamed from "Taxi" to "Transport"; keep "taxi" so
+    // budgets created under the old name are still treated as the default name.
+    'category.taxi': [
+      'taxi',
+      'transport',
+      'transportation',
+      'di chuyển',
+      'di chuyen',
+      'xe ôm',
+      'xe cong nghe',
+    ],
     'category.parking': ['parking', 'đỗ xe', 'do xe', 'gửi xe', 'gui xe'],
     'category.maintenance': [
       'maintenance',

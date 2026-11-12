@@ -8,6 +8,8 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../get_x/category_selection_controller.dart';
+import '../helper/horizontal_row_reveal.dart';
+import 'base/category_selection_layout.dart';
 
 class CategorySelectionSection extends StatelessWidget {
   final Function(CategoryEntity)? onCategorySelected;
@@ -121,8 +123,30 @@ class CategorySelectionSection extends StatelessWidget {
   ) {
     return HorizontalFadeScrollView(
       height: context.respDim(80),
-      builder: (scrollController) => Obx(
-        () => ListView.separated(
+      builder: (scrollController) => Obx(() {
+        if (controller.pendingReveal) {
+          controller.pendingReveal = false;
+          final selectedId = controller.selectedCategoryId.value;
+          final index = controller.categories.indexWhere(
+            (c) => c.id == selectedId,
+          );
+          // Wait a frame so the list is attached, then bring the preselected
+          // card into view (it may sit past the right edge, e.g. when editing).
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!context.mounted) return;
+            revealRowCard(
+              scrollController: scrollController,
+              index: index,
+              itemWidth: categoryItemWidth,
+              itemGap: categoryItemGap,
+              leadingPadding: CcPaddingParams.PAGE_SM,
+              context: context,
+              tag: 'CategorySelectionSection',
+              attemptsLeft: 6,
+            );
+          });
+        }
+        return ListView.separated(
           scrollDirection: Axis.horizontal,
           controller: scrollController,
           padding: EdgeInsets.symmetric(
@@ -146,8 +170,8 @@ class CategorySelectionSection extends StatelessWidget {
               },
             );
           },
-        ),
-      ),
+        );
+      }),
     );
   }
 }

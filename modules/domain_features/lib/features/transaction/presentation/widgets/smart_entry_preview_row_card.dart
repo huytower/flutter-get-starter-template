@@ -1,7 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:theme/data/data_source/color/prj_color.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
@@ -23,10 +23,9 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = context.ccColorScheme;
     final config = state.config;
     final isIncome = row.type == CategoryType.income;
-    final activeColor = isIncome ? PrjColors.success : scheme.error;
+    final activeColor = isIncome ? context.incomeAccent : context.expenseAccent;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

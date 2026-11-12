@@ -24,6 +24,10 @@ class CategorySelectionController extends CcGetController {
   String type = CategoryType.expense;
   bool autoSelectFirstEnabled = false;
   String? initialId;
+
+  /// Set when a selection was applied from outside (e.g. editing an existing
+  /// transaction) so the list scrolls the selected card into view once.
+  bool pendingReveal = false;
   Function(CategoryEntity)? onSelected;
 
   @override
@@ -54,6 +58,7 @@ class CategorySelectionController extends CcGetController {
         final changed = selectedCategoryId.value != category.id;
         selectedCategoryId.value = category.id;
         initialId = null;
+        pendingReveal = true;
         // Only report to parent if it's a new selection to avoid rebuild loops
         if (changed) {
           _reportToParent(category);

@@ -81,7 +81,7 @@ class _IncomeFormState extends State<IncomeForm> {
     // TransactionController.onInit(), the tagged edit-mode instance isn't.
     final guideline = Get.find<GuidelineController>();
 
-    const accentColor = PrjColors.success;
+    final accentColor = context.incomeAccent;
 
     return Obx(
       () => Column(

@@ -220,11 +220,11 @@ class TransactionHeaderBanner extends StatelessWidget {
 
   static Color _getTabColor(BuildContext context, TransactionTabKind tab) {
     return switch (tab) {
-      TransactionTabKind.expense => context.ccColorScheme.error,
-      TransactionTabKind.income => PrjColors.success,
-      TransactionTabKind.investment => context.ccColorScheme.investment,
-      TransactionTabKind.liability => context.ccColorScheme.liability,
-      TransactionTabKind.lend => context.ccColorScheme.liability,
+      TransactionTabKind.expense => context.expenseAccent,
+      TransactionTabKind.income => context.incomeAccent,
+      TransactionTabKind.investment => context.investmentAccent,
+      TransactionTabKind.liability => context.borrowAccent,
+      TransactionTabKind.lend => context.lendAccent,
     };
   }
 }

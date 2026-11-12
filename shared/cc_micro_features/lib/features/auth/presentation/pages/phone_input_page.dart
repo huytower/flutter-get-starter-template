@@ -3,11 +3,13 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../domain/sms_supported_regions.dart';
 import '../bloc/phone_auth_bloc.dart';
 import '../bloc/phone_auth_event.dart';
 import '../bloc/phone_auth_state.dart';
 import 'widgets/auth_security_warning_card.dart';
 import 'widgets/phone_auth_gradient_container.dart';
+import 'widgets/sms_region_picker_sheet.dart';
 
 class PhoneInputPage extends StatefulWidget {
   const PhoneInputPage({super.key});
@@ -18,7 +20,7 @@ class PhoneInputPage extends StatefulWidget {
 
 class _PhoneInputPageState extends State<PhoneInputPage> {
   late final TextEditingController _phoneController;
-  static const String _countryCode = '+84';
+  String _countryCode = defaultSmsDialCode;
   String? _validationError;
 
   @override
@@ -39,6 +41,18 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
   void dispose() {
     _phoneController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickCountry() async {
+    final region = await SmsRegionPickerSheet.show(
+      context,
+      selectedDialCode: _countryCode,
+    );
+    if (region == null || !mounted) return;
+    setState(() {
+      _countryCode = region.dialCode;
+      _validationError = null;
+    });
   }
 
   void _handleContinue() {
@@ -84,7 +98,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
         const CcSpaceXL(),
         CcPhoneNumberInput(
           countryCode: _countryCode,
-          onCountryCodeTap: () {},
+          onCountryCodeTap: _pickCountry,
           controller: _phoneController,
           hintText: el.tr(CcLocaleKeys.auth_phone_number_hint),
         ),

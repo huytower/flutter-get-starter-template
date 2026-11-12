@@ -14,6 +14,7 @@ import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
+import '../../../category/data/datasources/local/category_age_order.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
@@ -258,8 +259,18 @@ class IncomeFormController extends TransactionFormController
 
     final items = <UnifiedCategoryItem>[];
 
-    for (final c in incomeCats) {
+    // Tie-breaking order when lastActivityAt is the same (i.e. no history yet):
+    // the life-stage order for the user's birth year, so a first-time user sees
+    // the income sources people of their age actually have first (e.g. Allowance
+    // for a student, Salary for a working adult). Categories not in that list
+    // follow in seed order.
+    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    final ageOrder = CategoryAgeOrder.incomeOrder(settings.birthYear);
+
+    for (var i = 0; i < incomeCats.length; i++) {
+      final c = incomeCats[i];
       final lastActivity = lastUsedCat[c.id] ?? DateTime(2000);
+      final ageIndex = ageOrder.indexOf(c.nameKey);
       items.add(
         UnifiedCategoryItem(
           id: 'cat_${c.id}',
@@ -269,12 +280,19 @@ class IncomeFormController extends TransactionFormController
           iconFamily: c.iconFamily,
           lastActivityAt: lastActivity,
           isBudget: false,
+          initialOrder: ageIndex >= 0 ? ageIndex : ageOrder.length + i,
         ),
       );
     }
 
-    // Sort by lastActivityAt descending
-    items.sort((a, b) => b.lastActivityAt.compareTo(a.lastActivityAt));
+    // Sort strategy:
+    // 1. Primary: Most recently used (lastActivityAt descending)
+    // 2. Secondary: life-stage order (initialOrder ascending) for a stable first launch
+    items.sort((a, b) {
+      final activityCompare = b.lastActivityAt.compareTo(a.lastActivityAt);
+      if (activityCompare != 0) return activityCompare;
+      return a.initialOrder.compareTo(b.initialOrder);
+    });
 
     unifiedItems.assignAll(items);
 

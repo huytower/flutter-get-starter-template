@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 import 'package:get/get.dart';
 
 import '../get_x/report_controller.dart';
@@ -36,9 +37,10 @@ class ReportLiabilitySection extends StatelessWidget {
             title: el.tr(CcLocaleKeys.report_liability_out),
             amount: data.totalExpense,
             points: data.points,
-            color: context.ccColorScheme.liabilitySecondary,
+            color: context.borrowAccent.withValues(alpha: 0.8),
             range: controller.range.value,
             isIncome: false,
+            icon: Icons.arrow_circle_down,
           ),
         );
       }
@@ -52,9 +54,10 @@ class ReportLiabilitySection extends StatelessWidget {
             title: el.tr(CcLocaleKeys.report_liability_in),
             amount: data.totalIncome,
             points: data.points,
-            color: context.ccColorScheme.liability,
+            color: context.borrowAccent,
             range: controller.range.value,
             isIncome: true,
+            icon: Icons.arrow_circle_up,
           ),
         );
       }

@@ -17,11 +17,11 @@ extension TransactionTabKindStyle on TransactionTabKind {
   };
 
   Color color(BuildContext context) => switch (this) {
-    TransactionTabKind.expense => context.ccColorScheme.error,
-    TransactionTabKind.income => PrjColors.success,
-    TransactionTabKind.investment => context.ccColorScheme.investment,
-    TransactionTabKind.liability => context.ccColorScheme.liability,
-    TransactionTabKind.lend => context.ccColorScheme.liabilitySecondary,
+    TransactionTabKind.expense => context.expenseAccent,
+    TransactionTabKind.income => context.incomeAccent,
+    TransactionTabKind.investment => context.investmentAccent,
+    TransactionTabKind.liability => context.borrowAccent,
+    TransactionTabKind.lend => context.lendAccent,
   };
 }
 

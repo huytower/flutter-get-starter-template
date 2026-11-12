@@ -62,12 +62,33 @@ class AddLiquidSheetController extends CcGetController {
 
   bool get isCash => _wallet?.type == WalletType.cash;
 
+  /// The built-in Cash and default Bank wallets keep a fixed, localized name:
+  /// they are stored with an empty name and labelled at display time, so the
+  /// name must not be edited (or overwritten with the translated label).
+  bool get isNameLocked =>
+      isEditing && !_walletController.canDeleteWallet(_wallet!);
+
   bool get balanceLocked =>
       isEditing && _walletController.walletHasTransactions(_wallet!.id);
 
+  /// The name to prefill when editing [wallet].
+  ///
+  /// The default Cash and Bank wallets are stored with an EMPTY name and are
+  /// localized only at display time (see `WalletDisplayName`). Prefilling the
+  /// stored value left the field blank, which also kept Save disabled because an
+  /// empty name is invalid. Show the same label the wallet list shows instead.
+  String _initialName(WalletEntity? wallet) {
+    if (wallet == null) return '';
+    if (wallet.type == WalletType.cash) return el.tr(CcLocaleKeys.wallet_cash);
+    final stored = wallet.name.trim();
+    if (stored.isNotEmpty) return wallet.name;
+    if (wallet.type == WalletType.bank) return el.tr(CcLocaleKeys.wallet_bank);
+    return '';
+  }
+
   void init(WalletEntity? wallet) {
     _wallet = wallet;
-    nameController.text = wallet?.name ?? '';
+    nameController.text = _initialName(wallet);
     nameController.removeListener(_onNameChanged);
     nameController.addListener(_onNameChanged);
     _onNameChanged();
@@ -230,16 +251,18 @@ class AddLiquidSheetController extends CcGetController {
     if (isSubmitting.value) return;
     isSubmitting.value = true;
 
-    final name = nameController.text.trim();
+    final name = isNameLocked ? _wallet!.name : nameController.text.trim();
     final balance = int.tryParse(amountStr.value) ?? 0;
     final wallet = _wallet;
 
     // Check for duplicate names (excluding current wallet if editing)
-    final isDuplicate = _walletController.wallets.any(
-      (w) =>
-          w.name.trim().toLowerCase() == name.toLowerCase() &&
-          w.id != wallet?.id,
-    );
+    final isDuplicate =
+        !isNameLocked &&
+        _walletController.wallets.any(
+          (w) =>
+              w.name.trim().toLowerCase() == name.toLowerCase() &&
+              w.id != wallet?.id,
+        );
 
     if (isDuplicate) {
       nameError.value = el.tr(CcLocaleKeys.wallet_name_duplicate_error);

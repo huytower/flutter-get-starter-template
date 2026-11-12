@@ -72,7 +72,8 @@ class TrendCard extends StatelessWidget {
             borderRadius: context.brMd,
           ),
           child: Icon(
-            icon ?? (isIncome ? Icons.north_east : Icons.south_west),
+            icon ??
+                (isIncome ? Icons.arrow_circle_up : Icons.arrow_circle_down),
             color: color,
             size: context.respIconSize(baseSize: 18),
           ),

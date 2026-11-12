@@ -73,6 +73,26 @@ abstract final class PrjColors {
   );
 
   // ===========================================================================
+  // TRANSACTION FORM ACCENTS (brand identity, distinct from status colors)
+  // ===========================================================================
+  // Chosen so no form reuses the generic success green / error red / warning
+  // amber. Dark variants are lighter tints for contrast on dark surfaces.
+  static const Color incomeAccent = Color(0xFF00897B);
+  static const Color darkIncomeAccent = Color(0xFF4DB6AC);
+
+  static const Color expenseAccent = Color(0xFF1976D2);
+  static const Color darkExpenseAccent = Color(0xFF64B5F6);
+
+  static const Color investmentAccent = Color(0xFFFFB300);
+  static const Color darkInvestmentAccent = Color(0xFFFFD54F);
+
+  static const Color borrowAccent = Color(0xFF512DA8);
+  static const Color darkBorrowAccent = Color(0xFF9575CD);
+
+  static const Color lendAccent = Color(0xFFAB47BC);
+  static const Color darkLendAccent = Color(0xFFCE93D8);
+
+  // ===========================================================================
   // SURFACES & BACKGROUNDS
   // ===========================================================================
 

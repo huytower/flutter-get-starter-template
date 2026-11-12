@@ -190,7 +190,6 @@ class WalletController extends CcGetController {
   /// Σ Thu vào ÷ Σ Chi ra across every investment position (Recovery rate).
   final RxDouble investmentBreakevenPercent = 0.0.obs;
 
-
   /// Ids of wallets that have at least one (non-deleted) transaction. Used to
   /// lock the opening balance once a wallet has activity.
   final Set<String> _walletsWithTxns = <String>{};

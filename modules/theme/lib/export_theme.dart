@@ -9,3 +9,4 @@ export 'data/data_source/color/prj_color.dart';
 // Presentation
 export 'presentation/provider/theme_provider.dart';
 export 'presentation/style/cc_text_style.dart';
+export 'presentation/style/prj_form_accent.dart';

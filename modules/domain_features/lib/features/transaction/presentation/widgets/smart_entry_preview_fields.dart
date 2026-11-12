@@ -1,7 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:theme/data/data_source/color/prj_color.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../category/domain/entities/category_entity.dart';
 
@@ -93,7 +93,7 @@ class SmartEntryTypeToggle extends StatelessWidget {
   Widget _buildOption(BuildContext context, String type) {
     final scheme = context.ccColorScheme;
     final isIncome = type == CategoryType.income;
-    final accent = isIncome ? PrjColors.success : scheme.error;
+    final accent = isIncome ? context.incomeAccent : context.expenseAccent;
     final isSelected = type == selected;
 
     return CcBouncing(

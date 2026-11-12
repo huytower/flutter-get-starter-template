@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:theme/export_theme.dart';
 import 'package:get/get.dart';
 
 import '../get_x/report_controller.dart';
@@ -35,20 +36,20 @@ class ReportInvestmentSection extends StatelessWidget {
             title: el.tr(CcLocaleKeys.report_investment_contributed),
             amount: data.totalExpense,
             points: data.points,
-            color: context.ccColorScheme.investment,
+            color: context.investmentAccent,
             range: controller.range.value,
             isIncome: false,
-            icon: Icons.eco,
+            icon: Icons.arrow_circle_down,
           ),
           const CcSpaceLG(),
           TrendCard(
             title: el.tr(CcLocaleKeys.report_investment_returned),
             amount: data.totalIncome,
             points: data.points,
-            color: context.ccColorScheme.investmentSecondary,
+            color: context.investmentAccent.withValues(alpha: 0.8),
             range: controller.range.value,
             isIncome: true,
-            icon: Icons.auto_graph_rounded,
+            icon: Icons.arrow_circle_up,
           ),
         ],
       );
