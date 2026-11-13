@@ -7,12 +7,18 @@ import '../../../domain/sms_supported_regions.dart';
 /// Bottom sheet listing the countries SMS verification is available for.
 ///
 /// Styled like the currency picker (gradient header, glassy cards on a tinted
-/// body). Each row shows only flag, ISO code and dial code; the header reuses
-/// the existing "Phone Number" string. Pops with the chosen [SmsRegion].
+/// body) with the countries laid out in a 3-column grid. Each card shows only
+/// flag, ISO code and dial code; the header reuses the existing "Phone Number"
+/// string. Pops with the chosen [SmsRegion].
 class SmsRegionPickerSheet extends StatelessWidget {
   const SmsRegionPickerSheet({super.key, required this.selectedDialCode});
 
   final String selectedDialCode;
+
+  /// Share of the screen height the sheet occupies.
+  static const double sheetHeightFactor = 0.45;
+
+  static const int _columns = 3;
 
   /// Countries of the app's languages, in the same order as the language
   /// picker (vi, en, ko, ja, zh). Shown first; the rest follow alphabetically.
@@ -45,15 +51,13 @@ class SmsRegionPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
-    final maxHeight = MediaQuery.of(context).size.height * 0.7;
 
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: maxHeight),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * sheetHeightFactor,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
           _buildHeader(context, scheme),
-          Flexible(child: _buildBody(context, scheme)),
+          Expanded(child: _buildBody(context, scheme)),
         ],
       ),
     );
@@ -64,7 +68,7 @@ class SmsRegionPickerSheet extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(
         horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        vertical: context.respPadding(CcPaddingParams.SPACE_LG),
+        vertical: context.respPadding(CcPaddingParams.SPACE_MD),
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -89,45 +93,62 @@ class SmsRegionPickerSheet extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context, ColorScheme scheme) {
+    final padding = context.respPadding(CcPaddingParams.PAGE_MD);
+
     return DecoratedBox(
       decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
-      child: ListView.builder(
-        shrinkWrap: true,
-        padding: EdgeInsets.fromLTRB(
-          context.respPadding(CcPaddingParams.PAGE_MD),
-          context.respPadding(CcPaddingParams.SPACE_SM),
-          context.respPadding(CcPaddingParams.PAGE_MD),
-          context.respPadding(CcPaddingParams.SPACE_XL),
-        ),
-        itemCount: _popularRegions.length + _otherRegions.length,
-        itemBuilder: (context, index) {
-          if (index < _popularRegions.length) {
-            final tile = _buildRegionTile(
-              context,
-              scheme,
-              _popularRegions[index],
-            );
-            // Separate the popular group from the alphabetical one.
-            return index == _popularRegions.length - 1
-                ? Padding(
-                    padding: EdgeInsets.only(bottom: context.respDim(8)),
-                    child: Column(
-                      children: [
-                        tile,
-                        Divider(
-                          color: scheme.outlineVariant.withValues(alpha: 0.5),
-                        ),
-                      ],
-                    ),
-                  )
-                : tile;
-          }
-          return _buildRegionTile(
-            context,
-            scheme,
-            _otherRegions[index - _popularRegions.length],
-          );
-        },
+      child: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(
+              padding,
+              context.respPadding(CcPaddingParams.SPACE_SM),
+              padding,
+              0,
+            ),
+            sliver: _buildGrid(context, scheme, _popularRegions),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: padding,
+                vertical: context.respPadding(CcPaddingParams.SPACE_SM),
+              ),
+              child: Divider(
+                height: 1,
+                color: scheme.outlineVariant.withValues(alpha: 0.5),
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(
+              padding,
+              0,
+              padding,
+              context.respPadding(CcPaddingParams.SPACE_XL),
+            ),
+            sliver: _buildGrid(context, scheme, _otherRegions),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGrid(
+    BuildContext context,
+    ColorScheme scheme,
+    List<SmsRegion> regions,
+  ) {
+    return SliverGrid(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: _columns,
+        mainAxisSpacing: context.respDim(8),
+        crossAxisSpacing: context.respDim(8),
+        mainAxisExtent: context.respDim(76),
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (context, index) => _buildRegionTile(context, scheme, regions[index]),
+        childCount: regions.length,
       ),
     );
   }
@@ -138,69 +159,51 @@ class SmsRegionPickerSheet extends StatelessWidget {
     SmsRegion region,
   ) {
     final isSelected = region.dialCode == selectedDialCode;
+    final textColor = isSelected ? scheme.primary : scheme.onSurface;
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: context.respDim(8)),
-      child: CcBouncing(
-        onTap: () => Navigator.of(context).pop(region),
-        borderRadius: context.brMd,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            const Positioned.fill(child: CcGlassyGradientBackground()),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              height: context.respDim(60),
-              padding: EdgeInsets.symmetric(
-                horizontal: context.respPadding(CcPaddingParams.PAGE_XS),
-              ),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? scheme.primary.withValues(alpha: 0.15)
-                    : scheme.primaryContainer.withValues(alpha: 0.1),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: context.respDim(32),
-                    height: context.respDim(32),
-                    decoration: BoxDecoration(
-                      color: scheme.primary.withValues(alpha: 0.12),
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: Alignment.center,
-                    child: CcText(
-                      region.flag,
-                      textAlign: TextAlign.center,
-                      align: Alignment.center,
-                      textStyle: TextStyle(fontSize: context.respFontSize(16)),
-                    ),
-                  ),
-                  const CcSpaceSM(),
-                  Expanded(
-                    child: CcText(
-                      region.isoCode,
-                      textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                        fontWeight: isSelected
-                            ? CcTypographyParams.bold
-                            : CcTypographyParams.regular,
-                        color: isSelected ? scheme.primary : scheme.onSurface,
-                      ),
-                    ),
-                  ),
-                  const CcSpaceSM(),
-                  CcText(
-                    region.dialCode,
-                    textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: isSelected ? scheme.primary : scheme.onSurface,
-                    ),
-                  ),
-                ],
-              ),
+    return CcBouncing(
+      onTap: () => Navigator.of(context).pop(region),
+      borderRadius: context.brMd,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          const Positioned.fill(child: CcGlassyGradientBackground()),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.respPadding(CcPaddingParams.SPACE_XS),
             ),
-          ],
-        ),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? scheme.primary.withValues(alpha: 0.15)
+                  : scheme.primaryContainer.withValues(alpha: 0.1),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CcText(
+                  region.flag,
+                  textAlign: TextAlign.center,
+                  align: Alignment.center,
+                  textStyle: TextStyle(fontSize: context.respFontSize(22)),
+                ),
+                const SizedBox(height: 2),
+                CcText(
+                  '${region.isoCode}  ${region.dialCode}',
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  align: Alignment.center,
+                  textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                    fontWeight: isSelected
+                        ? CcTypographyParams.bold
+                        : CcTypographyParams.semiBold,
+                    color: textColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
