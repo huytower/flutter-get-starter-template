@@ -945,6 +945,8 @@ mixin QuickEntryMixin on TransactionFormController
       errorKey: switch (failure?.message) {
         ParseSmartEntryUseCase.geminiDisabledReason =>
           CcLocaleKeys.report_ai_advice_gemini_disabled,
+        ParseSmartEntryUseCase.deviceNotGenuineReason =>
+          CcLocaleKeys.quick_entry_device_not_genuine,
         ParseSmartEntryUseCase.dailyLimitReachedReason =>
           CcLocaleKeys.quick_entry_daily_limit_reached,
         _ => null,
@@ -1000,5 +1002,4 @@ mixin QuickEntryMixin on TransactionFormController
     applyQuickEntryParse(rows.first);
     return SmartEntryCommitResult(saved: rows.length);
   }
-
 }

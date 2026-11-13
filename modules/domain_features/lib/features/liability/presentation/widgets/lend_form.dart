@@ -70,7 +70,7 @@ class _LendFormState extends State<LendForm> {
           controller.action.value == LiabilityDirectionForm.increase;
       final accentColor = isIncrease
           ? context.lendAccent
-          : context.lendAccent.withValues(alpha: 0.8);
+          : context.lendAccent.secondaryShade;
 
       return Column(
         children: [

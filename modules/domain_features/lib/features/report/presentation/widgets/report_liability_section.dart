@@ -37,7 +37,7 @@ class ReportLiabilitySection extends StatelessWidget {
             title: el.tr(CcLocaleKeys.report_liability_out),
             amount: data.totalExpense,
             points: data.points,
-            color: context.borrowAccent.withValues(alpha: 0.8),
+            color: context.borrowAccent.secondaryShade,
             range: controller.range.value,
             isIncome: false,
             icon: Icons.arrow_circle_down,

@@ -73,7 +73,7 @@ class _LiabilityFormState extends State<LiabilityForm> {
           controller.action.value == LiabilityDirectionForm.increase;
       final accentColor = isIncrease
           ? context.borrowAccent
-          : context.borrowAccent.withValues(alpha: 0.8);
+          : context.borrowAccent.secondaryShade;
 
       return Column(
         children: [

@@ -83,7 +83,7 @@ abstract final class PrjColors {
   static const Color expenseAccent = Color(0xFF1976D2);
   static const Color darkExpenseAccent = Color(0xFF64B5F6);
 
-  static const Color investmentAccent = Color(0xFFFFB300);
+  static const Color investmentAccent = Color(0xFFFF8F00);
   static const Color darkInvestmentAccent = Color(0xFFFFD54F);
 
   static const Color borrowAccent = Color(0xFF512DA8);
@@ -91,6 +91,11 @@ abstract final class PrjColors {
 
   static const Color lendAccent = Color(0xFFAB47BC);
   static const Color darkLendAccent = Color(0xFFCE93D8);
+
+  /// Opacity of the "second leg" shade (repay, collect, return) of a form
+  /// accent. Set to 1.0 to turn the alpha off and keep the accent solid, which
+  /// reads best on light surfaces.
+  static const double formSecondaryAlpha = 1.0;
 
   // ===========================================================================
   // SURFACES & BACKGROUNDS

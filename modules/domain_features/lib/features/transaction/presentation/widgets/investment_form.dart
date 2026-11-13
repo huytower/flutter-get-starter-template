@@ -91,7 +91,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
   Color _accentColor(BuildContext context, InvestmentDirectionForm direction) =>
       direction == InvestmentDirectionForm.contribute
       ? context.investmentAccent
-      : context.investmentAccent.withValues(alpha: 0.8);
+      : context.investmentAccent.secondaryShade;
 
   Widget _buildScrollableContent(
     BuildContext context,

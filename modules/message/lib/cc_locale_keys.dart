@@ -135,8 +135,7 @@ class CodegenLoader extends AssetLoader {
         "expired": "OTP code has expired",
         "too_many_attempts": "Too many attempts. Please try again later",
       },
-      "security_warning_title":
-          "Integrated genuine security protection, only genuine devices can be used:",
+      "security_warning_title": "For genuine devices only:",
       "security_warning_bullet_sms": "SMS/OTP Verification",
       "security_warning_bullet_ai": "AI-Generated Content",
       "security_warning_other_login": "Other Sign In Methods",
@@ -357,6 +356,8 @@ class CodegenLoader extends AssetLoader {
           "Couldn't understand that — please fill in manually",
       "quick_entry_daily_limit_reached":
           "Daily AI quick-entry limit reached — please fill in manually",
+      "quick_entry_device_not_genuine":
+          "This feature is only available on genuine devices",
       "quick_entry_mic_permission_denied":
           "Microphone access is needed for voice entry",
       "quick_entry_photo_permission_denied":
@@ -768,6 +769,9 @@ class CodegenLoader extends AssetLoader {
       "birth_year_subtitle": "Used to suggest appropriate categories",
       "birth_year_hint":
           "Choose your actual birth year, it affects your daily income and expense calculations",
+      "sign_in_reminder_title": "Sign in to protect your data",
+      "sign_in_reminder_body":
+          "You can keep using the app without an account, but your financial data may be lost if you change or reset your device.",
       "birth_year_task_desc": "Task: set up your birth year",
       "weekly_audit": "Weekly audit",
       "days_left": "{count} days left",
@@ -1025,8 +1029,7 @@ class CodegenLoader extends AssetLoader {
         "expired": "Mã OTP đã hết hạn",
         "too_many_attempts": "Quá nhiều lần thử. Vui lòng thử lại sau",
       },
-      "security_warning_title":
-          "Tích hợp bảo mật chính hãng, chỉ có thể sử dụng thiết bị chính hãng:",
+      "security_warning_title": "Chỉ dành cho thiết bị chính hãng:",
       "security_warning_bullet_sms": "Xác minh SMS/OTP",
       "security_warning_bullet_ai": "Nội dung tạo bởi AI",
       "security_warning_other_login": "Đăng nhập khác",
@@ -1246,6 +1249,8 @@ class CodegenLoader extends AssetLoader {
           "Không hiểu được nội dung này — vui lòng nhập thủ công",
       "quick_entry_daily_limit_reached":
           "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
+      "quick_entry_device_not_genuine":
+          "Tính năng chỉ dành riêng cho thiết bị chính hãng",
       "quick_entry_mic_permission_denied":
           "Cần quyền truy cập micro để nhập bằng giọng nói",
       "quick_entry_photo_permission_denied":
@@ -1506,6 +1511,9 @@ class CodegenLoader extends AssetLoader {
       "birth_year_subtitle": "Dùng để gợi ý danh mục phù hợp",
       "birth_year_hint":
           "Chọn năm sinh thực tế của bạn, nó ảnh hưởng đến tính toán thu nhập và chi tiêu hàng ngày",
+      "sign_in_reminder_title": "Đăng nhập để bảo vệ dữ liệu",
+      "sign_in_reminder_body":
+          "Bạn vẫn có thể dùng ứng dụng khi chưa đăng nhập, nhưng dữ liệu tài chính có thể bị mất khi bạn đổi hoặc đặt lại thiết bị.",
       "birth_year_task_desc": "Nhiệm vụ: thiết lập năm sinh",
       "weekly_audit": "Kiểm tra hàng tuần",
       "days_left": "Còn {count} ngày",
@@ -2115,6 +2123,7 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_category_missing": "카테고리를 찾을 수 없음 (+ 필요): {label}",
       "quick_entry_could_not_parse": "이해할 수 없습니다 — 수동으로 입력하세요",
       "quick_entry_daily_limit_reached": "오늘 AI 빠른 입력 한도에 도달했습니다 — 수동으로 입력하세요",
+      "quick_entry_device_not_genuine": "이 기능은 정품 기기에서만 사용할 수 있습니다",
       "quick_entry_mic_permission_denied": "음성 입력에 마이크 권한이 필요합니다",
       "quick_entry_photo_permission_denied": "영수증 스캔에 카메라/사진 권한이 필요합니다",
       "quick_entry_batch_label": "{count} 거래 · {total}",
@@ -2498,6 +2507,9 @@ class CodegenLoader extends AssetLoader {
       "birth_year": "출생 연도",
       "birth_year_subtitle": "적절한 카테고리를 제안하는 데 사용",
       "birth_year_hint": "실제 출생 연도를 선택하세요. 일일 수입 및 지출 계산에 영향을 미칩니다",
+      "sign_in_reminder_title": "로그인하여 데이터를 보호하세요",
+      "sign_in_reminder_body":
+          "계정 없이도 앱을 계속 사용할 수 있지만, 기기를 교체하거나 초기화하면 재무 데이터가 사라질 수 있습니다.",
       "birth_year_task_desc": "작업: 출생 연도 설정",
       "weekly_audit": "주간 감사",
       "days_left": "{count}일 남음",
@@ -2734,8 +2746,7 @@ class CodegenLoader extends AssetLoader {
         "expired": "OTPコードの有効期限が切れました",
         "too_many_attempts": "試行回数が多すぎます。後でもう一度お試しください",
       },
-      "security_warning_title":
-          "正規品のセキュリティが統合されています。正規のデバイスのみ使用可能です：",
+      "security_warning_title": "正規品のセキュリティが統合されています。正規のデバイスのみ使用可能です：",
       "security_warning_bullet_sms": "SMS/OTP認証",
       "security_warning_bullet_ai": "AI生成コンテンツ",
       "security_warning_other_login": "その他のログイン方法",
@@ -2946,6 +2957,7 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_category_missing": "カテゴリが見つかりません（+が必要）: {label}",
       "quick_entry_could_not_parse": "理解できませんでした — 手動で入力してください",
       "quick_entry_daily_limit_reached": "本日のAI高速入力の上限に達しました — 手動で入力してください",
+      "quick_entry_device_not_genuine": "この機能は正規のデバイスでのみ利用できます",
       "quick_entry_mic_permission_denied": "音声入力にはマイク権限が必要です",
       "quick_entry_photo_permission_denied": "レシートのスキャンにはカメラ/写真権限が必要です",
       "quick_entry_batch_label": "{count}取引 · {total}",
@@ -3321,6 +3333,9 @@ class CodegenLoader extends AssetLoader {
       "birth_year": "生年",
       "birth_year_subtitle": "適切なカテゴリを提案するために使用",
       "birth_year_hint": "実際の生年を選択してください。日次収入および支出計算に影響します",
+      "sign_in_reminder_title": "ログインしてデータを守りましょう",
+      "sign_in_reminder_body":
+          "アカウントなしでもアプリを使い続けられますが、端末を変更または初期化すると財務データが失われる可能性があります。",
       "birth_year_task_desc": "タスク: 生年を設定",
       "weekly_audit": "週次監査",
       "days_left": "{count}日残り",
@@ -3764,6 +3779,7 @@ class CodegenLoader extends AssetLoader {
       "quick_entry_category_missing": "未找到类别（需要 +）: {label}",
       "quick_entry_could_not_parse": "无法理解 — 请手动填写",
       "quick_entry_daily_limit_reached": "今日 AI 快速输入上限已达到 — 请手动输入",
+      "quick_entry_device_not_genuine": "此功能仅限正品设备使用",
       "quick_entry_mic_permission_denied": "语音输入需要麦克风权限",
       "quick_entry_photo_permission_denied": "扫描收据需要相机/照片权限",
       "quick_entry_batch_label": "{count} 笔交易 · {total}",
@@ -4133,6 +4149,8 @@ class CodegenLoader extends AssetLoader {
       "birth_year": "出生年份",
       "birth_year_subtitle": "用于建议适当的类别",
       "birth_year_hint": "选择您的实际出生年份，它会影响您的每日收入和支出计算",
+      "sign_in_reminder_title": "登录以保护您的数据",
+      "sign_in_reminder_body": "未登录也可以继续使用应用，但更换或重置设备后，您的财务数据可能会丢失。",
       "birth_year_task_desc": "任务: 设置出生年份",
       "weekly_audit": "每周对账",
       "days_left": "剩余 {count} 天",
@@ -4642,6 +4660,8 @@ class CcLocaleKeys {
       'transaction.quick_entry_could_not_parse';
   static const transaction_quick_entry_daily_limit_reached =
       'transaction.quick_entry_daily_limit_reached';
+  static const transaction_quick_entry_device_not_genuine =
+      'transaction.quick_entry_device_not_genuine';
   static const transaction_quick_entry_mic_permission_denied =
       'transaction.quick_entry_mic_permission_denied';
   static const transaction_quick_entry_photo_permission_denied =
@@ -4699,6 +4719,8 @@ class CcLocaleKeys {
       'transaction.quick_entry_could_not_parse';
   static const quick_entry_daily_limit_reached =
       'transaction.quick_entry_daily_limit_reached';
+  static const quick_entry_device_not_genuine =
+      'transaction.quick_entry_device_not_genuine';
   static const quick_entry_mic_permission_denied =
       'transaction.quick_entry_mic_permission_denied';
   static const quick_entry_photo_permission_denied =
@@ -5137,6 +5159,9 @@ class CcLocaleKeys {
       'profile.link_account_verify_code';
   static const profile_birth_year = 'profile.birth_year';
   static const profile_birth_year_subtitle = 'profile.birth_year_subtitle';
+  static const profile_sign_in_reminder_title =
+      'profile.sign_in_reminder_title';
+  static const profile_sign_in_reminder_body = 'profile.sign_in_reminder_body';
   static const profile_birth_year_hint = 'profile.birth_year_hint';
   static const profile_birth_year_task_desc = 'profile.birth_year_task_desc';
   static const profile_weekly_audit = 'profile.weekly_audit';

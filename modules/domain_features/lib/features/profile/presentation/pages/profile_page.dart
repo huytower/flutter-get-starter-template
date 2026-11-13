@@ -15,6 +15,7 @@ import '../widgets/profile_delete_confirm_sheet.dart';
 import '../widgets/profile_menu_group.dart';
 import '../widgets/profile_page_header.dart';
 import '../widgets/profile_settings_tile.dart';
+import '../widgets/profile_sign_in_reminder.dart';
 
 class ProfilePage extends CcGetView<ProfileController> {
   const ProfilePage({super.key});
@@ -83,6 +84,18 @@ class ProfilePage extends CcGetView<ProfileController> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const CcSpaceMD(),
+                  Obx(
+                    () => controller.showSignInReminder
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                              bottom: context.respDim(CcPaddingParams.SPACE_MD),
+                            ),
+                            child: ProfileSignInReminder(
+                              onDismiss: controller.dismissSignInReminder,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
                   ProfileMenuGroup(items: _buildMenuItems(context)),
                   const CcSpaceXL(),
                   Obx(

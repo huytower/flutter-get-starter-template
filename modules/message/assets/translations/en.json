@@ -112,7 +112,7 @@
       "expired": "OTP code has expired",
       "too_many_attempts": "Too many attempts. Please try again later"
     },
-    "security_warning_title": "Integrated genuine security protection, only genuine devices can be used:",
+    "security_warning_title": "For genuine devices only:",
     "security_warning_bullet_sms": "SMS/OTP Verification",
     "security_warning_bullet_ai": "AI-Generated Content",
     "security_warning_other_login": "Other Sign In Methods"
@@ -326,6 +326,7 @@
     "quick_entry_category_missing": "Category not found (need +): {label}",
     "quick_entry_could_not_parse": "Couldn't understand that — please fill in manually",
     "quick_entry_daily_limit_reached": "Daily AI quick-entry limit reached — please fill in manually",
+    "quick_entry_device_not_genuine": "This feature is only available on genuine devices",
     "quick_entry_mic_permission_denied": "Microphone access is needed for voice entry",
     "quick_entry_photo_permission_denied": "Camera/photo access is needed to scan a receipt",
     "quick_entry_batch_label": "{count} transactions · {total}",
@@ -689,6 +690,8 @@
     "link_account_verify_code": "Verify",
     "birth_year": "Birth year",
     "birth_year_subtitle": "Used to suggest appropriate categories",
+    "sign_in_reminder_title": "Sign in to protect your data",
+    "sign_in_reminder_body": "You can keep using the app without an account, but your financial data may be lost if you change or reset your device.",
     "birth_year_hint": "Choose your actual birth year, it affects your daily income and expense calculations",
     "birth_year_task_desc": "Task: set up your birth year",
     "weekly_audit": "Weekly audit",

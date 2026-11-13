@@ -30,3 +30,10 @@ extension PrjFormAccent on BuildContext {
   Color get lendAccent =>
       _isDarkForm ? PrjColors.darkLendAccent : PrjColors.lendAccent;
 }
+
+/// Shade used for the second leg of a form (repay, collect, return).
+///
+/// Driven by [PrjColors.formSecondaryAlpha]; at 1.0 it is the accent itself.
+extension PrjSecondaryShade on Color {
+  Color get secondaryShade => withValues(alpha: PrjColors.formSecondaryAlpha);
+}

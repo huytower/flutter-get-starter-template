@@ -11,6 +11,7 @@ import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/exchange_rates/display_currency_converter.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/ai_advice_cache_datasource.dart';
+import '../../../../core/helper/ai_device_check_helper.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
@@ -252,6 +253,10 @@ class ReportController extends CcGetController {
 
     if (result == null) {
       CcAnalyticsHelper.logEvent(name: 'ai_advice_failed');
+      if (isDeviceAttestationFailure(CcGeminiHelper.lastError)) {
+        aiAdviceErrorKey.value = CcLocaleKeys.quick_entry_device_not_genuine;
+        return;
+      }
       final previousCached = await cacheDs.getLastCachedAdvice(
         languageCode: languageCode,
       );

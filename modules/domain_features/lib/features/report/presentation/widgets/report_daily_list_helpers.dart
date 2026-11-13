@@ -25,15 +25,15 @@ Color computeAmountColor(BuildContext context, TransactionEntity transaction) {
     case TransactionType.investmentOut:
       return context.investmentAccent;
     case TransactionType.investmentReturn:
-      return context.investmentAccent.withValues(alpha: 0.8);
+      return context.investmentAccent.secondaryShade;
     case TransactionType.debtBorrow:
       return context.borrowAccent;
     case TransactionType.debtRepay:
-      return context.borrowAccent.withValues(alpha: 0.8);
+      return context.borrowAccent.secondaryShade;
     case TransactionType.debtLend:
       return context.lendAccent;
     case TransactionType.debtCollect:
-      return context.lendAccent.withValues(alpha: 0.8);
+      return context.lendAccent.secondaryShade;
     case TransactionType.expense:
     default:
       return context.expenseAccent;

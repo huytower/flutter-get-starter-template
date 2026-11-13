@@ -112,7 +112,7 @@
       "expired": "Mã OTP đã hết hạn",
       "too_many_attempts": "Quá nhiều lần thử. Vui lòng thử lại sau"
     },
-    "security_warning_title": "Tích hợp bảo mật chính hãng, chỉ có thể sử dụng thiết bị chính hãng:",
+    "security_warning_title": "Chỉ dành cho thiết bị chính hãng:",
     "security_warning_bullet_sms": "Xác minh SMS/OTP",
     "security_warning_bullet_ai": "Nội dung tạo bởi AI",
     "security_warning_other_login": "Đăng nhập khác"
@@ -326,6 +326,7 @@
     "quick_entry_category_missing": "Danh mục chưa có (hãy thêm +): {label}",
     "quick_entry_could_not_parse": "Không hiểu được nội dung này — vui lòng nhập thủ công",
     "quick_entry_daily_limit_reached": "Đã đạt giới hạn AI nhập nhanh hôm nay — vui lòng nhập thủ công",
+    "quick_entry_device_not_genuine": "Tính năng chỉ dành riêng cho thiết bị chính hãng",
     "quick_entry_mic_permission_denied": "Cần quyền truy cập micro để nhập bằng giọng nói",
     "quick_entry_photo_permission_denied": "Cần quyền truy cập máy ảnh/thư viện ảnh để quét hóa đơn",
     "quick_entry_batch_label": "{count} giao dịch · {total}",
@@ -549,6 +550,8 @@
     "link_account_verify_code": "Xác minh",
     "birth_year": "Năm sinh",
     "birth_year_subtitle": "Dùng để gợi ý danh mục phù hợp",
+    "sign_in_reminder_title": "Đăng nhập để bảo vệ dữ liệu",
+    "sign_in_reminder_body": "Bạn vẫn có thể dùng ứng dụng khi chưa đăng nhập, nhưng dữ liệu tài chính có thể bị mất khi bạn đổi hoặc đặt lại thiết bị.",
     "birth_year_hint": "Chọn năm sinh thực tế của bạn, nó ảnh hưởng đến tính toán thu nhập và chi tiêu hàng ngày",
     "birth_year_task_desc": "Nhiệm vụ: thiết lập năm sinh",
     "weekly_audit": "Kiểm tra hàng tuần",

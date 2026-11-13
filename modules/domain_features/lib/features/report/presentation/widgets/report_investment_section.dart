@@ -46,7 +46,7 @@ class ReportInvestmentSection extends StatelessWidget {
             title: el.tr(CcLocaleKeys.report_investment_returned),
             amount: data.totalIncome,
             points: data.points,
-            color: context.investmentAccent.withValues(alpha: 0.8),
+            color: context.investmentAccent.secondaryShade,
             range: controller.range.value,
             isIncome: true,
             icon: Icons.arrow_circle_up,

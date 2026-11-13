@@ -14,6 +14,7 @@ import '../../../../core/constant/currency_catalog.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/exchange_rates/exchange_rate_types.dart';
+import '../../../../core/helper/ai_device_check_helper.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
@@ -30,6 +31,7 @@ class ParseSmartEntryUseCase {
 
   static const String geminiDisabledReason = 'gemini_disabled';
   static const String dailyLimitReachedReason = 'daily_limit_reached';
+  static const String deviceNotGenuineReason = 'device_not_genuine';
 
   final GetCategoriesUseCase _getCategories;
   final CurrencyConversionService _conversionService;
@@ -81,6 +83,9 @@ class ParseSmartEntryUseCase {
       '[AI_PARSING] [GEMINI] ❌ Gemini returned null response'.Log(
         'ParseSmartEntryUseCase',
       );
+      if (isDeviceAttestationFailure(CcGeminiHelper.lastError)) {
+        return const Error(ValidationFailure(deviceNotGenuineReason));
+      }
       return const Error(ServerFailure('empty_response'));
     }
     '[AI_PARSING] [GEMINI] 📥 Gemini Response: $response'.Log(

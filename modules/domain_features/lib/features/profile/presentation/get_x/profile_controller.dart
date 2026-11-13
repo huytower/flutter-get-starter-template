@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';
 
 import '../../../../core/constant/currency_constants.dart';
@@ -60,6 +61,34 @@ class ProfileController extends CcGetController {
   final RxString appVersion = ''.obs;
   final RxBool openBirthYearPicker = false.obs;
 
+  // --- Sign-in reminder (shown to users with no linked email/phone) ---
+  static const String _signInReminderDismissedKey =
+      'profile_sign_in_reminder_dismissed';
+
+  /// Once dismissed the reminder never comes back (across app launches and page
+  /// resumes). Starts hidden so it never flashes before the stored choice loads.
+  final RxBool signInReminderDismissed = true.obs;
+
+  /// True when the account has neither an email nor a phone number linked.
+  bool get needsSignIn {
+    final u = user.value;
+    return u == null || (u.email.isEmpty && (u.phoneNumber ?? '').isEmpty);
+  }
+
+  bool get showSignInReminder => needsSignIn && !signInReminderDismissed.value;
+
+  Future<void> _loadSignInReminder() async {
+    final prefs = await SharedPreferences.getInstance();
+    signInReminderDismissed.value =
+        prefs.getBool(_signInReminderDismissedKey) ?? false;
+  }
+
+  Future<void> dismissSignInReminder() async {
+    signInReminderDismissed.value = true;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_signInReminderDismissedKey, true);
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -85,6 +114,7 @@ class ProfileController extends CcGetController {
     });
     ever(CurrencyConstants.onCurrencyChanged, (_) => _syncStoredCurrency());
     _load();
+    unawaited(_loadSignInReminder());
   }
 
   Future<void> _syncStoredCurrency() async {
