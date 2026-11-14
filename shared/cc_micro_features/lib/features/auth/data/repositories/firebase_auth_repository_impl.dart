@@ -136,25 +136,31 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       final refreshed = _firebaseAuth.currentUser ?? user;
       return Success(_mapFirebaseUserToEntity(refreshed));
     } catch (e) {
-      'Could not store the Apple full name: $e'.Log('FirebaseAuthRepositoryImpl');
+      'Could not store the Apple full name: $e'.Log(
+        'FirebaseAuthRepositoryImpl',
+      );
       return Success(signedIn);
     }
   }
 
   /// Joins the given/family name Apple returned; null when Apple sent none.
   String? _appleFullName(AuthorizationCredentialAppleID credential) {
-    final parts = [credential.givenName, credential.familyName]
-        .whereType<String>()
-        .map((s) => s.trim())
-        .where((s) => s.isNotEmpty);
+    final parts = [
+      credential.givenName,
+      credential.familyName,
+    ].whereType<String>().map((s) => s.trim()).where((s) => s.isNotEmpty);
     final name = parts.join(' ');
     return name.isEmpty ? null : name;
   }
 
   /// Shared helper to handle the Apple Sign-In "dance" and return a Firebase
   /// credential together with the full name Apple provided (first sign-in only).
-  Future<Result<({firebase_auth.AuthCredential credential, String? fullName}),
-      CcFailure>>
+  Future<
+    Result<
+      ({firebase_auth.AuthCredential credential, String? fullName}),
+      CcFailure
+    >
+  >
   _getAppleCredential() async {
     try {
       final isAvailable = await SignInWithApple.isAvailable();
@@ -294,9 +300,13 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
 
   @override
   Stream<CcUserEntity?> authStateChanges() {
-    return _firebaseAuth.authStateChanges().map((user) {
+    // userChanges() (not authStateChanges()) so a profile-only update — e.g. the
+    // Apple full name saved right after sign-in, or a display-name edit — also
+    // reaches the session. distinct() drops the repeats it adds (token
+    // refreshes), since the entity is value-compared.
+    return _firebaseAuth.userChanges().map((user) {
       return user != null ? _mapFirebaseUserToEntity(user) : null;
-    });
+    }).distinct();
   }
 
   @override
@@ -519,7 +529,14 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
     // Parse display name for first/last name
     String? firstName;
     String? lastName;
-    final displayName = user.displayName;
+    // The account's own display name wins, so a name the user edited later is
+    // what shows. Linking a provider (guest -> Google/Apple) does not copy the
+    // provider's name onto the Firebase user, so fall back to it when the
+    // account has none yet.
+    final displayName = _firstNonEmpty([
+      user.displayName,
+      ...user.providerData.map((p) => p.displayName),
+    ]);
     if (displayName != null && displayName.isNotEmpty) {
       final nameParts = displayName.trim().split(' ');
       if (nameParts.length >= 2) {
@@ -538,7 +555,10 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       status: status,
       firstName: firstName ?? '',
       lastName: lastName ?? '',
-      avatarUrl: user.photoURL,
+      avatarUrl: _firstNonEmpty([
+        user.photoURL,
+        ...user.providerData.map((p) => p.photoURL),
+      ]),
       isEmailVerified: user.emailVerified,
       isPhoneVerified: user.phoneNumber != null,
       registeredDeviceIds: const [],
@@ -548,6 +568,14 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       lastActiveAt: user.metadata.lastSignInTime,
       linkedProviderIds: user.providerData.map((p) => p.providerId).toList(),
     );
+  }
+
+  String? _firstNonEmpty(Iterable<String?> values) {
+    for (final value in values) {
+      final trimmed = value?.trim();
+      if (trimmed != null && trimmed.isNotEmpty) return trimmed;
+    }
+    return null;
   }
 
   String _generateNonce([int length = 32]) {
