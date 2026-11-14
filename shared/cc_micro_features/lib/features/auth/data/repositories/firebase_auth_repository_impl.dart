@@ -126,25 +126,88 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
     CcUserEntity signedIn,
     String? fullName,
   ) async {
-    if (fullName == null || fullName.isEmpty) return Success(signedIn);
+    final hasAppleName = fullName != null && fullName.isNotEmpty;
+    final hasAccountName = (_firebaseAuth.currentUser?.displayName ?? '')
+        .trim()
+        .isNotEmpty;
+    '[AppleName] Apple sent a name: $hasAppleName | account already has a name: $hasAccountName'
+        .Log('FirebaseAuthRepositoryImpl');
+    _reportAppleNameDiagnostics(
+      stage: 'received',
+      user: _firebaseAuth.currentUser,
+      entity: signedIn,
+      appleSentName: hasAppleName,
+    );
+    if (!hasAppleName) return Success(signedIn);
     try {
       final user = _firebaseAuth.currentUser;
       if (user == null) return Success(signedIn);
-      if ((user.displayName ?? '').trim().isNotEmpty) return Success(signedIn);
+      if (hasAccountName) return Success(signedIn);
       await user.updateDisplayName(fullName);
       await user.reload();
       final refreshed = _firebaseAuth.currentUser ?? user;
-      return Success(_mapFirebaseUserToEntity(refreshed));
-    } catch (e) {
-      'Could not store the Apple full name: $e'.Log(
+      '[AppleName] Saved the Apple name to the account'.Log(
         'FirebaseAuthRepositoryImpl',
+      );
+      final mapped = _mapFirebaseUserToEntity(refreshed);
+      _reportAppleNameDiagnostics(
+        stage: 'saved',
+        user: refreshed,
+        entity: mapped,
+        appleSentName: true,
+      );
+      return Success(mapped);
+    } catch (e, stack) {
+      // Reported (not just logged) so a name that silently fails to save shows
+      // up in Crashlytics instead of leaving the profile blank.
+      Catcher2.reportCheckedError(
+        Exception('[AppleName] Could not store the Apple full name: $e'),
+        stack,
       );
       return Success(signedIn);
     }
   }
 
+  /// Presence flags of the last Apple credential's name parts (never the
+  /// values), kept only for [_reportAppleNameDiagnostics].
+  String _lastAppleNameFlags = 'n/a';
+
+  /// Sends a PRIVACY-SAFE trace to the crash Slack channel (through the
+  /// existing Catcher2 handler) so a missing Apple name can be diagnosed on a
+  /// real device. It carries only yes/no flags and provider ids — never the
+  /// name, email, phone or uid.
+  void _reportAppleNameDiagnostics({
+    required String stage,
+    required firebase_auth.User? user,
+    required CcUserEntity entity,
+    required bool appleSentName,
+  }) {
+    try {
+      bool has(String? v) => (v ?? '').trim().isNotEmpty;
+      final providers = user?.providerData ?? const [];
+      final report = [
+        '[AppleName][Diag] stage=$stage',
+        'appleSentName=$appleSentName ($_lastAppleNameFlags)',
+        'user.displayName=${has(user?.displayName)}',
+        'user.photoURL=${has(user?.photoURL)}',
+        'providers=${providers.map((p) => p.providerId).join(',')}',
+        'providerDisplayName=${providers.map((p) => '${p.providerId}:${has(p.displayName)}').join(',')}',
+        'entity.firstName=${has(entity.firstName)}',
+        'entity.lastName=${has(entity.lastName)}',
+        'entity.avatar=${has(entity.avatarUrl)}',
+        'ts=${DateTime.now().millisecondsSinceEpoch}',
+      ].join(' | ');
+      Catcher2.reportCheckedError(Exception(report), StackTrace.current);
+    } catch (_) {
+      // Diagnostics must never affect the sign-in.
+    }
+  }
+
   /// Joins the given/family name Apple returned; null when Apple sent none.
   String? _appleFullName(AuthorizationCredentialAppleID credential) {
+    _lastAppleNameFlags =
+        'given=${(credential.givenName ?? '').trim().isNotEmpty} '
+        'family=${(credential.familyName ?? '').trim().isNotEmpty}';
     final parts = [
       credential.givenName,
       credential.familyName,

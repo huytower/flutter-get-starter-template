@@ -12,8 +12,8 @@ class AiFallbackPreferenceDataSource {
   static const String _keyCallCount = 'ai_fallback_call_count';
   static const String _keyGeminiEnabled = 'ai_gemini_enabled';
 
-  /// Default daily cap on cloud-LLM fallback calls (3 calls/day).
-  static const int dailyCallLimit = 3;
+  /// Default daily cap on cloud-LLM fallback calls (5 calls/day).
+  static const int dailyCallLimit = 5;
 
   /// Whether to enforce the daily limit.
   /// Defaults to [!kDebugMode] (bypassed in debug builds, enforced in release).
