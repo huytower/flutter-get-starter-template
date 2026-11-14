@@ -18,9 +18,70 @@ extension PrjFormAccent on BuildContext {
   Color get expenseAccent =>
       _isDarkForm ? PrjColors.darkExpenseAccent : PrjColors.expenseAccent;
 
-  /// Investment — amber gold.
+  /// Investment — metallic gold, solid accent for text, icons and tints.
   Color get investmentAccent =>
       _isDarkForm ? PrjColors.darkInvestmentAccent : PrjColors.investmentAccent;
+
+  /// Foreground (label / icon) drawn on top of [investmentGoldGradient].
+  Color get onInvestmentGold => PrjColors.onInvestmentGold;
+
+  /// Opaque metallic-gold fill for primary surfaces (e.g. the submit button):
+  /// a diagonal highlight → gold → highlight band → deep gold sweep.
+  LinearGradient get investmentGoldGradient => const LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      PrjColors.investmentGoldHighlight,
+      PrjColors.investmentGoldMid,
+      PrjColors.investmentGoldHighlight,
+      PrjColors.investmentGoldDeep,
+    ],
+    stops: [0.0, 0.42, 0.62, 1.0],
+  );
+
+  /// Translucent version of [investmentGoldGradient] for card backgrounds that
+  /// carry their own text (e.g. wallet cards), so content stays readable.
+  LinearGradient get investmentGoldCardGradient => LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      PrjColors.investmentGoldHighlight.withValues(alpha: 0.28),
+      PrjColors.investmentGoldMid.withValues(alpha: 0.30),
+      PrjColors.investmentGoldHighlight.withValues(alpha: 0.18),
+      PrjColors.investmentGoldDeep.withValues(alpha: 0.28),
+    ],
+    stops: const [0.0, 0.42, 0.62, 1.0],
+  );
+
+  /// Liability zone (borrow + lend) — the violet of the liability hero card,
+  /// for text, icons and tints.
+  Color get liabilityAccent =>
+      _isDarkForm ? PrjColors.liabilityHighlight : PrjColors.liability;
+
+  /// Opaque violet fill for liability icon badges; pair with `onPrimary`.
+  LinearGradient get liabilityGradient => const LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      PrjColors.liabilityHighlight,
+      PrjColors.liability,
+      PrjColors.liabilityDeep,
+    ],
+  );
+
+  /// Translucent version of [liabilityGradient] for card backgrounds that
+  /// carry their own text.
+  LinearGradient get liabilityCardGradient => LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      PrjColors.liabilityHighlight.withValues(alpha: 0.14),
+      PrjColors.liability.withValues(alpha: 0.10),
+      PrjColors.liabilityHighlight.withValues(alpha: 0.06),
+      PrjColors.liabilityDeep.withValues(alpha: 0.16),
+    ],
+    stops: const [0.0, 0.42, 0.62, 1.0],
+  );
 
   /// Borrow (liability) — deep purple.
   Color get borrowAccent =>

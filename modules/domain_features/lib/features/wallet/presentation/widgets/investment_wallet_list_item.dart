@@ -87,16 +87,15 @@ class InvestmentWalletListItem extends StatelessWidget {
         Container(
           width: context.respDim(30),
           height: context.respDim(30),
+          alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: PrjColors.success.withOpacity(0.12),
+            gradient: context.investmentGoldGradient,
             borderRadius: context.brMd,
           ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              const Positioned.fill(child: CcGlassyGradientIcon()),
-              CcIconToken(iconDataFromCode(wallet.iconCode), size: 14),
-            ],
+          child: CcIconToken(
+            iconDataFromCode(wallet.iconCode),
+            size: 14,
+            color: context.onInvestmentGold,
           ),
         ),
         const CcSpaceXS(),

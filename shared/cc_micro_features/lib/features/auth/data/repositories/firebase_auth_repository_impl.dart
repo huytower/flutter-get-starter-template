@@ -195,6 +195,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         'entity.firstName=${has(entity.firstName)}',
         'entity.lastName=${has(entity.lastName)}',
         'entity.avatar=${has(entity.avatarUrl)}',
+        'accountAgeSec=${user?.metadata.creationTime == null || user?.metadata.lastSignInTime == null ? -1 : user!.metadata.lastSignInTime!.difference(user.metadata.creationTime!).inSeconds}',
         'ts=${DateTime.now().millisecondsSinceEpoch}',
       ].join(' | ');
       Catcher2.reportCheckedError(Exception(report), StackTrace.current);
@@ -206,6 +207,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   /// Joins the given/family name Apple returned; null when Apple sent none.
   String? _appleFullName(AuthorizationCredentialAppleID credential) {
     _lastAppleNameFlags =
+        'email=${(credential.email ?? '').trim().isNotEmpty} '
         'given=${(credential.givenName ?? '').trim().isNotEmpty} '
         'family=${(credential.familyName ?? '').trim().isNotEmpty}';
     final parts = [

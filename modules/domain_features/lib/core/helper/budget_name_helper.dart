@@ -48,6 +48,17 @@ abstract final class BudgetNameHelper {
       'xe ôm',
       'xe cong nghe',
     ],
+    // The category label was renamed from "Leisure & Travel" so it no longer
+    // overlaps "Travel"; keep the old names so budgets created under them are
+    // still treated as the default name.
+    'category.leisure': [
+      'leisure & travel',
+      'giải trí & du lịch',
+      'giai tri & du lich',
+      '여가 및 여행',
+      '余暇と旅行',
+      '休闲与旅行',
+    ],
     'category.parking': ['parking', 'đỗ xe', 'do xe', 'gửi xe', 'gui xe'],
     'category.maintenance': [
       'maintenance',

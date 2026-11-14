@@ -22,7 +22,6 @@ import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/get_monthly_recurring_match_usecase.dart';
 import '../../domain/usecases/update_transaction_usecase.dart';
-import '../helper/horizontal_row_reveal.dart';
 import '../models/unified_category_item.dart';
 import '../widgets/base/category_selection_layout.dart';
 import 'quick_entry_batch_mixin.dart';
@@ -333,18 +332,13 @@ class IncomeFormController extends TransactionFormController
     if (index == -1) return;
 
     _pendingScrollIndex = index;
-    final key = getItemKey(index);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_pendingScrollIndex == index) {
-        revealRowCard(
+        revealCategoryGridItem(
           scrollController: categoryScrollController,
           index: index,
-          itemWidth: categoryItemWidth,
-          itemGap: categoryItemGap,
-          leadingPadding: CcPaddingParams.PAGE_SM,
-          itemKey: key,
-          tag: _debugTag,
+          itemCount: unifiedItems.length,
         );
       }
     });

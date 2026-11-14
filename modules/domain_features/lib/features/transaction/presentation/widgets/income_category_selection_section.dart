@@ -1,7 +1,8 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../category/domain/entities/category_entity.dart';
+import '../../../category/presentation/pages/category_settings_page.dart';
 import '../get_x/income_form_controller.dart';
 import 'base/category_selection_layout.dart';
 import 'base/unified_category_item_widget.dart';
@@ -23,16 +24,17 @@ class IncomeCategorySelectionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.isLoadingUnified.value) {
-        return const CcCategoryShimmerList();
-      }
-
       final items = controller.unifiedItems;
       final selectedCategory = controller.selectedCategory.value;
 
       return CategorySelectionLayout(
+        isLoading: controller.isLoadingUnified.value,
         items: items,
         scrollController: controller.categoryScrollController,
+        onCustomize: () => CategorySettingsPage.open(
+          context,
+          initialSection: CategoryType.income,
+        ),
         itemBuilder: (context, index) {
           final item = items[index];
           final isSelected = selectedCategory?.id == item.categoryId;

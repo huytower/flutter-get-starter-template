@@ -27,6 +27,13 @@ class TransactionSubmitButton extends StatelessWidget {
   /// Base size for [leadingIcon], fed through `context.respIconSize`.
   final double leadingIconSize;
 
+  /// Optional fill painted instead of the solid [activeColor] while the button
+  /// is enabled (e.g. the metallic gold of the Investment form).
+  final Gradient? gradient;
+
+  /// Label / icon colour used on top of [gradient]. Defaults to `onPrimary`.
+  final Color? gradientForegroundColor;
+
   const TransactionSubmitButton({
     super.key,
     required this.text,
@@ -40,31 +47,48 @@ class TransactionSubmitButton extends StatelessWidget {
     this.textStyle,
     this.leadingIcon,
     this.leadingIconSize = 20,
+    this.gradient,
+    this.gradientForegroundColor,
   });
 
   @override
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
     final baseStyle = textStyle ?? context.ccTextTheme.titleMedium;
+    final borderRadius = BorderRadius.circular(12);
+    final useGradient = gradient != null && isEnabled;
+    final foreground = useGradient
+        ? gradientForegroundColor ?? scheme.onPrimary
+        : scheme.onPrimary;
     return Center(
       child: FractionallySizedBox(
         widthFactor: widthFactor,
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            SizedBox(
+            Container(
               width: double.infinity,
               height: height ?? context.respDim(40),
+              decoration: useGradient
+                  ? BoxDecoration(
+                      gradient: gradient,
+                      borderRadius: borderRadius,
+                    )
+                  : null,
               child: ElevatedButton(
                 onPressed: isEnabled && !isSubmitting ? onTap : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: activeColor,
+                  backgroundColor: useGradient
+                      ? Colors.transparent
+                      : activeColor,
+                  disabledBackgroundColor: useGradient
+                      ? Colors.transparent
+                      : null,
+                  shadowColor: useGradient ? Colors.transparent : null,
                   padding: EdgeInsets.symmetric(
                     horizontal: context.respPadding(CcPaddingParams.SPACE_SM),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: borderRadius),
                 ),
                 child: isSubmitting
                     ? SizedBox(
@@ -72,12 +96,10 @@ class TransactionSubmitButton extends StatelessWidget {
                         height: context.respDim(20),
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            scheme.onPrimary,
-                          ),
+                          valueColor: AlwaysStoppedAnimation<Color>(foreground),
                         ),
                       )
-                    : _buildLabel(context, scheme.onPrimary, baseStyle),
+                    : _buildLabel(context, foreground, baseStyle),
               ),
             ),
             if (badge != null)

@@ -211,6 +211,8 @@ class _InvestmentFormState extends State<InvestmentForm> {
               isEnabled: controller.canSubmit,
               onTap: () => controller.submitForm(context),
               activeColor: accentColor,
+              gradient: context.investmentGoldGradient,
+              gradientForegroundColor: context.onInvestmentGold,
               leadingIcon:
                   controller.direction.value ==
                       InvestmentDirectionForm.contribute
@@ -316,7 +318,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
           wallets: controller.wallets,
           selectedWalletId: controller.selectedWalletId.value,
           activeColor: accentColor,
-          defaultBgColor: context.verticalGradient(accentColor),
+          defaultBgColor: context.investmentGoldCardGradient,
           onWalletSelected: controller.setWalletId,
         ),
       ],

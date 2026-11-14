@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
@@ -22,7 +23,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
     final liability = balance.liability;
-    final directionColor = context.ccColorScheme.primary;
+    final directionColor = context.liabilityAccent;
 
     return CcBouncing(
       onTap: onTap,
@@ -34,7 +35,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
           vertical: context.respDim(8),
         ),
         decoration: BoxDecoration(
-          color: scheme.primaryContainer.withValues(alpha: 0.1),
+          gradient: context.liabilityCardGradient,
           borderRadius: context.brLg,
           border: context.borderSubtle,
         ),
@@ -48,7 +49,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                   width: context.respDim(28),
                   height: context.respDim(28),
                   decoration: BoxDecoration(
-                    color: directionColor.withAlpha(20),
+                    gradient: context.liabilityGradient,
                     borderRadius: context.brLg,
                   ),
                   child: Center(
@@ -58,7 +59,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                         fontFamily: liability.categoryIconFamily,
                       ),
                       size: 16,
-                      color: directionColor,
+                      color: scheme.onPrimary,
                     ),
                   ),
                 ),

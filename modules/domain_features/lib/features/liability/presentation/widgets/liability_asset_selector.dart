@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../transaction/presentation/helper/horizontal_row_reveal.dart';
+import '../../../transaction/presentation/widgets/base/category_customize_empty_state.dart';
 import '../get_x/liability_base_form_controller.dart';
+import '../pages/liability_grid_page.dart';
 
 class LiabilityAssetSelector extends StatelessWidget {
   final LiabilityBaseFormController controller;
@@ -44,22 +46,12 @@ class LiabilityAssetSelector extends StatelessWidget {
 
           final items = controller.mergedItems;
 
+          // The customize cell is only offered while there is nothing to
+          // pick; it opens the liability list with the add sheet on top.
           if (items.isEmpty) {
-            return Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(
-                vertical: context.respDim(20),
-                horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-              ),
-              child: CcText(
-                el.tr(CcLocaleKeys.liability_empty_state),
-                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
-                  fontStyle: FontStyle.italic,
-                ),
-                align: Alignment.center,
-                textAlign: TextAlign.center,
-              ),
+            return CategoryCustomizeEmptyState(
+              hint: el.tr(CcLocaleKeys.liability_empty_state),
+              onCustomize: () => LiabilityGridPage.open(context, openAdd: true),
             );
           }
 

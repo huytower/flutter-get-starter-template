@@ -30,7 +30,6 @@ import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/get_monthly_recurring_match_usecase.dart';
 import '../../domain/usecases/update_transaction_usecase.dart';
-import '../helper/horizontal_row_reveal.dart';
 import '../models/unified_category_item.dart';
 import '../widgets/base/category_selection_layout.dart';
 import 'quick_entry_batch_mixin.dart';
@@ -216,28 +215,18 @@ class ExpenseFormController extends TransactionFormController
     if (index == -1) return;
 
     _pendingScrollIndex = index;
-    final key = getItemKey(index);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_pendingScrollIndex == index) {
-        _revealItem(index, key);
+        // Brings the selected card into view by scrolling the category grid
+        // to that card's column.
+        revealCategoryGridItem(
+          scrollController: categoryScrollController,
+          index: index,
+          itemCount: unifiedItems.length,
+        );
       }
     });
-  }
-
-  /// Brings the selected card into view by animating the category row to that
-  /// card's offset.
-  void _revealItem(int index, GlobalKey itemKey, [int attemptsLeft = 6]) {
-    revealRowCard(
-      scrollController: categoryScrollController,
-      index: index,
-      itemWidth: categoryItemWidth,
-      itemGap: categoryItemGap,
-      leadingPadding: CcPaddingParams.PAGE_SM,
-      itemKey: itemKey,
-      tag: _debugTag,
-      attemptsLeft: attemptsLeft,
-    );
   }
 
   BudgetLimitEntity? _findBudgetById(String id) {

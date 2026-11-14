@@ -14,20 +14,59 @@ import '../../domain/entities/category_group_entity.dart';
 import '../get_x/category_settings_controller.dart';
 
 class CategorySettingsPage extends StatefulWidget {
-  const CategorySettingsPage({super.key});
+  const CategorySettingsPage({super.key, this.initialSection});
+
+  /// [CategoryType] of the section to scroll to once the list is ready (e.g.
+  /// [CategoryType.income] when opened from the Income form). Null keeps the
+  /// list at the top.
+  final String? initialSection;
+
+  /// Pushes the page, optionally scrolled to [initialSection].
+  static Future<bool?> open(BuildContext context, {String? initialSection}) {
+    return Navigator.of(context).push(
+      MaterialPageRoute<bool>(
+        builder: (_) => CategorySettingsPage(initialSection: initialSection),
+      ),
+    );
+  }
 
   @override
   State<CategorySettingsPage> createState() => _CategorySettingsPageState();
 }
 
 class _CategorySettingsPageState extends State<CategorySettingsPage> {
+  /// One key per section header, by [CategoryType], so a section can be
+  /// scrolled into view.
+  final Map<String, GlobalKey> _sectionKeys = {
+    CategoryType.expense: GlobalKey(debugLabel: 'category_section_expense'),
+    CategoryType.income: GlobalKey(debugLabel: 'category_section_income'),
+    CategoryType.investment: GlobalKey(
+      debugLabel: 'category_section_investment',
+    ),
+    CategoryType.liability: GlobalKey(debugLabel: 'category_section_liability'),
+  };
+
+  Worker? _layoutStatusWorker;
+  bool _initialSectionRevealed = false;
+
   @override
   void initState() {
     super.initState();
+    final CategorySettingsController controller;
     if (!Get.isRegistered<CategorySettingsController>()) {
-      Get.put(getIt<CategorySettingsController>());
+      controller = Get.put(getIt<CategorySettingsController>());
     } else {
-      Get.find<CategorySettingsController>().load();
+      controller = Get.find<CategorySettingsController>()..load();
+    }
+
+    // The list only exists once loading finishes, so try now and again on
+    // every status change until the target header has been laid out.
+    if (widget.initialSection != null) {
+      _layoutStatusWorker = ever(
+        controller.layoutStatus,
+        (_) => _revealInitialSection(),
+      );
+      _revealInitialSection();
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -37,12 +76,58 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
     });
   }
 
+  /// Scrolls to the requested section header once it has been laid out.
+  ///
+  /// The header is not in the tree right after loading finishes: the list
+  /// sits inside a `FadePageWrapper`, which only builds its child ~50ms after
+  /// mounting. So keep retrying for a short while instead of giving up on the
+  /// first miss.
+  void _revealInitialSection([int attemptsLeft = 20]) {
+    if (!mounted || _initialSectionRevealed) return;
+
+    final controller = Get.find<CategorySettingsController>();
+    // On the very first open the status is not `loading` yet and the list is
+    // still empty; scrolling then would be undone by the reload that follows.
+    final isLoading =
+        controller.layoutStatus.value == CcLayoutStatus.loading ||
+        controller.groups.isEmpty;
+    final headerContext = isLoading
+        ? null
+        : _sectionKeys[widget.initialSection]?.currentContext;
+
+    if (headerContext == null) {
+      // While loading, the status worker calls back in once it finishes.
+      if (isLoading || attemptsLeft <= 0) return;
+      Future.delayed(
+        const Duration(milliseconds: 50),
+        () => _revealInitialSection(attemptsLeft - 1),
+      );
+      return;
+    }
+
+    _initialSectionRevealed = true;
+    Scrollable.ensureVisible(
+      headerContext,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
   @override
-  Widget build(BuildContext context) => const _CategorySettingsView();
+  void dispose() {
+    _layoutStatusWorker?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      _CategorySettingsView(sectionKeys: _sectionKeys);
 }
 
 class _CategorySettingsView extends CcGetView<CategorySettingsController> {
-  const _CategorySettingsView();
+  const _CategorySettingsView({required this.sectionKeys});
+
+  final Map<String, GlobalKey> sectionKeys;
 
   @override
   bool get enableAppBar => true;
@@ -148,6 +233,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
         _buildHeader(
           context,
           el.tr(CcLocaleKeys.category_expense_settings_title),
+          key: sectionKeys[CategoryType.expense],
         ),
       );
       for (final group in groups) {
@@ -161,6 +247,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
         _buildHeader(
           context,
           el.tr(CcLocaleKeys.category_income_settings_title),
+          key: sectionKeys[CategoryType.income],
           topPadding: 24,
         ),
       );
@@ -176,6 +263,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
           _buildHeader(
             context,
             el.tr(CcLocaleKeys.category_investment_settings_title),
+            key: sectionKeys[CategoryType.investment],
             topPadding: 24,
           ),
         );
@@ -192,6 +280,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
           _buildHeader(
             context,
             el.tr(CcLocaleKeys.category_debt_loan_settings_title),
+            key: sectionKeys[CategoryType.liability],
             topPadding: 24,
           ),
         );
@@ -203,10 +292,14 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
         }
       }
 
-      return ListView.builder(
+      // Built eagerly (not a lazy ListView) so every section header is laid
+      // out and can be scrolled to; the list is a few dozen rows at most.
+      return SingleChildScrollView(
         padding: EdgeInsets.only(bottom: context.respDim(100)),
-        itemCount: sections.length,
-        itemBuilder: (context, index) => sections[index],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: sections,
+        ),
       );
     });
   }
@@ -285,9 +378,11 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
   Widget _buildHeader(
     BuildContext context,
     String title, {
+    Key? key,
     double topPadding = 8,
   }) {
     return CcPadding(
+      key: key,
       CcText(
         title,
         textStyle: context.ccTextTheme.titleMedium?.copyWith(

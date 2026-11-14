@@ -1,9 +1,9 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../budget_limit/domain/entities/budget_limit_entity.dart';
 import '../../../category/domain/entities/category_entity.dart';
+import '../../../category/presentation/pages/category_settings_page.dart';
 import '../get_x/expense_form_controller.dart';
 import '../models/unified_category_item.dart';
 import 'base/category_selection_layout.dart';
@@ -26,17 +26,18 @@ class ExpenseCategorySelectionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.isLoadingUnified.value) {
-        return const CcCategoryShimmerList();
-      }
-
       final items = controller.unifiedItems;
       final selectedBudget = controller.selectedBudget.value;
       final selectedCategory = controller.selectedCategory.value;
 
       return CategorySelectionLayout(
+        isLoading: controller.isLoadingUnified.value,
         items: items,
         scrollController: controller.categoryScrollController,
+        onCustomize: () => CategorySettingsPage.open(
+          context,
+          initialSection: CategoryType.expense,
+        ),
         itemBuilder: (context, index) {
           final item = items[index];
           final key = ValueKey('expense_${item.id}');

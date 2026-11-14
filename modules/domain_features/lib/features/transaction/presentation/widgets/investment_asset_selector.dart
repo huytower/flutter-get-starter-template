@@ -6,8 +6,10 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
+import '../../../wallet/presentation/pages/investment_list_page.dart';
 import '../get_x/investment_form_controller.dart';
 import '../helper/horizontal_row_reveal.dart';
+import 'base/category_customize_empty_state.dart';
 
 class InvestmentAssetSelector extends StatelessWidget {
   final InvestmentFormController controller;
@@ -47,23 +49,13 @@ class InvestmentAssetSelector extends StatelessWidget {
           // Capture items list to track its changes in this scope.
           final items = controller.mergedItems;
 
+          // The customize cell is only offered while there is nothing to
+          // pick; it opens the investment list with the add sheet on top.
           if (items.isEmpty) {
-            return Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(
-                vertical: context.respDim(20),
-                horizontal: context.respPadding(CcPaddingParams.PAGE_SM),
-              ),
-              child: CcText(
-                el.tr(CcLocaleKeys.transaction_no_investment_items_hint),
-                maxLines: 2,
-                textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                  color: context.ccColorScheme.onSurfaceVariant.withAlpha(50),
-                  fontStyle: FontStyle.italic,
-                ),
-                align: Alignment.center,
-                textAlign: TextAlign.center,
-              ),
+            return CategoryCustomizeEmptyState(
+              hint: el.tr(CcLocaleKeys.transaction_no_investment_items_hint),
+              onCustomize: () =>
+                  InvestmentListPage.open(context, openAdd: true),
             );
           }
 

@@ -13,7 +13,20 @@ import '../widgets/liability_wallet_grid_card.dart';
 
 @RoutePage()
 class LiabilityGridPage extends StatefulWidget {
-  const LiabilityGridPage({super.key});
+  const LiabilityGridPage({super.key, this.openAddOnStart = false});
+
+  /// Opens the "add liability" sheet as soon as the page is shown (e.g. when
+  /// coming from the Liability form's customize cell).
+  final bool openAddOnStart;
+
+  /// Pushes the page, optionally with the "add liability" sheet open.
+  static Future<void> open(BuildContext context, {bool openAdd = false}) {
+    return Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => LiabilityGridPage(openAddOnStart: openAdd),
+      ),
+    );
+  }
 
   @override
   State<LiabilityGridPage> createState() => _LiabilityGridPageState();
@@ -31,6 +44,12 @@ class _LiabilityGridPageState extends State<LiabilityGridPage> {
     controller = Get.find<LiabilityListController>();
     // Ensure edit mode is always off when entering the page.
     controller.isEditMode.value = false;
+
+    if (widget.openAddOnStart) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _openAddLiabilitySheet(context, controller);
+      });
+    }
   }
 
   @override
@@ -154,16 +173,8 @@ class _LiabilityGridView extends CcGetView<LiabilityListController> {
     });
   }
 
-  Future<void> _openAddLiability(BuildContext context) async {
-    final created = await AddLiabilitySheet.show(
-      context,
-      initialDirection: LiabilityDirection.borrow,
-      showDirectionToggle: false,
-    );
-    if (created == true) {
-      controller.load();
-    }
-  }
+  Future<void> _openAddLiability(BuildContext context) =>
+      _openAddLiabilitySheet(context, controller);
 
   void _confirmDelete(BuildContext context, String id) {
     showModalBottomSheet<void>(
@@ -180,5 +191,19 @@ class _LiabilityGridView extends CcGetView<LiabilityListController> {
         onDelete: () => controller.deleteLiability(context, id),
       ),
     );
+  }
+}
+
+Future<void> _openAddLiabilitySheet(
+  BuildContext context,
+  LiabilityListController controller,
+) async {
+  final created = await AddLiabilitySheet.show(
+    context,
+    initialDirection: LiabilityDirection.borrow,
+    showDirectionToggle: false,
+  );
+  if (created == true) {
+    controller.load();
   }
 }

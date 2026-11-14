@@ -13,7 +13,20 @@ import '../widgets/liability_delete_confirm_sheet.dart';
 
 @RoutePage()
 class LendListPage extends StatefulWidget {
-  const LendListPage({super.key});
+  const LendListPage({super.key, this.openAddOnStart = false});
+
+  /// Opens the "add lend" sheet as soon as the page is shown (e.g. when
+  /// coming from the Lend form's customize cell).
+  final bool openAddOnStart;
+
+  /// Pushes the page, optionally with the "add lend" sheet open.
+  static Future<void> open(BuildContext context, {bool openAdd = false}) {
+    return Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => LendListPage(openAddOnStart: openAdd),
+      ),
+    );
+  }
 
   @override
   State<LendListPage> createState() => _LendListPageState();
@@ -30,6 +43,12 @@ class _LendListPageState extends State<LendListPage> {
     }
     controller = Get.find<LiabilityListController>();
     controller.isEditMode.value = false;
+
+    if (widget.openAddOnStart) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _openAddLendSheet(context, controller);
+      });
+    }
   }
 
   @override
@@ -148,16 +167,8 @@ class _LendListView extends CcGetView<LiabilityListController> {
     });
   }
 
-  Future<void> _openAddLend(BuildContext context) async {
-    final created = await AddLiabilitySheet.show(
-      context,
-      initialDirection: LiabilityDirection.lend,
-      showDirectionToggle: false,
-    );
-    if (created == true) {
-      controller.load();
-    }
-  }
+  Future<void> _openAddLend(BuildContext context) =>
+      _openAddLendSheet(context, controller);
 
   void _confirmDelete(BuildContext context, String id) {
     showModalBottomSheet<void>(
@@ -174,5 +185,19 @@ class _LendListView extends CcGetView<LiabilityListController> {
         onDelete: () => controller.deleteLiability(context, id),
       ),
     );
+  }
+}
+
+Future<void> _openAddLendSheet(
+  BuildContext context,
+  LiabilityListController controller,
+) async {
+  final created = await AddLiabilitySheet.show(
+    context,
+    initialDirection: LiabilityDirection.lend,
+    showDirectionToggle: false,
+  );
+  if (created == true) {
+    controller.load();
   }
 }

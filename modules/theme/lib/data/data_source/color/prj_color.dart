@@ -67,6 +67,12 @@ abstract final class PrjColors {
 
   static const Color liability = CcBaseColors.violet600;
 
+  /// Lighter / deeper violets around [liability]; they build the liability
+  /// gradients in `PrjFormAccent`, and the highlight doubles as the accent on
+  /// dark surfaces.
+  static const Color liabilityHighlight = Color(0xFFA78BFA);
+  static const Color liabilityDeep = Color(0xFF6D28D9);
+
   /// Shaded variant for the "money leaves" leg of Liability activity (e.g. Lend/Repay).
   static final Color liabilitySecondary = CcBaseColors.violet600.withValues(
     alpha: 0.8,
@@ -83,8 +89,16 @@ abstract final class PrjColors {
   static const Color expenseAccent = Color(0xFF1976D2);
   static const Color darkExpenseAccent = Color(0xFF64B5F6);
 
-  static const Color investmentAccent = Color(0xFFFF8F00);
-  static const Color darkInvestmentAccent = Color(0xFFFFD54F);
+  /// Investment — metallic gold. The solid accent is deep enough to read as
+  /// text on a light surface; the highlight / mid / deep trio builds the
+  /// metallic gradients in `PrjFormAccent`, and [onInvestmentGold] is the
+  /// foreground drawn on top of a gold fill.
+  static const Color investmentAccent = Color(0xFFA67C00);
+  static const Color darkInvestmentAccent = Color(0xFFE6C35C);
+  static const Color investmentGoldHighlight = Color(0xFFF6E3A1);
+  static const Color investmentGoldMid = Color(0xFFD4AF37);
+  static const Color investmentGoldDeep = Color(0xFFA67C00);
+  static const Color onInvestmentGold = Color(0xFF3E2C00);
 
   static const Color borrowAccent = Color(0xFF512DA8);
   static const Color darkBorrowAccent = Color(0xFF9575CD);

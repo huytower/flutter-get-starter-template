@@ -11,7 +11,20 @@ import '../widgets/investment_wallet_list_item.dart';
 
 @RoutePage()
 class InvestmentListPage extends StatefulWidget {
-  const InvestmentListPage({super.key});
+  const InvestmentListPage({super.key, this.openAddOnStart = false});
+
+  /// Opens the "add investment" sheet as soon as the page is shown (e.g. when
+  /// coming from the Investment form's customize cell).
+  final bool openAddOnStart;
+
+  /// Pushes the page, optionally with the "add investment" sheet open.
+  static Future<void> open(BuildContext context, {bool openAdd = false}) {
+    return Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => InvestmentListPage(openAddOnStart: openAdd),
+      ),
+    );
+  }
 
   @override
   State<InvestmentListPage> createState() => _InvestmentListPageState();
@@ -26,6 +39,12 @@ class _InvestmentListPageState extends State<InvestmentListPage> {
     controller = Get.find<WalletController>();
     // Ensure edit mode is always off when entering the page.
     controller.isEditMode.value = false;
+
+    if (widget.openAddOnStart) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _showAddInvestmentSheet(context);
+      });
+    }
   }
 
   @override
@@ -175,15 +194,18 @@ class _InvestmentListView extends CcGetView<WalletController> {
     });
   }
 
-  void _openAddInvestment(BuildContext context, {dynamic wallet}) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: context.ccColorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => AddInvestmentSheet(wallet: wallet),
-    );
-  }
+  void _openAddInvestment(BuildContext context, {dynamic wallet}) =>
+      _showAddInvestmentSheet(context, wallet: wallet);
+}
+
+void _showAddInvestmentSheet(BuildContext context, {dynamic wallet}) {
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: context.ccColorScheme.surface,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) => AddInvestmentSheet(wallet: wallet),
+  );
 }

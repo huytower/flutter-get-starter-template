@@ -30,7 +30,12 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          const Positioned.fill(child: CcGlassyGradientBackground()),
+          Positioned.fill(
+            child: CcGlassyGradientBackground(
+              centerColor: context.investmentAccent.withValues(alpha: 0.04),
+              endColor: context.investmentAccent.withValues(alpha: 0.08),
+            ),
+          ),
           Container(
             width: context.respDim(160),
             padding: EdgeInsets.symmetric(
@@ -38,7 +43,7 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
               vertical: context.respDim(8),
             ),
             decoration: BoxDecoration(
-              color: scheme.primaryContainer.withValues(alpha: 0.1),
+              gradient: context.investmentGoldCardGradient,
               borderRadius: context.brLg,
               border: context.borderSubtle,
             ),
@@ -51,19 +56,15 @@ class InvestmentWalletPreviewCard extends StatelessWidget {
                     Container(
                       width: context.respDim(28),
                       height: context.respDim(28),
+                      alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: scheme.primary.withOpacity(0.12),
+                        gradient: context.investmentGoldGradient,
                         borderRadius: context.brLg,
                       ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const Positioned.fill(child: CcGlassyGradientIcon()),
-                          CcIconToken(
-                            iconDataFromCode(wallet.iconCode),
-                            size: 16,
-                          ),
-                        ],
+                      child: CcIconToken(
+                        iconDataFromCode(wallet.iconCode),
+                        size: 16,
+                        color: context.onInvestmentGold,
                       ),
                     ),
                     const CcSpaceSM(),

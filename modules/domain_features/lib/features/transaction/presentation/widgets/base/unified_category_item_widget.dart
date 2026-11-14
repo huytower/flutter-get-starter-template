@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/helper/wallet_icon_helper.dart';
 import '../../models/unified_category_item.dart';
-import 'category_selection_layout.dart';
 
 class UnifiedCategoryItemWidget extends StatelessWidget {
   const UnifiedCategoryItemWidget({
@@ -39,6 +38,8 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
       useDebounce: false,
       child: Stack(
         clipBehavior: Clip.none,
+        // The grid cell decides the card size.
+        fit: StackFit.expand,
         children: [
           if (isSelected) _buildActiveBackground(context),
           _buildItemContainer(context, scheme),
@@ -60,7 +61,6 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
   Widget _buildItemContainer(BuildContext context, ColorScheme scheme) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      width: context.respDim(categoryItemWidth),
       decoration: BoxDecoration(
         color: isSelected
             ? activeColor.withValues(alpha: 0.02)

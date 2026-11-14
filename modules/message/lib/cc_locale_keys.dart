@@ -715,7 +715,7 @@ class CodegenLoader extends AssetLoader {
       "investment_term_deposit": "Term Deposit",
       "market_supermarket": "Market & Supermarket",
       "religious": "Religious/Spirituality",
-      "leisure": "Leisure & Travel",
+      "leisure": "Leisure",
       "expense_settings_title": "Expense Categories",
     },
     "sync": {
@@ -1750,7 +1750,7 @@ class CodegenLoader extends AssetLoader {
       "investment_term_deposit": "Tiết kiệm kỳ hạn",
       "market_supermarket": "Chợ & Siêu thị",
       "religious": "Tôn giáo/Tâm linh",
-      "leisure": "Giải trí & Du lịch",
+      "leisure": "Vui chơi",
       "expense_settings_title": "Danh mục chi tiêu",
     },
     "notification": {
@@ -2460,7 +2460,7 @@ class CodegenLoader extends AssetLoader {
       "investment_term_deposit": "정기 예금",
       "market_supermarket": "시장 및 슈퍼마켓",
       "religious": "종교/영성",
-      "leisure": "여가 및 여행",
+      "leisure": "여가",
       "expense_settings_title": "지출 카테고리",
     },
     "sync": {
@@ -3288,7 +3288,7 @@ class CodegenLoader extends AssetLoader {
       "investment_term_deposit": "定期預金",
       "market_supermarket": "市場とスーパーマーケット",
       "religious": "宗教/精神性",
-      "leisure": "余暇と旅行",
+      "leisure": "余暇",
       "expense_settings_title": "支出カテゴリ",
     },
     "sync": {
@@ -4105,7 +4105,7 @@ class CodegenLoader extends AssetLoader {
       "investment_term_deposit": "定期存款",
       "market_supermarket": "市场与超市",
       "religious": "宗教/精神",
-      "leisure": "休闲与旅行",
+      "leisure": "休闲",
       "expense_settings_title": "支出类别",
     },
     "sync": {
