@@ -142,6 +142,10 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
       foreground (titles, forms, lists) stops at `CcMaxWidth.contentWidth` (840 dp) via `CcMaxWidth.content`, or,
       for a scroll view that must stay scrollable edge to edge, via `padding: CcMaxWidth.insetFor(width)`. Never
       cap a whole page (background included) — that leaves blank gutters on tablets and the web.
+    - **Horizontal carousels bleed**: inside a `CcContentInset` area, wrap capped parts (cards, labels, buttons) in
+      `CcContentPadding`, and give a carousel that is *not* inside a card a start padding of
+      `base + CcContentInset.of(context)` and an end padding of `base` — it starts aligned with the content and
+      scrolls out to the screen edge instead of being cut at the content edge. (Transaction page is the reference.)
     - **Layout** (navigation, pane count, grid columns) branches on Material 3 window size classes
       (`CcWindowSizeClass`: compact <600, medium 600–840, expanded 840–1200, large 1200–1600, extraLarge ≥1600),
       measured from the **space a widget is given**: `CcAdaptiveBuilder` / `CcResponsiveFlex` (LayoutBuilder-based),

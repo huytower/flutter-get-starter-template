@@ -90,8 +90,11 @@ void revealRowCard({
   final extent =
       width +
       (effectiveContext != null ? effectiveContext.respDim(itemGap) : itemGap);
+  // On wide windows the row starts at the content inset (it bleeds to the
+  // trailing edge), so the inset is part of the leading offset.
   final leading = effectiveContext != null
-      ? effectiveContext.respPadding(leadingPadding)
+      ? effectiveContext.respPadding(leadingPadding) +
+            CcContentInset.read(effectiveContext)
       : leadingPadding;
 
   // Approach 2: Calculated offset for off-screen cards

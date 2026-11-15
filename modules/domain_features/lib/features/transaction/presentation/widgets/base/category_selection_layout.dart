@@ -35,35 +35,58 @@ class CategoryGridMetrics {
     required this.columns,
     required this.itemWidth,
     required this.gap,
-    required this.leading,
+    required this.start,
+    required this.end,
   });
 
+  /// [inset] is the content inset of a wide window ([CcContentInset]); 0 on
+  /// phones and portrait tablets, where the metrics are unchanged.
   factory CategoryGridMetrics.of(
     BuildContext context, {
     required double viewportWidth,
     required int itemCount,
+    double inset = 0,
   }) {
     final gap = context.respDim(categoryItemGap);
     final leading = context.respPadding(CcPaddingParams.PAGE_SM);
     final preferredExtent = context.respDim(categoryItemWidth) + gap;
-    final columns = math.max(
+    int columnsFor(double width) => math.max(
       minColumns,
-      ((viewportWidth - 2 * leading + gap) / preferredExtent).floor(),
+      ((width - 2 * leading + gap) / preferredExtent).floor(),
     );
 
-    // Everything fits on one page: fill the width exactly. Otherwise leave a
-    // sliver of the next column peeking under the right-edge fade as a scroll
-    // affordance.
-    final fitsOnePage = itemCount <= columns * rows;
-    final itemWidth = fitsOnePage
-        ? (viewportWidth - 2 * leading - (columns - 1) * gap) / columns
-        : (viewportWidth - leading - columns * gap) / (columns + _peek);
+    // Everything fits on one page of the content width: fill that width
+    // exactly, centred like the rest of the content.
+    final contentWidth = viewportWidth - 2 * inset;
+    final contentColumns = columnsFor(contentWidth);
+    if (itemCount <= contentColumns * rows) {
+      return CategoryGridMetrics._(
+        columns: contentColumns,
+        itemWidth: math.max(
+          1,
+          (contentWidth - 2 * leading - (contentColumns - 1) * gap) /
+              contentColumns,
+        ),
+        gap: gap,
+        start: leading + inset,
+        end: leading + inset,
+      );
+    }
 
+    // It scrolls: start aligned with the content and run to the trailing edge
+    // of the screen, leaving a sliver of the next column peeking under the
+    // edge fade as a scroll affordance.
+    final scrollWidth = viewportWidth - inset;
+    final columns = columnsFor(scrollWidth);
     return CategoryGridMetrics._(
       columns: columns,
-      itemWidth: math.max(1, itemWidth),
+      itemWidth: math.max(
+        1,
+        (scrollWidth - leading - columns * gap) / (columns + _peek),
+      ),
       gap: gap,
-      leading: leading,
+      start: leading + inset,
+      end: leading,
     );
   }
 
@@ -75,7 +98,10 @@ class CategoryGridMetrics {
   final int columns;
   final double itemWidth;
   final double gap;
-  final double leading;
+
+  /// Padding before the first and after the last column.
+  final double start;
+  final double end;
 
   int get pageSize => columns * rows;
 
@@ -103,7 +129,7 @@ class CategoryGridMetrics {
   }
 
   /// Scroll offset of the leading edge of [column].
-  double columnOffset(int column) => leading + column * (itemWidth + gap);
+  double columnOffset(int column) => start + column * (itemWidth + gap);
 }
 
 /// Scrolls the category grid so the card at [index] is visible, centering its
@@ -149,6 +175,7 @@ void revealCategoryGridItem({
     context,
     viewportWidth: viewport,
     itemCount: cellCount,
+    inset: CcContentInset.read(context),
   );
   final start = metrics.columnOffset(metrics.columnOfItem(index));
   final end = start + metrics.itemWidth;
@@ -211,13 +238,15 @@ class CategorySelectionLayout extends StatelessWidget {
       (CategoryGridMetrics.rows - 1) * context.respDim(categoryItemGap);
 
   Widget _buildHeaderLabel(BuildContext context) {
-    return CcSymmetricPadding(
-      horizontal: CcPaddingParams.PAGE_SM,
-      child: CcText(
-        el.tr(CcLocaleKeys.transaction_category),
-        textStyle: context.ccTextTheme.labelMedium?.copyWith(
-          color: context.ccColorScheme.onSurfaceVariant,
-          fontWeight: FontWeight.bold,
+    return CcContentPadding(
+      child: CcSymmetricPadding(
+        horizontal: CcPaddingParams.PAGE_SM,
+        child: CcText(
+          el.tr(CcLocaleKeys.transaction_category),
+          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+            color: context.ccColorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
@@ -243,11 +272,15 @@ class CategorySelectionLayout extends StatelessWidget {
             context,
             viewportWidth: constraints.maxWidth,
             itemCount: cellCount,
+            inset: CcContentInset.of(context),
           );
           return GridView.builder(
             scrollDirection: Axis.horizontal,
             controller: gridScrollController,
-            padding: EdgeInsets.symmetric(horizontal: metrics.leading),
+            padding: EdgeInsetsDirectional.only(
+              start: metrics.start,
+              end: metrics.end,
+            ),
             gridDelegate: _gridDelegate(metrics),
             itemCount: metrics.slotCount(cellCount),
             itemBuilder: (context, slot) {
@@ -273,11 +306,15 @@ class CategorySelectionLayout extends StatelessWidget {
             context,
             viewportWidth: constraints.maxWidth,
             itemCount: 0,
+            inset: CcContentInset.of(context),
           );
           return GridView.builder(
             scrollDirection: Axis.horizontal,
             physics: const NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: metrics.leading),
+            padding: EdgeInsetsDirectional.only(
+              start: metrics.start,
+              end: metrics.end,
+            ),
             gridDelegate: _gridDelegate(metrics),
             itemCount: metrics.pageSize,
             itemBuilder: (context, _) => _buildShimmerCell(context),

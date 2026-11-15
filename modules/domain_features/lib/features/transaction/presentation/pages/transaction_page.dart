@@ -195,21 +195,25 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
       final hidden = keyboardUp || controller.isKeypadOpen.value;
       final showInvestmentBadge = controller.showInvestmentBadge;
 
-      // The header behind runs full-bleed; the form stops at the content
-      // width on wide windows (beside the rail, large tablets).
-      return CcMaxWidth.content(
+      // Wide windows (beside the rail, large tablets): the tab bar and form
+      // cards stop at the content width, while the category / asset
+      // carousels start aligned with them and scroll out to the screen edge
+      // (CcContentInset). Phones and portrait tablets: inset 0, unchanged.
+      return CcContentInset(
         child: Column(
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               height: hidden ? 0 : headerHeight - overlap,
             ),
-            TransactionTabBar(
-              controller: controller,
-              tabController: _tabController,
-              showInvestmentBadge: showInvestmentBadge,
-              showLiabilityBadge: controller.showLiabilityBadge,
-              showLendBadge: controller.showLendBadge,
+            CcContentPadding(
+              child: TransactionTabBar(
+                controller: controller,
+                tabController: _tabController,
+                showInvestmentBadge: showInvestmentBadge,
+                showLiabilityBadge: controller.showLiabilityBadge,
+                showLendBadge: controller.showLendBadge,
+              ),
             ),
             Expanded(
               child: TransactionTabBarView(

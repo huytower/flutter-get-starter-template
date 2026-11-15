@@ -1,3 +1,4 @@
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' show CcContentPadding;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -57,7 +58,7 @@ class TransactionTabBarView extends StatelessWidget {
   Widget _buildPage(BuildContext context, TransactionTabKind tab) {
     final isUnlocked = controller.isTabUnlocked(tab);
     if (!isUnlocked) {
-      return CcLevelLockPlaceholder(tab: tab);
+      return CcContentPadding(child: CcLevelLockPlaceholder(tab: tab));
     }
 
     return switch (tab) {

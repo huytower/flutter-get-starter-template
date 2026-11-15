@@ -50,66 +50,69 @@ class MoneyKeypadPanel extends StatelessWidget {
           ),
         ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CcSymmetricPadding(
-            vertical: CcPaddingParams.SPACE_XS,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: CcQuickAmountChips(
-                    amounts: suggestions,
-                    onSelected: (val) => onSuggestion?.call(val),
-                    activeColor: activeColor,
-                    padding: EdgeInsets.only(
-                      left: context.respPadding(CcPaddingParams.SPACE_SM),
-                    ),
-                  ),
-                ),
-                CcIconButton.bouncing(
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: activeColor,
-                    size: context.respIconSize(baseSize: 20),
-                  ),
-                  onTap: onClear,
-                  tooltip: el.tr(CcLocaleKeys.common_clear),
-                ),
-                if (onCopy != null)
-                  CcIconButton.bouncing(
-                    icon: Icon(
-                      Icons.copy_rounded,
-                      color: activeColor,
-                      size: context.respIconSize(baseSize: 20),
-                    ),
-                    onTap: onCopy!,
-                    tooltip: el.tr(CcLocaleKeys.common_copy),
-                  ),
-                CcBouncing(
-                  onTap: onDone,
-                  child: CcSymmetricPadding(
-                    horizontal: CcPaddingParams.SPACE_XL,
-                    child: CcText(
-                      el.tr(CcLocaleKeys.common_done),
-                      textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                        color: activeColor,
-                        fontWeight: CcTypographyParams.bold,
+      // Background full-bleed; chips and keys capped at the content width.
+      child: CcContentPadding(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CcSymmetricPadding(
+              vertical: CcPaddingParams.SPACE_XS,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: CcQuickAmountChips(
+                      amounts: suggestions,
+                      onSelected: (val) => onSuggestion?.call(val),
+                      activeColor: activeColor,
+                      padding: EdgeInsets.only(
+                        left: context.respPadding(CcPaddingParams.SPACE_SM),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  CcIconButton.bouncing(
+                    icon: Icon(
+                      Icons.close_rounded,
+                      color: activeColor,
+                      size: context.respIconSize(baseSize: 20),
+                    ),
+                    onTap: onClear,
+                    tooltip: el.tr(CcLocaleKeys.common_clear),
+                  ),
+                  if (onCopy != null)
+                    CcIconButton.bouncing(
+                      icon: Icon(
+                        Icons.copy_rounded,
+                        color: activeColor,
+                        size: context.respIconSize(baseSize: 20),
+                      ),
+                      onTap: onCopy!,
+                      tooltip: el.tr(CcLocaleKeys.common_copy),
+                    ),
+                  CcBouncing(
+                    onTap: onDone,
+                    child: CcSymmetricPadding(
+                      horizontal: CcPaddingParams.SPACE_XL,
+                      child: CcText(
+                        el.tr(CcLocaleKeys.common_done),
+                        textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                          color: activeColor,
+                          fontWeight: CcTypographyParams.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          QuickNumericKeypad(
-            onKeyPress: onKeyPress,
-            onDelete: onDelete,
-            onClear: onClear,
-            activeColor: activeColor,
-          ),
-        ],
+            QuickNumericKeypad(
+              onKeyPress: onKeyPress,
+              onDelete: onDelete,
+              onClear: onClear,
+              activeColor: activeColor,
+            ),
+          ],
+        ),
       ),
     );
   }

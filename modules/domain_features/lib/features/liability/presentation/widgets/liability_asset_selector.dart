@@ -24,23 +24,27 @@ class LiabilityAssetSelector extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CcSymmetricPadding(
-          horizontal: CcPaddingParams.PAGE_XS,
-          child: CcText(
-            el.tr(CcLocaleKeys.transaction_category),
-            textStyle: context.ccTextTheme.labelMedium?.copyWith(
-              color: context.ccColorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.bold,
+        CcContentPadding(
+          child: CcSymmetricPadding(
+            horizontal: CcPaddingParams.PAGE_XS,
+            child: CcText(
+              el.tr(CcLocaleKeys.transaction_category),
+              textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                color: context.ccColorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
         const CcSpaceXS(),
         Obx(() {
           if (controller.isLoadingMerged.value) {
-            return CcCategoryShimmerList(
-              height: context.respDim(95),
-              verticalPadding: context.respDim(4),
-              separator: const CcSpaceMD(),
+            return CcContentPadding(
+              child: CcCategoryShimmerList(
+                height: context.respDim(95),
+                verticalPadding: context.respDim(4),
+                separator: const CcSpaceMD(),
+              ),
             );
           }
 
@@ -49,9 +53,12 @@ class LiabilityAssetSelector extends StatelessWidget {
           // The customize cell is only offered while there is nothing to
           // pick; it opens the liability list with the add sheet on top.
           if (items.isEmpty) {
-            return CategoryCustomizeEmptyState(
-              hint: el.tr(CcLocaleKeys.liability_empty_state),
-              onCustomize: () => LiabilityGridPage.open(context, openAdd: true),
+            return CcContentPadding(
+              child: CategoryCustomizeEmptyState(
+                hint: el.tr(CcLocaleKeys.liability_empty_state),
+                onCustomize: () =>
+                    LiabilityGridPage.open(context, openAdd: true),
+              ),
             );
           }
 
@@ -61,9 +68,14 @@ class LiabilityAssetSelector extends StatelessWidget {
             builder: (scrollController) => ListView.separated(
               scrollDirection: Axis.horizontal,
               controller: scrollController,
-              padding: EdgeInsets.symmetric(
-                horizontal: context.respPadding(CcPaddingParams.PAGE_XS),
-                vertical: context.respDim(4),
+              // Starts aligned with the content, scrolls out to the screen edge.
+              padding: EdgeInsetsDirectional.only(
+                start:
+                    context.respPadding(CcPaddingParams.PAGE_XS) +
+                    CcContentInset.of(context),
+                end: context.respPadding(CcPaddingParams.PAGE_XS),
+                top: context.respDim(4),
+                bottom: context.respDim(4),
               ),
               itemCount: items.length,
               separatorBuilder: (context, index) => const CcSpaceSM(),
