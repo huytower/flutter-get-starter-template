@@ -117,7 +117,11 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
   }
 
   Widget _buildSeeMoreDescription(BuildContext context) {
-    final text = el.tr(CcLocaleKeys.reconciliation_description_line_1);
+    // The one-line preview is plain text: drop the `**keyword**` markers that
+    // the guide sheet turns into emphasis.
+    final text = el
+        .tr(CcLocaleKeys.reconciliation_description_line_1)
+        .replaceAll('**', '');
     return CcBouncing(
       onTap: () => ReconciliationGuideSheet.show(context),
       borderRadius: context.brSm,

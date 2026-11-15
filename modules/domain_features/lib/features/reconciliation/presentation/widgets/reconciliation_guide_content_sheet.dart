@@ -139,18 +139,42 @@ class ReconciliationGuideContentSheet extends StatelessWidget {
           ),
         ),
         const CcSpaceSM(),
-        Expanded(
-          child: CcText(
-            text,
-            maxLines: 10,
-            textAlign: TextAlign.start,
-            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-              color: scheme.onSurfaceVariant,
-              height: 1.4,
-            ),
-          ),
-        ),
+        Expanded(child: _buildHighlightedText(context, scheme, text)),
       ],
+    );
+  }
+
+  /// Renders [text] with every `**keyword**` run emphasized in the primary
+  /// color and bold, so the key step or button name stands out. Plain parts
+  /// keep the muted body color. Plain `Text.rich` is used (not `CcText`, which
+  /// takes a single string and style).
+  Widget _buildHighlightedText(
+    BuildContext context,
+    ColorScheme scheme,
+    String text,
+  ) {
+    final baseStyle = context.ccTextTheme.bodyMedium?.copyWith(
+      color: scheme.onSurfaceVariant,
+      height: 1.4,
+    );
+    final keywordStyle = baseStyle?.copyWith(
+      color: scheme.primary,
+      fontWeight: CcTypographyParams.bold,
+    );
+
+    // Splitting on the marker alternates plain / keyword / plain / ...; an
+    // unmatched marker simply leaves the tail as a keyword, never throws.
+    final parts = text.split('**');
+    return Text.rich(
+      TextSpan(
+        style: baseStyle,
+        children: [
+          for (final (index, part) in parts.indexed)
+            if (part.isNotEmpty)
+              TextSpan(text: part, style: index.isOdd ? keywordStyle : null),
+        ],
+      ),
+      textAlign: TextAlign.start,
     );
   }
 
