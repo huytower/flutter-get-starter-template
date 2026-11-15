@@ -89,6 +89,8 @@
     "terms_of_service": "利用規約",
     "link_account": "アカウント連携",
     "link_phone": "電話番号連携",
+    "apple_verify_failed": "Apple IDを確認できませんでした。iPhoneの設定でApple IDを確認して、もう一度お試しください。",
+    "recent_login_required": "セキュリティのため、アカウントを削除する前に再度ログインしてください。",
     "agree_prefix": "同意する ",
     "biometric": {
       "reason": "認証が必要です",

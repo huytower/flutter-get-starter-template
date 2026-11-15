@@ -89,6 +89,8 @@
     "terms_of_service": "服务条款",
     "link_account": "关联账号",
     "link_phone": "关联手机号码",
+    "apple_verify_failed": "无法验证 Apple ID。请在 iPhone 设置中检查您的 Apple ID 后重试。",
+    "recent_login_required": "出于安全考虑，请在删除账户前重新登录。",
     "agree_prefix": "我同意 ",
     "biometric": {
       "reason": "需要身份验证",

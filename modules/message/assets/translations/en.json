@@ -89,6 +89,8 @@
     "terms_of_service": "Terms of Service",
     "link_account": "Link Account",
     "link_phone": "Link Phone Number",
+    "apple_verify_failed": "Couldn't verify your Apple ID. Please check your Apple ID in iPhone Settings and try again.",
+    "recent_login_required": "For security, please log in again before deleting your account.",
     "agree_prefix": "I agree with ",
     "biometric": {
       "reason": "Authentication required",

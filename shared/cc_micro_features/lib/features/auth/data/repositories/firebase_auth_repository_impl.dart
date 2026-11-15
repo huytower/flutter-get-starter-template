@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:catcher_2/catcher_2.dart';
+import 'package:cc_micro_features/features/auth/domain/auth_failures.dart';
 import 'package:cc_micro_features/features/auth/domain/phone_auth_status.dart';
 import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
@@ -105,6 +106,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         return _applyAppleFullName(
           signInResult.tryGetSuccess()!,
           apple.fullName,
+          flow: 'signIn',
         );
       },
       (failure) {
@@ -125,26 +127,36 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   /// Best effort: a failure to store the name must never fail the sign-in.
   Future<Result<CcUserEntity, CcFailure>> _applyAppleFullName(
     CcUserEntity signedIn,
-    String? receivedName,
-  ) async {
+    String? receivedName, {
+    required String flow,
+  }) async {
     // Apple sends the name once. A name kept from an earlier attempt that never
     // reached the account (sign-in failed/cancelled after Apple answered) is
     // used when this response carries none.
-    final fullName = (receivedName != null && receivedName.isNotEmpty)
+    final appleSentName = receivedName != null && receivedName.isNotEmpty;
+    final fullName = appleSentName
         ? receivedName
         : await _readPendingAppleName();
     final hasAppleName = fullName != null && fullName.isNotEmpty;
     final hasAccountName = (_firebaseAuth.currentUser?.displayName ?? '')
         .trim()
         .isNotEmpty;
-    '[AppleName] Apple sent a name: $hasAppleName | account already has a name: $hasAccountName'
+    '[AppleName] flow=$flow isNewUser=$_lastIsNewUser | Apple sent a name: $appleSentName | name available (incl. kept): $hasAppleName | account already has a name: $hasAccountName'
         .Log('FirebaseAuthRepositoryImpl');
-    _reportAppleNameDiagnostics(
-      stage: 'received',
-      user: _firebaseAuth.currentUser,
-      entity: signedIn,
-      appleSentName: hasAppleName,
-    );
+    // A RETURNING user (existing account) never gets a name or email from
+    // Apple — that is Apple's documented behaviour, not a fault, so it is only
+    // logged locally. Slack is reserved for the real anomaly: a brand-new
+    // Apple authorization (new account / newly linked provider) that came back
+    // with no name, and no name kept from an earlier attempt either.
+    if (!hasAppleName && !hasAccountName && _lastIsNewUser == true) {
+      _reportAppleNameDiagnostics(
+        stage: 'first-auth-without-name',
+        flow: flow,
+        user: _firebaseAuth.currentUser,
+        entity: signedIn,
+        appleSentName: appleSentName,
+      );
+    }
     if (!hasAppleName) return Success(signedIn);
     try {
       final user = _firebaseAuth.currentUser;
@@ -161,18 +173,15 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         'FirebaseAuthRepositoryImpl',
       );
       final mapped = _mapFirebaseUserToEntity(refreshed);
-      _reportAppleNameDiagnostics(
-        stage: 'saved',
-        user: refreshed,
-        entity: mapped,
-        appleSentName: true,
-      );
       return Success(mapped);
     } catch (e, stack) {
       // Reported (not just logged) so a name that silently fails to save shows
       // up in Crashlytics instead of leaving the profile blank.
       Catcher2.reportCheckedError(
-        Exception('[AppleName] Could not store the Apple full name: $e'),
+        Exception(
+          '[AppleName] Could not store the Apple full name | flow=$flow '
+          'isNewUser=$_lastIsNewUser | error=$e',
+        ),
         stack,
       );
       return Success(signedIn);
@@ -223,12 +232,19 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   /// values), kept only for [_reportAppleNameDiagnostics].
   String _lastAppleNameFlags = 'n/a';
 
+  /// Whether the last Firebase sign-in created a new account, or the last link
+  /// attached a provider for the first time. Null when unknown. Separates a
+  /// first Apple authorization (name expected) from a returning user (Apple
+  /// never resends the name).
+  bool? _lastIsNewUser;
+
   /// Sends a PRIVACY-SAFE trace to the crash Slack channel (through the
   /// existing Catcher2 handler) so a missing Apple name can be diagnosed on a
   /// real device. It carries only yes/no flags and provider ids — never the
   /// name, email, phone or uid.
   void _reportAppleNameDiagnostics({
     required String stage,
+    required String flow,
     required firebase_auth.User? user,
     required CcUserEntity entity,
     required bool appleSentName,
@@ -238,6 +254,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       final providers = user?.providerData ?? const [];
       final report = [
         '[AppleName][Diag] stage=$stage',
+        'flow=$flow isNewUser=$_lastIsNewUser',
         'appleSentName=$appleSentName ($_lastAppleNameFlags)',
         'user.displayName=${has(user?.displayName)}',
         'user.photoURL=${has(user?.photoURL)}',
@@ -270,10 +287,16 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   }
 
   /// Shared helper to handle the Apple Sign-In "dance" and return a Firebase
-  /// credential together with the full name Apple provided (first sign-in only).
+  /// credential together with the full name Apple provided (first sign-in only)
+  /// and the one-time authorization code (needed to revoke the token on account
+  /// deletion).
   Future<
     Result<
-      ({firebase_auth.AuthCredential credential, String? fullName}),
+      ({
+        firebase_auth.AuthCredential credential,
+        String? fullName,
+        String authorizationCode,
+      }),
       CcFailure
     >
   >
@@ -318,21 +341,21 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       // Keep the name the moment Apple hands it over: it is never sent again,
       // so it must survive a failure in any later step.
       if (fullName != null) await _savePendingAppleName(fullName);
-      return Success((credential: credential, fullName: fullName));
+      return Success((
+        credential: credential,
+        fullName: fullName,
+        authorizationCode: appleCredential.authorizationCode,
+      ));
     } on SignInWithAppleAuthorizationException catch (e, stack) {
       if (e.code == AuthorizationErrorCode.canceled) {
-        return const Error(UnauthorizedFailure('Authentication cancelled'));
+        return const Error(AuthCancelledFailure());
       }
       final traceErr = Exception(
         '[AppleSignInTrace] Authorization Failed | Code: ${e.code} | Message: ${e.message}',
       );
       Catcher2.reportCheckedError(traceErr, stack);
       if (e.code == AuthorizationErrorCode.unknown) {
-        return const Error(
-          UnauthorizedFailure(
-            'Không thể xác thực Apple ID. Vui lòng kiểm tra tài khoản Apple ID trong Cài đặt iPhone của bạn và thử lại.',
-          ),
-        );
+        return const Error(AppleVerificationFailure());
       }
       return Error(ServerFailure('Apple Sign-In failed: ${e.message}'));
     } catch (e, stack) {
@@ -453,6 +476,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         credential,
       );
       final user = userCredential.user;
+      _lastIsNewUser = userCredential.additionalUserInfo?.isNewUser;
 
       return switch (user) {
         firebase_auth.User u => Success(_mapFirebaseUserToEntity(u)),
@@ -481,7 +505,11 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
     return credResult.when((apple) async {
       final linked = await _linkWithCredential(apple.credential);
       if (linked.isError()) return linked;
-      return _applyAppleFullName(linked.tryGetSuccess()!, apple.fullName);
+      return _applyAppleFullName(
+        linked.tryGetSuccess()!,
+        apple.fullName,
+        flow: 'link',
+      );
     }, (failure) => Error(failure));
   }
 
@@ -501,7 +529,7 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       );
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) {
-        return const Error(UnauthorizedFailure('Authentication cancelled'));
+        return const Error(AuthCancelledFailure());
       }
       return Error(ServerFailure(e.toString()));
     } catch (_) {
@@ -570,20 +598,106 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         return const Error(UnauthorizedFailure('Not logged in'));
       }
 
+      final providerIds = user.providerData.map((p) => p.providerId).toSet();
+      final hasApple = providerIds.contains('apple.com');
+      final hasGoogle = providerIds.contains('google.com');
+
+      // Sign in with Apple: App Store guideline 5.1.1(v) requires revoking the
+      // Apple token when the account is deleted. Apple only issues the
+      // authorization code needed for that during a fresh authorization, so
+      // re-authenticate first (this also satisfies Firebase's recent-login
+      // rule), revoke, then delete.
+      if (hasApple) {
+        final failure = await _reauthenticateAndRevokeApple(user);
+        if (failure != null) return Error(failure);
+      }
+
       try {
         await user.delete();
       } on firebase_auth.FirebaseAuthException catch (e) {
-        if (e.code == 'requires-recent-login') {
-          return const Error(
-            ServerFailure('Please re-login before deleting your account.'),
-          );
+        if (e.code != 'requires-recent-login') {
+          return Error(_mapLinkException(e));
         }
-        return Error(_mapLinkException(e));
+        // Google can be re-authenticated in place; phone/email cannot without
+        // a dedicated flow, so those get a localized "log in again" message.
+        if (!hasGoogle || hasApple) {
+          return const Error(RecentLoginRequiredFailure());
+        }
+        final reauth = await _reauthenticateWithGoogle(user);
+        if (reauth != null) return Error(reauth);
+        try {
+          await user.delete();
+        } on firebase_auth.FirebaseAuthException catch (retry) {
+          return Error(_mapLinkException(retry));
+        }
       }
 
       return const Success(unit);
     } catch (e) {
       return Error(UnknownFailure('Delete account failed: $e'));
+    }
+  }
+
+  /// Re-authenticates [user] with a fresh Apple authorization, then revokes the
+  /// Apple token. Returns a failure to abort the deletion (user cancelled or
+  /// re-authentication failed), or null to continue.
+  ///
+  /// A failed revoke does NOT block the deletion — the user asked to leave and
+  /// a broken Apple key setup in Firebase must not trap them — but it is
+  /// reported to Slack so the compliance gap is visible and fixable.
+  Future<CcFailure?> _reauthenticateAndRevokeApple(
+    firebase_auth.User user,
+  ) async {
+    final appleResult = await _getAppleCredential();
+    if (appleResult.isError()) return appleResult.tryGetError();
+    final apple = appleResult.tryGetSuccess()!;
+
+    final reauth = await _reauthenticate(user, apple.credential);
+    if (reauth != null) {
+      Catcher2.reportCheckedError(
+        Exception(
+          '[AppleRevoke] Re-authentication before delete failed: ${reauth.message}',
+        ),
+        StackTrace.current,
+      );
+      return reauth;
+    }
+
+    try {
+      await _firebaseAuth.revokeTokenWithAuthorizationCode(
+        apple.authorizationCode,
+      );
+      '[AppleRevoke] Apple token revoked'.Log('FirebaseAuthRepositoryImpl');
+    } catch (e, stack) {
+      Catcher2.reportCheckedError(
+        Exception(
+          '[AppleRevoke] Could not revoke the Apple token, account deletion '
+          'continues | error=$e | Check the Apple provider setup (Team ID, '
+          'Key ID, private key) in Firebase Console > Authentication.',
+        ),
+        stack,
+      );
+    }
+    return null;
+  }
+
+  Future<CcFailure?> _reauthenticateWithGoogle(firebase_auth.User user) async {
+    final credResult = await _getGoogleCredential();
+    if (credResult.isError()) return credResult.tryGetError();
+    return _reauthenticate(user, credResult.tryGetSuccess()!);
+  }
+
+  Future<CcFailure?> _reauthenticate(
+    firebase_auth.User user,
+    firebase_auth.AuthCredential credential,
+  ) async {
+    try {
+      await user.reauthenticateWithCredential(credential);
+      return null;
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return ServerFailure(e.message ?? 'Re-authentication failed');
+    } catch (e) {
+      return UnknownFailure('Re-authentication failed: $e');
     }
   }
 
@@ -597,6 +711,8 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       }
       final userCredential = await current.linkWithCredential(credential);
       final user = userCredential.user ?? current;
+      // A successful link attaches the provider for the first time.
+      _lastIsNewUser = true;
 
       return Success(_mapFirebaseUserToEntity(user));
     } on firebase_auth.FirebaseAuthException catch (e) {
@@ -608,6 +724,8 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
             credential,
           );
           final newUser = newCredential.user;
+          // Switched to an existing account: a returning user.
+          _lastIsNewUser = false;
           if (newUser != null) {
             return Success(_mapFirebaseUserToEntity(newUser));
           }

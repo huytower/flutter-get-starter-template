@@ -16,6 +16,12 @@ class LoginLoading extends LoginState {
   const LoginLoading();
 }
 
+/// The user dismissed the Google/Apple sheet. Not an error: the page only
+/// closes the loading sheet, no message is shown.
+class LoginCancelled extends LoginState {
+  const LoginCancelled();
+}
+
 class LoginSuccess extends LoginState {
   final CcUserEntity user;
 

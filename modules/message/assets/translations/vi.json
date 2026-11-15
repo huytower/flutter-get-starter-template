@@ -89,6 +89,8 @@
     "terms_of_service": "Điều khoản dịch vụ",
     "link_account": "Liên kết tài khoản",
     "link_phone": "Liên kết số điện thoại",
+    "apple_verify_failed": "Không thể xác thực Apple ID. Vui lòng kiểm tra tài khoản Apple ID trong Cài đặt iPhone của bạn và thử lại.",
+    "recent_login_required": "Vì lý do bảo mật, vui lòng đăng nhập lại trước khi xóa tài khoản.",
     "agree_prefix": "Tôi đồng ý với ",
     "biometric": {
       "reason": "Yêu cầu xác thực",

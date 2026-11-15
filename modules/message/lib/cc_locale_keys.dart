@@ -110,6 +110,8 @@ class CodegenLoader extends AssetLoader {
       "terms_of_service": "Terms of Service",
       "link_account": "Link Account",
       "link_phone": "Link Phone Number",
+      "apple_verify_failed": "Couldn't verify your Apple ID. Please check your Apple ID in iPhone Settings and try again.",
+      "recent_login_required": "For security, please log in again before deleting your account.",
       "agree_prefix": "I agree with ",
       "biometric": {
         "reason": "Authentication required",
@@ -1013,6 +1015,8 @@ class CodegenLoader extends AssetLoader {
       "terms_of_service": "Điều khoản dịch vụ",
       "link_account": "Liên kết tài khoản",
       "link_phone": "Liên kết số điện thoại",
+      "apple_verify_failed": "Không thể xác thực Apple ID. Vui lòng kiểm tra tài khoản Apple ID trong Cài đặt iPhone của bạn và thử lại.",
+      "recent_login_required": "Vì lý do bảo mật, vui lòng đăng nhập lại trước khi xóa tài khoản.",
       "agree_prefix": "Tôi đồng ý với ",
       "biometric": {
         "reason": "Yêu cầu xác thực",
@@ -1908,6 +1912,8 @@ class CodegenLoader extends AssetLoader {
       "terms_of_service": "서비스 이용약관",
       "link_account": "계정 연동",
       "link_phone": "휴대폰 번호 연동",
+      "apple_verify_failed": "Apple ID를 확인할 수 없습니다. iPhone 설정에서 Apple ID를 확인한 후 다시 시도해 주세요.",
+      "recent_login_required": "보안을 위해 계정을 삭제하기 전에 다시 로그인해 주세요.",
       "agree_prefix": "동의합니다 ",
       "biometric": {
         "reason": "인증 필요",
@@ -2754,6 +2760,8 @@ class CodegenLoader extends AssetLoader {
       "terms_of_service": "利用規約",
       "link_account": "アカウント連携",
       "link_phone": "電話番号連携",
+      "apple_verify_failed": "Apple IDを確認できませんでした。iPhoneの設定でApple IDを確認して、もう一度お試しください。",
+      "recent_login_required": "セキュリティのため、アカウントを削除する前に再度ログインしてください。",
       "agree_prefix": "同意する ",
       "biometric": {
         "reason": "認証が必要です",
@@ -3589,6 +3597,8 @@ class CodegenLoader extends AssetLoader {
       "terms_of_service": "服务条款",
       "link_account": "关联账号",
       "link_phone": "关联手机号码",
+      "apple_verify_failed": "无法验证 Apple ID。请在 iPhone 设置中检查您的 Apple ID 后重试。",
+      "recent_login_required": "出于安全考虑，请在删除账户前重新登录。",
       "agree_prefix": "我同意 ",
       "biometric": {
         "reason": "需要身份验证",
@@ -4429,6 +4439,8 @@ class CcLocaleKeys {
   static const auth_terms_of_service = 'auth.terms_of_service';
   static const auth_link_account = 'auth.link_account';
   static const auth_link_phone = 'auth.link_phone';
+  static const auth_apple_verify_failed = 'auth.apple_verify_failed';
+  static const auth_recent_login_required = 'auth.recent_login_required';
   static const auth_agree_prefix = 'auth.agree_prefix';
   static const auth_biometric = 'auth.biometric';
   static const auth_biometric_reason = 'auth.biometric.reason';

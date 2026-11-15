@@ -45,6 +45,12 @@ class _LoginViewState extends State<LoginView> {
           getIt<AuthCoordinator>().navigateToDashboard(context);
         } else if (state is LoginLoading) {
           CcDialogHelper.showLoadingBottomSheet(context);
+        } else if (state is LoginCancelled) {
+          // User dismissed the Google/Apple sheet: just close the loading
+          // sheet, no error.
+          Navigator.of(context, rootNavigator: true).popUntil(
+            (route) => route.isFirst || route is! ModalBottomSheetRoute,
+          );
         } else if (state is LoginError) {
           // Dismiss the loading bottom sheet if it's on top
           Navigator.of(context, rootNavigator: true).popUntil(

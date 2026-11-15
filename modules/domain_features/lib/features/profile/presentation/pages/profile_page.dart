@@ -1,4 +1,6 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_micro_features/export_micro_features.dart'
+    show AuthCancelledFailure, authFailureMessage;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/core/getx/cc_get_view.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
@@ -349,10 +351,13 @@ class ProfilePage extends CcGetView<ProfileController> {
                 // Guest state because session.clearSession() was called.
               },
               (failure) {
+                // Dismissing the Apple/Google re-authentication sheet is not
+                // an error.
+                if (failure is AuthCancelledFailure) return;
                 if (context.mounted) {
                   CcSnackBarHelper.showErrorSnackBar(
                     context: context,
-                    message: failure.message,
+                    message: authFailureMessage(failure),
                   );
                 }
               },
