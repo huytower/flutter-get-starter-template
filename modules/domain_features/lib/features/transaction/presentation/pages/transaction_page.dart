@@ -108,7 +108,7 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
       compact: 0.27,
       medium: 0.28,
     );
-    final headerHeight = MediaQuery.sizeOf(context).height * headerHeightFactor;
+    final headerHeight = context.respHeaderHeight(headerHeightFactor);
 
     // Use a custom inherited widget or provide the controller to TransactionTabBar
     // but here we can just wrap our content with a TabController provider.
@@ -155,7 +155,7 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
       compact: 0.27,
       medium: 0.29,
     );
-    final headerHeight = MediaQuery.sizeOf(context).height * headerHeightFactor;
+    final headerHeight = context.respHeaderHeight(headerHeightFactor);
 
     final tabBarHeight = context.respDim(64);
     final overlap = tabBarHeight / 2;

@@ -56,7 +56,12 @@ class _LendDirectionToggleState extends State<LendDirectionToggle>
 
     return Center(
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.6,
+        // 60% of a phone width; capped so it stays a compact toggle on
+        // tablets and beside the rail.
+        width: (MediaQuery.sizeOf(context).width * 0.6).clamp(
+          0.0,
+          context.respDim(240),
+        ),
         child: Container(
           height: context.respDim(35),
           decoration: BoxDecoration(

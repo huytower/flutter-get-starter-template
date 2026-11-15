@@ -131,8 +131,13 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
 8. **Spacing** — use `CcSpace*` (XS=4, SM=8, MD=12, LG=16, XL=24) instead of raw `SizedBox(height: context.respDim(N))`
    for token values. Raw `SizedBox` is fine only for non-token gaps or sizing shapes/icons/charts.
 9. **Responsiveness (Adaptive-First)** — two separate concerns, never mixed:
-    - **Scale** (sizes of text/icons/gaps) follows the window: `context.respDim()`, `context.respPadding()`,
-      `context.respIconSize()`, `context.ccTextTheme`.
+    - **Scale** (sizes of text/icons/gaps) follows the window through one curve, `CcScale` (phones keep
+      `width/360`, then a smooth rise to the max at 840 dp, flat beyond): `context.respDim()`, `context.respPadding()`,
+      `context.respIconSize()`, `context.respFontSize()`, `context.ccTextTheme`. Never write your own
+      `width / 360` factor. Hero headers use `context.respHeaderHeight(factor)` instead of a raw screen-height
+      percentage.
+    - Width-based sizing reads the space a widget is given (`LayoutBuilder`), not `MediaQuery` width — next to
+      the navigation rail the two differ. Cap any remaining screen-ratio size (e.g. `.clamp(0, respDim(n))`).
     - **Layout** (navigation, pane count, grid columns) branches on Material 3 window size classes
       (`CcWindowSizeClass`: compact <600, medium 600–840, expanded 840–1200, large 1200–1600, extraLarge ≥1600),
       measured from the **space a widget is given**: `CcAdaptiveBuilder` / `CcResponsiveFlex` (LayoutBuilder-based),

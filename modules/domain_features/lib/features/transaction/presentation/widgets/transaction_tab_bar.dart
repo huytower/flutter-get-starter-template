@@ -63,25 +63,31 @@ class TransactionTabBar extends StatelessWidget {
           children: [
             SizedBox(
               height: context.respDim(64),
-              child: Stack(
-                clipBehavior: Clip.none,
-                alignment: Alignment.center,
-                children: [
-                  // Back Card (Affordance)
-                  _buildCard(
-                    context: context,
-                    isFront: false,
-                    isSecondary: !isSecondaryFront,
-                    scheme: scheme,
-                  ),
-                  // Front Card (Interaction)
-                  _buildCard(
-                    context: context,
-                    isFront: true,
-                    isSecondary: isSecondaryFront,
-                    scheme: scheme,
-                  ),
-                ],
+              // Cards span the width this bar is given (inside the page
+              // margin), not the screen — correct beside the rail too.
+              child: LayoutBuilder(
+                builder: (context, constraints) => Stack(
+                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
+                  children: [
+                    // Back Card (Affordance)
+                    _buildCard(
+                      context: context,
+                      cardWidth: constraints.maxWidth,
+                      isFront: false,
+                      isSecondary: !isSecondaryFront,
+                      scheme: scheme,
+                    ),
+                    // Front Card (Interaction)
+                    _buildCard(
+                      context: context,
+                      cardWidth: constraints.maxWidth,
+                      isFront: true,
+                      isSecondary: isSecondaryFront,
+                      scheme: scheme,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -92,14 +98,12 @@ class TransactionTabBar extends StatelessWidget {
 
   Widget _buildCard({
     required BuildContext context,
+    required double cardWidth,
     required bool isFront,
     required bool isSecondary,
     required ColorScheme scheme,
   }) {
     final cardHeight = context.respDim(44);
-    final cardWidth =
-        MediaQuery.of(context).size.width -
-        (context.respPadding(CcPaddingParams.PAGE_MD) * 2);
 
     final tabs = isSecondary
         ? [
