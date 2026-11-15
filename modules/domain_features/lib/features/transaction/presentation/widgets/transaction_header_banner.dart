@@ -23,11 +23,16 @@ class TransactionHeaderBanner extends StatelessWidget {
     required this.controller,
     required this.guideline,
     this.expenseFormController,
+    this.hideGuidelineDescription = false,
   });
 
   final TransactionController controller;
   final GuidelineController guideline;
   final ExpenseFormController? expenseFormController;
+
+  /// Shows only the challenge title (one line) — for the one-row header on
+  /// short wide windows, where a wrapped description would not fit.
+  final bool hideGuidelineDescription;
 
   bool _isSupportedLanguageAndCurrency(BuildContext context) {
     final languageCode = el.EasyLocalization.of(
@@ -68,7 +73,9 @@ class TransactionHeaderBanner extends StatelessWidget {
           guideline.isBannerHidden.value = false;
         }
       },
-      child: const TransactionGuidelineBanner(shouldHideDescription: false),
+      child: TransactionGuidelineBanner(
+        shouldHideDescription: hideGuidelineDescription,
+      ),
     );
   }
 

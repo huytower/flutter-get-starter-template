@@ -175,8 +175,12 @@ class _NavigationBarState extends State<NavigationBar>
 
   Widget _buildNavigationRail(BuildContext context) {
     final guideline = Get.find<GuidelineController>();
-    // Labels beside icons once the window is desktop-class (≥ 1200 dp).
-    final extended = context.windowSizeClass.isAtLeast(CcWindowSizeClass.large);
+    // Labels beside icons only on desktop-class windows (≥ 1600 dp, web/PC).
+    // Tablets — even a 10" one in landscape (~1280 dp) — keep the compact
+    // rail so the content keeps the room.
+    final extended = context.windowSizeClass.isAtLeast(
+      CcWindowSizeClass.extraLarge,
+    );
     return Obx(() {
       final _ = guideline.bounceTrigger.value;
       return buildNavigationRail(extended: extended);
@@ -194,7 +198,11 @@ class _NavigationBarState extends State<NavigationBar>
       children: [
         if (showRail) _buildNavigationRail(context),
         Expanded(
-          child: KeyedSubtree(key: _contentKey, child: body),
+          // Lets pages square the edge that touches the rail.
+          child: CcNavigationRailScope(
+            railVisible: showRail,
+            child: KeyedSubtree(key: _contentKey, child: body),
+          ),
         ),
       ],
     );

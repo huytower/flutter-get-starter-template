@@ -18,6 +18,7 @@ class TransactionPageHeader extends StatelessWidget {
     this.onOpenReport,
     this.onSubmit,
     this.expenseFormController,
+    this.onInlineRowHeightChanged,
   });
 
   final TransactionController controller;
@@ -25,6 +26,10 @@ class TransactionPageHeader extends StatelessWidget {
   final VoidCallback? onOpenReport;
   final VoidCallback? onSubmit;
   final ExpenseFormController? expenseFormController;
+
+  /// Reports the height of the one-row header content (see [useInlineLayout])
+  /// so the page can size the header to it instead of a screen percentage.
+  final ValueChanged<double>? onInlineRowHeightChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +53,11 @@ class TransactionPageHeader extends StatelessWidget {
         height: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(context.respDim(16)),
+            // Square where the header meets the navigation rail, so it reads
+            // as one surface with the rail instead of a floating card.
+            bottomLeft: CcNavigationRailScope.railVisibleOf(context)
+                ? Radius.zero
+                : Radius.circular(context.respDim(16)),
             bottomRight: Radius.circular(context.respDim(16)),
           ),
           image: DecorationImage(
@@ -59,7 +68,7 @@ class TransactionPageHeader extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         // Background full-bleed, foreground capped on wide windows.
         child: CcMaxWidth.content(
-          child: _useInlineLayout(context)
+          child: useInlineLayout(context)
               ? _buildInlineForeground(context)
               : _buildHeroForeground(context),
         ),
@@ -70,47 +79,60 @@ class TransactionPageHeader extends StatelessWidget {
   /// Wide but short windows (tablet / iPad in landscape, ≥ 840 dp wide and
   /// < 900 dp tall): title, banner and actions share one row so the header
   /// stays low and the tab bar never covers the banner.
-  static bool _useInlineLayout(BuildContext context) =>
+  static bool useInlineLayout(BuildContext context) =>
       context.windowSizeClass.isAtLeast(CcWindowSizeClass.expanded) &&
       !context.windowHeightClass.isAtLeast(CcWindowHeightClass.expanded);
 
   Widget _buildInlineForeground(BuildContext context) {
     final guideline = Get.find<GuidelineController>();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(height: MediaQuery.paddingOf(context).top),
-        const CcSpaceMD(),
-        CcSymmetricPadding(
-          horizontal: CcPaddingParams.PAGE_MD,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              TransactionHeaderTitle(
-                controller: controller,
-                quickEntryControllerFor: _quickEntryControllerFor,
-                flex: 2,
+    // Laid out at its natural height (never squeezed by the header box) and
+    // measured, so the page sizes the header to its content.
+    return OverflowBox(
+      alignment: Alignment.topCenter,
+      minHeight: 0,
+      maxHeight: double.infinity,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SizedBox(height: MediaQuery.paddingOf(context).top),
+          const CcSpaceMD(),
+          CcMeasureSize(
+            onChange: (size) => onInlineRowHeightChanged?.call(size.height),
+            child: CcSymmetricPadding(
+              horizontal: CcPaddingParams.PAGE_MD,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  TransactionHeaderTitle(
+                    controller: controller,
+                    quickEntryControllerFor: _quickEntryControllerFor,
+                    flex: 2,
+                  ),
+                  const CcSpaceMD(),
+                  Expanded(
+                    flex: 3,
+                    child: TransactionHeaderBanner(
+                      controller: controller,
+                      guideline: guideline,
+                      expenseFormController: expenseFormController,
+                      // One line only: a wrapped description would not fit.
+                      hideGuidelineDescription: true,
+                    ),
+                  ),
+                  const CcSpaceSM(),
+                  TransactionHeaderActions(
+                    controller: controller,
+                    onSubmit: onSubmit,
+                    onOpenReport: onOpenReport,
+                  ),
+                ],
               ),
-              const CcSpaceMD(),
-              Expanded(
-                flex: 3,
-                child: TransactionHeaderBanner(
-                  controller: controller,
-                  guideline: guideline,
-                  expenseFormController: expenseFormController,
-                ),
-              ),
-              const CcSpaceSM(),
-              TransactionHeaderActions(
-                controller: controller,
-                onSubmit: onSubmit,
-                onOpenReport: onOpenReport,
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

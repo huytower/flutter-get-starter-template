@@ -102,13 +102,44 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
     super.dispose();
   }
 
+  /// Measured height of the one-row header content, once laid out.
+  double? _inlineRowHeight;
+
+  void _onInlineRowMeasured(double height) {
+    final previous = _inlineRowHeight;
+    if (!mounted || (previous != null && (height - previous).abs() < 0.5)) {
+      return;
+    }
+    setState(() => _inlineRowHeight = height);
+  }
+
+  /// Hero header height. Phones and portrait tablets keep the screen-height
+  /// [factor]. On wide-but-short windows the header is a single row, so it is
+  /// sized to that row (measured; estimated on the first frame): the tab bar
+  /// never covers the banner and no empty band is left above it.
+  double _headerHeight(BuildContext context, double factor) {
+    if (!TransactionPageHeader.useInlineLayout(context)) {
+      return context.respHeaderHeight(factor);
+    }
+    final row = _inlineRowHeight ?? context.respDim(56);
+    final gap = context.respPadding(CcPaddingParams.SPACE_MD);
+    return MediaQuery.paddingOf(context).top +
+        gap +
+        row +
+        gap +
+        _tabBarOverlap(context);
+  }
+
+  /// The tab bar straddles the header's bottom edge by half its height.
+  double _tabBarOverlap(BuildContext context) => context.respDim(64) / 2;
+
   @override
   Widget build(BuildContext context) {
     final headerHeightFactor = context.windowSizeClass.select(
       compact: 0.27,
       medium: 0.28,
     );
-    final headerHeight = context.respHeaderHeight(headerHeightFactor);
+    final headerHeight = _headerHeight(context, headerHeightFactor);
 
     // Use a custom inherited widget or provide the controller to TransactionTabBar
     // but here we can just wrap our content with a TabController provider.
@@ -137,6 +168,7 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
                         onSubmit: () => controller.submitCurrentForm(context),
                         expenseFormController:
                             Get.find<ExpenseFormController>(),
+                        onInlineRowHeightChanged: _onInlineRowMeasured,
                       ),
                     ),
                   ),
@@ -155,10 +187,8 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
       compact: 0.27,
       medium: 0.29,
     );
-    final headerHeight = context.respHeaderHeight(headerHeightFactor);
-
-    final tabBarHeight = context.respDim(64);
-    final overlap = tabBarHeight / 2;
+    final headerHeight = _headerHeight(context, headerHeightFactor);
+    final overlap = _tabBarOverlap(context);
 
     return Obx(() {
       final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
