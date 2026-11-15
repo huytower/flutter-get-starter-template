@@ -44,9 +44,10 @@ runs:
         flutter-version: ${{ inputs.flutter-version }}
         cache: true
 
-    - name: Disable Swift Package Manager
+    # Required on: google_mlkit_* >= 1.0 are Swift Package Manager-only on iOS.
+    - name: Enable Swift Package Manager
       shell: bash
-      run: flutter config --no-enable-swift-package-manager
+      run: flutter config --enable-swift-package-manager
 
     - name: Setup Melos
       shell: bash
