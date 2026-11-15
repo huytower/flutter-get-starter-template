@@ -12,6 +12,7 @@ import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../../wallet/presentation/widgets/wallet_display_name.dart';
 import '../get_x/reconciliation_controller.dart';
+import '../widgets/finance_line_art_background.dart';
 import '../widgets/reconciliation_confirm_button.dart';
 import '../widgets/reconciliation_history_section.dart';
 import '../widgets/reconciliation_mismatch_warning.dart';
@@ -52,6 +53,17 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
   void onRetry(BuildContext context) {
     controller.loadBalances();
     controller.loadHistory();
+  }
+
+  /// Mint gradient + finance line art behind the whole body.
+  @override
+  Widget onPageBodyWrapper(BuildContext context, Widget body) {
+    return Stack(
+      children: [
+        const Positioned.fill(child: FinanceLineArtBackground()),
+        body,
+      ],
+    );
   }
 
   @override

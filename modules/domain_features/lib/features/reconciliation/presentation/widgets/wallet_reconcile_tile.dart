@@ -52,14 +52,26 @@ class WalletReconcileTile extends StatelessWidget {
           : scheme.error;
 
       return Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
+        margin: EdgeInsets.only(
+          bottom: context.respDim(CcPaddingParams.SPACE_MD),
+        ),
+        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.SPACE_LG)),
         decoration: BoxDecoration(
-          color: statusColor.withValues(alpha: 0.06),
-          borderRadius: BorderRadius.circular(12),
-          border: isEditing
-              ? Border.all(color: scheme.primary, width: 2)
-              : null,
+          color: scheme.surface,
+          borderRadius: context.brLg,
+          border: Border.all(
+            color: isEditing
+                ? scheme.primary
+                : scheme.outlineVariant.withValues(alpha: 0.4),
+            width: isEditing ? 2 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: scheme.primary.withValues(alpha: 0.10),
+              blurRadius: context.respDim(12),
+              offset: Offset(0, context.respDim(4)),
+            ),
+          ],
         ),
         child: Stack(
           clipBehavior: Clip.none,
@@ -67,51 +79,47 @@ class WalletReconcileTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: CcText(
-                        balance.wallet.displayName(context),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                CcText(
+                  balance.wallet.displayName(context),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textStyle: context.ccTextTheme.bodyLarge?.copyWith(
+                    fontWeight: CcTypographyParams.bold,
+                    color: scheme.onSurface,
+                  ),
+                ),
+                const CcSpaceSM(),
+                IntrinsicHeight(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _buildBookColumn(context, scheme, currencyCode),
+                      ),
+                      VerticalDivider(
+                        width: context.respDim(24),
+                        thickness: 1,
+                        color: scheme.outlineVariant.withValues(alpha: 0.6),
+                      ),
+                      Expanded(
+                        child: WalletActualBalanceInput(
+                          actual: counted,
+                          isEditing: isEditing,
+                          currencyCode: currencyCode,
+                          onTap: () =>
+                              controller.startEditing(balance.wallet.id),
+                          onClear: () {
+                            if (isEditing) {
+                              controller.clearAmount();
+                            } else {
+                              controller.resetActual(balance.wallet.id);
+                            }
+                          },
                         ),
                       ),
-                    ),
-                    const CcSpaceSM(),
-                    CcText(
-                      el.tr(
-                        CcLocaleKeys.reconciliation_book_balance,
-                        namedArgs: {
-                          'amount': formatCurrencyWithSymbol(
-                            balance.bookBalance,
-                            currencyCode: currencyCode,
-                          ),
-                        },
-                      ),
-                      textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 10),
-                WalletActualBalanceInput(
-                  actual: counted,
-                  isEditing: isEditing,
-                  currencyCode: currencyCode,
-                  onTap: () => controller.startEditing(balance.wallet.id),
-                  onClear: () {
-                    if (isEditing) {
-                      controller.clearAmount();
-                    } else {
-                      controller.resetActual(balance.wallet.id);
-                    }
-                  },
-                ),
-                const SizedBox(height: 10),
+                const CcSpaceSM(),
                 WalletReconcileStatusRow(
                   isCounted: isCounted,
                   isBalanced: isBalanced,
@@ -129,6 +137,42 @@ class WalletReconcileTile extends StatelessWidget {
         ),
       );
     });
+  }
+
+  /// Left half of the comparison row: the book balance.
+  Widget _buildBookColumn(
+    BuildContext context,
+    ColorScheme scheme,
+    String currencyCode,
+  ) {
+    return Row(
+      children: [
+        CcText(
+          el.tr(CcLocaleKeys.reconciliation_book),
+          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
+        ),
+        const CcSpaceSM(),
+        Expanded(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerRight,
+            child: CcText(
+              formatCurrencyWithSymbol(
+                balance.bookBalance,
+                currencyCode: currencyCode,
+              ),
+              maxLines: 1,
+              textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                fontWeight: CcTypographyParams.bold,
+                color: scheme.onSurface,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildGuidelineBadge(BuildContext context) {
@@ -165,53 +209,65 @@ class WalletActualBalanceInput extends StatelessWidget {
             color: scheme.onSurfaceVariant,
           ),
         ),
-        const Spacer(),
-        const CcSpaceMD(),
-        CcBouncing(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
-              color: scheme.surface,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: isEditing
-                    ? scheme.primary
-                    : scheme.outline.withValues(alpha: 0.3),
+        const CcSpaceSM(),
+        Expanded(
+          child: CcBouncing(
+            onTap: onTap,
+            borderRadius: context.brMd,
+            child: Container(
+              padding: EdgeInsets.all(
+                context.respPadding(CcPaddingParams.SPACE_SM),
               ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CcText(
-                  actual == null
-                      ? el.tr(CcLocaleKeys.reconciliation_not_counted)
-                      : formatCurrencyWithSymbol(
-                          actual!,
-                          currencyCode: currencyCode,
-                        ),
-                  textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-                    fontWeight: actual == null ? null : FontWeight.w600,
-                    color: isEditing
-                        ? scheme.primary
-                        : actual == null
-                        ? scheme.onSurfaceVariant
-                        : null,
-                  ),
+              decoration: BoxDecoration(
+                color: scheme.surface,
+                borderRadius: context.brMd,
+                border: Border.all(
+                  color: isEditing
+                      ? scheme.primary
+                      : scheme.outline.withValues(alpha: 0.5),
+                  width: isEditing ? 1.5 : 1,
                 ),
-                if (actual != null) ...[
-                  const CcSpaceSM(),
-                  CcBouncing(
-                    onTap: onClear,
-                    child: Icon(
-                      Icons.cancel,
-                      size: 18,
-                      color: scheme.onSurfaceVariant.withOpacity(0.4),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: CcText(
+                        actual == null
+                            ? el.tr(CcLocaleKeys.reconciliation_not_counted)
+                            : formatCurrencyWithSymbol(
+                                actual!,
+                                currencyCode: currencyCode,
+                              ),
+                        maxLines: 1,
+                        textStyle: context.ccTextTheme.bodyMedium?.copyWith(
+                          fontWeight: actual == null
+                              ? CcTypographyParams.regular
+                              : CcTypographyParams.bold,
+                          color: isEditing
+                              ? scheme.primary
+                              : actual == null
+                              ? scheme.onSurfaceVariant
+                              : scheme.onSurface,
+                        ),
+                      ),
                     ),
                   ),
+                  if (actual != null) ...[
+                    const CcSpaceXS(),
+                    CcBouncing(
+                      onTap: onClear,
+                      child: Icon(
+                        Icons.cancel,
+                        size: context.respIconSize(baseSize: 16),
+                        color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
