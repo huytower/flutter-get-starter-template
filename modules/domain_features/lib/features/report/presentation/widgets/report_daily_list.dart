@@ -39,6 +39,7 @@ class ReportDailyList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const CcSpaceMD(),
         for (final date in sortedDates)
           DailyGroup(
             key: ValueKey(date.toIso8601String()),

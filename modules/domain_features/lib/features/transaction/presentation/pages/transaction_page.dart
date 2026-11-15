@@ -28,6 +28,11 @@ class TransactionPage extends CcGetView<TransactionController> {
   @override
   bool get enableBottomNavigationBar => false;
 
+  /// Opts out of the standard page background: the immersive header and the
+  /// per-form tinted surfaces are this page's own backdrop.
+  @override
+  Widget onPageBodyWrapper(BuildContext context, Widget body) => body;
+
   @override
   Widget? buildContent(BuildContext context) {
     if (!Get.isRegistered<BudgetLimitController>()) {

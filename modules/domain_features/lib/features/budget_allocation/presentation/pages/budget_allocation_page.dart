@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/core/config/tokens/cc_padding_params.dart';
-import 'package:cc_sdk_ui/core/extensions/cc_context_extension.dart';
 import 'package:cc_sdk_ui/core/extensions/common/cc_responsive_extension.dart';
 import 'package:cc_sdk_ui/widgets/anim/fade_page_wrapper.dart';
 import 'package:cc_sdk_ui/widgets/space/cc_space.dart';
@@ -38,10 +37,6 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   PreferredSizeWidget? buildAppBar(BuildContext context) {
     return buildBudgetAllocationHeader(context);
   }
-
-  @override
-  Widget onPageBodyWrapper(BuildContext context, Widget body) =>
-      ColoredBox(color: context.ccColorScheme.background, child: body);
 
   @override
   Widget? buildContent(BuildContext context) {

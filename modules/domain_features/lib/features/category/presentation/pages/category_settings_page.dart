@@ -142,11 +142,6 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
     return _buildBody(context);
   }
 
-  @override
-  Widget onPageBodyWrapper(BuildContext context, Widget body) {
-    return Container(color: context.ccColorScheme.surface, child: body);
-  }
-
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return buildDomainGradientAppBar(
       context,

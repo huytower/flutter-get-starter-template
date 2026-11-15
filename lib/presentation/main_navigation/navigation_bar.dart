@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
@@ -29,6 +31,14 @@ class _NavigationBarState extends State<NavigationBar>
   static const int _indexWalletAllocation = 0;
   static const int _indexEntry = 1;
   static const int _indexProfile = 2;
+
+  /// Bottom insets up to this size (dp) come from a gesture indicator (iOS home
+  /// indicator, Android gesture pill); larger ones are a 3-button bar.
+  static const double _maxGestureInset = 34;
+
+  /// Padding kept under the bar for a gesture indicator — enough to clear the
+  /// indicator itself. Tune on a real device if labels and indicator collide.
+  static const double _gestureInsetCap = 22;
 
   // Singleton to persist index across hot reload.
   static int? _persistentIndex;
@@ -124,12 +134,19 @@ class _NavigationBarState extends State<NavigationBar>
       final _ = guideline.bounceTrigger.value;
 
       // To support both gesture navigation and 3-button navigation without
-      // overlap, we use the actual system bottom padding.
-      // The background container ensures the color extends behind the system bar.
+      // overlap, we pad by the system bottom inset. A gesture indicator only
+      // occupies the lower part of its inset (34dp on iPhone, ~24dp on Pixel),
+      // so that case is capped to keep the bar compact; a 3-button bar fills
+      // its whole inset and keeps the full padding. The background container
+      // extends the color behind the system bar.
+      final isGestureInset = systemBottomPadding <= _maxGestureInset;
+      final bottomInset = isGestureInset
+          ? math.min(systemBottomPadding, _gestureInsetCap)
+          : systemBottomPadding;
       return Container(
         color: isDark ? Colors.transparent : CcBaseColors.white100,
         child: Padding(
-          padding: EdgeInsets.only(bottom: systemBottomPadding),
+          padding: EdgeInsets.only(bottom: bottomInset),
           child: buildCurvedNavigationBar(),
         ),
       );

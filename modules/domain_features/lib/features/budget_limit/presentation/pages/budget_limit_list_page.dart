@@ -104,10 +104,6 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
   }
 
   @override
-  Widget onPageBodyWrapper(BuildContext context, Widget body) =>
-      ColoredBox(color: context.ccColorScheme.background, child: body);
-
-  @override
   Widget? get floatingActionButton => null;
 
   @override

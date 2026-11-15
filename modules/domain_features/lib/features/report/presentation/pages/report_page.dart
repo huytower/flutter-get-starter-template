@@ -187,23 +187,4 @@ class _ReportView extends CcGetView<ReportController> {
   Widget _buildLoading() {
     return const CcProgressIndicator(paddingTop: 0);
   }
-
-  @override
-  Widget onPageBodyWrapper(BuildContext context, Widget body) {
-    final primaryColor = context.ccColorScheme.primary;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            primaryColor.withOpacity(0.10),
-            context.ccColorScheme.background,
-          ],
-        ),
-      ),
-      child: body,
-    );
-  }
 }

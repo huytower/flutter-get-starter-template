@@ -27,11 +27,6 @@ class ProfilePage extends CcGetView<ProfileController> {
   bool get useSafeArea => false;
 
   @override
-  Widget onPageBodyWrapper(BuildContext context, Widget body) {
-    return Stack(children: [const BgGradientWidget(topAlpha: 25), body]);
-  }
-
-  @override
   Widget buildContent(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (controller.openBirthYearPicker.value) {

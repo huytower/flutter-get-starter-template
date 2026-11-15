@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../di/di.dart';
+import '../presentation/widgets/prj_page_background.dart';
 import 'cc_get_controller.dart';
 
 /// Base class for GetX views with built-in layout state management.
@@ -49,6 +50,14 @@ abstract class CcGetView<T extends CcGetController> extends GetView<T>
 
   @override
   String get errorMessage => controller.errorMessage.value;
+
+  //----------------------------------------------------------------------------
+  /// Every page shares the standard brand-gradient background. Override to
+  /// return [body] untouched (or a custom backdrop) for a page that paints its
+  /// own.
+  @override
+  Widget onPageBodyWrapper(BuildContext context, Widget body) =>
+      PrjPageBackground(child: body);
 
   //----------------------------------------------------------------------------
   @override
