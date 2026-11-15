@@ -104,13 +104,11 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final headerHeightFactor = CcResponsiveHelper.getValue(
-      context: context,
-      mobile: 0.27,
-      tablet: 0.28,
+    final headerHeightFactor = context.windowSizeClass.select(
+      compact: 0.27,
+      medium: 0.28,
     );
-    final headerHeight = screenHeight * headerHeightFactor;
+    final headerHeight = MediaQuery.sizeOf(context).height * headerHeightFactor;
 
     // Use a custom inherited widget or provide the controller to TransactionTabBar
     // but here we can just wrap our content with a TabController provider.
@@ -153,13 +151,11 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
   }
 
   Widget _buildTransactionContent(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final headerHeightFactor = CcResponsiveHelper.getValue(
-      context: context,
-      mobile: 0.27,
-      tablet: 0.29,
+    final headerHeightFactor = context.windowSizeClass.select(
+      compact: 0.27,
+      medium: 0.29,
     );
-    final headerHeight = screenHeight * headerHeightFactor;
+    final headerHeight = MediaQuery.sizeOf(context).height * headerHeightFactor;
 
     final tabBarHeight = context.respDim(64);
     final overlap = tabBarHeight / 2;

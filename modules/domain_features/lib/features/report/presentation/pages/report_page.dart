@@ -57,13 +57,7 @@ class _ReportView extends CcGetView<ReportController> {
   Widget? buildContent(BuildContext context) {
     final keyboardUp = MediaQuery.of(context).viewInsets.bottom > 0;
 
-    final screenHeight = MediaQuery.of(context).size.height;
-    final headerHeightFactor = CcResponsiveHelper.getValue(
-      context: context,
-      mobile: 0.26,
-      tablet: 0.26,
-    );
-    final headerHeight = screenHeight * headerHeightFactor;
+    final headerHeight = MediaQuery.sizeOf(context).height * 0.26;
 
     return Obx(
       () => PopScope(
@@ -115,13 +109,7 @@ class _ReportView extends CcGetView<ReportController> {
   }
 
   Widget _buildReportContent(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final headerHeightFactor = CcResponsiveHelper.getValue(
-      context: context,
-      mobile: 0.29,
-      tablet: 0.29,
-    );
-    final headerHeight = screenHeight * headerHeightFactor;
+    final headerHeight = MediaQuery.sizeOf(context).height * 0.29;
 
     final tabBarHeight = context.respDim(90);
     final overlap = tabBarHeight / 2;

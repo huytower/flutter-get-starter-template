@@ -67,14 +67,16 @@ before making non-trivial changes inside a package.
 
 ## Multi-screen & orientation support (detail)
 
-Breakpoints and the `context.resp*` API are covered in `AGENTS.md` rule #9. Platform-level configuration that
-backs those breakpoints:
+Window size classes, scaling and the `context.resp*` API are covered in `AGENTS.md` rule #9. Platform-level
+orientation configuration today:
 
-- **Android**: `android:screenOrientation="unspecified"` in `AndroidManifest.xml`.
-- **iOS iPhone**: Portrait, LandscapeLeft, LandscapeRight in `Info.plist`.
+- **Android**: `android:screenOrientation="portrait"` in `AndroidManifest.xml`. With `targetSdk` 37, Android 16+
+  ignores this lock on screens ≥ 600 dp (tablets, unfolded foldables), so those devices rotate anyway, while
+  older Android tablets stay portrait.
+- **iOS iPhone**: Portrait only in `Info.plist`.
 - **iOS iPad**: all orientations supported (Portrait, PortraitUpsideDown, LandscapeLeft, LandscapeRight).
-- Use `context.isPortrait` / `context.isLandscape` for orientation-specific layout branches, and
-  `LayoutBuilder`/`OrientationBuilder` where a widget needs to react to orientation directly.
+- Branch layout on width (`CcWindowSizeClass` / `CcAdaptiveBuilder`) and vertical room (`CcWindowHeightClass`),
+  not on orientation; `context.isPortrait` / `context.isLandscape` remain for the rare orientation-specific case.
 - Landscape is worth deliberately designing for on data-heavy screens (dashboards, tables, charts), not just
   tolerating.
 

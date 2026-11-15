@@ -130,10 +130,17 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
    use `Colors.*`. Typography via `context.ccTextTheme` (Plus Jakarta Sans) — never hardcode font size/weight/family.
 8. **Spacing** — use `CcSpace*` (XS=4, SM=8, MD=12, LG=16, XL=24) instead of raw `SizedBox(height: context.respDim(N))`
    for token values. Raw `SizedBox` is fine only for non-token gaps or sizing shapes/icons/charts.
-9. **Responsiveness (Adaptive-First)** — `context.respPadding()`, `context.respFontSize()`, `context.respDim()`;
-   layouts via `CcResponsiveContainer`/`CcResponsiveFlex`. Breakpoints: small-mobile <360, mobile 360–600,
-   tablet 600–900, desktop >900. Verify both portrait and landscape — every new screen should be checked against:
-   small mobile, mobile, tablet, desktop, portrait, landscape, touch-target size, text overflow.
+9. **Responsiveness (Adaptive-First)** — two separate concerns, never mixed:
+    - **Scale** (sizes of text/icons/gaps) follows the window: `context.respDim()`, `context.respPadding()`,
+      `context.respIconSize()`, `context.ccTextTheme`.
+    - **Layout** (navigation, pane count, grid columns) branches on Material 3 window size classes
+      (`CcWindowSizeClass`: compact <600, medium 600–840, expanded 840–1200, large 1200–1600, extraLarge ≥1600),
+      measured from the **space a widget is given**: `CcAdaptiveBuilder` / `CcResponsiveFlex` (LayoutBuilder-based),
+      or `context.windowSizeClass` only for whole-window decisions (the navigation shell). Use
+      `CcWindowHeightClass` for vertical-room decisions instead of fixed percentages of screen height. Never branch
+      on device type or `Platform`.
+    - Check every new screen against the shared matrix in `modules/domain_features/test/adaptive/` (phones,
+      foldables, 7"/10" tablets, landscape, web desktop): touch-target size, text overflow, no layout overflow.
 10. **Localization** — `el.tr(CcLocaleKeys.key)`, never hardcoded strings. New strings require all three kept in
     sync (no build step enforces this — treat drift as a bug):
     1. `modules/message/assets/translations/en.json`
