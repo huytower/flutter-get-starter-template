@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../adaptive/adaptive_test_devices.dart';
+
 const _food = CategoryEntity(
   id: 'food',
   nameKey: 'category.food',
@@ -299,18 +301,14 @@ void main() {
     expect(_text('nothing saved'), findsOneWidget);
   });
 
-  const screens = {
-    'small mobile': Size(320, 640),
-    'mobile': Size(390, 844),
-    'tablet': Size(768, 1024),
-    'desktop': Size(1280, 800),
-    'mobile landscape': Size(844, 390),
-    'small mobile landscape': Size(640, 320),
-  };
-  for (final screen in screens.entries) {
-    testWidgets('lays out without overflow on ${screen.key}', (tester) async {
+  final screens = [
+    ...AdaptiveTestDevices.all,
+    AdaptiveTestDevices.smallPhone.landscape,
+  ];
+  for (final screen in screens) {
+    testWidgets('lays out without overflow on $screen', (tester) async {
       final state = _state([_valid, _valid, _valid], mixed: true);
-      await _open(tester, state, logicalSize: screen.value);
+      await _open(tester, state, logicalSize: screen.size);
 
       expect(tester.takeException(), isNull);
       expect(find.byType(SmartEntryPreviewRowCard), findsWidgets);
