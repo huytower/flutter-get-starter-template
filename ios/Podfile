@@ -9,6 +9,10 @@ platform :ios, '15.5'
 # AppTrackingTransparency out of the binary, so App Review does not expect an
 # App Tracking Transparency prompt (guideline 2.1 "uses the
 # AppTrackingTransparency framework but no permission request").
+# This variable only applies when firebase_analytics comes from CocoaPods. With
+# Swift Package Manager (the default now) the same switch is the environment
+# variable FIREBASE_ANALYTICS_WITHOUT_ADID, set in ios/fastlane/Fastfile; set it
+# too for local release builds.
 $FirebaseAnalyticsWithoutAdIdSupport = true
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
@@ -50,8 +54,10 @@ flutter_ios_podfile_setup
 target 'Runner' do
   use_frameworks!
   pod 'lottie-ios'
-  pod 'Firebase/Performance'
-  pod 'Firebase/AppCheck'
+  # No explicit Firebase pods: with Swift Package Manager enabled the FlutterFire
+  # plugins (firebase_performance, firebase_app_check, ...) bring Firebase via
+  # SPM, and a second copy from CocoaPods fails the archive with
+  # "redefinition of module 'Firebase'".
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))

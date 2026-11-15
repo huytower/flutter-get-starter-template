@@ -8,6 +8,12 @@ platform :ios do
   lane :beta do |options|
     flavor = options[:flavor] || "prod"
 
+    # firebase_analytics via Swift Package Manager links FirebaseAnalyticsCore
+    # (no Ad ID / AdSupport) only when this is set while packages resolve. It is
+    # the SPM counterpart of $FirebaseAnalyticsWithoutAdIdSupport in the Podfile
+    # and keeps App Review from expecting an App Tracking Transparency prompt.
+    ENV["FIREBASE_ANALYTICS_WITHOUT_ADID"] = "true"
+
     # 1. Generate code (run from root directory).
     # CI already ran `melos run gen` and sets SKIP_GEN=true to avoid repeating it.
     sh("cd ../.. && melos run gen") unless ENV["SKIP_GEN"] == "true"
