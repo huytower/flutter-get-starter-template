@@ -165,26 +165,30 @@ class _TransactionPageContentState extends State<_TransactionPageContent>
       final hidden = keyboardUp || controller.isKeypadOpen.value;
       final showInvestmentBadge = controller.showInvestmentBadge;
 
-      return Column(
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            height: hidden ? 0 : headerHeight - overlap,
-          ),
-          TransactionTabBar(
-            controller: controller,
-            tabController: _tabController,
-            showInvestmentBadge: showInvestmentBadge,
-            showLiabilityBadge: controller.showLiabilityBadge,
-            showLendBadge: controller.showLendBadge,
-          ),
-          Expanded(
-            child: TransactionTabBarView(
+      // The header behind runs full-bleed; the form stops at the content
+      // width on wide windows (beside the rail, large tablets).
+      return CcMaxWidth.content(
+        child: Column(
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              height: hidden ? 0 : headerHeight - overlap,
+            ),
+            TransactionTabBar(
               controller: controller,
               tabController: _tabController,
+              showInvestmentBadge: showInvestmentBadge,
+              showLiabilityBadge: controller.showLiabilityBadge,
+              showLendBadge: controller.showLendBadge,
             ),
-          ),
-        ],
+            Expanded(
+              child: TransactionTabBarView(
+                controller: controller,
+                tabController: _tabController,
+              ),
+            ),
+          ],
+        ),
       );
     });
   }

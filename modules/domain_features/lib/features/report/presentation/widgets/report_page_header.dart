@@ -50,7 +50,8 @@ class ReportPageHeader extends StatelessWidget {
         child: Stack(
           children: [
             _buildHeroBackground(context),
-            _buildHeroForeground(context),
+            // Background full-bleed, foreground capped on wide windows.
+            CcMaxWidth.content(child: _buildHeroForeground(context)),
           ],
         ),
       ),

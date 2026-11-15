@@ -48,73 +48,84 @@ class ProfilePage extends CcGetView<ProfileController> {
                 ? Brightness.light
                 : Brightness.dark,
           ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: topPadding + context.respDim(12)),
-            Obx(() {
-              return Hero(
-                tag: 'profile_hero_banner',
-                child: ProfilePageHeader(
-                  user: controller.user.value,
-                  displayName: controller.displayName,
-                  level: controller.userLevel.status.value.level,
-                  daysToNextAudit: controller.daysToNextAudit,
-                  levelStatus: controller.userLevel.status.value,
-                  initialFlipped: controller.settings.value.isHeaderFlipped,
-                  onFlip: controller.setHeaderFlipped,
-                  onEditName: () => controller.pickDisplayName(context),
-                  onLinkAccount: () => controller.handleLinkAccountTap(context),
-                  onAvatarTap: controller.isLoggedIn
-                      ? null
-                      : () => controller.handleAvatarTap(context),
-                  onLinkPhone: () => controller.handlePhoneLinkTap(context),
-                ),
-              );
-            }),
-            CcSymmetricPadding(
-              horizontal: CcPaddingParams.PAGE_SM,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const CcSpaceMD(),
-                  Obx(
-                    () => controller.showSignInReminder
-                        ? Padding(
-                            padding: EdgeInsets.only(
-                              bottom: context.respDim(CcPaddingParams.SPACE_MD),
-                            ),
-                            child: ProfileSignInReminder(
-                              onDismiss: controller.dismissSignInReminder,
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                  ProfileMenuGroup(items: _buildMenuItems(context)),
-                  const CcSpaceXL(),
-                  Obx(
-                    () => controller.isLoggedIn
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              _buildDeleteAccountText(context),
-                              const CcSpaceMD(),
-                              _buildLogoutButton(context),
-                              const CcSpaceMD(),
-                            ],
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                  const CcSpaceSM(),
-                  _buildFooter(context),
-                  const CcSpaceSM(),
-                ],
-              ),
-            ),
-          ],
+      // Scrolls across the full width; content centred and capped at the
+      // content width on wide windows.
+      child: LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+            horizontal: CcMaxWidth.insetFor(constraints.maxWidth),
+          ),
+          child: _buildScrollContent(context, topPadding),
         ),
       ),
+    );
+  }
+
+  Widget _buildScrollContent(BuildContext context, double topPadding) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(height: topPadding + context.respDim(12)),
+        Obx(() {
+          return Hero(
+            tag: 'profile_hero_banner',
+            child: ProfilePageHeader(
+              user: controller.user.value,
+              displayName: controller.displayName,
+              level: controller.userLevel.status.value.level,
+              daysToNextAudit: controller.daysToNextAudit,
+              levelStatus: controller.userLevel.status.value,
+              initialFlipped: controller.settings.value.isHeaderFlipped,
+              onFlip: controller.setHeaderFlipped,
+              onEditName: () => controller.pickDisplayName(context),
+              onLinkAccount: () => controller.handleLinkAccountTap(context),
+              onAvatarTap: controller.isLoggedIn
+                  ? null
+                  : () => controller.handleAvatarTap(context),
+              onLinkPhone: () => controller.handlePhoneLinkTap(context),
+            ),
+          );
+        }),
+        CcSymmetricPadding(
+          horizontal: CcPaddingParams.PAGE_SM,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const CcSpaceMD(),
+              Obx(
+                () => controller.showSignInReminder
+                    ? Padding(
+                        padding: EdgeInsets.only(
+                          bottom: context.respDim(CcPaddingParams.SPACE_MD),
+                        ),
+                        child: ProfileSignInReminder(
+                          onDismiss: controller.dismissSignInReminder,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+              ProfileMenuGroup(items: _buildMenuItems(context)),
+              const CcSpaceXL(),
+              Obx(
+                () => controller.isLoggedIn
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          _buildDeleteAccountText(context),
+                          const CcSpaceMD(),
+                          _buildLogoutButton(context),
+                          const CcSpaceMD(),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+              ),
+              const CcSpaceSM(),
+              _buildFooter(context),
+              const CcSpaceSM(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

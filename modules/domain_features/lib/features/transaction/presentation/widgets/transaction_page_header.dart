@@ -57,8 +57,60 @@ class TransactionPageHeader extends StatelessWidget {
           ),
         ),
         clipBehavior: Clip.antiAlias,
-        child: _buildHeroForeground(context),
+        // Background full-bleed, foreground capped on wide windows.
+        child: CcMaxWidth.content(
+          child: _useInlineLayout(context)
+              ? _buildInlineForeground(context)
+              : _buildHeroForeground(context),
+        ),
       ),
+    );
+  }
+
+  /// Wide but short windows (tablet / iPad in landscape, ≥ 840 dp wide and
+  /// < 900 dp tall): title, banner and actions share one row so the header
+  /// stays low and the tab bar never covers the banner.
+  static bool _useInlineLayout(BuildContext context) =>
+      context.windowSizeClass.isAtLeast(CcWindowSizeClass.expanded) &&
+      !context.windowHeightClass.isAtLeast(CcWindowHeightClass.expanded);
+
+  Widget _buildInlineForeground(BuildContext context) {
+    final guideline = Get.find<GuidelineController>();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(height: MediaQuery.paddingOf(context).top),
+        const CcSpaceMD(),
+        CcSymmetricPadding(
+          horizontal: CcPaddingParams.PAGE_MD,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TransactionHeaderTitle(
+                controller: controller,
+                quickEntryControllerFor: _quickEntryControllerFor,
+                flex: 2,
+              ),
+              const CcSpaceMD(),
+              Expanded(
+                flex: 3,
+                child: TransactionHeaderBanner(
+                  controller: controller,
+                  guideline: guideline,
+                  expenseFormController: expenseFormController,
+                ),
+              ),
+              const CcSpaceSM(),
+              TransactionHeaderActions(
+                controller: controller,
+                onSubmit: onSubmit,
+                onOpenReport: onOpenReport,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

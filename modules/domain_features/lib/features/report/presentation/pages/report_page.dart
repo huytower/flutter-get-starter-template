@@ -131,41 +131,43 @@ class _ReportView extends CcGetView<ReportController> {
 
           final topPadding = MediaQuery.of(context).padding.top;
 
-          return Column(
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                height: hidden ? topPadding : headerHeight - overlap,
-              ),
-              ReportTabBar(controller: controller),
-              const CcSpaceSM(),
-              Expanded(
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (notification) {
-                    controller.onScroll(notification);
-                    return false;
-                  },
-                  child: ListView(
-                    controller: controller.scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.fromLTRB(
-                      padding,
-                      0,
-                      padding,
-                      tabBarHeight,
+          return CcMaxWidth.content(
+            child: Column(
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  height: hidden ? topPadding : headerHeight - overlap,
+                ),
+                ReportTabBar(controller: controller),
+                const CcSpaceSM(),
+                Expanded(
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      controller.onScroll(notification);
+                      return false;
+                    },
+                    child: ListView(
+                      controller: controller.scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.fromLTRB(
+                        padding,
+                        0,
+                        padding,
+                        tabBarHeight,
+                      ),
+                      children: [
+                        const CcSpaceXS(),
+                        const ReportDailyDetailShortcut(),
+                        const CcSpaceSM(),
+                        ReportTrendSection(controller: controller, data: data),
+                        ReportInvestmentSection(controller: controller),
+                        ReportLiabilitySection(controller: controller),
+                      ],
                     ),
-                    children: [
-                      const CcSpaceXS(),
-                      const ReportDailyDetailShortcut(),
-                      const CcSpaceSM(),
-                      ReportTrendSection(controller: controller, data: data),
-                      ReportInvestmentSection(controller: controller),
-                      ReportLiabilitySection(controller: controller),
-                    ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         });
       },

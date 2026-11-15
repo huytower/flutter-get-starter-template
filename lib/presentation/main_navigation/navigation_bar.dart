@@ -40,10 +40,6 @@ class _NavigationBarState extends State<NavigationBar>
   /// indicator itself. Tune on a real device if labels and indicator collide.
   static const double _gestureInsetCap = 22;
 
-  /// Tab content never grows wider than this beside the rail, so the
-  /// phone-first tab pages keep the width they were designed for.
-  static final double _maxContentWidth = CcWindowSizeClass.expanded.minWidth;
-
   // Singleton to persist index across hot reload.
   static int? _persistentIndex;
 
@@ -172,34 +168,33 @@ class _NavigationBarState extends State<NavigationBar>
     });
   }
 
-  Widget _buildNavigationRail() {
+  /// "＋ Giao dịch" is the rail's round primary action, like the raised "＋"
+  /// of the bottom bar.
+  @override
+  int? get navigationRailPrimaryIndex => _indexEntry;
+
+  Widget _buildNavigationRail(BuildContext context) {
     final guideline = Get.find<GuidelineController>();
+    // Labels beside icons once the window is desktop-class (≥ 1200 dp).
+    final extended = context.windowSizeClass.isAtLeast(CcWindowSizeClass.large);
     return Obx(() {
       final _ = guideline.bounceTrigger.value;
-      return buildNavigationRail();
+      return buildNavigationRail(extended: extended);
     });
   }
 
-  /// Puts the rail beside the content on wide windows. The content subtree is
-  /// keyed so switching layouts does not reset the open tab's state.
+  /// Puts the rail beside the content on wide windows. No divider: the rail's
+  /// surface and the page background separate by tone. Tab pages run
+  /// full-bleed and cap their own foreground (`CcMaxWidth.content`). The
+  /// content subtree is keyed so switching layouts does not reset the open
+  /// tab's state.
   Widget onBodyWrapper(BuildContext context, Widget body) {
     final showRail = _useRail(context) && enableBottomNavigationBar;
     return Row(
       children: [
-        if (showRail) ...[
-          _buildNavigationRail(),
-          VerticalDivider(
-            width: 1,
-            thickness: 1,
-            color: context.ccColorScheme.outlineVariant,
-          ),
-        ],
+        if (showRail) _buildNavigationRail(context),
         Expanded(
-          child: CcMaxWidth(
-            maxWidth: _maxContentWidth,
-            gutterColor: Theme.of(context).scaffoldBackgroundColor,
-            child: KeyedSubtree(key: _contentKey, child: body),
-          ),
+          child: KeyedSubtree(key: _contentKey, child: body),
         ),
       ],
     );

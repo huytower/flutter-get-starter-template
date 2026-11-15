@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/core/config/tokens/cc_padding_params.dart';
 import 'package:cc_sdk_ui/core/extensions/common/cc_responsive_extension.dart';
+import 'package:cc_sdk_ui/widgets/adaptive/cc_max_width.dart';
 import 'package:cc_sdk_ui/widgets/anim/fade_page_wrapper.dart';
 import 'package:cc_sdk_ui/widgets/space/cc_space.dart';
 import 'package:flutter/material.dart';
@@ -41,13 +42,16 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
   @override
   Widget? buildContent(BuildContext context) {
     return FadePageWrapper(
-      child: Builder(
-        builder: (context) => buildPullToRefresh(
+      // The list scrolls across the full width; its content is centred and
+      // capped at the content width on wide windows.
+      child: LayoutBuilder(
+        builder: (context, constraints) => buildPullToRefresh(
           context: context,
           onRefresh: controller.refreshFromCloud,
           child: ListView(
             padding: EdgeInsets.symmetric(
               vertical: context.respPadding(CcPaddingParams.SPACE_MD),
+              horizontal: CcMaxWidth.insetFor(constraints.maxWidth),
             ),
             children: [
               _buildLiquidGroup(context),

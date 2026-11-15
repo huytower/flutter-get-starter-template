@@ -13,15 +13,20 @@ class TransactionHeaderTitle extends StatelessWidget {
     super.key,
     required this.controller,
     this.quickEntryControllerFor,
+    this.flex = 1,
   });
 
   final TransactionController controller;
   final QuickEntryMixin? Function(TransactionTabKind tab)?
   quickEntryControllerFor;
 
+  /// Share of the header row this title takes (it is an [Expanded]).
+  final int flex;
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
+      flex: flex,
       child: Obx(() {
         final bool showSummary = controller.showWalletSummaryTemporarily.value;
 

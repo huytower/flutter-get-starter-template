@@ -6,8 +6,8 @@ import 'package:flutter/widgets.dart';
 /// portrait only) and its inner screen (tablet: free rotation), or split
 /// screen resizing the app.
 ///
-/// Must sit above anything that overrides [MediaQuery] (such as
-/// `AppContentFrame`) so it sees the real window size.
+/// Must sit above anything that overrides [MediaQuery] so it sees the real
+/// window size.
 class OrientationPolicyScope extends StatefulWidget {
   final Widget child;
 

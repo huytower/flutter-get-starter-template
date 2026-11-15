@@ -138,6 +138,10 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
       percentage.
     - Width-based sizing reads the space a widget is given (`LayoutBuilder`), not `MediaQuery` width — next to
       the navigation rail the two differ. Cap any remaining screen-ratio size (e.g. `.clamp(0, respDim(n))`).
+    - **Full-bleed background, capped content**: page backgrounds and hero headers span the full width; the
+      foreground (titles, forms, lists) stops at `CcMaxWidth.contentWidth` (840 dp) via `CcMaxWidth.content`, or,
+      for a scroll view that must stay scrollable edge to edge, via `padding: CcMaxWidth.insetFor(width)`. Never
+      cap a whole page (background included) — that leaves blank gutters on tablets and the web.
     - **Layout** (navigation, pane count, grid columns) branches on Material 3 window size classes
       (`CcWindowSizeClass`: compact <600, medium 600–840, expanded 840–1200, large 1200–1600, extraLarge ≥1600),
       measured from the **space a widget is given**: `CcAdaptiveBuilder` / `CcResponsiveFlex` (LayoutBuilder-based),

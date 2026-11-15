@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:theme/core/helper/theme_helper.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';
 
-import '../../core/layout/app_content_frame.dart';
 import '../../core/layout/orientation_policy_scope.dart';
 import '../../core/navigation/config/auto_route/app_router.dart';
 
@@ -74,11 +73,9 @@ class AutoRouteStrategy extends RoutingStrategy {
         supportedLocales: context.supportedLocales,
         builder: (context, child) {
           return OrientationPolicyScope(
-            child: AppContentFrame(
-              child: CcKeyboardHelper.dismissOnTap(
-                child: child ?? const SizedBox.shrink(),
-                context: context,
-              ),
+            child: CcKeyboardHelper.dismissOnTap(
+              child: child ?? const SizedBox.shrink(),
+              context: context,
             ),
           );
         },
