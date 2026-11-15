@@ -12,6 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 /// Semantic token for the default server-failure message.
@@ -124,8 +125,14 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
   /// Best effort: a failure to store the name must never fail the sign-in.
   Future<Result<CcUserEntity, CcFailure>> _applyAppleFullName(
     CcUserEntity signedIn,
-    String? fullName,
+    String? receivedName,
   ) async {
+    // Apple sends the name once. A name kept from an earlier attempt that never
+    // reached the account (sign-in failed/cancelled after Apple answered) is
+    // used when this response carries none.
+    final fullName = (receivedName != null && receivedName.isNotEmpty)
+        ? receivedName
+        : await _readPendingAppleName();
     final hasAppleName = fullName != null && fullName.isNotEmpty;
     final hasAccountName = (_firebaseAuth.currentUser?.displayName ?? '')
         .trim()
@@ -142,9 +149,13 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
     try {
       final user = _firebaseAuth.currentUser;
       if (user == null) return Success(signedIn);
-      if (hasAccountName) return Success(signedIn);
+      if (hasAccountName) {
+        await _clearPendingAppleName();
+        return Success(signedIn);
+      }
       await user.updateDisplayName(fullName);
       await user.reload();
+      await _clearPendingAppleName();
       final refreshed = _firebaseAuth.currentUser ?? user;
       '[AppleName] Saved the Apple name to the account'.Log(
         'FirebaseAuthRepositoryImpl',
@@ -166,6 +177,46 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
       );
       return Success(signedIn);
     }
+  }
+
+  /// Apple's stable per-app user id of the last credential. The kept name is
+  /// stored under it, so a name can never be applied to a different Apple ID
+  /// signing in on the same device.
+  String? _lastAppleUserId;
+
+  String? get _pendingAppleNameKey {
+    final id = _lastAppleUserId;
+    return (id == null || id.isEmpty) ? null : 'auth_pending_apple_name_$id';
+  }
+
+  Future<String?> _readPendingAppleName() async {
+    final key = _pendingAppleNameKey;
+    if (key == null) return null;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final name = prefs.getString(key)?.trim();
+      return (name == null || name.isEmpty) ? null : name;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _savePendingAppleName(String name) async {
+    final key = _pendingAppleNameKey;
+    if (key == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(key, name);
+    } catch (_) {}
+  }
+
+  Future<void> _clearPendingAppleName() async {
+    final key = _pendingAppleNameKey;
+    if (key == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(key);
+    } catch (_) {}
   }
 
   /// Presence flags of the last Apple credential's name parts (never the
@@ -262,10 +313,12 @@ class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
         'apple.com',
       ).credential(idToken: appleCredential.identityToken, rawNonce: rawNonce);
 
-      return Success((
-        credential: credential,
-        fullName: _appleFullName(appleCredential),
-      ));
+      _lastAppleUserId = appleCredential.userIdentifier;
+      final fullName = _appleFullName(appleCredential);
+      // Keep the name the moment Apple hands it over: it is never sent again,
+      // so it must survive a failure in any later step.
+      if (fullName != null) await _savePendingAppleName(fullName);
+      return Success((credential: credential, fullName: fullName));
     } on SignInWithAppleAuthorizationException catch (e, stack) {
       if (e.code == AuthorizationErrorCode.canceled) {
         return const Error(UnauthorizedFailure('Authentication cancelled'));
