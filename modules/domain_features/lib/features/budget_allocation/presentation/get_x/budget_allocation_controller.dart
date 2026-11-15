@@ -72,15 +72,15 @@ class BudgetAllocationController extends CcGetController {
   }
 
   void navigateToInvestmentList(BuildContext context) {
-    context.router.push(const InvestmentListRoute());
+    context.router.push(InvestmentListRoute());
   }
 
   void navigateToLiabilityList(BuildContext context) {
-    context.router.push(const LiabilityGridRoute());
+    context.router.push(LiabilityGridRoute());
   }
 
   void navigateToLendList(BuildContext context) {
-    context.router.push(const LendListRoute());
+    context.router.push(LendListRoute());
   }
 
   void openAddWallet(BuildContext context) {

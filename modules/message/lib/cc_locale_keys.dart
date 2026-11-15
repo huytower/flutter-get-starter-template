@@ -421,7 +421,7 @@ class CodegenLoader extends AssetLoader {
       "no_history": "No repayment/collection yet",
       "delete_title": "Delete Liability",
       "delete_confirm_msg":
-          "Are you sure you want to delete this liability? This action cannot be undone.",
+          "Deleting this also deletes all of its related transactions, so the balances of the wallets involved will change. This action cannot be undone.",
       "borrow": "Borrowed from",
       "lend": "Lend",
       "borrow_type_personal": "Personal",
@@ -546,6 +546,10 @@ class CodegenLoader extends AssetLoader {
           "{count} wallet(s) unmatched, handle before confirming",
       "create_adjustment": "Create adjustment",
       "matched": "Balanced",
+      "not_counted": "Not counted",
+      "adjustment_category": "Reconciliation adjustment",
+      "adjustment_surplus": "Reconciliation - surplus adjustment",
+      "adjustment_shortfall": "Reconciliation - shortfall adjustment",
       "lech": "Off by {amount}",
       "review_transactions": "Review transactions",
     },
@@ -1372,6 +1376,10 @@ class CodegenLoader extends AssetLoader {
       "mismatch_warning": "{count} ví chưa khớp, hãy xử lý trước khi xác nhận",
       "create_adjustment": "Tạo điều chỉnh",
       "matched": "Đã khớp",
+      "not_counted": "Chưa đếm",
+      "adjustment_category": "Điều chỉnh khớp sổ",
+      "adjustment_surplus": "Khớp sổ - Điều chỉnh dôi dư",
+      "adjustment_shortfall": "Khớp sổ - Điều chỉnh hao hụt",
       "lech": "Lệch {amount}",
       "review_transactions": "Xem giao dịch",
       "empty": "Không có ví nào để đối soát.",
@@ -1465,7 +1473,7 @@ class CodegenLoader extends AssetLoader {
       "no_history": "Chưa có thanh toán/thu hồi nào",
       "delete_title": "Xóa khoản nợ",
       "delete_confirm_msg":
-          "Bạn có chắc muốn xóa khoản nợ này? Hành động này không thể hoàn tác.",
+          "Xóa khoản này cũng sẽ xóa mọi giao dịch liên quan, nên số dư các ví liên quan sẽ thay đổi. Hành động này không thể hoàn tác.",
       "borrow": "Đi vay từ",
       "lend": "Cho mượn",
       "borrow_type_personal": "Cá nhân",
@@ -2184,7 +2192,8 @@ class CodegenLoader extends AssetLoader {
       "history_title": "거래 기록",
       "no_history": "상환/수금 기록이 아직 없습니다",
       "delete_title": "부채 삭제",
-      "delete_confirm_msg": "이 부채를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
+      "delete_confirm_msg":
+          "삭제하면 관련된 모든 거래도 함께 삭제되어 관련 지갑의 잔액이 변경됩니다. 이 작업은 취소할 수 없습니다.",
       "borrow": "차용",
       "lend": "대여",
       "borrow_type_personal": "개인",
@@ -2297,6 +2306,10 @@ class CodegenLoader extends AssetLoader {
       "mismatch_warning": "{count}개 지갑이 일치하지 않습니다. 확인하기 전에 처리하세요",
       "create_adjustment": "조정 생성",
       "matched": "일치함",
+      "not_counted": "아직 확인 안 함",
+      "adjustment_category": "대사 조정",
+      "adjustment_surplus": "대사 - 초과분 조정",
+      "adjustment_shortfall": "대사 - 부족분 조정",
       "lech": "{amount} 차이",
       "review_transactions": "거래 검토",
     },
@@ -3017,7 +3030,8 @@ class CodegenLoader extends AssetLoader {
       "history_title": "取引履歴",
       "no_history": "まだ返済/回収履歴がありません",
       "delete_title": "負債を削除",
-      "delete_confirm_msg": "この負債を削除しますか？この操作は取り消せません。",
+      "delete_confirm_msg":
+          "削除すると関連するすべての取引も削除され、関連するウォレットの残高が変わります。この操作は取り消せません。",
       "borrow": "借り入れ",
       "lend": "貸付",
       "borrow_type_personal": "個人",
@@ -3125,6 +3139,10 @@ class CodegenLoader extends AssetLoader {
       "mismatch_warning": "{count}個のウォレットが一致しません。確認する前に処理してください",
       "create_adjustment": "調整を作成",
       "matched": "一致",
+      "not_counted": "未確認",
+      "adjustment_category": "照合調整",
+      "adjustment_surplus": "照合 - 過剰分の調整",
+      "adjustment_shortfall": "照合 - 不足分の調整",
       "lech": "{amount}の差",
       "review_transactions": "取引を確認",
     },
@@ -3837,7 +3855,7 @@ class CodegenLoader extends AssetLoader {
       "history_title": "交易历史",
       "no_history": "还没有还款/收款记录",
       "delete_title": "删除负债",
-      "delete_confirm_msg": "您确定要删除此负债吗？此操作无法撤销。",
+      "delete_confirm_msg": "删除后其所有相关交易也会一并删除，相关钱包的余额将随之变化。此操作无法撤销。",
       "borrow": "借入",
       "lend": "借出",
       "borrow_type_personal": "个人",
@@ -3943,6 +3961,10 @@ class CodegenLoader extends AssetLoader {
       "mismatch_warning": "{count} 个钱包不匹配，确认前请处理",
       "create_adjustment": "创建调整",
       "matched": "已匹配",
+      "not_counted": "未清点",
+      "adjustment_category": "对账调整",
+      "adjustment_surplus": "对账 - 盈余调整",
+      "adjustment_shortfall": "对账 - 短缺调整",
       "lech": "差额 {amount}",
       "review_transactions": "查看交易",
     },
@@ -4928,6 +4950,13 @@ class CcLocaleKeys {
   static const reconciliation_create_adjustment =
       'reconciliation.create_adjustment';
   static const reconciliation_matched = 'reconciliation.matched';
+  static const reconciliation_not_counted = 'reconciliation.not_counted';
+  static const reconciliation_adjustment_category =
+      'reconciliation.adjustment_category';
+  static const reconciliation_adjustment_surplus =
+      'reconciliation.adjustment_surplus';
+  static const reconciliation_adjustment_shortfall =
+      'reconciliation.adjustment_shortfall';
   static const reconciliation_lech = 'reconciliation.lech';
   static const reconciliation_review_transactions =
       'reconciliation.review_transactions';

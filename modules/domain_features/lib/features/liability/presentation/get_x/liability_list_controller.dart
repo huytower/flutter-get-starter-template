@@ -10,19 +10,16 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';
-import '../../domain/repositories/liability_repository.dart';
+import '../../domain/usecases/delete_liability_usecase.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
 import 'liability_form_controller.dart';
 
 @lazySingleton
 class LiabilityListController extends CcGetController {
-  LiabilityListController(
-    this._getLiabilityBalances,
-    this._LiabilityRepository,
-  );
+  LiabilityListController(this._getLiabilityBalances, this._deleteLiability);
 
   final GetLiabilityBalancesUseCase _getLiabilityBalances;
-  final LiabilityRepository _LiabilityRepository;
+  final DeleteLiabilityUseCase _deleteLiability;
 
   final RxList<LiabilityBalanceEntity> liabilities =
       <LiabilityBalanceEntity>[].obs;
@@ -128,13 +125,17 @@ class LiabilityListController extends CcGetController {
     final index = liabilities.indexWhere((b) => b.liability.id == id);
     if (index == -1) return;
 
-    final result = await _LiabilityRepository.deleteLiability(id);
+    final result = await _deleteLiability(liabilities[index].liability);
     result.when(
       (_) {
         liabilities.removeAt(index);
 
+        // The deleted debt transactions change wallet balances and every
+        // liability total, so refresh the dashboard (wallets included) too.
         if (Get.isRegistered<BudgetAllocationController>()) {
-          Get.find<BudgetAllocationController>().loadAll();
+          Get.find<BudgetAllocationController>().loadAll(showLoading: false);
+        } else if (Get.isRegistered<WalletController>()) {
+          Get.find<WalletController>().loadWallets(showLoading: false);
         }
 
         // Refresh LiabilityForm if it's open

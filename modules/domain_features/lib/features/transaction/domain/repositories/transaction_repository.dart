@@ -26,6 +26,9 @@ abstract class TransactionRepository {
   /// Soft-deletes every transaction (income and expense) of a wallet.
   Future<Result<void, CcFailure>> softDeleteByWallet(String walletId);
 
+  /// Soft-deletes the transactions with the given [ids].
+  Future<Result<void, CcFailure>> softDeleteByIds(List<String> ids);
+
   /// Transactions belonging to a wallet.
   Future<Result<List<TransactionEntity>, CcFailure>> getTransactionsByWallet(
     String walletId,

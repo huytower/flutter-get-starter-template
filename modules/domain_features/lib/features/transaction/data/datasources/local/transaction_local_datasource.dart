@@ -60,6 +60,23 @@ class TransactionLocalDataSource {
     }
   }
 
+  /// Marks the non-deleted transactions with the given [ids] as soft-deleted
+  /// and flags them for the next sync.
+  Future<void> softDeleteByIds(List<String> ids, DateTime deletedAt) async {
+    final box = await _box;
+    final iso = deletedAt.toIso8601String();
+    for (final id in ids) {
+      final model = box.get(id);
+      if (model == null || model.deletedAt != null) continue;
+      await box.put(
+        id,
+        model
+            .copyWith(deletedAt: iso)
+            .copyWithSyncMetadata(model.syncMetadata.withLocalChange(id)),
+      );
+    }
+  }
+
   Future<void> clear() async {
     final box = await _box;
     await box.clear();

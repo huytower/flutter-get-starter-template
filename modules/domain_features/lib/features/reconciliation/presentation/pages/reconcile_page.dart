@@ -10,6 +10,7 @@ import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
+import '../../../wallet/presentation/widgets/wallet_display_name.dart';
 import '../get_x/reconciliation_controller.dart';
 import '../widgets/reconciliation_confirm_button.dart';
 import '../widgets/reconciliation_history_section.dart';
@@ -40,28 +41,17 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
           fontWeight: CcTypographyParams.bold,
         ),
       ),
-      actions: [
-        Builder(
-          builder: (context) => Obx(() {
-            final enabled = controller.canReconcile;
-            return CcIconButton.bouncing(
-              icon: Icon(
-                Icons.handshake_outlined,
-                size: context.respIconSize(baseSize: 20),
-                color: context.ccColorScheme.onPrimary,
-              ),
-              tooltip: el.tr(CcLocaleKeys.reconciliation_confirm),
-              onTap: enabled
-                  ? () => controller.confirmReconciliation(context)
-                  : () {},
-              isEnable: enabled,
-              useDebounce: true,
-            );
-          }),
-        ),
-        const CcSpaceSM(),
-      ],
+      // No confirm action here: the inline ReconciliationConfirmButton under
+      // the summary is the single place to confirm.
     );
+  }
+
+  /// The base retry calls `onInit()`, which only registers listeners for this
+  /// controller — reload the data instead.
+  @override
+  void onRetry(BuildContext context) {
+    controller.loadBalances();
+    controller.loadHistory();
   }
 
   @override
@@ -234,7 +224,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
           onReview: () => _openWalletReview(
             context,
             balance.wallet.id,
-            balance.wallet.name,
+            balance.wallet.displayName(context),
           ),
         );
       }).toList(),

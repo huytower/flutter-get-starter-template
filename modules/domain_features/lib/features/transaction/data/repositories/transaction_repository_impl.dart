@@ -123,6 +123,14 @@ class TransactionRepositoryImpl
   }
 
   @override
+  Future<Result<void, CcFailure>> softDeleteByIds(List<String> ids) {
+    return safeRequest(() async {
+      await _local.softDeleteByIds(ids, DateTime.now());
+      _syncService.syncAll();
+    });
+  }
+
+  @override
   Future<Result<List<TransactionEntity>, CcFailure>> getTransactionsByWallet(
     String walletId,
   ) {

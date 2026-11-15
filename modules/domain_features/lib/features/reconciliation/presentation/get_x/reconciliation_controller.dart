@@ -42,6 +42,11 @@ class ReconciliationController extends CcGetController {
   /// Wallet ids where the user explicitly acknowledged creating an adjustment.
   final RxSet<String> _acknowledged = <String>{}.obs;
 
+  /// Unconverted balances (each in its wallet's own currency), keyed by wallet
+  /// id. [balances] is converted to the display currency for the UI, but the
+  /// reconciliation itself must compare and adjust in the wallet's currency.
+  final Map<String, WalletBalanceEntity> _originals = {};
+
   final RxInt systemTotal = 0.obs;
   final RxInt actualTotal = 0.obs;
   final RxInt unhandledCount = 0.obs;
@@ -59,11 +64,14 @@ class ReconciliationController extends CcGetController {
 
   int get difference => actualTotal.value - systemTotal.value;
 
-  /// Reconciliation is only permitted when there is non-zero wallet activity/amount
-  /// (system total > 0 or actual total > 0), no unacknowledged mismatches, and active balances exist.
+  /// Reconciliation is only permitted when there is wallet activity, at
+  /// least one wallet has been counted, no difference is left unacknowledged,
+  /// and nothing is being submitted. Uncounted wallets are taken as matching
+  /// their book balance.
   bool get canReconcile {
     final hasAmount = systemTotal.value > 0 || actualTotal.value > 0;
     return hasAmount &&
+        _actuals.isNotEmpty &&
         unhandledCount.value == 0 &&
         balances.isNotEmpty &&
         !isSubmitting.value;
@@ -71,7 +79,8 @@ class ReconciliationController extends CcGetController {
 
   bool isAcknowledged(String walletId) => _acknowledged.contains(walletId);
 
-  int actualOf(String walletId) => _actuals[walletId] ?? 0;
+  /// The counted amount, or null while the wallet has not been counted yet.
+  int? actualOf(String walletId) => _actuals[walletId];
 
   void acknowledgeAdjustment(String walletId) {
     _acknowledged.add(walletId);
@@ -84,6 +93,14 @@ class ReconciliationController extends CcGetController {
       return (actual - b.bookBalance) != 0 &&
           !_acknowledged.contains(b.wallet.id);
     }).length;
+  }
+
+  /// Actual total with uncounted wallets taken at their book balance.
+  void _recomputeActualTotal() {
+    actualTotal.value = balances.fold(
+      0,
+      (sum, b) => sum + (_actuals[b.wallet.id] ?? b.bookBalance),
+    );
   }
 
   @override
@@ -99,57 +116,67 @@ class ReconciliationController extends CcGetController {
     loadHistory();
   }
 
-  Future<void> loadBalances() async {
-    layoutStatus.value = CcLayoutStatus.loading;
+  /// Bumped on every load so a slower, older load (e.g. one started by a
+  /// currency change) can never overwrite the result of a newer one.
+  int _loadSeq = 0;
+
+  Future<void> loadBalances({bool showLoading = true}) async {
+    final seq = ++_loadSeq;
+    if (showLoading) layoutStatus.value = CcLayoutStatus.loading;
     final result = await _getWalletBalances.call();
-    result.when(
-      (success) async {
-        final walletController = Get.isRegistered<WalletController>()
-            ? Get.find<WalletController>()
-            : Get.put(getIt<WalletController>());
-        final targetCurrency = walletController.currencyCode.value;
+    if (seq != _loadSeq) return;
 
-        // Investment positions are excluded — "Thu vào" now credits a real
-        // liquid wallet directly, so an investment wallet's own balance is
-        // just cumulative contributed capital, nothing real to count here.
-        // The Emergency Fund stays reconciled normally, like cash/bank.
-        final liquid = success
-            .where((b) => b.wallet.type != WalletType.investment)
-            .toList();
+    final error = result.tryGetError();
+    if (error != null) {
+      errorMessage.value = error.message;
+      layoutStatus.value = CcLayoutStatus.error;
+      return;
+    }
 
-        final convertedLiquid = <WalletBalanceEntity>[];
-        for (final b in liquid) {
-          final convResult = await walletController.conversionService
-              .convertAmount(
-                amount: b.bookBalance,
-                fromCurrency: b.wallet.currencyCode,
-                toCurrency: targetCurrency,
-              );
-          final convertedBalance = convResult.tryGetSuccess() ?? b.bookBalance;
-          convertedLiquid.add(b.copyWith(bookBalance: convertedBalance));
-        }
+    final walletController = Get.isRegistered<WalletController>()
+        ? Get.find<WalletController>()
+        : Get.put(getIt<WalletController>());
+    final targetCurrency = walletController.currencyCode.value;
 
-        balances.assignAll(convertedLiquid);
-        _actuals
-          ..clear()
-          ..addEntries(convertedLiquid.map((b) => MapEntry(b.wallet.id, 0)));
-        _acknowledged.clear();
-        systemTotal.value = convertedLiquid.fold(
-          0,
-          (sum, b) => sum + b.bookBalance,
-        );
-        actualTotal.value = 0;
-        unhandledCount.value = 0;
-        _updateUnhandledCount();
-        layoutStatus.value = convertedLiquid.isEmpty
-            ? CcLayoutStatus.empty
-            : CcLayoutStatus.success;
-      },
-      (error) {
-        errorMessage.value = error.message;
-        layoutStatus.value = CcLayoutStatus.error;
-      },
+    // Investment positions are excluded — "Thu vào" now credits a real
+    // liquid wallet directly, so an investment wallet's own balance is
+    // just cumulative contributed capital, nothing real to count here.
+    // The Emergency Fund stays reconciled normally, like cash/bank.
+    final liquid = result
+        .tryGetSuccess()!
+        .where((b) => b.wallet.type != WalletType.investment)
+        .toList();
+
+    final convertedLiquid = <WalletBalanceEntity>[];
+    for (final b in liquid) {
+      final convResult = await walletController.conversionService.convertAmount(
+        amount: b.bookBalance,
+        fromCurrency: b.wallet.currencyCode,
+        toCurrency: targetCurrency,
+      );
+      convertedLiquid.add(
+        b.copyWith(bookBalance: convResult.tryGetSuccess() ?? b.bookBalance),
+      );
+    }
+    if (seq != _loadSeq) return;
+
+    _originals
+      ..clear()
+      ..addEntries(liquid.map((b) => MapEntry(b.wallet.id, b)));
+    balances.assignAll(convertedLiquid);
+    // Every wallet starts "not counted" (absent from the map).
+    _actuals.clear();
+    _acknowledged.clear();
+    editingWalletId.value = null;
+    systemTotal.value = convertedLiquid.fold(
+      0,
+      (sum, b) => sum + b.bookBalance,
     );
+    _recomputeActualTotal();
+    _updateUnhandledCount();
+    layoutStatus.value = convertedLiquid.isEmpty
+        ? CcLayoutStatus.empty
+        : CcLayoutStatus.success;
   }
 
   Future<void> loadHistory() async {
@@ -158,8 +185,20 @@ class ReconciliationController extends CcGetController {
   }
 
   void setActual(String walletId, int value) {
+    // An acknowledgement covers the difference the user saw; a new amount
+    // means a new difference that has to be reviewed again.
+    if (_actuals[walletId] != value) _acknowledged.remove(walletId);
     _actuals[walletId] = value;
-    actualTotal.value = _actuals.values.fold(0, (sum, v) => sum + v);
+    _recomputeActualTotal();
+    _updateUnhandledCount();
+  }
+
+  /// Puts a wallet back to "not counted".
+  void resetActual(String walletId) {
+    _actuals.remove(walletId);
+    _acknowledged.remove(walletId);
+    if (editingWalletId.value == walletId) editingWalletId.value = null;
+    _recomputeActualTotal();
     _updateUnhandledCount();
   }
 
@@ -232,9 +271,16 @@ class ReconciliationController extends CcGetController {
     if (isSubmitting.value) return null;
     isSubmitting.value = true;
     try {
-      final result = await _performReconciliation.call(Map.of(_actuals));
+      final result = await _performReconciliation.call(
+        await _actualsInWalletCurrency(),
+        displayTotals: (
+          systemTotal: systemTotal.value,
+          actualTotal: actualTotal.value,
+          currencyCode: currencyCode,
+        ),
+      );
       return result.when((_) {
-        loadBalances();
+        loadBalances(showLoading: false);
         loadHistory();
         _userLevel.refresh();
         return null;
@@ -244,15 +290,53 @@ class ReconciliationController extends CcGetController {
     }
   }
 
+  /// The use case compares each actual with the wallet's book balance in the
+  /// wallet's own currency, while the user typed amounts in the display
+  /// currency. Convert them back; an amount equal to the (converted) book
+  /// balance maps to the exact original book so a round-trip rounding error
+  /// can never create a spurious adjustment.
+  Future<Map<String, int>> _actualsInWalletCurrency() async {
+    final targetCurrency = currencyCode;
+    final converter = Get.isRegistered<WalletController>()
+        ? Get.find<WalletController>().conversionService
+        : null;
+    final result = <String, int>{};
+    for (final shown in balances) {
+      final id = shown.wallet.id;
+      final original = _originals[id];
+      final actual = _actuals[id];
+      // Uncounted wallets are left out: the use case treats them as matching.
+      if (actual == null) continue;
+      if (original == null) {
+        result[id] = actual;
+        continue;
+      }
+      final walletCurrency = original.wallet.currencyCode;
+      if (actual == shown.bookBalance) {
+        result[id] = original.bookBalance;
+      } else if (converter == null ||
+          walletCurrency.toUpperCase() == targetCurrency.toUpperCase()) {
+        result[id] = actual;
+      } else {
+        final converted = await converter.convertAmount(
+          amount: actual,
+          fromCurrency: targetCurrency,
+          toCurrency: walletCurrency,
+        );
+        result[id] = converted.tryGetSuccess() ?? actual;
+      }
+    }
+    return result;
+  }
+
   Future<String?> undoLast() async {
     if (isSubmitting.value) return null;
     isSubmitting.value = true;
     try {
       final result = await _undoReconciliation.call();
       return result.when((_) {
-        loadBalances();
+        loadBalances(showLoading: false);
         loadHistory();
-        _userLevel.refresh();
         _userLevel.refresh();
         return null;
       }, (error) => error.message);

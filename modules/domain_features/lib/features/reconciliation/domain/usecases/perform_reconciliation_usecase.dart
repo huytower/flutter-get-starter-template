@@ -1,6 +1,8 @@
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
+import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
+import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../transaction/domain/entities/transaction_entity.dart';
@@ -32,11 +34,18 @@ class PerformReconciliationUseCase {
   final TransactionRepository _transactionRepository;
   final ReconciliationRepository _reconciliationRepository;
 
-  /// [actualByWalletId] maps a wallet id to the counted balance. Wallets absent
-  /// from the map are assumed to match their book balance.
+  /// [actualByWalletId] maps a wallet id to the counted balance, in that
+  /// wallet's own currency. Wallets absent from the map are assumed to match
+  /// their book balance.
+  ///
+  /// Wallets can hold different currencies, so their raw sums are not a
+  /// meaningful total. Pass [displayTotals] (both totals already converted to
+  /// one currency) to store totals the history can show; without it the raw
+  /// sums are kept, which is only correct when every wallet shares a currency.
   Future<Result<ReconciliationEntity, CcFailure>> call(
-    Map<String, int> actualByWalletId,
-  ) async {
+    Map<String, int> actualByWalletId, {
+    ({int systemTotal, int actualTotal, String currencyCode})? displayTotals,
+  }) async {
     final balancesResult = await _getWalletBalances.call();
     if (balancesResult.isError()) {
       return Error(balancesResult.tryGetError()!);
@@ -82,10 +91,12 @@ class PerformReconciliationUseCase {
           id: '${stamp}_${balance.wallet.id}',
           type: isSurplus ? TransactionType.income : TransactionType.expense,
           amount: diff.abs(),
-          category: 'Điều chỉnh khớp sổ',
-          note: isSurplus
-              ? 'Khớp sổ - Điều chỉnh dôi dư'
-              : 'Khớp sổ - Điều chỉnh hao hụt',
+          category: el.tr(CcLocaleKeys.reconciliation_adjustment_category),
+          note: el.tr(
+            isSurplus
+                ? CcLocaleKeys.reconciliation_adjustment_surplus
+                : CcLocaleKeys.reconciliation_adjustment_shortfall,
+          ),
           date: now,
           walletId: balance.wallet.id,
           currencyCode: balance.wallet.currencyCode,
@@ -107,13 +118,17 @@ class PerformReconciliationUseCase {
       id: stamp.toString(),
       year: period.yearly,
       week: period.week,
-      systemTotal: systemTotal,
-      actualTotal: actualTotal,
-      difference: actualTotal - systemTotal,
+      systemTotal: displayTotals?.systemTotal ?? systemTotal,
+      actualTotal: displayTotals?.actualTotal ?? actualTotal,
+      difference:
+          (displayTotals?.actualTotal ?? actualTotal) -
+          (displayTotals?.systemTotal ?? systemTotal),
       allocations: allocations,
       adjustmentTransactionIds: adjustmentIds,
       date: now,
-      currencyCode: CurrencyConstants.currentPrimaryCurrency,
+      currencyCode:
+          displayTotals?.currencyCode ??
+          CurrencyConstants.currentPrimaryCurrency,
     );
 
     final saved = await _reconciliationRepository.saveReconciliation(
