@@ -539,9 +539,15 @@ class CodegenLoader extends AssetLoader {
       "book_balance": "Book: {amount}",
       "cycle_subtitle": "This week · due Sunday",
       "description_line_1":
-          "Reconciliation helps you match actual balances with the app to ensure all financial records are always accurate and transparent.",
+          "Reconciliation helps you **match actual balances with the app** to ensure all financial records are always accurate and transparent.",
       "description_line_2":
-          "Automatically generate adjustment entries to match app balances with reality without needing to review missed transactions.",
+          "**Automatically generate adjustment entries** to match app balances with reality without needing to review missed transactions.",
+      "guide_count":
+          "**Step 1 - Count:** check your cash and the real balance of each bank account or e-wallet, then enter it in that wallet's **\"Actual\"** field.",
+      "guide_compare":
+          "**Step 2 - Compare:** the app checks each actual amount against its book balance. Matching wallets are marked **\"Balanced\"**; the others show the difference.",
+      "guide_record":
+          "**Step 3 - Record:** for a wallet that differs, tap **\"Create adjustment\"** to accept an entry covering the gap, then tap **\"Confirm Reconciliation\"** to save.",
       "mismatch_warning":
           "{count} wallet(s) unmatched, handle before confirming",
       "create_adjustment": "Create adjustment",
@@ -1370,9 +1376,15 @@ class CodegenLoader extends AssetLoader {
       "book_balance": "Sổ sách: {amount}",
       "cycle_subtitle": "Tuần này • đến hạn Chủ Nhật",
       "description_line_1":
-          "Đối soát giúp bạn khớp số dư thực tế với ứng dụng để đảm bảo mọi ghi chép tài chính luôn chính xác và minh bạch.",
+          "Đối soát giúp bạn **khớp số dư thực tế với ứng dụng** để đảm bảo mọi ghi chép tài chính luôn chính xác và minh bạch.",
       "description_line_2":
-          "Tự động tạo các bút toán điều chỉnh để khớp số dư ứng dụng với thực tế mà không cần xem lại các giao dịch bị bỏ sót.",
+          "**Tự động tạo các bút toán điều chỉnh** để khớp số dư ứng dụng với thực tế mà không cần xem lại các giao dịch bị bỏ sót.",
+      "guide_count":
+          "**Bước 1 - Đếm:** kiểm tiền mặt và xem số dư thật của từng tài khoản ngân hàng, ví điện tử, rồi nhập vào ô **\"Thực tế\"** của ví đó.",
+      "guide_compare":
+          "**Bước 2 - So khớp:** ứng dụng so số thực tế với số sách của từng ví. Ví khớp được đánh dấu **\"Đã khớp\"**; ví lệch hiện số tiền chênh.",
+      "guide_record":
+          "**Bước 3 - Ghi sổ:** với ví bị lệch, chọn **\"Tạo điều chỉnh\"** để đồng ý ghi bút toán bù phần chênh, rồi bấm **\"Xác nhận đối soát\"** để lưu.",
       "mismatch_warning": "{count} ví chưa khớp, hãy xử lý trước khi xác nhận",
       "create_adjustment": "Tạo điều chỉnh",
       "matched": "Đã khớp",
@@ -2300,9 +2312,15 @@ class CodegenLoader extends AssetLoader {
       "book_balance": "장부: {amount}",
       "cycle_subtitle": "이번 주 · 일요일 마감",
       "description_line_1":
-          "조정은 실제 잔액을 앱과 일치시켜 모든 재무 기록이 항상 정확하고 투명하게 유지되도록 돕습니다.",
+          "조정은 **실제 잔액을 앱과 일치**시켜 모든 재무 기록이 항상 정확하고 투명하게 유지되도록 돕습니다.",
       "description_line_2":
-          "누락된 거래를 검토할 필요 없이 실제와 일치하도록 장부 잔액을 조정하는 조정 항목을 자동으로 생성합니다.",
+          "누락된 거래를 검토할 필요 없이 실제와 일치하도록 장부 잔액을 조정하는 **조정 항목을 자동으로 생성**합니다.",
+      "guide_count":
+          "**1단계 - 세기:** 현금과 각 은행 계좌·전자지갑의 실제 잔액을 확인한 뒤 해당 지갑의 **\"실제\"** 칸에 입력하세요.",
+      "guide_compare":
+          "**2단계 - 비교:** 앱이 지갑마다 실제 금액과 장부 잔액을 비교합니다. 일치하는 지갑은 **\"일치함\"**으로 표시되고, 다른 지갑은 차액이 표시됩니다.",
+      "guide_record":
+          "**3단계 - 기록:** 차이가 나는 지갑은 **\"조정 생성\"**을 눌러 차액을 메우는 항목을 승인한 뒤 **\"조정 확인\"**을 눌러 저장하세요.",
       "mismatch_warning": "{count}개 지갑이 일치하지 않습니다. 확인하기 전에 처리하세요",
       "create_adjustment": "조정 생성",
       "matched": "일치함",
@@ -3133,9 +3151,15 @@ class CodegenLoader extends AssetLoader {
       "actual": "実際",
       "book_balance": "帳簿: {amount}",
       "cycle_subtitle": "今週 · 日曜日期限",
-      "description_line_1": "調整は実際の残高をアプリと一致させ、すべての財務記録が常に正確で透明であることを保証します。",
+      "description_line_1": "調整は**実際の残高をアプリと一致**させ、すべての財務記録が常に正確で透明であることを保証します。",
       "description_line_2":
-          "見落とした取引を確認する必要なく、実際と一致するように帳簿残高を調整する調整エントリを自動的に生成します。",
+          "見落とした取引を確認する必要なく、実際と一致するように帳簿残高を調整する**調整エントリを自動的に生成**します。",
+      "guide_count":
+          "**ステップ1 - 数える:** 現金と各銀行口座・電子ウォレットの実際の残高を確認し、そのウォレットの**「実際」**欄に入力します。",
+      "guide_compare":
+          "**ステップ2 - 照合:** アプリがウォレットごとに実際の金額と帳簿残高を比較します。一致したウォレットは**「一致」**と表示され、それ以外は差額が表示されます。",
+      "guide_record":
+          "**ステップ3 - 記録:** 差額のあるウォレットは**「調整を作成」**をタップして差額を埋める記帳を承認し、**「調整を確認」**をタップして保存します。",
       "mismatch_warning": "{count}個のウォレットが一致しません。確認する前に処理してください",
       "create_adjustment": "調整を作成",
       "matched": "一致",
@@ -3956,8 +3980,14 @@ class CodegenLoader extends AssetLoader {
       "actual": "实际",
       "book_balance": "账面: {amount}",
       "cycle_subtitle": "本周 · 周日到期",
-      "description_line_1": "对账帮助您将实际余额与应用匹配，确保所有财务记录始终准确透明。",
-      "description_line_2": "自动生成调整条目以使应用余额与现实匹配，而无需查看遗漏的交易。",
+      "description_line_1": "对账帮助您**将实际余额与应用匹配**，确保所有财务记录始终准确透明。",
+      "description_line_2": "**自动生成调整条目**以使应用余额与现实匹配，而无需查看遗漏的交易。",
+      "guide_count":
+          "**第 1 步 - 清点：**核对现金以及每个银行账户、电子钱包的实际余额，然后填入该钱包的**“实际”**栏。",
+      "guide_compare":
+          "**第 2 步 - 比对：**应用会将每个钱包的实际金额与账面余额进行比较。相符的钱包标记为**“已匹配”**，其余显示差额。",
+      "guide_record":
+          "**第 3 步 - 记账：**对有差额的钱包，点按**“创建调整”**以同意生成补足差额的条目，然后点按**“确认对账”**保存。",
       "mismatch_warning": "{count} 个钱包不匹配，确认前请处理",
       "create_adjustment": "创建调整",
       "matched": "已匹配",
@@ -4945,6 +4975,9 @@ class CcLocaleKeys {
       'reconciliation.description_line_1';
   static const reconciliation_description_line_2 =
       'reconciliation.description_line_2';
+  static const reconciliation_guide_count = 'reconciliation.guide_count';
+  static const reconciliation_guide_compare = 'reconciliation.guide_compare';
+  static const reconciliation_guide_record = 'reconciliation.guide_record';
   static const reconciliation_mismatch_warning =
       'reconciliation.mismatch_warning';
   static const reconciliation_create_adjustment =

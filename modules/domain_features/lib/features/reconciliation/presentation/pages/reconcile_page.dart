@@ -14,6 +14,7 @@ import '../../../wallet/presentation/widgets/wallet_display_name.dart';
 import '../get_x/reconciliation_controller.dart';
 import '../widgets/finance_line_art_background.dart';
 import '../widgets/reconciliation_confirm_button.dart';
+import '../widgets/reconciliation_guide_sheet.dart';
 import '../widgets/reconciliation_history_section.dart';
 import '../widgets/reconciliation_mismatch_warning.dart';
 import '../widgets/reconciliation_summary.dart';
@@ -118,34 +119,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
   Widget _buildSeeMoreDescription(BuildContext context) {
     final text = el.tr(CcLocaleKeys.reconciliation_description_line_1);
     return CcBouncing(
-      onTap: () => CcDialogHelper.showMessageBottomSheet(
-        context: context,
-        title: el.tr(CcLocaleKeys.reconciliation_title),
-        isOnlyConfirm: true,
-        customWidget: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildDescriptionItem(
-              context,
-              icon: Icons.info_outline_rounded,
-              text: el.tr(CcLocaleKeys.reconciliation_description_line_1),
-            ),
-            const CcSpaceMD(),
-            _buildDescriptionItem(
-              context,
-              icon: Icons.sync_alt_rounded,
-              text: el.tr(CcLocaleKeys.reconciliation_description_line_2),
-            ),
-            const CcSpaceMD(),
-            _buildDescriptionItem(
-              context,
-              icon: Icons.event_repeat_rounded,
-              text: el.tr(CcLocaleKeys.reconciliation_cycle_subtitle),
-            ),
-          ],
-        ),
-      ),
+      onTap: () => ReconciliationGuideSheet.show(context),
       borderRadius: context.brSm,
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -183,44 +157,6 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDescriptionItem(
-    BuildContext context, {
-    required IconData icon,
-    required String text,
-  }) {
-    final scheme = context.ccColorScheme;
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(context.respDim(6)),
-          decoration: BoxDecoration(
-            color: scheme.primary.withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            icon,
-            size: context.respIconSize(baseSize: 18),
-            color: scheme.primary,
-          ),
-        ),
-        const CcSpaceSM(),
-        Expanded(
-          child: CcText(
-            text,
-            maxLines: 10,
-            textAlign: TextAlign.start,
-            textStyle: context.ccTextTheme.bodyMedium?.copyWith(
-              color: scheme.onSurfaceVariant,
-              height: 1.4,
-            ),
-          ),
-        ),
-      ],
     );
   }
 

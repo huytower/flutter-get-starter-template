@@ -15,7 +15,7 @@ import '../../domain/entities/reconciliation_entity.dart';
 import '../../domain/usecases/get_reconciliation_history_usecase.dart';
 import '../../domain/usecases/perform_reconciliation_usecase.dart';
 import '../../domain/usecases/undo_reconciliation_usecase.dart';
-import '../widgets/reconciliation_sheet.dart';
+import '../widgets/reconciliation_success_sheet.dart';
 
 @injectable
 class ReconciliationController extends CcGetController {

@@ -12,5 +12,5 @@ export 'domain/usecases/undo_reconciliation_usecase.dart';
 export 'presentation/get_x/reconciliation_controller.dart';
 export 'presentation/pages/reconcile_page.dart';
 export 'presentation/widgets/reconciliation_history_card.dart';
-export 'presentation/widgets/reconciliation_sheet.dart';
+export 'presentation/widgets/reconciliation_success_sheet.dart';
 export 'presentation/widgets/wallet_reconcile_tile.dart';
