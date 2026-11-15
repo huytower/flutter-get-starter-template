@@ -279,7 +279,7 @@ class ReconciliationController extends CcGetController {
           currencyCode: currencyCode,
         ),
       );
-      return result.when((_) {
+      return result.when<String?>((_) {
         loadBalances(showLoading: false);
         loadHistory();
         _userLevel.refresh();
@@ -334,7 +334,7 @@ class ReconciliationController extends CcGetController {
     isSubmitting.value = true;
     try {
       final result = await _undoReconciliation.call();
-      return result.when((_) {
+      return result.when<String?>((_) {
         loadBalances(showLoading: false);
         loadHistory();
         _userLevel.refresh();

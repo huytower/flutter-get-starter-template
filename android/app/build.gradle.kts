@@ -2,7 +2,6 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     id("dev.flutter.flutter-gradle-plugin")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
@@ -136,7 +135,7 @@ flutter {
 dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("com.airbnb.android:lottie:6.7.1")
-    implementation(platform("com.google.firebase:firebase-bom:34.17.0"))
+    implementation(platform("com.google.firebase:firebase-bom:35.1.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")

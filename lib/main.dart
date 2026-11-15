@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:theme/core/helper/theme_helper.dart';
 
 import 'core/crash_reporting/crash_log_startup.dart';
 import 'core/di/di.dart';
@@ -60,7 +61,15 @@ void main() async {
     );
     '❌ FATAL BOOTSTRAP ERROR | error=$error'.Log('Main');
     stackTrace.Log('Main');
-    runApp(ErrorPage(message: error.toString()));
+    // Bootstrap failed before the app shell (and its MaterialApp) existed, so
+    // ErrorPage needs its own MaterialApp for Directionality/Theme/Overlay.
+    runApp(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: createLightTheme(),
+        home: ErrorPage(message: error.toString()),
+      ),
+    );
     developer.log('✅ ErrorPage launched', name: 'Main');
     '✅ ErrorPage launched'.Log('Main');
   }

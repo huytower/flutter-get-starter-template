@@ -9,6 +9,10 @@ analyzer:
     - "**/generated/**"
     - "**/cc_codegen_loader.dart"
     - module/ui/lib/extension/logger.dart
+    - build/**
+    - android/**
+    - ios/**
+    - macos/**
   errors:
     cancel_subscriptions: ignore
     use_build_context_synchronously: ignore

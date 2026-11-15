@@ -58,7 +58,13 @@ class _NavigationBarState extends State<NavigationBar>
   }
 
   @override
-  double? get navigationBarHeight => context.respDim(70);
+  double? get navigationBarHeight => context.respDim(64);
+
+  /// [buildBottomNavigationBar] already pads for the system bottom inset
+  /// (capped for gesture navigation). Letting the bar add it again doubled
+  /// the inset and made the bar oversized on Android gesture devices.
+  @override
+  bool get navigationUseSafeArea => false;
 
   @override
   bool get shouldEnableDoubleBackToExit => currentIndex == _indexEntry;

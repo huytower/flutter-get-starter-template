@@ -5,7 +5,7 @@ version: 1.0.0+25
 
 environment:
   sdk: '^3.12.0'
-  flutter: '^3.44.3'
+  flutter: '^3.50.0'
 
 workspace:
   - modules/app_config
@@ -51,14 +51,14 @@ dependencies:
   easy_localization: ^3.0.8
   equatable: ^2.1.0
 
-  cloud_firestore: ^6.8.0
-  firebase_core: ^4.13.0
-  firebase_auth: ^6.5.7
-  firebase_messaging: ^16.5.0
-  firebase_crashlytics: ^5.2.7
-  firebase_analytics: ^12.0.2
-  firebase_performance: ^0.11.4+6
-  firebase_app_check: ^0.4.6
+  cloud_firestore: ^7.1.0
+  firebase_core: ^5.1.0
+  firebase_auth: ^7.0.1
+  firebase_messaging: ^17.0.1
+  firebase_crashlytics: ^6.0.1
+  firebase_analytics: ^13.0.1
+  firebase_performance: ^0.12.1
+  firebase_app_check: ^0.5.1
   google_sign_in: ^7.2.0
   sign_in_with_apple: ^8.1.0
 
@@ -78,7 +78,7 @@ dependencies:
   get: ^4.7.3
   get_it: ^9.2.1
 
-  google_fonts: ^8.2.1
+  google_fonts: ^9.0.0
   hive_ce: ^2.19.3
   hive_ce_flutter: ^2.3.4
   injectable: ^3.0.0
@@ -125,6 +125,22 @@ dev_dependencies:
 
 dependency_overrides:
   cli_util: ^0.5.0
+  # auto_route_generator 10.6.0 (latest) caps analyzer <14, but Flutter 3.50's
+  # pinned test_api forces test >=1.31.2 (analyzer 13-14) and hive_ce_generator
+  # >=1.11.3 needs analyzer ^14. Upper bound: injectable_generator 3.1.3 ->
+  # lean_builder 1.2.2 -> _fe_analyzer_shared <106 (analyzer <14.3). An override
+  # ignores every other package's constraint, so keep it narrow and pin
+  # build_runner to the last release that accepts analyzer <14.3 (2.16.2 needs
+  # >=14.3). Remove both once auto_route_generator allows analyzer 14.
+  analyzer: '>=14.0.0 <14.3.0'
+  build_runner: 2.16.1
+  # fluttertoast is NOT used by this project; it is only a transitive dependency
+  # of catcher_2 (for its ToastHandler, which we never register). Upstream
+  # 10.0.2 (latest) applies the Kotlin Gradle Plugin unconditionally and breaks
+  # AGP 9 built-in Kotlin, so it is replaced by a Dart-only no-op stub with no
+  # native code.
+  fluttertoast:
+    path: third_party/fluttertoast
 
 flutter:
   uses-material-design: true
@@ -136,7 +152,7 @@ flutter:
 
   # Environment files
   assets:
-    - env/.env.prod
+    - env/prod.env
     - assets/icon/
     - assets/lottie/
     - assets/bg/

@@ -3,6 +3,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+
 import 'dart:async' as _i687;
 
 import 'package:bridge/navigation_bridge_service_impl.dart' as _i357;

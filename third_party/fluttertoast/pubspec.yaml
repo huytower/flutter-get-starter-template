@@ -1,0 +1,15 @@
+name: fluttertoast
+description: >-
+  Dart-only no-op stand-in for the fluttertoast plugin. The project does not use
+  toasts; this exists only because catcher_2 imports fluttertoast for its
+  ToastHandler (unused here). No Android/iOS/web code, so the real plugin's
+  unconditional Kotlin Gradle Plugin apply cannot break AGP 9 built-in Kotlin.
+version: 10.0.2+stub
+publish_to: none
+
+environment:
+  sdk: '^3.12.0'
+
+dependencies:
+  flutter:
+    sdk: flutter

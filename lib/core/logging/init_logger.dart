@@ -9,7 +9,9 @@ Future<void> initEnv() async {
   String envFile;
   switch (env) {
     case Environment.PROD:
-      envFile = '.env.prod';
+      // Not `.env.prod`: Flutter 3.50.0 omits dot-prefixed assets from the
+      // Android bundle (flutter/flutter#196444).
+      envFile = 'prod.env';
       break;
   }
   try {

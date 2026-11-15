@@ -100,7 +100,7 @@ Run the app (flavor `prod`, entry `lib/main_prod.dart`):
 flutter run -d <device> --flavor prod -t lib/main_prod.dart
 ```
 
-Copy `env/.env.example` to `env/.env.prod` (git-ignored) and fill in your own values before the first run; the app
+Copy `env/.env.example` to `env/prod.env` (git-ignored) and fill in your own values before the first run; the app
 loads it at boot via `initEnv()`.
 
 ## Documentation map

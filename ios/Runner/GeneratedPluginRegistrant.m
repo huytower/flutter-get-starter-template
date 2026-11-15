@@ -6,12 +6,6 @@
 
 #import "GeneratedPluginRegistrant.h"
 
-#if __has_include(<cloud_firestore/FLTFirebaseFirestorePlugin.h>)
-#import <cloud_firestore/FLTFirebaseFirestorePlugin.h>
-#else
-@import cloud_firestore;
-#endif
-
 #if __has_include(<connectivity_plus/ConnectivityPlusPlugin.h>)
 #import <connectivity_plus/ConnectivityPlusPlugin.h>
 #else
@@ -24,10 +18,16 @@
 @import device_info_plus;
 #endif
 
-#if __has_include(<firebase_ai/FirebaseAIPlugin.h>)
-#import <firebase_ai/FirebaseAIPlugin.h>
+#if __has_include(<firebase_core/FLTFirebaseCorePlugin.h>)
+#import <firebase_core/FLTFirebaseCorePlugin.h>
 #else
-@import firebase_ai;
+@import firebase_core;
+#endif
+
+#if __has_include(<cloud_firestore/FLTFirebaseFirestorePlugin.h>)
+#import <cloud_firestore/FLTFirebaseFirestorePlugin.h>
+#else
+@import cloud_firestore;
 #endif
 
 #if __has_include(<firebase_analytics/FirebaseAnalyticsPlugin.h>)
@@ -48,14 +48,14 @@
 @import firebase_auth;
 #endif
 
-#if __has_include(<firebase_core/FLTFirebaseCorePlugin.h>)
-#import <firebase_core/FLTFirebaseCorePlugin.h>
+#if __has_include(<firebase_ai/FirebaseAIPlugin.h>)
+#import <firebase_ai/FirebaseAIPlugin.h>
 #else
-@import firebase_core;
+@import firebase_ai;
 #endif
 
-#if __has_include(<firebase_crashlytics/FLTFirebaseCrashlyticsPlugin.h>)
-#import <firebase_crashlytics/FLTFirebaseCrashlyticsPlugin.h>
+#if __has_include(<firebase_crashlytics/FirebaseCrashlyticsPlugin.h>)
+#import <firebase_crashlytics/FirebaseCrashlyticsPlugin.h>
 #else
 @import firebase_crashlytics;
 #endif
@@ -102,12 +102,6 @@
 @import flutter_udid;
 #endif
 
-#if __has_include(<fluttertoast/FluttertoastPlugin.h>)
-#import <fluttertoast/FluttertoastPlugin.h>
-#else
-@import fluttertoast;
-#endif
-
 #if __has_include(<geocoding_darwin/GeocodingDarwinPlugin.h>)
 #import <geocoding_darwin/GeocodingDarwinPlugin.h>
 #else
@@ -132,14 +126,14 @@
 @import google_mlkit_text_recognition;
 #endif
 
-#if __has_include(<google_sign_in_ios/FLTGoogleSignInPlugin.h>)
-#import <google_sign_in_ios/FLTGoogleSignInPlugin.h>
+#if __has_include(<google_sign_in_ios/GoogleSignInPlugin.h>)
+#import <google_sign_in_ios/GoogleSignInPlugin.h>
 #else
 @import google_sign_in_ios;
 #endif
 
-#if __has_include(<image_picker_ios/FLTImagePickerPlugin.h>)
-#import <image_picker_ios/FLTImagePickerPlugin.h>
+#if __has_include(<image_picker_ios/ImagePickerPlugin.h>)
+#import <image_picker_ios/ImagePickerPlugin.h>
 #else
 @import image_picker_ios;
 #endif
@@ -195,15 +189,15 @@
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
-  [FLTFirebaseFirestorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseFirestorePlugin"]];
   [ConnectivityPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"ConnectivityPlusPlugin"]];
   [FPPDeviceInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPDeviceInfoPlusPlugin"]];
-  [FirebaseAIPlugin registerWithRegistrar:[registry registrarForPlugin:@"FirebaseAIPlugin"]];
+  [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
+  [FLTFirebaseFirestorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseFirestorePlugin"]];
   [FirebaseAnalyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FirebaseAnalyticsPlugin"]];
   [FirebaseAppCheckPlugin registerWithRegistrar:[registry registrarForPlugin:@"FirebaseAppCheckPlugin"]];
   [FLTFirebaseAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAuthPlugin"]];
-  [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
-  [FLTFirebaseCrashlyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCrashlyticsPlugin"]];
+  [FirebaseAIPlugin registerWithRegistrar:[registry registrarForPlugin:@"FirebaseAIPlugin"]];
+  [FirebaseCrashlyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FirebaseCrashlyticsPlugin"]];
   [FLTFirebaseMessagingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMessagingPlugin"]];
   [FirebasePerformancePlugin registerWithRegistrar:[registry registrarForPlugin:@"FirebasePerformancePlugin"]];
   [FlutterLocalNotificationsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterLocalNotificationsPlugin"]];
@@ -211,13 +205,12 @@
   [FlutterSecureStorageDarwinPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterSecureStorageDarwinPlugin"]];
   [FlutterTimezonePlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterTimezonePlugin"]];
   [FlutterUdidPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterUdidPlugin"]];
-  [FluttertoastPlugin registerWithRegistrar:[registry registrarForPlugin:@"FluttertoastPlugin"]];
   [GeocodingDarwinPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeocodingDarwinPlugin"]];
   [GeolocatorPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeolocatorPlugin"]];
   [GoogleMlKitCommonsPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleMlKitCommonsPlugin"]];
   [GoogleMlKitTextRecognitionPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleMlKitTextRecognitionPlugin"]];
-  [FLTGoogleSignInPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleSignInPlugin"]];
-  [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
+  [GoogleSignInPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleSignInPlugin"]];
+  [ImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"ImagePickerPlugin"]];
   [LocalAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"LocalAuthPlugin"]];
   [FPPPackageInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPPackageInfoPlusPlugin"]];
   [PermissionHandlerPlugin registerWithRegistrar:[registry registrarForPlugin:@"PermissionHandlerPlugin"]];
