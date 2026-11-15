@@ -33,6 +33,18 @@ void main() async {
     );
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
+    // Orientation: phones portrait-only, tablets/foldables free. Applied
+    // before the first frame (fire-and-forget) so a phone held sideways never
+    // flashes a landscape UI; OrientationPolicyScope keeps it current after.
+    final view = WidgetsBinding.instance.platformDispatcher.implicitView;
+    if (view != null) {
+      unawaited(
+        CcDeviceHelper.applyOrientationPolicy(
+          view.physicalSize / view.devicePixelRatio,
+        ),
+      );
+    }
+
     // 1. Environment Loading (Critical & Blocking for DI)
     // We load this first because initializeDependencies() depends on env variables.
     // This is very fast (~50ms) and prevents race conditions in the parallel block.

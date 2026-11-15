@@ -67,13 +67,17 @@ before making non-trivial changes inside a package.
 
 ## Multi-screen & orientation support (detail)
 
-Window size classes, scaling and the `context.resp*` API are covered in `AGENTS.md` rule #9. Platform-level
-orientation configuration today:
+Window size classes, scaling and the `context.resp*` API are covered in `AGENTS.md` rule #9.
 
-- **Android**: `android:screenOrientation="portrait"` in `AndroidManifest.xml`. With `targetSdk` 37, Android 16+
-  ignores this lock on screens ≥ 600 dp (tablets, unfolded foldables), so those devices rotate anyway, while
-  older Android tablets stay portrait.
-- **iOS iPhone**: Portrait only in `Info.plist`.
+**Orientation policy** (one rule, applied in Dart on every platform): screens whose shortest side is < 600 dp
+(phones, foldable cover screens) are portrait-only; larger screens (tablets, unfolded foldables, desktop/web)
+rotate freely. `CcDeviceHelper.applyOrientationPolicy` implements it; `main.dart` applies it before the first
+frame and `OrientationPolicyScope` (in `MaterialApp.builder`) re-applies it on every window size change, e.g. a
+foldable opening or closing. Platform configuration backing it:
+
+- **Android**: no `screenOrientation` in `AndroidManifest.xml` — a manifest lock would also lock tablets on
+  Android ≤ 15, and Android 16+ ignores it on screens ≥ 600 dp anyway (`targetSdk` 37).
+- **iOS iPhone**: Portrait only in `Info.plist` (iPhones are always below 600 dp shortest side).
 - **iOS iPad**: all orientations supported (Portrait, PortraitUpsideDown, LandscapeLeft, LandscapeRight).
 - Branch layout on width (`CcWindowSizeClass` / `CcAdaptiveBuilder`) and vertical room (`CcWindowHeightClass`),
   not on orientation; `context.isPortrait` / `context.isLandscape` remain for the rare orientation-specific case.

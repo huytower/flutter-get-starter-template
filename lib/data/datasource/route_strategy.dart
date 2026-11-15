@@ -7,6 +7,7 @@ import 'package:theme/core/helper/theme_helper.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';
 
 import '../../core/layout/app_content_frame.dart';
+import '../../core/layout/orientation_policy_scope.dart';
 import '../../core/navigation/config/auto_route/app_router.dart';
 
 /// A strategy that builds the app shell and router widget.
@@ -72,10 +73,12 @@ class AutoRouteStrategy extends RoutingStrategy {
         localizationsDelegates: context.localizationDelegates,
         supportedLocales: context.supportedLocales,
         builder: (context, child) {
-          return AppContentFrame(
-            child: CcKeyboardHelper.dismissOnTap(
-              child: child ?? const SizedBox.shrink(),
-              context: context,
+          return OrientationPolicyScope(
+            child: AppContentFrame(
+              child: CcKeyboardHelper.dismissOnTap(
+                child: child ?? const SizedBox.shrink(),
+                context: context,
+              ),
             ),
           );
         },
