@@ -56,6 +56,23 @@ class HttpProd extends HttpBase {
     return url;
   }
 
+  /// `IS_FORCE_UPDATE`, injected by CI from the GitHub secret of the same
+  /// name. Anything but `true` (including the unreplaced placeholder) is off.
+  @override
+  bool get isForceUpdate =>
+      dotenv.maybeGet('IS_FORCE_UPDATE')?.trim().toLowerCase() == 'true';
+
+  /// `MINIMUM_OS_VERSION_HAS_FORCE`, injected by CI from the GitHub secret of
+  /// the same name. Blank or the unreplaced placeholder reads as unset.
+  @override
+  String? get minimumOsVersionHasForce {
+    final value = dotenv.maybeGet('MINIMUM_OS_VERSION_HAS_FORCE')?.trim();
+    if (value == null || value.isEmpty || value.startsWith('YOUR_')) {
+      return null;
+    }
+    return value;
+  }
+
   @override
   int get versionIOS => _getVersion('IOS_VERSION');
 

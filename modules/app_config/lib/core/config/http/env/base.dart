@@ -81,6 +81,18 @@ abstract class HttpBase extends Equatable {
   /// Whether the current env is free tier.
   bool get isEnvFree => false;
 
+  // App update (force update)
+
+  /// Default for the forced app update switch (`IS_FORCE_UPDATE`); the live
+  /// value comes from Firebase Remote Config (`isForce`).
+  bool get isForceUpdate => false;
+
+  /// Installed versions below this one must update when [isForceUpdate] is
+  /// on (`MINIMUM_OS_VERSION_HAS_FORCE`), a semver app version such as
+  /// `1.2.0`. Default for Remote Config `minimumOsVersionHasForce`;
+  /// `null` when unset.
+  String? get minimumOsVersionHasForce => null;
+
   // Immutable configuration - no setters
 
   @override

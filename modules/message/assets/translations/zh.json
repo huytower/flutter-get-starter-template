@@ -60,6 +60,13 @@
     "guest_login_continue_local": "继续本地体验",
     "later": "以后再说"
   },
+  "app_update": {
+    "title": "需要更新",
+    "message": "此版本已不再受支持。请更新到 {version} 或更高版本以继续使用。",
+    "current_version": "当前版本：{version}",
+    "update_now": "立即更新",
+    "open_store_failed": "无法打开应用商店。请从 App Store 或 Google Play 更新应用。"
+  },
   "auth": {
     "login": "登录",
     "logout": "退出",

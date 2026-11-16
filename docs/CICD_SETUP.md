@@ -56,6 +56,43 @@ Configure these secrets in `Settings > Secrets and variables > Actions`:
 | `APPLE_CERTIFICATE_BASE64`      | Base64-encoded `.p12` Distribution Certificate | Export `.p12` from Mac Keychain > Convert to Base64    |
 | `APPLE_CERTIFICATE_PASSWORD`    | Password for the `.p12` certificate            | Password set during `.p12` export from Mac Keychain   |
 
+### 3. App env values (written into `env/prod.env` at build time)
+
+`.github/actions/flutter-setup` copies `env/.env.example` to `env/prod.env` and replaces each
+`YOUR_<NAME>_HERE` placeholder with the secret (or repository variable) of the same name. All are optional:
+an unset value keeps the placeholder, which the app treats as "not configured".
+
+| Secret / Variable Name         | Description                                              | Format                                  |
+|:-------------------------------|:---------------------------------------------------------|:----------------------------------------|
+| `SLACK_CRASH_WEBHOOK_URL`      | Slack webhook for crash reports                          | `https://hooks.slack.com/...`           |
+| `SLACK_FEEDBACK_WEBHOOK_URL`   | Slack webhook for user feedback                          | `https://hooks.slack.com/...`           |
+| `GEMINI_MODEL_NAME`            | Gemini model used by AI features                         | e.g. `gemini-3.8-flash`                 |
+| `IS_FORCE_UPDATE`              | **Default** for the forced app update switch             | `true` / `false` (anything else = off)  |
+| `MINIMUM_OS_VERSION_HAS_FORCE` | **Default** minimum app version                          | semver, e.g. `1.2.0`                    |
+
+#### Forced app update (Firebase Remote Config)
+
+The live switch is **Firebase Remote Config** (Firebase Console > Run > Remote Config), because env values
+are baked into each build and could never reach builds already installed on users' phones:
+
+| Remote Config key          | Type    | Example | Meaning                                              |
+|:---------------------------|:--------|:--------|:-----------------------------------------------------|
+| `isForce`                  | Boolean | `true`  | Turns the forced update on                           |
+| `minimumOsVersionHasForce` | String  | `1.2.0` | Installed app versions (versionName) below it are blocked |
+
+Rule: the app is blocked when `isForce == true` **and** installed version < `minimumOsVersionHasForce`
+(semver, numeric per segment: `1.10.0` > `1.9.0`; the build number is ignored). Blocked users see a
+full-screen "Update required" page that only opens Google Play / the App Store (feature:
+`shared/cc_micro_features/lib/features/app_update/`, config wiring:
+`lib/data/repositories/app_update_config_repository_impl.dart`).
+
+- The app fetches once per launch, at most hourly in release builds; publishing a change reaches users on
+  their next launch after that interval.
+- The two secrets above are only the in-app defaults, used before the first successful fetch, offline, or when
+  a key is missing in Remote Config. Leave them unset (= off) unless a build must ship with the gate pre-armed.
+- Release order: publish the new version to the stores first, then raise `minimumOsVersionHasForce` and set
+  `isForce` to `true`. Use Remote Config conditions (platform) if Android and iOS go live on different days.
+
 ---
 
 ## Setup Steps

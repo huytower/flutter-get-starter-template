@@ -8,6 +8,18 @@ import 'dart:async' as _i687;
 
 import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
 import 'package:cc_micro_features/core/di/di.dart' as _i407;
+import 'package:cc_micro_features/features/app_update/data/repositories/app_update_repository_impl.dart'
+    as _i71;
+import 'package:cc_micro_features/features/app_update/domain/repositories/app_update_config_repository.dart'
+    as _i413;
+import 'package:cc_micro_features/features/app_update/domain/repositories/app_update_repository.dart'
+    as _i121;
+import 'package:cc_micro_features/features/app_update/domain/usecases/check_app_update_usecase.dart'
+    as _i1067;
+import 'package:cc_micro_features/features/app_update/domain/usecases/open_app_store_usecase.dart'
+    as _i911;
+import 'package:cc_micro_features/features/app_update/presentation/app_update_prompter.dart'
+    as _i331;
 import 'package:cc_micro_features/features/auth/data/datasources/auth_preference_datasource.dart'
     as _i951;
 import 'package:cc_micro_features/features/auth/data/repositories/firebase_auth_repository_impl.dart'
@@ -76,6 +88,8 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i951.AuthPreferenceDataSource());
     gh.lazySingleton<_i350.BiometricLocalDataSource>(
         () => _i350.BiometricLocalDataSource());
+    gh.lazySingleton<_i121.AppUpdateRepository>(
+        () => _i71.AppUpdateRepositoryImpl());
     gh.lazySingleton<_i4.CcMessagingService>(() =>
         _i441.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()));
     gh.lazySingleton<_i521.BiometricRepository>(() =>
@@ -109,6 +123,17 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
         _i189.SignInWithPhoneNumberUseCase(gh<_i745.FirebaseAuthRepository>()));
     gh.lazySingleton<_i120.VerifyPhoneNumberUseCase>(() =>
         _i120.VerifyPhoneNumberUseCase(gh<_i745.FirebaseAuthRepository>()));
+    gh.lazySingleton<_i1067.CheckAppUpdateUseCase>(
+        () => _i1067.CheckAppUpdateUseCase(
+              gh<_i413.AppUpdateConfigRepository>(),
+              gh<_i121.AppUpdateRepository>(),
+            ));
+    gh.lazySingleton<_i911.OpenAppStoreUseCase>(() => _i911.OpenAppStoreUseCase(
+          gh<_i413.AppUpdateConfigRepository>(),
+          gh<_i121.AppUpdateRepository>(),
+        ));
+    gh.lazySingleton<_i331.AppUpdatePrompter>(
+        () => _i331.AppUpdatePrompter(gh<_i1067.CheckAppUpdateUseCase>()));
     gh.factory<_i902.PhoneAuthBloc>(() => _i902.PhoneAuthBloc(
           gh<_i120.VerifyPhoneNumberUseCase>(),
           gh<_i189.SignInWithPhoneNumberUseCase>(),

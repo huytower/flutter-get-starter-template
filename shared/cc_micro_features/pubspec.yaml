@@ -38,9 +38,11 @@ dependencies:
   local_auth_android: ^2.0.9
   local_auth_darwin: ^2.0.0
   multiple_result: ^5.3.0
+  package_info_plus: ^10.2.1
   rxdart: ^0.28.0
   shared_preferences: ^2.5.2
   sign_in_with_apple: ^8.1.0
+  url_launcher: ^6.3.2
   webview_flutter: ^4.13.1
 
 dev_dependencies:

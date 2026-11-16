@@ -60,6 +60,13 @@
     "guest_login_continue_local": "Continue local experience",
     "later": "Later"
   },
+  "app_update": {
+    "title": "Update required",
+    "message": "This version is no longer supported. Please update to version {version} or later to keep using the app.",
+    "current_version": "Current version: {version}",
+    "update_now": "Update now",
+    "open_store_failed": "Couldn't open the store. Please update the app from the App Store or Google Play."
+  },
   "auth": {
     "login": "Login",
     "logout": "Logout",

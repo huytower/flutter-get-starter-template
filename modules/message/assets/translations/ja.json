@@ -60,6 +60,13 @@
     "guest_login_continue_local": "ローカル体験を続ける",
     "later": "後で"
   },
+  "app_update": {
+    "title": "アップデートが必要です",
+    "message": "このバージョンはサポートが終了しました。引き続きご利用いただくには、バージョン {version} 以降にアップデートしてください。",
+    "current_version": "現在のバージョン: {version}",
+    "update_now": "今すぐアップデート",
+    "open_store_failed": "ストアを開けませんでした。App Store または Google Play からアプリをアップデートしてください。"
+  },
   "auth": {
     "login": "ログイン",
     "logout": "ログアウト",

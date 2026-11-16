@@ -80,6 +80,13 @@ class CodegenLoader extends AssetLoader {
       "guest_login_continue_local": "Continue local experience",
       "later": "Later",
     },
+    "app_update": {
+      "title": "Update required",
+      "message": "This version is no longer supported. Please update to version {version} or later to keep using the app.",
+      "current_version": "Current version: {version}",
+      "update_now": "Update now",
+      "open_store_failed": "Couldn't open the store. Please update the app from the App Store or Google Play.",
+    },
     "auth": {
       "login": "Login",
       "logout": "Logout",
@@ -984,6 +991,13 @@ class CodegenLoader extends AssetLoader {
       "guest_login_continue_local": "Tiếp tục trải nghiệm local",
       "later": "Để sau",
     },
+    "app_update": {
+      "title": "Cần cập nhật ứng dụng",
+      "message": "Phiên bản này không còn được hỗ trợ. Vui lòng cập nhật lên phiên bản {version} trở lên để tiếp tục sử dụng.",
+      "current_version": "Phiên bản hiện tại: {version}",
+      "update_now": "Cập nhật ngay",
+      "open_store_failed": "Không mở được cửa hàng ứng dụng. Vui lòng cập nhật ứng dụng từ App Store hoặc Google Play.",
+    },
     "auth": {
       "login": "Đăng nhập",
       "logout": "Đăng xuất",
@@ -1883,6 +1897,13 @@ class CodegenLoader extends AssetLoader {
       "guest_login_continue_local": "로컬 체험 계속하기",
       "later": "나중에",
     },
+    "app_update": {
+      "title": "업데이트 필요",
+      "message": "이 버전은 더 이상 지원되지 않습니다. 앱을 계속 사용하려면 {version} 이상 버전으로 업데이트해 주세요.",
+      "current_version": "현재 버전: {version}",
+      "update_now": "지금 업데이트",
+      "open_store_failed": "스토어를 열 수 없습니다. App Store 또는 Google Play에서 앱을 업데이트해 주세요.",
+    },
     "auth": {
       "login": "로그인",
       "logout": "로그아웃",
@@ -2731,6 +2752,13 @@ class CodegenLoader extends AssetLoader {
       "guest_login_continue_local": "ローカル体験を続ける",
       "later": "後で",
     },
+    "app_update": {
+      "title": "アップデートが必要です",
+      "message": "このバージョンはサポートが終了しました。引き続きご利用いただくには、バージョン {version} 以降にアップデートしてください。",
+      "current_version": "現在のバージョン: {version}",
+      "update_now": "今すぐアップデート",
+      "open_store_failed": "ストアを開けませんでした。App Store または Google Play からアプリをアップデートしてください。",
+    },
     "auth": {
       "login": "ログイン",
       "logout": "ログアウト",
@@ -3567,6 +3595,13 @@ class CodegenLoader extends AssetLoader {
       "guest_login_action": "登录 / 注册",
       "guest_login_continue_local": "继续本地体验",
       "later": "以后再说",
+    },
+    "app_update": {
+      "title": "需要更新",
+      "message": "此版本已不再受支持。请更新到 {version} 或更高版本以继续使用。",
+      "current_version": "当前版本：{version}",
+      "update_now": "立即更新",
+      "open_store_failed": "无法打开应用商店。请从 App Store 或 Google Play 更新应用。",
     },
     "auth": {
       "login": "登录",
@@ -4410,6 +4445,12 @@ class CcLocaleKeys {
       'common.guest_login_continue_local';
   static const common_later = 'common.later';
 
+  static const app_update = 'app_update';
+  static const app_update_title = 'app_update.title';
+  static const app_update_message = 'app_update.message';
+  static const app_update_current_version = 'app_update.current_version';
+  static const app_update_update_now = 'app_update.update_now';
+  static const app_update_open_store_failed = 'app_update.open_store_failed';
   static const auth = 'auth';
   static const auth_login = 'auth.login';
   static const auth_logout = 'auth.logout';

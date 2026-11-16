@@ -25,6 +25,12 @@ inputs:
   slack-feedback-webhook-url:
     description: 'Slack Webhook URL for User Feedback'
     required: false
+  is-force-update:
+    description: 'Default for force app update ("true"/"false"); live value is Remote Config isForce'
+    required: false
+  minimum-os-version-has-force:
+    description: 'Default minimum app version (semver, e.g. 1.2.0); live value is Remote Config minimumOsVersionHasForce'
+    required: false
   gemini-model-name:
     description: 'Gemini Model Name'
     required: false
@@ -84,6 +90,8 @@ runs:
         SLACK_CRASH_WEBHOOK_URL: ${{ inputs.slack-crash-webhook-url }}
         SLACK_FEEDBACK_WEBHOOK_URL: ${{ inputs.slack-feedback-webhook-url }}
         GEMINI_MODEL_NAME: ${{ inputs.gemini-model-name }}
+        IS_FORCE_UPDATE: ${{ inputs.is-force-update }}
+        MINIMUM_OS_VERSION_HAS_FORCE: ${{ inputs.minimum-os-version-has-force }}
       run: |
         # Only touch files that can legitimately hold placeholders: the env files
         # and the native configs generated from *.template. (Scanning the whole
@@ -115,6 +123,8 @@ runs:
         inject_secret SLACK_CRASH_WEBHOOK_URL "YOUR_SLACK_CRASH_WEBHOOK_URL_HERE"
         inject_secret SLACK_FEEDBACK_WEBHOOK_URL "YOUR_SLACK_FEEDBACK_WEBHOOK_URL_HERE"
         inject_secret GEMINI_MODEL_NAME "YOUR_GEMINI_MODEL_NAME_HERE"
+        inject_secret IS_FORCE_UPDATE "YOUR_IS_FORCE_UPDATE_HERE"
+        inject_secret MINIMUM_OS_VERSION_HAS_FORCE "YOUR_MINIMUM_OS_VERSION_HAS_FORCE_HERE"
 
     - name: Bootstrap Workspace
       shell: bash

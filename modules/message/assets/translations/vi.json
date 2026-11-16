@@ -60,6 +60,13 @@
     "guest_login_continue_local": "Tiếp tục trải nghiệm local",
     "later": "Để sau"
   },
+  "app_update": {
+    "title": "Cần cập nhật ứng dụng",
+    "message": "Phiên bản này không còn được hỗ trợ. Vui lòng cập nhật lên phiên bản {version} trở lên để tiếp tục sử dụng.",
+    "current_version": "Phiên bản hiện tại: {version}",
+    "update_now": "Cập nhật ngay",
+    "open_store_failed": "Không mở được cửa hàng ứng dụng. Vui lòng cập nhật ứng dụng từ App Store hoặc Google Play."
+  },
   "auth": {
     "login": "Đăng nhập",
     "logout": "Đăng xuất",

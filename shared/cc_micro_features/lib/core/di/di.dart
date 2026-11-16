@@ -7,6 +7,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../features/app_update/domain/repositories/app_update_config_repository.dart';
+
 final GetIt getIt = GetIt.instance;
 
 /// Configures dependency injection for the cc_micro_features library.
@@ -14,6 +16,8 @@ final GetIt getIt = GetIt.instance;
 @InjectableInit.microPackage(
   ignoreUnregisteredTypes: [
     SharedPreferences,
+    // Implemented by the host app (env / remote config), see app_update.
+    AppUpdateConfigRepository,
     CcDeviceInfoHelper,
     CcDeviceEntity,
     FirebaseAuth,

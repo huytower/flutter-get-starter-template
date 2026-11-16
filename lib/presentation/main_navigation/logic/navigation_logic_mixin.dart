@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bridge/navigation_bridge_service.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_micro_features/features/app_update/presentation/app_update_prompter.dart';
 import 'package:cc_micro_features/features/splash/core/splash_manager.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,13 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
     // 1. Critical but non-blocking (User level drives UI availability)
     unawaited(_navigationBridge.initializeUserLevel());
 
-    // 2. Deferred background systems (Non-critical for first frame)
+    // 2. Forced update gate: after the first frame, never blocking boot.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(getIt<AppUpdatePrompter>().checkAndPrompt(context));
+    });
+
+    // 3. Deferred background systems (Non-critical for first frame)
     _initBackgroundServices();
   }
 

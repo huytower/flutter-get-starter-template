@@ -58,6 +58,8 @@ jobs:
           slack-crash-webhook-url: ${{ secrets.SLACK_CRASH_WEBHOOK_URL }}
           slack-feedback-webhook-url: ${{ secrets.SLACK_FEEDBACK_WEBHOOK_URL }}
           gemini-model-name: ${{ secrets.GEMINI_MODEL_NAME || vars.GEMINI_MODEL_NAME }}
+          is-force-update: ${{ secrets.IS_FORCE_UPDATE || vars.IS_FORCE_UPDATE }}
+          minimum-os-version-has-force: ${{ secrets.MINIMUM_OS_VERSION_HAS_FORCE || vars.MINIMUM_OS_VERSION_HAS_FORCE }}
       - name: Lint & Test
         run: |
           melos run gen
@@ -83,6 +85,8 @@ jobs:
           slack-crash-webhook-url: ${{ secrets.SLACK_CRASH_WEBHOOK_URL }}
           slack-feedback-webhook-url: ${{ secrets.SLACK_FEEDBACK_WEBHOOK_URL }}
           gemini-model-name: ${{ secrets.GEMINI_MODEL_NAME || vars.GEMINI_MODEL_NAME }}
+          is-force-update: ${{ secrets.IS_FORCE_UPDATE || vars.IS_FORCE_UPDATE }}
+          minimum-os-version-has-force: ${{ secrets.MINIMUM_OS_VERSION_HAS_FORCE || vars.MINIMUM_OS_VERSION_HAS_FORCE }}
           setup-java: 'true'
       - name: Generate Code
         run: melos run gen
@@ -111,6 +115,8 @@ jobs:
           slack-crash-webhook-url: ${{ secrets.SLACK_CRASH_WEBHOOK_URL }}
           slack-feedback-webhook-url: ${{ secrets.SLACK_FEEDBACK_WEBHOOK_URL }}
           gemini-model-name: ${{ secrets.GEMINI_MODEL_NAME || vars.GEMINI_MODEL_NAME }}
+          is-force-update: ${{ secrets.IS_FORCE_UPDATE || vars.IS_FORCE_UPDATE }}
+          minimum-os-version-has-force: ${{ secrets.MINIMUM_OS_VERSION_HAS_FORCE || vars.MINIMUM_OS_VERSION_HAS_FORCE }}
           setup-java: 'true'
           ruby-dir: 'android'
       
@@ -192,6 +198,8 @@ jobs:
           slack-crash-webhook-url: ${{ secrets.SLACK_CRASH_WEBHOOK_URL }}
           slack-feedback-webhook-url: ${{ secrets.SLACK_FEEDBACK_WEBHOOK_URL }}
           gemini-model-name: ${{ secrets.GEMINI_MODEL_NAME || vars.GEMINI_MODEL_NAME }}
+          is-force-update: ${{ secrets.IS_FORCE_UPDATE || vars.IS_FORCE_UPDATE }}
+          minimum-os-version-has-force: ${{ secrets.MINIMUM_OS_VERSION_HAS_FORCE || vars.MINIMUM_OS_VERSION_HAS_FORCE }}
           ruby-dir: 'ios'
 
       - name: Generate Code
