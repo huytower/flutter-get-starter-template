@@ -8,6 +8,7 @@ import '../bloc/phone_auth_bloc.dart';
 import '../bloc/phone_auth_event.dart';
 import '../bloc/phone_auth_state.dart';
 import 'widgets/auth_security_warning_card.dart';
+import 'widgets/auth_two_column_body.dart';
 import 'widgets/phone_auth_gradient_container.dart';
 import 'widgets/sms_region_picker_sheet.dart';
 
@@ -81,9 +82,8 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
   }
 
   Widget _buildBody(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
+    return AuthTwoColumnBody(
+      header: [
         const CcSpeechBubbleIcon(),
         CcText(
           el.tr(CcLocaleKeys.auth_enter_phone_number),
@@ -96,6 +96,8 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
           textAlign: TextAlign.center,
         ),
         const CcSpaceXL(),
+      ],
+      form: [
         CcPhoneNumberInput(
           countryCode: _countryCode,
           onCountryCodeTap: _pickCountry,

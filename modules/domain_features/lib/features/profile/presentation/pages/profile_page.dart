@@ -148,15 +148,20 @@ class ProfilePage extends CcGetView<ProfileController> {
     );
   }
 
-  /// Landscape tablet: the profile card, sign-in reminder, account actions
-  /// and footer on the left; the (long) settings list on the right.
+  /// Landscape tablet, three columns: the profile card, sign-in reminder,
+  /// account actions and footer on the left; the (long) settings list split
+  /// across the other two.
   Widget _buildTwoColumnContent(BuildContext context, double topPadding) {
+    final menuItems = _buildMenuItems(context);
+    final split = (menuItems.length / 2).ceil();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(height: topPadding + context.respDim(12)),
         CcTwoColumn(
           gap: 0,
+          leftFlex: 1,
+          rightFlex: 2,
           left: [
             _buildProfileHeader(context),
             CcSymmetricPadding(
@@ -180,7 +185,13 @@ class ProfilePage extends CcGetView<ProfileController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  ProfileMenuGroup(items: _buildMenuItems(context)),
+                  CcMultiColumn(
+                    columns: 2,
+                    children: [
+                      ProfileMenuGroup(items: menuItems.sublist(0, split)),
+                      ProfileMenuGroup(items: menuItems.sublist(split)),
+                    ],
+                  ),
                   const CcSpaceXL(),
                 ],
               ),

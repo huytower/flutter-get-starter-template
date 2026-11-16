@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/di.dart';
 import '../bloc/login_bloc.dart';
 import '../bloc/login_state.dart';
+import 'widgets/auth_two_column_body.dart';
 import 'widgets/login_card_content.dart';
 
 @RoutePage()
@@ -81,9 +82,11 @@ class _LoginViewState extends State<LoginView> {
           child: BlocBuilder<LoginBloc, LoginState>(
             builder: (context, state) {
               return CcGradientCardLayout(
-                maxWidth: CcContextExtension(context).isPortrait
-                    ? context.respDim(400)
-                    : context.respDim(600),
+                maxWidth:
+                    AuthTwoColumnBody.cardMaxWidth(context) ??
+                    (CcContextExtension(context).isPortrait
+                        ? context.respDim(400)
+                        : context.respDim(600)),
                 child: LoginCardContent(
                   onPhoneLogin: () =>
                       getIt<AuthCoordinator>().navigateToPhoneAuth(context),

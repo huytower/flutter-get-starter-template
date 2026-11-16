@@ -11,6 +11,7 @@ import '../bloc/phone_auth_bloc.dart';
 import '../bloc/phone_auth_event.dart';
 import '../bloc/phone_auth_state.dart';
 import 'widgets/auth_security_warning_card.dart';
+import 'widgets/auth_two_column_body.dart';
 import 'widgets/phone_auth_gradient_container.dart';
 import 'widgets/phone_otp_input.dart';
 
@@ -100,12 +101,13 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
       (PhoneAuthBloc bloc) => bloc.phoneNumber,
     );
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
+    return AuthTwoColumnBody(
+      header: [
         const CcSpeechBubbleIcon(),
         _buildTitle(context),
         _buildPhoneSubtitle(context, phoneNumber),
+      ],
+      form: [
         _buildOtpInput(),
         const CcSpaceLG(),
         _buildErrorSection(),

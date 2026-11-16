@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 
 import '../../../../../core/di/di.dart';
 import '../../../data/datasources/auth_preference_datasource.dart';
+import 'auth_two_column_body.dart';
 import 'login_or_divider.dart';
 import 'login_social_buttons.dart';
 
@@ -58,9 +59,8 @@ class _LoginCardContentState extends State<LoginCardContent> {
     final double opacity = isDisabled ? 0.3 : (_isAgreed ? 1.0 : 0.5);
     final bool needsAgreement = !isDisabled && !_isAgreed;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
+    return AuthTwoColumnBody(
+      header: [
         const CcSpaceLG(),
         const CcSpeechBubbleIcon(),
         const CcSpaceLG(),
@@ -75,6 +75,8 @@ class _LoginCardContentState extends State<LoginCardContent> {
           textAlign: TextAlign.center,
         ),
         const CcSpaceXL(),
+      ],
+      form: [
         // While the terms are not accepted the buttons stay dimmed, but a tap
         // on them must still respond: it points the user at the terms row.
         // (A silently ignored tap reads as "the button is broken".)
