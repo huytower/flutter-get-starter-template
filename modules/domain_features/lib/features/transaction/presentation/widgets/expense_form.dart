@@ -114,22 +114,176 @@ class _ExpenseFormState extends State<ExpenseForm> {
         physics: const BouncingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ExpenseCategorySelectionSection(
-              controller: controller,
-              activeColor: accentColor,
-            ),
-            const CcSpaceSM(),
-            Obx(
-              () =>
-                  _buildFormFields(context, controller, guideline, accentColor),
-            ),
-            const CcSpaceMD(),
-          ],
+        child: _useTwoColumns(context)
+            ? _buildTwoColumnContent(
+                context,
+                controller,
+                guideline,
+                accentColor,
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ExpenseCategorySelectionSection(
+                    controller: controller,
+                    activeColor: accentColor,
+                  ),
+                  const CcSpaceSM(),
+                  Obx(
+                    () => _buildFormFields(
+                      context,
+                      controller,
+                      guideline,
+                      accentColor,
+                    ),
+                  ),
+                  const CcSpaceMD(),
+                ],
+              ),
+      ),
+    );
+  }
+
+  /// Two columns on a tablet (≥ 600 dp wide) held sideways, to use the width
+  /// instead of stacking everything into a short window. Phones (portrait
+  /// only) and portrait tablets keep the single column.
+  static bool _useTwoColumns(BuildContext context) =>
+      MediaQuery.orientationOf(context) == Orientation.landscape &&
+      context.windowSizeClass.isAtLeast(CcWindowSizeClass.medium);
+
+  /// The two columns span up to this width (instead of the 840 dp content
+  /// column) so the extra room of a landscape tablet is actually used.
+  static const double _twoColumnMaxWidth = 1200;
+
+  /// Left: category + date/note details. Right: amount, source of expense
+  /// and the submit button.
+  Widget _buildTwoColumnContent(
+    BuildContext context,
+    ExpenseFormController controller,
+    GuidelineController guideline,
+    Color accentColor,
+  ) {
+    final gap = context.respPadding(CcPaddingParams.PAGE_SM);
+    return CcContentInset(
+      maxWidth: _twoColumnMaxWidth,
+      child: CcContentPadding(
+        child: Obx(
+          () => Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ExpenseCategorySelectionSection(
+                      controller: controller,
+                      activeColor: accentColor,
+                    ),
+                    const CcSpaceSM(),
+                    Padding(
+                      padding: EdgeInsets.only(left: gap),
+                      child: TransactionFormContainer(
+                        child: _buildDetailsSection(
+                          context,
+                          controller,
+                          accentColor,
+                          alwaysExpanded: true,
+                        ),
+                      ),
+                    ),
+                    const CcSpaceMD(),
+                  ],
+                ),
+              ),
+              SizedBox(width: gap),
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: EdgeInsets.only(right: gap),
+                  child: TransactionFormContainer(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildAmountSection(context, controller, accentColor),
+                        if (!controller.isEditing) ...[
+                          const CcSpaceSM(),
+                          _buildWalletSection(context, controller, accentColor),
+                        ],
+                        const CcSpaceSM(),
+                        _buildSubmitButton(
+                          context,
+                          controller,
+                          guideline,
+                          accentColor,
+                        ),
+                        const CcSpaceXS(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  /// Date + note. In the two-column layout it is always open (there is room
+  /// for it); in the single column it keeps its "More details" toggle.
+  Widget _buildDetailsSection(
+    BuildContext context,
+    ExpenseFormController controller,
+    Color accentColor, {
+    bool alwaysExpanded = false,
+  }) {
+    if (controller.isEditing) {
+      return TransactionAdditionalDetailsSection(
+        isExpanded: true,
+        selectedDate: controller.date.value,
+        onDateSelected: controller.setDate,
+        onCalendarTap: () => controller.pickDate(context),
+        noteController: controller.noteController,
+        activeColor: accentColor,
+        hideDate: true,
+      );
+    }
+    return TransactionAdditionalDetailsSection(
+      isExpanded: alwaysExpanded || controller.showMoreDetails.value,
+      onToggle: alwaysExpanded ? null : controller.toggleMoreDetails,
+      selectedDate: controller.date.value,
+      onDateSelected: controller.setDate,
+      onCalendarTap: () => controller.pickDate(context),
+      noteController: controller.noteController,
+      activeColor: accentColor,
+    );
+  }
+
+  Widget _buildSubmitButton(
+    BuildContext context,
+    ExpenseFormController controller,
+    GuidelineController guideline,
+    Color accentColor,
+  ) {
+    return TransactionSubmitButton(
+      text: controller.isEditing
+          ? el.tr(CcLocaleKeys.common_save)
+          : el.tr(CcLocaleKeys.transaction_record_expense),
+      isSubmitting: controller.isSubmitting.value,
+      isEnabled: controller.canSubmit,
+      onTap: () => controller.submitForm(context),
+      activeColor: accentColor,
+      leadingIcon: Icons.arrow_circle_down,
+      leadingIconSize: 28,
+      badge: guideline.isTaskActive('first_transaction')
+          ? PrjGuidelineBadge(
+              size: context.respDim(6),
+              label: guideline.bannerDescription,
+              labelAbove: true,
+              growRight: false,
+            )
+          : null,
     );
   }
 
