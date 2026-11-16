@@ -133,6 +133,15 @@ class _LiabilityFormState extends State<LiabilityForm> {
           controller: controller,
           activeColor: accentColor,
         ),
+        // Repayment method + due date sit in the wide left column, between
+        // the category and the time section, so they never overflow.
+        Padding(
+          padding: EdgeInsets.only(
+            left: context.respPadding(CcPaddingParams.PAGE_SM),
+            top: context.respPadding(CcPaddingParams.SPACE_SM),
+          ),
+          child: _buildRepaymentMethodSection(controller, accentColor),
+        ),
       ],
       details: TransactionAdditionalDetailsSection(
         isExpanded: true,
@@ -147,7 +156,6 @@ class _LiabilityFormState extends State<LiabilityForm> {
         const CcSpaceSM(),
         Obx(() => _buildWalletSection(context, controller, accentColor)),
         const CcSpaceSM(),
-        _buildRepaymentMethodSection(controller, accentColor),
         _buildSubmitButton(context, controller, accentColor),
         const CcSpaceXS(),
       ],

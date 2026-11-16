@@ -51,22 +51,23 @@ class TransactionTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Obx(() {
-      final isSecondaryFront = controller.isSecondaryCardFront.value;
-
-      return Container(
-        margin: EdgeInsets.symmetric(
-          horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: context.respDim(64),
-              // Cards span the width this bar is given (inside the page
-              // margin), not the screen — correct beside the rail too.
-              child: LayoutBuilder(
-                builder: (context, constraints) => Stack(
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: context.respDim(64),
+            // Cards span the width this bar is given (inside the page
+            // margin), not the screen — correct beside the rail too.
+            // The cards are built inside the LayoutBuilder callback, which
+            // runs during layout, outside any build-time Obx: wrap them in an
+            // Obx so selected-tab / card-stack / badge changes rebuild them.
+            child: LayoutBuilder(
+              builder: (context, constraints) => Obx(
+                () => Stack(
                   clipBehavior: Clip.none,
                   alignment: Alignment.center,
                   children: [
@@ -75,7 +76,7 @@ class TransactionTabBar extends StatelessWidget {
                       context: context,
                       cardWidth: constraints.maxWidth,
                       isFront: false,
-                      isSecondary: !isSecondaryFront,
+                      isSecondary: !controller.isSecondaryCardFront.value,
                       scheme: scheme,
                     ),
                     // Front Card (Interaction)
@@ -83,17 +84,17 @@ class TransactionTabBar extends StatelessWidget {
                       context: context,
                       cardWidth: constraints.maxWidth,
                       isFront: true,
-                      isSecondary: isSecondaryFront,
+                      isSecondary: controller.isSecondaryCardFront.value,
                       scheme: scheme,
                     ),
                   ],
                 ),
               ),
             ),
-          ],
-        ),
-      );
-    });
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildCard({
