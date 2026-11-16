@@ -17,6 +17,7 @@ import 'investment_direction_toggle.dart';
 import 'money_keypad_panel.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_form_container.dart';
+import 'transaction_form_two_column.dart';
 import 'transaction_submit_button.dart';
 
 class InvestmentForm extends StatefulWidget {
@@ -106,20 +107,60 @@ class _InvestmentFormState extends State<InvestmentForm> {
       },
       child: SingleChildScrollView(
         controller: controller.scrollController,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildInvestDirectionToggle(context, controller, accentColor),
-            const CcSpaceSM(),
-            InvestmentAssetSelector(
-              controller: controller,
-              activeColor: accentColor,
-            ),
-            const CcSpaceSM(),
-            _buildFormFields(context, controller, accentColor),
-          ],
+        child: TransactionFormTwoColumn.shouldUse(context)
+            ? _buildTwoColumnContent(context, controller, accentColor)
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildInvestDirectionToggle(context, controller, accentColor),
+                  const CcSpaceSM(),
+                  InvestmentAssetSelector(
+                    controller: controller,
+                    activeColor: accentColor,
+                  ),
+                  const CcSpaceSM(),
+                  _buildFormFields(context, controller, accentColor),
+                ],
+              ),
+      ),
+    );
+  }
+
+  /// Landscape tablet: direction toggle, asset selector and date/note on the
+  /// left; amount, wallet, new-item name and submit on the right.
+  Widget _buildTwoColumnContent(
+    BuildContext context,
+    InvestmentFormController controller,
+    Color accentColor,
+  ) {
+    return TransactionFormTwoColumn(
+      leading: [
+        buildInvestDirectionToggle(context, controller, accentColor),
+        const CcSpaceSM(),
+        InvestmentAssetSelector(
+          controller: controller,
+          activeColor: accentColor,
+        ),
+      ],
+      details: Obx(
+        () => TransactionAdditionalDetailsSection(
+          isExpanded: true,
+          selectedDate: controller.date.value,
+          onDateSelected: controller.setDate,
+          onCalendarTap: () => controller.pickDate(context),
+          noteController: controller.noteController,
+          activeColor: accentColor,
         ),
       ),
+      right: [
+        _buildAmountSection(context, controller, accentColor),
+        const CcSpaceSM(),
+        Obx(() => _buildWalletSection(context, controller, accentColor)),
+        const CcSpaceSM(),
+        _buildNewItemSection(context, controller, accentColor),
+        _buildSubmitButton(context, controller, accentColor),
+        const CcSpaceXS(),
+      ],
     );
   }
 
@@ -176,18 +217,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
           const CcSpaceSM(),
           Obx(() => _buildWalletSection(context, controller, accentColor)),
           const CcSpaceSM(),
-          Obx(() {
-            if (controller.isAddingNewItem.value) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildNewItemNameField(context, controller, accentColor),
-                  const CcSpaceSM(),
-                ],
-              );
-            }
-            return const SizedBox.shrink();
-          }),
+          _buildNewItemSection(context, controller, accentColor),
           Obx(
             () => TransactionAdditionalDetailsSection(
               isExpanded: controller.showMoreDetails.value,
@@ -200,29 +230,55 @@ class _InvestmentFormState extends State<InvestmentForm> {
             ),
           ),
           const CcSpaceSM(),
-          Obx(
-            () => TransactionSubmitButton(
-              text: el.tr(
-                controller.direction.value == InvestmentDirectionForm.contribute
-                    ? CcLocaleKeys.transaction_record_investment
-                    : CcLocaleKeys.transaction_record_investment_return,
-              ),
-              isSubmitting: controller.isSubmitting.value,
-              isEnabled: controller.canSubmit,
-              onTap: () => controller.submitForm(context),
-              activeColor: accentColor,
-              gradient: context.investmentGoldGradient,
-              gradientForegroundColor: context.onInvestmentGold,
-              leadingIcon:
-                  controller.direction.value ==
-                      InvestmentDirectionForm.contribute
-                  ? Icons.arrow_circle_down
-                  : Icons.arrow_circle_up,
-              leadingIconSize: 18,
-            ),
-          ),
+          _buildSubmitButton(context, controller, accentColor),
           const CcSpaceXS(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildNewItemSection(
+    BuildContext context,
+    InvestmentFormController controller,
+    Color accentColor,
+  ) {
+    return Obx(() {
+      if (controller.isAddingNewItem.value) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildNewItemNameField(context, controller, accentColor),
+            const CcSpaceSM(),
+          ],
+        );
+      }
+      return const SizedBox.shrink();
+    });
+  }
+
+  Widget _buildSubmitButton(
+    BuildContext context,
+    InvestmentFormController controller,
+    Color accentColor,
+  ) {
+    return Obx(
+      () => TransactionSubmitButton(
+        text: el.tr(
+          controller.direction.value == InvestmentDirectionForm.contribute
+              ? CcLocaleKeys.transaction_record_investment
+              : CcLocaleKeys.transaction_record_investment_return,
+        ),
+        isSubmitting: controller.isSubmitting.value,
+        isEnabled: controller.canSubmit,
+        onTap: () => controller.submitForm(context),
+        activeColor: accentColor,
+        gradient: context.investmentGoldGradient,
+        gradientForegroundColor: context.onInvestmentGold,
+        leadingIcon:
+            controller.direction.value == InvestmentDirectionForm.contribute
+            ? Icons.arrow_circle_down
+            : Icons.arrow_circle_up,
+        leadingIconSize: 18,
       ),
     );
   }

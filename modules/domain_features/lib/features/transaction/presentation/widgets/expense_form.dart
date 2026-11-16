@@ -12,6 +12,7 @@ import '../get_x/expense_form_controller.dart';
 import 'cc_amount_input_section.dart';
 import 'expense_category_selection_section.dart';
 import 'money_keypad_panel.dart';
+import 'transaction_form_two_column.dart';
 
 class ExpenseForm extends StatefulWidget {
   const ExpenseForm({super.key, this.tag});
@@ -114,7 +115,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
         physics: const BouncingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
-        child: _useTwoColumns(context)
+        child: TransactionFormTwoColumn.shouldUse(context)
             ? _buildTwoColumnContent(
                 context,
                 controller,
@@ -144,17 +145,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
     );
   }
 
-  /// Two columns on a tablet (≥ 600 dp wide) held sideways, to use the width
-  /// instead of stacking everything into a short window. Phones (portrait
-  /// only) and portrait tablets keep the single column.
-  static bool _useTwoColumns(BuildContext context) =>
-      MediaQuery.orientationOf(context) == Orientation.landscape &&
-      context.windowSizeClass.isAtLeast(CcWindowSizeClass.medium);
-
-  /// The two columns span up to this width (instead of the 840 dp content
-  /// column) so the extra room of a landscape tablet is actually used.
-  static const double _twoColumnMaxWidth = 1200;
-
   /// Left: category + date/note details. Right: amount, source of expense
   /// and the submit button.
   Widget _buildTwoColumnContent(
@@ -163,69 +153,30 @@ class _ExpenseFormState extends State<ExpenseForm> {
     GuidelineController guideline,
     Color accentColor,
   ) {
-    final gap = context.respPadding(CcPaddingParams.PAGE_SM);
-    return CcContentInset(
-      maxWidth: _twoColumnMaxWidth,
-      child: CcContentPadding(
-        child: Obx(
-          () => Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 3,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ExpenseCategorySelectionSection(
-                      controller: controller,
-                      activeColor: accentColor,
-                    ),
-                    const CcSpaceSM(),
-                    Padding(
-                      padding: EdgeInsets.only(left: gap),
-                      child: TransactionFormContainer(
-                        child: _buildDetailsSection(
-                          context,
-                          controller,
-                          accentColor,
-                          alwaysExpanded: true,
-                        ),
-                      ),
-                    ),
-                    const CcSpaceMD(),
-                  ],
-                ),
-              ),
-              SizedBox(width: gap),
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: EdgeInsets.only(right: gap),
-                  child: TransactionFormContainer(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildAmountSection(context, controller, accentColor),
-                        if (!controller.isEditing) ...[
-                          const CcSpaceSM(),
-                          _buildWalletSection(context, controller, accentColor),
-                        ],
-                        const CcSpaceSM(),
-                        _buildSubmitButton(
-                          context,
-                          controller,
-                          guideline,
-                          accentColor,
-                        ),
-                        const CcSpaceXS(),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+    return Obx(
+      () => TransactionFormTwoColumn(
+        leading: [
+          ExpenseCategorySelectionSection(
+            controller: controller,
+            activeColor: accentColor,
           ),
+        ],
+        details: _buildDetailsSection(
+          context,
+          controller,
+          accentColor,
+          alwaysExpanded: true,
         ),
+        right: [
+          _buildAmountSection(context, controller, accentColor),
+          if (!controller.isEditing) ...[
+            const CcSpaceSM(),
+            _buildWalletSection(context, controller, accentColor),
+          ],
+          const CcSpaceSM(),
+          _buildSubmitButton(context, controller, guideline, accentColor),
+          const CcSpaceXS(),
+        ],
       ),
     );
   }

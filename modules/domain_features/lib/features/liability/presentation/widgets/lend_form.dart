@@ -9,6 +9,7 @@ import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
+import '../../../transaction/presentation/widgets/transaction_form_two_column.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/lend_form_controller.dart';
@@ -82,18 +83,24 @@ class _LendFormState extends State<LendForm> {
               },
               child: SingleChildScrollView(
                 controller: controller.scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    LendDirectionToggle(
-                      value: controller.action.value,
-                      activeColor: accentColor,
-                      onChanged: controller.setAction,
-                    ),
-                    const CcSpaceSM(),
-                    _buildInitiateSection(context, controller, accentColor),
-                  ],
-                ),
+                child: TransactionFormTwoColumn.shouldUse(context)
+                    ? _buildTwoColumnContent(context, controller, accentColor)
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          LendDirectionToggle(
+                            value: controller.action.value,
+                            activeColor: accentColor,
+                            onChanged: controller.setAction,
+                          ),
+                          const CcSpaceSM(),
+                          _buildInitiateSection(
+                            context,
+                            controller,
+                            accentColor,
+                          ),
+                        ],
+                      ),
               ),
             ),
           ),
@@ -102,6 +109,42 @@ class _LendFormState extends State<LendForm> {
         ],
       );
     });
+  }
+
+  /// Landscape tablet: direction toggle, lend selector and date/note on the
+  /// left; amount, wallet and submit on the right.
+  Widget _buildTwoColumnContent(
+    BuildContext context,
+    LendFormController controller,
+    Color accentColor,
+  ) {
+    return TransactionFormTwoColumn(
+      leading: [
+        LendDirectionToggle(
+          value: controller.action.value,
+          activeColor: accentColor,
+          onChanged: controller.setAction,
+        ),
+        const CcSpaceSM(),
+        LendAssetSelector(controller: controller, activeColor: accentColor),
+      ],
+      details: TransactionAdditionalDetailsSection(
+        isExpanded: true,
+        selectedDate: controller.date.value,
+        onDateSelected: controller.setDate,
+        onCalendarTap: () => controller.pickDate(context),
+        noteController: controller.noteController,
+        activeColor: accentColor,
+      ),
+      right: [
+        Obx(() => _buildAmountSection(context, controller, accentColor)),
+        const CcSpaceSM(),
+        Obx(() => _buildWalletSection(context, controller, accentColor)),
+        const CcSpaceSM(),
+        _buildSubmitButton(context, controller, accentColor),
+        const CcSpaceXS(),
+      ],
+    );
   }
 
   Widget _buildInitiateSection(

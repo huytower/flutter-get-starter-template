@@ -11,6 +11,7 @@ import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
+import '../../../transaction/presentation/widgets/transaction_form_two_column.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/liability_base_form_controller.dart';
@@ -99,16 +100,78 @@ class _LiabilityFormState extends State<LiabilityForm> {
       },
       child: SingleChildScrollView(
         controller: controller.scrollController,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildLiabilityDirectionToggle(context, controller, accentColor),
-            const CcSpaceSM(),
-            _buildInitiateSection(context, controller, accentColor),
-          ],
-        ),
+        child: TransactionFormTwoColumn.shouldUse(context)
+            ? _buildTwoColumnContent(context, controller, accentColor)
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildLiabilityDirectionToggle(
+                    context,
+                    controller,
+                    accentColor,
+                  ),
+                  const CcSpaceSM(),
+                  _buildInitiateSection(context, controller, accentColor),
+                ],
+              ),
       ),
     );
+  }
+
+  /// Landscape tablet: direction toggle, liability selector and date/note on
+  /// the left; amount, wallet, repayment method and submit on the right.
+  Widget _buildTwoColumnContent(
+    BuildContext context,
+    LiabilityFormController controller,
+    Color accentColor,
+  ) {
+    return TransactionFormTwoColumn(
+      leading: [
+        _buildLiabilityDirectionToggle(context, controller, accentColor),
+        const CcSpaceSM(),
+        LiabilityAssetSelector(
+          controller: controller,
+          activeColor: accentColor,
+        ),
+      ],
+      details: TransactionAdditionalDetailsSection(
+        isExpanded: true,
+        selectedDate: controller.date.value,
+        onDateSelected: controller.setDate,
+        onCalendarTap: () => controller.pickDate(context),
+        noteController: controller.noteController,
+        activeColor: accentColor,
+      ),
+      right: [
+        Obx(() => _buildAmountSection(context, controller, accentColor)),
+        const CcSpaceSM(),
+        Obx(() => _buildWalletSection(context, controller, accentColor)),
+        const CcSpaceSM(),
+        _buildRepaymentMethodSection(controller, accentColor),
+        _buildSubmitButton(context, controller, accentColor),
+        const CcSpaceXS(),
+      ],
+    );
+  }
+
+  Widget _buildRepaymentMethodSection(
+    LiabilityFormController controller,
+    Color accentColor,
+  ) {
+    return Obx(() {
+      if (controller.action.value == LiabilityDirectionForm.decrease) {
+        return const SizedBox.shrink();
+      }
+      return Column(
+        children: [
+          LiabilityRepaymentMethodSection(
+            controller: controller,
+            accentColor: accentColor,
+          ),
+          const CcSpaceSM(),
+        ],
+      );
+    });
   }
 
   Widget _buildLiabilityDirectionToggle(
@@ -176,24 +239,7 @@ class _LiabilityFormState extends State<LiabilityForm> {
               const CcSpaceSM(),
               Obx(() => _buildWalletSection(context, controller, accentColor)),
               const CcSpaceSM(),
-              Obx(() {
-                final isRepay =
-                    controller.action.value == LiabilityDirectionForm.decrease;
-
-                if (isRepay) {
-                  return const SizedBox.shrink();
-                }
-
-                return Column(
-                  children: [
-                    LiabilityRepaymentMethodSection(
-                      controller: controller,
-                      accentColor: accentColor,
-                    ),
-                    const CcSpaceSM(),
-                  ],
-                );
-              }),
+              _buildRepaymentMethodSection(controller, accentColor),
               TransactionAdditionalDetailsSection(
                 isExpanded: controller.showMoreDetails.value,
                 onToggle: controller.toggleMoreDetails,

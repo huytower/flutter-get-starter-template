@@ -14,6 +14,7 @@ import 'income_category_selection_section.dart';
 import 'money_keypad_panel.dart';
 import 'transaction_additional_details_section.dart';
 import 'transaction_form_container.dart';
+import 'transaction_form_two_column.dart';
 import 'transaction_submit_button.dart';
 
 class IncomeForm extends StatefulWidget {
@@ -118,19 +119,98 @@ class _IncomeFormState extends State<IncomeForm> {
         physics: const BouncingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            IncomeCategorySelectionSection(
-              controller: controller,
+        child: TransactionFormTwoColumn.shouldUse(context)
+            ? _buildTwoColumnContent(
+                context,
+                controller,
+                guideline,
+                accentColor,
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IncomeCategorySelectionSection(
+                    controller: controller,
+                    activeColor: accentColor,
+                  ),
+                  const CcSpaceSM(),
+                  _buildFormFields(context, controller, guideline, accentColor),
+                  const CcSpaceMD(),
+                ],
+              ),
+      ),
+    );
+  }
+
+  /// Landscape tablet: category + date/note on the left; amount, source of
+  /// income and submit on the right.
+  Widget _buildTwoColumnContent(
+    BuildContext context,
+    IncomeFormController controller,
+    GuidelineController guideline,
+    Color accentColor,
+  ) {
+    return TransactionFormTwoColumn(
+      leading: [
+        IncomeCategorySelectionSection(
+          controller: controller,
+          activeColor: accentColor,
+        ),
+      ],
+      details: controller.isEditing
+          ? TransactionAdditionalDetailsSection(
+              isExpanded: true,
+              selectedDate: controller.date.value,
+              onDateSelected: controller.setDate,
+              onCalendarTap: () => controller.pickDate(context),
+              noteController: controller.noteController,
+              activeColor: accentColor,
+              hideDate: true,
+            )
+          : TransactionAdditionalDetailsSection(
+              isExpanded: true,
+              selectedDate: controller.date.value,
+              onDateSelected: controller.setDate,
+              onCalendarTap: () => controller.pickDate(context),
+              noteController: controller.noteController,
               activeColor: accentColor,
             ),
-            const CcSpaceSM(),
-            _buildFormFields(context, controller, guideline, accentColor),
-            const CcSpaceMD(),
-          ],
-        ),
-      ),
+      right: [
+        _buildAmountSection(context, controller, accentColor),
+        if (!controller.isEditing) ...[
+          const CcSpaceSM(),
+          _buildWalletSection(context, controller, accentColor),
+        ],
+        const CcSpaceSM(),
+        _buildSubmitButton(context, controller, guideline, accentColor),
+        const CcSpaceXS(),
+      ],
+    );
+  }
+
+  Widget _buildSubmitButton(
+    BuildContext context,
+    IncomeFormController controller,
+    GuidelineController guideline,
+    Color accentColor,
+  ) {
+    return TransactionSubmitButton(
+      text: controller.isEditing
+          ? el.tr(CcLocaleKeys.common_save)
+          : el.tr(CcLocaleKeys.transaction_record_income),
+      isSubmitting: controller.isSubmitting.value,
+      isEnabled: controller.canSubmit,
+      onTap: () => controller.submitForm(context),
+      activeColor: accentColor,
+      leadingIcon: Icons.arrow_circle_up,
+      leadingIconSize: 18,
+      badge: guideline.isTaskActive('first_transaction')
+          ? PrjGuidelineBadge(
+              size: context.respDim(8),
+              label: guideline.bannerDescription,
+              growRight: false,
+            )
+          : null,
     );
   }
 
