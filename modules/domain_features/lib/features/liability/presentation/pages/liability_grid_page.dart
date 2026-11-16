@@ -148,30 +148,41 @@ class _LiabilityGridView extends CcGetView<LiabilityListController> {
             controller.isEditMode.value = false;
           }
         },
-        child: GridView.builder(
-          padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_XS)),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisExtent: context.respDim(180),
-            crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
-            mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
+        // Landscape tablet: three columns, capped at the two-column width.
+        child: _capWide(
+          context,
+          GridView.builder(
+            padding: EdgeInsets.all(
+              context.respPadding(CcPaddingParams.PAGE_XS),
+            ),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: CcTwoColumn.shouldUse(context) ? 3 : 2,
+              mainAxisExtent: context.respDim(180),
+              crossAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
+              mainAxisSpacing: context.respDim(CcPaddingParams.PAGE_XS),
+            ),
+            itemCount: balances.length,
+            itemBuilder: (context, index) {
+              final balance = balances[index];
+              return LiabilityWalletGridCard(
+                key: ValueKey(balance.liability.id),
+                balance: balance,
+                isEditMode: isEdit,
+                canDelete: true,
+                onEdit: () => _openAddLiability(context),
+                onDelete: () => _confirmDelete(context, balance.liability.id),
+              );
+            },
           ),
-          itemCount: balances.length,
-          itemBuilder: (context, index) {
-            final balance = balances[index];
-            return LiabilityWalletGridCard(
-              key: ValueKey(balance.liability.id),
-              balance: balance,
-              isEditMode: isEdit,
-              canDelete: true,
-              onEdit: () => _openAddLiability(context),
-              onDelete: () => _confirmDelete(context, balance.liability.id),
-            );
-          },
         ),
       );
     });
   }
+
+  Widget _capWide(BuildContext context, Widget child) =>
+      CcTwoColumn.shouldUse(context)
+      ? CcMaxWidth(maxWidth: CcTwoColumn.defaultMaxWidth, child: child)
+      : child;
 
   Future<void> _openAddLiability(BuildContext context) =>
       _openAddLiabilitySheet(context, controller);

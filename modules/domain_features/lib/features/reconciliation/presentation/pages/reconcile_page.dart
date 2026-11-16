@@ -102,14 +102,19 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
     );
   }
 
-  /// Landscape tablet: the wallet tiles (the thing being counted) on the
-  /// left; the totals, mismatch warning, confirm button and history on the
-  /// right.
+  /// Landscape tablet, three columns: the wallet tiles (the thing being
+  /// counted) flow across the two left columns; the totals, mismatch warning,
+  /// confirm button and history fill the third.
   List<Widget> _buildTwoColumnChildren(BuildContext context) {
     return [
       _buildSeeMoreDescription(context),
       CcTwoColumn(
-        left: [_buildInstructionText(context), _buildWalletTiles(context)],
+        leftFlex: 2,
+        rightFlex: 1,
+        left: [
+          _buildInstructionText(context),
+          _buildWalletTiles(context, columns: 2),
+        ],
         right: [
           const ReconciliationMismatchWarning(),
           const CcSpaceXS(),
@@ -186,23 +191,24 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
     );
   }
 
-  Widget _buildWalletTiles(BuildContext context) {
-    return Column(
-      children: controller.balances.map((balance) {
-        return WalletReconcileTile(
-          balance: balance,
-          onActualChanged: (value) =>
-              controller.setActual(balance.wallet.id, value),
-          onAcknowledge: () =>
-              controller.acknowledgeAdjustment(balance.wallet.id),
-          onReview: () => _openWalletReview(
-            context,
-            balance.wallet.id,
-            balance.wallet.displayName(context),
-          ),
-        );
-      }).toList(),
-    );
+  /// The wallet tiles: one per row, or flowing across [columns] columns.
+  Widget _buildWalletTiles(BuildContext context, {int columns = 1}) {
+    final tiles = controller.balances.map((balance) {
+      return WalletReconcileTile(
+        balance: balance,
+        onActualChanged: (value) =>
+            controller.setActual(balance.wallet.id, value),
+        onAcknowledge: () =>
+            controller.acknowledgeAdjustment(balance.wallet.id),
+        onReview: () => _openWalletReview(
+          context,
+          balance.wallet.id,
+          balance.wallet.displayName(context),
+        ),
+      );
+    }).toList();
+    if (columns > 1) return CcMultiColumn(columns: columns, children: tiles);
+    return Column(children: tiles);
   }
 
   /// Shows the money keypad while a wallet amount is being edited.

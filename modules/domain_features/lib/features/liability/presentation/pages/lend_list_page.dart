@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../get_x/liability_list_controller.dart';
 import '../widgets/add_liability_sheet.dart';
@@ -136,6 +137,16 @@ class _LendListView extends CcGetView<LiabilityListController> {
         );
       }
 
+      Widget buildItem(LiabilityBalanceEntity balance, bool isEdit) =>
+          LendWalletListItem(
+            key: ValueKey(balance.liability.id),
+            balance: balance,
+            isEditMode: isEdit,
+            canDelete: true,
+            onEdit: () => _openAddLend(context),
+            onDelete: () => _confirmDelete(context, balance.liability.id),
+          );
+
       return PopScope(
         canPop: !controller.isEditMode.value,
         onPopInvokedWithResult: (didPop, result) {
@@ -147,22 +158,34 @@ class _LendListView extends CcGetView<LiabilityListController> {
             controller.isEditMode.value = false;
           }
         },
-        child: ListView.separated(
-          padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_SM)),
-          itemCount: balances.length,
-          separatorBuilder: (context, index) => const CcSpaceSM(),
-          itemBuilder: (context, index) {
-            final balance = balances[index];
-            return LendWalletListItem(
-              key: ValueKey(balance.liability.id),
-              balance: balance,
-              isEditMode: isEdit,
-              canDelete: true,
-              onEdit: () => _openAddLend(context),
-              onDelete: () => _confirmDelete(context, balance.liability.id),
-            );
-          },
-        ),
+        child: CcTwoColumn.shouldUse(context)
+            // Landscape tablet: three columns instead of one stretched list.
+            ? ListView(
+                padding: EdgeInsets.all(
+                  context.respPadding(CcPaddingParams.PAGE_SM),
+                ),
+                children: [
+                  CcMaxWidth(
+                    maxWidth: CcTwoColumn.defaultMaxWidth,
+                    child: CcMultiColumn(
+                      rowGap: context.respPadding(CcPaddingParams.SPACE_SM),
+                      children: [
+                        for (final balance in balances)
+                          buildItem(balance, isEdit),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            : ListView.separated(
+                padding: EdgeInsets.all(
+                  context.respPadding(CcPaddingParams.PAGE_SM),
+                ),
+                itemCount: balances.length,
+                separatorBuilder: (context, index) => const CcSpaceSM(),
+                itemBuilder: (context, index) =>
+                    buildItem(balances[index], isEdit),
+              ),
       );
     });
   }

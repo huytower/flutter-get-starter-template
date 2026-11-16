@@ -141,6 +141,19 @@ class _LiquidWalletListView extends CcGetView<WalletController> {
         );
       }
 
+      final items = [
+        for (final wallet in liquidWallets)
+          LiquidWalletListItem(
+            wallet: wallet,
+            isEditMode: isEdit,
+            canDelete: controller.canDeleteWallet(wallet),
+            onEdit: () => controller.openForm(context, wallet: wallet),
+            onDelete: () => controller.confirmDelete(context, wallet),
+            onTransfer: () =>
+                TransferMoneySheet.show(context, sourceWallet: wallet),
+          ),
+      ];
+
       return PopScope(
         canPop: !controller.isEditMode.value,
         onPopInvokedWithResult: (didPop, result) {
@@ -159,19 +172,17 @@ class _LiquidWalletListView extends CcGetView<WalletController> {
           padding: EdgeInsets.all(
             context.respPadding(CcPaddingParams.SPACE_MD),
           ),
-          children: liquidWallets
-              .map(
-                (wallet) => LiquidWalletListItem(
-                  wallet: wallet,
-                  isEditMode: isEdit,
-                  canDelete: controller.canDeleteWallet(wallet),
-                  onEdit: () => controller.openForm(context, wallet: wallet),
-                  onDelete: () => controller.confirmDelete(context, wallet),
-                  onTransfer: () =>
-                      TransferMoneySheet.show(context, sourceWallet: wallet),
-                ),
+          children: [
+            // Landscape tablet: wallets flow across three columns instead of
+            // one stretched row each.
+            if (CcTwoColumn.shouldUse(context))
+              CcMaxWidth(
+                maxWidth: CcTwoColumn.defaultMaxWidth,
+                child: CcMultiColumn(children: items),
               )
-              .toList(),
+            else
+              ...items,
+          ],
         ),
       );
     });

@@ -36,18 +36,30 @@ class ReportDailyList extends StatelessWidget {
 
     final sortedDates = groups.keys.toList()..sort((a, b) => b.compareTo(a));
 
+    final dayGroups = [
+      for (final date in sortedDates)
+        DailyGroup(
+          key: ValueKey(date.toIso8601String()),
+          date: date,
+          transactions: groups[date]!,
+          includeInvestmentAndLiability: includeInvestmentAndLiability,
+          isEditMode: isEditMode,
+        ),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const CcSpaceMD(),
-        for (final date in sortedDates)
-          DailyGroup(
-            key: ValueKey(date.toIso8601String()),
-            date: date,
-            transactions: groups[date]!,
-            includeInvestmentAndLiability: includeInvestmentAndLiability,
-            isEditMode: isEditMode,
-          ),
+        // Landscape tablet: days flow across three columns (newest first,
+        // left to right) instead of one stretched list.
+        if (CcTwoColumn.shouldUse(context))
+          CcMaxWidth(
+            maxWidth: CcTwoColumn.defaultMaxWidth,
+            child: CcMultiColumn(children: dayGroups),
+          )
+        else
+          ...dayGroups,
       ],
     );
   }
