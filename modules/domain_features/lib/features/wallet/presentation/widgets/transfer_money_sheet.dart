@@ -146,90 +146,94 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: EdgeInsets.all(
-                context.respPadding(CcPaddingParams.SPACE_LG),
-              ),
-              decoration: BoxDecoration(
-                color: scheme.surface,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(context.respDim(24)),
+            // Shrinks and scrolls when the window is short (landscape), so
+            // the rest of the sheet (e.g. the keypad) always fits.
+            Flexible(
+              child: Container(
+                padding: EdgeInsets.all(
+                  context.respPadding(CcPaddingParams.SPACE_LG),
                 ),
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CcFormLabel(
-                      text: el.tr('transaction.transfer_money'),
-                      color: scheme.primary,
-                    ),
-                    const CcSpaceSM(),
-                    CcAmountInputSection(
-                      label: el.tr(CcLocaleKeys.transaction_amount),
-                      amountStr: _amount,
-                      quickAmounts: MoneyConstants.getWalletQuickAmounts(
-                        currencyCode: currencyCode,
+                decoration: BoxDecoration(
+                  color: scheme.surface,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(context.respDim(24)),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CcFormLabel(
+                        text: el.tr('transaction.transfer_money'),
+                        color: scheme.primary,
                       ),
-                      isKeypadVisible: _showKeypad,
-                      activeColor: scheme.primary,
-                      currencyCode: currencyCode,
-                      onTap: () => setState(() => _showKeypad = true),
-                      onQuickAmountSelected: (value) =>
-                          setState(() => _amount = value.toString()),
-                      onClear: () => setState(() => _amount = '0'),
-                    ),
-                    const CcSpaceMD(),
-                    _buildWalletSelector(
-                      context,
-                      label: el.tr('transaction.transfer_from'),
-                      wallet: _sourceWallet,
-                      wallets: _walletController.liquidWallets,
-                      onSelected: (id) {
-                        final selected = _walletController.liquidWallets
-                            .firstWhere((item) => item.id == id);
-                        if (selected.id == _destinationWallet.id) {
-                          _swapWallets();
-                        } else {
-                          setState(() => _sourceWallet = selected);
-                        }
-                      },
-                    ),
-                    Center(
-                      child: CcIconButton.bouncing(
-                        icon: Icon(
-                          Icons.swap_vert_rounded,
-                          color: scheme.primary,
-                          size: context.respIconSize(baseSize: 24),
+                      const CcSpaceSM(),
+                      CcAmountInputSection(
+                        label: el.tr(CcLocaleKeys.transaction_amount),
+                        amountStr: _amount,
+                        quickAmounts: MoneyConstants.getWalletQuickAmounts(
+                          currencyCode: currencyCode,
                         ),
-                        onTap: _swapWallets,
-                        tooltip: el.tr('transaction.transfer_swap'),
+                        isKeypadVisible: _showKeypad,
+                        activeColor: scheme.primary,
+                        currencyCode: currencyCode,
+                        onTap: () => setState(() => _showKeypad = true),
+                        onQuickAmountSelected: (value) =>
+                            setState(() => _amount = value.toString()),
+                        onClear: () => setState(() => _amount = '0'),
                       ),
-                    ),
-                    _buildWalletSelector(
-                      context,
-                      label: el.tr('transaction.transfer_to'),
-                      wallet: _destinationWallet,
-                      wallets: destinations,
-                      onSelected: (id) {
-                        final selected = destinations.firstWhere(
-                          (item) => item.id == id,
-                        );
-                        setState(() => _destinationWallet = selected);
-                      },
-                    ),
-                    const CcSpaceMD(),
-                    TransactionSubmitButton(
-                      text: el.tr('transaction.transfer_money'),
-                      isSubmitting: _isSubmitting,
-                      isEnabled: canSubmit,
-                      onTap: _submit,
-                      activeColor: scheme.primary,
-                      widthFactor: 1,
-                      leadingIcon: Icons.swap_vert_rounded,
-                    ),
-                  ],
+                      const CcSpaceMD(),
+                      _buildWalletSelector(
+                        context,
+                        label: el.tr('transaction.transfer_from'),
+                        wallet: _sourceWallet,
+                        wallets: _walletController.liquidWallets,
+                        onSelected: (id) {
+                          final selected = _walletController.liquidWallets
+                              .firstWhere((item) => item.id == id);
+                          if (selected.id == _destinationWallet.id) {
+                            _swapWallets();
+                          } else {
+                            setState(() => _sourceWallet = selected);
+                          }
+                        },
+                      ),
+                      Center(
+                        child: CcIconButton.bouncing(
+                          icon: Icon(
+                            Icons.swap_vert_rounded,
+                            color: scheme.primary,
+                            size: context.respIconSize(baseSize: 24),
+                          ),
+                          onTap: _swapWallets,
+                          tooltip: el.tr('transaction.transfer_swap'),
+                        ),
+                      ),
+                      _buildWalletSelector(
+                        context,
+                        label: el.tr('transaction.transfer_to'),
+                        wallet: _destinationWallet,
+                        wallets: destinations,
+                        onSelected: (id) {
+                          final selected = destinations.firstWhere(
+                            (item) => item.id == id,
+                          );
+                          setState(() => _destinationWallet = selected);
+                        },
+                      ),
+                      const CcSpaceMD(),
+                      TransactionSubmitButton(
+                        text: el.tr('transaction.transfer_money'),
+                        isSubmitting: _isSubmitting,
+                        isEnabled: canSubmit,
+                        onTap: _submit,
+                        activeColor: scheme.primary,
+                        widthFactor: 1,
+                        leadingIcon: Icons.swap_vert_rounded,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -67,12 +67,15 @@ class _BirthYearContentSheetState extends State<BirthYearContentSheet> {
     final scheme = context.ccColorScheme;
     final int totalYears = widget.maxYear - widget.minYear + 1;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildHeader(context, scheme),
-        _buildBody(context, scheme, totalYears),
-      ],
+    // Scrolls in landscape (short window) instead of overflowing.
+    return CcLandscapeScrollable(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildHeader(context, scheme),
+          _buildBody(context, scheme, totalYears),
+        ],
+      ),
     );
   }
 

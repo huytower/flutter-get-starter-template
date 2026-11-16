@@ -51,13 +51,16 @@ class CurrencySelectionContentSheet extends StatelessWidget {
 
     final scheme = context.ccColorScheme;
 
-    return Obx(
-      () => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildHeader(context, scheme),
-          _buildBody(context, scheme, controller),
-        ],
+    // Scrolls in landscape (short window) instead of overflowing.
+    return CcLandscapeScrollable(
+      child: Obx(
+        () => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildHeader(context, scheme),
+            _buildBody(context, scheme, controller),
+          ],
+        ),
       ),
     );
   }

@@ -47,56 +47,59 @@ class _DisplayNameSheetState extends State<DisplayNameSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        left: context.respPadding(CcPaddingParams.SPACE_LG),
-        right: context.respPadding(CcPaddingParams.SPACE_LG),
-        top: context.respPadding(CcPaddingParams.SPACE_LG),
-        bottom:
-            MediaQuery.of(context).viewInsets.bottom +
-            context.respPadding(CcPaddingParams.SPACE_LG),
-      ),
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CcText(
-            el.tr(CcLocaleKeys.profile_display_name_title),
-            textStyle: context.ccTextTheme.titleLarge?.copyWith(
-              fontWeight: CcTypographyParams.bold,
-              color: context.ccColorScheme.primary,
+    // Scrolls in landscape (short window) instead of overflowing.
+    return CcLandscapeScrollable(
+      child: Container(
+        padding: EdgeInsets.only(
+          left: context.respPadding(CcPaddingParams.SPACE_LG),
+          right: context.respPadding(CcPaddingParams.SPACE_LG),
+          top: context.respPadding(CcPaddingParams.SPACE_LG),
+          bottom:
+              MediaQuery.of(context).viewInsets.bottom +
+              context.respPadding(CcPaddingParams.SPACE_LG),
+        ),
+        decoration: BoxDecoration(
+          color: context.ccColorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CcText(
+              el.tr(CcLocaleKeys.profile_display_name_title),
+              textStyle: context.ccTextTheme.titleLarge?.copyWith(
+                fontWeight: CcTypographyParams.bold,
+                color: context.ccColorScheme.primary,
+              ),
             ),
-          ),
-          const CcSpaceSM(),
-          TextField(
-            controller: _nameController,
-            maxLength: 20,
-            autofocus: true,
-            decoration: InputDecoration(
-              hintText: el.tr(CcLocaleKeys.profile_display_name_hint),
-              suffixIcon: _nameController.text.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(
-                        Icons.clear_rounded,
-                        color: context.ccColorScheme.onSurfaceVariant,
-                        size: context.respIconSize(baseSize: 20),
-                      ),
-                      onPressed: () => _nameController.clear(),
-                    )
-                  : null,
-              border: context.inputBorderTextField,
+            const CcSpaceSM(),
+            TextField(
+              controller: _nameController,
+              maxLength: 20,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: el.tr(CcLocaleKeys.profile_display_name_hint),
+                suffixIcon: _nameController.text.isNotEmpty
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.clear_rounded,
+                          color: context.ccColorScheme.onSurfaceVariant,
+                          size: context.respIconSize(baseSize: 20),
+                        ),
+                        onPressed: () => _nameController.clear(),
+                      )
+                    : null,
+                border: context.inputBorderTextField,
+              ),
             ),
-          ),
-          const CcSpaceMD(),
-          CcSaveButton(
-            onPressed: _isValid ? _onSave : null,
-            label: el.tr(CcLocaleKeys.profile_display_name_save),
-          ),
-        ],
+            const CcSpaceMD(),
+            CcSaveButton(
+              onPressed: _isValid ? _onSave : null,
+              label: el.tr(CcLocaleKeys.profile_display_name_save),
+            ),
+          ],
+        ),
       ),
     );
   }

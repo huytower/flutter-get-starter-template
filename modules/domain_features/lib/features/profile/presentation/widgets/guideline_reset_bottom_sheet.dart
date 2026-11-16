@@ -36,11 +36,17 @@ class GuidelineResetBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return SafeArea(
-      top: false,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [_buildHeader(context, scheme), _buildBody(context, scheme)],
+    // Scrolls in landscape (short window) instead of overflowing.
+    return CcLandscapeScrollable(
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildHeader(context, scheme),
+            _buildBody(context, scheme),
+          ],
+        ),
       ),
     );
   }

@@ -37,16 +37,19 @@ class _LanguageSelectionContentSheetState
     final scheme = context.ccColorScheme;
     const locales = CcLocalization.supportedLocales;
 
-    return Wrap(
-      children: [
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildHeader(context, scheme),
-            _buildBody(context, scheme, locales),
-          ],
-        ),
-      ],
+    // Scrolls in landscape (short window) instead of overflowing.
+    return CcLandscapeScrollable(
+      child: Wrap(
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildHeader(context, scheme),
+              _buildBody(context, scheme, locales),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

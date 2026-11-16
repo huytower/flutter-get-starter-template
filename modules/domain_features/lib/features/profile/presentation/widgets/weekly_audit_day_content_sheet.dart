@@ -42,9 +42,12 @@ class _WeeklyAuditDayContentSheetState
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [_buildHeader(context, scheme), _buildBody(context, scheme)],
+    // Scrolls in landscape (short window) instead of overflowing.
+    return CcLandscapeScrollable(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [_buildHeader(context, scheme), _buildBody(context, scheme)],
+      ),
     );
   }
 

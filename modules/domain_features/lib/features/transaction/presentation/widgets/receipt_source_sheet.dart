@@ -24,62 +24,65 @@ class ReceiptSourceSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return SafeArea(
-      top: false,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(
-              context.respPadding(CcPaddingParams.SPACE_LG),
-            ),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [scheme.primary, scheme.primaryContainer],
+    // Scrolls in landscape (short window) instead of overflowing.
+    return CcLandscapeScrollable(
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(
+                context.respPadding(CcPaddingParams.SPACE_LG),
               ),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(context.respDim(16)),
-                topRight: Radius.circular(context.respDim(16)),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [scheme.primary, scheme.primaryContainer],
+                ),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(context.respDim(16)),
+                  topRight: Radius.circular(context.respDim(16)),
+                ),
               ),
-            ),
-            child: CcText(
-              el.tr(CcLocaleKeys.quick_entry_scan_receipt),
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                color: scheme.onPrimary,
-                fontWeight: CcTypographyParams.bold,
-              ),
-            ),
-          ),
-          DecoratedBox(
-            decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: context.respPadding(CcPaddingParams.SPACE_SM),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildRow(
-                    context,
-                    icon: Icons.camera_alt_outlined,
-                    label: el.tr(CcLocaleKeys.quick_entry_take_photo),
-                    onTap: () => Navigator.of(context).pop(true),
-                  ),
-                  _buildRow(
-                    context,
-                    icon: Icons.photo_library_outlined,
-                    label: el.tr(CcLocaleKeys.quick_entry_choose_gallery),
-                    onTap: () => Navigator.of(context).pop(false),
-                  ),
-                  const CcSpaceXS(),
-                ],
+              child: CcText(
+                el.tr(CcLocaleKeys.quick_entry_scan_receipt),
+                textStyle: context.ccTextTheme.titleMedium?.copyWith(
+                  color: scheme.onPrimary,
+                  fontWeight: CcTypographyParams.bold,
+                ),
               ),
             ),
-          ),
-        ],
+            DecoratedBox(
+              decoration: BoxDecoration(color: scheme.surfaceContainerHighest),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: context.respPadding(CcPaddingParams.SPACE_SM),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildRow(
+                      context,
+                      icon: Icons.camera_alt_outlined,
+                      label: el.tr(CcLocaleKeys.quick_entry_take_photo),
+                      onTap: () => Navigator.of(context).pop(true),
+                    ),
+                    _buildRow(
+                      context,
+                      icon: Icons.photo_library_outlined,
+                      label: el.tr(CcLocaleKeys.quick_entry_choose_gallery),
+                      onTap: () => Navigator.of(context).pop(false),
+                    ),
+                    const CcSpaceXS(),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

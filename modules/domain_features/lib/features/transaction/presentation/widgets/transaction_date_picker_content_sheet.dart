@@ -112,12 +112,15 @@ class _TransactionDatePickerContentSheetState
     final calendarDays = _getCalendarDays();
     final today = DateTime.now();
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildHeader(context, scheme, languageCode),
-        _buildBody(context, scheme, languageCode, calendarDays, today),
-      ],
+    // Scrolls in landscape (short window) instead of overflowing.
+    return CcLandscapeScrollable(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildHeader(context, scheme, languageCode),
+          _buildBody(context, scheme, languageCode, calendarDays, today),
+        ],
+      ),
     );
   }
 

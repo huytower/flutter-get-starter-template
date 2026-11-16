@@ -57,140 +57,143 @@ class GuestLoginPromptSheet extends StatelessWidget {
         ? CcLocaleKeys.profile_guest_login_final_bullet3
         : CcLocaleKeys.profile_guest_login_bullet3;
 
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(
-          context.respPadding(CcPaddingParams.PAGE_LG),
-          context.respPadding(CcPaddingParams.PAGE_LG),
-          context.respPadding(CcPaddingParams.PAGE_LG),
-          context.respPadding(CcPaddingParams.PAGE_MD),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Container(
-                width: context.respDim(64),
-                height: context.respDim(64),
-                decoration: BoxDecoration(
-                  color: scheme.primary.withOpacity(0.12),
-                  shape: BoxShape.circle,
+    // Scrolls in landscape (short window) instead of overflowing.
+    return CcLandscapeScrollable(
+      child: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            context.respPadding(CcPaddingParams.PAGE_LG),
+            context.respPadding(CcPaddingParams.PAGE_LG),
+            context.respPadding(CcPaddingParams.PAGE_LG),
+            context.respPadding(CcPaddingParams.PAGE_MD),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: context.respDim(64),
+                  height: context.respDim(64),
+                  decoration: BoxDecoration(
+                    color: scheme.primary.withOpacity(0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isFinal
+                        ? Icons.workspace_premium_outlined
+                        : Icons.cloud_outlined,
+                    size: context.respIconSize(baseSize: 32),
+                    color: scheme.primary,
+                  ),
                 ),
-                child: Icon(
+              ),
+              const CcSpaceMD(),
+              CcText(
+                el.tr(
                   isFinal
-                      ? Icons.workspace_premium_outlined
-                      : Icons.cloud_outlined,
-                  size: context.respIconSize(baseSize: 32),
-                  color: scheme.primary,
+                      ? CcLocaleKeys.profile_guest_login_final_title
+                      : CcLocaleKeys.profile_guest_login_title,
+                ),
+                align: Alignment.center,
+                maxLines: 3,
+                textAlign: TextAlign.center,
+                textStyle: context.ccTextTheme.titleLarge?.copyWith(
+                  fontWeight: CcTypographyParams.bold,
+                  color: scheme.onSurface,
                 ),
               ),
-            ),
-            const CcSpaceMD(),
-            CcText(
-              el.tr(
-                isFinal
-                    ? CcLocaleKeys.profile_guest_login_final_title
-                    : CcLocaleKeys.profile_guest_login_title,
+              const CcSpaceLG(),
+              Column(
+                children: [
+                  _buildInsightCard(
+                    context: context,
+                    textKey: bullet1Key,
+                    icon: isFinal
+                        ? Icons.stars_outlined
+                        : Icons.thumb_up_alt_outlined,
+                    color: PrjColors.info,
+                    scheme: scheme,
+                  ),
+                  _buildInsightCard(
+                    context: context,
+                    textKey: bullet2Key,
+                    icon: Icons.warning_amber_rounded,
+                    color: scheme.error,
+                    scheme: scheme,
+                  ),
+                  _buildInsightCard(
+                    context: context,
+                    textKey: bullet3Key,
+                    icon: Icons.info_outline_rounded,
+                    color: PrjColors.info,
+                    scheme: scheme,
+                  ),
+                ],
               ),
-              align: Alignment.center,
-              maxLines: 3,
-              textAlign: TextAlign.center,
-              textStyle: context.ccTextTheme.titleLarge?.copyWith(
-                fontWeight: CcTypographyParams.bold,
-                color: scheme.onSurface,
-              ),
-            ),
-            const CcSpaceLG(),
-            Column(
-              children: [
-                _buildInsightCard(
-                  context: context,
-                  textKey: bullet1Key,
-                  icon: isFinal
-                      ? Icons.stars_outlined
-                      : Icons.thumb_up_alt_outlined,
-                  color: PrjColors.info,
-                  scheme: scheme,
-                ),
-                _buildInsightCard(
-                  context: context,
-                  textKey: bullet2Key,
-                  icon: Icons.warning_amber_rounded,
-                  color: scheme.error,
-                  scheme: scheme,
-                ),
-                _buildInsightCard(
-                  context: context,
-                  textKey: bullet3Key,
-                  icon: Icons.info_outline_rounded,
-                  color: PrjColors.info,
-                  scheme: scheme,
-                ),
-              ],
-            ),
-            const CcSpaceMD(),
-            Row(
-              children: [
-                Expanded(
-                  child: CcBouncing(
-                    onTap: onCancel,
-                    borderRadius: BorderRadius.circular(context.respDim(12)),
-                    child: Container(
-                      height: context.respDim(48),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: scheme.onSurface.withOpacity(0.06),
-                        borderRadius: BorderRadius.circular(
-                          context.respDim(12),
+              const CcSpaceMD(),
+              Row(
+                children: [
+                  Expanded(
+                    child: CcBouncing(
+                      onTap: onCancel,
+                      borderRadius: BorderRadius.circular(context.respDim(12)),
+                      child: Container(
+                        height: context.respDim(48),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: scheme.onSurface.withOpacity(0.06),
+                          borderRadius: BorderRadius.circular(
+                            context.respDim(12),
+                          ),
                         ),
-                      ),
-                      child: CcText(
-                        el.tr(
-                          isFinal
-                              ? CcLocaleKeys.common_guest_login_continue_local
-                              : CcLocaleKeys.common_later,
-                        ),
-                        align: Alignment.center,
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        textStyle: context.ccTextTheme.labelLarge?.copyWith(
-                          fontWeight: CcTypographyParams.bold,
-                          color: scheme.onSurface,
+                        child: CcText(
+                          el.tr(
+                            isFinal
+                                ? CcLocaleKeys.common_guest_login_continue_local
+                                : CcLocaleKeys.common_later,
+                          ),
+                          align: Alignment.center,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          textStyle: context.ccTextTheme.labelLarge?.copyWith(
+                            fontWeight: CcTypographyParams.bold,
+                            color: scheme.onSurface,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const CcSpaceMD(),
-                Expanded(
-                  child: CcBouncing(
-                    onTap: onLogin,
-                    borderRadius: BorderRadius.circular(context.respDim(12)),
-                    child: Container(
-                      height: context.respDim(48),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: scheme.primary,
-                        borderRadius: BorderRadius.circular(
-                          context.respDim(12),
+                  const CcSpaceMD(),
+                  Expanded(
+                    child: CcBouncing(
+                      onTap: onLogin,
+                      borderRadius: BorderRadius.circular(context.respDim(12)),
+                      child: Container(
+                        height: context.respDim(48),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: scheme.primary,
+                          borderRadius: BorderRadius.circular(
+                            context.respDim(12),
+                          ),
                         ),
-                      ),
-                      child: CcText(
-                        el.tr(CcLocaleKeys.common_guest_login_action),
-                        align: Alignment.center,
-                        textAlign: TextAlign.center,
-                        textStyle: context.ccTextTheme.labelLarge?.copyWith(
-                          fontWeight: CcTypographyParams.bold,
-                          color: scheme.onPrimary,
+                        child: CcText(
+                          el.tr(CcLocaleKeys.common_guest_login_action),
+                          align: Alignment.center,
+                          textAlign: TextAlign.center,
+                          textStyle: context.ccTextTheme.labelLarge?.copyWith(
+                            fontWeight: CcTypographyParams.bold,
+                            color: scheme.onPrimary,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
