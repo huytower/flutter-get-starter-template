@@ -72,6 +72,8 @@ class _LoginCardContentState extends State<LoginCardContent> {
             fontWeight: CcTypographyParams.bold,
             color: context.ccColorScheme.onSurface,
           ),
+          // Centred under the logo when the header is its own column.
+          align: CcTwoColumn.shouldUse(context) ? Alignment.center : null,
           textAlign: TextAlign.center,
         ),
         const CcSpaceXL(),

@@ -36,6 +36,7 @@ class FinancialRunwayWidget extends StatelessWidget {
           leadingIcon: statusIcon,
           title: message,
           color: statusColor,
+          endColor: _getEndColor(context),
           description: runway.fixedMonthlyCost > 0
               ? el.tr(CcLocaleKeys.report_runway_fixed_price_desc)
               : el.tr(CcLocaleKeys.report_runway_no_fixed_price_desc),
@@ -128,7 +129,17 @@ class FinancialRunwayWidget extends StatelessWidget {
       case FinancialRunwayStatus.caution:
         return scheme.error;
       case FinancialRunwayStatus.insufficient:
-        return scheme.outline;
+        // outline is a light grey in dark mode: light text on it was
+        // unreadable.
+        return context.isDarkMode ? CcBaseColors.gray700 : scheme.outline;
     }
+  }
+
+  /// The banner gradient ends in white by default; in dark mode that washes
+  /// out the light text of the neutral "insufficient data" state, so it ends
+  /// in a dark grey instead. Other states are unchanged.
+  Color? _getEndColor(BuildContext context) {
+    final insufficient = runway.status == FinancialRunwayStatus.insufficient;
+    return insufficient && context.isDarkMode ? CcBaseColors.gray600 : null;
   }
 }

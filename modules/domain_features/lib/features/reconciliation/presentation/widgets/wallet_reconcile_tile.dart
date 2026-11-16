@@ -31,6 +31,8 @@ class WalletReconcileTile extends StatelessWidget {
         ? Get.find<WalletController>()
         : Get.put(getIt<WalletController>());
 
+    final stacked = CcTwoColumn.shouldUse(context);
+
     return Obx(() {
       final currencyCode = walletController.currencyCode.value;
       final counted = controller.actualOf(balance.wallet.id);
@@ -42,6 +44,20 @@ class WalletReconcileTile extends StatelessWidget {
       final isResolved = isBalanced || isAcknowledged;
       final isEditing = controller.editingWalletId.value == balance.wallet.id;
       final scheme = context.ccColorScheme;
+
+      Widget actualInput() => WalletActualBalanceInput(
+        actual: counted,
+        isEditing: isEditing,
+        currencyCode: currencyCode,
+        onTap: () => controller.startEditing(balance.wallet.id),
+        onClear: () {
+          if (isEditing) {
+            controller.clearAmount();
+          } else {
+            controller.resetActual(balance.wallet.id);
+          }
+        },
+      );
 
       // Not counted yet: neutral, never an error — the wallet is assumed to
       // match its book balance until the user enters a counted amount.
@@ -89,36 +105,32 @@ class WalletReconcileTile extends StatelessWidget {
                   ),
                 ),
                 const CcSpaceSM(),
-                IntrinsicHeight(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _buildBookColumn(context, scheme, currencyCode),
-                      ),
-                      VerticalDivider(
-                        width: context.respDim(24),
-                        thickness: 1,
-                        color: scheme.outlineVariant.withValues(alpha: 0.6),
-                      ),
-                      Expanded(
-                        child: WalletActualBalanceInput(
-                          actual: counted,
-                          isEditing: isEditing,
-                          currencyCode: currencyCode,
-                          onTap: () =>
-                              controller.startEditing(balance.wallet.id),
-                          onClear: () {
-                            if (isEditing) {
-                              controller.clearAmount();
-                            } else {
-                              controller.resetActual(balance.wallet.id);
-                            }
-                          },
+                if (stacked) ...[
+                  // Landscape tablet: two rows — "Book" + amount, then
+                  // "Actual" + amount — so each amount has the full width.
+                  _buildBookColumn(context, scheme, currencyCode),
+                  const CcSpaceSM(),
+                  actualInput(),
+                ] else
+                  IntrinsicHeight(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _buildBookColumn(
+                            context,
+                            scheme,
+                            currencyCode,
+                          ),
                         ),
-                      ),
-                    ],
+                        VerticalDivider(
+                          width: context.respDim(24),
+                          thickness: 1,
+                          color: scheme.outlineVariant.withValues(alpha: 0.6),
+                        ),
+                        Expanded(child: actualInput()),
+                      ],
+                    ),
                   ),
-                ),
                 const CcSpaceSM(),
                 WalletReconcileStatusRow(
                   isCounted: isCounted,
@@ -129,6 +141,7 @@ class WalletReconcileTile extends StatelessWidget {
                   statusColor: statusColor,
                   onAcknowledge: onAcknowledge,
                   onReview: onReview,
+                  stacked: stacked,
                 ),
               ],
             ),
@@ -286,6 +299,10 @@ class WalletReconcileStatusRow extends StatelessWidget {
   final VoidCallback onAcknowledge;
   final VoidCallback onReview;
 
+  /// Puts the actions (create adjustment / review) on their own line, bottom
+  /// right, so a large "Off by" amount never competes with them for width.
+  final bool stacked;
+
   const WalletReconcileStatusRow({
     super.key,
     required this.isCounted,
@@ -296,6 +313,7 @@ class WalletReconcileStatusRow extends StatelessWidget {
     required this.statusColor,
     required this.onAcknowledge,
     required this.onReview,
+    this.stacked = false,
   });
 
   @override
@@ -337,70 +355,80 @@ class WalletReconcileStatusRow extends StatelessWidget {
       );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final status = Row(
       children: [
-        Row(
-          children: [
-            Icon(
-              isAcknowledged ? Icons.check_circle_outline : Icons.error_outline,
-              color: statusColor,
-              size: 16,
-            ),
-            const CcSpaceXS(),
-            CcText(
-              el.tr(
-                CcLocaleKeys.reconciliation_lech,
-                namedArgs: {
-                  'amount':
-                      '${diff > 0 ? '+' : ''}${diff < 0 ? '-' : ''}${formatCurrencyWithSymbol(diff.abs(), currencyCode: currencyCode)}',
-                },
-              ),
-              textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                color: statusColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        Icon(
+          isAcknowledged ? Icons.check_circle_outline : Icons.error_outline,
+          color: statusColor,
+          size: 16,
         ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!isAcknowledged)
-              CcBouncing(
-                onTap: onAcknowledge,
-                child: CcText(
-                  el.tr(CcLocaleKeys.reconciliation_create_adjustment),
-                  textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                    color: scheme.error,
-                    fontWeight: FontWeight.w600,
-                    decoration: TextDecoration.underline,
-                    decorationColor: scheme.error,
-                  ),
-                ),
-              )
-            else
-              CcText(
-                el.tr(CcLocaleKeys.common_done),
-                textStyle: context.ccTextTheme.bodySmall?.copyWith(
-                  color: scheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            CcIconButton.bouncing(
-              icon: Icon(
-                Icons.fact_check_outlined,
-                size: context.respIconSize(baseSize: 16),
-                color: scheme.onSurfaceVariant,
-              ),
-              height: context.respDim(28),
-              width: context.respDim(28),
-              tooltip: el.tr(CcLocaleKeys.reconciliation_review_transactions),
-              onTap: onReview,
-            ),
-          ],
+        const CcSpaceXS(),
+        CcText(
+          el.tr(
+            CcLocaleKeys.reconciliation_lech,
+            namedArgs: {
+              'amount':
+                  '${diff > 0 ? '+' : ''}${diff < 0 ? '-' : ''}${formatCurrencyWithSymbol(diff.abs(), currencyCode: currencyCode)}',
+            },
+          ),
+          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+            color: statusColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
+    );
+    final actions = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (!isAcknowledged)
+          CcBouncing(
+            onTap: onAcknowledge,
+            child: CcText(
+              el.tr(CcLocaleKeys.reconciliation_create_adjustment),
+              textStyle: context.ccTextTheme.bodySmall?.copyWith(
+                color: scheme.error,
+                fontWeight: FontWeight.w600,
+                decoration: TextDecoration.underline,
+                decorationColor: scheme.error,
+              ),
+            ),
+          )
+        else
+          CcText(
+            el.tr(CcLocaleKeys.common_done),
+            textStyle: context.ccTextTheme.bodySmall?.copyWith(
+              color: scheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        CcIconButton.bouncing(
+          icon: Icon(
+            Icons.fact_check_outlined,
+            size: context.respIconSize(baseSize: 16),
+            color: scheme.onSurfaceVariant,
+          ),
+          height: context.respDim(28),
+          width: context.respDim(28),
+          tooltip: el.tr(CcLocaleKeys.reconciliation_review_transactions),
+          onTap: onReview,
+        ),
+      ],
+    );
+
+    if (stacked) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          status,
+          const CcSpaceXS(),
+          Align(alignment: Alignment.centerRight, child: actions),
+        ],
+      );
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [status, actions],
     );
   }
 }
