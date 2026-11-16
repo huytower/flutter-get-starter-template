@@ -48,7 +48,10 @@ class _FinanceLineArtPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final w = size.width;
     final h = size.height;
-    final unit = w / 390; // scales the art with the screen width
+    // Scales the art with the shorter side: the width in portrait (phones,
+    // tablets — unchanged), the height in landscape, so a tablet held sideways
+    // does not blow the coins and nodes up over the content.
+    final unit = (w < h ? w : h) / 390;
 
     final line = Paint()
       ..color = lineColor
