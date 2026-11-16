@@ -85,10 +85,32 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
       onTap: controller.stopEditing,
       child: ListView(
         padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_SM)),
-        children: [
-          _buildSeeMoreDescription(context),
-          _buildInstructionText(context),
-          _buildWalletTiles(context),
+        children: CcTwoColumn.shouldUse(context)
+            ? _buildTwoColumnChildren(context)
+            : [
+                _buildSeeMoreDescription(context),
+                _buildInstructionText(context),
+                _buildWalletTiles(context),
+                const ReconciliationMismatchWarning(),
+                const CcSpaceXS(),
+                const ReconciliationSummary(),
+                const CcSpaceXS(),
+                const ReconciliationConfirmButton(),
+                const ReconciliationHistorySection(),
+              ],
+      ),
+    );
+  }
+
+  /// Landscape tablet: the wallet tiles (the thing being counted) on the
+  /// left; the totals, mismatch warning, confirm button and history on the
+  /// right.
+  List<Widget> _buildTwoColumnChildren(BuildContext context) {
+    return [
+      _buildSeeMoreDescription(context),
+      CcTwoColumn(
+        left: [_buildInstructionText(context), _buildWalletTiles(context)],
+        right: [
           const ReconciliationMismatchWarning(),
           const CcSpaceXS(),
           const ReconciliationSummary(),
@@ -97,7 +119,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
           const ReconciliationHistorySection(),
         ],
       ),
-    );
+    ];
   }
 
   Widget _buildInstructionText(BuildContext context) {

@@ -5,6 +5,7 @@ import 'package:theme/export_theme.dart';
 import 'package:get/get.dart';
 
 import '../get_x/report_controller.dart';
+import 'report_card_pair.dart';
 import 'trend_card.dart';
 
 class ReportLiabilitySection extends StatelessWidget {
@@ -46,9 +47,6 @@ class ReportLiabilitySection extends StatelessWidget {
       }
 
       if (data.totalIncome > 0) {
-        if (children.isNotEmpty) {
-          children.add(const CcSpaceLG());
-        }
         children.add(
           TrendCard(
             title: el.tr(CcLocaleKeys.report_liability_in),
@@ -66,7 +64,11 @@ class ReportLiabilitySection extends StatelessWidget {
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [const CcSpaceLG(), ...children, const CcSpaceSM()],
+        children: [
+          const CcSpaceLG(),
+          ReportCardPair(cards: children),
+          const CcSpaceSM(),
+        ],
       );
     });
   }

@@ -131,44 +131,64 @@ class _ReportView extends CcGetView<ReportController> {
 
           final topPadding = MediaQuery.of(context).padding.top;
 
-          return CcMaxWidth.content(
-            child: Column(
-              children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: hidden ? topPadding : headerHeight - overlap,
-                ),
-                ReportTabBar(controller: controller),
-                const CcSpaceSM(),
-                Expanded(
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (notification) {
-                      controller.onScroll(notification);
-                      return false;
-                    },
-                    child: ListView(
-                      controller: controller.scrollController,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.fromLTRB(
-                        padding,
-                        0,
-                        padding,
-                        tabBarHeight,
-                      ),
-                      children: [
-                        const CcSpaceXS(),
-                        const ReportDailyDetailShortcut(),
-                        const CcSpaceSM(),
-                        ReportTrendSection(controller: controller, data: data),
-                        ReportInvestmentSection(controller: controller),
-                        ReportLiabilitySection(controller: controller),
-                      ],
+          // Landscape tablet: the tab bar stays at the content width while the
+          // cards below use the wider two-column block, laid out as pairs
+          // (expense | income, contributed | returned, ...) — see
+          // ReportCardPair. Phones and portrait tablets: one capped column.
+          final wide = CcTwoColumn.shouldUse(context);
+          final sections = <Widget>[
+            const CcSpaceXS(),
+            const ReportDailyDetailShortcut(),
+            const CcSpaceSM(),
+            ReportTrendSection(controller: controller, data: data),
+            ReportInvestmentSection(controller: controller),
+            ReportLiabilitySection(controller: controller),
+          ];
+
+          final content = Column(
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                height: hidden ? topPadding : headerHeight - overlap,
+              ),
+              wide
+                  ? CcMaxWidth.content(
+                      child: ReportTabBar(controller: controller),
+                    )
+                  : ReportTabBar(controller: controller),
+              const CcSpaceSM(),
+              Expanded(
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    controller.onScroll(notification);
+                    return false;
+                  },
+                  child: ListView(
+                    controller: controller.scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.fromLTRB(
+                      padding,
+                      0,
+                      padding,
+                      tabBarHeight,
                     ),
+                    children: wide
+                        ? [
+                            CcMaxWidth(
+                              maxWidth: CcTwoColumn.defaultMaxWidth,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: sections,
+                              ),
+                            ),
+                          ]
+                        : sections,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
+          return wide ? content : CcMaxWidth.content(child: content);
         });
       },
     );

@@ -26,9 +26,7 @@ class TransactionFormTwoColumn extends StatelessWidget {
   final List<Widget> right;
 
   /// Landscape window at least 600 dp wide (small tablet and up).
-  static bool shouldUse(BuildContext context) =>
-      MediaQuery.orientationOf(context) == Orientation.landscape &&
-      context.windowSizeClass.isAtLeast(CcWindowSizeClass.medium);
+  static bool shouldUse(BuildContext context) => CcTwoColumn.shouldUse(context);
 
   /// The columns span up to this width (instead of the 840 dp content column)
   /// so the extra room of a landscape tablet is actually used.

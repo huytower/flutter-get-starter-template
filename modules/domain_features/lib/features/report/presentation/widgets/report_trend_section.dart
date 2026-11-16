@@ -6,6 +6,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../domain/entities/trend_data_entity.dart';
 import '../get_x/report_controller.dart';
+import 'report_card_pair.dart';
 import 'trend_card.dart';
 
 class ReportTrendSection extends StatelessWidget {
@@ -30,10 +31,10 @@ class ReportTrendSection extends StatelessWidget {
         return const SizedBox.shrink();
       }
 
-      final children = <Widget>[];
+      final cards = <Widget>[];
       if (filter == ReportFilterType.all ||
           filter == ReportFilterType.expense) {
-        children.add(
+        cards.add(
           TrendCard(
             title: el.tr(CcLocaleKeys.common_expense),
             amount: data.totalExpense,
@@ -45,12 +46,8 @@ class ReportTrendSection extends StatelessWidget {
         );
       }
 
-      if (filter == ReportFilterType.all && children.isNotEmpty) {
-        children.add(const CcSpaceLG());
-      }
-
       if (filter == ReportFilterType.all || filter == ReportFilterType.income) {
-        children.add(
+        cards.add(
           TrendCard(
             title: el.tr(CcLocaleKeys.common_income),
             amount: data.totalIncome,
@@ -62,7 +59,7 @@ class ReportTrendSection extends StatelessWidget {
         );
       }
 
-      return Column(children: children);
+      return ReportCardPair(cards: cards);
     });
   }
 }

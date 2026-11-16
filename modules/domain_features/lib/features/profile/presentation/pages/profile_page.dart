@@ -55,11 +55,70 @@ class ProfilePage extends CcGetView<ProfileController> {
       child: LayoutBuilder(
         builder: (context, constraints) => SingleChildScrollView(
           padding: EdgeInsets.symmetric(
-            horizontal: CcMaxWidth.insetFor(constraints.maxWidth),
+            // Two-column mode centres and caps itself (CcTwoColumn).
+            horizontal: CcTwoColumn.shouldUse(context)
+                ? 0
+                : CcMaxWidth.insetFor(constraints.maxWidth),
           ),
-          child: _buildScrollContent(context, topPadding),
+          child: CcTwoColumn.shouldUse(context)
+              ? _buildTwoColumnContent(context, topPadding)
+              : _buildScrollContent(context, topPadding),
         ),
       ),
+    );
+  }
+
+  Widget _buildProfileHeader(BuildContext context) {
+    return Obx(() {
+      return Hero(
+        tag: 'profile_hero_banner',
+        child: ProfilePageHeader(
+          user: controller.user.value,
+          displayName: controller.displayName,
+          level: controller.userLevel.status.value.level,
+          daysToNextAudit: controller.daysToNextAudit,
+          levelStatus: controller.userLevel.status.value,
+          initialFlipped: controller.settings.value.isHeaderFlipped,
+          onFlip: controller.setHeaderFlipped,
+          onEditName: () => controller.pickDisplayName(context),
+          onLinkAccount: () => controller.handleLinkAccountTap(context),
+          onAvatarTap: controller.isLoggedIn
+              ? null
+              : () => controller.handleAvatarTap(context),
+          onLinkPhone: () => controller.handlePhoneLinkTap(context),
+        ),
+      );
+    });
+  }
+
+  Widget _buildSignInReminder(BuildContext context) {
+    return Obx(
+      () => controller.showSignInReminder
+          ? Padding(
+              padding: EdgeInsets.only(
+                bottom: context.respDim(CcPaddingParams.SPACE_MD),
+              ),
+              child: ProfileSignInReminder(
+                onDismiss: controller.dismissSignInReminder,
+              ),
+            )
+          : const SizedBox.shrink(),
+    );
+  }
+
+  Widget _buildAccountActions(BuildContext context) {
+    return Obx(
+      () => controller.isLoggedIn
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildDeleteAccountText(context),
+                const CcSpaceMD(),
+                _buildLogoutButton(context),
+                const CcSpaceMD(),
+              ],
+            )
+          : const SizedBox.shrink(),
     );
   }
 
@@ -68,64 +127,65 @@ class ProfilePage extends CcGetView<ProfileController> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(height: topPadding + context.respDim(12)),
-        Obx(() {
-          return Hero(
-            tag: 'profile_hero_banner',
-            child: ProfilePageHeader(
-              user: controller.user.value,
-              displayName: controller.displayName,
-              level: controller.userLevel.status.value.level,
-              daysToNextAudit: controller.daysToNextAudit,
-              levelStatus: controller.userLevel.status.value,
-              initialFlipped: controller.settings.value.isHeaderFlipped,
-              onFlip: controller.setHeaderFlipped,
-              onEditName: () => controller.pickDisplayName(context),
-              onLinkAccount: () => controller.handleLinkAccountTap(context),
-              onAvatarTap: controller.isLoggedIn
-                  ? null
-                  : () => controller.handleAvatarTap(context),
-              onLinkPhone: () => controller.handlePhoneLinkTap(context),
-            ),
-          );
-        }),
+        _buildProfileHeader(context),
         CcSymmetricPadding(
           horizontal: CcPaddingParams.PAGE_SM,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const CcSpaceMD(),
-              Obx(
-                () => controller.showSignInReminder
-                    ? Padding(
-                        padding: EdgeInsets.only(
-                          bottom: context.respDim(CcPaddingParams.SPACE_MD),
-                        ),
-                        child: ProfileSignInReminder(
-                          onDismiss: controller.dismissSignInReminder,
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
+              _buildSignInReminder(context),
               ProfileMenuGroup(items: _buildMenuItems(context)),
               const CcSpaceXL(),
-              Obx(
-                () => controller.isLoggedIn
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          _buildDeleteAccountText(context),
-                          const CcSpaceMD(),
-                          _buildLogoutButton(context),
-                          const CcSpaceMD(),
-                        ],
-                      )
-                    : const SizedBox.shrink(),
-              ),
+              _buildAccountActions(context),
               const CcSpaceSM(),
               _buildFooter(context),
               const CcSpaceSM(),
             ],
           ),
+        ),
+      ],
+    );
+  }
+
+  /// Landscape tablet: the profile card, sign-in reminder, account actions
+  /// and footer on the left; the (long) settings list on the right.
+  Widget _buildTwoColumnContent(BuildContext context, double topPadding) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(height: topPadding + context.respDim(12)),
+        CcTwoColumn(
+          gap: 0,
+          left: [
+            _buildProfileHeader(context),
+            CcSymmetricPadding(
+              horizontal: CcPaddingParams.PAGE_SM,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const CcSpaceMD(),
+                  _buildSignInReminder(context),
+                  _buildAccountActions(context),
+                  const CcSpaceSM(),
+                  _buildFooter(context),
+                  const CcSpaceSM(),
+                ],
+              ),
+            ),
+          ],
+          right: [
+            CcSymmetricPadding(
+              horizontal: CcPaddingParams.PAGE_SM,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ProfileMenuGroup(items: _buildMenuItems(context)),
+                  const CcSpaceXL(),
+                ],
+              ),
+            ),
+          ],
         ),
       ],
     );

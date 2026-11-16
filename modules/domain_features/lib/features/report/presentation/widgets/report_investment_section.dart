@@ -5,6 +5,7 @@ import 'package:theme/export_theme.dart';
 import 'package:get/get.dart';
 
 import '../get_x/report_controller.dart';
+import 'report_card_pair.dart';
 import 'trend_card.dart';
 
 class ReportInvestmentSection extends StatelessWidget {
@@ -32,24 +33,27 @@ class ReportInvestmentSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const CcSpaceLG(),
-          TrendCard(
-            title: el.tr(CcLocaleKeys.report_investment_contributed),
-            amount: data.totalExpense,
-            points: data.points,
-            color: context.investmentAccent,
-            range: controller.range.value,
-            isIncome: false,
-            icon: Icons.arrow_circle_down,
-          ),
-          const CcSpaceLG(),
-          TrendCard(
-            title: el.tr(CcLocaleKeys.report_investment_returned),
-            amount: data.totalIncome,
-            points: data.points,
-            color: context.investmentAccent.secondaryShade,
-            range: controller.range.value,
-            isIncome: true,
-            icon: Icons.arrow_circle_up,
+          ReportCardPair(
+            cards: [
+              TrendCard(
+                title: el.tr(CcLocaleKeys.report_investment_contributed),
+                amount: data.totalExpense,
+                points: data.points,
+                color: context.investmentAccent,
+                range: controller.range.value,
+                isIncome: false,
+                icon: Icons.arrow_circle_down,
+              ),
+              TrendCard(
+                title: el.tr(CcLocaleKeys.report_investment_returned),
+                amount: data.totalIncome,
+                points: data.points,
+                color: context.investmentAccent.secondaryShade,
+                range: controller.range.value,
+                isIncome: true,
+                icon: Icons.arrow_circle_up,
+              ),
+            ],
           ),
         ],
       );

@@ -146,6 +146,9 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
       `CcContentPadding`, and give a carousel that is *not* inside a card a start padding of
       `base + CcContentInset.of(context)` and an end padding of `base` — it starts aligned with the content and
       scrolls out to the screen edge instead of being cut at the content edge. (Transaction page is the reference.)
+    - **Landscape tablets use left / right**: pages and forms split into two columns with `CcTwoColumn`
+      (3:2, capped at 1200 dp; `CcTwoColumn.shouldUse(context)` = landscape and >= 600 dp wide), primary content on
+      the left, secondary content / actions on the right. Phones and portrait tablets keep the single column.
     - **Layout** (navigation, pane count, grid columns) branches on Material 3 window size classes
       (`CcWindowSizeClass`: compact <600, medium 600–840, expanded 840–1200, large 1200–1600, extraLarge ≥1600),
       measured from the **space a widget is given**: `CcAdaptiveBuilder` / `CcResponsiveFlex` (LayoutBuilder-based),
