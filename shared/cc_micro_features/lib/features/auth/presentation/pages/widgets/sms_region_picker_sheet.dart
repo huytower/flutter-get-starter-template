@@ -1,3 +1,4 @@
+import 'package:cc_micro_features/l10n/cc_mf_locale_keys.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -82,7 +83,7 @@ class SmsRegionPickerSheet extends StatelessWidget {
         ),
       ),
       child: CcText(
-        el.tr(CcLocaleKeys.auth_phone_number),
+        el.tr(CcMfLocaleKeys.auth_phone_number),
         maxLines: 1,
         textStyle: context.ccTextTheme.titleLarge?.copyWith(
           color: scheme.onPrimary,

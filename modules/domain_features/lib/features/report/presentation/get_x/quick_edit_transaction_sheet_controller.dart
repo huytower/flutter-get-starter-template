@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
+import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/constant/currency_constants.dart';

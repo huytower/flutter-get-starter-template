@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:message/export_message.dart';
 
 /// Dismissible reminder explaining why the user should sign in: it keeps their
 /// financial data safe. It has no sign-in button on purpose — the profile card

@@ -7,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
+import 'package:message/export_message.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/emergency_fund_constants.dart';

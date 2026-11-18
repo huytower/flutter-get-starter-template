@@ -2,6 +2,7 @@ import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../firestore/financial_data_sync_service.dart';
@@ -367,6 +368,11 @@ class ProfileInfoCard extends StatelessWidget {
     );
   }
 
+  /// Apple "Hide My Email" addresses are random strings that mean nothing to
+  /// the user, so a localized label is shown instead of the raw address.
+  bool _isApplePrivateRelay(String email) =>
+      email.toLowerCase().endsWith('@privaterelay.appleid.com');
+
   String _getFullName() {
     if (user == null) return '';
     final parts = [
@@ -381,15 +387,31 @@ class ProfileInfoCard extends StatelessWidget {
     required String fullName,
     VoidCallback? onEdit,
   }) {
+    // Signed in but no name (Apple sends the name only on the first
+    // authorization, so a returning Apple user has none): show a neutral
+    // account label and no pencil. A "Not set" label plus an edit icon reads
+    // as a required step (Sign in with Apple guideline: don't ask for
+    // information the sign-in already provided). Editing stays available by
+    // tapping the label itself.
+    final signedInWithoutName = fullName.isEmpty && user != null;
+    if (signedInWithoutName) {
+      return CcBouncing(
+        onTap: onEdit,
+        child: CcText(
+          el.tr(CcLocaleKeys.profile_default_account_name),
+          textStyle: context.ccTextTheme.bodySmall?.copyWith(
+            color: context.ccColorScheme.onPrimary.withOpacity(0.85),
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      );
+    }
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // No name yet (e.g. a phone-only account): show a neutral state, never a
-        // prompt. Telling a user who just signed in to "Enter your display name"
-        // reads as a required step (Sign in with Apple guideline: don't ask for
-        // information the sign-in already provided). Editing stays optional via
-        // the pencil.
+        // Guest (not signed in): neutral state, never a prompt.
         CcText(
           fullName.isEmpty ? el.tr(CcLocaleKeys.common_not_set) : fullName,
           textStyle: context.ccTextTheme.bodySmall?.copyWith(
@@ -425,7 +447,11 @@ class ProfileInfoCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           CcText(
-            isEmpty ? 'Email' : email,
+            isEmpty
+                ? 'Email'
+                : _isApplePrivateRelay(email)
+                ? el.tr(CcLocaleKeys.profile_apple_private_email)
+                : email,
             textStyle: context.ccTextTheme.bodySmall?.copyWith(
               color: context.ccColorScheme.onPrimary.withOpacity(
                 isEmpty ? 0.5 : 0.85,

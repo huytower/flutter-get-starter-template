@@ -1,3 +1,4 @@
+import 'package:cc_micro_features/l10n/cc_mf_locale_keys.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -66,7 +67,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
     // Validate the parsed phone number
     if (!CcPhoneNumberHelper.isValidPhoneNumber(parsedPhoneNumber)) {
       setState(() {
-        _validationError = el.tr(CcLocaleKeys.validation_phone);
+        _validationError = el.tr(CcMfLocaleKeys.validation_phone);
       });
       return;
     }
@@ -86,7 +87,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
       header: [
         const CcSpeechBubbleIcon(),
         CcText(
-          el.tr(CcLocaleKeys.auth_enter_phone_number),
+          el.tr(CcMfLocaleKeys.auth_enter_phone_number),
           maxLines: 2,
           align: Alignment.center,
           textStyle: context.ccTextTheme.headlineMedium?.copyWith(
@@ -102,7 +103,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
           countryCode: _countryCode,
           onCountryCodeTap: _pickCountry,
           controller: _phoneController,
-          hintText: el.tr(CcLocaleKeys.auth_phone_number_hint),
+          hintText: el.tr(CcMfLocaleKeys.auth_phone_number_hint),
         ),
         // Validation error display
         if (_validationError != null)
@@ -151,7 +152,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
                 return CcNextBtn.bouncing(
                   onTap: _handleContinue,
                   isEnable: isEnabled,
-                  title: el.tr(CcLocaleKeys.common_continue),
+                  title: el.tr(CcMfLocaleKeys.common_continue),
                 );
               },
             );

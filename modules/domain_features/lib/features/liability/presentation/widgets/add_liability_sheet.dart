@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
 import '../../domain/entities/liability_entity.dart';
@@ -263,6 +264,10 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
         hintText: el.tr(CcLocaleKeys.transaction_liability_name_hint),
         errorText: controller.nameError.value,
         maxLength: 25,
+        maxLengthWarningText: el.tr(
+          CcLocaleKeys.validation_max_length_reached,
+          namedArgs: {'count': '25'},
+        ),
         onClear: () {
           controller.isNameValid.value = false;
           controller.selectedLiabilityCategory.value = null;

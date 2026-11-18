@@ -22,6 +22,8 @@ dependencies:
     path: ../../cc_bridge
   cc_sdk_data:
     path: ../../shared/cc_core_sdk/cc_sdk_data
+  message:
+    path: ../message
 
   curl_logger_dio_interceptor: ^1.0.1
   dartx: ^1.2.0

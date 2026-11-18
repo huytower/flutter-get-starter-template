@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
+import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/constant/currency_constants.dart';
@@ -13,6 +14,7 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/ai_advice_cache_datasource.dart';
 import '../../../../core/helper/ai_device_check_helper.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
+import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
@@ -223,7 +225,8 @@ class ReportController extends CcGetController {
     }
 
     final prefs = getIt<AiFallbackPreferenceDataSource>();
-    if (!await prefs.isGeminiEnabled()) {
+    // The advice sends this month's totals to Gemini: ask for consent first.
+    if (!context.mounted || !await AiConsentSheet.ensure(context)) {
       if (isClosed) return;
       isGeneratingAdvice.value = false;
       aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_gemini_disabled;

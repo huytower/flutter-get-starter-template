@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:message/export_message.dart';
 
 import '../get_x/smart_entry_preview_state.dart';
 import 'smart_entry_preview_row_card.dart';

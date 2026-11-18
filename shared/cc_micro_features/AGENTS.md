@@ -11,5 +11,8 @@ about this package).
 - New feature → `lib/features/{name}/{data,domain,presentation}/`, then export from `lib/export_micro_features.dart`.
 - DI: annotate classes in place (`@LazySingleton(as: ...)`); there is one shared `lib/core/di/di.dart` for the
   whole package — no per-feature DI file. See `feature_template.md` in this directory for full templates.
+- Strings: never `CcLocaleKeys` (that is the app's `message` module). Add the key to
+  `lib/l10n/cc_mf_locale_keys.dart` (path under `mf.`) and its value to every locale map in
+  `lib/l10n/cc_mf_translations.dart`; the app merges `CcMfTranslations.mapLocales` into its loader.
 - `crash_log/` here is the reusable crash-log **viewer UI** — not to be confused with
   `modules/domain_features/lib/features/crashlog/` (app-specific upload logic); both are real, neither is dead code.

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import 'cc_locale_keys.dart';
+import 'cc_merged_asset_loader.dart';
 
 ///
 /// This class provides static methods to handle all localization needs,
@@ -37,15 +37,27 @@ class CcLocalization {
   }
 
   /// Wraps the app with [EasyLocalization] to enable localization.
-  static Widget wrapWithLocalization({required Widget child}) {
+  ///
+  /// [packageTranslations] are the `locale code -> translations` maps shipped
+  /// by reusable packages (e.g. `CcMfTranslations.mapLocales` from
+  /// cc_micro_features); they are merged under the app's own strings by
+  /// [CcMergedAssetLoader]. A key missing in the current locale falls back to
+  /// [fallbackLocale].
+  static Widget wrapWithLocalization({
+    required Widget child,
+    List<Map<String, Map<String, dynamic>>> packageTranslations = const [],
+  }) {
     return EasyLocalization(
       path: translationsPath,
       supportedLocales: supportedLocales,
       fallbackLocale: fallbackLocale,
+      useFallbackTranslations: true,
       startLocale: const Locale('en'),
       useOnlyLangCode: true,
       saveLocale: true,
-      assetLoader: const CodegenLoader(),
+      assetLoader: CcMergedAssetLoader(
+        packageTranslations: packageTranslations,
+      ),
       child: child,
     );
   }

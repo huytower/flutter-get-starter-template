@@ -60,7 +60,9 @@ void main() {
   late AiFallbackPreferenceDataSource prefs;
 
   setUp(() async {
-    SharedPreferences.setMockInitialValues({});
+    // AI data sharing is opt-in (off by default); these tests cover the quota
+    // of a user who already agreed.
+    SharedPreferences.setMockInitialValues({'ai_gemini_enabled': true});
     prefs = AiFallbackPreferenceDataSource()..enforceDailyLimit = true;
     await getIt.reset();
     getIt.registerSingleton<AiFallbackPreferenceDataSource>(prefs);

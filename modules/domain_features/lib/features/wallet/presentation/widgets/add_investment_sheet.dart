@@ -2,8 +2,10 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/presentation/widgets/prj_vip_lock_banner.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/add_investment_sheet_controller.dart';
@@ -67,7 +69,7 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
         _buildTitle(context, controller),
         const CcSpaceMD(),
         if (!controller.isVip.value && !controller.isEditing) ...[
-          const CcVipLockBanner(),
+          const PrjVipLockBanner(),
           const CcSpaceMD(),
         ],
         _buildInvestmentCategoryPicker(context, controller),
@@ -148,6 +150,10 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
         hintText: el.tr(CcLocaleKeys.wallet_investment_name_hint),
         errorText: controller.nameError.value,
         maxLength: 20,
+        maxLengthWarningText: el.tr(
+          CcLocaleKeys.validation_max_length_reached,
+          namedArgs: {'count': '20'},
+        ),
         onClear: () {
           controller.isNameValid.value = false;
           controller.selectedInvestmentCategory.value = null;

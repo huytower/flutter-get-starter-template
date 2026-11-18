@@ -2,6 +2,7 @@ import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:message/export_message.dart';
 
 class RequestInterceptor extends Interceptor {
   @override

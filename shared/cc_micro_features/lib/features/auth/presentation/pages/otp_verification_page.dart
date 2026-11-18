@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:cc_micro_features/l10n/cc_mf_locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -124,7 +125,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
 
   Widget _buildTitle(BuildContext context) {
     return CcText(
-      el.tr(CcLocaleKeys.auth_we_just_sent_sms),
+      el.tr(CcMfLocaleKeys.auth_we_just_sent_sms),
       maxLines: 2,
       align: Alignment.center,
       textStyle: context.ccTextTheme.headlineMedium?.copyWith(
@@ -140,7 +141,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CcText(
-          el.tr(CcLocaleKeys.auth_enter_security_code),
+          el.tr(CcMfLocaleKeys.auth_enter_security_code),
           align: Alignment.center,
           textAlign: TextAlign.center,
           textStyle: context.ccTextTheme.bodyMedium?.copyWith(
@@ -227,7 +228,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
             return CcNextBtn(
               onTap: _handleVerify,
               isEnable: isEnabled,
-              title: el.tr(CcLocaleKeys.auth_verify),
+              title: el.tr(CcMfLocaleKeys.auth_verify),
             );
           },
         );
@@ -239,7 +240,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     return Column(
       children: [
         CcText(
-          el.tr(CcLocaleKeys.auth_didnt_receive_code),
+          el.tr(CcMfLocaleKeys.auth_didnt_receive_code),
           align: Alignment.center,
           textAlign: TextAlign.center,
           textStyle: context.ccTextTheme.bodyMedium?.copyWith(
@@ -258,7 +259,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               CcText(
-                el.tr(CcLocaleKeys.auth_resend),
+                el.tr(CcMfLocaleKeys.auth_resend),
                 textStyle: context.ccTextTheme.bodyMedium?.copyWith(
                   color: _canResend
                       ? context.ccColorScheme.primary

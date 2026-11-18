@@ -1,6 +1,7 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
+import 'package:message/export_message.dart';
 
 import '../../../profile/domain/repositories/profile_repository.dart';
 import '../../notification_service.dart';

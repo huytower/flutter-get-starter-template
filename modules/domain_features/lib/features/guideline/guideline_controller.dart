@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:app_config/export_app_config.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
+import 'package:message/export_message.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../budget_allocation/presentation/get_x/budget_allocation_controller.dart';

@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:cc_micro_features/l10n/cc_mf_locale_keys.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class _WebViewPageState extends State<WebViewPage> {
       backgroundColor: context.ccColorScheme.surface,
       appBar: AppBar(
         title: CcText(
-          widget.title ?? el.tr(CcLocaleKeys.profile_terms),
+          widget.title ?? el.tr(CcMfLocaleKeys.auth_terms),
           textStyle: context.ccTextTheme.titleMedium,
         ),
         centerTitle: true,

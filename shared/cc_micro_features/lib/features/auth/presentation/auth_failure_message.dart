@@ -1,5 +1,5 @@
+import 'package:cc_micro_features/l10n/cc_mf_locale_keys.dart';
 import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 
 import '../domain/auth_failures.dart';
@@ -11,9 +11,9 @@ import '../domain/auth_failures.dart';
 /// keeps its own message.
 String authFailureMessage(CcFailure failure) {
   return switch (failure) {
-    AppleVerificationFailure() => el.tr(CcLocaleKeys.auth_apple_verify_failed),
+    AppleVerificationFailure() => el.tr(CcMfLocaleKeys.auth_apple_verify_failed),
     RecentLoginRequiredFailure() => el.tr(
-      CcLocaleKeys.auth_recent_login_required,
+      CcMfLocaleKeys.auth_recent_login_required,
     ),
     _ => failure.message,
   };

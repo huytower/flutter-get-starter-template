@@ -7,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:message/export_message.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/di/di.dart';
@@ -15,6 +16,7 @@ import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../liability/domain/entities/liability_entity.dart';
+import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/smart_entry_input.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
@@ -707,11 +709,13 @@ mixin QuickEntryMixin on TransactionFormController
     final (isCurrentGeneration, resetParsingIfCurrent) =
         trackQuickEntryGeneration();
 
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
-    final isGeminiEnabled = await prefs.isGeminiEnabled();
+    // Scanning sends the photo to Gemini, so ask for consent first if the user
+    // has not allowed AI data sharing yet.
+    final isGeminiEnabled = await AiConsentSheet.ensure(context);
     if (!isGeminiEnabled) {
-      '[AI_PARSING] [GEMINI] ⛔ Gemini AI disabled/offline | hiding camera button and aborting'
-          .Log('QuickEntryMixin');
+      '[AI_PARSING] [GEMINI] ⛔ AI data sharing not allowed | aborting scan'.Log(
+        'QuickEntryMixin',
+      );
       resetParsingIfCurrent();
       quickEntryErrorKey.value = CcLocaleKeys.report_ai_advice_gemini_disabled;
       return;

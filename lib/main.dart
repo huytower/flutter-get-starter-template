@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_ce/hive_ce.dart';
+import 'package:message/export_message.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:theme/core/helper/theme_helper.dart';
 

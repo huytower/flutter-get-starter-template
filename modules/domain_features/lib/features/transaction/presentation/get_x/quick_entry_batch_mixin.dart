@@ -6,6 +6,7 @@ import 'package:domain_features/features/firestore/guest_login_prompt_service.da
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../guideline/guideline_controller.dart';

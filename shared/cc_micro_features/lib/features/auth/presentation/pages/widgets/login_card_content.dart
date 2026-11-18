@@ -1,4 +1,5 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:cc_micro_features/l10n/cc_mf_locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -66,8 +67,8 @@ class _LoginCardContentState extends State<LoginCardContent> {
         const CcSpaceLG(),
         CcText(
           widget.isLinking
-              ? (widget.loginTitle ?? el.tr(CcLocaleKeys.auth_link_account))
-              : (widget.loginTitle ?? el.tr(CcLocaleKeys.auth_login)),
+              ? (widget.loginTitle ?? el.tr(CcMfLocaleKeys.auth_link_account))
+              : (widget.loginTitle ?? el.tr(CcMfLocaleKeys.auth_login)),
           textStyle: context.ccTextTheme.headlineMedium?.copyWith(
             fontWeight: CcTypographyParams.bold,
             color: context.ccColorScheme.onSurface,
@@ -95,7 +96,7 @@ class _LoginCardContentState extends State<LoginCardContent> {
                   child: LoginSocialButtons(isLinking: widget.isLinking),
                 ),
                 const CcSpaceXL(),
-                LoginOrDivider(orText: el.tr(CcLocaleKeys.common_or)),
+                LoginOrDivider(orText: el.tr(CcMfLocaleKeys.common_or)),
                 const CcSpaceXL(),
                 Opacity(
                   opacity: opacity,
@@ -105,9 +106,9 @@ class _LoginCardContentState extends State<LoginCardContent> {
                         : widget.onPhoneLogin,
                     title: widget.isLinking
                         ? (widget.phoneLoginTitle ??
-                              el.tr(CcLocaleKeys.auth_link_phone))
+                              el.tr(CcMfLocaleKeys.auth_link_phone))
                         : (widget.phoneLoginTitle ??
-                              el.tr(CcLocaleKeys.auth_login_phone)),
+                              el.tr(CcMfLocaleKeys.auth_login_phone)),
                     bgColor: [
                       context.ccColorScheme.primary,
                       context.ccColorScheme.primary,
@@ -152,13 +153,13 @@ class _LoginCardContentState extends State<LoginCardContent> {
         Expanded(
           child: Text.rich(
             TextSpan(
-              text: widget.agreeText ?? el.tr(CcLocaleKeys.auth_agree_prefix),
+              text: widget.agreeText ?? el.tr(CcMfLocaleKeys.auth_agree_prefix),
               style: context.ccTextTheme.bodySmall?.copyWith(color: hintColor),
               children: [
                 TextSpan(
                   text:
                       widget.termsText ??
-                      el.tr(CcLocaleKeys.auth_terms_of_service),
+                      el.tr(CcMfLocaleKeys.auth_terms_of_service),
                   style: context.ccTextTheme.bodySmall?.copyWith(
                     color: hintColor ?? context.ccColorScheme.primary,
                     fontWeight: CcTypographyParams.bold,

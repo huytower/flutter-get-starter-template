@@ -1,3 +1,4 @@
+import 'package:cc_micro_features/l10n/cc_mf_locale_keys.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class _ForceUpdatePageState extends State<ForceUpdatePage> {
     result.whenError((_) {
       CcSnackBarHelper.showErrorSnackBar(
         context: context,
-        message: el.tr(CcLocaleKeys.app_update_open_store_failed),
+        message: el.tr(CcMfLocaleKeys.app_update_open_store_failed),
       );
     });
   }
@@ -71,7 +72,7 @@ class _ForceUpdatePageState extends State<ForceUpdatePage> {
         _buildIcon(context),
         const CcSpaceXL(),
         Text(
-          el.tr(CcLocaleKeys.app_update_title),
+          el.tr(CcMfLocaleKeys.app_update_title),
           textAlign: TextAlign.center,
           style: textTheme.headlineSmall?.copyWith(
             color: colors.onSurface,
@@ -81,7 +82,7 @@ class _ForceUpdatePageState extends State<ForceUpdatePage> {
         const CcSpaceMD(),
         Text(
           el.tr(
-            CcLocaleKeys.app_update_message,
+            CcMfLocaleKeys.app_update_message,
             namedArgs: {'version': widget.status.minimumVersion.toString()},
           ),
           textAlign: TextAlign.center,
@@ -90,7 +91,7 @@ class _ForceUpdatePageState extends State<ForceUpdatePage> {
         const CcSpaceSM(),
         Text(
           el.tr(
-            CcLocaleKeys.app_update_current_version,
+            CcMfLocaleKeys.app_update_current_version,
             namedArgs: {'version': widget.status.currentVersion.toString()},
           ),
           textAlign: TextAlign.center,
@@ -100,7 +101,7 @@ class _ForceUpdatePageState extends State<ForceUpdatePage> {
         ),
         const CcSpaceXL(),
         CcSaveButton(
-          label: el.tr(CcLocaleKeys.app_update_update_now),
+          label: el.tr(CcMfLocaleKeys.app_update_update_now),
           isLoading: _isOpening,
           onPressed: _isOpening ? null : _openStore,
         ),

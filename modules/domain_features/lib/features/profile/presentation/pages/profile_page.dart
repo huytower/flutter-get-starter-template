@@ -7,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:message/export_message.dart';
 
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../../guideline/export_guideline.dart';
@@ -262,7 +263,29 @@ class ProfilePage extends CcGetView<ProfileController> {
               fit: BoxFit.contain,
               child: Switch(
                 value: controller.settings.value.isVip,
-                onChanged: controller.setVip,
+                onChanged: (value) =>
+                    controller.toggleFullAccess(context, value),
+                activeColor: context.ccColorScheme.primary,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          ),
+        ),
+      ),
+      Obx(
+        () => ProfileSettingsTile(
+          icon: Icons.auto_awesome_rounded,
+          label: el.tr(CcLocaleKeys.profile_ai_sharing),
+          subtitle: el.tr(CcLocaleKeys.profile_ai_sharing_subtitle),
+          showChevron: false,
+          trailingWidget: SizedBox(
+            height: context.respIconSize(baseSize: 20),
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: Switch(
+                value: controller.aiSharingEnabled.value,
+                onChanged: (value) =>
+                    controller.toggleAiSharing(context, value),
                 activeColor: context.ccColorScheme.primary,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),

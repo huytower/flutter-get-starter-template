@@ -80,15 +80,7 @@ class CodegenLoader extends AssetLoader {
       "guest_login_continue_local": "Continue local experience",
       "later": "Later",
     },
-    "app_update": {
-      "title": "Update required",
-      "message": "This version is no longer supported. Please update to version {version} or later to keep using the app.",
-      "current_version": "Current version: {version}",
-      "update_now": "Update now",
-      "open_store_failed": "Couldn't open the store. Please update the app from the App Store or Google Play.",
-    },
     "auth": {
-      "login": "Login",
       "logout": "Logout",
       "email": "Email",
       "password": "Password",
@@ -98,28 +90,10 @@ class CodegenLoader extends AssetLoader {
       "have_account": "Already have an account?",
       "login_success": "Login successful",
       "login_failed": "Login failed. Please check your credentials.",
-      "login_google": "Login with Google",
-      "login_apple": "Login with Apple",
-      "login_phone": "Login with Phone Number",
-      "enter_phone_number": "Log in with \n Phone Number",
       "phone_number": "Phone Number",
-      "phone_number_hint": "Enter phone number",
       "phone_hint": "+1234567890",
-      "verify": "Verify",
       "send_code": "Send Code",
       "enter_code": "Enter SMS Code",
-      "we_just_sent_sms": "We just sent an SMS",
-      "enter_security_code": "Enter the security code we sent to",
-      "didnt_receive_code": "Didn't receive code?",
-      "resend": "Resend after",
-      "terms_and_privacy":
-          "By continuing, you agree to our Terms of Service and Privacy Policy",
-      "terms_of_service": "Terms of Service",
-      "link_account": "Link Account",
-      "link_phone": "Link Phone Number",
-      "apple_verify_failed": "Couldn't verify your Apple ID. Please check your Apple ID in iPhone Settings and try again.",
-      "recent_login_required": "For security, please log in again before deleting your account.",
-      "agree_prefix": "I agree with ",
       "biometric": {
         "reason": "Authentication required",
         "fallback": "Please enable biometrics for this app in Settings.",
@@ -144,10 +118,6 @@ class CodegenLoader extends AssetLoader {
         "expired": "OTP code has expired",
         "too_many_attempts": "Too many attempts. Please try again later",
       },
-      "security_warning_title": "For genuine devices only:",
-      "security_warning_bullet_sms": "SMS/OTP Verification",
-      "security_warning_bullet_ai": "AI-Generated Content",
-      "security_warning_other_login": "Other Sign In Methods",
     },
     "validation": {
       "required": "This field is required",
@@ -830,6 +800,15 @@ class CodegenLoader extends AssetLoader {
       "terms_subtitle": "Read our service terms and privacy policy",
       "about": "About app",
       "about_subtitle": "App information and developer logs",
+      "default_account_name": "My account",
+      "apple_private_email": "Hidden Apple email",
+      "ai_consent_title": "Share data with AI",
+      "ai_consent_body": "Quick entry, receipt scan and financial advice send data to Google Gemini: what you type, receipt photos, and monthly totals with category and wallet names. Your name, email and phone number are not sent. You can turn this off anytime in Profile.",
+      "ai_consent_terms": "View Terms & Privacy",
+      "ai_consent_allow": "Allow",
+      "ai_consent_decline": "Don't allow",
+      "ai_sharing": "Share data with AI",
+      "ai_sharing_subtitle": "Sends data to Google Gemini for quick entry, receipt scan and advice",
       "delete_account": "Delete account",
       "delete_confirm": "Delete Account?",
       "delete_confirm_desc":
@@ -991,15 +970,7 @@ class CodegenLoader extends AssetLoader {
       "guest_login_continue_local": "Tiếp tục trải nghiệm local",
       "later": "Để sau",
     },
-    "app_update": {
-      "title": "Cần cập nhật ứng dụng",
-      "message": "Phiên bản này không còn được hỗ trợ. Vui lòng cập nhật lên phiên bản {version} trở lên để tiếp tục sử dụng.",
-      "current_version": "Phiên bản hiện tại: {version}",
-      "update_now": "Cập nhật ngay",
-      "open_store_failed": "Không mở được cửa hàng ứng dụng. Vui lòng cập nhật ứng dụng từ App Store hoặc Google Play.",
-    },
     "auth": {
-      "login": "Đăng nhập",
       "logout": "Đăng xuất",
       "email": "Email",
       "password": "Mật khẩu",
@@ -1010,28 +981,10 @@ class CodegenLoader extends AssetLoader {
       "login_success": "Đăng nhập thành công",
       "login_failed":
           "Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập.",
-      "login_google": "Đăng nhập với Google",
-      "login_apple": "Đăng nhập với Apple",
-      "login_phone": "Đăng nhập với số điện thoại",
-      "enter_phone_number": "Nhập số điện thoại của bạn",
       "phone_number": "Số điện thoại",
-      "phone_number_hint": "Nhập số điện thoại",
       "phone_hint": "+1234567890",
-      "verify": "Xác minh",
       "send_code": "Gửi mã",
       "enter_code": "Nhập mã SMS",
-      "we_just_sent_sms": "Chúng tôi vừa gửi một bản tin nhắn SMS",
-      "enter_security_code": "Nhập mã bảo mật chúng tôi đã gửi tới",
-      "didnt_receive_code": "Không nhận được mã?",
-      "resend": "Gửi lại sau",
-      "terms_and_privacy":
-          "Bằng cách tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi",
-      "terms_of_service": "Điều khoản dịch vụ",
-      "link_account": "Liên kết tài khoản",
-      "link_phone": "Liên kết số điện thoại",
-      "apple_verify_failed": "Không thể xác thực Apple ID. Vui lòng kiểm tra tài khoản Apple ID trong Cài đặt iPhone của bạn và thử lại.",
-      "recent_login_required": "Vì lý do bảo mật, vui lòng đăng nhập lại trước khi xóa tài khoản.",
-      "agree_prefix": "Tôi đồng ý với ",
       "biometric": {
         "reason": "Yêu cầu xác thực",
         "fallback":
@@ -1057,10 +1010,6 @@ class CodegenLoader extends AssetLoader {
         "expired": "Mã OTP đã hết hạn",
         "too_many_attempts": "Quá nhiều lần thử. Vui lòng thử lại sau",
       },
-      "security_warning_title": "Chỉ dành cho thiết bị chính hãng:",
-      "security_warning_bullet_sms": "Xác minh SMS/OTP",
-      "security_warning_bullet_ai": "Nội dung tạo bởi AI",
-      "security_warning_other_login": "Đăng nhập khác",
     },
     "validation": {
       "required": "Trường này là bắt buộc",
@@ -1592,6 +1541,15 @@ class CodegenLoader extends AssetLoader {
           "Đọc điều khoản dịch vụ và chính sách bảo mật của chúng tôi",
       "about": "Về ứng dụng",
       "about_subtitle": "Thông tin ứng dụng và nhật ký phát triển",
+      "default_account_name": "Tài khoản của tôi",
+      "apple_private_email": "Email ẩn của Apple",
+      "ai_consent_title": "Chia sẻ dữ liệu với AI",
+      "ai_consent_body": "Nhập nhanh, quét hóa đơn và gợi ý tài chính gửi dữ liệu tới Google Gemini: nội dung bạn nhập, ảnh hóa đơn, số liệu thu chi tổng hợp theo tháng cùng tên danh mục và ví. Không gửi tên, email, số điện thoại. Bạn có thể tắt bất cứ lúc nào trong Hồ sơ.",
+      "ai_consent_terms": "Xem Điều khoản & Quyền riêng tư",
+      "ai_consent_allow": "Đồng ý",
+      "ai_consent_decline": "Không đồng ý",
+      "ai_sharing": "Chia sẻ dữ liệu với AI",
+      "ai_sharing_subtitle": "Gửi dữ liệu tới Google Gemini cho nhập nhanh, quét hóa đơn, gợi ý",
       "delete_account": "Xóa tài khoản",
       "delete_confirm": "Xóa Tài Khoản?",
       "delete_confirm_desc":
@@ -1897,15 +1855,7 @@ class CodegenLoader extends AssetLoader {
       "guest_login_continue_local": "로컬 체험 계속하기",
       "later": "나중에",
     },
-    "app_update": {
-      "title": "업데이트 필요",
-      "message": "이 버전은 더 이상 지원되지 않습니다. 앱을 계속 사용하려면 {version} 이상 버전으로 업데이트해 주세요.",
-      "current_version": "현재 버전: {version}",
-      "update_now": "지금 업데이트",
-      "open_store_failed": "스토어를 열 수 없습니다. App Store 또는 Google Play에서 앱을 업데이트해 주세요.",
-    },
     "auth": {
-      "login": "로그인",
       "logout": "로그아웃",
       "email": "이메일",
       "password": "비밀번호",
@@ -1915,27 +1865,10 @@ class CodegenLoader extends AssetLoader {
       "have_account": "이미 계정이 있으신가요?",
       "login_success": "로그인 성공",
       "login_failed": "로그인 실패. 자격 증명을 확인하세요.",
-      "login_google": "Google로 로그인",
-      "login_apple": "Apple로 로그인",
-      "login_phone": "전화번호로 로그인",
-      "enter_phone_number": "전화번호로\n로그인",
       "phone_number": "전화번호",
-      "phone_number_hint": "전화번호 입력",
       "phone_hint": "+1234567890",
-      "verify": "확인",
       "send_code": "코드 보내기",
       "enter_code": "SMS 코드 입력",
-      "we_just_sent_sms": "SMS를 보냈습니다",
-      "enter_security_code": "보낸 보안 코드를 입력하세요",
-      "didnt_receive_code": "코드를 받지 못하셨나요?",
-      "resend": "후에 재전송",
-      "terms_and_privacy": "계속하면 서비스 약관 및 개인정보 보호정책에 동의합니다",
-      "terms_of_service": "서비스 이용약관",
-      "link_account": "계정 연동",
-      "link_phone": "휴대폰 번호 연동",
-      "apple_verify_failed": "Apple ID를 확인할 수 없습니다. iPhone 설정에서 Apple ID를 확인한 후 다시 시도해 주세요.",
-      "recent_login_required": "보안을 위해 계정을 삭제하기 전에 다시 로그인해 주세요.",
-      "agree_prefix": "동의합니다 ",
       "biometric": {
         "reason": "인증 필요",
         "fallback": "설정에서 이 앱의 생체 인식을 활성화하세요.",
@@ -1958,10 +1891,6 @@ class CodegenLoader extends AssetLoader {
         "expired": "OTP 코드가 만료되었습니다",
         "too_many_attempts": "시도 횟수 초과. 나중에 다시 시도하세요",
       },
-      "security_warning_title": "정품 보안이 통합되어 정품 기기만 사용할 수 있습니다:",
-      "security_warning_bullet_sms": "SMS/OTP 인증",
-      "security_warning_bullet_ai": "AI 생성 콘텐츠",
-      "security_warning_other_login": "다른 로그인 방법",
     },
     "validation": {
       "required": "이 필드는 필수입니다",
@@ -2605,6 +2534,15 @@ class CodegenLoader extends AssetLoader {
       "terms_subtitle": "서비스 약관 및 개인정보 보호정책 읽기",
       "about": "앱 정보",
       "about_subtitle": "앱 정보 및 개발자 로그",
+      "default_account_name": "내 계정",
+      "apple_private_email": "Apple 비공개 이메일",
+      "ai_consent_title": "AI와 데이터 공유",
+      "ai_consent_body": "빠른 입력, 영수증 스캔, 재무 조언은 Google Gemini로 데이터를 보냅니다: 입력한 내용, 영수증 사진, 월간 수입·지출 합계와 카테고리·지갑 이름. 이름, 이메일, 전화번호는 보내지 않습니다. 프로필에서 언제든 끌 수 있습니다.",
+      "ai_consent_terms": "약관 및 개인정보 보기",
+      "ai_consent_allow": "동의",
+      "ai_consent_decline": "동의 안 함",
+      "ai_sharing": "AI와 데이터 공유",
+      "ai_sharing_subtitle": "빠른 입력, 영수증 스캔, 조언을 위해 Google Gemini로 데이터를 보냅니다",
       "delete_account": "계정 삭제",
       "delete_confirm": "계정을 삭제하시겠습니까?",
       "delete_confirm_desc": "계정 및 모든 관련 데이터를 영구적으로 삭제합니다. 이 작업은 취소할 수 없습니다.",
@@ -2752,15 +2690,7 @@ class CodegenLoader extends AssetLoader {
       "guest_login_continue_local": "ローカル体験を続ける",
       "later": "後で",
     },
-    "app_update": {
-      "title": "アップデートが必要です",
-      "message": "このバージョンはサポートが終了しました。引き続きご利用いただくには、バージョン {version} 以降にアップデートしてください。",
-      "current_version": "現在のバージョン: {version}",
-      "update_now": "今すぐアップデート",
-      "open_store_failed": "ストアを開けませんでした。App Store または Google Play からアプリをアップデートしてください。",
-    },
     "auth": {
-      "login": "ログイン",
       "logout": "ログアウト",
       "email": "メール",
       "password": "パスワード",
@@ -2770,27 +2700,10 @@ class CodegenLoader extends AssetLoader {
       "have_account": "すでにアカウントをお持ちですか？",
       "login_success": "ログイン成功",
       "login_failed": "ログインに失敗しました。認証情報を確認してください。",
-      "login_google": "Googleでログイン",
-      "login_apple": "Appleでログイン",
-      "login_phone": "電話番号でログイン",
-      "enter_phone_number": "電話番号で\nログイン",
       "phone_number": "電話番号",
-      "phone_number_hint": "電話番号を入力",
       "phone_hint": "+1234567890",
-      "verify": "確認",
       "send_code": "コードを送信",
       "enter_code": "SMSコードを入力",
-      "we_just_sent_sms": "SMSを送信しました",
-      "enter_security_code": "送信したセキュリティコードを入力してください",
-      "didnt_receive_code": "コードを受け取りませんでしたか？",
-      "resend": "後で再送信",
-      "terms_and_privacy": "続行することで、利用規約とプライバシーポリシーに同意します",
-      "terms_of_service": "利用規約",
-      "link_account": "アカウント連携",
-      "link_phone": "電話番号連携",
-      "apple_verify_failed": "Apple IDを確認できませんでした。iPhoneの設定でApple IDを確認して、もう一度お試しください。",
-      "recent_login_required": "セキュリティのため、アカウントを削除する前に再度ログインしてください。",
-      "agree_prefix": "同意する ",
       "biometric": {
         "reason": "認証が必要です",
         "fallback": "設定でこのアプリの生体認証を有効にしてください。",
@@ -2813,10 +2726,6 @@ class CodegenLoader extends AssetLoader {
         "expired": "OTPコードの有効期限が切れました",
         "too_many_attempts": "試行回数が多すぎます。後でもう一度お試しください",
       },
-      "security_warning_title": "正規品のセキュリティが統合されています。正規のデバイスのみ使用可能です：",
-      "security_warning_bullet_sms": "SMS/OTP認証",
-      "security_warning_bullet_ai": "AI生成コンテンツ",
-      "security_warning_other_login": "その他のログイン方法",
     },
     "validation": {
       "required": "このフィールドは必須です",
@@ -3451,6 +3360,15 @@ class CodegenLoader extends AssetLoader {
       "terms_subtitle": "サービス規約とプライバシーポリシーを読む",
       "about": "アプリについて",
       "about_subtitle": "アプリ情報と開発者ログ",
+      "default_account_name": "マイアカウント",
+      "apple_private_email": "Appleの非公開メール",
+      "ai_consent_title": "AIとのデータ共有",
+      "ai_consent_body": "クイック入力、レシートスキャン、家計アドバイスでは、Google Geminiにデータを送信します：入力内容、レシート画像、月間の収支合計とカテゴリ・ウォレット名。氏名、メール、電話番号は送信しません。プロフィールからいつでも無効にできます。",
+      "ai_consent_terms": "利用規約とプライバシーを見る",
+      "ai_consent_allow": "同意する",
+      "ai_consent_decline": "同意しない",
+      "ai_sharing": "AIとのデータ共有",
+      "ai_sharing_subtitle": "クイック入力・レシートスキャン・アドバイスのためGoogle Geminiにデータを送信します",
       "delete_account": "アカウントを削除",
       "delete_confirm": "アカウントを削除しますか？",
       "delete_confirm_desc": "アカウントとすべての関連データが永続的に削除されます。この操作は取り消せません。",
@@ -3596,15 +3514,7 @@ class CodegenLoader extends AssetLoader {
       "guest_login_continue_local": "继续本地体验",
       "later": "以后再说",
     },
-    "app_update": {
-      "title": "需要更新",
-      "message": "此版本已不再受支持。请更新到 {version} 或更高版本以继续使用。",
-      "current_version": "当前版本：{version}",
-      "update_now": "立即更新",
-      "open_store_failed": "无法打开应用商店。请从 App Store 或 Google Play 更新应用。",
-    },
     "auth": {
-      "login": "登录",
       "logout": "退出",
       "email": "邮箱",
       "password": "密码",
@@ -3614,27 +3524,10 @@ class CodegenLoader extends AssetLoader {
       "have_account": "已有账户？",
       "login_success": "登录成功",
       "login_failed": "登录失败。请检查您的凭据。",
-      "login_google": "使用 Google 登录",
-      "login_apple": "使用 Apple 登录",
-      "login_phone": "使用手机号码登录",
-      "enter_phone_number": "使用手机号码\n登录",
       "phone_number": "手机号码",
-      "phone_number_hint": "输入手机号码",
       "phone_hint": "+1234567890",
-      "verify": "验证",
       "send_code": "发送代码",
       "enter_code": "输入短信代码",
-      "we_just_sent_sms": "我们刚刚发送了一条短信",
-      "enter_security_code": "输入我们发送给您的安全代码",
-      "didnt_receive_code": "没有收到代码？",
-      "resend": "后重发",
-      "terms_and_privacy": "继续即表示您同意我们的服务条款和隐私政策",
-      "terms_of_service": "服务条款",
-      "link_account": "关联账号",
-      "link_phone": "关联手机号码",
-      "apple_verify_failed": "无法验证 Apple ID。请在 iPhone 设置中检查您的 Apple ID 后重试。",
-      "recent_login_required": "出于安全考虑，请在删除账户前重新登录。",
-      "agree_prefix": "我同意 ",
       "biometric": {
         "reason": "需要身份验证",
         "fallback": "请在设置中为此应用启用生物识别。",
@@ -3657,10 +3550,6 @@ class CodegenLoader extends AssetLoader {
         "expired": "OTP 代码已过期",
         "too_many_attempts": "尝试次数过多。请稍后再试",
       },
-      "security_warning_title": "已集成正品安全防护，仅正品设备可以使用：",
-      "security_warning_bullet_sms": "SMS/OTP 验证",
-      "security_warning_bullet_ai": "AI 生成内容",
-      "security_warning_other_login": "其他登录方式",
     },
     "validation": {
       "required": "此字段为必填项",
@@ -4284,6 +4173,15 @@ class CodegenLoader extends AssetLoader {
       "terms_subtitle": "阅读我们的服务条款和隐私政策",
       "about": "关于应用",
       "about_subtitle": "应用信息和开发者日志",
+      "default_account_name": "我的账户",
+      "apple_private_email": "Apple 隐藏邮箱",
+      "ai_consent_title": "与 AI 共享数据",
+      "ai_consent_body": "快速录入、扫描小票和理财建议会将数据发送给 Google Gemini：您输入的内容、小票照片、月度收支汇总及类别和钱包名称。不会发送您的姓名、邮箱和手机号。您可随时在“个人资料”中关闭。",
+      "ai_consent_terms": "查看条款与隐私",
+      "ai_consent_allow": "同意",
+      "ai_consent_decline": "不同意",
+      "ai_sharing": "与 AI 共享数据",
+      "ai_sharing_subtitle": "为快速录入、扫描小票和建议向 Google Gemini 发送数据",
       "delete_account": "删除账户",
       "delete_confirm": "删除账户？",
       "delete_confirm_desc": "这将永久删除您的账户和所有相关数据。此操作无法撤销。",
@@ -4445,14 +4343,7 @@ class CcLocaleKeys {
       'common.guest_login_continue_local';
   static const common_later = 'common.later';
 
-  static const app_update = 'app_update';
-  static const app_update_title = 'app_update.title';
-  static const app_update_message = 'app_update.message';
-  static const app_update_current_version = 'app_update.current_version';
-  static const app_update_update_now = 'app_update.update_now';
-  static const app_update_open_store_failed = 'app_update.open_store_failed';
   static const auth = 'auth';
-  static const auth_login = 'auth.login';
   static const auth_logout = 'auth.logout';
   static const auth_email = 'auth.email';
   static const auth_password = 'auth.password';
@@ -4462,27 +4353,10 @@ class CcLocaleKeys {
   static const auth_have_account = 'auth.have_account';
   static const auth_login_success = 'auth.login_success';
   static const auth_login_failed = 'auth.login_failed';
-  static const auth_login_google = 'auth.login_google';
-  static const auth_login_apple = 'auth.login_apple';
-  static const auth_login_phone = 'auth.login_phone';
-  static const auth_enter_phone_number = 'auth.enter_phone_number';
   static const auth_phone_number = 'auth.phone_number';
-  static const auth_phone_number_hint = 'auth.phone_number_hint';
   static const auth_phone_hint = 'auth.phone_hint';
-  static const auth_verify = 'auth.verify';
   static const auth_send_code = 'auth.send_code';
   static const auth_enter_code = 'auth.enter_code';
-  static const auth_we_just_sent_sms = 'auth.we_just_sent_sms';
-  static const auth_enter_security_code = 'auth.enter_security_code';
-  static const auth_didnt_receive_code = 'auth.didnt_receive_code';
-  static const auth_resend = 'auth.resend';
-  static const auth_terms_and_privacy = 'auth.terms_and_privacy';
-  static const auth_terms_of_service = 'auth.terms_of_service';
-  static const auth_link_account = 'auth.link_account';
-  static const auth_link_phone = 'auth.link_phone';
-  static const auth_apple_verify_failed = 'auth.apple_verify_failed';
-  static const auth_recent_login_required = 'auth.recent_login_required';
-  static const auth_agree_prefix = 'auth.agree_prefix';
   static const auth_biometric = 'auth.biometric';
   static const auth_biometric_reason = 'auth.biometric.reason';
   static const auth_biometric_fallback = 'auth.biometric.fallback';
@@ -4511,13 +4385,6 @@ class CcLocaleKeys {
   static const auth_otp_invalid = 'auth.otp.invalid';
   static const auth_otp_expired = 'auth.otp.expired';
   static const auth_otp_too_many_attempts = 'auth.otp.too_many_attempts';
-  static const auth_security_warning_title = 'auth.security_warning_title';
-  static const auth_security_warning_bullet_sms =
-      'auth.security_warning_bullet_sms';
-  static const auth_security_warning_bullet_ai =
-      'auth.security_warning_bullet_ai';
-  static const auth_security_warning_other_login =
-      'auth.security_warning_other_login';
 
   static const validation = 'validation';
   static const validation_required = 'validation.required';
@@ -5316,6 +5183,15 @@ class CcLocaleKeys {
   static const profile_about = 'profile.about';
   static const profile_about_subtitle = 'profile.about_subtitle';
   static const profile_delete_account = 'profile.delete_account';
+  static const profile_ai_consent_title = 'profile.ai_consent_title';
+  static const profile_ai_consent_body = 'profile.ai_consent_body';
+  static const profile_ai_consent_terms = 'profile.ai_consent_terms';
+  static const profile_ai_consent_allow = 'profile.ai_consent_allow';
+  static const profile_ai_consent_decline = 'profile.ai_consent_decline';
+  static const profile_ai_sharing = 'profile.ai_sharing';
+  static const profile_ai_sharing_subtitle = 'profile.ai_sharing_subtitle';
+  static const profile_default_account_name = 'profile.default_account_name';
+  static const profile_apple_private_email = 'profile.apple_private_email';
   static const profile_delete_confirm = 'profile.delete_confirm';
   static const profile_delete_confirm_desc = 'profile.delete_confirm_desc';
   static const profile_rate_app = 'profile.rate_app';

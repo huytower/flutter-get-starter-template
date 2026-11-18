@@ -4,6 +4,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:message/export_message.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'reviews/rating_pill.dart';

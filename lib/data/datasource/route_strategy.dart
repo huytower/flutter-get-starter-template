@@ -1,7 +1,10 @@
+import 'package:cc_micro_features/export_micro_features.dart'
+    show CcMfTranslations;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import 'package:message/export_message.dart';
 import 'package:provider/provider.dart';
 import 'package:theme/core/helper/theme_helper.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';
@@ -34,6 +37,7 @@ abstract class RoutingStrategy {
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
           return CcLocalization.wrapWithLocalization(
+            packageTranslations: const [CcMfTranslations.mapLocales],
             child: Builder(
               builder: (context) => routerBuilder(context, themeProvider),
             ),

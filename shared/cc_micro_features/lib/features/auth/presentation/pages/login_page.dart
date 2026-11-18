@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:cc_micro_features/l10n/cc_mf_locale_keys.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -91,15 +92,15 @@ class _LoginViewState extends State<LoginView> {
                   onPhoneLogin: () =>
                       getIt<AuthCoordinator>().navigateToPhoneAuth(context),
                   loginTitle: _isLinking
-                      ? el.tr(CcLocaleKeys.auth_link_account)
-                      : el.tr(CcLocaleKeys.auth_login),
+                      ? el.tr(CcMfLocaleKeys.auth_link_account)
+                      : el.tr(CcMfLocaleKeys.auth_login),
                   phoneLoginTitle: _isLinking
-                      ? el.tr(CcLocaleKeys.auth_link_phone)
-                      : el.tr(CcLocaleKeys.auth_login_phone),
+                      ? el.tr(CcMfLocaleKeys.auth_link_phone)
+                      : el.tr(CcMfLocaleKeys.auth_login_phone),
                   // `auth_terms_and_privacy` is already a full sentence, so
                   // it must not be prefixed with `auth_agree_prefix`.
                   agreeText: '',
-                  termsText: el.tr(CcLocaleKeys.auth_terms_and_privacy),
+                  termsText: el.tr(CcMfLocaleKeys.auth_terms_and_privacy),
                   isLinking: _isLinking,
                 ),
               );

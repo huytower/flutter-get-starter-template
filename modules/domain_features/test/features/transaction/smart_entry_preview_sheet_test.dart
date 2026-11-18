@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' show CcCancelBtn, CcLocaleKeys;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' show CcCancelBtn;
 import 'package:domain_features/features/category/domain/entities/category_entity.dart';
 import 'package:domain_features/features/transaction/domain/entities/parsed_transaction_entity.dart';
 import 'package:domain_features/features/transaction/presentation/get_x/smart_entry_preview_state.dart';
@@ -18,6 +18,7 @@ import 'package:easy_localization/src/translations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:message/export_message.dart';
 
 import '../../adaptive/adaptive_test_devices.dart';
 

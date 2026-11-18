@@ -20,9 +20,12 @@ class AiFallbackPreferenceDataSource {
   @visibleForTesting
   bool enforceDailyLimit = !kDebugMode;
 
+  /// Whether the user agreed to share data with Gemini (Google). Opt-in:
+  /// defaults to false, so nothing leaves the device until the user allows it
+  /// in the AI consent sheet (App Store guidelines 5.1.1(i) / 5.1.2(i)).
   Future<bool> isGeminiEnabled() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_keyGeminiEnabled) ?? true;
+    return prefs.getBool(_keyGeminiEnabled) ?? false;
   }
 
   Future<void> setGeminiEnabled(bool value) async {

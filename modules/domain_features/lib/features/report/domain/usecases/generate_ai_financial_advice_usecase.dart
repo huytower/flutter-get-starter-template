@@ -8,6 +8,7 @@ import 'package:multiple_result/multiple_result.dart';
 import '../../../../core/ai/ai_language.dart';
 import '../../../../core/ai/ai_prompts.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
+import '../../../../core/helper/ai_device_check_helper.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../budget_limit/domain/entities/budget_anomaly_entity.dart';
@@ -118,12 +119,17 @@ class GenerateAiFinancialAdviceUseCase {
         final errDetail = lastErr != null
             ? ' | Underlying Error: $lastErr'
             : '';
-        Catcher2.reportCheckedError(
-          Exception(
-            'Gemini AI Financial Advice returned null or empty response$errDetail',
-          ),
-          StackTrace.current,
-        );
+        // Expected failures stay out of the crash webhook: a device that fails
+        // App Check (emulator / not genuine) is already told so in the UI, and
+        // once today's AI quota is used up, further failures are not actionable.
+        if (await _shouldReportFailure(lastErr)) {
+          Catcher2.reportCheckedError(
+            Exception(
+              'Gemini AI Financial Advice returned null or empty response$errDetail',
+            ),
+            StackTrace.current,
+          );
+        }
         return null;
       }
 
@@ -143,6 +149,14 @@ class GenerateAiFinancialAdviceUseCase {
       Catcher2.reportCheckedError(e, stack);
       return null;
     }
+  }
+
+  /// False for failures that are expected and already handled in the UI:
+  /// device attestation (App Check) failures, and any failure once the daily
+  /// AI quota is exhausted (release builds; debug has no quota).
+  Future<bool> _shouldReportFailure(Object? error) async {
+    if (isDeviceAttestationFailure(error)) return false;
+    return getIt<AiFallbackPreferenceDataSource>().isUnderDailyLimit();
   }
 
   Schema _buildResponseSchema(String language) {

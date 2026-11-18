@@ -1,3 +1,4 @@
+import 'package:cc_micro_features/l10n/cc_mf_locale_keys.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -12,11 +13,11 @@ class AuthSecurityWarningCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    final headerText = el.tr(CcLocaleKeys.auth_security_warning_title);
-    final bullet1Text = el.tr(CcLocaleKeys.auth_security_warning_bullet_sms);
-    final bullet2Text = el.tr(CcLocaleKeys.auth_security_warning_bullet_ai);
+    final headerText = el.tr(CcMfLocaleKeys.auth_security_warning_title);
+    final bullet1Text = el.tr(CcMfLocaleKeys.auth_security_warning_bullet_sms);
+    final bullet2Text = el.tr(CcMfLocaleKeys.auth_security_warning_bullet_ai);
     final otherLoginText = el.tr(
-      CcLocaleKeys.auth_security_warning_other_login,
+      CcMfLocaleKeys.auth_security_warning_other_login,
     );
 
     return Container(

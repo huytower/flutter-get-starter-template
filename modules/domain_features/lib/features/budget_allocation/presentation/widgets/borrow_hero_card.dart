@@ -1,5 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:message/export_message.dart';
 
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import 'base_hero_banner_card.dart';

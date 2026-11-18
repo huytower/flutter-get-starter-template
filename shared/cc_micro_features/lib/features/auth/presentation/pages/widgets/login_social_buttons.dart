@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cc_micro_features/l10n/cc_mf_locale_keys.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class LoginSocialButtons extends StatelessWidget {
           children: [
             CcSocialLoginBtn(
               type: SocialLoginType.google,
-              label: el.tr(CcLocaleKeys.auth_login_google),
+              label: el.tr(CcMfLocaleKeys.auth_login_google),
               onTap: () {
                 context.read<LoginBloc>().add(
                   isLinking
@@ -40,7 +41,7 @@ class LoginSocialButtons extends StatelessWidget {
               const CcSpaceMD(),
               CcSocialLoginBtn(
                 type: SocialLoginType.apple,
-                label: el.tr(CcLocaleKeys.auth_login_apple),
+                label: el.tr(CcMfLocaleKeys.auth_login_apple),
                 onTap: () {
                   context.read<LoginBloc>().add(
                     isLinking

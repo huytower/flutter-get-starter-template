@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:message/export_message.dart';
 
 /// Content of the reconciliation guide sheet: a gradient title header, the
 /// guide rows (icon + text) and a single close action.

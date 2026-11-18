@@ -164,6 +164,12 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
     1. `modules/message/assets/translations/en.json`
     2. `modules/message/assets/translations/vi.json`
     3. `modules/message/lib/cc_locale_keys.dart` (the key constant **and** its `CodegenLoader` map entry).
+
+    `message` is app-specific: `cc_core_sdk` and `cc_micro_features` must not import it (`cc_sdk` no longer
+    re-exports it — import `package:message/export_message.dart` directly). Shared widgets take user-facing text
+    as parameters; `cc_micro_features` owns its strings in `shared/cc_micro_features/lib/l10n/`
+    (`CcMfLocaleKeys` + `CcMfTranslations`, all keys under `mf.*`), which the App Shell merges in through
+    `CcLocalization.wrapWithLocalization(packageTranslations: [...])`. Keys missing in a locale fall back to `en`.
 11. **SDK-First Reuse** — prioritize extending `cc_core_sdk/cc_sdk_ui` components before hand-rolling new widgets.
 
 ## III. Code quality & naming

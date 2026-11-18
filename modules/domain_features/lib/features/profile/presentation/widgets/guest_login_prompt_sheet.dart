@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../budget_allocation/presentation/widgets/budget_insight_card.dart';

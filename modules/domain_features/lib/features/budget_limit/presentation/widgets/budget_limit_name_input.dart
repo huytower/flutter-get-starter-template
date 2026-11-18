@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:message/export_message.dart';
 
 class BudgetLimitNameInput extends StatelessWidget {
   final TextEditingController controller;
@@ -25,6 +26,10 @@ class BudgetLimitNameInput extends StatelessWidget {
       onClear: onClear,
       onTap: onTap,
       maxLength: 30,
+      maxLengthWarningText: el.tr(
+        CcLocaleKeys.validation_max_length_reached,
+        namedArgs: {'count': '30'},
+      ),
     );
   }
 }

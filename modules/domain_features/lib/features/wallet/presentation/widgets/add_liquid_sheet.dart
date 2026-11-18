@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:message/export_message.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
@@ -124,6 +125,10 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
         hintText: el.tr(CcLocaleKeys.wallet_name_hint),
         errorText: controller.nameError.value,
         maxLength: 15,
+        maxLengthWarningText: el.tr(
+          CcLocaleKeys.validation_max_length_reached,
+          namedArgs: {'count': '15'},
+        ),
         onClear: () {
           controller.isNameValid.value = false;
           controller.selectedInvestmentCategory.value = null;

@@ -9,6 +9,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
+import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';
@@ -16,6 +17,7 @@ import 'package:theme/presentation/provider/theme_provider.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../category/export_category.dart';
 import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../../firestore/financial_data_sync_service.dart';
@@ -26,6 +28,7 @@ import '../../domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/usecases/update_profile_settings_usecase.dart';
 import '../../user_level/presentation/get_x/user_level_controller.dart';
 import '../pages/terms_of_service_page.dart';
+import '../widgets/ai_consent_sheet.dart';
 import '../widgets/birth_year_sheet.dart';
 import '../widgets/currency_selection_sheet.dart';
 import '../widgets/display_name_sheet.dart';
@@ -61,6 +64,36 @@ class ProfileController extends CcGetController {
   final RxString appVersion = ''.obs;
   final RxBool openBirthYearPicker = false.obs;
 
+  /// Whether the user allowed sharing data with Gemini (Google). Off until the
+  /// user agrees in the AI consent sheet.
+  final RxBool aiSharingEnabled = false.obs;
+
+  Future<void> _loadAiSharing() async {
+    aiSharingEnabled.value = await getIt<AiFallbackPreferenceDataSource>()
+        .isGeminiEnabled();
+  }
+
+  /// Turning it on shows the consent sheet; turning it off withdraws consent.
+  Future<void> toggleAiSharing(BuildContext context, bool value) async {
+    final prefs = getIt<AiFallbackPreferenceDataSource>();
+    if (!value) {
+      await prefs.setGeminiEnabled(false);
+      aiSharingEnabled.value = false;
+      return;
+    }
+    aiSharingEnabled.value = await AiConsentSheet.ensure(context);
+  }
+
+  /// "Unlock all features" also unlocks the AI features, so enabling it asks
+  /// for the AI data-sharing consent first. Either answer still unlocks the
+  /// features; only "Allow" turns on sharing.
+  Future<void> toggleFullAccess(BuildContext context, bool value) async {
+    if (value) {
+      aiSharingEnabled.value = await AiConsentSheet.ensure(context);
+    }
+    await setVip(value);
+  }
+
   // --- Sign-in reminder (shown to users with no linked email/phone) ---
   static const String _signInReminderDismissedKey =
       'profile_sign_in_reminder_dismissed';
@@ -93,6 +126,7 @@ class ProfileController extends CcGetController {
   void onInit() {
     super.onInit();
     user.bindStream(_session.userStream);
+    unawaited(_loadAiSharing());
 
     // Sync guideline progress into profile settings to avoid "Split Brain"
     // overwrites when updating other settings (theme, birth year, etc.)
