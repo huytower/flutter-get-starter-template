@@ -4,6 +4,7 @@ import 'package:cc_micro_features/core/di/di.module.dart';
 import 'package:cc_sdk/core/di/di.module.dart';
 import 'package:cc_sdk_device/core/di/di.module.dart';
 import 'package:cc_sdk_firebase/core/di/di.module.dart';
+import 'package:cc_sdk_phone/core/di/di.module.dart';
 import 'package:data_config/core/di/di.module.dart';
 import 'package:domain_features/core/di/di.module.dart';
 import 'package:injectable/injectable.dart';
@@ -19,6 +20,7 @@ class CcDiModuleConfig {
     ExternalModule(CcSdkPackageModule),
     ExternalModule(CcSdkDevicePackageModule),
     ExternalModule(CcSdkFirebasePackageModule),
+    ExternalModule(CcSdkPhonePackageModule),
     ExternalModule(DataConfigPackageModule),
     ExternalModule(AppConfigPackageModule),
     ExternalModule(CcMicroFeaturesPackageModule),

@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/di/di.dart';
 import '../../domain/sms_supported_regions.dart';
 import '../bloc/phone_auth_bloc.dart';
 import '../bloc/phone_auth_event.dart';
@@ -67,7 +68,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
     );
 
     // Validate the parsed phone number
-    if (!CcPhoneNumberHelper.isValidPhoneNumber(parsedPhoneNumber)) {
+    if (!getIt<CcPhoneNumberValidator>().isValidMobile(parsedPhoneNumber)) {
       setState(() {
         _validationError = el.tr(CcMfLocaleKeys.validation_phone);
       });

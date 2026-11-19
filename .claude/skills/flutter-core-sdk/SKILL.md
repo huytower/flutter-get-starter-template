@@ -47,8 +47,8 @@ Inner rings never import outer rings. The core ring has no vendor SDK dependency
   registered `@LazySingleton(as: CcAnalytics)` and wired through `ExternalModule(CcSdkFirebasePackageModule)`.
   Copy this shape for every new vendor capability.
 - Do not add new static-only vendor helpers (private constructor + static methods calling a vendor SDK): they
-  cannot be mocked or swapped. Still to migrate:
-  `CcPhoneNumberHelper` (AI, analytics, crash reporting, app attestation, Slack, speech and location are done).
+  cannot be mocked or swapped. All former static vendor helpers are migrated (AI, analytics, crash reporting,
+  app attestation, Slack, speech, location, phone); keep it that way.
 - Configuration comes in through `CcSdkConfig.configure()` (core settings) and each vendor helper's
   `configure(...)` (e.g. Slack webhook, Gemini model), called by the app at boot. The SDK never reads `.env`
   files, `dotenv` or `--dart-define` keys itself; `CcFeatureFlags`, `CcRouteConfig`, `CcAppTrackName` and
@@ -90,9 +90,10 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | `cc_sdk_firebase` | Capability ring: Firebase implementations of core interfaces (`CcFirebaseAiClient`, `CcFirebaseAnalytics`, `CcFirebaseCrashReporter`, `CcFirebaseAppAttestation`). Only package allowed to import Firebase SDKs (migration in progress) | `export_cc_sdk_firebase.dart` |
 | `cc_sdk_slack` | Capability ring: Slack webhook implementations (`CcSlackHandler` crash alerts, `CcSlackFeedbackReporter` as `CcFeedbackReporter`); captions come translated from the app | `export_cc_sdk_slack.dart` |
 | `cc_sdk_device` | Capability ring: device-plugin implementations (`CcDeviceLocationService` as `CcLocationService`, `CcSpeechToTextRecognizer` as `CcSpeechRecognizer`) | `export_cc_sdk_device.dart` |
+| `cc_sdk_phone` | Capability ring: `CcLibPhoneNumberValidator` (`phone_numbers_parser`) as `CcPhoneNumberValidator`; `cc_sdk` ships the dependency-free `CcBasicPhoneNumberValidator` | `export_cc_sdk_phone.dart` |
 
 Dependency direction (verified from `pubspec.yaml` and imports): `cc_mixin` → `cc_sdk_ui` → `cc_sdk` →
-`cc_sdk_data`; capability packages (`cc_sdk_firebase`, `cc_sdk_slack`, `cc_sdk_device`, ...) → `cc_sdk`. Never the reverse, never a cycle. `cc_mixin` depending on the whole design system is a known
+`cc_sdk_data`; capability packages (`cc_sdk_firebase`, `cc_sdk_slack`, `cc_sdk_device`, `cc_sdk_phone`) → `cc_sdk`. Never the reverse, never a cycle. `cc_mixin` depending on the whole design system is a known
 weakness: a new mixin should depend only on `cc_sdk_data` / `cc_sdk` unless it genuinely needs a widget.
 
 Encapsulation: only `cc_mixin` keeps implementation in `lib/src/`. In the other packages the barrel exports
