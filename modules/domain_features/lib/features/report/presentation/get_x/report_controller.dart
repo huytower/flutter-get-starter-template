@@ -12,7 +12,6 @@ import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/exchange_rates/display_currency_converter.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/ai_advice_cache_datasource.dart';
-import '../../../../core/helper/ai_device_check_helper.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
@@ -47,6 +46,7 @@ class ReportController extends CcGetController {
     this._generateAiAdvice,
     this._conversionService,
     this._analytics,
+    this._ai,
   );
 
   final GetCategorySpendingUseCase _getCategorySpending;
@@ -59,6 +59,7 @@ class ReportController extends CcGetController {
   final UserLevelController userLevel;
   final CurrencyConversionService _conversionService;
   final CcAnalytics _analytics;
+  final CcAiClient _ai;
 
   @override
   void onInit() {
@@ -258,7 +259,7 @@ class ReportController extends CcGetController {
 
     if (result == null) {
       _analytics.logEvent(name: 'ai_advice_failed');
-      if (isDeviceAttestationFailure(CcGeminiHelper.lastError)) {
+      if (_ai.lastFailure?.kind == CcAiFailureKind.deviceAttestation) {
         aiAdviceErrorKey.value = CcLocaleKeys.quick_entry_device_not_genuine;
         return;
       }

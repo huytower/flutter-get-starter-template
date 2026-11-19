@@ -8,67 +8,67 @@ abstract final class SmartEntrySchema {
   static const String kindTransactionList = 'transaction_list';
   static const String kindNotFinancial = 'not_financial';
 
-  static Schema build(
+  static CcAiSchema build(
     SmartEntryContext context, {
     required bool withDocumentKind,
     required int maxTransactions,
   }) {
-    final properties = <String, Schema>{
+    final properties = <String, CcAiSchema>{
       if (withDocumentKind)
-        'documentKind': Schema.enumString(
-          enumValues: const [
+        'documentKind': const CcAiSchema.enumString(
+          enumValues: [
             kindSingleReceipt,
             kindTransactionList,
             kindNotFinancial,
           ],
           description: AiPrompts.fieldDocumentKind,
         ),
-      'transactions': Schema.array(
+      'transactions': CcAiSchema.array(
         items: _item(context),
         maxItems: maxTransactions,
         description: AiPrompts.fieldTransactions(maxTransactions),
       ),
     };
-    return Schema.object(
+    return CcAiSchema.object(
       properties: properties,
       propertyOrdering: properties.keys.toList(),
     );
   }
 
-  static Schema _item(SmartEntryContext context) {
-    final properties = <String, Schema>{
+  static CcAiSchema _item(SmartEntryContext context) {
+    final properties = <String, CcAiSchema>{
       if (context.isMixed)
-        'type': Schema.enumString(
+        'type': CcAiSchema.enumString(
           enumValues: context.types,
           description: AiPrompts.fieldType,
         ),
-      'amount': Schema.number(
+      'amount': CcAiSchema.number(
         description: AiPrompts.fieldAmount(context.currency),
         nullable: true,
         minimum: 0.01,
       ),
-      'currencyCode': Schema.string(
+      'currencyCode': const CcAiSchema.string(
         description: AiPrompts.fieldCurrencyCode,
         nullable: true,
       ),
-      'categoryId': Schema.enumString(
+      'categoryId': CcAiSchema.enumString(
         enumValues: [for (final c in context.categories) c.id],
         description: AiPrompts.fieldCategoryId,
         nullable: true,
       ),
       if (context.wallets.isNotEmpty)
-        'walletId': Schema.enumString(
+        'walletId': CcAiSchema.enumString(
           enumValues: [for (final w in context.wallets) w.id],
           description: AiPrompts.fieldWalletId,
           nullable: true,
         ),
-      'date': Schema.string(description: AiPrompts.fieldDate, nullable: true),
-      'note': Schema.string(
+      'date': const CcAiSchema.string(description: AiPrompts.fieldDate, nullable: true),
+      'note': CcAiSchema.string(
         description: AiPrompts.fieldNote(context.language),
         nullable: true,
       ),
     };
-    return Schema.object(
+    return CcAiSchema.object(
       properties: properties,
       propertyOrdering: properties.keys.toList(),
     );

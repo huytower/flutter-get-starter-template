@@ -14,6 +14,7 @@ final GetIt getIt = GetIt.instance;
     CcDeviceInfoHelper,
     InternetConnection,
     CcAnalytics,
+    CcAiClient,
   ],
 )
 void initMicroPackage() {}

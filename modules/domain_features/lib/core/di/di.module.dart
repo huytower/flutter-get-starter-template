@@ -10,6 +10,7 @@ import 'dart:typed_data' as _i100;
 import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
 import 'package:cc_micro_features/features/auth/domain/usecases/delete_account_usecase.dart'
     as _i308;
+import 'package:cc_sdk/export_cc_sdk.dart' as _i54;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' as _i631;
 import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
 import 'package:dio/dio.dart' as _i361;
@@ -504,6 +505,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.lazySingleton<_i121.ParseQuickEntryUseCase>(
         () => _i121.ParseQuickEntryUseCase(gh<_i224.GetCategoriesUseCase>()));
+    gh.lazySingleton<_i263.ParseSmartEntryUseCase>(
+        () => _i263.ParseSmartEntryUseCase(
+              gh<_i224.GetCategoriesUseCase>(),
+              gh<_i195.CurrencyConversionService>(),
+              gh<_i54.CcAiClient>(),
+            ));
     gh.factory<_i754.ExpenseFormController>(() => _i754.ExpenseFormController(
           gh<_i1027.TransactionRepository>(),
           gh<_i1041.GetCategoriesUseCase>(),
@@ -517,11 +524,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i229.WalletController>(),
               gh<_i224.GetCategoriesUseCase>(),
               gh<_i569.GetProfileSettingsUseCase>(),
-            ));
-    gh.lazySingleton<_i263.ParseSmartEntryUseCase>(
-        () => _i263.ParseSmartEntryUseCase(
-              gh<_i224.GetCategoriesUseCase>(),
-              gh<_i195.CurrencyConversionService>(),
             ));
     gh.lazySingleton<_i743.GetBudgetLimitStatsUseCase>(
         () => _i743.GetBudgetLimitStatsUseCase(
@@ -642,6 +644,14 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i256.UpdateBudgetLimitOrdersUseCase>(),
               gh<_i106.DeleteBudgetLimitUseCase>(),
             ));
+    gh.lazySingleton<_i436.GenerateAiFinancialAdviceUseCase>(
+        () => _i436.GenerateAiFinancialAdviceUseCase(
+              gh<_i206.GetBudgetInsightsUseCase>(),
+              gh<_i463.GetBudgetAnomaliesUseCase>(),
+              gh<_i701.GetFinancialRunwayUseCase>(),
+              gh<_i895.GetMonthlyCashFlowUseCase>(),
+              gh<_i54.CcAiClient>(),
+            ));
     gh.factory<_i1007.AddLiabilitySheetController>(
         () => _i1007.AddLiabilitySheetController(
               gh<_i1041.GetCategoriesUseCase>(),
@@ -660,6 +670,19 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i570.GetWalletBalancesUseCase>(),
           gh<_i570.WalletRepository>(),
           gh<_i811.UserLevelController>(),
+        ));
+    gh.factory<_i353.ReportController>(() => _i353.ReportController(
+          gh<_i169.GetCategorySpendingUseCase>(),
+          gh<_i701.GetFinancialRunwayUseCase>(),
+          gh<_i951.GetTrendDataUseCase>(),
+          gh<_i231.GetInvestmentTrendUseCase>(),
+          gh<_i768.GetLiabilityTrendUseCase>(),
+          gh<_i572.WalletRepository>(),
+          gh<_i811.UserLevelController>(),
+          gh<_i436.GenerateAiFinancialAdviceUseCase>(),
+          gh<_i195.CurrencyConversionService>(),
+          gh<_i631.CcAnalytics>(),
+          gh<_i631.CcAiClient>(),
         ));
     gh.lazySingleton<_i451.BudgetAllocationController>(
         () => _i451.BudgetAllocationController(
@@ -688,30 +711,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i446.GetReconciliationHistoryUseCase>(),
               gh<_i811.UserLevelController>(),
             ));
-    gh.lazySingleton<_i436.GenerateAiFinancialAdviceUseCase>(
-        () => _i436.GenerateAiFinancialAdviceUseCase(
-              gh<_i206.GetBudgetInsightsUseCase>(),
-              gh<_i463.GetBudgetAnomaliesUseCase>(),
-              gh<_i701.GetFinancialRunwayUseCase>(),
-              gh<_i895.GetMonthlyCashFlowUseCase>(),
-            ));
     gh.factory<_i752.AddBudgetLimitSheetController>(
         () => _i752.AddBudgetLimitSheetController(
               gh<_i1041.GetCategoriesUseCase>(),
               gh<_i393.GetCategoryAverageMonthlySpendUseCase>(),
               gh<_i1003.BudgetLimitController>(),
             ));
-    gh.factory<_i353.ReportController>(() => _i353.ReportController(
-          gh<_i169.GetCategorySpendingUseCase>(),
-          gh<_i701.GetFinancialRunwayUseCase>(),
-          gh<_i951.GetTrendDataUseCase>(),
-          gh<_i231.GetInvestmentTrendUseCase>(),
-          gh<_i768.GetLiabilityTrendUseCase>(),
-          gh<_i572.WalletRepository>(),
-          gh<_i811.UserLevelController>(),
-          gh<_i436.GenerateAiFinancialAdviceUseCase>(),
-          gh<_i195.CurrencyConversionService>(),
-          gh<_i631.CcAnalytics>(),
-        ));
   }
 }

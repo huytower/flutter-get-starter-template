@@ -14,7 +14,6 @@ import '../../../../core/constant/currency_catalog.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/exchange_rates/exchange_rate_types.dart';
-import '../../../../core/helper/ai_device_check_helper.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
@@ -25,7 +24,11 @@ import '../entities/smart_entry_input.dart';
 
 @lazySingleton
 class ParseSmartEntryUseCase {
-  ParseSmartEntryUseCase(this._getCategories, this._conversionService);
+  ParseSmartEntryUseCase(
+    this._getCategories,
+    this._conversionService,
+    this._ai,
+  );
 
   static const int defaultMaxTransactions = 20;
 
@@ -35,6 +38,7 @@ class ParseSmartEntryUseCase {
 
   final GetCategoriesUseCase _getCategories;
   final CurrencyConversionService _conversionService;
+  final CcAiClient _ai;
 
   WalletRepository get _walletRepository => getIt<WalletRepository>();
 
@@ -78,12 +82,13 @@ class ParseSmartEntryUseCase {
       return const Error(ValidationFailure(dailyLimitReachedReason));
     }
 
-    final response = await _generate(input, context, maxTransactions);
+    final result = await _generate(input, context, maxTransactions);
+    final response = result.text;
     if (response == null) {
-      '[AI_PARSING] [GEMINI] ❌ Gemini returned null response'.Log(
+      '[AI_PARSING] [GEMINI] ❌ Gemini failed: ${result.failure}'.Log(
         'ParseSmartEntryUseCase',
       );
-      if (isDeviceAttestationFailure(CcGeminiHelper.lastError)) {
+      if (result.failure?.kind == CcAiFailureKind.deviceAttestation) {
         return const Error(ValidationFailure(deviceNotGenuineReason));
       }
       return const Error(ServerFailure('empty_response'));
@@ -109,7 +114,7 @@ class ParseSmartEntryUseCase {
     );
   }
 
-  Future<String?> _generate(
+  Future<CcAiResult> _generate(
     SmartEntryInput input,
     SmartEntryContext context,
     int maxTransactions,
@@ -135,17 +140,17 @@ class ParseSmartEntryUseCase {
       withDocumentKind: isImages,
       maxTransactions: maxTransactions,
     );
-    return switch (input) {
-      SmartEntryTextInput() => CcGeminiHelper.generateText(
-        prompt: prompt,
-        responseSchema: schema,
-      ),
-      SmartEntryImagesInput(:final images) => CcGeminiHelper.generateFromImages(
-        images: images,
-        prompt: prompt,
-        responseSchema: schema,
-      ),
-    };
+    return _ai.generate(
+      prompt: prompt,
+      images: switch (input) {
+        SmartEntryTextInput() => const [],
+        SmartEntryImagesInput(:final images) => [
+          for (final image in images)
+            CcAiImage(bytes: image.bytes, mimeType: image.mimeType),
+        ],
+      },
+      responseSchema: schema,
+    );
   }
 
   @visibleForTesting

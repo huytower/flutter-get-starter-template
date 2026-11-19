@@ -13,9 +13,9 @@ Future<void> initEnv() async {
       enableLogger: PrjEnv.enableLogger,
       enableLoggerDio: PrjEnv.enableLoggerDio,
       enableCrashLogUpload: PrjEnv.enableCrashLogUpload,
+      aiModelName: PrjEnv.geminiModelName,
     ),
   );
   CcSlackHandler.configure(webhookUrl: PrjEnv.slackCrashWebhookUrl);
   CcSlackFeedbackHelper.configure(webhookUrl: PrjEnv.slackFeedbackWebhookUrl);
-  CcGeminiHelper.configure(modelName: PrjEnv.geminiModelName);
 }

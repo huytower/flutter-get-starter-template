@@ -52,6 +52,7 @@ ParseSmartEntryUseCase _useCase(List<CategoryEntity> categories) =>
     ParseSmartEntryUseCase(
       _StubGetCategories(categories),
       CurrencyConversionService(_UnusedRateRepository()),
+      const _UnusedAiClient(),
     );
 
 void main() {
@@ -128,4 +129,22 @@ void main() {
       expect(await prefs.getTodayFallbackCount(), 1);
     });
   });
+}
+
+/// These tests never reach the AI call; if one does, it fails like an
+/// unavailable model rather than touching a real backend.
+class _UnusedAiClient implements CcAiClient {
+  const _UnusedAiClient();
+
+  @override
+  CcAiFailure? get lastFailure => null;
+
+  @override
+  Future<CcAiResult> generate({
+    required String prompt,
+    List<CcAiImage> images = const [],
+    CcAiSchema? responseSchema,
+  }) async => CcAiResult.failure(
+    CcAiFailure(CcAiFailureKind.unknown, cause: StateError('AI not used')),
+  );
 }

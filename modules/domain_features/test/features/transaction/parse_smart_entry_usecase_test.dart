@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:domain_features/core/ai/smart_entry_context.dart';
 import 'package:domain_features/core/ai/smart_entry_response_parser.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
@@ -93,6 +94,7 @@ ParseSmartEntryUseCase _useCaseWith(_FakeRateRepository repository) =>
     ParseSmartEntryUseCase(
       _FakeGetCategories(),
       CurrencyConversionService(repository),
+      const _UnusedAiClient(),
     );
 
 void main() {
@@ -438,4 +440,22 @@ void main() {
       expect(rows.single.categoryId, isNull);
     });
   });
+}
+
+/// These tests never reach the AI call; if one does, it fails like an
+/// unavailable model rather than touching a real backend.
+class _UnusedAiClient implements CcAiClient {
+  const _UnusedAiClient();
+
+  @override
+  CcAiFailure? get lastFailure => null;
+
+  @override
+  Future<CcAiResult> generate({
+    required String prompt,
+    List<CcAiImage> images = const [],
+    CcAiSchema? responseSchema,
+  }) async => CcAiResult.failure(
+    CcAiFailure(CcAiFailureKind.unknown, cause: StateError('AI not used')),
+  );
 }

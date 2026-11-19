@@ -8,7 +8,6 @@ import 'package:multiple_result/multiple_result.dart';
 import '../../../../core/ai/ai_language.dart';
 import '../../../../core/ai/ai_prompts.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
-import '../../../../core/helper/ai_device_check_helper.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../budget_limit/domain/entities/budget_anomaly_entity.dart';
@@ -36,12 +35,14 @@ class GenerateAiFinancialAdviceUseCase {
     this._getAnomalies,
     this._getRunway,
     this._getCashFlow,
+    this._ai,
   );
 
   final GetBudgetInsightsUseCase _getInsights;
   final GetBudgetAnomaliesUseCase _getAnomalies;
   final GetFinancialRunwayUseCase _getRunway;
   final GetMonthlyCashFlowUseCase _getCashFlow;
+  final CcAiClient _ai;
 
   static const int _maxHighlightsPerSection = 3;
 
@@ -110,19 +111,20 @@ class GenerateAiFinancialAdviceUseCase {
     );
 
     try {
-      final raw = await CcGeminiHelper.generateText(
+      final result = await _ai.generate(
         prompt: prompt,
         responseSchema: _buildResponseSchema(language),
       );
+      final raw = result.text;
       if (raw == null || raw.trim().isEmpty) {
-        final lastErr = CcGeminiHelper.lastError;
-        final errDetail = lastErr != null
-            ? ' | Underlying Error: $lastErr'
+        final failure = result.failure;
+        final errDetail = failure != null
+            ? ' | Underlying Error: ${failure.cause}'
             : '';
         // Expected failures stay out of the crash webhook: a device that fails
         // App Check (emulator / not genuine) is already told so in the UI, and
         // once today's AI quota is used up, further failures are not actionable.
-        if (await _shouldReportFailure(lastErr)) {
+        if (await _shouldReportFailure(failure)) {
           Catcher2.reportCheckedError(
             Exception(
               'Gemini AI Financial Advice returned null or empty response$errDetail',
@@ -154,29 +156,29 @@ class GenerateAiFinancialAdviceUseCase {
   /// False for failures that are expected and already handled in the UI:
   /// device attestation (App Check) failures, and any failure once the daily
   /// AI quota is exhausted (release builds; debug has no quota).
-  Future<bool> _shouldReportFailure(Object? error) async {
-    if (isDeviceAttestationFailure(error)) return false;
+  Future<bool> _shouldReportFailure(CcAiFailure? failure) async {
+    if (failure?.kind == CcAiFailureKind.deviceAttestation) return false;
     return getIt<AiFallbackPreferenceDataSource>().isUnderDailyLimit();
   }
 
-  Schema _buildResponseSchema(String language) {
-    return Schema.object(
+  CcAiSchema _buildResponseSchema(String language) {
+    return CcAiSchema.object(
       properties: {
-        'sections': Schema.array(
-          items: Schema.object(
+        'sections': CcAiSchema.array(
+          items: CcAiSchema.object(
             properties: {
-              'status': Schema.enumString(
+              'status': const CcAiSchema.enumString(
                 enumValues: ['good', 'normal', 'bad'],
                 description:
                     'Tone of this section: good (positive/encouraging), '
                     'normal (neutral advice), or bad (warning/needs '
                     'attention).',
               ),
-              'text': Schema.string(
+              'text': CcAiSchema.string(
                 description: AiPrompts.fieldAdviceText(language),
               ),
-              'highlights': Schema.array(
-                items: Schema.string(),
+              'highlights': const CcAiSchema.array(
+                items: CcAiSchema.string(),
                 maxItems: _maxHighlightsPerSection,
                 description:
                     '1-$_maxHighlightsPerSection key words or phrases '
