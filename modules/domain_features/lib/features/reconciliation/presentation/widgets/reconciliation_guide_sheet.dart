@@ -11,6 +11,8 @@ class ReconciliationGuideSheet extends StatelessWidget {
     return showAdaptiveBottomSheet<void>(
       context: context,
       backgroundColor: null,
+      // Two columns of guide rows need more room than a plain list sheet.
+      tabletMaxWidth: 840,
       builder: (context) => const ReconciliationGuideSheet(),
     );
   }

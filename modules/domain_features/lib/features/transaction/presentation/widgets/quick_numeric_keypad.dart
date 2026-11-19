@@ -42,7 +42,10 @@ class QuickNumericKeypad extends StatelessWidget {
         vertical: context.respPadding(CcPaddingParams.SPACE_XS),
       ),
       decoration: BoxDecoration(
-        color: context.ccColorScheme.surfaceContainerHighest,
+        // On tablets the panel behind supplies the (translucent) fill.
+        color: _isTablet(context)
+            ? Colors.transparent
+            : context.ccColorScheme.surfaceContainerHighest,
         border: Border(
           top: BorderSide(
             color: context.ccColorScheme.outlineVariant.withOpacity(0.1),

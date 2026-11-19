@@ -105,16 +105,34 @@ class ReconciliationGuideContentSheet extends StatelessWidget {
   Widget _buildGuideList(BuildContext context, ColorScheme scheme) {
     return SingleChildScrollView(
       padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_MD)),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (final (index, item) in _items.indexed) ...[
-            if (index > 0) const CcSpaceMD(),
-            _buildGuideItem(context, scheme, item.icon, tr(item.textKey)),
-          ],
+      child: _buildItems(context, scheme),
+    );
+  }
+
+  Widget _buildItems(BuildContext context, ColorScheme scheme) {
+    final items = [
+      for (final item in _items)
+        _buildGuideItem(context, scheme, item.icon, tr(item.textKey)),
+    ];
+    // Small tablet and up (>= 600 dp window): two columns, so the sheet is
+    // wider and shorter instead of one long column.
+    if (context.windowSizeClass.isAtLeast(CcWindowSizeClass.medium)) {
+      return CcMultiColumn(
+        columns: 2,
+        columnGap: context.respPadding(CcPaddingParams.SPACE_LG),
+        rowGap: context.respPadding(CcPaddingParams.SPACE_MD),
+        children: items,
+      );
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final (index, item) in items.indexed) ...[
+          if (index > 0) const CcSpaceMD(),
+          item,
         ],
-      ),
+      ],
     );
   }
 

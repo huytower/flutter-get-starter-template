@@ -32,6 +32,9 @@ class MoneyKeypadPanel extends StatelessWidget {
     required this.activeColor,
   });
 
+  /// Width cap on small tablet and up (same as a bottom sheet's).
+  static const double _tabletMaxWidth = 480;
+
   @override
   Widget build(BuildContext context) {
     // Hide soft keyboard when this custom keypad panel is active
@@ -42,77 +45,178 @@ class MoneyKeypadPanel extends StatelessWidget {
       }
     });
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: context.ccColorScheme.surfaceContainerHighest,
-        border: Border(
-          top: BorderSide(
-            color: context.ccColorScheme.outlineVariant.withOpacity(0.1),
+    final scheme = context.ccColorScheme;
+    final isTablet = context.windowSizeClass.isAtLeast(
+      CcWindowSizeClass.medium,
+    );
+
+    if (!isTablet) {
+      // Phone: full-width, edge-to-edge panel docked to the bottom.
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainerHighest,
+          border: Border(
+            top: BorderSide(color: scheme.outlineVariant.withOpacity(0.1)),
           ),
         ),
-      ),
-      // Background full-bleed; chips and keys capped at the content width.
-      child: CcContentPadding(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CcSymmetricPadding(
-              vertical: CcPaddingParams.SPACE_XS,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: CcQuickAmountChips(
-                      amounts: suggestions,
-                      onSelected: (val) => onSuggestion?.call(val),
-                      activeColor: activeColor,
-                      padding: EdgeInsets.only(
-                        left: context.respPadding(CcPaddingParams.SPACE_SM),
-                      ),
-                    ),
-                  ),
-                  CcIconButton.bouncing(
-                    icon: Icon(
-                      Icons.close_rounded,
-                      color: activeColor,
-                      size: context.respIconSize(baseSize: 20),
-                    ),
-                    onTap: onClear,
-                    tooltip: el.tr(CcLocaleKeys.common_clear),
-                  ),
-                  if (onCopy != null)
-                    CcIconButton.bouncing(
-                      icon: Icon(
-                        Icons.copy_rounded,
-                        color: activeColor,
-                        size: context.respIconSize(baseSize: 20),
-                      ),
-                      onTap: onCopy!,
-                      tooltip: el.tr(CcLocaleKeys.common_copy),
-                    ),
-                  CcBouncing(
-                    onTap: onDone,
-                    child: CcSymmetricPadding(
-                      horizontal: CcPaddingParams.SPACE_XL,
-                      child: CcText(
-                        el.tr(CcLocaleKeys.common_done),
-                        textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                          color: activeColor,
-                          fontWeight: CcTypographyParams.bold,
+        child: CcContentPadding(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CcSymmetricPadding(
+                vertical: CcPaddingParams.SPACE_XS,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: CcQuickAmountChips(
+                        amounts: suggestions,
+                        onSelected: (val) => onSuggestion?.call(val),
+                        activeColor: activeColor,
+                        padding: EdgeInsets.only(
+                          left: context.respPadding(CcPaddingParams.SPACE_SM),
                         ),
                       ),
                     ),
+                    CcIconButton.bouncing(
+                      icon: Icon(
+                        Icons.close_rounded,
+                        color: activeColor,
+                        size: context.respIconSize(baseSize: 20),
+                      ),
+                      onTap: onClear,
+                      tooltip: el.tr(CcLocaleKeys.common_clear),
+                    ),
+                    if (onCopy != null)
+                      CcIconButton.bouncing(
+                        icon: Icon(
+                          Icons.copy_rounded,
+                          color: activeColor,
+                          size: context.respIconSize(baseSize: 20),
+                        ),
+                        onTap: onCopy!,
+                        tooltip: el.tr(CcLocaleKeys.common_copy),
+                      ),
+                    CcBouncing(
+                      onTap: onDone,
+                      child: CcSymmetricPadding(
+                        horizontal: CcPaddingParams.SPACE_XL,
+                        child: CcText(
+                          el.tr(CcLocaleKeys.common_done),
+                          textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                            color: activeColor,
+                            fontWeight: CcTypographyParams.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              QuickNumericKeypad(
+                onKeyPress: onKeyPress,
+                onDelete: onDelete,
+                onClear: onClear,
+                activeColor: activeColor,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Small tablet and up: styled like a bottom sheet (rounded top corners,
+    // shadow, capped width, centred) but with no header, footer or actions, so
+    // the keys stay a normal size instead of stretching across the window.
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _tabletMaxWidth),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            // 80% opaque so the page content stays faintly visible behind it.
+            color: scheme.surfaceContainerHighest.withValues(alpha: 0.8),
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(context.respDim(16).clamp(0, 24).toDouble()),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: scheme.shadow.withOpacity(0.12),
+                blurRadius: context.respDim(12),
+                offset: Offset(0, -context.respDim(2)),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(context.respDim(16).clamp(0, 24).toDouble()),
+            ),
+            child: CcContentPadding(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CcSymmetricPadding(
+                    vertical: CcPaddingParams.SPACE_XS,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: CcQuickAmountChips(
+                            amounts: suggestions,
+                            onSelected: (val) => onSuggestion?.call(val),
+                            activeColor: activeColor,
+                            padding: EdgeInsets.only(
+                              left: context.respPadding(
+                                CcPaddingParams.SPACE_SM,
+                              ),
+                            ),
+                          ),
+                        ),
+                        CcIconButton.bouncing(
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: activeColor,
+                            size: context.respIconSize(baseSize: 20),
+                          ),
+                          onTap: onClear,
+                          tooltip: el.tr(CcLocaleKeys.common_clear),
+                        ),
+                        if (onCopy != null)
+                          CcIconButton.bouncing(
+                            icon: Icon(
+                              Icons.copy_rounded,
+                              color: activeColor,
+                              size: context.respIconSize(baseSize: 20),
+                            ),
+                            onTap: onCopy!,
+                            tooltip: el.tr(CcLocaleKeys.common_copy),
+                          ),
+                        CcBouncing(
+                          onTap: onDone,
+                          child: CcSymmetricPadding(
+                            horizontal: CcPaddingParams.SPACE_XL,
+                            child: CcText(
+                              el.tr(CcLocaleKeys.common_done),
+                              textStyle: context.ccTextTheme.labelMedium
+                                  ?.copyWith(
+                                    color: activeColor,
+                                    fontWeight: CcTypographyParams.bold,
+                                  ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  QuickNumericKeypad(
+                    onKeyPress: onKeyPress,
+                    onDelete: onDelete,
+                    onClear: onClear,
+                    activeColor: activeColor,
                   ),
                 ],
               ),
             ),
-            QuickNumericKeypad(
-              onKeyPress: onKeyPress,
-              onDelete: onDelete,
-              onClear: onClear,
-              activeColor: activeColor,
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -118,27 +118,48 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
     );
   }
 
-  /// Landscape tablet, two columns (2:1): the wallet tiles (the thing being
+  /// Landscape tablet, two columns (3.5:1.5): the wallet tiles (the thing being
   /// counted) flow across two sub-columns on the left; the totals, mismatch
   /// warning, confirm button and history fill the right.
   List<Widget> _buildTwoColumnChildren(BuildContext context) {
     return [
       _buildSeeMoreDescription(context),
-      CcTwoColumn(
-        leftFlex: 2,
-        rightFlex: 1,
-        left: [
-          _buildInstructionText(context),
-          _buildWalletTiles(context, columns: 2),
-        ],
-        right: [
-          const ReconciliationMismatchWarning(),
-          const CcSpaceXS(),
-          const ReconciliationSummary(),
-          const CcSpaceXS(),
-          const ReconciliationConfirmButton(),
-          const ReconciliationHistorySection(),
-        ],
+      // Own Row instead of CcTwoColumn: that widget forces a 1:1 split on small
+      // tablets, but this page always wants 3.5:1.5 (flex 7:3).
+      CcMaxWidth(
+        maxWidth: CcTwoColumn.defaultMaxWidth,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 7,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildInstructionText(context),
+                  _buildWalletTiles(context, columns: 2),
+                ],
+              ),
+            ),
+            SizedBox(width: context.respPadding(CcPaddingParams.SPACE_MD)),
+            const Expanded(
+              flex: 3,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ReconciliationMismatchWarning(),
+                  CcSpaceXS(),
+                  ReconciliationSummary(),
+                  CcSpaceXS(),
+                  ReconciliationConfirmButton(),
+                  ReconciliationHistorySection(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     ];
   }
