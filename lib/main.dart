@@ -61,7 +61,7 @@ void main() async {
     // 3. Setup error handling immediately after core systems are ready
     // Non-critical, non-blocking: upload any pending crash log from a previous session.
     uploadPendingCrashLogsOnStartup();
-    unawaited(CcAppCheckHelper.initialize());
+    unawaited(getIt<CcAppAttestation>().activate());
 
     // 4. UI Launch
     _runApplication();
@@ -94,6 +94,7 @@ Future<void> _runApplication() async {
   // DI is ready here (boot step 2), so uncaught errors also go to the
   // registered crash reporter (Crashlytics via cc_sdk_firebase).
   final crashReporter = getIt<CcCrashReporter>();
+  final attestation = getIt<CcAppAttestation>();
   Catcher2(
     rootWidget: const AppRunner(),
     ensureInitialized: false,
@@ -104,10 +105,12 @@ Future<void> _runApplication() async {
     releaseConfig: CcCatcherBootstrap.releaseOptions(
       logFile,
       crashReporter: crashReporter,
+      attestation: attestation,
     ),
     profileConfig: CcCatcherBootstrap.profileOptions(
       logFile,
       crashReporter: crashReporter,
+      attestation: attestation,
     ),
   );
 }

@@ -46,8 +46,8 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
     Future.delayed(const Duration(seconds: 3), () async {
       if (!mounted) return;
 
-      // Native security & analytics
-      CcAppCheckHelper.initialize();
+      // Native security & analytics (activate() no-ops if main already ran it)
+      unawaited(getIt<CcAppAttestation>().activate());
       FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
 
       // Local notifications & sync

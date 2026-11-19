@@ -48,7 +48,7 @@ Inner rings never import outer rings. The core ring has no vendor SDK dependency
   Copy this shape for every new vendor capability.
 - Do not add new static-only vendor helpers (private constructor + static methods calling a vendor SDK): they
   cannot be mocked or swapped. Still to migrate:
-  `CcAppCheckHelper`, `CcGeminiHelper`, `CcSpeechHelper`, `CcLocationHelper`, `CcPhoneNumberHelper`, `CcSlackFeedbackHelper` (analytics and crash reporting are done).
+  `CcGeminiHelper`, `CcSpeechHelper`, `CcLocationHelper`, `CcPhoneNumberHelper`, `CcSlackFeedbackHelper` (analytics, crash reporting and app attestation are done).
 - Configuration comes in through `CcSdkConfig.configure()` (core settings) and each vendor helper's
   `configure(...)` (e.g. Slack webhook, Gemini model), called by the app at boot. The SDK never reads `.env`
   files, `dotenv` or `--dart-define` keys itself; `CcFeatureFlags`, `CcRouteConfig`, `CcAppTrackName` and
@@ -87,7 +87,7 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | `cc_sdk_ui` | Design system and widget catalog (adaptive layout, buttons, cards, dialogs, inputs, text, shimmer, navigation), tokens (`CcBaseColors`, `CcSpace*`), `CcContextExtension`, `CcMaxWidth`, `CcTwoColumn` | `export_cc_sdk_ui.dart` |
 | `cc_mixin` | Reusable behavior mixins: pagination, refresh/load-more, back-button, navigation, view config | `export_cc_mixin.dart` |
 | `cc_sdk_data` | Core entities/models, `CcFailure` hierarchy, shared domain services | `export_cc_sdk_data.dart` |
-| `cc_sdk_firebase` | Capability ring: Firebase implementations of core interfaces (`CcFirebaseAnalytics`, `CcFirebaseCrashReporter`). Only package allowed to import Firebase SDKs (migration in progress) | `export_cc_sdk_firebase.dart` |
+| `cc_sdk_firebase` | Capability ring: Firebase implementations of core interfaces (`CcFirebaseAnalytics`, `CcFirebaseCrashReporter`, `CcFirebaseAppAttestation`). Only package allowed to import Firebase SDKs (migration in progress) | `export_cc_sdk_firebase.dart` |
 
 Dependency direction (verified from `pubspec.yaml` and imports): `cc_mixin` → `cc_sdk_ui` → `cc_sdk` →
 `cc_sdk_data`; capability packages (`cc_sdk_firebase`, ...) → `cc_sdk`. Never the reverse, never a cycle. `cc_mixin` depending on the whole design system is a known
