@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
+import '../../../../core/presentation/widgets/category/prj_category_shimmer_list.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/pages/investment_list_page.dart';
 import '../get_x/investment_form_controller.dart';
@@ -43,7 +44,7 @@ class InvestmentAssetSelector extends StatelessWidget {
         Obx(() {
           if (controller.isLoadingMerged.value) {
             return CcContentPadding(
-              child: CcCategoryShimmerList(
+              child: PrjCategoryShimmerList(
                 height: context.respDim(95),
                 verticalPadding: context.respDim(4),
                 separator: const CcSpaceMD(),

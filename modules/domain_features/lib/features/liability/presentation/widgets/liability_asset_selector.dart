@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
+import '../../../../core/presentation/widgets/category/prj_category_shimmer_list.dart';
 import '../../../transaction/presentation/helper/horizontal_row_reveal.dart';
 import '../../../transaction/presentation/widgets/base/category_customize_empty_state.dart';
 import '../get_x/liability_base_form_controller.dart';
@@ -41,7 +42,7 @@ class LiabilityAssetSelector extends StatelessWidget {
         Obx(() {
           if (controller.isLoadingMerged.value) {
             return CcContentPadding(
-              child: CcCategoryShimmerList(
+              child: PrjCategoryShimmerList(
                 height: context.respDim(95),
                 verticalPadding: context.respDim(4),
                 separator: const CcSpaceMD(),

@@ -8,6 +8,8 @@ import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/presentation/widgets/category/prj_category_item.dart';
+import '../../../../core/presentation/widgets/category/prj_category_shimmer_list.dart';
 import '../get_x/category_selection_controller.dart';
 import '../helper/horizontal_row_reveal.dart';
 import 'base/category_selection_layout.dart';
@@ -98,7 +100,7 @@ class CategorySelectionSection extends StatelessWidget {
           _buildTitle(context),
           const CcSpaceXS(),
           controller.isLoading.value
-              ? const CcCategoryShimmerList()
+              ? const PrjCategoryShimmerList()
               : _buildCategoryList(context, controller),
         ],
       );
@@ -159,7 +161,7 @@ class CategorySelectionSection extends StatelessWidget {
             final category = controller.categories[index];
             final isSelected =
                 controller.selectedCategoryId.value == category.id;
-            return CcCategoryItem(
+            return PrjCategoryItem(
               iconCode: category.iconCode,
               iconFamily: category.iconFamily,
               label: el.tr(category.nameKey),

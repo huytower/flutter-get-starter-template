@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../core/presentation/widgets/category/prj_category_item.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/smart_entry_preview_state.dart';
@@ -113,7 +114,7 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
               final category = categories[index];
               final isSelected = row.categoryId == category.id;
 
-              return CcCategoryItem(
+              return PrjCategoryItem(
                 key: ValueKey('smart_preview_cat_${row.id}_${category.id}'),
                 iconCode: category.iconCode,
                 iconFamily: category.iconFamily,

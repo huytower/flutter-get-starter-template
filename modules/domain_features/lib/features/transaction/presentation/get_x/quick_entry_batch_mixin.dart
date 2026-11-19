@@ -17,6 +17,7 @@ import '../../domain/entities/transaction_entity.dart';
 import '../../domain/usecases/create_transaction_batch_usecase.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/parse_smart_entry_usecase.dart';
+import '../helper/receipt_image_picker_helper.dart';
 import 'quick_entry_mixin.dart';
 import 'smart_entry_preview_state.dart';
 
@@ -42,7 +43,7 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     final languageCode = el.EasyLocalization.of(context)?.locale.languageCode;
 
     '[AI_PARSING] 📸 Gallery multi-picker started'.Log('QuickEntryBatchMixin');
-    final pickResult = await CcReceiptScanHelper.pickReceiptImages(
+    final pickResult = await ReceiptImagePickerHelper.pickReceiptImages(
       limit: quickEntryBatchLimit,
     );
     if (!isCurrentGeneration()) return;

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/presentation/widgets/category/prj_category_item.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../get_x/add_liability_sheet_controller.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
@@ -237,7 +238,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
                   final isSelected =
                       controller.selectedLiabilityCategory.value?.id ==
                       category.id;
-                  return CcCategoryItem(
+                  return PrjCategoryItem(
                     iconCode: category.iconCode,
                     iconFamily: category.iconFamily,
                     label: el.tr(category.nameKey),

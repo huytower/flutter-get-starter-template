@@ -1,6 +1,4 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:cc_sdk_ui/widgets/background/cc_watermark_background.dart';
-import 'package:cc_sdk_ui/widgets/chip/cc_feedback_tag.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 

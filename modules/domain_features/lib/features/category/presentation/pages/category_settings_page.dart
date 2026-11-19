@@ -7,6 +7,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/presentation/widgets/category/prj_category_group_section.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../data/datasources/local/category_seed.dart';
@@ -352,10 +353,10 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
     required List<CategoryEntity> categories,
     required Color accentColor,
   }) {
-    return CcCategoryGroupSection(
+    return PrjCategoryGroupSection(
       items: categories
           .map(
-            (c) => CcCategoryGroupItem(
+            (c) => PrjCategoryGroupItem(
               label: el.tr(c.nameKey),
               iconCode: c.iconCode,
               iconFamily: c.iconFamily,

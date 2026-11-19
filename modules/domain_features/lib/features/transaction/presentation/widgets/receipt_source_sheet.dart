@@ -6,7 +6,7 @@ import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 /// Phase 3.7 receipt-photo entry point — lets the user choose where the
 /// receipt/screenshot image comes from before [ExpenseFormController]
-/// hands off to [CcReceiptScanHelper].
+/// hands off to [ReceiptImagePickerHelper].
 ///
 /// Resolves to `true` (camera), `false` (gallery), or `null` (dismissed
 /// without a choice).

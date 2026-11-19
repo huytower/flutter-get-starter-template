@@ -11,6 +11,7 @@ import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
+import 'prj_wallet_item.dart';
 import 'wallet_display_name.dart';
 
 /// Unified horizontal strip of wallet cards for both Dashboard and Forms.
@@ -97,7 +98,7 @@ class WalletStripCard extends StatelessWidget {
     final isSelected = wallet.id == selectedWalletId;
 
     if (controller == null) {
-      return CcWalletItem(
+      return PrjWalletItem(
         name: wallet.displayName(context),
         iconCode: wallet.iconCode,
         isSelected: isSelected,
@@ -120,7 +121,7 @@ class WalletStripCard extends StatelessWidget {
           ? controller.displayBookBalanceOf(wallet.id)
           : null;
 
-      return CcWalletItem(
+      return PrjWalletItem(
         name: wallet.displayName(context),
         iconCode: wallet.iconCode,
         isSelected: isSelected,

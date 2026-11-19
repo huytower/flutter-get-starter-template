@@ -21,6 +21,7 @@ import '../../../profile/user_level/presentation/get_x/user_level_controller.dar
 import '../../domain/entities/smart_entry_input.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import '../../domain/usecases/parse_smart_entry_usecase.dart';
+import '../helper/receipt_image_picker_helper.dart';
 import '../widgets/smart_entry_preview_sheet.dart';
 import 'quick_entry_auto_save_helper.dart';
 import 'smart_entry_preview_state.dart';
@@ -723,7 +724,7 @@ mixin QuickEntryMixin on TransactionFormController
 
     '[AI_PARSING] [GEMINI] 📸 Image picker started for Gemini AI | fromCamera=$fromCamera'
         .Log('QuickEntryMixin');
-    final pickResult = await CcReceiptScanHelper.pickReceiptImage(
+    final pickResult = await ReceiptImagePickerHelper.pickReceiptImage(
       fromCamera: fromCamera,
     );
     if (!isCurrentGeneration()) return;
@@ -750,7 +751,7 @@ mixin QuickEntryMixin on TransactionFormController
   @protected
   Future<void> resolvePickedReceipt(
     BuildContext context,
-    PickedReceiptImage picked,
+    ReceiptImage picked,
   ) async {
     final (isCurrentGeneration, resetParsingIfCurrent) =
         trackQuickEntryGeneration();

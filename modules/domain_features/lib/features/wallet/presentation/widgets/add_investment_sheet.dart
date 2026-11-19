@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
+import '../../../../core/presentation/widgets/category/prj_category_item.dart';
 import '../../../../core/presentation/widgets/prj_vip_lock_banner.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../domain/entities/wallet_entity.dart';
@@ -123,7 +124,7 @@ class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {
                   final isSelected =
                       controller.selectedInvestmentCategory.value?.id ==
                       category.id;
-                  return CcCategoryItem(
+                  return PrjCategoryItem(
                     iconCode: category.iconCode,
                     iconFamily: category.iconFamily,
                     label: el.tr(category.nameKey),
