@@ -114,18 +114,6 @@
 @import geolocator_apple;
 #endif
 
-#if __has_include(<google_mlkit_commons/GoogleMlKitCommonsPlugin.h>)
-#import <google_mlkit_commons/GoogleMlKitCommonsPlugin.h>
-#else
-@import google_mlkit_commons;
-#endif
-
-#if __has_include(<google_mlkit_text_recognition/GoogleMlKitTextRecognitionPlugin.h>)
-#import <google_mlkit_text_recognition/GoogleMlKitTextRecognitionPlugin.h>
-#else
-@import google_mlkit_text_recognition;
-#endif
-
 #if __has_include(<google_sign_in_ios/GoogleSignInPlugin.h>)
 #import <google_sign_in_ios/GoogleSignInPlugin.h>
 #else
@@ -207,8 +195,6 @@
   [FlutterUdidPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterUdidPlugin"]];
   [GeocodingDarwinPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeocodingDarwinPlugin"]];
   [GeolocatorPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeolocatorPlugin"]];
-  [GoogleMlKitCommonsPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleMlKitCommonsPlugin"]];
-  [GoogleMlKitTextRecognitionPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleMlKitTextRecognitionPlugin"]];
   [GoogleSignInPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleSignInPlugin"]];
   [ImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"ImagePickerPlugin"]];
   [LocalAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"LocalAuthPlugin"]];

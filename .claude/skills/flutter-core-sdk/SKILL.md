@@ -61,12 +61,12 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 
 | Where | Why it leaks | Direction |
 |---|---|---|
-| `cc_sdk/.../cc_receipt_scan_helper.dart` | receipt scanning is a finance use case | generalize to a "document/image pick + AI extract" capability, or move to `domain_features` |
-| `cc_sdk_ui/lib/widgets/wallet/cc_wallet_item.dart` | wallet widget | move to `domain_features` |
-| `cc_sdk_ui/lib/widgets/category/*` | likely expense-category shaped | generalize (generic "tag/group item") or move |
-| `cc_gemini_helper`, `cc_slack_*`, `cc_speech_helper` | tied to one vendor | hide behind an interface; vendor impl in an optional package |
-| `cc_sdk/pubspec.yaml` (27 dependencies): `firebase_*`, `firebase_ai`, `google_mlkit_text_recognition`, `geolocator`, `geocoding`, `speech_to_text`, `image_picker`, `permission_handler`, `phone_numbers_parser`, `flutter_udid` | every consumer inherits all of them, even to use `.Log()` | move behind capability interfaces in separate packages |
-| `CcFeatureFlags.isVipModeEnabled` (`ENABLE_VIP_MODE`) | product concept in a core config type | move to the app's own flags |
+| `cc_sdk/.../cc_receipt_scan_helper.dart` | receipt scanning is a finance use case | **Done (2.0.0):** removed; the app owns `ReceiptImagePickerHelper` |
+| `cc_sdk_ui/lib/widgets/wallet/cc_wallet_item.dart` | wallet widget | Copied to `domain_features` (`PrjWalletItem`); SDK copy `@Deprecated`, remove it |
+| `cc_sdk_ui/lib/widgets/category/*` | expense-category shaped | Copied to `domain_features` (`PrjCategory*`); SDK copies `@Deprecated`, remove them |
+| `cc_gemini_helper`, `cc_slack_*`, `cc_speech_helper` | tied to one vendor | **Done (2.0.0):** `CcAiClient`, `CcFeedbackReporter`, `CcSpeechRecognizer` + capability packages |
+| `cc_sdk/pubspec.yaml` (was 27 dependencies) | every consumer inherited every vendor SDK | **Done (2.0.0):** 15 left, no vendor service SDK. Still in core: `catcher_2`, `connectivity_plus`, `internet_connection_checker_plus`, `device_info_plus`, `package_info_plus`, `flutter_udid`, `path_provider`, `shared_preferences` (platform plugins for universal concerns), `dartx` (re-exported as public API), `ansicolor` (vendored gson) |
+| `CcFeatureFlags.isVipModeEnabled` (`ENABLE_VIP_MODE`) | product concept in a core config type | App uses `PrjFeatureFlags`; SDK getter `@Deprecated`, remove it |
 | `CcUserEntity.linkedProviderIds` doc | describes the field in Firebase terms | describe provider-neutrally |
 | `cc_micro_features`: `FirebaseAuthRepository` (in `domain/`) | the abstraction is named after its vendor | rename to `AuthRepository`; keep `FirebaseAuthRepositoryImpl` in `data/` |
 
