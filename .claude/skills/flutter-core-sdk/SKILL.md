@@ -40,6 +40,15 @@ Inner rings never import outer rings. The core ring has no vendor SDK dependency
 - Heavy or vendor packages (Firebase, AI, speech, maps) go in the capability ring behind an interface, never
   in the core ring's `pubspec.yaml`.
 - Prefer injected abstractions (`Analytics`, `CrashReporter`, `AiClient`) over static calls to a vendor.
+- Reference pattern already in the SDK: `CcNetworkInfo` (`cc_sdk`) and `CcMessagingService` (`cc_sdk_data`) are
+  abstract interfaces; the Firebase implementation of messaging lives outside the core
+  (`cc_micro_features/lib/features/messaging/data/services/`). Copy this shape for every new vendor capability.
+- Do not add new static-only vendor helpers (private constructor + static methods calling a vendor SDK): they
+  cannot be mocked or swapped. Today there are 12 (`CcAnalyticsHelper`, `CcCrashReportingHelper`,
+  `CcAppCheckHelper`, `CcGeminiHelper`, `CcSpeechHelper`, `CcSlackFeedbackHelper`, ...) to migrate.
+- Configuration is read through the SDK's own config types, never by calling `dotenv` from new code;
+  `CcFeatureFlags` and `CcAppTrackName` currently read `flutter_dotenv` directly, which forces every consumer
+  to ship a `.env` file.
 
 ## Known domain leaks to relocate (audit of the current SDK)
 
@@ -52,7 +61,10 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | `cc_sdk_ui/lib/widgets/wallet/cc_wallet_item.dart` | wallet widget | move to `domain_features` |
 | `cc_sdk_ui/lib/widgets/category/*` | likely expense-category shaped | generalize (generic "tag/group item") or move |
 | `cc_gemini_helper`, `cc_slack_*`, `cc_speech_helper` | tied to one vendor | hide behind an interface; vendor impl in an optional package |
-| `cc_sdk/pubspec.yaml`: `firebase_*`, `firebase_ai` | every consumer inherits Firebase | move behind capability interfaces |
+| `cc_sdk/pubspec.yaml` (27 dependencies): `firebase_*`, `firebase_ai`, `google_mlkit_text_recognition`, `geolocator`, `geocoding`, `speech_to_text`, `image_picker`, `permission_handler`, `phone_numbers_parser`, `flutter_udid` | every consumer inherits all of them, even to use `.Log()` | move behind capability interfaces in separate packages |
+| `CcFeatureFlags.isVipModeEnabled` (`ENABLE_VIP_MODE`) | product concept in a core config type | move to the app's own flags |
+| `CcUserEntity.linkedProviderIds` doc | describes the field in Firebase terms | describe provider-neutrally |
+| `cc_micro_features`: `FirebaseAuthRepository` (in `domain/`) | the abstraction is named after its vendor | rename to `AuthRepository`; keep `FirebaseAuthRepositoryImpl` in `data/` |
 
 ## Stability and versioning
 
@@ -67,12 +79,18 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 
 | Package | Owns | Entry point |
 |---|---|---|
-| `cc_sdk` | Network/device helpers, DI core, config (`CcFeatureFlags`, route config), crash reporting, `ccGson`, the `.Log()` extension, `CcScale`, `CcWindowSizeClass`, `CcBaseColors` | `export_cc_sdk.dart` |
-| `cc_sdk_ui` | Design system and widget catalog (adaptive layout, buttons, cards, dialogs, inputs, text, shimmer, navigation), `CcContextExtension`, `CcSpace*`, `CcMaxWidth`, `CcTwoColumn` | `export_cc_sdk_ui.dart` |
+| `cc_sdk` | Network/device helpers, DI core, config (`CcFeatureFlags`, route config), crash reporting, `ccGson`, the `.Log()` extension, `CcScale`, `CcWindowSizeClass` | `export_cc_sdk.dart` |
+| `cc_sdk_ui` | Design system and widget catalog (adaptive layout, buttons, cards, dialogs, inputs, text, shimmer, navigation), tokens (`CcBaseColors`, `CcSpace*`), `CcContextExtension`, `CcMaxWidth`, `CcTwoColumn` | `export_cc_sdk_ui.dart` |
 | `cc_mixin` | Reusable behavior mixins: pagination, refresh/load-more, back-button, navigation, view config | `export_cc_mixin.dart` |
 | `cc_sdk_data` | Core entities/models, `CcFailure` hierarchy, shared domain services | `export_cc_sdk_data.dart` |
 
-Dependency direction: `cc_sdk_ui` / `cc_mixin` → `cc_sdk` → `cc_sdk_data`. Never the reverse, never a cycle.
+Dependency direction (verified from `pubspec.yaml` and imports): `cc_mixin` → `cc_sdk_ui` → `cc_sdk` →
+`cc_sdk_data`. Never the reverse, never a cycle. `cc_mixin` depending on the whole design system is a known
+weakness: a new mixin should depend only on `cc_sdk_data` / `cc_sdk` unless it genuinely needs a widget.
+
+Encapsulation: only `cc_mixin` keeps implementation in `lib/src/`. In the other packages the barrel exports
+nearly every file, so every file is public API and consumers deep-import internal paths. New implementation
+files go under `lib/src/`, and only what consumers need is exported from the barrel.
 
 ## Hard rules (a violation breaks reuse)
 
