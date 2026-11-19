@@ -70,14 +70,29 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
 
   @override
   Widget? buildContent(BuildContext context) {
-    return Obx(() {
-      return Column(
-        children: [
-          Expanded(child: _buildScrollBody(context)),
-          _buildBottomSlot(context),
-        ],
-      );
-    });
+    // The keypad always sits under the content (never as an extra column), so
+    // the tablet keeps its two-column body; the keypad itself is compact on
+    // tablets (see QuickNumericKeypad).
+    return Column(
+      children: [
+        Expanded(child: _buildScrollBody(context)),
+        _buildBottomSlot(context),
+      ],
+    );
+  }
+
+  Widget _buildKeypad(BuildContext context) {
+    return MoneyKeypadPanel(
+      onKeyPress: controller.updateAmount,
+      onDelete: controller.deleteChar,
+      onClear: controller.clearAmount,
+      suggestions: MoneyConstants.getReconciliationQuickAmounts(
+        currencyCode: controller.currencyCode,
+      ),
+      onSuggestion: (value) => controller.setAmount(value),
+      onDone: controller.stopEditing,
+      activeColor: context.ccColorScheme.primary,
+    );
   }
 
   Widget _buildScrollBody(BuildContext context) {
@@ -103,9 +118,9 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
     );
   }
 
-  /// Landscape tablet, three columns: the wallet tiles (the thing being
-  /// counted) flow across the two left columns; the totals, mismatch warning,
-  /// confirm button and history fill the third.
+  /// Landscape tablet, two columns (2:1): the wallet tiles (the thing being
+  /// counted) flow across two sub-columns on the left; the totals, mismatch
+  /// warning, confirm button and history fill the right.
   List<Widget> _buildTwoColumnChildren(BuildContext context) {
     return [
       _buildSeeMoreDescription(context),
@@ -223,20 +238,7 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
         return const SizedBox.shrink();
       }
 
-      return SafeArea(
-        top: false,
-        child: MoneyKeypadPanel(
-          onKeyPress: controller.updateAmount,
-          onDelete: controller.deleteChar,
-          onClear: controller.clearAmount,
-          suggestions: MoneyConstants.getReconciliationQuickAmounts(
-            currencyCode: controller.currencyCode,
-          ),
-          onSuggestion: (value) => controller.setAmount(value),
-          onDone: controller.stopEditing,
-          activeColor: context.ccColorScheme.primary,
-        ),
-      );
+      return SafeArea(top: false, child: _buildKeypad(context));
     });
   }
 }

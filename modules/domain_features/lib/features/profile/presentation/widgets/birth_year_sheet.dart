@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'birth_year_content_sheet.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class BirthYearSheet extends StatelessWidget {
   final int currentYear;
@@ -20,10 +21,8 @@ class BirthYearSheet extends StatelessWidget {
     required int minYear,
     required int maxYear,
   }) {
-    return showModalBottomSheet<int>(
+    return showAdaptiveBottomSheet<int>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (context) => BirthYearSheet(
         currentYear: currentYear,
         minYear: minYear,

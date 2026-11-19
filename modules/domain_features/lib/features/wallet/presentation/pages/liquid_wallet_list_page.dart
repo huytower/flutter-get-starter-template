@@ -169,21 +169,32 @@ class _LiquidWalletListView extends CcGetView<WalletController> {
             controller.isEditMode.value = false;
           }
         },
-        child: ListView(
-          padding: EdgeInsets.all(
-            context.respPadding(CcPaddingParams.SPACE_MD),
-          ),
-          children: [
-            // Landscape tablet: wallets flow across three columns instead of
-            // one stretched row each.
-            if (CcTwoColumn.shouldUse(context))
-              CcMaxWidth(
-                maxWidth: CcTwoColumn.defaultMaxWidth,
-                child: CcMultiColumn(children: items),
-              )
-            else
-              ...items,
-          ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Small tablet and up (>= 600 dp, either orientation): wallets
+            // flow across two columns instead of one stretched row each.
+            final useGrid = CcWindowSizeClass.fromWidth(
+              constraints.maxWidth,
+            ).isAtLeast(CcWindowSizeClass.medium);
+            return ListView(
+              padding: EdgeInsets.all(
+                context.respPadding(CcPaddingParams.SPACE_MD),
+              ),
+              children: [
+                if (useGrid)
+                  CcMaxWidth(
+                    maxWidth: CcTwoColumn.defaultMaxWidth,
+                    child: CcMultiColumn(
+                      columns: 2,
+                      columnGap: context.respPadding(CcPaddingParams.SPACE_MD),
+                      children: items,
+                    ),
+                  )
+                else
+                  ...items,
+              ],
+            );
+          },
         ),
       );
     });

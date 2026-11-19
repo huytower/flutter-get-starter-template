@@ -11,6 +11,7 @@ import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
 import '../get_x/report_controller.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class DeleteTransactionSheet extends StatelessWidget {
   const DeleteTransactionSheet({super.key, required this.transaction});
@@ -21,9 +22,8 @@ class DeleteTransactionSheet extends StatelessWidget {
     BuildContext context,
     TransactionEntity transaction,
   ) {
-    return showModalBottomSheet<Result<Unit, CcFailure>>(
+    return showAdaptiveBottomSheet<Result<Unit, CcFailure>>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: context.brXl),
       builder: (_) => DeleteTransactionSheet(transaction: transaction),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'transaction_date_picker_content_sheet.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class TransactionDatePickerSheet extends StatelessWidget {
   final DateTime initialDate;
@@ -20,10 +21,9 @@ class TransactionDatePickerSheet extends StatelessWidget {
     required DateTime firstDate,
     required DateTime lastDate,
   }) {
-    return showModalBottomSheet<DateTime>(
+    return showAdaptiveBottomSheet<DateTime>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: null,
       builder: (context) => TransactionDatePickerSheet(
         initialDate: initialDate,
         firstDate: firstDate,

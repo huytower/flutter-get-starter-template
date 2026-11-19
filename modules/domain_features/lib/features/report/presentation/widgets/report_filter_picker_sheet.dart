@@ -6,6 +6,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../get_x/report_controller.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class ReportFilterPickerSheet extends StatefulWidget {
   const ReportFilterPickerSheet({
@@ -25,10 +26,9 @@ class ReportFilterPickerSheet extends StatefulWidget {
     required String? selectedWalletId,
     required ReportFilterType selectedType,
   }) {
-    return showModalBottomSheet<({ReportFilterType type, String? walletId})>(
+    return showAdaptiveBottomSheet<({ReportFilterType type, String? walletId})>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: null,
       builder: (_) => ReportFilterPickerSheet(
         wallets: wallets,
         selectedWalletId: selectedWalletId,

@@ -13,6 +13,7 @@ import '../../../transaction/presentation/widgets/transaction_submit_button.dart
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import 'wallet_strip_card.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class TransferMoneySheet extends StatefulWidget {
   const TransferMoneySheet({super.key, required this.sourceWallet});
@@ -23,9 +24,8 @@ class TransferMoneySheet extends StatefulWidget {
     BuildContext context, {
     required WalletEntity sourceWallet,
   }) {
-    return showModalBottomSheet<void>(
+    return showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: context.brXl),
       builder: (_) => TransferMoneySheet(sourceWallet: sourceWallet),

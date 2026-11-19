@@ -128,8 +128,11 @@ class _BirthYearContentSheetState extends State<BirthYearContentSheet> {
     ColorScheme scheme,
     int totalYears,
   ) {
+    // respDim grows with the window, so on a tablet cap the grid to a share of
+    // the window height instead of letting it fill the sheet.
+    final double maxGridHeight = MediaQuery.sizeOf(context).height * 0.4;
     return SizedBox(
-      height: context.respDim(250),
+      height: context.respDim(250).clamp(0, maxGridHeight),
       child: GridView.builder(
         controller: _scrollController,
         padding: EdgeInsets.symmetric(

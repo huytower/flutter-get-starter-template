@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class GuidelineResetBottomSheet extends StatelessWidget {
   const GuidelineResetBottomSheet({
@@ -21,10 +22,9 @@ class GuidelineResetBottomSheet extends StatelessWidget {
     required int count,
     required VoidCallback onConfirm,
   }) {
-    return showModalBottomSheet<bool>(
+    return showAdaptiveBottomSheet<bool>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: null,
       builder: (context) => GuidelineResetBottomSheet(
         desc: desc,
         count: count,

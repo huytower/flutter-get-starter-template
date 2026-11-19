@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'weekly_audit_day_content_sheet.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class WeeklyAuditDaySheet extends StatelessWidget {
   final int currentDay;
@@ -8,10 +9,8 @@ class WeeklyAuditDaySheet extends StatelessWidget {
   const WeeklyAuditDaySheet({super.key, required this.currentDay});
 
   static Future<int?> show(BuildContext context, {required int currentDay}) {
-    return showModalBottomSheet<int>(
+    return showAdaptiveBottomSheet<int>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (context) => WeeklyAuditDaySheet(currentDay: currentDay),
     );
   }

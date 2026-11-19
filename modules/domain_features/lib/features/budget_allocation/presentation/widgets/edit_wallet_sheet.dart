@@ -6,6 +6,7 @@ import 'package:message/export_message.dart';
 
 import '../../../guideline/export_guideline.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 /// Bottom sheet for wallet actions (edit/delete).
 class EditWalletSheet extends StatelessWidget {
@@ -26,8 +27,9 @@ class EditWalletSheet extends StatelessWidget {
     required VoidCallback onEdit,
     required VoidCallback onDelete,
   }) {
-    return showModalBottomSheet<void>(
+    return showAdaptiveBottomSheet<void>(
       context: context,
+      isScrollControlled: false,
       backgroundColor: context.ccColorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: context.brXl),
       builder: (_) =>

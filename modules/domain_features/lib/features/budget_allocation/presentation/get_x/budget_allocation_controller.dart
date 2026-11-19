@@ -28,6 +28,7 @@ import '../../../wallet/presentation/widgets/add_investment_sheet.dart';
 import '../../../wallet/presentation/widgets/add_liquid_sheet.dart';
 import '../widgets/edit_wallet_sheet.dart';
 import '../widgets/wallet_delete_confirmation_sheet.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 @lazySingleton
 class BudgetAllocationController extends CcGetController {
@@ -85,9 +86,8 @@ class BudgetAllocationController extends CcGetController {
   }
 
   void openAddWallet(BuildContext context) {
-    showModalBottomSheet<void>(
+    showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -97,9 +97,8 @@ class BudgetAllocationController extends CcGetController {
   }
 
   void openAddInvestment(BuildContext context) {
-    showModalBottomSheet<void>(
+    showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -142,9 +141,8 @@ class BudgetAllocationController extends CcGetController {
   }
 
   void _editWallet(BuildContext context, WalletEntity wallet) {
-    showModalBottomSheet<void>(
+    showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -154,9 +152,8 @@ class BudgetAllocationController extends CcGetController {
   }
 
   void _editInvestment(BuildContext context, WalletEntity wallet) {
-    showModalBottomSheet<void>(
+    showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),

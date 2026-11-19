@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../get_x/reconciliation_controller.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class ReconciliationSuccessSheet extends StatefulWidget {
   const ReconciliationSuccessSheet({super.key, this.onDismiss});
@@ -78,9 +79,9 @@ class ReconciliationUndoSheet extends StatelessWidget {
   const ReconciliationUndoSheet({super.key});
 
   static Future<void> show(BuildContext context) {
-    return showModalBottomSheet<void>(
+    return showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
+      backgroundColor: null,
       builder: (_) => const ReconciliationUndoSheet(),
     );
   }

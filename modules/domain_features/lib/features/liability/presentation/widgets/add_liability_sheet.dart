@@ -7,6 +7,7 @@ import 'package:message/export_message.dart';
 import '../../../../core/di/di.dart';
 import '../../domain/entities/liability_entity.dart';
 import '../get_x/add_liability_sheet_controller.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
   const AddLiabilitySheet({
@@ -23,9 +24,8 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
     String initialDirection = LiabilityDirection.borrow,
     bool showDirectionToggle = false,
   }) {
-    return showModalBottomSheet<bool>(
+    return showAdaptiveBottomSheet<bool>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),

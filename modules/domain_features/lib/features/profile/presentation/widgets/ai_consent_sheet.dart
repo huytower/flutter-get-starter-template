@@ -6,6 +6,7 @@ import 'package:message/export_message.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../pages/terms_of_service_page.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 /// Asks the user to allow sharing data with Google Gemini before any AI
 /// feature sends anything. Short on purpose: what is sent, to whom, how to
@@ -19,9 +20,9 @@ class AiConsentSheet extends StatelessWidget {
     final prefs = getIt<AiFallbackPreferenceDataSource>();
     if (await prefs.isGeminiEnabled()) return true;
     if (!context.mounted) return false;
-    final allowed = await showModalBottomSheet<bool>(
+    final allowed = await showAdaptiveBottomSheet<bool>(
       context: context,
-      isScrollControlled: true,
+      backgroundColor: null,
       builder: (_) => const AiConsentSheet(),
     );
     final granted = allowed ?? false;

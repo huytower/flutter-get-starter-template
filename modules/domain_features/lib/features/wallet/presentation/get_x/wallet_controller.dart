@@ -24,6 +24,7 @@ import '../../domain/repositories/wallet_repository.dart';
 import '../widgets/add_liquid_sheet.dart';
 import '../widgets/investment_delete_confirm_sheet.dart';
 import '../widgets/wallet_delete_confirm_sheet.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 /// Outcome of a wallet deletion attempt (rule: only empty wallets deletable).
 enum WalletDeleteOutcome { success, notEmpty, protected, error }
@@ -77,9 +78,8 @@ class WalletController extends CcGetController {
   }
 
   void openForm(BuildContext context, {WalletEntity? wallet}) {
-    showModalBottomSheet<void>(
+    showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -99,8 +99,9 @@ class WalletController extends CcGetController {
       }
     }
 
-    showModalBottomSheet<void>(
+    showAdaptiveBottomSheet<void>(
       context: context,
+      isScrollControlled: false,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),

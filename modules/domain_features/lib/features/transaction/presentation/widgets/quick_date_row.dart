@@ -21,7 +21,13 @@ class QuickDateRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return Row(
+    // Wrap (not Row): in a narrow column (tablet two-column form) the quick
+    // buttons drop to the next line instead of overflowing.
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: context.respDim(8),
+      runSpacing: context.respDim(8),
       children: [
         CcText(
           el.tr(CcLocaleKeys.transaction_time),
@@ -30,26 +36,30 @@ class QuickDateRow extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const Spacer(),
-        _buildQuickDateButton(
-          context,
-          el.tr(CcLocaleKeys.transaction_today),
-          DateTime.now(),
-        ),
-        const CcSpaceSM(),
-        _buildQuickDateButton(
-          context,
-          el.tr(CcLocaleKeys.transaction_yesterday),
-          DateTime.now().subtract(const Duration(days: 1)),
-        ),
-        const CcSpaceSM(),
-        CcBouncing(
-          onTap: onCalendarTap,
-          child: Icon(
-            Icons.calendar_month,
-            size: context.respIconSize(baseSize: 18),
-            color: scheme.outline,
-          ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildQuickDateButton(
+              context,
+              el.tr(CcLocaleKeys.transaction_today),
+              DateTime.now(),
+            ),
+            const CcSpaceSM(),
+            _buildQuickDateButton(
+              context,
+              el.tr(CcLocaleKeys.transaction_yesterday),
+              DateTime.now().subtract(const Duration(days: 1)),
+            ),
+            const CcSpaceSM(),
+            CcBouncing(
+              onTap: onCalendarTap,
+              child: Icon(
+                Icons.calendar_month,
+                size: context.respIconSize(baseSize: 18),
+                color: scheme.outline,
+              ),
+            ),
+          ],
         ),
       ],
     );

@@ -8,6 +8,7 @@ import '../get_x/smart_entry_preview_state.dart';
 import 'smart_entry_preview_row_card.dart';
 import 'smart_entry_sheet_header.dart';
 import 'transaction_submit_button.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class SmartEntryPreviewSheet extends StatelessWidget {
   const SmartEntryPreviewSheet({
@@ -24,10 +25,9 @@ class SmartEntryPreviewSheet extends StatelessWidget {
     required SmartEntryPreviewState state,
     required SmartEntryCommit onConfirm,
   }) {
-    return showModalBottomSheet<bool>(
+    return showAdaptiveBottomSheet<bool>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: null,
       builder: (_) =>
           SmartEntryPreviewSheet(state: state, onConfirm: onConfirm),
     );

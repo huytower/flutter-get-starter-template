@@ -114,29 +114,81 @@ class CurrencySelectionContentSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildCurrencyList(context, scheme, currencies, controller),
-          _buildDefaultCurrencyNotice(context, scheme, controller),
-          _buildProviderAttribution(context, scheme),
-          const CcSpaceXS(),
-          _buildHiddenTagsSection(context, scheme, controller),
-          _buildActions(context, scheme, controller),
+          if (_useGrid(context))
+            ..._buildInlineFooter(context, scheme, controller)
+          else ...[
+            _buildDefaultCurrencyNotice(context, scheme, controller),
+            _buildProviderAttribution(context, scheme),
+            const CcSpaceXS(),
+            _buildHiddenTagsSection(context, scheme, controller),
+            _buildActions(context, scheme, controller),
+          ],
           const CcSpaceXL(),
+          // Keep the last row clear of the system navigation bar / taskbar.
+          SizedBox(height: MediaQuery.viewPaddingOf(context).bottom),
         ],
       ),
     );
   }
 
-  Widget _buildDefaultCurrencyNotice(
+  // The sheet is capped narrower than the window, so the decision uses the
+  // window class (small tablet and up, >= 600 dp), not the sheet's width.
+  bool _useGrid(BuildContext context) =>
+      context.windowSizeClass.isAtLeast(CcWindowSizeClass.medium);
+
+  /// Tablet footer: the notice + attribution share one row with the actions.
+  List<Widget> _buildInlineFooter(
     BuildContext context,
     ColorScheme scheme,
     CurrencySelectionController controller,
   ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
-        vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+    return [
+      Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+          vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDefaultCurrencyNotice(
+                    context,
+                    scheme,
+                    controller,
+                    inline: true,
+                  ),
+                  _buildProviderAttribution(context, scheme, inline: true),
+                ],
+              ),
+            ),
+            ..._buildActionButtons(context, scheme, controller),
+          ],
+        ),
       ),
+      _buildHiddenTagsSection(context, scheme, controller),
+    ];
+  }
+
+  Widget _buildDefaultCurrencyNotice(
+    BuildContext context,
+    ColorScheme scheme,
+    CurrencySelectionController controller, {
+    bool inline = false,
+  }) {
+    return Padding(
+      padding: inline
+          ? EdgeInsets.zero
+          : EdgeInsets.symmetric(
+              horizontal: context.respPadding(CcPaddingParams.PAGE_MD),
+              vertical: context.respPadding(CcPaddingParams.SPACE_XS),
+            ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: inline
+            ? MainAxisAlignment.start
+            : MainAxisAlignment.center,
         children: [
           RichText(
             text: TextSpan(
@@ -167,11 +219,15 @@ class CurrencySelectionContentSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildProviderAttribution(BuildContext context, ColorScheme scheme) {
+  Widget _buildProviderAttribution(
+    BuildContext context,
+    ColorScheme scheme, {
+    bool inline = false,
+  }) {
     return CcText(
       'Exchange rates provided by Frankfurter service',
-      align: Alignment.center,
-      textAlign: TextAlign.center,
+      align: inline ? Alignment.centerLeft : Alignment.center,
+      textAlign: inline ? TextAlign.start : TextAlign.center,
       textStyle: context.ccTextTheme.labelSmall?.copyWith(
         color: scheme.onSurface.withOpacity(0.5),
       ),
@@ -278,13 +334,25 @@ class CurrencySelectionContentSheet extends StatelessWidget {
     return CcSymmetricPadding(
       horizontal: CcPaddingParams.PAGE_MD,
       vertical: CcPaddingParams.SPACE_SM,
-      child: Column(
-        children: currencies
-            .map(
-              (code) => _buildCurrencyTile(context, scheme, code, controller),
-            )
-            .toList(),
-      ),
+      child: _buildTiles(context, scheme, currencies, controller),
+    );
+  }
+
+  Widget _buildTiles(
+    BuildContext context,
+    ColorScheme scheme,
+    List<String> currencies,
+    CurrencySelectionController controller,
+  ) {
+    final tiles = [
+      for (final code in currencies)
+        _buildCurrencyTile(context, scheme, code, controller),
+    ];
+    if (!_useGrid(context)) return Column(children: tiles);
+    return CcMultiColumn(
+      columns: 2,
+      columnGap: context.respDim(8),
+      children: tiles,
     );
   }
 
@@ -417,35 +485,43 @@ class CurrencySelectionContentSheet extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(null);
-            },
-            child: CcText(
-              el.tr(CcLocaleKeys.common_cancel),
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                color: scheme.primary,
-                fontWeight: CcTypographyParams.semiBold,
-              ),
-            ),
-          ),
-          const CcSpaceSM(),
-          TextButton(
-            onPressed: () {
-              final selectedCode = controller.primaryCurrencyCode.value;
-              Navigator.of(context).pop(selectedCode);
-            },
-            child: CcText(
-              el.tr(CcLocaleKeys.common_ok),
-              textStyle: context.ccTextTheme.titleMedium?.copyWith(
-                color: scheme.primary,
-                fontWeight: CcTypographyParams.semiBold,
-              ),
-            ),
-          ),
-        ],
+        children: _buildActionButtons(context, scheme, controller),
       ),
     );
+  }
+
+  List<Widget> _buildActionButtons(
+    BuildContext context,
+    ColorScheme scheme,
+    CurrencySelectionController controller,
+  ) {
+    return [
+      TextButton(
+        onPressed: () {
+          Navigator.of(context).pop(null);
+        },
+        child: CcText(
+          el.tr(CcLocaleKeys.common_cancel),
+          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            color: scheme.primary,
+            fontWeight: CcTypographyParams.semiBold,
+          ),
+        ),
+      ),
+      const CcSpaceSM(),
+      TextButton(
+        onPressed: () {
+          final selectedCode = controller.primaryCurrencyCode.value;
+          Navigator.of(context).pop(selectedCode);
+        },
+        child: CcText(
+          el.tr(CcLocaleKeys.common_ok),
+          textStyle: context.ccTextTheme.titleMedium?.copyWith(
+            color: scheme.primary,
+            fontWeight: CcTypographyParams.semiBold,
+          ),
+        ),
+      ),
+    ];
   }
 }

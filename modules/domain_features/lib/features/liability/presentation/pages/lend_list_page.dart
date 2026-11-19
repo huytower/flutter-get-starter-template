@@ -12,6 +12,7 @@ import '../get_x/liability_list_controller.dart';
 import '../widgets/add_liability_sheet.dart';
 import '../widgets/lend_wallet_list_item.dart';
 import '../widgets/liability_delete_confirm_sheet.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 @RoutePage()
 class LendListPage extends StatefulWidget {
@@ -195,9 +196,8 @@ class _LendListView extends CcGetView<LiabilityListController> {
       _openAddLendSheet(context, controller);
 
   void _confirmDelete(BuildContext context, String id) {
-    showModalBottomSheet<void>(
+    showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),

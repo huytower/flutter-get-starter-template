@@ -2,6 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class DisplayNameSheet extends StatefulWidget {
   const DisplayNameSheet({super.key, required this.currentName});
@@ -12,10 +13,8 @@ class DisplayNameSheet extends StatefulWidget {
     BuildContext context, {
     required String currentName,
   }) {
-    return showModalBottomSheet<String>(
+    return showAdaptiveBottomSheet<String>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (context) => DisplayNameSheet(currentName: currentName),
     );
   }

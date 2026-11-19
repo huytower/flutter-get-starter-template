@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'currency_selection_content_sheet.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class CurrencySelectionSheet extends StatelessWidget {
   const CurrencySelectionSheet({super.key, required this.initialCurrencyCode});
@@ -11,10 +12,10 @@ class CurrencySelectionSheet extends StatelessWidget {
     BuildContext context,
     String initialCurrencyCode,
   ) {
-    return showModalBottomSheet<String>(
+    return showAdaptiveBottomSheet<String>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      // Two columns of tiles need more room than a plain list sheet.
+      tabletMaxWidth: 840,
       builder: (context) =>
           CurrencySelectionSheet(initialCurrencyCode: initialCurrencyCode),
     );

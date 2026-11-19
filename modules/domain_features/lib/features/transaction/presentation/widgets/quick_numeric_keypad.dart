@@ -15,8 +15,27 @@ class QuickNumericKeypad extends StatelessWidget {
     required this.activeColor,
   });
 
+  /// Small tablet and up: respDim keeps growing with the window and would make
+  /// the keys huge, so the key height is capped and the pad is width-limited.
+  static const double _tabletKeyHeight = 36;
+  static const double _tabletMaxWidth = 480;
+
+  bool _isTablet(BuildContext context) =>
+      context.windowSizeClass.isAtLeast(CcWindowSizeClass.medium);
+
   @override
   Widget build(BuildContext context) {
+    final pad = _buildPad(context);
+    if (!_isTablet(context)) return pad;
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _tabletMaxWidth),
+        child: pad,
+      ),
+    );
+  }
+
+  Widget _buildPad(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: context.respPadding(CcPaddingParams.SPACE_XS),
@@ -58,7 +77,9 @@ class QuickNumericKeypad extends StatelessWidget {
       isBouncing: true,
       onTap: () => isDelete ? onDelete() : onKeyPress(label),
       child: Container(
-        height: context.respDim(30),
+        height: _isTablet(context)
+            ? context.respDim(30).clamp(0, _tabletKeyHeight).toDouble()
+            : context.respDim(30),
         margin: EdgeInsets.all(context.respDim(2)),
         decoration: BoxDecoration(
           color: context.ccColorScheme.surface,

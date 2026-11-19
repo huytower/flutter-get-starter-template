@@ -10,6 +10,7 @@ import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_limit/domain/usecases/sort_budget_limits_by_progress_usecase.dart';
 import '../../../budget_limit/export_budget_limit.dart';
 import '../../../guideline/export_guideline.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class BudgetLimitPreviewSection extends StatelessWidget {
   const BudgetLimitPreviewSection({super.key});
@@ -122,9 +123,8 @@ class BudgetLimitPreviewSection extends StatelessWidget {
   }
 
   void _openAddBudget(BuildContext context) {
-    showModalBottomSheet<void>(
+    showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),

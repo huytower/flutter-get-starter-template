@@ -16,6 +16,7 @@ import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
 import '../../../transaction/presentation/widgets/transaction_form_container.dart';
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 import '../get_x/quick_edit_transaction_sheet_controller.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class QuickEditTransactionSheet
     extends GetView<QuickEditTransactionSheetController> {
@@ -32,9 +33,8 @@ class QuickEditTransactionSheet
       }
     });
 
-    return showModalBottomSheet<void>(
+    return showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),

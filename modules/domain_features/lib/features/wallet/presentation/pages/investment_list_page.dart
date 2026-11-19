@@ -9,6 +9,7 @@ import '../../../../core/getx/cc_get_view.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/add_investment_sheet.dart';
 import '../widgets/investment_wallet_list_item.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 @RoutePage()
 class InvestmentListPage extends StatefulWidget {
@@ -200,9 +201,8 @@ class _InvestmentListView extends CcGetView<WalletController> {
 }
 
 void _showAddInvestmentSheet(BuildContext context, {dynamic wallet}) {
-  showModalBottomSheet<void>(
+  showAdaptiveBottomSheet<void>(
     context: context,
-    isScrollControlled: true,
     backgroundColor: context.ccColorScheme.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),

@@ -11,6 +11,7 @@ import '../get_x/budget_limit_controller.dart';
 import '../widgets/add_budget_limit_sheet.dart';
 import '../widgets/budget_limit_delete_confirm_sheet.dart';
 import '../widgets/budget_limit_grid.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 @RoutePage()
 class BudgetLimitListPage extends StatefulWidget {
@@ -157,9 +158,8 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
     BuildContext context, {
     BudgetLimitEntity? editTarget,
   }) {
-    showModalBottomSheet<void>(
+    showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: context.brXl),
       builder: (_) => AddBudgetLimitSheet(editTarget: editTarget),
@@ -170,9 +170,8 @@ class _BudgetLimitListView extends CcGetView<BudgetLimitController> {
     BuildContext context,
     BudgetLimitEntity budget,
   ) {
-    showModalBottomSheet<void>(
+    showAdaptiveBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: context.ccColorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: context.brXl),
       builder: (_) => BudgetLimitDeleteConfirmSheet(
