@@ -62,11 +62,11 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | Where | Why it leaks | Direction |
 |---|---|---|
 | `cc_sdk/.../cc_receipt_scan_helper.dart` | receipt scanning is a finance use case | **Done (2.0.0):** removed; the app owns `ReceiptImagePickerHelper` |
-| `cc_sdk_ui/lib/widgets/wallet/cc_wallet_item.dart` | wallet widget | Copied to `domain_features` (`PrjWalletItem`); SDK copy `@Deprecated`, remove it |
-| `cc_sdk_ui/lib/widgets/category/*` | expense-category shaped | Copied to `domain_features` (`PrjCategory*`); SDK copies `@Deprecated`, remove them |
+| `cc_sdk_ui/lib/widgets/wallet/cc_wallet_item.dart` | wallet widget | **Done (2.0.0):** removed; the app owns `PrjWalletItem` |
+| `cc_sdk_ui/lib/widgets/category/*` | expense-category shaped | **Done (2.0.0):** removed; the app owns `PrjCategory*` |
 | `cc_gemini_helper`, `cc_slack_*`, `cc_speech_helper` | tied to one vendor | **Done (2.0.0):** `CcAiClient`, `CcFeedbackReporter`, `CcSpeechRecognizer` + capability packages |
 | `cc_sdk/pubspec.yaml` (was 27 dependencies) | every consumer inherited every vendor SDK | **Done (2.0.0):** 15 left, no vendor service SDK. Still in core: `catcher_2`, `connectivity_plus`, `internet_connection_checker_plus`, `device_info_plus`, `package_info_plus`, `flutter_udid`, `path_provider`, `shared_preferences` (platform plugins for universal concerns), `dartx` (re-exported as public API), `ansicolor` (vendored gson) |
-| `CcFeatureFlags.isVipModeEnabled` (`ENABLE_VIP_MODE`) | product concept in a core config type | App uses `PrjFeatureFlags`; SDK getter `@Deprecated`, remove it |
+| `CcFeatureFlags.isVipModeEnabled` (`ENABLE_VIP_MODE`) | product concept in a core config type | **Done (2.0.0):** removed; the app reads it via `PrjFeatureFlags` |
 | `CcUserEntity.linkedProviderIds` doc | describes the field in Firebase terms | describe provider-neutrally |
 | `cc_micro_features`: `FirebaseAuthRepository` (in `domain/`) | the abstraction is named after its vendor | rename to `AuthRepository`; keep `FirebaseAuthRepositoryImpl` in `data/` |
 
