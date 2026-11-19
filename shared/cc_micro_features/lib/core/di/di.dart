@@ -20,6 +20,7 @@ final GetIt getIt = GetIt.instance;
     AppUpdateConfigRepository,
     CcDeviceInfoHelper,
     CcDeviceEntity,
+    CcAnalytics,
     FirebaseAuth,
     GoogleSignIn,
   ],

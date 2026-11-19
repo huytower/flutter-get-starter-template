@@ -23,6 +23,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginWithAppleUseCase _loginWithAppleUseCase;
   final LinkWithAppleUseCase _linkWithAppleUseCaseInstance;
   final AuthPreferenceDataSource _preferenceDataSource;
+  final CcAnalytics _analytics;
 
   LoginBloc(
     this._loginUseCase,
@@ -31,6 +32,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     this._loginWithAppleUseCase,
     this._linkWithAppleUseCaseInstance,
     this._preferenceDataSource,
+    this._analytics,
   ) : super(const LoginInitial()) {
     on<LoginStarted>(_onLoginStarted);
     on<LoginWithGoogleStarted>(
@@ -126,8 +128,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         '$label Success: ${user.id}'.Log('LoginBloc');
         // After linking hits `credential-already-in-use` the user id switches
         // to the existing account; setUserId keeps analytics on the new one.
-        CcAnalyticsHelper.logLogin(method: method);
-        CcAnalyticsHelper.setUserId(user.id);
+        _analytics.logLogin(method: method);
+        _analytics.setUserId(user.id);
         emit(LoginSuccess(user));
       },
       (failure) {

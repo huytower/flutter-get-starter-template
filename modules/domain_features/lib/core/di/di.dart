@@ -13,6 +13,7 @@ final GetIt getIt = GetIt.instance;
     AuthCoordinator,
     CcDeviceInfoHelper,
     InternetConnection,
+    CcAnalytics,
   ],
 )
 void initMicroPackage() {}

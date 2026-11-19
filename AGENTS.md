@@ -81,6 +81,7 @@ shared/
     cc_sdk_ui/                    #   design system / widget catalog (CcContextExtension)
     cc_mixin/                     #   reusable behavior mixins (pagination, back-button, etc.)
     cc_sdk_data/                  #   core data entities/models
+    cc_sdk_firebase/              #   capability ring: Firebase impls of core interfaces (CcAnalytics, ...)
 cc_bridge/                        # Root-level cross-module contracts (*Coordinator / *Contract / *Provider)
                                    # (contracts only; the app-level service lives in modules/bridge)
 ```

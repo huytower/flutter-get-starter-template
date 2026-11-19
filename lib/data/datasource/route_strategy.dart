@@ -57,8 +57,9 @@ abstract class RoutingStrategy {
 @LazySingleton(as: RoutingStrategy)
 class AutoRouteStrategy extends RoutingStrategy {
   final AppRouter _appRouter;
+  final CcAnalytics _analytics;
 
-  AutoRouteStrategy(ThemeProvider themeProvider, this._appRouter)
+  AutoRouteStrategy(ThemeProvider themeProvider, this._appRouter, this._analytics)
     : super(themeProvider);
 
   @override
@@ -70,7 +71,7 @@ class AutoRouteStrategy extends RoutingStrategy {
         darkTheme: createDarkTheme(),
         themeMode: themeProvider.themeMode,
         routerConfig: _appRouter.config(
-          navigatorObservers: () => [CcAnalyticsHelper.observer],
+          navigatorObservers: () => [?_analytics.navigatorObserver],
         ),
         locale: CcLocalization.getCurrentLocale(context),
         localizationsDelegates: context.localizationDelegates,

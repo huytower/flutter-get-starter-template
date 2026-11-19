@@ -5,10 +5,12 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
 import 'dart:async' as _i687;
+import 'dart:typed_data' as _i100;
 
 import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
 import 'package:cc_micro_features/features/auth/domain/usecases/delete_account_usecase.dart'
     as _i308;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' as _i631;
 import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
 import 'package:dio/dio.dart' as _i361;
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart'
@@ -223,6 +225,8 @@ import 'package:domain_features/features/transaction/presentation/get_x/quick_en
     as _i84;
 import 'package:domain_features/features/transaction/presentation/get_x/transaction_controller.dart'
     as _i700;
+import 'package:domain_features/features/transaction/presentation/helper/receipt_image_picker_helper.dart'
+    as _i395;
 import 'package:domain_features/features/wallet/data/datasources/local/wallet_local_datasource.dart'
     as _i1058;
 import 'package:domain_features/features/wallet/data/datasources/wallet_sync_datasource.dart'
@@ -323,6 +327,11 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.factory<_i429.CurrencySelectionController>(() =>
         _i429.CurrencySelectionController(
             gh<_i195.CurrencyConversionService>()));
+    gh.factory<_i395.ReceiptImage>(() => _i395.ReceiptImage(
+          path: gh<String>(),
+          bytes: gh<_i100.Uint8List>(),
+          mimeType: gh<String>(),
+        ));
     gh.lazySingleton<_i402.SimpleCubitInterface>(
       () => _i691.SimpleCubit(),
       dispose: (i) => i.close(),
@@ -386,8 +395,18 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           local: gh<_i1058.WalletLocalDataSource>(),
           sync: gh<_i156.WalletSyncDataSource>(),
         ));
+    gh.factory<_i395.ReceiptImageBatchPickResult>(
+        () => _i395.ReceiptImageBatchPickResult(
+              images: gh<List<_i395.ReceiptImage>>(),
+              permissionDenied: gh<bool>(),
+              failed: gh<bool>(),
+            ));
     gh.lazySingleton<_i232.GuestLoginPromptService>(
         () => _i232.GuestLoginPromptService(gh<_i727.SessionContract>()));
+    gh.factory<_i395.ReceiptImagePickResult>(() => _i395.ReceiptImagePickResult(
+          image: gh<_i395.ReceiptImage>(),
+          permissionDenied: gh<bool>(),
+        ));
     gh.lazySingleton<_i944.ReconciliationRepository>(
         () => _i513.ReconciliationRepositoryImpl(
               local: gh<_i896.ReconciliationLocalDataSource>(),
@@ -692,6 +711,7 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i811.UserLevelController>(),
           gh<_i436.GenerateAiFinancialAdviceUseCase>(),
           gh<_i195.CurrencyConversionService>(),
+          gh<_i631.CcAnalytics>(),
         ));
   }
 }

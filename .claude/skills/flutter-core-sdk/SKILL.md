@@ -42,10 +42,13 @@ Inner rings never import outer rings. The core ring has no vendor SDK dependency
 - Prefer injected abstractions (`Analytics`, `CrashReporter`, `AiClient`) over static calls to a vendor.
 - Reference pattern already in the SDK: `CcNetworkInfo` (`cc_sdk`) and `CcMessagingService` (`cc_sdk_data`) are
   abstract interfaces; the Firebase implementation of messaging lives outside the core
-  (`cc_micro_features/lib/features/messaging/data/services/`). Copy this shape for every new vendor capability.
+  (`cc_micro_features/lib/features/messaging/data/services/`). Canonical capability example: `CcAnalytics`
+  (interface + `CcNoopAnalytics` in `cc_sdk`) implemented by `CcFirebaseAnalytics` in the `cc_sdk_firebase` package,
+  registered `@LazySingleton(as: CcAnalytics)` and wired through `ExternalModule(CcSdkFirebasePackageModule)`.
+  Copy this shape for every new vendor capability.
 - Do not add new static-only vendor helpers (private constructor + static methods calling a vendor SDK): they
-  cannot be mocked or swapped. Today there are 12 (`CcAnalyticsHelper`, `CcCrashReportingHelper`,
-  `CcAppCheckHelper`, `CcGeminiHelper`, `CcSpeechHelper`, `CcSlackFeedbackHelper`, ...) to migrate.
+  cannot be mocked or swapped. Still to migrate: `CcCrashReportingHelper`,
+  `CcAppCheckHelper`, `CcGeminiHelper`, `CcSpeechHelper`, `CcLocationHelper`, `CcPhoneNumberHelper`, `CcSlackFeedbackHelper` (analytics is done).
 - Configuration comes in through `CcSdkConfig.configure()` (core settings) and each vendor helper's
   `configure(...)` (e.g. Slack webhook, Gemini model), called by the app at boot. The SDK never reads `.env`
   files, `dotenv` or `--dart-define` keys itself; `CcFeatureFlags`, `CcRouteConfig`, `CcAppTrackName` and
@@ -84,9 +87,10 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | `cc_sdk_ui` | Design system and widget catalog (adaptive layout, buttons, cards, dialogs, inputs, text, shimmer, navigation), tokens (`CcBaseColors`, `CcSpace*`), `CcContextExtension`, `CcMaxWidth`, `CcTwoColumn` | `export_cc_sdk_ui.dart` |
 | `cc_mixin` | Reusable behavior mixins: pagination, refresh/load-more, back-button, navigation, view config | `export_cc_mixin.dart` |
 | `cc_sdk_data` | Core entities/models, `CcFailure` hierarchy, shared domain services | `export_cc_sdk_data.dart` |
+| `cc_sdk_firebase` | Capability ring: Firebase implementations of core interfaces (`CcFirebaseAnalytics`). Only package allowed to import Firebase SDKs (migration in progress) | `export_cc_sdk_firebase.dart` |
 
 Dependency direction (verified from `pubspec.yaml` and imports): `cc_mixin` → `cc_sdk_ui` → `cc_sdk` →
-`cc_sdk_data`. Never the reverse, never a cycle. `cc_mixin` depending on the whole design system is a known
+`cc_sdk_data`; capability packages (`cc_sdk_firebase`, ...) → `cc_sdk`. Never the reverse, never a cycle. `cc_mixin` depending on the whole design system is a known
 weakness: a new mixin should depend only on `cc_sdk_data` / `cc_sdk` unless it genuinely needs a widget.
 
 Encapsulation: only `cc_mixin` keeps implementation in `lib/src/`. In the other packages the barrel exports

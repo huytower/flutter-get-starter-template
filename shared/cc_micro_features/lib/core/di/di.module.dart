@@ -70,7 +70,8 @@ import 'package:cc_micro_features/features/messaging/data/services/firebase_mess
     as _i441;
 import 'package:cc_micro_features/features/web/presentation/cubit/web_cubit.dart'
     as _i354;
-import 'package:cc_sdk_data/domain/services/cc_messaging_service.dart' as _i4;
+import 'package:cc_sdk/export_cc_sdk.dart' as _i54;
+import 'package:cc_sdk_data/export_cc_sdk_data.dart' as _i436;
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:firebase_messaging/firebase_messaging.dart' as _i892;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
@@ -90,10 +91,10 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i350.BiometricLocalDataSource());
     gh.lazySingleton<_i121.AppUpdateRepository>(
         () => _i71.AppUpdateRepositoryImpl());
-    gh.lazySingleton<_i4.CcMessagingService>(() =>
-        _i441.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()));
     gh.lazySingleton<_i521.BiometricRepository>(() =>
         _i32.BiometricRepositoryImpl(gh<_i350.BiometricLocalDataSource>()));
+    gh.lazySingleton<_i436.CcMessagingService>(() =>
+        _i441.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()));
     gh.lazySingleton<_i745.FirebaseAuthRepository>(
         () => _i832.FirebaseAuthRepositoryImpl(
               gh<_i59.FirebaseAuth>(),
@@ -132,12 +133,6 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i413.AppUpdateConfigRepository>(),
           gh<_i121.AppUpdateRepository>(),
         ));
-    gh.lazySingleton<_i331.AppUpdatePrompter>(
-        () => _i331.AppUpdatePrompter(gh<_i1067.CheckAppUpdateUseCase>()));
-    gh.factory<_i902.PhoneAuthBloc>(() => _i902.PhoneAuthBloc(
-          gh<_i120.VerifyPhoneNumberUseCase>(),
-          gh<_i189.SignInWithPhoneNumberUseCase>(),
-        ));
     gh.factory<_i345.LoginBloc>(() => _i345.LoginBloc(
           gh<_i23.LoginUseCase>(),
           gh<_i811.LoginWithGoogleUseCase>(),
@@ -145,6 +140,13 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i632.LoginWithAppleUseCase>(),
           gh<_i370.LinkWithAppleUseCase>(),
           gh<_i951.AuthPreferenceDataSource>(),
+          gh<_i54.CcAnalytics>(),
+        ));
+    gh.lazySingleton<_i331.AppUpdatePrompter>(
+        () => _i331.AppUpdatePrompter(gh<_i1067.CheckAppUpdateUseCase>()));
+    gh.factory<_i902.PhoneAuthBloc>(() => _i902.PhoneAuthBloc(
+          gh<_i120.VerifyPhoneNumberUseCase>(),
+          gh<_i189.SignInWithPhoneNumberUseCase>(),
         ));
     gh.lazySingleton<_i721.AuthenticateWithBiometricsUseCase>(() =>
         _i721.AuthenticateWithBiometricsUseCase(

@@ -46,6 +46,7 @@ class ReportController extends CcGetController {
     this.userLevel,
     this._generateAiAdvice,
     this._conversionService,
+    this._analytics,
   );
 
   final GetCategorySpendingUseCase _getCategorySpending;
@@ -57,6 +58,7 @@ class ReportController extends CcGetController {
   final GenerateAiFinancialAdviceUseCase _generateAiAdvice;
   final UserLevelController userLevel;
   final CurrencyConversionService _conversionService;
+  final CcAnalytics _analytics;
 
   @override
   void onInit() {
@@ -199,7 +201,7 @@ class ReportController extends CcGetController {
   }
 
   Future<void> generateAiAdvice(BuildContext context) async {
-    CcAnalyticsHelper.logEvent(name: 'click_generate_ai_advice');
+    _analytics.logEvent(name: 'click_generate_ai_advice');
     if (!userLevel.status.value.isVip) return;
 
     if (isGeneratingAdvice.value) return;
@@ -255,7 +257,7 @@ class ReportController extends CcGetController {
     isGeneratingAdvice.value = false;
 
     if (result == null) {
-      CcAnalyticsHelper.logEvent(name: 'ai_advice_failed');
+      _analytics.logEvent(name: 'ai_advice_failed');
       if (isDeviceAttestationFailure(CcGeminiHelper.lastError)) {
         aiAdviceErrorKey.value = CcLocaleKeys.quick_entry_device_not_genuine;
         return;
@@ -271,7 +273,7 @@ class ReportController extends CcGetController {
       return;
     }
 
-    CcAnalyticsHelper.logEvent(name: 'ai_advice_success');
+    _analytics.logEvent(name: 'ai_advice_success');
 
     aiAdvice.value = result;
     scrollToAiAdvice();
