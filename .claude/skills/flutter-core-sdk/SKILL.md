@@ -67,7 +67,7 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | `cc_gemini_helper`, `cc_slack_*`, `cc_speech_helper` | tied to one vendor | **Done (2.0.0):** `CcAiClient`, `CcFeedbackReporter`, `CcSpeechRecognizer` + capability packages |
 | `cc_sdk/pubspec.yaml` (was 27 dependencies) | every consumer inherited every vendor SDK | **Done (2.0.0):** 15 left, no vendor service SDK. Still in core: `catcher_2`, `connectivity_plus`, `internet_connection_checker_plus`, `device_info_plus`, `package_info_plus`, `flutter_udid`, `path_provider`, `shared_preferences` (platform plugins for universal concerns), `dartx` (re-exported as public API), `ansicolor` (vendored gson) |
 | `CcFeatureFlags.isVipModeEnabled` (`ENABLE_VIP_MODE`) | product concept in a core config type | **Done (2.0.0):** removed; the app reads it via `PrjFeatureFlags` |
-| `CcUserEntity.linkedProviderIds` doc | describes the field in Firebase terms | describe provider-neutrally |
+| `CcUserEntity.linkedProviderIds` doc | described the field in Firebase terms | **Done:** described provider-neutrally |
 | `cc_micro_features`: `FirebaseAuthRepository` (in `domain/`) | the abstraction is named after its vendor | **Done:** renamed `AuthRepository` (exported from `export_auth.dart`); `FirebaseAuthRepositoryImpl` stays in `data/` |
 
 ## Stability and versioning
