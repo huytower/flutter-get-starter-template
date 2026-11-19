@@ -107,6 +107,18 @@ class ReconciliationController extends CcGetController {
   void onInit() {
     super.onInit();
     ever(CurrencyConstants.onCurrencyChanged, (_) => loadBalances());
+
+    // This controller is permanent (it outlives the page), and onReady only
+    // runs once, so wallets added / edited / removed later would never reach
+    // the tiles. Follow the wallet list so it always matches the Wallets page.
+    final walletController = Get.isRegistered<WalletController>()
+        ? Get.find<WalletController>()
+        : Get.put(getIt<WalletController>());
+    debounce(
+      walletController.wallets,
+      (_) => loadBalances(showLoading: false),
+      time: const Duration(milliseconds: 300),
+    );
   }
 
   @override

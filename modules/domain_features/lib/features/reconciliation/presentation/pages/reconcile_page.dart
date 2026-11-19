@@ -95,26 +95,41 @@ class ReconcilePage extends CcGetView<ReconciliationController> {
     );
   }
 
+  /// Small tablet and up: the keypad floats over the page instead of pushing
+  /// the content up.
+  bool _floatingKeypad(BuildContext context) =>
+      context.windowSizeClass.isAtLeast(CcWindowSizeClass.medium);
+
+  /// Bottom room kept free while the floating keypad is up (chips + 4 key rows).
+  static const double _floatingKeypadReserve = 280;
+
   Widget _buildScrollBody(BuildContext context) {
+    final base = context.respPadding(CcPaddingParams.PAGE_SM);
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: controller.stopEditing,
-      child: ListView(
-        padding: EdgeInsets.all(context.respPadding(CcPaddingParams.PAGE_SM)),
-        children: CcTwoColumn.shouldUse(context)
-            ? _buildTwoColumnChildren(context)
-            : [
-                _buildSeeMoreDescription(context),
-                _buildInstructionText(context),
-                _buildWalletTiles(context),
-                const ReconciliationMismatchWarning(),
-                const CcSpaceXS(),
-                const ReconciliationSummary(),
-                const CcSpaceXS(),
-                const ReconciliationConfirmButton(),
-                const ReconciliationHistorySection(),
-              ],
-      ),
+      child: Obx(() {
+        final reserve =
+            _floatingKeypad(context) && controller.editingWalletId.value != null
+            ? _floatingKeypadReserve
+            : 0.0;
+        return ListView(
+          padding: EdgeInsets.fromLTRB(base, base, base, base + reserve),
+          children: CcTwoColumn.shouldUse(context)
+              ? _buildTwoColumnChildren(context)
+              : [
+                  _buildSeeMoreDescription(context),
+                  _buildInstructionText(context),
+                  _buildWalletTiles(context),
+                  const ReconciliationMismatchWarning(),
+                  const CcSpaceXS(),
+                  const ReconciliationSummary(),
+                  const CcSpaceXS(),
+                  const ReconciliationConfirmButton(),
+                  const ReconciliationHistorySection(),
+                ],
+        );
+      }),
     );
   }
 
