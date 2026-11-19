@@ -74,7 +74,7 @@ class NotificationService {
   }
 
   /// Requests POST_NOTIFICATIONS (Android 13+) / iOS alert permission,
-  /// mirroring `CcLocationHelper`'s request-on-demand pattern. Skips the
+  /// mirroring `CcLocationService`'s request-on-demand pattern. Skips the
   /// native prompt if already granted or permanently denied.
   Future<bool> requestPermission() async {
     final status = await Permission.notification.status;

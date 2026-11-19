@@ -6,7 +6,6 @@ import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:domain_features/features/profile/domain/entities/profile_settings_entity.dart';
 import 'package:domain_features/features/wallet/data/datasources/local/wallet_local_datasource.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
-import 'package:geocoding/geocoding.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../core/constant/currency_catalog.dart';
@@ -18,24 +17,27 @@ typedef GpsCurrencyDetector =
 
 @LazySingleton()
 class ProfileLocalDataSource {
-  ProfileLocalDataSource()
+  ProfileLocalDataSource(this._location)
     : _detectFromGps =
           CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails,
       _gpsTimeout = gpsDetectionTimeout {
-    CcLocationHelper.lastGpsPosition.addListener(_onGpsPositionUpdated);
+    _location.lastPosition.addListener(_onGpsPositionUpdated);
   }
 
   @visibleForTesting
   ProfileLocalDataSource.withGpsDetector(
     this._detectFromGps, {
     Duration timeout = gpsDetectionTimeout,
-  }) : _gpsTimeout = timeout {
-    CcLocationHelper.lastGpsPosition.addListener(_onGpsPositionUpdated);
+    CcLocationService? location,
+  }) : _gpsTimeout = timeout,
+       _location = location ?? CcNoopLocationService() {
+    _location.lastPosition.addListener(_onGpsPositionUpdated);
   }
 
   static const Duration gpsDetectionTimeout = Duration(seconds: 15);
 
   final GpsCurrencyDetector _detectFromGps;
+  final CcLocationService _location;
   final Duration _gpsTimeout;
 
   Future<ProfileSettingsEntity> getSettings() async {
@@ -168,7 +170,7 @@ class ProfileLocalDataSource {
   }
 
   Future<void> _onGpsPositionUpdated() async {
-    final pos = CcLocationHelper.lastGpsPosition.value;
+    final pos = _location.lastPosition.value;
     if (pos == null) return;
 
     final s = CcAppStorage.instance;
@@ -177,13 +179,7 @@ class ProfileLocalDataSource {
     }
 
     try {
-      final placemarks = await Geocoding().placemarkFromCoordinates(
-        pos.latitude,
-        pos.longitude,
-      );
-      if (placemarks.isEmpty) return;
-
-      final isoCountryCode = placemarks.first.isoCountryCode?.toUpperCase();
+      final isoCountryCode = await _location.countryCodeAt(pos);
       if (isoCountryCode == null ||
           !CurrencyCatalog.countryCodeToCurrency.containsKey(isoCountryCode)) {
         return;

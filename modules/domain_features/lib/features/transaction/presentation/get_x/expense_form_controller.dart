@@ -689,13 +689,13 @@ class ExpenseFormController extends TransactionFormController
     if (!_locationSuggestionLoaded) return;
     if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
 
-    final position = await CcLocationHelper.getCurrentPosition();
+    final position = await getIt<CcLocationService>().getCurrentPosition();
     if (position == null) return;
 
     final hasMoved =
         _currentLat == null ||
         _currentLng == null ||
-        CcLocationHelper.distanceBetweenMeters(
+        CcGeoPosition.distanceBetweenMeters(
               _currentLat!,
               _currentLng!,
               position.latitude,
@@ -712,7 +712,7 @@ class ExpenseFormController extends TransactionFormController
       return;
     }
 
-    final lastKnown = await CcLocationHelper.getLastKnownPosition();
+    final lastKnown = await getIt<CcLocationService>().getLastKnownPosition();
     if (lastKnown != null) {
       _applyLocationFix(lastKnown.latitude, lastKnown.longitude);
     }
@@ -723,7 +723,7 @@ class ExpenseFormController extends TransactionFormController
   }
 
   Future<void> _refreshWithCurrentPosition() async {
-    final position = await CcLocationHelper.getCurrentPosition();
+    final position = await getIt<CcLocationService>().getCurrentPosition();
     if (position != null) {
       _applyLocationFix(position.latitude, position.longitude);
     }

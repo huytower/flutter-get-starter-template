@@ -18,7 +18,7 @@ TransactionEntity? findNearbyExpenseMatch({
     final candidateLng = candidate.lng;
     if (candidateLat == null || candidateLng == null) continue;
 
-    final distance = CcLocationHelper.distanceBetweenMeters(
+    final distance = CcGeoPosition.distanceBetweenMeters(
       lat,
       lng,
       candidateLat,

@@ -83,7 +83,7 @@ shared/
     cc_sdk_data/                  #   core data entities/models
     cc_sdk_firebase/              #   capability ring: Firebase impls of core interfaces (CcAnalytics, ...)
     cc_sdk_slack/                 #   capability ring: Slack webhook impls (crash alerts, user feedback)
-    cc_sdk_device/                #   capability ring: device-plugin impls (speech recognition, ...)
+    cc_sdk_device/                #   capability ring: device-plugin impls (location, speech recognition)
 cc_bridge/                        # Root-level cross-module contracts (*Coordinator / *Contract / *Provider)
                                    # (contracts only; the app-level service lives in modules/bridge)
 ```

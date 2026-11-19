@@ -282,8 +282,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i279.LiabilityFormController());
     gh.lazySingleton<_i483.NotificationService>(
         () => _i483.NotificationService());
-    gh.lazySingleton<_i755.ProfileLocalDataSource>(
-        () => _i755.ProfileLocalDataSource());
     gh.lazySingleton<_i896.ReconciliationLocalDataSource>(
         () => _i896.ReconciliationLocalDataSource());
     gh.lazySingleton<_i648.TransactionLocalDataSource>(
@@ -328,6 +326,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.factory<_i429.CurrencySelectionController>(() =>
         _i429.CurrencySelectionController(
             gh<_i195.CurrencyConversionService>()));
+    gh.lazySingleton<_i755.ProfileLocalDataSource>(
+        () => _i755.ProfileLocalDataSource(gh<_i54.CcLocationService>()));
     gh.factory<_i395.ReceiptImage>(() => _i395.ReceiptImage(
           path: gh<String>(),
           bytes: gh<_i100.Uint8List>(),

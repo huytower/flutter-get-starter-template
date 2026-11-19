@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:cc_sdk/export_cc_sdk.dart';
-import 'package:geocoding/geocoding.dart';
 
 import 'currency_constants.dart';
 
@@ -178,22 +177,19 @@ class CurrencyCatalog {
   static Future<({String currencyCode, String? countryCode})>
   detectSuggestedCurrencyFromGpsWithDetails() async {
     try {
-      final lastKnownPosition = await CcLocationHelper.getLastKnownPosition();
+      // Resolved inside the try: without DI (e.g. in tests) this falls back to
+      // the device locale below.
+      final location = getIt<CcLocationService>();
       final position =
-          lastKnownPosition ?? await CcLocationHelper.getCurrentPosition();
+          await location.getLastKnownPosition() ??
+          await location.getCurrentPosition();
 
       if (position != null) {
-        final placemarks = await Geocoding().placemarkFromCoordinates(
-          position.latitude,
-          position.longitude,
-        );
-        if (placemarks.isNotEmpty) {
-          final isoCountryCode = placemarks.first.isoCountryCode?.toUpperCase();
-          if (isoCountryCode != null &&
-              countryCodeToCurrency.containsKey(isoCountryCode)) {
-            final currency = countryCodeToCurrency[isoCountryCode]!;
-            return (currencyCode: currency, countryCode: isoCountryCode);
-          }
+        final isoCountryCode = await location.countryCodeAt(position);
+        if (isoCountryCode != null &&
+            countryCodeToCurrency.containsKey(isoCountryCode)) {
+          final currency = countryCodeToCurrency[isoCountryCode]!;
+          return (currencyCode: currency, countryCode: isoCountryCode);
         }
       }
     } catch (_) {}
