@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_config/core/config/app/prj_feature_flags.dart';
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:domain_features/features/profile/domain/entities/profile_settings_entity.dart';
@@ -102,7 +103,7 @@ class ProfileLocalDataSource {
       isDarkMode: s.isDarkMode,
       weeklyAuditDayChangedAt: s.weeklyAuditDayChangedAt,
       levelFeatureAnchorAt: s.levelFeatureAnchorAt,
-      isVip: s.isVip ?? CcFeatureFlags.isVipModeEnabled,
+      isVip: s.isVip ?? PrjFeatureFlags.isVipModeEnabled,
       highestUserLevelReached: s.highestUserLevelReached ?? 1,
       firstLaunchAt: s.firstLaunchAt,
       cloudBackupReminderSentAt: s.cloudBackupReminderSentAt,

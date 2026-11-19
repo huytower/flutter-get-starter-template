@@ -13,6 +13,7 @@
 export 'package:cc_sdk/core/helper/cc_network_helper.dart';
 
 export 'core/config/app/cc_app_config.dart';
+export 'core/config/app/prj_feature_flags.dart';
 // =================================
 // ENVIRONMENT CONFIGURATIONS
 // =================================
@@ -52,6 +53,7 @@ export 'data/datasource/local/box/app_storage/cc_app_storage.dart';
 export 'data/datasource/local/box/cc_hive_box.dart';
 export 'data/datasource/local/box/device_info/cc_device_info.dart';
 export 'data/datasource/local/box/register_hive_adapter.dart';
+
 // Remote Data Sources
 // =================================
 // DOMAIN LAYER
