@@ -96,9 +96,10 @@ Dependency direction (verified from `pubspec.yaml` and imports): `cc_mixin` → 
 `cc_sdk_data`; capability packages (`cc_sdk_firebase`, `cc_sdk_slack`, `cc_sdk_device`, `cc_sdk_phone`) → `cc_sdk`. Never the reverse, never a cycle. `cc_mixin` depending on the whole design system is a known
 weakness: a new mixin should depend only on `cc_sdk_data` / `cc_sdk` unless it genuinely needs a widget.
 
-Encapsulation: only `cc_mixin` keeps implementation in `lib/src/`. In the other packages the barrel exports
-nearly every file, so every file is public API and consumers deep-import internal paths. New implementation
-files go under `lib/src/`, and only what consumers need is exported from the barrel.
+Encapsulation: every SDK package keeps its implementation in `lib/src/`; the only public entry points are the
+`export_*.dart` barrel and, by the DI convention, `lib/core/di/` (`di.dart` / `di.module.dart`). Consumers and
+sibling SDK packages import barrels only (no `package:x/src/...`). New files go under `lib/src/`, and only what
+consumers need is exported from the barrel.
 
 ## Hard rules (a violation breaks reuse)
 
@@ -114,7 +115,7 @@ files go under `lib/src/`, and only what consumers need is exported from the bar
    never a private `width / 360`). Layout branches on `CcWindowSizeClass` measured from the space given
    (`CcAdaptiveBuilder`, `LayoutBuilder`), never on `Platform` or device type.
 6. **Results and errors.** UseCases/repositories return `Result<T, CcFailure>` (`multiple_result`); add a new
-   failure as a subclass of `CcFailure` in `cc_sdk_data/lib/domain/failures/`.
+   failure as a subclass of `CcFailure` in `cc_sdk_data/lib/src/domain/failures/`.
 7. **Logging.** `.Log()` only; never `print()` or `developer.log()` directly.
 8. **DI.** Services are `@lazySingleton`, never eager `@singleton` (the SDK is on the boot path, target < 2 s).
    One `lib/core/di/di.dart` per package; annotate classes in place.
