@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cc_sdk_data/data/models/pagination_request.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart';

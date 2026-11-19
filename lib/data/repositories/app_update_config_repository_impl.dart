@@ -1,7 +1,7 @@
 import 'package:app_config/core/config/http/http_client/http_client_config.dart';
 import 'package:cc_micro_features/export_micro_features.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
-import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';

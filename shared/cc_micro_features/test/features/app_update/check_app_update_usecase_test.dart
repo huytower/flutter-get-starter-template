@@ -5,7 +5,7 @@ import 'package:cc_micro_features/features/app_update/domain/entities/installed_
 import 'package:cc_micro_features/features/app_update/domain/repositories/app_update_config_repository.dart';
 import 'package:cc_micro_features/features/app_update/domain/repositories/app_update_repository.dart';
 import 'package:cc_micro_features/features/app_update/domain/usecases/check_app_update_usecase.dart';
-import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multiple_result/multiple_result.dart';
 

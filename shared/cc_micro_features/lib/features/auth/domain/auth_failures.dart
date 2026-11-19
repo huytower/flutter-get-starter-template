@@ -1,5 +1,4 @@
-import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
-
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 /// The user dismissed the Google/Apple sheet. Not an error: the UI must close
 /// any loading state silently instead of showing a message. Typed so callers
 /// never have to compare [message] text.

@@ -1,11 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
-import 'package:cc_sdk_ui/core/config/tokens/cc_padding_params.dart';
-import 'package:cc_sdk_ui/core/extensions/common/cc_responsive_extension.dart';
-import 'package:cc_sdk_ui/widgets/adaptive/cc_max_width.dart';
-import 'package:cc_sdk_ui/widgets/adaptive/cc_two_column.dart';
-import 'package:cc_sdk_ui/widgets/anim/fade_page_wrapper.dart';
-import 'package:cc_sdk_ui/widgets/space/cc_space.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';

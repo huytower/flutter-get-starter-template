@@ -1,4 +1,4 @@
-import 'package:cc_sdk_data/domain/entities/cc_user_entity.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../domain/entities/auth/domain_user_entity.dart';

@@ -1,4 +1,4 @@
-import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:data_config/core/repository/cc_base_repository.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
 import 'package:domain_features/features/firestore/model/sync_metadata.dart';

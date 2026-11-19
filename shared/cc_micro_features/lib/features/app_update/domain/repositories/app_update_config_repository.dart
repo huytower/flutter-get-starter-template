@@ -1,4 +1,4 @@
-import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../entities/app_update_config_entity.dart';

@@ -1,4 +1,4 @@
-import 'package:cc_sdk_ui/core/config/tokens/cc_base_colors.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 /// App-specific (personal-finance) semantic colors, read as

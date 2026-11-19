@@ -1,4 +1,4 @@
-import 'package:cc_sdk_ui/core/config/tokens/cc_typography_params.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/data_source/color/prj_color.dart';

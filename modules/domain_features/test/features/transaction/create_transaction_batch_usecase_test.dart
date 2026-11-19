@@ -1,4 +1,4 @@
-import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/features/transaction/domain/entities/transaction_entity.dart';
 import 'package:domain_features/features/transaction/domain/usecases/create_transaction_batch_usecase.dart';

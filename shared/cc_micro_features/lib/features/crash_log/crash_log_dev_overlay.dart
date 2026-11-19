@@ -1,5 +1,5 @@
 import 'package:catcher_2/catcher_2.dart';
-import 'package:cc_sdk_ui/core/helper/cc_dialog_helper.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

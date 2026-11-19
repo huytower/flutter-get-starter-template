@@ -1,5 +1,5 @@
 import 'package:cc_micro_features/l10n/cc_mf_locale_keys.dart';
-import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 
 import '../domain/auth_failures.dart';

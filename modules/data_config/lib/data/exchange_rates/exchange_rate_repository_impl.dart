@@ -1,4 +1,4 @@
-import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
 import 'package:injectable/injectable.dart';

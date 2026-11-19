@@ -1,4 +1,4 @@
-import 'package:cc_sdk_data/domain/failures/cc_failure.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
 import 'package:domain_features/features/wallet/domain/repositories/wallet_repository.dart';

@@ -1,4 +1,4 @@
-import 'package:cc_sdk_data/domain/entities/cc_user_entity.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class LoginState extends Equatable {

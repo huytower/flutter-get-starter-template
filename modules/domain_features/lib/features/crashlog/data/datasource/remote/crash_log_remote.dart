@@ -1,4 +1,4 @@
-import 'package:cc_sdk/core/config/cc_app_track_info.dart';
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 

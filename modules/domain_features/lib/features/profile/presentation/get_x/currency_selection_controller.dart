@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
-import 'package:cc_sdk/core/extensions/common/cc_logger_extension.dart';
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
