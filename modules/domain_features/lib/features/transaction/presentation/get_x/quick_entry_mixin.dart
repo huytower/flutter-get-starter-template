@@ -104,7 +104,7 @@ mixin QuickEntryMixin on TransactionFormController
       ..dispose();
     // Only stop it if this instance holds it — the recognizer is a global singleton.
     if (isListeningQuickEntry.value) {
-      CcSpeechHelper.stopListening();
+      unawaited(getIt<CcSpeechRecognizer>().stopListening());
     }
   }
 
@@ -817,7 +817,7 @@ mixin QuickEntryMixin on TransactionFormController
 
     if (isListeningQuickEntry.value) {
       '[VoiceWorkflow] 🛑 Manual stop requested'.Log('QuickEntryMixin');
-      await CcSpeechHelper.stopListening();
+      await getIt<CcSpeechRecognizer>().stopListening();
       triggerVoiceSubmit(quickEntryController.text, 'manualStop');
       return;
     }
@@ -836,7 +836,9 @@ mixin QuickEntryMixin on TransactionFormController
     quickEntryErrorKey.value = null;
     isListeningQuickEntry.value = true;
 
-    final started = await CcSpeechHelper.startListening(
+    final started = await getIt<CcSpeechRecognizer>().startListening(
+      // Voice entry is tuned for Vietnamese amounts and phrases.
+      localeId: 'vi_VN',
       onResult: (recognizedWords, isFinal) {
         if (_quickEntryDisposed) return;
         '[VoiceWorkflow] 🗣️ Voice recognized words: "$recognizedWords" | isFinal=$isFinal'
@@ -859,7 +861,7 @@ mixin QuickEntryMixin on TransactionFormController
     if (_quickEntryDisposed) return;
 
     if (!started) {
-      if (!CcSpeechHelper.isListening) {
+      if (!getIt<CcSpeechRecognizer>().isListening) {
         '[VoiceWorkflow] ❌ Failed to start speech recognizer'.Log(
           'QuickEntryMixin',
         );
