@@ -155,6 +155,9 @@ class ProfilePage extends CcGetView<ProfileController> {
   Widget _buildTwoColumnContent(BuildContext context, double topPadding) {
     final menuItems = _buildMenuItems(context);
     final split = (menuItems.length / 2).ceil();
+    // Small (~7") tablet: two even columns, the settings list stays one
+    // group. Larger tablets split it for three columns.
+    final small = CcTwoColumn.isSmallTablet(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -186,13 +189,16 @@ class ProfilePage extends CcGetView<ProfileController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  CcMultiColumn(
-                    columns: 2,
-                    children: [
-                      ProfileMenuGroup(items: menuItems.sublist(0, split)),
-                      ProfileMenuGroup(items: menuItems.sublist(split)),
-                    ],
-                  ),
+                  if (small)
+                    ProfileMenuGroup(items: menuItems)
+                  else
+                    CcMultiColumn(
+                      columns: 2,
+                      children: [
+                        ProfileMenuGroup(items: menuItems.sublist(0, split)),
+                        ProfileMenuGroup(items: menuItems.sublist(split)),
+                      ],
+                    ),
                   const CcSpaceXL(),
                 ],
               ),

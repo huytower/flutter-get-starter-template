@@ -107,7 +107,9 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
 4. **Interface-Driven Communication (the Bridge)** — all cross-module interactions (navigation, session
    management) are mediated by contracts in `cc_bridge`. Naming: `*Coordinator` (flow/navigation), `*Contract`
    (shared state), `*Provider` (shared logic). Features depend on abstractions, never concrete impls of other
-   features.
+   features. `cc_bridge` holds only project-blind contracts (auth, session) and must not import any app module;
+   app-specific coordinators (wallet, transaction, comment, home) live in
+   `modules/domain_features/lib/core/navigation/coordinator/`, implemented by the App Shell.
 5. **Layer Purity Within a Feature (STRICT)** — `domain/` and `data/` MUST NOT import from their own (or any
    other) `presentation/` layer. Presentation types (Bloc `Event`/`State`, `Obx`, `GetxController`, widgets)
    never flow into `domain/`/`data/`. Streams/data crossing the `domain`↔`presentation` boundary use domain types

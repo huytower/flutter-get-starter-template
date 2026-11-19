@@ -2,7 +2,6 @@ import 'package:cc_micro_features/l10n/cc_mf_locale_keys.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:theme/export_theme.dart';
 
 class AuthSecurityWarningCard extends StatelessWidget {
   const AuthSecurityWarningCard({super.key, required this.onOtherLoginTap});
@@ -113,7 +112,7 @@ class AuthSecurityWarningCard extends StatelessWidget {
         Icon(
           Icons.check_circle_rounded,
           size: context.respIconSize(baseSize: 16),
-          color: PrjColors.success,
+          color: CcBaseColors.successGreen,
         ),
         const CcSpaceXS(),
         Expanded(

@@ -23,6 +23,7 @@ class PhoneInputPage extends StatefulWidget {
 class _PhoneInputPageState extends State<PhoneInputPage> {
   late final TextEditingController _phoneController;
   String _countryCode = defaultSmsDialCode;
+  String _countryIsoCode = defaultSmsIsoCode;
   String? _validationError;
 
   @override
@@ -53,6 +54,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
     if (region == null || !mounted) return;
     setState(() {
       _countryCode = region.dialCode;
+      _countryIsoCode = region.isoCode;
       _validationError = null;
     });
   }
@@ -101,6 +103,7 @@ class _PhoneInputPageState extends State<PhoneInputPage> {
       form: [
         CcPhoneNumberInput(
           countryCode: _countryCode,
+          countryIsoCode: _countryIsoCode,
           onCountryCodeTap: _pickCountry,
           controller: _phoneController,
           hintText: el.tr(CcMfLocaleKeys.auth_phone_number_hint),

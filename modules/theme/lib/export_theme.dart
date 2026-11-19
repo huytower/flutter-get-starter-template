@@ -10,3 +10,4 @@ export 'data/data_source/color/prj_color.dart';
 export 'presentation/provider/theme_provider.dart';
 export 'presentation/style/cc_text_style.dart';
 export 'presentation/style/prj_form_accent.dart';
+export 'presentation/style/prj_semantic_color_scheme.dart';

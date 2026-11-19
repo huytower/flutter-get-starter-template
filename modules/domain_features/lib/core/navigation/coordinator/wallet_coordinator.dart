@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import 'package:domain_features/features/wallet/domain/entities/wallet_entity.dart';
+import '../../../features/wallet/domain/entities/wallet_entity.dart';
 
 /// Contract for Wallet-related navigation.
 abstract class WalletCoordinator {

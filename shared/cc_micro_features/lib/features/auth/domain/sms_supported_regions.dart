@@ -1,3 +1,5 @@
+import 'package:cc_sdk/core/helper/cc_phone_number_helper.dart';
+
 /// A country the app can send a phone-verification SMS to.
 class SmsRegion {
   const SmsRegion(this.isoCode, this.dialCode);
@@ -9,13 +11,14 @@ class SmsRegion {
   final String dialCode;
 
   /// Flag emoji built from the ISO code (regional-indicator letters).
-  String get flag => String.fromCharCodes(
-    isoCode.codeUnits.map((unit) => unit - 0x41 + 0x1F1E6),
-  );
+  String get flag => CcPhoneNumberHelper.flagEmoji(isoCode);
 }
 
 /// Region used before the user picks another one.
 const String defaultSmsDialCode = '+84';
+
+/// ISO code of [defaultSmsDialCode].
+const String defaultSmsIsoCode = 'VN';
 
 /// Regions allowed by the Firebase "SMS region policy"
 /// (Firebase Console > Authentication > Settings > SMS region policy).

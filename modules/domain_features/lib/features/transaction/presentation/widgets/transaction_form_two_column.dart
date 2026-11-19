@@ -36,6 +36,8 @@ class TransactionFormTwoColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     final gap = context.respPadding(CcPaddingParams.PAGE_SM);
     final details = this.details;
+    // Small (~7") tablet: even split, the 3:2 right column is too narrow.
+    final even = CcTwoColumn.isSmallTablet(context);
     return CcContentInset(
       maxWidth: maxWidth,
       child: CcContentPadding(
@@ -43,7 +45,7 @@ class TransactionFormTwoColumn extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 3,
+              flex: even ? 1 : 3,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -61,7 +63,7 @@ class TransactionFormTwoColumn extends StatelessWidget {
             ),
             SizedBox(width: gap),
             Expanded(
-              flex: 2,
+              flex: even ? 1 : 2,
               child: Padding(
                 padding: EdgeInsets.only(right: gap),
                 child: TransactionFormContainer(

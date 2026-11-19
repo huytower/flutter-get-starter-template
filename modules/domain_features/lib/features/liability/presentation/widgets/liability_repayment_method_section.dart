@@ -24,48 +24,43 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              CcFormLabel(
-                text: isBorrowSide
-                    ? el.tr(
-                        CcLocaleKeys
-                            .transaction_liability_repayment_method_label,
-                      )
-                    : el.tr(
-                        CcLocaleKeys
-                            .transaction_liability_collection_method_label,
-                      ),
+          _buildMethodRow(
+            context,
+            label: CcFormLabel(
+              text: isBorrowSide
+                  ? el.tr(
+                      CcLocaleKeys.transaction_liability_repayment_method_label,
+                    )
+                  : el.tr(
+                      CcLocaleKeys
+                          .transaction_liability_collection_method_label,
+                    ),
+            ),
+            toggle: (width) => LiabilityPillToggle(
+              width: width,
+              selectedIndex:
+                  controller.repaymentMethod.value ==
+                      LiabilityRepaymentMethod.installment
+                  ? 0
+                  : 1,
+              firstLabel: isBorrowSide
+                  ? el.tr(CcLocaleKeys.transaction_liability_method_installment)
+                  : el.tr(
+                      CcLocaleKeys
+                          .transaction_liability_method_installment_lend,
+                    ),
+              secondLabel: isBorrowSide
+                  ? el.tr(CcLocaleKeys.transaction_liability_method_lump_sum)
+                  : el.tr(
+                      CcLocaleKeys.transaction_liability_method_lump_sum_lend,
+                    ),
+              activeColor: accentColor,
+              onChanged: (index) => controller.setRepaymentMethod(
+                index == 0
+                    ? LiabilityRepaymentMethod.installment
+                    : LiabilityRepaymentMethod.lumpSum,
               ),
-              const Spacer(),
-              LiabilityPillToggle(
-                width: context.respDim(220),
-                selectedIndex:
-                    controller.repaymentMethod.value ==
-                        LiabilityRepaymentMethod.installment
-                    ? 0
-                    : 1,
-                firstLabel: isBorrowSide
-                    ? el.tr(
-                        CcLocaleKeys.transaction_liability_method_installment,
-                      )
-                    : el.tr(
-                        CcLocaleKeys
-                            .transaction_liability_method_installment_lend,
-                      ),
-                secondLabel: isBorrowSide
-                    ? el.tr(CcLocaleKeys.transaction_liability_method_lump_sum)
-                    : el.tr(
-                        CcLocaleKeys.transaction_liability_method_lump_sum_lend,
-                      ),
-                activeColor: accentColor,
-                onChanged: (index) => controller.setRepaymentMethod(
-                  index == 0
-                      ? LiabilityRepaymentMethod.installment
-                      : LiabilityRepaymentMethod.lumpSum,
-                ),
-              ),
-            ],
+            ),
           ),
           const CcSpaceSM(),
           if (controller.repaymentMethod.value ==
@@ -82,5 +77,25 @@ class LiabilityRepaymentMethodSection extends StatelessWidget {
         ],
       );
     });
+  }
+
+  /// Label and toggle on one line; on a small (~7") tablet held sideways the
+  /// column is too narrow for both, so the toggle drops to its own line and
+  /// spans the column. Phones and larger tablets keep the single line.
+  Widget _buildMethodRow(
+    BuildContext context, {
+    required Widget label,
+    required Widget Function(double width) toggle,
+  }) {
+    if (!CcTwoColumn.isSmallTablet(context)) {
+      return Row(
+        children: [label, const Spacer(), toggle(context.respDim(220))],
+      );
+    }
+    final fullWidth = toggle(double.infinity);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [label, const CcSpaceSM(), fullWidth],
+    );
   }
 }

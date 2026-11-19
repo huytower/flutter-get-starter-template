@@ -16,26 +16,22 @@ dependencies:
     path: ../domain_features
   cc_sdk:
     path: ../../shared/cc_core_sdk/cc_sdk
-  cc_sdk_ui:
-    path: ../../shared/cc_core_sdk/cc_sdk_ui
   cc_bridge:
     path: ../../cc_bridge
   cc_sdk_data:
     path: ../../shared/cc_core_sdk/cc_sdk_data
+  easy_localization: ^3.0.8
   message:
     path: ../message
 
   curl_logger_dio_interceptor: ^1.0.1
-  dartx: ^1.2.0
   dio: ^5.11.0
   dio_cache_interceptor: ^4.0.7
   dio_smart_retry: ^7.0.1
 
-  firebase_core: ^5.1.0
   cloud_firestore: ^7.1.0
   firebase_auth: ^7.0.1
   google_sign_in: ^7.2.0
-  sign_in_with_apple: ^8.1.0
 
   flutter:
     sdk: flutter
@@ -46,13 +42,10 @@ dependencies:
   internet_connection_checker_plus: ^3.0.0
   json_annotation: ^4.12.0
 
-  permission_handler: ^13.0.1
-
+  multiple_result: ^5.3.0
   retrofit: ^4.10.0
   shared_preferences: ^2.5.2
   talker_dio_logger: ^5.1.20
-
-  uuid: ^4.6.0
 
 dev_dependencies:
   flutter_test:

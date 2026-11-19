@@ -11,17 +11,10 @@ resolution: workspace
 
 dependencies:
   # Internal dependencies
-  cc_sdk:
-    path: ../../shared/cc_core_sdk/cc_sdk
   cc_sdk_ui:
     path: ../../shared/cc_core_sdk/cc_sdk_ui
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-  google_fonts: ^9.0.0
-  message:
-    path: ../message
 
 dev_dependencies:
   flutter_lints: ^6.0.0

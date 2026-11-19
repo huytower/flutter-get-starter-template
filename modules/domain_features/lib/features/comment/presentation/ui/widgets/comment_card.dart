@@ -1,6 +1,7 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../core/navigation/coordinator/comment_coordinator.dart';
 import '../../../domain/entities/comment_entity.dart';
 
 class CommentCard extends StatelessWidget {

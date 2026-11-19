@@ -16,6 +16,7 @@ dependencies:
     path: ../shared/cc_core_sdk/cc_sdk_ui
   flutter:
     sdk: flutter
+  get_it: ^9.2.1
   injectable: ^3.0.0
 
 dev_dependencies:

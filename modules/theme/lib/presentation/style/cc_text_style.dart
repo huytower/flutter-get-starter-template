@@ -302,13 +302,3 @@ class CcTextStyle extends ThemeExtension<CcTextStyle> {
   }
 }
 
-// Extension for easy access to text styles from BuildContext
-extension CcTextStyleExtension on BuildContext {
-  /// Returns the current [CcTextStyle] from the theme.
-  CcTextStyle? get textStyle => Theme.of(this).extension<CcTextStyle>();
-
-  /// Returns the text theme from the current [CcTextStyle].
-  TextTheme get textTheme =>
-      Theme.of(this).extension<CcTextStyle>()?.textTheme ??
-      Theme.of(this).textTheme;
-}
