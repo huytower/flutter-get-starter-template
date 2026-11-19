@@ -117,7 +117,7 @@ class SmartEntryPreviewRowCard extends StatelessWidget {
                 key: ValueKey('smart_preview_cat_${row.id}_${category.id}'),
                 iconCode: category.iconCode,
                 iconFamily: category.iconFamily,
-                nameKey: category.nameKey,
+                label: el.tr(category.nameKey),
                 isSelected: isSelected,
                 activeColor: activeColor,
                 onTap: () {

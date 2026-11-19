@@ -56,7 +56,7 @@ class BudgetLimitCategorySelector extends StatelessWidget {
             return CcCategoryItem(
               iconCode: cat.iconCode,
               iconFamily: cat.iconFamily,
-              nameKey: cat.nameKey,
+              label: el.tr(cat.nameKey),
               isSelected: isSelected,
               onTap: () => onCategorySelected(cat),
             );

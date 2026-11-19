@@ -162,7 +162,7 @@ class CategorySelectionSection extends StatelessWidget {
             return CcCategoryItem(
               iconCode: category.iconCode,
               iconFamily: category.iconFamily,
-              nameKey: category.nameKey,
+              label: el.tr(category.nameKey),
               isSelected: isSelected,
               activeColor: activeColor,
               onTap: () {

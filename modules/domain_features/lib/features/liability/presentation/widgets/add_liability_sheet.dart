@@ -240,7 +240,7 @@ class AddLiabilitySheet extends GetView<AddLiabilitySheetController> {
                   return CcCategoryItem(
                     iconCode: category.iconCode,
                     iconFamily: category.iconFamily,
-                    nameKey: category.nameKey,
+                    label: el.tr(category.nameKey),
                     isSelected: isSelected,
                     onTap: () => controller.selectLiabilityCategory(category),
                   );

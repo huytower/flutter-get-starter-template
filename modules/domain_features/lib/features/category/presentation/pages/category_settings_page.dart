@@ -356,7 +356,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       items: categories
           .map(
             (c) => CcCategoryGroupItem(
-              labelKey: c.nameKey,
+              label: el.tr(c.nameKey),
               iconCode: c.iconCode,
               iconFamily: c.iconFamily,
               originalData: c,
