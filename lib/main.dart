@@ -91,12 +91,24 @@ void main() async {
 /// Configures and launches the application shell.
 Future<void> _runApplication() async {
   final logFile = await CcCrashLogPaths.resolveLogFile();
+  // DI is ready here (boot step 2), so uncaught errors also go to the
+  // registered crash reporter (Crashlytics via cc_sdk_firebase).
+  final crashReporter = getIt<CcCrashReporter>();
   Catcher2(
     rootWidget: const AppRunner(),
     ensureInitialized: false,
-    debugConfig: CcCatcherBootstrap.debugOptions(logFile),
-    releaseConfig: CcCatcherBootstrap.releaseOptions(logFile),
-    profileConfig: CcCatcherBootstrap.profileOptions(logFile),
+    debugConfig: CcCatcherBootstrap.debugOptions(
+      logFile,
+      crashReporter: crashReporter,
+    ),
+    releaseConfig: CcCatcherBootstrap.releaseOptions(
+      logFile,
+      crashReporter: crashReporter,
+    ),
+    profileConfig: CcCatcherBootstrap.profileOptions(
+      logFile,
+      crashReporter: crashReporter,
+    ),
   );
 }
 
