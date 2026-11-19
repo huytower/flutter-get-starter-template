@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
-import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
-import 'package:cc_micro_features/features/auth/domain/usecases/delete_account_usecase.dart';
-import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
+import 'package:cc_micro_features/export_micro_features.dart'
+    show
+        AuthRepository,
+        CrashLogDevOverlay,
+        CrashLogViewerPage,
+        DeleteAccountUseCase;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -407,7 +410,7 @@ class ProfileController extends CcGetController {
     final name = await DisplayNameSheet.show(context, currentName: fullName);
     if (name == null || name.trim().isEmpty) return;
 
-    final result = await getIt<FirebaseAuthRepository>().updateDisplayName(
+    final result = await getIt<AuthRepository>().updateDisplayName(
       name.trim(),
     );
     result.when(

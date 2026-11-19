@@ -4,7 +4,7 @@ import 'package:multiple_result/multiple_result.dart';
 import '../phone_auth_status.dart';
 
 /// Repository interface for authentication operations.
-abstract class FirebaseAuthRepository {
+abstract class AuthRepository {
   /// Signs in with email and password.
   Future<Result<CcUserEntity, CcFailure>> signInWithEmail(
     String email,

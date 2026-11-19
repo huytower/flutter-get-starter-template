@@ -24,8 +24,8 @@ import 'package:cc_micro_features/features/auth/data/datasources/auth_preference
     as _i951;
 import 'package:cc_micro_features/features/auth/data/repositories/firebase_auth_repository_impl.dart'
     as _i832;
-import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart'
-    as _i745;
+import 'package:cc_micro_features/features/auth/domain/repositories/auth_repository.dart'
+    as _i846;
 import 'package:cc_micro_features/features/auth/domain/usecases/auth_state_changes_usecase.dart'
     as _i684;
 import 'package:cc_micro_features/features/auth/domain/usecases/delete_account_usecase.dart'
@@ -91,39 +91,15 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i350.BiometricLocalDataSource());
     gh.lazySingleton<_i121.AppUpdateRepository>(
         () => _i71.AppUpdateRepositoryImpl());
-    gh.lazySingleton<_i521.BiometricRepository>(() =>
-        _i32.BiometricRepositoryImpl(gh<_i350.BiometricLocalDataSource>()));
-    gh.lazySingleton<_i436.CcMessagingService>(() =>
-        _i441.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()));
-    gh.lazySingleton<_i745.FirebaseAuthRepository>(
+    gh.lazySingleton<_i846.AuthRepository>(
         () => _i832.FirebaseAuthRepositoryImpl(
               gh<_i59.FirebaseAuth>(),
               gh<_i116.GoogleSignIn>(),
             ));
-    gh.lazySingleton<_i684.AuthStateChangesUseCase>(() =>
-        _i684.AuthStateChangesUseCase(gh<_i745.FirebaseAuthRepository>()));
-    gh.lazySingleton<_i308.DeleteAccountUseCase>(
-        () => _i308.DeleteAccountUseCase(gh<_i745.FirebaseAuthRepository>()));
-    gh.lazySingleton<_i380.GetCurrentUserUseCase>(
-        () => _i380.GetCurrentUserUseCase(gh<_i745.FirebaseAuthRepository>()));
-    gh.lazySingleton<_i370.LinkWithAppleUseCase>(
-        () => _i370.LinkWithAppleUseCase(gh<_i745.FirebaseAuthRepository>()));
-    gh.lazySingleton<_i1032.LinkWithGoogleUseCase>(
-        () => _i1032.LinkWithGoogleUseCase(gh<_i745.FirebaseAuthRepository>()));
-    gh.lazySingleton<_i566.LoginAnonymouslyUseCase>(() =>
-        _i566.LoginAnonymouslyUseCase(gh<_i745.FirebaseAuthRepository>()));
-    gh.lazySingleton<_i23.LoginUseCase>(
-        () => _i23.LoginUseCase(gh<_i745.FirebaseAuthRepository>()));
-    gh.lazySingleton<_i632.LoginWithAppleUseCase>(
-        () => _i632.LoginWithAppleUseCase(gh<_i745.FirebaseAuthRepository>()));
-    gh.lazySingleton<_i811.LoginWithGoogleUseCase>(
-        () => _i811.LoginWithGoogleUseCase(gh<_i745.FirebaseAuthRepository>()));
-    gh.lazySingleton<_i732.LogoutUseCase>(
-        () => _i732.LogoutUseCase(gh<_i745.FirebaseAuthRepository>()));
-    gh.lazySingleton<_i189.SignInWithPhoneNumberUseCase>(() =>
-        _i189.SignInWithPhoneNumberUseCase(gh<_i745.FirebaseAuthRepository>()));
-    gh.lazySingleton<_i120.VerifyPhoneNumberUseCase>(() =>
-        _i120.VerifyPhoneNumberUseCase(gh<_i745.FirebaseAuthRepository>()));
+    gh.lazySingleton<_i521.BiometricRepository>(() =>
+        _i32.BiometricRepositoryImpl(gh<_i350.BiometricLocalDataSource>()));
+    gh.lazySingleton<_i436.CcMessagingService>(() =>
+        _i441.FirebaseMessagingServiceImpl(gh<_i892.FirebaseMessaging>()));
     gh.lazySingleton<_i1067.CheckAppUpdateUseCase>(
         () => _i1067.CheckAppUpdateUseCase(
               gh<_i413.AppUpdateConfigRepository>(),
@@ -133,6 +109,32 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i413.AppUpdateConfigRepository>(),
           gh<_i121.AppUpdateRepository>(),
         ));
+    gh.lazySingleton<_i684.AuthStateChangesUseCase>(
+        () => _i684.AuthStateChangesUseCase(gh<_i846.AuthRepository>()));
+    gh.lazySingleton<_i308.DeleteAccountUseCase>(
+        () => _i308.DeleteAccountUseCase(gh<_i846.AuthRepository>()));
+    gh.lazySingleton<_i380.GetCurrentUserUseCase>(
+        () => _i380.GetCurrentUserUseCase(gh<_i846.AuthRepository>()));
+    gh.lazySingleton<_i370.LinkWithAppleUseCase>(
+        () => _i370.LinkWithAppleUseCase(gh<_i846.AuthRepository>()));
+    gh.lazySingleton<_i1032.LinkWithGoogleUseCase>(
+        () => _i1032.LinkWithGoogleUseCase(gh<_i846.AuthRepository>()));
+    gh.lazySingleton<_i566.LoginAnonymouslyUseCase>(
+        () => _i566.LoginAnonymouslyUseCase(gh<_i846.AuthRepository>()));
+    gh.lazySingleton<_i23.LoginUseCase>(
+        () => _i23.LoginUseCase(gh<_i846.AuthRepository>()));
+    gh.lazySingleton<_i632.LoginWithAppleUseCase>(
+        () => _i632.LoginWithAppleUseCase(gh<_i846.AuthRepository>()));
+    gh.lazySingleton<_i811.LoginWithGoogleUseCase>(
+        () => _i811.LoginWithGoogleUseCase(gh<_i846.AuthRepository>()));
+    gh.lazySingleton<_i732.LogoutUseCase>(
+        () => _i732.LogoutUseCase(gh<_i846.AuthRepository>()));
+    gh.lazySingleton<_i189.SignInWithPhoneNumberUseCase>(
+        () => _i189.SignInWithPhoneNumberUseCase(gh<_i846.AuthRepository>()));
+    gh.lazySingleton<_i120.VerifyPhoneNumberUseCase>(
+        () => _i120.VerifyPhoneNumberUseCase(gh<_i846.AuthRepository>()));
+    gh.lazySingleton<_i331.AppUpdatePrompter>(
+        () => _i331.AppUpdatePrompter(gh<_i1067.CheckAppUpdateUseCase>()));
     gh.factory<_i345.LoginBloc>(() => _i345.LoginBloc(
           gh<_i23.LoginUseCase>(),
           gh<_i811.LoginWithGoogleUseCase>(),
@@ -142,8 +144,6 @@ class CcMicroFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i951.AuthPreferenceDataSource>(),
           gh<_i54.CcAnalytics>(),
         ));
-    gh.lazySingleton<_i331.AppUpdatePrompter>(
-        () => _i331.AppUpdatePrompter(gh<_i1067.CheckAppUpdateUseCase>()));
     gh.factory<_i902.PhoneAuthBloc>(() => _i902.PhoneAuthBloc(
           gh<_i120.VerifyPhoneNumberUseCase>(),
           gh<_i189.SignInWithPhoneNumberUseCase>(),

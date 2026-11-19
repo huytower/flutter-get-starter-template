@@ -5,7 +5,7 @@ import 'dart:math';
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_micro_features/features/auth/domain/auth_failures.dart';
 import 'package:cc_micro_features/features/auth/domain/phone_auth_status.dart';
-import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
+import 'package:cc_micro_features/features/auth/domain/repositories/auth_repository.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:crypto/crypto.dart';
@@ -21,8 +21,8 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 /// the `message` module.
 const String _serverError = 'Server error. Please try again later.';
 
-@LazySingleton(as: FirebaseAuthRepository)
-class FirebaseAuthRepositoryImpl implements FirebaseAuthRepository {
+@LazySingleton(as: AuthRepository)
+class FirebaseAuthRepositoryImpl implements AuthRepository {
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
 

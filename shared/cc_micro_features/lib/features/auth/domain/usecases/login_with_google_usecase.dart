@@ -3,11 +3,11 @@ import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../repositories/firebase_auth_repository.dart';
+import '../repositories/auth_repository.dart';
 
 @lazySingleton
 class LoginWithGoogleUseCase {
-  final FirebaseAuthRepository _repository;
+  final AuthRepository _repository;
 
   LoginWithGoogleUseCase(this._repository);
 

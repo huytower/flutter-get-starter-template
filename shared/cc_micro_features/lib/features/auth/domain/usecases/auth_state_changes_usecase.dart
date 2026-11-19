@@ -1,11 +1,11 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:injectable/injectable.dart';
 
-import '../repositories/firebase_auth_repository.dart';
+import '../repositories/auth_repository.dart';
 
 @lazySingleton
 class AuthStateChangesUseCase {
-  final FirebaseAuthRepository _repository;
+  final AuthRepository _repository;
 
   AuthStateChangesUseCase(this._repository);
 
