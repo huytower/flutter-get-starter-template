@@ -18,6 +18,7 @@ workspace:
   - shared/cc_core_sdk/cc_mixin
   - shared/cc_core_sdk/cc_sdk_data
   - shared/cc_core_sdk/cc_sdk_firebase
+  - shared/cc_core_sdk/cc_sdk_slack
   - cc_bridge
   - shared/cc_micro_features
   - modules/domain_features
@@ -41,6 +42,8 @@ dependencies:
     path: shared/cc_core_sdk/cc_sdk
   cc_sdk_firebase:
     path: shared/cc_core_sdk/cc_sdk_firebase
+  cc_sdk_slack:
+    path: shared/cc_core_sdk/cc_sdk_slack
   cc_sdk_ui:
     path: shared/cc_core_sdk/cc_sdk_ui
 

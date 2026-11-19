@@ -16,6 +16,4 @@ Future<void> initEnv() async {
       aiModelName: PrjEnv.geminiModelName,
     ),
   );
-  CcSlackHandler.configure(webhookUrl: PrjEnv.slackCrashWebhookUrl);
-  CcSlackFeedbackHelper.configure(webhookUrl: PrjEnv.slackFeedbackWebhookUrl);
 }

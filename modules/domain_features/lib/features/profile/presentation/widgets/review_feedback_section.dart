@@ -1,6 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:message/export_message.dart';
 
 import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
 
@@ -83,14 +84,14 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
         .Log('ReviewFeedbackSection');
 
     try {
-      final languageCode = context.locale.languageCode;
-
-      await CcSlackFeedbackHelper.sendUserFeedback(
-        feedbackText: _feedbackController.text.trim(),
-        praiseLabels: praiseLabels,
-        criticismLabels: criticismLabels,
-        averageRating: widget.averageRating,
-        languageCode: languageCode,
+      await getIt<CcFeedbackReporter>().send(
+        CcFeedback(
+          text: _feedbackController.text.trim(),
+          praise: praiseLabels,
+          criticism: criticismLabels,
+          rating: widget.averageRating,
+        ),
+        labels: _feedbackLabels(),
       );
 
       if (!context.mounted) return;
@@ -108,6 +109,18 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
       }
     }
   }
+
+  /// Captions of the message the team receives, in the user's language.
+  CcFeedbackLabels _feedbackLabels() => CcFeedbackLabels(
+    title: el.tr(CcLocaleKeys.profile_feedback_slack_title),
+    rating: el.tr(CcLocaleKeys.profile_feedback_slack_rating),
+    praise: el.tr(CcLocaleKeys.profile_feedback_slack_praise),
+    criticism: el.tr(CcLocaleKeys.profile_feedback_slack_criticism),
+    text: el.tr(CcLocaleKeys.profile_feedback_slack_text),
+    none: el.tr(CcLocaleKeys.profile_feedback_slack_none),
+    noText: el.tr(CcLocaleKeys.profile_feedback_slack_no_text),
+    notRated: el.tr(CcLocaleKeys.profile_feedback_slack_not_rated),
+  );
 
   @override
   Widget build(BuildContext context) {

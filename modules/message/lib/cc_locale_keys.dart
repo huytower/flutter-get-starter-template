@@ -836,6 +836,14 @@ class CodegenLoader extends AssetLoader {
       "feedback_send": "Send feedback",
       "feedback_required": "Choose a tag or write a message",
       "feedback_sent": "Thanks for your feedback",
+      "feedback_slack_title": "📝 User Feedback",
+      "feedback_slack_rating": "Rating",
+      "feedback_slack_praise": "Praise",
+      "feedback_slack_criticism": "Criticism",
+      "feedback_slack_text": "Typing feedback",
+      "feedback_slack_none": "(none)",
+      "feedback_slack_no_text": "(no text)",
+      "feedback_slack_not_rated": "(not rated)",
       "feedback_praise_fast": "Lightning-fast entry",
       "feedback_praise_offline": "Works great offline",
       "feedback_praise_runway": "Real Runway calculation",
@@ -1577,6 +1585,14 @@ class CodegenLoader extends AssetLoader {
       "feedback_send": "Gửi góp ý",
       "feedback_required": "Hãy chọn thẻ hoặc viết nội dung",
       "feedback_sent": "Cảm ơn góp ý của bạn",
+      "feedback_slack_title": "📝 Đánh giá & Góp ý người dùng",
+      "feedback_slack_rating": "Đánh giá",
+      "feedback_slack_praise": "Khen ngợi",
+      "feedback_slack_criticism": "Góp ý",
+      "feedback_slack_text": "Nội dung góp ý",
+      "feedback_slack_none": "(không có)",
+      "feedback_slack_no_text": "(chưa nhập)",
+      "feedback_slack_not_rated": "(chưa đánh giá)",
       "feedback_praise_fast": "Nhập liệu rất nhanh",
       "feedback_praise_offline": "Hoạt động tốt khi ngoại tuyến",
       "feedback_praise_runway": "Tính Runway thực tế",
@@ -2569,6 +2585,14 @@ class CodegenLoader extends AssetLoader {
       "feedback_send": "피드백 보내기",
       "feedback_required": "태그를 선택하거나 내용을 입력하세요",
       "feedback_sent": "피드백 감사합니다",
+      "feedback_slack_title": "📝 사용자 피드백",
+      "feedback_slack_rating": "평가",
+      "feedback_slack_praise": "칭찬",
+      "feedback_slack_criticism": "개선 요청",
+      "feedback_slack_text": "피드백 내용",
+      "feedback_slack_none": "(없음)",
+      "feedback_slack_no_text": "(미입력)",
+      "feedback_slack_not_rated": "(평가 없음)",
       "feedback_praise_fast": "빠른 입력",
       "feedback_praise_offline": "오프라인에서도 잘 작동",
       "feedback_praise_runway": "정확한 런웨이 계산",
@@ -3394,6 +3418,14 @@ class CodegenLoader extends AssetLoader {
       "feedback_send": "フィードバックを送信",
       "feedback_required": "タグを選択するか内容を入力してください",
       "feedback_sent": "フィードバックありがとうございます",
+      "feedback_slack_title": "📝 ユーザーフィードバック",
+      "feedback_slack_rating": "評価",
+      "feedback_slack_praise": "良かった点",
+      "feedback_slack_criticism": "改善点",
+      "feedback_slack_text": "フィードバック内容",
+      "feedback_slack_none": "(なし)",
+      "feedback_slack_no_text": "(未入力)",
+      "feedback_slack_not_rated": "(未評価)",
       "feedback_praise_fast": "入力が速い",
       "feedback_praise_offline": "オフラインでも快適",
       "feedback_praise_runway": "正確なランウェイ計算",
@@ -4207,6 +4239,14 @@ class CodegenLoader extends AssetLoader {
       "feedback_send": "发送反馈",
       "feedback_required": "选择标签或写下内容",
       "feedback_sent": "感谢您的反馈",
+      "feedback_slack_title": "📝 用户反馈",
+      "feedback_slack_rating": "评分",
+      "feedback_slack_praise": "赞扬",
+      "feedback_slack_criticism": "批评/建议",
+      "feedback_slack_text": "反馈内容",
+      "feedback_slack_none": "(无)",
+      "feedback_slack_no_text": "(未输入)",
+      "feedback_slack_not_rated": "(未评分)",
       "feedback_praise_fast": "输入快速",
       "feedback_praise_offline": "离线也能正常使用",
       "feedback_praise_runway": "真实 Runway 计算",
@@ -5207,6 +5247,14 @@ class CcLocaleKeys {
   static const profile_feedback_send = 'profile.feedback_send';
   static const profile_feedback_required = 'profile.feedback_required';
   static const profile_feedback_sent = 'profile.feedback_sent';
+  static const profile_feedback_slack_title = 'profile.feedback_slack_title';
+  static const profile_feedback_slack_rating = 'profile.feedback_slack_rating';
+  static const profile_feedback_slack_praise = 'profile.feedback_slack_praise';
+  static const profile_feedback_slack_criticism = 'profile.feedback_slack_criticism';
+  static const profile_feedback_slack_text = 'profile.feedback_slack_text';
+  static const profile_feedback_slack_none = 'profile.feedback_slack_none';
+  static const profile_feedback_slack_no_text = 'profile.feedback_slack_no_text';
+  static const profile_feedback_slack_not_rated = 'profile.feedback_slack_not_rated';
   static const profile_feedback_praise_fast = 'profile.feedback_praise_fast';
   static const profile_feedback_praise_offline =
       'profile.feedback_praise_offline';

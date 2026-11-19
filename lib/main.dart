@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:developer' as developer;
 
+import 'package:app_config/core/config/app/prj_env.dart';
 import 'package:catcher_2/catcher_2.dart';
+import 'package:cc_sdk_slack/export_cc_sdk_slack.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -94,7 +96,14 @@ Future<void> _runApplication() async {
   // DI is ready here (boot step 2), so uncaught errors also go to the
   // registered crash reporter (Crashlytics via cc_sdk_firebase).
   final crashReporter = getIt<CcCrashReporter>();
-  final attestation = getIt<CcAppAttestation>();
+  // Release/profile crashes also alert the team on Slack, with the App Check
+  // state of the device.
+  final remoteHandlers = [
+    CcSlackHandler(
+      webhookUrl: PrjEnv.slackCrashWebhookUrl,
+      attestation: getIt<CcAppAttestation>(),
+    ),
+  ];
   Catcher2(
     rootWidget: const AppRunner(),
     ensureInitialized: false,
@@ -105,12 +114,12 @@ Future<void> _runApplication() async {
     releaseConfig: CcCatcherBootstrap.releaseOptions(
       logFile,
       crashReporter: crashReporter,
-      attestation: attestation,
+      remoteHandlers: remoteHandlers,
     ),
     profileConfig: CcCatcherBootstrap.profileOptions(
       logFile,
       crashReporter: crashReporter,
-      attestation: attestation,
+      remoteHandlers: remoteHandlers,
     ),
   );
 }
