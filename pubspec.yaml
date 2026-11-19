@@ -88,6 +88,12 @@ dev_dependencies:
   melos: ^8.10.0
 
 dependency_overrides:
+  # path_provider_android 2.3.x (jni-based) throws ClassNotFoundException
+  # "Landroid/content/Context;" at startup (_bootHive ->
+  # getApplicationDocumentsDirectory): its generated Context type has no
+  # className, so jni looks up the descriptor "Landroid/content/Context;".
+  # Pin the last pigeon-based release. Remove once upstream is fixed.
+  path_provider_android: 2.2.17
   cli_util: ^0.5.0
   # auto_route_generator 10.6.0 (latest) caps analyzer <14, but Flutter 3.50's
   # pinned test_api forces test >=1.31.2 (analyzer 13-14) and hive_ce_generator
