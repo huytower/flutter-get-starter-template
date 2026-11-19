@@ -182,13 +182,24 @@ jobs:
   ios-distribute:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/qltc')
     needs: quality-check
-    runs-on: macos-latest
+    # App Store Connect (ITMS-90725): from April 2027 uploads must be built with
+    # the iOS 27 SDK (Xcode 27+). macos-latest (macOS 26) tops out at Xcode 26.x,
+    # so use GitHub's Xcode 27 image (preview label) and pin the Xcode below.
+    # Move back to macos-latest once its default image ships Xcode 27.
+    runs-on: xcode-27
     timeout-minutes: 90
     environment: production
     steps:
       - uses: actions/checkout@v5
         with:
           submodules: recursive
+      # Pin a released Xcode instead of the image default, so a beta or a
+      # changed default can't alter the SDK we ship with.
+      - name: Select Xcode 27.2
+        run: |
+          sudo xcode-select -s /Applications/Xcode_27.2.app
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
       - uses: ./.github/actions/flutter-setup
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
