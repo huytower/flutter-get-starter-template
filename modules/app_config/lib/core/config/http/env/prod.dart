@@ -64,44 +64,29 @@ class HttpProd extends HttpBase {
     return value.isEmpty ? null : value;
   }
 
+  // Fixed per build, not per environment, so constants rather than env keys.
   @override
-  int get versionIOS => _parseVersion('IOS_VERSION', PrjEnv.iosVersion);
+  int get versionIOS => 1;
 
   @override
-  int get versionAndroid =>
-      _parseVersion('ANDROID_VERSION_CODE', PrjEnv.androidVersionCode);
+  int get versionAndroid => 1;
 
   @override
-  int get versionApi => _parseVersion('API_VERSION', PrjEnv.apiVersion);
-
-  /// Parses a version number read from [PrjEnv].
-  ///
-  /// Throws [CcMissingConfigFailure] naming [key] if [value] is not a
-  /// positive integer.
-  int _parseVersion(String key, String value) {
-    final version = int.tryParse(value.trim());
-    if (version == null || version <= 0) {
-      throw CcMissingConfigFailure(
-        key,
-        message: 'Version must be a positive integer, got "$value"',
-      );
-    }
-    return version;
-  }
+  int get versionApi => 1;
 
   /// Whether analytics collection is enabled.
   ///
-  /// Set with `ENABLE_ANALYTICS` (see [PrjEnv]).
+  /// From [CcFeatureFlags] (SDK default: on).
   bool get enableAnalytics => CcFeatureFlags.isAnalyticsEnabled;
 
   /// Whether crash reporting is enabled.
   ///
-  /// Set with `ENABLE_CRASH_REPORTING` (see [PrjEnv]).
+  /// From [CcFeatureFlags] (SDK default: on).
   bool get enableCrashReporting => CcFeatureFlags.isCrashReportingEnabled;
 
   /// Whether certificate pinning is enabled for http requests.
   ///
-  /// Set with `ENABLE_CERT_PINNING` (see [PrjEnv]).
+  /// From [CcFeatureFlags] (SDK default: on).
   bool get enableCertificatePinning =>
       CcFeatureFlags.isCertificatePinningEnabled;
 

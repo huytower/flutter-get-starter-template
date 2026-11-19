@@ -12,13 +12,7 @@ Future<void> initEnv() async {
       appName: PrjEnv.appName,
       enableLogger: PrjEnv.enableLogger,
       enableLoggerDio: PrjEnv.enableLoggerDio,
-      enableAnalytics: PrjEnv.enableAnalytics,
-      enableCrashReporting: PrjEnv.enableCrashReporting,
-      enableCertificatePinning: PrjEnv.enableCertificatePinning,
       enableCrashLogUpload: PrjEnv.enableCrashLogUpload,
-      crashLogApiPath: PrjEnv.crashLogApiPath,
-      mainNavigationPath: PrjEnv.mainNavigationPath,
-      loginPath: PrjEnv.loginPath,
     ),
   );
   CcSlackHandler.configure(webhookUrl: PrjEnv.slackCrashWebhookUrl);

@@ -1,19 +1,24 @@
 import 'package:flutter/foundation.dart';
 
-/// Every build-time setting of this app, read from `--dart-define` values.
+/// Build-time settings of this app that change per environment, read from
+/// `--dart-define` values.
 ///
 /// Builds pass them with `--dart-define-from-file=env/prod.json`. In CI that
 /// file is generated from the repository's GitHub Variables (non-secret
 /// values) and Secrets (secret values), which are the single source of truth;
-/// locally it is a git-ignored copy of `env/prod.example.json`. A key missing
-/// from the file falls back to the default below.
+/// locally it is a git-ignored copy of `env/prod.example.json`.
+///
+/// Rule: every key read here is listed in `env/prod.example.json`, in the same
+/// order, and nothing else is. A key missing from the file falls back to the
+/// default below. Values that never change per environment are plain
+/// constants in code, not keys.
 ///
 /// This is the only place that reads these keys. The SDK receives its share
 /// through `CcSdkConfig` (see `initEnv()` in the app shell).
 abstract final class PrjEnv {
   PrjEnv._();
 
-  // App identity and backend.
+  // App.
   static const String appName = String.fromEnvironment(
     'APP_NAME',
     defaultValue: 'MyApp',
@@ -21,18 +26,6 @@ abstract final class PrjEnv {
   static const String apiUrl = String.fromEnvironment(
     'API_URL',
     defaultValue: 'https://api.production.com',
-  );
-  static const String iosVersion = String.fromEnvironment(
-    'IOS_VERSION',
-    defaultValue: '1',
-  );
-  static const String androidVersionCode = String.fromEnvironment(
-    'ANDROID_VERSION_CODE',
-    defaultValue: '1',
-  );
-  static const String apiVersion = String.fromEnvironment(
-    'API_VERSION',
-    defaultValue: '1',
   );
 
   // Diagnostics.
@@ -44,36 +37,14 @@ abstract final class PrjEnv {
     'ENABLE_LOGGER_DIO',
     defaultValue: !kReleaseMode,
   );
-  static const bool enableAnalytics = bool.fromEnvironment(
-    'ENABLE_ANALYTICS',
-    defaultValue: true,
-  );
-  static const bool enableCrashReporting = bool.fromEnvironment(
-    'ENABLE_CRASH_REPORTING',
-    defaultValue: true,
-  );
-  static const bool enableCertificatePinning = bool.fromEnvironment(
-    'ENABLE_CERT_PINNING',
-    defaultValue: true,
-  );
   static const bool enableCrashLogUpload = bool.fromEnvironment(
     'ENABLE_CRASH_LOG_UPLOAD',
     defaultValue: true,
   );
-  static const String crashLogApiPath = String.fromEnvironment(
-    'CRASH_LOG_API_PATH',
-    defaultValue: '/client-logs',
-  );
+  // ENABLE_DEV_CRASH_LOG_VIEWER is read by `CrashLogDevOverlay`
+  // (cc_micro_features) directly.
 
   // Navigation.
-  static const String mainNavigationPath = String.fromEnvironment(
-    'MAIN_NAVIGATION_PATH',
-    defaultValue: '/main_navigation',
-  );
-  static const String loginPath = String.fromEnvironment(
-    'LOGIN_PATH',
-    defaultValue: '/login',
-  );
   static const String autoRouteStart = String.fromEnvironment(
     'AUTO_ROUTE_START',
     defaultValue: 'DASHBOARD',

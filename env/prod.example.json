@@ -1,23 +1,18 @@
 {
   "APP_NAME": "MyApp",
   "API_URL": "https://api.example.com",
-  "IOS_VERSION": "1",
-  "ANDROID_VERSION_CODE": "1",
-  "API_VERSION": "1",
+
   "ENABLE_LOGGER": "true",
   "ENABLE_LOGGER_DIO": "true",
-  "ENABLE_ANALYTICS": "true",
-  "ENABLE_CRASH_REPORTING": "true",
-  "ENABLE_CERT_PINNING": "true",
   "ENABLE_CRASH_LOG_UPLOAD": "true",
-  "CRASH_LOG_API_PATH": "/client-logs",
   "ENABLE_DEV_CRASH_LOG_VIEWER": "false",
-  "MAIN_NAVIGATION_PATH": "/main_navigation",
-  "LOGIN_PATH": "/login",
+
   "AUTO_ROUTE_START": "DASHBOARD",
   "ENABLE_VIP_MODE": "false",
+
   "IS_FORCE_UPDATE": "false",
   "MINIMUM_OS_VERSION_HAS_FORCE": "",
+
   "SLACK_CRASH_WEBHOOK_URL": "",
   "SLACK_FEEDBACK_WEBHOOK_URL": "",
   "GEMINI_MODEL_NAME": ""
