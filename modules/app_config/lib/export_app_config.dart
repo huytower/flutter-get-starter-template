@@ -10,7 +10,7 @@
 // CONSTANTS
 // =================================
 
-export 'package:cc_sdk/core/helper/cc_network_helper.dart';
+export 'package:cc_sdk/export_cc_sdk.dart' show CcNetworkHelper;
 
 export 'core/config/app/cc_app_config.dart';
 export 'core/config/app/prj_env.dart';

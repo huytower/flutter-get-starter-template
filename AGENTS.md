@@ -127,7 +127,8 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
     1. `await initEnv()` first and alone (hands `PrjEnv` values to `CcSdkConfig`, which DI and logging read).
     2. `await Future.wait([Firebase.initializeApp(), initializeDependencies(), _initHive(), CcLocalization.initialize()])`
        — parallel, not sequential.
-    3. `CcAppCheckHelper.initialize()` and other non-critical services fire-and-forget, non-blocking.
+    3. `getIt<CcAppAttestation>().activate()` (App Check) and other non-critical services fire-and-forget,
+       non-blocking.
     4. UI launch.
     Any new startup dependency goes into step 2's parallel block only if truly required before first frame;
     otherwise defer to step 3, or lazily via `NavigationLogicMixin` in the nav bar shell.
