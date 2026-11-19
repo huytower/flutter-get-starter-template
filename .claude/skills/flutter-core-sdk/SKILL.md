@@ -46,9 +46,10 @@ Inner rings never import outer rings. The core ring has no vendor SDK dependency
 - Do not add new static-only vendor helpers (private constructor + static methods calling a vendor SDK): they
   cannot be mocked or swapped. Today there are 12 (`CcAnalyticsHelper`, `CcCrashReportingHelper`,
   `CcAppCheckHelper`, `CcGeminiHelper`, `CcSpeechHelper`, `CcSlackFeedbackHelper`, ...) to migrate.
-- Configuration is read through the SDK's own config types, never by calling `dotenv` from new code;
-  `CcFeatureFlags` and `CcAppTrackName` currently read `flutter_dotenv` directly, which forces every consumer
-  to ship a `.env` file.
+- Configuration comes in through `CcSdkConfig.configure()` (core settings) and each vendor helper's
+  `configure(...)` (e.g. Slack webhook, Gemini model), called by the app at boot. The SDK never reads `.env`
+  files, `dotenv` or `--dart-define` keys itself; `CcFeatureFlags`, `CcRouteConfig`, `CcAppTrackName` and
+  `CcCrashLogEnv` are read-only views of `CcSdkConfig.current`.
 
 ## Known domain leaks to relocate (audit of the current SDK)
 

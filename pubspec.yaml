@@ -57,7 +57,6 @@ dependencies:
     path: modules/domain_features
   flutter:
     sdk: flutter
-  flutter_dotenv: ^6.0.1
 
   get: ^4.7.3
   get_it: ^9.2.1
@@ -120,9 +119,8 @@ flutter:
   config:
     enable-lldb-debugging: false
 
-  # Environment files
+  # Bundled assets
   assets:
-    - env/prod.env
     - assets/icon/
     - assets/lottie/
     - assets/bg/

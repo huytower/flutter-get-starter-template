@@ -1,14 +1,13 @@
 import 'dart:async';
 
+import 'package:app_config/core/config/app/prj_env.dart';
 import 'package:bridge/navigation_bridge_service.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:cc_micro_features/features/app_update/presentation/app_update_prompter.dart';
 import 'package:cc_micro_features/features/splash/core/splash_manager.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import '../../../core/logging/init_logger.dart';
 import '../tabs/quick_test_tab_content.dart';
 
 mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
@@ -25,10 +24,7 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
   }
 
   void initNavigationLogic() {
-    final startRoute = dotenv.maybeGet(
-      'AUTO_ROUTE_START',
-      fallback: 'DASHBOARD',
-    );
+    const startRoute = PrjEnv.autoRouteStart;
     showQuickTestAsSecondTab = _isQuickTestRoute(startRoute);
     checkSplash();
 
@@ -53,7 +49,6 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
       // Native security & analytics
       CcAppCheckHelper.initialize();
       FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
-      logEnv();
 
       // Local notifications & sync
       try {

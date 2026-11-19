@@ -12,7 +12,7 @@ platform :android do
     ENV["BUILD_NUMBER"] = build_num.to_s
 
     # 2. Build the Flutter App Bundle
-    sh("cd ../.. && flutter build appbundle --release --flavor #{flavor} --build-number=#{build_num} --no-tree-shake-icons")
+    sh("cd ../.. && flutter build appbundle --release --flavor #{flavor} --dart-define-from-file=env/prod.json --build-number=#{build_num} --no-tree-shake-icons")
 
     # 3. Upload AAB to Google Play Console.
     # Missing credentials must fail the job; silently skipping would report a

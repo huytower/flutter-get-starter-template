@@ -26,7 +26,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
-  flutter_dotenv: ^6.0.1
   flutter_native_splash: ^2.4.8
   bloc: ^9.2.1
   catcher_2: ^2.1.12

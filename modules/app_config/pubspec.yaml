@@ -21,7 +21,6 @@ dependencies:
   equatable: ^2.1.0
   flutter:
     sdk: flutter
-  flutter_dotenv: ^6.0.1
   get_it: ^9.2.1
 
   # Environment

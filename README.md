@@ -97,11 +97,13 @@ melos run test
 Run the app (flavor `prod`, entry `lib/main_prod.dart`):
 
 ```bash
-flutter run -d <device> --flavor prod -t lib/main_prod.dart
+flutter run -d <device> --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json
 ```
 
-Copy `env/.env.example` to `env/prod.env` (git-ignored) and fill in your own values before the first run; the app
-loads it at boot via `initEnv()`.
+Copy `env/prod.example.json` to `env/prod.json` (git-ignored) and fill in your own values before the first run.
+The values are compiled in as `--dart-define`s and read only by `PrjEnv` (`modules/app_config`); `initEnv()` hands
+the SDK its share through `CcSdkConfig`. In CI the file is generated from GitHub Variables and Secrets
+(see `docs/CICD_SETUP.md`).
 
 ## Documentation map
 

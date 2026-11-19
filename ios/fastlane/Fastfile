@@ -97,7 +97,7 @@ platform :ios do
     # Swift Package Manager must be ON: google_mlkit_* >= 1.0 ship SPM only.
     # Plugins with SPM support resolve through SPM (Flutter migrates the Xcode
     # project on the fly); the rest still come from `pod install` below.
-    sh("flutter config --enable-swift-package-manager && cd ../.. && flutter pub get && flutter build ios --config-only --release --flavor #{flavor} --build-number=#{next_build_number} --no-codesign --no-tree-shake-icons")
+    sh("flutter config --enable-swift-package-manager && cd ../.. && flutter pub get && flutter build ios --config-only --release --flavor #{flavor} --dart-define-from-file=env/prod.json --build-number=#{next_build_number} --no-codesign --no-tree-shake-icons")
 
     # 3.0 Install pods, retrying on failure. Some pods (e.g. BoringSSL-GRPC) are
     # fetched with a full anonymous `git clone` from GitHub; when GitHub throttles

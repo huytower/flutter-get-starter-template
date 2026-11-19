@@ -21,11 +21,10 @@ DerivedData/
 .env
 .env.*
 env/.env.*
-# Flutter 3.50.0 drops dot-prefixed assets on Android (flutter/flutter#196444),
-# so real env files are named env/<flavor>.env (e.g. env/prod.env).
 env/*.env
-!.env.example
-!env/.env.example
+# Real values: env/<flavor>.json, passed with --dart-define-from-file.
+env/*.json
+!env/prod.example.json
 
 # Block the native configuration files from being tracked
 android/app/src/prod/google-services.json

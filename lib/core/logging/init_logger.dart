@@ -1,36 +1,27 @@
-import 'package:app_config/core/config/http/http_client/http_client_config.dart';
-import 'package:app_config/core/enum/environment.dart';
+import 'package:app_config/core/config/app/prj_env.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-/// Initializes environment variables without logging
+/// Hands the build-time settings in [PrjEnv] to the SDK.
+///
+/// Values are compile-time constants (`--dart-define-from-file`), so this is
+/// synchronous and cheap; it stays first in the boot sequence because DI and
+/// logging read [CcSdkConfig] as soon as they start.
 Future<void> initEnv() async {
-  final env = HttpClientConfig.environment;
-  String envFile;
-  switch (env) {
-    case Environment.PROD:
-      // Not `.env.prod`: Flutter 3.50.0 omits dot-prefixed assets from the
-      // Android bundle (flutter/flutter#196444).
-      envFile = 'prod.env';
-      break;
-  }
-  try {
-    await dotenv.load(fileName: 'env/$envFile');
-  } catch (e, stackTrace) {
-    '❌ Failed to load environment file env/$envFile: $e'.Log('EnvConfig');
-    stackTrace.Log('EnvConfig');
-    rethrow;
-  }
-}
-
-Future<void> logEnv() async {
-  try {
-    if (!dotenv.isInitialized) {
-      await initEnv();
-    }
-  } catch (e, stackTrace) {
-    '❌ Failed to load env variables: $e'.Log('EnvConfig');
-    stackTrace.Log('EnvConfig');
-    rethrow;
-  }
+  CcSdkConfig.configure(
+    const CcSdkConfig(
+      appName: PrjEnv.appName,
+      enableLogger: PrjEnv.enableLogger,
+      enableLoggerDio: PrjEnv.enableLoggerDio,
+      enableAnalytics: PrjEnv.enableAnalytics,
+      enableCrashReporting: PrjEnv.enableCrashReporting,
+      enableCertificatePinning: PrjEnv.enableCertificatePinning,
+      enableCrashLogUpload: PrjEnv.enableCrashLogUpload,
+      crashLogApiPath: PrjEnv.crashLogApiPath,
+      mainNavigationPath: PrjEnv.mainNavigationPath,
+      loginPath: PrjEnv.loginPath,
+    ),
+  );
+  CcSlackHandler.configure(webhookUrl: PrjEnv.slackCrashWebhookUrl);
+  CcSlackFeedbackHelper.configure(webhookUrl: PrjEnv.slackFeedbackWebhookUrl);
+  CcGeminiHelper.configure(modelName: PrjEnv.geminiModelName);
 }

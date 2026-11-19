@@ -60,6 +60,7 @@ jobs:
           gemini-model-name: ${{ secrets.GEMINI_MODEL_NAME || vars.GEMINI_MODEL_NAME }}
           is-force-update: ${{ secrets.IS_FORCE_UPDATE || vars.IS_FORCE_UPDATE }}
           minimum-os-version-has-force: ${{ secrets.MINIMUM_OS_VERSION_HAS_FORCE || vars.MINIMUM_OS_VERSION_HAS_FORCE }}
+          app-vars-json: ${{ toJSON(vars) }}
       - name: Lint & Test
         run: |
           melos run gen
@@ -87,11 +88,12 @@ jobs:
           gemini-model-name: ${{ secrets.GEMINI_MODEL_NAME || vars.GEMINI_MODEL_NAME }}
           is-force-update: ${{ secrets.IS_FORCE_UPDATE || vars.IS_FORCE_UPDATE }}
           minimum-os-version-has-force: ${{ secrets.MINIMUM_OS_VERSION_HAS_FORCE || vars.MINIMUM_OS_VERSION_HAS_FORCE }}
+          app-vars-json: ${{ toJSON(vars) }}
           setup-java: 'true'
       - name: Generate Code
         run: melos run gen
       - name: Compile Check
-        run: flutter build appbundle --release --flavor prod --no-tree-shake-icons
+        run: flutter build appbundle --release --flavor prod --dart-define-from-file=env/prod.json --no-tree-shake-icons
 
   # 3. Android Deployment: runs on push to qltc or workflow_dispatch.
   # `environment: production` lets you require manual approval in
@@ -117,6 +119,7 @@ jobs:
           gemini-model-name: ${{ secrets.GEMINI_MODEL_NAME || vars.GEMINI_MODEL_NAME }}
           is-force-update: ${{ secrets.IS_FORCE_UPDATE || vars.IS_FORCE_UPDATE }}
           minimum-os-version-has-force: ${{ secrets.MINIMUM_OS_VERSION_HAS_FORCE || vars.MINIMUM_OS_VERSION_HAS_FORCE }}
+          app-vars-json: ${{ toJSON(vars) }}
           setup-java: 'true'
           ruby-dir: 'android'
       
@@ -211,6 +214,7 @@ jobs:
           gemini-model-name: ${{ secrets.GEMINI_MODEL_NAME || vars.GEMINI_MODEL_NAME }}
           is-force-update: ${{ secrets.IS_FORCE_UPDATE || vars.IS_FORCE_UPDATE }}
           minimum-os-version-has-force: ${{ secrets.MINIMUM_OS_VERSION_HAS_FORCE || vars.MINIMUM_OS_VERSION_HAS_FORCE }}
+          app-vars-json: ${{ toJSON(vars) }}
           ruby-dir: 'ios'
 
       - name: Generate Code

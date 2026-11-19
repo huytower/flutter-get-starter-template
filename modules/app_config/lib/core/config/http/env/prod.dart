@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../../app/prj_env.dart';
 import 'base.dart';
 
 /// Production env configuration.
@@ -43,11 +43,8 @@ class HttpProd extends HttpBase {
 
   @override
   String get baseUrl {
-    final url = dotenv.maybeGet(
-      'API_URL',
-      fallback: 'https://api.production.com',
-    );
-    if (url == null || url.isEmpty) {
+    const url = PrjEnv.apiUrl;
+    if (url.isEmpty) {
       throw const CcMissingConfigFailure(
         'API_URL',
         message: 'API base URL is required in production',
@@ -56,69 +53,55 @@ class HttpProd extends HttpBase {
     return url;
   }
 
-  /// `IS_FORCE_UPDATE`, injected by CI from the GitHub secret of the same
-  /// name. Anything but `true` (including the unreplaced placeholder) is off.
+  /// `IS_FORCE_UPDATE` (see [PrjEnv]). Anything but `true` is off.
   @override
-  bool get isForceUpdate =>
-      dotenv.maybeGet('IS_FORCE_UPDATE')?.trim().toLowerCase() == 'true';
+  bool get isForceUpdate => PrjEnv.isForceUpdate;
 
-  /// `MINIMUM_OS_VERSION_HAS_FORCE`, injected by CI from the GitHub secret of
-  /// the same name. Blank or the unreplaced placeholder reads as unset.
+  /// `MINIMUM_OS_VERSION_HAS_FORCE` (see [PrjEnv]). Blank reads as unset.
   @override
   String? get minimumOsVersionHasForce {
-    final value = dotenv.maybeGet('MINIMUM_OS_VERSION_HAS_FORCE')?.trim();
-    if (value == null || value.isEmpty || value.startsWith('YOUR_')) {
-      return null;
-    }
-    return value;
+    final value = PrjEnv.minimumOsVersionHasForce.trim();
+    return value.isEmpty ? null : value;
   }
 
   @override
-  int get versionIOS => _getVersion('IOS_VERSION');
+  int get versionIOS => _parseVersion('IOS_VERSION', PrjEnv.iosVersion);
 
   @override
-  int get versionAndroid => _getVersion('ANDROID_VERSION_CODE');
+  int get versionAndroid =>
+      _parseVersion('ANDROID_VERSION_CODE', PrjEnv.androidVersionCode);
 
   @override
-  int get versionApi => _getVersion('API_VERSION');
+  int get versionApi => _parseVersion('API_VERSION', PrjEnv.apiVersion);
 
-  /// Gets a version number from env variables with validation.
+  /// Parses a version number read from [PrjEnv].
   ///
-  /// [key] - The env variable key to read
-  ///
-  /// Returns the parsed version number
-  /// Throws [CcMissingConfigFailure] if the version is invalid
-  int _getVersion(String key) {
-    try {
-      final value = dotenv.maybeGet(key, fallback: '1') ?? '1';
-      final version = int.tryParse(value);
-
-      if (version == null || version <= 0) {
-        throw CcMissingConfigFailure(
-          key,
-          message: 'Version must be a positive integer',
-        );
-      }
-
-      return version;
-    } catch (e, stackTrace) {
-      throw CcMissingConfigFailure(key, message: 'Failed to parse version: $e');
+  /// Throws [CcMissingConfigFailure] naming [key] if [value] is not a
+  /// positive integer.
+  int _parseVersion(String key, String value) {
+    final version = int.tryParse(value.trim());
+    if (version == null || version <= 0) {
+      throw CcMissingConfigFailure(
+        key,
+        message: 'Version must be a positive integer, got "$value"',
+      );
     }
+    return version;
   }
 
   /// Whether analytics collection is enabled.
   ///
-  /// Can be overridden with `ENABLE_ANALYTICS=false` in .env
+  /// Set with `ENABLE_ANALYTICS` (see [PrjEnv]).
   bool get enableAnalytics => CcFeatureFlags.isAnalyticsEnabled;
 
   /// Whether crash reporting is enabled.
   ///
-  /// Can be overridden with `ENABLE_CRASH_REPORTING=false` in .env
+  /// Set with `ENABLE_CRASH_REPORTING` (see [PrjEnv]).
   bool get enableCrashReporting => CcFeatureFlags.isCrashReportingEnabled;
 
   /// Whether certificate pinning is enabled for http requests.
   ///
-  /// Can be overridden with `ENABLE_CERT_PINNING=false` in .env
+  /// Set with `ENABLE_CERT_PINNING` (see [PrjEnv]).
   bool get enableCertificatePinning =>
       CcFeatureFlags.isCertificatePinningEnabled;
 

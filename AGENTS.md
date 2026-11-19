@@ -44,7 +44,10 @@ melos run test                # flutter test, across all packages
 - To run/generate for a single package, `cd` into it and run the plain `flutter`/`dart` command (e.g.
   `cd modules/domain_features && flutter analyze`) rather than melos, when you only touched that package.
 - Run a single test file: `flutter test path/to/foo_test.dart` (from the package root that owns it).
-- Run the app: `flutter run -d <device> --flavor prod -t lib/main_prod.dart` (flavor: `prod`; entry point `lib/main_prod.dart` delegating to `lib/main.dart` via `EnvironmentRunner`).
+- Run the app: `flutter run -d <device> --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json` (flavor: `prod`; entry point `lib/main_prod.dart` delegating to `lib/main.dart` via `EnvironmentRunner`).
+- App settings are `--dart-define`s from `env/prod.json` (git-ignored copy of `env/prod.example.json`; generated in CI
+  from GitHub Variables + Secrets, the single source of truth). Only `PrjEnv` (`modules/app_config`) reads them; the
+  SDK gets its share via `CcSdkConfig.configure()` in `initEnv()`. No code reads `.env` files or `flutter_dotenv`.
 - Firebase config is git-ignored; `melos run setup:firebase` copies `.template` files into
   `android/app/src/{flavor}/google-services.json` and `ios/Firebase/{flavor}/GoogleService-Info.plist`.
 - CI (`.github/workflows/firebase-app-distribution.yml`) is **active**. It runs on push/PR to `qltc` (docs-only
@@ -117,7 +120,7 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
    is the reference example.)
 6. **Clean Bootstrap Integrity (CRITICAL PERF)** — `main.dart` stays a lean, service-only entry point. Startup
    target **< 2 seconds**. Boot sequence (STRICT):
-    1. `await initEnv()` first and alone (DI/feature flags depend on env being loaded).
+    1. `await initEnv()` first and alone (hands `PrjEnv` values to `CcSdkConfig`, which DI and logging read).
     2. `await Future.wait([Firebase.initializeApp(), initializeDependencies(), _initHive(), CcLocalization.initialize()])`
        — parallel, not sequential.
     3. `CcAppCheckHelper.initialize()` and other non-critical services fire-and-forget, non-blocking.

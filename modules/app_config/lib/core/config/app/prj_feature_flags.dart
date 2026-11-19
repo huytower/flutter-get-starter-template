@@ -1,5 +1,4 @@
-import 'package:cc_sdk/export_cc_sdk.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'prj_env.dart';
 
 /// Product feature flags owned by this app (not by the SDK).
 ///
@@ -14,18 +13,5 @@ abstract final class PrjFeatureFlags {
   PrjFeatureFlags._();
 
   /// Whether VIP mode is on by default (`ENABLE_VIP_MODE`, default `false`).
-  static bool get isVipModeEnabled => _getBool('ENABLE_VIP_MODE', false);
-
-  static bool _getBool(String key, bool defaultValue) {
-    try {
-      final value = dotenv.maybeGet(key);
-      if (value == null) return defaultValue;
-      return value.toLowerCase() == 'true';
-    } catch (e) {
-      'Failed to parse boolean feature flag for $key: $e'.Log(
-        'PrjFeatureFlags',
-      );
-      return defaultValue;
-    }
-  }
+  static bool get isVipModeEnabled => PrjEnv.enableVipMode;
 }

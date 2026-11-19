@@ -56,11 +56,15 @@ Configure these secrets in `Settings > Secrets and variables > Actions`:
 | `APPLE_CERTIFICATE_BASE64`      | Base64-encoded `.p12` Distribution Certificate | Export `.p12` from Mac Keychain > Convert to Base64    |
 | `APPLE_CERTIFICATE_PASSWORD`    | Password for the `.p12` certificate            | Password set during `.p12` export from Mac Keychain   |
 
-### 3. App env values (written into `env/prod.env` at build time)
+### 3. App env values (generated into `env/prod.json` at build time)
 
-`.github/actions/flutter-setup` copies `env/.env.example` to `env/prod.env` and replaces each
-`YOUR_<NAME>_HERE` placeholder with the secret (or repository variable) of the same name. All are optional:
-an unset value keeps the placeholder, which the app treats as "not configured".
+GitHub is the single source of truth for app settings. `.github/actions/flutter-setup` writes `env/prod.json`
+from every key listed in `env/prod.example.json`, taking the value from a **Secret** (the five below) or else a
+**Repository Variable** of the same name (Settings > Secrets and variables > Actions > *Variables*), e.g.
+`APP_NAME`, `API_URL`, `ENABLE_LOGGER`, `ENABLE_VIP_MODE`. A key with no value is left out, so the default in
+`PrjEnv` (`modules/app_config/lib/core/config/app/prj_env.dart`) applies. Builds pass the file with
+`--dart-define-from-file=env/prod.json`; the step log lists each key and where its value came from, never the
+value. To add a setting: add the key to `env/prod.example.json`, read it in `PrjEnv`, and set it in GitHub.
 
 | Secret / Variable Name         | Description                                              | Format                                  |
 |:-------------------------------|:---------------------------------------------------------|:----------------------------------------|
