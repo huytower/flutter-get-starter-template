@@ -6,6 +6,7 @@ import 'package:domain_features/core/contracts/user_level_provider.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:theme/presentation/provider/theme_provider.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -20,6 +21,8 @@ final GetIt getIt = GetIt.instance;
     AuthCoordinator,
     CcDeviceInfoHelper,
     InternetConnection,
+    // Registered by the App Shell (lib/core/di/module/dependencies.dart).
+    ThemeProvider,
   ],
 )
 void initMicroPackage() {}

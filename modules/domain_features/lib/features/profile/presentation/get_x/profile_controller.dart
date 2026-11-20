@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
-import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
-import 'package:cc_micro_features/features/auth/domain/usecases/delete_account_usecase.dart';
 import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -12,63 +10,39 @@ import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:theme/presentation/provider/theme_provider.dart';
 
 import '../../../../core/constant/currency_constants.dart';
-import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
-import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../category/export_category.dart';
 import '../../../firestore/financial_data_sync_service.dart';
-import '../../../notification/notification_service.dart';
 import '../../domain/entities/profile_settings_entity.dart';
-import '../../domain/usecases/get_profile_settings_usecase.dart';
-import '../../domain/usecases/update_profile_settings_usecase.dart';
 import '../../user_level/presentation/get_x/user_level_controller.dart';
 import '../pages/terms_of_service_page.dart';
-import '../widgets/ai_consent_sheet.dart';
 import '../widgets/birth_year_sheet.dart';
 import '../widgets/currency_selection_sheet.dart';
 import '../widgets/display_name_sheet.dart';
 import '../widgets/language_selection_sheet.dart';
 import '../widgets/weekly_audit_day_sheet.dart';
-import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
+import '../actions/ai_consent_handler.dart';
+import '../actions/profile_account_actions.dart';
+import '../actions/profile_onboarding_actions.dart';
+import '../actions/profile_settings_actions.dart';
 
 @lazySingleton
 class ProfileController extends CcGetController {
   ProfileController(
-    this._getSettings,
-    this._updateSettings,
-    this._toggleCategoryEnabled,
-    this._session,
-    this._deviceInfo,
-    this._authCoordinator,
+    this._settingsActions,
+    this._account,
+    this._onboarding,
+    this._aiConsent,
     this.userLevel,
-    this._notificationService,
-    this._deleteAccount,
-    this._refresh,
-    this._guidelineProvider,
-    this._authRepository,
-    this._aiPreferences,
   );
 
-  final AiFallbackPreferenceDataSource _aiPreferences;
-
-  final FirebaseAuthRepository _authRepository;
-
-  final FinancialRefreshProvider _refresh;
-  final GuidelineProvider _guidelineProvider;
-
-  final GetProfileSettingsUseCase _getSettings;
-  final UpdateProfileSettingsUseCase _updateSettings;
-  final ToggleCategoryEnabledUseCase _toggleCategoryEnabled;
-  final SessionContract _session;
-  final CcDeviceInfoHelper _deviceInfo;
-  final AuthCoordinator _authCoordinator;
+  final ProfileSettingsActions _settingsActions;
+  final ProfileAccountActions _account;
+  final ProfileOnboardingActions _onboarding;
+  final AiConsentHandler _aiConsent;
   final UserLevelController userLevel;
-  final NotificationService _notificationService;
-  final DeleteAccountUseCase _deleteAccount;
 
   final Rxn<CcUserEntity> user = Rxn<CcUserEntity>();
   final Rx<ProfileSettingsEntity> settings = const ProfileSettingsEntity().obs;
@@ -80,20 +54,17 @@ class ProfileController extends CcGetController {
   final RxBool aiSharingEnabled = false.obs;
 
   Future<void> _loadAiSharing() async {
-    aiSharingEnabled.value = await _aiPreferences.isGeminiEnabled();
+    aiSharingEnabled.value = await _aiConsent.isEnabled();
   }
 
   /// Turning it on shows the consent sheet; turning it off withdraws consent.
   Future<void> toggleAiSharing(BuildContext context, bool value) async {
     if (!value) {
-      await _aiPreferences.setGeminiEnabled(false);
+      await _aiConsent.withdraw();
       aiSharingEnabled.value = false;
       return;
     }
-    aiSharingEnabled.value = await AiConsentSheet.ensure(
-      context,
-      _aiPreferences,
-    );
+    aiSharingEnabled.value = await _aiConsent.request(context);
   }
 
   /// "Unlock all features" also unlocks the AI features, so enabling it asks
@@ -101,10 +72,7 @@ class ProfileController extends CcGetController {
   /// features; only "Allow" turns on sharing.
   Future<void> toggleFullAccess(BuildContext context, bool value) async {
     if (value) {
-      aiSharingEnabled.value = await AiConsentSheet.ensure(
-        context,
-        _aiPreferences,
-      );
+      aiSharingEnabled.value = await _aiConsent.request(context);
     }
     await setVip(value);
   }
@@ -140,20 +108,18 @@ class ProfileController extends CcGetController {
   @override
   void onInit() {
     super.onInit();
-    user.bindStream(_session.userStream);
+    user.bindStream(_account.userStream);
     unawaited(_loadAiSharing());
 
     // Sync guideline progress into profile settings to avoid "Split Brain"
     // overwrites when updating other settings (theme, birth year, etc.)
-    if (_guidelineProvider.isAvailable) {
-      _guidelineProvider.onCompletedTasksChanged((List<String> tasks) {
-        if (settings.value.completedGuidelineTaskIds != tasks) {
-          settings.value = settings.value.copyWith(
-            completedGuidelineTaskIds: tasks,
-          );
-        }
-      });
-    }
+    _onboarding.onGuidelineProgress((List<String> tasks) {
+      if (settings.value.completedGuidelineTaskIds != tasks) {
+        settings.value = settings.value.copyWith(
+          completedGuidelineTaskIds: tasks,
+        );
+      }
+    });
 
     ever(user, (u) {
       if (u != null) {
@@ -165,7 +131,7 @@ class ProfileController extends CcGetController {
   }
 
   Future<void> _syncStoredCurrency() async {
-    final stored = await _getSettings();
+    final stored = await _settingsActions.load();
     if (stored.currencyCode == settings.value.currencyCode) return;
     settings.value = settings.value.copyWith(
       currencyCode: stored.currencyCode,
@@ -177,9 +143,8 @@ class ProfileController extends CcGetController {
   Future<void> _load() async {
     try {
       layoutStatus.value = CcLayoutStatus.loading;
-      final s = await _getSettings();
-      settings.value = s;
-      appVersion.value = await _deviceInfo.getAppVersion();
+      settings.value = await _settingsActions.load();
+      appVersion.value = await _settingsActions.appVersion();
       unawaited(userLevel.refresh());
       layoutStatus.value = CcLayoutStatus.success;
     } catch (e) {
@@ -246,30 +211,20 @@ class ProfileController extends CcGetController {
   // ACTIONS
   // ===========================================================================
 
-  /// Enables the given category `nameKey`s (mapped to their seed ids) so they
-  /// appear checked in the category settings.
-  Future<void> enableCategories(List<String> keys) async {
-    final idByKey = {for (final c in CategorySeed.categories) c.nameKey: c.id};
-    for (final key in keys) {
-      final id = idByKey[key];
-      if (id != null) await _toggleCategoryEnabled.call(id, true);
-    }
-  }
-
   Future<void> toggleReminder(bool value) async {
     if (value) {
-      final granted = await _notificationService.requestPermission();
+      final granted = await _settingsActions.requestReminderPermission();
       if (!granted) return;
     }
     final updated = settings.value.copyWith(reminderEnabled: value);
     settings.value = updated;
-    await _updateSettings(updated);
+    await _settingsActions.save(updated);
   }
 
   Future<void> setBirthYear(int year) async {
     final updated = settings.value.copyWith(birthYear: year);
     settings.value = updated;
-    await _updateSettings(updated);
+    await _settingsActions.save(updated);
   }
 
   Future<void> setWeeklyAuditDay(int dayIndex) async {
@@ -282,27 +237,15 @@ class ProfileController extends CcGetController {
       weeklyAuditDayChangedAt: changed ? DateTime.now() : null,
     );
     settings.value = updated;
-    await _updateSettings(updated);
+    await _settingsActions.save(updated);
   }
 
   Future<void> setVip(bool value) async {
     final updated = settings.value.copyWith(isVip: value);
     settings.value = updated;
-    await _updateSettings(updated);
+    await _settingsActions.save(updated);
 
-    // Unlocking full access also enables investment and liability categories
-    // by default so they appear in the UI immediately.
-    if (value) {
-      final keys = CategorySeed.categories
-          .where(
-            (c) =>
-                c.type == CategoryType.investment ||
-                c.type == CategoryType.liability,
-          )
-          .map((c) => c.nameKey)
-          .toList();
-      await enableCategories(keys);
-    }
+    if (value) await _onboarding.enableFullAccessCategories();
 
     // Refresh user level status so gated sections (Investment/Liability)
     // appear immediately across the app.
@@ -310,44 +253,36 @@ class ProfileController extends CcGetController {
 
     // If CategorySettingsController is active, reload it to pick up the
     // newly-enabled categories and updated user level.
-    unawaited(_refresh.refreshCategorySettings());
+    _onboarding.refreshCategorySettings();
   }
 
   Future<void> setThemeMode(bool isDarkMode) async {
     final updated = settings.value.copyWith(isDarkMode: isDarkMode);
     settings.value = updated;
-    if (getIt.isRegistered<ThemeProvider>()) {
-      getIt<ThemeProvider>().toggleTheme(isDarkMode);
-    }
-    await _updateSettings(updated);
+    _settingsActions.applyTheme(isDarkMode: isDarkMode);
+    await _settingsActions.save(updated);
   }
 
   Future<void> setHeaderFlipped(bool isFlipped) async {
     if (settings.value.isHeaderFlipped == isFlipped) return;
     final updated = settings.value.copyWith(isHeaderFlipped: isFlipped);
     settings.value = updated;
-    await _updateSettings(updated);
+    await _settingsActions.save(updated);
   }
 
   /// Guards sign-out so the user can never leave behind unsynced financial
   /// records. Returns the reason it was refused, or null on success.
-  Future<LogoutResult?> logout(BuildContext context) async {
-    final syncService = getIt<FinancialDataSyncService>();
-    final result = await syncService.logoutSafely();
-
-    if (result == LogoutResult.success) return null;
-    return result;
-  }
+  Future<LogoutResult?> logout(BuildContext context) => _account.logout();
 
   /// Whether the logout button should be interactive.
-  bool get canLogout => getIt<FinancialDataSyncService>().canLogout();
+  bool get canLogout => _account.canLogout;
 
   /// Null when logout is allowed, otherwise why it is blocked.
-  LogoutBlock? get logoutBlock => getIt<FinancialDataSyncService>().logoutBlock;
+  LogoutBlock? get logoutBlock => _account.logoutBlock;
 
   void handleHeroBannerTap(BuildContext context) {
     if (!isLoggedIn) {
-      _authCoordinator.navigateToLogin(context);
+      _account.openLogin(context);
     }
   }
 
@@ -373,26 +308,12 @@ class ProfileController extends CcGetController {
       maxYear: maxYear,
     );
 
-    if (picked != null) {
-      final group = CategorySeed.ageGroup(picked);
-      if (group != null) {
-        await setBirthYear(picked);
-
-        // Only apply age-based categories if user hasn't customized their categories yet
-        if (!settings.value.hasCustomizedCategories) {
-          await enableCategories([
-            ...CategorySeed.defaultExpenseCategoryKeys[group]!,
-            ...CategorySeed.defaultIncomeCategoryKeys[group]!,
-            ...CategorySeed.defaultLiabilityCategoryKeys[group]!,
-            ...CategorySeed.defaultInvestmentCategoryKeys[group]!,
-            if (CategorySeed.qualifiesForFamilyDefaults(picked))
-              ...CategorySeed.familyCategoryKeys,
-          ]);
-        }
-
-        // Guideline: birth_year completed
-        _guidelineProvider.completeTask('birth_year');
-      }
+    if (picked != null && CategorySeed.ageGroup(picked) != null) {
+      await setBirthYear(picked);
+      await _onboarding.applyBirthYear(
+        picked,
+        hasCustomizedCategories: settings.value.hasCustomizedCategories,
+      );
     }
   }
 
@@ -418,7 +339,7 @@ class ProfileController extends CcGetController {
     final name = await DisplayNameSheet.show(context, currentName: fullName);
     if (name == null || name.trim().isEmpty) return;
 
-    final result = await _authRepository.updateDisplayName(name.trim());
+    final result = await _account.updateDisplayName(name.trim());
     result.when(
       // authStateChanges() won't re-emit for a profile-only update, so apply
       // the refreshed entity directly rather than waiting on the stream.
@@ -461,7 +382,7 @@ class ProfileController extends CcGetController {
         currencySelectionSource: CurrencySelectionSources.userSelected,
       );
       settings.value = updated;
-      await _updateSettings(updated);
+      await _settingsActions.save(updated);
       await _load();
       CurrencyConstants.onCurrencyChanged.value++;
     }
@@ -469,19 +390,19 @@ class ProfileController extends CcGetController {
 
   /// Handle link account tap - navigate to login page for account linking
   void handleLinkAccountTap(BuildContext context) {
-    _authCoordinator.navigateToLogin(context);
+    _account.openLogin(context);
   }
 
   /// Handle avatar tap - navigate to login page only if not logged in
   void handleAvatarTap(BuildContext context) {
     if (!isLoggedIn) {
-      _authCoordinator.navigateToLogin(context);
+      _account.openLogin(context);
     }
   }
 
   /// Handle phone number link tap - navigate to login page
   void handlePhoneLinkTap(BuildContext context) {
-    _authCoordinator.navigateToLogin(context);
+    _account.openLogin(context);
   }
 
   Future<void> navigateToCategorySettings(BuildContext context) async {
@@ -491,7 +412,7 @@ class ProfileController extends CcGetController {
     }
     if (!context.mounted) return;
 
-    _guidelineProvider.completeTask('categories');
+    _onboarding.completeCategoriesTask();
 
     Navigator.of(context).push(
       MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),
@@ -507,19 +428,9 @@ class ProfileController extends CcGetController {
   Future<Result<Unit, CcFailure>> deleteAccount() async {
     layoutStatus.value = CcLayoutStatus.loading;
     try {
-      final result = await _performDeleteAccount();
-      if (result.isSuccess()) {
-        final syncService = getIt<FinancialDataSyncService>();
-        await syncService.handleAccountDeleted();
-        await _session.clearSession();
-      }
-      return result;
+      return await _account.deleteAccount();
     } finally {
       layoutStatus.value = CcLayoutStatus.success;
     }
-  }
-
-  Future<Result<Unit, CcFailure>> _performDeleteAccount() async {
-    return _deleteAccount.call();
   }
 }

@@ -106,8 +106,7 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
       | Implementation of a `core/` interface | `modules/data_config` | `ExchangeRateRepositoryImpl` |
       | Implementation of a `cc_micro_features` interface that needs app config | App Shell `lib/data/repositories/` | `AppUpdateConfigRepositoryImpl` |
     - Another feature **may** depend on a repository **interface** (e.g. `report` uses `TransactionRepository`):
-      import it from the owning feature's `domain/`. DI-created classes receive it as a constructor parameter;
-      mixins and widgets follow the same rules as providers (rule 4).
+      import it from the owning feature's `domain/` and inject it as section IV describes.
     - Nothing may import a `*_repository_impl.dart` except its own feature's tests. Only the generated DI file
       (`di.module.dart` / `di.config.dart`) references implementations.
     - Repository interfaces are **not** moved to `core/` just because several features use them — only shared
@@ -131,12 +130,7 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
    contracts in `modules/domain_features/lib/core/contracts/`: `FinancialRefreshProvider`, `UserLevelProvider`,
    `GuidelineProvider`. Their implementations live in `modules/bridge` (the orchestrator — the only place that
    knows the concrete controllers), registered with `@LazySingleton(as: XProvider)`.
-   - Classes created by DI (`@injectable` / `@lazySingleton`): take the provider as a **constructor parameter**.
-   - Mixins (no constructor): declare an abstract getter for a dependency bundle that each host controller
-     injects — see `QuickEntryDependencies` used by `QuickEntryMixin` / `QuickEntryBatchMixin`.
-   - Widgets: take the dependency as a constructor argument from the controller or caller that builds them
-     (e.g. `AiConsentSheet.ensure(context, prefs)`, `QuickEntrySection(aiPreferences: ...)`). Use
-     `getIt<XProvider>()` only when no caller can supply it.
+   - Receive providers like any other dependency — see **section IV, "Injecting dependencies"**.
    - New cross-feature need → add a method to the matching provider (or a new `*Provider` + bridge impl); never
      route by string/event keys — typed contracts keep every call traceable in CodeGraph.
    - **Legacy, do not copy:** about 40 older imports of other features' controllers still exist (mainly
@@ -241,6 +235,48 @@ under `shared/cc_micro_features/lib/features/{name}/` (or `modules/domain_featur
 app-specific) with `data/`, `domain/`, `presentation/` subfolders, then export it from
 `export_micro_features.dart` / `export_domain_features.dart`. See `shared/cc_micro_features/feature_template.md`
 for full file templates.
+
+### Injecting dependencies (applies to every package: `lib/`, `modules/*`, `cc_bridge`, `shared/cc_micro_features`, `shared/cc_core_sdk`)
+
+1. **Constructor injection, always.** A class receives every collaborator (repository, use case, service,
+   `*Provider`, data source) through its constructor. DI-created classes (`@injectable` / `@lazySingleton`) get
+   them from injectable; widgets get them as constructor arguments from the controller or caller that builds
+   them (e.g. `AiConsentSheet.ensure(context, prefs)`, `QuickEntrySection(aiPreferences: ...)`).
+2. **`getIt` only at the composition root**, which is exactly:
+   - each package's `lib/core/di/di.dart` and the App Shell's DI / bootstrap code;
+   - the screen entry point that creates its own controller or bloc (page, route, binding), e.g.
+     `Get.put(getIt<ExpenseFormController>())`.
+   Nowhere else: not in `domain/`, `data/`, controllers, services, mixins, or widgets below the page.
+3. **Split, don't bundle.** If a constructor needs **more than 5 dependencies**, or the file passes ~300 lines
+   (rule #16), extract one cohesive responsibility into its own `@injectable` class with 2–4 dependencies and
+   inject that class instead. Never shorten a constructor by going back to `getIt` or by grouping unrelated
+   dependencies into one "bag" object.
+4. **Mixins carry no external dependencies.** Logic that needs services is a class injected into the
+   controller (composition over inheritance); a mixin may only hold small behavior over its host's own state.
+5. **Tests build the class directly with fakes.** If a test has to call `getIt.register…`, the class breaks
+   point 1 or 2.
+
+Example — `ProfileController` delegates each concern to a small injected class instead of taking 13
+dependencies:
+
+```dart
+@injectable
+class AiConsentHandler {                       // one concern, 1 dependency
+  AiConsentHandler(this._aiPreferences);
+  final AiFallbackPreferenceDataSource _aiPreferences;
+}
+
+@lazySingleton
+class ProfileController extends CcGetController {
+  ProfileController(this._aiConsent, this._account, ...); // few, named collaborators
+  final AiConsentHandler _aiConsent;
+  final ProfileAccountActions _account;
+}
+```
+
+**Legacy, do not copy:** `QuickEntryDependencies` (a dependency bag for `QuickEntryMixin`) breaks points 3–4
+and is to be replaced by an injected class; controllers above 5 dependencies (`ReportController`, ...) and
+widgets below the page that still call `getIt` are debt to migrate, not patterns.
 
 ## V. Delivery workflow
 

@@ -11,6 +11,7 @@ import 'package:cc_micro_features/features/auth/domain/repositories/firebase_aut
     as _i745;
 import 'package:cc_micro_features/features/auth/domain/usecases/delete_account_usecase.dart'
     as _i308;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' as _i631;
 import 'package:dio/dio.dart' as _i361;
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart'
     as _i953;
@@ -156,6 +157,14 @@ import 'package:domain_features/features/profile/domain/usecases/get_profile_set
     as _i569;
 import 'package:domain_features/features/profile/domain/usecases/update_profile_settings_usecase.dart'
     as _i220;
+import 'package:domain_features/features/profile/presentation/actions/ai_consent_handler.dart'
+    as _i734;
+import 'package:domain_features/features/profile/presentation/actions/profile_account_actions.dart'
+    as _i189;
+import 'package:domain_features/features/profile/presentation/actions/profile_onboarding_actions.dart'
+    as _i750;
+import 'package:domain_features/features/profile/presentation/actions/profile_settings_actions.dart'
+    as _i470;
 import 'package:domain_features/features/profile/presentation/get_x/currency_selection_controller.dart'
     as _i429;
 import 'package:domain_features/features/profile/presentation/get_x/profile_controller.dart'
@@ -258,6 +267,7 @@ import 'package:domain_features/features/wallet/presentation/get_x/wallet_contro
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart'
     as _i161;
+import 'package:theme/presentation/provider/theme_provider.dart' as _i577;
 
 class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -296,6 +306,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i648.TransactionLocalDataSource());
     gh.lazySingleton<_i1058.WalletLocalDataSource>(
         () => _i1058.WalletLocalDataSource());
+    gh.factory<_i734.AiConsentHandler>(() =>
+        _i734.AiConsentHandler(gh<_i967.AiFallbackPreferenceDataSource>()));
     gh.lazySingleton<_i128.GuidelineController>(
         () => _i128.GuidelineController(gh<_i136.UserLevelProvider>()));
     gh.factory<_i865.GenericSyncDataSource>(() => _i865.GenericSyncDataSource(
@@ -377,6 +389,13 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               local: gh<_i783.LiabilityLocalDatasource>(),
               syncService: gh<_i963.FinancialDataSyncService>(),
             ));
+    gh.factory<_i189.ProfileAccountActions>(() => _i189.ProfileAccountActions(
+          gh<_i727.SessionContract>(),
+          gh<_i745.FirebaseAuthRepository>(),
+          gh<_i308.DeleteAccountUseCase>(),
+          gh<_i963.FinancialDataSyncService>(),
+          gh<_i727.AuthCoordinator>(),
+        ));
     gh.lazySingleton<_i857.CommentRepository>(
         () => _i536.CommentRepositoryImpl(remote: gh<_i130.CommentRemote>()));
     gh.lazySingleton<_i857.TransactionRepository>(
@@ -483,6 +502,13 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i136.UserLevelProvider>(),
           gh<_i953.FinancialRefreshProvider>(),
         ));
+    gh.factory<_i470.ProfileSettingsActions>(() => _i470.ProfileSettingsActions(
+          gh<_i569.GetProfileSettingsUseCase>(),
+          gh<_i220.UpdateProfileSettingsUseCase>(),
+          gh<_i483.NotificationService>(),
+          gh<_i577.ThemeProvider>(),
+          gh<_i631.CcDeviceInfoHelper>(),
+        ));
     gh.lazySingleton<_i393.GetCategoryAverageMonthlySpendUseCase>(() =>
         _i393.GetCategoryAverageMonthlySpendUseCase(
             gh<_i1027.TransactionRepository>()));
@@ -522,6 +548,12 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i544.BudgetLimitRepository>(),
               gh<_i1027.TransactionRepository>(),
               gh<_i1059.CategoryRepository>(),
+            ));
+    gh.factory<_i750.ProfileOnboardingActions>(
+        () => _i750.ProfileOnboardingActions(
+              gh<_i1041.ToggleCategoryEnabledUseCase>(),
+              gh<_i953.FinancialRefreshProvider>(),
+              gh<_i373.GuidelineProvider>(),
             ));
     gh.lazySingleton<_i240.CreateInvestmentTransactionUseCase>(
         () => _i240.CreateInvestmentTransactionUseCase(
@@ -626,6 +658,13 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i743.GetBudgetLimitStatsUseCase>(),
               gh<_i1027.TransactionRepository>(),
             ));
+    gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
+          gh<_i470.ProfileSettingsActions>(),
+          gh<_i189.ProfileAccountActions>(),
+          gh<_i750.ProfileOnboardingActions>(),
+          gh<_i734.AiConsentHandler>(),
+          gh<_i811.UserLevelController>(),
+        ));
     gh.lazySingleton<_i206.GetBudgetInsightsUseCase>(
         () => _i206.GetBudgetInsightsUseCase(
               gh<_i743.GetBudgetLimitStatsUseCase>(),
@@ -709,21 +748,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i373.GuidelineProvider>(),
               gh<_i232.GuestLoginPromptService>(),
             ));
-    gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
-          gh<_i569.GetProfileSettingsUseCase>(),
-          gh<_i220.UpdateProfileSettingsUseCase>(),
-          gh<_i1041.ToggleCategoryEnabledUseCase>(),
-          gh<_i727.SessionContract>(),
-          gh<_i727.CcDeviceInfoHelper>(),
-          gh<_i727.AuthCoordinator>(),
-          gh<_i811.UserLevelController>(),
-          gh<_i483.NotificationService>(),
-          gh<_i308.DeleteAccountUseCase>(),
-          gh<_i953.FinancialRefreshProvider>(),
-          gh<_i373.GuidelineProvider>(),
-          gh<_i745.FirebaseAuthRepository>(),
-          gh<_i967.AiFallbackPreferenceDataSource>(),
-        ));
     gh.lazySingleton<_i451.BudgetAllocationController>(
         () => _i451.BudgetAllocationController(
               gh<_i231.WalletController>(),
