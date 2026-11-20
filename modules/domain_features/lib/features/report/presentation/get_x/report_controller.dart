@@ -46,7 +46,10 @@ class ReportController extends CcGetController {
     this.userLevel,
     this._generateAiAdvice,
     this._conversionService,
+    this._aiPreferences,
   );
+
+  final AiFallbackPreferenceDataSource _aiPreferences;
 
   final GetCategorySpendingUseCase _getCategorySpending;
   final GetFinancialRunwayUseCase _getFinancialRunway;
@@ -224,7 +227,6 @@ class ReportController extends CcGetController {
       return;
     }
 
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
     // The advice sends this month's totals to Gemini: ask for consent first.
     if (!context.mounted || !await AiConsentSheet.ensure(context)) {
       if (isClosed) return;
@@ -232,7 +234,7 @@ class ReportController extends CcGetController {
       aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_gemini_disabled;
       return;
     }
-    if (!await prefs.tryConsumeDailyCall()) {
+    if (!await _aiPreferences.tryConsumeDailyCall()) {
       if (isClosed) return;
       isGeneratingAdvice.value = false;
       aiAdviceErrorKey.value =

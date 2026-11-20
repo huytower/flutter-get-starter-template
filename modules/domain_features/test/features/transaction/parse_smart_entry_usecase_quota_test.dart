@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
 import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
@@ -48,12 +47,15 @@ const _food = CategoryEntity(
 
 const _text = SmartEntryTextInput('cafe 30k');
 
-ParseSmartEntryUseCase _useCase(List<CategoryEntity> categories) =>
-    ParseSmartEntryUseCase(
-      _StubGetCategories(categories),
-      CurrencyConversionService(_UnusedRateRepository()),
-      _StubWalletRepository(),
-    );
+ParseSmartEntryUseCase _useCase(
+  List<CategoryEntity> categories,
+  AiFallbackPreferenceDataSource prefs,
+) => ParseSmartEntryUseCase(
+  _StubGetCategories(categories),
+  CurrencyConversionService(_UnusedRateRepository()),
+  _StubWalletRepository(),
+  prefs,
+);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -65,11 +67,7 @@ void main() {
     // of a user who already agreed.
     SharedPreferences.setMockInitialValues({'ai_gemini_enabled': true});
     prefs = AiFallbackPreferenceDataSource()..enforceDailyLimit = true;
-    await getIt.reset();
-    getIt.registerSingleton<AiFallbackPreferenceDataSource>(prefs);
   });
-
-  tearDown(() => getIt.reset());
 
   String? failureOf(Result<Object?, CcFailure> result) =>
       result.tryGetError()?.message;
@@ -78,7 +76,7 @@ void main() {
     test('fails with gemini_disabled and spends nothing when off', () async {
       await prefs.setGeminiEnabled(false);
 
-      final result = await _useCase([_food]).call(input: _text);
+      final result = await _useCase([_food], prefs).call(input: _text);
 
       expect(failureOf(result), ParseSmartEntryUseCase.geminiDisabledReason);
       expect(await prefs.getTodayFallbackCount(), 0);
@@ -89,7 +87,7 @@ void main() {
         await prefs.incrementTodayFallbackCount();
       }
 
-      final result = await _useCase([_food]).call(input: _text);
+      final result = await _useCase([_food], prefs).call(input: _text);
 
       expect(failureOf(result), ParseSmartEntryUseCase.dailyLimitReachedReason);
       expect(
@@ -99,7 +97,7 @@ void main() {
     });
 
     test('does not spend a call when there are no categories', () async {
-      final result = await _useCase(const []).call(input: _text);
+      final result = await _useCase(const [], prefs).call(input: _text);
 
       expect(failureOf(result), 'no_categories');
       expect(await prefs.getTodayFallbackCount(), 0);
@@ -108,14 +106,14 @@ void main() {
     test('does not spend a call when no image was given', () async {
       final result = await _useCase([
         _food,
-      ]).call(input: const SmartEntryImagesInput([]));
+      ], prefs).call(input: const SmartEntryImagesInput([]));
 
       expect(failureOf(result), 'no_input');
       expect(await prefs.getTodayFallbackCount(), 0);
     });
 
     test('spends exactly one call once the request goes out', () async {
-      final result = await _useCase([_food]).call(
+      final result = await _useCase([_food], prefs).call(
         input: SmartEntryImagesInput([
           (bytes: Uint8List(1), mimeType: 'image/jpeg'),
         ]),

@@ -50,7 +50,10 @@ class ProfileController extends CcGetController {
     this._refresh,
     this._guidelineProvider,
     this._authRepository,
+    this._aiPreferences,
   );
+
+  final AiFallbackPreferenceDataSource _aiPreferences;
 
   final FirebaseAuthRepository _authRepository;
 
@@ -77,15 +80,13 @@ class ProfileController extends CcGetController {
   final RxBool aiSharingEnabled = false.obs;
 
   Future<void> _loadAiSharing() async {
-    aiSharingEnabled.value = await getIt<AiFallbackPreferenceDataSource>()
-        .isGeminiEnabled();
+    aiSharingEnabled.value = await _aiPreferences.isGeminiEnabled();
   }
 
   /// Turning it on shows the consent sheet; turning it off withdraws consent.
   Future<void> toggleAiSharing(BuildContext context, bool value) async {
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
     if (!value) {
-      await prefs.setGeminiEnabled(false);
+      await _aiPreferences.setGeminiEnabled(false);
       aiSharingEnabled.value = false;
       return;
     }

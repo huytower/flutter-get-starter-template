@@ -36,7 +36,10 @@ class GenerateAiFinancialAdviceUseCase {
     this._getAnomalies,
     this._getRunway,
     this._getCashFlow,
+    this._aiPreferences,
   );
+
+  final AiFallbackPreferenceDataSource _aiPreferences;
 
   final GetBudgetInsightsUseCase _getInsights;
   final GetBudgetAnomaliesUseCase _getAnomalies;
@@ -53,7 +56,7 @@ class GenerateAiFinancialAdviceUseCase {
     required CurrencyConversionService conversionService,
     String? languageCode,
   }) async {
-    if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
+    if (!await _aiPreferences.isGeminiEnabled()) {
       return null;
     }
     final results = await Future.wait([
@@ -156,7 +159,7 @@ class GenerateAiFinancialAdviceUseCase {
   /// AI quota is exhausted (release builds; debug has no quota).
   Future<bool> _shouldReportFailure(Object? error) async {
     if (isDeviceAttestationFailure(error)) return false;
-    return getIt<AiFallbackPreferenceDataSource>().isUnderDailyLimit();
+    return _aiPreferences.isUnderDailyLimit();
   }
 
   Schema _buildResponseSchema(String language) {

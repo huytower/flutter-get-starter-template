@@ -29,7 +29,10 @@ class ParseSmartEntryUseCase {
     this._getCategories,
     this._conversionService,
     this._walletRepository,
+    this._aiPreferences,
   );
+
+  final AiFallbackPreferenceDataSource _aiPreferences;
 
   static const int defaultMaxTransactions = 20;
 
@@ -50,8 +53,7 @@ class ParseSmartEntryUseCase {
     int maxTransactions = defaultMaxTransactions,
     ParsedTransactionEntity? localResult,
   }) async {
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
-    if (!await prefs.isGeminiEnabled()) {
+    if (!await _aiPreferences.isGeminiEnabled()) {
       return const Error(ValidationFailure(geminiDisabledReason));
     }
     if (input is SmartEntryImagesInput && input.images.isEmpty) {
@@ -78,7 +80,7 @@ class ParseSmartEntryUseCase {
       today: DateTime.now(),
     );
 
-    if (!await prefs.tryConsumeDailyCall()) {
+    if (!await _aiPreferences.tryConsumeDailyCall()) {
       return const Error(ValidationFailure(dailyLimitReachedReason));
     }
 

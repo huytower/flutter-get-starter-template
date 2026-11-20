@@ -442,16 +442,17 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i1027.TransactionRepository>(),
               gh<_i195.CurrencyConversionService>(),
             ));
+    gh.lazySingleton<_i196.UndoReconciliationUseCase>(
+        () => _i196.UndoReconciliationUseCase(
+              gh<_i944.ReconciliationRepository>(),
+              gh<_i1027.TransactionRepository>(),
+            ));
     gh.lazySingleton<_i263.ParseSmartEntryUseCase>(
         () => _i263.ParseSmartEntryUseCase(
               gh<_i224.GetCategoriesUseCase>(),
               gh<_i195.CurrencyConversionService>(),
               gh<_i572.WalletRepository>(),
-            ));
-    gh.lazySingleton<_i196.UndoReconciliationUseCase>(
-        () => _i196.UndoReconciliationUseCase(
-              gh<_i944.ReconciliationRepository>(),
-              gh<_i1027.TransactionRepository>(),
+              gh<_i967.AiFallbackPreferenceDataSource>(),
             ));
     gh.lazySingleton<_i473.CrashLogRepository>(
         () => _i689.CrashLogRepositoryImpl(gh<_i580.CrashLogRemote>()));
@@ -654,20 +655,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i743.GetBudgetLimitStatsUseCase>(),
               gh<_i483.NotificationService>(),
             ));
-    gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
-          gh<_i569.GetProfileSettingsUseCase>(),
-          gh<_i220.UpdateProfileSettingsUseCase>(),
-          gh<_i1041.ToggleCategoryEnabledUseCase>(),
-          gh<_i727.SessionContract>(),
-          gh<_i727.CcDeviceInfoHelper>(),
-          gh<_i727.AuthCoordinator>(),
-          gh<_i811.UserLevelController>(),
-          gh<_i483.NotificationService>(),
-          gh<_i308.DeleteAccountUseCase>(),
-          gh<_i953.FinancialRefreshProvider>(),
-          gh<_i373.GuidelineProvider>(),
-          gh<_i745.FirebaseAuthRepository>(),
-        ));
     gh.factory<_i797.AddInvestmentSheetController>(
         () => _i797.AddInvestmentSheetController(
               gh<_i231.WalletController>(),
@@ -683,6 +670,14 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i829.UpdateBudgetLimitUseCase>(),
               gh<_i256.UpdateBudgetLimitOrdersUseCase>(),
               gh<_i106.DeleteBudgetLimitUseCase>(),
+            ));
+    gh.lazySingleton<_i436.GenerateAiFinancialAdviceUseCase>(
+        () => _i436.GenerateAiFinancialAdviceUseCase(
+              gh<_i206.GetBudgetInsightsUseCase>(),
+              gh<_i463.GetBudgetAnomaliesUseCase>(),
+              gh<_i701.GetFinancialRunwayUseCase>(),
+              gh<_i895.GetMonthlyCashFlowUseCase>(),
+              gh<_i967.AiFallbackPreferenceDataSource>(),
             ));
     gh.factory<_i1007.AddLiabilitySheetController>(
         () => _i1007.AddLiabilitySheetController(
@@ -701,29 +696,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
               gh<_i136.UserLevelProvider>(),
               gh<_i953.FinancialRefreshProvider>(),
             ));
-    gh.factory<_i752.AddBudgetLimitSheetController>(
-        () => _i752.AddBudgetLimitSheetController(
-              gh<_i1041.GetCategoriesUseCase>(),
-              gh<_i393.GetCategoryAverageMonthlySpendUseCase>(),
-              gh<_i1003.BudgetLimitController>(),
-              gh<_i373.GuidelineProvider>(),
-            ));
-    gh.lazySingleton<_i436.GenerateAiFinancialAdviceUseCase>(
-        () => _i436.GenerateAiFinancialAdviceUseCase(
-              gh<_i206.GetBudgetInsightsUseCase>(),
-              gh<_i463.GetBudgetAnomaliesUseCase>(),
-              gh<_i701.GetFinancialRunwayUseCase>(),
-              gh<_i895.GetMonthlyCashFlowUseCase>(),
-            ));
-    gh.lazySingleton<_i451.BudgetAllocationController>(
-        () => _i451.BudgetAllocationController(
-              gh<_i231.WalletController>(),
-              gh<_i1003.BudgetLimitController>(),
-              gh<_i663.GetLiabilityBalancesUseCase>(),
-              gh<_i136.UserLevelProvider>(),
-              gh<_i206.GetBudgetInsightsUseCase>(),
-              gh<_i953.FinancialRefreshProvider>(),
-            ));
     gh.factory<_i353.ReportController>(() => _i353.ReportController(
           gh<_i169.GetCategorySpendingUseCase>(),
           gh<_i701.GetFinancialRunwayUseCase>(),
@@ -734,6 +706,38 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i136.UserLevelProvider>(),
           gh<_i436.GenerateAiFinancialAdviceUseCase>(),
           gh<_i195.CurrencyConversionService>(),
+          gh<_i967.AiFallbackPreferenceDataSource>(),
         ));
+    gh.factory<_i752.AddBudgetLimitSheetController>(
+        () => _i752.AddBudgetLimitSheetController(
+              gh<_i1041.GetCategoriesUseCase>(),
+              gh<_i393.GetCategoryAverageMonthlySpendUseCase>(),
+              gh<_i1003.BudgetLimitController>(),
+              gh<_i373.GuidelineProvider>(),
+            ));
+    gh.lazySingleton<_i920.ProfileController>(() => _i920.ProfileController(
+          gh<_i569.GetProfileSettingsUseCase>(),
+          gh<_i220.UpdateProfileSettingsUseCase>(),
+          gh<_i1041.ToggleCategoryEnabledUseCase>(),
+          gh<_i727.SessionContract>(),
+          gh<_i727.CcDeviceInfoHelper>(),
+          gh<_i727.AuthCoordinator>(),
+          gh<_i811.UserLevelController>(),
+          gh<_i483.NotificationService>(),
+          gh<_i308.DeleteAccountUseCase>(),
+          gh<_i953.FinancialRefreshProvider>(),
+          gh<_i373.GuidelineProvider>(),
+          gh<_i745.FirebaseAuthRepository>(),
+          gh<_i967.AiFallbackPreferenceDataSource>(),
+        ));
+    gh.lazySingleton<_i451.BudgetAllocationController>(
+        () => _i451.BudgetAllocationController(
+              gh<_i231.WalletController>(),
+              gh<_i1003.BudgetLimitController>(),
+              gh<_i663.GetLiabilityBalancesUseCase>(),
+              gh<_i136.UserLevelProvider>(),
+              gh<_i206.GetBudgetInsightsUseCase>(),
+              gh<_i953.FinancialRefreshProvider>(),
+            ));
   }
 }
