@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -49,13 +50,15 @@ class GenerateAiFinancialAdviceUseCase {
   /// Never throws; returns null on a failed/empty cloud call. A failed
   /// local data source degrades to null/empty for that one input rather
   /// than blocking advice generation entirely.
-  Future<AiAdviceEntity?> call({
+  /// Fails with [DeviceFailure] when the device did not pass app attestation
+  /// (the UI says so), [UnknownFailure] for anything else.
+  Future<Result<AiAdviceEntity, CcFailure>> call({
     required String targetCurrency,
     required CurrencyConversionService conversionService,
     String? languageCode,
   }) async {
     if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
-      return null;
+      return const Error(UnknownFailure('gemini_disabled'));
     }
     final results = await Future.wait([
       _getInsights.call(),
@@ -132,7 +135,11 @@ class GenerateAiFinancialAdviceUseCase {
             StackTrace.current,
           );
         }
-        return null;
+        return Error(
+          failure?.kind == CcAiFailureKind.deviceAttestation
+              ? const DeviceFailure('device_attestation')
+              : const UnknownFailure('empty_response'),
+        );
       }
 
       final sections = _parseSections(raw);
@@ -143,13 +150,15 @@ class GenerateAiFinancialAdviceUseCase {
           ),
           StackTrace.current,
         );
-        return null;
+        return const Error(UnknownFailure('empty_sections'));
       }
 
-      return AiAdviceEntity(sections: sections, generatedAt: DateTime.now());
+      return Success(
+        AiAdviceEntity(sections: sections, generatedAt: DateTime.now()),
+      );
     } catch (e, stack) {
       Catcher2.reportCheckedError(e, stack);
-      return null;
+      return Error(UnknownFailure(e.toString()));
     }
   }
 

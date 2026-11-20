@@ -1,4 +1,4 @@
-import 'package:cc_sdk/core/error/cc_exceptions.dart';
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:dio/dio.dart';
 import 'package:multiple_result/multiple_result.dart';

@@ -448,9 +448,6 @@ class _UnusedAiClient implements CcAiClient {
   const _UnusedAiClient();
 
   @override
-  CcAiFailure? get lastFailure => null;
-
-  @override
   Future<CcAiResult> generate({
     required String prompt,
     List<CcAiImage> images = const [],
