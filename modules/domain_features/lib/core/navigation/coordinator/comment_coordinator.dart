@@ -1,5 +1,10 @@
 import 'package:flutter/widgets.dart';
 
-abstract class CommentCoordinator {
-  void navigateToCommentDetail(BuildContext context, dynamic comment);
+import '../../../features/comment/domain/entities/comment_entity.dart';
+
+/// Navigation out of the comment feature. Implemented in `modules/bridge`
+/// (`CommentCoordinatorImpl`).
+abstract interface class CommentCoordinator {
+  /// Opens the detail page of [comment].
+  void navigateToCommentDetail(BuildContext context, CommentEntity comment);
 }

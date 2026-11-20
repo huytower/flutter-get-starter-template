@@ -1,18 +1,25 @@
-import 'package:bridge/navigation_bridge_service.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
-import 'package:domain_features/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart';
-import 'package:domain_features/features/budget_limit/presentation/get_x/budget_limit_controller.dart';
+import 'package:domain_features/features/crashlog/domain/usecases/upload_pending_crash_logs_usecase.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
+import 'package:domain_features/features/guideline/guideline_controller.dart';
 import 'package:domain_features/features/notification/domain/usecases/check_audit_reminder_usecase.dart';
 import 'package:domain_features/features/notification/domain/usecases/check_cloud_backup_reminder_usecase.dart';
 import 'package:domain_features/features/profile/user_level/presentation/get_x/user_level_controller.dart';
-import 'package:domain_features/features/transaction/presentation/get_x/transaction_controller.dart';
-import 'package:domain_features/features/wallet/presentation/get_x/wallet_controller.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-@lazySingleton
-class NavigationBridgeServiceImpl implements NavigationBridgeService {
+import '../contracts/app_lifecycle_provider.dart';
+
+/// Resolves each dependency when its step runs, not at construction, so the
+/// shell can hold this provider from boot without building feature
+/// controllers early.
+@LazySingleton(as: AppLifecycleProvider)
+class AppLifecycleProviderImpl implements AppLifecycleProvider {
+  @override
+  void registerPresentationBindings() {
+    Get.lazyPut(() => getIt<GuidelineController>());
+  }
+
   @override
   Future<void> initializeUserLevel() async {
     getIt<UserLevelController>().refresh();
@@ -50,23 +57,10 @@ class NavigationBridgeServiceImpl implements NavigationBridgeService {
   }
 
   @override
-  Future<void> refreshTab(int index) async {
-    getIt<UserLevelController>().refresh();
-
-    if (index == 0) {
-      if (Get.isRegistered<BudgetAllocationController>()) {
-        Get.find<BudgetAllocationController>().loadAll();
-      } else {
-        if (Get.isRegistered<WalletController>()) {
-          Get.find<WalletController>().loadWallets();
-        }
-        if (Get.isRegistered<BudgetLimitController>()) {
-          Get.find<BudgetLimitController>().loadBudgets();
-        }
-      }
+  Future<void> uploadPendingCrashLogs() async {
+    if (!getIt.isRegistered<UploadPendingCrashLogsUseCase>()) {
+      return;
     }
-    if (index == 1 && Get.isRegistered<TransactionController>()) {
-      Get.find<TransactionController>().refreshWalletTotal();
-    }
+    await getIt<UploadPendingCrashLogsUseCase>()();
   }
 }

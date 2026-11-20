@@ -52,8 +52,8 @@ flutter-get-starter-template/
 ├── cc_bridge/                   # Bridge contracts (Coordinators, SessionContract) — root level
 ├── modules/                      # App-specific modules
 │   ├── app_config/              # Configuration, Storage
-│   ├── bridge/                  # NavigationBridgeService: app-level post-boot orchestration
-│   │                            #   (user level init, data services, authenticated sync, reminders)
+│   ├── bridge/                  # App Shell gateway to features: shell contracts + all coordinator impls
+│   │                            #   (AppLifecycleProvider, MainShellProvider, RegionalSettingsContract)
 │   │                            #   Distinct from cc_bridge — not a duplicate.
 │   ├── data_config/             # App-specific data implementations, sync helpers, exchange rates
 │   ├── message/                 # i18n/localization (CcLocaleKeys)

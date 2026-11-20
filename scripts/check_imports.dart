@@ -1,4 +1,4 @@
-// Enforces the import boundaries of AGENTS.md (rules 2, 3, 5, 10, 22) and of
+// Enforces the import boundaries of AGENTS.md (rules 2, 3, 4, 5, 10, 22) and of
 // the flutter-core-sdk skill, so they do not depend on anyone re-reading docs.
 //
 // Run from the repo root: `melos run check:imports`
@@ -76,6 +76,15 @@ final RegExp _directive = RegExp(
   multiLine: true,
 );
 final RegExp _literal = RegExp(r'''['"]([^'"\n]*)['"]''');
+
+/// What the App Shell (root `lib/`) may import from domain_features: wiring
+/// only (DI module, route classes, generated Hive registrar). Every call into a
+/// feature goes through `package:bridge/export_bridge.dart` (AGENTS.md rule 4).
+const Set<String> _shellWiringIntoFeatures = {
+  'core/di/di.module.dart',
+  'core/navigation/domain_router.gr.dart',
+  'hive_registrar.g.dart',
+};
 
 /// Known package cycles (AGENTS.md rule 2, tech debt): the back-edge of each
 /// cycle, with the only URIs it may import. Every other edge between our
@@ -163,6 +172,16 @@ Iterable<_Violation> _check(String owner, String path, File file) sync* {
   final source = file.readAsStringSync();
   final isTest = path.contains('/test/') || path.startsWith('test/');
 
+  // Cross-module coordinators are implemented in one place, the bridge.
+  if (path.endsWith('_coordinator_impl.dart') && owner != 'bridge') {
+    yield _Violation(
+      path,
+      1,
+      'coordinator-home',
+      'coordinator implementations live in modules/bridge/lib/src/coordinators/',
+    );
+  }
+
   for (final match in _directive.allMatches(source)) {
     final uri = _literal
         .allMatches(match.group(2)!)
@@ -229,14 +248,39 @@ Iterable<_Violation> _checkUri(
     );
   } else if (pkg != null &&
       pkg != owner &&
-      _sdk.contains(pkg) &&
+      (_sdk.contains(pkg) || pkg == 'bridge') &&
       !RegExp(r'^export_[a-z_]+\.dart$').hasMatch(rest) &&
       !rest.startsWith('core/di/')) {
     yield _Violation(
       path,
       line,
-      'sdk-barrel',
+      pkg == 'bridge' ? 'bridge-barrel' : 'sdk-barrel',
       '$uri: import $pkg through its export_*.dart barrel',
+    );
+  }
+
+  // The bridge barrel publishes contracts only; implementations stay behind DI.
+  if (path == 'modules/bridge/lib/export_bridge.dart' &&
+      uri.endsWith('_impl.dart')) {
+    yield _Violation(
+      path,
+      line,
+      'bridge-barrel',
+      '$uri: export_bridge.dart exports contracts, never an implementation',
+    );
+  }
+
+  // The App Shell reaches features only through the bridge.
+  if (owner == 'mobile_flutter_template' &&
+      pkg == 'domain_features' &&
+      !_shellWiringIntoFeatures.contains(rest)) {
+    yield _Violation(
+      path,
+      line,
+      'shell-via-bridge',
+      '$uri: the App Shell calls features through '
+          'package:bridge/export_bridge.dart (allowed wiring: '
+          '${_shellWiringIntoFeatures.join(', ')})',
     );
   }
 

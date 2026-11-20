@@ -62,7 +62,7 @@ To set up Firebase for local development:
     - Local-first sync: repositories call `syncAll()` after every local write; Profile tab can trigger it manually
 
 8. `modules/bridge/` vs `cc_bridge/`
-    - `cc_bridge` = cross-module contracts; `modules/bridge` = app-level `NavigationBridgeService`. Different jobs.
+    - `cc_bridge` = project-blind contracts; `modules/bridge` = the App Shell's only gateway to features (shell contracts + every coordinator impl). Different jobs.
 
 ## Current feature pattern
 

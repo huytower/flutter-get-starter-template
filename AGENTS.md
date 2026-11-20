@@ -71,8 +71,9 @@ modules/
                                    # Firestore sync utilities, DomainUserEntity (+ Hive adapter), exchange rates.
                                    # domain_features builds its repository impls on top of it.
   app_config/                     # Env management, storage, DI discovery
-  bridge/                         # NavigationBridgeService — app-level post-boot orchestration (user level,
-                                   # data services, authenticated sync, reminders). NOT a duplicate of cc_bridge.
+  bridge/                         # The App Shell's gateway to features: shell contracts (AppLifecycleProvider,
+                                   # MainShellProvider, RegionalSettingsContract) + every coordinator impl.
+                                   # NOT a duplicate of cc_bridge (which holds project-blind contracts only).
   theme/                          # SSOT for colors/typography (PrjColors, CcTextStyle, CcThemes)
   message/                        # SSOT for i18n strings (CcLocaleKeys)
 shared/
@@ -128,8 +129,26 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
    management) are mediated by contracts in `cc_bridge`. Naming: `*Coordinator` (flow/navigation), `*Contract`
    (shared state), `*Provider` (shared logic). Features depend on abstractions, never concrete impls of other
    features. `cc_bridge` holds only project-blind contracts (auth, session) and must not import any app module;
-   app-specific coordinators (wallet, transaction, comment, home) live in
-   `modules/domain_features/lib/core/navigation/coordinator/`, implemented by the App Shell.
+   app-specific coordinators (e.g. `CommentCoordinator`) live in
+   `modules/domain_features/lib/core/navigation/coordinator/`. Two directions, one gateway:
+    - **Shell → features:** `lib/` calls features only through `package:bridge/export_bridge.dart`
+      (`AppLifecycleProvider` for boot/post-boot work, `MainShellProvider` + `MainTab` for the tab pages, badges
+      and refresh, `RegionalSettingsContract` for detected regional settings). Its only direct imports from
+      `domain_features` are wiring: `core/di/di.module.dart`, `core/navigation/domain_router.gr.dart`,
+      `hive_registrar.g.dart`.
+    - **Features → outside their package:** through a `*Coordinator` contract. **Every** coordinator impl lives in
+      `modules/bridge/lib/src/coordinators/`; inside `domain_features`, navigate with its own typed routes
+      directly. The only string-path hop is `AuthCoordinatorImpl.navigateToDashboard` (`MainNavigationRoute` is
+      in `lib/`, which the bridge cannot import).
+    - Contracts the features consume stay in `domain_features` or `cc_bridge` — a contract in `modules/bridge`
+      that `domain_features` imports would be a package cycle.
+    - **CodeGraph-friendly hops** (each contract → impl → destination must be a static edge an indexer can
+      follow): an `abstract interface class` with exactly one `implements` impl annotated
+      `@LazySingleton(as: X)` (no hand registration); resolve with constructor injection or a typed `getIt<X>()` /
+      `Get.find<X>()` (no `instanceName`, `tag`, or string lookup); no `dynamic` in a contract signature; typed
+      Route classes, not string paths; no global `Rx`/stream as a cross-module call channel — wrap it in a
+      `*Contract`; one class per file, file name = snake_case(class), suffix `_coordinator` / `_provider` /
+      `_contract` (`_impl` for the implementation).
 5. **Layer Purity Within a Feature (STRICT)** — `domain/` and `data/` MUST NOT import from their own (or any
    other) `presentation/` layer. Presentation types (Bloc `Event`/`State`, `Obx`, `GetxController`, widgets)
    never flow into `domain/`/`data/`. Streams/data crossing the `domain`↔`presentation` boundary use domain types
@@ -251,7 +270,7 @@ for full file templates.
 Several rules above are currently only enforced by human/agent review — prefer running these checks over relying
 on any doc having been read:
 
-22. **Forbidden import boundaries** (rules #2, #3, #5, #10): run `melos run check:imports` (`scripts/check_imports.dart`)
+22. **Forbidden import boundaries** (rules #2, #3, #4, #5, #10): run `melos run check:imports` (`scripts/check_imports.dart`)
     before finishing a change; CI runs it first in the quality gate and fails on any violation. It checks:
     - `sdk-barrel` / `private-src`: other packages import an SDK package only through its `export_*.dart` barrel
       (or `core/di/`), and never any workspace package's `src/`.
@@ -266,6 +285,11 @@ on any doc having been read:
     - `no-dotenv`: no `flutter_dotenv` anywhere.
     - `package-cycle`: `lib/` imports between workspace packages form no new cycle; the known cycle (rule #2) is
       frozen to the files they import today (`_knownBackEdges`), which may shrink but never grow.
+    - `shell-via-bridge` (rule #4): the App Shell imports from `domain_features` only the wiring files
+      (`_shellWiringIntoFeatures`); every call goes through `package:bridge/export_bridge.dart`.
+    - `bridge-barrel`: other packages import `bridge` only through `export_bridge.dart` (or `core/di/`), and that
+      barrel exports contracts, never a `*_impl.dart`.
+    - `coordinator-home`: a `*_coordinator_impl.dart` file lives only in `modules/bridge`.
     A new rule goes into the script, not only into this file.
 23. **Import order** (rule #13): rely on `dart analyze` with `directives_ordering` enabled, `dart fix --apply` to
     auto-sort.

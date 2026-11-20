@@ -1,0 +1,21 @@
+import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
+import 'package:data_config/domain/currency/currency_catalog.dart';
+import 'package:domain_features/core/constant/currency_constants.dart';
+import 'package:injectable/injectable.dart';
+
+import '../contracts/regional_settings_contract.dart';
+
+@LazySingleton(as: RegionalSettingsContract)
+class RegionalSettingsContractImpl implements RegionalSettingsContract {
+  @override
+  Stream<String> get detectedLanguageCode => CurrencyConstants
+      .onRegionalSettingsChanged
+      .stream
+      .map(
+        (_) => CurrencyCatalog.languageCodeForCountry(
+          CcAppStorage.instance.currencyDetectionCountryCode,
+        ),
+      )
+      .where((code) => code != null)
+      .cast<String>();
+}

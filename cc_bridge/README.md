@@ -69,7 +69,7 @@ abstract class AuthCoordinator {
 
 ### Implementing a Coordinator
 
-In the App Shell (`lib/core/navigation/coordinators/`):
+In `modules/bridge/lib/src/coordinators/` (every coordinator impl lives there):
 
 ```dart
 @LazySingleton(as: AuthCoordinator)
@@ -126,8 +126,7 @@ Future<void> initMicroPackage() async {
 ### Navigation Coordinators
 
 - **AuthCoordinator**: Manages authentication flow navigation
-- **HomeCoordinator**: Handles home feature navigation
-- **CommentCoordinator**: Manages comment feature navigation
+- **CommentCoordinator** (declared in `domain_features`): opens a comment's detail page
 
 ### Session Contracts
 

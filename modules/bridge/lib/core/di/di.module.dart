@@ -6,14 +6,31 @@
 
 import 'dart:async' as _i687;
 
-import 'package:bridge/navigation_bridge_service_impl.dart' as _i357;
+import 'package:bridge/src/contracts/app_lifecycle_provider.dart' as _i1025;
+import 'package:bridge/src/contracts/main_shell_provider.dart' as _i883;
+import 'package:bridge/src/contracts/regional_settings_contract.dart' as _i91;
+import 'package:bridge/src/coordinators/auth_coordinator_impl.dart' as _i103;
+import 'package:bridge/src/coordinators/comment_coordinator_impl.dart' as _i530;
+import 'package:bridge/src/impl/app_lifecycle_provider_impl.dart' as _i243;
+import 'package:bridge/src/impl/main_shell_provider_impl.dart' as _i598;
+import 'package:bridge/src/impl/regional_settings_contract_impl.dart' as _i576;
+import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
+import 'package:domain_features/core/navigation/coordinator/comment_coordinator.dart'
+    as _i516;
 import 'package:injectable/injectable.dart' as _i526;
 
 class BridgePackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
-    gh.lazySingleton<_i357.NavigationBridgeServiceImpl>(
-        () => _i357.NavigationBridgeServiceImpl());
+    gh.lazySingleton<_i91.RegionalSettingsContract>(
+        () => _i576.RegionalSettingsContractImpl());
+    gh.lazySingleton<_i883.MainShellProvider>(
+        () => _i598.MainShellProviderImpl());
+    gh.lazySingleton<_i516.CommentCoordinator>(
+        () => _i530.CommentCoordinatorImpl());
+    gh.lazySingleton<_i1025.AppLifecycleProvider>(
+        () => _i243.AppLifecycleProviderImpl());
+    gh.lazySingleton<_i727.AuthCoordinator>(() => _i103.AuthCoordinatorImpl());
   }
 }

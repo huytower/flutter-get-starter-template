@@ -1,4 +1,5 @@
 import 'package:app_config/core/di/di.module.dart';
+import 'package:bridge/core/di/di.module.dart';
 import 'package:cc_bridge/core/di/di.module.dart';
 import 'package:cc_micro_features/core/di/di.module.dart';
 import 'package:cc_sdk/core/di/di.module.dart';
@@ -26,5 +27,7 @@ class CcDiModuleConfig {
     ExternalModule(CcMicroFeaturesPackageModule),
     ExternalModule(CcBridgePackageModule),
     ExternalModule(DomainFeaturesPackageModule),
+    // Last: the bridge implements contracts of every module above.
+    ExternalModule(BridgePackageModule),
   ];
 }

@@ -1,13 +1,12 @@
 import 'dart:math' as math;
 
 import 'package:auto_route/auto_route.dart';
+import 'package:bridge/export_bridge.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/export_domain_features.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
@@ -28,10 +27,9 @@ class NavigationBar extends StatefulWidget {
 
 class _NavigationBarState extends State<NavigationBar>
     with CcCurvedNavigationMixin, DoubleBackToExitMixin, NavigationLogicMixin {
-  // Navigation indices — entry ("Giao dịch") is centred as the raised "＋".
-  static const int _indexWalletAllocation = 0;
-  static const int _indexEntry = 1;
-  static const int _indexProfile = 2;
+  // Bar index i is MainTab.values[i]; entry ("Giao dịch") is centred as the
+  // raised "＋".
+  static final int _indexEntry = MainTab.entry.index;
 
   /// Bottom insets up to this size (dp) come from a gesture indicator (iOS home
   /// indicator, Android gesture pill); larger ones are a 3-button bar.
@@ -103,37 +101,27 @@ class _NavigationBarState extends State<NavigationBar>
   }
 
   @override
-  List<CcCurvedNavigationItem> get navigationItems {
-    final guideline = Get.find<GuidelineController>();
-
-    return [
-      CcCurvedNavigationItem(
-        inactiveIcon: Icons.pie_chart_outline,
-        activeIcon: Icons.pie_chart,
-        label: el.tr(CcLocaleKeys.nav_budget_allocation),
-        badgeWidget: guideline.activeTabIndex == 0
-            ? const PrjGuidelineBadge(size: 8, forceHideLabel: true)
-            : null,
-      ),
-      // Centre "＋" — opens the Chi/Thu entry form.
-      CcCurvedNavigationItem(
-        inactiveIcon: Icons.add,
-        activeIcon: Icons.add,
-        label: el.tr(CcLocaleKeys.nav_transaction),
-        badgeWidget: guideline.activeTabIndex == 1
-            ? const PrjGuidelineBadge(size: 8, forceHideLabel: true)
-            : null,
-      ),
-      CcCurvedNavigationItem(
-        inactiveIcon: Icons.person_outline_rounded,
-        activeIcon: Icons.person_rounded,
-        label: el.tr(CcLocaleKeys.nav_profile),
-        badgeWidget: guideline.activeTabIndex == 2
-            ? const PrjGuidelineBadge(size: 8, forceHideLabel: true)
-            : null,
-      ),
-    ];
-  }
+  List<CcCurvedNavigationItem> get navigationItems => [
+    CcCurvedNavigationItem(
+      inactiveIcon: Icons.pie_chart_outline,
+      activeIcon: Icons.pie_chart,
+      label: el.tr(CcLocaleKeys.nav_budget_allocation),
+      badgeWidget: mainShell.tabBadge(MainTab.budget),
+    ),
+    // Centre "＋" — opens the Chi/Thu entry form.
+    CcCurvedNavigationItem(
+      inactiveIcon: Icons.add,
+      activeIcon: Icons.add,
+      label: el.tr(CcLocaleKeys.nav_transaction),
+      badgeWidget: mainShell.tabBadge(MainTab.entry),
+    ),
+    CcCurvedNavigationItem(
+      inactiveIcon: Icons.person_outline_rounded,
+      activeIcon: Icons.person_rounded,
+      label: el.tr(CcLocaleKeys.nav_profile),
+      badgeWidget: mainShell.tabBadge(MainTab.profile),
+    ),
+  ];
 
   bool get enableAppBar => false;
 
@@ -142,13 +130,10 @@ class _NavigationBarState extends State<NavigationBar>
   PreferredSizeWidget? buildAppBar(BuildContext context) => null;
 
   Widget? buildBottomNavigationBar(BuildContext context) {
-    final guideline = Get.find<GuidelineController>();
     final systemBottomPadding = MediaQuery.of(context).padding.bottom;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Obx(() {
-      final _ = guideline.bounceTrigger.value;
-
+    return mainShell.watchTabs(() {
       // To support both gesture navigation and 3-button navigation without
       // overlap, we pad by the system bottom inset. A gesture indicator only
       // occupies the lower part of its inset (34dp on iPhone, ~24dp on Pixel),
@@ -175,17 +160,15 @@ class _NavigationBarState extends State<NavigationBar>
   int? get navigationRailPrimaryIndex => _indexEntry;
 
   Widget _buildNavigationRail(BuildContext context) {
-    final guideline = Get.find<GuidelineController>();
     // Labels beside icons only on desktop-class windows (≥ 1600 dp, web/PC).
     // Tablets — even a 10" one in landscape (~1280 dp) — keep the compact
     // rail so the content keeps the room.
     final extended = context.windowSizeClass.isAtLeast(
       CcWindowSizeClass.extraLarge,
     );
-    return Obx(() {
-      final _ = guideline.bounceTrigger.value;
-      return buildNavigationRail(extended: extended);
-    });
+    return mainShell.watchTabs(
+      () => buildNavigationRail(extended: extended),
+    );
   }
 
   /// Puts the rail beside the content on wide windows. No divider: the rail's
@@ -213,20 +196,7 @@ class _NavigationBarState extends State<NavigationBar>
     if (showSplash) {
       return const Center(child: CcLoadingIconWidget());
     }
-    return _buildContentForIndex(currentIndex);
-  }
-
-  Widget? _buildContentForIndex(int index) {
-    switch (index) {
-      case _indexWalletAllocation:
-        return const BudgetAllocationPage();
-      case _indexEntry:
-        return const TransactionPage();
-      case _indexProfile:
-        return const ProfilePage();
-      default:
-        return const TransactionPage();
-    }
+    return mainShell.buildTab(MainTab.fromIndex(currentIndex));
   }
 
   @override

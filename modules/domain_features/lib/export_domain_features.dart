@@ -8,9 +8,6 @@ export 'core/getx/cc_get_controller.dart';
 export 'core/getx/cc_get_view.dart';
 export 'core/helper/ai_advice_cache_datasource.dart';
 export 'core/navigation/coordinator/comment_coordinator.dart';
-export 'core/navigation/coordinator/home_coordinator.dart';
-export 'core/navigation/coordinator/transaction_coordinator.dart';
-export 'core/navigation/coordinator/wallet_coordinator.dart';
 // Budget Allocation (composite: Wallet + Budget Limit)
 export 'features/budget_allocation/export_budget_allocation.dart';
 // Budget Limit

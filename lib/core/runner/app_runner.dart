@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
+import 'package:bridge/export_bridge.dart';
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
-import 'package:data_config/domain/currency/currency_catalog.dart';
-import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,24 +22,18 @@ class AppRunner extends StatefulWidget {
 
 class _AppRunnerState extends State<AppRunner> {
   late final RoutingStrategy _routingStrategy;
-  StreamSubscription<int>? _regionalSettingsSubscription;
+  StreamSubscription<String>? _regionalSettingsSubscription;
 
   @override
   void initState() {
     super.initState();
     _routingStrategy = getIt<RoutingStrategy>();
-    _regionalSettingsSubscription = CurrencyConstants
-        .onRegionalSettingsChanged
-        .stream
-        .listen((_) => _applyDetectedLocale());
+    _regionalSettingsSubscription = getIt<RegionalSettingsContract>()
+        .detectedLanguageCode
+        .listen(_applyDetectedLocale);
   }
 
-  Future<void> _applyDetectedLocale() async {
-    final languageCode = CurrencyCatalog.languageCodeForCountry(
-      CcAppStorage.instance.currencyDetectionCountryCode,
-    );
-    if (languageCode == null) return;
-
+  Future<void> _applyDetectedLocale(String languageCode) async {
     final targetContext = Get.context;
     if (targetContext == null) return;
 

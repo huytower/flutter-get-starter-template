@@ -1,44 +1,20 @@
 import 'package:app_config/data/datasource/local/box/register_hive_adapter.dart'
     as app_config;
-import 'package:data_config/export_data.dart' as data_config;
-import 'package:domain_features/export_domain_features.dart';
+import 'package:data_config/hive_registrar.g.dart' as data_config;
+import 'package:domain_features/hive_registrar.g.dart' as domain_features;
 import 'package:hive_ce/hive_ce.dart';
 
 /// Central registrar for all Hive adapters across all modules.
 class HiveRegistrar {
   /// Registers all adapters from all modules.
   static Future<void> registerAll() async {
-    // 1. Register Core/App adapters (via app_config)
+    // 1. Core/App adapters (via app_config)
     await app_config.registerHiveAdapter();
 
-    // 2. Register Feature adapters (that app_config cannot see)
-    // We register them here because lib/ can see both modules.
-    _registerFeatureAdapters();
-  }
-
-  static void _registerFeatureAdapters() {
-    Hive.registerAdapter(WalletHiveModelAdapter());
-
-    // Register Category adapter (data-layer model) from domain_features
-    Hive.registerAdapter(CategoryModelAdapter());
-
-    // Register Transaction adapter (data-layer model) from domain_features
-    Hive.registerAdapter(TransactionModelAdapter());
-
-    // Register Budget Limit adapter (data-layer model) from domain_features
-    Hive.registerAdapter(BudgetLimitModelAdapter());
-
-    // Register Reconciliation adapters (record + nested allocation)
-    Hive.registerAdapter(ReconciliationAllocationModelAdapter());
-    Hive.registerAdapter(ReconciliationModelAdapter());
-
-    // Register Loan adapters (record + nested installment)
-    Hive.registerAdapter(LiabilityInstallmentModelAdapter());
-    Hive.registerAdapter(LiabilityModelAdapter());
-
-    // Register Exchange Rate adapter from data_config
-    Hive.registerAdapter(data_config.ExchangeRateHiveModelAdapter());
-
-    // Add other feature adapters here as needed
+    // 2. Feature and data adapters, from the registrars hive_ce generates in
+    // each package, so a new @GenerateAdapters model needs no edit here. Both
+    // extensions are named HiveRegistrar, hence the explicit application.
+    domain_features.HiveRegistrar(Hive).registerAdapters();
+    data_config.HiveRegistrar(Hive).registerAdapters();
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:app_config/core/config/app/prj_env.dart';
-import 'package:bridge/navigation_bridge_service.dart';
+import 'package:bridge/export_bridge.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:cc_micro_features/features/app_update/presentation/app_update_prompter.dart';
 import 'package:cc_micro_features/features/splash/core/splash_manager.dart';
@@ -14,12 +14,18 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
   bool showQuickTestAsSecondTab = false;
   bool showSplash = true;
 
-  late final NavigationBridgeService _navigationBridge;
+  late final AppLifecycleProvider _appLifecycle;
+  late final MainShellProvider _mainShell;
+
+  /// The bridge's view of the tabs: pages, badges and refresh logic.
+  @protected
+  MainShellProvider get mainShell => _mainShell;
 
   @override
   void initState() {
     super.initState();
-    _navigationBridge = getIt<NavigationBridgeService>();
+    _appLifecycle = getIt<AppLifecycleProvider>();
+    _mainShell = getIt<MainShellProvider>();
     initNavigationLogic();
   }
 
@@ -29,7 +35,7 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
     checkSplash();
 
     // 1. Critical but non-blocking (User level drives UI availability)
-    unawaited(_navigationBridge.initializeUserLevel());
+    unawaited(_appLifecycle.initializeUserLevel());
 
     // 2. Forced update gate: after the first frame, never blocking boot.
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -52,25 +58,25 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
 
       // Local notifications & sync
       try {
-        await _navigationBridge.initializeDataServices();
+        await _appLifecycle.initializeDataServices();
       } catch (e) {
-        '❌ NavigationBridgeService.initializeDataServices() failed | error=$e'
+        '❌ AppLifecycleProvider.initializeDataServices() failed | error=$e'
             .Log('NavigationLogicMixin');
         rethrow;
       }
 
       // Conditional sync & reminders
       try {
-        await _navigationBridge.syncAuthenticatedData();
+        await _appLifecycle.syncAuthenticatedData();
       } catch (e) {
-        '❌ NavigationBridgeService.syncAuthenticatedData() failed | error=$e'
+        '❌ AppLifecycleProvider.syncAuthenticatedData() failed | error=$e'
             .Log('NavigationLogicMixin');
       }
 
       try {
-        await _navigationBridge.checkReminders();
+        await _appLifecycle.checkReminders();
       } catch (e) {
-        '❌ NavigationBridgeService.checkReminders() failed | error=$e'.Log(
+        '❌ AppLifecycleProvider.checkReminders() failed | error=$e'.Log(
           'NavigationLogicMixin',
         );
       }
@@ -78,7 +84,7 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
   }
 
   void handleTabRefresh(int index) {
-    unawaited(_navigationBridge.refreshTab(index));
+    unawaited(_mainShell.refreshTab(MainTab.fromIndex(index)));
   }
 
   Future<void> checkSplash() async {

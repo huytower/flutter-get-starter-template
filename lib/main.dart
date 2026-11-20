@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:app_config/core/config/app/prj_env.dart';
+import 'package:bridge/export_bridge.dart';
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_sdk_slack/export_cc_sdk_slack.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
@@ -13,7 +14,6 @@ import 'package:message/export_message.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:theme/core/helper/theme_helper.dart';
 
-import 'core/crash_reporting/crash_log_startup.dart';
 import 'core/di/di.dart';
 import 'core/di/hive_registrar.dart';
 import 'core/logging/init_logger.dart';
@@ -62,7 +62,7 @@ void main() async {
 
     // 3. Setup error handling immediately after core systems are ready
     // Non-critical, non-blocking: upload any pending crash log from a previous session.
-    uploadPendingCrashLogsOnStartup();
+    unawaited(getIt<AppLifecycleProvider>().uploadPendingCrashLogs());
     unawaited(getIt<CcAppAttestation>().activate());
 
     // 4. UI Launch

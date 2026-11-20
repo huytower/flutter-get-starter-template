@@ -41,8 +41,9 @@ Four rigid layers, plus a bridge:
 4. **Shared Core** (`shared/cc_core_sdk/`, git submodule) — network, failures, logging, design system, mixins.
 5. **Bridge** — cross-module contracts so features never depend on each other's concrete classes:
    - `cc_bridge/` holds the contracts (`*Coordinator`, `*Contract`, `*Provider`), e.g. `SessionContract`.
-   - `modules/bridge/` holds the app-level `NavigationBridgeService` used by the shell to run post-boot tasks
-     (user level init, data services, authenticated sync, reminders, tab refresh). The two are different
+   - `modules/bridge/` is the App Shell's only gateway to features: `AppLifecycleProvider` (post-boot tasks:
+     user level, data services, sync, reminders, crash-log upload), `MainShellProvider` (tab pages, badges,
+     refresh), `RegionalSettingsContract`, and every coordinator impl. The two are different
      packages with different jobs, not duplicates.
 
 Presentation layers may use Bloc or GetX per feature; the core SDK and bridge stay state-management agnostic.
@@ -67,7 +68,7 @@ flutter-get-starter-template/
 │   │                             #   comment, notification, firestore (sync), guideline, crashlog
 │   ├── data_config/              # App-specific data implementations (network config, sync helpers, exchange rates)
 │   ├── app_config/               # Env management, storage, DI discovery
-│   ├── bridge/                   # NavigationBridgeService (app-level post-boot orchestration)
+│   ├── bridge/                   # App Shell gateway to features (shell contracts + coordinator impls)
 │   ├── theme/                    # Colors and typography (PrjColors, CcTextStyle, CcThemes)
 │   └── message/                  # i18n strings (en.json, vi.json, CcLocaleKeys)
 ├── shared/
