@@ -17,8 +17,9 @@ typedef GpsCurrencyDetector =
 
 @LazySingleton()
 class ProfileLocalDataSource {
-  ProfileLocalDataSource(this._location)
-    : _detectFromGps =
+  ProfileLocalDataSource(this._location, WalletLocalDataSource walletLocal)
+    : _walletLocal = walletLocal,
+      _detectFromGps =
           CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails,
       _gpsTimeout = gpsDetectionTimeout {
     _location.lastPosition.addListener(_onGpsPositionUpdated);
@@ -29,7 +30,9 @@ class ProfileLocalDataSource {
     this._detectFromGps, {
     Duration timeout = gpsDetectionTimeout,
     CcLocationService? location,
+    WalletLocalDataSource? walletLocal,
   }) : _gpsTimeout = timeout,
+       _walletLocal = walletLocal,
        _location = location ?? CcNoopLocationService() {
     _location.lastPosition.addListener(_onGpsPositionUpdated);
   }
@@ -38,6 +41,9 @@ class ProfileLocalDataSource {
 
   final GpsCurrencyDetector _detectFromGps;
   final CcLocationService _location;
+
+  /// Null only in tests that don't exercise the wallet-currency update.
+  final WalletLocalDataSource? _walletLocal;
   final Duration _gpsTimeout;
 
   Future<ProfileSettingsEntity> getSettings() async {
@@ -164,8 +170,7 @@ class ProfileLocalDataSource {
 
   Future<void> _updateDefaultWalletsCurrency(String newCurrencyCode) async {
     try {
-      final walletDataSource = getIt<WalletLocalDataSource>();
-      await walletDataSource.updateDefaultWalletsCurrency(newCurrencyCode);
+      await _walletLocal?.updateDefaultWalletsCurrency(newCurrencyCode);
     } catch (_) {}
   }
 

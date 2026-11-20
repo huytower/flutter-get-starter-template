@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/di/di.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 
@@ -13,6 +12,7 @@ class ProfileInfoCard extends StatelessWidget {
   final int level;
   final int daysToNextAudit;
   final UserLevelStatusEntity levelStatus;
+  final FinancialDataSyncService syncService;
   final VoidCallback? onTap;
   final VoidCallback? onEditName;
   final VoidCallback? onLinkAccount;
@@ -26,6 +26,7 @@ class ProfileInfoCard extends StatelessWidget {
     required this.level,
     required this.daysToNextAudit,
     required this.levelStatus,
+    required this.syncService,
     this.onTap,
     this.onEditName,
     this.onLinkAccount,
@@ -221,7 +222,7 @@ class ProfileInfoCard extends StatelessWidget {
   /// sync" while the sync is already running invites a redundant tap.
   Widget _buildSyncStatusIcon(BuildContext context) {
     return Obx(() {
-      final service = getIt<FinancialDataSyncService>();
+      final service = syncService;
       final online = service.isOnline.value;
       final syncing = service.isSyncing.value;
       final pending = service.pendingCount.value;

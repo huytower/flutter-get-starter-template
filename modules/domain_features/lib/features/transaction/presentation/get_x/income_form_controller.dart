@@ -23,28 +23,33 @@ import '../../domain/usecases/get_monthly_recurring_match_usecase.dart';
 import '../../domain/usecases/update_transaction_usecase.dart';
 import '../models/unified_category_item.dart';
 import '../widgets/base/category_selection_layout.dart';
-import 'quick_entry_batch_mixin.dart';
-import 'quick_entry_mixin.dart';
+import 'quick_entry_batch_session.dart';
+import 'quick_entry_session.dart';
 import 'smart_suggestion_source.dart';
 import 'suggestion_prefill_mixin.dart';
 import 'transaction_form_controller.dart';
 import 'package:domain_features/core/contracts/user_level_provider.dart';
-import 'quick_entry_dependencies.dart';
+import 'quick_entry_handler.dart';
 
 const String _debugTag = 'IncomeCategoryScroll';
 
 @injectable
 class IncomeFormController extends TransactionFormController
-    with QuickEntryMixin, QuickEntryBatchMixin, SuggestionPrefillMixin
+    with SuggestionPrefillMixin
     implements SmartSuggestionSource {
   IncomeFormController(
     this._transactionRepository,
     this._getCategories,
-    this.quickEntryDeps,
+    this.quickEntryHandler,
   );
 
+  final QuickEntryHandler quickEntryHandler;
+
   @override
-  final QuickEntryDependencies quickEntryDeps;
+  late final QuickEntrySession quickEntry = QuickEntryBatchSession(
+    this,
+    quickEntryHandler,
+  );
 
   final TransactionRepository _transactionRepository;
   final GetCategoriesUseCase _getCategories;
@@ -79,7 +84,7 @@ class IncomeFormController extends TransactionFormController
   final RxBool isLoadingCategories = false.obs;
 
   /// Set right before [categoryKey] is bumped by
-  /// [QuickEntryMixin.applyQuickEntryCategory], so the remounted
+  /// [TransactionFormController.applyQuickEntryCategory], so the remounted
   /// `CategorySelectionSection` resolves and reports back the real
   /// [CategoryEntity] for this id.
   @override
@@ -95,7 +100,7 @@ class IncomeFormController extends TransactionFormController
   void onInit() {
     super.onInit();
     _loadAll();
-    initQuickEntry();
+    quickEntry.initQuickEntry();
     ever(CurrencyConstants.onCurrencyChanged, (_) => loadSuggestions());
 
     ever(
@@ -127,7 +132,7 @@ class IncomeFormController extends TransactionFormController
     } else if (unifiedItems.isNotEmpty &&
         selectedCategory.value == null &&
         !isEditing &&
-        quickEntryController.text.isEmpty) {
+        quickEntry.quickEntryController.text.isEmpty) {
       final first = unifiedItems.first;
       final cat = getCachedCategoryById(first.categoryId);
       if (cat != null) setCategory(cat);
@@ -366,7 +371,7 @@ class IncomeFormController extends TransactionFormController
   @override
   void onClose() {
     categoryScrollController.dispose();
-    disposeQuickEntry();
+    quickEntry.disposeQuickEntry();
     super.onClose();
   }
 
@@ -401,7 +406,7 @@ class IncomeFormController extends TransactionFormController
     selectedCategory.value = null;
     billMatchSuggestion.value = null;
     categoryKey.value++;
-    resetQuickEntry();
+    quickEntry.resetQuickEntry();
     await _rebuildUnifiedItems();
   }
 

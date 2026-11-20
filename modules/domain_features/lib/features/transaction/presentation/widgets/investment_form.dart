@@ -304,7 +304,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
         const CcSpaceXS(),
         TextField(
           controller: controller.newItemNameController,
-          enabled: controller.isVip.value,
+          enabled: controller.quickEntry.isVip.value,
           onChanged: controller.setNewItemName,
           style: context.ccTextTheme.bodyLarge,
           decoration: InputDecoration(
@@ -314,7 +314,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
               horizontal: context.respDim(12),
               vertical: context.respDim(10),
             ),
-            suffixIcon: !controller.isVip.value
+            suffixIcon: !controller.quickEntry.isVip.value
                 ? Tooltip(
                     message: el.tr(
                       CcLocaleKeys.transaction_investment_item_vip_locked,

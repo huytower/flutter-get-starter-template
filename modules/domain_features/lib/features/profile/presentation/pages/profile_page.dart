@@ -19,8 +19,6 @@ import '../widgets/profile_menu_group.dart';
 import '../widgets/profile_page_header.dart';
 import '../widgets/profile_settings_tile.dart';
 import '../widgets/profile_sign_in_reminder.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
-import 'package:domain_features/core/di/di.dart';
 
 class ProfilePage extends CcGetView<ProfileController> {
   const ProfilePage({super.key});
@@ -81,6 +79,7 @@ class ProfilePage extends CcGetView<ProfileController> {
           level: controller.userLevel.status.value.level,
           daysToNextAudit: controller.daysToNextAudit,
           levelStatus: controller.userLevel.status.value,
+          syncService: controller.syncService,
           initialFlipped: controller.settings.value.isHeaderFlipped,
           onFlip: controller.setHeaderFlipped,
           onEditName: () => controller.pickDisplayName(context),
@@ -212,7 +211,7 @@ class ProfilePage extends CcGetView<ProfileController> {
   }
 
   List<Widget> _buildMenuItems(BuildContext context) {
-    final guideline = getIt<GuidelineProvider>();
+    final guideline = controller.guideline;
 
     return [
       Obx(
@@ -391,7 +390,7 @@ class ProfilePage extends CcGetView<ProfileController> {
         icon: Icons.star_rate_rounded,
         label: el.tr(CcLocaleKeys.profile_rate_app),
         subtitle: el.tr(CcLocaleKeys.profile_rate_app_subtitle),
-        onTap: () => AppRatingSheet.show(context),
+        onTap: () => AppRatingSheet.show(context, controller.feedbackReporter),
       ),
     ];
   }

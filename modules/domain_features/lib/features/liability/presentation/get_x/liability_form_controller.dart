@@ -27,7 +27,7 @@ import 'package:domain_features/core/contracts/guideline_provider.dart';
 /// or recording additional borrowings against existing loans.
 @lazySingleton
 class LiabilityFormController extends LiabilityBaseFormController {
-  LiabilityFormController(super.quickEntryDeps);
+  LiabilityFormController(super.quickEntryHandler);
 
   @override
   String get quickEntryCategoryType => CategoryType.liability;
@@ -113,11 +113,11 @@ class LiabilityFormController extends LiabilityBaseFormController {
   Future<void> _loadAll() async {
     isLoadingMerged.value = true;
     final settings = await getIt<GetProfileSettingsUseCase>().call();
-    isVip.value = settings.isVip;
+    quickEntry.isVip.value = settings.isVip;
     await loadSuggestions();
     await loadLiabilities();
     isLoadingMerged.value = false;
-    initQuickEntry();
+    quickEntry.initQuickEntry();
   }
 
   Future<void> loadLiabilities() async {
@@ -194,7 +194,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
       draft.dispose();
     }
     assetRowScrollController.dispose();
-    disposeQuickEntry();
+    quickEntry.disposeQuickEntry();
     super.onClose();
   }
 
@@ -408,7 +408,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     installmentDrafts.clear();
     selectedLiabilityId.value = null;
     await loadLiabilities();
-    resetQuickEntry();
+    quickEntry.resetQuickEntry();
   }
 
   @override

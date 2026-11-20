@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../get_x/expense_form_controller.dart';
-import '../get_x/quick_entry_mixin.dart';
+import '../get_x/quick_entry_session.dart';
 import '../get_x/transaction_controller.dart';
+import '../get_x/transaction_form_controller.dart';
 import 'transaction_header_actions.dart';
 import 'transaction_header_title.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
@@ -176,9 +177,11 @@ class TransactionPageHeader extends StatelessWidget {
     );
   }
 
-  QuickEntryMixin? _quickEntryControllerFor(TransactionTabKind tab) {
-    return (tab == TransactionTabKind.expense && expenseFormController != null)
+  QuickEntrySession? _quickEntryControllerFor(TransactionTabKind tab) {
+    final TransactionFormController? form =
+        (tab == TransactionTabKind.expense && expenseFormController != null)
         ? expenseFormController
         : controller.getQuickEntryControllerForTab(tab);
+    return form?.quickEntry;
   }
 }

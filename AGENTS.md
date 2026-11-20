@@ -275,22 +275,26 @@ dependencies:
 
 ```dart
 @injectable
-class AiConsentHandler {                       // one concern, 1 dependency
-  AiConsentHandler(this._aiPreferences);
+class ProfileAppActions {                      // one concern (AI consent + feedback), 2 dependencies
+  ProfileAppActions(this._aiPreferences, this.feedbackReporter);
   final AiFallbackPreferenceDataSource _aiPreferences;
+  final CcFeedbackReporter feedbackReporter;
 }
 
 @lazySingleton
 class ProfileController extends CcGetController {
-  ProfileController(this._aiConsent, this._account, ...); // few, named collaborators
-  final AiConsentHandler _aiConsent;
+  ProfileController(this._settingsActions, this._account, this._onboarding, this._app, this.userLevel); // 5
+  final ProfileAppActions _app;
   final ProfileAccountActions _account;
 }
 ```
 
-**Legacy, do not copy:** `QuickEntryDependencies` (a dependency bag for `QuickEntryMixin`) breaks points 3–4
-and is to be replaced by an injected class; controllers above 5 dependencies (`ReportController`, ...) and
-widgets below the page that still call `getIt` are debt to migrate, not patterns.
+**Reference for point 4:** quick entry. Each transaction form controller owns a `QuickEntrySession` (or
+`QuickEntryBatchSession`) built from itself and an injected `QuickEntryHandler`; per-form behaviour comes from hooks
+on `TransactionFormController` (`quickEntryCategoryType`, `applyQuickEntryCategory`, ...), not from a mixin.
+**Legacy, do not copy:** `quick_entry_session.dart` is still ~900 lines (split its intent hand-off, voice and image
+flows next); controllers above 5 dependencies (`ReportController`, ...) and widgets below the page that still call
+`getIt` are debt to migrate, not patterns.
 
 ## V. Delivery workflow
 
