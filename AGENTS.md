@@ -65,8 +65,8 @@ modules/
                                    # budget_limit, liability, reconciliation, report, category, comment,
                                    # profile (incl. profile/user_level), guideline, notification, firestore
                                    # (sync), crashlog, examples (demo only)
-  data_config/                    # App-specific data implementations; implements Repository interfaces
-                                   # that domain_features/cc_micro_features define
+  data_config/                    # App-wide data infrastructure (exchange rates, user adapters). Implements
+                                   # only repository interfaces that live in domain_features/lib/core/ (rule 2)
   app_config/                     # Env management, storage, DI discovery
   bridge/                         # NavigationBridgeService — app-level post-boot orchestration (user level,
                                    # data services, authenticated sync, reminders) + impls of the cross-feature
@@ -97,9 +97,22 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
 2. **Project-Blind Dependency Rules (STRICT)**:
     - `cc_micro_features` and `domain_features` **must not** import from `lib/` (App Shell) or `modules/data_config`.
     - `cc_micro_features` must not import from `domain_features`.
-    - Every feature defines its own `Repository` interface in its own `domain/` layer; `lib/` or
-      `modules/data_config` implements it and injects the impl via DI. Never import a concrete repository impl
-      across a module boundary.
+    - **Repositories — where each piece lives:**
+      | Piece | Location | Example |
+      |---|---|---|
+      | Interface owned by one feature | that feature's `domain/repositories/` | `features/transaction/domain/repositories/transaction_repository.dart` |
+      | Implementation of it | the **same** feature's `data/repositories/`, annotated `@LazySingleton(as: XRepository)` | `features/transaction/data/repositories/transaction_repository_impl.dart` |
+      | Interface for an app-wide concept that no single feature owns | `modules/domain_features/lib/core/` | `ExchangeRateRepository` in `core/exchange_rates/` |
+      | Implementation of a `core/` interface | `modules/data_config` | `ExchangeRateRepositoryImpl` |
+      | Implementation of a `cc_micro_features` interface that needs app config | App Shell `lib/data/repositories/` | `AppUpdateConfigRepositoryImpl` |
+    - Another feature **may** depend on a repository **interface** (e.g. `report` uses `TransactionRepository`):
+      import it from the owning feature's `domain/`. DI-created classes receive it as a constructor parameter;
+      widgets use `getIt<XRepository>()`.
+    - Nothing may import a `*_repository_impl.dart` except its own feature's tests. Only the generated DI file
+      (`di.module.dart` / `di.config.dart`) references implementations.
+    - Repository interfaces are **not** moved to `core/` just because several features use them — only shared
+      *entities* are (`core/domain/entities/`: `TransactionEntity`, `WalletEntity`, `CategoryEntity`,
+      `LiabilityEntity`, `UserLevelStatusEntity`).
 3. **State-Management Agnostic Core (STRICT)**:
     - `cc_core_sdk` (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`) and `cc_bridge` must stay state-management agnostic — no
       Bloc/GetX reactive state.
@@ -113,12 +126,19 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
    features. `cc_bridge` holds only project-blind contracts (auth, session) and must not import any app module;
    app-specific coordinators (wallet, transaction, comment, home) live in
    `modules/domain_features/lib/core/navigation/coordinator/`, implemented by the App Shell.
-   Cross-feature *calls* inside `domain_features` (refresh another feature's screen after a mutation, record
-   guideline progress) go through typed `*Provider` contracts in `modules/domain_features/lib/core/contracts/`
-   (`FinancialRefreshProvider`, `GuidelineProgressProvider`), resolved with `getIt<XProvider>()`. Their impls
-   live in `modules/bridge` (the orchestrator — the only place that knows the concrete controllers), registered
-   with `@LazySingleton(as: XProvider)`. Never route by string/event keys: typed contracts keep every call
-   traceable in CodeGraph.
+   A feature never imports another feature's **controller** (GetX controller / Bloc). To refresh another
+   feature's screen, read the user level, or read/advance the onboarding guideline, use the typed `*Provider`
+   contracts in `modules/domain_features/lib/core/contracts/`: `FinancialRefreshProvider`, `UserLevelProvider`,
+   `GuidelineProvider`. Their implementations live in `modules/bridge` (the orchestrator — the only place that
+   knows the concrete controllers), registered with `@LazySingleton(as: XProvider)`.
+   - Classes created by DI (`@injectable` / `@lazySingleton`): take the provider as a **constructor parameter**.
+   - Widgets, mixins, abstract base classes (no DI constructor): use `getIt<XProvider>()`.
+   - New cross-feature need → add a method to the matching provider (or a new `*Provider` + bridge impl); never
+     route by string/event keys — typed contracts keep every call traceable in CodeGraph.
+   - **Legacy, do not copy:** about 40 older imports of other features' controllers still exist (mainly
+     `WalletController`, the liability/lend form controllers hosted by `transaction`, `TransactionController`,
+     `BudgetLimitController`, `BudgetAllocationController`, `CategorySettingsController`). They are debt to
+     migrate, not a pattern: never add a new one; route the new need through a provider instead.
 5. **Layer Purity Within a Feature (STRICT)** — `domain/` and `data/` MUST NOT import from their own (or any
    other) `presentation/` layer. Presentation types (Bloc `Event`/`State`, `Obx`, `GetxController`, widgets)
    never flow into `domain/`/`data/`. Streams/data crossing the `domain`↔`presentation` boundary use domain types

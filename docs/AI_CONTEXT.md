@@ -20,8 +20,8 @@ without code changes elsewhere (`AGENTS.md` rules #1–#5 state the resulting im
   that assumes *this specific app* (its wallet/budget/transaction domain) belongs in `domain_features`; anything
   that could be dropped into an unrelated app unchanged (auth, biometric, crash reporting UI) belongs in
   `cc_micro_features`.
-- **Dependency Inversion** (features define their own `Repository` interface; `lib/` or `data_config` implements
-  it) exists so the same feature package can be pointed at a different backend per app without touching feature
+- **Dependency Inversion** (each feature defines its `Repository` interface in `domain/` and implements it in its own
+  `data/`; see `AGENTS.md` rule 2 for the few cases implemented in `data_config` or `lib/`) exists so the same feature package can be pointed at a different backend per app without touching feature
   code.
 - **State-management agnosticism in the core** exists because the template deliberately supports both Bloc and
   GetX in `presentation/` — baking either into `cc_core_sdk` would force every consuming app onto one choice.
