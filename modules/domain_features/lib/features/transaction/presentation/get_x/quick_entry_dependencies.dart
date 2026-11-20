@@ -1,3 +1,4 @@
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/contracts/guideline_provider.dart';
@@ -25,6 +26,7 @@ class QuickEntryDependencies {
     this.userLevel,
     this.guideline,
     this.guestLoginPrompt,
+    this.speechRecognizer,
   );
 
   final GetCategoriesUseCase getCategories;
@@ -36,4 +38,5 @@ class QuickEntryDependencies {
   final UserLevelProvider userLevel;
   final GuidelineProvider guideline;
   final GuestLoginPromptService guestLoginPrompt;
+  final CcSpeechRecognizer speechRecognizer;
 }

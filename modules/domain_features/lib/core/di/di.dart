@@ -24,6 +24,7 @@ final GetIt getIt = GetIt.instance;
     CcAnalytics,
     CcAiClient,
     CcLocationService,
+    CcSpeechRecognizer,
     // Registered by the App Shell (lib/core/di/module/dependencies.dart).
     ThemeProvider,
   ],
