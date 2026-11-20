@@ -292,9 +292,11 @@ class ProfileController extends CcGetController {
 **Reference for point 4:** quick entry. Each transaction form controller owns a `QuickEntrySession` (or
 `QuickEntryBatchSession`) built from itself and an injected `QuickEntryHandler`; per-form behaviour comes from hooks
 on `TransactionFormController` (`quickEntryCategoryType`, `applyQuickEntryCategory`, ...), not from a mixin.
-**Legacy, do not copy:** `quick_entry_session.dart` is still ~900 lines (split its intent hand-off, voice and image
-flows next); controllers above 5 dependencies (`ReportController`, ...) and widgets below the page that still call
-`getIt` are debt to migrate, not patterns.
+The session itself only holds state and orchestration; each flow is a small class it owns: `QuickEntryTextInput`,
+`QuickEntryImageInput`, `QuickEntryVoiceInput`, `QuickEntryCategoryCache`, plus the stateless
+`QuickEntryIntentRouter`.
+**Legacy, do not copy:** controllers above 5 dependencies (`ReportController`, ...) and widgets below the page that
+still call `getIt` are debt to migrate, not patterns.
 
 ## V. Delivery workflow
 
