@@ -1,4 +1,4 @@
-import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_micro_features/export_micro_features.dart'
     show AuthCancelledFailure, authFailureMessage;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
@@ -79,6 +79,7 @@ class ProfilePage extends CcGetView<ProfileController> {
           level: controller.userLevel.status.value.level,
           daysToNextAudit: controller.daysToNextAudit,
           levelStatus: controller.userLevel.status.value,
+          syncService: controller.syncService,
           initialFlipped: controller.settings.value.isHeaderFlipped,
           onFlip: controller.setHeaderFlipped,
           onEditName: () => controller.pickDisplayName(context),
@@ -210,7 +211,7 @@ class ProfilePage extends CcGetView<ProfileController> {
   }
 
   List<Widget> _buildMenuItems(BuildContext context) {
-    final guideline = Get.find<GuidelineController>();
+    final guideline = controller.guideline;
 
     return [
       Obx(
@@ -389,7 +390,7 @@ class ProfilePage extends CcGetView<ProfileController> {
         icon: Icons.star_rate_rounded,
         label: el.tr(CcLocaleKeys.profile_rate_app),
         subtitle: el.tr(CcLocaleKeys.profile_rate_app_subtitle),
-        onTap: () => AppRatingSheet.show(context),
+        onTap: () => AppRatingSheet.show(context, controller.feedbackReporter),
       ),
     ];
   }

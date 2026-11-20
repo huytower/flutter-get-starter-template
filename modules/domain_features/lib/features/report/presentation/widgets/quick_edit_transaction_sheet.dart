@@ -8,13 +8,13 @@ import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../liability/presentation/widgets/lend_asset_selector.dart';
 import '../../../liability/presentation/widgets/liability_asset_selector.dart';
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';
-import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
+import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/investment_asset_selector.dart';
-import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
-import '../../../transaction/presentation/widgets/transaction_form_container.dart';
-import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
+import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import '../get_x/quick_edit_transaction_sheet_controller.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
@@ -74,14 +74,14 @@ class QuickEditTransactionSheet
                       const CcSpaceSM(),
                       _buildAmountSection(context, accentColor),
                       const CcSpaceSM(),
-                      TransactionFormContainer(
+                      EntryFormContainer(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [_buildDateAndNoteSection(context)],
                         ),
                       ),
                       const CcSpaceSM(),
-                      TransactionSubmitButton(
+                      EntrySubmitButton(
                         text: el.tr(CcLocaleKeys.common_save),
                         isSubmitting: controller.isSubmitting.value,
                         isEnabled: true,

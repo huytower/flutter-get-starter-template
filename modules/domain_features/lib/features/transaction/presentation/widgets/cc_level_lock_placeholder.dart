@@ -6,9 +6,9 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../budget_limit/presentation/widgets/budget_limit_pie_chart.dart';
-import '../../../guideline/guideline_controller.dart';
-import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../get_x/transaction_controller.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 class CcLevelLockPlaceholder extends StatelessWidget {
   final TransactionTabKind tab;
@@ -17,11 +17,11 @@ class CcLevelLockPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userLevel = getIt<UserLevelController>();
-    final guideline = getIt<GuidelineController>();
+    final userLevel = getIt<UserLevelProvider>();
+    final guideline = getIt<GuidelineProvider>();
 
     return Obx(() {
-      final status = userLevel.status.value;
+      final status = userLevel.status;
       final targetLevel = (tab == TransactionTabKind.investment) ? 2 : 3;
 
       double progress = 0;

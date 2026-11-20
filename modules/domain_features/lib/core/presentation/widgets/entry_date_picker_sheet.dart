@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'transaction_date_picker_content_sheet.dart';
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import 'package:domain_features/core/presentation/widgets/entry_date_picker_content_sheet.dart';
+import 'package:domain_features/core/helper/adaptive_bottom_sheet.dart';
 
-class TransactionDatePickerSheet extends StatelessWidget {
+class EntryDatePickerSheet extends StatelessWidget {
   final DateTime initialDate;
   final DateTime firstDate;
   final DateTime lastDate;
 
-  const TransactionDatePickerSheet({
+  const EntryDatePickerSheet({
     super.key,
     required this.initialDate,
     required this.firstDate,
@@ -24,7 +24,7 @@ class TransactionDatePickerSheet extends StatelessWidget {
     return showAdaptiveBottomSheet<DateTime>(
       context: context,
       backgroundColor: null,
-      builder: (context) => TransactionDatePickerSheet(
+      builder: (context) => EntryDatePickerSheet(
         initialDate: initialDate,
         firstDate: firstDate,
         lastDate: lastDate,
@@ -34,7 +34,7 @@ class TransactionDatePickerSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TransactionDatePickerContentSheet(
+    return EntryDatePickerContentSheet(
       initialDate: initialDate,
       firstDate: firstDate,
       lastDate: lastDate,

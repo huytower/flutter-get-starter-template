@@ -5,21 +5,22 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../guideline/guideline_controller.dart';
 import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
-import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
-import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
-import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
-import '../../../transaction/presentation/widgets/transaction_form_container.dart';
-import '../../../transaction/presentation/widgets/transaction_form_two_column.dart';
-import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
+import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
+import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
+import 'package:domain_features/core/presentation/widgets/entry_form_two_column.dart';
+import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/liability_base_form_controller.dart';
 import '../get_x/liability_form_controller.dart';
 import 'liability_asset_selector.dart';
 import 'liability_direction_toggle.dart';
 import 'liability_repayment_method_section.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 
 class LiabilityForm extends StatefulWidget {
   const LiabilityForm({super.key});
@@ -101,7 +102,7 @@ class _LiabilityFormState extends State<LiabilityForm> {
       },
       child: SingleChildScrollView(
         controller: controller.scrollController,
-        child: TransactionFormTwoColumn.shouldUse(context)
+        child: EntryFormTwoColumn.shouldUse(context)
             ? _buildTwoColumnContent(context, controller, accentColor)
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +127,7 @@ class _LiabilityFormState extends State<LiabilityForm> {
     LiabilityFormController controller,
     Color accentColor,
   ) {
-    return TransactionFormTwoColumn(
+    return EntryFormTwoColumn(
       leading: [
         _buildLiabilityDirectionToggle(context, controller, accentColor),
         const CcSpaceSM(),
@@ -144,7 +145,7 @@ class _LiabilityFormState extends State<LiabilityForm> {
           child: _buildRepaymentMethodSection(controller, accentColor),
         ),
       ],
-      details: TransactionAdditionalDetailsSection(
+      details: EntryAdditionalDetailsSection(
         isExpanded: true,
         selectedDate: controller.date.value,
         onDateSelected: controller.setDate,
@@ -188,8 +189,8 @@ class _LiabilityFormState extends State<LiabilityForm> {
     LiabilityFormController controller,
     Color accentColor,
   ) {
-    final guideline = Get.isRegistered<GuidelineController>()
-        ? Get.find<GuidelineController>()
+    final guideline = getIt<GuidelineProvider>().isAvailable
+        ? getIt<GuidelineProvider>()
         : null;
 
     return Stack(
@@ -240,7 +241,7 @@ class _LiabilityFormState extends State<LiabilityForm> {
           activeColor: accentColor,
         ),
         const CcSpaceSM(),
-        TransactionFormContainer(
+        EntryFormContainer(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -249,7 +250,7 @@ class _LiabilityFormState extends State<LiabilityForm> {
               Obx(() => _buildWalletSection(context, controller, accentColor)),
               const CcSpaceSM(),
               _buildRepaymentMethodSection(controller, accentColor),
-              TransactionAdditionalDetailsSection(
+              EntryAdditionalDetailsSection(
                 isExpanded: controller.showMoreDetails.value,
                 onToggle: controller.toggleMoreDetails,
                 selectedDate: controller.date.value,
@@ -361,7 +362,7 @@ class _LiabilityFormState extends State<LiabilityForm> {
       icon = Icons.arrow_circle_up;
     }
 
-    return TransactionSubmitButton(
+    return EntrySubmitButton(
       text: text,
       isSubmitting: controller.isSubmitting.value,
       isEnabled: controller.canSubmit,

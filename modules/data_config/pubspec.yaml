@@ -16,8 +16,6 @@ dependencies:
     path: ../domain_features
   cc_sdk:
     path: ../../shared/cc_core_sdk/cc_sdk
-  cc_bridge:
-    path: ../../cc_bridge
   cc_sdk_data:
     path: ../../shared/cc_core_sdk/cc_sdk_data
   easy_localization: ^3.0.8
@@ -29,7 +27,6 @@ dependencies:
   dio_cache_interceptor: ^4.0.7
   dio_smart_retry: ^7.0.1
 
-  cloud_firestore: ^7.1.0
   firebase_auth: ^7.0.1
   google_sign_in: ^7.2.0
 

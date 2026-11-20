@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
-import 'package:data_config/domain/currency/currency_catalog.dart';
+import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/features/profile/data/datasources/local/profile_local_datasource.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -4,7 +4,7 @@ import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
-import '../../../category/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../../category/domain/repositories/category_repository.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/category_spending_entity.dart';

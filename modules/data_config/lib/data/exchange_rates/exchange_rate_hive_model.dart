@@ -1,5 +1,5 @@
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
-import 'package:data_config/domain/exchange_rates/exchange_rate_types.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
 import 'package:hive_ce/hive_ce.dart';
 
 part 'exchange_rate_hive_model.g.dart';

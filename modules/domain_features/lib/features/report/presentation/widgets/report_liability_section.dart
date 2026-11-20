@@ -18,7 +18,7 @@ class ReportLiabilitySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       final data = controller.liabilityTrend.value;
-      if (!controller.userLevel.status.value.canUseLiability ||
+      if (!controller.userLevel.status.canUseLiability ||
           data == null ||
           (data.totalIncome == 0 && data.totalExpense == 0)) {
         return const SizedBox.shrink();

@@ -119,7 +119,8 @@ consumers need is exported from the barrel.
    failure as a subclass of `CcFailure` in `cc_sdk_data/lib/src/domain/failures/`.
 7. **Logging.** `.Log()` only; never `print()` or `developer.log()` directly.
 8. **DI.** Services are `@lazySingleton`, never eager `@singleton` (the SDK is on the boot path, target < 2 s).
-   One `lib/core/di/di.dart` per package; annotate classes in place.
+   One `lib/core/di/di.dart` per package; annotate classes in place. Collaborators come in through the
+   constructor; `getIt` is used only in the package's `di.dart` (root `AGENTS.md` section IV).
 9. **Naming and files.** Suffix-first `lower_snake_case`, `Cc` class prefix, ~200–300 lines per file, `const`
    wherever possible, export through the package's `export_*.dart` barrel only.
 
@@ -157,7 +158,10 @@ Before writing any widget, helper, extension, or mixin:
 `shared/cc_core_sdk` is a **git submodule** (`huytower/cc_core_sdk`). Editing files here does not commit them to
 the parent repo.
 
-1. Commit and push **inside** `shared/cc_core_sdk` (on its own branch/remote).
+1. Work only on `main`, or on a short-lived branch that is merged into `main` by a PR on
+   `huytower/cc_core_sdk`. Never detach the submodule or check out another commit/branch unless the user asks
+   (root `AGENTS.md`, "Submodule branch rule"); report a pointer mismatch instead of fixing it.
+   Commit and push **inside** `shared/cc_core_sdk`.
 2. Then, in the parent repo, commit the updated submodule pointer as a separate change.
 3. Never push without the user's explicit go-ahead.
 4. Stray local noise (e.g. `.dart_tool/` files showing as modified) is not part of an SDK change; do not commit it.

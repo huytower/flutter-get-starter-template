@@ -6,20 +6,21 @@ import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
 import '../../../wallet/export_wallet.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
 import '../get_x/transaction_controller.dart';
-import 'cc_amount_input_section.dart';
+import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'investment_asset_selector.dart';
 import 'investment_direction_toggle.dart';
-import 'money_keypad_panel.dart';
-import 'transaction_additional_details_section.dart';
-import 'transaction_form_container.dart';
-import 'transaction_form_two_column.dart';
-import 'transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
+import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
+import 'package:domain_features/core/presentation/widgets/entry_form_two_column.dart';
+import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 
 class InvestmentForm extends StatefulWidget {
   const InvestmentForm({super.key});
@@ -71,7 +72,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
   Widget build(BuildContext context) {
     return Obx(() {
       final accentColor = _accentColor(context, controller.direction.value);
-      final guideline = Get.find<GuidelineController>();
+      final guideline = getIt<GuidelineProvider>();
 
       return Column(
         children: [
@@ -99,7 +100,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
     BuildContext context,
     InvestmentFormController controller,
     Color accentColor,
-    GuidelineController guideline,
+    GuidelineProvider guideline,
   ) {
     return GestureDetector(
       onTap: () {
@@ -108,7 +109,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
       },
       child: SingleChildScrollView(
         controller: controller.scrollController,
-        child: TransactionFormTwoColumn.shouldUse(context)
+        child: EntryFormTwoColumn.shouldUse(context)
             ? _buildTwoColumnContent(context, controller, accentColor)
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,7 +135,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
     InvestmentFormController controller,
     Color accentColor,
   ) {
-    return TransactionFormTwoColumn(
+    return EntryFormTwoColumn(
       leading: [
         buildInvestDirectionToggle(context, controller, accentColor),
         const CcSpaceSM(),
@@ -144,7 +145,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
         ),
       ],
       details: Obx(
-        () => TransactionAdditionalDetailsSection(
+        () => EntryAdditionalDetailsSection(
           isExpanded: true,
           selectedDate: controller.date.value,
           onDateSelected: controller.setDate,
@@ -170,7 +171,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
     InvestmentFormController controller,
     Color accentColor,
   ) {
-    final guideline = Get.find<GuidelineController>();
+    final guideline = getIt<GuidelineProvider>();
 
     return Stack(
       clipBehavior: Clip.none,
@@ -210,7 +211,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
     InvestmentFormController controller,
     Color accentColor,
   ) {
-    return TransactionFormContainer(
+    return EntryFormContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -220,7 +221,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
           const CcSpaceSM(),
           _buildNewItemSection(context, controller, accentColor),
           Obx(
-            () => TransactionAdditionalDetailsSection(
+            () => EntryAdditionalDetailsSection(
               isExpanded: controller.showMoreDetails.value,
               onToggle: controller.toggleMoreDetails,
               selectedDate: controller.date.value,
@@ -263,7 +264,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
     Color accentColor,
   ) {
     return Obx(
-      () => TransactionSubmitButton(
+      () => EntrySubmitButton(
         text: el.tr(
           controller.direction.value == InvestmentDirectionForm.contribute
               ? CcLocaleKeys.transaction_record_investment
@@ -303,7 +304,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
         const CcSpaceXS(),
         TextField(
           controller: controller.newItemNameController,
-          enabled: controller.isVip.value,
+          enabled: controller.quickEntry.isVip.value,
           onChanged: controller.setNewItemName,
           style: context.ccTextTheme.bodyLarge,
           decoration: InputDecoration(
@@ -313,7 +314,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
               horizontal: context.respDim(12),
               vertical: context.respDim(10),
             ),
-            suffixIcon: !controller.isVip.value
+            suffixIcon: !controller.quickEntry.isVip.value
                 ? Tooltip(
                     message: el.tr(
                       CcLocaleKeys.transaction_investment_item_vip_locked,

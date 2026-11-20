@@ -1,5 +1,5 @@
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
-import 'package:data_config/domain/currency/currency_catalog.dart';
+import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:injectable/injectable.dart';
 

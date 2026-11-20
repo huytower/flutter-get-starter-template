@@ -11,7 +11,7 @@ import '../../../../core/di/di.dart';
 import '../../../../core/presentation/widgets/category/prj_category_item.dart';
 import '../../../../core/presentation/widgets/category/prj_category_shimmer_list.dart';
 import '../get_x/category_selection_controller.dart';
-import '../helper/horizontal_row_reveal.dart';
+import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import 'base/category_selection_layout.dart';
 
 class CategorySelectionSection extends StatelessWidget {

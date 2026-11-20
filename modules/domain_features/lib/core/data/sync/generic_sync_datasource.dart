@@ -1,5 +1,5 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
-import 'package:data_config/core/util/firestore_sync_service.dart';
+import 'package:domain_features/core/data/sync/firestore_sync_service.dart';
 
 class GenericSyncDataSource {
   final FirestoreSyncService _syncService;

@@ -1,5 +1,5 @@
 import 'package:domain_features/core/helper/quick_entry_parser_helper.dart';
-import 'package:domain_features/features/category/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

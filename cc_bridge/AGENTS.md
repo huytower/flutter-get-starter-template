@@ -10,3 +10,5 @@ about this package).
 - Must stay state-management agnostic — no Bloc/GetX reactive state types in any contract signature.
 - Project-blind: contracts must make sense for any app built on this template, not just this one.
 - DI file: `lib/core/di/di.dart`.
+- Dependencies: constructor injection only; `getIt` only at the composition root; split classes above 5
+  dependencies — root `AGENTS.md` section IV, "Injecting dependencies".

@@ -1,5 +1,5 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
-import 'package:domain_features/features/transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/features/transaction/domain/repositories/transaction_repository.dart';
 import 'package:domain_features/features/transaction/domain/usecases/get_monthly_recurring_match_usecase.dart';
 import 'package:flutter_test/flutter_test.dart';

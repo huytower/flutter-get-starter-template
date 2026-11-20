@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
-import 'package:data_config/core/repository/cc_base_repository.dart';
+import 'package:domain_features/core/data/repository/cc_base_repository.dart';
 import 'package:domain_features/export_domain_features.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';

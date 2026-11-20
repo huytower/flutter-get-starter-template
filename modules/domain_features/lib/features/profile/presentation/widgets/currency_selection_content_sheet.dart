@@ -1,5 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:data_config/domain/currency/currency_catalog.dart';
+import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

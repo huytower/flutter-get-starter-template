@@ -2,31 +2,27 @@ import 'dart:async';
 
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
-import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/di/di.dart';
-import '../../../guideline/guideline_controller.dart';
-import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../domain/entities/parsed_transaction_entity.dart';
 import '../../domain/entities/smart_entry_input.dart';
-import '../../domain/entities/transaction_entity.dart';
-import '../../domain/usecases/create_transaction_batch_usecase.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/parse_smart_entry_usecase.dart';
 import '../helper/receipt_image_picker_helper.dart';
-import 'quick_entry_mixin.dart';
+import 'quick_entry_session.dart';
 import 'smart_entry_preview_state.dart';
 
-mixin QuickEntryBatchMixin on QuickEntryMixin {
+class QuickEntryBatchSession extends QuickEntrySession {
+  QuickEntryBatchSession(super.host, super.handler);
+
   static const int quickEntryBatchLimit = 5;
 
   @override
   List<String> get quickEntryCloudCategoryTypes =>
-      quickEntryCategoryType == CategoryType.income
+      host.quickEntryCategoryType == CategoryType.income
       ? const [CategoryType.income, CategoryType.expense]
       : const [CategoryType.expense, CategoryType.income];
 
@@ -42,7 +38,9 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
         trackQuickEntryGeneration();
     final languageCode = el.EasyLocalization.of(context)?.locale.languageCode;
 
-    '[AI_PARSING] 📸 Gallery multi-picker started'.Log('QuickEntryBatchMixin');
+    '[AI_PARSING] 📸 Gallery multi-picker started'.Log(
+      'QuickEntryBatchSession',
+    );
     final pickResult = await ReceiptImagePickerHelper.pickReceiptImages(
       limit: quickEntryBatchLimit,
     );
@@ -53,7 +51,7 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     }
     final images = pickResult.images;
     if (images.isEmpty) {
-      '[AI_PARSING] ❌ No images picked'.Log('QuickEntryBatchMixin');
+      '[AI_PARSING] ❌ No images picked'.Log('QuickEntryBatchSession');
       resetParsingIfCurrent();
       if (pickResult.permissionDenied) {
         quickEntryErrorKey.value =
@@ -69,7 +67,7 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     }
 
     '[AI_PARSING] [GEMINI] ☁️ Escalating ${images.length} images to Gemini AI...'
-        .Log('QuickEntryBatchMixin');
+        .Log('QuickEntryBatchSession');
     final cloud = await runSmartEntry(
       input: SmartEntryImagesInput([
         for (final image in images)
@@ -83,19 +81,19 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
 
     if (cloud.errorKey != null) {
       '[AI_PARSING] [GEMINI] ❌ Gemini AI batch parsing failed | errorKey=${cloud.errorKey}'
-          .Log('QuickEntryBatchMixin');
+          .Log('QuickEntryBatchSession');
       quickEntryErrorKey.value = cloud.errorKey;
       return;
     }
     if (cloud.rows.isEmpty) {
       '[AI_PARSING] [GEMINI] ⚠️ Gemini AI batch parsing returned 0 rows'.Log(
-        'QuickEntryBatchMixin',
+        'QuickEntryBatchSession',
       );
       quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
       return;
     }
     '[AI_PARSING] [GEMINI] ✅ Gemini AI batch parsing succeeded | rowsCount=${cloud.rows.length} rows=${cloud.rows.map((r) => r.toJson()).toList()}'
-        .Log('QuickEntryBatchMixin');
+        .Log('QuickEntryBatchSession');
     if (context.mounted) await presentQuickEntryPreview(context, cloud.rows);
   }
 
@@ -104,33 +102,26 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     BuildContext context,
     List<ParsedTransactionEntity> rows,
   ) async {
-    if (isSubmitting.value) return const SmartEntryCommitResult(saved: 0);
+    if (host.isSubmitting.value) return const SmartEntryCommitResult(saved: 0);
 
     final categories = {
       for (final category
-          in (await getIt<GetCategoriesUseCase>().call()).tryGetSuccess() ??
+          in (await handler.parser.loadCategories()).tryGetSuccess() ??
               const <CategoryEntity>[])
         category.id: category,
     };
     final now = DateTime.now();
     final params = [for (final row in rows) _toParams(row, categories, now)];
 
-    isSubmitting.value = true;
-    final result = await getIt<CreateTransactionBatchUseCase>().call(params);
-    isSubmitting.value = false;
+    host.isSubmitting.value = true;
+    final result = await handler.committer.save(params);
+    host.isSubmitting.value = false;
 
     final savedParams = params.take(result.saved).toList();
     if (savedParams.isNotEmpty) {
       _checkBudgetThresholds(savedParams);
-      await refreshParent();
-      if (Get.isRegistered<GuidelineController>()) {
-        unawaited(
-          Get.find<GuidelineController>().completeTask('first_transaction'),
-        );
-      }
-      if (context.mounted) {
-        unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
-      }
+      await host.refreshParent();
+      handler.committer.afterSaved(context);
     }
 
     final failure = result.failure;
@@ -165,11 +156,9 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
       );
     }
     spentByCategory.forEach((categoryId, amount) {
-      unawaited(
-        getIt<CheckBudgetThresholdUseCase>().call(
-          categoryId: categoryId,
-          transactionAmount: amount,
-        ),
+      handler.committer.checkBudgetThreshold(
+        categoryId: categoryId,
+        transactionAmount: amount,
       );
     });
   }
@@ -182,7 +171,7 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     final category = categories[row.categoryId];
     final date = row.date;
     return CreateTransactionParams(
-      type: (row.type ?? quickEntryCategoryType) == CategoryType.income
+      type: (row.type ?? host.quickEntryCategoryType) == CategoryType.income
           ? TransactionType.income
           : TransactionType.expense,
       amount: row.amount ?? 0,
@@ -190,7 +179,7 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
       categoryLabel: category != null ? el.tr(category.nameKey) : '',
       categoryIconCode: category?.iconCode,
       categoryIconFamily: category?.iconFamily,
-      walletId: row.walletId ?? selectedWalletId.value ?? '',
+      walletId: row.walletId ?? host.selectedWalletId.value ?? '',
       note: row.note,
       date: date == null
           ? now

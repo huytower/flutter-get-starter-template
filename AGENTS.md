@@ -65,20 +65,22 @@ melos run check:imports       # import boundaries (section VI), also the first C
 lib/                              # App Shell — pure orchestrator only (DI wiring, routing, boot sequence).
                                    # MUST NOT contain business logic or feature-specific UI.
 modules/
-  domain_features/lib/features/   # App-specific business verticals (wallet, transaction, budget, loan,
-                                   # reconciliation, report, user_level, category, comment, profile, ...)
-  data_config/                    # App-specific data infrastructure: Dio/Retrofit setup, CcBaseRepository,
-                                   # Firestore sync utilities, DomainUserEntity (+ Hive adapter), exchange rates.
-                                   # domain_features builds its repository impls on top of it.
-  app_config/                     # Env management, storage, DI discovery
+  domain_features/lib/features/   # App-specific business verticals: wallet, transaction, budget_allocation,
+                                   # budget_limit, liability, reconciliation, report, category, comment,
+                                   # profile (incl. profile/user_level), guideline, notification, firestore
+                                   # (sync), crashlog, examples (demo only)
+  data_config/                    # App-wide data infrastructure (Dio/Retrofit setup, exchange rates). Implements
+                                   # only repository interfaces that live in domain_features/lib/core/ (rule 2)
+  app_config/                     # Env management, storage, DI discovery, DomainUserEntity (+ Hive adapter)
   bridge/                         # The App Shell's gateway to features: shell contracts (AppLifecycleProvider,
-                                   # MainShellProvider, RegionalSettingsContract) + every coordinator impl.
+                                   # MainShellProvider, RegionalSettingsContract), every coordinator impl, and
+                                   # the impls of the cross-feature *Provider contracts (see rule 4).
                                    # NOT a duplicate of cc_bridge (which holds project-blind contracts only).
   theme/                          # SSOT for colors/typography (PrjColors, CcTextStyle, CcThemes)
   message/                        # SSOT for i18n strings (CcLocaleKeys)
 shared/
-  cc_micro_features/lib/features/ # Project-blind, reusable-across-apps verticals (auth, biometric,
-                                   # crash_log, messaging, splash, web)
+  cc_micro_features/lib/features/ # Project-blind, reusable-across-apps verticals (app_update, auth,
+                                   # biometric, crash_log, messaging, splash, web)
   cc_core_sdk/                    # GIT SUBMODULE (huytower/cc_core_sdk) — universal engine:
     cc_sdk/                       #   network, failures, logging (.Log()), ccGson serialization
     cc_sdk_ui/                    #   design system / widget catalog (CcContextExtension)
@@ -95,6 +97,13 @@ cc_bridge/                        # Root-level cross-module contracts (*Coordina
 `shared/cc_core_sdk` is a **git submodule**; commits there don't land by editing files in this repo — they must
 be committed and pushed inside the submodule itself, then the parent repo's submodule pointer updated separately.
 
+**Submodule branch rule (STRICT):** inside `shared/cc_core_sdk`, work only on `main`, or on a short-lived branch
+that goes into `main` through a PR on `huytower/cc_core_sdk`. Never move the submodule off `main` on your own:
+no `git submodule update`, no `git checkout <commit>` / `--detach`, no switching its branch, unless the user asks.
+If the parent branch records a different SDK commit than the one checked out, **report the mismatch** instead of
+fixing it. To take a newer SDK: `git -C shared/cc_core_sdk pull` on `main`, then commit the new pointer in the
+parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, so `git submodule update` skips it.)
+
 ## I. Architectural integrity (the laws)
 
 1. **Hybrid-Modular Super App Design (CRITICAL)** — three layers, strictly separated: App Shell (`lib/`, pure
@@ -102,22 +111,26 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
    verticals), Micro-Features (`shared/cc_micro_features/`, project-blind reusable verticals), Shared Core
    (`shared/cc_core_sdk/`, universal engine), Bridge Layer (`cc_bridge/`, cross-module contracts).
 2. **Project-Blind Dependency Rules (STRICT)**:
-    - `cc_micro_features` and `domain_features` **must not** import from `lib/` (App Shell).
+    - `cc_micro_features` and `domain_features` **must not** import from `lib/` (App Shell) or `modules/data_config`.
     - `cc_micro_features` must not import from `domain_features` or any app module (`modules/*`).
-    - `domain_features` **may** import `modules/data_config`, but only its shared infrastructure
-      (`CcBaseRepository`, `FirestoreSyncService`, `GenericSyncDatasource`, `DomainUserEntity`, network config) —
-      never another feature's concrete repository impl.
-    - Every feature defines its own `Repository` interface in its own `domain/` layer. The impl lives in that
-      feature's own `data/` layer (the usual case for `domain_features`, e.g. `wallet`, `category`, `comment`), or in
-      `modules/data_config` / `lib/` when it is shared infrastructure (e.g. `ExchangeRateRepositoryImpl`), and is
-      injected via DI (`@LazySingleton(as: XRepository)`). Other features depend on the interface only; never import
-      a concrete repository impl across a module or feature boundary.
-    - **Known package cycle (tech debt — do not add more):** `app_config ↔ data_config` (`app_config` registers
-      the `DomainUserEntity` Hive adapter). Pub workspaces tolerate it, but any new import that adds a back-edge
-      between packages is a bug; prefer moving the shared type down into a lower package to deepening a cycle.
-      Exchange-rate types (`ExchangeRateRepository`, `CurrencyCatalog`, `CurrencyCodes`) live in `data_config`
-      (`domain/exchange_rates/`, `domain/currency/`) for that reason. Enforced by `check:imports`
-      (`package-cycle`); the frozen back-edges are `_knownBackEdges` in `scripts/check_imports.dart`.
+    - **Repositories — where each piece lives:**
+      | Piece | Location | Example |
+      |---|---|---|
+      | Interface owned by one feature | that feature's `domain/repositories/` | `features/transaction/domain/repositories/transaction_repository.dart` |
+      | Implementation of it | the **same** feature's `data/repositories/`, annotated `@LazySingleton(as: XRepository)` | `features/transaction/data/repositories/transaction_repository_impl.dart` |
+      | Interface for an app-wide concept that no single feature owns | `modules/domain_features/lib/core/` | `ExchangeRateRepository` in `core/exchange_rates/` |
+      | Implementation of a `core/` interface | `modules/data_config` | `ExchangeRateRepositoryImpl` |
+      | Implementation of a `cc_micro_features` interface that needs app config | App Shell `lib/data/repositories/` | `AppUpdateConfigRepositoryImpl` |
+    - Another feature **may** depend on a repository **interface** (e.g. `report` uses `TransactionRepository`):
+      import it from the owning feature's `domain/` and inject it as section IV describes.
+    - Nothing may import a `*_repository_impl.dart` except its own feature's tests. Only the generated DI file
+      (`di.module.dart` / `di.config.dart`) references implementations.
+    - Repository interfaces are **not** moved to `core/` just because several features use them — only shared
+      *entities* are (`core/domain/entities/`: `TransactionEntity`, `WalletEntity`, `CategoryEntity`,
+      `LiabilityEntity`, `UserLevelStatusEntity`).
+    - **No package cycles.** Workspace packages form a DAG (`data_config` → `domain_features` → `app_config`;
+      `app_config` depends on neither). A new import that adds a back-edge between packages is a bug: move the
+      shared type down into the lower package instead. Enforced by `check:imports` (`package-cycle`).
 3. **State-Management Agnostic Core (STRICT)**:
     - `cc_core_sdk` (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`) and `cc_bridge` must stay state-management agnostic — no
       Bloc/GetX reactive state.
@@ -139,6 +152,18 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
       `modules/bridge/lib/src/coordinators/`; inside `domain_features`, navigate with its own typed routes
       directly. The only string-path hop is `AuthCoordinatorImpl.navigateToDashboard` (`MainNavigationRoute` is
       in `lib/`, which the bridge cannot import).
+    - **Feature → feature:** a feature never imports another feature's **controller** (GetX controller / Bloc).
+      To refresh another feature's screen, read the user level, or read/advance the onboarding guideline, use the
+      typed `*Provider` contracts in `modules/domain_features/lib/core/contracts/`: `FinancialRefreshProvider`,
+      `UserLevelProvider`, `GuidelineProvider`. Their implementations live in `modules/bridge/lib/src/impl/` (the
+      orchestrator — the only place that knows the concrete controllers), registered with
+      `@LazySingleton(as: XProvider)`. Receive providers like any other dependency — see **section IV,
+      "Injecting dependencies"**. New cross-feature need → add a method to the matching provider (or a new
+      `*Provider` + bridge impl); never route by string/event keys.
+    - **Legacy, do not copy:** about 40 older imports of other features' controllers still exist (mainly
+      `WalletController`, the liability/lend form controllers hosted by `transaction`, `TransactionController`,
+      `BudgetLimitController`, `BudgetAllocationController`, `CategorySettingsController`). They are debt to
+      migrate, not a pattern: never add a new one; route the new need through a provider instead.
     - Contracts the features consume stay in `domain_features` or `cc_bridge` — a contract in `modules/bridge`
       that `domain_features` imports would be a package cycle.
     - **CodeGraph-friendly hops** (each contract → impl → destination must be a static edge an indexer can
@@ -248,6 +273,54 @@ app-specific) with `data/`, `domain/`, `presentation/` subfolders, then export i
 `export_micro_features.dart` / `export_domain_features.dart`. See `shared/cc_micro_features/feature_template.md`
 for full file templates.
 
+### Injecting dependencies (applies to every package: `lib/`, `modules/*`, `cc_bridge`, `shared/cc_micro_features`, `shared/cc_core_sdk`)
+
+1. **Constructor injection, always.** A class receives every collaborator (repository, use case, service,
+   `*Provider`, data source) through its constructor. DI-created classes (`@injectable` / `@lazySingleton`) get
+   them from injectable; widgets get them as constructor arguments from the controller or caller that builds
+   them (e.g. `AiConsentSheet.ensure(context, prefs)`, `QuickEntrySection(aiPreferences: ...)`).
+2. **`getIt` only at the composition root**, which is exactly:
+   - each package's `lib/core/di/di.dart` and the App Shell's DI / bootstrap code;
+   - the screen entry point that creates its own controller or bloc (page, route, binding), e.g.
+     `Get.put(getIt<ExpenseFormController>())`.
+   Nowhere else: not in `domain/`, `data/`, controllers, services, mixins, or widgets below the page.
+3. **Split, don't bundle.** If a constructor needs **more than 5 dependencies**, or the file passes ~300 lines
+   (rule #16), extract one cohesive responsibility into its own `@injectable` class with 2–4 dependencies and
+   inject that class instead. Never shorten a constructor by going back to `getIt` or by grouping unrelated
+   dependencies into one "bag" object.
+4. **Mixins carry no external dependencies.** Logic that needs services is a class injected into the
+   controller (composition over inheritance); a mixin may only hold small behavior over its host's own state.
+5. **Tests build the class directly with fakes.** If a test has to call `getIt.register…`, the class breaks
+   point 1 or 2.
+
+Example — `ProfileController` delegates each concern to a small injected class instead of taking 13
+dependencies:
+
+```dart
+@injectable
+class ProfileAppActions {                      // one concern (AI consent + feedback), 2 dependencies
+  ProfileAppActions(this._aiPreferences, this.feedbackReporter);
+  final AiFallbackPreferenceDataSource _aiPreferences;
+  final CcFeedbackReporter feedbackReporter;
+}
+
+@lazySingleton
+class ProfileController extends CcGetController {
+  ProfileController(this._settingsActions, this._account, this._onboarding, this._app, this.userLevel); // 5
+  final ProfileAppActions _app;
+  final ProfileAccountActions _account;
+}
+```
+
+**Reference for point 4:** quick entry. Each transaction form controller owns a `QuickEntrySession` (or
+`QuickEntryBatchSession`) built from itself and an injected `QuickEntryHandler`; per-form behaviour comes from hooks
+on `TransactionFormController` (`quickEntryCategoryType`, `applyQuickEntryCategory`, ...), not from a mixin.
+The session itself only holds state and orchestration; each flow is a small class it owns: `QuickEntryTextInput`,
+`QuickEntryImageInput`, `QuickEntryVoiceInput`, `QuickEntryCategoryCache`, plus the stateless
+`QuickEntryIntentRouter`.
+**Legacy, do not copy:** controllers above 5 dependencies (`ReportController`, ...) and widgets below the page that
+still call `getIt` are debt to migrate, not patterns.
+
 ## V. Delivery workflow
 
 18. **Evidence-Based Implementation** — verify current structure and linter compliance before and after changes;
@@ -282,8 +355,8 @@ on any doc having been read:
       `cc_micro_features`.
     - `layer-purity`: `features/*/domain/` and `data/` import no `presentation/` layer.
     - `no-dotenv`: no `flutter_dotenv` anywhere.
-    - `package-cycle`: `lib/` imports between workspace packages form no new cycle; the known cycle (rule #2) is
-      frozen to the files they import today (`_knownBackEdges`), which may shrink but never grow.
+    - `package-cycle`: `lib/` imports between workspace packages form no cycle (rule #2). `_knownBackEdges` in the
+      script is empty and must stay so; a new cycle is fixed by moving the shared type down, not by an exception.
     - `shell-via-bridge` (rule #4): the App Shell imports from `domain_features` only the wiring files
       (`_shellWiringIntoFeatures`); every call goes through `package:bridge/export_bridge.dart`.
     - `bridge-barrel`: other packages import `bridge` only through `export_bridge.dart` (or `core/di/`), and that

@@ -1,6 +1,6 @@
-import 'package:data_config/domain/exchange_rates/exchange_rate_types.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
 
-import '../../features/transaction/domain/entities/transaction_entity.dart';
 import 'currency_conversion_service.dart';
 
 class DisplayCurrencyConverter {

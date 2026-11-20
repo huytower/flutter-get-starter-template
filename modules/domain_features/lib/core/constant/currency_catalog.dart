@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:cc_sdk/export_cc_sdk.dart';
 
 /// ISO 4217 codes of the currencies the app supports. The single source for
-/// these codes; `CurrencyConstants` in domain_features re-exposes them.
+/// these codes; `CurrencyConstants` re-exposes them.
 abstract final class CurrencyCodes {
   static const String vnd = 'VND';
   static const String usd = 'USD';

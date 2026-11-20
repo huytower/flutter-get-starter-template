@@ -1,4 +1,4 @@
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 
 /// Book balance = opening balance + Σ income − Σ expense (± transfer legs) for
 /// the wallet.

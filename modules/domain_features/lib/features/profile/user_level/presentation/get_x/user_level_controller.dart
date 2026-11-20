@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../domain/entities/user_level_status_entity.dart';
+import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 import '../../domain/usecases/get_user_level_status_usecase.dart';
 
 /// Cross-cutting, app-wide singleton (not tied to any one page) exposing the

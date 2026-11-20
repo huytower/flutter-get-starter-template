@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import 'wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 
 /// Pairs a wallet with its computed book balance (used by reconciliation).
 class WalletBalanceEntity extends Equatable {

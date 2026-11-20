@@ -1,12 +1,13 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../guideline/export_guideline.dart';
 import '../../../wallet/export_wallet.dart';
 import 'investment_wallet_preview_card.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 
 /// Section displaying investment wallets in a grid layout, following the
 /// Budget Allocation design pattern.
@@ -28,7 +29,7 @@ class InvestmentWalletsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final guideline = Get.find<GuidelineController>();
+    final guideline = getIt<GuidelineProvider>();
 
     return Stack(
       clipBehavior: Clip.none,
@@ -77,8 +78,8 @@ class InvestmentWalletsSection extends StatelessWidget {
               label: guideline.bannerDescription,
               labelAbove: false,
               growRight: false,
-              onTap: () => guideline.isDescriptionHidden.value = true,
-              onLabelTap: () => guideline.isDescriptionHidden.value = true,
+              onTap: () => guideline.isDescriptionHidden = true,
+              onLabelTap: () => guideline.isDescriptionHidden = true,
             ),
           ),
       ],

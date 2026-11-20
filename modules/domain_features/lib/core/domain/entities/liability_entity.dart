@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../../core/constant/currency_constants.dart';
+import 'package:domain_features/core/constant/currency_constants.dart';
 
 /// Direction values stored in [LiabilityEntity.direction].
 abstract class LiabilityDirection {

@@ -2,18 +2,28 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../transaction/presentation/get_x/quick_entry_mixin.dart';
+import '../../../transaction/presentation/get_x/quick_entry_session.dart';
 import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
-import '../../../transaction/presentation/helper/horizontal_row_reveal.dart';
+import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import 'liability_installment_draft.dart';
+import '../../../transaction/presentation/get_x/quick_entry_handler.dart';
 
 enum LiabilityDirectionForm { increase, decrease }
 
 const String _debugTag = 'LiabilityAssetRow';
 
-abstract class LiabilityBaseFormController extends TransactionFormController
-    with QuickEntryMixin {
+abstract class LiabilityBaseFormController extends TransactionFormController {
+  LiabilityBaseFormController(this.quickEntryHandler);
+
+  final QuickEntryHandler quickEntryHandler;
+
+  @override
+  late final QuickEntrySession quickEntry = QuickEntrySession(
+    this,
+    quickEntryHandler,
+  );
+
   RxList<LiabilityBalanceEntity> get mergedItems;
 
   RxBool get isLoadingMerged;

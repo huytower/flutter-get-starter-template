@@ -1,6 +1,6 @@
 import 'package:string_similarity/string_similarity.dart';
 
-import '../../features/transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'merchant_match_helper.dart';
 
 /// Shortest normalized query worth fuzzy-matching — Dice's-coefficient

@@ -11,14 +11,14 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
-import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import 'expense_form_controller.dart';
 import 'income_form_controller.dart';
 import 'investment_form_controller.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 /// Which real tab a `TabBar`/`TabBarView` slot represents.
 enum TransactionTabKind { expense, income, investment, liability, lend }
@@ -29,11 +29,14 @@ class TransactionController extends CcGetController {
     this._getWalletBalances,
     this._walletRepository,
     this._userLevel,
+    this._refresh,
   );
+
+  final FinancialRefreshProvider _refresh;
 
   final GetWalletBalancesUseCase _getWalletBalances;
   final WalletRepository _walletRepository;
-  final UserLevelController _userLevel;
+  final UserLevelProvider _userLevel;
 
   final RxInt selectedTabIndex = 0.obs;
 
@@ -63,13 +66,13 @@ class TransactionController extends CcGetController {
       return true;
     }
     if (kind == TransactionTabKind.investment) {
-      return _userLevel.status.value.canUseInvestment;
+      return _userLevel.status.canUseInvestment;
     }
     if (kind == TransactionTabKind.liability) {
-      return _userLevel.status.value.canUseLiability;
+      return _userLevel.status.canUseLiability;
     }
     if (kind == TransactionTabKind.lend) {
-      return _userLevel.status.value.canUseLiability;
+      return _userLevel.status.canUseLiability;
     }
     return false;
   }
@@ -274,27 +277,25 @@ class TransactionController extends CcGetController {
       await wc.loadWallets(forceRefresh: true);
     }
 
-    if (Get.isRegistered<BudgetAllocationController>()) {
-      await Get.find<BudgetAllocationController>().loadAll();
-    }
+    await _refresh.refreshBudgetAllocation();
   }
 
   bool get showInvestmentBadge {
-    if (!Get.isRegistered<GuidelineController>()) return false;
-    final guideline = Get.find<GuidelineController>();
+    if (!getIt<GuidelineProvider>().isAvailable) return false;
+    final guideline = getIt<GuidelineProvider>();
     return guideline.isTaskActive('investment') &&
-        guideline.hasCreatedFirstInvestment.value;
+        guideline.hasCreatedFirstInvestment;
   }
 
   bool get showLiabilityBadge {
-    if (!Get.isRegistered<GuidelineController>()) return false;
-    final guideline = Get.find<GuidelineController>();
+    if (!getIt<GuidelineProvider>().isAvailable) return false;
+    final guideline = getIt<GuidelineProvider>();
     return guideline.isTaskActive('liability');
   }
 
   bool get showLendBadge {
-    if (!Get.isRegistered<GuidelineController>()) return false;
-    final guideline = Get.find<GuidelineController>();
+    if (!getIt<GuidelineProvider>().isAvailable) return false;
+    final guideline = getIt<GuidelineProvider>();
     return guideline.isTaskActive('lend');
   }
 

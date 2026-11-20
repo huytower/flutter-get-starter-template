@@ -86,18 +86,11 @@ const Set<String> _shellWiringIntoFeatures = {
   'hive_registrar.g.dart',
 };
 
-/// Known package cycles (AGENTS.md rule 2, tech debt): the back-edge of each
-/// cycle, with the only URIs it may import. Every other edge between our
-/// packages must form a DAG, and these back-edges must not grow — import a
-/// new file across one and `package-cycle` fails. Shrink this list as the
-/// cycles are broken; never add to it.
-const Map<(String, String), Set<String>> _knownBackEdges = {
-  ('app_config', 'data_config'): {
-    'package:data_config/data/adapters/domain_user_entity_adapter.dart',
-    'package:data_config/data/converters/domain_user_entity_converter.dart',
-    'package:data_config/domain/entities/auth/domain_user_entity.dart',
-  },
-};
+/// Known package cycles (AGENTS.md rule 2): the back-edge of each cycle, with
+/// the only URIs it may import. Empty since `DomainUserEntity` moved into
+/// app_config — every edge between our packages must form a DAG. Keep it
+/// empty; never add to it.
+const Map<(String, String), Set<String>> _knownBackEdges = {};
 
 /// One `lib/` import from one of our packages into another.
 class _Edge {

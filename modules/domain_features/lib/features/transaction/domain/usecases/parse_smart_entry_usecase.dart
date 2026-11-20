@@ -1,7 +1,7 @@
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
-import 'package:data_config/domain/currency/currency_catalog.dart';
-import 'package:data_config/domain/exchange_rates/exchange_rate_types.dart';
+import 'package:domain_features/core/constant/currency_catalog.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:injectable/injectable.dart';
@@ -15,9 +15,9 @@ import '../../../../core/ai/smart_entry_schema.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
-import '../../../category/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../entities/parsed_transaction_entity.dart';
 import '../entities/smart_entry_input.dart';
@@ -28,7 +28,11 @@ class ParseSmartEntryUseCase {
     this._getCategories,
     this._conversionService,
     this._ai,
+    this._walletRepository,
+    this._aiPreferences,
   );
+
+  final AiFallbackPreferenceDataSource _aiPreferences;
 
   static const int defaultMaxTransactions = 20;
 
@@ -40,7 +44,7 @@ class ParseSmartEntryUseCase {
   final CurrencyConversionService _conversionService;
   final CcAiClient _ai;
 
-  WalletRepository get _walletRepository => getIt<WalletRepository>();
+  final WalletRepository _walletRepository;
 
   Future<Result<List<ParsedTransactionEntity>, CcFailure>> call({
     required SmartEntryInput input,
@@ -50,8 +54,7 @@ class ParseSmartEntryUseCase {
     int maxTransactions = defaultMaxTransactions,
     ParsedTransactionEntity? localResult,
   }) async {
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
-    if (!await prefs.isGeminiEnabled()) {
+    if (!await _aiPreferences.isGeminiEnabled()) {
       return const Error(ValidationFailure(geminiDisabledReason));
     }
     if (input is SmartEntryImagesInput && input.images.isEmpty) {
@@ -78,7 +81,7 @@ class ParseSmartEntryUseCase {
       today: DateTime.now(),
     );
 
-    if (!await prefs.tryConsumeDailyCall()) {
+    if (!await _aiPreferences.tryConsumeDailyCall()) {
       return const Error(ValidationFailure(dailyLimitReachedReason));
     }
 

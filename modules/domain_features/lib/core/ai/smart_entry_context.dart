@@ -1,4 +1,4 @@
-import 'package:data_config/domain/currency/currency_catalog.dart';
+import 'package:domain_features/core/constant/currency_catalog.dart';
 
 typedef AiPromptCategory = ({String id, String label, String type});
 typedef AiPromptWallet = ({String id, String name});
