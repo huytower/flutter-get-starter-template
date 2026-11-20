@@ -106,8 +106,9 @@ consumers need is exported from the barrel.
 1. **Project- and domain-blind.** No import of `lib/` (App Shell), `modules/*`, `cc_micro_features`, `domain_features`, or any
    app name, brand, URL, key, or business term. If a widget needs app text/colors/behavior, take it as a
    parameter or an abstract interface the app implements.
-2. **No reactive state management.** No `bloc`, `flutter_bloc`, `GetxController`, `Obx`, `.obs`. Only exception:
-   `cc_sdk_ui` uses `get` for navigation/context helpers (`Get.context!`, `Get.dialog`, `Get.back()`). Never extend it.
+2. **No reactive state management.** No `bloc`, `flutter_bloc`, `get` (`GetxController`, `Obx`, `.obs`,
+   `Get.context`). No SDK package depends on `get`; helpers take a `BuildContext` or use `Navigator` /
+   `FocusManager`.
 3. **No i18n coupling.** The `message` module is app-specific. SDK widgets receive already-translated `String`s.
 4. **Colors/typography.** Use `CcBaseColors` and `context.ccColorScheme` / `context.ccTextTheme`. No `Colors.*`,
    hex, or hardcoded font size/weight/family.

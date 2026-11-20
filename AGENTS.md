@@ -121,9 +121,8 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
 3. **State-Management Agnostic Core (STRICT)**:
     - `cc_core_sdk` (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`) and `cc_bridge` must stay state-management agnostic — no
       Bloc/GetX reactive state.
-    - **Pragmatic exception**: `cc_sdk_ui` (and transitively `cc_sdk`) uses the `get` package for lightweight
-      navigation/context helpers only (`Get.context!`, `Get.dialog`, `Get.back()` in `CcDialogHelper`). This is
-      NOT state management — never introduce `GetxController`/`Obx` into the core.
+    - The SDK does not depend on the `get` package at all (dialog and keyboard helpers take a `BuildContext`
+      or use `Navigator` / `FocusManager`); don't add it back, not even for navigation helpers.
     - Presentation layers are free to use Bloc or GetX; the project deliberately supports both, chosen per feature.
 4. **Interface-Driven Communication (the Bridge)** — all cross-module interactions (navigation, session
    management) are mediated by contracts in `cc_bridge`. Naming: `*Coordinator` (flow/navigation), `*Contract`
@@ -224,7 +223,7 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
     from the same module. Order: Flutter/Dart → external packages → project modules → local relative
     (`directives_ordering: error` in `analysis_options.yaml`; fix with `dart fix --apply`, don't disable the rule).
 14. **Functional Results** — all UseCases/Repositories return `Result<T, CcFailure>` (`multiple_result` package;
-    `CcFailure` lives in `cc_sdk`).
+    `CcFailure` lives in `cc_sdk_data`, import `package:cc_sdk_data/export_cc_sdk_data.dart`).
 15. **Logging** — the `.Log()` extension from `cc_sdk` only. NEVER `print()` or `developer.log()` in production code.
 16. **File size & composition** — keep files ~200–300 lines; split large `build()` methods into
     `_buildHeader`/`_buildListItem`/etc. helpers. `const` everything that can be const.
@@ -275,7 +274,7 @@ on any doc having been read:
     - `sdk-barrel` / `private-src`: other packages import an SDK package only through its `export_*.dart` barrel
       (or `core/di/`), and never any workspace package's `src/`.
     - `state-agnostic-core`: the SDK core ring and `cc_bridge` use no `bloc`, `flutter_bloc` or reactive GetX
-      (`package:get` only in `cc_sdk_ui`, for navigation helpers).
+      (no `package:get` either).
     - `sdk-core-vendor`: the SDK core ring imports no vendor SDK (Firebase, ML Kit, location, speech, phone parser,
       ...); those live in the capability packages.
     - `project-blind`: SDK, `cc_bridge` and `cc_micro_features` import no app package (`message`, `theme`,

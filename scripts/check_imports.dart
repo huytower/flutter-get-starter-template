@@ -285,16 +285,8 @@ Iterable<_Violation> _checkUri(
   }
 
   if (_sdkCore.contains(owner) && pkg != null) {
-    if (pkg == 'bloc' || pkg == 'flutter_bloc') {
+    if (pkg == 'bloc' || pkg == 'flutter_bloc' || pkg == 'get') {
       yield _Violation(path, line, 'state-agnostic-core', '$pkg in $owner');
-    }
-    if (pkg == 'get' && owner != 'cc_sdk_ui') {
-      yield _Violation(
-        path,
-        line,
-        'state-agnostic-core',
-        'package:get is allowed only in cc_sdk_ui (navigation helpers)',
-      );
     }
     if (_vendorPackage.hasMatch(pkg) && !isTest) {
       yield _Violation(
