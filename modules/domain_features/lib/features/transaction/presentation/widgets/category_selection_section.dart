@@ -9,7 +9,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../get_x/category_selection_controller.dart';
-import '../helper/horizontal_row_reveal.dart';
+import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import 'base/category_selection_layout.dart';
 
 class CategorySelectionSection extends StatelessWidget {

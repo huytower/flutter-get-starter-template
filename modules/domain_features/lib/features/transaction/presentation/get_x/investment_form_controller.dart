@@ -21,7 +21,7 @@ import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
-import '../helper/horizontal_row_reveal.dart';
+import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import 'quick_entry_mixin.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../transaction/presentation/get_x/quick_entry_mixin.dart';
 import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
-import '../../../transaction/presentation/helper/horizontal_row_reveal.dart';
+import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import 'liability_installment_draft.dart';
 

@@ -10,13 +10,13 @@ import '../../../guideline/export_guideline.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/income_form_controller.dart';
 import '../get_x/transaction_controller.dart';
-import 'cc_amount_input_section.dart';
+import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'income_category_selection_section.dart';
-import 'money_keypad_panel.dart';
-import 'transaction_additional_details_section.dart';
-import 'transaction_form_container.dart';
-import 'transaction_form_two_column.dart';
-import 'transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_additional_details_section.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_form_container.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_form_two_column.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_submit_button.dart';
 
 class IncomeForm extends StatefulWidget {
   const IncomeForm({super.key, this.tag});

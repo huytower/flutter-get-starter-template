@@ -9,8 +9,8 @@ import '../../../../core/helper/budget_name_helper.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/pages/investment_list_page.dart';
 import '../get_x/investment_form_controller.dart';
-import '../helper/horizontal_row_reveal.dart';
-import 'base/category_customize_empty_state.dart';
+import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
+import 'package:domain_features/features/transaction/presentation/widgets/base/category_customize_empty_state.dart';
 
 class InvestmentAssetSelector extends StatelessWidget {
   final InvestmentFormController controller;

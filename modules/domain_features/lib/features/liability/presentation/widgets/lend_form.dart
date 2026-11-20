@@ -6,12 +6,12 @@ import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
-import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
-import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
-import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
-import '../../../transaction/presentation/widgets/transaction_form_container.dart';
-import '../../../transaction/presentation/widgets/transaction_form_two_column.dart';
-import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
+import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_additional_details_section.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_form_container.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_form_two_column.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_submit_button.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/lend_form_controller.dart';
 import '../get_x/liability_base_form_controller.dart';

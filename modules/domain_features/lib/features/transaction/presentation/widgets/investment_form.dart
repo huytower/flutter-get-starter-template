@@ -12,14 +12,14 @@ import '../../../wallet/export_wallet.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
 import '../get_x/transaction_controller.dart';
-import 'cc_amount_input_section.dart';
+import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'investment_asset_selector.dart';
 import 'investment_direction_toggle.dart';
-import 'money_keypad_panel.dart';
-import 'transaction_additional_details_section.dart';
-import 'transaction_form_container.dart';
-import 'transaction_form_two_column.dart';
-import 'transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_additional_details_section.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_form_container.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_form_two_column.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_submit_button.dart';
 
 class InvestmentForm extends StatefulWidget {
   const InvestmentForm({super.key});

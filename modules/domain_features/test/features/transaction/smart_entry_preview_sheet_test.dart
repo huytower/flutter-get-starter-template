@@ -8,7 +8,7 @@ import 'package:domain_features/features/transaction/presentation/get_x/smart_en
 import 'package:domain_features/features/transaction/presentation/widgets/smart_entry_amount_field.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/smart_entry_preview_row_card.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/smart_entry_preview_sheet.dart';
-import 'package:domain_features/features/transaction/presentation/widgets/transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/transaction_submit_button.dart';
 import 'package:domain_features/features/wallet/domain/entities/wallet_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 // ignore: implementation_imports

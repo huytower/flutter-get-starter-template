@@ -1,8 +1,8 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 
-import 'category_customize_tile.dart';
-import 'category_selection_layout.dart';
+import 'package:domain_features/features/transaction/presentation/widgets/base/category_customize_tile.dart';
+import 'package:domain_features/features/transaction/presentation/widgets/base/category_selection_layout.dart';
 
 /// Empty state of an asset row (investment / liability / lend forms): the
 /// "Customize" cell on the left with the "nothing here yet" [hint] beside it.

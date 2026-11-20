@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
-import '../../../transaction/presentation/helper/horizontal_row_reveal.dart';
-import '../../../transaction/presentation/widgets/base/category_customize_empty_state.dart';
+import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
+import 'package:domain_features/features/transaction/presentation/widgets/base/category_customize_empty_state.dart';
 import '../get_x/liability_base_form_controller.dart';
 import '../pages/liability_grid_page.dart';
 

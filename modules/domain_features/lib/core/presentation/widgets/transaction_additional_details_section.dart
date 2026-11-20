@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import 'quick_date_row.dart';
+import 'package:domain_features/core/presentation/widgets/quick_date_row.dart';
 
 class TransactionAdditionalDetailsSection extends StatelessWidget {
   final bool isExpanded;
