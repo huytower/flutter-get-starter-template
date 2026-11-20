@@ -1,5 +1,5 @@
 import 'package:domain_features/core/helper/monthly_bill_suggestion_helper.dart';
-import 'package:domain_features/features/transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 TransactionEntity _txn(

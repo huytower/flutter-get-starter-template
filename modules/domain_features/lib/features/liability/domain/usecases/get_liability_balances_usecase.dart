@@ -3,12 +3,12 @@ import 'package:collection/collection.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../category/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../../category/domain/repositories/category_repository.dart';
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/liability_balance_entity.dart';
-import '../entities/liability_entity.dart';
+import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import '../repositories/liability_repository.dart';
 
 /// Computes the outstanding balance and repaid amount for every loan.

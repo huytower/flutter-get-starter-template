@@ -1,7 +1,7 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../entities/category_group_entity.dart';
 
 abstract class CategoryRepository {

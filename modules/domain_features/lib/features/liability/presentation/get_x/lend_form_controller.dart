@@ -15,7 +15,7 @@ import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/liability_balance_entity.dart';
-import '../../domain/entities/liability_entity.dart';
+import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
 import '../../domain/usecases/record_liability_payment_usecase.dart';
 import '../get_x/liability_base_form_controller.dart';

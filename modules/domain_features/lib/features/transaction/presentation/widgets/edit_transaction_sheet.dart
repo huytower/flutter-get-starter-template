@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../report/presentation/widgets/quick_edit_transaction_sheet.dart';
-import '../../domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 
 /// Bottom sheet for correcting a previously recorded transaction. Delegates to
 /// [QuickEditTransactionSheet] to provide a compact, fitted bottom-sheet UX/UI.

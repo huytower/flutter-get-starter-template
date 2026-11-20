@@ -5,7 +5,7 @@ import 'package:domain_features/features/firestore/model/sync_metadata.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../domain/entities/liability_entity.dart';
+import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import '../../domain/repositories/liability_repository.dart';
 import '../datasources/local/liability_local_datasource.dart';
 import '../models/liability_model.dart';

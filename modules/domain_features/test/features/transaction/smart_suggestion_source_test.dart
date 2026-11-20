@@ -1,6 +1,6 @@
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/features/category/export_category.dart';
-import 'package:domain_features/features/transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/features/transaction/domain/repositories/transaction_repository.dart';
 import 'package:domain_features/features/transaction/presentation/get_x/expense_form_controller.dart';
 import 'package:domain_features/features/transaction/presentation/get_x/income_form_controller.dart';

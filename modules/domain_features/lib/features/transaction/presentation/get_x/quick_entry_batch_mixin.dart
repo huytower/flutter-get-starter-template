@@ -11,7 +11,7 @@ import '../../../../core/di/di.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../domain/entities/parsed_transaction_entity.dart';
 import '../../domain/entities/smart_entry_input.dart';
-import '../../domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../domain/usecases/create_transaction_batch_usecase.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/parse_smart_entry_usecase.dart';

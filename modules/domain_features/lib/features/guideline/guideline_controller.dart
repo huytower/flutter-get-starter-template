@@ -9,7 +9,7 @@ import 'package:message/export_message.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
-import '../wallet/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../wallet/presentation/get_x/wallet_controller.dart';
 import 'package:domain_features/core/contracts/user_level_provider.dart';
 

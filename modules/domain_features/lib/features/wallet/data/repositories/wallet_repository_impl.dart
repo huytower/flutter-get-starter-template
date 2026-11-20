@@ -6,7 +6,7 @@ import 'package:domain_features/features/firestore/enum/sync_status.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../domain/repositories/wallet_repository.dart';
 import '../datasources/local/wallet_local_datasource.dart';
 import '../datasources/wallet_sync_datasource.dart';

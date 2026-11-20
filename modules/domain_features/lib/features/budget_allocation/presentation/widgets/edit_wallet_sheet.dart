@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../guideline/export_guideline.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/di/di.dart';

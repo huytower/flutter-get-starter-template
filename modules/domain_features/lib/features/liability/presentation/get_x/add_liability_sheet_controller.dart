@@ -13,7 +13,7 @@ import 'package:message/export_message.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
-import '../../domain/entities/liability_entity.dart';
+import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import '../../domain/usecases/create_liability_usecase.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
 import 'lend_form_controller.dart';

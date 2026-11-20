@@ -1,7 +1,7 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 
 abstract class WalletRepository {
   Future<Result<List<WalletEntity>, CcFailure>> getWallets();

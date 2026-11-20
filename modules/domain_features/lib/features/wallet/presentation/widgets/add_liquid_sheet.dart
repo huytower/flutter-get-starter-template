@@ -11,7 +11,7 @@ import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../guideline/export_guideline.dart';
 import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
-import '../../domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../get_x/add_liquid_sheet_controller.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 

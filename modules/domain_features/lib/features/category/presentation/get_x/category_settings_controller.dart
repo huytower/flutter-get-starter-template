@@ -7,7 +7,7 @@ import '../../../profile/domain/entities/profile_settings_entity.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../profile/domain/usecases/update_profile_settings_usecase.dart';
 import '../../data/datasources/local/category_seed.dart';
-import '../../domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../domain/entities/category_group_entity.dart';
 import '../../domain/usecases/get_categories_usecase.dart';
 import '../../domain/usecases/get_category_groups_usecase.dart';

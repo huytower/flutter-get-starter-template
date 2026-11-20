@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';

@@ -8,7 +8,7 @@ import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../liability/presentation/widgets/lend_asset_selector.dart';
 import '../../../liability/presentation/widgets/liability_asset_selector.dart';
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';
 import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import '../../../transaction/presentation/widgets/investment_asset_selector.dart';

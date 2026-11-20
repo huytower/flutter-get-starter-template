@@ -6,8 +6,8 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/presentation/widgets/prj_vip_lock_banner.dart';
-import '../../../category/domain/entities/category_entity.dart';
-import '../../domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../get_x/add_investment_sheet_controller.dart';
 
 class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {

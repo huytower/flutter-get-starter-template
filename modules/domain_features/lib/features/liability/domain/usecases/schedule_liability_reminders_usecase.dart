@@ -4,7 +4,7 @@ import 'package:message/cc_locale_keys.dart';
 
 import '../../../notification/notification_service.dart';
 import '../../../notification/reminder_ids.dart';
-import '../entities/liability_entity.dart';
+import 'package:domain_features/core/domain/entities/liability_entity.dart';
 
 /// Schedules the due-date reminder notifications for a just-created loan,
 /// if [LiabilityEntity.reminderBeforeDueDate] is set:

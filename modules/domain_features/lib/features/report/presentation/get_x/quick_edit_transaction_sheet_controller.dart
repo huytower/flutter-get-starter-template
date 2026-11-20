@@ -13,7 +13,7 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/usecases/update_transaction_usecase.dart';
 import '../../../transaction/presentation/get_x/investment_form_controller.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';

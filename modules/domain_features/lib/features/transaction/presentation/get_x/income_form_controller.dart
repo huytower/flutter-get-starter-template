@@ -16,7 +16,7 @@ import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../category/data/datasources/local/category_age_order.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import '../../domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/get_monthly_recurring_match_usecase.dart';

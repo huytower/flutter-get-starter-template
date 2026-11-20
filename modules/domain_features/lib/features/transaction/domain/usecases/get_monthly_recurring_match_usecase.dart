@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/helper/monthly_bill_suggestion_helper.dart';
-import '../entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../repositories/transaction_repository.dart';
 
 @lazySingleton

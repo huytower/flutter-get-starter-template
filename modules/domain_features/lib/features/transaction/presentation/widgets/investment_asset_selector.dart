@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/pages/investment_list_page.dart';
 import '../get_x/investment_form_controller.dart';
 import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';

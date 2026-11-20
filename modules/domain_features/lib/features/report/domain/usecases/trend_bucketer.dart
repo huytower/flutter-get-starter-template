@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:intl/intl.dart';
 import 'package:message/cc_locale_keys.dart';
 
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../entities/trend_data_entity.dart';
 import '../report_range.dart';
 

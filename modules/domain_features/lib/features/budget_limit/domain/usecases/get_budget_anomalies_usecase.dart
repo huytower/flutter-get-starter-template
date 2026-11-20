@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/helper/spend_anomaly_helper.dart';
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/budget_anomaly_entity.dart';
 import 'get_budget_limit_stats_usecase.dart';

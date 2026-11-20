@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import 'wallet_display_name.dart';
 

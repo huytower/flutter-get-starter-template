@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../wallet/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../get_x/report_controller.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
 

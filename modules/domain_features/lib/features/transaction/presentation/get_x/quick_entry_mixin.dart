@@ -15,7 +15,7 @@ import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
-import '../../../liability/domain/entities/liability_entity.dart';
+import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
 import '../../domain/entities/smart_entry_input.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';

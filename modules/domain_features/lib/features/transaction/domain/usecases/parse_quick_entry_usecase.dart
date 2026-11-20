@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/helper/quick_entry_parser_helper.dart';
-import '../../../category/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 

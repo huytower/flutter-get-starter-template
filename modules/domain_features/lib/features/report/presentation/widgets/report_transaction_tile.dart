@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'delete_transaction_sheet.dart';
 import 'quick_edit_transaction_sheet.dart';
 import 'report_daily_list_helpers.dart';

@@ -8,7 +8,7 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../data/datasources/local/category_seed.dart';
-import '../../domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../domain/entities/category_group_entity.dart';
 import '../get_x/category_settings_controller.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';

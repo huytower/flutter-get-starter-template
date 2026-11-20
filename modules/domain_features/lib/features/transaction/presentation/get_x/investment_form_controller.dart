@@ -18,7 +18,7 @@ import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import 'quick_entry_mixin.dart';
