@@ -4,7 +4,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 ///
 /// This allows any feature (Dashboard, Profile, Payment) to check
 /// authentication status without depending on the Auth or Data modules.
-abstract class SessionContract {
+abstract interface class SessionContract {
   /// Whether the user is currently authenticated.
   bool get isAuthenticated;
 

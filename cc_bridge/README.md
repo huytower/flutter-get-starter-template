@@ -39,9 +39,7 @@ cc_bridge/
 │   │       └── di.module.dart
 │   ├── src/
 │   │   ├── navigation/          # Navigation coordinators
-│   │   │   ├── auth_coordinator.dart
-│   │   │   ├── comment_coordinator.dart
-│   │   │   └── home_coordinator.dart
+│   │   │   └── auth_coordinator.dart
 │   │   └── session/             # Session management contracts
 │   │       └── session_contract.dart
 │   └── export_cc_bridge.dart   # Public API exports
@@ -55,7 +53,7 @@ cc_bridge/
 
 ```dart
 /// Contract for authentication-related navigation.
-abstract class AuthCoordinator {
+abstract interface class AuthCoordinator {
   /// Navigates to the Login screen.
   void navigateToLogin(BuildContext context);
 
@@ -126,7 +124,9 @@ Future<void> initMicroPackage() async {
 ### Navigation Coordinators
 
 - **AuthCoordinator**: Manages authentication flow navigation
-- **CommentCoordinator** (declared in `domain_features`): opens a comment's detail page
+
+Navigation that starts and ends inside `domain_features` uses its own typed routes directly
+(`context.pushRoute(CommentDetailRoute(comment: comment))`), with no coordinator.
 
 ### Session Contracts
 

@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 ///
 /// This allows the Login feature to request navigation to other flows
 /// (like Phone Auth or Dashboard) without knowing about their specific routes.
-abstract class AuthCoordinator {
+abstract interface class AuthCoordinator {
   /// Navigates to the Login screen.
   void navigateToLogin(BuildContext context);
 

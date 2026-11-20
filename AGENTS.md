@@ -129,7 +129,7 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
    management) are mediated by contracts in `cc_bridge`. Naming: `*Coordinator` (flow/navigation), `*Contract`
    (shared state), `*Provider` (shared logic). Features depend on abstractions, never concrete impls of other
    features. `cc_bridge` holds only project-blind contracts (auth, session) and must not import any app module;
-   app-specific coordinators (e.g. `CommentCoordinator`) live in
+   an app-specific coordinator contract, when one is needed, goes in
    `modules/domain_features/lib/core/navigation/coordinator/`. Two directions, one gateway:
     - **Shell → features:** `lib/` calls features only through `package:bridge/export_bridge.dart`
       (`AppLifecycleProvider` for boot/post-boot work, `MainShellProvider` + `MainTab` for the tab pages, badges

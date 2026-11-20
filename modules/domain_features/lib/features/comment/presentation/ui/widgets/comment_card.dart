@@ -1,7 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../core/navigation/coordinator/comment_coordinator.dart';
+import '../../../../../core/navigation/domain_router.gr.dart';
 import '../../../domain/entities/comment_entity.dart';
 
 class CommentCard extends StatelessWidget {
@@ -12,8 +13,7 @@ class CommentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CcBouncing(
-      onTap: () =>
-          getIt<CommentCoordinator>().navigateToCommentDetail(context, comment),
+      onTap: () => context.pushRoute(CommentDetailRoute(comment: comment)),
       borderRadius: CcWidgetHelper.getBorderRoundedLG(),
       child: Container(
         height: context.respDim(160),

@@ -3,7 +3,6 @@ import 'package:bridge/core/di/di.module.dart';
 import 'package:bridge/export_bridge.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
-import 'package:domain_features/core/navigation/coordinator/comment_coordinator.dart';
 import 'package:domain_features/features/budget_allocation/presentation/pages/budget_allocation_page.dart';
 import 'package:domain_features/features/profile/presentation/pages/profile_page.dart';
 import 'package:domain_features/features/transaction/presentation/pages/transaction_page.dart';
@@ -24,7 +23,6 @@ void main() {
       expect(getIt.isRegistered<MainShellProvider>(), isTrue);
       expect(getIt.isRegistered<RegionalSettingsContract>(), isTrue);
       expect(getIt.isRegistered<AuthCoordinator>(), isTrue);
-      expect(getIt.isRegistered<CommentCoordinator>(), isTrue);
     });
 
     test('resolves one shared instance per contract', () {
