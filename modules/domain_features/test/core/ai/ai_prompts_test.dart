@@ -1,6 +1,6 @@
+import 'package:data_config/domain/currency/currency_catalog.dart';
 import 'package:domain_features/core/ai/ai_prompts.dart';
 import 'package:domain_features/core/ai/smart_entry_context.dart';
-import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/features/budget_limit/domain/entities/budget_anomaly_entity.dart';
 import 'package:domain_features/features/budget_limit/domain/entities/budget_insights_entity.dart';
 import 'package:domain_features/features/budget_limit/domain/entities/budget_limit_stats_entity.dart';

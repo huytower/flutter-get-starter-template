@@ -1,9 +1,8 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
+import 'package:data_config/domain/currency/currency_catalog.dart';
+import 'package:data_config/domain/exchange_rates/exchange_rate_types.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
-
-import '../../core/constant/currency_catalog.dart';
-import 'exchange_rate_types.dart';
 
 /// Service for converting amounts between currencies using exchange rates.
 @lazySingleton

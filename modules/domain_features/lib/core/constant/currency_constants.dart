@@ -1,9 +1,8 @@
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
+import 'package:data_config/domain/currency/currency_catalog.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:hive_ce/hive_ce.dart';
-
-import 'currency_catalog.dart';
 
 abstract final class CurrencySelectionSources {
   static const detected = 'detected';
@@ -47,12 +46,12 @@ class CurrencyConstants {
 
   static const String defaultCurrencyCode = 'USD';
 
-  static const String vnd = 'VND';
-  static const String usd = 'USD';
-  static const String jpy = 'JPY';
-  static const String eur = 'EUR';
-  static const String krw = 'KRW';
-  static const String cny = 'CNY';
+  static const String vnd = CurrencyCodes.vnd;
+  static const String usd = CurrencyCodes.usd;
+  static const String jpy = CurrencyCodes.jpy;
+  static const String eur = CurrencyCodes.eur;
+  static const String krw = CurrencyCodes.krw;
+  static const String cny = CurrencyCodes.cny;
 
   /// Global reactive broadcast for when the primary currency changes.
   static final RxInt onCurrencyChanged = 0.obs;

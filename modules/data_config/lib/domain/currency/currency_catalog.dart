@@ -2,7 +2,16 @@ import 'dart:ui';
 
 import 'package:cc_sdk/export_cc_sdk.dart';
 
-import 'currency_constants.dart';
+/// ISO 4217 codes of the currencies the app supports. The single source for
+/// these codes; `CurrencyConstants` in domain_features re-exposes them.
+abstract final class CurrencyCodes {
+  static const String vnd = 'VND';
+  static const String usd = 'USD';
+  static const String jpy = 'JPY';
+  static const String eur = 'EUR';
+  static const String krw = 'KRW';
+  static const String cny = 'CNY';
+}
 
 class CurrencyDefinition {
   const CurrencyDefinition({
@@ -34,7 +43,7 @@ class CurrencyCatalog {
 
   static const List<CurrencyDefinition> definitions = [
     CurrencyDefinition(
-      code: CurrencyConstants.vnd,
+      code: CurrencyCodes.vnd,
       nameKey: 'profile.currency_vnd',
       symbol: 'đ',
       sampleAmount: 2500000,
@@ -44,7 +53,7 @@ class CurrencyCatalog {
       aliases: ['vnd', 'dong', 'd', 'đ'],
     ),
     CurrencyDefinition(
-      code: CurrencyConstants.usd,
+      code: CurrencyCodes.usd,
       nameKey: 'profile.currency_usd',
       symbol: '\$',
       sampleAmount: 100,
@@ -54,7 +63,7 @@ class CurrencyCatalog {
       aliases: ['usd', 'dollar', 'dollars', '\$'],
     ),
     CurrencyDefinition(
-      code: CurrencyConstants.eur,
+      code: CurrencyCodes.eur,
       nameKey: 'profile.currency_eur',
       symbol: '€',
       sampleAmount: 85,
@@ -64,7 +73,7 @@ class CurrencyCatalog {
       aliases: ['eur', 'euro', 'euros', '€'],
     ),
     CurrencyDefinition(
-      code: CurrencyConstants.jpy,
+      code: CurrencyCodes.jpy,
       nameKey: 'profile.currency_jpy',
       symbol: '¥',
       sampleAmount: 11347,
@@ -74,7 +83,7 @@ class CurrencyCatalog {
       aliases: ['jpy', 'yen', '¥'],
     ),
     CurrencyDefinition(
-      code: CurrencyConstants.krw,
+      code: CurrencyCodes.krw,
       nameKey: 'profile.currency_krw',
       symbol: '₩',
       sampleAmount: 135000,
@@ -84,7 +93,7 @@ class CurrencyCatalog {
       aliases: ['krw', 'won', '₩'],
     ),
     CurrencyDefinition(
-      code: CurrencyConstants.cny,
+      code: CurrencyCodes.cny,
       nameKey: 'profile.currency_cny',
       symbol: '¥',
       sampleAmount: 639,
@@ -106,17 +115,17 @@ class CurrencyCatalog {
 
   /// Mapping from country code (ISO 3166-1 alpha-2) to currency code.
   static const Map<String, String> countryCodeToCurrency = {
-    'VN': CurrencyConstants.vnd,
-    'US': CurrencyConstants.usd,
-    'JP': CurrencyConstants.jpy,
-    'FR': CurrencyConstants.eur,
-    'DE': CurrencyConstants.eur,
-    'IT': CurrencyConstants.eur,
-    'ES': CurrencyConstants.eur,
-    'NL': CurrencyConstants.eur,
-    'EU': CurrencyConstants.eur,
-    'KR': CurrencyConstants.krw,
-    'CN': CurrencyConstants.cny,
+    'VN': CurrencyCodes.vnd,
+    'US': CurrencyCodes.usd,
+    'JP': CurrencyCodes.jpy,
+    'FR': CurrencyCodes.eur,
+    'DE': CurrencyCodes.eur,
+    'IT': CurrencyCodes.eur,
+    'ES': CurrencyCodes.eur,
+    'NL': CurrencyCodes.eur,
+    'EU': CurrencyCodes.eur,
+    'KR': CurrencyCodes.krw,
+    'CN': CurrencyCodes.cny,
   };
 
   static const Map<String, String> countryCodeToLanguageCode = {
@@ -148,23 +157,23 @@ class CurrencyCatalog {
       // Language fallback
       final languageCode = locale.languageCode.toLowerCase();
       if (languageCode == 'vi') {
-        return (currencyCode: CurrencyConstants.vnd, countryCode: 'VN');
+        return (currencyCode: CurrencyCodes.vnd, countryCode: 'VN');
       }
       if (languageCode == 'ja') {
-        return (currencyCode: CurrencyConstants.jpy, countryCode: 'JP');
+        return (currencyCode: CurrencyCodes.jpy, countryCode: 'JP');
       }
       if (languageCode == 'ko') {
-        return (currencyCode: CurrencyConstants.krw, countryCode: 'KR');
+        return (currencyCode: CurrencyCodes.krw, countryCode: 'KR');
       }
       if (languageCode == 'zh') {
-        return (currencyCode: CurrencyConstants.cny, countryCode: 'CN');
+        return (currencyCode: CurrencyCodes.cny, countryCode: 'CN');
       }
       if (languageCode == 'en') {
-        return (currencyCode: CurrencyConstants.usd, countryCode: 'US');
+        return (currencyCode: CurrencyCodes.usd, countryCode: 'US');
       }
     } catch (_) {}
 
-    return (currencyCode: CurrencyConstants.usd, countryCode: 'US');
+    return (currencyCode: CurrencyCodes.usd, countryCode: 'US');
   }
 
   /// Detects the suggested currency code based on device regional settings.

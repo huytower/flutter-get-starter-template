@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
-import 'package:domain_features/core/constant/currency_catalog.dart';
+import 'package:data_config/domain/currency/currency_catalog.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

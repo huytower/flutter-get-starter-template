@@ -12,11 +12,11 @@ import 'package:cc_micro_features/export_micro_features.dart' as _i1005;
 import 'package:cc_sdk/export_cc_sdk.dart' as _i54;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' as _i631;
 import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
+import 'package:data_config/domain/exchange_rates/exchange_rate_types.dart'
+    as _i874;
 import 'package:dio/dio.dart' as _i361;
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart'
     as _i195;
-import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart'
-    as _i686;
 import 'package:domain_features/core/helper/ai_advice_cache_datasource.dart'
     as _i994;
 import 'package:domain_features/core/helper/ai_fallback_preference_datasource.dart'
@@ -290,8 +290,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
     gh.lazySingleton<_i934.ScheduleLiabilityRemindersUseCase>(() =>
         _i934.ScheduleLiabilityRemindersUseCase(
             gh<_i483.NotificationService>()));
-    gh.lazySingleton<_i195.CurrencyConversionService>(() =>
-        _i195.CurrencyConversionService(gh<_i686.ExchangeRateRepository>()));
     gh.factory<_i540.BudgetLimitSyncDataSource>(
         () => _i540.BudgetLimitSyncDataSource(
               gh<_i954.FirestoreSyncService>(),
@@ -322,9 +320,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         ));
     gh.lazySingleton<_i130.CommentRemote>(
         () => _i130.CommentRemote(gh<_i361.Dio>(instanceName: 'baseDio')));
-    gh.factory<_i429.CurrencySelectionController>(() =>
-        _i429.CurrencySelectionController(
-            gh<_i195.CurrencyConversionService>()));
     gh.factory<_i395.ReceiptImage>(() => _i395.ReceiptImage(
           path: gh<String>(),
           bytes: gh<_i100.Uint8List>(),
@@ -399,6 +394,8 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
             ));
     gh.lazySingleton<_i232.GuestLoginPromptService>(
         () => _i232.GuestLoginPromptService(gh<_i727.SessionContract>()));
+    gh.lazySingleton<_i195.CurrencyConversionService>(() =>
+        _i195.CurrencyConversionService(gh<_i874.ExchangeRateRepository>()));
     gh.factory<_i395.ReceiptImagePickResult>(() => _i395.ReceiptImagePickResult(
           image: gh<_i395.ReceiptImage>(),
           permissionDenied: gh<bool>(),
@@ -431,6 +428,9 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
         () => _i397.GetCategoryGroupsUseCase(gh<_i1059.CategoryRepository>()));
     gh.lazySingleton<_i110.ToggleCategoryEnabledUseCase>(() =>
         _i110.ToggleCategoryEnabledUseCase(gh<_i1059.CategoryRepository>()));
+    gh.factory<_i429.CurrencySelectionController>(() =>
+        _i429.CurrencySelectionController(
+            gh<_i195.CurrencyConversionService>()));
     gh.lazySingleton<_i167.GetWalletBalancesUseCase>(
         () => _i167.GetWalletBalancesUseCase(
               gh<_i572.WalletRepository>(),

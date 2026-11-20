@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:app_config/core/config/app/prj_feature_flags.dart';
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
+import 'package:data_config/domain/currency/currency_catalog.dart';
 import 'package:domain_features/features/profile/domain/entities/profile_settings_entity.dart';
 import 'package:domain_features/features/wallet/data/datasources/local/wallet_local_datasource.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:injectable/injectable.dart';
 
-import '../../../../../core/constant/currency_catalog.dart';
 import '../../../../../core/constant/currency_constants.dart';
 import '../../../../../core/migration/financial_schema_migration.dart';
 

@@ -1,8 +1,9 @@
 library domain_features;
 
+export 'package:data_config/domain/exchange_rates/exchange_rate_types.dart';
+
 // Core
 export 'core/di/di.dart';
-export 'core/exchange_rates/exchange_rate_types.dart';
 export 'core/getx/cc_get_controller.dart';
 export 'core/getx/cc_get_view.dart';
 export 'core/helper/ai_advice_cache_datasource.dart';

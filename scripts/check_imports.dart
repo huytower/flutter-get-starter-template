@@ -83,10 +83,6 @@ final RegExp _literal = RegExp(r'''['"]([^'"\n]*)['"]''');
 /// new file across one and `package-cycle` fails. Shrink this list as the
 /// cycles are broken; never add to it.
 const Map<(String, String), Set<String>> _knownBackEdges = {
-  ('data_config', 'domain_features'): {
-    'package:domain_features/core/constant/currency_catalog.dart',
-    'package:domain_features/core/exchange_rates/exchange_rate_types.dart',
-  },
   ('app_config', 'data_config'): {
     'package:data_config/data/adapters/domain_user_entity_adapter.dart',
     'package:data_config/data/converters/domain_user_entity_converter.dart',

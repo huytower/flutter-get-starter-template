@@ -1,11 +1,11 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:data_config/domain/currency/currency_catalog.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../../core/constant/currency_catalog.dart';
 import '../../../../../core/constant/currency_constants.dart';
 import '../../../../../core/di/di.dart';
 import '../../../../../core/helper/money_format_helper.dart';

@@ -1,4 +1,4 @@
-import 'package:domain_features/core/constant/currency_catalog.dart';
+import 'package:data_config/domain/currency/currency_catalog.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:flutter_test/flutter_test.dart';
 

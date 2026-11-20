@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
+import 'package:data_config/domain/exchange_rates/exchange_rate_types.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
-import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
 import 'package:domain_features/core/helper/ai_fallback_preference_datasource.dart';
 import 'package:domain_features/features/category/domain/entities/category_entity.dart';
 import 'package:domain_features/features/category/domain/usecases/get_categories_usecase.dart';
