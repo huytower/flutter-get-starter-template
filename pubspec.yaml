@@ -178,6 +178,13 @@ melos:
       run: melos exec --dir-exists="test" --concurrency=1 -- "flutter test"
       description: Run tests for all packages.
 
+    check:imports:
+      run: dart scripts/check_imports.dart
+      description: >-
+        Enforce import boundaries (AGENTS.md "VI. Enforcement"): SDK barrels
+        only, no private src/ imports, state-agnostic and vendor-free SDK
+        core, project-blind shared code, layer purity, no flutter_dotenv.
+
     setup:firebase:
       run: bash scripts/setup_firebase_configs.sh
       description: Generate local config files from templates.

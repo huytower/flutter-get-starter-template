@@ -141,7 +141,8 @@ Before writing any widget, helper, extension, or mixin:
 ## Adding to the SDK: checklist
 
 - [ ] Passes the second-domain test, ring placement and dependency budget above.
-- [ ] Passes the Hard rules above (grep the new files for `package:message`, `bloc`, `Colors.`, `print(`).
+- [ ] Passes the Hard rules above: `melos run check:imports` is clean (barrels, vendor-free core, no app imports,
+      no reactive state), and grep the new files for `Colors.` and `print(`.
 - [ ] Exported from the correct `export_*.dart` barrel; no consumer imports a deep file path.
 - [ ] Public API documented with a `///` doc comment and a one-line usage example.
 - [ ] Widgets: verified compact → large, portrait and landscape, no overflow, touch targets adequate.

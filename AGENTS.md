@@ -37,6 +37,7 @@ melos run gen                # dart run build_runner build --delete-conflicting-
 melos run rebuild            # flutter clean && flutter pub get && build_runner build, across all packages
 melos run analyze            # flutter analyze, across all packages
 melos run test                # flutter test, across all packages
+melos run check:imports       # import boundaries (section VI), also the first CI quality-gate step
 ```
 
 - **Workspace scripts are defined once**, in root `pubspec.yaml` under `melos.scripts` — melos 8.10.0 reads
@@ -238,12 +239,20 @@ for full file templates.
 Several rules above are currently only enforced by human/agent review — prefer running these checks over relying
 on any doc having been read:
 
-22. **Forbidden import boundaries** (rules #2, #3, #5): grep for illegal imports before finishing a change —
-    `shared/cc_micro_features/**/domain/**` and `**/data/**` must not import `*/presentation/**`, `lib/`,
-    `modules/data_config`, or `domain_features`; `cc_core_sdk/**` and `cc_bridge/**` must not import `bloc`,
-    `flutter_bloc`, or reactive `get` (except the documented `cc_sdk_ui` navigation-helper exception). A
-    `melos run check:imports` CI script for this is recommended but not yet built — until it exists, this is a
-    manual check.
+22. **Forbidden import boundaries** (rules #2, #3, #5, #10): run `melos run check:imports` (`scripts/check_imports.dart`)
+    before finishing a change; CI runs it first in the quality gate and fails on any violation. It checks:
+    - `sdk-barrel` / `private-src`: other packages import an SDK package only through its `export_*.dart` barrel
+      (or `core/di/`), and never any workspace package's `src/`.
+    - `state-agnostic-core`: the SDK core ring and `cc_bridge` use no `bloc`, `flutter_bloc` or reactive GetX
+      (`package:get` only in `cc_sdk_ui`, for navigation helpers).
+    - `sdk-core-vendor`: the SDK core ring imports no vendor SDK (Firebase, ML Kit, location, speech, phone parser,
+      ...); those live in the capability packages.
+    - `project-blind`: SDK, `cc_bridge` and `cc_micro_features` import no app package (`message`, `theme`,
+      `domain_features`, `data_config`, `app_config`, `bridge`, the app shell); the SDK and `cc_bridge` import no
+      `cc_micro_features`.
+    - `layer-purity`: `features/*/domain/` and `data/` import no `presentation/` layer.
+    - `no-dotenv`: no `flutter_dotenv` anywhere.
+    A new rule goes into the script, not only into this file.
 23. **Import order** (rule #13): rely on `dart analyze` with `directives_ordering` enabled, `dart fix --apply` to
     auto-sort.
 24. **Pre-delivery checklist** (rule #21): treat each unchecked box as a blocking issue, not an FYI.

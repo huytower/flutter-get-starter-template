@@ -63,6 +63,7 @@ jobs:
           app-vars-json: ${{ toJSON(vars) }}
       - name: Lint & Test
         run: |
+          melos run check:imports
           melos run gen
           melos run analyze
           melos run test
