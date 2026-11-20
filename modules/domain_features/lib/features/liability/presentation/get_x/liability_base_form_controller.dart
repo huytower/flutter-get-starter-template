@@ -7,7 +7,7 @@ import '../../../transaction/presentation/get_x/transaction_form_controller.dart
 import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import 'liability_installment_draft.dart';
-import '../../../transaction/presentation/get_x/quick_entry_dependencies.dart';
+import '../../../transaction/presentation/get_x/quick_entry_handler.dart';
 
 enum LiabilityDirectionForm { increase, decrease }
 
@@ -15,10 +15,10 @@ const String _debugTag = 'LiabilityAssetRow';
 
 abstract class LiabilityBaseFormController extends TransactionFormController
     with QuickEntryMixin {
-  LiabilityBaseFormController(this.quickEntryDeps);
+  LiabilityBaseFormController(this.quickEntryHandler);
 
   @override
-  final QuickEntryDependencies quickEntryDeps;
+  final QuickEntryHandler quickEntryHandler;
 
   RxList<LiabilityBalanceEntity> get mergedItems;
 

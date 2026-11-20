@@ -27,7 +27,7 @@ import 'package:domain_features/core/contracts/guideline_provider.dart';
 /// or recording additional lending against existing loan records.
 @lazySingleton
 class LendFormController extends LiabilityBaseFormController {
-  LendFormController(super.quickEntryDeps);
+  LendFormController(super.quickEntryHandler);
 
   @override
   String get quickEntryCategoryType => CategoryType.liability;

@@ -29,7 +29,7 @@ import 'smart_suggestion_source.dart';
 import 'suggestion_prefill_mixin.dart';
 import 'transaction_form_controller.dart';
 import 'package:domain_features/core/contracts/user_level_provider.dart';
-import 'quick_entry_dependencies.dart';
+import 'quick_entry_handler.dart';
 
 const String _debugTag = 'IncomeCategoryScroll';
 
@@ -40,11 +40,11 @@ class IncomeFormController extends TransactionFormController
   IncomeFormController(
     this._transactionRepository,
     this._getCategories,
-    this.quickEntryDeps,
+    this.quickEntryHandler,
   );
 
   @override
-  final QuickEntryDependencies quickEntryDeps;
+  final QuickEntryHandler quickEntryHandler;
 
   final TransactionRepository _transactionRepository;
   final GetCategoriesUseCase _getCategories;

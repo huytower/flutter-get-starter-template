@@ -37,7 +37,7 @@ import 'suggestion_prefill_mixin.dart';
 import 'transaction_form_controller.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/contracts/user_level_provider.dart';
-import 'quick_entry_dependencies.dart';
+import 'quick_entry_handler.dart';
 
 const String _debugTag = 'ExpenseFormCategoryScroll';
 
@@ -49,11 +49,11 @@ class ExpenseFormController extends TransactionFormController
     this._transactionRepository,
     this._getCategories,
     this._guidelineProvider,
-    this.quickEntryDeps,
+    this.quickEntryHandler,
   );
 
   @override
-  final QuickEntryDependencies quickEntryDeps;
+  final QuickEntryHandler quickEntryHandler;
 
   final GuidelineProvider _guidelineProvider;
 

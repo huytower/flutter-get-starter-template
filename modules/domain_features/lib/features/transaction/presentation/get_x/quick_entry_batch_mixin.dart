@@ -102,7 +102,8 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
 
     final categories = {
       for (final category
-          in (await quickEntryDeps.getCategories.call()).tryGetSuccess() ??
+          in (await quickEntryHandler.parser.loadCategories())
+                  .tryGetSuccess() ??
               const <CategoryEntity>[])
         category.id: category,
     };
@@ -110,17 +111,14 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     final params = [for (final row in rows) _toParams(row, categories, now)];
 
     isSubmitting.value = true;
-    final result = await quickEntryDeps.createTransactionBatch.call(params);
+    final result = await quickEntryHandler.committer.save(params);
     isSubmitting.value = false;
 
     final savedParams = params.take(result.saved).toList();
     if (savedParams.isNotEmpty) {
       _checkBudgetThresholds(savedParams);
       await refreshParent();
-      unawaited(quickEntryDeps.guideline.completeTask('first_transaction'));
-      if (context.mounted) {
-        unawaited(quickEntryDeps.guestLoginPrompt.maybeShow(context));
-      }
+      quickEntryHandler.committer.afterSaved(context);
     }
 
     final failure = result.failure;
@@ -155,11 +153,9 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
       );
     }
     spentByCategory.forEach((categoryId, amount) {
-      unawaited(
-        quickEntryDeps.checkBudgetThreshold.call(
-          categoryId: categoryId,
-          transactionAmount: amount,
-        ),
+      quickEntryHandler.committer.checkBudgetThreshold(
+        categoryId: categoryId,
+        transactionAmount: amount,
       );
     });
   }

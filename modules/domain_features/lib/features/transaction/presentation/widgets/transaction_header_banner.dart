@@ -163,7 +163,7 @@ class TransactionHeaderBanner extends StatelessWidget {
         if (suggestion != null) controller.applyQuickEntryParse(suggestion);
       },
       onDismissSuggestion: controller.dismissQuickEntrySuggestion,
-      aiPreferences: controller.quickEntryDeps.aiPreferences,
+      aiPreferences: controller.quickEntryHandler.parser.aiPreferences,
       onClear: () {
         controller.dismissQuickEntrySuggestion();
         controller.isParsingQuickEntry.value = false;

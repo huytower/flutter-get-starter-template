@@ -289,9 +289,11 @@ class ProfileController extends CcGetController {
 }
 ```
 
-**Legacy, do not copy:** `QuickEntryDependencies` (a dependency bag for `QuickEntryMixin`) breaks points 3–4
-and is to be replaced by an injected class; controllers above 5 dependencies (`ReportController`, ...) and
-widgets below the page that still call `getIt` are debt to migrate, not patterns.
+**Legacy, do not copy:** `QuickEntryMixin` / `QuickEntryBatchMixin` still reach services through the host's
+`quickEntryHandler` (a `QuickEntryHandler` composing `QuickEntryParser`, `CcSpeechRecognizer` and
+`QuickEntryBatchCommitter`), which breaks point 4; the mixin state is to move into a session object the controller
+owns. Controllers above 5 dependencies (`ReportController`, ...) and widgets below the page that still call `getIt`
+are debt to migrate, not patterns.
 
 ## V. Delivery workflow
 
