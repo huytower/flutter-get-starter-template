@@ -61,18 +61,21 @@ melos run test                # flutter test, across all packages
 lib/                              # App Shell — pure orchestrator only (DI wiring, routing, boot sequence).
                                    # MUST NOT contain business logic or feature-specific UI.
 modules/
-  domain_features/lib/features/   # App-specific business verticals (wallet, transaction, budget, loan,
-                                   # reconciliation, report, user_level, category, comment, profile, ...)
+  domain_features/lib/features/   # App-specific business verticals: wallet, transaction, budget_allocation,
+                                   # budget_limit, liability, reconciliation, report, category, comment,
+                                   # profile (incl. profile/user_level), guideline, notification, firestore
+                                   # (sync), crashlog, examples (demo only)
   data_config/                    # App-specific data implementations; implements Repository interfaces
                                    # that domain_features/cc_micro_features define
   app_config/                     # Env management, storage, DI discovery
   bridge/                         # NavigationBridgeService — app-level post-boot orchestration (user level,
-                                   # data services, authenticated sync, reminders). NOT a duplicate of cc_bridge.
+                                   # data services, authenticated sync, reminders) + impls of the cross-feature
+                                   # *Provider contracts (see rule 4). NOT a duplicate of cc_bridge.
   theme/                          # SSOT for colors/typography (PrjColors, CcTextStyle, CcThemes)
   message/                        # SSOT for i18n strings (CcLocaleKeys)
 shared/
-  cc_micro_features/lib/features/ # Project-blind, reusable-across-apps verticals (auth, biometric,
-                                   # crash_log, messaging, splash, web)
+  cc_micro_features/lib/features/ # Project-blind, reusable-across-apps verticals (app_update, auth,
+                                   # biometric, crash_log, messaging, splash, web)
   cc_core_sdk/                    # GIT SUBMODULE (huytower/cc_core_sdk) — universal engine:
     cc_sdk/                       #   network, failures, logging (.Log()), ccGson serialization
     cc_sdk_ui/                    #   design system / widget catalog (CcContextExtension)
