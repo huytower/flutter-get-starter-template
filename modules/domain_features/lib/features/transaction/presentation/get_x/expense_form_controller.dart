@@ -4,7 +4,6 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt, el;
 import 'package:domain_features/features/budget_limit/export_budget_limit.dart';
 import 'package:domain_features/features/category/export_category.dart';
-import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart';
 import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -22,7 +21,6 @@ import '../../../../core/helper/merchant_matcher.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/time_based_suggestion_helper.dart';
 import '../../../category/data/datasources/local/category_age_order.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
@@ -38,6 +36,7 @@ import 'quick_entry_mixin.dart';
 import 'smart_suggestion_source.dart';
 import 'suggestion_prefill_mixin.dart';
 import 'transaction_form_controller.dart';
+import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
 
 const String _debugTag = 'ExpenseFormCategoryScroll';
 
@@ -982,7 +981,7 @@ class ExpenseFormController extends TransactionFormController
         }
         await refreshParent();
         // Guideline: first_transaction completed
-        Get.find<GuidelineController>().completeTask('first_transaction');
+        getIt<GuidelineProgressProvider>().completeTask('first_transaction');
         if (!isEditing && context.mounted) {
           unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
         }

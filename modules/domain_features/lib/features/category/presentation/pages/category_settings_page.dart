@@ -13,6 +13,7 @@ import '../../data/datasources/local/category_seed.dart';
 import '../../domain/entities/category_entity.dart';
 import '../../domain/entities/category_group_entity.dart';
 import '../get_x/category_settings_controller.dart';
+import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
 
 class CategorySettingsPage extends StatefulWidget {
   const CategorySettingsPage({super.key, this.initialSection});
@@ -72,7 +73,7 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (Get.isRegistered<GuidelineController>()) {
-        Get.find<GuidelineController>().completeTask('categories');
+        getIt<GuidelineProgressProvider>().completeTask('categories');
       }
     });
   }

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
-import 'package:data_config/core/util/firestore_sync_service.dart';
+import 'package:domain_features/core/data/sync/firestore_sync_service.dart';
 import 'package:domain_features/features/firestore/enum/logout_block.dart';
 import 'package:domain_features/features/firestore/enum/logout_result.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
@@ -26,12 +26,7 @@ import '../../../features/transaction/data/models/transaction_model.dart';
 import '../../../features/wallet/data/datasources/wallet_sync_datasource.dart';
 import '../../../features/wallet/data/models/wallet_hive_model.dart';
 import '../../core/di/di.dart';
-import '../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
-import '../liability/presentation/get_x/lend_form_controller.dart';
-import '../liability/presentation/get_x/liability_form_controller.dart';
-import '../liability/presentation/get_x/liability_list_controller.dart';
-import '../transaction/presentation/get_x/transaction_controller.dart';
-import '../wallet/presentation/get_x/wallet_controller.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 
 export 'enum/logout_block.dart';
 export 'enum/logout_result.dart';
@@ -196,7 +191,7 @@ class FinancialDataSyncService {
         // Signed out without a verified sync — forget the live user, keep the
         // records so they can still be pushed if the same user returns.
         _observedUserId = null;
-        await _releaseLoadedControllers();
+        await getIt<FinancialRefreshProvider>().releaseAllLoaded();
         return;
       }
 
@@ -312,94 +307,6 @@ class FinancialDataSyncService {
     pendingCount.value = 0;
   }
 
-  /// Re-reads every already-registered screen controller from the freshly
-  /// merged Hive state.
-  ///
-  /// Runs with `showLoading: false` — a pull finishes on a background task, so
-  /// replacing a screen the user is currently looking at with a full-screen
-  /// loader (only to repaint it a moment later with the same data) is a
-  /// regression, not a refresh. Callers that want visible loading state pass
-  /// it themselves via their own pull-to-refresh handlers.
-  ///
-  /// Each controller is refreshed exactly once, and only when it is actually
-  /// mounted.
-  ///
-  /// [BudgetAllocationController.loadAll] already calls
-  /// [WalletController.loadWallets] internally, so the wallet controller is
-  /// only refreshed directly when the allocation controller is absent — the
-  /// standalone case the `refreshTab` fallback registers. Doing both
-  /// unconditionally re-read the same Hive box twice per pull.
-  ///
-  /// [TransactionController.loadWallets] is a different controller with its
-  /// own `RxList` and no loading flag, so it is always refreshed alongside
-  /// [TransactionController.refreshWalletTotal].
-  Future<void> _refreshLoadedControllers() async {
-    if (Get.isRegistered<WalletController>()) {
-      final walletController = Get.find<WalletController>();
-      walletController.markDirty();
-      await walletController.loadWallets(
-        showLoading: false,
-        forceRefresh: true,
-      );
-    }
-
-    if (Get.isRegistered<TransactionController>()) {
-      final transaction = Get.find<TransactionController>();
-      await Future.wait([
-        transaction.refreshWalletTotal(),
-        transaction.loadWallets(),
-      ]);
-    }
-
-    if (Get.isRegistered<BudgetAllocationController>()) {
-      await Get.find<BudgetAllocationController>().loadAll(showLoading: false);
-    }
-
-    if (Get.isRegistered<LendFormController>()) {
-      await Get.find<LendFormController>().loadLiabilities();
-    }
-
-    if (Get.isRegistered<LiabilityFormController>()) {
-      await Get.find<LiabilityFormController>().loadLiabilities();
-    }
-
-    if (Get.isRegistered<LiabilityListController>()) {
-      await Get.find<LiabilityListController>().load();
-    }
-  }
-
-  /// Blanks the in-memory financial state on sign-out.
-  ///
-  /// The GetX controllers are `@lazySingleton` and are never disposed, so
-  /// without this the previous user's records stay live in their `RxList`s for
-  /// the whole unauthenticated window.
-  ///
-  /// This only clears what is currently rendered. On its own it cannot hold —
-  /// any later `loadAll()` re-reads the Hive boxes and repopulates from disk —
-  /// so it is always paired with either a cache clear ([_resetAfterLogout]) or
-  /// the intention to keep the records for a returning user. Everything else
-  /// derived (`borrowBalance`, `lendBalance`, `insights`, budgets) is recomputed
-  /// by [_refreshLoadedControllers] from the same post-reset read.
-  Future<void> _releaseLoadedControllers() async {
-    try {
-      if (Get.isRegistered<WalletController>()) {
-        Get.find<WalletController>().wallets.clear();
-      }
-      if (Get.isRegistered<BudgetAllocationController>()) {
-        Get.find<BudgetAllocationController>().liabilityBalances.clear();
-      }
-      if (Get.isRegistered<LendFormController>()) {
-        Get.find<LendFormController>().clearFormOnLogout();
-      }
-      if (Get.isRegistered<LiabilityFormController>()) {
-        Get.find<LiabilityFormController>().clearFormOnLogout();
-      }
-      if (Get.isRegistered<LiabilityListController>()) {
-        Get.find<LiabilityListController>().liabilities.clear();
-      }
-    } catch (_) {}
-  }
-
   /// Whether the user is currently allowed to sign out.
   bool canLogout() {
     final block = logoutBlock;
@@ -488,10 +395,10 @@ class FinancialDataSyncService {
   /// are re-read from the now-empty boxes so the UI the user is looking at
   /// settles on a consistent logged-out state instead of a full-screen loader.
   Future<void> _resetAfterLogout() async {
-    await _releaseLoadedControllers();
+    await getIt<FinancialRefreshProvider>().releaseAllLoaded();
     await _clearFinancialCache();
     await getIt<GuestLoginPromptService>().resetPromptFlags();
-    await _refreshLoadedControllers();
+    await getIt<FinancialRefreshProvider>().refreshAllLoaded();
   }
 
   /// Pushes every pending/failed record to the cloud.
@@ -622,7 +529,7 @@ class FinancialDataSyncService {
       // itself — otherwise correctness depended on which caller remembered to
       // do it, and the bridge's `syncAuthenticatedData()` path silently left
       // the wallet/budget screens showing pre-pull data.
-      await _refreshLoadedControllers();
+      await getIt<FinancialRefreshProvider>().refreshAllLoaded();
     } catch (e) {
       'pullFromFirestore failed: $e'.Log('FinancialDataSyncService');
     }

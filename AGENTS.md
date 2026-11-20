@@ -110,6 +110,12 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
    features. `cc_bridge` holds only project-blind contracts (auth, session) and must not import any app module;
    app-specific coordinators (wallet, transaction, comment, home) live in
    `modules/domain_features/lib/core/navigation/coordinator/`, implemented by the App Shell.
+   Cross-feature *calls* inside `domain_features` (refresh another feature's screen after a mutation, record
+   guideline progress) go through typed `*Provider` contracts in `modules/domain_features/lib/core/contracts/`
+   (`FinancialRefreshProvider`, `GuidelineProgressProvider`), resolved with `getIt<XProvider>()`. Their impls
+   live in `modules/bridge` (the orchestrator — the only place that knows the concrete controllers), registered
+   with `@LazySingleton(as: XProvider)`. Never route by string/event keys: typed contracts keep every call
+   traceable in CodeGraph.
 5. **Layer Purity Within a Feature (STRICT)** — `domain/` and `data/` MUST NOT import from their own (or any
    other) `presentation/` layer. Presentation types (Bloc `Event`/`State`, `Obx`, `GetxController`, widgets)
    never flow into `domain/`/`data/`. Streams/data crossing the `domain`↔`presentation` boundary use domain types

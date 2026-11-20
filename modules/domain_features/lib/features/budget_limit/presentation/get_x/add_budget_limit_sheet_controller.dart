@@ -13,13 +13,13 @@ import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../../domain/usecases/create_budget_limit_usecase.dart';
 import '../../domain/usecases/get_category_average_monthly_spend_usecase.dart';
 import '../../domain/usecases/update_budget_limit_usecase.dart';
 import '../get_x/budget_limit_controller.dart';
+import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
 
 @injectable
 class AddBudgetLimitSheetController extends CcGetController {
@@ -231,9 +231,9 @@ class AddBudgetLimitSheetController extends CcGetController {
     }
 
     if (!isEdit) {
-      Get.find<GuidelineController>().completeTask('budget_limit');
+      getIt<GuidelineProgressProvider>().completeTask('budget_limit');
       if (isFixedPrice.value) {
-        Get.find<GuidelineController>().completeTask('min_living');
+        getIt<GuidelineProgressProvider>().completeTask('min_living');
       }
     }
 

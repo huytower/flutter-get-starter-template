@@ -19,7 +19,6 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../category/export_category.dart';
-import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../notification/notification_service.dart';
@@ -34,6 +33,8 @@ import '../widgets/currency_selection_sheet.dart';
 import '../widgets/display_name_sheet.dart';
 import '../widgets/language_selection_sheet.dart';
 import '../widgets/weekly_audit_day_sheet.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
+import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
 
 @lazySingleton
 class ProfileController extends CcGetController {
@@ -297,9 +298,7 @@ class ProfileController extends CcGetController {
 
     // If CategorySettingsController is active, reload it to pick up the
     // newly-enabled categories and updated user level.
-    if (Get.isRegistered<CategorySettingsController>()) {
-      unawaited(Get.find<CategorySettingsController>().load());
-    }
+    unawaited(getIt<FinancialRefreshProvider>().refreshCategorySettings());
   }
 
   Future<void> setThemeMode(bool isDarkMode) async {
@@ -380,7 +379,7 @@ class ProfileController extends CcGetController {
         }
 
         // Guideline: birth_year completed
-        Get.find<GuidelineController>().completeTask('birth_year');
+        getIt<GuidelineProgressProvider>().completeTask('birth_year');
       }
     }
   }
@@ -482,9 +481,7 @@ class ProfileController extends CcGetController {
     }
     if (!context.mounted) return;
 
-    if (Get.isRegistered<GuidelineController>()) {
-      Get.find<GuidelineController>().completeTask('categories');
-    }
+    getIt<GuidelineProgressProvider>().completeTask('categories');
 
     Navigator.of(context).push(
       MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:collection/collection.dart' hide IterableFirstOrNull;
 import 'package:domain_features/features/category/export_category.dart';
-import 'package:domain_features/features/category/presentation/get_x/category_settings_controller.dart';
 import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -26,6 +25,7 @@ import '../helper/horizontal_row_reveal.dart';
 import 'quick_entry_mixin.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
+import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
 
 const String _debugTag = 'InvestmentAssetRow';
 
@@ -541,7 +541,7 @@ class InvestmentFormController extends TransactionFormController
 
         // Complete the investment guideline task
         if (Get.isRegistered<GuidelineController>()) {
-          Get.find<GuidelineController>().completeTask('investment');
+          getIt<GuidelineProgressProvider>().completeTask('investment');
         }
         if (context.mounted) {
           unawaited(getIt<GuestLoginPromptService>().maybeShow(context));

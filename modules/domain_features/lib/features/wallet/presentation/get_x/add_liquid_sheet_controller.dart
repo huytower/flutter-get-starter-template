@@ -14,7 +14,6 @@ import '../../../../core/constant/emergency_fund_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
-import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../../../guideline/guideline_controller.dart';
@@ -23,6 +22,7 @@ import '../../../profile/domain/usecases/update_profile_settings_usecase.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import 'wallet_controller.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 
 /// Backs [AddLiquidSheet] — create/edit form state for a single liquid wallet.
 /// Instantiated fresh per sheet open via [init]; see the sheet's
@@ -340,9 +340,7 @@ class AddLiquidSheetController extends CcGetController {
       if (context.mounted) {
         // Refresh related controllers immediately to reflect memory changes
         _walletController.loadWallets();
-        if (Get.isRegistered<BudgetAllocationController>()) {
-          Get.find<BudgetAllocationController>().loadAll();
-        }
+        getIt<FinancialRefreshProvider>().refreshBudgetAllocation();
 
         // Mark guideline task as completed when adding first wallet
         if (!isEditing && Get.isRegistered<GuidelineController>()) {

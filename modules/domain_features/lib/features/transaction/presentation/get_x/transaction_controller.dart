@@ -11,7 +11,6 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../guideline/guideline_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_form_controller.dart';
@@ -19,6 +18,7 @@ import '../../../profile/user_level/presentation/get_x/user_level_controller.dar
 import 'expense_form_controller.dart';
 import 'income_form_controller.dart';
 import 'investment_form_controller.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 
 /// Which real tab a `TabBar`/`TabBarView` slot represents.
 enum TransactionTabKind { expense, income, investment, liability, lend }
@@ -274,9 +274,7 @@ class TransactionController extends CcGetController {
       await wc.loadWallets(forceRefresh: true);
     }
 
-    if (Get.isRegistered<BudgetAllocationController>()) {
-      await Get.find<BudgetAllocationController>().loadAll();
-    }
+    await getIt<FinancialRefreshProvider>().refreshBudgetAllocation();
   }
 
   bool get showInvestmentBadge {

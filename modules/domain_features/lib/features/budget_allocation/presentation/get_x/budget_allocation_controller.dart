@@ -18,10 +18,8 @@ import '../../../firestore/financial_data_sync_service.dart';
 import '../../../liability/domain/entities/liability_balance_entity.dart';
 import '../../../liability/domain/entities/liability_entity.dart';
 import '../../../liability/domain/usecases/get_liability_balances_usecase.dart';
-import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../liability/presentation/widgets/add_liability_sheet.dart';
 import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
-import '../../../reconciliation/presentation/get_x/reconciliation_controller.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../../wallet/presentation/widgets/add_investment_sheet.dart';
@@ -29,6 +27,7 @@ import '../../../wallet/presentation/widgets/add_liquid_sheet.dart';
 import '../widgets/edit_wallet_sheet.dart';
 import '../widgets/wallet_delete_confirmation_sheet.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 
 @lazySingleton
 class BudgetAllocationController extends CcGetController {
@@ -177,9 +176,7 @@ class BudgetAllocationController extends CcGetController {
   void _handleDeleteOutcome(BuildContext context, WalletDeleteOutcome outcome) {
     switch (outcome) {
       case WalletDeleteOutcome.success:
-        if (Get.isRegistered<ReconciliationController>()) {
-          Get.find<ReconciliationController>().loadBalances();
-        }
+        getIt<FinancialRefreshProvider>().refreshReconciliationBalances();
         CcSnackBarHelper.showSuccessSnackBar(
           context: context,
           message: el.tr(CcLocaleKeys.common_done),
@@ -343,9 +340,7 @@ class BudgetAllocationController extends CcGetController {
       liabilityBalance.value = newBorrow - newLend;
 
       // Refresh transaction form if it's already active
-      if (Get.isRegistered<LiabilityFormController>()) {
-        Get.find<LiabilityFormController>().loadLiabilities();
-      }
+      getIt<FinancialRefreshProvider>().refreshLiabilityForm();
     }, (error) {});
   }
 }

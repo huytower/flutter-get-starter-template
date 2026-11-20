@@ -13,6 +13,8 @@ import '../../domain/entities/category_group_entity.dart';
 import '../../domain/usecases/get_categories_usecase.dart';
 import '../../domain/usecases/get_category_groups_usecase.dart';
 import '../../domain/usecases/toggle_category_enabled_usecase.dart';
+import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 
 @injectable
 class CategorySettingsController extends CcGetController {
@@ -225,7 +227,7 @@ class CategorySettingsController extends CcGetController {
 
     // Guideline: Mark task as completed once the settings are reached/loaded.
     if (Get.isRegistered<GuidelineController>()) {
-      Get.find<GuidelineController>().completeTask('categories');
+      getIt<GuidelineProgressProvider>().completeTask('categories');
     }
   }
 

@@ -24,12 +24,11 @@ dependencies:
   auto_route: ^11.1.0
   app_config:
     path: ../../modules/app_config
-  data_config:
-    path: ../../modules/data_config
   theme:
     path: ../../modules/theme
   message:
     path: ../../modules/message
+  cloud_firestore: ^7.1.0
   dio: ^5.11.0
   easy_localization: ^3.0.8
   equatable: ^2.1.0

@@ -1,5 +1,6 @@
 library budget_allocation;
 
+export 'presentation/get_x/budget_allocation_controller.dart';
 export 'presentation/pages/budget_allocation_page.dart';
 export 'presentation/pages/budget_insights_list_page.dart';
 export 'presentation/widgets/budget_allocation_header.dart';

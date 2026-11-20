@@ -11,8 +11,6 @@ import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
-import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/liability_entity.dart';
@@ -21,6 +19,8 @@ import '../../domain/usecases/get_liability_balances_usecase.dart';
 import 'lend_form_controller.dart';
 import 'liability_form_controller.dart';
 import 'liability_list_controller.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
+import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
 
 @injectable
 class AddLiabilitySheetController extends CcGetController {
@@ -195,9 +195,7 @@ class AddLiabilitySheetController extends CcGetController {
             nameError.value = null;
 
             // Refresh related lists immediately
-            if (Get.isRegistered<BudgetAllocationController>()) {
-              Get.find<BudgetAllocationController>().loadAll();
-            }
+            getIt<FinancialRefreshProvider>().refreshBudgetAllocation();
             if (Get.isRegistered<LiabilityListController>()) {
               Get.find<LiabilityListController>().load();
             }
@@ -215,9 +213,7 @@ class AddLiabilitySheetController extends CcGetController {
             );
 
             // Guideline: update status so the badge moves to the Transaction tab
-            if (Get.isRegistered<GuidelineController>()) {
-              Get.find<GuidelineController>().setLiabilityCreated();
-            }
+            getIt<GuidelineProgressProvider>().setLiabilityCreated();
             if (context.mounted) {
               unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
             }

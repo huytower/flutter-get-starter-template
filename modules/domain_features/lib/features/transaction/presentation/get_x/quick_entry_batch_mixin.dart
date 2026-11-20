@@ -5,11 +5,9 @@ import 'package:domain_features/features/category/export_category.dart';
 import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../domain/entities/parsed_transaction_entity.dart';
 import '../../domain/entities/smart_entry_input.dart';
@@ -19,6 +17,7 @@ import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/parse_smart_entry_usecase.dart';
 import 'quick_entry_mixin.dart';
 import 'smart_entry_preview_state.dart';
+import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
 
 mixin QuickEntryBatchMixin on QuickEntryMixin {
   static const int quickEntryBatchLimit = 5;
@@ -122,11 +121,7 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     if (savedParams.isNotEmpty) {
       _checkBudgetThresholds(savedParams);
       await refreshParent();
-      if (Get.isRegistered<GuidelineController>()) {
-        unawaited(
-          Get.find<GuidelineController>().completeTask('first_transaction'),
-        );
-      }
+      unawaited(getIt<GuidelineProgressProvider>().completeTask('first_transaction'));
       if (context.mounted) {
         unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
       }

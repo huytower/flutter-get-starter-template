@@ -1,6 +1,8 @@
 library domain_features;
 
 // Core
+export 'core/contracts/financial_refresh_provider.dart';
+export 'core/contracts/guideline_progress_provider.dart';
 export 'core/di/di.dart';
 export 'core/exchange_rates/exchange_rate_types.dart';
 export 'core/getx/cc_get_controller.dart';

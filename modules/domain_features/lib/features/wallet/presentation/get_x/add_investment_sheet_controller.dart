@@ -7,14 +7,15 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
-import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../category/data/datasources/local/category_seed.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/wallet_entity.dart';
 import 'wallet_controller.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
+import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 
 /// Backs [AddInvestmentSheet] — specifically for creating/editing investment assets.
 @injectable
@@ -194,17 +195,13 @@ class AddInvestmentSheetController extends CcGetController {
       );
 
       // Guideline: update status so the badge moves to the Transaction tab
-      if (Get.isRegistered<GuidelineController>()) {
-        Get.find<GuidelineController>().setInvestmentCreated();
-      }
+      getIt<GuidelineProgressProvider>().setInvestmentCreated();
     }
 
     if (context.mounted) {
       // Refresh related controllers immediately to reflect memory changes
       _walletController.loadWallets();
-      if (Get.isRegistered<BudgetAllocationController>()) {
-        Get.find<BudgetAllocationController>().loadAll();
-      }
+      getIt<FinancialRefreshProvider>().refreshBudgetAllocation();
 
       Navigator.pop(context);
       CcSnackBarHelper.showSuccessSnackBar(

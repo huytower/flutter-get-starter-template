@@ -22,6 +22,7 @@ import '../../domain/usecases/record_liability_payment_usecase.dart';
 import '../get_x/liability_base_form_controller.dart';
 import '../get_x/liability_installment_draft.dart';
 import '../get_x/liability_list_controller.dart';
+import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
 
 /// Consolidated Lend form: handles completing a new loan's details (Lend)
 /// or recording additional lending against existing loan records.
@@ -484,7 +485,7 @@ class LendFormController extends LiabilityBaseFormController {
         await refreshParent();
 
         if (Get.isRegistered<GuidelineController>()) {
-          Get.find<GuidelineController>().completeTask('liability');
+          getIt<GuidelineProgressProvider>().completeTask('liability');
         }
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(

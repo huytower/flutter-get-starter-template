@@ -6,14 +6,22 @@
 
 import 'dart:async' as _i687;
 
+import 'package:bridge/financial_refresh_provider_impl.dart' as _i929;
+import 'package:bridge/guideline_progress_provider_impl.dart' as _i206;
+import 'package:bridge/navigation_bridge_service.dart' as _i763;
 import 'package:bridge/navigation_bridge_service_impl.dart' as _i357;
+import 'package:domain_features/export_domain_features.dart' as _i857;
 import 'package:injectable/injectable.dart' as _i526;
 
 class BridgePackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
-    gh.lazySingleton<_i357.NavigationBridgeServiceImpl>(
+    gh.lazySingleton<_i857.GuidelineProgressProvider>(
+        () => _i206.GuidelineProgressProviderImpl());
+    gh.lazySingleton<_i857.FinancialRefreshProvider>(
+        () => _i929.FinancialRefreshProviderImpl());
+    gh.lazySingleton<_i763.NavigationBridgeService>(
         () => _i357.NavigationBridgeServiceImpl());
   }
 }

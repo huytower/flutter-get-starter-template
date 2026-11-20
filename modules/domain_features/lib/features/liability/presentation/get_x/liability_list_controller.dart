@@ -14,6 +14,7 @@ import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/usecases/delete_liability_usecase.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
 import 'liability_form_controller.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 
 @lazySingleton
 class LiabilityListController extends CcGetController {
@@ -133,10 +134,11 @@ class LiabilityListController extends CcGetController {
 
         // The deleted debt transactions change wallet balances and every
         // liability total, so refresh the dashboard (wallets included) too.
+        final refresh = getIt<FinancialRefreshProvider>();
         if (Get.isRegistered<BudgetAllocationController>()) {
-          Get.find<BudgetAllocationController>().loadAll(showLoading: false);
-        } else if (Get.isRegistered<WalletController>()) {
-          Get.find<WalletController>().loadWallets(showLoading: false);
+          refresh.refreshBudgetAllocation(showLoading: false);
+        } else {
+          refresh.refreshWallets(showLoading: false);
         }
 
         // Refresh LiabilityForm if it's open

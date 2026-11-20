@@ -9,4 +9,5 @@ export 'domain/usecases/get_categories_usecase.dart';
 export 'domain/usecases/get_category_groups_usecase.dart';
 export 'domain/usecases/toggle_category_enabled_usecase.dart';
 // Presentation
+export 'presentation/get_x/category_settings_controller.dart';
 export 'presentation/pages/category_settings_page.dart';
