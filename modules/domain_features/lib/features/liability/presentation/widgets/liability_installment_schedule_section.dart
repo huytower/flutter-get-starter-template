@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../domain/entities/liability_entity.dart';
+import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import '../get_x/liability_base_form_controller.dart';
 import 'liability_installment_schedule_editor.dart';
 import 'liability_reminder_toggle.dart';

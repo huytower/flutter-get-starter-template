@@ -64,18 +64,21 @@ melos run test                # flutter test, across all packages
 lib/                              # App Shell — pure orchestrator only (DI wiring, routing, boot sequence).
                                    # MUST NOT contain business logic or feature-specific UI.
 modules/
-  domain_features/lib/features/   # App-specific business verticals (wallet, transaction, budget, loan,
-                                   # reconciliation, report, user_level, category, comment, profile, ...)
-  data_config/                    # App-specific data implementations; implements Repository interfaces
-                                   # that domain_features/cc_micro_features define
+  domain_features/lib/features/   # App-specific business verticals: wallet, transaction, budget_allocation,
+                                   # budget_limit, liability, reconciliation, report, category, comment,
+                                   # profile (incl. profile/user_level), guideline, notification, firestore
+                                   # (sync), crashlog, examples (demo only)
+  data_config/                    # App-wide data infrastructure (exchange rates, user adapters). Implements
+                                   # only repository interfaces that live in domain_features/lib/core/ (rule 2)
   app_config/                     # Env management, storage, DI discovery
   bridge/                         # NavigationBridgeService — app-level post-boot orchestration (user level,
-                                   # data services, authenticated sync, reminders). NOT a duplicate of cc_bridge.
+                                   # data services, authenticated sync, reminders) + impls of the cross-feature
+                                   # *Provider contracts (see rule 4). NOT a duplicate of cc_bridge.
   theme/                          # SSOT for colors/typography (PrjColors, CcTextStyle, CcThemes)
   message/                        # SSOT for i18n strings (CcLocaleKeys)
 shared/
-  cc_micro_features/lib/features/ # Project-blind, reusable-across-apps verticals (auth, biometric,
-                                   # crash_log, messaging, splash, web)
+  cc_micro_features/lib/features/ # Project-blind, reusable-across-apps verticals (app_update, auth,
+                                   # biometric, crash_log, messaging, splash, web)
   cc_core_sdk/                    # GIT SUBMODULE (huytower/cc_core_sdk) — universal engine:
     cc_sdk/                       #   network, failures, logging (.Log()), ccGson serialization
     cc_sdk_ui/                    #   design system / widget catalog (CcContextExtension)
@@ -108,9 +111,21 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
 2. **Project-Blind Dependency Rules (STRICT)**:
     - `cc_micro_features` and `domain_features` **must not** import from `lib/` (App Shell) or `modules/data_config`.
     - `cc_micro_features` must not import from `domain_features`.
-    - Every feature defines its own `Repository` interface in its own `domain/` layer; `lib/` or
-      `modules/data_config` implements it and injects the impl via DI. Never import a concrete repository impl
-      across a module boundary.
+    - **Repositories — where each piece lives:**
+      | Piece | Location | Example |
+      |---|---|---|
+      | Interface owned by one feature | that feature's `domain/repositories/` | `features/transaction/domain/repositories/transaction_repository.dart` |
+      | Implementation of it | the **same** feature's `data/repositories/`, annotated `@LazySingleton(as: XRepository)` | `features/transaction/data/repositories/transaction_repository_impl.dart` |
+      | Interface for an app-wide concept that no single feature owns | `modules/domain_features/lib/core/` | `ExchangeRateRepository` in `core/exchange_rates/` |
+      | Implementation of a `core/` interface | `modules/data_config` | `ExchangeRateRepositoryImpl` |
+      | Implementation of a `cc_micro_features` interface that needs app config | App Shell `lib/data/repositories/` | `AppUpdateConfigRepositoryImpl` |
+    - Another feature **may** depend on a repository **interface** (e.g. `report` uses `TransactionRepository`):
+      import it from the owning feature's `domain/` and inject it as section IV describes.
+    - Nothing may import a `*_repository_impl.dart` except its own feature's tests. Only the generated DI file
+      (`di.module.dart` / `di.config.dart`) references implementations.
+    - Repository interfaces are **not** moved to `core/` just because several features use them — only shared
+      *entities* are (`core/domain/entities/`: `TransactionEntity`, `WalletEntity`, `CategoryEntity`,
+      `LiabilityEntity`, `UserLevelStatusEntity`).
 3. **State-Management Agnostic Core (STRICT)**:
     - `cc_core_sdk` (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`) and `cc_bridge` must stay state-management agnostic — no
       Bloc/GetX reactive state.
@@ -124,6 +139,18 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
    features. `cc_bridge` holds only project-blind contracts (auth, session) and must not import any app module;
    app-specific coordinators (wallet, transaction, comment, home) live in
    `modules/domain_features/lib/core/navigation/coordinator/`, implemented by the App Shell.
+   A feature never imports another feature's **controller** (GetX controller / Bloc). To refresh another
+   feature's screen, read the user level, or read/advance the onboarding guideline, use the typed `*Provider`
+   contracts in `modules/domain_features/lib/core/contracts/`: `FinancialRefreshProvider`, `UserLevelProvider`,
+   `GuidelineProvider`. Their implementations live in `modules/bridge` (the orchestrator — the only place that
+   knows the concrete controllers), registered with `@LazySingleton(as: XProvider)`.
+   - Receive providers like any other dependency — see **section IV, "Injecting dependencies"**.
+   - New cross-feature need → add a method to the matching provider (or a new `*Provider` + bridge impl); never
+     route by string/event keys — typed contracts keep every call traceable in CodeGraph.
+   - **Legacy, do not copy:** about 40 older imports of other features' controllers still exist (mainly
+     `WalletController`, the liability/lend form controllers hosted by `transaction`, `TransactionController`,
+     `BudgetLimitController`, `BudgetAllocationController`, `CategorySettingsController`). They are debt to
+     migrate, not a pattern: never add a new one; route the new need through a provider instead.
 5. **Layer Purity Within a Feature (STRICT)** — `domain/` and `data/` MUST NOT import from their own (or any
    other) `presentation/` layer. Presentation types (Bloc `Event`/`State`, `Obx`, `GetxController`, widgets)
    never flow into `domain/`/`data/`. Streams/data crossing the `domain`↔`presentation` boundary use domain types
@@ -222,6 +249,48 @@ under `shared/cc_micro_features/lib/features/{name}/` (or `modules/domain_featur
 app-specific) with `data/`, `domain/`, `presentation/` subfolders, then export it from
 `export_micro_features.dart` / `export_domain_features.dart`. See `shared/cc_micro_features/feature_template.md`
 for full file templates.
+
+### Injecting dependencies (applies to every package: `lib/`, `modules/*`, `cc_bridge`, `shared/cc_micro_features`, `shared/cc_core_sdk`)
+
+1. **Constructor injection, always.** A class receives every collaborator (repository, use case, service,
+   `*Provider`, data source) through its constructor. DI-created classes (`@injectable` / `@lazySingleton`) get
+   them from injectable; widgets get them as constructor arguments from the controller or caller that builds
+   them (e.g. `AiConsentSheet.ensure(context, prefs)`, `QuickEntrySection(aiPreferences: ...)`).
+2. **`getIt` only at the composition root**, which is exactly:
+   - each package's `lib/core/di/di.dart` and the App Shell's DI / bootstrap code;
+   - the screen entry point that creates its own controller or bloc (page, route, binding), e.g.
+     `Get.put(getIt<ExpenseFormController>())`.
+   Nowhere else: not in `domain/`, `data/`, controllers, services, mixins, or widgets below the page.
+3. **Split, don't bundle.** If a constructor needs **more than 5 dependencies**, or the file passes ~300 lines
+   (rule #16), extract one cohesive responsibility into its own `@injectable` class with 2–4 dependencies and
+   inject that class instead. Never shorten a constructor by going back to `getIt` or by grouping unrelated
+   dependencies into one "bag" object.
+4. **Mixins carry no external dependencies.** Logic that needs services is a class injected into the
+   controller (composition over inheritance); a mixin may only hold small behavior over its host's own state.
+5. **Tests build the class directly with fakes.** If a test has to call `getIt.register…`, the class breaks
+   point 1 or 2.
+
+Example — `ProfileController` delegates each concern to a small injected class instead of taking 13
+dependencies:
+
+```dart
+@injectable
+class AiConsentHandler {                       // one concern, 1 dependency
+  AiConsentHandler(this._aiPreferences);
+  final AiFallbackPreferenceDataSource _aiPreferences;
+}
+
+@lazySingleton
+class ProfileController extends CcGetController {
+  ProfileController(this._aiConsent, this._account, ...); // few, named collaborators
+  final AiConsentHandler _aiConsent;
+  final ProfileAccountActions _account;
+}
+```
+
+**Legacy, do not copy:** `QuickEntryDependencies` (a dependency bag for `QuickEntryMixin`) breaks points 3–4
+and is to be replaced by an injected class; controllers above 5 dependencies (`ReportController`, ...) and
+widgets below the page that still call `getIt` are debt to migrate, not patterns.
 
 ## V. Delivery workflow
 

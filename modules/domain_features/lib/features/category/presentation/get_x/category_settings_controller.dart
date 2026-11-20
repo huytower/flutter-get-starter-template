@@ -3,16 +3,16 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/entities/profile_settings_entity.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../profile/domain/usecases/update_profile_settings_usecase.dart';
 import '../../data/datasources/local/category_seed.dart';
-import '../../domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../domain/entities/category_group_entity.dart';
 import '../../domain/usecases/get_categories_usecase.dart';
 import '../../domain/usecases/get_category_groups_usecase.dart';
 import '../../domain/usecases/toggle_category_enabled_usecase.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 @injectable
 class CategorySettingsController extends CcGetController {
@@ -22,7 +22,10 @@ class CategorySettingsController extends CcGetController {
     this._toggleEnabled,
     this._getProfileSettings,
     this._updateProfileSettings,
+    this._guidelineProvider,
   );
+
+  final GuidelineProvider _guidelineProvider;
 
   final GetCategoryGroupsUseCase _getGroups;
   final GetCategoriesUseCase _getCategories;
@@ -224,8 +227,8 @@ class CategorySettingsController extends CcGetController {
     layoutStatus.value = CcLayoutStatus.success;
 
     // Guideline: Mark task as completed once the settings are reached/loaded.
-    if (Get.isRegistered<GuidelineController>()) {
-      Get.find<GuidelineController>().completeTask('categories');
+    if (_guidelineProvider.isAvailable) {
+      _guidelineProvider.completeTask('categories');
     }
   }
 

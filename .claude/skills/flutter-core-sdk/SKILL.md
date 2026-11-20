@@ -117,7 +117,8 @@ files go under `lib/src/`, and only what consumers need is exported from the bar
    failure as a subclass of `CcFailure` in `cc_sdk_data/lib/domain/failures/`.
 7. **Logging.** `.Log()` only; never `print()` or `developer.log()` directly.
 8. **DI.** Services are `@lazySingleton`, never eager `@singleton` (the SDK is on the boot path, target < 2 s).
-   One `lib/core/di/di.dart` per package; annotate classes in place.
+   One `lib/core/di/di.dart` per package; annotate classes in place. Collaborators come in through the
+   constructor; `getIt` is used only in the package's `di.dart` (root `AGENTS.md` section IV).
 9. **Naming and files.** Suffix-first `lower_snake_case`, `Cc` class prefix, ~200–300 lines per file, `const`
    wherever possible, export through the package's `export_*.dart` barrel only.
 

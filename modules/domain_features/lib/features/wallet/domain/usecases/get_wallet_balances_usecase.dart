@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/wallet_balance_entity.dart';
 import '../repositories/wallet_repository.dart';

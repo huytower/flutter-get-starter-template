@@ -7,7 +7,7 @@ import 'package:message/export_message.dart';
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../domain/entities/liability_balance_entity.dart';
-import '../../domain/entities/liability_entity.dart';
+import 'package:domain_features/core/domain/entities/liability_entity.dart';
 
 /// Card item for a lending item shown in [LendListPage]'s list view.
 class LendWalletListItem extends StatelessWidget {

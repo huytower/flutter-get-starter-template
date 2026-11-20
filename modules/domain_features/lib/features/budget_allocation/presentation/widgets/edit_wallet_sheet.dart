@@ -1,12 +1,14 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../guideline/export_guideline.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 
 /// Bottom sheet for wallet actions (edit/delete).
 class EditWalletSheet extends StatelessWidget {
@@ -55,9 +57,9 @@ class EditWalletSheet extends StatelessWidget {
                   onEdit();
                 },
               ),
-              if (Get.isRegistered<GuidelineController>())
+              if (getIt<GuidelineProvider>().isAvailable)
                 Obx(() {
-                  final guideline = Get.find<GuidelineController>();
+                  final guideline = getIt<GuidelineProvider>();
                   final showing =
                       guideline.isTaskActive('wallet_balance') &&
                       wallet.type == WalletType.cash;

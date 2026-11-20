@@ -6,11 +6,8 @@
 
 import 'dart:async' as _i687;
 
-import 'package:cc_bridge/export_cc_bridge.dart' as _i727;
 import 'package:data_config/core/di/di.dart' as _i177;
 import 'package:data_config/core/di/module/data_module.dart' as _i291;
-import 'package:data_config/core/util/firestore_sync_service.dart' as _i954;
-import 'package:data_config/core/util/generic_sync_datasource.dart' as _i312;
 import 'package:data_config/data/exchange_rates/exchange_rate_local_datasource.dart'
     as _i25;
 import 'package:data_config/data/exchange_rates/exchange_rate_repository_impl.dart'
@@ -33,8 +30,6 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
     final dataModule = _$DataModule();
     gh.lazySingleton<_i59.FirebaseAuth>(() => firebaseModule.firebaseAuth);
     gh.lazySingleton<_i116.GoogleSignIn>(() => firebaseModule.googleSignIn);
-    gh.lazySingleton<_i954.FirestoreSyncService>(
-        () => _i954.FirestoreSyncService());
     gh.lazySingleton<_i25.ExchangeRateLocalDataSource>(
         () => _i25.ExchangeRateLocalDataSource());
     gh.lazySingleton<_i221.RateFreshness>(
@@ -63,11 +58,6 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
       () => dataModule.responseInterceptor,
       instanceName: 'responseInterceptor',
     );
-    gh.factory<_i312.GenericSyncDataSource>(() => _i312.GenericSyncDataSource(
-          gh<_i954.FirestoreSyncService>(),
-          gh<_i727.SessionContract>(),
-          gh<String>(),
-        ));
     gh.lazySingleton<List<_i361.Interceptor>>(() => dataModule.interceptors(
           gh<_i361.Interceptor>(instanceName: 'requestInterceptor'),
           gh<_i361.Interceptor>(instanceName: 'responseInterceptor'),

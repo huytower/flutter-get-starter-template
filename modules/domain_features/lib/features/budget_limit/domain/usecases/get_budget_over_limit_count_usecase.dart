@@ -2,7 +2,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/budget_over_limit_entity.dart';
 import '../repositories/budget_limit_repository.dart';

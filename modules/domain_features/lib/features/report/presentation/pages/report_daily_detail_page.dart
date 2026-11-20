@@ -50,7 +50,7 @@ class _ReportDailyDetailView extends CcGetView<ReportController> {
       ),
       actions: [
         Obx(() {
-          if (!controller.userLevel.status.value.isVip ||
+          if (!controller.userLevel.status.isVip ||
               !controller.hasDailyTransactions) {
             return const SizedBox.shrink();
           }

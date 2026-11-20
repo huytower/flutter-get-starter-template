@@ -5,10 +5,10 @@ import 'package:injectable/injectable.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../wallet/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
-import '../entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../repositories/transaction_repository.dart';
 
 /// Chi ra (capital into a position) vs Thu vào (return/profit recorded on it).

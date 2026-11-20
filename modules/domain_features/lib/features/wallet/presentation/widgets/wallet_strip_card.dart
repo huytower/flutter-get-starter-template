@@ -9,7 +9,7 @@ import 'package:theme/data/data_source/color/prj_color.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import '../../domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import 'prj_wallet_item.dart';
 import 'wallet_display_name.dart';

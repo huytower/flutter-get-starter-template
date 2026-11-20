@@ -5,7 +5,7 @@ import 'package:message/cc_locale_keys.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../../wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
-import '../entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'create_transaction_usecase.dart';
 
 class BatchSaveResult {

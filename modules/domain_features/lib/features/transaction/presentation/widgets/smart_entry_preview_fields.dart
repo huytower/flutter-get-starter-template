@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../category/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 
 class SmartEntryFieldChip extends StatelessWidget {
   const SmartEntryFieldChip({

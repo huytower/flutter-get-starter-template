@@ -9,10 +9,11 @@ import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../guideline/export_guideline.dart';
-import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
-import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
-import '../../domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
+import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../get_x/add_liquid_sheet_controller.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 class AddLiquidSheet extends GetView<AddLiquidSheetController> {
   const AddLiquidSheet({super.key, this.wallet});
@@ -170,9 +171,9 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                 CcStringHelper.copyToClipboard(controller.amountStr.value),
           ),
         ),
-        if (Get.isRegistered<GuidelineController>())
+        if (getIt<GuidelineProvider>().isAvailable)
           Obx(() {
-            final guideline = Get.find<GuidelineController>();
+            final guideline = getIt<GuidelineProvider>();
             final showing =
                 guideline.isTaskActive('wallet_balance') && controller.isCash;
             return Positioned(
@@ -318,8 +319,8 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     controller.newType.value;
 
     final isEmergencyFundVisible =
-        controller.userLevel.status.value.level >= 3 ||
-        controller.userLevel.status.value.isVip;
+        controller.userLevel.status.level >= 3 ||
+        controller.userLevel.status.isVip;
 
     final options = [
       (WalletType.bank, el.tr(CcLocaleKeys.wallet_bank)),

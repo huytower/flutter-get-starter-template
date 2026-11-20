@@ -1,12 +1,24 @@
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/features/category/export_category.dart';
-import 'package:domain_features/features/transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/features/transaction/domain/repositories/transaction_repository.dart';
 import 'package:domain_features/features/transaction/presentation/get_x/expense_form_controller.dart';
 import 'package:domain_features/features/transaction/presentation/get_x/income_form_controller.dart';
+import 'package:domain_features/features/transaction/presentation/get_x/quick_entry_dependencies.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:message/cc_locale_keys.dart';
 
 class _FakeTransactionRepository implements TransactionRepository {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _FakeGuidelineProgress implements GuidelineProvider {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _FakeQuickEntryDeps implements QuickEntryDependencies {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -39,6 +51,8 @@ void main() {
       controller = ExpenseFormController(
         _FakeTransactionRepository(),
         _FakeGetCategories(),
+        _FakeGuidelineProgress(),
+        _FakeQuickEntryDeps(),
       );
     });
 
@@ -100,6 +114,7 @@ void main() {
       controller = IncomeFormController(
         _FakeTransactionRepository(),
         _FakeGetCategories(),
+        _FakeQuickEntryDeps(),
       );
     });
 

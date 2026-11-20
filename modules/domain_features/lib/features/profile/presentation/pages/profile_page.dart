@@ -1,4 +1,4 @@
-import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_micro_features/export_micro_features.dart'
     show AuthCancelledFailure, authFailureMessage;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
@@ -19,6 +19,8 @@ import '../widgets/profile_menu_group.dart';
 import '../widgets/profile_page_header.dart';
 import '../widgets/profile_settings_tile.dart';
 import '../widgets/profile_sign_in_reminder.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 
 class ProfilePage extends CcGetView<ProfileController> {
   const ProfilePage({super.key});
@@ -210,7 +212,7 @@ class ProfilePage extends CcGetView<ProfileController> {
   }
 
   List<Widget> _buildMenuItems(BuildContext context) {
-    final guideline = Get.find<GuidelineController>();
+    final guideline = getIt<GuidelineProvider>();
 
     return [
       Obx(

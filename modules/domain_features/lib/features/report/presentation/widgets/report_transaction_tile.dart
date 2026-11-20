@@ -6,12 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../transaction/domain/entities/transaction_entity.dart';
-import '../../../wallet/export_wallet.dart';
-import '../get_x/report_controller.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'delete_transaction_sheet.dart';
 import 'quick_edit_transaction_sheet.dart';
 import 'report_daily_list_helpers.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 
 class TransactionTile extends StatelessWidget {
   const TransactionTile({required this.transaction, required this.isEditMode});
@@ -145,12 +144,9 @@ class TransactionTile extends StatelessWidget {
                 ),
                 onTap: () async {
                   await QuickEditTransactionSheet.show(context, transaction);
-                  if (Get.isRegistered<WalletController>()) {
-                    await Get.find<WalletController>().loadWallets();
-                  }
-                  if (Get.isRegistered<ReportController>()) {
-                    await Get.find<ReportController>().load(showLoading: false);
-                  }
+                  final refresh = getIt<FinancialRefreshProvider>();
+                  await refresh.refreshWallets();
+                  await refresh.refreshReport(showLoading: false);
                 },
               ),
             ],

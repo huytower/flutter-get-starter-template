@@ -9,15 +9,15 @@ import 'package:message/export_message.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
-import '../profile/user_level/presentation/get_x/user_level_controller.dart';
-import '../wallet/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../wallet/presentation/get_x/wallet_controller.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
 
 @lazySingleton
 class GuidelineController extends GetxController {
   GuidelineController(this._userLevelController);
 
-  final UserLevelController _userLevelController;
+  final UserLevelProvider _userLevelController;
 
   final List<String> taskSequence = [
     'birth_year',
@@ -141,7 +141,7 @@ class GuidelineController extends GetxController {
 
   /// Filtered list of tasks available at the user's current level & VIP status.
   List<String> get activeTaskSequence {
-    final status = _userLevelController.status.value;
+    final status = _userLevelController.status;
     return taskSequence.where((taskId) {
       if (taskId == 'investment' && !status.canUseInvestment) return false;
       if (taskId == 'liability' && !status.canUseLiability) return false;

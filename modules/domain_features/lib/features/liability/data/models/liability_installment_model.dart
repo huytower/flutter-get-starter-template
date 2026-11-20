@@ -1,7 +1,7 @@
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
 import 'package:hive_ce/hive_ce.dart';
 
-import '../../domain/entities/liability_entity.dart';
+import 'package:domain_features/core/domain/entities/liability_entity.dart';
 
 part 'liability_installment_model.g.dart';
 

@@ -2,13 +2,6 @@ library data;
 
 export 'package:data_config/core/di/di.module.dart';
 
-// Core utilities
-export 'core/util/firestore_sync_service.dart';
-export 'core/util/generic_sync_datasource.dart';
-// Adapters
-export 'data/adapters/domain_user_entity_adapter.dart';
-// Converters
-export 'data/converters/domain_user_entity_converter.dart';
 // Exchange Rates Hive Model
 export 'data/exchange_rates/exchange_rate_hive_model.dart';
 

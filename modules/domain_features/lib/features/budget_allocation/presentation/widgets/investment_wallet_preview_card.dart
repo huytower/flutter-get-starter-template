@@ -5,7 +5,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
 /// Compact horizontal card for an investment asset shown on the dashboard.

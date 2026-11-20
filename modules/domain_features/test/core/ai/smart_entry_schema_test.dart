@@ -1,7 +1,7 @@
 import 'package:domain_features/core/ai/smart_entry_context.dart';
 import 'package:domain_features/core/ai/smart_entry_schema.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
-import 'package:domain_features/features/category/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 SmartEntryContext _context({

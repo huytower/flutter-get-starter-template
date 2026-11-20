@@ -17,7 +17,7 @@ class AiAdviceSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (!controller.userLevel.status.value.isVip ||
+      if (!controller.userLevel.status.isVip ||
           !controller.hasDailyTransactions) {
         return const SizedBox.shrink();
       }

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 
 class TrendPoint extends Equatable {
   final String label;

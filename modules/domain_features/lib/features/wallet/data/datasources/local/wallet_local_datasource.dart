@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../models/wallet_hive_model.dart';
 
 /// Local (Hive) persistence for wallets.

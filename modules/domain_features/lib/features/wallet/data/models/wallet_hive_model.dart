@@ -4,7 +4,7 @@ import 'package:domain_features/features/firestore/enum/sync_status.dart';
 import 'package:domain_features/features/firestore/model/sync_metadata.dart';
 import 'package:hive_ce/hive_ce.dart';
 
-import '../../domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 
 part 'wallet_hive_model.g.dart';
 

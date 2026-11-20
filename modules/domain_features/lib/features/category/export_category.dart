@@ -2,11 +2,12 @@
 export 'data/datasources/local/category_seed.dart';
 // Data (model adapter exported so the app shell can register it with Hive)
 export 'data/models/category_model.dart';
-export 'domain/entities/category_entity.dart';
+export 'package:domain_features/core/domain/entities/category_entity.dart';
 export 'domain/entities/category_group_entity.dart';
 export 'domain/repositories/category_repository.dart';
 export 'domain/usecases/get_categories_usecase.dart';
 export 'domain/usecases/get_category_groups_usecase.dart';
 export 'domain/usecases/toggle_category_enabled_usecase.dart';
 // Presentation
+export 'presentation/get_x/category_settings_controller.dart';
 export 'presentation/pages/category_settings_page.dart';

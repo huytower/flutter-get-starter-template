@@ -4,10 +4,10 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../budget_limit/domain/repositories/budget_limit_repository.dart';
 import '../../../../reconciliation/domain/usecases/get_reconciliation_history_usecase.dart';
-import '../../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../domain/repositories/profile_repository.dart';
-import '../entities/user_level_status_entity.dart';
+import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 import 'reconciliation_streak_calculator.dart';
 
 @lazySingleton

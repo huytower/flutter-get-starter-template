@@ -1,21 +1,32 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
-import 'package:data_config/core/util/firestore_sync_service.dart';
+import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:theme/presentation/provider/theme_provider.dart';
 
 final GetIt getIt = GetIt.instance;
 
 @InjectableInit.microPackage(
+  // Implemented in modules/bridge (registered after this package).
   ignoreUnregisteredTypes: [
-    FirestoreSyncService,
+    FinancialRefreshProvider,
+    GuidelineProvider,
+    UserLevelProvider,
     SessionContract,
+    FirebaseAuthRepository,
     AuthCoordinator,
     CcDeviceInfoHelper,
     InternetConnection,
     CcAnalytics,
     CcAiClient,
     CcLocationService,
+    CcSpeechRecognizer,
+    // Registered by the App Shell (lib/core/di/module/dependencies.dart).
+    ThemeProvider,
   ],
 )
 void initMicroPackage() {}

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../../core/constant/currency_constants.dart';
+import 'package:domain_features/core/constant/currency_constants.dart';
 
 /// Only [TransactionType.income], [TransactionType.expense], debt/loan, and
 /// investment entries dated within this many days of "now" can be corrected

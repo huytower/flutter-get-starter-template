@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import '../get_x/reconciliation_controller.dart';
 
 class ReconciliationConfirmButton extends StatelessWidget {
@@ -16,7 +16,7 @@ class ReconciliationConfirmButton extends StatelessWidget {
     return Obx(() {
       final busy = controller.isSubmitting.value;
 
-      return TransactionSubmitButton(
+      return EntrySubmitButton(
         text: el.tr(CcLocaleKeys.reconciliation_confirm),
         isSubmitting: busy,
         isEnabled: controller.canReconcile,

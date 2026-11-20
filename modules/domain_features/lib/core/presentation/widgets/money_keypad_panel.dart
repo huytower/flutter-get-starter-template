@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import 'cc_quick_amount_chips.dart';
-import 'quick_numeric_keypad.dart';
+import 'package:domain_features/core/presentation/widgets/cc_quick_amount_chips.dart';
+import 'package:domain_features/core/presentation/widgets/quick_numeric_keypad.dart';
 
 class MoneyKeypadPanel extends StatelessWidget {
   final void Function(String) onKeyPress;

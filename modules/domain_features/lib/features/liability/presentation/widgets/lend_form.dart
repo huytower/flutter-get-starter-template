@@ -6,12 +6,12 @@ import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
-import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
-import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
-import '../../../transaction/presentation/widgets/transaction_additional_details_section.dart';
-import '../../../transaction/presentation/widgets/transaction_form_container.dart';
-import '../../../transaction/presentation/widgets/transaction_form_two_column.dart';
-import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
+import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
+import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
+import 'package:domain_features/core/presentation/widgets/entry_form_two_column.dart';
+import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/lend_form_controller.dart';
 import '../get_x/liability_base_form_controller.dart';
@@ -84,7 +84,7 @@ class _LendFormState extends State<LendForm> {
               },
               child: SingleChildScrollView(
                 controller: controller.scrollController,
-                child: TransactionFormTwoColumn.shouldUse(context)
+                child: EntryFormTwoColumn.shouldUse(context)
                     ? _buildTwoColumnContent(context, controller, accentColor)
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +119,7 @@ class _LendFormState extends State<LendForm> {
     LendFormController controller,
     Color accentColor,
   ) {
-    return TransactionFormTwoColumn(
+    return EntryFormTwoColumn(
       leading: [
         LendDirectionToggle(
           value: controller.action.value,
@@ -129,7 +129,7 @@ class _LendFormState extends State<LendForm> {
         const CcSpaceSM(),
         LendAssetSelector(controller: controller, activeColor: accentColor),
       ],
-      details: TransactionAdditionalDetailsSection(
+      details: EntryAdditionalDetailsSection(
         isExpanded: true,
         selectedDate: controller.date.value,
         onDateSelected: controller.setDate,
@@ -158,7 +158,7 @@ class _LendFormState extends State<LendForm> {
       children: [
         LendAssetSelector(controller: controller, activeColor: accentColor),
         const CcSpaceSM(),
-        TransactionFormContainer(
+        EntryFormContainer(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -166,7 +166,7 @@ class _LendFormState extends State<LendForm> {
               const CcSpaceSM(),
               Obx(() => _buildWalletSection(context, controller, accentColor)),
               const CcSpaceSM(),
-              TransactionAdditionalDetailsSection(
+              EntryAdditionalDetailsSection(
                 isExpanded: controller.showMoreDetails.value,
                 onToggle: controller.toggleMoreDetails,
                 selectedDate: controller.date.value,
@@ -279,7 +279,7 @@ class _LendFormState extends State<LendForm> {
       icon = Icons.arrow_circle_down;
     }
 
-    return TransactionSubmitButton(
+    return EntrySubmitButton(
       text: text,
       isSubmitting: controller.isSubmitting.value,
       isEnabled: controller.canSubmit,

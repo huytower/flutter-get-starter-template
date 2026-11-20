@@ -2,14 +2,14 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/transaction/presentation/widgets/transaction_header_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 
-import '../../../guideline/export_guideline.dart';
 import '../get_x/expense_form_controller.dart';
 import '../get_x/quick_entry_mixin.dart';
 import '../get_x/transaction_controller.dart';
 import 'transaction_header_actions.dart';
 import 'transaction_header_title.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 
 class TransactionPageHeader extends StatelessWidget {
   const TransactionPageHeader({
@@ -84,7 +84,7 @@ class TransactionPageHeader extends StatelessWidget {
       !context.windowHeightClass.isAtLeast(CcWindowHeightClass.expanded);
 
   Widget _buildInlineForeground(BuildContext context) {
-    final guideline = Get.find<GuidelineController>();
+    final guideline = getIt<GuidelineProvider>();
 
     // Laid out at its natural height (never squeezed by the header box) and
     // measured, so the page sizes the header to its content.
@@ -137,7 +137,7 @@ class TransactionPageHeader extends StatelessWidget {
   }
 
   Widget _buildHeroForeground(BuildContext context) {
-    final guideline = Get.find<GuidelineController>();
+    final guideline = getIt<GuidelineProvider>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

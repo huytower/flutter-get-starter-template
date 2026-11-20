@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import '../../domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 
 class SmartSuggestion {
   const SmartSuggestion({

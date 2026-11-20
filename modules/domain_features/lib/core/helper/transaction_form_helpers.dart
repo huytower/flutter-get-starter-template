@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../features/transaction/presentation/widgets/transaction_date_picker_sheet.dart';
+import 'package:domain_features/core/presentation/widgets/entry_date_picker_sheet.dart';
 import '../constant/currency_constants.dart';
 import 'money_format_helper.dart';
 
@@ -24,7 +24,7 @@ class TransactionFormHelpers {
     DateTime? lastDate,
   }) async {
     final now = DateTime.now();
-    final picked = await TransactionDatePickerSheet.show(
+    final picked = await EntryDatePickerSheet.show(
       context,
       initialDate: initialDate,
       firstDate: firstDate ?? DateTime(now.year, now.month - 6, now.day),
