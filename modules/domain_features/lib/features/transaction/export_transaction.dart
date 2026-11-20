@@ -12,7 +12,7 @@ export 'domain/usecases/parse_smart_entry_usecase.dart';
 export 'domain/usecases/update_transaction_usecase.dart';
 // Presentation
 export 'presentation/get_x/quick_entry_auto_save_helper.dart';
-export 'presentation/get_x/quick_entry_mixin.dart';
+export 'presentation/get_x/quick_entry_session.dart';
 export 'presentation/get_x/transaction_controller.dart';
 export 'presentation/pages/transaction_page.dart';
 export 'presentation/widgets/edit_transaction_sheet.dart';

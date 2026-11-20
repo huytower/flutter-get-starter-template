@@ -21,7 +21,7 @@ import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
-import 'quick_entry_mixin.dart';
+import 'quick_entry_session.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
@@ -30,8 +30,7 @@ import 'quick_entry_handler.dart';
 const String _debugTag = 'InvestmentAssetRow';
 
 @injectable
-class InvestmentFormController extends TransactionFormController
-    with QuickEntryMixin {
+class InvestmentFormController extends TransactionFormController {
   InvestmentFormController(
     this._getCategories,
     this._getProfileSettings,
@@ -40,8 +39,13 @@ class InvestmentFormController extends TransactionFormController
     this.quickEntryHandler,
   );
 
-  @override
   final QuickEntryHandler quickEntryHandler;
+
+  @override
+  late final QuickEntrySession quickEntry = QuickEntrySession(
+    this,
+    quickEntryHandler,
+  );
 
   final GuidelineProvider _guidelineProvider;
 
@@ -57,7 +61,7 @@ class InvestmentFormController extends TransactionFormController
   /// Otherwise, it selects the base category to prepare for adding a new asset.
   @override
   void applyQuickEntryCategory(String categoryId) {
-    final text = quickEntryController.text.toLowerCase();
+    final text = quickEntry.quickEntryController.text.toLowerCase();
 
     // 1. Try to find an existing investment wallet for this category
     final matchingWallets = mergedItems
@@ -226,7 +230,7 @@ class InvestmentFormController extends TransactionFormController
     everAll([selectedInvestmentWalletId, selectedCategory], (_) {
       _revealSelectedAsset();
     });
-    initQuickEntry();
+    quickEntry.initQuickEntry();
     ever(CurrencyConstants.onCurrencyChanged, (_) => loadSuggestions());
   }
 
@@ -265,7 +269,7 @@ class InvestmentFormController extends TransactionFormController
   Future<void> _loadAll() async {
     isLoadingMerged.value = true;
     final settings = await _getProfileSettings();
-    isVip.value = settings.isVip;
+    quickEntry.isVip.value = settings.isVip;
     await loadSuggestions();
     await _loadCategories();
     await _recomputeMergedItems();
@@ -381,7 +385,7 @@ class InvestmentFormController extends TransactionFormController
     selectedCategory.value = category;
     selectedInvestmentWalletId.value = null;
 
-    if (isVip.value) {
+    if (quickEntry.isVip.value) {
       isAddingNewItem.value = true;
       newItemName.value = el.tr(category.nameKey);
       newItemNameController.text = newItemName.value;
@@ -396,7 +400,7 @@ class InvestmentFormController extends TransactionFormController
   void onClose() {
     newItemNameController.dispose();
     assetRowScrollController.dispose();
-    disposeQuickEntry();
+    quickEntry.disposeQuickEntry();
     super.onClose();
   }
 
@@ -459,7 +463,7 @@ class InvestmentFormController extends TransactionFormController
     newItemName.value = '';
     newItemNameController.clear();
     await _recomputeMergedItems();
-    resetQuickEntry();
+    quickEntry.resetQuickEntry();
   }
 
   @override

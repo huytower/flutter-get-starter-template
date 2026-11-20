@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -35,31 +33,17 @@ typedef QuickEntryCloudResult = ({
 /// escalated to Gemini (see [ParseSmartEntryUseCase], which enforces the
 /// daily cap).
 ///
-/// Hosts must `extend TransactionFormController`, provide
-/// [quickEntryCategoryType], and expose their own `categoryKey`/
-/// [pendingPrefillCategoryId]. Call [initQuickEntry]/[disposeQuickEntry]/
-/// [resetQuickEntry] from the host's own `onInit`/`onClose`/`onReset` — not
-/// automatic, to avoid relying on mixin `super` linearization order.
-mixin QuickEntryMixin on TransactionFormController
-    implements WidgetsBindingObserver {
-  /// Provided by the host controller's constructor (a mixin has none).
-  QuickEntryHandler get quickEntryHandler;
+/// Owned by each form controller (`quickEntry`); the controller calls
+/// [initQuickEntry]/[disposeQuickEntry]/[resetQuickEntry] from its own
+/// `onInit`/`onClose`/reset. Per-form behaviour comes from the hooks on
+/// [TransactionFormController].
+class QuickEntrySession with WidgetsBindingObserver {
+  QuickEntrySession(this.host, this.handler);
 
-  /// Category type quick-entry searches/prefills within.
-  String get quickEntryCategoryType;
-
-  /// Further restricts [quickEntryCategoryType] to these `groupId`s (e.g.
-  /// Loan only offers the currently-selected direction's group). Null means
-  /// every enabled category of that type.
-  List<String>? get quickEntryCategoryGroupIds => null;
-
-  /// Bumped to force the category picker to remount and resolve
-  /// [pendingPrefillCategoryId] as its initial selection.
-  RxInt get categoryKey;
-
-  /// Set right before [categoryKey] is bumped so the remounted category
-  /// picker resolves this id (same mechanism edit-mode uses).
-  Rx<String?> get pendingPrefillCategoryId;
+  /// The form this session fills in; also supplies the per-form hooks
+  /// (category type, groups, direction, how a category is applied, ...).
+  final TransactionFormController host;
+  final QuickEntryHandler handler;
 
   final TextEditingController quickEntryController = TextEditingController();
   final Rx<ParsedTransactionEntity?> quickEntrySuggestion =
@@ -104,12 +88,9 @@ mixin QuickEntryMixin on TransactionFormController
       ..dispose();
     // Only stop it if this instance holds it — the recognizer is a global singleton.
     if (isListeningQuickEntry.value) {
-      unawaited(quickEntryHandler.speech.stopListening());
+      unawaited(handler.speech.stopListening());
     }
   }
-
-  @override
-  void hideKeypad() => super.hideKeypad();
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -120,59 +101,10 @@ mixin QuickEntryMixin on TransactionFormController
     }
   }
 
-  @override
-  void didChangeAccessibilityFeatures() {}
-
-  @override
-  void didChangeLocales(List<Locale>? locales) {}
-
-  @override
-  void didChangeMetrics() {}
-
-  @override
-  void didChangePlatformBrightness() {}
-
-  @override
-  void didChangeTextScaleFactor() {}
-
-  @override
-  void didChangeViewFocus(ViewFocusEvent event) {}
-
-  @override
-  void didHaveMemoryPressure() {}
-
-  @override
-  Future<AppExitResponse> didRequestAppExit() async => AppExitResponse.exit;
-
-  @override
-  void handleCancelBackGesture() {}
-
-  @override
-  void handleCommitBackGesture() {}
-
-  @override
-  bool handleStartBackGesture(PredictiveBackEvent backEvent) => false;
-
-  @override
-  void handleStatusBarTap() {}
-
-  @override
-  void handleUpdateBackGestureProgress(PredictiveBackEvent backEvent) {}
-
-  @override
-  Future<bool> didPopRoute() => Future.value(false);
-
-  @override
-  Future<bool> didPushRoute(String route) => Future.value(false);
-
-  @override
-  Future<bool> didPushRouteInformation(RouteInformation routeInformation) =>
-      Future.value(false);
-
   /// Bumps the generation to invalidate any in-flight cloud call.
   void resetQuickEntry() {
     _cancelAutoSave();
-    pendingPrefillCategoryId.value = null;
+    host.pendingPrefillCategoryId.value = null;
     quickEntrySuggestion.value = null;
     quickEntryErrorKey.value = null;
     quickEntryController.clear();
@@ -196,12 +128,12 @@ mixin QuickEntryMixin on TransactionFormController
   Future<void> startAutoSaveTimer(BuildContext context) async {
     _autoSaveHelper.startAutoSaveTimer(
       context: context,
-      hasSelectableCategory: quickEntryHasSelectableCategory,
+      hasSelectableCategory: host.quickEntryHasSelectableCategory,
       onSave: () {
         final suggestion = quickEntrySuggestion.value;
         if (suggestion != null) {
           applyQuickEntryParse(suggestion);
-          submitForm(context);
+          host.submitForm(context);
         }
       },
     );
@@ -212,29 +144,19 @@ mixin QuickEntryMixin on TransactionFormController
     _autoSaveHelper.startAutoSaveCountdown(onElapsed);
   }
 
-  /// Direction string (e.g. 'borrow'/'lend') for dual-direction forms like
-  /// Liability. Used by the cross-tab intent switcher to decide if a
-  /// switch is needed even within the same tab kind.
-  String get quickEntryDirection => '';
-
-  /// Optional hook for controllers to apply custom state based on the
-  /// detected intent and raw text (e.g. setting direction to 'contribute'
-  /// in Investment).
-  void applyQuickEntryIntent(QuickEntryIntent intent, String text) {}
-
   /// Reloads the category cache used to label a resolved `categoryId`. Must
-  /// be re-called whenever [quickEntryCategoryGroupIds] changes at runtime
+  /// be re-called whenever [host.quickEntryCategoryGroupIds] changes at runtime
   /// (e.g. Loan switching direction), or the label lookup goes stale.
   Future<void> refreshQuickEntryCategories() async {
-    final result = await quickEntryHandler.parser.loadCategories();
-    final groupIds = quickEntryCategoryGroupIds;
+    final result = await handler.parser.loadCategories();
+    final groupIds = host.quickEntryCategoryGroupIds;
     final list =
         result
             .tryGetSuccess()
             ?.where(
               (category) =>
                   category.isEnabled &&
-                  category.type == quickEntryCategoryType &&
+                  category.type == host.quickEntryCategoryType &&
                   (groupIds == null || groupIds.contains(category.groupId)),
             )
             .toList() ??
@@ -250,10 +172,6 @@ mixin QuickEntryMixin on TransactionFormController
     return null;
   }
 
-  /// False for Investment, where [applyQuickEntryCategory] is a no-op — a
-  /// resolved category would otherwise look tappable when it silently isn't.
-  bool get quickEntryShowsCategoryInLabel => true;
-
   /// Display label for a suggestion, e.g. "50.00k · Cà phê · 12/08" — lists
   /// only whatever actually resolved.
   String quickEntryResultLabel(ParsedTransactionEntity result) {
@@ -261,7 +179,7 @@ mixin QuickEntryMixin on TransactionFormController
     if (result.amount != null) {
       parts.add(formatShortCurrencyWithSymbol(result.amount!));
     }
-    if (result.categoryId != null && quickEntryShowsCategoryInLabel) {
+    if (result.categoryId != null && host.quickEntryShowsCategoryInLabel) {
       final category = findQuickEntryCategory(result.categoryId!);
       if (category != null) parts.add(el.tr(category.nameKey));
     }
@@ -291,18 +209,18 @@ mixin QuickEntryMixin on TransactionFormController
   /// reads that Rx and would score the *previous* keystroke's result.
   bool isCategoryMissingFor(ParsedTransactionEntity result) {
     // Nothing to record against at all, whatever the parse resolved.
-    if (!quickEntryHasSelectableCategory) return true;
+    if (!host.quickEntryHasSelectableCategory) return true;
 
     final id = result.categoryId;
 
     // If we have no category ID at all, it's definitely missing (Case 2).
     if (id == null) return true;
 
-    final availableIds = quickEntryAvailableCategoryIds;
+    final availableIds = host.quickEntryAvailableCategoryIds;
     final isAvailable = availableIds.contains(id);
 
     '[AI_PARSING] 🔍 Checking category missing | id=$id | isAvailable=$isAvailable | availableCount=${availableIds.length}'
-        .Log('QuickEntryMixin');
+        .Log('QuickEntrySession');
 
     return !isAvailable;
   }
@@ -311,19 +229,10 @@ mixin QuickEntryMixin on TransactionFormController
   /// if a parsed category is "Missing" or "Invalid" (Case 2).
   bool get isQuickEntryCategoryInvalid => isQuickEntryCategoryMissing;
 
-  /// List of category IDs that are currently valid/selectable in this form.
-  /// Used to determine if a parsed category is "Missing" (Case 2).
-  List<String> get quickEntryAvailableCategoryIds =>
+  /// Ids of the categories loaded for this form; the default for
+  /// [TransactionFormController.quickEntryAvailableCategoryIds].
+  List<String> get loadedCategoryIds =>
       _quickEntryCategories.map((category) => category.id).toList();
-
-  /// Whether this form currently has at least one row a parsed entry can be
-  /// recorded against.
-  ///
-  /// Category-backed forms (expense, income) always do. The asset-backed forms
-  /// (investment, borrow, lend) render an empty row until the user creates
-  /// their first asset, and their submit button stays disabled — so an entry
-  /// typed there has nowhere to go and must not be auto-saved.
-  bool get quickEntryHasSelectableCategory => true;
 
   /// Cancels auto-save and reports why when this form has nothing to save
   /// into. Returns true when auto-save was blocked.
@@ -333,12 +242,12 @@ mixin QuickEntryMixin on TransactionFormController
   /// [isQuickEntryCategoryInvalid], so the user still gets the message — a
   /// second copy on top of it would just be noise.
   bool _blockAutoSaveWhenNoCategory(String stage) {
-    if (quickEntryHasSelectableCategory) return false;
+    if (host.quickEntryHasSelectableCategory) return false;
 
     _cancelAutoSave();
     '[AI_PARSING] ⛔ Auto-save blocked | stage=$stage | '
             'no category/asset defined for this tab'
-        .Log('QuickEntryMixin');
+        .Log('QuickEntrySession');
     return true;
   }
 
@@ -360,91 +269,95 @@ mixin QuickEntryMixin on TransactionFormController
   }
 
   Future<void> _runLocalQuickEntryParse() async {
-    if (!quickEntryHandler.parser.canUseAiSmartEntry) return;
+    if (!handler.parser.canUseAiSmartEntry) return;
     final text = quickEntryController.text.trim();
     if (text.isEmpty) {
       quickEntrySuggestion.value = null;
       return;
     }
 
-    if (await quickEntryHandler.parser.aiPreferences.isGeminiEnabled()) {
+    if (await handler.parser.aiPreferences.isGeminiEnabled()) {
       quickEntrySuggestion.value = null;
       return;
     }
 
-    '[AI_PARSING] [LOCAL] 🔍 Reactive parse started | tab=$quickEntryCategoryType | text="$text"'
-        .Log('QuickEntryMixin');
+    '[AI_PARSING] [LOCAL] 🔍 Reactive parse started | tab=$host.quickEntryCategoryType | text="$text"'
+        .Log('QuickEntrySession');
 
     // Intent detection for cross-tab switching (Reactive)
     final intent = detectQuickEntryIntent(text);
     if (intent != null) {
-      '[AI_PARSING] [LOCAL] 🎯 Intent detected: $intent'.Log('QuickEntryMixin');
+      '[AI_PARSING] [LOCAL] 🎯 Intent detected: $intent'.Log(
+        'QuickEntrySession',
+      );
       final dynamic txController = Get.find<TransactionController>();
       bool isMismatch = false;
       switch (intent) {
         case QuickEntryIntent.expense:
-          if (quickEntryCategoryType != CategoryType.expense) isMismatch = true;
+          if (host.quickEntryCategoryType != CategoryType.expense)
+            isMismatch = true;
           break;
         case QuickEntryIntent.income:
-          if (quickEntryCategoryType != CategoryType.income) isMismatch = true;
+          if (host.quickEntryCategoryType != CategoryType.income)
+            isMismatch = true;
           break;
         case QuickEntryIntent.investment:
-          if (quickEntryCategoryType != CategoryType.investment) {
+          if (host.quickEntryCategoryType != CategoryType.investment) {
             isMismatch = true;
           }
           break;
         case QuickEntryIntent.debt:
-          if (quickEntryCategoryType != CategoryType.liability ||
-              quickEntryDirection != LiabilityDirection.borrow) {
+          if (host.quickEntryCategoryType != CategoryType.liability ||
+              host.quickEntryDirection != LiabilityDirection.borrow) {
             isMismatch = true;
           }
           break;
         case QuickEntryIntent.lend:
-          if (quickEntryCategoryType != CategoryType.liability ||
-              quickEntryDirection != LiabilityDirection.lend) {
+          if (host.quickEntryCategoryType != CategoryType.liability ||
+              host.quickEntryDirection != LiabilityDirection.lend) {
             isMismatch = true;
           }
           break;
       }
 
       if (isMismatch) {
-        '[AI_PARSING] [LOCAL] 🔄 Intent mismatch found (Tab: $quickEntryCategoryType vs Intent: $intent) | switching...'
-            .Log('QuickEntryMixin');
+        '[AI_PARSING] [LOCAL] 🔄 Intent mismatch found (Tab: $host.quickEntryCategoryType vs Intent: $intent) | switching...'
+            .Log('QuickEntrySession');
         txController.switchToTabForIntent(intent);
 
         // Handoff to the target tab's controller
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           final dynamic targetController = txController
               .getQuickEntryControllerForIntent(intent);
-          if (targetController != null && targetController != this) {
+          if (targetController != null && targetController != host) {
             '[AI_PARSING] [LOCAL] 🤝 Handing off text to target controller: ${targetController.runtimeType}'
-                .Log('QuickEntryMixin');
-            if (targetController is QuickEntryMixin) {
+                .Log('QuickEntrySession');
+            if (targetController is TransactionFormController) {
               targetController.applyQuickEntryIntent(intent, text);
             }
             // Pass the text so the new tab can continue parsing
-            targetController.quickEntryController.text = text;
-            targetController.quickEntryController.selection =
+            targetController.quickEntry.quickEntryController.text = text;
+            targetController.quickEntry.quickEntryController.selection =
                 TextSelection.collapsed(offset: text.length);
           }
         });
         return;
       } else {
-        '[AI_PARSING] [LOCAL] ✅ Intent matches current tab ($quickEntryCategoryType)'
-            .Log('QuickEntryMixin');
+        '[AI_PARSING] [LOCAL] ✅ Intent matches current tab ($host.quickEntryCategoryType)'
+            .Log('QuickEntrySession');
         // Apply intent-based state (e.g. switching subsegments) even when tab matches.
-        applyQuickEntryIntent(intent, text);
+        host.applyQuickEntryIntent(intent, text);
       }
     } else {
       '[AI_PARSING] [LOCAL] ❓ No clear intent detected for switching'.Log(
-        'QuickEntryMixin',
+        'QuickEntrySession',
       );
     }
 
-    final local = await quickEntryHandler.parser.parseLocally(
+    final local = await handler.parser.parseLocally(
       text,
-      categoryType: quickEntryCategoryType,
-      groupIds: quickEntryCategoryGroupIds,
+      categoryType: host.quickEntryCategoryType,
+      groupIds: host.quickEntryCategoryGroupIds,
     );
     if (_quickEntryDisposed || text != quickEntryController.text.trim()) {
       return;
@@ -469,20 +382,20 @@ mixin QuickEntryMixin on TransactionFormController
     quickEntrySuggestion.value = hasAmount ? local : null;
 
     '[AI_PARSING] [LOCAL] ✅ Local parse completed | isComplete=$isComplete | categoryMissing=$categoryMissing | categoryId=${local.categoryId} | amount=${local.amount}'
-        .Log('QuickEntryMixin');
+        .Log('QuickEntrySession');
 
     // Proactive Prefill: Update form fields (amount and category) immediately
     // as the user types, so the form stays in sync with the visual recognition.
     if (local.amount != null) {
-      amountStr.value = local.amount!.toString();
+      host.amountStr.value = local.amount!.toString();
     }
     if (local.categoryId != null && !categoryMissing) {
-      applyQuickEntryCategory(local.categoryId!);
+      host.applyQuickEntryCategory(local.categoryId!);
     } else if (text.isNotEmpty) {
       // No usable category (never resolved, or no record in this tab carries
       // it). Clear any previous selection so the submit button stays disabled
       // until a valid category is found or picked by hand.
-      clearCategorySelection();
+      host.clearCategorySelection();
     }
 
     // Auto-save should only trigger if we have BOTH a valid category and a
@@ -514,9 +427,9 @@ mixin QuickEntryMixin on TransactionFormController
   /// path that calls Gemini, so a network call never fires while someone
   /// is still mid-typing.
   Future<void> submitQuickEntry(BuildContext context) async {
-    if (!quickEntryHandler.parser.canUseAiSmartEntry) return;
+    if (!handler.parser.canUseAiSmartEntry) return;
     final languageCode = el.EasyLocalization.of(context)?.locale.languageCode;
-    final prefs = quickEntryHandler.parser.aiPreferences;
+    final prefs = handler.parser.aiPreferences;
     final geminiEnabled = await prefs.isGeminiEnabled();
     final cloudAllowed = geminiEnabled && await prefs.isUnderDailyLimit();
     // Guards a fast double-submit from firing two concurrent cloud calls.
@@ -525,7 +438,7 @@ mixin QuickEntryMixin on TransactionFormController
     if (text.isEmpty) return;
 
     '[AI_PARSING] [LOCAL] 🚀 Submitting quick entry | text="$text"'.Log(
-      'QuickEntryMixin',
+      'QuickEntrySession',
     );
 
     // Intent detection for cross-tab switching
@@ -535,25 +448,27 @@ mixin QuickEntryMixin on TransactionFormController
       bool isMismatch = false;
       switch (intent) {
         case QuickEntryIntent.expense:
-          if (quickEntryCategoryType != CategoryType.expense) isMismatch = true;
+          if (host.quickEntryCategoryType != CategoryType.expense)
+            isMismatch = true;
           break;
         case QuickEntryIntent.income:
-          if (quickEntryCategoryType != CategoryType.income) isMismatch = true;
+          if (host.quickEntryCategoryType != CategoryType.income)
+            isMismatch = true;
           break;
         case QuickEntryIntent.investment:
-          if (quickEntryCategoryType != CategoryType.investment) {
+          if (host.quickEntryCategoryType != CategoryType.investment) {
             isMismatch = true;
           }
           break;
         case QuickEntryIntent.debt:
-          if (quickEntryCategoryType != CategoryType.liability ||
-              quickEntryDirection != LiabilityDirection.borrow) {
+          if (host.quickEntryCategoryType != CategoryType.liability ||
+              host.quickEntryDirection != LiabilityDirection.borrow) {
             isMismatch = true;
           }
           break;
         case QuickEntryIntent.lend:
-          if (quickEntryCategoryType != CategoryType.liability ||
-              quickEntryDirection != LiabilityDirection.lend) {
+          if (host.quickEntryCategoryType != CategoryType.liability ||
+              host.quickEntryDirection != LiabilityDirection.lend) {
             isMismatch = true;
           }
           break;
@@ -561,30 +476,31 @@ mixin QuickEntryMixin on TransactionFormController
 
       if (isMismatch) {
         '[AI_PARSING] [LOCAL] 🔄 Intent mismatch detected during typing | switching to $intent'
-            .Log('QuickEntryMixin');
+            .Log('QuickEntrySession');
         txController.switchToTabForIntent(intent);
 
         // Handoff to the target tab's controller
         WidgetsBinding.instance.addPostFrameCallback((_) async {
           final dynamic targetController = txController
               .getQuickEntryControllerForIntent(intent);
-          if (targetController != null && targetController != this) {
-            if (targetController is QuickEntryMixin) {
+          if (targetController != null && targetController != host) {
+            if (targetController is TransactionFormController) {
               targetController.applyQuickEntryIntent(intent, text);
             }
             // Pass the text so the new tab can continue parsing
-            targetController.quickEntryController.text = text;
-            targetController.quickEntryController.selection =
+            targetController.quickEntry.quickEntryController.text = text;
+            targetController.quickEntry.quickEntryController.selection =
                 TextSelection.collapsed(offset: text.length);
-            if (geminiEnabled && targetController is QuickEntryMixin) {
-              targetController.submitQuickEntry(context);
+            if (geminiEnabled &&
+                targetController is TransactionFormController) {
+              targetController.quickEntry.submitQuickEntry(context);
             }
           }
         });
         return;
       } else {
         // Even if the tab is correct, we might need to apply a direction/mode switch
-        applyQuickEntryIntent(intent, text);
+        host.applyQuickEntryIntent(intent, text);
       }
     }
 
@@ -594,25 +510,25 @@ mixin QuickEntryMixin on TransactionFormController
     final (isCurrentGeneration, resetParsingIfCurrent) =
         trackQuickEntryGeneration();
 
-    final parseUseCase = quickEntryHandler.parser;
+    final parseUseCase = handler.parser;
     final local = await parseUseCase.parseLocally(
       text,
-      categoryType: quickEntryCategoryType,
-      groupIds: quickEntryCategoryGroupIds,
+      categoryType: host.quickEntryCategoryType,
+      groupIds: host.quickEntryCategoryGroupIds,
     );
     if (!isCurrentGeneration()) return;
     '[AI_PARSING] [LOCAL] 📍 Local fallback ready | result=${local.toJson()}'
-        .Log('QuickEntryMixin');
+        .Log('QuickEntrySession');
 
     if (!cloudAllowed && local.amount != null) {
       '[AI_PARSING] [LOCAL] ✅ Local parse found amount | applying to form and starting auto-save'
-          .Log('QuickEntryMixin');
+          .Log('QuickEntrySession');
       resetParsingIfCurrent();
 
       // Proactively prefill form fields so the UI highlights the match immediately
-      amountStr.value = local.amount!.toString();
+      host.amountStr.value = local.amount!.toString();
       if (local.categoryId != null && !isCategoryMissingFor(local)) {
-        applyQuickEntryCategory(local.categoryId!);
+        host.applyQuickEntryCategory(local.categoryId!);
       }
 
       // Published before the guard so the chip can render the missing-category
@@ -627,7 +543,7 @@ mixin QuickEntryMixin on TransactionFormController
 
     if (!context.mounted) return;
 
-    '[AI_PARSING] [GEMINI] ☁️ Escalating to Gemini...'.Log('QuickEntryMixin');
+    '[AI_PARSING] [GEMINI] ☁️ Escalating to Gemini...'.Log('QuickEntrySession');
     final cloud = await runSmartEntry(
       input: SmartEntryTextInput(text),
       local: local,
@@ -638,7 +554,7 @@ mixin QuickEntryMixin on TransactionFormController
     // still matches what was sent before applying/erroring on anything.
     if (!isCurrentGeneration() || text != quickEntryController.text.trim()) {
       '[AI_PARSING] [GEMINI] ⚠️ Generation stale after cloud call | aborting'
-          .Log('QuickEntryMixin');
+          .Log('QuickEntrySession');
       return;
     }
 
@@ -654,7 +570,7 @@ mixin QuickEntryMixin on TransactionFormController
     final suggestion = local;
 
     '[AI_PARSING] [GEMINI] ↩️ Cloud returned nothing, using local result | result=${suggestion.toJson()}'
-        .Log('QuickEntryMixin');
+        .Log('QuickEntrySession');
 
     if (suggestion.isEmpty) {
       quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
@@ -663,10 +579,10 @@ mixin QuickEntryMixin on TransactionFormController
 
     // Apply proactive prefill for the cloud result
     if (suggestion.amount != null) {
-      amountStr.value = suggestion.amount!.toString();
+      host.amountStr.value = suggestion.amount!.toString();
     }
     if (suggestion.categoryId != null && !isCategoryMissingFor(suggestion)) {
-      applyQuickEntryCategory(suggestion.categoryId!);
+      host.applyQuickEntryCategory(suggestion.categoryId!);
     }
 
     // Published before the guard so the chip can render the missing-category
@@ -683,7 +599,7 @@ mixin QuickEntryMixin on TransactionFormController
   /// trip, then follow with [submitQuickEntryFromImage] or
   /// [cancelQuickEntryImage].
   bool beginQuickEntryImage() {
-    if (!quickEntryHandler.parser.canUseAiSmartEntry) {
+    if (!handler.parser.canUseAiSmartEntry) {
       return false;
     }
     if (isParsingQuickEntry.value) return false;
@@ -714,11 +630,11 @@ mixin QuickEntryMixin on TransactionFormController
     // has not allowed AI data sharing yet.
     final isGeminiEnabled = await AiConsentSheet.ensure(
       context,
-      quickEntryHandler.parser.aiPreferences,
+      handler.parser.aiPreferences,
     );
     if (!isGeminiEnabled) {
       '[AI_PARSING] [GEMINI] ⛔ AI data sharing not allowed | aborting scan'.Log(
-        'QuickEntryMixin',
+        'QuickEntrySession',
       );
       resetParsingIfCurrent();
       quickEntryErrorKey.value = CcLocaleKeys.report_ai_advice_gemini_disabled;
@@ -726,7 +642,7 @@ mixin QuickEntryMixin on TransactionFormController
     }
 
     '[AI_PARSING] [GEMINI] 📸 Image picker started for Gemini AI | fromCamera=$fromCamera'
-        .Log('QuickEntryMixin');
+        .Log('QuickEntrySession');
     final pickResult = await ReceiptImagePickerHelper.pickReceiptImage(
       fromCamera: fromCamera,
     );
@@ -734,7 +650,7 @@ mixin QuickEntryMixin on TransactionFormController
     final picked = pickResult.image;
     if (picked == null) {
       '[AI_PARSING] [GEMINI] ❌ Image pick cancelled or failed | permissionDenied=${pickResult.permissionDenied}'
-          .Log('QuickEntryMixin');
+          .Log('QuickEntrySession');
       resetParsingIfCurrent();
       // A denied permission gets explicit feedback; a plain cancel stays silent.
       if (pickResult.permissionDenied) {
@@ -766,7 +682,7 @@ mixin QuickEntryMixin on TransactionFormController
     }
 
     '[AI_PARSING] [GEMINI] ☁️ Direct image sending to Gemini AI parsing (No OCR) | bytes=${picked.bytes.length} mimeType=${picked.mimeType} lang=$languageCode'
-        .Log('QuickEntryMixin');
+        .Log('QuickEntrySession');
     final cloud = await runSmartEntry(
       input: SmartEntryImagesInput([
         (bytes: picked.bytes, mimeType: picked.mimeType),
@@ -779,28 +695,28 @@ mixin QuickEntryMixin on TransactionFormController
 
     if (cloud.errorKey != null) {
       '[AI_PARSING] [GEMINI] ❌ Gemini AI parsing failed | errorKey=${cloud.errorKey}'
-          .Log('QuickEntryMixin');
+          .Log('QuickEntrySession');
       quickEntryErrorKey.value = cloud.errorKey;
       return;
     }
     if (cloud.rows.isNotEmpty) {
       '[AI_PARSING] [GEMINI] ✅ Gemini AI parsing succeeded | rowsCount=${cloud.rows.length} rows=${cloud.rows.map((r) => r.toJson()).toList()}'
-          .Log('QuickEntryMixin');
+          .Log('QuickEntrySession');
       if (context.mounted) await presentQuickEntryPreview(context, cloud.rows);
       return;
     }
 
     '[AI_PARSING] [GEMINI] ⚠️ Gemini AI parsing returned 0 rows'.Log(
-      'QuickEntryMixin',
+      'QuickEntrySession',
     );
     quickEntryErrorKey.value = CcLocaleKeys.quick_entry_could_not_parse;
   }
 
   Future<void> toggleVoiceQuickEntry(BuildContext context) async {
-    if (!quickEntryHandler.parser.canUseAiSmartEntry) return;
+    if (!handler.parser.canUseAiSmartEntry) return;
 
     '[VoiceWorkflow] 🟢 toggleVoiceQuickEntry triggered | isListening=${isListeningQuickEntry.value}'
-        .Log('QuickEntryMixin');
+        .Log('QuickEntrySession');
 
     bool voiceSubmitted = false;
 
@@ -813,21 +729,21 @@ mixin QuickEntryMixin on TransactionFormController
       final text = rawText.trim();
       if (text.isNotEmpty && !isParsingQuickEntry.value) {
         '[VoiceWorkflow] 🚀 Submitting voice result via $source | text="$text"'
-            .Log('QuickEntryMixin');
+            .Log('QuickEntrySession');
         submitQuickEntry(context);
       }
     }
 
     if (isListeningQuickEntry.value) {
-      '[VoiceWorkflow] 🛑 Manual stop requested'.Log('QuickEntryMixin');
-      await quickEntryHandler.speech.stopListening();
+      '[VoiceWorkflow] 🛑 Manual stop requested'.Log('QuickEntrySession');
+      await handler.speech.stopListening();
       triggerVoiceSubmit(quickEntryController.text, 'manualStop');
       return;
     }
 
     final status = await Permission.microphone.request();
     '[VoiceWorkflow] 🔒 Microphone permission status: $status'.Log(
-      'QuickEntryMixin',
+      'QuickEntrySession',
     );
 
     if (!status.isGranted) {
@@ -835,17 +751,17 @@ mixin QuickEntryMixin on TransactionFormController
       return;
     }
 
-    hideKeypad();
+    host.hideKeypad();
     quickEntryErrorKey.value = null;
     isListeningQuickEntry.value = true;
 
-    final started = await quickEntryHandler.speech.startListening(
+    final started = await handler.speech.startListening(
       // Voice entry is tuned for Vietnamese amounts and phrases.
       localeId: 'vi_VN',
       onResult: (recognizedWords, isFinal) {
         if (_quickEntryDisposed) return;
         '[VoiceWorkflow] 🗣️ Voice recognized words: "$recognizedWords" | isFinal=$isFinal'
-            .Log('QuickEntryMixin');
+            .Log('QuickEntrySession');
 
         quickEntryController.text = recognizedWords;
         quickEntryController.selection = TextSelection.collapsed(
@@ -855,7 +771,7 @@ mixin QuickEntryMixin on TransactionFormController
       onListeningStopped: () {
         if (_quickEntryDisposed) return;
         '[VoiceWorkflow] 🏁 Voice listening session completed'.Log(
-          'QuickEntryMixin',
+          'QuickEntrySession',
         );
         triggerVoiceSubmit(quickEntryController.text, 'onListeningStopped');
       },
@@ -864,9 +780,9 @@ mixin QuickEntryMixin on TransactionFormController
     if (_quickEntryDisposed) return;
 
     if (!started) {
-      if (!quickEntryHandler.speech.isListening) {
+      if (!handler.speech.isListening) {
         '[VoiceWorkflow] ❌ Failed to start speech recognizer'.Log(
-          'QuickEntryMixin',
+          'QuickEntrySession',
         );
         isListeningQuickEntry.value = false;
         quickEntryErrorKey.value =
@@ -875,11 +791,10 @@ mixin QuickEntryMixin on TransactionFormController
     }
   }
 
-  /// Applies a resolved `categoryId` to the category-picker UI. Investment
-  /// overrides this as a no-op — its category always comes from the chosen
-  /// asset, a manual pick by design.
-  void applyQuickEntryCategory(String categoryId) {
-    pendingPrefillCategoryId.value = categoryId;
+  /// Default for [TransactionFormController.applyQuickEntryCategory]: marks
+  /// the id for the category picker and selects it right away when cached.
+  void applyCategoryDefault(String categoryId) {
+    host.pendingPrefillCategoryId.value = categoryId;
 
     // Proactive resolution: if we can find the real CategoryEntity in our
     // local cache, tell the host controller to select it immediately.
@@ -887,35 +802,31 @@ mixin QuickEntryMixin on TransactionFormController
     // without waiting for the UI selection-grid to remount.
     final category = findQuickEntryCategory(categoryId);
     if (category != null) {
-      applyResolvedCategory(category);
+      host.applyResolvedCategory(category);
     }
   }
-
-  /// Optional hook for controllers to apply a synchronously resolved
-  /// [CategoryEntity] to their internal state.
-  void applyResolvedCategory(CategoryEntity category) {}
 
   /// Pre-fills whichever fields [result] resolved; a null field is left at
   /// the form's existing default for the user to fill in by hand.
   void applyQuickEntryParse(ParsedTransactionEntity result) {
     _cancelAutoSave();
     '[AI_PARSING] 📥 Applying parse result | result=${result.toJson()}'.Log(
-      'QuickEntryMixin',
+      'QuickEntrySession',
     );
     if (result.amount != null) {
-      amountStr.value = result.amount!.toString();
+      host.amountStr.value = result.amount!.toString();
     } else {
-      amountStr.value = '0';
+      host.amountStr.value = '0';
     }
 
     if (result.categoryId != null) {
-      applyQuickEntryCategory(result.categoryId!);
+      host.applyQuickEntryCategory(result.categoryId!);
     }
     if (result.walletId != null) {
-      setWalletId(result.walletId!);
+      host.setWalletId(result.walletId!);
     }
-    if (result.date != null) setDate(result.date!);
-    if (result.note != null) noteController.text = result.note!;
+    if (result.date != null) host.setDate(result.date!);
+    if (result.note != null) host.noteController.text = result.note!;
     quickEntrySuggestion.value = null;
     quickEntryController.clear();
   }
@@ -924,7 +835,9 @@ mixin QuickEntryMixin on TransactionFormController
     quickEntrySuggestion.value = null;
   }
 
-  List<String> get quickEntryCloudCategoryTypes => [quickEntryCategoryType];
+  List<String> get quickEntryCloudCategoryTypes => [
+    host.quickEntryCategoryType,
+  ];
 
   int get quickEntryCloudMaxTransactions => 1;
 
@@ -936,10 +849,10 @@ mixin QuickEntryMixin on TransactionFormController
     required ParsedTransactionEntity local,
     String? languageCode,
   }) async {
-    final result = await quickEntryHandler.parser.parseSmart(
+    final result = await handler.parser.parseSmart(
       input: input,
       categoryTypes: quickEntryCloudCategoryTypes,
-      groupIds: quickEntryCategoryGroupIds,
+      groupIds: host.quickEntryCategoryGroupIds,
       languageCode: languageCode,
       maxTransactions: quickEntryCloudMaxTransactions,
       localResult: local,
@@ -947,7 +860,7 @@ mixin QuickEntryMixin on TransactionFormController
     final failure = result.tryGetError();
     if (failure != null) {
       '[AI_PARSING] [GEMINI] ❌ Smart entry failed | ${failure.message}'.Log(
-        'QuickEntryMixin',
+        'QuickEntrySession',
       );
     }
     return (
@@ -971,9 +884,9 @@ mixin QuickEntryMixin on TransactionFormController
   ) async {
     quickEntrySuggestion.value = null;
     final types = quickEntryCloudCategoryTypes;
-    final groupIds = quickEntryCategoryGroupIds;
+    final groupIds = host.quickEntryCategoryGroupIds;
     final categories =
-        (await quickEntryHandler.parser.loadCategories()).tryGetSuccess() ??
+        (await handler.parser.loadCategories()).tryGetSuccess() ??
         const <CategoryEntity>[];
     if (!context.mounted || _quickEntryDisposed) return;
 
@@ -986,14 +899,14 @@ mixin QuickEntryMixin on TransactionFormController
               (groupIds == null || groupIds.contains(category.groupId)))
             category,
       ],
-      wallets: wallets.toList(),
+      wallets: host.wallets.toList(),
       config: SmartEntryPreviewConfig(
         types: types,
-        currencyCode: currencyCode.value,
-        showCategory: quickEntryShowsCategoryInLabel,
+        currencyCode: host.currencyCode.value,
+        showCategory: host.quickEntryShowsCategoryInLabel,
         appliesToForm: !quickEntryCommitsDirectly,
       ),
-      defaultWalletId: selectedWalletId.value ?? '',
+      defaultWalletId: host.selectedWalletId.value ?? '',
     );
     final committed = await SmartEntryPreviewSheet.show(
       context,

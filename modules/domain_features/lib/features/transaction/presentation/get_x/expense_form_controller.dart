@@ -30,8 +30,8 @@ import '../../domain/usecases/get_monthly_recurring_match_usecase.dart';
 import '../../domain/usecases/update_transaction_usecase.dart';
 import '../models/unified_category_item.dart';
 import '../widgets/base/category_selection_layout.dart';
-import 'quick_entry_batch_mixin.dart';
-import 'quick_entry_mixin.dart';
+import 'quick_entry_batch_session.dart';
+import 'quick_entry_session.dart';
 import 'smart_suggestion_source.dart';
 import 'suggestion_prefill_mixin.dart';
 import 'transaction_form_controller.dart';
@@ -43,7 +43,7 @@ const String _debugTag = 'ExpenseFormCategoryScroll';
 
 @injectable
 class ExpenseFormController extends TransactionFormController
-    with QuickEntryMixin, QuickEntryBatchMixin, SuggestionPrefillMixin
+    with SuggestionPrefillMixin, WidgetsBindingObserver
     implements SmartSuggestionSource {
   ExpenseFormController(
     this._transactionRepository,
@@ -52,8 +52,13 @@ class ExpenseFormController extends TransactionFormController
     this.quickEntryHandler,
   );
 
-  @override
   final QuickEntryHandler quickEntryHandler;
+
+  @override
+  late final QuickEntrySession quickEntry = QuickEntryBatchSession(
+    this,
+    quickEntryHandler,
+  );
 
   final GuidelineProvider _guidelineProvider;
 
@@ -151,7 +156,9 @@ class ExpenseFormController extends TransactionFormController
     _loadAll();
 
     noteController.addListener(_onNoteChanged);
-    initQuickEntry();
+    quickEntry.initQuickEntry();
+    // Location suggestions refresh when the app resumes.
+    WidgetsBinding.instance.addObserver(this);
     ever(CurrencyConstants.onCurrencyChanged, (_) => loadSuggestions());
 
     // Handle AI category suggestions by resolving to a budget or category
@@ -274,7 +281,7 @@ class ExpenseFormController extends TransactionFormController
         selectedBudget.value == null &&
         selectedCategory.value == null &&
         !isEditing &&
-        quickEntryController.text.isEmpty) {
+        quickEntry.quickEntryController.text.isEmpty) {
       final first = unifiedItems.first;
       if (first.isBudget) {
         final budget = _findBudgetById(first.budgetId!);
@@ -535,7 +542,8 @@ class ExpenseFormController extends TransactionFormController
     _merchantMatchDebounce?.cancel();
     noteController.removeListener(_onNoteChanged);
     categoryScrollController.dispose();
-    disposeQuickEntry();
+    WidgetsBinding.instance.removeObserver(this);
+    quickEntry.disposeQuickEntry();
     super.onClose();
   }
 
@@ -570,7 +578,7 @@ class ExpenseFormController extends TransactionFormController
     _lastLocationMatch = null;
     _lastBillMatch = null;
     _dismissedLocationMatchId = null;
-    resetQuickEntry();
+    quickEntry.resetQuickEntry();
     refreshTimeBasedSuggestion();
     categoryKey.value++;
     await _rebuildUnifiedItems();

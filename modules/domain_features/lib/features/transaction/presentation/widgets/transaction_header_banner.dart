@@ -9,10 +9,11 @@ import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../guideline/export_guideline.dart';
 import '../get_x/expense_form_controller.dart';
-import '../get_x/quick_entry_batch_mixin.dart';
-import '../get_x/quick_entry_mixin.dart';
+import '../get_x/quick_entry_batch_session.dart';
+import '../get_x/quick_entry_session.dart';
 import '../get_x/smart_suggestion_source.dart';
 import '../get_x/transaction_controller.dart';
+import '../get_x/transaction_form_controller.dart';
 import 'quick_entry_section.dart';
 import 'receipt_source_sheet.dart';
 import 'package:domain_features/core/contracts/user_level_provider.dart';
@@ -80,7 +81,7 @@ class TransactionHeaderBanner extends StatelessWidget {
     );
   }
 
-  QuickEntryMixin? _quickEntryControllerFor(TransactionTabKind tab) {
+  TransactionFormController? _quickEntryControllerFor(TransactionTabKind tab) {
     return (tab == TransactionTabKind.expense && expenseFormController != null)
         ? expenseFormController
         : controller.getQuickEntryControllerForTab(tab);
@@ -119,7 +120,7 @@ class TransactionHeaderBanner extends StatelessWidget {
             children: [
               _buildQuickEntrySection(
                 context,
-                quickEntry,
+                quickEntry.quickEntry,
                 accentColor,
                 isLocked,
               ),
@@ -139,7 +140,7 @@ class TransactionHeaderBanner extends StatelessWidget {
 
   Widget _buildQuickEntrySection(
     BuildContext context,
-    QuickEntryMixin controller,
+    QuickEntrySession controller,
     Color accentColor,
     bool isLocked,
   ) {
@@ -163,7 +164,7 @@ class TransactionHeaderBanner extends StatelessWidget {
         if (suggestion != null) controller.applyQuickEntryParse(suggestion);
       },
       onDismissSuggestion: controller.dismissQuickEntrySuggestion,
-      aiPreferences: controller.quickEntryHandler.parser.aiPreferences,
+      aiPreferences: controller.handler.parser.aiPreferences,
       onClear: () {
         controller.dismissQuickEntrySuggestion();
         controller.isParsingQuickEntry.value = false;
@@ -211,7 +212,7 @@ class TransactionHeaderBanner extends StatelessWidget {
 
   Future<void> _pickReceiptSource(
     BuildContext context,
-    QuickEntryMixin controller,
+    QuickEntrySession controller,
   ) async {
     if (!controller.beginQuickEntryImage()) return;
     final fromCamera = await ReceiptSourceSheet.show(context);
@@ -220,7 +221,7 @@ class TransactionHeaderBanner extends StatelessWidget {
       return;
     }
     if (!context.mounted) return;
-    if (!fromCamera && controller is QuickEntryBatchMixin) {
+    if (!fromCamera && controller is QuickEntryBatchSession) {
       controller.submitQuickEntryFromGallery(context);
       return;
     }

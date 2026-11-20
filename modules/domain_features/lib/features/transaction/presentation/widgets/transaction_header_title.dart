@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../get_x/quick_entry_mixin.dart';
+import '../get_x/quick_entry_session.dart';
 import '../get_x/transaction_controller.dart';
 import 'transaction_auto_save_message.dart';
 import 'transaction_wallet_summary.dart';
@@ -18,7 +18,7 @@ class TransactionHeaderTitle extends StatelessWidget {
   });
 
   final TransactionController controller;
-  final QuickEntryMixin? Function(TransactionTabKind tab)?
+  final QuickEntrySession? Function(TransactionTabKind tab)?
   quickEntryControllerFor;
 
   /// Share of the header row this title takes (it is an [Expanded]).

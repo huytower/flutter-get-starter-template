@@ -5,7 +5,7 @@ import 'quick_entry_batch_committer.dart';
 import 'quick_entry_parser.dart';
 
 /// The services behind quick entry, grouped by concern. A form controller that
-/// mixes in [QuickEntryMixin] takes this through its constructor and exposes it
+/// owns a [QuickEntrySession] takes this through its constructor and exposes it
 /// as `quickEntryHandler`.
 ///
 /// Interim shape (phase A): the mixin still owns the reactive UI state; phase B

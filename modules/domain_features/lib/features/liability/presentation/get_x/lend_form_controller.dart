@@ -136,11 +136,11 @@ class LendFormController extends LiabilityBaseFormController {
   Future<void> _loadAll() async {
     isLoadingMerged.value = true;
     final settings = await getIt<GetProfileSettingsUseCase>().call();
-    isVip.value = settings.isVip;
+    quickEntry.isVip.value = settings.isVip;
     await loadSuggestions();
     await loadLiabilities();
     isLoadingMerged.value = false;
-    initQuickEntry();
+    quickEntry.initQuickEntry();
   }
 
   Future<void> loadLiabilities() async {
@@ -217,7 +217,7 @@ class LendFormController extends LiabilityBaseFormController {
       draft.dispose();
     }
     assetRowScrollController.dispose();
-    disposeQuickEntry();
+    quickEntry.disposeQuickEntry();
     super.onClose();
   }
 
@@ -438,7 +438,7 @@ class LendFormController extends LiabilityBaseFormController {
     installmentDrafts.clear();
     selectedLiabilityId.value = null;
     await loadLiabilities();
-    resetQuickEntry();
+    quickEntry.resetQuickEntry();
   }
 
   @override

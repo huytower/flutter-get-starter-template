@@ -7,10 +7,13 @@ import 'package:get/get.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
+import 'quick_entry_session.dart';
 import 'transaction_controller.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 
@@ -230,4 +233,55 @@ abstract class TransactionFormController extends CcGetController {
   void clearCategorySelection();
 
   void submitForm(BuildContext context);
+
+  // ---------------------------------------------------------------------------
+  // Quick entry: the controller owns a [QuickEntrySession]; these hooks tell it
+  // how this form works. Override only what differs from the default.
+  // ---------------------------------------------------------------------------
+
+  QuickEntrySession get quickEntry;
+
+  /// Category type quick entry searches and prefills within.
+  String get quickEntryCategoryType;
+
+  /// Further restricts [quickEntryCategoryType] to these `groupId`s (e.g. Loan
+  /// only offers the selected direction's group). Null means every enabled
+  /// category of that type.
+  List<String>? get quickEntryCategoryGroupIds => null;
+
+  /// Bumped to force the category picker to remount and resolve
+  /// [pendingPrefillCategoryId] as its initial selection.
+  RxInt get categoryKey;
+
+  /// Set right before [categoryKey] is bumped so the remounted picker
+  /// resolves this id (same mechanism edit mode uses).
+  Rx<String?> get pendingPrefillCategoryId;
+
+  /// Direction ('borrow' / 'lend') for dual-direction forms like Liability;
+  /// the cross-tab intent switcher uses it within the same tab kind.
+  String get quickEntryDirection => '';
+
+  /// Applies form state for a detected intent (e.g. Investment "contribute").
+  void applyQuickEntryIntent(QuickEntryIntent intent, String text) {}
+
+  /// False for Investment, where [applyQuickEntryCategory] is a no-op — a
+  /// resolved category would otherwise look tappable when it silently isn't.
+  bool get quickEntryShowsCategoryInLabel => true;
+
+  /// Whether this form has at least one row a parsed entry can be recorded
+  /// against. Asset-backed forms (investment, borrow, lend) have none until the
+  /// user creates an asset, so an entry there must not be auto-saved.
+  bool get quickEntryHasSelectableCategory => true;
+
+  /// Category ids a parsed entry may resolve to in this form.
+  List<String> get quickEntryAvailableCategoryIds =>
+      quickEntry.loadedCategoryIds;
+
+  /// Applies a resolved category id to the picker. Investment overrides this
+  /// as a no-op: its category always comes from the chosen asset.
+  void applyQuickEntryCategory(String categoryId) =>
+      quickEntry.applyCategoryDefault(categoryId);
+
+  /// Applies a category resolved synchronously from the cache.
+  void applyResolvedCategory(CategoryEntity category) {}
 }
