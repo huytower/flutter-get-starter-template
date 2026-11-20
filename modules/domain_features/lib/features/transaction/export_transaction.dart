@@ -3,7 +3,7 @@
 export 'data/models/transaction_model.dart';
 export 'domain/entities/parsed_transaction_entity.dart';
 export 'domain/entities/smart_entry_input.dart';
-export 'domain/entities/transaction_entity.dart';
+export 'package:domain_features/core/domain/entities/transaction_entity.dart';
 export 'domain/repositories/transaction_repository.dart';
 export 'domain/usecases/create_transaction_usecase.dart';
 export 'domain/usecases/create_wallet_transfer_usecase.dart';

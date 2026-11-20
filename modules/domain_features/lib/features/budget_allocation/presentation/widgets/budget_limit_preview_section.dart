@@ -11,13 +11,14 @@ import '../../../budget_limit/domain/usecases/sort_budget_limits_by_progress_use
 import '../../../budget_limit/export_budget_limit.dart';
 import '../../../guideline/export_guideline.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 class BudgetLimitPreviewSection extends StatelessWidget {
   const BudgetLimitPreviewSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final guideline = Get.find<GuidelineController>();
+    final guideline = getIt<GuidelineProvider>();
 
     return Stack(
       clipBehavior: Clip.none,
@@ -102,7 +103,7 @@ class BudgetLimitPreviewSection extends StatelessWidget {
           ],
         ),
         Obx(() {
-          guideline.bounceTrigger.value;
+          guideline.bounceTrigger;
           if (!guideline.isTaskActive('budget_limit') &&
               !guideline.isTaskActive('min_living')) {
             return const SizedBox.shrink();

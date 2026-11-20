@@ -10,7 +10,7 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
-import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
 import '../../../wallet/presentation/widgets/wallet_display_name.dart';
 import '../get_x/reconciliation_controller.dart';
 import '../widgets/finance_line_art_background.dart';

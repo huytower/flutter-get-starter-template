@@ -8,7 +8,7 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/presentation/widgets/prj_page_background.dart';
-import '../../domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/wallet_display_name.dart';
 

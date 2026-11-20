@@ -3,9 +3,9 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import 'quick_date_row.dart';
+import 'package:domain_features/core/presentation/widgets/quick_date_row.dart';
 
-class TransactionAdditionalDetailsSection extends StatelessWidget {
+class EntryAdditionalDetailsSection extends StatelessWidget {
   final bool isExpanded;
   final VoidCallback? onToggle;
   final DateTime selectedDate;
@@ -16,7 +16,7 @@ class TransactionAdditionalDetailsSection extends StatelessWidget {
   final Color activeColor;
   final bool hideDate;
 
-  const TransactionAdditionalDetailsSection({
+  const EntryAdditionalDetailsSection({
     super.key,
     required this.isExpanded,
     this.onToggle,

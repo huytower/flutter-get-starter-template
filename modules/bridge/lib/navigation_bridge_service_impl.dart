@@ -1,17 +1,10 @@
 import 'package:bridge/navigation_bridge_service.dart';
-import 'package:cc_bridge/export_cc_bridge.dart';
-import 'package:domain_features/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart';
-import 'package:domain_features/features/budget_limit/presentation/get_x/budget_limit_controller.dart';
-import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
-import 'package:domain_features/features/notification/domain/usecases/check_audit_reminder_usecase.dart';
-import 'package:domain_features/features/notification/domain/usecases/check_cloud_backup_reminder_usecase.dart';
-import 'package:domain_features/features/profile/user_level/presentation/get_x/user_level_controller.dart';
-import 'package:domain_features/features/transaction/presentation/get_x/transaction_controller.dart';
-import 'package:domain_features/features/wallet/presentation/get_x/wallet_controller.dart';
+import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:domain_features/export_domain_features.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-@lazySingleton
+@LazySingleton(as: NavigationBridgeService)
 class NavigationBridgeServiceImpl implements NavigationBridgeService {
   @override
   Future<void> initializeUserLevel() async {

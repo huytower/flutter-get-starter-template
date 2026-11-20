@@ -4,7 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../user_level/domain/entities/user_level_status_entity.dart';
+import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 
 class ProfileExperienceCard extends StatelessWidget {
   final int level;

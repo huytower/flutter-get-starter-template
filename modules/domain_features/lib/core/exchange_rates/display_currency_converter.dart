@@ -1,4 +1,4 @@
-import '../../features/transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'currency_conversion_service.dart';
 import 'exchange_rate_types.dart';
 

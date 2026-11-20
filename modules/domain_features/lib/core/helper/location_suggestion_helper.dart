@@ -1,6 +1,6 @@
 import 'package:cc_sdk/export_cc_sdk.dart';
 
-import '../../features/transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 
 const double locationMatchRadiusMeters = 150;
 

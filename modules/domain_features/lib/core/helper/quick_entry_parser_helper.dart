@@ -2,9 +2,9 @@ import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:string_similarity/string_similarity.dart';
 
-import '../../features/category/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../features/transaction/domain/entities/parsed_transaction_entity.dart';
-import '../../features/wallet/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'merchant_match_helper.dart';
 import 'quick_entry_alias_dataset.dart';
 import 'quick_entry_intent.dart';

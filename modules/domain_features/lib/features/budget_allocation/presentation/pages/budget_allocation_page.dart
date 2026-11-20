@@ -1,15 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_mixin/export_cc_mixin.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../guideline/export_guideline.dart';
 import '../../../liability/export_liability.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_allocation_header.dart';
@@ -21,6 +18,8 @@ import '../widgets/liability_hero_banner.dart';
 import '../widgets/liability_wallets_section.dart';
 import '../widgets/liquid_hero_banner.dart';
 import '../widgets/liquid_wallets_section.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 
 @RoutePage()
 class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
@@ -97,7 +96,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   Widget _buildInvestmentGroup(BuildContext context) {
     return Obx(() {
-      final status = controller.userLevel.status.value;
+      final status = controller.userLevel.status;
       if (!status.canUseInvestment) return const SizedBox.shrink();
 
       return Column(
@@ -109,14 +108,12 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
             wallets: controller.walletController.recentInvestmentWallets,
             onAddInvestment: () => controller.openAddInvestment(context),
             onSeeAll: () => controller.navigateToInvestmentList(context),
-            showGuidelineBadge: Get.isRegistered<GuidelineController>()
-                ? Get.find<GuidelineController>().isTaskActive('investment') &&
-                      !Get.find<GuidelineController>()
-                          .hasCreatedFirstInvestment
-                          .value
+            showGuidelineBadge: getIt<GuidelineProvider>().isAvailable
+                ? getIt<GuidelineProvider>().isTaskActive('investment') &&
+                      !getIt<GuidelineProvider>().hasCreatedFirstInvestment
                 : false,
-            badgeColor: Get.isRegistered<GuidelineController>()
-                ? Get.find<GuidelineController>().currentColor
+            badgeColor: getIt<GuidelineProvider>().isAvailable
+                ? getIt<GuidelineProvider>().currentColor
                 : null,
           ),
           const CcSpaceXL(),
@@ -127,7 +124,7 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
 
   Widget _buildLiabilityGroup(BuildContext context) {
     return Obx(() {
-      final status = controller.userLevel.status.value;
+      final status = controller.userLevel.status;
       if (!status.canUseLiability) return const SizedBox.shrink();
 
       return Column(
@@ -151,14 +148,12 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
             ),
             onSeeAll: () => controller.navigateToLiabilityList(context),
             isLendFront: controller.isLendSectionFront.value,
-            showGuidelineBadge: Get.isRegistered<GuidelineController>()
-                ? Get.find<GuidelineController>().isTaskActive('liability') &&
-                      !Get.find<GuidelineController>()
-                          .hasCreatedFirstLiability
-                          .value
+            showGuidelineBadge: getIt<GuidelineProvider>().isAvailable
+                ? getIt<GuidelineProvider>().isTaskActive('liability') &&
+                      !getIt<GuidelineProvider>().hasCreatedFirstLiability
                 : false,
-            badgeColor: Get.isRegistered<GuidelineController>()
-                ? Get.find<GuidelineController>().currentColor
+            badgeColor: getIt<GuidelineProvider>().isAvailable
+                ? getIt<GuidelineProvider>().currentColor
                 : null,
           ),
           const CcSpaceLG(),
@@ -200,11 +195,11 @@ class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
       return LiquidWalletsSection(
         wallets: controller.walletController.recentLiquidWallets,
         onAddWallet: () => controller.openAddWallet(context),
-        showGuidelineBadge: Get.isRegistered<GuidelineController>()
-            ? Get.find<GuidelineController>().isTaskActive('wallet_balance')
+        showGuidelineBadge: getIt<GuidelineProvider>().isAvailable
+            ? getIt<GuidelineProvider>().isTaskActive('wallet_balance')
             : false,
-        badgeColor: Get.isRegistered<GuidelineController>()
-            ? Get.find<GuidelineController>().currentColor
+        badgeColor: getIt<GuidelineProvider>().isAvailable
+            ? getIt<GuidelineProvider>().currentColor
             : null,
       );
     });

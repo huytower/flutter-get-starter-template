@@ -16,8 +16,6 @@ dependencies:
     path: ../../shared/cc_core_sdk/cc_sdk_data
   cc_sdk_ui:
     path: ../../shared/cc_core_sdk/cc_sdk_ui
-  data_config:
-    path: ../data_config
   equatable: ^2.1.0
   flutter:
     sdk: flutter

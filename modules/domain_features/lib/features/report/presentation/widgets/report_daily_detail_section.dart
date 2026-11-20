@@ -22,8 +22,8 @@ class ReportDailyDetailSection extends StatelessWidget {
           () => ReportDailyList(
             transactions: controller.dailyListTransactions,
             includeInvestmentAndLiability:
-                controller.userLevel.status.value.canUseInvestment ||
-                controller.userLevel.status.value.canUseLiability,
+                controller.userLevel.status.canUseInvestment ||
+                controller.userLevel.status.canUseLiability,
             isEditMode: controller.isEditMode.value,
           ),
         ),

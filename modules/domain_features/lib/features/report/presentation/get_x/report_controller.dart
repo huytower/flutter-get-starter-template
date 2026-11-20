@@ -15,9 +15,8 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/ai_advice_cache_datasource.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
-import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
-import '../../../transaction/domain/entities/transaction_entity.dart';
-import '../../../wallet/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/entities/ai_advice_entity.dart';
 import '../../domain/entities/category_spending_entity.dart';
@@ -31,6 +30,7 @@ import '../../domain/usecases/get_investment_trend_usecase.dart';
 import '../../domain/usecases/get_liability_trend_usecase.dart';
 import '../../domain/usecases/get_trend_data_usecase.dart';
 import '../widgets/report_filter_picker_sheet.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
 
 enum ReportFilterType { all, expense, income, investment, liability, lend }
 
@@ -47,7 +47,10 @@ class ReportController extends CcGetController {
     this._generateAiAdvice,
     this._conversionService,
     this._analytics,
+    this._aiPreferences,
   );
+
+  final AiFallbackPreferenceDataSource _aiPreferences;
 
   final GetCategorySpendingUseCase _getCategorySpending;
   final GetFinancialRunwayUseCase _getFinancialRunway;
@@ -56,7 +59,7 @@ class ReportController extends CcGetController {
   final GetLiabilityTrendUseCase _getLiabilityTrend;
   final WalletRepository _walletRepository;
   final GenerateAiFinancialAdviceUseCase _generateAiAdvice;
-  final UserLevelController userLevel;
+  final UserLevelProvider userLevel;
   final CurrencyConversionService _conversionService;
   final CcAnalytics _analytics;
 
@@ -202,7 +205,7 @@ class ReportController extends CcGetController {
 
   Future<void> generateAiAdvice(BuildContext context) async {
     _analytics.logEvent(name: 'click_generate_ai_advice');
-    if (!userLevel.status.value.isVip) return;
+    if (!userLevel.status.isVip) return;
 
     if (isGeneratingAdvice.value) return;
     isGeneratingAdvice.value = true;
@@ -226,15 +229,15 @@ class ReportController extends CcGetController {
       return;
     }
 
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
     // The advice sends this month's totals to Gemini: ask for consent first.
-    if (!context.mounted || !await AiConsentSheet.ensure(context)) {
+    if (!context.mounted ||
+        !await AiConsentSheet.ensure(context, _aiPreferences)) {
       if (isClosed) return;
       isGeneratingAdvice.value = false;
       aiAdviceErrorKey.value = CcLocaleKeys.report_ai_advice_gemini_disabled;
       return;
     }
-    if (!await prefs.tryConsumeDailyCall()) {
+    if (!await _aiPreferences.tryConsumeDailyCall()) {
       if (isClosed) return;
       isGeneratingAdvice.value = false;
       aiAdviceErrorKey.value =
@@ -419,7 +422,7 @@ class ReportController extends CcGetController {
   }
 
   Future<void> _loadCachedAdviceIfAvailable() async {
-    if (!userLevel.status.value.isVip) return;
+    if (!userLevel.status.isVip) return;
     final cacheDs = getIt<AiAdviceCacheDataSource>();
     final fingerprint = cacheDs.computeFingerprint(dailyListTransactions);
     final targetCurrency = CurrencyConstants.currentPrimaryCurrency;

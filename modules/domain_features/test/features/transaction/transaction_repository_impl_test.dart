@@ -4,7 +4,7 @@ import 'package:domain_features/features/transaction/data/datasources/local/tran
 import 'package:domain_features/features/transaction/data/datasources/transaction_sync_datasource.dart';
 import 'package:domain_features/features/transaction/data/models/transaction_model.dart';
 import 'package:domain_features/features/transaction/data/repositories/transaction_repository_impl.dart';
-import 'package:domain_features/features/transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FakeLocal implements TransactionLocalDataSource {

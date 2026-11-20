@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 /// The tinted card holding a form's fields. On wide windows it is capped at
 /// the content width ([CcContentPadding]); carousels inside it scroll within
 /// the card.
-class TransactionFormContainer extends StatelessWidget {
-  const TransactionFormContainer({super.key, required this.child});
+class EntryFormContainer extends StatelessWidget {
+  const EntryFormContainer({super.key, required this.child});
 
   final Widget child;
 

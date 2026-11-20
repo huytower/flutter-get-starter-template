@@ -8,7 +8,6 @@ import 'package:theme/export_theme.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../guideline/export_guideline.dart';
-import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../get_x/expense_form_controller.dart';
 import '../get_x/quick_entry_batch_mixin.dart';
 import '../get_x/quick_entry_mixin.dart';
@@ -16,6 +15,8 @@ import '../get_x/smart_suggestion_source.dart';
 import '../get_x/transaction_controller.dart';
 import 'quick_entry_section.dart';
 import 'receipt_source_sheet.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 class TransactionHeaderBanner extends StatelessWidget {
   const TransactionHeaderBanner({
@@ -27,7 +28,7 @@ class TransactionHeaderBanner extends StatelessWidget {
   });
 
   final TransactionController controller;
-  final GuidelineController guideline;
+  final GuidelineProvider guideline;
   final ExpenseFormController? expenseFormController;
 
   /// Shows only the challenge title (one line) — for the one-row header on
@@ -66,11 +67,11 @@ class TransactionHeaderBanner extends StatelessWidget {
     return GestureDetector(
       onHorizontalDragEnd: (details) {
         if (details.primaryVelocity != null && details.primaryVelocity! > 300) {
-          guideline.isBannerHidden.value = true;
+          guideline.isBannerHidden = true;
         }
         if (details.primaryVelocity != null &&
             details.primaryVelocity! < -300) {
-          guideline.isBannerHidden.value = false;
+          guideline.isBannerHidden = false;
         }
       },
       child: TransactionGuidelineBanner(
@@ -105,7 +106,7 @@ class TransactionHeaderBanner extends StatelessWidget {
     final suggestionSource = _suggestionSourceFor(activeTab);
 
     final canUseAiSmartEntry =
-        getIt<UserLevelController>().status.value.canUseAiSmartEntry;
+        getIt<UserLevelProvider>().status.canUseAiSmartEntry;
     final accentColor = _getTabColor(context, activeTab);
     final isLocked = !canUseAiSmartEntry;
 
@@ -162,6 +163,7 @@ class TransactionHeaderBanner extends StatelessWidget {
         if (suggestion != null) controller.applyQuickEntryParse(suggestion);
       },
       onDismissSuggestion: controller.dismissQuickEntrySuggestion,
+      aiPreferences: controller.quickEntryDeps.aiPreferences,
       onClear: () {
         controller.dismissQuickEntrySuggestion();
         controller.isParsingQuickEntry.value = false;

@@ -7,13 +7,14 @@ import 'package:message/export_message.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../guideline/export_guideline.dart';
-import '../../../transaction/presentation/widgets/cc_amount_input_section.dart';
-import '../../../transaction/presentation/widgets/money_keypad_panel.dart';
+import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
+import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../get_x/add_budget_limit_sheet_controller.dart';
 import 'budget_limit_category_selector.dart';
 import 'budget_limit_lock_notice.dart';
 import 'budget_limit_name_input.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
   const AddBudgetLimitSheet({super.key, this.editTarget});
@@ -178,7 +179,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
     AddBudgetLimitSheetController controller,
   ) {
     final scheme = context.ccColorScheme;
-    final guideline = Get.find<GuidelineController>();
+    final guideline = getIt<GuidelineProvider>();
 
     return Stack(
       clipBehavior: Clip.none,
@@ -222,7 +223,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
           ),
         ),
         Obx(() {
-          guideline.bounceTrigger.value;
+          guideline.bounceTrigger;
           if (!guideline.isTaskActive('min_living')) {
             return const SizedBox.shrink();
           }

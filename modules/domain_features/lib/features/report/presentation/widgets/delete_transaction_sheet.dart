@@ -1,17 +1,14 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/features/wallet/export_wallet.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
-import '../../../transaction/presentation/get_x/transaction_controller.dart';
-import '../get_x/report_controller.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 
 class DeleteTransactionSheet extends StatelessWidget {
   const DeleteTransactionSheet({super.key, required this.transaction});
@@ -130,15 +127,10 @@ class DeleteTransactionSheet extends StatelessWidget {
         context: context,
         message: el.tr(CcLocaleKeys.common_delete),
       );
-      if (Get.isRegistered<TransactionController>()) {
-        await Get.find<TransactionController>().refreshData();
-      }
-      if (Get.isRegistered<WalletController>()) {
-        await Get.find<WalletController>().loadWallets();
-      }
-      if (Get.isRegistered<ReportController>()) {
-        await Get.find<ReportController>().load(showLoading: false);
-      }
+      final refresh = getIt<FinancialRefreshProvider>();
+      await refresh.refreshTransactions();
+      await refresh.refreshWallets();
+      await refresh.refreshReport(showLoading: false);
     }
 
     return result.map(successMapper: (_) => unit, errorMapper: (e) => e);

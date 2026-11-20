@@ -3,12 +3,12 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-class TransactionDatePickerContentSheet extends StatefulWidget {
+class EntryDatePickerContentSheet extends StatefulWidget {
   final DateTime initialDate;
   final DateTime firstDate;
   final DateTime lastDate;
 
-  const TransactionDatePickerContentSheet({
+  const EntryDatePickerContentSheet({
     super.key,
     required this.initialDate,
     required this.firstDate,
@@ -16,12 +16,12 @@ class TransactionDatePickerContentSheet extends StatefulWidget {
   });
 
   @override
-  State<TransactionDatePickerContentSheet> createState() =>
-      _TransactionDatePickerContentSheetState();
+  State<EntryDatePickerContentSheet> createState() =>
+      _EntryDatePickerContentSheetState();
 }
 
-class _TransactionDatePickerContentSheetState
-    extends State<TransactionDatePickerContentSheet> {
+class _EntryDatePickerContentSheetState
+    extends State<EntryDatePickerContentSheet> {
   late DateTime _selectedDate;
   late DateTime _viewedMonth;
   bool _isYearPickerOpen = false;

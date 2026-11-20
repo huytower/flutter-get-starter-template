@@ -7,7 +7,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
-import '../../../transaction/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import 'report_daily_list_helpers.dart';
 import 'report_transaction_tile.dart';

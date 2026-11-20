@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../../transaction/presentation/widgets/transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 
 class ReviewFeedbackSection extends StatefulWidget {
   const ReviewFeedbackSection({super.key, this.averageRating});
@@ -158,7 +158,7 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
         ),
         const CcSpaceSM(),
         CcPadding(
-          TransactionSubmitButton(
+          EntrySubmitButton(
             text: el.tr('profile.feedback_send'),
             isSubmitting: _isSubmitting,
             isEnabled: !_isSubmitting,

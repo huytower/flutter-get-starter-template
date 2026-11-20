@@ -1,4 +1,4 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,6 +7,8 @@ import 'package:theme/export_theme.dart';
 
 import '../../../guideline/export_guideline.dart';
 import '../get_x/transaction_controller.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 
 extension TransactionTabKindStyle on TransactionTabKind {
   String label(BuildContext context) => switch (this) {
@@ -271,7 +273,7 @@ class TransactionTabBar extends StatelessWidget {
   }
 
   Widget _buildToggleAction(BuildContext context, ColorScheme scheme) {
-    final guideline = Get.find<GuidelineController>();
+    final guideline = getIt<GuidelineProvider>();
     final bool isSecondaryFront = controller.isSecondaryCardFront.value;
     final String? activeTaskId = guideline.currentTaskId;
 
