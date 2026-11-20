@@ -25,6 +25,7 @@ import 'quick_entry_mixin.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'quick_entry_dependencies.dart';
 
 const String _debugTag = 'InvestmentAssetRow';
 
@@ -36,7 +37,11 @@ class InvestmentFormController extends TransactionFormController
     this._getProfileSettings,
     this._createInvestmentTransaction,
     this._guidelineProvider,
+    this.quickEntryDeps,
   );
+
+  @override
+  final QuickEntryDependencies quickEntryDeps;
 
   final GuidelineProvider _guidelineProvider;
 

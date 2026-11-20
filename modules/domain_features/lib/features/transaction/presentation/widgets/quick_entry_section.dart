@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:message/cc_locale_keys.dart';
 
 import '../../../../core/constant/currency_constants.dart';
-import '../../../../core/di/di.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import 'voice_ripple_animation_widget.dart';
 
@@ -31,6 +30,7 @@ class QuickEntrySection extends StatelessWidget {
     required this.onScanTap,
     required this.onApplySuggestion,
     required this.onDismissSuggestion,
+    required this.aiPreferences,
     this.onClear,
     this.isLocked = false,
   });
@@ -47,6 +47,7 @@ class QuickEntrySection extends StatelessWidget {
   final VoidCallback onScanTap;
   final VoidCallback onApplySuggestion;
   final VoidCallback onDismissSuggestion;
+  final AiFallbackPreferenceDataSource aiPreferences;
   final VoidCallback? onClear;
   final bool isLocked;
 
@@ -240,7 +241,7 @@ class QuickEntrySection extends StatelessWidget {
     final buttonSize = context.respDim(30);
 
     return FutureBuilder<bool>(
-      future: getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled(),
+      future: aiPreferences.isGeminiEnabled(),
       builder: (context, snapshot) {
         final isGeminiEnabled = snapshot.data ?? true;
         if (!isGeminiEnabled) {

@@ -3,7 +3,6 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/di/di.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../pages/terms_of_service_page.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
@@ -16,8 +15,10 @@ class AiConsentSheet extends StatelessWidget {
 
   /// Returns true when the user has allowed AI data sharing — already stored,
   /// or just granted in the sheet. Declining or dismissing returns false.
-  static Future<bool> ensure(BuildContext context) async {
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
+  static Future<bool> ensure(
+    BuildContext context,
+    AiFallbackPreferenceDataSource prefs,
+  ) async {
     if (await prefs.isGeminiEnabled()) return true;
     if (!context.mounted) return false;
     final allowed = await showAdaptiveBottomSheet<bool>(

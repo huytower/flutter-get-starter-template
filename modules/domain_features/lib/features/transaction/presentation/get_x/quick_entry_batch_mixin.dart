@@ -2,22 +2,17 @@ import 'dart:async';
 
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/features/category/export_category.dart';
-import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/di/di.dart';
-import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../domain/entities/parsed_transaction_entity.dart';
 import '../../domain/entities/smart_entry_input.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
-import '../../domain/usecases/create_transaction_batch_usecase.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/parse_smart_entry_usecase.dart';
 import 'quick_entry_mixin.dart';
 import 'smart_entry_preview_state.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 mixin QuickEntryBatchMixin on QuickEntryMixin {
   static const int quickEntryBatchLimit = 5;
@@ -106,7 +101,7 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
 
     final categories = {
       for (final category
-          in (await getIt<GetCategoriesUseCase>().call()).tryGetSuccess() ??
+          in (await quickEntryDeps.getCategories.call()).tryGetSuccess() ??
               const <CategoryEntity>[])
         category.id: category,
     };
@@ -114,16 +109,16 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     final params = [for (final row in rows) _toParams(row, categories, now)];
 
     isSubmitting.value = true;
-    final result = await getIt<CreateTransactionBatchUseCase>().call(params);
+    final result = await quickEntryDeps.createTransactionBatch.call(params);
     isSubmitting.value = false;
 
     final savedParams = params.take(result.saved).toList();
     if (savedParams.isNotEmpty) {
       _checkBudgetThresholds(savedParams);
       await refreshParent();
-      unawaited(getIt<GuidelineProvider>().completeTask('first_transaction'));
+      unawaited(quickEntryDeps.guideline.completeTask('first_transaction'));
       if (context.mounted) {
-        unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
+        unawaited(quickEntryDeps.guestLoginPrompt.maybeShow(context));
       }
     }
 
@@ -160,7 +155,7 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     }
     spentByCategory.forEach((categoryId, amount) {
       unawaited(
-        getIt<CheckBudgetThresholdUseCase>().call(
+        quickEntryDeps.checkBudgetThreshold.call(
           categoryId: categoryId,
           transactionAmount: amount,
         ),

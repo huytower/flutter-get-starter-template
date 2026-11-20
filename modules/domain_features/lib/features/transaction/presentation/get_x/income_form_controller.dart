@@ -29,6 +29,7 @@ import 'smart_suggestion_source.dart';
 import 'suggestion_prefill_mixin.dart';
 import 'transaction_form_controller.dart';
 import 'package:domain_features/core/contracts/user_level_provider.dart';
+import 'quick_entry_dependencies.dart';
 
 const String _debugTag = 'IncomeCategoryScroll';
 
@@ -36,7 +37,14 @@ const String _debugTag = 'IncomeCategoryScroll';
 class IncomeFormController extends TransactionFormController
     with QuickEntryMixin, QuickEntryBatchMixin, SuggestionPrefillMixin
     implements SmartSuggestionSource {
-  IncomeFormController(this._transactionRepository, this._getCategories);
+  IncomeFormController(
+    this._transactionRepository,
+    this._getCategories,
+    this.quickEntryDeps,
+  );
+
+  @override
+  final QuickEntryDependencies quickEntryDeps;
 
   final TransactionRepository _transactionRepository;
   final GetCategoriesUseCase _getCategories;

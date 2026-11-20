@@ -90,7 +90,10 @@ class ProfileController extends CcGetController {
       aiSharingEnabled.value = false;
       return;
     }
-    aiSharingEnabled.value = await AiConsentSheet.ensure(context);
+    aiSharingEnabled.value = await AiConsentSheet.ensure(
+      context,
+      _aiPreferences,
+    );
   }
 
   /// "Unlock all features" also unlocks the AI features, so enabling it asks
@@ -98,7 +101,10 @@ class ProfileController extends CcGetController {
   /// features; only "Allow" turns on sharing.
   Future<void> toggleFullAccess(BuildContext context, bool value) async {
     if (value) {
-      aiSharingEnabled.value = await AiConsentSheet.ensure(context);
+      aiSharingEnabled.value = await AiConsentSheet.ensure(
+        context,
+        _aiPreferences,
+      );
     }
     await setVip(value);
   }

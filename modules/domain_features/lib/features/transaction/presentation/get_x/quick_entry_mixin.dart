@@ -10,22 +10,19 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../../core/di/di.dart';
-import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
 import '../../domain/entities/smart_entry_input.dart';
-import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import '../../domain/usecases/parse_smart_entry_usecase.dart';
 import '../widgets/smart_entry_preview_sheet.dart';
 import 'quick_entry_auto_save_helper.dart';
 import 'smart_entry_preview_state.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
-import 'package:domain_features/core/contracts/user_level_provider.dart';
+import 'quick_entry_dependencies.dart';
 
 typedef QuickEntryCloudResult = ({
   List<ParsedTransactionEntity> rows,
@@ -44,6 +41,9 @@ typedef QuickEntryCloudResult = ({
 /// automatic, to avoid relying on mixin `super` linearization order.
 mixin QuickEntryMixin on TransactionFormController
     implements WidgetsBindingObserver {
+  /// Provided by the host controller's constructor (a mixin has none).
+  QuickEntryDependencies get quickEntryDeps;
+
   /// Category type quick-entry searches/prefills within.
   String get quickEntryCategoryType;
 
@@ -225,7 +225,7 @@ mixin QuickEntryMixin on TransactionFormController
   /// be re-called whenever [quickEntryCategoryGroupIds] changes at runtime
   /// (e.g. Loan switching direction), or the label lookup goes stale.
   Future<void> refreshQuickEntryCategories() async {
-    final result = await getIt<GetCategoriesUseCase>().call();
+    final result = await quickEntryDeps.getCategories.call();
     final groupIds = quickEntryCategoryGroupIds;
     final list =
         result
@@ -359,14 +359,14 @@ mixin QuickEntryMixin on TransactionFormController
   }
 
   Future<void> _runLocalQuickEntryParse() async {
-    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) return;
+    if (!quickEntryDeps.userLevel.status.canUseAiSmartEntry) return;
     final text = quickEntryController.text.trim();
     if (text.isEmpty) {
       quickEntrySuggestion.value = null;
       return;
     }
 
-    if (await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
+    if (await quickEntryDeps.aiPreferences.isGeminiEnabled()) {
       quickEntrySuggestion.value = null;
       return;
     }
@@ -440,7 +440,7 @@ mixin QuickEntryMixin on TransactionFormController
       );
     }
 
-    final local = await getIt<ParseQuickEntryUseCase>().parseLocally(
+    final local = await quickEntryDeps.parseQuickEntry.parseLocally(
       text,
       categoryType: quickEntryCategoryType,
       groupIds: quickEntryCategoryGroupIds,
@@ -513,9 +513,9 @@ mixin QuickEntryMixin on TransactionFormController
   /// path that calls Gemini, so a network call never fires while someone
   /// is still mid-typing.
   Future<void> submitQuickEntry(BuildContext context) async {
-    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) return;
+    if (!quickEntryDeps.userLevel.status.canUseAiSmartEntry) return;
     final languageCode = el.EasyLocalization.of(context)?.locale.languageCode;
-    final prefs = getIt<AiFallbackPreferenceDataSource>();
+    final prefs = quickEntryDeps.aiPreferences;
     final geminiEnabled = await prefs.isGeminiEnabled();
     final cloudAllowed = geminiEnabled && await prefs.isUnderDailyLimit();
     // Guards a fast double-submit from firing two concurrent cloud calls.
@@ -593,7 +593,7 @@ mixin QuickEntryMixin on TransactionFormController
     final (isCurrentGeneration, resetParsingIfCurrent) =
         trackQuickEntryGeneration();
 
-    final parseUseCase = getIt<ParseQuickEntryUseCase>();
+    final parseUseCase = quickEntryDeps.parseQuickEntry;
     final local = await parseUseCase.parseLocally(
       text,
       categoryType: quickEntryCategoryType,
@@ -682,7 +682,7 @@ mixin QuickEntryMixin on TransactionFormController
   /// trip, then follow with [submitQuickEntryFromImage] or
   /// [cancelQuickEntryImage].
   bool beginQuickEntryImage() {
-    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) {
+    if (!quickEntryDeps.userLevel.status.canUseAiSmartEntry) {
       return false;
     }
     if (isParsingQuickEntry.value) return false;
@@ -711,7 +711,10 @@ mixin QuickEntryMixin on TransactionFormController
 
     // Scanning sends the photo to Gemini, so ask for consent first if the user
     // has not allowed AI data sharing yet.
-    final isGeminiEnabled = await AiConsentSheet.ensure(context);
+    final isGeminiEnabled = await AiConsentSheet.ensure(
+      context,
+      quickEntryDeps.aiPreferences,
+    );
     if (!isGeminiEnabled) {
       '[AI_PARSING] [GEMINI] ⛔ AI data sharing not allowed | aborting scan'.Log(
         'QuickEntryMixin',
@@ -793,7 +796,7 @@ mixin QuickEntryMixin on TransactionFormController
   }
 
   Future<void> toggleVoiceQuickEntry(BuildContext context) async {
-    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) return;
+    if (!quickEntryDeps.userLevel.status.canUseAiSmartEntry) return;
 
     '[VoiceWorkflow] 🟢 toggleVoiceQuickEntry triggered | isListening=${isListeningQuickEntry.value}'
         .Log('QuickEntryMixin');
@@ -930,7 +933,7 @@ mixin QuickEntryMixin on TransactionFormController
     required ParsedTransactionEntity local,
     String? languageCode,
   }) async {
-    final result = await getIt<ParseSmartEntryUseCase>().call(
+    final result = await quickEntryDeps.parseSmartEntry.call(
       input: input,
       categoryTypes: quickEntryCloudCategoryTypes,
       groupIds: quickEntryCategoryGroupIds,
@@ -967,7 +970,7 @@ mixin QuickEntryMixin on TransactionFormController
     final types = quickEntryCloudCategoryTypes;
     final groupIds = quickEntryCategoryGroupIds;
     final categories =
-        (await getIt<GetCategoriesUseCase>().call()).tryGetSuccess() ??
+        (await quickEntryDeps.getCategories.call()).tryGetSuccess() ??
         const <CategoryEntity>[];
     if (!context.mounted || _quickEntryDisposed) return;
 

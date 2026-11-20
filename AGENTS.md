@@ -107,7 +107,7 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
       | Implementation of a `cc_micro_features` interface that needs app config | App Shell `lib/data/repositories/` | `AppUpdateConfigRepositoryImpl` |
     - Another feature **may** depend on a repository **interface** (e.g. `report` uses `TransactionRepository`):
       import it from the owning feature's `domain/`. DI-created classes receive it as a constructor parameter;
-      widgets use `getIt<XRepository>()`.
+      mixins and widgets follow the same rules as providers (rule 4).
     - Nothing may import a `*_repository_impl.dart` except its own feature's tests. Only the generated DI file
       (`di.module.dart` / `di.config.dart`) references implementations.
     - Repository interfaces are **not** moved to `core/` just because several features use them — only shared
@@ -132,7 +132,11 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
    `GuidelineProvider`. Their implementations live in `modules/bridge` (the orchestrator — the only place that
    knows the concrete controllers), registered with `@LazySingleton(as: XProvider)`.
    - Classes created by DI (`@injectable` / `@lazySingleton`): take the provider as a **constructor parameter**.
-   - Widgets, mixins, abstract base classes (no DI constructor): use `getIt<XProvider>()`.
+   - Mixins (no constructor): declare an abstract getter for a dependency bundle that each host controller
+     injects — see `QuickEntryDependencies` used by `QuickEntryMixin` / `QuickEntryBatchMixin`.
+   - Widgets: take the dependency as a constructor argument from the controller or caller that builds them
+     (e.g. `AiConsentSheet.ensure(context, prefs)`, `QuickEntrySection(aiPreferences: ...)`). Use
+     `getIt<XProvider>()` only when no caller can supply it.
    - New cross-feature need → add a method to the matching provider (or a new `*Provider` + bridge impl); never
      route by string/event keys — typed contracts keep every call traceable in CodeGraph.
    - **Legacy, do not copy:** about 40 older imports of other features' controllers still exist (mainly
