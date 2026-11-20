@@ -7,13 +7,12 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
-import '../../../guideline/guideline_controller.dart';
-import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../data/datasources/local/category_seed.dart';
 import '../../domain/entities/category_entity.dart';
 import '../../domain/entities/category_group_entity.dart';
 import '../get_x/category_settings_controller.dart';
-import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
 
 class CategorySettingsPage extends StatefulWidget {
   const CategorySettingsPage({super.key, this.initialSection});
@@ -72,8 +71,8 @@ class _CategorySettingsPageState extends State<CategorySettingsPage> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (Get.isRegistered<GuidelineController>()) {
-        getIt<GuidelineProgressProvider>().completeTask('categories');
+      if (getIt<GuidelineProvider>().isAvailable) {
+        getIt<GuidelineProvider>().completeTask('categories');
       }
     });
   }
@@ -222,7 +221,7 @@ class _CategorySettingsView extends CcGetView<CategorySettingsController> {
       const investmentGroups = CategorySeed.investmentGroups;
       const liabilityGroups = CategorySeed.liabilityGroups;
 
-      final status = getIt<UserLevelController>().status.value;
+      final status = getIt<UserLevelProvider>().status;
 
       final sections = <Widget>[];
 

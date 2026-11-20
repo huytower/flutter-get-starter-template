@@ -1,7 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-class TransactionSubmitButton extends StatelessWidget {
+class EntrySubmitButton extends StatelessWidget {
   final String text;
   final bool isSubmitting;
   final bool isEnabled;
@@ -34,7 +34,7 @@ class TransactionSubmitButton extends StatelessWidget {
   /// Label / icon colour used on top of [gradient]. Defaults to `onPrimary`.
   final Color? gradientForegroundColor;
 
-  const TransactionSubmitButton({
+  const EntrySubmitButton({
     super.key,
     required this.text,
     required this.isSubmitting,

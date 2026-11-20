@@ -16,13 +16,13 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../profile/domain/usecases/update_profile_settings_usecase.dart';
-import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/wallet_entity.dart';
 import 'wallet_controller.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 /// Backs [AddLiquidSheet] — create/edit form state for a single liquid wallet.
 /// Instantiated fresh per sheet open via [init]; see the sheet's
@@ -33,11 +33,14 @@ class AddLiquidSheetController extends CcGetController {
     this._walletController,
     this._getCategories,
     this.userLevel,
+    this._refresh,
   );
+
+  final FinancialRefreshProvider _refresh;
 
   final WalletController _walletController;
   final GetCategoriesUseCase _getCategories;
-  final UserLevelController userLevel;
+  final UserLevelProvider userLevel;
 
   WalletEntity? _wallet;
   final TextEditingController nameController = TextEditingController();
@@ -147,7 +150,7 @@ class AddLiquidSheetController extends CcGetController {
   }
 
   Future<void> _loadEmergencyFundGate() async {
-    final status = userLevel.status.value;
+    final status = userLevel.status;
     final level = status.level;
     final settings = await getIt<GetProfileSettingsUseCase>().call();
     emergencyFundUnlocked.value =
@@ -340,11 +343,11 @@ class AddLiquidSheetController extends CcGetController {
       if (context.mounted) {
         // Refresh related controllers immediately to reflect memory changes
         _walletController.loadWallets();
-        getIt<FinancialRefreshProvider>().refreshBudgetAllocation();
+        _refresh.refreshBudgetAllocation();
 
         // Mark guideline task as completed when adding first wallet
-        if (!isEditing && Get.isRegistered<GuidelineController>()) {
-          final guideline = Get.find<GuidelineController>();
+        if (!isEditing && getIt<GuidelineProvider>().isAvailable) {
+          final guideline = getIt<GuidelineProvider>();
           if (guideline.isTaskActive('wallet_balance')) {
             await guideline.completeTask('wallet_balance');
           }

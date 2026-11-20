@@ -20,7 +20,7 @@ import 'lend_form_controller.dart';
 import 'liability_form_controller.dart';
 import 'liability_list_controller.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
-import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 @injectable
 class AddLiabilitySheetController extends CcGetController {
@@ -30,7 +30,12 @@ class AddLiabilitySheetController extends CcGetController {
     this._createLiability,
     this._walletController,
     this._getLiabilityBalances,
+    this._refresh,
+    this._guidelineProvider,
   );
+
+  final FinancialRefreshProvider _refresh;
+  final GuidelineProvider _guidelineProvider;
 
   final GetCategoriesUseCase _getCategories;
   final GetProfileSettingsUseCase _getProfileSettings;
@@ -195,7 +200,7 @@ class AddLiabilitySheetController extends CcGetController {
             nameError.value = null;
 
             // Refresh related lists immediately
-            getIt<FinancialRefreshProvider>().refreshBudgetAllocation();
+            _refresh.refreshBudgetAllocation();
             if (Get.isRegistered<LiabilityListController>()) {
               Get.find<LiabilityListController>().load();
             }
@@ -213,7 +218,7 @@ class AddLiabilitySheetController extends CcGetController {
             );
 
             // Guideline: update status so the badge moves to the Transaction tab
-            getIt<GuidelineProgressProvider>().setLiabilityCreated();
+            _guidelineProvider.setLiabilityCreated();
             if (context.mounted) {
               unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
             }

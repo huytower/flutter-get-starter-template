@@ -19,7 +19,7 @@ import '../../domain/usecases/create_budget_limit_usecase.dart';
 import '../../domain/usecases/get_category_average_monthly_spend_usecase.dart';
 import '../../domain/usecases/update_budget_limit_usecase.dart';
 import '../get_x/budget_limit_controller.dart';
-import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 @injectable
 class AddBudgetLimitSheetController extends CcGetController {
@@ -27,7 +27,10 @@ class AddBudgetLimitSheetController extends CcGetController {
     this._getCategories,
     this._getAverageSpend,
     this._budgetLimitController,
+    this._guidelineProvider,
   );
+
+  final GuidelineProvider _guidelineProvider;
 
   final GetCategoriesUseCase _getCategories;
   final GetCategoryAverageMonthlySpendUseCase _getAverageSpend;
@@ -231,9 +234,9 @@ class AddBudgetLimitSheetController extends CcGetController {
     }
 
     if (!isEdit) {
-      getIt<GuidelineProgressProvider>().completeTask('budget_limit');
+      _guidelineProvider.completeTask('budget_limit');
       if (isFixedPrice.value) {
-        getIt<GuidelineProgressProvider>().completeTask('min_living');
+        _guidelineProvider.completeTask('min_living');
       }
     }
 

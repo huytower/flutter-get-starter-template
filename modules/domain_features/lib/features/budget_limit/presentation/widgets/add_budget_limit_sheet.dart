@@ -14,6 +14,7 @@ import '../get_x/add_budget_limit_sheet_controller.dart';
 import 'budget_limit_category_selector.dart';
 import 'budget_limit_lock_notice.dart';
 import 'budget_limit_name_input.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
   const AddBudgetLimitSheet({super.key, this.editTarget});
@@ -178,7 +179,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
     AddBudgetLimitSheetController controller,
   ) {
     final scheme = context.ccColorScheme;
-    final guideline = Get.find<GuidelineController>();
+    final guideline = getIt<GuidelineProvider>();
 
     return Stack(
       clipBehavior: Clip.none,
@@ -222,7 +223,7 @@ class AddBudgetLimitSheet extends GetView<AddBudgetLimitSheetController> {
           ),
         ),
         Obx(() {
-          guideline.bounceTrigger.value;
+          guideline.bounceTrigger;
           if (!guideline.isTaskActive('min_living')) {
             return const SizedBox.shrink();
           }

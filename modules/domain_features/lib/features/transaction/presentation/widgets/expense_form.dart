@@ -1,8 +1,8 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:domain_features/export_domain_features.dart';
-import 'package:domain_features/core/presentation/widgets/transaction_additional_details_section.dart';
-import 'package:domain_features/core/presentation/widgets/transaction_form_container.dart';
-import 'package:domain_features/core/presentation/widgets/transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
+import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
+import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,7 +13,7 @@ import '../get_x/expense_form_controller.dart';
 import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'expense_category_selection_section.dart';
 import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
-import 'package:domain_features/core/presentation/widgets/transaction_form_two_column.dart';
+import 'package:domain_features/core/presentation/widgets/entry_form_two_column.dart';
 
 class ExpenseForm extends StatefulWidget {
   const ExpenseForm({super.key, this.tag});
@@ -76,7 +76,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
 
   @override
   Widget build(BuildContext context) {
-    final guideline = Get.find<GuidelineController>();
+    final guideline = getIt<GuidelineProvider>();
 
     final accentColor = context.expenseAccent;
 
@@ -102,7 +102,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
   Widget _buildScrollableContent(
     BuildContext context,
     ExpenseFormController controller,
-    GuidelineController guideline,
+    GuidelineProvider guideline,
     Color accentColor,
   ) {
     return GestureDetector(
@@ -116,7 +116,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
         physics: const BouncingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
-        child: TransactionFormTwoColumn.shouldUse(context)
+        child: EntryFormTwoColumn.shouldUse(context)
             ? _buildTwoColumnContent(
                 context,
                 controller,
@@ -151,11 +151,11 @@ class _ExpenseFormState extends State<ExpenseForm> {
   Widget _buildTwoColumnContent(
     BuildContext context,
     ExpenseFormController controller,
-    GuidelineController guideline,
+    GuidelineProvider guideline,
     Color accentColor,
   ) {
     return Obx(
-      () => TransactionFormTwoColumn(
+      () => EntryFormTwoColumn(
         leading: [
           ExpenseCategorySelectionSection(
             controller: controller,
@@ -191,7 +191,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
     bool alwaysExpanded = false,
   }) {
     if (controller.isEditing) {
-      return TransactionAdditionalDetailsSection(
+      return EntryAdditionalDetailsSection(
         isExpanded: true,
         selectedDate: controller.date.value,
         onDateSelected: controller.setDate,
@@ -201,7 +201,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
         hideDate: true,
       );
     }
-    return TransactionAdditionalDetailsSection(
+    return EntryAdditionalDetailsSection(
       isExpanded: alwaysExpanded || controller.showMoreDetails.value,
       onToggle: alwaysExpanded ? null : controller.toggleMoreDetails,
       selectedDate: controller.date.value,
@@ -215,10 +215,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
   Widget _buildSubmitButton(
     BuildContext context,
     ExpenseFormController controller,
-    GuidelineController guideline,
+    GuidelineProvider guideline,
     Color accentColor,
   ) {
-    return TransactionSubmitButton(
+    return EntrySubmitButton(
       text: controller.isEditing
           ? el.tr(CcLocaleKeys.common_save)
           : el.tr(CcLocaleKeys.transaction_record_expense),
@@ -242,10 +242,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
   Widget _buildFormFields(
     BuildContext context,
     ExpenseFormController controller,
-    GuidelineController guideline,
+    GuidelineProvider guideline,
     Color accentColor,
   ) {
-    return TransactionFormContainer(
+    return EntryFormContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -254,7 +254,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
             const CcSpaceSM(),
             _buildWalletSection(context, controller, accentColor),
             const CcSpaceSM(),
-            TransactionAdditionalDetailsSection(
+            EntryAdditionalDetailsSection(
               isExpanded: controller.showMoreDetails.value,
               onToggle: controller.toggleMoreDetails,
               selectedDate: controller.date.value,
@@ -266,7 +266,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
           ],
           if (controller.isEditing) ...[
             const CcSpaceSM(),
-            TransactionAdditionalDetailsSection(
+            EntryAdditionalDetailsSection(
               isExpanded: true,
               selectedDate: controller.date.value,
               onDateSelected: controller.setDate,
@@ -277,7 +277,7 @@ class _ExpenseFormState extends State<ExpenseForm> {
             ),
           ],
           const CcSpaceSM(),
-          TransactionSubmitButton(
+          EntrySubmitButton(
             text: controller.isEditing
                 ? el.tr(CcLocaleKeys.common_save)
                 : el.tr(CcLocaleKeys.transaction_record_expense),

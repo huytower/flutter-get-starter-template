@@ -18,7 +18,7 @@ class ReportInvestmentSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       final data = controller.investmentTrend.value;
-      if (!controller.userLevel.status.value.canUseInvestment ||
+      if (!controller.userLevel.status.canUseInvestment ||
           data == null ||
           (data.totalIncome == 0 && data.totalExpense == 0)) {
         return const SizedBox.shrink();

@@ -53,7 +53,10 @@ class FinancialDataSyncService {
     this._reconciliationSync,
     this._categorySync,
     this._liabilitySync,
+    this._refresh,
   );
+
+  final FinancialRefreshProvider _refresh;
 
   bool get _isAuthenticated => _session.currentUser != null;
 
@@ -191,7 +194,7 @@ class FinancialDataSyncService {
         // Signed out without a verified sync — forget the live user, keep the
         // records so they can still be pushed if the same user returns.
         _observedUserId = null;
-        await getIt<FinancialRefreshProvider>().releaseAllLoaded();
+        await _refresh.releaseAllLoaded();
         return;
       }
 
@@ -395,10 +398,10 @@ class FinancialDataSyncService {
   /// are re-read from the now-empty boxes so the UI the user is looking at
   /// settles on a consistent logged-out state instead of a full-screen loader.
   Future<void> _resetAfterLogout() async {
-    await getIt<FinancialRefreshProvider>().releaseAllLoaded();
+    await _refresh.releaseAllLoaded();
     await _clearFinancialCache();
     await getIt<GuestLoginPromptService>().resetPromptFlags();
-    await getIt<FinancialRefreshProvider>().refreshAllLoaded();
+    await _refresh.refreshAllLoaded();
   }
 
   /// Pushes every pending/failed record to the cloud.
@@ -529,7 +532,7 @@ class FinancialDataSyncService {
       // itself — otherwise correctness depended on which caller remembered to
       // do it, and the bridge's `syncAuthenticatedData()` path silently left
       // the wallet/budget screens showing pre-pull data.
-      await getIt<FinancialRefreshProvider>().refreshAllLoaded();
+      await _refresh.refreshAllLoaded();
     } catch (e) {
       'pullFromFirestore failed: $e'.Log('FinancialDataSyncService');
     }

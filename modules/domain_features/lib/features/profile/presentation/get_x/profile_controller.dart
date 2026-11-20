@@ -20,7 +20,6 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../category/export_category.dart';
 import '../../../firestore/financial_data_sync_service.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../notification/notification_service.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../domain/usecases/get_profile_settings_usecase.dart';
@@ -34,7 +33,7 @@ import '../widgets/display_name_sheet.dart';
 import '../widgets/language_selection_sheet.dart';
 import '../widgets/weekly_audit_day_sheet.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
-import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 @lazySingleton
 class ProfileController extends CcGetController {
@@ -48,7 +47,12 @@ class ProfileController extends CcGetController {
     this.userLevel,
     this._notificationService,
     this._deleteAccount,
+    this._refresh,
+    this._guidelineProvider,
   );
+
+  final FinancialRefreshProvider _refresh;
+  final GuidelineProvider _guidelineProvider;
 
   final GetProfileSettingsUseCase _getSettings;
   final UpdateProfileSettingsUseCase _updateSettings;
@@ -131,10 +135,8 @@ class ProfileController extends CcGetController {
 
     // Sync guideline progress into profile settings to avoid "Split Brain"
     // overwrites when updating other settings (theme, birth year, etc.)
-    if (Get.isRegistered<GuidelineController>()) {
-      ever(Get.find<GuidelineController>().completedTasks, (
-        List<String> tasks,
-      ) {
+    if (_guidelineProvider.isAvailable) {
+      _guidelineProvider.onCompletedTasksChanged((List<String> tasks) {
         if (settings.value.completedGuidelineTaskIds != tasks) {
           settings.value = settings.value.copyWith(
             completedGuidelineTaskIds: tasks,
@@ -298,7 +300,7 @@ class ProfileController extends CcGetController {
 
     // If CategorySettingsController is active, reload it to pick up the
     // newly-enabled categories and updated user level.
-    unawaited(getIt<FinancialRefreshProvider>().refreshCategorySettings());
+    unawaited(_refresh.refreshCategorySettings());
   }
 
   Future<void> setThemeMode(bool isDarkMode) async {
@@ -379,7 +381,7 @@ class ProfileController extends CcGetController {
         }
 
         // Guideline: birth_year completed
-        getIt<GuidelineProgressProvider>().completeTask('birth_year');
+        _guidelineProvider.completeTask('birth_year');
       }
     }
   }
@@ -481,7 +483,7 @@ class ProfileController extends CcGetController {
     }
     if (!context.mounted) return;
 
-    getIt<GuidelineProgressProvider>().completeTask('categories');
+    _guidelineProvider.completeTask('categories');
 
     Navigator.of(context).push(
       MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),

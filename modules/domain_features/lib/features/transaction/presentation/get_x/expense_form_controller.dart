@@ -23,7 +23,6 @@ import '../../../../core/helper/time_based_suggestion_helper.dart';
 import '../../../category/data/datasources/local/category_age_order.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
@@ -36,7 +35,8 @@ import 'quick_entry_mixin.dart';
 import 'smart_suggestion_source.dart';
 import 'suggestion_prefill_mixin.dart';
 import 'transaction_form_controller.dart';
-import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
 
 const String _debugTag = 'ExpenseFormCategoryScroll';
 
@@ -44,7 +44,13 @@ const String _debugTag = 'ExpenseFormCategoryScroll';
 class ExpenseFormController extends TransactionFormController
     with QuickEntryMixin, QuickEntryBatchMixin, SuggestionPrefillMixin
     implements SmartSuggestionSource {
-  ExpenseFormController(this._transactionRepository, this._getCategories);
+  ExpenseFormController(
+    this._transactionRepository,
+    this._getCategories,
+    this._guidelineProvider,
+  );
+
+  final GuidelineProvider _guidelineProvider;
 
   final TransactionRepository _transactionRepository;
   final GetCategoriesUseCase _getCategories;
@@ -631,7 +637,7 @@ class ExpenseFormController extends TransactionFormController
   }
 
   void _runMerchantMatch() {
-    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) {
+    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) {
       return;
     }
     merchantMatchSuggestion.value = _merchantMatcher.findBest(
@@ -686,7 +692,7 @@ class ExpenseFormController extends TransactionFormController
 
   Future<void> _refreshLocationSuggestionIfMoved() async {
     if (!_locationSuggestionLoaded) return;
-    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) return;
 
     final position = await CcLocationHelper.getCurrentPosition();
     if (position == null) return;
@@ -707,7 +713,7 @@ class ExpenseFormController extends TransactionFormController
   }
 
   Future<void> _loadLocationSuggestion() async {
-    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) {
+    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) {
       return;
     }
 
@@ -745,7 +751,7 @@ class ExpenseFormController extends TransactionFormController
   }
 
   Future<void> _loadMonthlyBillSuggestion() async {
-    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) {
+    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) {
       return;
     }
 
@@ -981,7 +987,7 @@ class ExpenseFormController extends TransactionFormController
         }
         await refreshParent();
         // Guideline: first_transaction completed
-        getIt<GuidelineProgressProvider>().completeTask('first_transaction');
+        _guidelineProvider.completeTask('first_transaction');
         if (!isEditing && context.mounted) {
           unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
         }

@@ -13,7 +13,6 @@ import '../../../../core/helper/budget_name_helper.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/repositories/category_repository.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../../../transaction/presentation/get_x/transaction_controller.dart';
@@ -24,7 +23,8 @@ import '../widgets/investment_delete_confirm_sheet.dart';
 import '../widgets/wallet_delete_confirm_sheet.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
-import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
 
 /// Outcome of a wallet deletion attempt (rule: only empty wallets deletable).
 enum WalletDeleteOutcome { success, notEmpty, protected, error }
@@ -36,7 +36,12 @@ class WalletController extends CcGetController {
     this._transactionRepository,
     this._getProfileSettings,
     this._conversionService,
+    this._refresh,
+    this._guidelineProvider,
   ) : _categoryRepository = getIt<CategoryRepository>();
+
+  final FinancialRefreshProvider _refresh;
+  final GuidelineProvider _guidelineProvider;
 
   final WalletRepository _repository;
   final TransactionRepository _transactionRepository;
@@ -134,7 +139,7 @@ class WalletController extends CcGetController {
 
     switch (outcome) {
       case WalletDeleteOutcome.success:
-        getIt<FinancialRefreshProvider>().refreshReconciliationBalances();
+        _refresh.refreshReconciliationBalances();
         CcSnackBarHelper.showSuccessSnackBar(
           context: activeContext,
           message: el.tr(CcLocaleKeys.common_done),
@@ -710,7 +715,7 @@ class WalletController extends CcGetController {
     String? categoryId,
   }) async {
     if (type == WalletType.emergencyFund) {
-      final status = getIt<UserLevelController>().status.value;
+      final status = getIt<UserLevelProvider>().status;
       final settings = await getIt<GetProfileSettingsUseCase>().call();
       final unlocked =
           settings.isVip ||
@@ -810,12 +815,12 @@ class WalletController extends CcGetController {
           }
 
           if (toSave.balance > 0) {
-            getIt<GuidelineProgressProvider>().completeTask('wallet_balance');
+            _guidelineProvider.completeTask('wallet_balance');
           }
 
           if (wallet.type == WalletType.cash &&
               toSave.balance != original.balance) {
-            getIt<GuidelineProgressProvider>().completeTask('wallet_balance');
+            _guidelineProvider.completeTask('wallet_balance');
           }
         }
       },

@@ -17,7 +17,7 @@ import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/parse_smart_entry_usecase.dart';
 import 'quick_entry_mixin.dart';
 import 'smart_entry_preview_state.dart';
-import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 mixin QuickEntryBatchMixin on QuickEntryMixin {
   static const int quickEntryBatchLimit = 5;
@@ -121,7 +121,7 @@ mixin QuickEntryBatchMixin on QuickEntryMixin {
     if (savedParams.isNotEmpty) {
       _checkBudgetThresholds(savedParams);
       await refreshParent();
-      unawaited(getIt<GuidelineProgressProvider>().completeTask('first_transaction'));
+      unawaited(getIt<GuidelineProvider>().completeTask('first_transaction'));
       if (context.mounted) {
         unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
       }

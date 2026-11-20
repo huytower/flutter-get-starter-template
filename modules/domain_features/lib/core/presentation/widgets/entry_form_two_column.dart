@@ -1,7 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:flutter/material.dart';
 
-import 'package:domain_features/core/presentation/widgets/transaction_form_container.dart';
+import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
 
 /// Two-column layout shared by the Transaction-page forms (expense, income,
 /// investment, liability, lend) on a tablet held sideways.
@@ -13,8 +13,8 @@ import 'package:domain_features/core/presentation/widgets/transaction_form_conta
 ///
 /// Use [shouldUse] to pick it; phones (portrait only) and portrait tablets
 /// keep each form's single column.
-class TransactionFormTwoColumn extends StatelessWidget {
-  const TransactionFormTwoColumn({
+class EntryFormTwoColumn extends StatelessWidget {
+  const EntryFormTwoColumn({
     super.key,
     required this.leading,
     required this.right,
@@ -54,7 +54,7 @@ class TransactionFormTwoColumn extends StatelessWidget {
                     const CcSpaceSM(),
                     Padding(
                       padding: EdgeInsets.only(left: gap),
-                      child: TransactionFormContainer(child: details),
+                      child: EntryFormContainer(child: details),
                     ),
                   ],
                   const CcSpaceMD(),
@@ -66,7 +66,7 @@ class TransactionFormTwoColumn extends StatelessWidget {
               flex: even ? 1 : 2,
               child: Padding(
                 padding: EdgeInsets.only(right: gap),
-                child: TransactionFormContainer(
+                child: EntryFormContainer(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: right,

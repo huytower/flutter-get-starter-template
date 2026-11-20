@@ -6,7 +6,7 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../firestore/financial_data_sync_service.dart';
-import '../../user_level/domain/entities/user_level_status_entity.dart';
+import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 
 class ProfileInfoCard extends StatelessWidget {
   final CcUserEntity? user;

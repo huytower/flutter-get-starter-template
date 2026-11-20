@@ -1,4 +1,4 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +9,8 @@ import '../../../liability/export_liability.dart';
 import '../get_x/budget_allocation_controller.dart';
 import 'borrow_wallets_card.dart';
 import 'lend_wallets_card.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 
 /// A section for liabilities and lending that follows the InvestmentWalletsSection
 /// design pattern but uses a Card-stack mechanism for its content.
@@ -35,7 +37,7 @@ class LiabilityWalletsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BudgetAllocationController>();
-    final guideline = Get.find<GuidelineController>();
+    final guideline = getIt<GuidelineProvider>();
 
     final isBothEmpty = borrowBalances.isEmpty && lendBalances.isEmpty;
 

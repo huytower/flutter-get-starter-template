@@ -17,7 +17,6 @@ import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/helper/quick_entry_parser_helper.dart';
 import '../../../liability/domain/entities/liability_entity.dart';
 import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
-import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/smart_entry_input.dart';
 import '../../domain/usecases/parse_quick_entry_usecase.dart';
 import '../../domain/usecases/parse_smart_entry_usecase.dart';
@@ -26,6 +25,7 @@ import 'quick_entry_auto_save_helper.dart';
 import 'smart_entry_preview_state.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
 
 typedef QuickEntryCloudResult = ({
   List<ParsedTransactionEntity> rows,
@@ -359,7 +359,7 @@ mixin QuickEntryMixin on TransactionFormController
   }
 
   Future<void> _runLocalQuickEntryParse() async {
-    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) return;
     final text = quickEntryController.text.trim();
     if (text.isEmpty) {
       quickEntrySuggestion.value = null;
@@ -513,7 +513,7 @@ mixin QuickEntryMixin on TransactionFormController
   /// path that calls Gemini, so a network call never fires while someone
   /// is still mid-typing.
   Future<void> submitQuickEntry(BuildContext context) async {
-    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) return;
     final languageCode = el.EasyLocalization.of(context)?.locale.languageCode;
     final prefs = getIt<AiFallbackPreferenceDataSource>();
     final geminiEnabled = await prefs.isGeminiEnabled();
@@ -682,7 +682,7 @@ mixin QuickEntryMixin on TransactionFormController
   /// trip, then follow with [submitQuickEntryFromImage] or
   /// [cancelQuickEntryImage].
   bool beginQuickEntryImage() {
-    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) {
+    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) {
       return false;
     }
     if (isParsingQuickEntry.value) return false;
@@ -793,7 +793,7 @@ mixin QuickEntryMixin on TransactionFormController
   }
 
   Future<void> toggleVoiceQuickEntry(BuildContext context) async {
-    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) return;
 
     '[VoiceWorkflow] 🟢 toggleVoiceQuickEntry triggered | isListening=${isListeningQuickEntry.value}'
         .Log('QuickEntryMixin');

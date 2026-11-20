@@ -9,7 +9,7 @@ import '../../../../core/di/di.dart';
 import '../../../transaction/domain/usecases/create_wallet_transfer_usecase.dart';
 import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
-import 'package:domain_features/core/presentation/widgets/transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import '../../domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import 'wallet_strip_card.dart';
@@ -224,7 +224,7 @@ class _TransferMoneySheetState extends State<TransferMoneySheet> {
                         },
                       ),
                       const CcSpaceMD(),
-                      TransactionSubmitButton(
+                      EntrySubmitButton(
                         text: el.tr('transaction.transfer_money'),
                         isSubmitting: _isSubmitting,
                         isEnabled: canSubmit,

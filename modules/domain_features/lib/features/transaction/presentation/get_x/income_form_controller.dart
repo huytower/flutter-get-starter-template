@@ -16,7 +16,6 @@ import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../category/data/datasources/local/category_age_order.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import '../../../profile/user_level/presentation/get_x/user_level_controller.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
@@ -29,6 +28,7 @@ import 'quick_entry_mixin.dart';
 import 'smart_suggestion_source.dart';
 import 'suggestion_prefill_mixin.dart';
 import 'transaction_form_controller.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
 
 const String _debugTag = 'IncomeCategoryScroll';
 
@@ -160,7 +160,7 @@ class IncomeFormController extends TransactionFormController
 
   Future<void> refreshMonthlySuggestion() async {
     if (_monthlySuggestionLoaded) return;
-    if (!getIt<UserLevelController>().status.value.canUseAiSmartEntry) return;
+    if (!getIt<UserLevelProvider>().status.canUseAiSmartEntry) return;
     _monthlySuggestionLoaded = true;
 
     final result = await getIt<GetMonthlyRecurringMatchUseCase>().call(

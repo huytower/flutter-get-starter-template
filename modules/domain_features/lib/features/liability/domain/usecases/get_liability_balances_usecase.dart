@@ -1,9 +1,8 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
-import 'package:get/get.dart';
+import 'package:collection/collection.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../../core/di/di.dart';
 import '../../../category/domain/entities/category_entity.dart';
 import '../../../category/domain/repositories/category_repository.dart';
 import '../../../transaction/domain/entities/transaction_entity.dart';
@@ -18,7 +17,8 @@ class GetLiabilityBalancesUseCase {
   GetLiabilityBalancesUseCase(
     this._LiabilityRepository,
     this._transactionRepository,
-  ) : _categoryRepository = getIt<CategoryRepository>();
+    this._categoryRepository,
+  );
 
   final LiabilityRepository _LiabilityRepository;
   final TransactionRepository _transactionRepository;

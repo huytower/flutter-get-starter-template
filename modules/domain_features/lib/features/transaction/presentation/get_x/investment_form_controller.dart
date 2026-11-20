@@ -17,7 +17,6 @@ import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/helper/quick_entry_intent_util.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/domain/entities/wallet_entity.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
@@ -25,7 +24,7 @@ import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.d
 import 'quick_entry_mixin.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
-import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 const String _debugTag = 'InvestmentAssetRow';
 
@@ -36,7 +35,10 @@ class InvestmentFormController extends TransactionFormController
     this._getCategories,
     this._getProfileSettings,
     this._createInvestmentTransaction,
+    this._guidelineProvider,
   );
+
+  final GuidelineProvider _guidelineProvider;
 
   final GetCategoriesUseCase _getCategories;
   final GetProfileSettingsUseCase _getProfileSettings;
@@ -540,8 +542,8 @@ class InvestmentFormController extends TransactionFormController
         await refreshParent();
 
         // Complete the investment guideline task
-        if (Get.isRegistered<GuidelineController>()) {
-          getIt<GuidelineProgressProvider>().completeTask('investment');
+        if (_guidelineProvider.isAvailable) {
+          _guidelineProvider.completeTask('investment');
         }
         if (context.mounted) {
           unawaited(getIt<GuestLoginPromptService>().maybeShow(context));

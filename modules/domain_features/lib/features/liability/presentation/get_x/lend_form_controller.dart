@@ -13,7 +13,6 @@ import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
-import '../../../guideline/guideline_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/entities/liability_entity.dart';
@@ -22,7 +21,7 @@ import '../../domain/usecases/record_liability_payment_usecase.dart';
 import '../get_x/liability_base_form_controller.dart';
 import '../get_x/liability_installment_draft.dart';
 import '../get_x/liability_list_controller.dart';
-import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 /// Consolidated Lend form: handles completing a new loan's details (Lend)
 /// or recording additional lending against existing loan records.
@@ -484,8 +483,8 @@ class LendFormController extends LiabilityBaseFormController {
         await resetForm();
         await refreshParent();
 
-        if (Get.isRegistered<GuidelineController>()) {
-          getIt<GuidelineProgressProvider>().completeTask('liability');
+        if (getIt<GuidelineProvider>().isAvailable) {
+          getIt<GuidelineProvider>().completeTask('liability');
         }
       },
       (error) => CcSnackBarHelper.showErrorSnackBar(

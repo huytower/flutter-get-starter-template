@@ -14,8 +14,7 @@ import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/wallet_entity.dart';
 import 'wallet_controller.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
-import 'package:domain_features/core/contracts/guideline_progress_provider.dart';
-import 'package:domain_features/core/di/di.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 /// Backs [AddInvestmentSheet] — specifically for creating/editing investment assets.
 @injectable
@@ -24,7 +23,12 @@ class AddInvestmentSheetController extends CcGetController {
     this._walletController,
     this._getCategories,
     this._getProfileSettings,
+    this._refresh,
+    this._guidelineProvider,
   );
+
+  final FinancialRefreshProvider _refresh;
+  final GuidelineProvider _guidelineProvider;
 
   final WalletController _walletController;
   final GetCategoriesUseCase _getCategories;
@@ -195,13 +199,13 @@ class AddInvestmentSheetController extends CcGetController {
       );
 
       // Guideline: update status so the badge moves to the Transaction tab
-      getIt<GuidelineProgressProvider>().setInvestmentCreated();
+      _guidelineProvider.setInvestmentCreated();
     }
 
     if (context.mounted) {
       // Refresh related controllers immediately to reflect memory changes
       _walletController.loadWallets();
-      getIt<FinancialRefreshProvider>().refreshBudgetAllocation();
+      _refresh.refreshBudgetAllocation();
 
       Navigator.pop(context);
       CcSnackBarHelper.showSuccessSnackBar(

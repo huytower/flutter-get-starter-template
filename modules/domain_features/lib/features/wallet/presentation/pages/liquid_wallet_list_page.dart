@@ -10,6 +10,8 @@ import '../../../guideline/export_guideline.dart';
 import '../get_x/wallet_controller.dart';
 import '../widgets/liquid_wallet_list_item.dart';
 import '../widgets/transfer_money_sheet.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 
 @RoutePage()
 class LiquidWalletListPage extends StatefulWidget {
@@ -101,9 +103,9 @@ class _LiquidWalletListView extends CcGetView<WalletController> {
                   ),
                 ),
               ),
-              if (Get.isRegistered<GuidelineController>())
+              if (getIt<GuidelineProvider>().isAvailable)
                 Obx(() {
-                  final guideline = Get.find<GuidelineController>();
+                  final guideline = getIt<GuidelineProvider>();
                   final showing =
                       guideline.isTaskActive('wallet_balance') &&
                       !controller.isEditMode.value;

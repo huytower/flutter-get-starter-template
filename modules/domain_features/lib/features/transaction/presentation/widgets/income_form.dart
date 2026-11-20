@@ -13,10 +13,11 @@ import '../get_x/transaction_controller.dart';
 import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'income_category_selection_section.dart';
 import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
-import 'package:domain_features/core/presentation/widgets/transaction_additional_details_section.dart';
-import 'package:domain_features/core/presentation/widgets/transaction_form_container.dart';
-import 'package:domain_features/core/presentation/widgets/transaction_form_two_column.dart';
-import 'package:domain_features/core/presentation/widgets/transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
+import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
+import 'package:domain_features/core/presentation/widgets/entry_form_two_column.dart';
+import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 class IncomeForm extends StatefulWidget {
   const IncomeForm({super.key, this.tag});
@@ -81,7 +82,7 @@ class _IncomeFormState extends State<IncomeForm> {
     // See ExpenseForm.build() for why untagged vs. tagged resolve
     // differently: the untagged instance is pre-registered by
     // TransactionController.onInit(), the tagged edit-mode instance isn't.
-    final guideline = Get.find<GuidelineController>();
+    final guideline = getIt<GuidelineProvider>();
 
     final accentColor = context.incomeAccent;
 
@@ -106,7 +107,7 @@ class _IncomeFormState extends State<IncomeForm> {
   Widget _buildScrollableContent(
     BuildContext context,
     IncomeFormController controller,
-    GuidelineController guideline,
+    GuidelineProvider guideline,
     Color accentColor,
   ) {
     return GestureDetector(
@@ -120,7 +121,7 @@ class _IncomeFormState extends State<IncomeForm> {
         physics: const BouncingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
-        child: TransactionFormTwoColumn.shouldUse(context)
+        child: EntryFormTwoColumn.shouldUse(context)
             ? _buildTwoColumnContent(
                 context,
                 controller,
@@ -148,10 +149,10 @@ class _IncomeFormState extends State<IncomeForm> {
   Widget _buildTwoColumnContent(
     BuildContext context,
     IncomeFormController controller,
-    GuidelineController guideline,
+    GuidelineProvider guideline,
     Color accentColor,
   ) {
-    return TransactionFormTwoColumn(
+    return EntryFormTwoColumn(
       leading: [
         IncomeCategorySelectionSection(
           controller: controller,
@@ -159,7 +160,7 @@ class _IncomeFormState extends State<IncomeForm> {
         ),
       ],
       details: controller.isEditing
-          ? TransactionAdditionalDetailsSection(
+          ? EntryAdditionalDetailsSection(
               isExpanded: true,
               selectedDate: controller.date.value,
               onDateSelected: controller.setDate,
@@ -168,7 +169,7 @@ class _IncomeFormState extends State<IncomeForm> {
               activeColor: accentColor,
               hideDate: true,
             )
-          : TransactionAdditionalDetailsSection(
+          : EntryAdditionalDetailsSection(
               isExpanded: true,
               selectedDate: controller.date.value,
               onDateSelected: controller.setDate,
@@ -192,10 +193,10 @@ class _IncomeFormState extends State<IncomeForm> {
   Widget _buildSubmitButton(
     BuildContext context,
     IncomeFormController controller,
-    GuidelineController guideline,
+    GuidelineProvider guideline,
     Color accentColor,
   ) {
-    return TransactionSubmitButton(
+    return EntrySubmitButton(
       text: controller.isEditing
           ? el.tr(CcLocaleKeys.common_save)
           : el.tr(CcLocaleKeys.transaction_record_income),
@@ -218,10 +219,10 @@ class _IncomeFormState extends State<IncomeForm> {
   Widget _buildFormFields(
     BuildContext context,
     IncomeFormController controller,
-    GuidelineController guideline,
+    GuidelineProvider guideline,
     Color accentColor,
   ) {
-    return TransactionFormContainer(
+    return EntryFormContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -230,7 +231,7 @@ class _IncomeFormState extends State<IncomeForm> {
             const CcSpaceSM(),
             _buildWalletSection(context, controller, accentColor),
             const CcSpaceSM(),
-            TransactionAdditionalDetailsSection(
+            EntryAdditionalDetailsSection(
               isExpanded: controller.showMoreDetails.value,
               onToggle: controller.toggleMoreDetails,
               selectedDate: controller.date.value,
@@ -242,7 +243,7 @@ class _IncomeFormState extends State<IncomeForm> {
           ],
           if (controller.isEditing) ...[
             const CcSpaceSM(),
-            TransactionAdditionalDetailsSection(
+            EntryAdditionalDetailsSection(
               isExpanded: true,
               selectedDate: controller.date.value,
               onDateSelected: controller.setDate,
@@ -253,7 +254,7 @@ class _IncomeFormState extends State<IncomeForm> {
             ),
           ],
           const CcSpaceSM(),
-          TransactionSubmitButton(
+          EntrySubmitButton(
             text: controller.isEditing
                 ? el.tr(CcLocaleKeys.common_save)
                 : el.tr(CcLocaleKeys.transaction_record_income),

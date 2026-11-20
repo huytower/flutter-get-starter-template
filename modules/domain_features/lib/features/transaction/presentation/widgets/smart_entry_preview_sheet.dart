@@ -7,7 +7,7 @@ import 'package:message/export_message.dart';
 import '../get_x/smart_entry_preview_state.dart';
 import 'smart_entry_preview_row_card.dart';
 import 'smart_entry_sheet_header.dart';
-import 'package:domain_features/core/presentation/widgets/transaction_submit_button.dart';
+import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class SmartEntryPreviewSheet extends StatelessWidget {
@@ -164,7 +164,7 @@ class SmartEntryPreviewSheet extends StatelessWidget {
   }
 
   Widget _buildConfirmButton(BuildContext context) {
-    return TransactionSubmitButton(
+    return EntrySubmitButton(
       text: _confirmLabel(),
       isSubmitting: state.isCommitting.value,
       isEnabled: state.canConfirm,
