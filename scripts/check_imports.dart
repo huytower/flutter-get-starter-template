@@ -77,6 +77,34 @@ final RegExp _directive = RegExp(
 );
 final RegExp _literal = RegExp(r'''['"]([^'"\n]*)['"]''');
 
+/// Known package cycles (AGENTS.md rule 2, tech debt): the back-edge of each
+/// cycle, with the only URIs it may import. Every other edge between our
+/// packages must form a DAG, and these back-edges must not grow — import a
+/// new file across one and `package-cycle` fails. Shrink this list as the
+/// cycles are broken; never add to it.
+const Map<(String, String), Set<String>> _knownBackEdges = {
+  ('data_config', 'domain_features'): {
+    'package:domain_features/core/constant/currency_catalog.dart',
+    'package:domain_features/core/exchange_rates/exchange_rate_types.dart',
+  },
+  ('app_config', 'data_config'): {
+    'package:data_config/data/adapters/domain_user_entity_adapter.dart',
+    'package:data_config/data/converters/domain_user_entity_converter.dart',
+    'package:data_config/domain/entities/auth/domain_user_entity.dart',
+  },
+};
+
+/// One `lib/` import from one of our packages into another.
+class _Edge {
+  _Edge(this.path, this.line, this.uri);
+  final String path;
+  final int line;
+  final String uri;
+}
+
+/// (from, to) -> every lib/ import that creates that package edge.
+final Map<(String, String), List<_Edge>> _edges = {};
+
 final RegExp _generated = RegExp(
   r'\.(g|module|config|gr|freezed|mocks)\.dart$',
 );
@@ -119,6 +147,8 @@ void main() {
       }
     }
   }
+
+  violations.addAll(_checkCycles());
 
   if (violations.isEmpty) {
     stdout.writeln('check:imports: $files files, no violations.');
@@ -175,6 +205,10 @@ Iterable<_Violation> _checkUri(
       ? uri.substring(8, uri.contains('/') ? uri.indexOf('/') : uri.length)
       : null;
   final rest = pkg == null ? '' : uri.substring(8 + pkg.length + 1);
+
+  if (pkg != null && pkg != owner && _packages.containsKey(pkg) && !isTest) {
+    _edges.putIfAbsent((owner, pkg), () => []).add(_Edge(path, line, uri));
+  }
 
   if (pkg == 'flutter_dotenv') {
     yield _Violation(
@@ -271,4 +305,64 @@ Iterable<_Violation> _checkUri(
       '${layer.group(1)}/ must not import a presentation layer ($uri)',
     );
   }
+}
+
+/// Package cycles: with the known back-edges taken out, the graph of lib/
+/// imports between our packages must be acyclic, and each known back-edge may
+/// only import its listed URIs.
+Iterable<_Violation> _checkCycles() sync* {
+  for (final MapEntry(key: edge, value: imports) in _edges.entries) {
+    final (from, to) = edge;
+    final allowed = _knownBackEdges[edge];
+    if (allowed != null) {
+      for (final i in imports.where((i) => !allowed.contains(i.uri))) {
+        yield _Violation(
+          i.path,
+          i.line,
+          'package-cycle',
+          '${i.uri} deepens the known $from <-> $to cycle; move the type '
+              'into $from (or a lower package) instead',
+        );
+      }
+      continue;
+    }
+    final back = _path(to, from);
+    if (back == null) continue;
+    final cycle = [from, ...back].join(' -> ');
+    for (final i in imports) {
+      yield _Violation(
+        i.path,
+        i.line,
+        'package-cycle',
+        '${i.uri} closes a package cycle ($cycle)',
+      );
+    }
+  }
+}
+
+/// Shortest package path start -> ... -> goal over the edges that are not
+/// known back-edges, or null if goal is unreachable.
+List<String>? _path(String start, String goal) {
+  final parent = <String, String>{start: start};
+  final queue = [start];
+  while (queue.isNotEmpty) {
+    final node = queue.removeAt(0);
+    if (node == goal) {
+      final path = [node];
+      for (var n = node; n != start; n = parent[n]!) {
+        path.insert(0, parent[n]!);
+      }
+      return path;
+    }
+    for (final (from, to) in _edges.keys) {
+      if (from != node ||
+          parent.containsKey(to) ||
+          _knownBackEdges.containsKey((from, to))) {
+        continue;
+      }
+      parent[to] = node;
+      queue.add(to);
+    }
+  }
+  return null;
 }

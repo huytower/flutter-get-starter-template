@@ -115,7 +115,8 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
       `exchange_rate_types` / `currency_catalog` from `domain_features`) and `app_config ↔ data_config`
       (`app_config` registers the `DomainUserEntity` Hive adapter). Pub workspaces tolerate these, but any new
       import that adds a back-edge between these packages is a bug; when touching them, prefer moving the shared
-      type down into `data_config` (or a lower package) to deepening the cycle.
+      type down into `data_config` (or a lower package) to deepening the cycle. Enforced by `check:imports`
+      (`package-cycle`); the frozen back-edges are `_knownBackEdges` in `scripts/check_imports.dart`.
 3. **State-Management Agnostic Core (STRICT)**:
     - `cc_core_sdk` (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`) and `cc_bridge` must stay state-management agnostic — no
       Bloc/GetX reactive state.
@@ -263,6 +264,8 @@ on any doc having been read:
       `cc_micro_features`.
     - `layer-purity`: `features/*/domain/` and `data/` import no `presentation/` layer.
     - `no-dotenv`: no `flutter_dotenv` anywhere.
+    - `package-cycle`: `lib/` imports between workspace packages form no new cycle; the two known cycles (rule #2)
+      are frozen to the files they import today (`_knownBackEdges`), which may shrink but never grow.
     A new rule goes into the script, not only into this file.
 23. **Import order** (rule #13): rely on `dart analyze` with `directives_ordering` enabled, `dart fix --apply` to
     auto-sort.

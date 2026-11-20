@@ -183,7 +183,8 @@ melos:
       description: >-
         Enforce import boundaries (AGENTS.md "VI. Enforcement"): SDK barrels
         only, no private src/ imports, state-agnostic and vendor-free SDK
-        core, project-blind shared code, layer purity, no flutter_dotenv.
+        core, project-blind shared code, layer purity, no flutter_dotenv,
+        no new package cycles.
 
     setup:firebase:
       run: bash scripts/setup_firebase_configs.sh
