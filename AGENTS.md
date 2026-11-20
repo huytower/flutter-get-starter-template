@@ -67,8 +67,9 @@ lib/                              # App Shell — pure orchestrator only (DI wir
 modules/
   domain_features/lib/features/   # App-specific business verticals (wallet, transaction, budget, loan,
                                    # reconciliation, report, user_level, category, comment, profile, ...)
-  data_config/                    # App-specific data implementations; implements Repository interfaces
-                                   # that domain_features/cc_micro_features define
+  data_config/                    # App-specific data infrastructure: Dio/Retrofit setup, CcBaseRepository,
+                                   # Firestore sync utilities, DomainUserEntity (+ Hive adapter), exchange rates.
+                                   # domain_features builds its repository impls on top of it.
   app_config/                     # Env management, storage, DI discovery
   bridge/                         # NavigationBridgeService — app-level post-boot orchestration (user level,
                                    # data services, authenticated sync, reminders). NOT a duplicate of cc_bridge.
@@ -100,11 +101,21 @@ be committed and pushed inside the submodule itself, then the parent repo's subm
    verticals), Micro-Features (`shared/cc_micro_features/`, project-blind reusable verticals), Shared Core
    (`shared/cc_core_sdk/`, universal engine), Bridge Layer (`cc_bridge/`, cross-module contracts).
 2. **Project-Blind Dependency Rules (STRICT)**:
-    - `cc_micro_features` and `domain_features` **must not** import from `lib/` (App Shell) or `modules/data_config`.
-    - `cc_micro_features` must not import from `domain_features`.
-    - Every feature defines its own `Repository` interface in its own `domain/` layer; `lib/` or
-      `modules/data_config` implements it and injects the impl via DI. Never import a concrete repository impl
-      across a module boundary.
+    - `cc_micro_features` and `domain_features` **must not** import from `lib/` (App Shell).
+    - `cc_micro_features` must not import from `domain_features` or any app module (`modules/*`).
+    - `domain_features` **may** import `modules/data_config`, but only its shared infrastructure
+      (`CcBaseRepository`, `FirestoreSyncService`, `GenericSyncDatasource`, `DomainUserEntity`, network config) —
+      never another feature's concrete repository impl.
+    - Every feature defines its own `Repository` interface in its own `domain/` layer. The impl lives in that
+      feature's own `data/` layer (the usual case for `domain_features`, e.g. `wallet`, `category`, `comment`), or in
+      `modules/data_config` / `lib/` when it is shared infrastructure (e.g. `ExchangeRateRepositoryImpl`), and is
+      injected via DI (`@LazySingleton(as: XRepository)`). Other features depend on the interface only; never import
+      a concrete repository impl across a module or feature boundary.
+    - **Known package cycles (tech debt — do not add more):** `domain_features ↔ data_config` (`data_config` reads
+      `exchange_rate_types` / `currency_catalog` from `domain_features`) and `app_config ↔ data_config`
+      (`app_config` registers the `DomainUserEntity` Hive adapter). Pub workspaces tolerate these, but any new
+      import that adds a back-edge between these packages is a bug; when touching them, prefer moving the shared
+      type down into `data_config` (or a lower package) to deepening the cycle.
 3. **State-Management Agnostic Core (STRICT)**:
     - `cc_core_sdk` (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`) and `cc_bridge` must stay state-management agnostic — no
       Bloc/GetX reactive state.
