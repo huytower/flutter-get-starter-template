@@ -154,7 +154,10 @@ Before writing any widget, helper, extension, or mixin:
 `shared/cc_core_sdk` is a **git submodule** (`huytower/cc_core_sdk`). Editing files here does not commit them to
 the parent repo.
 
-1. Commit and push **inside** `shared/cc_core_sdk` (on its own branch/remote).
+1. Work only on `main`, or on a short-lived branch that is merged into `main` by a PR on
+   `huytower/cc_core_sdk`. Never detach the submodule or check out another commit/branch unless the user asks
+   (root `AGENTS.md`, "Submodule branch rule"); report a pointer mismatch instead of fixing it.
+   Commit and push **inside** `shared/cc_core_sdk`.
 2. Then, in the parent repo, commit the updated submodule pointer as a separate change.
 3. Never push without the user's explicit go-ahead.
 4. Stray local noise (e.g. `.dart_tool/` files showing as modified) is not part of an SDK change; do not commit it.

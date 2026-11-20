@@ -92,6 +92,13 @@ cc_bridge/                        # Root-level cross-module contracts (*Coordina
 `shared/cc_core_sdk` is a **git submodule**; commits there don't land by editing files in this repo — they must
 be committed and pushed inside the submodule itself, then the parent repo's submodule pointer updated separately.
 
+**Submodule branch rule (STRICT):** inside `shared/cc_core_sdk`, work only on `main`, or on a short-lived branch
+that goes into `main` through a PR on `huytower/cc_core_sdk`. Never move the submodule off `main` on your own:
+no `git submodule update`, no `git checkout <commit>` / `--detach`, no switching its branch, unless the user asks.
+If the parent branch records a different SDK commit than the one checked out, **report the mismatch** instead of
+fixing it. To take a newer SDK: `git -C shared/cc_core_sdk pull` on `main`, then commit the new pointer in the
+parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, so `git submodule update` skips it.)
+
 ## I. Architectural integrity (the laws)
 
 1. **Hybrid-Modular Super App Design (CRITICAL)** — three layers, strictly separated: App Shell (`lib/`, pure
