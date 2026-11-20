@@ -5,7 +5,9 @@ import 'review_feedback_section.dart';
 import 'reviews_summary_card.dart';
 
 class AppRatingSheetContent extends StatefulWidget {
-  const AppRatingSheetContent({super.key});
+  const AppRatingSheetContent({super.key, required this.feedbackReporter});
+
+  final CcFeedbackReporter feedbackReporter;
 
   @override
   State<AppRatingSheetContent> createState() => _AppRatingSheetContentState();
@@ -60,6 +62,7 @@ class _AppRatingSheetContentState extends State<AppRatingSheetContent> {
                     },
                   ),
                   ReviewFeedbackSection(
+                    feedbackReporter: widget.feedbackReporter,
                     averageRating: _selectedRating.toDouble(),
                   ),
                 ],

@@ -4,6 +4,7 @@ import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:flutter/material.dart';
 
 import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
+import '../../../firestore/financial_data_sync_service.dart';
 import 'profile_experience_card.dart';
 import 'profile_info_card.dart';
 
@@ -13,6 +14,7 @@ class ProfilePageHeader extends StatefulWidget {
   final int level;
   final int daysToNextAudit;
   final UserLevelStatusEntity levelStatus;
+  final FinancialDataSyncService syncService;
   final bool initialFlipped;
   final Function(bool isFlipped)? onFlip;
   final VoidCallback? onEditName;
@@ -27,6 +29,7 @@ class ProfilePageHeader extends StatefulWidget {
     required this.level,
     required this.daysToNextAudit,
     required this.levelStatus,
+    required this.syncService,
     this.initialFlipped = false,
     this.onFlip,
     this.onEditName,
@@ -118,6 +121,7 @@ class _ProfilePageHeaderState extends State<ProfilePageHeader>
                       level: widget.level,
                       daysToNextAudit: widget.daysToNextAudit,
                       levelStatus: widget.levelStatus,
+                      syncService: widget.syncService,
                       onTap: () {
                         _toggleCard();
                       },

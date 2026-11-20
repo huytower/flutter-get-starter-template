@@ -6,7 +6,13 @@ import 'package:message/export_message.dart';
 import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
 
 class ReviewFeedbackSection extends StatefulWidget {
-  const ReviewFeedbackSection({super.key, this.averageRating});
+  const ReviewFeedbackSection({
+    super.key,
+    this.averageRating,
+    required this.feedbackReporter,
+  });
+
+  final CcFeedbackReporter feedbackReporter;
 
   final double? averageRating;
 
@@ -84,7 +90,7 @@ class _ReviewFeedbackSectionState extends State<ReviewFeedbackSection> {
         .Log('ReviewFeedbackSection');
 
     try {
-      await getIt<CcFeedbackReporter>().send(
+      await widget.feedbackReporter.send(
         CcFeedback(
           text: _feedbackController.text.trim(),
           praise: praiseLabels,

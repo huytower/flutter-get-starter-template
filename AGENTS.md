@@ -275,15 +275,16 @@ dependencies:
 
 ```dart
 @injectable
-class AiConsentHandler {                       // one concern, 1 dependency
-  AiConsentHandler(this._aiPreferences);
+class ProfileAppActions {                      // one concern (AI consent + feedback), 2 dependencies
+  ProfileAppActions(this._aiPreferences, this.feedbackReporter);
   final AiFallbackPreferenceDataSource _aiPreferences;
+  final CcFeedbackReporter feedbackReporter;
 }
 
 @lazySingleton
 class ProfileController extends CcGetController {
-  ProfileController(this._aiConsent, this._account, ...); // few, named collaborators
-  final AiConsentHandler _aiConsent;
+  ProfileController(this._settingsActions, this._account, this._onboarding, this._app, this.userLevel); // 5
+  final ProfileAppActions _app;
   final ProfileAccountActions _account;
 }
 ```

@@ -15,13 +15,14 @@ import '../../../category/export_category.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../user_level/presentation/get_x/user_level_controller.dart';
-import '../actions/ai_consent_handler.dart';
+import '../actions/profile_app_actions.dart';
 import '../actions/profile_account_actions.dart';
 import '../actions/profile_onboarding_actions.dart';
 import '../actions/profile_settings_actions.dart';
 import '../helper/profile_display_text.dart';
 import '../helper/profile_routes.dart';
 import '../helper/profile_sheets.dart';
+import '../../../../core/contracts/guideline_provider.dart';
 
 @lazySingleton
 class ProfileController extends CcGetController {
@@ -29,15 +30,24 @@ class ProfileController extends CcGetController {
     this._settingsActions,
     this._account,
     this._onboarding,
-    this._aiConsent,
+    this._app,
     this.userLevel,
   );
 
   final ProfileSettingsActions _settingsActions;
   final ProfileAccountActions _account;
   final ProfileOnboardingActions _onboarding;
-  final AiConsentHandler _aiConsent;
+  final ProfileAppActions _app;
   final UserLevelController userLevel;
+
+  /// For the guideline badges on the settings tiles.
+  GuidelineProvider get guideline => _onboarding.guideline;
+
+  /// For the sync indicator on the profile card.
+  FinancialDataSyncService get syncService => _account.syncService;
+
+  /// For the rating sheet's feedback section.
+  CcFeedbackReporter get feedbackReporter => _app.feedbackReporter;
 
   final Rxn<CcUserEntity> user = Rxn<CcUserEntity>();
   final Rx<ProfileSettingsEntity> settings = const ProfileSettingsEntity().obs;
@@ -49,17 +59,17 @@ class ProfileController extends CcGetController {
   final RxBool aiSharingEnabled = false.obs;
 
   Future<void> _loadAiSharing() async {
-    aiSharingEnabled.value = await _aiConsent.isEnabled();
+    aiSharingEnabled.value = await _app.isAiSharingEnabled();
   }
 
   /// Turning it on shows the consent sheet; turning it off withdraws consent.
   Future<void> toggleAiSharing(BuildContext context, bool value) async {
     if (!value) {
-      await _aiConsent.withdraw();
+      await _app.withdrawAiConsent();
       aiSharingEnabled.value = false;
       return;
     }
-    aiSharingEnabled.value = await _aiConsent.request(context);
+    aiSharingEnabled.value = await _app.requestAiConsent(context);
   }
 
   /// "Unlock all features" also unlocks the AI features, so enabling it asks
@@ -67,7 +77,7 @@ class ProfileController extends CcGetController {
   /// features; only "Allow" turns on sharing.
   Future<void> toggleFullAccess(BuildContext context, bool value) async {
     if (value) {
-      aiSharingEnabled.value = await _aiConsent.request(context);
+      aiSharingEnabled.value = await _app.requestAiConsent(context);
     }
     await setVip(value);
   }

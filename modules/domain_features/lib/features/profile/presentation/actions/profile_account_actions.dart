@@ -25,6 +25,8 @@ class ProfileAccountActions {
   final FinancialDataSyncService _syncService;
   final AuthCoordinator _authCoordinator;
 
+  FinancialDataSyncService get syncService => _syncService;
+
   Stream<CcUserEntity?> get userStream => _session.userStream;
 
   Future<Result<CcUserEntity, CcFailure>> updateDisplayName(String name) =>

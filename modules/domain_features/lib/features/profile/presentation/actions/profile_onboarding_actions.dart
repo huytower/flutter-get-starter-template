@@ -20,6 +20,8 @@ class ProfileOnboardingActions {
   final FinancialRefreshProvider _refresh;
   final GuidelineProvider _guideline;
 
+  GuidelineProvider get guideline => _guideline;
+
   /// Enables the given category `nameKey`s (mapped to their seed ids) so they
   /// appear checked in the category settings.
   Future<void> enableCategories(List<String> keys) async {
