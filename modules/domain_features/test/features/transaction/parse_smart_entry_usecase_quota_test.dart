@@ -52,6 +52,7 @@ ParseSmartEntryUseCase _useCase(List<CategoryEntity> categories) =>
     ParseSmartEntryUseCase(
       _StubGetCategories(categories),
       CurrencyConversionService(_UnusedRateRepository()),
+      _StubWalletRepository(),
     );
 
 void main() {
@@ -66,7 +67,6 @@ void main() {
     prefs = AiFallbackPreferenceDataSource()..enforceDailyLimit = true;
     await getIt.reset();
     getIt.registerSingleton<AiFallbackPreferenceDataSource>(prefs);
-    getIt.registerSingleton<WalletRepository>(_StubWalletRepository());
   });
 
   tearDown(() => getIt.reset());

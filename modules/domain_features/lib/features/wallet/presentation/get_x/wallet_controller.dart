@@ -38,7 +38,8 @@ class WalletController extends CcGetController {
     this._conversionService,
     this._refresh,
     this._guidelineProvider,
-  ) : _categoryRepository = getIt<CategoryRepository>();
+    this._categoryRepository,
+  );
 
   final FinancialRefreshProvider _refresh;
   final GuidelineProvider _guidelineProvider;

@@ -1,4 +1,3 @@
-import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:injectable/injectable.dart';
 
@@ -9,11 +8,11 @@ import '../../../wallet/domain/repositories/wallet_repository.dart';
 
 @lazySingleton
 class ParseQuickEntryUseCase {
-  ParseQuickEntryUseCase(this._getCategories);
+  ParseQuickEntryUseCase(this._getCategories, this._walletRepository);
 
   final GetCategoriesUseCase _getCategories;
 
-  WalletRepository get _walletRepository => getIt<WalletRepository>();
+  final WalletRepository _walletRepository;
 
   Future<List<CategoryEntity>> _loadCategories(
     String categoryType,

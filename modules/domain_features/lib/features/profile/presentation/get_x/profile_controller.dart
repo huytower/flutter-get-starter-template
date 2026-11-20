@@ -49,7 +49,10 @@ class ProfileController extends CcGetController {
     this._deleteAccount,
     this._refresh,
     this._guidelineProvider,
+    this._authRepository,
   );
+
+  final FirebaseAuthRepository _authRepository;
 
   final FinancialRefreshProvider _refresh;
   final GuidelineProvider _guidelineProvider;
@@ -408,9 +411,7 @@ class ProfileController extends CcGetController {
     final name = await DisplayNameSheet.show(context, currentName: fullName);
     if (name == null || name.trim().isEmpty) return;
 
-    final result = await getIt<FirebaseAuthRepository>().updateDisplayName(
-      name.trim(),
-    );
+    final result = await _authRepository.updateDisplayName(name.trim());
     result.when(
       // authStateChanges() won't re-emit for a profile-only update, so apply
       // the refreshed entity directly rather than waiting on the stream.

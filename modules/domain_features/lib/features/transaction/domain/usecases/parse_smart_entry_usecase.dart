@@ -25,7 +25,11 @@ import '../entities/smart_entry_input.dart';
 
 @lazySingleton
 class ParseSmartEntryUseCase {
-  ParseSmartEntryUseCase(this._getCategories, this._conversionService);
+  ParseSmartEntryUseCase(
+    this._getCategories,
+    this._conversionService,
+    this._walletRepository,
+  );
 
   static const int defaultMaxTransactions = 20;
 
@@ -36,7 +40,7 @@ class ParseSmartEntryUseCase {
   final GetCategoriesUseCase _getCategories;
   final CurrencyConversionService _conversionService;
 
-  WalletRepository get _walletRepository => getIt<WalletRepository>();
+  final WalletRepository _walletRepository;
 
   Future<Result<List<ParsedTransactionEntity>, CcFailure>> call({
     required SmartEntryInput input,

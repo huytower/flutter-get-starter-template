@@ -1,4 +1,5 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:cc_micro_features/features/auth/domain/repositories/firebase_auth_repository.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/contracts/user_level_provider.dart';
@@ -15,6 +16,7 @@ final GetIt getIt = GetIt.instance;
     GuidelineProvider,
     UserLevelProvider,
     SessionContract,
+    FirebaseAuthRepository,
     AuthCoordinator,
     CcDeviceInfoHelper,
     InternetConnection,

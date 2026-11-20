@@ -9,6 +9,7 @@ import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/features/category/domain/usecases/get_categories_usecase.dart';
 import 'package:domain_features/features/transaction/domain/entities/parsed_transaction_entity.dart';
 import 'package:domain_features/features/transaction/domain/usecases/parse_smart_entry_usecase.dart';
+import 'package:domain_features/features/wallet/domain/repositories/wallet_repository.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -93,7 +94,13 @@ ParseSmartEntryUseCase _useCaseWith(_FakeRateRepository repository) =>
     ParseSmartEntryUseCase(
       _FakeGetCategories(),
       CurrencyConversionService(repository),
+      _UnusedWalletRepository(),
     );
+
+class _UnusedWalletRepository implements WalletRepository {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 void main() {
   final useCase = _useCaseWith(_FakeRateRepository());
