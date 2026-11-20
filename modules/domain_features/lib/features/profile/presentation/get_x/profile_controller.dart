@@ -2,14 +2,12 @@ import 'dart:async';
 
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
-import 'package:cc_micro_features/features/crash_log/export_crash_log.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/getx/cc_get_controller.dart';
@@ -17,16 +15,13 @@ import '../../../category/export_category.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../user_level/presentation/get_x/user_level_controller.dart';
-import '../pages/terms_of_service_page.dart';
-import '../widgets/birth_year_sheet.dart';
-import '../widgets/currency_selection_sheet.dart';
-import '../widgets/display_name_sheet.dart';
-import '../widgets/language_selection_sheet.dart';
-import '../widgets/weekly_audit_day_sheet.dart';
 import '../actions/ai_consent_handler.dart';
 import '../actions/profile_account_actions.dart';
 import '../actions/profile_onboarding_actions.dart';
 import '../actions/profile_settings_actions.dart';
+import '../helper/profile_display_text.dart';
+import '../helper/profile_routes.dart';
+import '../helper/profile_sheets.dart';
 
 @lazySingleton
 class ProfileController extends CcGetController {
@@ -78,8 +73,6 @@ class ProfileController extends CcGetController {
   }
 
   // --- Sign-in reminder (shown to users with no linked email/phone) ---
-  static const String _signInReminderDismissedKey =
-      'profile_sign_in_reminder_dismissed';
 
   /// Once dismissed the reminder never comes back (across app launches and page
   /// resumes). Starts hidden so it never flashes before the stored choice loads.
@@ -94,15 +87,13 @@ class ProfileController extends CcGetController {
   bool get showSignInReminder => needsSignIn && !signInReminderDismissed.value;
 
   Future<void> _loadSignInReminder() async {
-    final prefs = await SharedPreferences.getInstance();
-    signInReminderDismissed.value =
-        prefs.getBool(_signInReminderDismissedKey) ?? false;
+    signInReminderDismissed.value = await _settingsActions
+        .isSignInReminderDismissed();
   }
 
   Future<void> dismissSignInReminder() async {
     signInReminderDismissed.value = true;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_signInReminderDismissedKey, true);
+    await _settingsActions.dismissSignInReminder();
   }
 
   @override
@@ -121,10 +112,6 @@ class ProfileController extends CcGetController {
       }
     });
 
-    ever(user, (u) {
-      if (u != null) {
-      } else {}
-    });
     ever(CurrencyConstants.onCurrencyChanged, (_) => _syncStoredCurrency());
     _load();
     unawaited(_loadSignInReminder());
@@ -138,6 +125,12 @@ class ProfileController extends CcGetController {
       currencySelectionSource: stored.currencySelectionSource,
       currencyDetectionCountryCode: stored.currencyDetectionCountryCode,
     );
+  }
+
+  /// Shows [updated] immediately, then persists it.
+  Future<void> _save(ProfileSettingsEntity updated) async {
+    settings.value = updated;
+    await _settingsActions.save(updated);
   }
 
   Future<void> _load() async {
@@ -159,53 +152,19 @@ class ProfileController extends CcGetController {
 
   bool get isLoggedIn => user.value != null;
 
-  String get displayName {
-    final u = user.value;
-    if (u == null) return el.tr(CcLocaleKeys.profile_guest);
-    final parts = [
-      u.firstName,
-      u.lastName,
-    ].whereType<String>().where((s) => s.isNotEmpty).join(' ');
+  String get displayName => ProfileDisplayText.displayName(user.value);
 
-    if (parts.isNotEmpty) return parts;
-    if (u.email.isNotEmpty) return u.email;
-    if (u.phoneNumber != null) return u.phoneNumber!;
-    return el.tr(CcLocaleKeys.profile_guest);
-  }
+  /// Days until the configured audit weekday; 0 when today is the audit day.
+  int get daysToNextAudit => ProfileDisplayText.daysToNextAudit(
+    settings.value.weeklyAuditDayIndex,
+    DateTime.now(),
+  );
 
-  /// Days remaining until the next occurrence of the user's configured
-  /// audit weekday (1=Monday..7=Sunday, matching [DateTime.weekday]) — 0
-  /// when today is the audit day.
-  int get daysToNextAudit {
-    final auditWeekday = settings.value.weeklyAuditDayIndex + 1;
-    return (auditWeekday - DateTime.now().weekday) % 7;
-  }
+  String get weeklyAuditDayName =>
+      ProfileDisplayText.weeklyAuditDayName(settings.value.weeklyAuditDayIndex);
 
-  String get weeklyAuditDayName {
-    final day = settings.value.weeklyAuditDayIndex + 1;
-    final names = el.tr(CcLocaleKeys.common_weekday_names).split('|');
-    if (day >= 1 && day <= 7) {
-      return names[day - 1];
-    }
-    return '';
-  }
-
-  String currentLanguageName(BuildContext context) {
-    final languageCode = context.locale.languageCode;
-    switch (languageCode) {
-      case 'vi':
-        return el.tr(CcLocaleKeys.settings_language_vietnamese);
-      case 'ko':
-        return el.tr(CcLocaleKeys.settings_language_korean);
-      case 'ja':
-        return el.tr(CcLocaleKeys.settings_language_japanese);
-      case 'zh':
-        return el.tr(CcLocaleKeys.settings_language_chinese);
-      case 'en':
-      default:
-        return el.tr(CcLocaleKeys.settings_language_english);
-    }
-  }
+  String currentLanguageName(BuildContext context) =>
+      ProfileDisplayText.languageName(context.locale.languageCode);
 
   // ===========================================================================
   // ACTIONS
@@ -216,15 +175,11 @@ class ProfileController extends CcGetController {
       final granted = await _settingsActions.requestReminderPermission();
       if (!granted) return;
     }
-    final updated = settings.value.copyWith(reminderEnabled: value);
-    settings.value = updated;
-    await _settingsActions.save(updated);
+    await _save(settings.value.copyWith(reminderEnabled: value));
   }
 
   Future<void> setBirthYear(int year) async {
-    final updated = settings.value.copyWith(birthYear: year);
-    settings.value = updated;
-    await _settingsActions.save(updated);
+    await _save(settings.value.copyWith(birthYear: year));
   }
 
   Future<void> setWeeklyAuditDay(int dayIndex) async {
@@ -232,18 +187,16 @@ class ProfileController extends CcGetController {
     // Changing the audit day invalidates prior reconciliation-streak
     // progress (user-level feature), so re-stamp the anchor whenever the
     // day actually changes.
-    final updated = settings.value.copyWith(
-      weeklyAuditDayIndex: dayIndex,
-      weeklyAuditDayChangedAt: changed ? DateTime.now() : null,
+    await _save(
+      settings.value.copyWith(
+        weeklyAuditDayIndex: dayIndex,
+        weeklyAuditDayChangedAt: changed ? DateTime.now() : null,
+      ),
     );
-    settings.value = updated;
-    await _settingsActions.save(updated);
   }
 
   Future<void> setVip(bool value) async {
-    final updated = settings.value.copyWith(isVip: value);
-    settings.value = updated;
-    await _settingsActions.save(updated);
+    await _save(settings.value.copyWith(isVip: value));
 
     if (value) await _onboarding.enableFullAccessCategories();
 
@@ -257,17 +210,13 @@ class ProfileController extends CcGetController {
   }
 
   Future<void> setThemeMode(bool isDarkMode) async {
-    final updated = settings.value.copyWith(isDarkMode: isDarkMode);
-    settings.value = updated;
     _settingsActions.applyTheme(isDarkMode: isDarkMode);
-    await _settingsActions.save(updated);
+    await _save(settings.value.copyWith(isDarkMode: isDarkMode));
   }
 
   Future<void> setHeaderFlipped(bool isFlipped) async {
     if (settings.value.isHeaderFlipped == isFlipped) return;
-    final updated = settings.value.copyWith(isHeaderFlipped: isFlipped);
-    settings.value = updated;
-    await _settingsActions.save(updated);
+    await _save(settings.value.copyWith(isHeaderFlipped: isFlipped));
   }
 
   /// Guards sign-out so the user can never leave behind unsynced financial
@@ -281,31 +230,16 @@ class ProfileController extends CcGetController {
   LogoutBlock? get logoutBlock => _account.logoutBlock;
 
   void handleHeroBannerTap(BuildContext context) {
-    if (!isLoggedIn) {
-      _account.openLogin(context);
-    }
+    if (!isLoggedIn) _account.openLogin(context);
   }
 
-  void openCrashLogViewer(BuildContext context) {
-    if (!CrashLogDevOverlay.isViewerEnabled) return;
-    final navContext = Catcher2.navigatorKey.currentContext ?? context;
-    CcDialogHelper.showModalBottomSheet(navContext, const CrashLogViewerPage());
-  }
+  void openCrashLogViewer(BuildContext context) =>
+      ProfileRoutes.crashLogViewer(context);
 
   Future<void> pickBirthYear(BuildContext context) async {
-    final now = DateTime.now();
-    final minYear = now.year - 70;
-    final maxYear = now.year - 10;
-    final current = (settings.value.birthYear ?? now.year - 25).clamp(
-      minYear,
-      maxYear,
-    );
-
-    final picked = await BirthYearSheet.show(
+    final picked = await ProfileSheets.birthYear(
       context,
-      currentYear: current,
-      minYear: minYear,
-      maxYear: maxYear,
+      settings.value.birthYear,
     );
 
     if (picked != null && CategorySeed.ageGroup(picked) != null) {
@@ -318,11 +252,11 @@ class ProfileController extends CcGetController {
   }
 
   Future<void> pickWeeklyAuditDay(BuildContext context) async {
-    final current = settings.value.weeklyAuditDayIndex + 1;
-
-    final picked = await WeeklyAuditDaySheet.show(context, currentDay: current);
-
-    if (picked != null) await setWeeklyAuditDay(picked - 1);
+    final picked = await ProfileSheets.weeklyAuditDay(
+      context,
+      settings.value.weeklyAuditDayIndex,
+    );
+    if (picked != null) await setWeeklyAuditDay(picked);
   }
 
   /// Guests have no Firebase account to update — the edit affordance is
@@ -330,16 +264,13 @@ class ProfileController extends CcGetController {
   Future<void> pickDisplayName(BuildContext context) async {
     if (!isLoggedIn) return;
 
-    final u = user.value;
-    final fullName = [
-      u?.firstName,
-      u?.lastName,
-    ].whereType<String>().where((s) => s.isNotEmpty).join(' ');
+    final name = await ProfileSheets.displayName(
+      context,
+      ProfileDisplayText.fullName(user.value),
+    );
+    if (name == null) return;
 
-    final name = await DisplayNameSheet.show(context, currentName: fullName);
-    if (name == null || name.trim().isEmpty) return;
-
-    final result = await _account.updateDisplayName(name.trim());
+    final result = await _account.updateDisplayName(name);
     result.when(
       // authStateChanges() won't re-emit for a profile-only update, so apply
       // the refreshed entity directly rather than waiting on the stream.
@@ -363,46 +294,35 @@ class ProfileController extends CcGetController {
     );
   }
 
-  Future<void> pickLanguage(BuildContext context) async {
-    final picked = await LanguageSelectionSheet.show(context);
-    if (picked != null && context.mounted) {
-      await el.EasyLocalization.of(context)!.setLocale(picked);
-      CategorySettingsController.onCategoriesChanged.value++;
-    }
-  }
+  Future<void> pickLanguage(BuildContext context) =>
+      ProfileSheets.language(context);
 
   Future<void> pickCurrency(BuildContext context) async {
-    final picked = await CurrencySelectionSheet.show(
+    final picked = await ProfileSheets.currency(
       context,
       settings.value.currencyCode,
     );
     if (picked != null && picked != settings.value.currencyCode) {
-      final updated = settings.value.copyWith(
-        currencyCode: picked,
-        currencySelectionSource: CurrencySelectionSources.userSelected,
+      await _save(
+        settings.value.copyWith(
+          currencyCode: picked,
+          currencySelectionSource: CurrencySelectionSources.userSelected,
+        ),
       );
-      settings.value = updated;
-      await _settingsActions.save(updated);
       await _load();
       CurrencyConstants.onCurrencyChanged.value++;
     }
   }
 
-  /// Handle link account tap - navigate to login page for account linking
-  void handleLinkAccountTap(BuildContext context) {
-    _account.openLogin(context);
-  }
-
-  /// Handle avatar tap - navigate to login page only if not logged in
-  void handleAvatarTap(BuildContext context) {
-    if (!isLoggedIn) {
+  /// Linking an account or phone opens the login screen.
+  void handleLinkAccountTap(BuildContext context) =>
       _account.openLogin(context);
-    }
-  }
 
-  /// Handle phone number link tap - navigate to login page
-  void handlePhoneLinkTap(BuildContext context) {
-    _account.openLogin(context);
+  void handlePhoneLinkTap(BuildContext context) => _account.openLogin(context);
+
+  /// Only guests are sent to login from the avatar.
+  void handleAvatarTap(BuildContext context) {
+    if (!isLoggedIn) _account.openLogin(context);
   }
 
   Future<void> navigateToCategorySettings(BuildContext context) async {
@@ -414,16 +334,10 @@ class ProfileController extends CcGetController {
 
     _onboarding.completeCategoriesTask();
 
-    Navigator.of(context).push(
-      MaterialPageRoute<bool>(builder: (_) => const CategorySettingsPage()),
-    );
+    ProfileRoutes.categorySettings(context);
   }
 
-  void navigateToTerms(BuildContext context) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const TermsOfServicePage()));
-  }
+  void navigateToTerms(BuildContext context) => ProfileRoutes.terms(context);
 
   Future<Result<Unit, CcFailure>> deleteAccount() async {
     layoutStatus.value = CcLayoutStatus.loading;

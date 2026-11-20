@@ -1,5 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';
 
 import '../../../notification/notification_service.dart';
@@ -38,4 +39,20 @@ class ProfileSettingsActions {
       _themeProvider.toggleTheme(isDarkMode);
 
   Future<String> appVersion() => _deviceInfo.getAppVersion();
+
+  static const String _signInReminderDismissedKey =
+      'profile_sign_in_reminder_dismissed';
+
+  /// Once dismissed, the sign-in reminder never comes back.
+  Future<bool> isSignInReminderDismissed() async =>
+      (await SharedPreferences.getInstance()).getBool(
+        _signInReminderDismissedKey,
+      ) ??
+      false;
+
+  Future<void> dismissSignInReminder() async =>
+      (await SharedPreferences.getInstance()).setBool(
+        _signInReminderDismissedKey,
+        true,
+      );
 }
