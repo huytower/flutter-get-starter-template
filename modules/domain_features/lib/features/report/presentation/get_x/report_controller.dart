@@ -1,3 +1,4 @@
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -46,7 +47,6 @@ class ReportController extends CcGetController {
     this._generateAiAdvice,
     this._conversionService,
     this._analytics,
-    this._ai,
   );
 
   final GetCategorySpendingUseCase _getCategorySpending;
@@ -59,7 +59,6 @@ class ReportController extends CcGetController {
   final UserLevelController userLevel;
   final CurrencyConversionService _conversionService;
   final CcAnalytics _analytics;
-  final CcAiClient _ai;
 
   @override
   void onInit() {
@@ -257,9 +256,13 @@ class ReportController extends CcGetController {
     if (isClosed) return;
     isGeneratingAdvice.value = false;
 
-    if (result == null) {
+    final advice = result.tryGetSuccess();
+    if (advice == null) {
       _analytics.logEvent(name: 'ai_advice_failed');
-      if (_ai.lastFailure?.kind == CcAiFailureKind.deviceAttestation) {
+      final failure = result.tryGetError();
+      if (failure is ValidationFailure &&
+          failure.message ==
+              GenerateAiFinancialAdviceUseCase.deviceNotGenuineReason) {
         aiAdviceErrorKey.value = CcLocaleKeys.quick_entry_device_not_genuine;
         return;
       }
@@ -276,10 +279,10 @@ class ReportController extends CcGetController {
 
     _analytics.logEvent(name: 'ai_advice_success');
 
-    aiAdvice.value = result;
+    aiAdvice.value = advice;
     scrollToAiAdvice();
     await cacheDs.saveAdvice(
-      advice: result,
+      advice: advice,
       fingerprint: fingerprint,
       targetCurrency: targetCurrency,
       languageCode: languageCode,

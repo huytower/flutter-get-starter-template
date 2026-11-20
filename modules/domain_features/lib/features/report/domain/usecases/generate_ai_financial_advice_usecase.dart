@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:catcher_2/catcher_2.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
@@ -46,16 +48,30 @@ class GenerateAiFinancialAdviceUseCase {
 
   static const int _maxHighlightsPerSection = 3;
 
-  /// Never throws; returns null on a failed/empty cloud call. A failed
-  /// local data source degrades to null/empty for that one input rather
-  /// than blocking advice generation entirely.
-  Future<AiAdviceEntity?> call({
+  /// The user turned AI features off ([ValidationFailure.message]).
+  static const String aiDisabledReason = 'ai_disabled';
+
+  /// The device failed app attestation; same reason as the smart-entry flow.
+  static const String deviceNotGenuineReason = 'device_not_genuine';
+
+  /// The model returned nothing usable ([ServerFailure.message]).
+  static const String emptyResponseReason = 'empty_response';
+
+  /// The model answered, but no valid advice section could be read.
+  static const String invalidResponseReason = 'invalid_response';
+
+  /// Never throws. Fails with a [ValidationFailure] when AI is off
+  /// ([aiDisabledReason]) or the device is not genuine
+  /// ([deviceNotGenuineReason]), else a [ServerFailure] for an empty or
+  /// unreadable answer. A failed local data source degrades to null/empty for
+  /// that one input rather than blocking advice generation entirely.
+  Future<Result<AiAdviceEntity, CcFailure>> call({
     required String targetCurrency,
     required CurrencyConversionService conversionService,
     String? languageCode,
   }) async {
     if (!await getIt<AiFallbackPreferenceDataSource>().isGeminiEnabled()) {
-      return null;
+      return const Error(ValidationFailure(aiDisabledReason));
     }
     final results = await Future.wait([
       _getInsights.call(),
@@ -132,7 +148,7 @@ class GenerateAiFinancialAdviceUseCase {
             StackTrace.current,
           );
         }
-        return null;
+        return Error(failureFor(failure));
       }
 
       final sections = _parseSections(raw);
@@ -143,15 +159,24 @@ class GenerateAiFinancialAdviceUseCase {
           ),
           StackTrace.current,
         );
-        return null;
+        return const Error(ServerFailure(invalidResponseReason));
       }
 
-      return AiAdviceEntity(sections: sections, generatedAt: DateTime.now());
+      return Success(
+        AiAdviceEntity(sections: sections, generatedAt: DateTime.now()),
+      );
     } catch (e, stack) {
       Catcher2.reportCheckedError(e, stack);
-      return null;
+      return const Error(ServerFailure(emptyResponseReason));
     }
   }
+
+  /// The [CcFailure] for an AI call that produced no text.
+  @visibleForTesting
+  static CcFailure failureFor(CcAiFailure? failure) =>
+      failure?.kind == CcAiFailureKind.deviceAttestation
+      ? const ValidationFailure(deviceNotGenuineReason)
+      : const ServerFailure(emptyResponseReason);
 
   /// False for failures that are expected and already handled in the UI:
   /// device attestation (App Check) failures, and any failure once the daily

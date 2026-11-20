@@ -708,7 +708,6 @@ class DomainFeaturesPackageModule extends _i526.MicroPackageModule {
           gh<_i436.GenerateAiFinancialAdviceUseCase>(),
           gh<_i195.CurrencyConversionService>(),
           gh<_i631.CcAnalytics>(),
-          gh<_i631.CcAiClient>(),
         ));
     gh.factory<_i752.AddBudgetLimitSheetController>(
         () => _i752.AddBudgetLimitSheetController(
