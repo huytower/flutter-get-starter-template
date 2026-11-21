@@ -132,7 +132,7 @@ class LendWalletListItem extends StatelessWidget {
         children: [
           CcText(
             TransactionFormHelpers.formatShortWithSymbol(
-              balance.outstandingBalance.abs(),
+              balance.remainingToShow,
               currencyCode: liability.currencyCode,
             ),
             align: Alignment.center,

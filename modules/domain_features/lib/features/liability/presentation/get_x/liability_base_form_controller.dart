@@ -1,5 +1,6 @@
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -52,6 +53,33 @@ abstract class LiabilityBaseFormController extends TransactionFormController {
   Rx<LiabilityDirectionForm> get action;
 
   void setAction(LiabilityDirectionForm value);
+
+  /// The listed balance of the selected liability, if one is selected.
+  LiabilityBalanceEntity? get selectedBalance => mergedItems.firstWhereOrNull(
+    (b) => b.liability.id == selectedLiabilityId.value,
+  );
+
+  /// Whether a repay / collect amount is more than what is still owed, so the
+  /// form can say so and keep Save off.
+  ///
+  /// A settled (or over-collected) liability takes no amount at all, in any
+  /// currency. Otherwise the amount is compared only when the liability is in
+  /// the currency it is typed in; for another currency
+  /// `RecordLiabilityPaymentUseCase` checks the converted amount on save.
+  bool get exceedsOutstanding {
+    final balance = selectedBalance;
+    if (balance == null || action.value != LiabilityDirectionForm.decrease) {
+      return false;
+    }
+    final amount = int.tryParse(amountStr.value) ?? 0;
+    if (amount <= 0) return false;
+    if (balance.isSettled) return true;
+    if (balance.liability.currencyCode.toUpperCase() !=
+        CurrencyConstants.currentPrimaryCurrency.toUpperCase()) {
+      return false;
+    }
+    return amount > balance.outstandingBalance;
+  }
 
   /// Drives the asset row in the liability/lend asset selector so the selected
   /// asset can be brought into view.

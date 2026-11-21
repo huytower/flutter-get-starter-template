@@ -239,6 +239,7 @@
     "delete_confirm_desc": "この操作は取り消せません。",
     "liability_payment_saved": "{amount}の支払いが記録されました！",
     "liability_not_found": "この借入記録は存在しません。別の項目を選んでもう一度お試しください。",
+    "liability_exceeds_outstanding": "残っている金額を超えています。残高以下の金額を入力してください。",
     "source_income": "収入元",
     "reason_income": "収入理由",
     "recipient": "受取人",

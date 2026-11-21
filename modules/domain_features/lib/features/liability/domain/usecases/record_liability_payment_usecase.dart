@@ -33,6 +33,11 @@ class RecordLiabilityPaymentParams {
   /// such a liability is not in the repository, so this entity is used instead.
   final LiabilityEntity? listedLiability;
 
+  /// What is still owed on the liability, in its own currency, as the form
+  /// lists it. A settlement (repay / collect) may not exceed it; null skips
+  /// the check (no balance known).
+  final int? outstandingBalance;
+
   const RecordLiabilityPaymentParams({
     required this.liabilityId,
     this.isSettlement = true,
@@ -41,6 +46,7 @@ class RecordLiabilityPaymentParams {
     this.note,
     required this.date,
     this.listedLiability,
+    this.outstandingBalance,
   });
 }
 
@@ -104,6 +110,19 @@ class RecordLiabilityPaymentUseCase {
       );
       return const Error(
         ValidationFailure(CcLocaleKeys.transaction_liability_not_found),
+      );
+    }
+
+    final outstanding = params.outstandingBalance;
+    if (params.isSettlement &&
+        outstanding != null &&
+        await _inCurrencyOf(liability, params.amount) > outstanding) {
+      '[LIABILITY] ❌ Settlement ${params.amount} exceeds outstanding $outstanding | liabilityId=${liability.id}'
+          .Log(runtimeType.toString());
+      return const Error(
+        ValidationFailure(
+          CcLocaleKeys.transaction_liability_exceeds_outstanding,
+        ),
       );
     }
 
@@ -212,5 +231,21 @@ class RecordLiabilityPaymentUseCase {
     await _LiabilityRepository.updateLiability(updatedLiability);
 
     return Success(updatedLiability);
+  }
+
+  /// [amount], typed in the primary currency, in [liability]'s currency (the
+  /// currency its outstanding balance is kept in). Unchanged if conversion
+  /// fails.
+  Future<int> _inCurrencyOf(LiabilityEntity liability, int amount) async {
+    final from = CurrencyConstants.currentPrimaryCurrency;
+    if (from.toUpperCase() == liability.currencyCode.toUpperCase()) {
+      return amount;
+    }
+    final converted = await _conversionService.convertAmount(
+      amount: amount,
+      fromCurrency: from,
+      toCurrency: liability.currencyCode,
+    );
+    return converted.tryGetSuccess() ?? amount;
   }
 }

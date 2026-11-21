@@ -239,6 +239,7 @@
     "delete_confirm_desc": "이 작업은 취소할 수 없습니다.",
     "liability_payment_saved": "{amount} 지불이 기록되었습니다!",
     "liability_not_found": "이 부채 기록이 더 이상 존재하지 않습니다. 다른 항목을 선택하고 다시 시도하세요.",
+    "liability_exceeds_outstanding": "남은 금액보다 많습니다. 남은 잔액 이하로 입력하세요.",
     "source_income": "수입 원천",
     "reason_income": "수입 사유",
     "recipient": "수취인",

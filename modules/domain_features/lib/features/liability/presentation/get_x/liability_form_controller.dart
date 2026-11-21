@@ -107,6 +107,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     if (selectedLiabilityId.value == null) return false;
     if (amountStr.value == '0' || amountStr.value.isEmpty) return false;
     if (selectedWalletId.value == null) return false;
+    if (exceedsOutstanding) return false;
 
     return true;
   }
@@ -433,6 +434,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
       note: composeNote(),
       date: date.value,
       listedLiability: liability,
+      outstandingBalance: selectedBalance?.outstandingBalance,
     );
 
     final result = await getIt<RecordLiabilityPaymentUseCase>().call(params);

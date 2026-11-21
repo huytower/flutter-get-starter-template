@@ -88,7 +88,7 @@ class LiabilityWalletPreviewCard extends StatelessWidget {
                   context,
                   color: directionColor,
                   iconAsset: 'assets/icon/ic_remain.webp',
-                  value: balance.outstandingBalance.abs(),
+                  value: balance.remainingToShow,
                 ),
                 _buildCompactStat(
                   context,

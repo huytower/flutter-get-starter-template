@@ -239,6 +239,7 @@
     "delete_confirm_desc": "此操作无法撤销。",
     "liability_payment_saved": "已记录 {amount} 的付款！",
     "liability_not_found": "该债务记录已不存在。请选择其他记录后重试。",
+    "liability_exceeds_outstanding": "金额超过了剩余欠款。请输入不超过剩余余额的金额。",
     "source_income": "收入来源",
     "reason_income": "收入原因",
     "recipient": "收款人",

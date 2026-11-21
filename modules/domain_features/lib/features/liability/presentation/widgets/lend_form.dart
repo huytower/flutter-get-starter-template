@@ -18,6 +18,7 @@ import '../get_x/lend_form_controller.dart';
 import '../get_x/liability_base_form_controller.dart';
 import 'lend_asset_selector.dart';
 import 'lend_direction_toggle.dart';
+import 'outstanding_exceeded_hint.dart';
 
 class LendForm extends StatefulWidget {
   const LendForm({super.key});
@@ -140,6 +141,9 @@ class _LendFormState extends State<LendForm> {
       ),
       right: [
         Obx(() => _buildAmountSection(context, controller, accentColor)),
+        Obx(
+          () => OutstandingExceededHint(visible: controller.exceedsOutstanding),
+        ),
         const CcSpaceSM(),
         Obx(() => _buildWalletSection(context, controller, accentColor)),
         const CcSpaceSM(),
@@ -164,6 +168,11 @@ class _LendFormState extends State<LendForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Obx(() => _buildAmountSection(context, controller, accentColor)),
+              Obx(
+                () => OutstandingExceededHint(
+                  visible: controller.exceedsOutstanding,
+                ),
+              ),
               const CcSpaceSM(),
               Obx(() => _buildWalletSection(context, controller, accentColor)),
               const CcSpaceSM(),

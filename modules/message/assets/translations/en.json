@@ -239,6 +239,7 @@
     "delete_confirm_desc": "This action cannot be undone.",
     "liability_payment_saved": "Payment of {amount} recorded!",
     "liability_not_found": "This debt record no longer exists. Pick another one and try again.",
+    "liability_exceeds_outstanding": "This is more than what is still owed. Enter at most the remaining balance.",
     "source_income": "Source of Income",
     "reason_income": "Reason for Income",
     "recipient": "Recipient",

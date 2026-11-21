@@ -262,6 +262,7 @@ class CodegenLoader extends AssetLoader {
       "delete_confirm_desc": "This action cannot be undone.",
       "liability_payment_saved": "Payment of {amount} recorded!",
       "liability_not_found": "This debt record no longer exists. Pick another one and try again.",
+      "liability_exceeds_outstanding": "This is more than what is still owed. Enter at most the remaining balance.",
       "source_income": "Source of Income",
       "reason_income": "Reason for Income",
       "recipient": "Recipient",
@@ -1186,6 +1187,7 @@ class CodegenLoader extends AssetLoader {
       "liability_name_duplicate_error": "Tên khoản nợ/vay này đã tồn tại",
       "liability_payment_saved": "Đã ghi nhận thanh toán {amount}!",
       "liability_not_found": "Khoản nợ này không còn tồn tại. Hãy chọn khoản khác và thử lại.",
+      "liability_exceeds_outstanding": "Số tiền vượt quá dư nợ còn lại. Hãy nhập tối đa bằng số còn lại.",
       "liability_category_borrow_label": "Hình thức vay",
       "liability_category_lend_label": "Hình thức cho mượn",
       "liability_borrower_label": "Tên khoản vay",
@@ -2048,6 +2050,7 @@ class CodegenLoader extends AssetLoader {
       "delete_confirm_desc": "이 작업은 취소할 수 없습니다.",
       "liability_payment_saved": "{amount} 지불이 기록되었습니다!",
       "liability_not_found": "이 부채 기록이 더 이상 존재하지 않습니다. 다른 항목을 선택하고 다시 시도하세요.",
+      "liability_exceeds_outstanding": "남은 금액보다 많습니다. 남은 잔액 이하로 입력하세요.",
       "source_income": "수입 원천",
       "reason_income": "수입 사유",
       "recipient": "수취인",
@@ -2891,6 +2894,7 @@ class CodegenLoader extends AssetLoader {
       "delete_confirm_desc": "この操作は取り消せません。",
       "liability_payment_saved": "{amount}の支払いが記録されました！",
       "liability_not_found": "この借入記録は存在しません。別の項目を選んでもう一度お試しください。",
+      "liability_exceeds_outstanding": "残っている金額を超えています。残高以下の金額を入力してください。",
       "source_income": "収入元",
       "reason_income": "収入理由",
       "recipient": "受取人",
@@ -3722,6 +3726,7 @@ class CodegenLoader extends AssetLoader {
       "delete_confirm_desc": "此操作无法撤销。",
       "liability_payment_saved": "已记录 {amount} 的付款！",
       "liability_not_found": "该债务记录已不存在。请选择其他记录后重试。",
+      "liability_exceeds_outstanding": "金额超过了剩余欠款。请输入不超过剩余余额的金额。",
       "source_income": "收入来源",
       "reason_income": "收入原因",
       "recipient": "收款人",
@@ -4604,6 +4609,8 @@ class CcLocaleKeys {
       'transaction.liability_payment_saved';
   static const transaction_liability_not_found =
       'transaction.liability_not_found';
+  static const transaction_liability_exceeds_outstanding =
+      'transaction.liability_exceeds_outstanding';
   static const transaction_liability_category_borrow_label =
       'transaction.liability_category_borrow_label';
   static const transaction_liability_category_lend_label =

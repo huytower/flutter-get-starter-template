@@ -22,6 +22,7 @@ import '../get_x/liability_form_controller.dart';
 import 'liability_asset_selector.dart';
 import 'liability_direction_toggle.dart';
 import 'liability_repayment_method_section.dart';
+import 'outstanding_exceeded_hint.dart';
 
 class LiabilityForm extends StatefulWidget {
   const LiabilityForm({super.key});
@@ -156,6 +157,9 @@ class _LiabilityFormState extends State<LiabilityForm> {
       ),
       right: [
         Obx(() => _buildAmountSection(context, controller, accentColor)),
+        Obx(
+          () => OutstandingExceededHint(visible: controller.exceedsOutstanding),
+        ),
         const CcSpaceSM(),
         Obx(() => _buildWalletSection(context, controller, accentColor)),
         const CcSpaceSM(),
@@ -247,6 +251,11 @@ class _LiabilityFormState extends State<LiabilityForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Obx(() => _buildAmountSection(context, controller, accentColor)),
+              Obx(
+                () => OutstandingExceededHint(
+                  visible: controller.exceedsOutstanding,
+                ),
+              ),
               const CcSpaceSM(),
               Obx(() => _buildWalletSection(context, controller, accentColor)),
               const CcSpaceSM(),
