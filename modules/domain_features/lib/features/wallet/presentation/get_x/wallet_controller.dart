@@ -101,6 +101,12 @@ class WalletController extends CcGetController {
 
   bool _isTransactionDataDirty = true;
 
+  /// The load in progress, if any.
+  Future<void>? _loading;
+
+  /// One load queued behind [_loading], shared by every call made meanwhile.
+  Future<void>? _followUp;
+
   @override
   void onInit() {
     super.onInit();
@@ -160,9 +166,40 @@ class WalletController extends CcGetController {
   }
 
   /// Reloads wallets and their derived book balances.
+  ///
+  /// Calls overlap often (several screens refresh after one save). While a
+  /// load runs, further calls share one follow-up load instead of starting
+  /// their own. The follow-up rebuilds balances only if [markDirty] was
+  /// called after the running load read the transactions, so one change
+  /// costs one rebuild.
   Future<void> loadWallets({
     bool showLoading = true,
     bool forceRefresh = false,
+  }) {
+    final running = _loading;
+    if (running == null) {
+      return _startLoad(showLoading: showLoading, forceRefresh: forceRefresh);
+    }
+    return _followUp ??= running.catchError((_) {}).then((_) {
+      _followUp = null;
+      return _startLoad(showLoading: false, forceRefresh: false);
+    });
+  }
+
+  Future<void> _startLoad({
+    required bool showLoading,
+    required bool forceRefresh,
+  }) {
+    final load = _load(showLoading: showLoading, forceRefresh: forceRefresh);
+    _loading = load;
+    return load.whenComplete(() {
+      if (identical(_loading, load)) _loading = null;
+    });
+  }
+
+  Future<void> _load({
+    required bool showLoading,
+    required bool forceRefresh,
   }) async {
     if (showLoading) layoutStatus.value = CcLayoutStatus.loading;
 
@@ -183,14 +220,21 @@ class WalletController extends CcGetController {
         wallets.isEmpty) {
       '[WalletController] 🔄 Rebuilding derived balances | dirty=$_isTransactionDataDirty | force=$forceRefresh | currencyChanged=$currencyChanged | empty=${wallets.isEmpty}'
           .Log('WalletController');
-      final snapshot = await _ledger.build(list, currencyCode.value);
-      _walletsWithTxns
-        ..clear()
-        ..addAll(snapshot.walletsWithTransactions);
-      _bookBalances.assignAll(snapshot.bookBalances);
-      _investmentStats.assignAll(snapshot.investmentStats);
-      _monthlyInvestmentStats.assignAll(snapshot.monthlyInvestmentStats);
+      // Cleared before the ledger reads transactions: a markDirty() from here
+      // on means data this build may miss, so the follow-up load rebuilds.
       _isTransactionDataDirty = false;
+      try {
+        final snapshot = await _ledger.build(list, currencyCode.value);
+        _walletsWithTxns
+          ..clear()
+          ..addAll(snapshot.walletsWithTransactions);
+        _bookBalances.assignAll(snapshot.bookBalances);
+        _investmentStats.assignAll(snapshot.investmentStats);
+        _monthlyInvestmentStats.assignAll(snapshot.monthlyInvestmentStats);
+      } catch (_) {
+        _isTransactionDataDirty = true;
+        rethrow;
+      }
     }
     wallets.assignAll(list);
     displayBalances.assignAll(
