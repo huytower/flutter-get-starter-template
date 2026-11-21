@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cc_sdk/export_cc_sdk.dart' show CcCrashReporter;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/data/repository/cc_base_repository.dart';
 import 'package:domain_features/export_domain_features.dart';
@@ -11,8 +12,13 @@ import '../datasources/remote/comment_remote.dart';
 @LazySingleton(as: CommentRepository)
 class CommentRepositoryImpl with CcBaseRepository implements CommentRepository {
   @factoryMethod
-  CommentRepositoryImpl({required CommentRemote remote}) : _remote = remote;
+  CommentRepositoryImpl({
+    required CommentRemote remote,
+    required this.crashReporter,
+  }) : _remote = remote;
 
+  @override
+  final CcCrashReporter crashReporter;
   final CommentRemote _remote;
 
   @override

@@ -1,3 +1,4 @@
+import 'package:cc_sdk/export_cc_sdk.dart' show CcCrashReporter;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/data/repository/cc_base_repository.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
@@ -16,11 +17,14 @@ class ReconciliationRepositoryImpl
     implements ReconciliationRepository {
   @factoryMethod
   ReconciliationRepositoryImpl({
+    required this.crashReporter,
     required ReconciliationLocalDataSource local,
     required FinancialDataSyncService syncService,
   }) : _local = local,
        _syncService = syncService;
 
+  @override
+  final CcCrashReporter crashReporter;
   final ReconciliationLocalDataSource _local;
   final FinancialDataSyncService _syncService;
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cc_sdk/export_cc_sdk.dart' show CcCrashReporter;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/data/repository/cc_base_repository.dart';
 import 'package:domain_features/export_domain_features.dart';
@@ -16,6 +17,7 @@ class TransactionRepositoryImpl
     implements TransactionRepository {
   @factoryMethod
   TransactionRepositoryImpl({
+    required this.crashReporter,
     required TransactionLocalDataSource local,
     required TransactionSyncDataSource syncDataSource,
     required FinancialDataSyncService syncService,
@@ -23,6 +25,8 @@ class TransactionRepositoryImpl
        _syncDataSource = syncDataSource,
        _syncService = syncService;
 
+  @override
+  final CcCrashReporter crashReporter;
   final TransactionLocalDataSource _local;
   final TransactionSyncDataSource _syncDataSource;
   final FinancialDataSyncService _syncService;

@@ -16,11 +16,14 @@ import '../models/wallet_hive_model.dart';
 class WalletRepositoryImpl with CcBaseRepository implements WalletRepository {
   @factoryMethod
   WalletRepositoryImpl({
+    required this.crashReporter,
     required WalletLocalDataSource local,
     required WalletSyncDataSource sync,
   }) : _local = local,
        _sync = sync;
 
+  @override
+  final CcCrashReporter crashReporter;
   final WalletLocalDataSource _local;
   final WalletSyncDataSource _sync;
 

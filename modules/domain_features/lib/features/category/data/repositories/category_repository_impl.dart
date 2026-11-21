@@ -1,3 +1,4 @@
+import 'package:cc_sdk/export_cc_sdk.dart' show CcCrashReporter;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/data/repository/cc_base_repository.dart';
 import 'package:domain_features/core/domain/entities/category_entity.dart';
@@ -18,11 +19,14 @@ class CategoryRepositoryImpl
     implements CategoryRepository {
   @factoryMethod
   CategoryRepositoryImpl({
+    required this.crashReporter,
     required CategoryLocalDataSource local,
     required FinancialDataSyncService syncService,
   }) : _local = local,
        _syncService = syncService;
 
+  @override
+  final CcCrashReporter crashReporter;
   final CategoryLocalDataSource _local;
   final FinancialDataSyncService _syncService;
 

@@ -1,3 +1,4 @@
+import 'package:cc_sdk/export_cc_sdk.dart' show CcNoopCrashReporter;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
@@ -45,6 +46,7 @@ TransactionRepositoryImpl _repository(List<TransactionModel> models) =>
       local: _FakeLocal(models),
       syncDataSource: _FakeSync(),
       syncService: _FakeSyncService(),
+      crashReporter: const CcNoopCrashReporter(),
     );
 
 void main() {

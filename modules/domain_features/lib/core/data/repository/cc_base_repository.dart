@@ -1,4 +1,7 @@
-import 'package:cc_sdk/export_cc_sdk.dart' show CcServerException;
+import 'dart:async';
+
+import 'package:cc_sdk/export_cc_sdk.dart'
+    show CcCrashReporter, CcLoggerExtension, CcServerException;
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:dio/dio.dart';
 import 'package:multiple_result/multiple_result.dart';
@@ -8,7 +11,16 @@ import 'package:multiple_result/multiple_result.dart';
 /// Using a mixin allows repository implementations to share this logic
 /// without using up their single inheritance slot.
 mixin CcBaseRepository {
+  /// Receives every unexpected exception [safeRequest] turns into a failure.
+  /// The host repository gets it through its constructor (the mixin holds no
+  /// dependency of its own).
+  CcCrashReporter get crashReporter;
+
   /// Executes a network request and maps any DioException to a Failure.
+  ///
+  /// Server and network failures are expected and only mapped. Any other
+  /// exception is a bug (a missing record, a bad cast, a Hive error): it is
+  /// also logged and sent to [crashReporter] before being mapped.
   Future<Result<T, CcFailure>> safeRequest<T>(
     Future<T> Function() request,
   ) async {
@@ -32,7 +44,11 @@ mixin CcBaseRepository {
         );
       }
       return Error(mapDioErrorToFailure(e));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      final reason = '$runtimeType.safeRequest';
+      '❌ $reason | $e'.Log(runtimeType.toString());
+      // Not awaited: reporting must not delay the failure reaching the UI.
+      unawaited(crashReporter.recordError(e, stackTrace, reason: reason));
       return Error(ServerFailure(e.toString()));
     }
   }
