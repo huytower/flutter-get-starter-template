@@ -789,6 +789,8 @@ class CodegenLoader extends AssetLoader {
       "language_subtitle": "Select your preferred language",
       "currency": "Currency unit",
       "currency_subtitle": "Change your primary currency unit",
+      "currency_convert_title": "Switch to {to}?",
+      "currency_convert_message": "All balances, transactions, budgets and debts will be converted from {from} to {to} at the current exchange rate. From then on every amount is recorded in {to}.",
       "currency_dong": "Dong",
       "currency_vnd": "Vietnamese Dong",
       "currency_usd": "United States Dollar",
@@ -1539,6 +1541,8 @@ class CodegenLoader extends AssetLoader {
       "language_subtitle": "Chọn ngôn ngữ ưa thích của bạn",
       "currency": "Đơn vị tiền tệ",
       "currency_subtitle": "Thay đổi đơn vị tiền tệ chính",
+      "currency_convert_title": "Chuyển sang {to}?",
+      "currency_convert_message": "Toàn bộ số dư, giao dịch, ngân sách và khoản nợ sẽ được quy đổi từ {from} sang {to} theo tỷ giá hiện tại. Từ đó mọi số tiền được ghi bằng {to}.",
       "currency_dong": "Đồng",
       "currency_vnd": "Đồng Việt Nam",
       "currency_usd": "Đô la Mỹ",
@@ -2543,6 +2547,8 @@ class CodegenLoader extends AssetLoader {
       "language_subtitle": "선호하는 언어 선택",
       "currency": "통화 단위",
       "currency_subtitle": "기본 통화 단위 변경",
+      "currency_convert_title": "{to}(으)로 전환할까요?",
+      "currency_convert_message": "모든 잔액, 거래, 예산, 부채가 현재 환율로 {from}에서 {to}(으)로 환산됩니다. 이후 모든 금액은 {to}(으)로 기록됩니다.",
       "currency_dong": "동",
       "currency_vnd": "베트남 동",
       "currency_usd": "미국 달러",
@@ -3379,6 +3385,8 @@ class CodegenLoader extends AssetLoader {
       "language_subtitle": "希望する言語を選択",
       "currency": "通貨単位",
       "currency_subtitle": "主な通貨単位を変更",
+      "currency_convert_title": "{to}に切り替えますか？",
+      "currency_convert_message": "すべての残高、取引、予算、借入が現在の為替レートで{from}から{to}に換算されます。以後、すべての金額は{to}で記録されます。",
       "currency_dong": "ドン",
       "currency_vnd": "ベトナムドン",
       "currency_usd": "米ドル",
@@ -4202,6 +4210,8 @@ class CodegenLoader extends AssetLoader {
       "language_subtitle": "选择您的首选语言",
       "currency": "货币单位",
       "currency_subtitle": "更改您的主要货币单位",
+      "currency_convert_title": "切换到{to}？",
+      "currency_convert_message": "所有余额、交易、预算和债务将按当前汇率从{from}换算为{to}。此后所有金额都以{to}记录。",
       "currency_dong": "盾",
       "currency_vnd": "越南盾",
       "currency_usd": "美元",
@@ -5222,6 +5232,10 @@ class CcLocaleKeys {
   static const profile_language_subtitle = 'profile.language_subtitle';
   static const profile_currency = 'profile.currency';
   static const profile_currency_subtitle = 'profile.currency_subtitle';
+  static const profile_currency_convert_title =
+      'profile.currency_convert_title';
+  static const profile_currency_convert_message =
+      'profile.currency_convert_message';
   static const profile_currency_dong = 'profile.currency_dong';
   static const profile_currency_vnd = 'profile.currency_vnd';
   static const profile_currency_usd = 'profile.currency_usd';

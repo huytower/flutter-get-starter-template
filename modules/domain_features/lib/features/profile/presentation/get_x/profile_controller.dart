@@ -313,7 +313,23 @@ class ProfileController extends CcGetController {
       context,
       settings.value.currencyCode,
     );
-    if (picked != null && picked != settings.value.currencyCode) {
+    final current = settings.value.currencyCode;
+    if (picked != null && picked != current) {
+      // The whole book is converted into the new currency (see
+      // BookCurrencyAligner), so ask first.
+      if (!context.mounted) return;
+      final confirmed = await CcDialogHelper.showMessageBottomSheet(
+        context: context,
+        title: el.tr(
+          CcLocaleKeys.profile_currency_convert_title,
+          namedArgs: {'to': picked},
+        ),
+        content: el.tr(
+          CcLocaleKeys.profile_currency_convert_message,
+          namedArgs: {'from': current, 'to': picked},
+        ),
+      );
+      if (confirmed != true) return;
       await _save(
         settings.value.copyWith(
           currencyCode: picked,

@@ -703,6 +703,8 @@
     "language_subtitle": "希望する言語を選択",
     "currency": "通貨単位",
     "currency_subtitle": "主な通貨単位を変更",
+    "currency_convert_title": "{to}に切り替えますか？",
+    "currency_convert_message": "すべての残高、取引、予算、借入が現在の為替レートで{from}から{to}に換算されます。以後、すべての金額は{to}で記録されます。",
     "currency_dong": "ドン",
     "currency_vnd": "ベトナムドン",
     "currency_usd": "米ドル",

@@ -146,27 +146,4 @@ class WalletLocalDataSource {
     final box = await _box;
     await box.put(wallet.id, wallet);
   }
-
-  /// Updates default seeded wallets (`wallet_cash`, `wallet_bank`) to [newCurrencyCode]
-  /// if they have a balance of 0 (initial unpopulated state).
-  Future<void> updateDefaultWalletsCurrency(String newCurrencyCode) async {
-    final box = await _box;
-    final updates = <String, WalletHiveModel>{};
-    for (final m in box.values) {
-      if ((m.id == cashWalletId || m.id == bankWalletId) && m.balance == 0) {
-        updates[m.id] = WalletHiveModel(
-          id: m.id,
-          name: m.name,
-          balance: m.balance,
-          iconCode: m.iconCode,
-          type: m.type,
-          createdAt: m.createdAt,
-          currencyCode: newCurrencyCode,
-        );
-      }
-    }
-    if (updates.isNotEmpty) {
-      await box.putAll(updates);
-    }
-  }
 }

@@ -5,7 +5,6 @@ import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/features/profile/domain/entities/profile_settings_entity.dart';
-import 'package:domain_features/features/wallet/data/datasources/local/wallet_local_datasource.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:injectable/injectable.dart';
 
@@ -17,9 +16,8 @@ typedef GpsCurrencyDetector =
 
 @LazySingleton()
 class ProfileLocalDataSource {
-  ProfileLocalDataSource(this._location, WalletLocalDataSource walletLocal)
-    : _walletLocal = walletLocal,
-      _detectFromGps = (() =>
+  ProfileLocalDataSource(this._location)
+    : _detectFromGps = (() =>
           CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails(_location)),
       _gpsTimeout = gpsDetectionTimeout {
     _location.lastPosition.addListener(_onGpsPositionUpdated);
@@ -30,9 +28,7 @@ class ProfileLocalDataSource {
     this._detectFromGps, {
     Duration timeout = gpsDetectionTimeout,
     CcLocationService? location,
-    WalletLocalDataSource? walletLocal,
   }) : _gpsTimeout = timeout,
-       _walletLocal = walletLocal,
        _location = location ?? CcNoopLocationService() {
     _location.lastPosition.addListener(_onGpsPositionUpdated);
   }
@@ -42,8 +38,6 @@ class ProfileLocalDataSource {
   final GpsCurrencyDetector _detectFromGps;
   final CcLocationService _location;
 
-  /// Null only in tests that don't exercise the wallet-currency update.
-  final WalletLocalDataSource? _walletLocal;
   final Duration _gpsTimeout;
 
   Future<ProfileSettingsEntity> getSettings() async {
@@ -159,18 +153,11 @@ class ProfileLocalDataSource {
       await s.save();
 
       if (currencyChanged) {
-        await _updateDefaultWalletsCurrency(code);
         CurrencyConstants.onCurrencyChanged.value++;
       }
       CurrencyConstants.onRegionalSettingsChanged.value++;
     } on TimeoutException catch (e) {
       'Regional settings save timed out: $e'.Log('ProfileLocalDataSource');
-    } catch (_) {}
-  }
-
-  Future<void> _updateDefaultWalletsCurrency(String newCurrencyCode) async {
-    try {
-      await _walletLocal?.updateDefaultWalletsCurrency(newCurrencyCode);
     } catch (_) {}
   }
 
@@ -204,7 +191,6 @@ class ProfileLocalDataSource {
       await s.save();
 
       if (currencyChanged) {
-        await _updateDefaultWalletsCurrency(code);
         CurrencyConstants.onCurrencyChanged.value++;
       }
       CurrencyConstants.onRegionalSettingsChanged.value++;

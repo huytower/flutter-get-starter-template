@@ -160,7 +160,7 @@ class WalletLedger {
 
     var balance = wallet.balance;
     for (var i = 0; i < walletTxns.length; i++) {
-      balance += _sign(walletTxns[i].type) * amounts[i];
+      balance += signOf(walletTxns[i].type) * amounts[i];
     }
     return balance;
   }
@@ -185,7 +185,7 @@ class WalletLedger {
 
   /// +1 for money entering a wallet, -1 for money leaving it, 0 for any other
   /// (legacy) type.
-  static int _sign(String type) => switch (type) {
+  static int signOf(String type) => switch (type) {
     TransactionType.income ||
     TransactionType.transferIn ||
     TransactionType.investmentIn ||

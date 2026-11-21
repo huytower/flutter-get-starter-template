@@ -703,6 +703,8 @@
     "language_subtitle": "Select your preferred language",
     "currency": "Currency unit",
     "currency_subtitle": "Change your primary currency unit",
+    "currency_convert_title": "Switch to {to}?",
+    "currency_convert_message": "All balances, transactions, budgets and debts will be converted from {from} to {to} at the current exchange rate. From then on every amount is recorded in {to}.",
     "currency_dong": "Dong",
     "currency_vnd": "Vietnamese Dong",
     "currency_usd": "United States Dollar",

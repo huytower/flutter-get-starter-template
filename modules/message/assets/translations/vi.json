@@ -563,6 +563,8 @@
     "language_subtitle": "Chọn ngôn ngữ ưa thích của bạn",
     "currency": "Đơn vị tiền tệ",
     "currency_subtitle": "Thay đổi đơn vị tiền tệ chính",
+    "currency_convert_title": "Chuyển sang {to}?",
+    "currency_convert_message": "Toàn bộ số dư, giao dịch, ngân sách và khoản nợ sẽ được quy đổi từ {from} sang {to} theo tỷ giá hiện tại. Từ đó mọi số tiền được ghi bằng {to}.",
     "currency_dong": "Đồng",
     "currency_vnd": "Đồng Việt Nam",
     "currency_usd": "Đô la Mỹ",

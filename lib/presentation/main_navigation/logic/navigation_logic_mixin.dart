@@ -38,6 +38,10 @@ mixin NavigationLogicMixin<T extends StatefulWidget> on State<T> {
     // 1. Critical but non-blocking (User level drives UI availability)
     unawaited(_appLifecycle.initializeUserLevel());
 
+    // Every stored amount in the primary currency, so entries add and
+    // subtract exactly as shown.
+    unawaited(getIt<BookCurrencyProvider>().keepAlignedWithPrimary());
+
     // 2. Forced update gate: after the first frame, never blocking boot.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
