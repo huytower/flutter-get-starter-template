@@ -58,69 +58,7 @@ class MoneyKeypadPanel extends StatelessWidget {
             top: BorderSide(color: scheme.outlineVariant.withOpacity(0.1)),
           ),
         ),
-        child: CcContentPadding(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CcSymmetricPadding(
-                vertical: CcPaddingParams.SPACE_XS,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: CcQuickAmountChips(
-                        amounts: suggestions,
-                        onSelected: (val) => onSuggestion?.call(val),
-                        activeColor: activeColor,
-                        padding: EdgeInsets.only(
-                          left: context.respPadding(CcPaddingParams.SPACE_SM),
-                        ),
-                      ),
-                    ),
-                    CcIconButton.bouncing(
-                      icon: Icon(
-                        Icons.close_rounded,
-                        color: activeColor,
-                        size: context.respIconSize(baseSize: 20),
-                      ),
-                      onTap: onClear,
-                      tooltip: el.tr(CcLocaleKeys.common_clear),
-                    ),
-                    if (onCopy != null)
-                      CcIconButton.bouncing(
-                        icon: Icon(
-                          Icons.copy_rounded,
-                          color: activeColor,
-                          size: context.respIconSize(baseSize: 20),
-                        ),
-                        onTap: onCopy!,
-                        tooltip: el.tr(CcLocaleKeys.common_copy),
-                      ),
-                    CcBouncing(
-                      onTap: onDone,
-                      child: CcSymmetricPadding(
-                        horizontal: CcPaddingParams.SPACE_XL,
-                        child: CcText(
-                          el.tr(CcLocaleKeys.common_done),
-                          textStyle: context.ccTextTheme.labelMedium?.copyWith(
-                            color: activeColor,
-                            fontWeight: CcTypographyParams.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              QuickNumericKeypad(
-                onKeyPress: onKeyPress,
-                onDelete: onDelete,
-                onClear: onClear,
-                activeColor: activeColor,
-              ),
-            ],
-          ),
-        ),
+        child: _buildContent(context),
       );
     }
 
@@ -149,74 +87,77 @@ class MoneyKeypadPanel extends StatelessWidget {
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(context.respDim(16).clamp(0, 24).toDouble()),
             ),
-            child: CcContentPadding(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CcSymmetricPadding(
-                    vertical: CcPaddingParams.SPACE_XS,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: CcQuickAmountChips(
-                            amounts: suggestions,
-                            onSelected: (val) => onSuggestion?.call(val),
-                            activeColor: activeColor,
-                            padding: EdgeInsets.only(
-                              left: context.respPadding(
-                                CcPaddingParams.SPACE_SM,
-                              ),
-                            ),
-                          ),
-                        ),
-                        CcIconButton.bouncing(
-                          icon: Icon(
-                            Icons.close_rounded,
-                            color: activeColor,
-                            size: context.respIconSize(baseSize: 20),
-                          ),
-                          onTap: onClear,
-                          tooltip: el.tr(CcLocaleKeys.common_clear),
-                        ),
-                        if (onCopy != null)
-                          CcIconButton.bouncing(
-                            icon: Icon(
-                              Icons.copy_rounded,
-                              color: activeColor,
-                              size: context.respIconSize(baseSize: 20),
-                            ),
-                            onTap: onCopy!,
-                            tooltip: el.tr(CcLocaleKeys.common_copy),
-                          ),
-                        CcBouncing(
-                          onTap: onDone,
-                          child: CcSymmetricPadding(
-                            horizontal: CcPaddingParams.SPACE_XL,
-                            child: CcText(
-                              el.tr(CcLocaleKeys.common_done),
-                              textStyle: context.ccTextTheme.labelMedium
-                                  ?.copyWith(
-                                    color: activeColor,
-                                    fontWeight: CcTypographyParams.bold,
-                                  ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  QuickNumericKeypad(
-                    onKeyPress: onKeyPress,
-                    onDelete: onDelete,
-                    onClear: onClear,
-                    activeColor: activeColor,
-                  ),
-                ],
-              ),
-            ),
+            child: _buildContent(context),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Quick amounts, clear / copy / done and the keys; the same on phone and
+  /// tablet, which differ only in the container around it.
+  Widget _buildContent(BuildContext context) {
+    return CcContentPadding(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CcSymmetricPadding(
+            vertical: CcPaddingParams.SPACE_XS,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: CcQuickAmountChips(
+                    amounts: suggestions,
+                    onSelected: (val) => onSuggestion?.call(val),
+                    activeColor: activeColor,
+                    padding: EdgeInsets.only(
+                      left: context.respPadding(CcPaddingParams.SPACE_SM),
+                    ),
+                  ),
+                ),
+                CcIconButton.bouncing(
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: activeColor,
+                    size: context.respIconSize(baseSize: 20),
+                  ),
+                  onTap: onClear,
+                  tooltip: el.tr(CcLocaleKeys.common_clear),
+                ),
+                if (onCopy != null)
+                  CcIconButton.bouncing(
+                    icon: Icon(
+                      Icons.copy_rounded,
+                      color: activeColor,
+                      size: context.respIconSize(baseSize: 20),
+                    ),
+                    onTap: onCopy!,
+                    tooltip: el.tr(CcLocaleKeys.common_copy),
+                  ),
+                CcBouncing(
+                  onTap: onDone,
+                  child: CcSymmetricPadding(
+                    horizontal: CcPaddingParams.SPACE_XL,
+                    child: CcText(
+                      el.tr(CcLocaleKeys.common_done),
+                      textStyle: context.ccTextTheme.labelMedium?.copyWith(
+                        color: activeColor,
+                        fontWeight: CcTypographyParams.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          QuickNumericKeypad(
+            onKeyPress: onKeyPress,
+            onDelete: onDelete,
+            onClear: onClear,
+            activeColor: activeColor,
+          ),
+        ],
       ),
     );
   }

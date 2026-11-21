@@ -14,14 +14,16 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../liability/presentation/get_x/borrow_form_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
-import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import 'expense_form_controller.dart';
 import 'income_form_controller.dart';
 import 'investment_form_controller.dart';
+import 'tab_change_notifier.dart';
+import 'transaction_form_controller.dart';
 
 /// Which real tab a `TabBar`/`TabBarView` slot represents.
-enum TransactionTabKind { expense, income, investment, liability, lend }
+enum TransactionTabKind { expense, income, investment, borrow, lend }
 
 @injectable
 class TransactionController extends CcGetController {
@@ -55,7 +57,7 @@ class TransactionController extends CcGetController {
     TransactionTabKind.expense,
     TransactionTabKind.income,
     TransactionTabKind.investment,
-    TransactionTabKind.liability,
+    TransactionTabKind.borrow,
     TransactionTabKind.lend,
   ];
 
@@ -68,7 +70,7 @@ class TransactionController extends CcGetController {
     if (kind == TransactionTabKind.investment) {
       return _userLevel.status.canUseInvestment;
     }
-    if (kind == TransactionTabKind.liability) {
+    if (kind == TransactionTabKind.borrow) {
       return _userLevel.status.canUseLiability;
     }
     if (kind == TransactionTabKind.lend) {
@@ -126,55 +128,49 @@ class TransactionController extends CcGetController {
   }
 
   /// Returns the controller backing the tab relevant to [intent].
-  dynamic getQuickEntryControllerForIntent(QuickEntryIntent intent) {
-    switch (intent) {
-      case QuickEntryIntent.expense:
-        return Get.isRegistered<ExpenseFormController>()
-            ? Get.find<ExpenseFormController>()
-            : null;
-      case QuickEntryIntent.income:
-        return Get.isRegistered<IncomeFormController>()
-            ? Get.find<IncomeFormController>()
-            : null;
-      case QuickEntryIntent.investment:
-        return Get.isRegistered<InvestmentFormController>()
-            ? Get.find<InvestmentFormController>()
-            : null;
-      case QuickEntryIntent.debt:
-        return Get.isRegistered<LiabilityFormController>()
-            ? Get.find<LiabilityFormController>()
-            : null;
-      case QuickEntryIntent.lend:
-        return Get.isRegistered<LendFormController>()
-            ? Get.find<LendFormController>()
-            : null;
-    }
-  }
+  dynamic getQuickEntryControllerForIntent(QuickEntryIntent intent) =>
+      _formControllerFor(_tabForIntent(intent));
 
   /// Returns the controller backing a specific [tab].
-  dynamic getQuickEntryControllerForTab(TransactionTabKind tab) {
-    switch (tab) {
-      case TransactionTabKind.expense:
-        return Get.isRegistered<ExpenseFormController>()
-            ? Get.find<ExpenseFormController>()
-            : null;
-      case TransactionTabKind.income:
-        return Get.isRegistered<IncomeFormController>()
-            ? Get.find<IncomeFormController>()
-            : null;
-      case TransactionTabKind.investment:
-        return Get.isRegistered<InvestmentFormController>()
-            ? Get.find<InvestmentFormController>()
-            : null;
-      case TransactionTabKind.liability:
-        return Get.isRegistered<LiabilityFormController>()
-            ? Get.find<LiabilityFormController>()
-            : null;
-      case TransactionTabKind.lend:
-        return Get.isRegistered<LendFormController>()
-            ? Get.find<LendFormController>()
-            : null;
-    }
+  dynamic getQuickEntryControllerForTab(TransactionTabKind tab) =>
+      _formControllerFor(tab);
+
+  static TransactionTabKind _tabForIntent(QuickEntryIntent intent) =>
+      switch (intent) {
+        QuickEntryIntent.expense => TransactionTabKind.expense,
+        QuickEntryIntent.income => TransactionTabKind.income,
+        QuickEntryIntent.investment => TransactionTabKind.investment,
+        QuickEntryIntent.debt => TransactionTabKind.borrow,
+        QuickEntryIntent.lend => TransactionTabKind.lend,
+      };
+
+  /// The form controller behind [tab], or null when it is not registered.
+  /// With [onlyIfBuilt], also null while it is registered but not built yet:
+  /// the controllers are registered lazily so startup stays light, and asking
+  /// for one that was never shown would build it just to refresh it.
+  TransactionFormController? _formControllerFor(
+    TransactionTabKind tab, {
+    bool onlyIfBuilt = false,
+  }) => switch (tab) {
+    TransactionTabKind.expense => _formController<ExpenseFormController>(
+      onlyIfBuilt,
+    ),
+    TransactionTabKind.income => _formController<IncomeFormController>(
+      onlyIfBuilt,
+    ),
+    TransactionTabKind.investment => _formController<InvestmentFormController>(
+      onlyIfBuilt,
+    ),
+    TransactionTabKind.borrow => _formController<BorrowFormController>(
+      onlyIfBuilt,
+    ),
+    TransactionTabKind.lend => _formController<LendFormController>(onlyIfBuilt),
+  };
+
+  T? _formController<T extends TransactionFormController>(bool onlyIfBuilt) {
+    if (!Get.isRegistered<T>()) return null;
+    if (onlyIfBuilt && Get.isPrepared<T>()) return null;
+    return Get.find<T>();
   }
 
   /// Temporarily shows the wallet summary in place of the title for 2 seconds.
@@ -213,6 +209,7 @@ class TransactionController extends CcGetController {
   void onInit() {
     super.onInit();
     ever(CurrencyConstants.onCurrencyChanged, (_) => loadWallets());
+    ever(selectedTabIndex, _onTabChanged);
 
     // Load persisted interaction state
     hasInteractedWithCardStack.value =
@@ -231,8 +228,8 @@ class TransactionController extends CcGetController {
     if (!Get.isRegistered<IncomeFormController>()) {
       Get.lazyPut(() => getIt<IncomeFormController>());
     }
-    if (!Get.isRegistered<LiabilityFormController>()) {
-      Get.lazyPut(() => getIt<LiabilityFormController>());
+    if (!Get.isRegistered<BorrowFormController>()) {
+      Get.lazyPut(() => getIt<BorrowFormController>());
     }
     if (!Get.isRegistered<LendFormController>()) {
       Get.lazyPut(() => getIt<LendFormController>());
@@ -247,6 +244,26 @@ class TransactionController extends CcGetController {
       refreshWalletTotal();
       loadWallets();
     });
+  }
+
+  /// The tab shown before the latest change.
+  int _shownTabIndex = 0;
+
+  TransactionTabKind? _tabAt(int index) {
+    final tabs = visibleTabs;
+    return index >= 0 && index < tabs.length ? tabs[index] : null;
+  }
+
+  /// Lets the form of the tab just left and the one just opened refresh what
+  /// went stale (the one place that decides when; see [notifyTabChange]).
+  void _onTabChanged(int index) {
+    final from = _tabAt(_shownTabIndex);
+    _shownTabIndex = index;
+    notifyTabChange(
+      from: from,
+      to: _tabAt(index),
+      controllerOf: (tab) => _formControllerFor(tab, onlyIfBuilt: true),
+    );
   }
 
   Future<void> loadWallets() async {
@@ -306,32 +323,6 @@ class TransactionController extends CcGetController {
   void submitCurrentForm(BuildContext context) {
     final tabs = visibleTabs;
     if (selectedTabIndex.value >= tabs.length) return;
-    switch (tabs[selectedTabIndex.value]) {
-      case TransactionTabKind.expense:
-        if (Get.isRegistered<ExpenseFormController>()) {
-          Get.find<ExpenseFormController>().submitForm(context);
-        }
-        break;
-      case TransactionTabKind.income:
-        if (Get.isRegistered<IncomeFormController>()) {
-          Get.find<IncomeFormController>().submitForm(context);
-        }
-        break;
-      case TransactionTabKind.investment:
-        if (Get.isRegistered<InvestmentFormController>()) {
-          Get.find<InvestmentFormController>().submitForm(context);
-        }
-        break;
-      case TransactionTabKind.liability:
-        if (Get.isRegistered<LiabilityFormController>()) {
-          Get.find<LiabilityFormController>().submitForm(context);
-        }
-        break;
-      case TransactionTabKind.lend:
-        if (Get.isRegistered<LendFormController>()) {
-          Get.find<LendFormController>().submitForm(context);
-        }
-        break;
-    }
+    _formControllerFor(tabs[selectedTabIndex.value])?.submitForm(context);
   }
 }

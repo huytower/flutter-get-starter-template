@@ -344,7 +344,7 @@ class BudgetAllocationController extends CcGetController {
       liabilityBalance.value = newBorrow - newLend;
 
       // Refresh transaction form if it's already active
-      _refresh.refreshLiabilityForm();
+      _refresh.refreshBorrowForm();
     }, (error) {});
   }
 }

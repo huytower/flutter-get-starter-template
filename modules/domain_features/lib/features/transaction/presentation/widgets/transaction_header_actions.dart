@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../liability/presentation/get_x/borrow_form_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_base_form_controller.dart';
-import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
 import '../get_x/transaction_controller.dart';
@@ -78,7 +78,7 @@ class TransactionHeaderActions extends StatelessWidget {
       TransactionTabKind.expense => context.expenseAccent,
       TransactionTabKind.income => context.incomeAccent,
       TransactionTabKind.investment => context.investmentAccent,
-      TransactionTabKind.liability => context.borrowAccent,
+      TransactionTabKind.borrow => context.borrowAccent,
       TransactionTabKind.lend => context.lendAccent,
     };
   }
@@ -97,9 +97,9 @@ class TransactionHeaderActions extends StatelessWidget {
               : Icons.arrow_circle_up;
         }
         return Icons.arrow_circle_down;
-      case TransactionTabKind.liability:
-        if (Get.isRegistered<LiabilityFormController>()) {
-          final c = Get.find<LiabilityFormController>();
+      case TransactionTabKind.borrow:
+        if (Get.isRegistered<BorrowFormController>()) {
+          final c = Get.find<BorrowFormController>();
           return c.action.value == LiabilityDirectionForm.decrease
               ? Icons.arrow_circle_down
               : Icons.arrow_circle_up;

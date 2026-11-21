@@ -14,7 +14,7 @@ import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import '../../domain/usecases/delete_liability_usecase.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
-import 'liability_form_controller.dart';
+import 'borrow_form_controller.dart';
 
 @lazySingleton
 class LiabilityListController extends CcGetController {
@@ -146,9 +146,9 @@ class LiabilityListController extends CcGetController {
           _refresh.refreshWallets(showLoading: false);
         }
 
-        // Refresh LiabilityForm if it's open
-        if (Get.isRegistered<LiabilityFormController>()) {
-          Get.find<LiabilityFormController>().loadLiabilities();
+        // Refresh BorrowForm if it's open
+        if (Get.isRegistered<BorrowFormController>()) {
+          Get.find<BorrowFormController>().loadLiabilities();
         }
 
         CcSnackBarHelper.showSuccessSnackBar(

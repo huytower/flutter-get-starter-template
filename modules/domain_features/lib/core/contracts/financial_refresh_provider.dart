@@ -31,7 +31,7 @@ abstract class FinancialRefreshProvider {
   Future<void> refreshBudgetLimits();
 
   /// The borrow-form liability list (not the lend form).
-  Future<void> refreshLiabilityForm();
+  Future<void> refreshBorrowForm();
 
   Future<void> refreshLiabilityList();
 

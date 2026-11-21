@@ -93,6 +93,19 @@ class ExpenseFormController extends TransactionFormController
 
   final RxList<int> quickAmounts = RxList<int>(MoneyConstants.quickAmounts);
 
+  @override
+  void onTabActivated() {
+    loadSuggestions();
+    refreshTimeBasedSuggestion();
+    refreshLocationSuggestion();
+    restoreActiveTabSuggestions();
+  }
+
+  @override
+  void onTabDeactivated() {
+    hideSuggestionsWhileInactive();
+  }
+
   Future<void> loadSuggestions() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
     currencyCode.value = settings.currencyCode;

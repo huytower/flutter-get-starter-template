@@ -233,7 +233,7 @@ class TransactionHeaderBanner extends StatelessWidget {
       TransactionTabKind.expense => context.expenseAccent,
       TransactionTabKind.income => context.incomeAccent,
       TransactionTabKind.investment => context.investmentAccent,
-      TransactionTabKind.liability => context.borrowAccent,
+      TransactionTabKind.borrow => context.borrowAccent,
       TransactionTabKind.lend => context.lendAccent,
     };
   }

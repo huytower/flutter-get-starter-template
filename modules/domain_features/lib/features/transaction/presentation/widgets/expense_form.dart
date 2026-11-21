@@ -1,11 +1,8 @@
-import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
 import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
 import 'package:domain_features/core/presentation/widgets/entry_form_two_column.dart';
 import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
-import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
 import 'package:domain_features/export_domain_features.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -15,6 +12,9 @@ import 'package:theme/export_theme.dart';
 
 import '../get_x/expense_form_controller.dart';
 import 'expense_category_selection_section.dart';
+import 'form_amount_section.dart';
+import 'form_keypad_panel.dart';
+import 'form_wallet_section.dart';
 
 class ExpenseForm extends StatefulWidget {
   const ExpenseForm({super.key, this.tag});
@@ -28,7 +28,6 @@ class ExpenseForm extends StatefulWidget {
 class _ExpenseFormState extends State<ExpenseForm> {
   late final ExpenseFormController controller;
   final GlobalKey _amountFieldKey = GlobalKey();
-  Worker? _tabRevisitWorker;
 
   @override
   void initState() {
@@ -45,34 +44,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
       controller.refreshTimeBasedSuggestion();
       if (widget.tag == null) controller.refreshLocationSuggestion();
     });
-
-    if (Get.isRegistered<TransactionController>()) {
-      final transactionController = Get.find<TransactionController>();
-      _tabRevisitWorker = ever(transactionController.selectedTabIndex, (
-        int index,
-      ) {
-        if (!mounted) return;
-        final tabs = transactionController.visibleTabs;
-        final isExpenseActive =
-            index >= 0 &&
-            index < tabs.length &&
-            tabs[index] == TransactionTabKind.expense;
-        if (isExpenseActive) {
-          controller.loadSuggestions();
-          controller.refreshTimeBasedSuggestion();
-          if (widget.tag == null) controller.refreshLocationSuggestion();
-          controller.restoreActiveTabSuggestions();
-        } else {
-          controller.hideSuggestionsWhileInactive();
-        }
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _tabRevisitWorker?.dispose();
-    super.dispose();
   }
 
   @override
@@ -251,52 +222,14 @@ class _ExpenseFormState extends State<ExpenseForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAmountSection(context, controller, accentColor),
+          const CcSpaceSM(),
           if (!controller.isEditing) ...[
-            const CcSpaceSM(),
             _buildWalletSection(context, controller, accentColor),
             const CcSpaceSM(),
-            EntryAdditionalDetailsSection(
-              isExpanded: controller.showMoreDetails.value,
-              onToggle: controller.toggleMoreDetails,
-              selectedDate: controller.date.value,
-              onDateSelected: controller.setDate,
-              onCalendarTap: () => controller.pickDate(context),
-              noteController: controller.noteController,
-              activeColor: accentColor,
-            ),
           ],
-          if (controller.isEditing) ...[
-            const CcSpaceSM(),
-            EntryAdditionalDetailsSection(
-              isExpanded: true,
-              selectedDate: controller.date.value,
-              onDateSelected: controller.setDate,
-              onCalendarTap: () => controller.pickDate(context),
-              noteController: controller.noteController,
-              activeColor: accentColor,
-              hideDate: true,
-            ),
-          ],
+          _buildDetailsSection(context, controller, accentColor),
           const CcSpaceSM(),
-          EntrySubmitButton(
-            text: controller.isEditing
-                ? el.tr(CcLocaleKeys.common_save)
-                : el.tr(CcLocaleKeys.transaction_record_expense),
-            isSubmitting: controller.isSubmitting.value,
-            isEnabled: controller.canSubmit,
-            onTap: () => controller.submitForm(context),
-            activeColor: accentColor,
-            leadingIcon: Icons.arrow_circle_down,
-            leadingIconSize: 28,
-            badge: guideline.isTaskActive('first_transaction')
-                ? PrjGuidelineBadge(
-                    size: context.respDim(6),
-                    label: guideline.bannerDescription,
-                    labelAbove: true,
-                    growRight: false,
-                  )
-                : null,
-          ),
+          _buildSubmitButton(context, controller, guideline, accentColor),
           const CcSpaceXS(),
         ],
       ),
@@ -308,23 +241,11 @@ class _ExpenseFormState extends State<ExpenseForm> {
     ExpenseFormController controller,
     Color accentColor,
   ) {
-    return Obx(
-      () => CcAmountInputSection(
-        label: el.tr(CcLocaleKeys.transaction_amount),
-        amountStr: controller.amountStr.value,
-        quickAmounts: controller.quickAmounts,
-        isKeypadVisible: controller.showKeypad.value,
-        activeColor: accentColor,
-        currencyCode: controller.currencyCode.value,
-        fieldKey: _amountFieldKey,
-        onTap: () =>
-            controller.showKeypadAndScroll(context, fieldKey: _amountFieldKey),
-        onQuickAmountSelected: (amount) =>
-            controller.amountStr.value = amount.toString(),
-        onClear: () => controller.amountStr.value = '0',
-        onCopy: () =>
-            CcStringHelper.copyToClipboard(controller.amountStr.value),
-      ),
+    return FormAmountSection(
+      controller: controller,
+      label: el.tr(CcLocaleKeys.transaction_amount),
+      activeColor: accentColor,
+      fieldKey: _amountFieldKey,
     );
   }
 
@@ -333,19 +254,10 @@ class _ExpenseFormState extends State<ExpenseForm> {
     ExpenseFormController controller,
     Color accentColor,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcFormLabel(text: el.tr(CcLocaleKeys.transaction_source_expense)),
-        const CcSpaceXS(),
-        WalletStripCard(
-          wallets: controller.wallets,
-          selectedWalletId: controller.selectedWalletId.value,
-          activeColor: accentColor,
-          defaultBgColor: context.verticalGradient(accentColor),
-          onWalletSelected: controller.setWalletId,
-        ),
-      ],
+    return FormWalletSection(
+      controller: controller,
+      label: el.tr(CcLocaleKeys.transaction_source_expense),
+      activeColor: accentColor,
     );
   }
 
@@ -354,14 +266,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
     ExpenseFormController controller,
     Color accentColor,
   ) {
-    return MoneyKeypadPanel(
-      onKeyPress: controller.handleKeyPress,
-      onDelete: controller.handleDelete,
-      onClear: () => controller.amountStr.value = '0',
-      suggestions: controller.quickAmounts,
-      onSuggestion: (value) => controller.amountStr.value = value.toString(),
-      onDone: controller.hideKeypad,
-      activeColor: accentColor,
-    );
+    return FormKeypadPanel(controller: controller, activeColor: accentColor);
   }
 }

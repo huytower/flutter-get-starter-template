@@ -375,6 +375,12 @@ class IncomeFormController extends TransactionFormController
     super.onClose();
   }
 
+  @override
+  void onTabActivated() {
+    loadSuggestions();
+    refreshMonthlySuggestion();
+  }
+
   Future<void> loadSuggestions() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
     currencyCode.value = settings.currencyCode;

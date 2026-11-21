@@ -13,8 +13,8 @@ import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/budget_name_helper.dart';
+import '../../../liability/presentation/get_x/borrow_form_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
-import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../../../transaction/domain/usecases/update_transaction_usecase.dart';
 import '../../../transaction/presentation/get_x/investment_form_controller.dart';
 
@@ -29,7 +29,7 @@ class QuickEditTransactionSheetController extends CcGetController {
   final TextEditingController noteController = TextEditingController();
 
   InvestmentFormController? investmentController;
-  LiabilityFormController? liabilityController;
+  BorrowFormController? liabilityController;
   LendFormController? lendController;
 
   String get currencyCode {
@@ -114,7 +114,7 @@ class QuickEditTransactionSheetController extends CcGetController {
         });
       }
     } else if (isBorrow) {
-      liabilityController = Get.put(getIt<LiabilityFormController>(), tag: tag);
+      liabilityController = Get.put(getIt<BorrowFormController>(), tag: tag);
       if (tx.liabilityId != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (liabilityController != null) {
@@ -291,7 +291,7 @@ class QuickEditTransactionSheetController extends CcGetController {
       Get.delete<InvestmentFormController>(tag: tag);
     }
     if (liabilityController != null) {
-      Get.delete<LiabilityFormController>(tag: tag);
+      Get.delete<BorrowFormController>(tag: tag);
     }
     if (lendController != null) {
       Get.delete<LendFormController>(tag: tag);

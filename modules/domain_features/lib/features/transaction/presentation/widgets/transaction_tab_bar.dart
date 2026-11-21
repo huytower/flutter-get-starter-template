@@ -15,7 +15,7 @@ extension TransactionTabKindStyle on TransactionTabKind {
     TransactionTabKind.expense => el.tr(CcLocaleKeys.transaction_expense_slip),
     TransactionTabKind.income => el.tr(CcLocaleKeys.transaction_income_slip),
     TransactionTabKind.investment => el.tr(CcLocaleKeys.transaction_investment),
-    TransactionTabKind.liability => el.tr(CcLocaleKeys.liability_title),
+    TransactionTabKind.borrow => el.tr(CcLocaleKeys.liability_title),
     TransactionTabKind.lend => el.tr(CcLocaleKeys.liability_lend),
   };
 
@@ -23,7 +23,7 @@ extension TransactionTabKindStyle on TransactionTabKind {
     TransactionTabKind.expense => context.expenseAccent,
     TransactionTabKind.income => context.incomeAccent,
     TransactionTabKind.investment => context.investmentAccent,
-    TransactionTabKind.liability => context.borrowAccent,
+    TransactionTabKind.borrow => context.borrowAccent,
     TransactionTabKind.lend => context.lendAccent,
   };
 }
@@ -112,7 +112,7 @@ class TransactionTabBar extends StatelessWidget {
     final tabs = isSecondary
         ? [
             TransactionTabKind.investment,
-            TransactionTabKind.liability,
+            TransactionTabKind.borrow,
             TransactionTabKind.lend,
           ]
         : [TransactionTabKind.expense, TransactionTabKind.income];
@@ -253,7 +253,7 @@ class TransactionTabBar extends StatelessWidget {
                 showInvestmentBadge &&
                 !isSelected)
               _buildBadge(context),
-            if (kind == TransactionTabKind.liability &&
+            if (kind == TransactionTabKind.borrow &&
                 showLiabilityBadge &&
                 !isSelected)
               _buildBadge(context),

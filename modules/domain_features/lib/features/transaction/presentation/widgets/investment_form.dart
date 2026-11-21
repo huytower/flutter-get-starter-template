@@ -1,13 +1,10 @@
-import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/di/di.dart';
-import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
 import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
 import 'package:domain_features/core/presentation/widgets/entry_form_two_column.dart';
 import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
-import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,10 +13,12 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
-import '../../../wallet/export_wallet.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import '../get_x/investment_form_controller.dart';
 import '../get_x/transaction_controller.dart';
+import 'form_amount_section.dart';
+import 'form_keypad_panel.dart';
+import 'form_wallet_section.dart';
 import 'investment_asset_selector.dart';
 import 'investment_direction_toggle.dart';
 
@@ -32,7 +31,6 @@ class InvestmentForm extends StatefulWidget {
 
 class _InvestmentFormState extends State<InvestmentForm> {
   late final InvestmentFormController controller;
-  Worker? _tabRevisitWorker;
   final GlobalKey _amountFieldKey = GlobalKey();
 
   @override
@@ -44,29 +42,6 @@ class _InvestmentFormState extends State<InvestmentForm> {
       if (!mounted) return;
       controller.loadSuggestions();
     });
-
-    if (Get.isRegistered<TransactionController>()) {
-      final transactionController = Get.find<TransactionController>();
-      _tabRevisitWorker = ever(transactionController.selectedTabIndex, (
-        int index,
-      ) {
-        if (!mounted) return;
-        final tabs = transactionController.visibleTabs;
-        final isInvestmentActive =
-            index >= 0 &&
-            index < tabs.length &&
-            tabs[index] == TransactionTabKind.investment;
-        if (isInvestmentActive) {
-          controller.loadSuggestions();
-        }
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _tabRevisitWorker?.dispose();
-    super.dispose();
   }
 
   @override
@@ -339,23 +314,11 @@ class _InvestmentFormState extends State<InvestmentForm> {
     InvestmentFormController controller,
     Color accentColor,
   ) {
-    return Obx(
-      () => CcAmountInputSection(
-        label: el.tr(CcLocaleKeys.transaction_amount),
-        amountStr: controller.amountStr.value,
-        quickAmounts: controller.quickAmounts,
-        isKeypadVisible: controller.showKeypad.value,
-        activeColor: accentColor,
-        currencyCode: controller.currencyCode.value,
-        fieldKey: _amountFieldKey,
-        onTap: () =>
-            controller.showKeypadAndScroll(context, fieldKey: _amountFieldKey),
-        onQuickAmountSelected: (amount) =>
-            controller.amountStr.value = amount.toString(),
-        onClear: () => controller.amountStr.value = '0',
-        onCopy: () =>
-            CcStringHelper.copyToClipboard(controller.amountStr.value),
-      ),
+    return FormAmountSection(
+      controller: controller,
+      label: el.tr(CcLocaleKeys.transaction_amount),
+      activeColor: accentColor,
+      fieldKey: _amountFieldKey,
     );
   }
 
@@ -368,19 +331,11 @@ class _InvestmentFormState extends State<InvestmentForm> {
         controller.direction.value == InvestmentDirectionForm.contribute
         ? CcLocaleKeys.transaction_source_investment
         : CcLocaleKeys.transaction_destination_investment;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcFormLabel(text: el.tr(labelKey)),
-        const CcSpaceXS(),
-        WalletStripCard(
-          wallets: controller.wallets,
-          selectedWalletId: controller.selectedWalletId.value,
-          activeColor: accentColor,
-          defaultBgColor: context.investmentGoldCardGradient,
-          onWalletSelected: controller.setWalletId,
-        ),
-      ],
+    return FormWalletSection(
+      controller: controller,
+      label: el.tr(labelKey),
+      activeColor: accentColor,
+      background: context.investmentGoldCardGradient,
     );
   }
 
@@ -389,14 +344,6 @@ class _InvestmentFormState extends State<InvestmentForm> {
     InvestmentFormController controller,
     Color accentColor,
   ) {
-    return MoneyKeypadPanel(
-      onKeyPress: controller.handleKeyPress,
-      onDelete: controller.handleDelete,
-      onClear: () => controller.amountStr.value = '0',
-      suggestions: controller.quickAmounts,
-      onSuggestion: (value) => controller.amountStr.value = value.toString(),
-      onDone: controller.hideKeypad,
-      activeColor: accentColor,
-    );
+    return FormKeypadPanel(controller: controller, activeColor: accentColor);
   }
 }

@@ -1,4 +1,3 @@
-
 abstract class MoneyConstants {
   /// standard quick amounts for transaction entries (Expense/Income/Transfer) - VND
   static const List<int> quickAmounts = [
@@ -514,5 +513,4 @@ abstract class MoneyConstants {
     if (age < 30) return liability20To30;
     return liabilityAbove30;
   }
-
 }

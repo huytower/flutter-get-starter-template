@@ -1,12 +1,9 @@
-import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
-import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
 import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
 import 'package:domain_features/core/presentation/widgets/entry_form_two_column.dart';
 import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
-import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,9 +12,10 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../guideline/export_guideline.dart';
-import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
 import '../get_x/income_form_controller.dart';
-import '../get_x/transaction_controller.dart';
+import 'form_amount_section.dart';
+import 'form_keypad_panel.dart';
+import 'form_wallet_section.dart';
 import 'income_category_selection_section.dart';
 
 class IncomeForm extends StatefulWidget {
@@ -35,7 +33,6 @@ class IncomeForm extends StatefulWidget {
 
 class _IncomeFormState extends State<IncomeForm> {
   late final IncomeFormController controller;
-  Worker? _tabRevisitWorker;
   final GlobalKey _amountFieldKey = GlobalKey();
 
   @override
@@ -52,30 +49,6 @@ class _IncomeFormState extends State<IncomeForm> {
       controller.loadSuggestions();
       if (widget.tag == null) controller.refreshMonthlySuggestion();
     });
-
-    if (Get.isRegistered<TransactionController>()) {
-      final transactionController = Get.find<TransactionController>();
-      _tabRevisitWorker = ever(transactionController.selectedTabIndex, (
-        int index,
-      ) {
-        if (!mounted) return;
-        final tabs = transactionController.visibleTabs;
-        final isIncomeActive =
-            index >= 0 &&
-            index < tabs.length &&
-            tabs[index] == TransactionTabKind.income;
-        if (isIncomeActive) {
-          controller.loadSuggestions();
-          if (widget.tag == null) controller.refreshMonthlySuggestion();
-        }
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _tabRevisitWorker?.dispose();
-    super.dispose();
   }
 
   @override
@@ -160,24 +133,12 @@ class _IncomeFormState extends State<IncomeForm> {
           activeColor: accentColor,
         ),
       ],
-      details: controller.isEditing
-          ? EntryAdditionalDetailsSection(
-              isExpanded: true,
-              selectedDate: controller.date.value,
-              onDateSelected: controller.setDate,
-              onCalendarTap: () => controller.pickDate(context),
-              noteController: controller.noteController,
-              activeColor: accentColor,
-              hideDate: true,
-            )
-          : EntryAdditionalDetailsSection(
-              isExpanded: true,
-              selectedDate: controller.date.value,
-              onDateSelected: controller.setDate,
-              onCalendarTap: () => controller.pickDate(context),
-              noteController: controller.noteController,
-              activeColor: accentColor,
-            ),
+      details: _buildDetailsSection(
+        context,
+        controller,
+        accentColor,
+        alwaysExpanded: true,
+      ),
       right: [
         _buildAmountSection(context, controller, accentColor),
         if (!controller.isEditing) ...[
@@ -188,6 +149,36 @@ class _IncomeFormState extends State<IncomeForm> {
         _buildSubmitButton(context, controller, guideline, accentColor),
         const CcSpaceXS(),
       ],
+    );
+  }
+
+  /// Date + note. In the two-column layout it is always open (there is room
+  /// for it); in the single column it keeps its "More details" toggle.
+  Widget _buildDetailsSection(
+    BuildContext context,
+    IncomeFormController controller,
+    Color accentColor, {
+    bool alwaysExpanded = false,
+  }) {
+    if (controller.isEditing) {
+      return EntryAdditionalDetailsSection(
+        isExpanded: true,
+        selectedDate: controller.date.value,
+        onDateSelected: controller.setDate,
+        onCalendarTap: () => controller.pickDate(context),
+        noteController: controller.noteController,
+        activeColor: accentColor,
+        hideDate: true,
+      );
+    }
+    return EntryAdditionalDetailsSection(
+      isExpanded: alwaysExpanded || controller.showMoreDetails.value,
+      onToggle: alwaysExpanded ? null : controller.toggleMoreDetails,
+      selectedDate: controller.date.value,
+      onDateSelected: controller.setDate,
+      onCalendarTap: () => controller.pickDate(context),
+      noteController: controller.noteController,
+      activeColor: accentColor,
     );
   }
 
@@ -228,51 +219,14 @@ class _IncomeFormState extends State<IncomeForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAmountSection(context, controller, accentColor),
+          const CcSpaceSM(),
           if (!controller.isEditing) ...[
-            const CcSpaceSM(),
             _buildWalletSection(context, controller, accentColor),
             const CcSpaceSM(),
-            EntryAdditionalDetailsSection(
-              isExpanded: controller.showMoreDetails.value,
-              onToggle: controller.toggleMoreDetails,
-              selectedDate: controller.date.value,
-              onDateSelected: controller.setDate,
-              onCalendarTap: () => controller.pickDate(context),
-              noteController: controller.noteController,
-              activeColor: accentColor,
-            ),
           ],
-          if (controller.isEditing) ...[
-            const CcSpaceSM(),
-            EntryAdditionalDetailsSection(
-              isExpanded: true,
-              selectedDate: controller.date.value,
-              onDateSelected: controller.setDate,
-              onCalendarTap: () => controller.pickDate(context),
-              noteController: controller.noteController,
-              activeColor: accentColor,
-              hideDate: true,
-            ),
-          ],
+          _buildDetailsSection(context, controller, accentColor),
           const CcSpaceSM(),
-          EntrySubmitButton(
-            text: controller.isEditing
-                ? el.tr(CcLocaleKeys.common_save)
-                : el.tr(CcLocaleKeys.transaction_record_income),
-            isSubmitting: controller.isSubmitting.value,
-            isEnabled: controller.canSubmit,
-            onTap: () => controller.submitForm(context),
-            activeColor: accentColor,
-            leadingIcon: Icons.arrow_circle_up,
-            leadingIconSize: 18,
-            badge: guideline.isTaskActive('first_transaction')
-                ? PrjGuidelineBadge(
-                    size: context.respDim(8),
-                    label: guideline.bannerDescription,
-                    growRight: false,
-                  )
-                : null,
-          ),
+          _buildSubmitButton(context, controller, guideline, accentColor),
           const CcSpaceXS(),
         ],
       ),
@@ -284,23 +238,11 @@ class _IncomeFormState extends State<IncomeForm> {
     IncomeFormController controller,
     Color accentColor,
   ) {
-    return Obx(
-      () => CcAmountInputSection(
-        label: el.tr(CcLocaleKeys.transaction_amount),
-        amountStr: controller.amountStr.value,
-        quickAmounts: controller.quickAmounts,
-        isKeypadVisible: controller.showKeypad.value,
-        activeColor: accentColor,
-        currencyCode: controller.currencyCode.value,
-        fieldKey: _amountFieldKey,
-        onTap: () =>
-            controller.showKeypadAndScroll(context, fieldKey: _amountFieldKey),
-        onQuickAmountSelected: (amount) =>
-            controller.amountStr.value = amount.toString(),
-        onClear: () => controller.amountStr.value = '0',
-        onCopy: () =>
-            CcStringHelper.copyToClipboard(controller.amountStr.value),
-      ),
+    return FormAmountSection(
+      controller: controller,
+      label: el.tr(CcLocaleKeys.transaction_amount),
+      activeColor: accentColor,
+      fieldKey: _amountFieldKey,
     );
   }
 
@@ -309,19 +251,10 @@ class _IncomeFormState extends State<IncomeForm> {
     IncomeFormController controller,
     Color accentColor,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcFormLabel(text: el.tr(CcLocaleKeys.transaction_source_income)),
-        const CcSpaceXS(),
-        WalletStripCard(
-          wallets: controller.wallets,
-          selectedWalletId: controller.selectedWalletId.value,
-          activeColor: accentColor,
-          defaultBgColor: context.verticalGradient(accentColor),
-          onWalletSelected: controller.setWalletId,
-        ),
-      ],
+    return FormWalletSection(
+      controller: controller,
+      label: el.tr(CcLocaleKeys.transaction_source_income),
+      activeColor: accentColor,
     );
   }
 
@@ -330,14 +263,6 @@ class _IncomeFormState extends State<IncomeForm> {
     IncomeFormController controller,
     Color accentColor,
   ) {
-    return MoneyKeypadPanel(
-      onKeyPress: controller.handleKeyPress,
-      onDelete: controller.handleDelete,
-      onClear: () => controller.amountStr.value = '0',
-      suggestions: controller.quickAmounts,
-      onSuggestion: (value) => controller.amountStr.value = value.toString(),
-      onDone: controller.hideKeypad,
-      activeColor: accentColor,
-    );
+    return FormKeypadPanel(controller: controller, activeColor: accentColor);
   }
 }

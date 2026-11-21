@@ -40,6 +40,11 @@ class LendFormController extends LiabilityBaseFormController {
 
   final RxList<int> quickAmounts = <int>[].obs;
 
+  @override
+  void onTabActivated() {
+    loadSuggestions();
+  }
+
   Future<void> loadSuggestions() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
     final suggestions = MoneyConstants.getLiabilitySuggestions(
@@ -354,6 +359,7 @@ class LendFormController extends LiabilityBaseFormController {
     }
   }
 
+  @override
   void handleClear() {
     if (editingInstallmentIndex.value != null) {
       final index = editingInstallmentIndex.value!;
@@ -364,6 +370,7 @@ class LendFormController extends LiabilityBaseFormController {
     }
   }
 
+  @override
   void handleSuggestion(int value) {
     if (editingInstallmentIndex.value != null) {
       final index = editingInstallmentIndex.value!;

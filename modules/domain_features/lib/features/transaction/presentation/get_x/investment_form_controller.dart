@@ -125,6 +125,11 @@ class InvestmentFormController extends TransactionFormController {
     MoneyConstants.budgetQuickAmounts,
   );
 
+  @override
+  void onTabActivated() {
+    loadSuggestions();
+  }
+
   Future<void> loadSuggestions() async {
     final settings = await _getProfileSettings();
     currencyCode.value = settings.currencyCode;

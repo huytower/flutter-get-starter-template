@@ -120,6 +120,16 @@ abstract class TransactionFormController extends CcGetController {
     }
   }
 
+  /// Quick-amount chips shown above the keypad and in the amount field.
+  RxList<int> get quickAmounts;
+
+  /// Clears the amount. Borrow and lend override it to clear an installment
+  /// draft while one is being edited.
+  void handleClear() => amountStr.value = '0';
+
+  /// Applies a tapped quick amount (borrow and lend route it to a draft).
+  void handleSuggestion(int value) => amountStr.value = value.toString();
+
   void handleDelete() {
     if (amountStr.value.length > 1) {
       amountStr.value = amountStr.value.substring(
@@ -227,6 +237,14 @@ abstract class TransactionFormController extends CcGetController {
 
     await Future.wait(futures);
   }
+
+  /// The user came back to this form's tab. Refresh what can go stale while
+  /// away (suggestions, regional amounts). Not called on the first visit: the
+  /// form loads itself when it is built.
+  void onTabActivated() {}
+
+  /// The user moved to another tab.
+  void onTabDeactivated() {}
 
   bool get canSubmit;
 

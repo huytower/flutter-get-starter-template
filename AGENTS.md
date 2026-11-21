@@ -245,6 +245,10 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
 12. **Suffix-First Naming, `lower_snake_case` files**: `*_entity.dart`, `*_usecase.dart`, `*_repository.dart` /
     `*_repository_impl.dart`, `*_model.dart`, `*_page.dart`, `*_bloc.dart`/`*_cubit.dart`,
     `*_state.dart`/`*_event.dart`.
+    - **Liability family:** `Borrow*` = Vay nợ (borrowing side only), `Lend*` = Cho mượn (lending side only),
+      `Liability*` = the direction-agnostic concept or shared base (feature folder `liability/`,
+      `LiabilityBaseFormController`). Borrow and Lend are independent features: do not merge their
+      controllers or forms, and do not name a one-sided class `Liability*`.
 13. **Import Hygiene** — prefer centralized package exports (e.g. `package:cc_micro_features/export_micro_features.dart`)
     over reaching into a specific file inside another module; never import both the export and a specific file
     from the same module. Order: Flutter/Dart → external packages → project modules → local relative

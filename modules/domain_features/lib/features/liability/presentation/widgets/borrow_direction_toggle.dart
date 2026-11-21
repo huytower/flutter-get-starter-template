@@ -6,12 +6,12 @@ import 'package:message/export_message.dart';
 import '../get_x/liability_base_form_controller.dart';
 
 /// Borrow/Repay pill switch shown at the top of the Liability form.
-class LiabilityDirectionToggle extends StatefulWidget {
+class BorrowDirectionToggle extends StatefulWidget {
   final LiabilityDirectionForm value;
   final Color activeColor;
   final ValueChanged<LiabilityDirectionForm> onChanged;
 
-  const LiabilityDirectionToggle({
+  const BorrowDirectionToggle({
     super.key,
     required this.value,
     required this.activeColor,
@@ -19,11 +19,10 @@ class LiabilityDirectionToggle extends StatefulWidget {
   });
 
   @override
-  State<LiabilityDirectionToggle> createState() =>
-      _LiabilityDirectionToggleState();
+  State<BorrowDirectionToggle> createState() => _BorrowDirectionToggleState();
 }
 
-class _LiabilityDirectionToggleState extends State<LiabilityDirectionToggle>
+class _BorrowDirectionToggleState extends State<BorrowDirectionToggle>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController = TabController(
     length: 2,
@@ -35,7 +34,7 @@ class _LiabilityDirectionToggleState extends State<LiabilityDirectionToggle>
       action == LiabilityDirectionForm.increase ? 0 : 1;
 
   @override
-  void didUpdateWidget(covariant LiabilityDirectionToggle oldWidget) {
+  void didUpdateWidget(covariant BorrowDirectionToggle oldWidget) {
     super.didUpdateWidget(oldWidget);
     final index = _indexOf(widget.value);
     if (_tabController.index != index) {

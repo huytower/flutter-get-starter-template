@@ -2,8 +2,8 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' show CcContentPadding;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../liability/presentation/widgets/borrow_form.dart';
 import '../../../liability/presentation/widgets/lend_form.dart';
-import '../../../liability/presentation/widgets/liability_form.dart';
 import '../get_x/transaction_controller.dart';
 import 'cc_level_lock_placeholder.dart';
 import 'expense_form.dart';
@@ -65,7 +65,7 @@ class TransactionTabBarView extends StatelessWidget {
       TransactionTabKind.expense => const ExpenseForm(),
       TransactionTabKind.income => const IncomeForm(),
       TransactionTabKind.investment => const InvestmentForm(),
-      TransactionTabKind.liability => const LiabilityForm(),
+      TransactionTabKind.borrow => const BorrowForm(),
       TransactionTabKind.lend => const LendForm(),
     };
   }

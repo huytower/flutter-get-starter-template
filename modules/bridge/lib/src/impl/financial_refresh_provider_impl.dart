@@ -67,9 +67,9 @@ class FinancialRefreshProviderImpl implements FinancialRefreshProvider {
   }
 
   @override
-  Future<void> refreshLiabilityForm() async {
-    if (Get.isRegistered<LiabilityFormController>()) {
-      await Get.find<LiabilityFormController>().loadLiabilities();
+  Future<void> refreshBorrowForm() async {
+    if (Get.isRegistered<BorrowFormController>()) {
+      await Get.find<BorrowFormController>().loadLiabilities();
     }
   }
 
@@ -129,7 +129,7 @@ class FinancialRefreshProviderImpl implements FinancialRefreshProvider {
       await Get.find<LendFormController>().loadLiabilities();
     }
 
-    await refreshLiabilityForm();
+    await refreshBorrowForm();
     await refreshLiabilityList();
   }
 
@@ -147,8 +147,8 @@ class FinancialRefreshProviderImpl implements FinancialRefreshProvider {
       if (Get.isRegistered<LendFormController>()) {
         Get.find<LendFormController>().clearFormOnLogout();
       }
-      if (Get.isRegistered<LiabilityFormController>()) {
-        Get.find<LiabilityFormController>().clearFormOnLogout();
+      if (Get.isRegistered<BorrowFormController>()) {
+        Get.find<BorrowFormController>().clearFormOnLogout();
       }
       if (Get.isRegistered<LiabilityListController>()) {
         Get.find<LiabilityListController>().liabilities.clear();

@@ -33,7 +33,7 @@ flowchart TD
     ExpenseForm --> ExpenseCtrl["ExpenseFormController"]
     IncomeForm --> IncomeCtrl["IncomeFormController"]
     InvestForm --> InvestCtrl["InvestmentFormController"]
-    LiabForm --> LiabCtrl["LiabilityFormController"]
+    LiabForm --> LiabCtrl["BorrowFormController"]
     LendForm --> LendCtrl["LendFormController"]
 
     ExpenseCtrl -.->|"extends"| FormBase
@@ -157,16 +157,20 @@ sequenceDiagram
     F->>Other: GuidelineController.completeTask('first_transaction')
 ```
 
-## 3. Observed issues in the current flow
+## 3. Tab refresh
 
-- **Liability vs Lend controllers are ~95% duplicated code.** `LiabilityFormController` and
+A tab's form refreshes stale data in `onTabActivated()` / `onTabDeactivated()`. `TransactionController` is the only place that watches `selectedTabIndex` and calls them (via `notifyTabChange`), only for forms already built. Widgets no longer subscribe on their own.
+
+## 4. Observed issues in the current flow
+
+- **Liability vs Lend controllers are ~95% duplicated code.** `BorrowFormController` and
   `LendFormController` (`liability/presentation/get_x/`) are near-identical
   ~490-line files — same installment-draft handling, same `submitForm`, same
   `handleKeyPress`/`handleDelete` overrides — differing mainly in `direction`
   and one filter (`isBorrow` vs `isLend`). Any bug fix must be applied twice.
 - **Fragile, documented DI ordering hazard.** `TransactionController.onInit()`
   deliberately does *not* register `InvestmentFormController`/
-  `LiabilityFormController`/`LendFormController` because doing so recurses into
+  `BorrowFormController`/`LendFormController` because doing so recurses into
   `Get.find<TransactionController>()` mid-`onInit()`. They're registered
   instead from `TransactionPage.buildContent()`, one level up — the ordering
   is enforced by convention/comments, not by the type system.

@@ -62,7 +62,10 @@ abstract final class SmartEntrySchema {
           description: AiPrompts.fieldWalletId,
           nullable: true,
         ),
-      'date': const CcAiSchema.string(description: AiPrompts.fieldDate, nullable: true),
+      'date': const CcAiSchema.string(
+        description: AiPrompts.fieldDate,
+        nullable: true,
+      ),
       'note': CcAiSchema.string(
         description: AiPrompts.fieldNote(context.language),
         nullable: true,

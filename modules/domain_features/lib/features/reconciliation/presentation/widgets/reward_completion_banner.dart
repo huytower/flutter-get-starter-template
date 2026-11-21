@@ -20,8 +20,7 @@ class RewardCompletionBanner extends StatefulWidget {
   final VoidCallback? onClose;
 
   @override
-  State<RewardCompletionBanner> createState() =>
-      _RewardCompletionBannerState();
+  State<RewardCompletionBanner> createState() => _RewardCompletionBannerState();
 }
 
 class _RewardCompletionBannerState extends State<RewardCompletionBanner>

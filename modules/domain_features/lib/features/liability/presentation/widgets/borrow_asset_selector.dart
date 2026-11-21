@@ -11,11 +11,11 @@ import '../../../../core/presentation/widgets/category/prj_category_shimmer_list
 import '../get_x/liability_base_form_controller.dart';
 import '../pages/liability_grid_page.dart';
 
-class LiabilityAssetSelector extends StatelessWidget {
+class BorrowAssetSelector extends StatelessWidget {
   final LiabilityBaseFormController controller;
   final Color activeColor;
 
-  const LiabilityAssetSelector({
+  const BorrowAssetSelector({
     super.key,
     required this.controller,
     required this.activeColor,

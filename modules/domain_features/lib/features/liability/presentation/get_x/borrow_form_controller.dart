@@ -27,8 +27,8 @@ import '../get_x/liability_list_controller.dart';
 /// Consolidated Liability form: handles completing a new loan's details (Borrow)
 /// or recording additional borrowings against existing loans.
 @lazySingleton
-class LiabilityFormController extends LiabilityBaseFormController {
-  LiabilityFormController(super.quickEntryHandler);
+class BorrowFormController extends LiabilityBaseFormController {
+  BorrowFormController(super.quickEntryHandler);
 
   @override
   String get quickEntryCategoryType => CategoryType.liability;
@@ -41,6 +41,11 @@ class LiabilityFormController extends LiabilityBaseFormController {
   final RxList<int> quickAmounts = RxList<int>(
     MoneyConstants.budgetQuickAmounts,
   );
+
+  @override
+  void onTabActivated() {
+    loadSuggestions();
+  }
 
   Future<void> loadSuggestions() async {
     final settings = await getIt<GetProfileSettingsUseCase>().call();
@@ -318,6 +323,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     }
   }
 
+  @override
   void handleClear() {
     if (editingInstallmentIndex.value != null) {
       final index = editingInstallmentIndex.value!;
@@ -328,6 +334,7 @@ class LiabilityFormController extends LiabilityBaseFormController {
     }
   }
 
+  @override
   void handleSuggestion(int value) {
     if (editingInstallmentIndex.value != null) {
       final index = editingInstallmentIndex.value!;

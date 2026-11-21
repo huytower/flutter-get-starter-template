@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
+import '../../../liability/presentation/get_x/borrow_form_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
-import '../../../liability/presentation/get_x/liability_form_controller.dart';
 import '../get_x/expense_form_controller.dart' hide ever;
 import '../get_x/investment_form_controller.dart';
 import '../get_x/transaction_controller.dart';
@@ -41,8 +41,8 @@ class TransactionPage extends CcGetView<TransactionController> {
     if (!Get.isRegistered<InvestmentFormController>()) {
       Get.put(getIt<InvestmentFormController>());
     }
-    if (!Get.isRegistered<LiabilityFormController>()) {
-      Get.put(getIt<LiabilityFormController>());
+    if (!Get.isRegistered<BorrowFormController>()) {
+      Get.put(getIt<BorrowFormController>());
     }
     if (!Get.isRegistered<LendFormController>()) {
       Get.lazyPut(() => getIt<LendFormController>());

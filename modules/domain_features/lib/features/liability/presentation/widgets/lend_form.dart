@@ -1,19 +1,17 @@
-import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/core/presentation/widgets/cc_amount_input_section.dart';
 import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
 import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
 import 'package:domain_features/core/presentation/widgets/entry_form_two_column.dart';
 import 'package:domain_features/core/presentation/widgets/entry_submit_button.dart';
-import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../transaction/presentation/get_x/transaction_controller.dart';
-import '../../../wallet/presentation/widgets/wallet_strip_card.dart';
+import '../../../transaction/presentation/widgets/form_amount_section.dart';
+import '../../../transaction/presentation/widgets/form_keypad_panel.dart';
+import '../../../transaction/presentation/widgets/form_wallet_section.dart';
 import '../get_x/lend_form_controller.dart';
 import '../get_x/liability_base_form_controller.dart';
 import 'lend_asset_selector.dart';
@@ -29,7 +27,6 @@ class LendForm extends StatefulWidget {
 
 class _LendFormState extends State<LendForm> {
   late final LendFormController controller;
-  Worker? _tabRevisitWorker;
   final GlobalKey _amountFieldKey = GlobalKey();
 
   @override
@@ -41,29 +38,6 @@ class _LendFormState extends State<LendForm> {
       if (!mounted) return;
       controller.loadSuggestions();
     });
-
-    if (Get.isRegistered<TransactionController>()) {
-      final transactionController = Get.find<TransactionController>();
-      _tabRevisitWorker = ever(transactionController.selectedTabIndex, (
-        int index,
-      ) {
-        if (!mounted) return;
-        final tabs = transactionController.visibleTabs;
-        final isLendActive =
-            index >= 0 &&
-            index < tabs.length &&
-            tabs[index] == TransactionTabKind.liability;
-        if (isLendActive) {
-          controller.loadSuggestions();
-        }
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _tabRevisitWorker?.dispose();
-    super.dispose();
   }
 
   @override
@@ -214,23 +188,11 @@ class _LendFormState extends State<LendForm> {
         ? el.tr(CcLocaleKeys.transaction_amount)
         : el.tr(CcLocaleKeys.transaction_liability_amount_lend_label);
 
-    return Obx(
-      () => CcAmountInputSection(
-        label: label,
-        amountStr: controller.amountStr.value,
-        quickAmounts: controller.quickAmounts,
-        isKeypadVisible: controller.showKeypad.value,
-        activeColor: accentColor,
-        currencyCode: controller.currencyCode.value,
-        fieldKey: _amountFieldKey,
-        onTap: () =>
-            controller.showKeypadAndScroll(context, fieldKey: _amountFieldKey),
-        onQuickAmountSelected: (amount) =>
-            controller.amountStr.value = amount.toString(),
-        onClear: controller.handleClear,
-        onCopy: () =>
-            CcStringHelper.copyToClipboard(controller.amountStr.value),
-      ),
+    return FormAmountSection(
+      controller: controller,
+      label: label,
+      activeColor: accentColor,
+      fieldKey: _amountFieldKey,
     );
   }
 
@@ -245,21 +207,10 @@ class _LendFormState extends State<LendForm> {
         ? el.tr(CcLocaleKeys.transaction_source_debt)
         : el.tr(CcLocaleKeys.transaction_liability_wallet_lend_label);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CcFormLabel(text: text),
-        const CcSpaceXS(),
-        Obx(
-          () => WalletStripCard(
-            wallets: controller.wallets.toList(),
-            selectedWalletId: controller.selectedWalletId.value,
-            activeColor: accentColor,
-            defaultBgColor: context.verticalGradient(accentColor),
-            onWalletSelected: controller.setWalletId,
-          ),
-        ),
-      ],
+    return FormWalletSection(
+      controller: controller,
+      label: text,
+      activeColor: accentColor,
     );
   }
 
@@ -305,14 +256,6 @@ class _LendFormState extends State<LendForm> {
     LendFormController controller,
     Color accentColor,
   ) {
-    return MoneyKeypadPanel(
-      onKeyPress: controller.handleKeyPress,
-      onDelete: controller.handleDelete,
-      onClear: controller.handleClear,
-      suggestions: controller.quickAmounts,
-      onSuggestion: (value) => controller.handleSuggestion(value),
-      onDone: controller.hideKeypad,
-      activeColor: accentColor,
-    );
+    return FormKeypadPanel(controller: controller, activeColor: accentColor);
   }
 }

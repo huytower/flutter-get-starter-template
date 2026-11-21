@@ -12,8 +12,8 @@ import 'package:message/export_message.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import '../../../liability/presentation/widgets/borrow_asset_selector.dart';
 import '../../../liability/presentation/widgets/lend_asset_selector.dart';
-import '../../../liability/presentation/widgets/liability_asset_selector.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';
 import '../../../transaction/presentation/widgets/investment_asset_selector.dart';
 import '../get_x/quick_edit_transaction_sheet_controller.dart';
@@ -125,7 +125,7 @@ class QuickEditTransactionSheet
     }
 
     if (controller.isBorrow && controller.liabilityController != null) {
-      return LiabilityAssetSelector(
+      return BorrowAssetSelector(
         controller: controller.liabilityController!,
         activeColor: accentColor,
       );
