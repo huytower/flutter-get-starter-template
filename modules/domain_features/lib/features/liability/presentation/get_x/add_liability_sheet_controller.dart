@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/di/di.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';

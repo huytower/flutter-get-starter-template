@@ -19,6 +19,8 @@ dependencies:
     path: ../../cc_bridge
   cc_micro_features:
     path: ../../shared/cc_micro_features
+  cc_sdk:
+    path: ../../shared/cc_core_sdk/cc_sdk
   data_config:
     path: ../data_config
   domain_features:

@@ -2,7 +2,7 @@ library cc_bridge;
 
 export 'package:cc_sdk_data/export_cc_sdk_data.dart'
     hide getIt, initMicroPackage;
-export 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt, initMicroPackage;
+export 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 
 export 'core/di/di.dart';
 export 'src/navigation/auth_coordinator.dart';

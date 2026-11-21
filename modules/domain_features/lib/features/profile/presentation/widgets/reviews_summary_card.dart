@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/foundation.dart' show kIsWeb;

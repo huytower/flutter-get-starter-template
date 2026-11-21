@@ -1,4 +1,5 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_micro_features/features/auth/domain/repositories/auth_repository.dart';
 import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';

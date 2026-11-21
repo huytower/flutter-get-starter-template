@@ -5,9 +5,37 @@
 // (or `dart scripts/check_imports.dart`). Exits 1 and lists every violation
 // as `path:line [rule] message`. Generated files are skipped.
 //
+// Legacy debt of the `feature-controller` and `di-composition-root` rules is
+// frozen per file in `scripts/check_imports_baseline.txt`: a file may keep (not
+// add to) its recorded count, and an entry that went down must be lowered, so
+// the baseline only ever shrinks. After paying debt off, run
+// `dart scripts/check_imports.dart --write-baseline` and commit the smaller file.
+//
 // Uses dart:io only, so it runs the same on Windows, macOS and CI.
 
 import 'dart:io';
+
+/// Rules whose existing violations are tracked in the baseline file.
+const Set<String> _baselinedRules = {'feature-controller', 'di-composition-root'};
+
+const String _baselinePath = 'scripts/check_imports_baseline.txt';
+
+/// A feature's screen controller / Bloc / Cubit (rule 4: never imported by
+/// another feature).
+final RegExp _controllerFile = RegExp(
+  r'/features/[^/]+/presentation/.*_(controller|bloc|cubit)\.dart$',
+);
+
+/// The feature a file belongs to (top folder under lib/features/), for the
+/// packages that hold features.
+final RegExp _featurePath = RegExp(
+  r'^(modules/domain_features|shared/cc_micro_features)/lib/(?:features/([^/]+)/)?',
+);
+
+/// `getIt<X>()`, `getIt.get<X>()`, `getIt(...)` or `GetIt.instance`.
+final RegExp _getItUse = RegExp(
+  r'\bgetIt\s*(?:<\s*(\w+)|\.(?:get|call)\s*<\s*(\w+)|\.\w+|\()|\bGetIt\.instance\b',
+);
 
 /// Package name -> folder, for every package the checks know about.
 const Map<String, String> _packages = {
@@ -121,7 +149,7 @@ class _Violation {
   String toString() => '$path:$line [$rule] $message';
 }
 
-void main() {
+void main(List<String> args) {
   final root = Directory.current;
   if (!File('${root.path}/melos.yaml').existsSync()) {
     stderr.writeln('Run from the repository root (where melos.yaml is).');
@@ -151,8 +179,17 @@ void main() {
 
   violations.addAll(_checkCycles());
 
+  if (args.contains('--write-baseline')) {
+    _writeBaseline(violations);
+    return;
+  }
+  final frozen = _applyBaseline(violations);
+
   if (violations.isEmpty) {
-    stdout.writeln('check:imports: $files files, no violations.');
+    stdout.writeln(
+      'check:imports: $files files, no violations '
+      '($frozen legacy violation(s) frozen in $_baselinePath).',
+    );
     return;
   }
   violations.sort((a, b) => a.toString().compareTo(b.toString()));
@@ -185,6 +222,11 @@ Iterable<_Violation> _check(String owner, String path, File file) sync* {
         .join();
     final line = '\n'.allMatches(source.substring(0, match.start)).length + 1;
     yield* _checkUri(owner, path, line, uri, isTest);
+  }
+
+  if (!isTest) {
+    yield* _checkFeatureControllers(path, source);
+    yield* _checkComposition(owner, path, source);
   }
 
   if (_sdkCore.contains(owner) || owner == 'cc_bridge') {
@@ -333,6 +375,203 @@ Iterable<_Violation> _checkUri(
       '${layer.group(1)}/ must not import a presentation layer ($uri)',
     );
   }
+}
+
+/// Rule 4: a feature (or `core/`) never uses another feature's controller,
+/// Bloc or Cubit, whether it imports the file directly (by package or relative
+/// path) or through a barrel that re-exports it. The bridge, the orchestrator,
+/// is the one place allowed to.
+Iterable<_Violation> _checkFeatureControllers(
+  String path,
+  String source,
+) sync* {
+  final own = _featurePath.firstMatch(path);
+  if (own == null) return;
+  final ownFeature = own.group(2); // null for core/ and the barrels.
+
+  for (final match in _directive.allMatches(source)) {
+    if (match.group(1) != 'import') continue;
+    final uri = _literal
+        .allMatches(match.group(2)!)
+        .map((m) => m.group(1)!)
+        .join();
+    final target = _resolve(path, uri);
+    if (target == null) continue;
+    final line = '\n'.allMatches(source.substring(0, match.start)).length + 1;
+
+    for (final controller in _controllersExportedBy(target)) {
+      final feature = _featurePath.firstMatch(controller)?.group(2);
+      if (feature == null || feature == ownFeature) continue;
+      final name = _className(controller);
+      final direct = controller == target;
+      if (!direct && !RegExp('\\b$name\\b').hasMatch(source)) continue;
+      yield _Violation(
+        path,
+        line,
+        'feature-controller',
+        '$name belongs to feature "$feature"; reach it through a *Provider '
+            'contract (core/contracts/) implemented in modules/bridge',
+      );
+    }
+  }
+}
+
+/// AGENTS.md section IV.2: `getIt` only at the composition root, which is a
+/// package's `core/di/`, the App Shell, a page, or an entry point resolving
+/// the controller / Bloc / Cubit it creates (`getIt<XController>()`).
+Iterable<_Violation> _checkComposition(
+  String owner,
+  String path,
+  String source,
+) sync* {
+  if (owner == 'mobile_flutter_template' ||
+      path.contains('/core/di/') ||
+      path.contains('/presentation/pages/') ||
+      path.endsWith('_page.dart')) {
+    return;
+  }
+  final lines = source.split('\n');
+  for (var i = 0; i < lines.length; i++) {
+    final code = lines[i].trimLeft();
+    if (code.startsWith('//') || code.startsWith('*')) continue;
+    for (final hit in _getItUse.allMatches(lines[i])) {
+      final type = hit.group(1) ?? hit.group(2);
+      if (type != null && RegExp(r'(Controller|Bloc|Cubit)$').hasMatch(type)) {
+        continue;
+      }
+      yield _Violation(
+        path,
+        i + 1,
+        'di-composition-root',
+        '`${hit.group(0)}`: take it through the constructor; getIt belongs '
+            'in core/di/, a page, or the entry point creating its controller',
+      );
+    }
+  }
+}
+
+/// The repo-relative path [uri] points to, for our packages and relative
+/// URIs; null for anything else.
+String? _resolve(String from, String uri) {
+  if (uri.startsWith('dart:')) return null;
+  if (uri.startsWith('package:')) {
+    final slash = uri.indexOf('/');
+    final folder = _packages[uri.substring(8, slash)];
+    if (folder == null) return null;
+    final base = folder == '.' ? 'lib' : '$folder/lib';
+    return '$base/${uri.substring(slash + 1)}';
+  }
+  final parts = from.split('/')..removeLast();
+  for (final part in uri.split('/')) {
+    if (part == '..') {
+      if (parts.isNotEmpty) parts.removeLast();
+    } else if (part != '.') {
+      parts.add(part);
+    }
+  }
+  return parts.join('/');
+}
+
+final Map<String, Set<String>> _exportCache = {};
+
+/// Controller files reachable from [path]: itself, or through its `export`
+/// directives (followed transitively).
+Set<String> _controllersExportedBy(String path) {
+  final cached = _exportCache[path];
+  if (cached != null) return cached;
+  final found = _exportCache[path] = <String>{};
+  if (_controllerFile.hasMatch(path)) return found..add(path);
+
+  final file = File(path);
+  if (!file.existsSync()) return found;
+  final source = file.readAsStringSync();
+  for (final match in _directive.allMatches(source)) {
+    if (match.group(1) != 'export') continue;
+    final uri = _literal
+        .allMatches(match.group(2)!)
+        .map((m) => m.group(1)!)
+        .join();
+    final target = _resolve(path, uri);
+    if (target != null) found.addAll(_controllersExportedBy(target));
+  }
+  return found;
+}
+
+/// `budget_limit_controller.dart` -> `BudgetLimitController`.
+String _className(String path) => path
+    .split('/')
+    .last
+    .replaceFirst('.dart', '')
+    .split('_')
+    .map((w) => w.isEmpty ? w : w[0].toUpperCase() + w.substring(1))
+    .join();
+
+/// `rule path` -> number of violations, for the baselined rules.
+Map<String, int> _countDebt(List<_Violation> violations) {
+  final counts = <String, int>{};
+  for (final v in violations.where((v) => _baselinedRules.contains(v.rule))) {
+    final key = '${v.rule} ${v.path}';
+    counts[key] = (counts[key] ?? 0) + 1;
+  }
+  return counts;
+}
+
+void _writeBaseline(List<_Violation> violations) {
+  final counts = _countDebt(violations);
+  final keys = counts.keys.toList()..sort();
+  File(_baselinePath).writeAsStringSync(
+    '# Legacy violations of check_imports.dart, frozen per file. Format:\n'
+    '# <rule> <path> <count>. Only ever lower these numbers or delete lines;\n'
+    '# a new violation is fixed, never added here. See AGENTS.md section VI.\n'
+    '${keys.map((k) => '$k ${counts[k]}').join('\n')}\n',
+  );
+  stdout.writeln(
+    'check:imports: wrote ${keys.length} baseline entries '
+    '(${counts.values.fold(0, (a, b) => a + b)} violations) to $_baselinePath.',
+  );
+}
+
+/// Drops baselined violations that stay within their recorded count from
+/// [violations]; adds a `baseline` violation for every entry that is now too
+/// high (stale). Returns how many violations the baseline absorbed.
+int _applyBaseline(List<_Violation> violations) {
+  final baseline = <String, int>{};
+  final file = File(_baselinePath);
+  if (file.existsSync()) {
+    for (final raw in file.readAsLinesSync()) {
+      final line = raw.trim();
+      if (line.isEmpty || line.startsWith('#')) continue;
+      final cut = line.lastIndexOf(' ');
+      baseline[line.substring(0, cut)] = int.parse(line.substring(cut + 1));
+    }
+  }
+
+  final counts = _countDebt(violations);
+  var frozen = 0;
+  violations.removeWhere((v) {
+    if (!_baselinedRules.contains(v.rule)) return false;
+    final key = '${v.rule} ${v.path}';
+    final allowed = baseline[key] ?? 0;
+    if (counts[key]! > allowed) return false;
+    frozen++;
+    return true;
+  });
+
+  for (final MapEntry(key: key, value: allowed) in baseline.entries) {
+    final now = counts[key] ?? 0;
+    if (now >= allowed) continue;
+    final space = key.indexOf(' ');
+    violations.add(
+      _Violation(
+        key.substring(space + 1),
+        1,
+        'baseline',
+        '${key.substring(0, space)} debt went down from $allowed to $now: '
+            'run `dart scripts/check_imports.dart --write-baseline`',
+      ),
+    );
+  }
+  return frozen;
 }
 
 /// Package cycles: with the known back-edges taken out, the graph of lib/

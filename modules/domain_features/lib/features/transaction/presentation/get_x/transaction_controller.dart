@@ -1,6 +1,6 @@
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/features/wallet/export_wallet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

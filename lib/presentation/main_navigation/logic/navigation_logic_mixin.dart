@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:app_config/core/config/app/prj_env.dart';
 import 'package:bridge/export_bridge.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_micro_features/features/app_update/presentation/app_update_prompter.dart';
 import 'package:cc_micro_features/features/splash/core/splash_manager.dart';
 import 'package:firebase_performance/firebase_performance.dart';

@@ -1,5 +1,6 @@
 import 'package:cc_micro_features/export_micro_features.dart'
     show CcMfTranslations;
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';

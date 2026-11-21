@@ -1,4 +1,4 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 /// Body of an auth card (login, phone number, OTP): the brand header (logo,

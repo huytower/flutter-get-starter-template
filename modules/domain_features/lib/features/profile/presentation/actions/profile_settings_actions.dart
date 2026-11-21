@@ -1,4 +1,4 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';

@@ -24,13 +24,15 @@ Neutral vocabulary only: no domain nouns in class names, doc comments, enum valu
 
 ## Rings (what may depend on what)
 
-1. **Core (domain-free, always present):** `CcFailure`, `.Log()`, `CcScale`, `CcWindowSizeClass`,
-   tokens (`CcBaseColors`, `CcSpace*`), mixins, generic entities (user, device, message), pagination.
+1. **Core (domain-free, always present):** `CcFailure` (open on purpose: apps add failures, so it is not
+   `sealed`), `.Log()`, mixins, generic entities (user, device, message), pagination.
 2. **Optional capabilities (vendor- or platform-specific):** analytics, crash reporting, uncaught-error handling (`catcher_2`), AI/Gemini, speech, Slack
    feedback, location, phone-number helpers. Each sits behind an interface in the core ring and its vendor
    implementation lives in its own package, so an app that does not use it does not pull its dependencies.
-3. **Design system:** generic components only (buttons, cards, inputs, dialogs, adaptive layout, state views).
-   Domain-shaped widgets (wallet, expense category) do not belong here.
+3. **Design system:** tokens (`CcBaseColors`, `CcSpace*`), the scale curve and window classes (`CcScale`,
+   `CcWindowSizeClass`), and generic components only (buttons, cards, inputs, dialogs, adaptive layout, state
+   views). Domain-shaped or showcase widgets (wallet, expense category, onboarding badge, reward banner) do
+   not belong here.
 
 Inner rings never import outer rings. The core ring has no vendor SDK dependency.
 
@@ -49,10 +51,12 @@ Inner rings never import outer rings. The core ring has no vendor SDK dependency
 - Do not add new static-only vendor helpers (private constructor + static methods calling a vendor SDK): they
   cannot be mocked or swapped. All former static vendor helpers are migrated (AI, analytics, crash reporting,
   app attestation, Slack, speech, location, phone); keep it that way.
-- Configuration comes in through `CcSdkConfig.configure()` (core settings) and each vendor helper's
-  `configure(...)` (e.g. Slack webhook, Gemini model), called by the app at boot. The SDK never reads `.env`
-  files, `dotenv` or `--dart-define` keys itself; `CcFeatureFlags`, `CcRouteConfig`, `CcAppTrackName` and
-  `CcCrashLogEnv` are read-only views of `CcSdkConfig.current`.
+- Configuration: `CcSdkConfig.configure()` holds only what every package reads without injection (app
+  name, the `.Log()` switch; `CcAppTrackName` is its read-only view). Everything else is configured where
+  it is used: a capability takes its settings through its constructor from an app-registered interface
+  (`CcFirebaseAiConfig`, implemented by the app's `PrjFirebaseAiConfig`), or a vendor helper's
+  `configure(...)` (Slack webhook). Product concerns (route paths, upload paths, product flags) never enter
+  the SDK. The SDK never reads `.env` files, `dotenv` or `--dart-define` keys itself.
 - **`get_it` + `injectable` in the core ring is a deliberate choice, not a leak.** Every app built on this SDK
   uses them as its DI standard, and each SDK package registers its own services through
   `@InjectableInit.microPackage()` so the app wires the SDK with one `ExternalModule(...)` per package. The cost
@@ -80,6 +84,10 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | `CcFeatureFlags.isVipModeEnabled` (`ENABLE_VIP_MODE`) | product concept in a core config type | **Done (2.0.0):** removed; the app reads it via `PrjFeatureFlags` |
 | `CcUserEntity.linkedProviderIds` doc | described the field in Firebase terms | **Done:** described provider-neutrally |
 | `cc_micro_features`: `FirebaseAuthRepository` (in `domain/`) | the abstraction is named after its vendor | **Done:** renamed `AuthRepository` (exported from `export_auth.dart`); `FirebaseAuthRepositoryImpl` stays in `data/` |
+| `CcSdkConfig` (12 fields), `CcFeatureFlags`, `CcRouteConfig`, `CcCrashLogEnv` | one global config for every capability and product concern (Dio logging, pinning, routes, crash-log path, AI model) | **Done (Unreleased):** `CcSdkConfig` keeps `appName` + `enableLogger`; AI model via `CcFirebaseAiConfig` (DI); the rest moved to the app |
+| `cc_sdk_ui` → `cc_sdk` (and re-export of `export_cc_sdk.dart`) | a design system pulled device/network/storage plugins and the whole core API | **Done (Unreleased):** `CcScale` / `CcWindowSizeClass` moved into `cc_sdk_ui`; no dependency, no re-export |
+| `CcRewardCompletionBanner`, `CcGuidelineBadge` | a showcase banner and the app's onboarding badge in the design system | **Done (Unreleased):** moved to the app (`RewardCompletionBanner`, `GuidelineBadgeView`) |
+| `BiometricFailure`, `CurlFailure` in `cc_sdk_data`; `flutter` runtime dependency | feature / tool-named failures in the core; a pure-Dart package depending on Flutter | **Done (Unreleased):** removed; `cc_sdk_data` is pure Dart at runtime |
 
 ## Stability and versioning
 
@@ -104,8 +112,8 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 
 | Package | Owns | Entry point |
 |---|---|---|
-| `cc_sdk` | Network/device helpers, DI core, config (`CcFeatureFlags`, route config), crash-reporter interface and log file path, the `.Log()` extension, `CcScale`, `CcWindowSizeClass` | `export_cc_sdk.dart` |
-| `cc_sdk_ui` | Design system and widget catalog (adaptive layout, buttons, cards, dialogs, inputs, text, shimmer, navigation, `CcLoadMoreList`), tokens (`CcBaseColors`, `CcSpace*`), `CcContextExtension`, `CcMaxWidth`, `CcTwoColumn`, widget-building mixins (view config, pull-to-refresh, load-more, curved navigation) | `export_cc_sdk_ui.dart` |
+| `cc_sdk` | Network/device helpers, DI core, `CcSdkConfig` (app name, logger switch), capability interfaces, crash-reporter interface and log file path, the `.Log()` extension | `export_cc_sdk.dart` |
+| `cc_sdk_ui` | Design system and widget catalog (adaptive layout, buttons, cards, dialogs, inputs, text, shimmer, navigation, `CcLoadMoreList`), tokens (`CcBaseColors`, `CcSpace*`), `CcScale`, `CcWindowSizeClass`, `CcContextExtension`, `CcMaxWidth`, `CcTwoColumn`, widget-building mixins (view config, pull-to-refresh, load-more, curved navigation). Does not depend on `cc_sdk`: import both barrels when you need both | `export_cc_sdk_ui.dart` |
 | `cc_mixin` | Behavior-only mixins: pagination, back-button | `export_cc_mixin.dart` |
 | `cc_sdk_data` | Core entities/models, `CcFailure` hierarchy, shared domain services | `export_cc_sdk_data.dart` |
 | `cc_sdk_firebase` | Capability ring: Firebase implementations of core interfaces (`CcFirebaseAiClient`, `CcFirebaseAnalytics`, `CcFirebaseCrashReporter`, `CcFirebaseAppAttestation`). Only package allowed to import Firebase SDKs (migration in progress) | `export_cc_sdk_firebase.dart` |
@@ -114,8 +122,8 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | `cc_sdk_device` | Capability ring: device-plugin implementations (`CcDeviceLocationService` as `CcLocationService`, `CcSpeechToTextRecognizer` as `CcSpeechRecognizer`) | `export_cc_sdk_device.dart` |
 | `cc_sdk_phone` | Capability ring: `CcLibPhoneNumberValidator` (`phone_numbers_parser`) as `CcPhoneNumberValidator`; `cc_sdk` ships the dependency-free `CcBasicPhoneNumberValidator` | `export_cc_sdk_phone.dart` |
 
-Dependency direction (verified from `pubspec.yaml` and imports): `cc_sdk_ui` → `cc_sdk` → `cc_sdk_data`;
-`cc_mixin` → `cc_sdk_data`; capability packages (`cc_sdk_firebase`, `cc_sdk_catcher`, `cc_sdk_slack`,
+Dependency direction (verified from `pubspec.yaml` and imports): `cc_sdk` → `cc_sdk_data` (pure Dart);
+`cc_sdk_ui` → Flutter only (no SDK package); `cc_mixin` → `cc_sdk_data`; capability packages (`cc_sdk_firebase`, `cc_sdk_catcher`, `cc_sdk_slack`,
 `cc_sdk_device`, `cc_sdk_phone`) → `cc_sdk`. Never the reverse, never a cycle. A mixin that builds widgets goes in
 `cc_sdk_ui/lib/src/mixins/`; `cc_mixin` stays free of the design system (presentation goes through an overridable
 hook, e.g. `DoubleBackToExitMixin.showBackPressHint`).

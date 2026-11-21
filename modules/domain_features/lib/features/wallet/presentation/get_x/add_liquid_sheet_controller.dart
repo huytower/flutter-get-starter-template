@@ -1,28 +1,23 @@
-import 'dart:async';
-
 import 'package:cc_micro_features/features/web/export_web.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
-import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/constant/currency_constants.dart';
+import 'package:domain_features/core/constant/emergency_fund_constants.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/getx/cc_get_controller.dart';
+import 'package:domain_features/core/helper/wallet_icon_helper.dart';
+import 'package:domain_features/features/category/domain/usecases/get_categories_usecase.dart';
+import 'package:domain_features/features/profile/domain/usecases/get_profile_settings_usecase.dart';
+import 'package:domain_features/features/wallet/domain/services/emergency_fund_access.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/constant/currency_constants.dart';
-import '../../../../core/constant/emergency_fund_constants.dart';
-import '../../../../core/di/di.dart';
-import '../../../../core/getx/cc_get_controller.dart';
-import '../../../../core/helper/wallet_icon_helper.dart';
-import 'package:domain_features/core/domain/entities/category_entity.dart';
-import '../../../category/domain/usecases/get_categories_usecase.dart';
-import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import '../../../profile/domain/usecases/update_profile_settings_usecase.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
+import 'wallet_change_effects.dart';
 import 'wallet_controller.dart';
-import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
-import 'package:domain_features/core/contracts/user_level_provider.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 /// Backs [AddLiquidSheet] — create/edit form state for a single liquid wallet.
 /// Instantiated fresh per sheet open via [init]; see the sheet's
@@ -32,15 +27,22 @@ class AddLiquidSheetController extends CcGetController {
   AddLiquidSheetController(
     this._walletController,
     this._getCategories,
-    this.userLevel,
-    this._refresh,
+    this._getSettings,
+    this._emergencyFund,
+    this._effects,
   );
-
-  final FinancialRefreshProvider _refresh;
 
   final WalletController _walletController;
   final GetCategoriesUseCase _getCategories;
-  final UserLevelProvider userLevel;
+  final GetProfileSettingsUseCase _getSettings;
+  final EmergencyFundAccess _emergencyFund;
+  final WalletChangeEffects _effects;
+
+  /// The onboarding guideline, for the sheet's badges.
+  GuidelineProvider get guideline => _effects.guideline;
+
+  /// Whether the emergency-fund type is shown at all.
+  bool get isEmergencyFundOffered => _emergencyFund.isOffered;
 
   WalletEntity? _wallet;
   final TextEditingController nameController = TextEditingController();
@@ -108,7 +110,7 @@ class AddLiquidSheetController extends CcGetController {
   }
 
   Future<void> _loadAsyncData() async {
-    final settings = await getIt<GetProfileSettingsUseCase>().call();
+    final settings = await _getSettings();
     currencyCode.value = settings.currencyCode;
 
     if (isEditing && _wallet != null) {
@@ -150,11 +152,7 @@ class AddLiquidSheetController extends CcGetController {
   }
 
   Future<void> _loadEmergencyFundGate() async {
-    final status = userLevel.status;
-    final level = status.level;
-    final settings = await getIt<GetProfileSettingsUseCase>().call();
-    emergencyFundUnlocked.value =
-        settings.isVip || (level >= 3 && settings.hasViewedEmergencyFundEbook);
+    emergencyFundUnlocked.value = await _emergencyFund.isUnlocked();
   }
 
   Future<void> openEmergencyFundEbook(BuildContext context) async {
@@ -167,10 +165,7 @@ class AddLiquidSheetController extends CcGetController {
         ),
       ),
     );
-    final settings = await getIt<GetProfileSettingsUseCase>().call();
-    await getIt<UpdateProfileSettingsUseCase>().call(
-      settings.copyWith(hasViewedEmergencyFundEbook: true),
-    );
+    await _emergencyFund.markEbookViewed();
     await _loadEmergencyFundGate();
     if (emergencyFundUnlocked.value) {
       newType.value = WalletType.emergencyFund;
@@ -343,15 +338,7 @@ class AddLiquidSheetController extends CcGetController {
       if (context.mounted) {
         // Refresh related controllers immediately to reflect memory changes
         _walletController.loadWallets();
-        _refresh.refreshBudgetAllocation();
-
-        // Mark guideline task as completed when adding first wallet
-        if (!isEditing && getIt<GuidelineProvider>().isAvailable) {
-          final guideline = getIt<GuidelineProvider>();
-          if (guideline.isTaskActive('wallet_balance')) {
-            await guideline.completeTask('wallet_balance');
-          }
-        }
+        await _effects.afterSheetSaved(created: !isEditing);
 
         if (!context.mounted) return;
         Navigator.pop(context);
@@ -362,7 +349,7 @@ class AddLiquidSheetController extends CcGetController {
               : el.tr(CcLocaleKeys.wallet_added_success),
         );
         if (!isEditing && context.mounted) {
-          unawaited(getIt<GuestLoginPromptService>().maybeShow(context));
+          _effects.promptGuestSignIn(context);
         }
       }
     } catch (e) {

@@ -161,10 +161,11 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
       `@LazySingleton(as: XProvider)`. Receive providers like any other dependency — see **section IV,
       "Injecting dependencies"**. New cross-feature need → add a method to the matching provider (or a new
       `*Provider` + bridge impl); never route by string/event keys.
-    - **Legacy, do not copy:** about 40 older imports of other features' controllers still exist (mainly
+    - **Legacy, do not copy:** 46 older uses of other features' controllers still exist (mainly
       `WalletController`, the liability/lend form controllers hosted by `transaction`, `TransactionController`,
       `BudgetLimitController`, `BudgetAllocationController`, `CategorySettingsController`). They are debt to
-      migrate, not a pattern: never add a new one; route the new need through a provider instead.
+      migrate, not a pattern: they are frozen per file in `scripts/check_imports_baseline.txt`, and
+      `check:imports` fails on any new one (`feature-controller`); route the new need through a provider instead.
     - Contracts the features consume stay in `domain_features` or `cc_bridge` — a contract in `modules/bridge`
       that `domain_features` imports would be a package cycle.
     - **CodeGraph-friendly hops** (each contract → impl → destination must be a static edge an indexer can
@@ -320,7 +321,12 @@ The session itself only holds state and orchestration; each flow is a small clas
 `QuickEntryImageInput`, `QuickEntryVoiceInput`, `QuickEntryCategoryCache`, plus the stateless
 `QuickEntryIntentRouter`.
 **Legacy, do not copy:** controllers above 5 dependencies (`ReportController`, ...) and widgets below the page that
-still call `getIt` are debt to migrate, not patterns.
+still call `getIt` are debt to migrate, not patterns. The `getIt` calls are frozen per file in
+`scripts/check_imports_baseline.txt` (`di-composition-root`); `check:imports` fails on any new one.
+**Reference for points 1–3:** `wallet`. `WalletController` takes 5 collaborators: `LoadWalletOverviewUseCase`,
+`WalletLedger` (balances from transactions), `EmergencyFundAccess` (the unlock rule shared with the add sheet),
+`WalletChangeEffects` (what other features see, through `FinancialRefreshProvider` / `GuidelineProvider`),
+and the repository. Its sheets are an extension (`WalletSheets`), not a mixin.
 
 ## V. Delivery workflow
 
@@ -363,6 +369,14 @@ on any doc having been read:
     - `bridge-barrel`: other packages import `bridge` only through `export_bridge.dart` (or `core/di/`), and that
       barrel exports contracts, never a `*_impl.dart`.
     - `coordinator-home`: a `*_coordinator_impl.dart` file lives only in `modules/bridge`.
+    - `feature-controller` (rule #4): a feature (or `domain_features/lib/core/`) uses no other feature's
+      `*_controller` / `*_bloc` / `*_cubit`, whether imported by package path, relative path, or through a
+      barrel that re-exports it. Only `modules/bridge` may.
+    - `di-composition-root` (section IV.2): `getIt` only in `core/di/`, the App Shell, a page (`*_page.dart`,
+      `presentation/pages/`), or as `getIt<XController|XBloc|XCubit>()` at the entry point creating it.
+    Existing `feature-controller` / `di-composition-root` debt is frozen per file in
+    `scripts/check_imports_baseline.txt`: a file may not exceed its count, and a count that went down must be
+    lowered (`dart scripts/check_imports.dart --write-baseline`), so the file only shrinks. Never add a line to it.
     A new rule goes into the script, not only into this file.
 23. **Import order** (rule #13): rely on `dart analyze` with `directives_ordering` enabled, `dart fix --apply` to
     auto-sort.

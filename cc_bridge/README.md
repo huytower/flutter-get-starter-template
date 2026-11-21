@@ -84,7 +84,7 @@ class AuthCoordinatorImpl implements AuthCoordinator {
 
   @override
   void navigateToDashboard(BuildContext context) {
-    context.router.replacePath(CcRouteConfig.mainNavigation);
+    context.router.replacePath(ShellRoutePaths.mainNavigation);
   }
 }
 ```

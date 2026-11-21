@@ -119,11 +119,11 @@ Hive.registerAdapter(UserModelAdapter());
 
 ## Feature Flags
 
-Control feature availability using `CcFeatureFlags`:
+Product flags live in `PrjFeatureFlags` (the SDK keeps none):
 
 ```dart
-if (CcFeatureFlags.isEnableLogger) {
-  // Logger is enabled
+if (PrjFeatureFlags.isVipModeEnabled) {
+  // VIP mode is on
 }
 ```
 

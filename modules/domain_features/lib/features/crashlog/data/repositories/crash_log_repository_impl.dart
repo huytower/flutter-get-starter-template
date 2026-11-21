@@ -1,5 +1,6 @@
 import 'dart:developer' as developer;
 
+import 'package:app_config/core/config/app/prj_env.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:injectable/injectable.dart';
 
@@ -15,7 +16,7 @@ class CrashLogRepositoryImpl implements CrashLogRepository {
 
   @override
   Future<bool> uploadPendingOnRestart() async {
-    if (!CcCrashLogEnv.isUploadEnabled) return false;
+    if (!PrjEnv.enableCrashLogUpload) return false;
 
     final file = await CcCrashLogPaths.resolveLogFile();
     if (!file.existsSync() || file.lengthSync() == 0) return false;

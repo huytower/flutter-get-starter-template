@@ -1,3 +1,5 @@
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
+
 /// Cross-feature refresh of in-memory screen state after another feature
 /// changed the underlying data.
 ///
@@ -13,6 +15,16 @@ abstract class FinancialRefreshProvider {
 
   /// Transaction screen totals and wallet picker.
   Future<void> refreshTransactions();
+
+  /// Adds a just-created wallet to the transaction screen's wallet picker.
+  void addWalletToTransactions(WalletEntity wallet);
+
+  /// Replaces [wallet] in the transaction screen's wallet picker (reloads the
+  /// picker when it does not hold that wallet yet).
+  void updateWalletInTransactions(WalletEntity wallet);
+
+  /// Drops a deleted wallet from the transaction screen's wallet picker.
+  void removeWalletFromTransactions(String walletId);
 
   Future<void> refreshBudgetAllocation({bool showLoading = true});
 

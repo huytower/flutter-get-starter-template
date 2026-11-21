@@ -1,4 +1,3 @@
-import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
@@ -11,7 +10,10 @@ class CrashLogRemote {
 
   final Dio _dio;
 
+  /// Path appended to the API base URL for crash log uploads.
+  static const String apiPath = '/client-logs';
+
   Future<void> upload(CrashLogUploadBody body) async {
-    await _dio.post<void>(CcCrashLogEnv.apiPath, data: body.toJson());
+    await _dio.post<void>(apiPath, data: body.toJson());
   }
 }

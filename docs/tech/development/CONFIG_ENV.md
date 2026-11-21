@@ -19,13 +19,14 @@ GitHub Variables + Secrets
   -> CI step "Generate App Env" writes env/prod.json (key names logged, values never)
   -> flutter build ... --dart-define-from-file=env/prod.json   (values compiled in)
   -> PrjEnv (modules/app_config) reads them as const String/bool.fromEnvironment
-  -> initEnv() (app shell, first boot step) -> CcSdkConfig.configure(...),
-     CcSlackHandler / CcSlackFeedbackHelper / CcGeminiHelper.configure(...)
+  -> initEnv() (app shell, first boot step) -> CcSdkConfig.configure(appName, enableLogger)
+  -> DI: app classes implement capability settings (PrjFirebaseAiConfig as CcFirebaseAiConfig)
 ```
 
 - `PrjEnv` is the **only** code that reads these keys; a missing key falls back to the default declared there.
 - The SDK (`cc_core_sdk`) never reads env files or `--dart-define` keys; it receives typed values
-  (`CcSdkConfig`). `CcFeatureFlags`, `CcRouteConfig`, `CcAppTrackName`, `CcCrashLogEnv` are read-only views of it.
+  (`CcSdkConfig` holds only the app name and the logger switch; `CcAppTrackName` is a read-only view of it).
+  A capability takes its own settings through its constructor, supplied by an app class registered in DI.
 - There is no `.env` file and no `flutter_dotenv` dependency any more.
 
 ## Local setup
@@ -41,14 +42,16 @@ VS Code's `Prod App` launch configuration already passes `--dart-define-from-fil
 
 Only values that **change per environment** (or are secret) are keys. Values that are the same everywhere
 (route paths, crash-log API path, API version numbers, analytics / crash reporting / certificate pinning
-switches) are constants in code: the `CcSdkConfig` defaults, or `HttpProd`. `env/prod.example.json` and
+switches) are constants in code: `ShellRoutePaths` (bridge), `CrashLogRemote.apiPath`, `PrjFeatureFlags`, or
+`HttpProd`. `env/prod.example.json` and
 `PrjEnv` list exactly the same keys in the same order; keep them in sync.
 
 ## Adding a setting
 
 1. Add the key with a sample value to `env/prod.example.json`, in its group.
 2. Add a `const` field to `PrjEnv` with a sensible default, in the same position.
-3. If the SDK needs it, add a field to `CcSdkConfig` (submodule) and pass it in `initEnv()`.
+3. If an SDK capability needs it, implement that capability's config interface in the app (for example
+   `PrjFirebaseAiConfig` implements `CcFirebaseAiConfig`) and register it with `@LazySingleton(as: ...)`.
 4. Set the value in GitHub: a Variable, or a Secret if it is sensitive. A new Secret must also be passed into
    `.github/actions/flutter-setup` (input + `env:` of the "Generate App Env" step) and added to its
    `secret_keys` set.

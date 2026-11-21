@@ -1,4 +1,5 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,7 +14,6 @@ import 'package:domain_features/core/presentation/widgets/cc_amount_input_sectio
 import 'package:domain_features/core/presentation/widgets/money_keypad_panel.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../get_x/add_liquid_sheet_controller.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 class AddLiquidSheet extends GetView<AddLiquidSheetController> {
   const AddLiquidSheet({super.key, this.wallet});
@@ -171,9 +171,9 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
                 CcStringHelper.copyToClipboard(controller.amountStr.value),
           ),
         ),
-        if (getIt<GuidelineProvider>().isAvailable)
+        if (controller.guideline.isAvailable)
           Obx(() {
-            final guideline = getIt<GuidelineProvider>();
+            final guideline = controller.guideline;
             final showing =
                 guideline.isTaskActive('wallet_balance') && controller.isCash;
             return Positioned(
@@ -318,9 +318,7 @@ class AddLiquidSheet extends GetView<AddLiquidSheetController> {
     // itemBuilder would be missed during the initial build phase.
     controller.newType.value;
 
-    final isEmergencyFundVisible =
-        controller.userLevel.status.level >= 3 ||
-        controller.userLevel.status.isVip;
+    final isEmergencyFundVisible = controller.isEmergencyFundOffered;
 
     final options = [
       (WalletType.bank, el.tr(CcLocaleKeys.wallet_bank)),

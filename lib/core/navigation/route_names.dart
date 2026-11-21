@@ -1,4 +1,4 @@
-import 'package:cc_sdk/export_cc_sdk.dart';
+import 'package:bridge/export_bridge.dart';
 
 /// Central route name definitions for the app.
 ///
@@ -39,10 +39,10 @@ enum AppRoute {
 extension AppRoutePath on AppRoute {
   String get path {
     if (this == AppRoute.mainNavigation) {
-      return CcRouteConfig.mainNavigation;
+      return ShellRoutePaths.mainNavigation;
     }
     if (this == AppRoute.login) {
-      return CcRouteConfig.login;
+      return ShellRoutePaths.login;
     }
     return '/${_snakeCase(name)}';
   }

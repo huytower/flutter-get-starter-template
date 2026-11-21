@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +8,9 @@ import 'package:message/export_message.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../guideline/export_guideline.dart';
 import '../get_x/wallet_controller.dart';
+import '../get_x/wallet_sheets.dart';
 import '../widgets/liquid_wallet_list_item.dart';
+import '../../../transaction/domain/usecases/create_wallet_transfer_usecase.dart';
 import '../widgets/transfer_money_sheet.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/di/di.dart';
@@ -152,8 +154,11 @@ class _LiquidWalletListView extends CcGetView<WalletController> {
             canDelete: controller.canDeleteWallet(wallet),
             onEdit: () => controller.openForm(context, wallet: wallet),
             onDelete: () => controller.confirmDelete(context, wallet),
-            onTransfer: () =>
-                TransferMoneySheet.show(context, sourceWallet: wallet),
+            onTransfer: () => TransferMoneySheet.show(
+              context,
+              sourceWallet: wallet,
+              transfer: getIt<CreateWalletTransferUseCase>(),
+            ),
           ),
       ];
 

@@ -23,6 +23,34 @@ class FinancialRefreshProviderImpl implements FinancialRefreshProvider {
   }
 
   @override
+  void addWalletToTransactions(WalletEntity wallet) {
+    if (Get.isRegistered<TransactionController>()) {
+      Get.find<TransactionController>().wallets.add(wallet);
+    }
+  }
+
+  @override
+  void updateWalletInTransactions(WalletEntity wallet) {
+    if (!Get.isRegistered<TransactionController>()) return;
+    final transaction = Get.find<TransactionController>();
+    final index = transaction.wallets.indexWhere((e) => e.id == wallet.id);
+    if (index != -1) {
+      transaction.wallets[index] = wallet;
+    } else {
+      transaction.loadWallets();
+    }
+  }
+
+  @override
+  void removeWalletFromTransactions(String walletId) {
+    if (Get.isRegistered<TransactionController>()) {
+      Get.find<TransactionController>().wallets.removeWhere(
+        (e) => e.id == walletId,
+      );
+    }
+  }
+
+  @override
   Future<void> refreshBudgetAllocation({bool showLoading = true}) async {
     if (Get.isRegistered<BudgetAllocationController>()) {
       await Get.find<BudgetAllocationController>().loadAll(

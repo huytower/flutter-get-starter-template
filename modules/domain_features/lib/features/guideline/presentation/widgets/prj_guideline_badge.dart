@@ -1,10 +1,10 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../guideline_controller.dart';
+import 'guideline_badge_view.dart';
 
-/// A wrapper around [CcGuidelineBadge] that automatically connects to
+/// A wrapper around [GuidelineBadgeView] that automatically connects to
 /// [GuidelineController] for centralized state (colors, bounce, and visibility).
 ///
 /// This widget handles the "dismiss on tap" behavior and adaptive styling
@@ -42,7 +42,7 @@ class PrjGuidelineBadge extends StatelessWidget {
     final guideline = Get.find<GuidelineController>();
 
     return Obx(
-      () => CcGuidelineBadge(
+      () => GuidelineBadgeView(
         size: size,
         color: guideline.currentColor,
         showing: showing,

@@ -2,10 +2,10 @@ import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../app/prj_env.dart';
+import '../../app/prj_feature_flags.dart';
 import 'base.dart';
 
 /// Production env configuration.
@@ -76,19 +76,19 @@ class HttpProd extends HttpBase {
 
   /// Whether analytics collection is enabled.
   ///
-  /// From [CcFeatureFlags] (SDK default: on).
-  bool get enableAnalytics => CcFeatureFlags.isAnalyticsEnabled;
+  /// From [PrjFeatureFlags].
+  bool get enableAnalytics => PrjFeatureFlags.isAnalyticsEnabled;
 
   /// Whether crash reporting is enabled.
   ///
-  /// From [CcFeatureFlags] (SDK default: on).
-  bool get enableCrashReporting => CcFeatureFlags.isCrashReportingEnabled;
+  /// From [PrjFeatureFlags].
+  bool get enableCrashReporting => PrjFeatureFlags.isCrashReportingEnabled;
 
   /// Whether certificate pinning is enabled for http requests.
   ///
-  /// From [CcFeatureFlags] (SDK default: on).
+  /// From [PrjFeatureFlags].
   bool get enableCertificatePinning =>
-      CcFeatureFlags.isCertificatePinningEnabled;
+      PrjFeatureFlags.isCertificatePinningEnabled;
 
   @override
   Map<String, String> get apiHeaders => {

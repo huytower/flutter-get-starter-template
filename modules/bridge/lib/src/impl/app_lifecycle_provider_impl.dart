@@ -1,4 +1,5 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:domain_features/features/crashlog/domain/usecases/upload_pending_crash_logs_usecase.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
 import 'package:domain_features/features/guideline/guideline_controller.dart';

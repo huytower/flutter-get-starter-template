@@ -1,4 +1,5 @@
-import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/export_domain_features.dart';
 import 'package:domain_features/core/presentation/widgets/entry_additional_details_section.dart';
 import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';

@@ -5,6 +5,8 @@ import 'package:domain_features/core/navigation/domain_router.gr.dart';
 import 'package:flutter/widgets.dart';
 import 'package:injectable/injectable.dart';
 
+import '../contracts/shell_route_paths.dart';
+
 @LazySingleton(as: AuthCoordinator)
 class AuthCoordinatorImpl implements AuthCoordinator {
   @override
@@ -19,7 +21,7 @@ class AuthCoordinatorImpl implements AuthCoordinator {
 
   @override
   void navigateToDashboard(BuildContext context) {
-    context.router.replacePath(CcRouteConfig.mainNavigation);
+    context.router.replacePath(ShellRoutePaths.mainNavigation);
   }
 
   @override

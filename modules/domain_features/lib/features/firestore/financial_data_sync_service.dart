@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:domain_features/core/data/sync/firestore_sync_service.dart';
 import 'package:domain_features/features/firestore/enum/logout_block.dart';
 import 'package:domain_features/features/firestore/enum/logout_result.dart';

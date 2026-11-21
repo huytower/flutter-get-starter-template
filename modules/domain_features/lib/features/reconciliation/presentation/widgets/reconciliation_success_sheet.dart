@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../get_x/reconciliation_controller.dart';
+import 'reward_completion_banner.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 class ReconciliationSuccessSheet extends StatefulWidget {
@@ -62,7 +63,7 @@ class _ReconciliationSuccessSheetState
             maxWidth: size.width * 0.9,
             maxHeight: size.height * 0.15,
           ),
-          child: CcRewardCompletionBanner(
+          child: RewardCompletionBanner(
             message: el.tr(
               CcLocaleKeys.reconciliation_success_message,
               namedArgs: {'count': count.toString()},
