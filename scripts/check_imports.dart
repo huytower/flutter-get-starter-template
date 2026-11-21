@@ -25,6 +25,7 @@ const Map<String, String> _packages = {
   'cc_sdk_data': 'shared/cc_core_sdk/cc_sdk_data',
   'cc_mixin': 'shared/cc_core_sdk/cc_mixin',
   'cc_sdk_firebase': 'shared/cc_core_sdk/cc_sdk_firebase',
+  'cc_sdk_catcher': 'shared/cc_core_sdk/cc_sdk_catcher',
   'cc_sdk_slack': 'shared/cc_core_sdk/cc_sdk_slack',
   'cc_sdk_device': 'shared/cc_core_sdk/cc_sdk_device',
   'cc_sdk_phone': 'shared/cc_core_sdk/cc_sdk_phone',
@@ -37,6 +38,7 @@ const Set<String> _sdk = {
   'cc_sdk_data',
   'cc_mixin',
   'cc_sdk_firebase',
+  'cc_sdk_catcher',
   'cc_sdk_slack',
   'cc_sdk_device',
   'cc_sdk_phone',
@@ -57,11 +59,12 @@ const Set<String> _appPackages = {
 };
 
 /// Vendor / heavy plugin packages that belong in a capability package
-/// (cc_sdk_firebase, cc_sdk_slack, cc_sdk_device, cc_sdk_phone), not the core.
+/// (cc_sdk_firebase, cc_sdk_catcher, cc_sdk_slack, cc_sdk_device, cc_sdk_phone),
+/// not the core.
 final RegExp _vendorPackage = RegExp(
   r'^(firebase_[a-z_]+|cloud_firestore|google_mlkit_[a-z_]+|geolocator|'
   r'geocoding|speech_to_text|phone_numbers_parser|permission_handler|'
-  r'image_picker|google_sign_in|sign_in_with_apple|flutter_dotenv)$',
+  r'image_picker|google_sign_in|sign_in_with_apple|flutter_dotenv|catcher_2)$',
 );
 
 /// Reactive GetX / Bloc usage that the state-agnostic core must not contain.
@@ -287,7 +290,7 @@ Iterable<_Violation> _checkUri(
         line,
         'sdk-core-vendor',
         '$pkg in the core ring: put it behind an interface in a capability '
-            'package (cc_sdk_firebase / cc_sdk_slack / cc_sdk_device / cc_sdk_phone)',
+            'package (cc_sdk_firebase / cc_sdk_catcher / cc_sdk_slack / cc_sdk_device / cc_sdk_phone)',
       );
     }
   }

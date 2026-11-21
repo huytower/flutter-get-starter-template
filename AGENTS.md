@@ -82,11 +82,12 @@ shared/
   cc_micro_features/lib/features/ # Project-blind, reusable-across-apps verticals (app_update, auth,
                                    # biometric, crash_log, messaging, splash, web)
   cc_core_sdk/                    # GIT SUBMODULE (huytower/cc_core_sdk) — universal engine:
-    cc_sdk/                       #   network, failures, logging (.Log()), ccGson serialization
-    cc_sdk_ui/                    #   design system / widget catalog (CcContextExtension)
-    cc_mixin/                     #   reusable behavior mixins (pagination, back-button, etc.)
+    cc_sdk/                       #   network, failures, logging (.Log()), crash-reporter interface
+    cc_sdk_ui/                    #   design system / widget catalog (CcContextExtension) + widget-building mixins
+    cc_mixin/                     #   behavior-only mixins (pagination, back-button); depends on cc_sdk_data only
     cc_sdk_data/                  #   core data entities/models
     cc_sdk_firebase/              #   capability ring: Firebase impls of core interfaces (CcAnalytics, ...)
+    cc_sdk_catcher/               #   capability ring: uncaught-error handling on catcher_2 (CcCatcherBootstrap)
     cc_sdk_slack/                 #   capability ring: Slack webhook impls (crash alerts, user feedback)
     cc_sdk_device/                #   capability ring: device-plugin impls (location, speech recognition)
     cc_sdk_phone/                 #   capability ring: phone number validation (phone_numbers_parser)
@@ -349,7 +350,7 @@ on any doc having been read:
     - `state-agnostic-core`: the SDK core ring and `cc_bridge` use no `bloc`, `flutter_bloc` or reactive GetX
       (no `package:get` either).
     - `sdk-core-vendor`: the SDK core ring imports no vendor SDK (Firebase, ML Kit, location, speech, phone parser,
-      ...); those live in the capability packages.
+      `catcher_2`, ...); those live in the capability packages.
     - `project-blind`: SDK, `cc_bridge` and `cc_micro_features` import no app package (`message`, `theme`,
       `domain_features`, `data_config`, `app_config`, `bridge`, the app shell); the SDK and `cc_bridge` import no
       `cc_micro_features`.

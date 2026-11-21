@@ -91,6 +91,10 @@ class _NavigationBarState extends State<NavigationBar>
       el.tr(CcLocaleKeys.common_press_back_again_to_exit);
 
   @override
+  void showBackPressHint(BuildContext context, String message) =>
+      showDoubleBackPressSnackBar(context, message);
+
+  @override
   int get currentIndex => _persistentIndex ?? _indexEntry;
 
   @override

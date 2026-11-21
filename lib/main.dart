@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 import 'package:app_config/core/config/app/prj_env.dart';
 import 'package:bridge/export_bridge.dart';
 import 'package:catcher_2/catcher_2.dart';
+import 'package:cc_sdk_catcher/export_cc_sdk_catcher.dart';
 import 'package:cc_sdk_slack/export_cc_sdk_slack.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide getIt;
 import 'package:firebase_core/firebase_core.dart';

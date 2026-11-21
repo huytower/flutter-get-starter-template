@@ -45,7 +45,7 @@ flutter-get-starter-template/
 ├── shared/cc_micro_features/     # Global Legos (Micro-Features)
 │   └── lib/features/            # Auth, Biometric, Splash, etc.
 ├── shared/cc_core_sdk/           # Shared Core (Engine) — GIT SUBMODULE
-│   ├── cc_sdk/                  # Core SDK (network, device, failures, ccGson)
+│   ├── cc_sdk/                  # Core SDK (network, device, failures, logging)
 │   ├── cc_sdk_ui/               # UI component library (CcContextExtension)
 │   ├── cc_mixin/                # Reusable mixins
 │   └── cc_sdk_data/             # Core data entities/models

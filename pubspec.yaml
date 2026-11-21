@@ -17,6 +17,7 @@ workspace:
   - shared/cc_core_sdk/cc_sdk_ui
   - shared/cc_core_sdk/cc_mixin
   - shared/cc_core_sdk/cc_sdk_data
+  - shared/cc_core_sdk/cc_sdk_catcher
   - shared/cc_core_sdk/cc_sdk_device
   - shared/cc_core_sdk/cc_sdk_firebase
   - shared/cc_core_sdk/cc_sdk_phone
@@ -38,6 +39,8 @@ dependencies:
 
   cc_bridge:
     path: cc_bridge
+  cc_sdk_catcher:
+    path: shared/cc_core_sdk/cc_sdk_catcher
   cc_sdk_data:
     path: shared/cc_core_sdk/cc_sdk_data
   cc_sdk_device:

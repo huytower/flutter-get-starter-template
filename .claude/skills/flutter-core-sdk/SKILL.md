@@ -1,6 +1,6 @@
 ---
 name: flutter-core-sdk
-description: Use when adding, changing, moving, or consuming anything in shared/cc_core_sdk (cc_sdk, cc_sdk_ui, cc_mixin, cc_sdk_data) — the Flutter engine meant to be reused across many apps AND many business domains. Covers the cross-domain "second-domain test", ring structure (core / optional capabilities / design system), dependency budget, API stability, known domain leaks to relocate, the submodule commit workflow, and adopting the SDK in a new project.
+description: Use when adding, changing, moving, or consuming anything in shared/cc_core_sdk (cc_sdk, cc_sdk_ui, cc_mixin, cc_sdk_data, capability packages) — the Flutter engine meant to be reused across many apps AND many business domains. Covers the cross-domain "second-domain test", ring structure (core / optional capabilities / design system), dependency budget, API stability, known domain leaks to relocate, the submodule commit workflow, and adopting the SDK in a new project.
 ---
 
 # Flutter Core SDK (`shared/cc_core_sdk`)
@@ -24,9 +24,9 @@ Neutral vocabulary only: no domain nouns in class names, doc comments, enum valu
 
 ## Rings (what may depend on what)
 
-1. **Core (domain-free, always present):** `CcFailure`, `.Log()`, `ccGson`, `CcScale`, `CcWindowSizeClass`,
+1. **Core (domain-free, always present):** `CcFailure`, `.Log()`, `CcScale`, `CcWindowSizeClass`,
    tokens (`CcBaseColors`, `CcSpace*`), mixins, generic entities (user, device, message), pagination.
-2. **Optional capabilities (vendor- or platform-specific):** analytics, crash reporting, AI/Gemini, speech, Slack
+2. **Optional capabilities (vendor- or platform-specific):** analytics, crash reporting, uncaught-error handling (`catcher_2`), AI/Gemini, speech, Slack
    feedback, location, phone-number helpers. Each sits behind an interface in the core ring and its vendor
    implementation lives in its own package, so an app that does not use it does not pull its dependencies.
 3. **Design system:** generic components only (buttons, cards, inputs, dialogs, adaptive layout, state views).
@@ -72,7 +72,11 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | `cc_sdk_ui/lib/widgets/wallet/cc_wallet_item.dart` | wallet widget | **Done (2.0.0):** removed; the app owns `PrjWalletItem` |
 | `cc_sdk_ui/lib/widgets/category/*` | expense-category shaped | **Done (2.0.0):** removed; the app owns `PrjCategory*` |
 | `cc_gemini_helper`, `cc_slack_*`, `cc_speech_helper` | tied to one vendor | **Done (2.0.0):** `CcAiClient`, `CcFeedbackReporter`, `CcSpeechRecognizer` + capability packages |
-| `cc_sdk/pubspec.yaml` (was 27 dependencies) | every consumer inherited every vendor SDK | **Done (2.0.0):** 15 left, no vendor service SDK. Still in core: `catcher_2`, `connectivity_plus`, `internet_connection_checker_plus`, `device_info_plus`, `package_info_plus`, `flutter_udid`, `path_provider`, `shared_preferences` (platform plugins for universal concerns), `dartx` (re-exported as public API), `ansicolor` (vendored gson) |
+| `cc_sdk/pubspec.yaml` (was 27 dependencies) | every consumer inherited every vendor SDK | **Done (2.0.0):** 15 left, no vendor service SDK. **Unreleased:** 13 left. Still in core: `connectivity_plus`, `internet_connection_checker_plus`, `device_info_plus`, `package_info_plus`, `flutter_udid`, `path_provider`, `shared_preferences` (platform plugins for universal concerns), `dartx` (re-exported as public API) |
+| `catcher_2` in `cc_sdk` | a third-party error-handling library in the core ring | **Done (Unreleased):** moved to the `cc_sdk_catcher` capability package |
+| vendored gson (`ccGson`, 922 lines + `ansicolor`) | a non-standard serializer, only used by `.Log()` | **Done (Unreleased):** removed; `.Log()` uses `dart:convert`, models use `json_serializable` |
+| `cc_mixin` → `cc_sdk_ui` | a behavior package pulled the whole design system | **Done (Unreleased):** widget-building mixins moved to `cc_sdk_ui`; `cc_mixin` depends on `cc_sdk_data` only |
+| `loadmore`, `curved_navigation_bar_pro` | small, rarely maintained widget packages in the design system | **Done (Unreleased):** replaced by `CcLoadMoreList`; the bar is adapted into `cc_sdk_ui` (MIT notice kept) |
 | `CcFeatureFlags.isVipModeEnabled` (`ENABLE_VIP_MODE`) | product concept in a core config type | **Done (2.0.0):** removed; the app reads it via `PrjFeatureFlags` |
 | `CcUserEntity.linkedProviderIds` doc | described the field in Firebase terms | **Done:** described provider-neutrally |
 | `cc_micro_features`: `FirebaseAuthRepository` (in `domain/`) | the abstraction is named after its vendor | **Done:** renamed `AuthRepository` (exported from `export_auth.dart`); `FirebaseAuthRepositoryImpl` stays in `data/` |
@@ -80,13 +84,18 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 ## Stability and versioning
 
 - The public API is what the barrel files export. Prefer additive changes; when a symbol is wrong or no longer
-  needed, **remove or rename it directly**. The SDK does not use `@Deprecated` transition releases: do not add
-  `@Deprecated` annotations, and update every caller in the workspace in the same change.
+  needed, **remove or rename it directly**.
+- **No deprecation, ever.** Do not add `@Deprecated` annotations or transition releases, whether one app or many
+  use the SDK. Inside this workspace, update every caller in the same change.
+- **Tags, not deprecation, protect other apps.** A release with any breaking change bumps the major version
+  (`2.x` → `3.0.0`) and is tagged `vX.Y.Z`. Each app pins a tag and moves to the next major on its own
+  schedule, following the CHANGELOG migration lines; nothing forces an app to upgrade the day a breaking tag
+  ships. Additive changes are minor releases, fixes are patch releases.
 - Every removal or rename is a breaking change: list it under `### Breaking` in the package `CHANGELOG.md` with
   a one-line migration step (what to use instead).
 - One version for the whole SDK: all packages under `shared/cc_core_sdk` carry the same `version:` in
-  `pubspec.yaml` (currently `2.0.0`) and are bumped together. Version with semver in the submodule repo; tag
-  releases so consumers pin a tag, not `main`.
+  `pubspec.yaml` (currently `2.0.0`; the breaking changes under `## Unreleased` make the next one `3.0.0`) and
+  are bumped together.
 - Every package keeps a `CHANGELOG.md`; changes go under `## Unreleased` until the next release.
 - Keep a minimal example app (or the test suite) that uses the SDK with **no** domain features, as proof the
   SDK stands alone. A change that breaks it is a domain leak or a hidden dependency.
@@ -95,18 +104,25 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 
 | Package | Owns | Entry point |
 |---|---|---|
-| `cc_sdk` | Network/device helpers, DI core, config (`CcFeatureFlags`, route config), crash reporting, `ccGson`, the `.Log()` extension, `CcScale`, `CcWindowSizeClass` | `export_cc_sdk.dart` |
-| `cc_sdk_ui` | Design system and widget catalog (adaptive layout, buttons, cards, dialogs, inputs, text, shimmer, navigation), tokens (`CcBaseColors`, `CcSpace*`), `CcContextExtension`, `CcMaxWidth`, `CcTwoColumn` | `export_cc_sdk_ui.dart` |
-| `cc_mixin` | Reusable behavior mixins: pagination, refresh/load-more, back-button, navigation, view config | `export_cc_mixin.dart` |
+| `cc_sdk` | Network/device helpers, DI core, config (`CcFeatureFlags`, route config), crash-reporter interface and log file path, the `.Log()` extension, `CcScale`, `CcWindowSizeClass` | `export_cc_sdk.dart` |
+| `cc_sdk_ui` | Design system and widget catalog (adaptive layout, buttons, cards, dialogs, inputs, text, shimmer, navigation, `CcLoadMoreList`), tokens (`CcBaseColors`, `CcSpace*`), `CcContextExtension`, `CcMaxWidth`, `CcTwoColumn`, widget-building mixins (view config, pull-to-refresh, load-more, curved navigation) | `export_cc_sdk_ui.dart` |
+| `cc_mixin` | Behavior-only mixins: pagination, back-button | `export_cc_mixin.dart` |
 | `cc_sdk_data` | Core entities/models, `CcFailure` hierarchy, shared domain services | `export_cc_sdk_data.dart` |
 | `cc_sdk_firebase` | Capability ring: Firebase implementations of core interfaces (`CcFirebaseAiClient`, `CcFirebaseAnalytics`, `CcFirebaseCrashReporter`, `CcFirebaseAppAttestation`). Only package allowed to import Firebase SDKs (migration in progress) | `export_cc_sdk_firebase.dart` |
+| `cc_sdk_catcher` | Capability ring: uncaught-error handling on `catcher_2` (`CcCatcherBootstrap`, `CcCrashReporterHandler` forwarding to `CcCrashReporter`); no DI | `export_cc_sdk_catcher.dart` |
 | `cc_sdk_slack` | Capability ring: Slack webhook implementations (`CcSlackHandler` crash alerts, `CcSlackFeedbackReporter` as `CcFeedbackReporter`); captions come translated from the app | `export_cc_sdk_slack.dart` |
 | `cc_sdk_device` | Capability ring: device-plugin implementations (`CcDeviceLocationService` as `CcLocationService`, `CcSpeechToTextRecognizer` as `CcSpeechRecognizer`) | `export_cc_sdk_device.dart` |
 | `cc_sdk_phone` | Capability ring: `CcLibPhoneNumberValidator` (`phone_numbers_parser`) as `CcPhoneNumberValidator`; `cc_sdk` ships the dependency-free `CcBasicPhoneNumberValidator` | `export_cc_sdk_phone.dart` |
 
-Dependency direction (verified from `pubspec.yaml` and imports): `cc_mixin` → `cc_sdk_ui` → `cc_sdk` →
-`cc_sdk_data`; capability packages (`cc_sdk_firebase`, `cc_sdk_slack`, `cc_sdk_device`, `cc_sdk_phone`) → `cc_sdk`. Never the reverse, never a cycle. `cc_mixin` depending on the whole design system is a known
-weakness: a new mixin should depend only on `cc_sdk_data` / `cc_sdk` unless it genuinely needs a widget.
+Dependency direction (verified from `pubspec.yaml` and imports): `cc_sdk_ui` → `cc_sdk` → `cc_sdk_data`;
+`cc_mixin` → `cc_sdk_data`; capability packages (`cc_sdk_firebase`, `cc_sdk_catcher`, `cc_sdk_slack`,
+`cc_sdk_device`, `cc_sdk_phone`) → `cc_sdk`. Never the reverse, never a cycle. A mixin that builds widgets goes in
+`cc_sdk_ui/lib/src/mixins/`; `cc_mixin` stays free of the design system (presentation goes through an overridable
+hook, e.g. `DoubleBackToExitMixin.showBackPressHint`).
+
+Third-party widget code: prefer writing it in the SDK over adding a small, rarely maintained widget package. When
+adapting an existing package's code, keep its license notice on each file and a `LICENSE` in the folder
+(`cc_sdk_ui/lib/src/widgets/navigation/curved/` is the reference).
 
 Encapsulation: every SDK package keeps its implementation in `lib/src/`; the only public entry points are the
 `export_*.dart` barrel and, by the DI convention, `lib/core/di/` (`di.dart` / `di.module.dart`). Consumers and
@@ -190,11 +206,13 @@ the parent repo.
       git:
         url: https://github.com/huytower/cc_core_sdk
         path: cc_sdk
-        ref: v2.0.0
+        ref: v3.0.0
   ```
-  At that point: tag every release `vX.Y.Z` (all packages share the version), bump the `ref:` in each app on
-  purpose, and use a local `pubspec_overrides.yaml` with `path:` only while developing an SDK change against an
-  app. Moving this template off the submodule is a structural change: present a plan and get the user's
+  At that point: tag every release `vX.Y.Z` (all packages share the version), and each app bumps its `ref:` on
+  purpose. A breaking change still ships with no deprecation (see **Stability and versioning**): it is a new
+  major tag, and an app on the previous tag keeps working until it chooses to move, using the CHANGELOG
+  migration lines. Use a local `pubspec_overrides.yaml` with `path:` only while developing an SDK change against
+  an app. Moving this template off the submodule is a structural change: present a plan and get the user's
   confirmation first (root `AGENTS.md` rule 20).
 
 ## Adopting the SDK in a new project
@@ -213,7 +231,9 @@ the parent repo.
 
 ## Quick reference
 
-- Logging: `value.Log('tag')`; serialization: `ccGson.encode(obj)` / `ccGson.decode(str)`.
+- Logging: `value.Log('tag')` (maps and lists as JSON). No serializer in the SDK: models use `json_serializable`.
+- Uncaught errors: `CcCatcherBootstrap` (`cc_sdk_catcher`) → `CcCrashReporter`; caught ones: `recordError`.
+- Paged lists: `PaginationMixin` (`cc_mixin`) + `CcLoadMoreList` / `CcLoadMoreMixin` (`cc_sdk_ui`).
 - Spacing tokens: `CcSpaceXS/SM/MD/LG/XL` (4/8/12/16/24).
 - Content cap: `CcMaxWidth.content` (840 dp); scroll views use `padding: CcMaxWidth.insetFor(width)`.
 - Landscape tablets: `CcTwoColumn` (check `CcTwoColumn.shouldUse(context)`); list pages: `CcMultiColumn`.
