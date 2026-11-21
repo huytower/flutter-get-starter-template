@@ -53,6 +53,13 @@ Inner rings never import outer rings. The core ring has no vendor SDK dependency
   `configure(...)` (e.g. Slack webhook, Gemini model), called by the app at boot. The SDK never reads `.env`
   files, `dotenv` or `--dart-define` keys itself; `CcFeatureFlags`, `CcRouteConfig`, `CcAppTrackName` and
   `CcCrashLogEnv` are read-only views of `CcSdkConfig.current`.
+- **`get_it` + `injectable` in the core ring is a deliberate choice, not a leak.** Every app built on this SDK
+  uses them as its DI standard, and each SDK package registers its own services through
+  `@InjectableInit.microPackage()` so the app wires the SDK with one `ExternalModule(...)` per package. The cost
+  is accepted: an app on another DI container cannot use the SDK's registrations as is. Keep the coupling
+  limited to annotations on implementation classes and each package's `lib/core/di/`; public interfaces and
+  widgets never take or return `GetIt` or call `getIt` themselves (constructor injection, root `AGENTS.md`
+  section IV), so the classes stay usable by hand. Do not add another DI or service-locator package.
 
 ## Known domain leaks to relocate (audit of the current SDK)
 
@@ -72,12 +79,17 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 
 ## Stability and versioning
 
-- The public API is what the barrel files export. Treat it as a contract: additive changes by default;
-  renames and removals go through `@Deprecated('use X, removed in <version>')` for at least one release.
-- Version the SDK with semver in the submodule repo; tag releases so consumers pin a tag, not `main`.
+- The public API is what the barrel files export. Prefer additive changes; when a symbol is wrong or no longer
+  needed, **remove or rename it directly**. The SDK does not use `@Deprecated` transition releases: do not add
+  `@Deprecated` annotations, and update every caller in the workspace in the same change.
+- Every removal or rename is a breaking change: list it under `### Breaking` in the package `CHANGELOG.md` with
+  a one-line migration step (what to use instead).
+- One version for the whole SDK: all packages under `shared/cc_core_sdk` carry the same `version:` in
+  `pubspec.yaml` (currently `2.0.0`) and are bumped together. Version with semver in the submodule repo; tag
+  releases so consumers pin a tag, not `main`.
+- Every package keeps a `CHANGELOG.md`; changes go under `## Unreleased` until the next release.
 - Keep a minimal example app (or the test suite) that uses the SDK with **no** domain features, as proof the
   SDK stands alone. A change that breaks it is a domain leak or a hidden dependency.
-- Record breaking changes and the migration step in the package `CHANGELOG.md`.
 
 ## Package map
 
@@ -166,11 +178,31 @@ the parent repo.
 3. Never push without the user's explicit go-ahead.
 4. Stray local noise (e.g. `.dart_tool/` files showing as modified) is not part of an SDK change; do not commit it.
 
+## Distribution
+
+- **Today (one consumer app):** submodule + `path:` dependencies. This keeps SDK and app changes in one
+  workspace, which is the fastest loop while this template is the only consumer.
+- **Planned, once a second app uses the SDK:** consumers depend on a released tag instead of a submodule, one
+  entry per package they need:
+  ```yaml
+  dependencies:
+    cc_sdk:
+      git:
+        url: https://github.com/huytower/cc_core_sdk
+        path: cc_sdk
+        ref: v2.0.0
+  ```
+  At that point: tag every release `vX.Y.Z` (all packages share the version), bump the `ref:` in each app on
+  purpose, and use a local `pubspec_overrides.yaml` with `path:` only while developing an SDK change against an
+  app. Moving this template off the submodule is a structural change: present a plan and get the user's
+  confirmation first (root `AGENTS.md` rule 20).
+
 ## Adopting the SDK in a new project
 
-1. Add the submodule: `git submodule add <cc_core_sdk url> shared/cc_core_sdk`.
-2. Reference the four packages by `path:` in the workspace/app `pubspec.yaml`, add them to `melos.yaml`
-   packages, run `melos bootstrap`.
+1. Today: add the submodule (`git submodule add <cc_core_sdk url> shared/cc_core_sdk`). Once the SDK is
+   distributed by tag (see **Distribution**), depend on the tag with `git:` + `ref:` instead.
+2. With the submodule, reference the packages by `path:` in the workspace/app `pubspec.yaml`, add them to
+   `melos.yaml` packages, run `melos bootstrap`.
 3. Call the SDK's DI entry (`initMicroPackage()`) from the app's `@InjectableInit` via
    `externalPackageModulesBefore`; follow the boot order in `AGENTS.md` (env first, then parallel init).
 4. Provide the app-owned pieces the SDK deliberately does not: theme (`PrjColors` built on `CcBaseColors`),
