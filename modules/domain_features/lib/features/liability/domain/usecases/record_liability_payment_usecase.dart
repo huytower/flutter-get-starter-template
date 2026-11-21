@@ -81,9 +81,12 @@ class RecordLiabilityPaymentUseCase {
       );
     }
 
-    final liabilityResult = await _LiabilityRepository.getLiability(
+    final liabilityResult = await _LiabilityRepository.findLiability(
       params.liabilityId,
     );
+    if (liabilityResult.isError()) {
+      return Error(liabilityResult.tryGetError()!);
+    }
     final stored = liabilityResult.tryGetSuccess();
     final listed = params.listedLiability;
     final LiabilityEntity liability;
@@ -96,9 +99,12 @@ class RecordLiabilityPaymentUseCase {
           .Log(runtimeType.toString());
       liability = listed;
     } else {
-      '[LIABILITY] ❌ Liability ${params.liabilityId} not found | ${liabilityResult.tryGetError()?.message}'
-          .Log(runtimeType.toString());
-      return Error(liabilityResult.tryGetError()!);
+      '[LIABILITY] ❌ Liability ${params.liabilityId} not found'.Log(
+        runtimeType.toString(),
+      );
+      return const Error(
+        ValidationFailure(CcLocaleKeys.transaction_liability_not_found),
+      );
     }
 
     final walletResult = await _walletRepository.getWallet(params.walletId);

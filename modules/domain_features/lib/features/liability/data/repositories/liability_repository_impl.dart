@@ -44,14 +44,8 @@ class LiabilityRepositoryImpl
   }
 
   @override
-  Future<Result<LiabilityEntity, CcFailure>> getLiability(String id) {
-    return safeRequest(() async {
-      final model = await _local.getById(id);
-      if (model == null) {
-        throw StateError('Liability $id not found');
-      }
-      return model.toEntity();
-    });
+  Future<Result<LiabilityEntity?, CcFailure>> findLiability(String id) {
+    return safeRequest(() async => (await _local.getById(id))?.toEntity());
   }
 
   @override

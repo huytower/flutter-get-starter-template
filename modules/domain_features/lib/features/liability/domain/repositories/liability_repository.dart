@@ -5,7 +5,9 @@ import 'package:multiple_result/multiple_result.dart';
 abstract class LiabilityRepository {
   Future<Result<List<LiabilityEntity>, CcFailure>> getLiabilities();
 
-  Future<Result<LiabilityEntity, CcFailure>> getLiability(String id);
+  /// The stored liability with [id], or `null` when there is none (e.g. a
+  /// synthetic liability rebuilt from transactions only).
+  Future<Result<LiabilityEntity?, CcFailure>> findLiability(String id);
 
   Future<Result<void, CcFailure>> createLiability(LiabilityEntity liability);
 

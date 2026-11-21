@@ -260,6 +260,7 @@
     "liability_saved": "Đã ghi nhận khoản nợ/vay {amount}!",
     "liability_name_duplicate_error": "Tên khoản nợ/vay này đã tồn tại",
     "liability_payment_saved": "Đã ghi nhận thanh toán {amount}!",
+    "liability_not_found": "Khoản nợ này không còn tồn tại. Hãy chọn khoản khác và thử lại.",
     "liability_category_borrow_label": "Hình thức vay",
     "liability_category_lend_label": "Hình thức cho mượn",
     "liability_borrower_label": "Tên khoản vay",

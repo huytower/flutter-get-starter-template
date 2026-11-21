@@ -261,6 +261,7 @@ class CodegenLoader extends AssetLoader {
       "delete_title": "Delete transaction",
       "delete_confirm_desc": "This action cannot be undone.",
       "liability_payment_saved": "Payment of {amount} recorded!",
+      "liability_not_found": "This debt record no longer exists. Pick another one and try again.",
       "source_income": "Source of Income",
       "reason_income": "Reason for Income",
       "recipient": "Recipient",
@@ -1184,6 +1185,7 @@ class CodegenLoader extends AssetLoader {
       "liability_saved": "Đã ghi nhận khoản nợ/vay {amount}!",
       "liability_name_duplicate_error": "Tên khoản nợ/vay này đã tồn tại",
       "liability_payment_saved": "Đã ghi nhận thanh toán {amount}!",
+      "liability_not_found": "Khoản nợ này không còn tồn tại. Hãy chọn khoản khác và thử lại.",
       "liability_category_borrow_label": "Hình thức vay",
       "liability_category_lend_label": "Hình thức cho mượn",
       "liability_borrower_label": "Tên khoản vay",
@@ -2045,6 +2047,7 @@ class CodegenLoader extends AssetLoader {
       "delete_title": "거래 삭제",
       "delete_confirm_desc": "이 작업은 취소할 수 없습니다.",
       "liability_payment_saved": "{amount} 지불이 기록되었습니다!",
+      "liability_not_found": "이 부채 기록이 더 이상 존재하지 않습니다. 다른 항목을 선택하고 다시 시도하세요.",
       "source_income": "수입 원천",
       "reason_income": "수입 사유",
       "recipient": "수취인",
@@ -2887,6 +2890,7 @@ class CodegenLoader extends AssetLoader {
       "delete_title": "取引を削除",
       "delete_confirm_desc": "この操作は取り消せません。",
       "liability_payment_saved": "{amount}の支払いが記録されました！",
+      "liability_not_found": "この借入記録は存在しません。別の項目を選んでもう一度お試しください。",
       "source_income": "収入元",
       "reason_income": "収入理由",
       "recipient": "受取人",
@@ -3717,6 +3721,7 @@ class CodegenLoader extends AssetLoader {
       "delete_title": "删除交易",
       "delete_confirm_desc": "此操作无法撤销。",
       "liability_payment_saved": "已记录 {amount} 的付款！",
+      "liability_not_found": "该债务记录已不存在。请选择其他记录后重试。",
       "source_income": "收入来源",
       "reason_income": "收入原因",
       "recipient": "收款人",
@@ -4597,6 +4602,8 @@ class CcLocaleKeys {
       'transaction.liability_name_duplicate_error';
   static const transaction_liability_payment_saved =
       'transaction.liability_payment_saved';
+  static const transaction_liability_not_found =
+      'transaction.liability_not_found';
   static const transaction_liability_category_borrow_label =
       'transaction.liability_category_borrow_label';
   static const transaction_liability_category_lend_label =

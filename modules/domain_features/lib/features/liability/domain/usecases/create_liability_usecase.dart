@@ -128,7 +128,7 @@ class CreateLiabilityUseCase {
     var isUpdate = false;
 
     if (targetId.isNotEmpty) {
-      final existingResult = await _LiabilityRepository.getLiability(targetId);
+      final existingResult = await _LiabilityRepository.findLiability(targetId);
       if (existingResult.isSuccess()) {
         final existing = existingResult.tryGetSuccess();
         if (existing != null) {
