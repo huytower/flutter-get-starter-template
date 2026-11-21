@@ -1,4 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
@@ -6,8 +8,6 @@ import 'package:message/export_message.dart';
 import '../../../guideline/export_guideline.dart';
 import '../../../wallet/export_wallet.dart';
 import 'investment_wallet_preview_card.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
-import 'package:domain_features/core/di/di.dart';
 
 /// Section displaying investment wallets in a grid layout, following the
 /// Budget Allocation design pattern.

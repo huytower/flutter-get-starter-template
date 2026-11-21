@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'birth_year_content_sheet.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import 'birth_year_content_sheet.dart';
 
 class BirthYearSheet extends StatelessWidget {
   final int currentYear;

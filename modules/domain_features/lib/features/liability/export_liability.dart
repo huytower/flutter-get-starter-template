@@ -1,9 +1,10 @@
 // Domain
 // Data (model adapters exported so the app shell can register them with Hive)
+export 'package:domain_features/core/domain/entities/liability_entity.dart';
+
 export 'data/models/liability_installment_model.dart';
 export 'data/models/liability_model.dart';
 export 'domain/entities/liability_balance_entity.dart';
-export 'package:domain_features/core/domain/entities/liability_entity.dart';
 export 'domain/repositories/liability_repository.dart';
 export 'domain/usecases/create_liability_usecase.dart';
 export 'domain/usecases/get_liability_balances_usecase.dart';

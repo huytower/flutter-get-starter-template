@@ -11,19 +11,19 @@ import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/constant/currency_constants.dart';
+import '../../../../core/contracts/guideline_provider.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../category/export_category.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../domain/entities/profile_settings_entity.dart';
 import '../../user_level/presentation/get_x/user_level_controller.dart';
-import '../actions/profile_app_actions.dart';
 import '../actions/profile_account_actions.dart';
+import '../actions/profile_app_actions.dart';
 import '../actions/profile_onboarding_actions.dart';
 import '../actions/profile_settings_actions.dart';
 import '../helper/profile_display_text.dart';
 import '../helper/profile_routes.dart';
 import '../helper/profile_sheets.dart';
-import '../../../../core/contracts/guideline_provider.dart';
 
 @lazySingleton
 class ProfileController extends CcGetController {

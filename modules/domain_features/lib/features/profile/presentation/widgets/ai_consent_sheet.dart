@@ -3,9 +3,9 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../pages/terms_of_service_page.dart';
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 /// Asks the user to allow sharing data with Google Gemini before any AI
 /// feature sends anything. Short on purpose: what is sent, to whom, how to

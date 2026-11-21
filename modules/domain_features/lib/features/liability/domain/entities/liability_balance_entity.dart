@@ -1,6 +1,5 @@
-import 'package:equatable/equatable.dart';
-
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
+import 'package:equatable/equatable.dart';
 
 /// Pairs a [LiabilityEntity] with its computed outstanding balance
 /// (principal − Σ repay/collect transactions) and total repaid/received amount.

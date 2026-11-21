@@ -1,4 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/transaction_header_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,8 +11,6 @@ import '../get_x/transaction_controller.dart';
 import '../get_x/transaction_form_controller.dart';
 import 'transaction_header_actions.dart';
 import 'transaction_header_title.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
-import 'package:domain_features/core/di/di.dart';
 
 class TransactionPageHeader extends StatelessWidget {
   const TransactionPageHeader({

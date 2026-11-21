@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,7 +10,6 @@ import 'package:theme/data/data_source/color/prj_color.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import 'prj_wallet_item.dart';
 import 'wallet_display_name.dart';

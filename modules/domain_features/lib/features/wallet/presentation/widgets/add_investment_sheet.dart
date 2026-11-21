@@ -1,4 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,8 +9,6 @@ import 'package:message/export_message.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/presentation/widgets/category/prj_category_item.dart';
 import '../../../../core/presentation/widgets/prj_vip_lock_banner.dart';
-import 'package:domain_features/core/domain/entities/category_entity.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../get_x/add_investment_sheet_controller.dart';
 
 class AddInvestmentSheet extends GetView<AddInvestmentSheetController> {

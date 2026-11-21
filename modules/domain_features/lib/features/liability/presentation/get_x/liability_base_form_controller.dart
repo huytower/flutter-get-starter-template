@@ -1,14 +1,14 @@
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../transaction/presentation/get_x/quick_entry_handler.dart';
 import '../../../transaction/presentation/get_x/quick_entry_session.dart';
 import '../../../transaction/presentation/get_x/transaction_form_controller.dart';
-import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 import 'liability_installment_draft.dart';
-import '../../../transaction/presentation/get_x/quick_entry_handler.dart';
 
 enum LiabilityDirectionForm { increase, decrease }
 

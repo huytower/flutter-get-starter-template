@@ -1,10 +1,10 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../../category/domain/repositories/category_repository.dart';
-import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/trend_data_entity.dart';
 import '../report_range.dart';

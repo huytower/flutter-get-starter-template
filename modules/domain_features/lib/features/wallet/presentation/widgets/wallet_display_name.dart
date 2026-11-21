@@ -1,9 +1,9 @@
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/cc_locale_keys.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 
 extension WalletDisplayName on WalletEntity {
   String displayName(BuildContext context) {

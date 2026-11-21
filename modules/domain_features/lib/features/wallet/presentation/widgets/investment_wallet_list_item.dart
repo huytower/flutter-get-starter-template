@@ -1,4 +1,5 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,7 +8,6 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/presentation/widgets/asset_stat_item.dart';
 import '../../../../core/presentation/widgets/base_asset_list_item.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../get_x/wallet_controller.dart';
 import 'wallet_display_name.dart';
 

@@ -1,8 +1,8 @@
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:message/cc_locale_keys.dart';
 import 'package:theme/export_theme.dart';
 
-import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../../domain/entities/category_group_entity.dart';
 import '../../models/category_model.dart';
 

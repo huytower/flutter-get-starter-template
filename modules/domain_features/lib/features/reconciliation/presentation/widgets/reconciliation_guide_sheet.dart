@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'reconciliation_guide_content_sheet.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import 'reconciliation_guide_content_sheet.dart';
 
 /// Bottom sheet explaining what reconciliation is and how to do it.
 class ReconciliationGuideSheet extends StatelessWidget {

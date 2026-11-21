@@ -1,3 +1,4 @@
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
@@ -5,7 +6,6 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../category/data/datasources/local/category_seed.dart';
-import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../../../category/presentation/get_x/category_settings_controller.dart';
 

@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:cc_bridge/export_cc_bridge.dart';
+import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 import 'package:flutter/material.dart';
 
-import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import 'profile_experience_card.dart';
 import 'profile_info_card.dart';

@@ -1,7 +1,7 @@
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../../category/presentation/pages/category_settings_page.dart';
 import '../get_x/income_form_controller.dart';
 import 'base/category_selection_layout.dart';

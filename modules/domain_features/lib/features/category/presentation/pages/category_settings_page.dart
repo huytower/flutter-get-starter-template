@@ -1,4 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,11 +12,8 @@ import '../../../../core/di/di.dart';
 import '../../../../core/getx/cc_get_view.dart';
 import '../../../../core/presentation/widgets/category/prj_category_group_section.dart';
 import '../../data/datasources/local/category_seed.dart';
-import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../domain/entities/category_group_entity.dart';
 import '../get_x/category_settings_controller.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
-import 'package:domain_features/core/contracts/user_level_provider.dart';
 
 class CategorySettingsPage extends StatefulWidget {
   const CategorySettingsPage({super.key, this.initialSection});

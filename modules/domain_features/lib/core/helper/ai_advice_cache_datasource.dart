@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/report/domain/entities/ai_advice_entity.dart';
-import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 
 /// Local data source for caching AI Advice responses based on transaction fingerprints.
 @lazySingleton

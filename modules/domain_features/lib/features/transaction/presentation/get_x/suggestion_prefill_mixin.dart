@@ -1,8 +1,8 @@
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
-import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'transaction_form_controller.dart';
 
 mixin SuggestionPrefillMixin on TransactionFormController {

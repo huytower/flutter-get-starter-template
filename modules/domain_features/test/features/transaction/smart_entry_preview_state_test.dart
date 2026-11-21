@@ -1,7 +1,7 @@
 import 'package:domain_features/core/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/features/transaction/domain/entities/parsed_transaction_entity.dart';
 import 'package:domain_features/features/transaction/presentation/get_x/smart_entry_preview_state.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _food = CategoryEntity(

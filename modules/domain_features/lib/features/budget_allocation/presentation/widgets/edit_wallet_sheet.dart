@@ -1,14 +1,14 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../guideline/export_guideline.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../../../core/helper/adaptive_bottom_sheet.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
-import 'package:domain_features/core/di/di.dart';
+import '../../../guideline/export_guideline.dart';
 
 /// Bottom sheet for wallet actions (edit/delete).
 class EditWalletSheet extends StatelessWidget {

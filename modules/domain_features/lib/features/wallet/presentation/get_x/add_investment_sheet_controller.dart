@@ -1,4 +1,8 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,13 +12,9 @@ import 'package:message/export_message.dart';
 import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../category/data/datasources/local/category_seed.dart';
-import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'wallet_controller.dart';
-import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 /// Backs [AddInvestmentSheet] — specifically for creating/editing investment assets.
 @injectable

@@ -4,6 +4,7 @@ import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
+import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 import 'package:domain_features/core/data/sync/firestore_sync_service.dart';
 import 'package:domain_features/features/firestore/enum/logout_block.dart';
 import 'package:domain_features/features/firestore/enum/logout_result.dart';
@@ -27,7 +28,6 @@ import '../../../features/transaction/data/models/transaction_model.dart';
 import '../../../features/wallet/data/datasources/wallet_sync_datasource.dart';
 import '../../../features/wallet/data/models/wallet_hive_model.dart';
 import '../../core/di/di.dart';
-import 'package:domain_features/core/contracts/financial_refresh_provider.dart';
 
 export 'enum/logout_block.dart';
 export 'enum/logout_result.dart';

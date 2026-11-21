@@ -1,7 +1,6 @@
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:theme/export_theme.dart';
-
-import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 
 bool computeIsInflow(TransactionEntity transaction) {
   final type = transaction.type;

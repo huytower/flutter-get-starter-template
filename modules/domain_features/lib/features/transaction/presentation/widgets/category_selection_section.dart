@@ -1,5 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:collection/collection.dart';
+import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ import '../../../../core/di/di.dart';
 import '../../../../core/presentation/widgets/category/prj_category_item.dart';
 import '../../../../core/presentation/widgets/category/prj_category_shimmer_list.dart';
 import '../get_x/category_selection_controller.dart';
-import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import 'base/category_selection_layout.dart';
 
 class CategorySelectionSection extends StatelessWidget {

@@ -1,8 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:flutter/material.dart';
-
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/helper/transaction_form_helpers.dart';
+import 'package:flutter/material.dart';
 
 /// A horizontal scrollable strip of chip-like buttons for selecting
 /// common monetary amounts.

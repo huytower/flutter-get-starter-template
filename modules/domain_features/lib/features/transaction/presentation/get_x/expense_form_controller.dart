@@ -1,8 +1,11 @@
 import 'dart:async';
 
-import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/features/budget_limit/export_budget_limit.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
@@ -24,7 +27,6 @@ import '../../../../core/helper/time_based_suggestion_helper.dart';
 import '../../../category/data/datasources/local/category_age_order.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../domain/repositories/transaction_repository.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/get_monthly_recurring_match_usecase.dart';
@@ -32,13 +34,11 @@ import '../../domain/usecases/update_transaction_usecase.dart';
 import '../models/unified_category_item.dart';
 import '../widgets/base/category_selection_layout.dart';
 import 'quick_entry_batch_session.dart';
+import 'quick_entry_handler.dart';
 import 'quick_entry_session.dart';
 import 'smart_suggestion_source.dart';
 import 'suggestion_prefill_mixin.dart';
 import 'transaction_form_controller.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
-import 'package:domain_features/core/contracts/user_level_provider.dart';
-import 'quick_entry_handler.dart';
 
 const String _debugTag = 'ExpenseFormCategoryScroll';
 

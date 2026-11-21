@@ -1,9 +1,9 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
-import 'package:get/get.dart';
 
 import '../get_x/report_controller.dart';
 import 'report_card_pair.dart';

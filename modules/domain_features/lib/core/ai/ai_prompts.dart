@@ -1,9 +1,9 @@
 import 'package:domain_features/core/constant/currency_catalog.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 
 import '../../features/budget_limit/domain/entities/budget_anomaly_entity.dart';
 import '../../features/budget_limit/domain/entities/budget_insights_entity.dart';
 import '../../features/budget_limit/domain/entities/budget_limit_stats_entity.dart';
-import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../features/report/domain/entities/financial_runway_entity.dart';
 import '../../features/transaction/domain/usecases/get_monthly_cash_flow_usecase.dart';
 import '../constant/currency_constants.dart';

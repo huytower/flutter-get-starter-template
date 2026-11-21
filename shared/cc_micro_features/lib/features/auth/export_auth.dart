@@ -1,9 +1,9 @@
 export 'domain/auth_failures.dart';
 export 'domain/repositories/auth_repository.dart';
+export 'domain/usecases/delete_account_usecase.dart';
 export 'domain/usecases/get_current_user_usecase.dart';
 export 'domain/usecases/login_usecase.dart';
 export 'domain/usecases/logout_usecase.dart';
-export 'domain/usecases/delete_account_usecase.dart';
 export 'presentation/auth_failure_message.dart';
 export 'presentation/bloc/login_bloc.dart';
 export 'presentation/bloc/login_state.dart';

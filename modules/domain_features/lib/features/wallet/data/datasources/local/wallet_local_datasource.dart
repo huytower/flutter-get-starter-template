@@ -1,10 +1,10 @@
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../models/wallet_hive_model.dart';
 
 /// Local (Hive) persistence for wallets.

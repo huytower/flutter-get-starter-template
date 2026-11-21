@@ -1,9 +1,9 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'report_daily_group.dart';
 
 class ReportDailyList extends StatelessWidget {

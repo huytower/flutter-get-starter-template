@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:message/cc_locale_keys.dart';
@@ -17,8 +19,6 @@ import '../widgets/liability_hero_banner.dart';
 import '../widgets/liability_wallets_section.dart';
 import '../widgets/liquid_hero_banner.dart';
 import '../widgets/liquid_wallets_section.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
-import 'package:domain_features/core/di/di.dart';
 
 @RoutePage()
 class BudgetAllocationPage extends CcGetView<BudgetAllocationController>

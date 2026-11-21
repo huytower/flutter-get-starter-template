@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'package:message/export_message.dart';
 
 import '../../domain/entities/parsed_transaction_entity.dart';
 import '../../domain/entities/smart_entry_input.dart';
-import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../domain/usecases/create_transaction_usecase.dart';
 import '../../domain/usecases/parse_smart_entry_usecase.dart';
 import '../helper/receipt_image_picker_helper.dart';

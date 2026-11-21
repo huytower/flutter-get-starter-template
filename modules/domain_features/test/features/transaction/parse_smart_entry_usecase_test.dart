@@ -1,18 +1,18 @@
 import 'dart:convert';
 
 import 'package:cc_sdk/export_cc_sdk.dart';
-import 'package:domain_features/core/constant/currency_catalog.dart';
-import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
 import 'package:domain_features/core/ai/smart_entry_context.dart';
 import 'package:domain_features/core/ai/smart_entry_response_parser.dart';
-import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
-import 'package:domain_features/core/helper/ai_fallback_preference_datasource.dart';
+import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/core/domain/entities/category_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
+import 'package:domain_features/core/helper/ai_fallback_preference_datasource.dart';
 import 'package:domain_features/features/category/domain/usecases/get_categories_usecase.dart';
 import 'package:domain_features/features/transaction/domain/entities/parsed_transaction_entity.dart';
 import 'package:domain_features/features/transaction/domain/usecases/parse_smart_entry_usecase.dart';
 import 'package:domain_features/features/wallet/domain/repositories/wallet_repository.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multiple_result/multiple_result.dart';
 

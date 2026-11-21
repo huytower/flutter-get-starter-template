@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 import '../../../budget_allocation/presentation/widgets/budget_insight_card.dart';
 import '../../../firestore/guest_login_prompt_service.dart';
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 /// Bottom sheet widget prompting guests to log in with an account.
 ///

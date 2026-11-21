@@ -1,4 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,8 +9,6 @@ import 'package:message/export_message.dart';
 import '../../../../core/di/di.dart';
 import '../../../budget_limit/presentation/widgets/budget_limit_pie_chart.dart';
 import '../get_x/transaction_controller.dart';
-import 'package:domain_features/core/contracts/user_level_provider.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 class CcLevelLockPlaceholder extends StatelessWidget {
   final TransactionTabKind tab;

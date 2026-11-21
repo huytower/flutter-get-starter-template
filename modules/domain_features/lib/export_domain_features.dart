@@ -1,5 +1,9 @@
 library domain_features;
 
+// Transaction
+export 'package:domain_features/core/domain/entities/transaction_entity.dart';
+// Wallet
+export 'package:domain_features/core/domain/entities/wallet_entity.dart';
 export 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
 
 // Core
@@ -42,11 +46,7 @@ export 'features/profile/user_level/export_user_level.dart';
 export 'features/reconciliation/export_reconciliation.dart';
 // Report
 export 'features/report/export_report.dart';
-// Transaction
-export 'package:domain_features/core/domain/entities/transaction_entity.dart';
 export 'features/transaction/domain/repositories/transaction_repository.dart';
 export 'features/transaction/export_transaction.dart';
-// Wallet
-export 'package:domain_features/core/domain/entities/wallet_entity.dart';
 export 'features/wallet/domain/repositories/wallet_repository.dart';
 export 'features/wallet/export_wallet.dart';

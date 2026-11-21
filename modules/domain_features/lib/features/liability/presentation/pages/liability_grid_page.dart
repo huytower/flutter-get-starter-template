@@ -1,18 +1,18 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
-import 'package:domain_features/core/domain/entities/liability_entity.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 import '../get_x/liability_list_controller.dart';
 import '../widgets/add_liability_sheet.dart';
 import '../widgets/liability_delete_confirm_sheet.dart';
 import '../widgets/liability_wallet_grid_card.dart';
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 @RoutePage()
 class LiabilityGridPage extends StatefulWidget {

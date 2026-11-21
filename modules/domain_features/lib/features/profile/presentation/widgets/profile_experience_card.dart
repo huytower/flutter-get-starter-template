@@ -1,11 +1,10 @@
 import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
+import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
-
-import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 
 class ProfileExperienceCard extends StatelessWidget {
   final int level;

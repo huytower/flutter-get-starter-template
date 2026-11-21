@@ -1,7 +1,6 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
-import 'package:multiple_result/multiple_result.dart';
-
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
+import 'package:multiple_result/multiple_result.dart';
 
 abstract class LiabilityRepository {
   Future<Result<List<LiabilityEntity>, CcFailure>> getLiabilities();

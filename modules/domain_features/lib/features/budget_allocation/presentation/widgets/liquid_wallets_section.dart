@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/di/di.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
@@ -7,8 +9,6 @@ import 'package:message/export_message.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../guideline/export_guideline.dart';
 import '../../../wallet/export_wallet.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
-import 'package:domain_features/core/di/di.dart';
 
 /// Section displaying liquid wallet list with add and see all actions.
 class LiquidWalletsSection extends StatelessWidget {

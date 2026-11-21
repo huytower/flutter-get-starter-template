@@ -1,11 +1,11 @@
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
+import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../firestore/financial_data_sync_service.dart';
-import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 
 class ProfileInfoCard extends StatelessWidget {
   final CcUserEntity? user;

@@ -1,4 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
 import 'package:domain_features/features/transaction/presentation/widgets/transaction_smart_suggestion_chip.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -16,8 +18,6 @@ import '../get_x/transaction_controller.dart';
 import '../get_x/transaction_form_controller.dart';
 import 'quick_entry_section.dart';
 import 'receipt_source_sheet.dart';
-import 'package:domain_features/core/contracts/user_level_provider.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 class TransactionHeaderBanner extends StatelessWidget {
   const TransactionHeaderBanner({

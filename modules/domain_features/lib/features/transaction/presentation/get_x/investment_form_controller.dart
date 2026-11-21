@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:collection/collection.dart' hide IterableFirstOrNull;
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
+import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
@@ -19,14 +22,11 @@ import '../../../../core/helper/money_format_helper.dart';
 import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
-import 'package:domain_features/core/presentation/helper/horizontal_row_reveal.dart';
+import 'quick_entry_handler.dart';
 import 'quick_entry_session.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
-import 'quick_entry_handler.dart';
 
 const String _debugTag = 'InvestmentAssetRow';
 

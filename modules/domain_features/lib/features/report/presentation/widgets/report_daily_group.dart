@@ -1,5 +1,6 @@
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +9,6 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/money_format_helper.dart';
-import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import 'report_daily_list_helpers.dart';
 import 'report_transaction_tile.dart';

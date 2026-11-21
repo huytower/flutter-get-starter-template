@@ -1,5 +1,5 @@
-import 'package:domain_features/core/helper/merchant_matcher.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/helper/merchant_matcher.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 TransactionEntity _expense(String id, String? note) => TransactionEntity(

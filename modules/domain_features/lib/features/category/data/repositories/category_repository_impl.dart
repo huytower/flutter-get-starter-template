@@ -1,11 +1,11 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/data/repository/cc_base_repository.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/features/firestore/financial_data_sync_service.dart';
 import 'package:domain_features/features/firestore/model/sync_metadata.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../domain/entities/category_group_entity.dart';
 import '../../domain/repositories/category_repository.dart';
 import '../datasources/local/category_local_datasource.dart';

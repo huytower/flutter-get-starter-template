@@ -1,4 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import 'package:domain_features/features/category/export_category.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
@@ -15,13 +17,11 @@ import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/liability_balance_entity.dart';
-import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import '../../domain/usecases/get_liability_balances_usecase.dart';
 import '../../domain/usecases/record_liability_payment_usecase.dart';
 import '../get_x/liability_base_form_controller.dart';
 import '../get_x/liability_installment_draft.dart';
 import '../get_x/liability_list_controller.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 /// Consolidated Lend form: handles completing a new loan's details (Lend)
 /// or recording additional lending against existing loan records.

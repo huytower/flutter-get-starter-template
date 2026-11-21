@@ -6,11 +6,11 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/helper/adaptive_bottom_sheet.dart';
 import '../get_x/wallet_controller.dart';
 import '../get_x/wallet_sheets.dart';
 import '../widgets/add_investment_sheet.dart';
 import '../widgets/investment_wallet_list_item.dart';
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
 
 @RoutePage()
 class InvestmentListPage extends StatefulWidget {

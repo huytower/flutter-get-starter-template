@@ -1,6 +1,9 @@
-import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
+import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/user_level_provider.dart';
+import 'package:domain_features/core/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,8 +19,6 @@ import '../../../../core/getx/cc_get_controller.dart';
 import '../../../../core/helper/ai_advice_cache_datasource.dart';
 import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
-import 'package:domain_features/core/domain/entities/transaction_entity.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/entities/ai_advice_entity.dart';
 import '../../domain/entities/category_spending_entity.dart';
@@ -31,7 +32,6 @@ import '../../domain/usecases/get_investment_trend_usecase.dart';
 import '../../domain/usecases/get_liability_trend_usecase.dart';
 import '../../domain/usecases/get_trend_data_usecase.dart';
 import '../widgets/report_filter_picker_sheet.dart';
-import 'package:domain_features/core/contracts/user_level_provider.dart';
 
 enum ReportFilterType { all, expense, income, investment, liability, lend }
 

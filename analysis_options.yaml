@@ -70,6 +70,7 @@ linter:
   rules:
     # prefer_relative_imports is disabled for generated files that use absolute imports
     - avoid_empty_else
+    - directives_ordering
     - avoid_print
     - avoid_slow_async_io
     - avoid_types_as_parameter_names

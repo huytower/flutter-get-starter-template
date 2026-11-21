@@ -1,7 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:flutter/material.dart';
-
 import 'package:domain_features/core/presentation/widgets/entry_form_container.dart';
+import 'package:flutter/material.dart';
 
 /// Two-column layout shared by the Transaction-page forms (expense, income,
 /// investment, liability, lend) on a tablet held sideways.

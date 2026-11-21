@@ -1,5 +1,7 @@
 import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:domain_features/core/contracts/guideline_provider.dart';
+import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
@@ -8,12 +10,10 @@ import '../../../profile/domain/entities/profile_settings_entity.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../profile/domain/usecases/update_profile_settings_usecase.dart';
 import '../../data/datasources/local/category_seed.dart';
-import 'package:domain_features/core/domain/entities/category_entity.dart';
 import '../../domain/entities/category_group_entity.dart';
 import '../../domain/usecases/get_categories_usecase.dart';
 import '../../domain/usecases/get_category_groups_usecase.dart';
 import '../../domain/usecases/toggle_category_enabled_usecase.dart';
-import 'package:domain_features/core/contracts/guideline_provider.dart';
 
 @injectable
 class CategorySettingsController extends CcGetController {

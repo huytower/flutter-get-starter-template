@@ -1,9 +1,9 @@
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
+import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/features/transaction/domain/usecases/create_transaction_batch_usecase.dart';
 import 'package:domain_features/features/transaction/domain/usecases/create_transaction_usecase.dart';
-import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/features/wallet/domain/repositories/wallet_repository.dart';
 import 'package:domain_features/features/wallet/domain/usecases/get_wallet_book_balance_usecase.dart';
 import 'package:flutter_test/flutter_test.dart';
