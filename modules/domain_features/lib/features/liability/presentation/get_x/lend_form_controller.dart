@@ -1,3 +1,4 @@
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/contracts/guideline_provider.dart';
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
@@ -461,6 +462,7 @@ class LendFormController extends LiabilityBaseFormController {
       amount: int.tryParse(amountStr.value) ?? 0,
       note: composeNote(),
       date: date.value,
+      listedLiability: liability,
     );
 
     final result = await getIt<RecordLiabilityPaymentUseCase>().call(params);
@@ -489,10 +491,14 @@ class LendFormController extends LiabilityBaseFormController {
           getIt<GuidelineProvider>().completeTask('liability');
         }
       },
-      (error) => CcSnackBarHelper.showErrorSnackBar(
-        context: context,
-        message: el.tr(error.message),
-      ),
+      (error) {
+        '[LIABILITY] ❌ Submit failed | liabilityId=${liability.id} | action=${action.value.name} | ${error.message}'
+            .Log(runtimeType.toString());
+        CcSnackBarHelper.showErrorSnackBar(
+          context: context,
+          message: el.tr(error.message),
+        );
+      },
     );
   }
 }

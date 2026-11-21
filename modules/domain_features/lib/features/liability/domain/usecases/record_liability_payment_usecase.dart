@@ -1,3 +1,4 @@
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
@@ -11,6 +12,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../repositories/liability_repository.dart';
+import 'get_liability_balances_usecase.dart';
 
 /// Input for [RecordLiabilityPaymentUseCase].
 class RecordLiabilityPaymentParams {
@@ -26,6 +28,11 @@ class RecordLiabilityPaymentParams {
   final String? note;
   final DateTime date;
 
+  /// The liability as the form lists it. `GetLiabilityBalancesUseCase` rebuilds
+  /// debt transactions that have no stored record into a synthetic liability;
+  /// such a liability is not in the repository, so this entity is used instead.
+  final LiabilityEntity? listedLiability;
+
   const RecordLiabilityPaymentParams({
     required this.liabilityId,
     this.isSettlement = true,
@@ -33,6 +40,7 @@ class RecordLiabilityPaymentParams {
     required this.amount,
     this.note,
     required this.date,
+    this.listedLiability,
   });
 }
 
@@ -76,10 +84,22 @@ class RecordLiabilityPaymentUseCase {
     final liabilityResult = await _LiabilityRepository.getLiability(
       params.liabilityId,
     );
-    if (liabilityResult.isError()) {
+    final stored = liabilityResult.tryGetSuccess();
+    final listed = params.listedLiability;
+    final LiabilityEntity liability;
+    if (stored != null) {
+      liability = stored;
+    } else if (listed != null && listed.id == params.liabilityId) {
+      // Synthetic liability: its balance lives only in its transactions, so
+      // the new leg is recorded as one more transaction of that group.
+      '[LIABILITY] No stored record for ${params.liabilityId}, recording against the listed (synthetic) liability'
+          .Log(runtimeType.toString());
+      liability = listed;
+    } else {
+      '[LIABILITY] ❌ Liability ${params.liabilityId} not found | ${liabilityResult.tryGetError()?.message}'
+          .Log(runtimeType.toString());
       return Error(liabilityResult.tryGetError()!);
     }
-    final liability = liabilityResult.tryGetSuccess()!;
 
     final walletResult = await _walletRepository.getWallet(params.walletId);
     if (walletResult.isError()) {
@@ -144,13 +164,23 @@ class RecordLiabilityPaymentUseCase {
       note: params.note,
       date: params.date,
       walletId: params.walletId,
-      liabilityId: liability.id,
+      // An id made up for a synthetic group matches nothing; leaving it out
+      // lets the transaction join its group by category label.
+      liabilityId: liability.id.startsWith(syntheticLiabilityIdPrefix)
+          ? null
+          : liability.id,
       currencyCode: finalCurrency,
     );
 
     final txnResult = await _transactionRepository.createTransaction(txn);
     if (txnResult.isError()) {
       return Error(txnResult.tryGetError()!);
+    }
+
+    // A synthetic liability has no record to update (writing one would also
+    // count its principal twice); the new transaction already sorts it first.
+    if (stored == null) {
+      return Success(liability.copyWith(updatedAt: DateTime.now()));
     }
 
     // High Priority Logic: Update updatedAt so this liability jumps to the front

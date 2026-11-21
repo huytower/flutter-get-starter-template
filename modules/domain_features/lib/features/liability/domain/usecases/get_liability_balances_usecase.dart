@@ -11,6 +11,11 @@ import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/liability_balance_entity.dart';
 import '../repositories/liability_repository.dart';
 
+/// Id prefix of a synthetic liability whose transactions carry no liability id.
+/// A synthetic liability (debt transactions without a stored record) is never
+/// in the repository: see `RecordLiabilityPaymentParams.listedLiability`.
+const String syntheticLiabilityIdPrefix = 'synthetic_';
+
 /// Computes the outstanding balance and repaid amount for every loan.
 @lazySingleton
 class GetLiabilityBalancesUseCase {
@@ -201,7 +206,9 @@ class GetLiabilityBalancesUseCase {
         );
 
         final syntheticEntity = LiabilityEntity(
-          id: firstTxn.liabilityId ?? 'synthetic_${entry.key}',
+          id: (firstTxn.liabilityId?.isNotEmpty ?? false)
+              ? firstTxn.liabilityId!
+              : '$syntheticLiabilityIdPrefix${entry.key}',
           direction: direction,
           principalAmount: totalPrincipal,
           categoryId: firstTxn.categoryId,
