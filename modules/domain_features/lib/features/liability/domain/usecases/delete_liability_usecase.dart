@@ -17,7 +17,10 @@ import '../repositories/liability_repository.dart';
 /// reverts their effect on wallet balances.
 @lazySingleton
 class DeleteLiabilityUseCase {
-  DeleteLiabilityUseCase(this._liabilityRepository, this._transactionRepository);
+  DeleteLiabilityUseCase(
+    this._liabilityRepository,
+    this._transactionRepository,
+  );
 
   final LiabilityRepository _liabilityRepository;
   final TransactionRepository _transactionRepository;
