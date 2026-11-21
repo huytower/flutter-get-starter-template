@@ -34,6 +34,15 @@ abstract class Dependencies {
       webhookUrl: PrjEnv.slackCrashWebhookUrl,
       deviceInfo: deviceInfo,
       attestation: attestation,
+      ignoredErrors: _slackIgnoredErrors,
     ),
   ]);
 }
+
+/// Errors that stay out of the #crash channel (Crashlytics still records
+/// them). App Check answers "Too many attempts" when a device asks for tokens
+/// too often (emulators, repeated launches): it throttles, and clears by
+/// itself, so it is no bug to chase.
+final List<Pattern> _slackIgnoredErrors = [
+  RegExp('firebase_app_check.*Too many attempts', caseSensitive: false),
+];
