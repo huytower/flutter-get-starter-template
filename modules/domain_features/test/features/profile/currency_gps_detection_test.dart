@@ -1,3 +1,4 @@
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -55,7 +56,9 @@ void main() {
       'detectSuggestedCurrencyFromGpsWithDetails resolves asynchronously to valid currency',
       () async {
         final suggestion =
-            await CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails();
+            await CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails(
+              CcNoopLocationService(),
+            );
         expect(
           CurrencyConstants.supportedCurrencyCodes.contains(
             suggestion.currencyCode,

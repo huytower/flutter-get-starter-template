@@ -1,6 +1,6 @@
-import 'dart:developer' as developer;
 import 'dart:io';
 
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:flutter/foundation.dart';
 
@@ -116,12 +116,12 @@ class HttpProd extends HttpBase {
       }
 
       if (!enableCertificatePinning) {
-        developer.log('Certificate pinning is disabled in production');
+        'Certificate pinning is disabled in production'.Log('HttpProd');
       }
     }
 
     if (enableAnalytics && !enableCrashReporting) {
-      developer.log('Analytics is enabled but crash reporting is disabled');
+      'Analytics is enabled but crash reporting is disabled'.Log('HttpProd');
     }
   }
 

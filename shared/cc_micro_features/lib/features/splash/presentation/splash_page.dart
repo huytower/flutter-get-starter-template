@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:cc_bridge/export_cc_bridge.dart' show AuthCoordinator;
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:lottie/lottie.dart';
@@ -34,7 +35,7 @@ class _SplashPageState extends State<SplashPage>
 
     if (_config == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) navigateFromSplash(context);
+        if (mounted) navigateFromSplash(context, getIt<AuthCoordinator>());
       });
       return;
     }
@@ -43,7 +44,7 @@ class _SplashPageState extends State<SplashPage>
     SplashManager.shouldShowSplash().then((shouldShow) {
       if (!shouldShow && mounted) {
         // Skip splash screen if shown within the last week
-        navigateFromSplash(context);
+        navigateFromSplash(context, getIt<AuthCoordinator>());
       }
     });
   }
@@ -70,7 +71,7 @@ class _SplashPageState extends State<SplashPage>
             _controller.forward();
             Future.delayed(config.displayDuration, () {
               if (!context.mounted) return;
-              navigateFromSplash(context);
+              navigateFromSplash(context, getIt<AuthCoordinator>());
             });
           },
         ),

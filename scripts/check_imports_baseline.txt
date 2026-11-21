@@ -2,22 +2,16 @@
 # <rule> <path> <count>. Only ever lower these numbers or delete lines;
 # a new violation is fixed, never added here. See AGENTS.md section VI.
 di-composition-root modules/bridge/lib/src/impl/app_lifecycle_provider_impl.dart 7
-di-composition-root modules/data_config/lib/core/config/retrofit/interceptors/request_interceptor.dart 1
-di-composition-root modules/domain_features/lib/core/constant/currency_catalog.dart 1
-di-composition-root modules/domain_features/lib/core/constant/money_constants.dart 1
 di-composition-root modules/domain_features/lib/core/getx/cc_get_controller.dart 1
-di-composition-root modules/domain_features/lib/core/getx/cc_get_view.dart 1
 di-composition-root modules/domain_features/lib/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart 1
 di-composition-root modules/domain_features/lib/features/budget_allocation/presentation/widgets/budget_limit_preview_section.dart 2
 di-composition-root modules/domain_features/lib/features/budget_allocation/presentation/widgets/edit_wallet_sheet.dart 2
 di-composition-root modules/domain_features/lib/features/budget_allocation/presentation/widgets/investment_wallets_section.dart 1
 di-composition-root modules/domain_features/lib/features/budget_allocation/presentation/widgets/liability_wallets_section.dart 1
 di-composition-root modules/domain_features/lib/features/budget_allocation/presentation/widgets/liquid_wallets_section.dart 1
-di-composition-root modules/domain_features/lib/features/budget_limit/domain/usecases/get_budget_limit_stats_usecase.dart 1
 di-composition-root modules/domain_features/lib/features/budget_limit/presentation/get_x/add_budget_limit_sheet_controller.dart 3
 di-composition-root modules/domain_features/lib/features/budget_limit/presentation/widgets/add_budget_limit_sheet.dart 1
 di-composition-root modules/domain_features/lib/features/firestore/financial_data_sync_service.dart 1
-di-composition-root modules/domain_features/lib/features/firestore/guest_login_prompt_service.dart 1
 di-composition-root modules/domain_features/lib/features/liability/presentation/get_x/add_liability_sheet_controller.dart 1
 di-composition-root modules/domain_features/lib/features/liability/presentation/get_x/lend_form_controller.dart 8
 di-composition-root modules/domain_features/lib/features/liability/presentation/get_x/liability_form_controller.dart 8
@@ -42,7 +36,6 @@ di-composition-root modules/domain_features/lib/features/transaction/presentatio
 di-composition-root modules/domain_features/lib/features/transaction/presentation/widgets/transaction_smart_suggestion_chip.dart 1
 di-composition-root modules/domain_features/lib/features/transaction/presentation/widgets/transaction_tab_bar.dart 1
 di-composition-root modules/domain_features/lib/features/wallet/presentation/widgets/wallet_strip_card.dart 1
-di-composition-root shared/cc_micro_features/lib/features/splash/presentation/splash_init.dart 1
 feature-controller modules/domain_features/lib/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart 2
 feature-controller modules/domain_features/lib/features/budget_allocation/presentation/widgets/base_hero_banner_card.dart 1
 feature-controller modules/domain_features/lib/features/budget_allocation/presentation/widgets/borrow_hero_card.dart 1

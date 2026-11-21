@@ -2,6 +2,11 @@ import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+class _UnusedAuthCoordinator implements AuthCoordinator {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 class _FakeSessionContract implements SessionContract {
   @override
   final bool isAnonymous;
@@ -46,7 +51,7 @@ void main() {
           ),
         );
 
-        final service = GuestLoginPromptService(session);
+        final service = GuestLoginPromptService(session, _UnusedAuthCoordinator());
         final prompt = await service.evaluate();
         expect(prompt, isNull);
       },

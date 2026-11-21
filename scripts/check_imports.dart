@@ -16,9 +16,16 @@
 import 'dart:io';
 
 /// Rules whose existing violations are tracked in the baseline file.
-const Set<String> _baselinedRules = {'feature-controller', 'di-composition-root'};
+const Set<String> _baselinedRules = {
+  'feature-controller',
+  'di-composition-root',
+};
 
 const String _baselinePath = 'scripts/check_imports_baseline.txt';
+
+/// The one file allowed to import dart:developer: the `.Log()` extension.
+const String _logImplementation =
+    'shared/cc_core_sdk/cc_sdk/lib/src/core/extensions/common/cc_logger_extension.dart';
 
 /// A feature's screen controller / Bloc / Cubit (rule 4: never imported by
 /// another feature).
@@ -263,6 +270,17 @@ Iterable<_Violation> _checkUri(
     _edges.putIfAbsent((owner, pkg), () => []).add(_Edge(path, line, uri));
   }
 
+  // Rule 15: logging goes through `.Log()`; only its implementation may use
+  // dart:developer (`print` is the analyzer's avoid_print lint).
+  if (uri == 'dart:developer' && !isTest && path != _logImplementation) {
+    yield _Violation(
+      path,
+      line,
+      'no-developer-log',
+      'log through the `.Log()` extension of cc_sdk, not dart:developer',
+    );
+  }
+
   if (pkg == 'flutter_dotenv') {
     yield _Violation(
       path,
@@ -436,7 +454,10 @@ Iterable<_Violation> _checkComposition(
     if (code.startsWith('//') || code.startsWith('*')) continue;
     for (final hit in _getItUse.allMatches(lines[i])) {
       final type = hit.group(1) ?? hit.group(2);
-      if (type != null && RegExp(r'(Controller|Bloc|Cubit)$').hasMatch(type)) {
+      // The controller the entry point creates, also as a generic page base's
+      // type parameter (`getIt<T>()` in CcGetView).
+      if (type != null &&
+          RegExp(r'(Controller|Bloc|Cubit)$|^[A-Z]$').hasMatch(type)) {
         continue;
       }
       yield _Violation(

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer' as developer;
 
 import 'package:app_config/core/config/app/prj_env.dart';
 import 'package:bridge/export_bridge.dart';
@@ -70,12 +69,6 @@ void main() async {
     // 4. UI Launch
     _runApplication();
   } catch (error, stackTrace) {
-    developer.log(
-      '❌ FATAL BOOTSTRAP ERROR | error=$error',
-      error: error,
-      stackTrace: stackTrace,
-      name: 'Main',
-    );
     '❌ FATAL BOOTSTRAP ERROR | error=$error'.Log('Main');
     stackTrace.Log('Main');
     // Bootstrap failed before the app shell (and its MaterialApp) existed, so
@@ -87,7 +80,6 @@ void main() async {
         home: ErrorPage(message: error.toString()),
       ),
     );
-    developer.log('✅ ErrorPage launched', name: 'Main');
     '✅ ErrorPage launched'.Log('Main');
   }
 }

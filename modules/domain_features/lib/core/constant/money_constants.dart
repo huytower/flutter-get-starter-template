@@ -1,5 +1,3 @@
-import '../di/di.dart';
-import '../exchange_rates/currency_conversion_service.dart';
 
 abstract class MoneyConstants {
   /// standard quick amounts for transaction entries (Expense/Income/Transfer) - VND
@@ -517,33 +515,4 @@ abstract class MoneyConstants {
     return liabilityAbove30;
   }
 
-  static Future<List<int>> getConvertedQuickAmounts(
-    List<int> baseVndAmounts,
-    String targetCurrency,
-  ) async {
-    final normalized = targetCurrency.trim().toUpperCase();
-    if (normalized == 'USD') return quickAmountsUsd;
-    if (normalized == 'EUR') return quickAmountsEur;
-    if (normalized == 'JPY') return quickAmountsJpy;
-    if (normalized == 'KRW') return quickAmountsKrw;
-    if (normalized == 'CNY') return quickAmountsCny;
-    if (normalized == 'VND' || normalized.isEmpty) return baseVndAmounts;
-
-    try {
-      final conversionService = getIt<CurrencyConversionService>();
-      final converted = <int>[];
-      for (final amount in baseVndAmounts) {
-        final result = await conversionService.convertAmount(
-          amount: amount,
-          fromCurrency: 'VND',
-          toCurrency: normalized,
-        );
-        final convertedVal = result.tryGetSuccess() ?? amount;
-        converted.add(convertedVal > 0 ? convertedVal : 1);
-      }
-      return converted;
-    } catch (_) {
-      return baseVndAmounts;
-    }
-  }
 }

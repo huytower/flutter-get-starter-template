@@ -76,7 +76,7 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | `cc_sdk_ui/lib/widgets/wallet/cc_wallet_item.dart` | wallet widget | **Done (2.0.0):** removed; the app owns `PrjWalletItem` |
 | `cc_sdk_ui/lib/widgets/category/*` | expense-category shaped | **Done (2.0.0):** removed; the app owns `PrjCategory*` |
 | `cc_gemini_helper`, `cc_slack_*`, `cc_speech_helper` | tied to one vendor | **Done (2.0.0):** `CcAiClient`, `CcFeedbackReporter`, `CcSpeechRecognizer` + capability packages |
-| `cc_sdk/pubspec.yaml` (was 27 dependencies) | every consumer inherited every vendor SDK | **Done (2.0.0):** 15 left, no vendor service SDK. **Unreleased:** 13 left. Still in core: `connectivity_plus`, `internet_connection_checker_plus`, `device_info_plus`, `package_info_plus`, `flutter_udid`, `path_provider`, `shared_preferences` (platform plugins for universal concerns), `dartx` (re-exported as public API) |
+| `cc_sdk/pubspec.yaml` (was 27 dependencies) | every consumer inherited every vendor SDK | **Done (2.0.0):** 15 left, no vendor service SDK. **Unreleased:** 12 left. Still in core: `connectivity_plus`, `internet_connection_checker_plus`, `device_info_plus`, `package_info_plus`, `path_provider`, `shared_preferences` (platform plugins for universal concerns), `dartx` (re-exported as public API) |
 | `catcher_2` in `cc_sdk` | a third-party error-handling library in the core ring | **Done (Unreleased):** moved to the `cc_sdk_catcher` capability package |
 | vendored gson (`ccGson`, 922 lines + `ansicolor`) | a non-standard serializer, only used by `.Log()` | **Done (Unreleased):** removed; `.Log()` uses `dart:convert`, models use `json_serializable` |
 | `cc_mixin` → `cc_sdk_ui` | a behavior package pulled the whole design system | **Done (Unreleased):** widget-building mixins moved to `cc_sdk_ui`; `cc_mixin` depends on `cc_sdk_data` only |
@@ -87,6 +87,7 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | `CcSdkConfig` (12 fields), `CcFeatureFlags`, `CcRouteConfig`, `CcCrashLogEnv` | one global config for every capability and product concern (Dio logging, pinning, routes, crash-log path, AI model) | **Done (Unreleased):** `CcSdkConfig` keeps `appName` + `enableLogger`; AI model via `CcFirebaseAiConfig` (DI); the rest moved to the app |
 | `cc_sdk_ui` → `cc_sdk` (and re-export of `export_cc_sdk.dart`) | a design system pulled device/network/storage plugins and the whole core API | **Done (Unreleased):** `CcScale` / `CcWindowSizeClass` moved into `cc_sdk_ui`; no dependency, no re-export |
 | `CcRewardCompletionBanner`, `CcGuidelineBadge` | a showcase banner and the app's onboarding badge in the design system | **Done (Unreleased):** moved to the app (`RewardCompletionBanner`, `GuidelineBadgeView`) |
+| `flutter_udid` in `cc_sdk` (+ a `CcDeviceEntity` pre-resolved at boot) | a long-lived hardware id is a per-app privacy decision; the boot lookup was unused | **Done (Unreleased):** `CcDeviceIdProvider` in core, `CcUdidDeviceIdProvider` in `cc_sdk_device`; no boot pre-resolve |
 | `BiometricFailure`, `CurlFailure` in `cc_sdk_data`; `flutter` runtime dependency | feature / tool-named failures in the core; a pure-Dart package depending on Flutter | **Done (Unreleased):** removed; `cc_sdk_data` is pure Dart at runtime |
 
 ## Stability and versioning
@@ -119,7 +120,7 @@ structural change: present a plan and get the user's confirmation first (`AGENTS
 | `cc_sdk_firebase` | Capability ring: Firebase implementations of core interfaces (`CcFirebaseAiClient`, `CcFirebaseAnalytics`, `CcFirebaseCrashReporter`, `CcFirebaseAppAttestation`). Only package allowed to import Firebase SDKs (migration in progress) | `export_cc_sdk_firebase.dart` |
 | `cc_sdk_catcher` | Capability ring: uncaught-error handling on `catcher_2` (`CcCatcherBootstrap`, `CcCrashReporterHandler` forwarding to `CcCrashReporter`); no DI | `export_cc_sdk_catcher.dart` |
 | `cc_sdk_slack` | Capability ring: Slack webhook implementations (`CcSlackHandler` crash alerts, `CcSlackFeedbackReporter` as `CcFeedbackReporter`); captions come translated from the app | `export_cc_sdk_slack.dart` |
-| `cc_sdk_device` | Capability ring: device-plugin implementations (`CcDeviceLocationService` as `CcLocationService`, `CcSpeechToTextRecognizer` as `CcSpeechRecognizer`) | `export_cc_sdk_device.dart` |
+| `cc_sdk_device` | Capability ring: device-plugin implementations (`CcDeviceLocationService` as `CcLocationService`, `CcSpeechToTextRecognizer` as `CcSpeechRecognizer`, `CcUdidDeviceIdProvider` as `CcDeviceIdProvider`) | `export_cc_sdk_device.dart` |
 | `cc_sdk_phone` | Capability ring: `CcLibPhoneNumberValidator` (`phone_numbers_parser`) as `CcPhoneNumberValidator`; `cc_sdk` ships the dependency-free `CcBasicPhoneNumberValidator` | `export_cc_sdk_phone.dart` |
 
 Dependency direction (verified from `pubspec.yaml` and imports): `cc_sdk` → `cc_sdk_data` (pure Dart);

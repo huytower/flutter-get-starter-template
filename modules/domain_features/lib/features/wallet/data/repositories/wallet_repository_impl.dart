@@ -1,5 +1,5 @@
-import 'dart:developer' as developer;
 
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/data/repository/cc_base_repository.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
@@ -77,7 +77,7 @@ class WalletRepositoryImpl with CcBaseRepository implements WalletRepository {
         try {
           await _sync.deleteWallet(walletModel.remoteId!);
         } catch (e) {
-          developer.log('Remote delete failed: $e', error: e);
+          'Remote delete failed: $e'.Log('WalletRepository');
         }
       }
     });
@@ -130,7 +130,7 @@ class WalletRepositoryImpl with CcBaseRepository implements WalletRepository {
         await _local.updateWalletModel(updated);
       }
     } catch (e) {
-      developer.log('Sync failed for wallet $id: $e', error: e);
+      'Sync failed for wallet $id: $e'.Log('WalletRepository');
     }
   }
 }

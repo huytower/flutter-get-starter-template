@@ -4,15 +4,19 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:message/export_message.dart';
 
+/// Rejects requests while offline and drops headers marked "empty".
 class RequestInterceptor extends Interceptor {
+  RequestInterceptor(this._connection);
+
+  final InternetConnection _connection;
+
   @override
   Future<void> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
     /// Check internet connection
-    final internetConnection = getIt<InternetConnection>();
-    final hasInternet = await CcNetworkHelper(internetConnection).hasInternet;
+    final hasInternet = await CcNetworkHelper(_connection).hasInternet;
     if (!hasInternet) {
       final errorMsg = el.tr(CcLocaleKeys.app_error_network);
       errorMsg.Log();

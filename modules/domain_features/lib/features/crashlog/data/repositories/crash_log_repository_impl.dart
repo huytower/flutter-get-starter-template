@@ -1,5 +1,3 @@
-import 'dart:developer' as developer;
-
 import 'package:app_config/core/config/app/prj_env.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:injectable/injectable.dart';
@@ -32,18 +30,10 @@ class CrashLogRepositoryImpl implements CrashLogRepository {
         ),
       );
       await CcCrashLogPaths.clearLogFile();
-      developer.log(
-        'Crash log uploaded (${logs.length} chars)',
-        name: 'CrashLog',
-      );
+      'Crash log uploaded (${logs.length} chars)'.Log('CrashLog');
       return true;
     } catch (e, stackTrace) {
-      developer.log(
-        'Crash log upload failed: $e',
-        error: e,
-        stackTrace: stackTrace,
-        name: 'CrashLog',
-      );
+      'Crash log upload failed: $e\n$stackTrace'.Log('CrashLog');
       return false;
     }
   }

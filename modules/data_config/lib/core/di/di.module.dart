@@ -21,6 +21,8 @@ import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart'
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart'
+    as _i161;
 
 class DataConfigPackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -51,20 +53,20 @@ class DataConfigPackageModule extends _i526.MicroPackageModule {
       instanceName: 'curlLoggerInterceptor',
     );
     gh.lazySingleton<_i361.Interceptor>(
-      () => dataModule.requestInterceptor,
-      instanceName: 'requestInterceptor',
-    );
-    gh.lazySingleton<_i361.Interceptor>(
       () => dataModule.responseInterceptor,
       instanceName: 'responseInterceptor',
     );
+    gh.lazySingleton<_i361.Interceptor>(
+      () => dataModule.requestInterceptor(gh<_i161.InternetConnection>()),
+      instanceName: 'requestInterceptor',
+    );
+    gh.lazySingleton<_i361.BaseOptions>(
+        () => dataModule.baseOptions(gh<String>(instanceName: 'baseUrl')));
     gh.lazySingleton<List<_i361.Interceptor>>(() => dataModule.interceptors(
           gh<_i361.Interceptor>(instanceName: 'requestInterceptor'),
           gh<_i361.Interceptor>(instanceName: 'responseInterceptor'),
           gh<_i361.Interceptor>(instanceName: 'cacheInterceptor'),
         ));
-    gh.lazySingleton<_i361.BaseOptions>(
-        () => dataModule.baseOptions(gh<String>(instanceName: 'baseUrl')));
     gh.lazySingleton<_i361.Dio>(
       () => dataModule.dio(
         gh<_i361.BaseOptions>(),

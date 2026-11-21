@@ -184,11 +184,8 @@ class CurrencyCatalog {
   /// Asynchronously detects suggested currency code based on GPS location first,
   /// falling back to device regional locale settings if GPS is unavailable.
   static Future<({String currencyCode, String? countryCode})>
-  detectSuggestedCurrencyFromGpsWithDetails() async {
+  detectSuggestedCurrencyFromGpsWithDetails(CcLocationService location) async {
     try {
-      // Resolved inside the try: without DI (e.g. in tests) this falls back to
-      // the device locale below.
-      final location = getIt<CcLocationService>();
       final position =
           await location.getLastKnownPosition() ??
           await location.getCurrentPosition();

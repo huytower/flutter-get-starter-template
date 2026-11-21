@@ -19,8 +19,8 @@ typedef GpsCurrencyDetector =
 class ProfileLocalDataSource {
   ProfileLocalDataSource(this._location, WalletLocalDataSource walletLocal)
     : _walletLocal = walletLocal,
-      _detectFromGps =
-          CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails,
+      _detectFromGps = (() =>
+          CurrencyCatalog.detectSuggestedCurrencyFromGpsWithDetails(_location)),
       _gpsTimeout = gpsDetectionTimeout {
     _location.lastPosition.addListener(_onGpsPositionUpdated);
   }

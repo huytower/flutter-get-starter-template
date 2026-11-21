@@ -1,6 +1,6 @@
-import 'dart:developer' as developer;
 
 import 'package:app_config/data/adapters/domain_user_entity_adapter.dart';
+import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:hive_ce/hive_ce.dart';
 
 import 'app_storage/cc_app_storage.dart';
@@ -36,11 +36,7 @@ Future<void> registerHiveAdapter() async {
       () => CcDeviceInfo.register(),
     );
   } catch (e, stackTrace) {
-    developer.log(
-      'Failed to register one or more Hive adapters',
-      error: e,
-      stackTrace: stackTrace,
-    );
+    'Failed to register one or more Hive adapters: $e\n$stackTrace'.Log('Hive');
     rethrow;
   }
 }
@@ -53,11 +49,7 @@ Future<void> _registerAdapterWithErrorHandling(
   try {
     await registerFunction();
   } catch (e, stackTrace) {
-    developer.log(
-      'Failed to register $adapterName adapter',
-      error: e,
-      stackTrace: stackTrace,
-    );
+    'Failed to register $adapterName adapter: $e\n$stackTrace'.Log('Hive');
     rethrow;
   }
 }

@@ -362,6 +362,8 @@ on any doc having been read:
       `cc_micro_features`.
     - `layer-purity`: `features/*/domain/` and `data/` import no `presentation/` layer.
     - `no-dotenv`: no `flutter_dotenv` anywhere.
+    - `no-developer-log` (rule #15): no `dart:developer` outside the `.Log()` extension itself (`print` is the
+      analyzer's `avoid_print`).
     - `package-cycle`: `lib/` imports between workspace packages form no cycle (rule #2). `_knownBackEdges` in the
       script is empty and must stay so; a new cycle is fixed by moving the shared type down, not by an exception.
     - `shell-via-bridge` (rule #4): the App Shell imports from `domain_features` only the wiring files

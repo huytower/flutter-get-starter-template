@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../core/di/di.dart';
 import '../budget_limit/data/models/budget_limit_model.dart';
 import '../category/data/datasources/local/category_seed.dart';
 import '../category/data/models/category_model.dart';
@@ -28,7 +27,9 @@ class GuestLoginPromptService {
   final SessionContract _session;
   bool _promptInFlight = false;
 
-  GuestLoginPromptService(this._session);
+  GuestLoginPromptService(this._session, this._auth);
+
+  final AuthCoordinator _auth;
 
   Future<int> countFinancialRecords() async {
     final counts = await Future.wait([
@@ -129,7 +130,7 @@ class GuestLoginPromptService {
             : Get.context);
         if (navContext != null && navContext.mounted) {
           // ignore: use_build_context_synchronously
-          getIt<AuthCoordinator>().navigateToLogin(navContext);
+          _auth.navigateToLogin(navContext);
         }
       }
     } finally {

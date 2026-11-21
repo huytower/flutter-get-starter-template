@@ -1,5 +1,4 @@
 import 'package:cc_sdk/export_cc_sdk.dart';
-import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_it/get_it.dart';
@@ -19,7 +18,6 @@ final GetIt getIt = GetIt.instance;
     // Implemented by the host app (env / remote config), see app_update.
     AppUpdateConfigRepository,
     CcDeviceInfoHelper,
-    CcDeviceEntity,
     CcAnalytics,
     FirebaseAuth,
     GoogleSignIn,
