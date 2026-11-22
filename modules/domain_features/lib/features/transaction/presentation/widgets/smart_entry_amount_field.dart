@@ -1,7 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/money_formatter.dart';
 
 class SmartEntryAmountField extends StatelessWidget {
   const SmartEntryAmountField({

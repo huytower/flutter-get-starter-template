@@ -22,7 +22,7 @@ import '../widgets/liquid_wallets_section.dart';
 
 @RoutePage()
 class BudgetAllocationPage extends CcGetView<BudgetAllocationController>
-    with CcPullRefreshMixin {
+    with CcPullToRefreshMixin {
   const BudgetAllocationPage({super.key});
 
   @override

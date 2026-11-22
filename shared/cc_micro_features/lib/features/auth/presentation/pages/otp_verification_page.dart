@@ -248,7 +248,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
           ),
         ),
         const CcSpaceXS(),
-        CcInteractBtnWrapper(
+        CcInteractionWrapper(
           onTap: _handleResend,
           isEnable: _canResend,
           useDebounce: true,

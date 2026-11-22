@@ -1,7 +1,7 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../data/data_source/color/prj_color.dart';
+import '../../data/data_source/color/prj_colors.dart';
 
 /// A collection of text styles following Material Design guidelines.
 ///

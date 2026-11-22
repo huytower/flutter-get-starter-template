@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../enum/environment.dart';
-import '../env/base.dart';
-import '../env/prod.dart';
+import '../env/http_base.dart';
+import '../env/http_prod.dart';
 
 /// Central configuration manager for the application.
 /// Handles environment-specific configurations and feature flags.

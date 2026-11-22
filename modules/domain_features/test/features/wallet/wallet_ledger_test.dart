@@ -2,7 +2,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
-import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_repository.dart';
 import 'package:domain_features/features/transaction/domain/repositories/transaction_repository.dart';
 import 'package:domain_features/features/wallet/domain/entities/wallet_totals.dart';
 import 'package:domain_features/features/wallet/domain/services/wallet_ledger.dart';

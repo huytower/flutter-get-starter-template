@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/money_formatter.dart';
 import '../../../guideline/export_guideline.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../get_x/add_budget_limit_sheet_controller.dart';

@@ -9,6 +9,7 @@ import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/trend_data_entity.dart';
 import '../report_range.dart';
 import 'trend_bucketer.dart';
+import 'trend_window.dart';
 
 @lazySingleton
 class GetTrendDataUseCase {

@@ -1,15 +1,9 @@
 import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
-import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_table.dart';
 import 'package:hive_ce/hive_ce.dart';
 import 'package:injectable/injectable.dart';
 
 import 'exchange_rate_hive_model.dart';
-
-class RateCachePolicy {
-  const RateCachePolicy({this.maxAge = const Duration(days: 90)});
-
-  final Duration maxAge;
-}
 
 @lazySingleton
 class ExchangeRateLocalDataSource {

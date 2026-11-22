@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/money_formatter.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../get_x/reconciliation_controller.dart';
 

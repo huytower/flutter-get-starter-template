@@ -19,8 +19,8 @@ export 'core/config/app/prj_feature_flags.dart';
 // ENVIRONMENT CONFIGURATIONS
 // =================================
 
-export 'core/config/http/env/base.dart';
-export 'core/config/http/env/prod.dart';
+export 'core/config/http/env/http_base.dart';
+export 'core/config/http/env/http_prod.dart';
 // =================================
 // HTTP CLIENT CONFIGURATION
 // =================================

@@ -9,31 +9,12 @@ import '../../features/reconciliation/data/models/reconciliation_model.dart';
 import '../../features/transaction/data/models/transaction_model.dart';
 import '../../features/wallet/data/models/wallet_hive_model.dart';
 import '../constant/currency_constants.dart';
-
-class CurrencyAnnotationResult {
-  const CurrencyAnnotationResult({
-    required this.walletsUpdated,
-    required this.transactionsUpdated,
-    required this.budgetsUpdated,
-    required this.liabilitiesUpdated,
-    required this.reconciliationsUpdated,
-    required this.success,
-    this.errorMessage,
-  });
-
-  final int walletsUpdated;
-  final int transactionsUpdated;
-  final int budgetsUpdated;
-  final int liabilitiesUpdated;
-  final int reconciliationsUpdated;
-  final bool success;
-  final String? errorMessage;
-}
+import 'currency_annotation_result.dart';
 
 /// Versioned schema migration runner for annotating existing financial records
 /// with their original record currencyCode (defaulting to VND for legacy records).
 /// Fail-secure: version does not advance on partial or full failure, ensuring safe retries on next startup.
-abstract final class FinancialSchema {
+abstract final class FinancialSchemaMigration {
   static const currentVersion = 2;
 
   static Future<CurrencyAnnotationResult> runMigrationIfNeeded() async {
@@ -252,7 +233,7 @@ abstract final class FinancialSchema {
       );
     } catch (e) {
       debugPrint(
-        '[FinancialSchema] Migration failed at version $currentVersion: $e',
+        '[FinancialSchemaMigration] Migration failed at version $currentVersion: $e',
       );
       return CurrencyAnnotationResult(
         walletsUpdated: walletsUpdated,

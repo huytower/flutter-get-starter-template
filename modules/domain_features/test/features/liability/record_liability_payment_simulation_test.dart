@@ -3,7 +3,7 @@ import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
-import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_repository.dart';
 import 'package:domain_features/features/liability/domain/entities/liability_balance_entity.dart';
 import 'package:domain_features/features/liability/domain/repositories/liability_repository.dart';
 import 'package:domain_features/features/liability/domain/usecases/get_liability_balances_usecase.dart';

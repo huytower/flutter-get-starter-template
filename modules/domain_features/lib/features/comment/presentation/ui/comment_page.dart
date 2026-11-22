@@ -8,7 +8,7 @@ import 'widgets/comment_card.dart';
 import 'widgets/shimmer_comment_card.dart';
 
 @RoutePage()
-class CommentPage extends CcGetView<CommentController> with CcPullRefreshMixin {
+class CommentPage extends CcGetView<CommentController> with CcPullToRefreshMixin {
   const CommentPage({super.key});
 
   @override

@@ -8,7 +8,7 @@ import 'package:theme/export_theme.dart';
 import '../../../liability/presentation/get_x/borrow_form_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../liability/presentation/get_x/liability_base_form_controller.dart';
-import '../../domain/usecases/create_investment_transaction_usecase.dart';
+import '../../domain/entities/investment_direction.dart';
 import '../get_x/investment_form_controller.dart';
 import '../get_x/transaction_controller.dart';
 
@@ -92,7 +92,7 @@ class TransactionHeaderActions extends StatelessWidget {
       case TransactionTabKind.investment:
         if (Get.isRegistered<InvestmentFormController>()) {
           final c = Get.find<InvestmentFormController>();
-          return c.direction.value == InvestmentDirectionForm.contribute
+          return c.direction.value == InvestmentDirection.contribute
               ? Icons.arrow_circle_down
               : Icons.arrow_circle_up;
         }

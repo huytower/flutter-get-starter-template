@@ -13,7 +13,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
 import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
-import '../../domain/usecases/create_investment_transaction_usecase.dart';
+import '../../domain/entities/investment_direction.dart';
 import '../get_x/investment_form_controller.dart';
 import '../get_x/transaction_controller.dart';
 import 'form_amount_section.dart';
@@ -67,8 +67,8 @@ class _InvestmentFormState extends State<InvestmentForm> {
     });
   }
 
-  Color _accentColor(BuildContext context, InvestmentDirectionForm direction) =>
-      direction == InvestmentDirectionForm.contribute
+  Color _accentColor(BuildContext context, InvestmentDirection direction) =>
+      direction == InvestmentDirection.contribute
       ? context.investmentAccent
       : context.investmentAccent.secondaryShade;
 
@@ -242,7 +242,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
     return Obx(
       () => EntrySubmitButton(
         text: el.tr(
-          controller.direction.value == InvestmentDirectionForm.contribute
+          controller.direction.value == InvestmentDirection.contribute
               ? CcLocaleKeys.transaction_record_investment
               : CcLocaleKeys.transaction_record_investment_return,
         ),
@@ -253,7 +253,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
         gradient: context.investmentGoldGradient,
         gradientForegroundColor: context.onInvestmentGold,
         leadingIcon:
-            controller.direction.value == InvestmentDirectionForm.contribute
+            controller.direction.value == InvestmentDirection.contribute
             ? Icons.arrow_circle_down
             : Icons.arrow_circle_up,
         leadingIconSize: 18,
@@ -328,7 +328,7 @@ class _InvestmentFormState extends State<InvestmentForm> {
     Color accentColor,
   ) {
     final labelKey =
-        controller.direction.value == InvestmentDirectionForm.contribute
+        controller.direction.value == InvestmentDirection.contribute
         ? CcLocaleKeys.transaction_source_investment
         : CcLocaleKeys.transaction_destination_investment;
     return FormWalletSection(

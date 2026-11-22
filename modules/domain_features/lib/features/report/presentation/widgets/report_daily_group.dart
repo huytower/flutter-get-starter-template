@@ -8,13 +8,13 @@ import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/money_formatter.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import 'report_daily_list_helpers.dart';
 import 'report_transaction_tile.dart';
 
-class DailyGroup extends StatefulWidget {
-  const DailyGroup({
+class ReportDailyGroup extends StatefulWidget {
+  const ReportDailyGroup({
     super.key,
     required this.date,
     required this.transactions,
@@ -28,10 +28,10 @@ class DailyGroup extends StatefulWidget {
   final bool isEditMode;
 
   @override
-  State<DailyGroup> createState() => _DailyGroupState();
+  State<ReportDailyGroup> createState() => _ReportDailyGroupState();
 }
 
-class _DailyGroupState extends State<DailyGroup> {
+class _ReportDailyGroupState extends State<ReportDailyGroup> {
   late bool _isExpanded;
 
   @override
@@ -73,8 +73,8 @@ class _DailyGroupState extends State<DailyGroup> {
         totalDaily,
         currencyCode: currencyCode,
       );
-      '[DailyGroup] date=${widget.date} totalDaily=$totalDaily currencyCode=$currencyCode formatted=$amountText'
-          .Log('DailyGroup');
+      '[ReportDailyGroup] date=${widget.date} totalDaily=$totalDaily currencyCode=$currencyCode formatted=$amountText'
+          .Log('ReportDailyGroup');
 
       return Container(
         margin: EdgeInsets.only(bottom: context.respDim(16)),
@@ -171,7 +171,7 @@ class _DailyGroupState extends State<DailyGroup> {
                 ),
               ),
               for (final tx in widget.transactions)
-                TransactionTile(transaction: tx, isEditMode: widget.isEditMode),
+                ReportTransactionTile(transaction: tx, isEditMode: widget.isEditMode),
             ],
           ],
         ),

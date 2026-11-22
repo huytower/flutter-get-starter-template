@@ -9,7 +9,7 @@ import 'package:multiple_result/multiple_result.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/helper/budget_name_helper.dart';
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/money_formatter.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../budget_limit/domain/entities/budget_insights_entity.dart';
 import '../get_x/budget_allocation_controller.dart';

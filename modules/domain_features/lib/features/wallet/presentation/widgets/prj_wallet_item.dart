@@ -27,7 +27,7 @@ class PrjWalletItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CcInteractBtnWrapper(
+    return CcInteractionWrapper(
       onTap: onTap,
       useDebounce: true,
       isBouncing: true,

@@ -1,6 +1,10 @@
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
-import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_failure.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_repository.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_result.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_table.dart';
+import 'package:domain_features/core/exchange_rates/rate_provenance.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 

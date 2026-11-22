@@ -75,7 +75,7 @@ class QuickNumericKeypad extends StatelessWidget {
   Widget _buildKey(BuildContext context, String label) {
     final bool isDelete = label == 'DEL';
 
-    return CcInteractBtnWrapper(
+    return CcInteractionWrapper(
       useDebounce: false,
       isBouncing: true,
       onTap: () => isDelete ? onDelete() : onKeyPress(label),

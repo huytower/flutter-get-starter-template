@@ -8,7 +8,7 @@ import 'package:theme/export_theme.dart';
 
 import '../../../../../core/constant/currency_constants.dart';
 import '../../../../../core/di/di.dart';
-import '../../../../../core/helper/money_format_helper.dart';
+import '../../../../../core/helper/money_formatter.dart';
 import '../get_x/currency_selection_controller.dart';
 
 String getCurrencyFlag(String code) {

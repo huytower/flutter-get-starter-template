@@ -2,7 +2,7 @@ import 'package:domain_features/core/presentation/widgets/entry_date_picker_shee
 import 'package:flutter/material.dart';
 
 import '../constant/currency_constants.dart';
-import 'money_format_helper.dart';
+import 'money_formatter.dart';
 
 /// Common helper functions for transaction forms.
 /// State-management agnostic - pure functions only.

@@ -204,7 +204,7 @@ class TransactionTabBar extends StatelessWidget {
     final isUnlocked = controller.isTabUnlocked(kind);
     final activeColor = kind.color(context);
 
-    return CcInteractBtnWrapper(
+    return CcInteractionWrapper(
       isEnable: true,
       isBouncing: true,
       useDebounce: true,

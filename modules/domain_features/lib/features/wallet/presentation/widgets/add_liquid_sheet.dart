@@ -10,7 +10,7 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/money_formatter.dart';
 import '../../../../core/helper/wallet_icon_helper.dart';
 import '../../../guideline/export_guideline.dart';
 import '../get_x/add_liquid_sheet_controller.dart';

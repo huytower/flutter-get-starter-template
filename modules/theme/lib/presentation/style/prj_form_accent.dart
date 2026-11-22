@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../data/data_source/color/prj_color.dart';
+import '../../data/data_source/color/prj_colors.dart';
 
 /// Brand accent colors for the transaction entry forms.
 ///

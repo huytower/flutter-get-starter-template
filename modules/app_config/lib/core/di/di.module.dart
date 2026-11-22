@@ -6,7 +6,7 @@
 
 import 'dart:async' as _i687;
 
-import 'package:app_config/core/di/module/dependencies.dart' as _i224;
+import 'package:app_config/core/di/module/app_config_dependencies.dart' as _i33;
 import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart'
     as _i215;
 import 'package:app_config/data/datasource/local/box/device_info/cc_device_info.dart'
@@ -25,4 +25,4 @@ class AppConfigPackageModule extends _i526.MicroPackageModule {
   }
 }
 
-class _$AppConfigDependencies extends _i224.AppConfigDependencies {}
+class _$AppConfigDependencies extends _i33.AppConfigDependencies {}

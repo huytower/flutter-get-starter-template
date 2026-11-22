@@ -17,7 +17,7 @@ class CategoryCustomizeTile extends StatelessWidget {
     final scheme = context.ccColorScheme;
     final foreground = scheme.onSurfaceVariant.withValues(alpha: 0.6);
 
-    return CcInteractBtnWrapper(
+    return CcInteractionWrapper(
       onTap: onTap,
       isBouncing: true,
       useDebounce: true,

@@ -44,7 +44,7 @@ class ProfileLocalDataSource {
     final s = CcAppStorage.instance;
 
     // Run versioned migration to annotate existing financial records with currencyCode (default VND)
-    await FinancialSchema.runMigrationIfNeeded();
+    await FinancialSchemaMigration.runMigrationIfNeeded();
 
     // Stamp the user-level feature anchor once, the first time settings are
     // read after this feature shipped. Pre-existing reconciliation/budget

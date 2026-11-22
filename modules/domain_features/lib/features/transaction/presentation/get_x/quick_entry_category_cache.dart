@@ -2,7 +2,7 @@ import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 
 import '../../../../core/domain/entities/category_entity.dart';
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/money_formatter.dart';
 import '../../domain/entities/parsed_transaction_entity.dart';
 import 'quick_entry_parser.dart';
 import 'transaction_form_controller.dart';

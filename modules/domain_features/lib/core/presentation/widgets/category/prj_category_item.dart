@@ -29,7 +29,7 @@ class PrjCategoryItem extends StatelessWidget {
     final scheme = context.ccColorScheme;
     final effectiveActiveColor = activeColor ?? scheme.primary;
 
-    return CcInteractBtnWrapper(
+    return CcInteractionWrapper(
       onTap: onTap,
       isBouncing: true,
       useDebounce: false,

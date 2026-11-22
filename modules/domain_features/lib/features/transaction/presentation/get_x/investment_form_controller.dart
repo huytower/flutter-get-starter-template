@@ -18,10 +18,11 @@ import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/helper/budget_name_helper.dart';
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/money_formatter.dart';
 import '../../../../core/helper/quick_entry_intent.dart';
 import '../../../../core/helper/quick_entry_intent_util.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
+import '../../domain/entities/investment_direction.dart';
 import '../../domain/usecases/create_investment_transaction_usecase.dart';
 import 'quick_entry_handler.dart';
 import 'quick_entry_session.dart';
@@ -113,8 +114,8 @@ class InvestmentFormController extends TransactionFormController {
 
     setDirection(
       QuickEntryIntentUtil.isInvestmentReturn(text)
-          ? InvestmentDirectionForm.returnProfit
-          : InvestmentDirectionForm.contribute,
+          ? InvestmentDirection.returnProfit
+          : InvestmentDirection.contribute,
     );
   }
 
@@ -140,8 +141,8 @@ class InvestmentFormController extends TransactionFormController {
     quickAmounts.assignAll(suggestions);
   }
 
-  final Rx<InvestmentDirectionForm> direction =
-      InvestmentDirectionForm.contribute.obs;
+  final Rx<InvestmentDirection> direction =
+      InvestmentDirection.contribute.obs;
   final Rx<CategoryEntity?> selectedCategory = Rx<CategoryEntity?>(null);
   @override
   final RxInt categoryKey = 0.obs;
@@ -410,11 +411,11 @@ class InvestmentFormController extends TransactionFormController {
     super.onClose();
   }
 
-  void setDirection(InvestmentDirectionForm value) {
+  void setDirection(InvestmentDirection value) {
     if (direction.value == value) return;
     direction.value = value;
     _recomputeMergedItems();
-    if (value == InvestmentDirectionForm.returnProfit) {
+    if (value == InvestmentDirection.returnProfit) {
       // Logic for return profit: must pick existing asset if available
       if (isAddingNewItem.value || selectedInvestmentWalletId.value == null) {
         final firstAsset = mergedItems
@@ -452,7 +453,7 @@ class InvestmentFormController extends TransactionFormController {
   @override
   String? composeNote() {
     final userNote = super.composeNote();
-    final subsegment = direction.value == InvestmentDirectionForm.contribute
+    final subsegment = direction.value == InvestmentDirection.contribute
         ? el.tr(CcLocaleKeys.transaction_investment_contribution)
         : el.tr(CcLocaleKeys.transaction_investment_return);
 

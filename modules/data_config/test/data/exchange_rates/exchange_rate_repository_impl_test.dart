@@ -2,7 +2,10 @@ import 'package:data_config/data/exchange_rates/exchange_rate_local_datasource.d
 import 'package:data_config/data/exchange_rates/exchange_rate_repository_impl.dart';
 import 'package:data_config/data/exchange_rates/frankfurter_remote.dart';
 import 'package:data_config/data/exchange_rates/rate_freshness.dart';
-import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_failure.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_result.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_table.dart';
+import 'package:domain_features/core/exchange_rates/rate_provenance.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FakeRemote implements FrankfurterRemote {

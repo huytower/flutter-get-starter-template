@@ -6,7 +6,7 @@ import 'package:domain_features/features/budget_limit/domain/entities/budget_ano
 import 'package:domain_features/features/budget_limit/domain/entities/budget_insights_entity.dart';
 import 'package:domain_features/features/budget_limit/domain/entities/budget_limit_stats_entity.dart';
 import 'package:domain_features/features/report/domain/entities/financial_runway_entity.dart';
-import 'package:domain_features/features/transaction/domain/usecases/get_monthly_cash_flow_usecase.dart';
+import 'package:domain_features/features/transaction/domain/entities/cash_flow_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 SmartEntryContext _context({

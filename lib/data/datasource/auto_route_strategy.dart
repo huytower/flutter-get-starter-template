@@ -1,0 +1,49 @@
+import 'package:cc_sdk/export_cc_sdk.dart' hide getIt;
+import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
+import 'package:message/export_message.dart';
+import 'package:theme/core/helper/theme_helper.dart';
+import 'package:theme/presentation/provider/theme_provider.dart';
+
+import '../../core/layout/orientation_policy_scope.dart';
+import '../../core/navigation/config/auto_route/app_router.dart';
+import 'routing_strategy.dart';
+
+/// [RoutingStrategy] backed by the `auto_route` package.
+@LazySingleton(as: RoutingStrategy)
+class AutoRouteStrategy extends RoutingStrategy {
+  final AppRouter _appRouter;
+  final CcAnalytics _analytics;
+
+  AutoRouteStrategy(ThemeProvider themeProvider, this._appRouter, this._analytics)
+    : super(themeProvider);
+
+  @override
+  Widget buildApp() {
+    final result = buildThemedApp((context, themeProvider) {
+      return MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        theme: createLightTheme(),
+        darkTheme: createDarkTheme(),
+        themeMode: themeProvider.themeMode,
+        routerConfig: _appRouter.config(
+          navigatorObservers: () => [?_analytics.navigatorObserver],
+        ),
+        locale: CcLocalization.getCurrentLocale(context),
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        builder: (context, child) {
+          return OrientationPolicyScope(
+            child: CcKeyboardHelper.dismissOnTap(
+              child: child ?? const SizedBox.shrink(),
+              context: context,
+            ),
+          );
+        },
+      );
+    });
+    return result;
+  }
+}

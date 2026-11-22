@@ -3,7 +3,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
-import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
+import 'package:domain_features/core/exchange_rates/conversion_use.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:injectable/injectable.dart';

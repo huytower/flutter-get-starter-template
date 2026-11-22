@@ -22,7 +22,7 @@ import '../../../../core/helper/budget_name_helper.dart';
 import '../../../../core/helper/budget_over_limit_helper.dart';
 import '../../../../core/helper/location_suggestion_helper.dart';
 import '../../../../core/helper/merchant_matcher.dart';
-import '../../../../core/helper/money_format_helper.dart';
+import '../../../../core/helper/money_formatter.dart';
 import '../../../../core/helper/time_based_suggestion_helper.dart';
 import '../../../category/data/datasources/local/category_age_order.dart';
 import '../../../notification/domain/usecases/check_budget_threshold_usecase.dart';

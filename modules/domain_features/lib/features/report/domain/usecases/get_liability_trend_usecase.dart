@@ -7,6 +7,7 @@ import '../../../transaction/domain/repositories/transaction_repository.dart';
 import '../entities/trend_data_entity.dart';
 import '../report_range.dart';
 import 'trend_bucketer.dart';
+import 'trend_window.dart';
 
 /// Liability/debt "chart" for the report page — cash in (Đi vay
 /// [TransactionType.debtBorrow] + Thu nợ [TransactionType.debtCollect]) vs

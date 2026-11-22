@@ -1,5 +1,5 @@
 import 'package:domain_features/core/domain/entities/transaction_entity.dart';
-import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
+import 'package:domain_features/core/exchange_rates/currency_amount.dart';
 
 import 'currency_conversion_service.dart';
 

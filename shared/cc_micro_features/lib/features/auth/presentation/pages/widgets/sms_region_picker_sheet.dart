@@ -3,7 +3,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../domain/sms_supported_regions.dart';
+import '../../../domain/sms_region.dart';
 
 /// Bottom sheet listing the countries SMS verification is available for.
 ///

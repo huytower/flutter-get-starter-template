@@ -3,15 +3,15 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../domain/usecases/create_investment_transaction_usecase.dart';
+import '../../domain/entities/investment_direction.dart';
 
 /// Chi ra / Thu vào pill switch shown at the top of the Investment form —
 /// same [TabBar]-in-a-shadowed-pill construction as [TransactionTabBar]
 /// above it, so the two read as one consistent tab language.
 class InvestmentDirectionToggle extends StatefulWidget {
-  final InvestmentDirectionForm value;
+  final InvestmentDirection value;
   final Color activeColor;
-  final ValueChanged<InvestmentDirectionForm> onChanged;
+  final ValueChanged<InvestmentDirection> onChanged;
 
   const InvestmentDirectionToggle({
     super.key,
@@ -33,8 +33,8 @@ class _InvestmentDirectionToggleState extends State<InvestmentDirectionToggle>
     initialIndex: _indexOf(widget.value),
   );
 
-  static int _indexOf(InvestmentDirectionForm direction) =>
-      direction == InvestmentDirectionForm.contribute ? 0 : 1;
+  static int _indexOf(InvestmentDirection direction) =>
+      direction == InvestmentDirection.contribute ? 0 : 1;
 
   @override
   void didUpdateWidget(covariant InvestmentDirectionToggle oldWidget) {
@@ -81,8 +81,8 @@ class _InvestmentDirectionToggleState extends State<InvestmentDirectionToggle>
             controller: _tabController,
             onTap: (index) => widget.onChanged(
               index == 0
-                  ? InvestmentDirectionForm.contribute
-                  : InvestmentDirectionForm.returnProfit,
+                  ? InvestmentDirection.contribute
+                  : InvestmentDirection.returnProfit,
             ),
             indicatorSize: TabBarIndicatorSize.tab,
             dividerColor: Colors.transparent,

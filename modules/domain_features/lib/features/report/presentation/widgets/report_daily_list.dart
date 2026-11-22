@@ -39,7 +39,7 @@ class ReportDailyList extends StatelessWidget {
 
     final dayGroups = [
       for (final date in sortedDates)
-        DailyGroup(
+        ReportDailyGroup(
           key: ValueKey(date.toIso8601String()),
           date: date,
           transactions: groups[date]!,

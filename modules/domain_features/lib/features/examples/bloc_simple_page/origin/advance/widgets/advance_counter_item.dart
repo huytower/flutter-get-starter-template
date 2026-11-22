@@ -18,7 +18,7 @@ class AdvanceCounterItem extends StatelessWidget {
       width: double.infinity,
       backgroundColor: context.ccColorScheme.surfaceContainerHighest,
       hasShadow: false,
-      child: CcInteractBtnWrapper(
+      child: CcInteractionWrapper(
         onTap: () {
           'DebounceWidget'.Log();
         },

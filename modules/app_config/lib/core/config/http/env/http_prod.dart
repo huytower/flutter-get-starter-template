@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../app/prj_env.dart';
 import '../../app/prj_feature_flags.dart';
-import 'base.dart';
+import 'http_base.dart';
 
 /// Production env configuration.
 ///

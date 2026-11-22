@@ -4,7 +4,14 @@ library domain_features;
 export 'package:domain_features/core/domain/entities/transaction_entity.dart';
 // Wallet
 export 'package:domain_features/core/domain/entities/wallet_entity.dart';
-export 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
+export 'package:domain_features/core/exchange_rates/conversion_use.dart';
+export 'package:domain_features/core/exchange_rates/converted_money.dart';
+export 'package:domain_features/core/exchange_rates/currency_amount.dart';
+export 'package:domain_features/core/exchange_rates/exchange_rate_failure.dart';
+export 'package:domain_features/core/exchange_rates/exchange_rate_repository.dart';
+export 'package:domain_features/core/exchange_rates/exchange_rate_result.dart';
+export 'package:domain_features/core/exchange_rates/exchange_rate_table.dart';
+export 'package:domain_features/core/exchange_rates/rate_provenance.dart';
 
 // Core
 export 'core/contracts/financial_refresh_provider.dart';

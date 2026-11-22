@@ -9,7 +9,7 @@ import 'package:domain_features/core/domain/entities/transaction_entity.dart';
 import 'package:domain_features/core/domain/entities/user_level_status_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
-import 'package:domain_features/core/exchange_rates/exchange_rate_types.dart';
+import 'package:domain_features/core/exchange_rates/exchange_rate_repository.dart';
 import 'package:domain_features/features/category/domain/repositories/category_repository.dart';
 import 'package:domain_features/features/firestore/guest_login_prompt_service.dart';
 import 'package:domain_features/features/profile/domain/entities/profile_settings_entity.dart';

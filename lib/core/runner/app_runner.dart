@@ -6,7 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../data/datasource/route_strategy.dart';
+import '../../data/datasource/routing_strategy.dart';
 import '../di/di.dart';
 
 /// The root widget of the application.

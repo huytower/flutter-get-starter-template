@@ -23,7 +23,7 @@ class UnifiedCategoryItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = context.ccColorScheme;
 
-    return CcInteractBtnWrapper(
+    return CcInteractionWrapper(
       onTap: onTap,
       isBouncing: true,
       useDebounce: false,

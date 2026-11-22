@@ -13,8 +13,8 @@ import 'delete_transaction_sheet.dart';
 import 'quick_edit_transaction_sheet.dart';
 import 'report_daily_list_helpers.dart';
 
-class TransactionTile extends StatelessWidget {
-  const TransactionTile({required this.transaction, required this.isEditMode});
+class ReportTransactionTile extends StatelessWidget {
+  const ReportTransactionTile({required this.transaction, required this.isEditMode});
 
   final TransactionEntity transaction;
   final bool isEditMode;
