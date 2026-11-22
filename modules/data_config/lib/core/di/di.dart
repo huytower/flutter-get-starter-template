@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';

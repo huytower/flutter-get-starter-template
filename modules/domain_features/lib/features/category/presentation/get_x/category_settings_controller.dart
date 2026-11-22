@@ -5,7 +5,7 @@ import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/get_x/cc_get_controller.dart';
 import '../../../profile/domain/entities/profile_settings_entity.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../profile/domain/usecases/update_profile_settings_usecase.dart';

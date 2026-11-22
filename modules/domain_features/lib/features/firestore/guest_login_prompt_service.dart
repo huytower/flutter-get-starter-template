@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
-import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
 import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

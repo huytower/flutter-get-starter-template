@@ -1,4 +1,4 @@
-import 'quick_entry_regex_dataset.dart';
+import '../quick_entry/quick_entry_regex_dataset.dart';
 
 const Map<String, String> _vietnameseDiacriticsMap = {
   'à': 'a',

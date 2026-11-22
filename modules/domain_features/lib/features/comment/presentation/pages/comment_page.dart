@@ -2,10 +2,10 @@ import 'package:auto_route/annotations.dart';
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/get_x/cc_get_view.dart';
 import '../get_x/comment_controller.dart';
-import 'widgets/comment_card.dart';
-import 'widgets/shimmer_comment_card.dart';
+import '../widgets/comment_card.dart';
+import '../widgets/shimmer_comment_card.dart';
 
 @RoutePage()
 class CommentPage extends CcGetView<CommentController> with CcPullToRefreshMixin {

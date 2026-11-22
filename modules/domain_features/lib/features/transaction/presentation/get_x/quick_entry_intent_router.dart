@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/domain/entities/category_entity.dart';
 import '../../../../core/domain/entities/liability_entity.dart';
-import '../../../../core/helper/quick_entry_intent.dart';
+import '../../../../core/quick_entry/quick_entry_intent.dart';
 import 'transaction_controller.dart';
 import 'transaction_form_controller.dart';
 

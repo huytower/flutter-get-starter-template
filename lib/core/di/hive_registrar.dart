@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasource/local/box/register_hive_adapter.dart'
+import 'package:app_config/data/datasources/local/box/register_hive_adapter.dart'
     as app_config;
 import 'package:data_config/hive_registrar.g.dart' as data_config;
 import 'package:domain_features/hive_registrar.g.dart' as domain_features;

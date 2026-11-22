@@ -9,10 +9,10 @@ import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
+import '../../../../core/budget/budget_name_helper.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/getx/cc_get_controller.dart';
-import '../../../../core/helper/budget_name_helper.dart';
+import '../../../../core/get_x/cc_get_controller.dart';
 import '../../../liability/presentation/get_x/borrow_form_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';
 import '../../../transaction/domain/usecases/update_transaction_usecase.dart';

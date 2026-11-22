@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../data/data_source/color/prj_colors.dart';
 import '../../presentation/style/cc_text_style.dart';
+import '../../presentation/style/prj_colors.dart';
 
 /// Creates a `ColorScheme` based on the provided `brightness`.
 ///

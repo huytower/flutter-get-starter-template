@@ -5,7 +5,7 @@ import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import 'package:string_similarity/string_similarity.dart';
 
 import '../../features/transaction/domain/entities/parsed_transaction_entity.dart';
-import 'merchant_match_helper.dart';
+import '../suggestion/merchant_match_helper.dart';
 import 'quick_entry_alias_dataset.dart';
 import 'quick_entry_intent.dart';
 import 'quick_entry_locale_pack.dart';

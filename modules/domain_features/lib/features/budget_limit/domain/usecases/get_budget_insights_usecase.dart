@@ -2,7 +2,7 @@ import 'package:cc_sdk_data/export_cc_sdk_data.dart';
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../../core/helper/budget_pacing_helper.dart';
+import '../../../../core/budget/budget_pacing_helper.dart';
 import '../../../transaction/domain/usecases/get_monthly_cash_flow_usecase.dart';
 import '../entities/budget_insights_entity.dart';
 import '../entities/budget_limit_stats_entity.dart';

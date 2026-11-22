@@ -4,8 +4,8 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/cc_locale_keys.dart';
 
+import '../../../../core/ai/ai_fallback_preference_datasource.dart';
 import '../../../../core/constant/currency_constants.dart';
-import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import 'voice_ripple_animation_widget.dart';
 
 /// Phase 3.6 "NLP Simple" quick entry — a free-text field ("50k cafe") with

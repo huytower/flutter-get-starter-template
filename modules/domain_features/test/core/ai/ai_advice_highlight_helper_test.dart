@@ -1,4 +1,4 @@
-import 'package:domain_features/core/helper/ai_advice_highlight_helper.dart';
+import 'package:domain_features/core/ai/ai_advice_highlight_helper.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

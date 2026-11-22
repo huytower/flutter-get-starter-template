@@ -1,5 +1,5 @@
-import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
-import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
 import 'package:domain_features/core/constant/currency_catalog.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:hive_ce/hive_ce.dart';

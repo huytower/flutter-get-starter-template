@@ -3,7 +3,7 @@ import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../domain/repositories/crash_log_repository.dart';
-import '../datasource/remote/crash_log_remote.dart';
+import '../datasources/remote/crash_log_remote.dart';
 import '../models/crash_log_upload_body.dart';
 
 @LazySingleton(as: CrashLogRepository)

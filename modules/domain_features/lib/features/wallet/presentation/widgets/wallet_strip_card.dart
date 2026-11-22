@@ -5,11 +5,11 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
-import 'package:theme/data/data_source/color/prj_colors.dart';
+import 'package:theme/presentation/style/prj_colors.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/transaction_form_helpers.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
+import '../../../../core/presentation/helper/transaction_form_helpers.dart';
 import '../get_x/wallet_controller.dart';
 import 'prj_wallet_item.dart';
 import 'wallet_display_name.dart';

@@ -8,7 +8,7 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/get_x/cc_get_controller.dart';
 import '../../../budget_allocation/presentation/get_x/budget_allocation_controller.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/liability_balance_entity.dart';

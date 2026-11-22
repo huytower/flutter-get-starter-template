@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/get_x/cc_get_controller.dart';
 import '../../../category/presentation/get_x/category_settings_controller.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';

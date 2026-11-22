@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/helper/quick_entry_parser_helper.dart';
+import '../../../../core/quick_entry/quick_entry_parser_helper.dart';
 import '../../domain/entities/smart_entry_input.dart';
 import 'quick_entry_intent_router.dart';
 import 'quick_entry_session.dart';

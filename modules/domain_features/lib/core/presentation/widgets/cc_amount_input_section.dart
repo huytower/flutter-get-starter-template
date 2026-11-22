@@ -1,6 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
-import 'package:domain_features/core/helper/money_formatter.dart';
+import 'package:domain_features/core/currency/money_formatter.dart';
 import 'package:domain_features/core/presentation/widgets/cc_quick_amount_chips.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';

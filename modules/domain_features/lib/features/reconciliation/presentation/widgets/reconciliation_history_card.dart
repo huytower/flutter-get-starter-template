@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
+import '../../../../core/currency/money_formatter.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/money_formatter.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/entities/reconciliation_entity.dart';
 

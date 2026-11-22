@@ -2,7 +2,7 @@ import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:flutter/widgets.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/helper/ai_fallback_preference_datasource.dart';
+import '../../../../core/ai/ai_fallback_preference_datasource.dart';
 import '../widgets/ai_consent_sheet.dart';
 
 /// App-level choices from the profile: consent to share data with the cloud

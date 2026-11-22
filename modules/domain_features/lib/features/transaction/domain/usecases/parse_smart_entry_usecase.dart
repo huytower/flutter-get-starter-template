@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:injectable/injectable.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../../core/ai/ai_fallback_preference_datasource.dart';
 import '../../../../core/ai/ai_language.dart';
 import '../../../../core/ai/ai_prompts.dart';
 import '../../../../core/ai/smart_entry_context.dart';
@@ -16,7 +17,6 @@ import '../../../../core/ai/smart_entry_response_parser.dart';
 import '../../../../core/ai/smart_entry_schema.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
-import '../../../../core/helper/ai_fallback_preference_datasource.dart';
 import '../../../category/domain/usecases/get_categories_usecase.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../entities/parsed_transaction_entity.dart';

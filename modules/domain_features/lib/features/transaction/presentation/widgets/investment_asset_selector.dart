@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/helper/budget_name_helper.dart';
+import '../../../../core/budget/budget_name_helper.dart';
 import '../../../../core/presentation/widgets/category/prj_category_shimmer_list.dart';
 import '../../../wallet/presentation/pages/investment_list_page.dart';
 import '../get_x/investment_form_controller.dart';

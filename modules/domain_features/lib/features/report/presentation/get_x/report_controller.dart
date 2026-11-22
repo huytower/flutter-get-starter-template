@@ -11,13 +11,13 @@ import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../../core/ai/ai_advice_cache_datasource.dart';
+import '../../../../core/ai/ai_fallback_preference_datasource.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
 import '../../../../core/exchange_rates/display_currency_converter.dart';
-import '../../../../core/getx/cc_get_controller.dart';
-import '../../../../core/helper/ai_advice_cache_datasource.dart';
-import '../../../../core/helper/ai_fallback_preference_datasource.dart';
+import '../../../../core/get_x/cc_get_controller.dart';
 import '../../../profile/presentation/widgets/ai_consent_sheet.dart';
 import '../../../wallet/domain/repositories/wallet_repository.dart';
 import '../../domain/entities/ai_advice_entity.dart';

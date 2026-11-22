@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/get_x/cc_get_view.dart';
 import '../../../budget_limit/presentation/get_x/budget_limit_controller.dart';
 import '../../../liability/presentation/get_x/borrow_form_controller.dart';
 import '../../../liability/presentation/get_x/lend_form_controller.dart';

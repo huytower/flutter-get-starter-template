@@ -245,6 +245,26 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
 12. **Suffix-First Naming, `lower_snake_case` files**: `*_entity.dart`, `*_usecase.dart`, `*_repository.dart` /
     `*_repository_impl.dart`, `*_model.dart`, `*_page.dart`, `*_bloc.dart`/`*_cubit.dart`,
     `*_state.dart`/`*_event.dart`.
+    - **File = type.** A file is named after the public type it declares (`money_formatter.dart` →
+      `MoneyFormatter`). `*_usecase.dart` holds `*UseCase`, `*_datasource.dart` holds `*DataSource`. A
+      use case's own `*Params` / result type may share its file; any other type (entity, enum, failure,
+      repository interface) gets its own file. A sealed family stays in one file (Dart requires it).
+      The few deliberate family files (`CcSpace*`, `CcRow*`/`CcCol*`, ...) are listed in
+      `_typeFamilyFiles` in `scripts/check_imports.dart`; keep that list short.
+    - **Folders:** plural layer folders (`datasources/`, `models/`, `entities/`, `repositories/`,
+      `usecases/`), `get_x/` for GetX controllers, `pages/` + `widgets/` (not `ui/`). Shared code goes in a
+      folder named after what it does (`quick_entry/`, `suggestion/`, `budget/`, `currency/`, `ai/`), not
+      in `helper/` / `util/`; `presentation/helper/` holds presentation-only helpers.
+    - **Prefixes:** `Cc` only for types in the SDK (`shared/cc_core_sdk`) and `cc_micro_features`; app
+      types use `Prj` when they need one, or no prefix. A widget whose name could clash with another
+      feature's carries its feature name (`ReportTransactionTile`, not `TransactionTile`).
+    - **Say what it is:** no abbreviations in names (`button`, not `btn`; `repository`, not `repo`;
+      `controller`, not `ctrl`; `background`, not `bg`); established API such as `respDim` stays.
+      Booleans read as a yes/no question: `isX`, `hasX`, `canX`, `shouldX` (widget flags such as
+      `dense` / `inline` are fine). No magic numbers in names (`guestLoginPrompt15Dismissed`).
+      Avoid `Helper` / `Util` / `Manager` / `Data` / `Info` as a whole name or a catch-all suffix: name the
+      job (`MoneyFormatter`, `MerchantMatcher`). Single-letter variables only for loop indices and math.
+    - Enforced by `check:imports` (`naming-folder`, `naming-file-type`); the rest is review.
     - **Liability family:** `Borrow*` = Vay nợ (borrowing side only), `Lend*` = Cho mượn (lending side only),
       `Liability*` = the direction-agnostic concept or shared base (feature folder `liability/`,
       `LiabilityBaseFormController`). Borrow and Lend are independent features: do not merge their
@@ -353,7 +373,7 @@ and the repository. Its sheets are an extension (`WalletSheets`), not a mixin.
 Several rules above are currently only enforced by human/agent review — prefer running these checks over relying
 on any doc having been read:
 
-22. **Forbidden import boundaries** (rules #2, #3, #4, #5, #10): run `melos run check:imports` (`scripts/check_imports.dart`)
+22. **Forbidden import boundaries** (rules #2, #3, #4, #5, #10, #12): run `melos run check:imports` (`scripts/check_imports.dart`)
     before finishing a change; CI runs it first in the quality gate and fails on any violation. It checks:
     - `sdk-barrel` / `private-src`: other packages import an SDK package only through its `export_*.dart` barrel
       (or `core/di/`), and never any workspace package's `src/`.
@@ -380,6 +400,8 @@ on any doc having been read:
       barrel that re-exports it. Only `modules/bridge` may.
     - `di-composition-root` (section IV.2): `getIt` only in `core/di/`, the App Shell, a page (`*_page.dart`,
       `presentation/pages/`), or as `getIt<XController|XBloc|XCubit>()` at the entry point creating it.
+    - `naming-folder` / `naming-file-type` (rule #12): canonical folder names under `lib/`, and each file
+      named after the public type it declares (except the listed family files).
     Existing `feature-controller` / `di-composition-root` debt is frozen per file in
     `scripts/check_imports_baseline.txt`: a file may not exceed its count, and a count that went down must be
     lowered (`dart scripts/check_imports.dart --write-baseline`), so the file only shrinks. Never add a line to it.

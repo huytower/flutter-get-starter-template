@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/get_x/cc_get_view.dart';
 import '../get_x/report_controller.dart';
 import '../widgets/report_daily_detail_section.dart';
 

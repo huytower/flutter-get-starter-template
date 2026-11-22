@@ -7,7 +7,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/get_x/cc_get_controller.dart';
 import '../../../wallet/domain/entities/wallet_balance_entity.dart';
 import '../../../wallet/domain/usecases/get_wallet_balances_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';

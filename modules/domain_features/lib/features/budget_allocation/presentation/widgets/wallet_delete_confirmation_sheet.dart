@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 
 /// Delete confirmation dialog for wallet deletion.
 class WalletDeleteConfirmationSheet extends StatelessWidget {

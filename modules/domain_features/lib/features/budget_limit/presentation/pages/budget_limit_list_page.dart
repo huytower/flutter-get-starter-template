@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/getx/cc_get_view.dart';
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../get_x/budget_limit_controller.dart';
 import '../widgets/add_budget_limit_sheet.dart';

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/helper/budget_name_helper.dart';
-import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/budget/budget_name_helper.dart';
+import '../../../../core/presentation/helper/transaction_form_helpers.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 
 /// Compact horizontal card for an investment asset shown on the dashboard.

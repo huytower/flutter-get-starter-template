@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/helper/ai_advice_highlight_helper.dart';
+import '../../../../core/ai/ai_advice_highlight_helper.dart';
 import '../../domain/entities/ai_advice_entity.dart';
 import '../get_x/report_controller.dart';
 

@@ -1,4 +1,4 @@
-import 'package:domain_features/core/helper/ai_advice_cache_datasource.dart';
+import 'package:domain_features/core/ai/ai_advice_cache_datasource.dart';
 import 'package:domain_features/features/report/domain/entities/ai_advice_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';

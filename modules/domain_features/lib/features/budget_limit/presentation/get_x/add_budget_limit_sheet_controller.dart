@@ -13,7 +13,7 @@ import 'package:message/export_message.dart';
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/get_x/cc_get_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 import '../../domain/usecases/create_budget_limit_usecase.dart';

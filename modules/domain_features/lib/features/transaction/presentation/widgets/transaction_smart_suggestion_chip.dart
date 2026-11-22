@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:multiple_result/multiple_result.dart';
 
+import '../../../../core/currency/money_formatter.dart';
 import '../../../../core/di/di.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
-import '../../../../core/helper/money_formatter.dart';
 import '../get_x/smart_suggestion_source.dart';
 
 class TransactionSmartSuggestionChip extends StatelessWidget {

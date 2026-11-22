@@ -1,4 +1,4 @@
-import 'merchant_match_helper.dart';
+import '../suggestion/merchant_match_helper.dart';
 import 'quick_entry_intent.dart';
 
 /// Centralized helper for detecting intent sub-segments and directions

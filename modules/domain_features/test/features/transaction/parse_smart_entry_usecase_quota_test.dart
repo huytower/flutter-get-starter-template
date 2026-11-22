@@ -2,11 +2,11 @@ import 'dart:typed_data';
 
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
+import 'package:domain_features/core/ai/ai_fallback_preference_datasource.dart';
 import 'package:domain_features/core/domain/entities/category_entity.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
 import 'package:domain_features/core/exchange_rates/exchange_rate_repository.dart';
-import 'package:domain_features/core/helper/ai_fallback_preference_datasource.dart';
 import 'package:domain_features/features/category/domain/usecases/get_categories_usecase.dart';
 import 'package:domain_features/features/transaction/domain/entities/smart_entry_input.dart';
 import 'package:domain_features/features/transaction/domain/usecases/parse_smart_entry_usecase.dart';

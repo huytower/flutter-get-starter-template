@@ -2,7 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:flutter/material.dart';
 
 import '../../constant/currency_constants.dart';
-import '../../helper/transaction_form_helpers.dart';
+import '../helper/transaction_form_helpers.dart';
 
 class AssetStatItem extends StatelessWidget {
   final String label;

@@ -12,7 +12,7 @@ import 'package:injectable/injectable.dart';
 
 /// Configuration for Dependency Injection.
 /// Consolidates all types and modules from external packages.
-class CcDiModuleConfig {
+class DiModuleConfig {
   /// Types that are registered in Micro-Packages but used as dependencies in lib/
   static const List<Type> ignoreUnregisteredTypes = [];
 

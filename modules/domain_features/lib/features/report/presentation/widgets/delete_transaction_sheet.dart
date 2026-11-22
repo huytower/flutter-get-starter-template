@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 import 'package:multiple_result/multiple_result.dart';
 
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../../transaction/domain/repositories/transaction_repository.dart';
 
 class DeleteTransactionSheet extends StatelessWidget {

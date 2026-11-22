@@ -2,7 +2,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart' hide iconDataFromCode;
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 
-import '../../../../../core/helper/wallet_icon_helper.dart';
+import '../../../../../core/presentation/helper/wallet_icon_helper.dart';
 import '../../models/unified_category_item.dart';
 
 class UnifiedCategoryItemWidget extends StatelessWidget {

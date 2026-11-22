@@ -11,7 +11,7 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../../liability/presentation/widgets/borrow_asset_selector.dart';
 import '../../../liability/presentation/widgets/lend_asset_selector.dart';
 import '../../../transaction/presentation/widgets/category_selection_section.dart';

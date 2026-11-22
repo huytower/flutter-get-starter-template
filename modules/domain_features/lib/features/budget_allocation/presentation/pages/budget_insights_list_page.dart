@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/get_x/cc_get_view.dart';
 import '../get_x/budget_allocation_controller.dart';
 import '../widgets/budget_insights_section.dart';
 

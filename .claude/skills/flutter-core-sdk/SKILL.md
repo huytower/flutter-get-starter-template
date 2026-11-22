@@ -159,7 +159,8 @@ consumers need is exported from the barrel.
    One `lib/core/di/di.dart` per package; annotate classes in place. Collaborators come in through the
    constructor; `getIt` is used only in the package's `di.dart` (root `AGENTS.md` section IV).
 9. **Naming and files.** Suffix-first `lower_snake_case`, `Cc` class prefix, ~200–300 lines per file, `const`
-   wherever possible, export through the package's `export_*.dart` barrel only.
+   wherever possible, export through the package's `export_*.dart` barrel only. File = type, no
+   abbreviations (`Btn`, `Bg`), boolean `is/has/can/should` prefixes: root `AGENTS.md` rule 12.
 
 ## Reuse-first workflow
 

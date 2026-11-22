@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/helper/money_formatter.dart';
+import '../../../../core/currency/money_formatter.dart';
 import '../get_x/transaction_controller.dart';
 
 class TransactionWalletSummary extends StatelessWidget {

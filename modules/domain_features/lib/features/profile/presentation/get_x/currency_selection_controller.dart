@@ -6,7 +6,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/exchange_rates/currency_conversion_service.dart';
-import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/get_x/cc_get_controller.dart';
 
 @injectable
 class CurrencySelectionController extends CcGetController {

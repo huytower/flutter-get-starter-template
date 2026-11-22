@@ -1,6 +1,6 @@
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_data/export_cc_sdk_data.dart';
-import 'package:domain_features/core/data/repository/cc_base_repository.dart';
+import 'package:domain_features/core/data/repositories/cc_base_repository.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
 import 'package:injectable/injectable.dart';

@@ -1,7 +1,7 @@
-import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
 import 'package:domain_features/core/domain/entities/liability_entity.dart';
 import 'package:domain_features/features/firestore/enum/sync_status.dart';
-import 'package:domain_features/features/firestore/model/sync_metadata.dart';
+import 'package:domain_features/features/firestore/models/sync_metadata.dart';
 import 'package:hive_ce/hive_ce.dart';
 
 import 'liability_installment_model.dart';

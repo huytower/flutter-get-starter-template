@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/presentation/helper/transaction_form_helpers.dart';
 import '../get_x/liability_base_form_controller.dart';
 import '../get_x/liability_installment_draft.dart';
 import 'liability_date_row.dart';

@@ -7,8 +7,8 @@ import 'package:message/export_message.dart';
 import 'package:theme/core/helper/theme_helper.dart';
 import 'package:theme/presentation/provider/theme_provider.dart';
 
-import '../../core/layout/orientation_policy_scope.dart';
-import '../../core/navigation/config/auto_route/app_router.dart';
+import '../layout/orientation_policy_scope.dart';
+import 'config/auto_route/app_router.dart';
 import 'routing_strategy.dart';
 
 /// [RoutingStrategy] backed by the `auto_route` package.

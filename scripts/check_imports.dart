@@ -1,5 +1,6 @@
-// Enforces the import boundaries of AGENTS.md (rules 2, 3, 4, 5, 10, 22) and of
-// the flutter-core-sdk skill, so they do not depend on anyone re-reading docs.
+// Enforces the import boundaries and naming rules of AGENTS.md (rules 2, 3, 4,
+// 5, 10, 12, 22) and of the flutter-core-sdk skill, so they do not depend on
+// anyone re-reading docs.
 //
 // Run from the repo root: `melos run check:imports`
 // (or `dart scripts/check_imports.dart`). Exits 1 and lists every violation
@@ -145,6 +146,46 @@ final RegExp _generated = RegExp(
   r'\.(g|module|config|gr|freezed|mocks)\.dart$',
 );
 
+/// Folder names under lib/ that have a canonical spelling (AGENTS.md rule 12):
+/// plural layer folders and `get_x`, never a vague `ui` / `util` drawer.
+const Map<String, String> _folderSpelling = {
+  'datasource': 'datasources',
+  'data_source': 'datasources',
+  'data_sources': 'datasources',
+  'model': 'models',
+  'entity': 'entities',
+  'repository': 'repositories',
+  'usecase': 'usecases',
+  'use_case': 'usecases',
+  'use_cases': 'usecases',
+  'getx': 'get_x',
+  'ui': 'pages / widgets',
+  'util': 'a folder named after what it does',
+  'utils': 'a folder named after what it does',
+};
+
+/// A public class, mixin or enum declared at the top of a file.
+final RegExp _publicType = RegExp(
+  r'^(?:abstract |sealed |final |base |interface |mixin )*(?:class|mixin|enum)\s+([A-Z]\w*)',
+  multiLine: true,
+);
+
+/// Files that deliberately hold a family of small related types, so no single
+/// type gives the file its name (AGENTS.md rule 12). Keep this list short.
+const Set<String> _typeFamilyFiles = {
+  // AppRoute + ExampleRoute share the private route-key helpers.
+  'lib/core/navigation/route_names.dart',
+  // The field widgets of the smart-entry preview sheet.
+  'modules/domain_features/lib/features/transaction/presentation/widgets/smart_entry_preview_fields.dart',
+  // The auth failure family.
+  'shared/cc_micro_features/lib/features/auth/domain/auth_failures.dart',
+  // Design tokens and layout shorthands: CcSpaceXS..XL, CcRow*/CcCol*, ...
+  'shared/cc_core_sdk/cc_sdk_ui/lib/src/widgets/space/cc_space.dart',
+  'shared/cc_core_sdk/cc_sdk_ui/lib/src/widgets/flex/cc_flex.dart',
+  'shared/cc_core_sdk/cc_sdk_ui/lib/src/widgets/divider_line/cc_divider.dart',
+  'shared/cc_core_sdk/cc_sdk_ui/lib/src/widgets/container/cc_glassy_gradient.dart',
+};
+
 class _Violation {
   _Violation(this.path, this.line, this.rule, this.message);
   final String path;
@@ -234,6 +275,7 @@ Iterable<_Violation> _check(String owner, String path, File file) sync* {
   if (!isTest) {
     yield* _checkFeatureControllers(path, source);
     yield* _checkComposition(owner, path, source);
+    yield* _checkNaming(path, source);
   }
 
   if (_sdkCore.contains(owner) || owner == 'cc_bridge') {
@@ -473,6 +515,44 @@ Iterable<_Violation> _checkComposition(
 
 /// The repo-relative path [uri] points to, for our packages and relative
 /// URIs; null for anything else.
+/// AGENTS.md rule 12: canonical folder names, and a file is named after the
+/// public type it declares (`get_monthly_cash_flow_usecase.dart` holds
+/// `GetMonthlyCashFlowUseCase`; underscores and case are ignored, so
+/// `*_usecase.dart` / `*UseCase` and `*_datasource.dart` / `*DataSource` match).
+Iterable<_Violation> _checkNaming(String path, String source) sync* {
+  final libAt = path.indexOf('lib/');
+  if (libAt < 0) return;
+  final segments = path.substring(libAt + 4).split('/');
+  for (final folder in segments.take(segments.length - 1)) {
+    final canonical = _folderSpelling[folder];
+    if (canonical != null) {
+      yield _Violation(
+        path,
+        1,
+        'naming-folder',
+        'folder `$folder/` is spelled `$canonical`',
+      );
+      break;
+    }
+  }
+
+  final base = segments.last.replaceFirst(RegExp(r'\.dart$'), '');
+  if (base == 'di' || base.startsWith('export_')) return;
+  if (_typeFamilyFiles.contains(path)) return;
+  if (RegExp(r'^part of\b', multiLine: true).hasMatch(source)) return;
+  final types = _publicType.allMatches(source).map((m) => m.group(1)!).toList();
+  if (types.isEmpty) return;
+  final key = base.replaceAll('_', '');
+  if (types.any((t) => t.toLowerCase() == key)) return;
+  yield _Violation(
+    path,
+    1,
+    'naming-file-type',
+    'file name does not match its type (${types.join(', ')}); rename the file '
+        'or the type, or move the other types to their own files',
+  );
+}
+
 String? _resolve(String from, String uri) {
   if (uri.startsWith('dart:')) return null;
   if (uri.startsWith('package:')) {

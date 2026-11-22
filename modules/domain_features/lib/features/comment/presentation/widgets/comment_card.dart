@@ -2,8 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../core/navigation/domain_router.gr.dart';
-import '../../../domain/entities/comment_entity.dart';
+import '../../../../core/navigation/domain_router.gr.dart';
+import '../../domain/entities/comment_entity.dart';
 
 class CommentCard extends StatelessWidget {
   final CommentEntity comment;

@@ -13,14 +13,14 @@ export 'package:domain_features/core/exchange_rates/exchange_rate_result.dart';
 export 'package:domain_features/core/exchange_rates/exchange_rate_table.dart';
 export 'package:domain_features/core/exchange_rates/rate_provenance.dart';
 
+export 'core/ai/ai_advice_cache_datasource.dart';
 // Core
 export 'core/contracts/financial_refresh_provider.dart';
 export 'core/contracts/guideline_provider.dart';
 export 'core/contracts/user_level_provider.dart';
 export 'core/di/di.dart';
-export 'core/getx/cc_get_controller.dart';
-export 'core/getx/cc_get_view.dart';
-export 'core/helper/ai_advice_cache_datasource.dart';
+export 'core/get_x/cc_get_controller.dart';
+export 'core/get_x/cc_get_view.dart';
 // Budget Allocation (composite: Wallet + Budget Limit)
 export 'features/budget_allocation/export_budget_allocation.dart';
 // Budget Limit
@@ -31,8 +31,8 @@ export 'features/category/export_category.dart';
 export 'features/comment/domain/entities/comment_entity.dart';
 export 'features/comment/domain/repositories/comment_repository.dart';
 export 'features/comment/presentation/get_x/comment_controller.dart';
-export 'features/comment/presentation/ui/comment_detail_page.dart';
-export 'features/comment/presentation/ui/comment_page.dart';
+export 'features/comment/presentation/pages/comment_detail_page.dart';
+export 'features/comment/presentation/pages/comment_page.dart';
 // Examples
 export 'features/examples/bloc_simple_page/cubit/simple/simple_cubit_page.dart';
 export 'features/examples/bloc_simple_page/origin/advance/advance_bloc_page.dart';

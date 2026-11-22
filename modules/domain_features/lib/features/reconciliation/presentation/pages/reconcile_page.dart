@@ -8,7 +8,7 @@ import 'package:message/export_message.dart';
 
 import '../../../../core/constant/money_constants.dart';
 import '../../../../core/di/di.dart';
-import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/get_x/cc_get_view.dart';
 import '../../../../core/navigation/domain_router.gr.dart';
 import '../../../report/presentation/get_x/report_controller.dart';
 import '../../../wallet/presentation/widgets/wallet_display_name.dart';

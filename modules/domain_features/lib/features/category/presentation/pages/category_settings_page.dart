@@ -9,7 +9,7 @@ import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/get_x/cc_get_view.dart';
 import '../../../../core/presentation/widgets/category/prj_category_group_section.dart';
 import '../../data/datasources/local/category_seed.dart';
 import '../../domain/entities/category_group_entity.dart';

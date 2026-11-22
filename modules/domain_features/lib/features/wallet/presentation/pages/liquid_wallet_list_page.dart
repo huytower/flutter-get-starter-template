@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/getx/cc_get_view.dart';
+import '../../../../core/get_x/cc_get_view.dart';
 import '../../../guideline/export_guideline.dart';
 import '../../../transaction/domain/usecases/create_wallet_transfer_usecase.dart';
 import '../get_x/wallet_controller.dart';

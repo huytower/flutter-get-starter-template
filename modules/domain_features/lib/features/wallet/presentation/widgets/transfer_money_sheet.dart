@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/constant/money_constants.dart';
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../../transaction/domain/usecases/create_wallet_transfer_usecase.dart';
 import '../get_x/wallet_controller.dart';
 import 'wallet_strip_card.dart';

@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
 import '../../../../core/di/di.dart';
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../../../../core/presentation/widgets/category/prj_category_item.dart';
 import '../get_x/add_liability_sheet_controller.dart';
 

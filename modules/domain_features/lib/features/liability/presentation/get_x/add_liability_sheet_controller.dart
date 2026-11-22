@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/get_x/cc_get_controller.dart';
 import '../../../profile/domain/usecases/get_profile_settings_usecase.dart';
 import '../../../wallet/presentation/get_x/wallet_controller.dart';
 import '../../domain/usecases/create_liability_usecase.dart';

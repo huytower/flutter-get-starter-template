@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasource/local/box/cc_hive_box.dart';
+import 'package:app_config/data/datasources/local/box/cc_hive_box.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:flutter/material.dart';

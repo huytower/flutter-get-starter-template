@@ -4,7 +4,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:get/get.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/get_x/cc_get_controller.dart';
 import '../../domain/entities/comment_entity.dart';
 import '../../domain/repositories/comment_repository.dart';
 

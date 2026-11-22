@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
 import 'package:bridge/core/di/di.module.dart';
 import 'package:bridge/export_bridge.dart';
 import 'package:cc_bridge/export_cc_bridge.dart';

@@ -1,6 +1,6 @@
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
-import 'package:domain_features/core/helper/adaptive_bottom_sheet.dart';
+import 'package:domain_features/core/presentation/helper/adaptive_bottom_sheet.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

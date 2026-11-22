@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/getx/cc_get_view.dart';
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import '../../../../core/get_x/cc_get_view.dart';
+import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import '../get_x/liability_list_controller.dart';
 import '../widgets/add_liability_sheet.dart';
 import '../widgets/liability_delete_confirm_sheet.dart';

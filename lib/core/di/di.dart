@@ -11,8 +11,8 @@ final GetIt getIt = GetIt.instance;
   initializerName: 'init',
   preferRelativeImports: true,
   asExtension: true,
-  ignoreUnregisteredTypes: CcDiModuleConfig.ignoreUnregisteredTypes,
-  externalPackageModulesBefore: CcDiModuleConfig.externalPackageModulesBefore,
+  ignoreUnregisteredTypes: DiModuleConfig.ignoreUnregisteredTypes,
+  externalPackageModulesBefore: DiModuleConfig.externalPackageModulesBefore,
 )
 Future<void> initializeDependencies() async {
   await getIt.init();

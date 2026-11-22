@@ -2,7 +2,7 @@ import 'package:cc_bridge/export_cc_bridge.dart' hide getIt;
 import 'package:cc_micro_features/export_micro_features.dart'
     show AuthCancelledFailure, authFailureMessage;
 import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
-import 'package:domain_features/core/getx/cc_get_view.dart';
+import 'package:domain_features/core/get_x/cc_get_view.dart';
 import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

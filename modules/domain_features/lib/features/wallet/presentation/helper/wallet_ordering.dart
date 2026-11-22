@@ -1,5 +1,5 @@
+import 'package:domain_features/core/budget/budget_name_helper.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
-import 'package:domain_features/core/helper/budget_name_helper.dart';
 
 /// How the wallet screens order and group wallets.
 abstract final class WalletOrdering {

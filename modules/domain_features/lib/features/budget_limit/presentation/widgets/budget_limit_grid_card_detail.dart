@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/presentation/helper/transaction_form_helpers.dart';
 import '../../domain/entities/budget_limit_stats_entity.dart';
 
 /// Back-side detail widget for a budget limit item shown upon card flip.

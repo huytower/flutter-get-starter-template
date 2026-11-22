@@ -1,5 +1,5 @@
 import 'package:app_config/core/config/app/prj_env.dart';
-import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:cc_sdk_firebase/export_cc_sdk_firebase.dart';
 import 'package:cc_sdk_slack/export_cc_sdk_slack.dart';

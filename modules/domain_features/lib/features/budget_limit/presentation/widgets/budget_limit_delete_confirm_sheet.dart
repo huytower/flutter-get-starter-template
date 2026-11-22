@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart' as el;
 import 'package:flutter/material.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/helper/budget_name_helper.dart';
+import '../../../../core/budget/budget_name_helper.dart';
 import '../../domain/entities/budget_limit_entity.dart';
 
 class BudgetLimitDeleteConfirmSheet extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:cc_sdk/export_cc_sdk.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import 'app_rating_sheet_content.dart';
 
 class AppRatingSheet extends StatelessWidget {

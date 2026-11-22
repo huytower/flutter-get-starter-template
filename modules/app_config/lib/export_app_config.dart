@@ -50,10 +50,10 @@ export 'core/enum/environment.dart';
 // =================================
 
 // Local Data Sources
-export 'data/datasource/local/box/app_storage/cc_app_storage.dart';
-export 'data/datasource/local/box/cc_hive_box.dart';
-export 'data/datasource/local/box/device_info/cc_device_info.dart';
-export 'data/datasource/local/box/register_hive_adapter.dart';
+export 'data/datasources/local/box/app_storage/cc_app_storage.dart';
+export 'data/datasources/local/box/cc_hive_box.dart';
+export 'data/datasources/local/box/device_info/cc_device_info.dart';
+export 'data/datasources/local/box/register_hive_adapter.dart';
 
 // Remote Data Sources
 // =================================

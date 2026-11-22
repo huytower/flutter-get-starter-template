@@ -12,7 +12,7 @@ import 'package:multiple_result/multiple_result.dart';
 
 import '../../../../core/constant/currency_constants.dart';
 import '../../../../core/contracts/guideline_provider.dart';
-import '../../../../core/getx/cc_get_controller.dart';
+import '../../../../core/get_x/cc_get_controller.dart';
 import '../../../category/export_category.dart';
 import '../../../firestore/financial_data_sync_service.dart';
 import '../../domain/entities/profile_settings_entity.dart';

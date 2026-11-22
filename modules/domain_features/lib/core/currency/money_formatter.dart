@@ -1,4 +1,4 @@
-import 'package:app_config/data/datasource/local/box/app_storage/cc_app_storage.dart';
+import 'package:app_config/data/datasources/local/box/app_storage/cc_app_storage.dart';
 import 'package:intl/intl.dart';
 
 import '../constant/currency_constants.dart';

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/helper/budget_name_helper.dart';
-import '../../../../core/helper/transaction_form_helpers.dart';
+import '../../../../core/budget/budget_name_helper.dart';
+import '../../../../core/presentation/helper/transaction_form_helpers.dart';
 import '../../domain/entities/liability_balance_entity.dart';
 
 /// Card item for a lending item shown in [LendListPage]'s list view.

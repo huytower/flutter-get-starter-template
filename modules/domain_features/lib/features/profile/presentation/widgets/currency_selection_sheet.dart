@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/helper/adaptive_bottom_sheet.dart';
+import '../../../../core/presentation/helper/adaptive_bottom_sheet.dart';
 import 'currency_selection_content_sheet.dart';
 
 class CurrencySelectionSheet extends StatelessWidget {

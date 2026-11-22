@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 
-import '../../../../core/helper/quick_entry_parser_helper.dart';
+import '../../../../core/quick_entry/quick_entry_parser_helper.dart';
 import '../../domain/entities/smart_entry_input.dart';
 import '../../domain/usecases/parse_smart_entry_usecase.dart';
 import '../helper/receipt_image_picker_helper.dart';

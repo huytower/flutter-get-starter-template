@@ -6,9 +6,9 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../../core/constant/currency_constants.dart';
-import '../../../../../core/di/di.dart';
-import '../../../../../core/helper/money_formatter.dart';
+import '../../../../core/constant/currency_constants.dart';
+import '../../../../core/currency/money_formatter.dart';
+import '../../../../core/di/di.dart';
 import '../get_x/currency_selection_controller.dart';
 
 String getCurrencyFlag(String code) {

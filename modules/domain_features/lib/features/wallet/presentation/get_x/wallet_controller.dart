@@ -3,7 +3,7 @@ import 'package:cc_sdk_ui/export_cc_sdk_ui.dart';
 import 'package:domain_features/core/constant/currency_constants.dart';
 import 'package:domain_features/core/domain/entities/wallet_entity.dart';
 import 'package:domain_features/core/exchange_rates/currency_conversion_service.dart';
-import 'package:domain_features/core/getx/cc_get_controller.dart';
+import 'package:domain_features/core/get_x/cc_get_controller.dart';
 import 'package:domain_features/features/wallet/domain/entities/wallet_totals.dart';
 import 'package:domain_features/features/wallet/domain/repositories/wallet_repository.dart';
 import 'package:domain_features/features/wallet/domain/services/emergency_fund_access.dart';

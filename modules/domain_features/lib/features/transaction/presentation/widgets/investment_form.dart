@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:message/export_message.dart';
 import 'package:theme/export_theme.dart';
 
-import '../../../../core/helper/budget_name_helper.dart';
+import '../../../../core/budget/budget_name_helper.dart';
 import '../../../guideline/presentation/widgets/prj_guideline_badge.dart';
 import '../../domain/entities/investment_direction.dart';
 import '../get_x/investment_form_controller.dart';

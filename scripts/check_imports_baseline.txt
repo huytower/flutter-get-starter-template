@@ -2,7 +2,7 @@
 # <rule> <path> <count>. Only ever lower these numbers or delete lines;
 # a new violation is fixed, never added here. See AGENTS.md section VI.
 di-composition-root modules/bridge/lib/src/impl/app_lifecycle_provider_impl.dart 7
-di-composition-root modules/domain_features/lib/core/getx/cc_get_controller.dart 1
+di-composition-root modules/domain_features/lib/core/get_x/cc_get_controller.dart 1
 di-composition-root modules/domain_features/lib/features/budget_allocation/presentation/get_x/budget_allocation_controller.dart 1
 di-composition-root modules/domain_features/lib/features/budget_allocation/presentation/widgets/budget_limit_preview_section.dart 2
 di-composition-root modules/domain_features/lib/features/budget_allocation/presentation/widgets/edit_wallet_sheet.dart 2
