@@ -1,4 +1,17 @@
-# Transaction Tab — Current Data Flow
+# Transaction Tab — Data Flow (snapshot, 2026-08-22)
+
+> **Historical snapshot, not the current design.** Traced on 2026-08-22; several parts have changed since. Where
+> this file and `AGENTS.md` disagree, `AGENTS.md` and the code win. Known changes:
+>
+> - Quick entry is no longer a mixin: each form controller owns a `QuickEntrySession` built with an injected
+>   `QuickEntryHandler` (`AGENTS.md` section IV, point 4). `QuickEntryMixin` no longer exists.
+> - Cross-feature refreshes go through `*Provider` contracts (`FinancialRefreshProvider`, `UserLevelProvider`,
+>   `GuidelineProvider`) implemented in `modules/bridge`, not `Get.find` on other features' controllers
+>   (`AGENTS.md` rule 4). The remaining legacy uses are frozen in `scripts/check_imports_baseline.txt`.
+> - Many `getIt` lookups inside controllers were replaced by constructor injection (`AGENTS.md` section IV).
+> - The Borrow form widget is `BorrowForm` (not `LiabilityForm`).
+> - The closing suggestion of one `LoanDirection`-parameterized controller for Borrow and Lend is **rejected**:
+>   `AGENTS.md` rule 12 keeps Borrow and Lend as separate controllers and forms.
 
 Traced from `modules/domain_features/lib/features/transaction/**` and
 `modules/domain_features/lib/features/liability/**` (the tab bar hosts Expense,
@@ -193,7 +206,7 @@ A tab's form refreshes stale data in `onTabActivated()` / `onTabDeactivated()`. 
   `UserLevelController`) is wired by reaching across feature boundaries with
   the GetX service locator and `if (Get.isRegistered<...>())` guards, rather
   than through a domain event / callback the transaction feature owns. This
-  is the same pattern flagged in `CLAUDE.md`'s dependency-direction rules —
+  is the same pattern flagged in `AGENTS.md` rule 4 —
   it works today but any of those controllers being absent silently no-ops
   the refresh.
 - **Sync is unconditionally fire-and-forget per mutation.** `TransactionRepositoryImpl`

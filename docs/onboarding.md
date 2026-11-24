@@ -16,7 +16,8 @@ modular Flutter workspace with:
 
 ## Firebase Configuration
 
-This project uses Firebase for Crashlytics, Performance Monitoring, and App Check. Due to security, the actual
+This project uses Firebase for Auth, Firestore (cloud sync), Cloud Messaging, Remote Config (forced update),
+Firebase AI (Gemini), Analytics, Crashlytics, Performance Monitoring, and App Check. Due to security, the actual
 configuration files are ignored by Git.
 
 To set up Firebase for local development:
@@ -30,15 +31,15 @@ To set up Firebase for local development:
 
 2. **Manual Setup:**
    If you need to use your own Firebase project, manually create/update:
-    - **Android:** `android:app/src/{flavor}/google-services.json`
+    - **Android:** `android/app/src/{flavor}/google-services.json`
     - **iOS:** `ios/Firebase/{flavor}/GoogleService-Info.plist`
 
 ## Most important files
 
 1. `lib/main.dart`
-    - App startup flow (Turbo Parallel Boot < 2s)
-    - Critical initialization sequence (Env -> Parallel DI/Hive/I18n)
-    - Crash log feature wrapper
+    - App startup flow (target < 2 s), boot order in `AGENTS.md` rule 6:
+      Env -> parallel Firebase / DI / Hive / i18n -> fire-and-forget services -> UI
+    - Uncaught-error handling (`Catcher2` set up through `CcCatcherBootstrap`)
 
 2. `lib/core/di/di.dart`
     - Global DI assembly
@@ -48,15 +49,15 @@ To set up Firebase for local development:
     - Exports reusable feature packages
     - New reusable features should be added here
 
-4. `modules/data_config/lib/core/di/di.dart`
-    - Data module DI registration
-    - Remote/local repository wiring
+4. `modules/domain_features/lib/core/di/di.dart`
+    - DI entry of the app's business features (one per package, `initMicroPackage()`)
 
-5. `modules/theme/lib/core/di/di.dart`
-    - Theme module DI registration and exports
+5. `modules/data_config/lib/core/di/di.dart`
+    - DI for app-wide data infrastructure (Dio/Retrofit setup, exchange rates)
 
 6. `shared/cc_core_sdk/cc_sdk/lib/core/di/di.dart`
-    - Core SDK DI exports (`shared/cc_core_sdk` is a git submodule — run `git submodule update --init --recursive`)
+    - Core SDK DI (`shared/cc_core_sdk` is a git submodule — on first clone run
+      `git submodule update --init --recursive`; afterwards keep it on `main`, see `AGENTS.md`)
 
 7. `modules/domain_features/lib/features/firestore/financial_data_sync_service.dart`
     - Local-first sync: repositories call `syncAll()` after every local write; Profile tab can trigger it manually
@@ -66,22 +67,24 @@ To set up Firebase for local development:
 
 ## Current feature pattern
 
-Reusable feature packages live under `shared/cc_micro_features/lib/features/`.
+Reusable features live under `shared/cc_micro_features/lib/features/`; app-specific ones under
+`modules/domain_features/lib/features/`.
 
-Each feature should generally follow this structure:
+Each feature should generally follow this structure (there is no per-feature DI file: the package's single
+`lib/core/di/di.dart` picks up the annotated classes):
 
 ```
 {feature_name}/
-├── core/di/di.dart
 ├── data/
 │   ├── datasources/
-│   ├── repositories/
-│   └── model/
+│   ├── models/
+│   └── repositories/
 ├── domain/
 │   ├── entities/
 │   ├── repositories/
 │   └── usecases/
 └── presentation/
+    ├── get_x/        # GetX controllers (or bloc/ for Bloc)
     ├── pages/
     └── widgets/
 ```
@@ -111,23 +114,27 @@ code-verified DI pattern — annotate classes in place, there's no per-feature D
 
 1. Open the issue or ticket description.
 2. Identify the related module/package.
-    - UI/UX changes often live in `lib/presentation` or `shared/cc_core_sdk/cc_sdk_ui`
+    - Feature screens live in the feature's `presentation/` (`modules/domain_features` or `cc_micro_features`);
+      `lib/presentation` holds only the shell (navigation bar / rail), and shared widgets live in
+      `shared/cc_core_sdk/cc_sdk_ui`
     - Domain logic changes often live in `modules/domain_features` feature domain folders
     - Reusable feature changes often live in `cc_micro_features`
 3. Find the DI entry points.
 4. Confirm current behavior by running the app or using existing examples.
-5. Make the change, then run `flutter analyze`.
+5. Make the change, then run `melos run check:imports` and `flutter analyze` (in the package you touched).
 
 ## Useful commands
 
+Full list in `AGENTS.md` ("Commands").
+
 - `melos bootstrap` - Bootstrap the workspace
-- `melos run gen` - Generate code for all modules
 - `melos run setup:firebase` - Initialize Firebase config from templates
-- `flutter pub get`
-- `flutter analyze`
-- `flutter pub run build_runner build --delete-conflicting-outputs`
-- `flutter test`
-- `flutter run -d <device> --flavor prod -t lib/main_prod.dart` - run the app (only the `prod` flavor exists)
+- `melos run gen` - Generate code for all packages (`dart run build_runner build --delete-conflicting-outputs`)
+- `melos run check:imports` - Import-boundary check (first CI step)
+- `melos run analyze` / `melos run test` - Analyze / test every package
+- In one package: `flutter analyze`, `flutter test`
+- `flutter run -d <device> --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json` - run the
+  app (only the `prod` flavor exists; copy `env/prod.example.json` to `env/prod.json` first)
 
 ## Recommended workflow
 

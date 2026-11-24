@@ -16,7 +16,7 @@ monolith. The philosophy: *smart, effective, and disciplined spending*.
 | Wallets | Liquid wallets (cash, bank, e-wallet), investment wallets with ROI, emergency fund |
 | Reconciliation | Weekly audit: compare book vs. actual balance, auto-create adjustment slips, history and undo |
 | Budgets | Per-category monthly limits, threshold notifications, anomaly detection, budget insights |
-| Debts | Separate Lend and Liability flows, payments linked to wallets, repayment reminders |
+| Debts | Separate Borrow (vay nợ) and Lend (cho mượn) flows, payments linked to wallets, repayment reminders |
 | Reports | Weekly / monthly / yearly trends, category spending, financial runway, AI financial advice |
 | Levels | LV1 → LV3 progression that unlocks Investment and Debt/Loan based on reconciliation streak, budgets and cash flow |
 | Account & data | Phone / Google / Apple sign-in, guest mode, Hive local storage with automatic Firestore sync |
@@ -31,15 +31,17 @@ monolith. The philosophy: *smart, effective, and disciplined spending*.
 
 ## Architecture
 
-Four rigid layers, plus a bridge:
+Four layers plus a bridge (`AGENTS.md` rule 1):
 
 1. **App Shell** (`lib/`) — pure orchestrator: boot sequence, DI wiring, routing. No business logic or feature UI.
 2. **Domain Features** (`modules/domain_features/`) — app-specific business verticals (transaction, wallet, budget,
    reconciliation, report, ...). This is where most of the code lives.
-3. **Micro-Features** (`shared/cc_micro_features/`) — project-blind, reusable verticals (auth, biometric, crash log,
-   messaging, splash, web) that can be dropped into another app unchanged.
-4. **Shared Core** (`shared/cc_core_sdk/`, git submodule) — network, failures, logging, design system, mixins.
-5. **Bridge** — cross-module contracts so features never depend on each other's concrete classes:
+3. **Micro-Features** (`shared/cc_micro_features/`) — project-blind, reusable verticals (app update, auth,
+   biometric, crash log viewer, messaging, splash, web) that can be dropped into another app unchanged.
+4. **Shared Core** (`shared/cc_core_sdk/`, git submodule) — network, failures, logging, design system, mixins, and
+   optional capability packages (Firebase, Slack, device plugins, ...).
+5. **Bridge** (not a layer; the connection between them) — cross-module contracts so features never depend on each
+   other's concrete classes:
    - `cc_bridge/` holds the contracts (`*Coordinator`, `*Contract`, `*Provider`), e.g. `SessionContract`.
    - `modules/bridge/` is the App Shell's only gateway to features: `AppLifecycleProvider` (post-boot tasks:
      user level, data services, sync, reminders, crash-log upload), `MainShellProvider` (tab pages, badges,
@@ -53,7 +55,9 @@ Presentation layers may use Bloc or GetX per feature; the core SDK and bridge st
 - `cc_micro_features` and `domain_features` must not import `lib/` or `modules/data_config`.
 - `cc_micro_features` must not import `domain_features`.
 - `domain/` and `data/` never import `presentation/`.
-- Each feature defines its own `Repository` interface; the implementation is injected through DI.
+- Each feature defines its own `Repository` interface in `domain/` and implements it in its own `data/`; the
+  implementation is injected through DI.
+- `melos run check:imports` enforces these boundaries in CI.
 
 The full, authoritative list is in [`AGENTS.md`](AGENTS.md).
 
@@ -65,35 +69,44 @@ flutter-get-starter-template/
 ├── modules/
 │   ├── domain_features/          # Business verticals: wallet, transaction, budget_limit, budget_allocation,
 │   │                             #   reconciliation, liability, report, category, profile (+ user_level),
-│   │                             #   comment, notification, firestore (sync), guideline, crashlog
-│   ├── data_config/              # App-specific data implementations (network config, sync helpers, exchange rates)
-│   ├── app_config/               # Env management, storage, DI discovery
-│   ├── bridge/                   # App Shell gateway to features (shell contracts + coordinator impls)
-│   ├── theme/                    # Colors and typography (PrjColors, PrjTextStyle, CcThemes)
+│   │                             #   comment, notification, firestore (sync), guideline, crashlog,
+│   │                             #   examples (demo only)
+│   ├── data_config/              # App-wide data infrastructure (Dio/Retrofit setup, exchange rates)
+│   ├── app_config/               # Env management (PrjEnv), storage, DI discovery
+│   ├── bridge/                   # App Shell gateway to features (shell contracts, coordinator and provider impls)
+│   ├── theme/                    # Colors and typography (PrjColors, PrjTextStyle, createLightTheme / createDarkTheme)
 │   └── message/                  # i18n strings (en.json, vi.json, PrjLocaleKeys)
 ├── shared/
-│   ├── cc_micro_features/        # auth, biometric, crash_log, messaging, splash, web
-│   └── cc_core_sdk/              # GIT SUBMODULE: cc_sdk, cc_sdk_ui, cc_mixin, cc_sdk_data
-├── cc_bridge/                    # Cross-module contracts (Coordinators, SessionContract)
-├── docs/                         # Business requirements, onboarding, contributing, AI context
-└── scripts/                      # Firebase setup, run scripts
+│   ├── cc_micro_features/        # app_update, auth, biometric, crash_log, messaging, splash, web
+│   └── cc_core_sdk/              # GIT SUBMODULE: cc_sdk, cc_sdk_ui, cc_mixin, cc_sdk_data (core), plus
+│                                 #   cc_sdk_firebase, cc_sdk_catcher, cc_sdk_slack, cc_sdk_device, cc_sdk_phone
+├── cc_bridge/                    # Project-blind cross-module contracts (Coordinators, SessionContract)
+├── docs/                         # Onboarding, contributing, AI context, CI/CD, docs/tech (build, env, diagrams)
+└── scripts/                      # Firebase setup, import-boundary check (check_imports.dart)
 ```
 
 ## Naming convention (suffix-first)
 
 `*_entity.dart`, `*_usecase.dart`, `*_repository.dart` / `*_repository_impl.dart`, `*_model.dart`, `*_page.dart`,
-`*_bloc.dart` / `*_cubit.dart`, `*_state.dart` / `*_event.dart`; files are `lower_snake_case`.
+`*_bloc.dart` / `*_cubit.dart`, `*_state.dart` / `*_event.dart`; files are `lower_snake_case`, named after the type
+they declare. Full rules: `AGENTS.md` rule 12.
 
 ## Quick start
 
 ```bash
-git submodule update --init --recursive   # fetch shared/cc_core_sdk
+git submodule update --init --recursive   # first clone only: fetch shared/cc_core_sdk (see note below)
 melos bootstrap                            # bootstrap the workspace
 melos run setup:firebase                   # generate local Firebase config from templates
 melos run gen                              # build_runner: DI and serialization code
+melos run check:imports                    # import boundaries (first CI step)
 melos run analyze
 melos run test
 ```
+
+After the first clone, the SDK submodule stays on its `main` branch: update it with
+`git -C shared/cc_core_sdk pull`, not `git submodule update` (see "Submodule branch rule" in `AGENTS.md`).
+
+Platforms: Android and iOS. There is no web target yet (no `web/` folder).
 
 Run the app (flavor `prod`, entry `lib/main_prod.dart`):
 
@@ -113,4 +126,6 @@ the SDK its share through `CcSdkConfig`. In CI the file is generated from GitHub
 - [`docs/onboarding.md`](docs/onboarding.md) — new-developer fast path
 - [`docs/AI_CONTEXT.md`](docs/AI_CONTEXT.md) — rationale behind the architecture
 - [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) — PR checklist and doc-sync obligations
-- [`docs/CICD_SETUP.md`](docs/CICD_SETUP.md) — build and distribution setup
+- [`docs/CICD_SETUP.md`](docs/CICD_SETUP.md) — CI pipeline, secrets, release to Google Play / TestFlight
+- [`docs/tech/development/`](docs/tech/development/) — local builds (`BUILD.md`), env settings (`CONFIG_ENV.md`), tips
+- [`CHANGELOG.md`](CHANGELOG.md) — app changes; the SDK keeps its own `CHANGELOG.md` per package

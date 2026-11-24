@@ -1,17 +1,21 @@
+%% App boot flow (lib/main.dart + NavigationLogicMixin). Boot rules: AGENTS.md rule 6.
 flowchart TD
-    A["🚀 App Launch"] --> B["📋 Load Environment Config<br/>(development env)"]
-    B --> C["✅ Initialize GetMaterialController"]
-    C --> D["📱 Navigate to /splash"]
-    D --> E["⏳ Display Splash Screen"]
-    E --> F["✨ Splash Complete"]
-    F --> G["📱 Navigate to /comment"]
-    G --> H["⚙️ Create CommentController"]
-    H --> I["🔧 Initialize Controller"]
-    I --> J["⚡ Call onReady()"]
-    J --> K["🌐 HTTP GET Request<br/>/comments"]
-    K --> L{"API Response<br/>Status 200 OK?"}
-    L -->|Yes| M["💾 Parse Comments Data"]
-    M --> N["📺 Display Comments List"]
-    L -->|No| O["❌ Show Error"]
-    N --> P["✅ App Running"]
-    O --> P
+    A["App launch<br/>lib/main_prod.dart -> main.dart"] --> B["Orientation policy<br/>(CcOrientationPolicy, before first frame)"]
+    B --> C["await initEnv()<br/>PrjEnv -> CcSdkConfig"]
+    C --> D["await Future.wait (parallel)"]
+    D --> D1["Firebase.initializeApp()"]
+    D --> D2["initializeDependencies()<br/>(get_it + injectable)"]
+    D --> D3["Hive init + adapters"]
+    D --> D4["PrjLocalization.initialize()"]
+    D1 & D2 & D3 & D4 --> E["Fire-and-forget<br/>crash-log upload, App Check"]
+    E --> F["Catcher2 (CcCatcherBootstrap)<br/>runs AppRunner"]
+    F --> G["auto_route: initial route<br/>MainNavigation shell"]
+    G --> H{"First launch?<br/>SplashManager"}
+    H -->|Yes| I["Splash"]
+    H -->|No| J["Main tabs<br/>(AUTO_ROUTE_START = quick-test route adds<br/>a quick-test second tab; default DASHBOARD)"]
+    I --> J
+    J --> K["NavigationLogicMixin<br/>user level, currency alignment"]
+    K --> L["After first frame: forced-update check"]
+    K --> M["After ~3 s: analytics, performance,<br/>background services"]
+    C -. "boot error" .-> X["CcErrorPage"]
+    D -. "boot error" .-> X

@@ -41,29 +41,31 @@ flutter-get-starter-template/
 ├── modules/domain_features/      # Business Verticals (Vertical Features)
 │   └── lib/features/            # wallet, transaction, budget_limit, budget_allocation, reconciliation,
 │                                #   liability, report, category, profile (+ user_level), comment,
-│                                #   notification, firestore (sync), guideline, crashlog
+│                                #   notification, firestore (sync), guideline, crashlog, examples (demo only)
 ├── shared/cc_micro_features/     # Global Legos (Micro-Features)
-│   └── lib/features/            # Auth, Biometric, Splash, etc.
+│   └── lib/features/            # app_update, auth, biometric, crash_log, messaging, splash, web
 ├── shared/cc_core_sdk/           # Shared Core (Engine) — GIT SUBMODULE
-│   ├── cc_sdk/                  # Core SDK (network, device, failures, logging)
+│   ├── cc_sdk/                  # Core SDK (network, device, logging, capability interfaces)
 │   ├── cc_sdk_ui/               # UI component library (CcContextExtension)
-│   ├── cc_mixin/                # Reusable mixins
-│   └── cc_sdk_data/             # Core data entities/models
+│   ├── cc_mixin/                # Behavior-only mixins
+│   ├── cc_sdk_data/             # Core data entities/models, CcFailure hierarchy
+│   └── cc_sdk_firebase/, cc_sdk_catcher/, cc_sdk_slack/, cc_sdk_device/, cc_sdk_phone/
+│                                #   Capability packages (vendor implementations of core interfaces)
 ├── cc_bridge/                   # Bridge contracts (Coordinators, SessionContract) — root level
 ├── modules/                      # App-specific modules
-│   ├── app_config/              # Configuration, Storage
-│   ├── bridge/                  # App Shell gateway to features: shell contracts + all coordinator impls
-│   │                            #   (AppLifecycleProvider, MainShellProvider, RegionalSettingsContract)
+│   ├── app_config/              # Configuration (PrjEnv), Storage
+│   ├── bridge/                  # App Shell gateway to features: shell contracts, every coordinator impl,
+│   │                            #   and the *Provider impls (AppLifecycleProvider, MainShellProvider, ...)
 │   │                            #   Distinct from cc_bridge — not a duplicate.
-│   ├── data_config/             # App-specific data implementations, sync helpers, exchange rates
+│   ├── data_config/             # App-wide data infrastructure (Dio/Retrofit setup, exchange rates)
 │   ├── message/                 # i18n/localization (PrjLocaleKeys)
 │   └── theme/                   # Theming system (PrjColors, PrjTextStyle)
 └── docs/                        # Documentation
 ```
 
-Each package under `modules/`, `shared/`, and `cc_bridge/` has its own package-scoped `AGENTS.md` covering what's
-distinctive about it, plus a `README.md` as the source of truth for its technical API surface — check both
-before making non-trivial changes inside a package.
+Most packages under `modules/`, `shared/`, and `cc_bridge/` have a package-scoped `AGENTS.md` (what's distinctive
+about the package) and/or a `README.md` (its technical API surface). Not every package has both (for example
+`modules/bridge` has neither), so check which exist before making non-trivial changes inside a package.
 
 ## Multi-screen & orientation support (detail)
 
@@ -98,12 +100,15 @@ Local-first: Hive (`hive_ce`) is the source of truth on device; Firestore is the
 
 ## Key technologies
 
-- **DI**: `get_it` (service locator) + `injectable` (codegen, v3.0+), Micro-Package pattern. Annotations in use:
-  `@injectable`, `@module`, `@preResolve`, `@named`, `@singleton`, `@lazySingleton`,
-  `@InjectableInit.microPackage()`. The concrete file/method/locator conventions are in `AGENTS.md` section IV.
-- **State management**: no lock-in. `cc_sdk`, `cc_sdk_ui`, `cc_mixin`, `cc_micro_features` domain/data layers
-  stay agnostic; `presentation/` layers choose Bloc or GetX per feature, via abstract interfaces implemented
-  with either.
+- **DI**: `get_it` (service locator) + `injectable` (codegen, v3.0+), Micro-Package pattern. Your own classes use
+  `@injectable` / `@lazySingleton` (`@LazySingleton(as: X)` for an interface) on the class itself. `@module` (with
+  `@preResolve` where needed) is only for third-party types you cannot annotate, and eager `@singleton` is
+  reserved for cheap objects; heavy services stay lazy (`AGENTS.md` rule 6). The concrete file/method/locator
+  conventions are in `AGENTS.md` section IV.
+- **State management**: no lock-in. Every `cc_core_sdk` package, `cc_bridge`, and every `domain/` and `data/` layer
+  stay agnostic; `presentation/` layers choose Bloc or GetX per feature (`AGENTS.md` rule 3).
+- **Platforms**: Android and iOS. There is no web target yet; see `AGENTS.md` rule 9 for the adaptive layout
+  rules that already cover wide windows.
 - **Melos workspace**: scripts are defined once, in root `pubspec.yaml`'s `melos.scripts` — melos 8.10.0 reads
   scripts from `pubspec.yaml`, not `melos.yaml`. Keep `melos.yaml` free of a `scripts:` section to avoid drift
   between two divergent script definitions.

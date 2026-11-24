@@ -6,10 +6,13 @@ This guide explains how to set up the automated CI/CD pipeline for this modular 
 
 The CI/CD pipeline automatically:
 
-- **Validates**: Runs Linting (`melos run analyze`) and Unit Tests (`melos run test`) across all workspace packages using **Melos 8.10.0**.
+- **Validates**: runs, in order, the import-boundary check (`melos run check:imports`), code generation
+  (`melos run gen`), linting (`melos run analyze`) and unit tests (`melos run test`) across all workspace packages
+  using **Melos 8.10.0**.
 - **Android**:
   - Builds Release AAB and uploads directly to **Google Play Console (Alpha / Closed Testing track)** via Fastlane `upload_to_play_store`.
-  - Automatically auto-increments build numbers (`25 + github.run_number`).
+  - Sets the build number (`versionCode`) to `25 + github.run_number` (at least 26). It overrides the `+N` in
+    `pubspec.yaml`, which only applies to local builds (see `docs/tech/development/BUILD.md`).
 - **iOS**:
   - Fetches the latest build number from TestFlight via `latest_testflight_build_number` and auto-increments dynamically (`latest + 1`).
   - Auto-imports the `.p12` Distribution Certificate and downloads the App Store Provisioning Profile.
@@ -158,9 +161,10 @@ The pipeline is defined in `.github/workflows/firebase-app-distribution.yml`.
 
 ### Jobs & Auto-versioning:
 
-1. **Quality Check**: Runs `melos run analyze` and `melos run test`. Must pass clean before deployments start.
+1. **Quality Check**: Runs `melos run check:imports`, `melos run gen`, `melos run analyze` and `melos run test`.
+   Must pass clean before deployments start.
 2. **Android Distribute** (fails if `FIREBASE_SERVICE_CREDENTIALS` is missing; it no longer skips the Play upload silently):
-   - Auto-calculates build number: `25 + github.run_number`.
+   - Auto-calculates build number: `25 + github.run_number` (at least 26).
    - Builds Release AAB and uploads directly to **Google Play Console (Alpha track)** via `upload_to_play_store`.
 3. **iOS Distribute**:
    - Queries App Store Connect for the latest TestFlight build number and auto-increments (`latest + 1`). If the query fails the lane stops immediately instead of guessing a number.

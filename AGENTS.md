@@ -47,8 +47,9 @@ melos run check:imports       # import boundaries (section VI), also the first C
 - Run a single test file: `flutter test path/to/foo_test.dart` (from the package root that owns it).
 - Run the app: `flutter run -d <device> --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json` (flavor: `prod`; entry point `lib/main_prod.dart` delegating to `lib/main.dart` via `EnvironmentRunner`).
 - App settings are `--dart-define`s from `env/prod.json` (git-ignored copy of `env/prod.example.json`; generated in CI
-  from GitHub Variables + Secrets, the single source of truth). Only `PrjEnv` (`modules/app_config`) reads them; the
-  SDK gets its share via `CcSdkConfig.configure()` in `initEnv()`. No code reads `.env` files or `flutter_dotenv`.
+  from GitHub Variables + Secrets, the single source of truth). Only `PrjEnv` (`modules/app_config`) reads them
+  (one exception: `CrashLogDevOverlay` reads `ENABLE_DEV_CRASH_LOG_VIEWER`); the SDK gets its share via
+  `CcSdkConfig.configure()` in `initEnv()`. No code reads `.env` files or `flutter_dotenv`.
 - Firebase config is git-ignored; `melos run setup:firebase` copies `.template` files into
   `android/app/src/{flavor}/google-services.json` and `ios/Firebase/{flavor}/GoogleService-Info.plist`.
 - CI (`.github/workflows/firebase-app-distribution.yml`) is **active**. It runs on push/PR to `qltc` (docs-only
@@ -82,10 +83,10 @@ shared/
   cc_micro_features/lib/features/ # Project-blind, reusable-across-apps verticals (app_update, auth,
                                    # biometric, crash_log, messaging, splash, web)
   cc_core_sdk/                    # GIT SUBMODULE (huytower/cc_core_sdk) — universal engine:
-    cc_sdk/                       #   network, failures, logging (.Log()), crash-reporter interface
+    cc_sdk/                       #   network, device, logging (.Log()), capability + crash-reporter interfaces
     cc_sdk_ui/                    #   design system / widget catalog (CcContextExtension) + widget-building mixins
     cc_mixin/                     #   behavior-only mixins (pagination, back-button); depends on cc_sdk_data only
-    cc_sdk_data/                  #   core data entities/models
+    cc_sdk_data/                  #   core data entities/models, the CcFailure hierarchy (pure Dart)
     cc_sdk_firebase/              #   capability ring: Firebase impls of core interfaces (CcAnalytics, ...)
     cc_sdk_catcher/               #   capability ring: uncaught-error handling on catcher_2 (CcCatcherBootstrap)
     cc_sdk_slack/                 #   capability ring: Slack webhook impls (crash alerts, user feedback)
@@ -107,10 +108,11 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
 
 ## I. Architectural integrity (the laws)
 
-1. **Hybrid-Modular Super App Design (CRITICAL)** — three layers, strictly separated: App Shell (`lib/`, pure
-   orchestrator, no business logic/feature UI), Domain Features (`modules/domain_features/`, app-specific
-   verticals), Micro-Features (`shared/cc_micro_features/`, project-blind reusable verticals), Shared Core
-   (`shared/cc_core_sdk/`, universal engine), Bridge Layer (`cc_bridge/`, cross-module contracts).
+1. **Hybrid-Modular Super App Design (CRITICAL)** — four layers plus a bridge, strictly separated: App Shell
+   (`lib/`, pure orchestrator, no business logic/feature UI), Domain Features (`modules/domain_features/`,
+   app-specific verticals), Micro-Features (`shared/cc_micro_features/`, project-blind reusable verticals), Shared
+   Core (`shared/cc_core_sdk/`, universal engine); the Bridge (`cc_bridge/` contracts + `modules/bridge` impls,
+   rule 4) connects them.
 2. **Project-Blind Dependency Rules (STRICT)**:
     - `cc_micro_features` and `domain_features` **must not** import from `lib/` (App Shell) or `modules/data_config`.
     - `cc_micro_features` must not import from `domain_features` or any app module (`modules/*`).
@@ -129,12 +131,12 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
     - Repository interfaces are **not** moved to `core/` just because several features use them — only shared
       *entities* are (`core/domain/entities/`: `TransactionEntity`, `WalletEntity`, `CategoryEntity`,
       `LiabilityEntity`, `UserLevelStatusEntity`).
-    - **No package cycles.** Workspace packages form a DAG (`data_config` → `domain_features` → `app_config`;
-      `app_config` depends on neither). A new import that adds a back-edge between packages is a bug: move the
+    - **No package cycles.** Workspace packages form a DAG (for example `data_config` → `domain_features` →
+      `app_config`; `app_config` depends on neither; `bridge` sits above `domain_features`). A new import that adds a back-edge between packages is a bug: move the
       shared type down into the lower package instead. Enforced by `check:imports` (`package-cycle`).
 3. **State-Management Agnostic Core (STRICT)**:
-    - `cc_core_sdk` (`cc_sdk`, `cc_sdk_ui`, `cc_mixin`) and `cc_bridge` must stay state-management agnostic — no
-      Bloc/GetX reactive state.
+    - `cc_core_sdk` (every package: `cc_sdk`, `cc_sdk_ui`, `cc_mixin`, `cc_sdk_data` and the capability packages)
+      and `cc_bridge` must stay state-management agnostic — no Bloc/GetX reactive state.
     - The SDK does not depend on the `get` package at all (dialog and keyboard helpers take a `BuildContext`
       or use `Navigator` / `FocusManager`); don't add it back, not even for navigation helpers.
     - Presentation layers are free to use Bloc or GetX; the project deliberately supports both, chosen per feature.
@@ -161,7 +163,8 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
       `@LazySingleton(as: XProvider)`. Receive providers like any other dependency — see **section IV,
       "Injecting dependencies"**. New cross-feature need → add a method to the matching provider (or a new
       `*Provider` + bridge impl); never route by string/event keys.
-    - **Legacy, do not copy:** 46 older uses of other features' controllers still exist (mainly
+    - **Legacy, do not copy:** older uses of other features' controllers still exist (45 at the time of writing;
+      the baseline file has the current count) (mainly
       `WalletController`, the liability/lend form controllers hosted by `transaction`, `TransactionController`,
       `BudgetLimitController`, `BudgetAllocationController`, `CategorySettingsController`). They are debt to
       migrate, not a pattern: they are frozen per file in `scripts/check_imports_baseline.txt`, and
@@ -227,6 +230,7 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
       on device type or `Platform`.
     - Check every new screen against the shared matrix in `modules/domain_features/test/adaptive/` (phones,
       foldables, 7"/10" tablets, landscape, web desktop): touch-target size, text overflow, no layout overflow.
+      "Web desktop" there is a window size only: the app ships on Android and iOS, and has no web target yet.
 10. **Localization** — `el.tr(PrjLocaleKeys.key)`, never hardcoded strings. New strings require all three kept in
     sync (no build step enforces this — treat drift as a bug):
     1. `modules/message/assets/translations/en.json`
@@ -290,7 +294,7 @@ parent repo. (This checkout sets `submodule.cc_core_sdk.update = none` locally, 
 | Method name | Always `initMicroPackage()` |
 | Locator name | Always `getIt` |
 | Generated file | `di.module.dart` (or `di.config.dart` at the App Shell level) |
-| Annotation style | Annotate the class directly (`@LazySingleton(as: XRepository)` on `XRepositoryImpl`), not a `@module` block |
+| Annotation style | Annotate the class directly (`@LazySingleton(as: XRepository)` on `XRepositoryImpl`), not a `@module` block. `@module` is only for third-party types you cannot annotate (`Dio`, `SharedPreferences`, a vendor SDK instance), inside the package's `core/di/` or a capability package |
 
 There is **no per-feature DI module file** — `@InjectableInit.microPackage()` on the package's single
 `initMicroPackage()` scans the whole package for annotations. The App Shell consolidates everything in
@@ -362,7 +366,7 @@ and the repository. Its sheets are an extension (`WalletSheets`), not a mixin.
     present a clear plan and proceed after developer confirmation.
 21. **Verification checklist before delivery**:
     - [ ] No hardcoded strings/colors/typography.
-    - [ ] Functional responsiveness (`context.resp*`) checked at all four breakpoints, both orientations.
+    - [ ] Functional responsiveness (`context.resp*`) checked in every window size class (rule 9), both orientations.
     - [ ] Import hygiene and suffix-first naming.
     - [ ] Spacing uses `CcSpace*` (not raw `SizedBox(respDim(N))` gaps).
     - [ ] Localization: JSONs + `PrjLocaleKeys` + `CodegenLoader` updated and in sync.

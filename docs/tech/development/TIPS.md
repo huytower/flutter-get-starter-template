@@ -1,4 +1,4 @@
-# TIPS
+# Tips
 
 ### Import curl request into Postman?
 
@@ -40,24 +40,24 @@ This way will `increase capacity` significantly
 <br />
 - Remove many unnecessary `system_image` files (`android emulator` os version)
 
-![](/doc/increase_capacity/delete_system_image.png)
+![](../../tips/increase_capacity/delete_system_image.png)
 
 <br />
 - Remove old version, ex. `kotlin_version`, `jdk version` ...
 
-![](/doc/increase_capacity/delete_old_version.png)
+![](../../tips/increase_capacity/delete_old_version.png)
 
 <br />
 - Delete folder `CoreSimulator` (`ios simulator` os version), by this way :
 
-![](/doc/increase_capacity/select_xcode_device_emulator.png)
+![](../../tips/increase_capacity/select_xcode_device_emulator.png)
 
 <br />
 then, `delete all unnecessary simulator version`, as below example :
 
-![](/doc/increase_capacity/xcode_simulator_list.png)
+![](../../tips/increase_capacity/xcode_simulator_list.png)
 
-![](/doc/increase_capacity/delete_folder_core_simulator.png)
+![](../../tips/increase_capacity/delete_folder_core_simulator.png)
 
 <br />
 - Only build|run app with `Real Device`, not use `Emulator|Simulator` anymore
@@ -68,7 +68,7 @@ then, `delete all unnecessary simulator version`, as below example :
 <br />
 - Delete `App Caches`
 
-![](/doc/increase_capacity/delete_app_cache.png)
+![](../../tips/increase_capacity/delete_app_cache.png)
 
 <br />
 - Delete old|unnecessary `gradle` version, keep `using stable gradle version`
@@ -79,7 +79,7 @@ then, `delete all unnecessary simulator version`, as below example :
 <br />
 - Delete old|unnecessary `android ndk` version, keep `using stable ndk version`
 
-![](/doc/increase_capacity/delete_unnecessary_ndk_version.png)
+![](../../tips/increase_capacity/delete_unnecessary_ndk_version.png)
 
 <br />
 - Delete all `*.apk` was built by `Developer Tools`
@@ -89,10 +89,11 @@ then, `delete all unnecessary simulator version`, as below example :
 
 ### Identify Performance Bottlenecks
 
-For **Turbo Boot** performance (startup < 2s):
+For startup performance (target < 2 s, boot order in `AGENTS.md` rule 6):
 
-- Use `developer.log` with timestamps in `main.dart` to measure startup time.
+- Log timestamps with the `.Log()` extension in `main.dart` to measure startup time (never `print` or
+  `developer.log`, `AGENTS.md` rule 15).
 - If startup exceeds 2s, check if any `@singleton` is being eagerly instantiated. Convert to `@lazySingleton`.
-- **Deferred Telemetry**: Non-essential services (Logging, Performance) must be deferred to the NavigationBar shell via `NavigationLogicMixin`.
-- Use **Firebase Performance Monitoring** (enabled in `NavigationBar`) to track real-world startup metrics.
-- Review `PrjAppConfig.serviceStartupLogEnabled` in `modules/app_config` for startup timing analysis.
+- **Deferred telemetry**: non-essential services (analytics, performance monitoring) start from the navigation
+  shell via `NavigationLogicMixin` (`lib/presentation/main_navigation/logic/`), a few seconds after the first frame.
+- Use **Firebase Performance Monitoring** (started in `NavigationLogicMixin`) to track real-world startup metrics.

@@ -1,34 +1,26 @@
+%% App boot sequence (lib/main.dart + NavigationLogicMixin). Boot rules: AGENTS.md rule 6.
 sequenceDiagram
-    participant App as Flutter App
-    participant GetX as GetX Router
-    participant Splash as Splash Page
-    participant Comment as Comment Page
-    participant Controller as CommentController
-    participant API as API<br/>(JSONPlaceholder)
+    participant Main as main.dart
+    participant Env as PrjEnv / CcSdkConfig
+    participant Boot as Parallel boot
+    participant Bridge as AppLifecycleProvider (modules/bridge)
+    participant Router as auto_route (AppRouter)
+    participant Shell as MainNavigation + NavigationLogicMixin
 
-    App->>App: Load Environment Config
-    Note over App: 🌐 API_URL: https://jsonplaceholder.typicode.com
-    
-    App->>GetX: Initialize GetMaterialController
-    Note over GetX: Instance created & initialized
-    
-    GetX->>Splash: Navigate to /splash
-    activate Splash
-    Splash->>Splash: Display Splash Screen
-    deactivate Splash
-    
-    Splash->>GetX: Splash Complete
-    GetX->>Comment: Navigate to /comment
-    
-    activate Comment
-    Comment->>Controller: Create CommentController
-    Controller->>Controller: Initialize
-    Controller->>Controller: onReady()
-    
-    Controller->>API: GET /comments
-    activate API
-    API-->>Controller: 200 OK (Comments Data)
-    deactivate API
-    
-    Controller->>Comment: Display Comments
-    deactivate Comment
+    Main->>Env: await initEnv()
+    Main->>Boot: await Future.wait([Firebase, DI, Hive, Localization])
+    Boot-->>Main: ready
+    Main-)Bridge: uploadPendingCrashLogs() (not awaited)
+    Main-)Main: CcAppAttestation.activate() (not awaited)
+    Main->>Router: Catcher2 runs AppRunner (MaterialApp.router)
+    Router->>Shell: initial route: MainNavigation
+    Shell->>Shell: SplashManager.shouldShowSplash()
+    alt first launch
+        Shell->>Shell: show Splash, then the main tabs
+    else
+        Shell->>Shell: show the main tabs
+    end
+    Note over Shell: AUTO_ROUTE_START set to the quick-test route adds a quick-test second tab
+    Shell-)Bridge: initializeUserLevel() (not awaited)
+    Shell-)Shell: after first frame: AppUpdatePrompter.checkAndPrompt()
+    Shell-)Shell: after ~3 s: analytics, performance, background services
